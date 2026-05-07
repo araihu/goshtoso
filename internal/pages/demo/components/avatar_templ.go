@@ -370,7 +370,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:     "/assets/images/goatth.png",
+			Src:     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230089d6'/%3E%3Ccircle cx='32' cy='32' r='18' fill='white'/%3E%3C/svg%3E",
 			Alt:     "Loaded",
 			Name:    "Load Test",
 			Size:    avatar.SizeMD,
