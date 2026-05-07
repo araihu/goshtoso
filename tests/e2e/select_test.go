@@ -34,25 +34,22 @@ func TestSelect_DefaultRendering(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, labelText, "Operating System")
 
-		// Check select element exists with options
-		selectEl := page.Locator("select#os")
-		count, err := selectEl.Count()
+		trigger := page.Locator("#os-trigger[role='combobox']")
+		count, err := trigger.Count()
 		require.NoError(t, err)
 		assert.Equal(t, 1, count, "should have exactly one default select")
 
-		// Check it has options (placeholder + 3 options)
-		options := selectEl.Locator("option")
+		require.NoError(t, trigger.Click())
+		options := page.Locator("#os-option-0, #os-option-1, #os-option-2")
 		optCount, err := options.Count()
 		require.NoError(t, err)
-		assert.Equal(t, 4, optCount, "should have placeholder + 3 options")
+		assert.Equal(t, 3, optCount, "should have 3 options")
 
 		t.Log("Default select renders with label and options")
 	})
 
 	t.Run("Select_Has_Chevron_Icon", func(t *testing.T) {
-		// The chevron SVG should be present as a sibling of the select
-		wrapper := page.Locator("select#os").Locator("xpath=..")
-		svg := wrapper.Locator("svg")
+		svg := page.Locator("#os-trigger svg")
 		svgCount, err := svg.Count()
 		require.NoError(t, err)
 		assert.GreaterOrEqual(t, svgCount, 1, "should have chevron icon")
@@ -61,10 +58,10 @@ func TestSelect_DefaultRendering(t *testing.T) {
 	})
 
 	t.Run("Select_Has_Appearance_None", func(t *testing.T) {
-		selectEl := page.Locator("select#os")
-		class, err := selectEl.GetAttribute("class")
+		trigger := page.Locator("#os-trigger")
+		class, err := trigger.GetAttribute("class")
 		require.NoError(t, err)
-		assert.Contains(t, class, "appearance-none", "select should have appearance-none class")
+		assert.Contains(t, class, "rounded-radius", "select trigger should use custom styling")
 
 		t.Log("Select has appearance-none for custom styling")
 	})
@@ -90,8 +87,8 @@ func TestSelect_ValidationStates(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Error_State_Has_Danger_Border", func(t *testing.T) {
-		selectEl := page.Locator("select#os-error")
-		class, err := selectEl.GetAttribute("class")
+		trigger := page.Locator("#os-error-trigger")
+		class, err := trigger.GetAttribute("class")
 		require.NoError(t, err)
 		assert.Contains(t, class, "border-danger", "error select should have border-danger")
 
@@ -99,7 +96,7 @@ func TestSelect_ValidationStates(t *testing.T) {
 	})
 
 	t.Run("Error_State_Has_Helper_Text", func(t *testing.T) {
-		helperText := page.Locator("select#os-error").Locator("xpath=../small")
+		helperText := page.Locator("label[for='os-error'] ~ div + small")
 		text, err := helperText.TextContent()
 		require.NoError(t, err)
 		assert.Contains(t, text, "Error: Please select an operating system")
@@ -122,8 +119,8 @@ func TestSelect_ValidationStates(t *testing.T) {
 	})
 
 	t.Run("Success_State_Has_Success_Border", func(t *testing.T) {
-		selectEl := page.Locator("select#os-success")
-		class, err := selectEl.GetAttribute("class")
+		trigger := page.Locator("#os-success-trigger")
+		class, err := trigger.GetAttribute("class")
 		require.NoError(t, err)
 		assert.Contains(t, class, "border-success", "success select should have border-success")
 
@@ -131,8 +128,8 @@ func TestSelect_ValidationStates(t *testing.T) {
 	})
 
 	t.Run("Success_State_Has_Preselected_Value", func(t *testing.T) {
-		selectEl := page.Locator("select#os-success")
-		value, err := selectEl.InputValue()
+		hiddenInput := page.Locator("input#os-success")
+		value, err := hiddenInput.InputValue()
 		require.NoError(t, err)
 		assert.Equal(t, "mac", value, "success select should have Mac preselected")
 
@@ -160,8 +157,8 @@ func TestSelect_DisabledState(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Disabled_Select_Has_Disabled_Attribute", func(t *testing.T) {
-		selectEl := page.Locator("select#os-disabled")
-		isDisabled, err := selectEl.IsDisabled()
+		trigger := page.Locator("#os-disabled-trigger")
+		isDisabled, err := trigger.IsDisabled()
 		require.NoError(t, err)
 		assert.True(t, isDisabled, "disabled select should be disabled")
 
@@ -189,8 +186,8 @@ func TestSelect_CountrySelect(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Country_Select_Has_Many_Options", func(t *testing.T) {
-		selectEl := page.Locator("select#country")
-		options := selectEl.Locator("option")
+		require.NoError(t, page.Locator("#country-trigger").Click())
+		options := page.Locator("[id^='country-option-']")
 		count, err := options.Count()
 		require.NoError(t, err)
 		assert.Greater(t, count, 50, "country select should have many options")
@@ -199,8 +196,8 @@ func TestSelect_CountrySelect(t *testing.T) {
 	})
 
 	t.Run("Country_Select_Has_Autocomplete", func(t *testing.T) {
-		selectEl := page.Locator("select#country")
-		autocomplete, err := selectEl.GetAttribute("autocomplete")
+		hiddenInput := page.Locator("input#country")
+		autocomplete, err := hiddenInput.GetAttribute("autocomplete")
 		require.NoError(t, err)
 		assert.Equal(t, "country", autocomplete, "country select should have autocomplete=country")
 

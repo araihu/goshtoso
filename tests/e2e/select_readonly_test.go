@@ -24,26 +24,26 @@ func TestSelect_ReadonlyDisabledWithHiddenInput(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	// The visible select should be disabled
-	sel := page.Locator("#os-readonly")
-	require.NoError(t, sel.WaitFor())
+	// The visible trigger should be disabled
+	trigger := page.Locator("#os-readonly-trigger")
+	require.NoError(t, trigger.WaitFor())
 
-	disabled, err := sel.IsDisabled()
+	disabled, err := trigger.IsDisabled()
 	require.NoError(t, err)
 	assert.True(t, disabled, "readonly select should be rendered as disabled")
 
 	// Should show the selected value "Windows"
-	val, err := sel.InputValue()
+	val, err := trigger.InnerText()
 	require.NoError(t, err)
-	assert.Equal(t, "windows", val, "readonly select should show the selected value")
+	assert.Contains(t, val, "Windows", "readonly select should show the selected label")
 
 	// There should be a hidden input with the same name and value for form submission
-	hidden := page.Locator("form#readonlySelectForm input[type='hidden'][name='os-readonly']")
+	hidden := page.Locator("form#readonlySelectForm input[hidden][name='os-readonly']")
 	count, err := hidden.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 1, count, "should have a hidden input for form submission")
 
-	hiddenVal, err := hidden.GetAttribute("value")
+	hiddenVal, err := hidden.InputValue()
 	require.NoError(t, err)
 	assert.Equal(t, "windows", hiddenVal, "hidden input should have the selected value")
 }

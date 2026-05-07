@@ -598,17 +598,15 @@ func TestTableHTMX_BrowserInfiniteScroll(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("InfiniteScroll_HasSentinel", func(t *testing.T) {
-		sentinel := page.Locator("#infinite-table tr[hx-get][hx-trigger='revealed']")
+		sentinel := page.Locator("#infinite-table tr#infinite-table-sentinel[data-hx-get]")
 		count, err := sentinel.Count()
 		require.NoError(t, err)
-		assert.Equal(t, 1, count, "should have exactly 1 scroll sentinel row")
+		require.Equal(t, 1, count, "should have exactly 1 scroll sentinel row")
 
 		// Verify sentinel URL has page=2
-		if count > 0 {
-			url, err := sentinel.GetAttribute("hx-get")
-			require.NoError(t, err)
-			assert.Contains(t, url, "page=2", "sentinel should request page 2")
-		}
+		url, err := sentinel.GetAttribute("data-hx-get")
+		require.NoError(t, err)
+		assert.Contains(t, url, "page=2", "sentinel should request page 2")
 	})
 
 	t.Run("InitialRows_Present", func(t *testing.T) {
@@ -643,13 +641,14 @@ func TestTableHTMX_ResponseFormat(t *testing.T) {
 
 	t.Run("InfiniteVariant_ContainsSentinel", func(t *testing.T) {
 		body := tableAPI(t, "variant=infinite&page=1&per_page=3")
-		assert.Contains(t, body, "hx-trigger", "infinite response should include sentinel")
+		assert.Contains(t, body, `id="table-sentinel"`, "infinite response should include sentinel")
+		assert.Contains(t, body, "data-hx-get", "infinite response should include next-page URL")
 		assert.Contains(t, body, "page=2", "sentinel should reference next page")
 	})
 
 	t.Run("InfiniteVariant_LastPage_NoSentinel", func(t *testing.T) {
 		body := tableAPI(t, "variant=infinite&page=4&per_page=3")
-		assert.NotContains(t, body, "hx-trigger", "last page should not have sentinel")
+		assert.NotContains(t, body, `id="table-sentinel"`, "last page should not have sentinel")
 	})
 
 	t.Run("Rows_ContainExpectedColumns", func(t *testing.T) {

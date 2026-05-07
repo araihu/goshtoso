@@ -247,7 +247,7 @@ func TestTable_UsersTable(t *testing.T) {
 		usersHeading := page.Locator("h4:has-text('Users Table')")
 		usersSection := usersHeading.Locator("xpath=..")
 
-		avatars := usersSection.Locator("img.rounded-full")
+		avatars := usersSection.Locator("td img[src*='avatar-']")
 		count, err := avatars.Count()
 		require.NoError(t, err)
 		assert.Equal(t, 5, count, "users table should have 5 avatar images")
@@ -481,14 +481,15 @@ func TestTable_InfiniteScroll(t *testing.T) {
 	t.Run("Infinite_Scroll_Has_Sentinel", func(t *testing.T) {
 		infiniteTable := page.Locator("#infinite-table")
 
-		// Should have a sentinel row with hx-trigger="revealed"
-		sentinel := infiniteTable.Locator("tr[hx-trigger='revealed']")
+		// Should have a script-driven sentinel row for the next page.
+		sentinel := infiniteTable.Locator("tr#infinite-table-sentinel[data-hx-get]")
 		count, err := sentinel.Count()
 		require.NoError(t, err)
-		assert.Equal(t, 1, count, "should have one scroll sentinel row")
+		require.Equal(t, 1, count, "should have one scroll sentinel row")
 
-		// Sentinel should have hx-get
-		hxGet, err := sentinel.GetAttribute("hx-get")
+		// Sentinel should point at the next page. The URL is stored in data-hx-get
+		// because the component drives htmx.ajax from IntersectionObserver.
+		hxGet, err := sentinel.GetAttribute("data-hx-get")
 		require.NoError(t, err)
 		assert.Contains(t, hxGet, "page=2", "sentinel should request page 2")
 

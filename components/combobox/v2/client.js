@@ -21,6 +21,32 @@
       .map(function (el) { return el.value; });
   }
 
+  function storageKey(cfg) {
+    return 'goatth:combobox:v2:' + cfg.id + ':selected';
+  }
+
+  function saveSelected(cfg, selected) {
+    try {
+      window.sessionStorage.setItem(storageKey(cfg), JSON.stringify(selected));
+    } catch (_) {}
+  }
+
+  function restoreSelected(root) {
+    var cfg = readCfg(root);
+    try {
+      var raw = window.sessionStorage.getItem(storageKey(cfg));
+      if (!raw) return;
+      var selected = JSON.parse(raw);
+      if (!Array.isArray(selected)) return;
+      setHiddenInputs(root, cfg.name, selected.map(String));
+      updateUI(root);
+    } catch (_) {}
+  }
+
+  function restoreAllClientRoots() {
+    document.querySelectorAll('[data-combobox][data-combobox-mode="client"]').forEach(restoreSelected);
+  }
+
   function cssEscape(s) {
     return window.CSS.escape(String(s));
   }
@@ -118,6 +144,7 @@
       else selected.push(value);
     }
     setHiddenInputs(root, cfg.name, selected);
+    saveSelected(cfg, selected);
     updateUI(root);
     dispatchChange(root, selected, cfg);
   }
@@ -125,6 +152,7 @@
   function clearAll(root) {
     var cfg = readCfg(root);
     setHiddenInputs(root, cfg.name, []);
+    saveSelected(cfg, []);
     updateUI(root);
     dispatchChange(root, [], cfg);
   }
@@ -147,4 +175,11 @@
     e.preventDefault();
     toggleValue(root, li.getAttribute('data-value'));
   }, true);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', restoreAllClientRoots);
+  } else {
+    restoreAllClientRoots();
+  }
+  window.addEventListener('pageshow', restoreAllClientRoots);
 })();
