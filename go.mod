@@ -3,7 +3,7 @@ module github.com/guilycst/GoATTH-penguinui
 go 1.26.1
 
 require (
-	github.com/a-h/templ v0.3.1001
+	github.com/a-h/templ v0.3.1020
 	github.com/playwright-community/playwright-go v0.5700.1
 	github.com/stretchr/testify v1.11.1
 )
