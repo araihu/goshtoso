@@ -14,6 +14,7 @@ env:
   GO_VERSION: '1.26.1'
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.5700.1'
+  TAILWIND_VERSION: 'v4.1.17'
 
 jobs:
   lint-build:
@@ -33,7 +34,7 @@ jobs:
       - name: Install Tailwind CSS standalone
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/tailwindcss https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
           chmod +x /tmp/tailwindcss
           sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
@@ -87,7 +88,7 @@ jobs:
       - name: Install Tailwind CSS standalone
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/tailwindcss https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
           chmod +x /tmp/tailwindcss
           sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
@@ -116,7 +117,7 @@ jobs:
       - name: Install Tailwind CSS standalone
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/tailwindcss https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
           chmod +x /tmp/tailwindcss
           sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
