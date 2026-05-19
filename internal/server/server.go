@@ -88,6 +88,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 	switch componentName {
 	case "button":
 		components.ButtonDemoPage().Render(r.Context(), w)
+	case "codeblock":
+		components.CodeBlockDemoPage().Render(r.Context(), w)
 	case "accordion":
 		components.AccordionDemoPage().Render(r.Context(), w)
 	case "sidebar":

@@ -1,0 +1,190 @@
+/* ============================================
+   Code block syntax palette
+   Renders Chroma class-mode output (prefix "ch-").
+   Panel surface follows site theme via surface-alt tokens.
+   Token colors swap between light/dark for contrast.
+   4-color palette inspired by penguinui.com:
+     pink   → tags, function/class/decorator names
+     purple → keywords, attribute names, builtins, variables
+     blue   → strings, numbers, all literals
+     muted  → comments
+   Everything else (punct, operators, plain idents) inherits surface text.
+   ============================================ */
+
+.codeblock {
+  background-color: var(--color-surface-alt);
+  color: var(--color-on-surface);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.dark .codeblock {
+  background-color: var(--color-surface-dark-alt);
+  color: var(--color-on-surface-dark);
+}
+
+.codeblock pre.ch-chroma {
+  background: transparent;
+  margin: 0;
+  padding: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.codeblock pre.ch-chroma code {
+  background: transparent;
+  padding: 0;
+  display: block;
+}
+
+/* ============================================
+   PINK — tag + definition names
+   ============================================ */
+.codeblock .ch-nt,   /* Name.Tag */
+.codeblock .ch-nf,   /* Name.Function */
+.codeblock .ch-fm,   /* Name.Function.Magic */
+.codeblock .ch-nc,   /* Name.Class */
+.codeblock .ch-nd,   /* Name.Decorator */
+.codeblock .ch-ne,   /* Name.Exception */
+.codeblock .ch-nl    /* Name.Label */ {
+  color: var(--color-pink-700);
+}
+.dark .codeblock .ch-nt,
+.dark .codeblock .ch-nf,
+.dark .codeblock .ch-fm,
+.dark .codeblock .ch-nc,
+.dark .codeblock .ch-nd,
+.dark .codeblock .ch-ne,
+.dark .codeblock .ch-nl {
+  color: var(--color-pink-400);
+}
+
+/* ============================================
+   PURPLE — keywords, attrs, builtins, variables
+   ============================================ */
+.codeblock .ch-k,    /* Keyword */
+.codeblock .ch-kc,   /* Keyword.Constant */
+.codeblock .ch-kd,   /* Keyword.Declaration */
+.codeblock .ch-kn,   /* Keyword.Namespace */
+.codeblock .ch-kp,   /* Keyword.Pseudo */
+.codeblock .ch-kr,   /* Keyword.Reserved */
+.codeblock .ch-kt,   /* Keyword.Type */
+.codeblock .ch-na,   /* Name.Attribute */
+.codeblock .ch-nb,   /* Name.Builtin */
+.codeblock .ch-bp,   /* Name.Builtin.Pseudo */
+.codeblock .ch-no,   /* Name.Constant */
+.codeblock .ch-nn,   /* Name.Namespace */
+.codeblock .ch-py,   /* Name.Property */
+.codeblock .ch-nv,   /* Name.Variable */
+.codeblock .ch-vc,   /* Name.Variable.Class */
+.codeblock .ch-vg,   /* Name.Variable.Global */
+.codeblock .ch-vi,   /* Name.Variable.Instance */
+.codeblock .ch-vm,   /* Name.Variable.Magic */
+.codeblock .ch-ow    /* Operator.Word */ {
+  color: var(--color-purple-700);
+}
+.dark .codeblock .ch-k,
+.dark .codeblock .ch-kc,
+.dark .codeblock .ch-kd,
+.dark .codeblock .ch-kn,
+.dark .codeblock .ch-kp,
+.dark .codeblock .ch-kr,
+.dark .codeblock .ch-kt,
+.dark .codeblock .ch-na,
+.dark .codeblock .ch-nb,
+.dark .codeblock .ch-bp,
+.dark .codeblock .ch-no,
+.dark .codeblock .ch-nn,
+.dark .codeblock .ch-py,
+.dark .codeblock .ch-nv,
+.dark .codeblock .ch-vc,
+.dark .codeblock .ch-vg,
+.dark .codeblock .ch-vi,
+.dark .codeblock .ch-vm,
+.dark .codeblock .ch-ow {
+  color: var(--color-purple-400);
+}
+
+/* ============================================
+   BLUE — all literals
+   ============================================ */
+.codeblock .ch-s,    /* String */
+.codeblock .ch-s1,   /* String.Single */
+.codeblock .ch-s2,   /* String.Double */
+.codeblock .ch-sa,   /* String.Affix */
+.codeblock .ch-sb,   /* String.Backtick */
+.codeblock .ch-sc,   /* String.Char */
+.codeblock .ch-sd,   /* String.Doc */
+.codeblock .ch-se,   /* String.Escape */
+.codeblock .ch-sh,   /* String.Heredoc */
+.codeblock .ch-si,   /* String.Interpol */
+.codeblock .ch-sr,   /* String.Regex */
+.codeblock .ch-ss,   /* String.Symbol */
+.codeblock .ch-sx,   /* String.Other */
+.codeblock .ch-dl,   /* String.Delimiter */
+.codeblock .ch-m,    /* Number */
+.codeblock .ch-mi,   /* Number.Integer */
+.codeblock .ch-mf,   /* Number.Float */
+.codeblock .ch-mh,   /* Number.Hex */
+.codeblock .ch-mo,   /* Number.Oct */
+.codeblock .ch-mb,   /* Number.Bin */
+.codeblock .ch-il    /* Number.Integer.Long */ {
+  color: var(--color-blue-700);
+}
+.dark .codeblock .ch-s,
+.dark .codeblock .ch-s1,
+.dark .codeblock .ch-s2,
+.dark .codeblock .ch-sa,
+.dark .codeblock .ch-sb,
+.dark .codeblock .ch-sc,
+.dark .codeblock .ch-sd,
+.dark .codeblock .ch-se,
+.dark .codeblock .ch-sh,
+.dark .codeblock .ch-si,
+.dark .codeblock .ch-sr,
+.dark .codeblock .ch-ss,
+.dark .codeblock .ch-sx,
+.dark .codeblock .ch-dl,
+.dark .codeblock .ch-m,
+.dark .codeblock .ch-mi,
+.dark .codeblock .ch-mf,
+.dark .codeblock .ch-mh,
+.dark .codeblock .ch-mo,
+.dark .codeblock .ch-mb,
+.dark .codeblock .ch-il {
+  color: var(--color-blue-400);
+}
+
+/* ============================================
+   MUTED ITALIC — comments
+   ============================================ */
+.codeblock .ch-c,    /* Comment */
+.codeblock .ch-ch,   /* Comment.Hashbang */
+.codeblock .ch-cm,   /* Comment.Multiline */
+.codeblock .ch-c1,   /* Comment.Single */
+.codeblock .ch-cs,   /* Comment.Special */
+.codeblock .ch-cp,   /* Comment.Preproc */
+.codeblock .ch-cpf   /* Comment.PreprocFile */ {
+  color: var(--color-on-surface-muted);
+  font-style: italic;
+}
+.dark .codeblock .ch-c,
+.dark .codeblock .ch-ch,
+.dark .codeblock .ch-cm,
+.dark .codeblock .ch-c1,
+.dark .codeblock .ch-cs,
+.dark .codeblock .ch-cp,
+.dark .codeblock .ch-cpf {
+  color: var(--color-on-surface-dark-muted);
+}
+
+/* ============================================
+   SUBTLE — punctuation + operators dim slightly
+   ============================================ */
+.codeblock .ch-p,    /* Punctuation */
+.codeblock .ch-o     /* Operator */ {
+  color: color-mix(in srgb, var(--color-on-surface) 70%, transparent);
+}
+.dark .codeblock .ch-p,
+.dark .codeblock .ch-o {
+  color: color-mix(in srgb, var(--color-on-surface-dark) 70%, transparent);
+}

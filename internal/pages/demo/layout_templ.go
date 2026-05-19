@@ -45,7 +45,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Goshtoso PenguinUI</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script><script defer src=\"/assets/js/vendor/alpine-focus.min.js\"></script><script defer src=\"/assets/js/vendor/alpine-collapse.min.js\"></script><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><link href=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css\" rel=\"stylesheet\"><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js\"></script><style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t.code-block { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }\n\t\t\t\tpre[class*=\"language-\"] {\n\t\t\t\t\tbackground: #1e1e1e !important;\n\t\t\t\t\tmargin: 0 !important;\n\t\t\t\t\tpadding: 1rem !important;\n\t\t\t\t\tborder-radius: 0 !important;\n\t\t\t\t}\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition\"><!-- Header --><header class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\"><span class=\"text-2xl font-bold font-title\">Goshtoso</span> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">PenguinUI</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector Dropdown --><div class=\"relative\" x-data=\"{ open: false }\" @click.away=\"open = false\"><button @click=\"open = !open\" class=\"flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-outline bg-surface-alt hover:bg-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:bg-surface-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01\"></path></svg> <span x-text=\"theme === 'minimal' ? 'Minimal' : theme\" class=\"capitalize\"></span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button><!-- Dropdown Menu --><div x-show=\"open\" @click.away=\"open = false\" x-cloak class=\"absolute right-0 mt-2 w-48 max-h-80 overflow-y-auto rounded-radius border border-outline bg-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark z-50\"><div class=\"py-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Goshtoso PenguinUI</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script><script defer src=\"/assets/js/vendor/alpine-focus.min.js\"></script><script defer src=\"/assets/js/vendor/alpine-collapse.min.js\"></script><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition\"><!-- Header --><header class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\"><span class=\"text-2xl font-bold font-title\">Goshtoso</span> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">PenguinUI</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector Dropdown --><div class=\"relative\" x-data=\"{ open: false }\" @click.away=\"open = false\"><button @click=\"open = !open\" class=\"flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-outline bg-surface-alt hover:bg-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:bg-surface-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01\"></path></svg> <span x-text=\"theme === 'minimal' ? 'Minimal' : theme\" class=\"capitalize\"></span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button><!-- Dropdown Menu --><div x-show=\"open\" @click.away=\"open = false\" x-cloak class=\"absolute right-0 mt-2 w-48 max-h-80 overflow-y-auto rounded-radius border border-outline bg-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark z-50\"><div class=\"py-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -57,7 +57,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 104, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 92, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -70,7 +70,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 109, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 97, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -230,6 +230,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("banner", "Banner", "/components/banner", activeComponent),
 				sItem("card", "Card", "/components/card", activeComponent),
 				sItem("carousel", "Carousel", "/components/carousel", activeComponent),
+				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
 				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
 				sItem("table", "Table", "/components/table", activeComponent),
 				sItem("tabs", "Tabs", "/components/tabs", activeComponent),
@@ -291,6 +292,7 @@ var orderedComponents = []componentNavLink{
 	{"Banner", "/components/banner"},
 	{"Card", "/components/card"},
 	{"Carousel", "/components/carousel"},
+	{"Code Block", "/components/codeblock"},
 	{"Spinner", "/components/spinner"},
 	{"Table", "/components/table"},
 	{"Tabs", "/components/tabs"},
@@ -371,7 +373,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var9 templ.SafeURL
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 390, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 380, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -384,7 +386,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 396, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 386, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -408,7 +410,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var11 templ.SafeURL
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 403, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 393, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -421,7 +423,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 406, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 396, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {

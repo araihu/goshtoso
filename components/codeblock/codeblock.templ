@@ -2,8 +2,9 @@ package codeblock
 
 import "fmt"
 
-// CodeBlock renders a syntax-highlighted code block with a header bar,
-// copy button, and Prism.js integration.
+// CodeBlock renders a syntax-highlighted code block with a header bar and
+// copy button. Highlighting is done server-side via Chroma (class mode);
+// the palette is defined in css/codeblock.css.
 //
 // Usage:
 //
@@ -42,8 +43,8 @@ templ CodeBlock(cfg Config) {
 			</button>
 		</div>
 		<!-- Code -->
-		<div class="overflow-x-auto" style={ cfg.maxHeightStyle() }>
-			<pre id={ id } class={ "!m-0 !rounded-none language-" + cfg.Language }><code class={ "language-" + cfg.Language }>{ cfg.Code }</code></pre>
+		<div id={ id } class="codeblock overflow-x-auto" style={ cfg.maxHeightStyle() }>
+			@templ.Raw(Render(cfg.Code, cfg.Language))
 		</div>
 	</div>
 }

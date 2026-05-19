@@ -28,6 +28,9 @@
    ============================================ */
 @import "../all-themes.css";
 
+/* Code block palette (Chroma class-mode tokens, theme-independent) */
+@import "./codeblock.css";
+
 /* TOTVS Brand Font */
 @font-face {
   font-family: 'TOTVS';
