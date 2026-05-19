@@ -1,12 +1,12 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/form"
-	gocombobox "github.com/guilycst/GoATTH-penguinui/components/combobox"
-	"github.com/guilycst/GoATTH-penguinui/components/textarea"
-	"github.com/guilycst/GoATTH-penguinui/components/textinput"
-	"github.com/guilycst/GoATTH-penguinui/components/toggle"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/form"
+	gocombobox "github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/textarea"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // FormDemoPage renders the Form component demo
@@ -18,8 +18,8 @@ templ formDemoContent() {
 	@demo.ComponentDemo(
 		demo.ComponentDemoProps{
 			Title:       "Form",
-			Description: "A composable form layout with sections, collapsible areas, flip-card read/edit panels, and built-in GoATTH field rendering. Supports HTMX validation and external submit triggers.",
-			GoATTHLabel: "GoATTH Component",
+			Description: "A composable form layout with sections, collapsible areas, flip-card read/edit panels, and built-in Goshtoso field rendering. Supports HTMX validation and external submit triggers.",
+			GoshtosoLabel: "Goshtoso Component",
 		},
 		formDemoPreview(),
 		formDemoCode,

@@ -1,8 +1,8 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/toast"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/toast"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // ToastDemoPage renders the Toast component demo
@@ -18,7 +18,7 @@ templ toastDemoContent() {
 			Description:   "Stacking toast notifications with auto-dismiss, hover pause, and multiple variants. Supports both client-side Alpine.js events and server-side HTMX OOB swaps.",
 			OriginalURL:   "/original/toast-notification/stacking-toast-notification.html",
 			OriginalLabel: "Original PenguinUI",
-			GoATTHLabel:   "GoATTH Component",
+			GoshtosoLabel:   "Goshtoso Component",
 		},
 		toastDemoPreview(),
 		`// 1. Place the container once in your layout
@@ -51,7 +51,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-// toastDemoPreview renders the GoATTH toast preview with trigger buttons
+// toastDemoPreview renders the Goshtoso toast preview with trigger buttons
 templ toastDemoPreview() {
 	<div class="w-full max-w-4xl mx-auto space-y-8">
 		<!-- Toast Container (global listener) -->

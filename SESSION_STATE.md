@@ -1,4 +1,4 @@
-# Session State — GoATTH-penguinui
+# Session State — goshtoso
 
 ## What Was Done This Session
 

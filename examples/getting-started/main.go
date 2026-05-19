@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/guilycst/GoATTH-penguinui/assets"
-	"github.com/guilycst/GoATTH-penguinui/components/table"
+	"github.com/araihu/goshtoso/assets"
+	"github.com/araihu/goshtoso/components/table"
 )
 
 // Dog represents a dog breed with metadata
@@ -146,7 +146,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Serve embedded GoATTH assets (CSS with themes, Alpine.js, HTMX, fonts)
+	// Serve embedded Goshtoso assets (CSS with themes, Alpine.js, HTMX, fonts)
 	mux.Handle("/assets/", assets.Handler())
 
 	// Main page — renders the full table with filters, sorting, and pagination

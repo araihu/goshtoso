@@ -1,8 +1,8 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/textinput"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // TextInputDemoPage renders the Text Input component demo
@@ -18,7 +18,7 @@ templ textInputDemoContent() {
 			Description:   "Text inputs allow users to enter and edit text. Supports various types including password with toggle, search with icon, validation states, and input masks.",
 			OriginalURL:   "/original/text-input/default-text-input.html",
 			OriginalLabel: "Original PenguinUI",
-			GoATTHLabel:   "GoATTH Component",
+			GoshtosoLabel:   "Goshtoso Component",
 		},
 		textInputDemoPreview(),
 		`// Default text input
@@ -76,7 +76,7 @@ templ textInputDemoContent() {
 	)
 }
 
-// textInputDemoPreview renders the GoATTH text input preview
+// textInputDemoPreview renders the Goshtoso text input preview
 templ textInputDemoPreview() {
 	<div class="w-full max-w-4xl mx-auto space-y-8">
 		// Default Text Input

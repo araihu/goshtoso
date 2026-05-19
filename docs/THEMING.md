@@ -1,6 +1,6 @@
-# GoATTH Theming Reference
+# Goshtoso Theming Reference
 
-GoATTH uses CSS custom properties (design tokens) for all colors, fonts, and border radii. Themes override these tokens via `[data-theme="name"]` selectors. All components reference these tokens — never hardcoded color values.
+Goshtoso uses CSS custom properties (design tokens) for all colors, fonts, and border radii. Themes override these tokens via `[data-theme="name"]` selectors. All components reference these tokens — never hardcoded color values.
 
 ## Applying a Theme
 
@@ -36,7 +36,7 @@ Components use both light and dark variants in their Tailwind classes:
 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark
 ```
 
-GoATTH includes an Alpine.js dark mode store at `assets/js/darkmode.js` that persists the preference to `localStorage`.
+Goshtoso includes an Alpine.js dark mode store at `assets/js/darkmode.js` that persists the preference to `localStorage`.
 
 ## Token Reference
 

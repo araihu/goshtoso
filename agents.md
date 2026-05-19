@@ -1,7 +1,7 @@
 # agents.md - Process & Learnings for AI Agents
 
 This file documents the development process, known pitfalls, and lessons learned
-while building GoATTH PenguinUI, intended to help AI agents (and humans) avoid
+while building Goshtoso PenguinUI, intended to help AI agents (and humans) avoid
 repeating past mistakes.
 
 ## Development Process
@@ -94,7 +94,7 @@ containers" appearance — the sidebar looks like a separate app from the header
 
 **Fix:** The sidebar logo section is conditional — only renders when `Logo` or
 `LogoText` is set. In the demo layout, omit `LogoText` since the page header
-already shows "GoATTH PenguinUI".
+already shows "Goshtoso PenguinUI".
 
 Also: don't duplicate positioning CSS. The layout wrapper handles `fixed`/`static`
 responsive positioning; the sidebar component itself should only handle its own

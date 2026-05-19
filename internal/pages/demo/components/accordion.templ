@@ -1,8 +1,8 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/accordion"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/accordion"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // AccordionDemoPage renders the Accordion component demo
@@ -18,7 +18,7 @@ templ accordionDemoContent() {
 			Description:   "An accordion is a vertically stacked list of headers that reveal or hide associated sections of content when clicked.",
 			OriginalURL:   "/original/accordion/default-accordion.html",
 			OriginalLabel: "Original PenguinUI",
-			GoATTHLabel:   "GoATTH Component",
+			GoshtosoLabel:   "Goshtoso Component",
 		},
 		accordionDemoPreview(),
 		`// Basic Accordion
@@ -77,7 +77,7 @@ templ lazyLoadingContent(targetID string) {
 	)
 }
 
-// accordionDemoPreview renders the GoATTH accordion preview
+// accordionDemoPreview renders the Goshtoso accordion preview
 templ accordionDemoPreview() {
 	<div class="w-full max-w-2xl mx-auto space-y-8" id="accordion-fragment">
 		// Default Accordion

@@ -478,7 +478,7 @@ func TestAPIEndpoints(t *testing.T) {
 	})
 }
 
-// TestAccordion_Visual_Parity tests visual parity between Original and GoATTH
+// TestAccordion_Visual_Parity tests visual parity between Original and Goshtoso
 func TestAccordion_Visual_Parity(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -517,7 +517,7 @@ func TestAccordion_Visual_Parity(t *testing.T) {
 	})
 
 	t.Run("CSS_Classes_Match_Expected", func(t *testing.T) {
-		// Get first GoATTH accordion
+		// Get first Goshtoso accordion
 		accordion := page.Locator("#accordion-fragment .divide-y").First()
 		classAttr, err := accordion.GetAttribute("class")
 		require.NoError(t, err)

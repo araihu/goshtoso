@@ -19,7 +19,7 @@ import (
 // ScreenshotConfig holds configuration for screenshot comparison
 type ScreenshotConfig struct {
 	OriginalURL    string
-	GoATTHURL      string
+	GoshtosoURL      string
 	ComponentName  string
 	ViewportWidth  int
 	ViewportHeight int
@@ -36,7 +36,7 @@ func DefaultScreenshotConfig(componentName string) ScreenshotConfig {
 	}
 }
 
-// CompareScreenshots takes screenshots of both original and GoATTH implementations
+// CompareScreenshots takes screenshots of both original and Goshtoso implementations
 // and returns comparison results
 func CompareScreenshots(t *testing.T, cfg ScreenshotConfig) *ComparisonResult {
 	t.Helper()
@@ -59,14 +59,14 @@ func CompareScreenshots(t *testing.T, cfg ScreenshotConfig) *ComparisonResult {
 	originalBytes := captureScreenshot(t, browser, cfg.OriginalURL, originalPath, "original")
 	result.OriginalScreenshotPath = originalPath
 
-	// Capture GoATTH screenshot
-	goatthPath := filepath.Join(screenshotDir, "goatth.png")
-	goatthBytes := captureScreenshot(t, browser, cfg.GoATTHURL, goatthPath, "goatth")
-	result.GoATTHScreenshotPath = goatthPath
+	// Capture Goshtoso screenshot
+	goshtosoPath := filepath.Join(screenshotDir, "goshtoso.png")
+	goshtosoBytes := captureScreenshot(t, browser, cfg.GoshtosoURL, goshtosoPath, "goshtoso")
+	result.GoshtosoScreenshotPath = goshtosoPath
 
 	// Compare screenshots
-	if len(originalBytes) > 0 && len(goatthBytes) > 0 {
-		matchPercent, diffPath := compareImages(t, originalBytes, goatthBytes, screenshotDir)
+	if len(originalBytes) > 0 && len(goshtosoBytes) > 0 {
+		matchPercent, diffPath := compareImages(t, originalBytes, goshtosoBytes, screenshotDir)
 		result.MatchPercentage = matchPercent
 		result.DiffScreenshotPath = diffPath
 		result.Passed = matchPercent >= cfg.Threshold
@@ -84,7 +84,7 @@ type ComparisonResult struct {
 	ComponentName          string
 	Timestamp              time.Time
 	OriginalScreenshotPath string
-	GoATTHScreenshotPath   string
+	GoshtosoScreenshotPath   string
 	DiffScreenshotPath     string
 	MatchPercentage        float64
 	Passed                 bool

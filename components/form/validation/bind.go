@@ -4,7 +4,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/guilycst/GoATTH-penguinui/components/form"
+	"github.com/araihu/goshtoso/components/form"
 )
 
 // Bind populates Meta and Validation on each FieldGroupConfig based on the FormDef.
@@ -22,7 +22,7 @@ func (fd *FormDef) Bind() {
 
 		// Auto-set ID if empty (required for OOB swaps)
 		if fg.ID == "" {
-			fg.ID = "goatth-field-" + name
+			fg.ID = "goshtoso-field-" + name
 		}
 
 		// Set validation config for OnChange fields

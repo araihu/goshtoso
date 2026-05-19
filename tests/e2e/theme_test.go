@@ -94,7 +94,7 @@ func TestTheme_Classes_Presence(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	t.Run("GoATTH_Buttons_Have_Correct_Classes", func(t *testing.T) {
+	t.Run("Goshtoso_Buttons_Have_Correct_Classes", func(t *testing.T) {
 		// Get all buttons in the button fragment
 		buttons := page.Locator("#button-fragment button")
 		count, err := buttons.Count()
@@ -218,9 +218,9 @@ func TestTheme_Visual_Comparison(t *testing.T) {
 		t.Logf("✓ Screenshot saved: %s", screenshotPath)
 	})
 
-	t.Run("Screenshot_GoATTH_Section", func(t *testing.T) {
-		// Take screenshot of GoATTH section
-		gotthaSection := page.Locator("text=GoATTH").First()
+	t.Run("Screenshot_Goshtoso_Section", func(t *testing.T) {
+		// Take screenshot of Goshtoso section
+		gotthaSection := page.Locator("text=Goshtoso").First()
 		screenshotPath := fmt.Sprintf("test-results/screenshots/gottha-section-%d.png", time.Now().Unix())
 
 		_, err := gotthaSection.Screenshot(playwright.LocatorScreenshotOptions{
@@ -233,7 +233,7 @@ func TestTheme_Visual_Comparison(t *testing.T) {
 	})
 }
 
-// TestTheme_Visual_Parity_99_99 tests for 99.99% visual parity between Original and GoATTH
+// TestTheme_Visual_Parity_99_99 tests for 99.99% visual parity between Original and Goshtoso
 func TestTheme_Visual_Parity_99_99(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -275,9 +275,9 @@ func TestTheme_Visual_Parity_99_99(t *testing.T) {
 		t.Logf("✓ Screenshot saved: %s", screenshotPath)
 
 		// Get computed styles for both sections to compare
-		// Check that Original and GoATTH buttons have matching computed styles
+		// Check that Original and Goshtoso buttons have matching computed styles
 		originalButtons := page.Locator("text=Original").Locator("xpath=../..//button")
-		gotthaButtons := page.Locator("text=GoATTH").Locator("xpath=../..//button")
+		gotthaButtons := page.Locator("text=Goshtoso").Locator("xpath=../..//button")
 
 		origCount, err := originalButtons.Count()
 		require.NoError(t, err)
@@ -285,7 +285,7 @@ func TestTheme_Visual_Parity_99_99(t *testing.T) {
 		gotthaCount, err := gotthaButtons.Count()
 		require.NoError(t, err)
 
-		t.Logf("Found %d Original buttons and %d GoATTH buttons", origCount, gotthaCount)
+		t.Logf("Found %d Original buttons and %d Goshtoso buttons", origCount, gotthaCount)
 
 		// Compare button colors
 		matchingCount := 0
@@ -301,7 +301,7 @@ func TestTheme_Visual_Parity_99_99(t *testing.T) {
 			if origBg == gotthaBg {
 				matchingCount++
 			} else {
-				t.Logf("Button %d background mismatch: Original=%v, GoATTH=%v", i, origBg, gotthaBg)
+				t.Logf("Button %d background mismatch: Original=%v, Goshtoso=%v", i, origBg, gotthaBg)
 			}
 			totalComparisons++
 		}

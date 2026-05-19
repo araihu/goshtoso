@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/guilycst/GoATTH-penguinui/components/carousel"
-	combobox "github.com/guilycst/GoATTH-penguinui/components/combobox/v2"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo/components"
+	"github.com/araihu/goshtoso/components/carousel"
+	combobox "github.com/araihu/goshtoso/components/combobox/v2"
+	"github.com/araihu/goshtoso/internal/pages/demo/components"
 )
 
-// Server handles HTTP requests for both original PenguinUI and GoATTH components
+// Server handles HTTP requests for both original PenguinUI and Goshtoso components
 type Server struct {
 	projectRoot string
 	mux         *http.ServeMux

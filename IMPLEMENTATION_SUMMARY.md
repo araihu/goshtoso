@@ -8,7 +8,7 @@ Created comprehensive testing utilities in `tests/e2e/`:
 
 **New Files:**
 - `tests/e2e/visual_helpers.go` - Screenshot comparison utilities
-  - `CompareScreenshots()` - Compares original vs GoATTH pixel-by-pixel
+  - `CompareScreenshots()` - Compares original vs Goshtoso pixel-by-pixel
   - `captureScreenshot()` - Captures page/component screenshots
   - `compareImages()` - Calculates pixel match percentage
   - `CreateSideBySideComparison()` - Creates comparison images
@@ -79,7 +79,7 @@ Created comprehensive demo page at `/components/accordion`:
 - Updated `internal/server/server.go` - Added route handler
 
 **Features:**
-- Split view comparison (Original PenguinUI vs GoATTH)
+- Split view comparison (Original PenguinUI vs Goshtoso)
 - Three accordion variants displayed:
   - Default (with background)
   - No Background
@@ -95,7 +95,7 @@ Created extensive test suite in `tests/e2e/accordion_test.go`:
 
 **Test Coverage:**
 - `TestAccordion_OriginalPenguinUI` - Tests original HTML behavior
-- `TestAccordion_GoATTHComponent` - Tests GoATTH implementation
+- `TestAccordion_GoshtosoComponent` - Tests Goshtoso implementation
 - `TestAccordion_VisualParity` - Screenshot comparison (95% threshold)
 - `TestAccordion_CSSClassParity` - CSS class extraction/comparison
 - `TestAccordion_Variants` - Tests all accordion variants
@@ -133,14 +133,14 @@ Created comprehensive documentation:
 The accordion component is now importable by tks-console:
 
 ```go
-import "github.com/guilycst/GoATTH-penguinui/components/accordion"
+import "github.com/araihu/goshtoso/components/accordion"
 ```
 
 ### tks-console Integration Steps
 
 1. **Add Dependency:**
    ```bash
-   go get github.com/guilycst/GoATTH-penguinui@latest
+   go get github.com/araihu/goshtoso@latest
    ```
 
 2. **Test Component:**
@@ -170,7 +170,7 @@ import "github.com/guilycst/GoATTH-penguinui/components/accordion"
 ## Project Structure
 
 ```
-GoATTH-penguinui/
+goshtoso/
 ├── components/
 │   ├── accordion/
 │   │   ├── accordion.templ          # Main template
@@ -210,7 +210,7 @@ GoATTH-penguinui/
    - Check visual parity screenshots
 
 2. **Test tks-console Integration:**
-   - Add GoATTH dependency to tks-console
+   - Add Goshtoso dependency to tks-console
    - Create test page
    - Verify component renders correctly
 
@@ -289,7 +289,7 @@ go test ./tests/e2e/... -run TestAccordion -v
 
 ## Conclusion
 
-The GoATTH PenguinUI project now has:
+The Goshtoso PenguinUI project now has:
 1. ✅ Robust visual regression testing infrastructure
 2. ✅ First complete component (Accordion) with visual parity
 3. ✅ Comprehensive documentation for integration

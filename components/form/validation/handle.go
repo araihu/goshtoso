@@ -79,7 +79,7 @@ func Handle(r *http.Request, def *FormDef, validate ValidateFunc) *Result {
 // (as opposed to a full form submit).
 func IsFieldValidation(r *http.Request) bool {
 	r.ParseForm()
-	return r.FormValue("X-GoATTH-Validation") == "field"
+	return r.FormValue("X-Goshtoso-Validation") == "field"
 }
 
 // PopulateValues fills field configs with values from the form submission.

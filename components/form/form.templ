@@ -1,15 +1,15 @@
 package form
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
-	"github.com/guilycst/GoATTH-penguinui/components/combobox"
-	"github.com/guilycst/GoATTH-penguinui/components/fileinput"
-	"github.com/guilycst/GoATTH-penguinui/components/keyvalue"
-	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
-	"github.com/guilycst/GoATTH-penguinui/components/textarea"
-	"github.com/guilycst/GoATTH-penguinui/components/textinput"
-	"github.com/guilycst/GoATTH-penguinui/components/toggle"
-	"github.com/guilycst/GoATTH-penguinui/components/triplet"
+	"github.com/araihu/goshtoso/components/checkbox"
+	"github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/keyvalue"
+	"github.com/araihu/goshtoso/components/tagslist"
+	"github.com/araihu/goshtoso/components/textarea"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/components/triplet"
 )
 
 // Form renders a <form> element with enter-key prevention and optional HTMX/footer.
@@ -238,7 +238,7 @@ templ SubSection(cfg SubSectionConfig) {
 
 // FieldGroup wraps a single form field with label, validation errors, and hints.
 // Set a built-in field type (Input, Select, Combobox, etc.) on FieldGroupConfig to render
-// a GoATTH component automatically. If none are set, renders { children... } instead.
+// a Goshtoso component automatically. If none are set, renders { children... } instead.
 templ FieldGroup(cfg FieldGroupConfig) {
 	<div
 		if cfg.ID != "" {
@@ -249,10 +249,10 @@ templ FieldGroup(cfg FieldGroupConfig) {
 			hx-swap-oob="true"
 		}
 		if cfg.Meta != nil {
-			data-goatth-form={ cfg.Meta.FormID }
-			data-goatth-field={ cfg.Meta.FieldName }
+			data-goshtoso-form={ cfg.Meta.FormID }
+			data-goshtoso-field={ cfg.Meta.FieldName }
 			if cfg.Meta.DependsOn != "" {
-				data-goatth-depends={ cfg.Meta.DependsOn }
+				data-goshtoso-depends={ cfg.Meta.DependsOn }
 			}
 		}
 		if cfg.Validation != nil {
@@ -270,7 +270,7 @@ templ FieldGroup(cfg FieldGroupConfig) {
 			}
 			hx-swap="outerHTML"
 			hx-include="closest form"
-			hx-vals='{"X-GoATTH-Validation":"field"}'
+			hx-vals='{"X-Goshtoso-Validation":"field"}'
 		}
 	>
 		if cfg.Label != "" {

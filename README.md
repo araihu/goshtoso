@@ -1,11 +1,14 @@
-# GoATTH PenguinUI 
+# Goshtoso PenguinUI
 
+<p align="center">
+  <img src="assets/images/goshtoso-art.png" alt="Goshtoso mascot" width="320" />
+</p>
 
 ⚠️ Work-In-Progress
 
 There is still lots of rough edeges to iron out, most related to preserving Alpine.js state when a wired component is swapped in by HTMX.
 
-**GoATTH**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
+**Goshtoso**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
 
 ## About This Fork
 
@@ -14,7 +17,7 @@ This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvan
 
 ### What's Changed?
 
-| Original | GoATTH Fork |
+| Original | Goshtoso Fork |
 |----------|-------------|
 | Static HTML | Go + Templ templates |
 | CDN assets | Configurable (CDN/Embedded/Custom) |
@@ -28,21 +31,21 @@ This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvan
 
 ## CSS Integration
 
-GoATTH ships a CLI tool that extracts the pre-built Tailwind CSS from the embedded assets. Client applications use this instead of manually copying CSS files.
+Goshtoso ships a CLI tool that extracts the pre-built Tailwind CSS from the embedded assets. Client applications use this instead of manually copying CSS files.
 
 ```bash
 # Via go tool (recommended — version-pinned in go.mod)
-go tool goatth -out=css/goatth-base.css
+go tool goshtoso -out=css/goshtoso-base.css
 
 # Or via go run (for one-off use)
-go run github.com/guilycst/GoATTH-penguinui/cmd/goatth@latest -out=goatth-base.css
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=goshtoso-base.css
 ```
 
 Then import it in your Tailwind entry point:
 
 ```css
 @import "tailwindcss";
-@import "./goatth-base.css";
+@import "./goshtoso-base.css";
 ```
 
 See [docs/USAGE.md](docs/USAGE.md) for full setup instructions.
@@ -50,11 +53,11 @@ See [docs/USAGE.md](docs/USAGE.md) for full setup instructions.
 ## Project Structure
 
 ```
-GoATTH-penguinui/
+goshtoso/
 ├── cmd/
 │   ├── server/              # Demo server
-│   └── goatth/              # CSS extraction CLI tool
-├── components/              # GoATTH component library (32 components)
+│   └── goshtoso/              # CSS extraction CLI tool
+├── components/              # Goshtoso component library (32 components)
 │   └── badge/
 │       ├── types.go         # Configuration types
 │       └── badge.templ      # Templ component
@@ -99,7 +102,7 @@ go run cmd/server/main.go
 
 # Server will start on http://localhost:8090
 # - Original PenguinUI: http://localhost:8090/original/
-# - GoATTH Components: http://localhost:8090/gottha/
+# - Goshtoso Components: http://localhost:8090/gottha/
 ```
 
 ## Running E2E Tests
@@ -112,7 +115,7 @@ just gp-test-e2e                    # Run all E2E tests
 just gp-test-e2e-one TestButton     # Run specific test
 
 # Or directly
-go test ./GoATTH-penguinui/tests/e2e/... -v
+go test ./goshtoso/tests/e2e/... -v
 
 # First time setup - install Playwright browsers
 just gp-install-playwright
@@ -127,7 +130,7 @@ Tests automatically:
 - Start the demo server
 - Run browser automation tests
 - Capture screenshots on failures to `test-results/screenshots/`
-- Verify both Original PenguinUI and GoATTH component rendering
+- Verify both Original PenguinUI and Goshtoso component rendering
 
 ### Current Test Coverage
 
@@ -139,7 +142,7 @@ Tests automatically:
 ### Button Component
 
 ```go
-import "github.com/guilycst/GoATTH-penguinui/components/button"
+import "github.com/araihu/goshtoso/components/button"
 
 // Basic button
 @button.Button(button.Config{

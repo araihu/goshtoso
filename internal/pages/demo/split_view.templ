@@ -6,23 +6,23 @@ type SplitViewProps struct {
 	Description     string
 	OriginalHTML    string
 	OriginalLabel   string
-	GoATTHLabel     string
+	GoshtosoLabel     string
 }
 
-// SplitView renders a side-by-side comparison of Original and GoATTH implementations
+// SplitView renders a side-by-side comparison of Original and Goshtoso implementations
 templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode string) {
 	<div x-data="{ 
 		size: 'md', 
 		disabled: false,
 		copiedOriginal: false,
-		copiedGoATTH: false,
+		copiedGoshtoso: false,
 		copyToClipboard(text, type) {
 			navigator.clipboard.writeText(text).then(() => {
 				if (type === 'original') this.copiedOriginal = true;
-				if (type === 'gottha') this.copiedGoATTH = true;
+				if (type === 'gottha') this.copiedGoshtoso = true;
 				setTimeout(() => {
 					if (type === 'original') this.copiedOriginal = false;
-					if (type === 'gottha') this.copiedGoATTH = false;
+					if (type === 'gottha') this.copiedGoshtoso = false;
 				}, 2000);
 			});
 		}
@@ -140,14 +140,14 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 				</div>
 			</div>
 
-			<!-- GoATTH Column -->
+			<!-- Goshtoso Column -->
 			<div class="space-y-4">
 				<div class="flex items-center justify-between">
-					<h2 class="text-lg font-semibold font-title">{ props.GoATTHLabel }</h2>
+					<h2 class="text-lg font-semibold font-title">{ props.GoshtosoLabel }</h2>
 					<span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Go + Templ</span>
 				</div>
 
-				<!-- GoATTH Preview - Matching PenguinUI exactly -->
+				<!-- Goshtoso Preview - Matching PenguinUI exactly -->
 				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
 					<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark">
 						<div class="flex gap-1.5">
@@ -163,7 +163,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 					</div>
 				</div>
 
-				<!-- GoATTH Code -->
+				<!-- Goshtoso Code -->
 				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
 					<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
 						<span class="text-sm font-medium">Templ</span>
@@ -171,13 +171,13 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 							@click="copyToClipboard(document.getElementById('gottha-code').textContent, 'gottha')"
 							class="flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors dark:text-on-surface-dark-muted dark:hover:text-primary-dark"
 						>
-							<svg x-show="!copiedGoATTH" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<svg x-show="!copiedGoshtoso" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
 							</svg>
-							<svg x-show="copiedGoATTH" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<svg x-show="copiedGoshtoso" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
 							</svg>
-							<span x-text="copiedGoATTH ? 'Copied!' : 'Copy'"></span>
+							<span x-text="copiedGoshtoso ? 'Copied!' : 'Copy'"></span>
 						</button>
 					</div>
 					<div class="p-4 overflow-x-auto bg-slate-900 text-slate-50">

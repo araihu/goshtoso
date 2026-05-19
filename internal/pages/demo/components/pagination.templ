@@ -1,8 +1,8 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/pagination"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/pagination"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // PaginationDemoPage renders the Pagination component demo
@@ -18,7 +18,7 @@ templ paginationDemoContent() {
 			Description:   "Pagination components allow users to navigate between pages of content. Supports simple prev/next and ellipsis variants.",
 			OriginalURL:   "/original/pagination/pagination-with-ellipsis.html",
 			OriginalLabel: "Original PenguinUI",
-			GoATTHLabel:   "GoATTH Component",
+			GoshtosoLabel:   "Goshtoso Component",
 		},
 		paginationDemoPreview(),
 		`// Simple pagination (prev/next only)
@@ -49,7 +49,7 @@ templ paginationDemoContent() {
 	)
 }
 
-// paginationDemoPreview renders the GoATTH pagination preview
+// paginationDemoPreview renders the Goshtoso pagination preview
 templ paginationDemoPreview() {
 	<div class="w-full max-w-3xl mx-auto space-y-12">
 		// Simple Pagination (prev/next only)

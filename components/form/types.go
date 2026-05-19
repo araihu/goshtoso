@@ -3,15 +3,15 @@ package form
 import (
 	"fmt"
 
-	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
-	"github.com/guilycst/GoATTH-penguinui/components/combobox"
-	"github.com/guilycst/GoATTH-penguinui/components/fileinput"
-	"github.com/guilycst/GoATTH-penguinui/components/keyvalue"
-	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
-	"github.com/guilycst/GoATTH-penguinui/components/textarea"
-	"github.com/guilycst/GoATTH-penguinui/components/textinput"
-	"github.com/guilycst/GoATTH-penguinui/components/toggle"
-	"github.com/guilycst/GoATTH-penguinui/components/triplet"
+	"github.com/araihu/goshtoso/components/checkbox"
+	"github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/keyvalue"
+	"github.com/araihu/goshtoso/components/tagslist"
+	"github.com/araihu/goshtoso/components/textarea"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/components/triplet"
 )
 
 // Config holds the form configuration
@@ -187,7 +187,7 @@ func (c SubSectionConfig) gridClasses() string {
 
 // FieldGroupConfig configures a field wrapper with label, errors, and hints.
 // Set one of the built-in field types (Input, Select, Combobox, etc.) to render
-// a GoATTH component automatically. If none are set, uses { children... }.
+// a Goshtoso component automatically. If none are set, uses { children... }.
 type FieldGroupConfig struct {
 	// ID is the field ID (used for label's "for" attribute)
 	ID string
@@ -204,7 +204,7 @@ type FieldGroupConfig struct {
 	// Validation enables HTMX-based field validation
 	Validation *ValidationConfig
 
-	// Built-in GoATTH field types (mutually exclusive — first non-nil wins).
+	// Built-in Goshtoso field types (mutually exclusive — first non-nil wins).
 	// If none are set, FieldGroup renders { children... } instead.
 	Input    *textinput.Config
 	Combobox *combobox.Config

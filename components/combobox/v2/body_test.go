@@ -273,7 +273,7 @@ func TestCombobox_ClientMode_EmitsScript(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, Combobox(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
 	html := buf.String()
-	assert.Contains(t, html, `__goatthComboboxV2Init`, "listener script inlined")
+	assert.Contains(t, html, `__goshtosoComboboxV2Init`, "listener script inlined")
 }
 
 func TestCombobox_ServerMode_NoScript(t *testing.T) {
@@ -284,7 +284,7 @@ func TestCombobox_ServerMode_NoScript(t *testing.T) {
 	}
 	var buf bytes.Buffer
 	require.NoError(t, Combobox(cfg, State{Options: []Option{{Value: "red"}}}).Render(context.Background(), &buf))
-	assert.NotContains(t, buf.String(), `__goatthComboboxV2Init`)
+	assert.NotContains(t, buf.String(), `__goshtosoComboboxV2Init`)
 }
 
 func TestOptionsList_DisabledOption_OmitsHXPost(t *testing.T) {

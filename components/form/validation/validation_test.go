@@ -11,11 +11,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
-	"github.com/guilycst/GoATTH-penguinui/components/form"
-	"github.com/guilycst/GoATTH-penguinui/components/textarea"
-	"github.com/guilycst/GoATTH-penguinui/components/textinput"
-	"github.com/guilycst/GoATTH-penguinui/components/toggle"
+	"github.com/araihu/goshtoso/components/checkbox"
+	"github.com/araihu/goshtoso/components/form"
+	"github.com/araihu/goshtoso/components/textarea"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toggle"
 )
 
 // ---------------------------------------------------------------------------
@@ -83,7 +83,7 @@ func TestBind_AutoSetsFieldGroupID(t *testing.T) {
 
 	fd.Bind()
 
-	assert.Equal(t, "goatth-field-username", fd.Fields["username"].FieldGroup.ID)
+	assert.Equal(t, "goshtoso-field-username", fd.Fields["username"].FieldGroup.ID)
 }
 
 func TestBind_PreservesExistingID(t *testing.T) {
@@ -464,7 +464,7 @@ func TestHandle_FieldChange_OnlyTriggerAndDeps(t *testing.T) {
 		"country":               {"US"},
 		"region":                {""},
 		"unrelated":             {"x"},
-		"X-GoATTH-Validation":  {"field"},
+		"X-Goshtoso-Validation":  {"field"},
 	}
 	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
 
@@ -493,7 +493,7 @@ func TestHandle_FieldChange_SetsCorrectType(t *testing.T) {
 	values := url.Values{
 		"country":              {"US"},
 		"region":               {""},
-		"X-GoATTH-Validation": {"field"},
+		"X-Goshtoso-Validation": {"field"},
 	}
 	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
 
@@ -519,7 +519,7 @@ func TestHandle_FieldChange_PrimaryAndDependents(t *testing.T) {
 		"country":              {"US"},
 		"region":               {""},
 		"city":                 {""},
-		"X-GoATTH-Validation": {"field"},
+		"X-Goshtoso-Validation": {"field"},
 	}
 	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
 
@@ -575,7 +575,7 @@ func TestHandle_UnknownTriggerField(t *testing.T) {
 	}
 
 	values := url.Values{
-		"X-GoATTH-Validation": {"field"},
+		"X-Goshtoso-Validation": {"field"},
 	}
 	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "nonexistent"})
 
@@ -591,7 +591,7 @@ func TestHandle_UnknownTriggerField(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestIsFieldValidation_True(t *testing.T) {
-	values := url.Values{"X-GoATTH-Validation": {"field"}}
+	values := url.Values{"X-Goshtoso-Validation": {"field"}}
 	r := newPostRequest(values, nil)
 
 	assert.True(t, IsFieldValidation(r))
@@ -604,7 +604,7 @@ func TestIsFieldValidation_False(t *testing.T) {
 }
 
 func TestIsFieldValidation_WrongValue(t *testing.T) {
-	values := url.Values{"X-GoATTH-Validation": {"submit"}}
+	values := url.Values{"X-Goshtoso-Validation": {"submit"}}
 	r := newPostRequest(values, nil)
 
 	assert.False(t, IsFieldValidation(r))
@@ -616,7 +616,7 @@ func TestIsFieldValidation_WrongValue(t *testing.T) {
 
 func TestRenderFieldResponse_PrimaryOnly(t *testing.T) {
 	fg := &form.FieldGroupConfig{
-		ID:    "goatth-field-name",
+		ID:    "goshtoso-field-name",
 		Label: "Name",
 		Input: &textinput.Config{Name: "name", Value: "Alice"},
 	}
@@ -631,18 +631,18 @@ func TestRenderFieldResponse_PrimaryOnly(t *testing.T) {
 	require.NoError(t, err)
 
 	body := w.Body.String()
-	assert.Contains(t, body, "goatth-field-name")
+	assert.Contains(t, body, "goshtoso-field-name")
 	assert.Equal(t, "text/html; charset=utf-8", w.Header().Get("Content-Type"))
 }
 
 func TestRenderFieldResponse_WithOOB(t *testing.T) {
 	primary := &form.FieldGroupConfig{
-		ID:    "goatth-field-country",
+		ID:    "goshtoso-field-country",
 		Label: "Country",
 		Input: &textinput.Config{Name: "country", Value: "US"},
 	}
 	dep := &form.FieldGroupConfig{
-		ID:    "goatth-field-region",
+		ID:    "goshtoso-field-region",
 		Label: "Region",
 		Input: &textinput.Config{Name: "region"},
 	}
@@ -660,8 +660,8 @@ func TestRenderFieldResponse_WithOOB(t *testing.T) {
 	require.NoError(t, err)
 
 	body := w.Body.String()
-	assert.Contains(t, body, "goatth-field-country")
-	assert.Contains(t, body, "goatth-field-region")
+	assert.Contains(t, body, "goshtoso-field-country")
+	assert.Contains(t, body, "goshtoso-field-region")
 	assert.Contains(t, body, "hx-swap-oob")
 
 	// OOB flag should be reset after rendering

@@ -1,10 +1,10 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/form"
-	"github.com/guilycst/GoATTH-penguinui/components/form/validation"
-	"github.com/guilycst/GoATTH-penguinui/components/textinput"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/form"
+	"github.com/araihu/goshtoso/components/form/validation"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // FormValidationDemoPage renders the Form Validation demo page
@@ -17,7 +17,7 @@ templ formValidationDemoContent() {
 		demo.ComponentDemoProps{
 			Title:       "Form Validation",
 			Description: "Server-side field validation with HTMX. Fields validate on change, dependent fields update automatically (e.g. slug from name), and full-form submit validates everything at once.",
-			GoATTHLabel: "GoATTH Component",
+			GoshtosoLabel: "Goshtoso Component",
 		},
 		formValidationDemoPreview(),
 		formValidationDemoCode,

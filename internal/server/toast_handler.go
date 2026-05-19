@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/guilycst/GoATTH-penguinui/components/toast"
+	"github.com/araihu/goshtoso/components/toast"
 )
 
 func (s *Server) handleToastOOB(w http.ResponseWriter, r *http.Request) {

@@ -1,4 +1,4 @@
-module github.com/guilycst/GoATTH-penguinui
+module github.com/araihu/goshtoso
 
 go 1.26.1
 

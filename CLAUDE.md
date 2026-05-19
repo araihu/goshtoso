@@ -1,8 +1,8 @@
-# CLAUDE.md - GoATTH PenguinUI
+# CLAUDE.md - Goshtoso PenguinUI
 
 ## Project Overview
 
-**GoATTH** (Go + Alpine.js + Tailwind CSS + HTMX + Templ) is a UI component library that replicates [PenguinUI](https://penguinui.com) components using Go's templating system. Hard fork of PenguinUI targeting 99.99% visual parity.
+**Goshtoso** (Go + Alpine.js + Tailwind CSS + HTMX + Templ) is a UI component library that replicates [PenguinUI](https://penguinui.com) components using Go's templating system. Hard fork of PenguinUI targeting 99.99% visual parity.
 
 ## Tech Stack
 
@@ -42,7 +42,7 @@ go build -o bin/server ./cmd/server
 ## Repository Structure
 
 ```
-GoATTH-penguinui/
+goshtoso/
 ├── cmd/server/main.go          # Server entry point
 ├── components/                 # Reusable UI components (22 total)
 │   └── <name>/

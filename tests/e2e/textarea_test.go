@@ -60,8 +60,8 @@ func TestTextarea_OriginalPenguinUI(t *testing.T) {
 	})
 }
 
-// TestTextarea_GoATTHComponent tests the GoATTH textarea component
-func TestTextarea_GoATTHComponent(t *testing.T) {
+// TestTextarea_GoshtosoComponent tests the Goshtoso textarea component
+func TestTextarea_GoshtosoComponent(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}

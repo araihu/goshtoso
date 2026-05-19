@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/guilycst/GoATTH-penguinui/internal/server"
+	"github.com/araihu/goshtoso/internal/server"
 )
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 }
 
 func resolveProjectRoot() string {
-	if envRoot := os.Getenv("GOATTH_PROJECT_ROOT"); envRoot != "" {
+	if envRoot := os.Getenv("GOSHTOSO_PROJECT_ROOT"); envRoot != "" {
 		return envRoot
 	}
 

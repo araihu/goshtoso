@@ -23,13 +23,13 @@ type ElementClasses struct {
 // ClassComparisonResult holds the result of comparing classes between two elements
 type ClassComparisonResult struct {
 	OriginalSelector    string
-	GoATTHSelector      string
+	GoshtosoSelector      string
 	MissingClasses      []string
 	ExtraClasses        []string
 	MatchingClasses     []string
 	ComputedDifferences map[string]struct {
 		Original string
-		GoATTH   string
+		Goshtoso   string
 	}
 	MatchPercentage float64
 }
@@ -72,53 +72,53 @@ func ExtractClassesFromPage(t *testing.T, page playwright.Page, selector string)
 	return results
 }
 
-// CompareElementClasses compares classes between original and GoATTH implementations
-func CompareElementClasses(t *testing.T, originalClasses, goatthClasses []ElementClasses) []ClassComparisonResult {
+// CompareElementClasses compares classes between original and Goshtoso implementations
+func CompareElementClasses(t *testing.T, originalClasses, goshtosoClasses []ElementClasses) []ClassComparisonResult {
 	t.Helper()
 
 	var results []ClassComparisonResult
 
 	minLen := len(originalClasses)
-	if len(goatthClasses) < minLen {
-		minLen = len(goatthClasses)
+	if len(goshtosoClasses) < minLen {
+		minLen = len(goshtosoClasses)
 	}
 
 	for i := 0; i < minLen; i++ {
 		orig := originalClasses[i]
-		goatth := goatthClasses[i]
+		goshtoso := goshtosoClasses[i]
 
-		result := compareSingleElement(t, orig, goatth)
+		result := compareSingleElement(t, orig, goshtoso)
 		results = append(results, result)
 	}
 
-	if len(originalClasses) != len(goatthClasses) {
-		t.Logf("Warning: Different number of elements - Original: %d, GoATTH: %d",
-			len(originalClasses), len(goatthClasses))
+	if len(originalClasses) != len(goshtosoClasses) {
+		t.Logf("Warning: Different number of elements - Original: %d, Goshtoso: %d",
+			len(originalClasses), len(goshtosoClasses))
 	}
 
 	return results
 }
 
 // compareSingleElement compares classes for a single element pair
-func compareSingleElement(t *testing.T, original, goatth ElementClasses) ClassComparisonResult {
+func compareSingleElement(t *testing.T, original, goshtoso ElementClasses) ClassComparisonResult {
 	result := ClassComparisonResult{
 		OriginalSelector:    original.Selector,
-		GoATTHSelector:      goatth.Selector,
-		ComputedDifferences: make(map[string]struct{ Original, GoATTH string }),
+		GoshtosoSelector:      goshtoso.Selector,
+		ComputedDifferences: make(map[string]struct{ Original, Goshtoso string }),
 	}
 
 	origMap := makeSet(original.Classes)
-	goatthMap := makeSet(goatth.Classes)
+	goshtosoMap := makeSet(goshtoso.Classes)
 
-	// Find missing classes (in original but not in GoATTH)
+	// Find missing classes (in original but not in Goshtoso)
 	for class := range origMap {
-		if !goatthMap[class] {
+		if !goshtosoMap[class] {
 			result.MissingClasses = append(result.MissingClasses, class)
 		}
 	}
 
-	// Find extra classes (in GoATTH but not in original)
-	for class := range goatthMap {
+	// Find extra classes (in Goshtoso but not in original)
+	for class := range goshtosoMap {
 		if !origMap[class] {
 			result.ExtraClasses = append(result.ExtraClasses, class)
 		}
@@ -126,7 +126,7 @@ func compareSingleElement(t *testing.T, original, goatth ElementClasses) ClassCo
 
 	// Find matching classes
 	for class := range origMap {
-		if goatthMap[class] {
+		if goshtosoMap[class] {
 			result.MatchingClasses = append(result.MatchingClasses, class)
 		}
 	}
@@ -141,14 +141,14 @@ func compareSingleElement(t *testing.T, original, goatth ElementClasses) ClassCo
 
 	// Compare computed styles
 	for key, origValue := range original.Computed {
-		if goatthValue, exists := goatth.Computed[key]; exists {
-			if origValue != goatthValue {
+		if goshtosoValue, exists := goshtoso.Computed[key]; exists {
+			if origValue != goshtosoValue {
 				result.ComputedDifferences[key] = struct {
 					Original string
-					GoATTH   string
+					Goshtoso   string
 				}{
 					Original: origValue,
-					GoATTH:   goatthValue,
+					Goshtoso:   goshtosoValue,
 				}
 			}
 		}
@@ -230,7 +230,7 @@ func AssertClassParity(t *testing.T, results []ClassComparisonResult, threshold 
 			if result.MatchPercentage < threshold {
 				allPassed = false
 				t.Errorf("Class match %.2f%% below threshold %.2f%% for %s",
-					result.MatchPercentage*100, threshold*100, result.GoATTHSelector)
+					result.MatchPercentage*100, threshold*100, result.GoshtosoSelector)
 
 				if len(result.MissingClasses) > 0 {
 					t.Errorf("Missing classes: %v", result.MissingClasses)
@@ -267,7 +267,7 @@ func VerifyTailwindClasses(t *testing.T, locator playwright.Locator, expectedCla
 }
 
 // ExtractAndCompareHTML extracts HTML from both implementations and compares
-func ExtractAndCompareHTML(t *testing.T, page playwright.Page, originalSelector, goatthSelector string) HTMLComparisonResult {
+func ExtractAndCompareHTML(t *testing.T, page playwright.Page, originalSelector, goshtosoSelector string) HTMLComparisonResult {
 	t.Helper()
 
 	result := HTMLComparisonResult{}
@@ -277,31 +277,31 @@ func ExtractAndCompareHTML(t *testing.T, page playwright.Page, originalSelector,
 	originalHTML, err := originalLocator.InnerHTML()
 	require.NoError(t, err)
 
-	// Get GoATTH HTML
-	goatthLocator := page.Locator(goatthSelector)
-	goatthHTML, err := goatthLocator.InnerHTML()
+	// Get Goshtoso HTML
+	goshtosoLocator := page.Locator(goshtosoSelector)
+	goshtosoHTML, err := goshtosoLocator.InnerHTML()
 	require.NoError(t, err)
 
 	result.OriginalHTML = normalizeHTML(originalHTML)
-	result.GoATTHHTML = normalizeHTML(goatthHTML)
+	result.GoshtosoHTML = normalizeHTML(goshtosoHTML)
 
 	// Extract class attributes from both
 	result.OriginalClasses = extractAllClasses(result.OriginalHTML)
-	result.GoATTHClasses = extractAllClasses(result.GoATTHHTML)
+	result.GoshtosoClasses = extractAllClasses(result.GoshtosoHTML)
 
 	// Compare
 	origSet := makeSet(result.OriginalClasses)
-	goatthSet := makeSet(result.GoATTHClasses)
+	goshtosoSet := makeSet(result.GoshtosoClasses)
 
 	for _, class := range result.OriginalClasses {
-		if goatthSet[class] {
+		if goshtosoSet[class] {
 			result.MatchingClasses = append(result.MatchingClasses, class)
 		} else {
 			result.MissingClasses = append(result.MissingClasses, class)
 		}
 	}
 
-	for _, class := range result.GoATTHClasses {
+	for _, class := range result.GoshtosoClasses {
 		if !origSet[class] {
 			result.ExtraClasses = append(result.ExtraClasses, class)
 		}
@@ -312,7 +312,7 @@ func ExtractAndCompareHTML(t *testing.T, page playwright.Page, originalSelector,
 	for _, c := range result.OriginalClasses {
 		allClasses[c] = true
 	}
-	for _, c := range result.GoATTHClasses {
+	for _, c := range result.GoshtosoClasses {
 		allClasses[c] = true
 	}
 
@@ -328,9 +328,9 @@ func ExtractAndCompareHTML(t *testing.T, page playwright.Page, originalSelector,
 // HTMLComparisonResult holds HTML comparison data
 type HTMLComparisonResult struct {
 	OriginalHTML    string
-	GoATTHHTML      string
+	GoshtosoHTML      string
 	OriginalClasses []string
-	GoATTHClasses   []string
+	GoshtosoClasses   []string
 	MatchingClasses []string
 	MissingClasses  []string
 	ExtraClasses    []string

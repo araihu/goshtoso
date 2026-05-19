@@ -631,7 +631,7 @@ func TestCombobox_VisualParity(t *testing.T) {
 
 	config := ScreenshotConfig{
 		OriginalURL:    baseURL + "/original/combobox/simple-combobox.html",
-		GoATTHURL:      baseURL + "/components/combobox",
+		GoshtosoURL:      baseURL + "/components/combobox",
 		ComponentName:  "combobox",
 		ViewportWidth:  1280,
 		ViewportHeight: 800,
@@ -647,7 +647,7 @@ func TestCombobox_VisualParity(t *testing.T) {
 
 		t.Logf("✓ Visual parity: %.2f%%", result.MatchPercentage*100)
 		t.Logf("  Original: %s", result.OriginalScreenshotPath)
-		t.Logf("  GoATTH: %s", result.GoATTHScreenshotPath)
+		t.Logf("  Goshtoso: %s", result.GoshtosoScreenshotPath)
 		t.Logf("  Diff: %s", result.DiffScreenshotPath)
 	})
 }

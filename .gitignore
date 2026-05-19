@@ -48,6 +48,10 @@ test-results/
 *.png
 *.jpg
 *.jpeg
+# Keep brand artwork bundled with the library
+!assets/images/*.png
+!assets/images/*.jpg
+!assets/images/*.jpeg
 
 # Screenshots from E2E tests (keep fixtures, ignore test outputs)
 tests/e2e/test-results/

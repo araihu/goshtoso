@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/guilycst/GoATTH-penguinui/components/codeblock"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 templ GettingStartedPage() {
@@ -74,7 +74,7 @@ templ gettingStartedContent() {
 		<!-- Source -->
 		<div class="pb-8">
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				Full source: <a href="https://github.com/guilycst/GoATTH-penguinui/tree/main/examples/getting-started" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">examples/getting-started</a>
+				Full source: <a href="https://github.com/araihu/goshtoso/tree/main/examples/getting-started" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">examples/getting-started</a>
 			</p>
 		</div>
 	</div>
@@ -84,10 +84,10 @@ func step1Code() string {
 	return `mkdir dog-breeds && cd dog-breeds
 go mod init dog-breeds
 go get github.com/a-h/templ@latest
-go get github.com/guilycst/GoATTH-penguinui@latest
+go get github.com/araihu/goshtoso@latest
 
-# Extract GoATTH CSS (themes, component styles, utilities)
-go run github.com/guilycst/GoATTH-penguinui/cmd/goatth@latest -out=goatth.css`
+# Extract Goshtoso CSS (themes, component styles, utilities)
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=goshtoso.css`
 }
 
 // readExampleFile reads a source file from examples/getting-started/

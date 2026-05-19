@@ -15,6 +15,6 @@ RUN go install github.com/playwright-community/playwright-go/cmd/playwright@v0.5
 
 RUN playwright install --with-deps chromium
 
-WORKDIR /workspace/GoATTH-penguinui
+WORKDIR /workspace/goshtoso
 
 CMD ["bash", "-lc", "go test ./tests/e2e/..."]

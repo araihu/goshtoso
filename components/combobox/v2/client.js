@@ -1,6 +1,6 @@
 (function () {
-  if (window.__goatthComboboxV2Init) return;
-  window.__goatthComboboxV2Init = true;
+  if (window.__goshtosoComboboxV2Init) return;
+  window.__goshtosoComboboxV2Init = true;
 
   function clientRoot(target) {
     if (!target || !target.closest) return null;
@@ -22,7 +22,7 @@
   }
 
   function storageKey(cfg) {
-    return 'goatth:combobox:v2:' + cfg.id + ':selected';
+    return 'goshtoso:combobox:v2:' + cfg.id + ':selected';
   }
 
   function saveSelected(cfg, selected) {

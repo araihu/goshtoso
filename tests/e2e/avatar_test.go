@@ -1,7 +1,9 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -132,16 +134,42 @@ func TestAvatar_CachedReload(t *testing.T) {
 // and the spinner disappears.
 func TestAvatar_ImageError_FallsBackToInitials(t *testing.T) {
 	page := newPage(t, sharedBrowser)
+
+	// Listen for the 404 response so we can confirm the browser attempted the
+	// fetch and the failure reached Alpine's x-on:error.
+	errResp := make(chan playwright.Response, 1)
+	page.On("response", func(resp playwright.Response) {
+		if resp.Status() == 404 && strings.Contains(resp.URL(), "does-not-exist-404.png") {
+			select {
+			case errResp <- resp:
+			default:
+			}
+		}
+	})
+
 	navigateToAvatarDemo(t, page)
 
-	// Wait long enough for the browser to attempt the fetch and fail (404).
-	// We poll on the initials becoming visible rather than fixed sleep.
-	require.NoError(t, page.Locator(errorAvatarSelector+" span.font-bold.tracking-wider").WaitFor(
-		playwright.LocatorWaitForOptions{
-			State:   playwright.WaitForSelectorStateVisible,
-			Timeout: playwright.Float(5000),
-		},
-	), "initials should become visible after image load error")
+	// Confirm the 404 actually returned. If this times out, the server route
+	// changed and the test fixture needs updating.
+	select {
+	case <-errResp:
+	case <-time.After(5 * time.Second):
+		t.Fatal("404 for /assets/images/does-not-exist-404.png never returned")
+	}
+
+	// Poll Alpine state directly: imgError must flip to true. WaitFor on DOM
+	// visibility races with Alpine's reactive re-render after the error event.
+	_, err := page.WaitForFunction(
+		`() => {
+			const el = document.querySelector("[data-testid='avatar-test-error'] [x-data]");
+			if (!el || !window.Alpine) return false;
+			const data = window.Alpine.$data(el);
+			return data.imgError === true;
+		}`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)},
+	)
+	require.NoError(t, err, "Alpine imgError should flip to true after 404")
 
 	assert.True(t, avatarIsInitialsVisible(t, page, errorAvatarSelector),
 		"initials should be visible as fallback after image error")

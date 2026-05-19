@@ -73,7 +73,7 @@ func TestButton_OriginalPenguinUI(t *testing.T) {
 	})
 }
 
-func TestButton_GoATTHComponent(t *testing.T) {
+func TestButton_GoshtosoComponent(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -106,7 +106,7 @@ func TestButton_GoATTHComponent(t *testing.T) {
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, count, 8, "expected at least 8 buttons")
 
-		t.Logf("✓ Found %d GoATTH buttons", count)
+		t.Logf("✓ Found %d Goshtoso buttons", count)
 	})
 
 	t.Run("PrimaryButtonExists", func(t *testing.T) {

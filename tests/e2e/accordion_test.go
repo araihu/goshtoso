@@ -70,7 +70,7 @@ func TestAccordion_OriginalPenguinUI(t *testing.T) {
 	})
 }
 
-func TestAccordion_GoATTHComponent(t *testing.T) {
+func TestAccordion_GoshtosoComponent(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -96,13 +96,13 @@ func TestAccordion_GoATTHComponent(t *testing.T) {
 		t.Logf("✓ Page loaded: %s", title)
 	})
 
-	t.Run("GoATTH_Accordion_Exists", func(t *testing.T) {
+	t.Run("Goshtoso_Accordion_Exists", func(t *testing.T) {
 		accordions := page.Locator("#accordion-fragment .divide-y")
 		count, err := accordions.Count()
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, count, 3, "should have at least 3 accordion variants")
 
-		t.Logf("✓ Found %d GoATTH accordions", count)
+		t.Logf("✓ Found %d Goshtoso accordions", count)
 	})
 
 	t.Run("Interactions_Work", func(t *testing.T) {
@@ -117,7 +117,7 @@ func TestAccordion_GoATTHComponent(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "true", expanded)
 
-		t.Log("✓ GoATTH accordion interactions work")
+		t.Log("✓ Goshtoso accordion interactions work")
 	})
 }
 
@@ -134,7 +134,7 @@ func TestAccordion_VisualParity(t *testing.T) {
 
 	config := ScreenshotConfig{
 		OriginalURL:    baseURL + "/original/accordion/default-accordion.html",
-		GoATTHURL:      baseURL + "/components/accordion",
+		GoshtosoURL:      baseURL + "/components/accordion",
 		ComponentName:  "accordion",
 		ViewportWidth:  1280,
 		ViewportHeight: 800,
@@ -217,7 +217,7 @@ func TestAccordion_Variants(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Default_Variant", func(t *testing.T) {
-		// The first accordion in the GoATTH fragment is the default variant
+		// The first accordion in the Goshtoso fragment is the default variant
 		defaultAccordion := page.Locator("#accordion-fragment .divide-y").First()
 		classAttr, err := defaultAccordion.GetAttribute("class")
 		require.NoError(t, err)
@@ -430,7 +430,7 @@ func TestAccordion_VisualParity_99_99(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Visual_Parity_Comprehensive", func(t *testing.T) {
-		// Compare first GoATTH accordion's classes against expected Tailwind classes
+		// Compare first Goshtoso accordion's classes against expected Tailwind classes
 		firstAccordion := page.Locator("#accordion-fragment .divide-y").First()
 
 		classAttr, err := firstAccordion.GetAttribute("class")

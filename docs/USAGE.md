@@ -1,32 +1,32 @@
-# GoATTH Components - Usage Guide
+# Goshtoso Components - Usage Guide
 
-This guide explains how to use GoATTH (Go + Alpine.js + Tailwind CSS + HTMX + Templ) components from the tks-console and other projects.
+This guide explains how to use Goshtoso (Go + Alpine.js + Tailwind CSS + HTMX + Templ) components from the tks-console and other projects.
 
 ## Installation
 
 ### 1. Add Dependency
 
 ```bash
-go get github.com/guilycst/GoATTH-penguinui@latest
+go get github.com/araihu/goshtoso@latest
 ```
 
-### 2. Extract GoATTH CSS
+### 2. Extract Goshtoso CSS
 
-GoATTH ships a CLI that extracts the pre-built CSS from embedded assets. Register it as a Go tool for version-pinned reproducibility:
+Goshtoso ships a CLI that extracts the pre-built CSS from embedded assets. Register it as a Go tool for version-pinned reproducibility:
 
 ```bash
 # Add to go.mod (alongside your other tools)
-# tool github.com/guilycst/GoATTH-penguinui/cmd/goatth
+# tool github.com/araihu/goshtoso/cmd/goshtoso
 go mod tidy
 
 # Extract CSS
-go tool goatth -out=css/goatth-base.css
+go tool goshtoso -out=css/goshtoso-base.css
 ```
 
 Or use `go run` for one-off extraction:
 
 ```bash
-go run github.com/guilycst/GoATTH-penguinui/cmd/goatth@latest -out=css/goatth-base.css
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=css/goshtoso-base.css
 ```
 
 Then import it in your Tailwind entry point:
@@ -34,10 +34,10 @@ Then import it in your Tailwind entry point:
 ```css
 /* your-project/css/main.css */
 @import "tailwindcss";
-@import "./goatth-base.css";
+@import "./goshtoso-base.css";
 ```
 
-The extracted CSS includes all GoATTH component styles, the theme system (13 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
+The extracted CSS includes all Goshtoso component styles, the theme system (13 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
 
 ### 3. Required JavaScript
 
@@ -55,7 +55,7 @@ For components using Alpine.js collapse plugin (like Accordion):
 
 ## Component Catalog
 
-All components are imported from `github.com/guilycst/GoATTH-penguinui/components/<name>`. Run the demo server (`go run cmd/server/main.go`) to see interactive examples.
+All components are imported from `github.com/araihu/goshtoso/components/<name>`. Run the demo server (`go run cmd/server/main.go`) to see interactive examples.
 
 | Component | Import | Description |
 |-----------|--------|-------------|
@@ -98,7 +98,7 @@ A collapsible accordion component with multiple variants.
 
 **Import:**
 ```go
-import "github.com/guilycst/GoATTH-penguinui/components/accordion"
+import "github.com/araihu/goshtoso/components/accordion"
 ```
 
 **Basic Usage:**
@@ -186,7 +186,7 @@ A versatile button component with multiple variants.
 
 **Import:**
 ```go
-import "github.com/guilycst/GoATTH-penguinui/components/button"
+import "github.com/araihu/goshtoso/components/button"
 ```
 
 **Basic Usage:**
@@ -305,7 +305,7 @@ type Config struct {
 
 ### Available Themes
 
-GoATTH supports all 13 PenguinUI themes:
+Goshtoso supports all 13 PenguinUI themes:
 
 1. **Minimal** (default) - Black/white, no border radius
 2. **Arctic** - Cool blue tones
@@ -413,8 +413,8 @@ Always test your component implementations:
 ```go
 // In your project tests
 func TestAccordion_Integration(t *testing.T) {
-    // Use GoATTH's visual testing utilities
-    // See GoATTH tests for examples
+    // Use Goshtoso's visual testing utilities
+    // See Goshtoso tests for examples
 }
 ```
 
@@ -448,7 +448,7 @@ row := table.Row{
 
 HTMX's `intersect` and `revealed` triggers use `IntersectionObserver` with the **viewport** as root. If the table is inside a container with `overflow-y-auto` (e.g., a scrollable main content area), the sentinel element may already be in the viewport even though it's scrolled out of view within its parent. The observer fires immediately or never fires on scroll.
 
-GoATTH's table infinite scroll sentinel includes a built-in scroll-listener fallback that attaches to the nearest `.overflow-y-auto` ancestor. This handles the nested-scroll case automatically.
+Goshtoso's table infinite scroll sentinel includes a built-in scroll-listener fallback that attaches to the nearest `.overflow-y-auto` ancestor. This handles the nested-scroll case automatically.
 
 If you're building custom infinite scroll outside the table component, use this pattern:
 
@@ -501,12 +501,12 @@ If you're building custom infinite scroll outside the table component, use this 
 
 ## Examples
 
-See the `/components` directory in the GoATTH repository for complete examples of each component with visual parity tests.
+See the `/components` directory in the Goshtoso repository for complete examples of each component with visual parity tests.
 
 Run the demo server:
 
 ```bash
-cd /path/to/GoATTH-penguinui
+cd /path/to/goshtoso
 go run cmd/server/main.go -port 8090
 ```
 

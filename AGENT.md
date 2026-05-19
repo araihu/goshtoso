@@ -1,8 +1,8 @@
-# AGENT.md - GoATTH PenguinUI
+# AGENT.md - Goshtoso PenguinUI
 
 ## Project Overview
 
-**GoATTH** (Go + Alpine.js + Tailwind CSS + HTMX + Templ) is a UI component library that replicates [PenguinUI](https://penguinui.com) components using Go's templating system.
+**Goshtoso** (Go + Alpine.js + Tailwind CSS + HTMX + Templ) is a UI component library that replicates [PenguinUI](https://penguinui.com) components using Go's templating system.
 
 ## Completed Components (22)
 

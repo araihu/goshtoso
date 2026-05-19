@@ -1,8 +1,8 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/tooltip"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/tooltip"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // TooltipDemoPage renders the Tooltip component demo
@@ -18,7 +18,7 @@ templ tooltipDemoContent() {
 			Description:   "A tooltip displays informative text when users hover over, focus on, or click an element. Useful for providing additional context without cluttering the interface.",
 			OriginalURL:   "/original/tooltip/default-tooltip.html",
 			OriginalLabel: "Original PenguinUI",
-			GoATTHLabel:   "GoATTH Component",
+			GoshtosoLabel:   "Goshtoso Component",
 		},
 		tooltipDemoPreview(),
 		`// Simple Tooltip (top, hover)
@@ -54,7 +54,7 @@ templ tooltipDemoContent() {
 	)
 }
 
-// tooltipDemoPreview renders the GoATTH tooltip preview
+// tooltipDemoPreview renders the Goshtoso tooltip preview
 templ tooltipDemoPreview() {
 	<div class="w-full max-w-4xl mx-auto space-y-8">
 		// Default Hover Tooltips (all positions)

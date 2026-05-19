@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/form"
+	"github.com/araihu/goshtoso/components/form"
 )
 
 // ValidationType indicates why validation is running.

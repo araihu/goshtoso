@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/guilycst/GoATTH-penguinui/components/form"
+	"github.com/araihu/goshtoso/components/form"
 )
 
 // RenderFieldResponse writes the HTMX response for field-level validation.

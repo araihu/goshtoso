@@ -3,8 +3,8 @@ package components
 import (
 	"fmt"
 
-	"github.com/guilycst/GoATTH-penguinui/components/steps"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/steps"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // StepsDemoPage renders the Steps component demo.
@@ -17,10 +17,10 @@ templ stepsDemoContent() {
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:         "Steps",
-				Description:   "Steps show progress through multi-stage flows. Supports horizontal and vertical layouts, with optional labels, using GoatTH theme tokens only.",
+				Description:   "Steps show progress through multi-stage flows. Supports horizontal and vertical layouts, with optional labels, using Goshtoso theme tokens only.",
 				OriginalURL:   "https://www.penguinui.com/components/steps",
 				OriginalLabel: "Original PenguinUI",
-				GoATTHLabel:   "GoATTH Component",
+				GoshtosoLabel:   "Goshtoso Component",
 				Props: []demo.PropDoc{
 					{Name: "Steps", Type: "[]steps.Step", Default: "nil", Description: "Ordered progress items to render."},
 					{Name: "ID", Type: "string", Default: "\"\"", Description: "Stable root id for HTMX targets and swaps."},

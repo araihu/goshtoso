@@ -1,8 +1,8 @@
 package main
 
-import "github.com/guilycst/GoATTH-penguinui/components/table"
+import "github.com/araihu/goshtoso/components/table"
 
-// Page renders the dog breeds page using the GoATTH table component.
+// Page renders the dog breeds page using the Goshtoso table component.
 // Filtering, sorting, and pagination are all built into the component —
 // just configure them via table.Config.
 //
@@ -18,8 +18,8 @@ templ Page(cfg table.Config) {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>Dog Breeds — GoATTH Getting Started</title>
-			<!-- Embedded GoATTH assets (CSS with themes + JS) -->
+			<title>Dog Breeds — Goshtoso Getting Started</title>
+			<!-- Embedded Goshtoso assets (CSS with themes + JS) -->
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
 			<script defer src="/assets/js/vendor/alpine-focus.min.js"></script>
@@ -33,12 +33,12 @@ templ Page(cfg table.Config) {
 				<h1 class="text-3xl font-bold font-title mb-2 text-on-surface-strong dark:text-on-surface-dark-strong">Dog Breeds</h1>
 				<p class="text-on-surface-muted dark:text-on-surface-dark-muted mb-8">
 					A filterable, sortable, paginated table built with
-					<a href="https://github.com/guilycst/GoATTH-penguinui" class="underline text-primary dark:text-primary-dark">GoATTH</a> —
+					<a href="https://github.com/araihu/goshtoso" class="underline text-primary dark:text-primary-dark">Goshtoso</a> —
 					Go + Alpine.js + Tailwind CSS + Templ + HTMX.
 				</p>
 				@table.Table(cfg)
 				<p class="mt-6 text-xs text-on-surface-muted dark:text-on-surface-dark-muted text-center">
-					Built with <a href="https://github.com/guilycst/GoATTH-penguinui" class="underline">GoATTH</a>
+					Built with <a href="https://github.com/araihu/goshtoso" class="underline">Goshtoso</a>
 				</p>
 			</div>
 		</body>

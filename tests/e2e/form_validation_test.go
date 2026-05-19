@@ -34,13 +34,13 @@ func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, val
 		const vals = {};
 		for (const [k, v] of fd.entries()) { vals[k] = v; }
 		vals[%q] = %q;
-		vals['X-GoATTH-Validation'] = 'field';
+		vals['X-Goshtoso-Validation'] = 'field';
 
 		// Also set the input value in the DOM so the form state is consistent
 		const input = document.querySelector('input[name=%q]');
 		if (input) input.value = %q;
 
-		const el = document.querySelector('#goatth-field-' + %q);
+		const el = document.querySelector('#goshtoso-field-' + %q);
 		return htmx.ajax('POST', '/api/components/form-validation', {
 			source: el,
 			target: el,
@@ -78,17 +78,17 @@ func TestFormValidation_SubmitEmpty(t *testing.T) {
 	page.WaitForTimeout(800)
 
 	// Check for error messages on all 3 required fields
-	nameErrors := page.Locator("#goatth-field-name > .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name > .text-danger")
 	nameErrCount, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, nameErrCount, 1, "name field should have error messages")
 
-	slugErrors := page.Locator("#goatth-field-slug > .text-danger")
+	slugErrors := page.Locator("#goshtoso-field-slug > .text-danger")
 	slugErrCount, err := slugErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, slugErrCount, 1, "slug field should have error messages")
 
-	emailErrors := page.Locator("#goatth-field-email > .text-danger")
+	emailErrors := page.Locator("#goshtoso-field-email > .text-danger")
 	emailErrCount, err := emailErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, emailErrCount, 1, "email field should have error messages")
@@ -135,7 +135,7 @@ func TestFormValidation_FieldChange_NameTooShort(t *testing.T) {
 	assert.Contains(t, classes, "border-danger", "name input should have border-danger class")
 
 	// Check error text
-	nameField := page.Locator("#goatth-field-name")
+	nameField := page.Locator("#goshtoso-field-name")
 	text, err := nameField.InnerText()
 	require.NoError(t, err)
 	assert.Contains(t, strings.ToLower(text), "at least 3 characters")
@@ -158,7 +158,7 @@ func TestFormValidation_FieldChange_NameValid(t *testing.T) {
 	assert.Contains(t, classes, "border-success", "name input should have border-success class")
 
 	// Check no error text in name field
-	nameErrors := page.Locator("#goatth-field-name > .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name > .text-danger")
 	count, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, count, "name field should have no error messages")
@@ -192,7 +192,7 @@ func TestFormValidation_SlugTaken(t *testing.T) {
 	fillAndTriggerValidation(t, page, "slug", "admin")
 
 	// Check error text
-	slugField := page.Locator("#goatth-field-slug")
+	slugField := page.Locator("#goshtoso-field-slug")
 	text, err := slugField.InnerText()
 	require.NoError(t, err)
 	assert.Contains(t, strings.ToLower(text), "already taken")
@@ -209,7 +209,7 @@ func TestFormValidation_EmailInvalid(t *testing.T) {
 	fillAndTriggerValidation(t, page, "email", "notanemail")
 
 	// Check error text
-	emailField := page.Locator("#goatth-field-email")
+	emailField := page.Locator("#goshtoso-field-email")
 	text, err := emailField.InnerText()
 	require.NoError(t, err)
 	assert.Contains(t, strings.ToLower(text), "valid email")
@@ -248,7 +248,7 @@ func TestFormValidation_ErrorClearing(t *testing.T) {
 	fillAndTriggerValidation(t, page, "name", "ab")
 
 	// Verify error is present
-	nameField := page.Locator("#goatth-field-name")
+	nameField := page.Locator("#goshtoso-field-name")
 	text, err := nameField.InnerText()
 	require.NoError(t, err)
 	assert.Contains(t, strings.ToLower(text), "at least 3 characters")
@@ -264,7 +264,7 @@ func TestFormValidation_ErrorClearing(t *testing.T) {
 	assert.NotContains(t, classes, "border-danger", "name input should not have border-danger after correction")
 
 	// No error messages
-	nameErrors := page.Locator("#goatth-field-name > .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name > .text-danger")
 	count, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, count, "name field should have no error messages after correction")

@@ -100,7 +100,7 @@ func TestYourFeature(t *testing.T) {
 ```go
 config := ScreenshotConfig{
     OriginalURL:    baseURL + "/original",
-    GoATTHURL:      baseURL + "/gottha",
+    GoshtosoURL:      baseURL + "/gottha",
     ComponentName:  "your-component",
     Threshold:      0.95, // 95% match required
 }

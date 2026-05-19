@@ -1,14 +1,14 @@
 # tks-console Integration Guide
 
-This guide demonstrates how to integrate GoATTH components into the tks-console project.
+This guide demonstrates how to integrate Goshtoso components into the tks-console project.
 
 ## Quick Start
 
-### 1. Add GoATTH Dependency
+### 1. Add Goshtoso Dependency
 
 ```bash
 cd /path/to/tks-console
-go get github.com/guilycst/GoATTH-penguinui@latest
+go get github.com/araihu/goshtoso@latest
 ```
 
 Or manually add to `go.mod`:
@@ -16,7 +16,7 @@ Or manually add to `go.mod`:
 ```go
 require (
     // ... existing dependencies ...
-    github.com/guilycst/GoATTH-penguinui v0.1.0
+    github.com/araihu/goshtoso v0.1.0
 )
 ```
 
@@ -26,16 +26,16 @@ Then run:
 go mod tidy
 ```
 
-### 2. Extract GoATTH CSS
+### 2. Extract Goshtoso CSS
 
-tks-console uses GoATTH's CLI tool to extract the pre-built CSS:
+tks-console uses Goshtoso's CLI tool to extract the pre-built CSS:
 
 ```bash
 # Already registered in go.mod as a tool dependency
-go tool goatth -out=css/goatth-base.css
+go tool goshtoso -out=css/goshtoso-base.css
 
 # Or via Makefile
-make sync-goatth-css
+make sync-goshtoso-css
 ```
 
 This replaces the old manual `cp` approach. The extracted CSS is imported in `css/main.css` and is gitignored as a build artifact. `make generate` runs this automatically.
@@ -49,16 +49,16 @@ Create a test page to verify the component works:
 package pages
 
 import (
-    "github.com/guilycst/GoATTH-penguinui/components/accordion"
+    "github.com/araihu/goshtoso/components/accordion"
     "github.com/cloud104/tks-console/internal/ports/http/ssr/components/page"
 )
 
-templ TestGoATTHAccordion() {
+templ TestGoshtosoAccordion() {
     @page.Base(page.BaseData{
-        Title: "GoATTH Accordion Test",
+        Title: "Goshtoso Accordion Test",
     }) {
         <div class="max-w-2xl mx-auto p-8">
-            <h1 class="text-2xl font-bold mb-6">GoATTH Accordion Test</h1>
+            <h1 class="text-2xl font-bold mb-6">Goshtoso Accordion Test</h1>
             
             @accordion.Accordion(accordion.AccordionConfig{
                 Items: []accordion.AccordionItem{
@@ -92,7 +92,7 @@ Add route in your handler:
 ```go
 // In your router setup
 r.Get("/dev/test-gottha-accordion", func(w http.ResponseWriter, r *http.Request) {
-    pages.TestGoATTHAccordion().Render(r.Context(), w)
+    pages.TestGoshtosoAccordion().Render(r.Context(), w)
 })
 ```
 
@@ -270,9 +270,9 @@ Looking at existing tks-console components in `internal/ports/http/ssr/component
 - `toast/` - Custom implementation ✓ (compatible)
 - `table/` - Custom implementation ✓ (compatible)
 - `sidebar/` - Custom implementation ✓ (compatible)
-- `form/` - Complex forms (can use alongside GoATTH)
+- `form/` - Complex forms (can use alongside Goshtoso)
 
-**New Components from GoATTH:**
+**New Components from Goshtoso:**
 - `accordion/` - ✓ New addition
 - `button/` - Can supplement existing
 - Future: `alert/`, `card/`, `spinner/`, etc.
@@ -284,18 +284,18 @@ Looking at existing tks-console components in `internal/ports/http/ssr/component
    - Keep existing components unchanged
 
 2. **Phase 2: Gradual Replacement**
-   - Replace custom implementations with GoATTH versions
+   - Replace custom implementations with Goshtoso versions
    - Test visual parity before replacing
 
 3. **Phase 3: Standardize**
-   - Use GoATTH components as primary library
+   - Use Goshtoso components as primary library
    - Keep custom components only for tks-specific features
 
 ## Testing Integration
 
 ### Visual Regression Tests
 
-Add tests to verify GoATTH components render correctly in tks-console:
+Add tests to verify Goshtoso components render correctly in tks-console:
 
 ```go
 // tests/e2e/gottha_integration_test.go
@@ -308,7 +308,7 @@ import (
     "github.com/stretchr/testify/require"
 )
 
-func TestGoATTHAccordion_InTksConsole(t *testing.T) {
+func TestGoshtosoAccordion_InTksConsole(t *testing.T) {
     // Setup
     pool, err := dockertest.NewPool("")
     require.NoError(t, err)
@@ -331,7 +331,7 @@ func TestGoATTHAccordion_InTksConsole(t *testing.T) {
     // Login
     loginWithOIDC(t, page, env.ConsoleURL)
     
-    // Navigate to page using GoATTH accordion
+    // Navigate to page using Goshtoso accordion
     _, err = page.Goto(env.ConsoleURL+"/dev/test-gottha-accordion")
     require.NoError(t, err)
     
@@ -364,8 +364,8 @@ Create an internal wrapper for commonly used components:
 package components
 
 import (
-    gotthabutton "github.com/guilycst/GoATTH-penguinui/components/button"
-    gotthaaccordion "github.com/guilycst/GoATTH-penguinui/components/accordion"
+    gotthabutton "github.com/araihu/goshtoso/components/button"
+    gotthaaccordion "github.com/araihu/goshtoso/components/accordion"
 )
 
 // Re-export with tks-console defaults
@@ -384,7 +384,7 @@ func Accordion(cfg AccordionConfig) templ.Component {
 
 ### 2. Theme Compatibility
 
-tks-console uses these CSS variables (verify they match GoATTH):
+tks-console uses these CSS variables (verify they match Goshtoso):
 
 ```css
 /* Check these variables are defined */
@@ -403,7 +403,7 @@ tks-console uses these CSS variables (verify they match GoATTH):
 
 ### 3. Icon System
 
-tks-console uses SVG icons. Pass them to GoATTH components:
+tks-console uses SVG icons. Pass them to Goshtoso components:
 
 ```go
 import "github.com/cloud104/tks-console/internal/ports/http/ssr/components/icons"
@@ -421,7 +421,7 @@ import "github.com/cloud104/tks-console/internal/ports/http/ssr/components/icons
 
 ### 4. HTMX Integration
 
-GoATTH components work with tks-console's HTMX patterns:
+Goshtoso components work with tks-console's HTMX patterns:
 
 ```go
 // Existing tks-console HTMX pattern
@@ -429,7 +429,7 @@ hx-post="/api/clusters/validate"
 hx-target="#validation-result"
 hx-swap="outerHTML"
 
-// Works seamlessly with GoATTH components
+// Works seamlessly with Goshtoso components
 ```
 
 ## Troubleshooting
@@ -455,7 +455,7 @@ If components don't look right:
 
 ### Alpine.js Conflicts
 
-tks-console already uses Alpine.js. GoATTH components use standard Alpine.js patterns and should work seamlessly. If you see conflicts:
+tks-console already uses Alpine.js. Goshtoso components use standard Alpine.js patterns and should work seamlessly. If you see conflicts:
 
 1. Check Alpine.js version compatibility
 2. Ensure `x-cloak` CSS is defined
@@ -468,15 +468,15 @@ tks-console already uses Alpine.js. GoATTH components use standard Alpine.js pat
    - Verify visual parity with existing tks-console components
 
 2. **Gradual Adoption**
-   - Start with new features using GoATTH components
+   - Start with new features using Goshtoso components
    - Replace existing components over time
 
 3. **Contribute Back**
-   - Report any issues to GoATTH repository
+   - Report any issues to Goshtoso repository
    - Suggest new components based on tks-console needs
 
 ## Support
 
-- GoATTH Repository: https://github.com/guilycst/GoATTH-penguinui
-- Issues: Create issue in GoATTH repo for component bugs
+- Goshtoso Repository: https://github.com/araihu/goshtoso
+- Issues: Create issue in Goshtoso repo for component bugs
 - Discussions: Use tks-console team channels for integration questions

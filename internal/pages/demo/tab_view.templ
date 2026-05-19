@@ -6,7 +6,7 @@ type TabViewProps struct {
 	Description string
 }
 
-// TabView renders a tabbed interface with GoATTH (first) and Original (second) tabs
+// TabView renders a tabbed interface with Goshtoso (first) and Original (second) tabs
 templ TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML string, templCode string) {
 	<div x-data="{ 
 		activeTab: 'gottha',
@@ -88,13 +88,13 @@ templ TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML st
 		<!-- Tabs -->
 		<div class="border-b border-outline dark:border-outline-dark mb-6">
 			<nav class="flex gap-8" aria-label="Tabs">
-				<!-- GoATTH Tab (First) -->
+				<!-- Goshtoso Tab (First) -->
 				<button
 					@click="activeTab = 'gottha'"
 					class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
 					:class="activeTab === 'gottha' ? 'border-primary text-primary dark:border-primary-dark dark:text-primary-dark' : 'border-transparent text-on-surface-muted hover:text-on-surface dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark'"
 				>
-					GoATTH
+					Goshtoso
 					<span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Go + Templ</span>
 				</button>
 				
@@ -112,7 +112,7 @@ templ TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML st
 
 		<!-- Tab Content -->
 		<div class="relative">
-			<!-- GoATTH Tab Panel -->
+			<!-- Goshtoso Tab Panel -->
 			<div 
 				x-show="activeTab === 'gottha'"
 				x-cloak

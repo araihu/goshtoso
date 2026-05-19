@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to GoATTH-penguinui are documented in this file.
+All notable changes to goshtoso are documented in this file.
 
 ## Unreleased
 

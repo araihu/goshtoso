@@ -5,10 +5,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/guilycst/GoATTH-penguinui/components/form"
-	"github.com/guilycst/GoATTH-penguinui/components/form/validation"
-	"github.com/guilycst/GoATTH-penguinui/components/textinput"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo/components"
+	"github.com/araihu/goshtoso/components/form"
+	"github.com/araihu/goshtoso/components/form/validation"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/internal/pages/demo/components"
 )
 
 // takenSlugs simulates a database of existing slugs for the demo

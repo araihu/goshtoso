@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/guilycst/GoATTH-penguinui/components/table"
+	"github.com/araihu/goshtoso/components/table"
 )
 
 // tableRecord is the server-side data model for demo table rows

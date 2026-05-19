@@ -1,6 +1,6 @@
 package demo
 
-import "github.com/guilycst/GoATTH-penguinui/components/codeblock"
+import "github.com/araihu/goshtoso/components/codeblock"
 
 // PropDoc documents a single Config struct field for the API reference table
 type PropDoc struct {
@@ -16,7 +16,7 @@ type ComponentDemoProps struct {
 	Description   string
 	OriginalURL   string // Link to original PenguinUI page
 	OriginalLabel string
-	GoATTHLabel   string
+	GoshtosoLabel   string
 	Props         []PropDoc // Optional API reference table
 }
 
@@ -52,7 +52,7 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 		<!-- Demo Section -->
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
-				<h2 class="text-lg font-semibold font-title">{ props.GoATTHLabel }</h2>
+				<h2 class="text-lg font-semibold font-title">{ props.GoshtosoLabel }</h2>
 				<span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Go + Templ</span>
 			</div>
 

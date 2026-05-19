@@ -1,8 +1,8 @@
 package components
 
 import (
-	"github.com/guilycst/GoATTH-penguinui/components/banner"
-	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+	"github.com/araihu/goshtoso/components/banner"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
 // BannerDemoPage renders the Banner component demo
@@ -18,7 +18,7 @@ templ bannerDemoContent() {
 			Description:   "A banner displays a prominent message at the top of a page or section. Used for announcements, promotions, alerts, and cookie consent.",
 			OriginalURL:   "/original/banner/simple-banner.html",
 			OriginalLabel: "Original PenguinUI",
-			GoATTHLabel:   "GoATTH Component",
+			GoshtosoLabel:   "Goshtoso Component",
 		},
 		bannerDemoPreview(),
 		`// Simple Banner (Dismissible by default)
@@ -69,7 +69,7 @@ templ bannerDemoContent() {
 	)
 }
 
-// bannerDemoPreview renders the GoATTH banner preview
+// bannerDemoPreview renders the Goshtoso banner preview
 templ bannerDemoPreview() {
 	<div class="w-full max-w-4xl mx-auto space-y-8">
 		// Simple Banner (Dismissible by default)
