@@ -545,31 +545,45 @@ func getThemeCSSBlocks() map[string]string {
 func themeCSSScript() string {
 	blocks := getThemeCSSBlocks()
 	var sb strings.Builder
-	sb.WriteString("document.addEventListener('alpine:init', () => {\n")
-	sb.WriteString("  Alpine.data('themeCssOutput', () => ({\n")
-	sb.WriteString("    copied: false,\n")
-	sb.WriteString("    currentCSS: '',\n")
-	sb.WriteString("    init() {\n")
-	sb.WriteString("      const update = () => {\n")
-	sb.WriteString("        const t = document.documentElement.getAttribute('data-theme') || 'minimal';\n")
-	sb.WriteString("        this.currentCSS = this.blocks[t] || 'Theme not found';\n")
-	sb.WriteString("      };\n")
-	sb.WriteString("      update();\n")
-	sb.WriteString("      new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });\n")
-	sb.WriteString("    },\n")
-	sb.WriteString("    copyCSS() {\n")
-	sb.WriteString("      navigator.clipboard.writeText(this.currentCSS).then(() => {\n")
-	sb.WriteString("        this.copied = true;\n")
-	sb.WriteString("        setTimeout(() => this.copied = false, 2000);\n")
-	sb.WriteString("      });\n")
-	sb.WriteString("    },\n")
-	sb.WriteString("    blocks: {\n")
+	// Register immediately when Alpine is already up (HTMX-swapped re-visit
+	// of this page); fall back to alpine:init for the initial page load. The
+	// alpine:init listener only fires once per page, so a swap-injected
+	// script that arrives afterwards would never register.
+	sb.WriteString("(() => {\n")
+	sb.WriteString("  const register = () => {\n")
+	sb.WriteString("    Alpine.data('themeCssOutput', () => ({\n")
+	sb.WriteString("      copied: false,\n")
+	sb.WriteString("      currentCSS: '',\n")
+	sb.WriteString("      init() {\n")
+	sb.WriteString("        const update = () => {\n")
+	sb.WriteString("          const t = document.documentElement.getAttribute('data-theme') || 'minimal';\n")
+	sb.WriteString("          this.currentCSS = this.blocks[t] || 'Theme not found';\n")
+	sb.WriteString("        };\n")
+	sb.WriteString("        update();\n")
+	sb.WriteString("        new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });\n")
+	sb.WriteString("      },\n")
+	sb.WriteString("      copyCSS() {\n")
+	sb.WriteString("        navigator.clipboard.writeText(this.currentCSS).then(() => {\n")
+	sb.WriteString("          this.copied = true;\n")
+	sb.WriteString("          setTimeout(() => this.copied = false, 2000);\n")
+	sb.WriteString("        });\n")
+	sb.WriteString("      },\n")
+	sb.WriteString("      blocks: {\n")
 	for key, css := range blocks {
-		sb.WriteString(fmt.Sprintf("      '%s': `%s`,\n", key, css))
+		sb.WriteString(fmt.Sprintf("        '%s': `%s`,\n", key, css))
 	}
-	sb.WriteString("    }\n")
-	sb.WriteString("  }));\n")
-	sb.WriteString("});\n")
+	sb.WriteString("      }\n")
+	sb.WriteString("    }));\n")
+	sb.WriteString("    document.querySelectorAll('[x-data=\"themeCssOutput\"]').forEach((el) => {\n")
+	sb.WriteString("      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);\n")
+	sb.WriteString("    });\n")
+	sb.WriteString("  };\n")
+	sb.WriteString("  if (window.Alpine && window.Alpine.version) {\n")
+	sb.WriteString("    register();\n")
+	sb.WriteString("  } else {\n")
+	sb.WriteString("    document.addEventListener('alpine:init', register);\n")
+	sb.WriteString("  }\n")
+	sb.WriteString("})();\n")
 	return sb.String()
 }
 
@@ -721,7 +735,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 606, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 620, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -734,7 +748,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 609, Col: 164}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 623, Col: 164}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -747,7 +761,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 616, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 630, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -760,7 +774,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 619, Col: 106}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 633, Col: 106}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

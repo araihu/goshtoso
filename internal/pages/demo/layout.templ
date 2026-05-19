@@ -43,10 +43,19 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 						Alpine.store('nav').path = window.location.pathname;
 					}
 				});
+				// Sidebar OOB swap rebuilds the .sidebar-scroll element, so its scrollTop
+				// resets. Capture before each swap and restore right after.
+				var __sidebarScrollTop = 0;
+				document.addEventListener('htmx:beforeSwap', () => {
+					var el = document.querySelector('.sidebar-scroll');
+					if (el) __sidebarScrollTop = el.scrollTop;
+				});
 				document.addEventListener('htmx:afterSwap', (e) => {
 					if (e && e.detail && e.detail.target && window.Alpine && Alpine.initTree) {
 						Alpine.initTree(e.detail.target);
 					}
+					var sb = document.querySelector('.sidebar-scroll');
+					if (sb) sb.scrollTop = __sidebarScrollTop;
 					var main = document.querySelector('main');
 					if (main) main.scrollTo({ top: 0 });
 				});
