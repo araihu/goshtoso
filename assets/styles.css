@@ -3542,11 +3542,6 @@
       }
     }
   }
-  .first\:mt-0 {
-    &:first-child {
-      margin-top: calc(var(--spacing) * 0);
-    }
-  }
   .first\:mt-2 {
     &:first-child {
       margin-top: calc(var(--spacing) * 2);
@@ -4897,11 +4892,6 @@
     @media (width >= 64rem) {
       --tw-translate-x: calc(var(--spacing) * 0);
       translate: var(--tw-translate-x) var(--tw-translate-y);
-    }
-  }
-  .lg\:grid-cols-2 {
-    @media (width >= 64rem) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   .lg\:grid-cols-3 {
