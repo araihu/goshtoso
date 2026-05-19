@@ -1,0 +1,158 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  GO_VERSION: '1.26.1'
+  TEMPL_VERSION: 'v0.3.1020'
+  PLAYWRIGHT_VERSION: 'v0.5700.1'
+
+jobs:
+  lint-build:
+    name: Lint, drift checks, build
+    runs-on: araihu
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
+
+      - name: Install Tailwind CSS standalone
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/tailwindcss https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          chmod +x /tmp/tailwindcss
+          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
+
+      - name: templ generate drift check
+        run: |
+          templ generate
+          git diff --exit-code -- '*_templ.go' \
+            || { echo "::error::templ generate drift — run 'templ generate' and commit"; exit 1; }
+
+      - name: Tailwind CSS drift check
+        run: |
+          tailwindcss -i css/main.css -o assets/styles.css
+          git diff --exit-code -- assets/styles.css \
+            || { echo "::error::tailwind drift — run 'tailwindcss -i css/main.css -o assets/styles.css' and commit"; exit 1; }
+
+      - name: go mod tidy drift check
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum \
+            || { echo "::error::go.mod/go.sum drift — run 'go mod tidy' and commit"; exit 1; }
+
+      - name: gofmt
+        run: |
+          out=$(gofmt -l .)
+          if [ -n "$out" ]; then
+            echo "::error::gofmt drift in:"
+            echo "$out"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: Build server
+        run: go build -o bin/server ./cmd/server
+
+  unit-test:
+    name: Unit tests
+    runs-on: araihu
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
+
+      - name: Install Tailwind CSS standalone
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/tailwindcss https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          chmod +x /tmp/tailwindcss
+          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
+
+      - name: Generate templ + CSS
+        run: |
+          templ generate
+          tailwindcss -i css/main.css -o assets/styles.css
+
+      - name: Unit tests (exclude e2e)
+        run: go test $(go list ./... | grep -v /tests/e2e) -count=1
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: araihu
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
+
+      - name: Install Tailwind CSS standalone
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/tailwindcss https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          chmod +x /tmp/tailwindcss
+          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
+
+      - name: Install Playwright + Chromium
+        run: |
+          go install github.com/playwright-community/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
+          playwright install --with-deps chromium
+
+      - name: Generate templ + CSS
+        run: |
+          templ generate
+          tailwindcss -i css/main.css -o assets/styles.css
+
+      - name: E2E tests
+        run: go test ./tests/e2e/... -count=1 -timeout 15m
+
+      - name: Upload E2E artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: tests/e2e/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  deploy:
+    name: Deploy to Fly.io
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [lint-build, unit-test, e2e]
+    runs-on: araihu
+    concurrency: deploy-group
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

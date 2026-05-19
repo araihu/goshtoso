@@ -1,4 +1,4 @@
-# CLAUDE.md — Goshtoso PenguinUI
+# CLAUDE.md — Goshtoso
 
 This is the single source of truth for AI agents (Claude, Copilot, Codex, etc.)
 working in this repo. `AGENTS.md` is a symlink to this file.
