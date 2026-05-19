@@ -23,13 +23,13 @@ type ElementClasses struct {
 // ClassComparisonResult holds the result of comparing classes between two elements
 type ClassComparisonResult struct {
 	OriginalSelector    string
-	GoshtosoSelector      string
+	GoshtosoSelector    string
 	MissingClasses      []string
 	ExtraClasses        []string
 	MatchingClasses     []string
 	ComputedDifferences map[string]struct {
 		Original string
-		Goshtoso   string
+		Goshtoso string
 	}
 	MatchPercentage float64
 }
@@ -103,7 +103,7 @@ func CompareElementClasses(t *testing.T, originalClasses, goshtosoClasses []Elem
 func compareSingleElement(t *testing.T, original, goshtoso ElementClasses) ClassComparisonResult {
 	result := ClassComparisonResult{
 		OriginalSelector:    original.Selector,
-		GoshtosoSelector:      goshtoso.Selector,
+		GoshtosoSelector:    goshtoso.Selector,
 		ComputedDifferences: make(map[string]struct{ Original, Goshtoso string }),
 	}
 
@@ -145,10 +145,10 @@ func compareSingleElement(t *testing.T, original, goshtoso ElementClasses) Class
 			if origValue != goshtosoValue {
 				result.ComputedDifferences[key] = struct {
 					Original string
-					Goshtoso   string
+					Goshtoso string
 				}{
 					Original: origValue,
-					Goshtoso:   goshtosoValue,
+					Goshtoso: goshtosoValue,
 				}
 			}
 		}
@@ -328,9 +328,9 @@ func ExtractAndCompareHTML(t *testing.T, page playwright.Page, originalSelector,
 // HTMLComparisonResult holds HTML comparison data
 type HTMLComparisonResult struct {
 	OriginalHTML    string
-	GoshtosoHTML      string
+	GoshtosoHTML    string
 	OriginalClasses []string
-	GoshtosoClasses   []string
+	GoshtosoClasses []string
 	MatchingClasses []string
 	MissingClasses  []string
 	ExtraClasses    []string

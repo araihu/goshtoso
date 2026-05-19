@@ -631,7 +631,7 @@ func TestCombobox_VisualParity(t *testing.T) {
 
 	config := ScreenshotConfig{
 		OriginalURL:    baseURL + "/original/combobox/simple-combobox.html",
-		GoshtosoURL:      baseURL + "/components/combobox",
+		GoshtosoURL:    baseURL + "/components/combobox",
 		ComponentName:  "combobox",
 		ViewportWidth:  1280,
 		ViewportHeight: 800,

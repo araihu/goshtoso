@@ -448,8 +448,8 @@ func TestHandle_FieldChange_OnlyTriggerAndDeps(t *testing.T) {
 	fd := &FormDef{
 		FormID: "f1",
 		Fields: map[string]*FieldDef{
-			"country":  {Name: "country", FieldGroup: &form.FieldGroupConfig{Input: &textinput.Config{}}, OnChange: true},
-			"region":   {Name: "region", FieldGroup: &form.FieldGroupConfig{Input: &textinput.Config{}}, DependsOn: []string{"country"}, OnChange: true},
+			"country":   {Name: "country", FieldGroup: &form.FieldGroupConfig{Input: &textinput.Config{}}, OnChange: true},
+			"region":    {Name: "region", FieldGroup: &form.FieldGroupConfig{Input: &textinput.Config{}}, DependsOn: []string{"country"}, OnChange: true},
 			"unrelated": {Name: "unrelated", FieldGroup: &form.FieldGroupConfig{Input: &textinput.Config{}}, OnChange: true},
 		},
 	}
@@ -464,7 +464,7 @@ func TestHandle_FieldChange_OnlyTriggerAndDeps(t *testing.T) {
 		"country":               {"US"},
 		"region":                {""},
 		"unrelated":             {"x"},
-		"X-Goshtoso-Validation":  {"field"},
+		"X-Goshtoso-Validation": {"field"},
 	}
 	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
 
@@ -491,8 +491,8 @@ func TestHandle_FieldChange_SetsCorrectType(t *testing.T) {
 	}
 
 	values := url.Values{
-		"country":              {"US"},
-		"region":               {""},
+		"country":               {"US"},
+		"region":                {""},
 		"X-Goshtoso-Validation": {"field"},
 	}
 	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
@@ -516,9 +516,9 @@ func TestHandle_FieldChange_PrimaryAndDependents(t *testing.T) {
 	hook := func(_ ValidationContext, _ string, _ *form.FieldGroupConfig) bool { return true }
 
 	values := url.Values{
-		"country":              {"US"},
-		"region":               {""},
-		"city":                 {""},
+		"country":               {"US"},
+		"region":                {""},
+		"city":                  {""},
 		"X-Goshtoso-Validation": {"field"},
 	}
 	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})

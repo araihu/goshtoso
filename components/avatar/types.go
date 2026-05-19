@@ -256,7 +256,6 @@ func GetInitials(name, email string) string {
 	return "?"
 }
 
-
 func toUpper(b byte) string {
 	if b >= 'a' && b <= 'z' {
 		return string(b - 32)

@@ -40,10 +40,10 @@ func TestBody_MultiSelect_RendersHiddenInputsPerSelected(t *testing.T) {
 
 func TestBody_MultiSelect_TriggerLabelReflectsSelection(t *testing.T) {
 	cfg := Config{
-		ID:          "status",
-		Name:        "status",
-		Mode:        ModeMultiple,
-		Placeholder: "Select statuses",
+		ID:             "status",
+		Name:           "status",
+		Mode:           ModeMultiple,
+		Placeholder:    "Select statuses",
 		ToggleEndpoint: "/t", OptionsEndpoint: "/o", ClearEndpoint: "/c",
 		Source: Source{Static: []Option{{Value: "a", Label: "A"}, {Value: "b", Label: "B"}}},
 	}
@@ -71,9 +71,9 @@ func TestBody_MultiSelect_TriggerLabelReflectsSelection(t *testing.T) {
 
 func TestBody_SingleSelect_TriggerLabelShowsSelectedOption(t *testing.T) {
 	cfg := Config{
-		ID:   "provider",
-		Name: "provider",
-		Mode: ModeSingle,
+		ID:             "provider",
+		Name:           "provider",
+		Mode:           ModeSingle,
 		ToggleEndpoint: "/t", OptionsEndpoint: "/o", ClearEndpoint: "/c",
 		Source: Source{Static: []Option{{Value: "maas", Label: "MAAS"}, {Value: "eks", Label: "EKS"}}},
 	}
@@ -112,11 +112,11 @@ func TestOptionsList_AriaSelectedMatchesState(t *testing.T) {
 func TestOptionsList_LiHasHXAttributesForToggle(t *testing.T) {
 	cfg := Config{
 		ID: "status", Name: "status", Mode: ModeMultiple,
-		ToggleEndpoint: "/ui/combobox/status/toggle",
+		ToggleEndpoint:  "/ui/combobox/status/toggle",
 		OptionsEndpoint: "/ui/combobox/status/options",
-		ClearEndpoint: "/ui/combobox/status/clear",
-		Source: Source{LazyEndpoint: "/ui/combobox/status/options"},
-		DependsOn: []string{"provider"},
+		ClearEndpoint:   "/ui/combobox/status/clear",
+		Source:          Source{LazyEndpoint: "/ui/combobox/status/options"},
+		DependsOn:       []string{"provider"},
 	}
 	state := State{Options: []Option{{Value: "running", Label: "Running"}}}
 
@@ -136,7 +136,7 @@ func TestBody_SearchInput_RenderedWhenEnabled(t *testing.T) {
 	cfg := Config{
 		ID: "users", Name: "users", Mode: ModeMultiple,
 		ToggleEndpoint: "/t", OptionsEndpoint: "/ui/combobox/users/options", ClearEndpoint: "/c",
-		Source: Source{Static: []Option{{Value: "a"}}},
+		Source:       Source{Static: []Option{{Value: "a"}}},
 		EnableSearch: true,
 	}
 
@@ -165,7 +165,7 @@ func TestBody_ClearAllButton(t *testing.T) {
 	cfg := Config{
 		ID: "t", Name: "t", Mode: ModeMultiple,
 		ToggleEndpoint: "/t", OptionsEndpoint: "/o", ClearEndpoint: "/ui/combobox/t/clear",
-		Source: Source{LazyEndpoint: "/o"},
+		Source:         Source{LazyEndpoint: "/o"},
 		EnableClearAll: true,
 	}
 	opts := []Option{{Value: "a"}}
@@ -337,7 +337,7 @@ func TestTriggerLabelOOB_EmitsSiblingSwap(t *testing.T) {
 	cfg := Config{
 		ID: "status", Name: "status", Mode: ModeMultiple,
 		Placeholder: "All Statuses",
-		Source: Source{Static: []Option{{Value: "a", Label: "Alpha"}}},
+		Source:      Source{Static: []Option{{Value: "a", Label: "Alpha"}}},
 	}
 	state := State{Options: cfg.Source.Static, Selected: []string{"a"}}
 

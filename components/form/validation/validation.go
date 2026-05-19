@@ -28,7 +28,7 @@ type ValidateFunc func(ctx ValidationContext, name string, fg *form.FieldGroupCo
 // FormDef describes a form for validation purposes.
 type FormDef struct {
 	FormID   string
-	Endpoint string               // default validation endpoint
+	Endpoint string // default validation endpoint
 	Fields   map[string]*FieldDef
 }
 

@@ -124,9 +124,9 @@ func TestToggle_ColorVariants(t *testing.T) {
 	require.NoError(t, err)
 
 	variants := []struct {
-		id       string
-		label    string
-		bgClass  string
+		id      string
+		label   string
+		bgClass string
 	}{
 		{"demoPrimary", "primary", "peer-checked:bg-primary"},
 		{"demoSecondary", "secondary", "peer-checked:bg-secondary"},

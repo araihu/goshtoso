@@ -26,9 +26,9 @@ const (
 type Animation string
 
 const (
-	AnimationNone      Animation = ""          // No animation (default)
-	AnimationSlideUp   Animation = "slide-up"  // Checkmark slides up
-	AnimationScaleUp   Animation = "scale-up"  // Background scales up
+	AnimationNone      Animation = ""           // No animation (default)
+	AnimationSlideUp   Animation = "slide-up"   // Checkmark slides up
+	AnimationScaleUp   Animation = "scale-up"   // Background scales up
 	AnimationSlideDown Animation = "slide-down" // Background slides down
 )
 

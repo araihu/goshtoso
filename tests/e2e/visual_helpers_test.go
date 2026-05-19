@@ -19,7 +19,7 @@ import (
 // ScreenshotConfig holds configuration for screenshot comparison
 type ScreenshotConfig struct {
 	OriginalURL    string
-	GoshtosoURL      string
+	GoshtosoURL    string
 	ComponentName  string
 	ViewportWidth  int
 	ViewportHeight int
@@ -84,7 +84,7 @@ type ComparisonResult struct {
 	ComponentName          string
 	Timestamp              time.Time
 	OriginalScreenshotPath string
-	GoshtosoScreenshotPath   string
+	GoshtosoScreenshotPath string
 	DiffScreenshotPath     string
 	MatchPercentage        float64
 	Passed                 bool

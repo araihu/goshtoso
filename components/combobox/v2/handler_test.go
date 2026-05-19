@@ -34,7 +34,7 @@ func TestHandler_GetOptions_RendersListForCurrentSearchAndSelection(t *testing.T
 	cfg := Config{
 		ID: "users", Name: "user", Mode: ModeMultiple,
 		ToggleEndpoint: "/c/toggle", OptionsEndpoint: "/c/options", ClearEndpoint: "/c/clear",
-		Source: Source{LazyEndpoint: "/c/options"},
+		Source:       Source{LazyEndpoint: "/c/options"},
 		EnableSearch: true,
 	}
 	provider := staticProvider([]Option{
@@ -225,7 +225,7 @@ func TestHandler_CascadeInvalidation_DropsStaleSelection(t *testing.T) {
 	cfg := Config{
 		ID: "region", Name: "region", Mode: ModeMultiple,
 		ToggleEndpoint: "/region/toggle", OptionsEndpoint: "/region/options", ClearEndpoint: "/region/clear",
-		Source: Source{LazyEndpoint: "/region/options"},
+		Source:    Source{LazyEndpoint: "/region/options"},
 		DependsOn: []string{"provider"},
 	}
 	provider := OptionsProvider(func(ctx context.Context, search string, deps map[string]string) ([]Option, error) {

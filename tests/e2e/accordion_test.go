@@ -134,7 +134,7 @@ func TestAccordion_VisualParity(t *testing.T) {
 
 	config := ScreenshotConfig{
 		OriginalURL:    baseURL + "/original/accordion/default-accordion.html",
-		GoshtosoURL:      baseURL + "/components/accordion",
+		GoshtosoURL:    baseURL + "/components/accordion",
 		ComponentName:  "accordion",
 		ViewportWidth:  1280,
 		ViewportHeight: 800,

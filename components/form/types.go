@@ -206,13 +206,13 @@ type FieldGroupConfig struct {
 
 	// Built-in Goshtoso field types (mutually exclusive — first non-nil wins).
 	// If none are set, FieldGroup renders { children... } instead.
-	Input    *textinput.Config
-	Combobox *combobox.Config
-	Textarea *textarea.Config
-	Toggle   *toggle.Config
-	Checkbox *checkbox.Config
-	TagsList *tagslist.Config
-	KeyValue *keyvalue.Config
+	Input     *textinput.Config
+	Combobox  *combobox.Config
+	Textarea  *textarea.Config
+	Toggle    *toggle.Config
+	Checkbox  *checkbox.Config
+	TagsList  *tagslist.Config
+	KeyValue  *keyvalue.Config
 	Triplet   *triplet.Config
 	FileInput *fileinput.Config
 
