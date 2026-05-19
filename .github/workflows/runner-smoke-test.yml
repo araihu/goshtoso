@@ -1,0 +1,26 @@
+name: Runner Smoke Test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/runner-smoke-test.yml
+
+jobs:
+  smoke:
+    name: Self-hosted runner smoke test
+    runs-on: araihu
+    steps:
+      - name: Runner identity
+        run: |
+          echo "hostname: $(hostname)"
+          echo "uname: $(uname -a)"
+          echo "whoami: $(whoami)"
+          echo "pwd: $(pwd)"
+
+      - uses: actions/checkout@v6
+
+      - name: Repo checkout sanity
+        run: |
+          echo "git rev: $(git rev-parse HEAD)"
+          ls -la | head -20
