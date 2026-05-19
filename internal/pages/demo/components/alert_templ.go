@@ -71,7 +71,6 @@ func alertDemoContent() templ.Component {
 				Description:   "Alerts display important messages to the user. They come in four color variants (info, success, warning, danger) and support dismiss functionality, action links, action buttons, and list content.",
 				OriginalURL:   "/original/alert/default-alert.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			alertDemoPreview(),
 			`// Default Alert (all 4 variants)

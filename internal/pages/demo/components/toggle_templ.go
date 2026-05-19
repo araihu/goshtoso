@@ -71,7 +71,6 @@ func toggleDemoContent() templ.Component {
 				Description:   "A toggle switch allows users to turn an option on or off. It provides a visual indicator of the current state and supports multiple color variants.",
 				OriginalURL:   "/original/toggle/default-toggle.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			toggleDemoPreview(),
 			`// Default Toggle

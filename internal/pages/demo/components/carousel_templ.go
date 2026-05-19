@@ -71,7 +71,6 @@ func carouselDemoContent() templ.Component {
 				Description:   "A carousel component for cycling through slides with images, text overlays, autoplay, touch support, and HTMX dynamic loading.",
 				OriginalURL:   "/original/carousel/default-carousel.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			carouselDemoPreview(),
 			carouselDemoCode,

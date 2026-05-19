@@ -71,7 +71,6 @@ func bannerDemoContent() templ.Component {
 				Description:   "A banner displays a prominent message at the top of a page or section. Used for announcements, promotions, alerts, and cookie consent.",
 				OriginalURL:   "/original/banner/simple-banner.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			bannerDemoPreview(),
 			`// Simple Banner (Dismissible by default)

@@ -71,7 +71,6 @@ func avatarDemoContent() templ.Component {
 				Description:   "An avatar is a visual representation of a user or entity, typically displayed as a profile picture or initials.",
 				OriginalURL:   "/original/avatar/default-avatar.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			avatarDemoPreview(),
 			`// Image Avatar

@@ -66,9 +66,8 @@ func tagsListDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Tags List",
-				Description:   "A dynamic list of text inputs for managing string values (tags). Add, remove, and edit items with Alpine.js reactivity.",
-				GoshtosoLabel: "Goshtoso Component",
+				Title:       "Tags List",
+				Description: "A dynamic list of text inputs for managing string values (tags). Add, remove, and edit items with Alpine.js reactivity.",
 			},
 			tagsListDemoPreview(),
 			`// Tags List with initial values

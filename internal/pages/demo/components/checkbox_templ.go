@@ -71,7 +71,6 @@ func checkboxDemoContent() templ.Component {
 				Description:   "A checkbox allows users to select one or more options from a set. Supports color variants, custom icons, animations, descriptions, containers, and groups.",
 				OriginalURL:   "/original/checkbox/default-checkbox.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			checkboxDemoPreview(),
 			`// Default Checkbox

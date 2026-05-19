@@ -71,7 +71,6 @@ func spinnerDemoContent() templ.Component {
 				Description:   "A spinner indicates loading state with an animated circular indicator. Available in multiple color variants and sizes.",
 				OriginalURL:   "/original/spinner/default-spinner.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			spinnerDemoPreview(),
 			`// Default Spinner

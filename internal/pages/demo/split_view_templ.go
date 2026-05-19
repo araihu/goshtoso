@@ -14,7 +14,6 @@ type SplitViewProps struct {
 	Description   string
 	OriginalHTML  string
 	OriginalLabel string
-	GoshtosoLabel string
 }
 
 // SplitView renders a side-by-side comparison of Original and Goshtoso implementations
@@ -46,7 +45,7 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 32, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 31, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -59,7 +58,7 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 34, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 33, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -72,7 +71,7 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.OriginalLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 100, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 99, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -93,26 +92,13 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.OriginalHTML)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 138, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 137, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</code></pre></div></div></div><!-- Goshtoso Column --><div class=\"space-y-4\"><div class=\"flex items-center justify-between\"><h2 class=\"text-lg font-semibold font-title\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.GoshtosoLabel)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 146, Col: 71}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</h2><span class=\"text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200\">Go + Templ</span></div><!-- Goshtoso Preview - Matching PenguinUI exactly --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark\"><div class=\"flex gap-1.5\"><div class=\"rounded-full w-3 h-3 bg-red-500\"></div><div class=\"rounded-full w-3 h-3 bg-yellow-500\"></div><div class=\"rounded-full w-3 h-3 bg-green-500\"></div></div></div><div class=\"bg-pattern flex justify-center dark:bg-surface-dark bg-surface\"><div class=\"relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none\" id=\"gottha-button-preview\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</code></pre></div></div></div><!-- Goshtoso Column --><div class=\"space-y-4\"><!-- Goshtoso Preview - Matching PenguinUI exactly --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark\"><div class=\"flex gap-1.5\"><div class=\"rounded-full w-3 h-3 bg-red-500\"></div><div class=\"rounded-full w-3 h-3 bg-yellow-500\"></div><div class=\"rounded-full w-3 h-3 bg-green-500\"></div></div></div><div class=\"bg-pattern flex justify-center dark:bg-surface-dark bg-surface\"><div class=\"relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none\" id=\"gottha-button-preview\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -120,20 +106,20 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div><!-- Goshtoso Code --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt\"><span class=\"text-sm font-medium\">Templ</span> <button @click=\"copyToClipboard(document.getElementById('gottha-code').textContent, 'gottha')\" class=\"flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors dark:text-on-surface-dark-muted dark:hover:text-primary-dark\"><svg x-show=\"!copiedGoshtoso\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg> <svg x-show=\"copiedGoshtoso\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"copiedGoshtoso ? 'Copied!' : 'Copy'\"></span></button></div><div class=\"p-4 overflow-x-auto bg-slate-900 text-slate-50\"><pre id=\"gottha-code\" class=\"font-mono text-sm\"><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div><!-- Goshtoso Code --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt\"><span class=\"text-sm font-medium\">Templ</span> <button @click=\"copyToClipboard(document.getElementById('gottha-code').textContent, 'gottha')\" class=\"flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors dark:text-on-surface-dark-muted dark:hover:text-primary-dark\"><svg x-show=\"!copiedGoshtoso\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg> <svg x-show=\"copiedGoshtoso\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"copiedGoshtoso ? 'Copied!' : 'Copy'\"></span></button></div><div class=\"p-4 overflow-x-auto bg-slate-900 text-slate-50\"><pre id=\"gottha-code\" class=\"font-mono text-sm\"><code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templCode)
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templCode)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 184, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 178, Col: 71}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</code></pre></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</code></pre></div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

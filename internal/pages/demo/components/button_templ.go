@@ -71,7 +71,6 @@ func buttonDemoContent() templ.Component {
 				Description:   "Buttons are a fundamental element of any user interface. Users can use them to trigger actions, such as submitting a form, opening a modal, or navigating to another page.",
 				OriginalURL:   "/original/buttons/default-button.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			buttonDemoPreview(),
 			`// Primary Button

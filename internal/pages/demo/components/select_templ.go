@@ -71,7 +71,6 @@ func selectDemoContent() templ.Component {
 				Description:   "A native select dropdown with label, validation states, and support for Alpine.js binding.",
 				OriginalURL:   "/original/select/default-select.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			selectDemoPreview(),
 			`// Default Select

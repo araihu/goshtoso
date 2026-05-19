@@ -71,7 +71,6 @@ func textareaDemoContent() templ.Component {
 				Description:   "A textarea is a multi-line text input field for longer form content like comments, messages, and descriptions.",
 				OriginalURL:   "/original/text-area/default-textarea.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			textareaDemoPreview(),
 			`// Default Textarea

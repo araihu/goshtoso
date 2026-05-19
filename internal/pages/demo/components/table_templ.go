@@ -71,7 +71,6 @@ func tableDemoContent() templ.Component {
 				Description:   "Tables display structured data in rows and columns. Supports static, sortable, lazy-loaded, paginated, and infinite scroll variants.",
 				OriginalURL:   "/original/table/default-table.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			tableDemoPreview(),
 			`// Default Table

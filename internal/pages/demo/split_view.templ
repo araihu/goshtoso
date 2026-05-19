@@ -6,7 +6,6 @@ type SplitViewProps struct {
 	Description     string
 	OriginalHTML    string
 	OriginalLabel   string
-	GoshtosoLabel     string
 }
 
 // SplitView renders a side-by-side comparison of Original and Goshtoso implementations
@@ -142,11 +141,6 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 
 			<!-- Goshtoso Column -->
 			<div class="space-y-4">
-				<div class="flex items-center justify-between">
-					<h2 class="text-lg font-semibold font-title">{ props.GoshtosoLabel }</h2>
-					<span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Go + Templ</span>
-				</div>
-
 				<!-- Goshtoso Preview - Matching PenguinUI exactly -->
 				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
 					<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark">

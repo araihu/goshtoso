@@ -72,7 +72,6 @@ func cardDemoContent() templ.Component {
 				Description:   "A card is a flexible container that groups related content and actions. Used for displaying products, articles, testimonials, and more.",
 				OriginalURL:   "/original/card/default-card.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			cardDemoPreview(),
 			`// Simple Card
