@@ -205,7 +205,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 
 				<!-- Main Content -->
 				<main class="flex-1 overflow-y-auto p-6 lg:p-8">
-					<div id="main-content" class="mx-auto max-w-5xl">
+					<div id="main-content" class={ "mx-auto " + mainContentMaxWidth(activeComponent) }>
 						@content
 						@componentNavFooter(activeComponent)
 					</div>
@@ -249,6 +249,16 @@ func navHxAttrs(href, label string) templ.Attributes {
 		attrs["data-sidebar-item"] = label
 	}
 	return attrs
+}
+
+// mainContentMaxWidth picks the page-content container width per route. The
+// theme page needs the extra width to host the side-by-side controls + theme
+// showcase layout; everything else stays at the narrower docs default.
+func mainContentMaxWidth(activeComponent string) string {
+	if activeComponent == "theme" {
+		return "max-w-7xl"
+	}
+	return "max-w-5xl"
 }
 
 // getSidebarTopItems returns the top-level icon navigation items above the component sections

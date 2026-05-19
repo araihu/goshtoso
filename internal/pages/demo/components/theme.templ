@@ -759,13 +759,19 @@ func themePageScript() string {
 	radii := getRadiusOptions()
 
 	var sb strings.Builder
-	// Register immediately when Alpine is already up (HTMX-swapped re-visit
-	// of this page); fall back to alpine:init for the initial page load. The
-	// alpine:init listener only fires once per page, so a swap-injected
-	// script that arrives afterwards would never register.
+	// Two registration paths so the page works on both initial load and an
+	// HTMX fragment swap:
+	//   * First load: Alpine hasn't run yet. Register the factory inside an
+	//     alpine:init listener and let Alpine's own DOM traversal bind both
+	//     the parent <html> x-data and our x-data="themePage" subtree. Don't
+	//     manually initTree here — running it before Alpine has bound the
+	//     parent leaves child expressions like `theme === 'arctic'` evaluated
+	//     against an empty scope chain, so :class never fires.
+	//   * HTMX swap: alpine:init already fired, so re-listening would never
+	//     resolve. Register the factory immediately and manually initTree
+	//     just the swapped-in subtree (parent <html> is already bound).
 	sb.WriteString("(() => {\n")
-	sb.WriteString("  const register = () => {\n")
-	sb.WriteString("    Alpine.data('themePage', () => ({\n")
+	sb.WriteString("  const factory = () => ({\n")
 	// state
 	sb.WriteString("    titleFont: localStorage.getItem('themeTitleFont') || '',\n")
 	sb.WriteString("    bodyFont: localStorage.getItem('themeBodyFont') || '',\n")
@@ -853,18 +859,19 @@ func themePageScript() string {
 
 	// lifecycle
 	sb.WriteString(`    init() {
-      this.applyAll();
-      this.refreshResolved();
+      try { this.applyAll(); } catch (e) { console.error('themePage applyAll', e); }
+      try { this.refreshResolved(); } catch (e) { console.error('themePage refreshResolved', e); }
       this.$watch('titleFont', v => { localStorage.setItem('themeTitleFont', v); this.applyFont('--font-title', v); });
       this.$watch('bodyFont', v => { localStorage.setItem('themeBodyFont', v); this.applyFont('--font-body', v); });
       this.$watch('radius', v => { localStorage.setItem('themeRadius', v); this.applyRadius(v); });
       this.$watch('overrides', v => { localStorage.setItem('themeOverrides', JSON.stringify(v)); this.applyColors(); }, { deep: true });
       this.$watch('cssMode', v => localStorage.setItem('themeCssMode', v));
       this.$watch('cssFilter', v => localStorage.setItem('themeCssFilter', v));
-      this.$watch('theme', () => { this.applyAll(); requestAnimationFrame(() => this.refreshResolved()); });
-      // recompute resolved palette when dark mode toggles
-      window.addEventListener('darkmode-change', () => this.refreshResolved());
-      new MutationObserver(() => this.refreshResolved()).observe(document.documentElement, { attributes: true, attributeFilter: ['class','data-theme'] });
+      // Theme + dark-mode changes are picked up via a MutationObserver on
+      // <html>; using $watch('theme', ...) here would try to subscribe to a
+      // property on a parent x-data scope and fail silently in some Alpine
+      // versions, taking the rest of init() down with it.
+      new MutationObserver(() => { this.applyAll(); this.refreshResolved(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['class','data-theme'] });
     },
     applyAll() {
       this.applyFont('--font-title', this.titleFont);
@@ -1068,15 +1075,14 @@ func themePageScript() string {
 	}
 	sb.WriteString("},\n")
 
-	sb.WriteString("    }));\n")
+	sb.WriteString("  });\n")
+	sb.WriteString("  if (window.Alpine && window.Alpine.version) {\n")
+	sb.WriteString("    Alpine.data('themePage', factory);\n")
 	sb.WriteString("    document.querySelectorAll('[x-data=\"themePage\"]').forEach((el) => {\n")
 	sb.WriteString("      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);\n")
 	sb.WriteString("    });\n")
-	sb.WriteString("  };\n")
-	sb.WriteString("  if (window.Alpine && window.Alpine.version) {\n")
-	sb.WriteString("    register();\n")
 	sb.WriteString("  } else {\n")
-	sb.WriteString("    document.addEventListener('alpine:init', register);\n")
+	sb.WriteString("    document.addEventListener('alpine:init', () => Alpine.data('themePage', factory));\n")
 	sb.WriteString("  }\n")
 	sb.WriteString("})();\n")
 	return sb.String()
@@ -1092,13 +1098,19 @@ templ ThemeDemoPage() {
 
 templ themeDemoContent() {
 	@themePageScriptTag()
-	<div x-data="themePage" class="space-y-12 max-w-6xl">
+	<div x-data="themePage" class="space-y-12">
 		@themeHeader()
 		@themeGridSection()
-		@themeTypographySection()
-		@themeBorderSection()
-		@themeColorEditorSection()
-		@themePreviewSection()
+		<div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
+			<div class="space-y-10 min-w-0">
+				@themeTypographySection()
+				@themeBorderSection()
+				@themeColorEditorSection()
+			</div>
+			<div class="lg:sticky lg:top-6 min-w-0">
+				@themePreviewSection()
+			</div>
+		</div>
 		@themeContrastSection()
 		@themeCSSSection()
 	</div>
@@ -1229,7 +1241,7 @@ templ radiusIcon(key string) {
 templ themeBorderSection() {
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Border</h2>
-		<div class="grid gap-6 md:grid-cols-2">
+		<div class="space-y-6">
 			<div>
 				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Border Color</span>
 				@colorRow(colorToken{Key: "outline", Label: "Outline"})
@@ -1258,18 +1270,48 @@ templ themeBorderSection() {
 templ themeColorEditorSection() {
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Colors</h2>
-		<div class="grid gap-8 lg:grid-cols-2">
-			@colorGroup("Light Mode Colors", getLightTokens())
-			@colorGroup("Dark Mode Colors", getDarkTokens())
+		<div x-show="!$store.darkMode.on">
+			@modeColorGroup("Light Mode Colors", getLightTokens(), true)
+		</div>
+		<div x-show="$store.darkMode.on" x-cloak>
+			@modeColorGroup("Dark Mode Colors", getDarkTokens(), false)
 		</div>
 		@colorGroup("Shared Colors", getSharedTokens())
 	</div>
 }
 
+// modeColorGroup is the Light / Dark variant: title row carries a sun/moon
+// button that flips the global dark-mode store so users can swap which
+// palette they're editing in place.
+templ modeColorGroup(title string, tokens []colorToken, isLight bool) {
+	<div>
+		<div class="mb-3 flex items-center justify-between gap-3">
+			<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h3>
+			<button
+				type="button"
+				@click="$store.darkMode.toggle()"
+				class="rounded-full p-1.5 text-on-surface-muted transition-colors hover:bg-surface-alt hover:text-primary dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt dark:hover:text-primary-dark"
+				aria-label="Switch mode"
+			>
+				if isLight {
+					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"></path></svg>
+				} else {
+					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"></path></svg>
+				}
+			</button>
+		</div>
+		<div class="flex flex-col gap-2">
+			for _, t := range tokens {
+				@colorRow(t)
+			}
+		</div>
+	</div>
+}
+
 templ colorGroup(title string, tokens []colorToken) {
-	<div class="mt-6 first:mt-0">
-		<h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted">{ title }</h3>
-		<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+	<div class="mt-6">
+		<h3 class="mb-3 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h3>
+		<div class="flex flex-col gap-2">
 			for _, t := range tokens {
 				@colorRow(t)
 			}
@@ -1329,7 +1371,7 @@ templ tailwindPalette(token string) {
 				class="ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark"
 			>Reset</button>
 		</div>
-		<div class="grid gap-y-1" style="grid-template-columns: repeat(11, minmax(0, 1fr));">
+		<div class="inline-grid gap-0.5" style="grid-template-columns: repeat(11, 1.25rem);">
 			for _, hue := range tailwindHues {
 				for _, shade := range tailwindShades {
 					<button
@@ -1337,7 +1379,7 @@ templ tailwindPalette(token string) {
 						data-token={ token }
 						data-cls={ hue + "-" + shade }
 						@click="pickColor($el.dataset.token, $el.dataset.cls)"
-						class="size-5 rounded transition-transform hover:scale-110 hover:ring-2 hover:ring-primary dark:hover:ring-primary-dark"
+						class="size-5 rounded-sm transition-transform hover:scale-125 hover:ring-2 hover:ring-primary dark:hover:ring-primary-dark"
 						style={ "background-color: var(--color-" + hue + "-" + shade + ")" }
 						title={ hue + "-" + shade }
 					></button>
