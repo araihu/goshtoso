@@ -914,7 +914,10 @@ func themePageScript() string {
       const cls = this.currentClass(token);
       if (!cls) return '—';
       if (cls.startsWith('#')) return cls;
-      return cls.split('-').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+      // "blue-700" -> "Blue-700", "white" -> "White"
+      const idx = cls.indexOf('-');
+      if (idx === -1) return cls.charAt(0).toUpperCase() + cls.slice(1);
+      return cls.charAt(0).toUpperCase() + cls.slice(1, idx) + cls.slice(idx);
     },
     clearColor(token) {
       const next = Object.assign({}, this.overrides);
