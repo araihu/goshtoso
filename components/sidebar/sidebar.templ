@@ -139,7 +139,7 @@ templ sidebarItem(item Item) {
 templ sidebarSection(section Section, index int) {
 	<div data-sidebar-section={ section.Title }>
 		if section.Title != "" {
-			<h3 class="mb-2 mt-6 first:mt-0 text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
+			<h3 class="mb-2 mt-8 first:mt-2 text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
 				{ section.Title }
 			</h3>
 		}
@@ -161,7 +161,7 @@ templ sidebarSectionItem(item Item) {
 		<a
 			href={ templ.SafeURL(item.Href) }
 			{ item.LinkAttrs... }
-			class="flex items-center border-l-2 border-outline-strong py-2.5 pl-4 text-sm font-medium text-on-surface-strong dark:border-outline-dark-strong dark:text-on-surface-dark-strong"
+			class="pointer-events-none flex items-center border-l-2 border-primary py-2.5 pl-4 text-sm font-bold text-primary dark:border-primary-dark dark:text-primary-dark"
 		>
 			<span>{ item.Label }</span>
 			if item.Badge != "" {
