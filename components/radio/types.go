@@ -1,6 +1,26 @@
+// Package radio renders a PenguinUI-styled radio button.
+//
+// # Interaction primitives
+//
+// Radio exposes both HTMX and Alpine.js primitives as first-class Config
+// fields so callers can wire either, or both, without escaping pitfalls:
+//
+//   - HTMX → server roundtrip on radio change. Set fields on cfg.HTMX
+//     (Get/Post/Target/Swap/...). When any HTMX verb is set and
+//     cfg.HTMX.Trigger is empty, the rendered hx-trigger defaults to
+//     "change" — the native event radios fire on selection.
+//   - Alpine → client-side state without a server. Set fields on
+//     cfg.Alpine (Model/OnChange/BindChecked/BindDisabled/Data).
+//   - Both → set both. HTMX hits the server while Alpine updates local
+//     state. Useful for optimistic UI / hybrid flows.
+//   - Attrs → generic templ.Attributes escape hatch for any
+//     hx-*/x-*/data-*/aria-* not modelled above. Rendered LAST so the
+//     caller can always override.
 package radio
 
-// Variant represents radio button color variants
+import "github.com/a-h/templ"
+
+// Variant represents radio button color variants.
 type Variant string
 
 const (
@@ -12,7 +32,52 @@ const (
 	Danger    Variant = "danger"
 )
 
-// Config holds configuration for a single radio button
+// Size represents radio input sizes.
+type Size string
+
+const (
+	SizeSM Size = "sm"
+	SizeMD Size = "md" // default
+	SizeLG Size = "lg"
+	SizeXL Size = "xl"
+)
+
+// HTMXConfig holds HTMX attributes for server-side interactions on change.
+type HTMXConfig struct {
+	Get       string
+	Post      string
+	Put       string
+	Delete    string
+	Patch     string
+	Target    string
+	Swap      string
+	Trigger   string // default "change" when any verb is set
+	Indicator string
+	PushURL   bool
+	Confirm   string
+	Vals      string // hx-vals JSON string (caller-escaped)
+	Include   string // hx-include selector
+}
+
+// HasHxVerb reports whether any HTMX verb field is set, used to default
+// hx-trigger to "change" when the caller omits it.
+func (h *HTMXConfig) HasHxVerb() bool {
+	if h == nil {
+		return false
+	}
+	return h.Get != "" || h.Post != "" || h.Put != "" || h.Delete != "" || h.Patch != ""
+}
+
+// AlpineConfig holds common Alpine.js directives for client-side behavior.
+type AlpineConfig struct {
+	Data         string // x-data
+	Model        string // x-model
+	OnChange     string // x-on:change
+	BindChecked  string // x-bind:checked (JS expression)
+	BindDisabled string // x-bind:disabled
+}
+
+// Config holds configuration for a single radio button.
 type Config struct {
 	// ID is the unique identifier for the radio input
 	ID string
@@ -28,12 +93,33 @@ type Config struct {
 	Disabled bool
 	// Variant determines the color scheme (default: Primary)
 	Variant Variant
+	// Size sets the input box size (default: SizeMD)
+	Size Size
 	// Description adds helper text below the label
 	Description string
-	// BadgeColor wraps the label in a semi-solid badge. Accepts: "success", "danger", "warning", "info", "neutral", "primary", "secondary"
+	// DescriptionID is the id for the description element (for aria-describedby)
+	DescriptionID string
+	// BadgeColor wraps the label in a semi-solid badge.
+	// Accepts: "success", "danger", "warning", "info", "neutral", "primary", "secondary"
 	BadgeColor string
-	// Container wraps the radio in a bordered container
+	// Container wraps the radio in a bordered container, showing the radio
+	// bullet next to a label (still a discrete option visually).
 	Container bool
+	// Segmented renders a true segmented-control pill: the input is sr-only
+	// and the label takes the full visual, switching background/text via
+	// `has-checked:`. Designed to be grouped inside a `RadioBar` wrapper
+	// (or any flex container with `divide-x` for connected segments).
+	// When set, Container is ignored.
+	Segmented bool
+	// Class is appended to the label root element
+	Class string
+
+	// HTMX wires server interactions on change.
+	HTMX *HTMXConfig
+	// Alpine wires client-side state.
+	Alpine *AlpineConfig
+	// Attrs is an escape hatch applied LAST to the input — wins on conflict.
+	Attrs templ.Attributes
 }
 
 // GroupConfig holds configuration for a group of radio buttons
@@ -62,7 +148,7 @@ func (cfg Config) checkedBorderClass() string {
 	}
 }
 
-// checkedBgClass returns the checked background color class
+// checkedBgClass returns the checked background color class on the before pseudo
 func (cfg Config) checkedBgClass() string {
 	switch cfg.Variant {
 	case Secondary:
@@ -98,6 +184,20 @@ func (cfg Config) focusCheckedClass() string {
 	}
 }
 
+// sizeBoxClass returns the radio input box size class
+func (cfg Config) sizeBoxClass() string {
+	switch cfg.Size {
+	case SizeSM:
+		return "size-3"
+	case SizeLG:
+		return "size-5"
+	case SizeXL:
+		return "size-6"
+	default:
+		return "size-4"
+	}
+}
+
 // BadgeClasses returns CSS classes for a badge-styled label
 func BadgeClasses(color string) string {
 	base := "w-fit rounded-radius px-2 py-0.5 text-xs font-medium"
@@ -123,11 +223,53 @@ func BadgeClasses(color string) string {
 
 // InputClasses returns the full CSS class string for the radio input
 func (cfg Config) InputClasses() string {
-	base := "before:content[''] peer relative size-4 shrink-0 appearance-none overflow-hidden rounded-full border border-outline bg-surface-alt before:absolute before:inset-0 before:scale-0 before:rounded-full before:transition before:duration-200 checked:before:scale-[0.55] focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:focus:outline-outline-dark-strong"
-
+	bg := "bg-surface-alt dark:bg-surface-dark-alt"
 	if cfg.Container {
-		base = "before:content[''] peer relative size-4 shrink-0 appearance-none overflow-hidden rounded-full border border-outline bg-surface before:absolute before:inset-0 before:scale-0 before:rounded-full before:transition before:duration-200 checked:before:scale-[0.55] focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark dark:focus:outline-outline-dark-strong"
+		bg = "bg-surface dark:bg-surface-dark"
 	}
 
-	return base + " " + cfg.checkedBorderClass() + " " + cfg.checkedBgClass() + " " + cfg.focusCheckedClass()
+	base := "before:content[''] peer relative shrink-0 appearance-none overflow-hidden rounded-full border border-outline " + bg +
+		" before:absolute before:inset-0 before:scale-0 before:rounded-full before:transition before:duration-200 checked:before:scale-[0.55]" +
+		" focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed" +
+		" dark:border-outline-dark dark:focus:outline-outline-dark-strong"
+
+	return base + " " + cfg.sizeBoxClass() + " " + cfg.checkedBorderClass() + " " + cfg.checkedBgClass() + " " + cfg.focusCheckedClass()
+}
+
+// SegmentedLabelClasses returns the label classes for the Segmented variant.
+// The label fully replaces the visual; the input is sr-only and acts as the
+// state holder. Active styling rides on Tailwind v4's `has-checked:` selector
+// (label has a checked input child → primary fill).
+func (cfg Config) SegmentedLabelClasses() string {
+	checkedVariant := segmentedCheckedClasses(cfg.Variant)
+	return "cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors " +
+		"text-on-surface hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark " +
+		"has-disabled:cursor-not-allowed has-disabled:opacity-75 " + checkedVariant
+}
+
+func segmentedCheckedClasses(v Variant) string {
+	switch v {
+	case Secondary:
+		return "has-checked:bg-secondary has-checked:text-on-secondary dark:has-checked:bg-secondary-dark dark:has-checked:text-on-secondary-dark"
+	case Info:
+		return "has-checked:bg-info has-checked:text-on-info"
+	case Success:
+		return "has-checked:bg-success has-checked:text-on-success"
+	case Warning:
+		return "has-checked:bg-warning has-checked:text-on-warning"
+	case Danger:
+		return "has-checked:bg-danger has-checked:text-on-danger"
+	default:
+		return "has-checked:bg-primary has-checked:text-on-primary dark:has-checked:bg-primary-dark dark:has-checked:text-on-primary-dark"
+	}
+}
+
+// HasAlpine reports whether any Alpine field is set.
+func (cfg Config) HasAlpine() bool {
+	return cfg.Alpine != nil
+}
+
+// HasHTMX reports whether the HTMX block is non-nil.
+func (cfg Config) HasHTMX() bool {
+	return cfg.HTMX != nil
 }

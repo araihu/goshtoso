@@ -10,10 +10,12 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/araihu/goshtoso/components/avatar"
+	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
-// AvatarDemoPage renders the Avatar component demo
+// AvatarDemoPage renders the Avatar component demo as a full document.
+// Kept for direct invocation; the registry uses avatarDemoContent directly.
 func AvatarDemoPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -43,8 +45,11 @@ func AvatarDemoPage() templ.Component {
 	})
 }
 
-// avatarDemoContent renders the actual content inside the layout
-func avatarDemoContent() templ.Component {
+// avatarShowcaseScript registers an Alpine data component the demo preview
+// uses to drive every avatar's size class from a single selector. Using
+// <script>+Alpine.data() instead of inline x-data avoids the templ escape
+// trap with quoted JS object literals.
+func avatarShowcaseScript() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -65,58 +70,28 @@ func avatarDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = demo.ComponentDemo(
-			demo.ComponentDemoProps{
-				Title:         "Avatar",
-				Description:   "An avatar is a visual representation of a user or entity, typically displayed as a profile picture or initials.",
-				OriginalURL:   "/original/avatar/default-avatar.html",
-				OriginalLabel: "Original PenguinUI",
-			},
-			avatarDemoPreview(),
-			`// Image Avatar
-@avatar.Avatar(avatar.Config{
-    Src: "https://example.com/avatar.jpg",
-    Alt: "John Doe",
-    Size: avatar.SizeMD,
-})
-
-// Initials Avatar
-@avatar.Avatar(avatar.Config{
-    Initials: "JS",
-    Variant:  avatar.Primary,
-    Size:     avatar.SizeLG,
-})
-
-// With Status Indicator
-@avatar.Avatar(avatar.Config{
-    Src:    "https://example.com/avatar.jpg",
-    Status: avatar.StatusSuccess,
-    Size:   avatar.SizeMD,
-})
-
-// With Border
-@avatar.Avatar(avatar.Config{
-    Src:         "https://example.com/avatar.jpg",
-    Border:      true,
-    BorderColor: "border-primary",
-    Size:        avatar.SizeMD,
-})
-
-// Square Avatar
-@avatar.Avatar(avatar.Config{
-    Initials: "AB",
-    Shape:    avatar.ShapeSquare,
-    Variant:  avatar.Info,
-    Size:     avatar.SizeMD,
-})
-
-// Different Sizes
-@avatar.Avatar(avatar.Config{Initials: "XS", Size: avatar.SizeXS})
-@avatar.Avatar(avatar.Config{Initials: "SM", Size: avatar.SizeSM})
-@avatar.Avatar(avatar.Config{Initials: "MD", Size: avatar.SizeMD})
-@avatar.Avatar(avatar.Config{Initials: "LG", Size: avatar.SizeLG})
-@avatar.Avatar(avatar.Config{Initials: "XL", Size: avatar.SizeXL})`,
-		).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw(`<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('avatarShowcase', () => ({
+    selected: 'md',
+    sizes: ['xs','sm','md','lg','xl','2xl'],
+    sizeMap: {
+      xs:  'size-8 text-xs',
+      sm:  'size-10 text-sm',
+      md:  'size-14 text-2xl',
+      lg:  'size-20 text-3xl',
+      xl:  'size-24 text-4xl',
+      '2xl': 'size-32 text-5xl'
+    },
+    statusSizeMap: {
+      xs: 'size-2', sm: 'size-2.5', md: 'size-4',
+      lg: 'size-5', xl: 'size-6', '2xl': 'size-7'
+    },
+    get avatarSizeClass()       { return this.sizeMap[this.selected]; },
+    get avatarStatusSizeClass() { return this.statusSizeMap[this.selected]; }
+  }));
+});
+</script>`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -124,8 +99,11 @@ func avatarDemoContent() templ.Component {
 	})
 }
 
-// avatarDemoPreview renders the Goshtoso avatar preview
-func avatarDemoPreview() templ.Component {
+// avatarDemoContent renders the actual content inside the layout.
+// The x-data wrapper hoists Alpine state above the ComponentDemo macOS-frame
+// so the size selector sits in the page chrome (matching PenguinUI), while
+// every reactive avatar inside the frame still inherits the same scope.
+func avatarDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -146,225 +124,366 @@ func avatarDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Image Avatars</h4><div class=\"flex flex-wrap items-center gap-4\">")
+		templ_7745c5c3_Err = avatarShowcaseScript().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"avatarShowcase\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:         "Avatar",
+				Description:   "A visual representation of a user or entity. Supports image, initials, icon placeholder, status indicator, square shape, and now an interactive size selector that drives every avatar on the page in lockstep via Alpine.js (matches PenguinUI's reference UX).",
+				OriginalURL:   "/original/avatar/default-avatar.html",
+				OriginalLabel: "Original PenguinUI",
+				AbovePreview:  avatarSizeSelector(),
+			},
+			avatarDemoPreview(),
+			`// Interactive size selector: the demo page wraps avatars in an Alpine scope
+// that exposes 'avatarSizeClass' + 'avatarStatusSizeClass'. Setting
+// Reactive: true on the avatar Config makes the component read those bindings
+// instead of baking SizeClasses() into the rendered HTML.
+//
+// <div x-data="avatarShowcase">
+//   ... segmented radio group bound to `+"`selected`"+` ...
+//   @avatar.Avatar(avatar.Config{Reactive: true, Initials: "JD", ...})
+// </div>
+
+// Image Avatar (reactive — sized by parent Alpine scope)
+@avatar.Avatar(avatar.Config{
+    Src:      "/assets/images/avatars/avatar-8.webp",
+    Alt:      "John Doe",
+    Reactive: true,
+})
+
+// Initials Avatar (also reactive)
+@avatar.Avatar(avatar.Config{
+    Initials: "JS",
+    Variant:  avatar.Primary,
+    Reactive: true,
+})
+
+// With Status Indicator (status dot resizes via avatarStatusSizeClass)
+@avatar.Avatar(avatar.Config{
+    Src:      "/assets/images/avatars/avatar-8.webp",
+    Status:   avatar.StatusSuccess,
+    Reactive: true,
+})
+
+// Size selector — uses the new radio.Segmented variant + Alpine primitives
+@radio.RadioBar() {
+    @radio.Radio(radio.Config{
+        Name: "avatar-size", Value: "md", Label: "md", Segmented: true,
+        Alpine: &radio.AlpineConfig{
+            BindChecked: "selected === 'md'",
+            OnChange:    "selected = 'md'",
+        },
+    })
+}`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// avatarSizeSelector renders the segmented size pill bar that sits above the
+// preview frame. Mirrors PenguinUI's avatar-page layout.
+func avatarSizeSelector() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mb-3 flex items-center gap-4\"><label class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Size</label><div data-testid=\"avatar-size-selector\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = sizeOption("xs", "xs").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = sizeOption("sm", "sm").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = sizeOption("md", "md").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = sizeOption("lg", "lg").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = sizeOption("xl", "xl").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = sizeOption("2xl", "2xl").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = radio.RadioBar().Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><span class=\"sr-only\" data-testid=\"avatar-size-selected\" x-text=\"selected\"></span></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// sizeOption renders a single segmented pill for the size selector.
+func sizeOption(value, label string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = radio.Radio(radio.Config{
+			ID:        "avatar-size-" + value,
+			Name:      "avatar-size",
+			Value:     value,
+			Label:     label,
+			Segmented: true,
+			Alpine: &radio.AlpineConfig{
+				BindChecked: "selected === '" + value + "'",
+				OnChange:    "selected = '" + value + "'",
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// avatarDemoPreview renders the Goshtoso avatar preview. Selector lives
+// outside the preview frame (see avatarDemoContent + avatarSizeSelector);
+// this template inherits the avatarShowcase Alpine scope from its parent.
+func avatarDemoPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"w-full max-w-4xl mx-auto\"><div class=\"space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Image Avatars</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-image\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:  "/assets/images/avatars/avatar-8.webp",
-			Alt:  "User Avatar",
-			Size: avatar.SizeMD,
+			Src:      "/assets/images/avatars/avatar-8.webp",
+			Alt:      "User Avatar",
+			Reactive: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
 			Src:         "/assets/images/avatars/avatar-8.webp",
-			Alt:         "User Avatar Large",
-			Size:        avatar.SizeLG,
+			Alt:         "User Avatar with border",
 			Border:      true,
 			BorderColor: "border-primary",
+			Reactive:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "/assets/images/avatars/avatar-8.webp",
-			Alt:    "User with Status",
-			Size:   avatar.SizeMD,
-			Status: avatar.StatusSuccess,
+			Src:      "/assets/images/avatars/avatar-8.webp",
+			Alt:      "User with Status",
+			Status:   avatar.StatusSuccess,
+			Reactive: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "/assets/images/avatars/avatar-8.webp",
-			Alt:    "User Offline",
-			Size:   avatar.SizeMD,
-			Status: avatar.StatusOffline,
+			Src:      "/assets/images/avatars/avatar-8.webp",
+			Alt:      "User Offline",
+			Status:   avatar.StatusOffline,
+			Reactive: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Initials Avatars</h4><div class=\"flex flex-wrap items-center gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Initials Avatars</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-initials\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "JD",
-			Variant:  avatar.Default,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JD", Variant: avatar.Default, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "AB",
-			Variant:  avatar.Primary,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "AB", Variant: avatar.Primary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "CD",
-			Variant:  avatar.Secondary,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "CD", Variant: avatar.Secondary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "EF",
-			Variant:  avatar.Info,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "EF", Variant: avatar.Info, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "GH",
-			Variant:  avatar.Success,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "GH", Variant: avatar.Success, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "IJ",
-			Variant:  avatar.Warning,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "IJ", Variant: avatar.Warning, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "KL",
-			Variant:  avatar.Danger,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "KL", Variant: avatar.Danger, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Icon Placeholders</h4><div class=\"flex flex-wrap items-center gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Icon Placeholders</h4><div class=\"flex flex-wrap items-center gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Size:    avatar.SizeMD,
-			Variant: avatar.Default,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Default, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Size:    avatar.SizeMD,
-			Variant: avatar.Primary,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Size:    avatar.SizeMD,
-			Variant: avatar.Info,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Info, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Status Indicators</h4><div class=\"flex flex-wrap items-center gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Status Indicators</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-status\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "/assets/images/avatars/avatar-8.webp",
-			Alt:    "Offline",
-			Size:   avatar.SizeMD,
-			Status: avatar.StatusOffline,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Offline", Status: avatar.StatusOffline, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "/assets/images/avatars/avatar-8.webp",
-			Alt:    "Info",
-			Size:   avatar.SizeMD,
-			Status: avatar.StatusInfo,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Info", Status: avatar.StatusInfo, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "/assets/images/avatars/avatar-8.webp",
-			Alt:    "Online",
-			Size:   avatar.SizeMD,
-			Status: avatar.StatusSuccess,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Online", Status: avatar.StatusSuccess, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "/assets/images/avatars/avatar-8.webp",
-			Alt:    "Away",
-			Size:   avatar.SizeMD,
-			Status: avatar.StatusWarning,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Away", Status: avatar.StatusWarning, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "/assets/images/avatars/avatar-8.webp",
-			Alt:    "Busy",
-			Size:   avatar.SizeMD,
-			Status: avatar.StatusDanger,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Busy", Status: avatar.StatusDanger, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Sizes</h4><div class=\"flex flex-wrap items-end gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Square Shape</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-square\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "XS",
-			Variant:  avatar.Primary,
-			Size:     avatar.SizeXS,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "SQ", Variant: avatar.Info, Shape: avatar.ShapeSquare, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "SM",
-			Variant:  avatar.Primary,
-			Size:     avatar.SizeSM,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Square", Shape: avatar.ShapeSquare, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "MD",
-			Variant:  avatar.Primary,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "SQ", Variant: avatar.Success, Shape: avatar.ShapeSquare, Status: avatar.StatusSuccess, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "LG",
-			Variant:  avatar.Primary,
-			Size:     avatar.SizeLG,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "XL",
-			Variant:  avatar.Primary,
-			Size:     avatar.SizeXL,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div><div data-testid=\"avatar-e2e-fixtures\"><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">E2E Test Fixtures</h4><div class=\"flex flex-wrap items-center gap-4\"><!-- Successful local image: spinner should disappear, initials should hide --><div data-testid=\"avatar-test-loaded\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></div><div data-testid=\"avatar-e2e-fixtures\"><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">E2E Test Fixtures (fixed size)</h4><div class=\"flex flex-wrap items-center gap-4\"><div data-testid=\"avatar-test-loaded\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,7 +497,7 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><!-- Broken URL: should show initials fallback after error --><div data-testid=\"avatar-test-error\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div data-testid=\"avatar-test-error\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -392,7 +511,7 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><!-- Initials only: no image, always shows initials --><div data-testid=\"avatar-test-initials\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><div data-testid=\"avatar-test-initials\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -404,39 +523,7 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Square Shape</h4><div class=\"flex flex-wrap items-center gap-4\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "SQ",
-			Variant:  avatar.Info,
-			Shape:    avatar.ShapeSquare,
-			Size:     avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:   "/assets/images/avatars/avatar-8.webp",
-			Alt:   "Square",
-			Shape: avatar.ShapeSquare,
-			Size:  avatar.SizeMD,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Initials: "SQ",
-			Variant:  avatar.Success,
-			Shape:    avatar.ShapeSquare,
-			Size:     avatar.SizeMD,
-			Status:   avatar.StatusSuccess,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -55,6 +55,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/carousel/slides", s.handleCarouselSlides)
 	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
 	s.mux.HandleFunc("/api/components/steps/demo", s.handleStepsDemo)
+	s.mux.HandleFunc("/api/components/radio/echo", s.handleRadioEcho)
 
 	// HTMX SSR combobox (v2) — users demo runs server-mode lazy search.
 	usersHandler := combobox.Handler(components.UsersCfg, usersProvider)
@@ -103,6 +104,30 @@ func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) 
 		return
 	}
 	demo.Layout(entry.Title, entry.Active, content).Render(r.Context(), w)
+}
+
+// handleRadioEcho returns a small HTML fragment for the radio demo's HTMX showcase.
+// It echoes back the radio value selected by the user.
+func (s *Server) handleRadioEcho(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	value := r.URL.Query().Get("value")
+	if value == "" {
+		value = "(empty)"
+	}
+	fmt.Fprintf(w, `Server: you picked <span class="font-mono font-semibold">%s</span> at %s.`,
+		htmlEscape(value), time.Now().Format("15:04:05.000"))
+}
+
+// htmlEscape applies a minimal HTML escape suitable for an attribute-free text fragment.
+func htmlEscape(s string) string {
+	r := strings.NewReplacer(
+		"&", "&amp;",
+		"<", "&lt;",
+		">", "&gt;",
+		"\"", "&quot;",
+		"'", "&#39;",
+	)
+	return r.Replace(s)
 }
 
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {

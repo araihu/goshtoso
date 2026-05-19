@@ -16,7 +16,12 @@ type ComponentDemoProps struct {
 	Description   string
 	OriginalURL   string // Link to original PenguinUI page
 	OriginalLabel string
-	Props         []PropDoc // Optional API reference table
+	// AbovePreview is an optional slot rendered between the header and the
+	// macOS-frame preview. Use for inline controls (e.g. an interactive
+	// size selector) that belong to the demo but should sit in page chrome
+	// rather than inside the preview frame.
+	AbovePreview templ.Component
+	Props        []PropDoc // Optional API reference table
 }
 
 // DemoSectionProps holds configuration for individual demo sections within a page
@@ -50,6 +55,9 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 
 		<!-- Demo Section -->
 		<div class="space-y-4">
+			if props.AbovePreview != nil {
+				@props.AbovePreview
+			}
 			<!-- Preview -->
 			<div class="border border-outline dark:border-outline-dark rounded-radius">
 				<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">

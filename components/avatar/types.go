@@ -6,11 +6,12 @@ import "github.com/a-h/templ"
 type Size string
 
 const (
-	SizeXS Size = "xs" // Extra small
-	SizeSM Size = "sm" // Small
-	SizeMD Size = "md" // Medium (default)
-	SizeLG Size = "lg" // Large
-	SizeXL Size = "xl" // Extra large
+	SizeXS  Size = "xs"  // Extra small
+	SizeSM  Size = "sm"  // Small
+	SizeMD  Size = "md"  // Medium (default)
+	SizeLG  Size = "lg"  // Large
+	SizeXL  Size = "xl"  // Extra large
+	Size2XL Size = "2xl" // 2x extra large (matches PenguinUI)
 )
 
 // Variant represents avatar style variants
@@ -83,6 +84,22 @@ type Config struct {
 	Icon templ.Component
 	// Class allows additional CSS classes
 	Class string
+	// Reactive defers the size + status-indicator size classes to the parent
+	// Alpine scope. When true, the avatar root and status dot read their size
+	// class from `avatarSizeClass` and `avatarStatusSizeClass` respectively
+	// (via x-bind:class). This lets a demo page or container drive multiple
+	// avatars from a single Alpine state — e.g. an interactive size selector.
+	//
+	// The outer Alpine scope must define both expressions, for example:
+	//
+	//   x-data="{
+	//     selected: 'md',
+	//     sizeMap: { xs:'size-8 text-xs', md:'size-14 text-2xl', ... },
+	//     statusSizeMap: { xs:'size-2', md:'size-4', ... },
+	//     get avatarSizeClass() { return this.sizeMap[this.selected]; },
+	//     get avatarStatusSizeClass() { return this.statusSizeMap[this.selected]; },
+	//   }"
+	Reactive bool
 }
 
 // ResolvedInitials returns the initials to display: explicit Initials, or derived from Name.
@@ -109,6 +126,8 @@ func (cfg Config) SizeClasses() string {
 		return "size-20 text-3xl"
 	case SizeXL:
 		return "size-24 text-4xl"
+	case Size2XL:
+		return "size-32 text-5xl"
 	default:
 		return "size-14 text-2xl"
 	}
@@ -200,6 +219,8 @@ func (cfg Config) StatusSizeClasses() string {
 		return "size-5"
 	case SizeXL:
 		return "size-6"
+	case Size2XL:
+		return "size-7"
 	default:
 		return "size-4"
 	}
@@ -216,6 +237,8 @@ func (cfg Config) SpinnerSizeClasses() string {
 		return "size-8"
 	case SizeXL:
 		return "size-10"
+	case Size2XL:
+		return "size-12"
 	default:
 		return "size-6"
 	}

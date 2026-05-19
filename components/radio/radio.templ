@@ -1,6 +1,9 @@
 package radio
 
-// Radio renders a single radio button component matching PenguinUI's design.
+// Radio renders a single PenguinUI-styled radio button.
+//
+// See package doc for the HTMX + Alpine interaction primitive surface.
+//
 // Usage:
 //
 //	@radio.Radio(radio.Config{
@@ -10,7 +13,9 @@ package radio
 //	    Label: "Root",
 //	})
 templ Radio(cfg Config) {
-	if cfg.Description != "" {
+	if cfg.Segmented {
+		@radioSegmented(cfg)
+	} else if cfg.Description != "" {
 		@radioWithDescription(cfg)
 	} else if cfg.Container {
 		@radioWithContainer(cfg)
@@ -19,9 +24,105 @@ templ Radio(cfg Config) {
 	}
 }
 
+// radioSegmented renders a pill-shaped label that toggles via has-checked.
+// The input itself is sr-only — the label is the entire visual. Designed to
+// live inside a RadioBar (or any container with `divide-x` for connected pills).
+templ radioSegmented(cfg Config) {
+	<label for={ cfg.ID } class={ cfg.SegmentedLabelClasses() + " " + cfg.Class }>
+		@segmentedInput(cfg)
+		<span>{ cfg.Label }</span>
+	</label>
+}
+
+// segmentedInput renders the actual <input> sr-only with all primitives wired in.
+templ segmentedInput(cfg Config) {
+	<input
+		id={ cfg.ID }
+		type="radio"
+		name={ cfg.Name }
+		value={ cfg.Value }
+		class="sr-only"
+		if cfg.Checked {
+			checked
+		}
+		if cfg.Disabled {
+			disabled
+		}
+		if cfg.HasHTMX() {
+			if cfg.HTMX.Get != "" {
+				hx-get={ cfg.HTMX.Get }
+			}
+			if cfg.HTMX.Post != "" {
+				hx-post={ cfg.HTMX.Post }
+			}
+			if cfg.HTMX.Put != "" {
+				hx-put={ cfg.HTMX.Put }
+			}
+			if cfg.HTMX.Delete != "" {
+				hx-delete={ cfg.HTMX.Delete }
+			}
+			if cfg.HTMX.Patch != "" {
+				hx-patch={ cfg.HTMX.Patch }
+			}
+			if cfg.HTMX.Target != "" {
+				hx-target={ cfg.HTMX.Target }
+			}
+			if cfg.HTMX.Swap != "" {
+				hx-swap={ cfg.HTMX.Swap }
+			}
+			if cfg.HTMX.Trigger != "" {
+				hx-trigger={ cfg.HTMX.Trigger }
+			} else if cfg.HTMX.HasHxVerb() {
+				hx-trigger="change"
+			}
+			if cfg.HTMX.Indicator != "" {
+				hx-indicator={ cfg.HTMX.Indicator }
+			}
+			if cfg.HTMX.PushURL {
+				hx-push-url="true"
+			}
+			if cfg.HTMX.Confirm != "" {
+				hx-confirm={ cfg.HTMX.Confirm }
+			}
+			if cfg.HTMX.Vals != "" {
+				hx-vals={ cfg.HTMX.Vals }
+			}
+			if cfg.HTMX.Include != "" {
+				hx-include={ cfg.HTMX.Include }
+			}
+		}
+		if cfg.HasAlpine() {
+			if cfg.Alpine.Data != "" {
+				x-data={ cfg.Alpine.Data }
+			}
+			if cfg.Alpine.Model != "" {
+				x-model={ cfg.Alpine.Model }
+			}
+			if cfg.Alpine.OnChange != "" {
+				x-on:change={ cfg.Alpine.OnChange }
+			}
+			if cfg.Alpine.BindChecked != "" {
+				x-bind:checked={ cfg.Alpine.BindChecked }
+			}
+			if cfg.Alpine.BindDisabled != "" {
+				x-bind:disabled={ cfg.Alpine.BindDisabled }
+			}
+		}
+		{ cfg.Attrs... }
+	/>
+}
+
+// RadioBar groups a set of segmented radios into a single connected pill bar
+// (PenguinUI-style segmented control). Children should each have Segmented: true.
+templ RadioBar() {
+	<div class="inline-flex w-fit overflow-clip rounded-radius border border-outline bg-surface-alt divide-x divide-outline dark:border-outline-dark dark:bg-surface-dark-alt dark:divide-outline-dark">
+		{ children... }
+	</div>
+}
+
 // standardRadio renders a basic radio with label
 templ standardRadio(cfg Config) {
-	<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+	<label for={ cfg.ID } class={ "flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75 " + cfg.Class }>
 		@radioInput(cfg)
 		<span>{ cfg.Label }</span>
 	</label>
@@ -29,37 +130,119 @@ templ standardRadio(cfg Config) {
 
 // radioWithDescription renders a radio with description text below
 templ radioWithDescription(cfg Config) {
-	<div class="flex items-start gap-2">
+	<div class={ "flex items-start gap-2 " + cfg.Class }>
 		@radioInput(cfg)
 		<div class="flex flex-col">
 			<label for={ cfg.ID } class="text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
 				{ cfg.Label }
 			</label>
-			<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.Description }</span>
+			if cfg.DescriptionID != "" {
+				<span id={ cfg.DescriptionID } class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.Description }</span>
+			} else {
+				<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.Description }</span>
+			}
 		</div>
 	</div>
 }
 
-// radioWithContainer renders a radio inside a bordered container
+// radioWithContainer renders a radio inside a bordered container (segmented look)
 templ radioWithContainer(cfg Config) {
-	<label for={ cfg.ID } class="inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed">
+	<label for={ cfg.ID } class={ "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed " + cfg.Class }>
 		<span>{ cfg.Label }</span>
 		@radioInput(cfg)
 	</label>
 }
 
-// radioInput renders the actual radio input element
+// radioInput renders the actual <input type="radio"> with all primitives wired in.
+//
+// Render order on the element:
+//  1. Static identity attrs (id, type, name, value)
+//  2. class
+//  3. checked / disabled / aria-describedby
+//  4. HTMX attrs (hx-*) — server roundtrip on change
+//  5. Alpine attrs (x-*) — client-side state
+//  6. cfg.Attrs (escape hatch) — wins on conflict
 templ radioInput(cfg Config) {
-	if cfg.Checked {
-		<input id={ cfg.ID } type="radio" name={ cfg.Name } value={ cfg.Value } class={ cfg.InputClasses() } checked/>
-	} else if cfg.Disabled {
-		<input id={ cfg.ID } type="radio" name={ cfg.Name } value={ cfg.Value } class={ cfg.InputClasses() } disabled/>
-	} else {
-		<input id={ cfg.ID } type="radio" name={ cfg.Name } value={ cfg.Value } class={ cfg.InputClasses() }/>
-	}
+	<input
+		id={ cfg.ID }
+		type="radio"
+		name={ cfg.Name }
+		value={ cfg.Value }
+		class={ cfg.InputClasses() }
+		if cfg.Checked {
+			checked
+		}
+		if cfg.Disabled {
+			disabled
+		}
+		if cfg.DescriptionID != "" {
+			aria-describedby={ cfg.DescriptionID }
+		}
+		if cfg.HasHTMX() {
+			if cfg.HTMX.Get != "" {
+				hx-get={ cfg.HTMX.Get }
+			}
+			if cfg.HTMX.Post != "" {
+				hx-post={ cfg.HTMX.Post }
+			}
+			if cfg.HTMX.Put != "" {
+				hx-put={ cfg.HTMX.Put }
+			}
+			if cfg.HTMX.Delete != "" {
+				hx-delete={ cfg.HTMX.Delete }
+			}
+			if cfg.HTMX.Patch != "" {
+				hx-patch={ cfg.HTMX.Patch }
+			}
+			if cfg.HTMX.Target != "" {
+				hx-target={ cfg.HTMX.Target }
+			}
+			if cfg.HTMX.Swap != "" {
+				hx-swap={ cfg.HTMX.Swap }
+			}
+			if cfg.HTMX.Trigger != "" {
+				hx-trigger={ cfg.HTMX.Trigger }
+			} else if cfg.HTMX.HasHxVerb() {
+				hx-trigger="change"
+			}
+			if cfg.HTMX.Indicator != "" {
+				hx-indicator={ cfg.HTMX.Indicator }
+			}
+			if cfg.HTMX.PushURL {
+				hx-push-url="true"
+			}
+			if cfg.HTMX.Confirm != "" {
+				hx-confirm={ cfg.HTMX.Confirm }
+			}
+			if cfg.HTMX.Vals != "" {
+				hx-vals={ cfg.HTMX.Vals }
+			}
+			if cfg.HTMX.Include != "" {
+				hx-include={ cfg.HTMX.Include }
+			}
+		}
+		if cfg.HasAlpine() {
+			if cfg.Alpine.Data != "" {
+				x-data={ cfg.Alpine.Data }
+			}
+			if cfg.Alpine.Model != "" {
+				x-model={ cfg.Alpine.Model }
+			}
+			if cfg.Alpine.OnChange != "" {
+				x-on:change={ cfg.Alpine.OnChange }
+			}
+			if cfg.Alpine.BindChecked != "" {
+				x-bind:checked={ cfg.Alpine.BindChecked }
+			}
+			if cfg.Alpine.BindDisabled != "" {
+				x-bind:disabled={ cfg.Alpine.BindDisabled }
+			}
+		}
+		{ cfg.Attrs... }
+	/>
 }
 
-// RadioGroup renders a group of radio buttons in a bordered list
+// RadioGroup renders a group of radio buttons in a bordered list.
 // Usage:
 //
 //	@radio.RadioGroup(radio.GroupConfig{

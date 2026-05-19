@@ -40,20 +40,38 @@ templ Avatar(cfg Config) {
 	}
 }
 
-// avatarLayers renders the 3-layer stack
+// avatarLayers renders the 3-layer stack.
+//
+// When cfg.Reactive is true, the size classes (size-X text-Y) are omitted
+// from the baked class string and an x-bind:class="avatarSizeClass" reads
+// the live value from the parent Alpine scope instead — see Config.Reactive.
 templ avatarLayers(cfg Config) {
-	{{ containerClasses := "relative inline-flex " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.VariantClasses() + " " + cfg.Class }}
+	{{
+		sizePart := cfg.SizeClasses()
+		if cfg.Reactive {
+			sizePart = ""
+		}
+		containerClasses := "relative inline-flex " + sizePart + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.VariantClasses() + " " + cfg.Class
+	}}
 	if cfg.HasImage() {
 		<div
 			x-data="{ imgLoaded: false, imgError: false }"
 			class={ containerClasses }
+			if cfg.Reactive {
+				x-bind:class="avatarSizeClass"
+			}
 		>
 			@layerInitials(cfg, true)
 			@layerLoading(cfg)
 			@layerImage(cfg)
 		</div>
 	} else {
-		<div class={ containerClasses }>
+		<div
+			class={ containerClasses }
+			if cfg.Reactive {
+				x-bind:class="avatarSizeClass"
+			}
+		>
 			@layerInitials(cfg, false)
 		</div>
 	}
@@ -112,13 +130,25 @@ templ layerImage(cfg Config) {
 	/>
 }
 
-// avatarWithStatus wraps the layered avatar with a status indicator dot
+// avatarWithStatus wraps the layered avatar with a status indicator dot.
+//
+// In reactive mode the status-dot size class is also deferred to the parent
+// Alpine scope via x-bind:class="avatarStatusSizeClass".
 templ avatarWithStatus(cfg Config) {
 	<div class="relative w-fit">
 		@avatarLayers(cfg)
-		{{ positionClass := "bottom-0.5 end-0" }}
+		{{
+			positionClass := "bottom-0.5 end-0"
+			statusSizePart := cfg.StatusSizeClasses()
+			if cfg.Reactive {
+				statusSizePart = ""
+			}
+		}}
 		<span
-			class={ "absolute rounded-full border-2 border-surface dark:border-surface-dark " + cfg.StatusSizeClasses() + " " + cfg.StatusClasses() + " " + positionClass }
+			class={ "absolute rounded-full border-2 border-surface dark:border-surface-dark " + statusSizePart + " " + cfg.StatusClasses() + " " + positionClass }
+			if cfg.Reactive {
+				x-bind:class="avatarStatusSizeClass"
+			}
 			aria-hidden="true"
 		></span>
 	</div>

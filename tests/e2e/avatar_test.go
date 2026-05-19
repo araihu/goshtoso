@@ -129,6 +129,93 @@ func TestAvatar_CachedReload(t *testing.T) {
 		"initials should still be hidden after cached reload")
 }
 
+// TestAvatar_SizeSelector_RendersSixPills verifies the interactive size selector
+// rendered six segmented radio pills (xs/sm/md/lg/xl/2xl).
+func TestAvatar_SizeSelector_RendersSixPills(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	navigateToAvatarDemo(t, page)
+
+	for _, val := range []string{"xs", "sm", "md", "lg", "xl", "2xl"} {
+		count, err := page.Locator("#avatar-size-" + val).Count()
+		require.NoError(t, err)
+		assert.Equal(t, 1, count, "expected size pill #avatar-size-%s to exist", val)
+	}
+	v, err := page.Locator("#avatar-size-md").Evaluate("el => el.checked", nil)
+	require.NoError(t, err)
+	assert.Equal(t, true, v, "md pill should start checked")
+}
+
+// TestAvatar_SizeSelector_DrivesReactiveAvatars verifies that clicking a size
+// pill propagates the Tailwind size class to all reactive avatars on the page.
+func TestAvatar_SizeSelector_DrivesReactiveAvatars(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	navigateToAvatarDemo(t, page)
+
+	_, err := page.WaitForFunction(
+		`() => typeof window.Alpine !== 'undefined'`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+	)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("label[for='avatar-size-2xl']").Click())
+
+	_, err = page.WaitForFunction(
+		`() => {
+			const roots = document.querySelectorAll("[data-testid='avatar-section-image'] .relative.inline-flex");
+			return Array.from(roots).some(el => {
+				const c = el.getAttribute('class') || '';
+				return c.includes('size-32') && c.includes('text-5xl');
+			});
+		}`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)},
+	)
+	require.NoError(t, err, "after clicking 2xl, at least one reactive avatar root should carry size-32 text-5xl")
+
+	_, err = page.WaitForFunction(
+		`() => {
+			const dots = document.querySelectorAll("[data-testid='avatar-section-status'] span.absolute.rounded-full");
+			return Array.from(dots).some(el => (el.getAttribute('class') || '').includes('size-7'));
+		}`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)},
+	)
+	require.NoError(t, err, "after clicking 2xl, status indicator should carry size-7")
+
+	require.NoError(t, page.Locator("label[for='avatar-size-xs']").Click())
+	_, err = page.WaitForFunction(
+		`() => {
+			const roots = document.querySelectorAll("[data-testid='avatar-section-image'] .relative.inline-flex");
+			return Array.from(roots).some(el => {
+				const c = el.getAttribute('class') || '';
+				return c.includes('size-8') && c.includes('text-xs');
+			});
+		}`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)},
+	)
+	require.NoError(t, err, "after clicking xs, reactive avatar root should carry size-8 text-xs")
+
+	txt, err := page.Locator("[data-testid='avatar-size-selected']").TextContent()
+	require.NoError(t, err)
+	assert.Equal(t, "xs", txt)
+}
+
+// TestAvatar_SizeSelector_FixturesUnchanged verifies that the E2E test fixtures
+// section stays at fixed SizeMD even when the selector changes.
+func TestAvatar_SizeSelector_FixturesUnchanged(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	navigateToAvatarDemo(t, page)
+
+	require.NoError(t, page.Locator("label[for='avatar-size-2xl']").Click())
+
+	cls, err := page.Locator("[data-testid='avatar-test-loaded'] .relative.inline-flex").GetAttribute("class")
+	require.NoError(t, err)
+	assert.Contains(t, cls, "size-14", "E2E fixture must not be size-driven by the selector")
+	assert.NotContains(t, cls, "size-32", "E2E fixture must NOT receive 2xl bindings")
+}
+
 // TestAvatar_ImageError_FallsBackToInitials verifies that when an image fails
 // to load (404, network error, etc.), the initials fallback becomes visible
 // and the spinner disappears.
