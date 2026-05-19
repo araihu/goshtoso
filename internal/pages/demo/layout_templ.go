@@ -45,7 +45,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Goshtoso PenguinUI</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script><script defer src=\"/assets/js/vendor/alpine-focus.min.js\"></script><script defer src=\"/assets/js/vendor/alpine-collapse.min.js\"></script><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><link href=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css\" rel=\"stylesheet\"><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js\"></script><style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t.code-block { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }\n\t\t\t\tpre[class*=\"language-\"] {\n\t\t\t\t\tbackground: #1e1e1e !important;\n\t\t\t\t\tmargin: 0 !important;\n\t\t\t\t\tpadding: 1rem !important;\n\t\t\t\t\tborder-radius: 0 !important;\n\t\t\t\t}\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition\"><!-- Header --><header class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\"><span class=\"text-2xl font-bold font-title\">Goshtoso</span> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">PenguinUI</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector Dropdown --><div class=\"relative\" x-data=\"{ open: false }\" @click.away=\"open = false\"><button @click=\"open = !open\" class=\"flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-outline bg-surface-alt hover:bg-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:bg-surface-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01\"></path></svg> <span x-text=\"theme === 'minimal' ? 'Minimal' : theme\" class=\"capitalize\"></span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button><!-- Dropdown Menu --><div x-show=\"open\" @click.away=\"open = false\" x-cloak class=\"absolute right-0 mt-2 w-48 max-h-80 overflow-y-auto rounded-radius border border-outline bg-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark z-50\"><div class=\"py-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Goshtoso PenguinUI</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script><script defer src=\"/assets/js/vendor/alpine-focus.min.js\"></script><script defer src=\"/assets/js/vendor/alpine-collapse.min.js\"></script><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><script>\n\t\t\t\t// Alpine nav store + htmx integration for fragment-swap sidebar navigation.\n\t\t\t\t// The store's `path` field is read inside the sidebar wrapper's x-effect so\n\t\t\t\t// the search filter re-applies after an OOB sidebar swap.\n\t\t\t\tdocument.addEventListener('alpine:init', () => {\n\t\t\t\t\tAlpine.store('nav', { path: window.location.pathname });\n\t\t\t\t});\n\t\t\t\tdocument.addEventListener('htmx:pushedIntoHistory', () => {\n\t\t\t\t\tif (window.Alpine && Alpine.store('nav')) {\n\t\t\t\t\t\tAlpine.store('nav').path = window.location.pathname;\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t\tdocument.addEventListener('htmx:afterSwap', (e) => {\n\t\t\t\t\tif (e && e.detail && e.detail.target && window.Alpine && Alpine.initTree) {\n\t\t\t\t\t\tAlpine.initTree(e.detail.target);\n\t\t\t\t\t}\n\t\t\t\t\tvar main = document.querySelector('main');\n\t\t\t\t\tif (main) main.scrollTo({ top: 0 });\n\t\t\t\t});\n\t\t\t</script><style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition\"><!-- Header --><header class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\"><span class=\"text-2xl font-bold font-title\">Goshtoso</span> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">PenguinUI</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector Dropdown --><div class=\"relative\" x-data=\"{ open: false }\" @click.away=\"open = false\"><button @click=\"open = !open\" class=\"flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-outline bg-surface-alt hover:bg-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:bg-surface-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01\"></path></svg> <span x-text=\"theme === 'minimal' ? 'Minimal' : theme\" class=\"capitalize\"></span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\"></path></svg></button><!-- Dropdown Menu --><div x-show=\"open\" @click.away=\"open = false\" x-cloak class=\"absolute right-0 mt-2 w-48 max-h-80 overflow-y-auto rounded-radius border border-outline bg-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark z-50\"><div class=\"py-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -57,7 +57,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 104, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 112, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -70,7 +70,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 109, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 117, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -81,7 +81,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div><!-- Dark Mode Toggle --><button id=\"darkModeToggleBtn\" aria-label=\"dark mode toggle\" @click=\"$store.darkMode.toggle()\" class=\"p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors\"><!-- Light Mode Icon (Sun) - shows when dark mode is ON --><svg x-show=\"$store.darkMode.on\" name=\"Light Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z\"></path></svg><!-- Dark Mode Icon (Moon) - shows when dark mode is OFF --><svg x-show=\"!$store.darkMode.on\" name=\"Dark Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z\"></path></svg></button><!-- GitHub Link --><a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z\"></path></svg></a></div></div></header><div class=\"flex h-[calc(100vh-4rem)] overflow-hidden\"><!-- Sidebar Component --><div class=\"fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 lg:h-full\" :class=\"sidebarOpen ? 'translate-x-0' : '-translate-x-full'\"><div class=\"h-full\" hx-boost=\"true\" x-data=\"{ q: '' }\" x-effect=\"\n\t\t\t\t\t\tconst items = $el.querySelectorAll('[data-sidebar-item]');\n\t\t\t\t\t\tconst sections = $el.querySelectorAll('[data-sidebar-section]');\n\t\t\t\t\t\tconst term = q.toLowerCase();\n\t\t\t\t\t\titems.forEach(el => {\n\t\t\t\t\t\t\tel.style.display = !term || el.dataset.sidebarItem.toLowerCase().includes(term) ? '' : 'none';\n\t\t\t\t\t\t});\n\t\t\t\t\t\tsections.forEach(el => {\n\t\t\t\t\t\t\tconst visible = [...el.querySelectorAll('[data-sidebar-item]')].some(i => i.style.display !== 'none');\n\t\t\t\t\t\t\tel.style.display = visible ? '' : 'none';\n\t\t\t\t\t\t});\n\t\t\t\t\t\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div><!-- Dark Mode Toggle --><button id=\"darkModeToggleBtn\" aria-label=\"dark mode toggle\" @click=\"$store.darkMode.toggle()\" class=\"p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors\"><!-- Light Mode Icon (Sun) - shows when dark mode is ON --><svg x-show=\"$store.darkMode.on\" name=\"Light Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z\"></path></svg><!-- Dark Mode Icon (Moon) - shows when dark mode is OFF --><svg x-show=\"!$store.darkMode.on\" name=\"Dark Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z\"></path></svg></button><!-- GitHub Link --><a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z\"></path></svg></a></div></div></header><div class=\"flex h-[calc(100vh-4rem)] overflow-hidden\"><!-- Sidebar Component --><div class=\"fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 lg:h-full\" :class=\"sidebarOpen ? 'translate-x-0' : '-translate-x-full'\"><div class=\"h-full\" x-data=\"{ q: '' }\" x-effect=\"\n\t\t\t\t\t\tvoid $store.nav?.path;\n\t\t\t\t\t\tconst items = $el.querySelectorAll('[data-sidebar-item]');\n\t\t\t\t\t\tconst sections = $el.querySelectorAll('[data-sidebar-section]');\n\t\t\t\t\t\tconst term = q.toLowerCase();\n\t\t\t\t\t\titems.forEach(el => {\n\t\t\t\t\t\t\tel.style.display = !term || el.dataset.sidebarItem.toLowerCase().includes(term) ? '' : 'none';\n\t\t\t\t\t\t});\n\t\t\t\t\t\tsections.forEach(el => {\n\t\t\t\t\t\t\tconst visible = [...el.querySelectorAll('[data-sidebar-item]')].some(i => i.style.display !== 'none');\n\t\t\t\t\t\t\tel.style.display = visible ? '' : 'none';\n\t\t\t\t\t\t});\n\t\t\t\t\t\"><div id=\"sidebar-nav-content\" class=\"h-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -94,7 +94,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><!-- Overlay for mobile sidebar --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"fixed inset-0 z-30 bg-black/50 lg:hidden\" x-cloak></div><!-- Main Content --><main class=\"flex-1 overflow-y-auto p-6 lg:p-8\" hx-boost=\"true\"><div class=\"mx-auto max-w-5xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div><!-- Overlay for mobile sidebar --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"fixed inset-0 z-30 bg-black/50 lg:hidden\" x-cloak></div><!-- Main Content --><main class=\"flex-1 overflow-y-auto p-6 lg:p-8\"><div id=\"main-content\" class=\"mx-auto max-w-5xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -114,11 +114,27 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 	})
 }
 
+// navHxAttrs returns the HTMX attrs we attach to every sidebar/footer nav link
+// so clicking swaps only the main content area instead of reloading the page.
+// The plain `href` stays so middle-click / cmd-click / no-JS still works.
+func navHxAttrs(href, label string) templ.Attributes {
+	attrs := templ.Attributes{
+		"hx-get":      href,
+		"hx-target":   "#main-content",
+		"hx-swap":     "innerHTML",
+		"hx-push-url": "true",
+	}
+	if label != "" {
+		attrs["data-sidebar-item"] = label
+	}
+	return attrs
+}
+
 // getSidebarTopItems returns the top-level icon navigation items above the component sections
 func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
-		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == ""},
-		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme"},
+		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
+		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 	}
 }
 
@@ -210,11 +226,12 @@ func sidebarThemeIcon() templ.Component {
 }
 
 // sidebarItem creates a sidebar item with data-sidebar-item for search filtering
+// and HTMX attributes for fragment-swap navigation.
 func sItem(id, label, href, activeComponent string) sidebar.Item {
 	return sidebar.Item{
 		ID: id, Label: label, Href: href,
 		Active:    activeComponent == id,
-		LinkAttrs: templ.Attributes{"data-sidebar-item": label},
+		LinkAttrs: navHxAttrs(href, label),
 	}
 }
 
@@ -230,6 +247,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("banner", "Banner", "/components/banner", activeComponent),
 				sItem("card", "Card", "/components/card", activeComponent),
 				sItem("carousel", "Carousel", "/components/carousel", activeComponent),
+				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
 				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
 				sItem("table", "Table", "/components/table", activeComponent),
 				sItem("tabs", "Tabs", "/components/tabs", activeComponent),
@@ -291,6 +309,7 @@ var orderedComponents = []componentNavLink{
 	{"Banner", "/components/banner"},
 	{"Card", "/components/card"},
 	{"Carousel", "/components/carousel"},
+	{"Code Block", "/components/codeblock"},
 	{"Spinner", "/components/spinner"},
 	{"Table", "/components/table"},
 	{"Tabs", "/components/tabs"},
@@ -364,6 +383,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if prev != nil {
+				prevAttrs := navHxAttrs(prev.Href, "")
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -371,73 +391,90 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var9 templ.SafeURL
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 390, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 420, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15 19l-7-7 7-7\"></path></svg> <span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, prevAttrs)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15 19l-7-7 7-7\"></path></svg> <span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 396, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 427, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span></a> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></a> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if next != nil {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<a href=\"")
+				nextAttrs := navHxAttrs(next.Href, "")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 templ.SafeURL
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 403, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 435, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, nextAttrs)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 406, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 439, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 5l7 7-7 7\"></path></svg></a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 5l7 7-7 7\"></path></svg></a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

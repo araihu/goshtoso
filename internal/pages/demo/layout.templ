@@ -51,20 +51,8 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					if (main) main.scrollTo({ top: 0 });
 				});
 			</script>
-			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
 			<style>
 				[x-cloak] { display: none !important; }
-				.code-block { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
-				pre[class*="language-"] {
-					background: #1e1e1e !important;
-					margin: 0 !important;
-					padding: 1rem !important;
-					border-radius: 0 !important;
-				}
 				/* Hide scrollbar for sidebar */
 				.sidebar-scroll::-webkit-scrollbar {
 					display: none;
@@ -314,6 +302,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("banner", "Banner", "/components/banner", activeComponent),
 				sItem("card", "Card", "/components/card", activeComponent),
 				sItem("carousel", "Carousel", "/components/carousel", activeComponent),
+				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
 				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
 				sItem("table", "Table", "/components/table", activeComponent),
 				sItem("tabs", "Tabs", "/components/tabs", activeComponent),
@@ -375,6 +364,7 @@ var orderedComponents = []componentNavLink{
 	{"Banner", "/components/banner"},
 	{"Card", "/components/card"},
 	{"Carousel", "/components/carousel"},
+	{"Code Block", "/components/codeblock"},
 	{"Spinner", "/components/spinner"},
 	{"Table", "/components/table"},
 	{"Tabs", "/components/tabs"},
