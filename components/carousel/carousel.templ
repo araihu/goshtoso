@@ -26,7 +26,7 @@ templ Carousel(cfg Config) {
 // staticCarousel renders the full Alpine.js carousel with slides from Go config
 templ staticCarousel(cfg Config) {
 	{{ alpineData := generateAlpineData(cfg) }}
-	{{ duration := transitionDuration(cfg) }}
+	{{ transitionAttr := transitionAttr(cfg) }}
 	{{ xInit := "" }}
 	{{ if cfg.Autoplay != nil { xInit = "autoplay" } }}
 	<div
@@ -54,7 +54,7 @@ templ staticCarousel(cfg Config) {
 					x-cloak
 					x-show="currentSlideIndex == index + 1"
 					class="absolute inset-0"
-					x-transition.opacity.duration={ duration }
+					{ transitionAttrs(transitionAttr)... }
 				>
 					if hasOverlay(cfg.Variant) {
 						@slideOverlay(cfg)
@@ -83,7 +83,7 @@ templ cardCarousel(cfg Config) {
 	{{ cardCfg := cfg }}
 	{{ if cardCfg.Height == "" { cardCfg.Height = "h-48 lg:h-64" } }}
 	{{ alpineData := generateAlpineData(cardCfg) }}
-	{{ duration := transitionDuration(cardCfg) }}
+	{{ transitionAttr := transitionAttr(cardCfg) }}
 	<article
 		x-data={ alpineData }
 		class={ cardContainerClasses() }
@@ -98,7 +98,7 @@ templ cardCarousel(cfg Config) {
 					x-cloak
 					x-show="currentSlideIndex == index + 1"
 					class="absolute inset-0"
-					x-transition.opacity.duration={ duration }
+					{ transitionAttrs(transitionAttr)... }
 				>
 					<img
 						class="absolute w-full h-full inset-0 object-cover text-on-surface dark:text-on-surface-dark"

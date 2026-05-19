@@ -3,6 +3,8 @@ package carousel
 import (
 	"fmt"
 	"strings"
+
+	"github.com/a-h/templ"
 )
 
 // Variant represents carousel visual variants
@@ -80,8 +82,12 @@ func hasOverlay(v Variant) bool {
 	return v == WithText || v == WithCTA
 }
 
-// transitionDuration returns the Alpine.js transition duration string
-func transitionDuration(cfg Config) string {
+// transitionAttr returns the duration suffix for Alpine's x-transition modifier
+// (e.g. "1000ms"). Use with transitionAttrs() to build the full attribute name —
+// Alpine's `x-transition.opacity.duration.500ms` modifier syntax requires the
+// duration as part of the attribute key, not as a value (a value like "1000ms"
+// gets evaluated as a JS expression and breaks).
+func transitionAttr(cfg Config) string {
 	switch cfg.Variant {
 	case OnCard:
 		return "300ms"
@@ -90,6 +96,15 @@ func transitionDuration(cfg Config) string {
 			return "700ms"
 		}
 		return "1000ms"
+	}
+}
+
+// transitionAttrs builds a templ attribute map encoding Alpine's
+// `x-transition.opacity.duration.<suffix>` modifier. A `true` value tells templ
+// to render the attribute as a boolean (key only).
+func transitionAttrs(suffix string) templ.Attributes {
+	return templ.Attributes{
+		"x-transition.opacity.duration." + suffix: true,
 	}
 }
 
@@ -152,8 +167,8 @@ func generateAlpineData(cfg Config) string {
 	b.WriteString(",currentSlideIndex:1,")
 
 	// Navigation methods
-	b.WriteString("previous(){if(this.currentSlideIndex>1){this.currentSlideIndex=this.currentSlideIndex-1}else{this.currentSlideIndex=this.slides.length}},")
-	b.WriteString("next(){if(this.currentSlideIndex<this.slides.length){this.currentSlideIndex=this.currentSlideIndex+1}else{this.currentSlideIndex=1}}")
+	b.WriteString("previous:function(){if(this.currentSlideIndex>1){this.currentSlideIndex=this.currentSlideIndex-1}else{this.currentSlideIndex=this.slides.length}},")
+	b.WriteString("next:function(){if(this.currentSlideIndex<this.slides.length){this.currentSlideIndex=this.currentSlideIndex+1}else{this.currentSlideIndex=1}}")
 
 	// Autoplay state and methods
 	if cfg.Autoplay != nil {
@@ -162,16 +177,16 @@ func generateAlpineData(cfg Config) string {
 			interval = 4000
 		}
 		b.WriteString(fmt.Sprintf(",autoplayIntervalTime:%d,isPaused:false,autoplayInterval:null,", interval))
-		b.WriteString("autoplay(){this.autoplayInterval=setInterval(()=>{if(!this.isPaused){this.next()}},this.autoplayIntervalTime)},")
-		b.WriteString("setAutoplayInterval(t){clearInterval(this.autoplayInterval);this.autoplayIntervalTime=t;this.autoplay()}")
+		b.WriteString("autoplay:function(){this.autoplayInterval=setInterval(()=>{if(!this.isPaused){this.next()}},this.autoplayIntervalTime)},")
+		b.WriteString("setAutoplayInterval:function(t){clearInterval(this.autoplayInterval);this.autoplayIntervalTime=t;this.autoplay()}")
 	}
 
 	// Touch state and methods
 	if cfg.Touch {
 		b.WriteString(",touchStartX:null,touchEndX:null,swipeThreshold:50,")
-		b.WriteString("handleTouchStart(e){this.touchStartX=e.touches[0].clientX},")
-		b.WriteString("handleTouchMove(e){this.touchEndX=e.touches[0].clientX},")
-		b.WriteString("handleTouchEnd(){if(this.touchEndX){if(this.touchStartX-this.touchEndX>this.swipeThreshold){this.next()}if(this.touchStartX-this.touchEndX<-this.swipeThreshold){this.previous()}this.touchStartX=null;this.touchEndX=null}}")
+		b.WriteString("handleTouchStart:function(e){this.touchStartX=e.touches[0].clientX},")
+		b.WriteString("handleTouchMove:function(e){this.touchEndX=e.touches[0].clientX},")
+		b.WriteString("handleTouchEnd:function(){if(this.touchEndX){if(this.touchStartX-this.touchEndX>this.swipeThreshold){this.next()}if(this.touchStartX-this.touchEndX<-this.swipeThreshold){this.previous()}this.touchStartX=null;this.touchEndX=null}}")
 	}
 
 	b.WriteString("}")
