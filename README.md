@@ -1,4 +1,4 @@
-# Goshtoso PenguinUI
+# Goshtoso
 
 <p align="center">
   <img src="assets/images/goshtoso-art.png" alt="Goshtoso mascot" width="320" />
