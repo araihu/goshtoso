@@ -10,11 +10,13 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
+// ThemeInfo describes a theme tile in the picker grid.
 type ThemeInfo struct {
 	Key            string
 	Label          string
@@ -40,6 +42,111 @@ func getThemeInfos() []ThemeInfo {
 		{Key: "totvs", Label: "TOTVS", PrimaryClass: "bg-cyan-400", SecondaryClass: "bg-violet-500"},
 		{Key: "dracula", Label: "Dracula", PrimaryClass: "bg-purple-400", SecondaryClass: "bg-pink-400"},
 	}
+}
+
+// FontOption is one entry in the typography font picker dropdowns.
+type FontOption struct {
+	Label  string // human-readable, also used as CSS font-family stack head
+	Google string // Google Fonts query name; empty = use system/local fallback
+}
+
+func getFontOptions() []FontOption {
+	return []FontOption{
+		{Label: "Default", Google: ""},
+		{Label: "Jost", Google: "Jost"},
+		{Label: "Inter", Google: "Inter"},
+		{Label: "Roboto", Google: "Roboto"},
+		{Label: "Lato", Google: "Lato"},
+		{Label: "Montserrat", Google: "Montserrat"},
+		{Label: "Instrument Sans", Google: "Instrument+Sans"},
+		{Label: "Open Sans", Google: "Open+Sans"},
+		{Label: "Oswald", Google: "Oswald"},
+		{Label: "Poppins", Google: "Poppins"},
+		{Label: "Raleway", Google: "Raleway"},
+		{Label: "Source Code Pro", Google: "Source+Code+Pro"},
+		{Label: "Playfair", Google: "Playfair+Display"},
+		{Label: "Merriweather", Google: "Merriweather"},
+		{Label: "Denk One", Google: "Denk+One"},
+		{Label: "Concert One", Google: "Concert+One"},
+		{Label: "Inconsolata", Google: "Inconsolata"},
+		{Label: "Space Mono", Google: "Space+Mono"},
+		{Label: "Playpen Sans", Google: "Playpen+Sans"},
+	}
+}
+
+type radiusOption struct {
+	Key   string // "none", "sm", "md", "lg", "xl", "2xl"
+	Label string
+	CSS   string // CSS value to write to --radius-radius
+}
+
+func getRadiusOptions() []radiusOption {
+	return []radiusOption{
+		{Key: "none", Label: "none", CSS: "0"},
+		{Key: "sm", Label: "sm", CSS: "0.25rem"},
+		{Key: "md", Label: "md", CSS: "0.375rem"},
+		{Key: "lg", Label: "lg", CSS: "0.5rem"},
+		{Key: "xl", Label: "xl", CSS: "0.75rem"},
+		{Key: "2xl", Label: "2xl", CSS: "1rem"},
+	}
+}
+
+// colorToken describes one editable CSS variable in the color editors section.
+type colorToken struct {
+	Key   string // CSS var suffix, e.g. "primary" -> --color-primary
+	Label string
+}
+
+func getLightTokens() []colorToken {
+	return []colorToken{
+		{"surface", "Surface"},
+		{"on-surface", "On Surface"},
+		{"on-surface-strong", "On Surface Strong"},
+		{"surface-alt", "Surface Alt"},
+		{"primary", "Primary"},
+		{"on-primary", "On Primary"},
+		{"secondary", "Secondary"},
+		{"on-secondary", "On Secondary"},
+		{"outline", "Outline"},
+		{"outline-strong", "Outline Strong"},
+	}
+}
+
+func getDarkTokens() []colorToken {
+	return []colorToken{
+		{"surface-dark", "Surface Dark"},
+		{"on-surface-dark", "On Surface Dark"},
+		{"on-surface-dark-strong", "On Surface Dark Strong"},
+		{"surface-dark-alt", "Surface Dark Alt"},
+		{"primary-dark", "Primary Dark"},
+		{"on-primary-dark", "On Primary Dark"},
+		{"secondary-dark", "Secondary Dark"},
+		{"on-secondary-dark", "On Secondary Dark"},
+		{"outline-dark", "Outline Dark"},
+		{"outline-dark-strong", "Outline Dark Strong"},
+	}
+}
+
+func getSharedTokens() []colorToken {
+	return []colorToken{
+		{"danger", "Danger"},
+		{"on-danger", "On Danger"},
+		{"info", "Info"},
+		{"on-info", "On Info"},
+		{"warning", "Warning"},
+		{"on-warning", "On Warning"},
+		{"success", "Success"},
+		{"on-success", "On Success"},
+	}
+}
+
+// allEditableTokens returns the full ordered list of tokens used to generate
+// the CSS code block and the contrast checker base-token dropdown.
+func allEditableTokens() []colorToken {
+	out := append([]colorToken{}, getLightTokens()...)
+	out = append(out, getDarkTokens()...)
+	out = append(out, getSharedTokens()...)
+	return out
 }
 
 func getThemeCSSBlocks() map[string]string {
@@ -542,38 +649,257 @@ func getThemeCSSBlocks() map[string]string {
 	}
 }
 
-func themeCSSScript() string {
+func sortedThemeKeys() []string {
+	keys := make([]string, 0)
+	for _, t := range getThemeInfos() {
+		keys = append(keys, t.Key)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+// themePageScript builds the single Alpine component backing the entire page.
+// Lives in a <script> tag rather than inline x-data to escape templ's
+// attribute encoder (see CLAUDE.md "Templ escaping — the #1 source of bugs").
+func themePageScript() string {
 	blocks := getThemeCSSBlocks()
+	infos := getThemeInfos()
+	fonts := getFontOptions()
+	radii := getRadiusOptions()
+
 	var sb strings.Builder
 	sb.WriteString("document.addEventListener('alpine:init', () => {\n")
-	sb.WriteString("  Alpine.data('themeCssOutput', () => ({\n")
+	sb.WriteString("  Alpine.data('themePage', () => ({\n")
+	// state
+	sb.WriteString("    titleFont: localStorage.getItem('themeTitleFont') || '',\n")
+	sb.WriteString("    bodyFont: localStorage.getItem('themeBodyFont') || '',\n")
+	sb.WriteString("    radius: localStorage.getItem('themeRadius') || '',\n")
+	sb.WriteString("    overrides: JSON.parse(localStorage.getItem('themeOverrides') || '{}'),\n")
+	sb.WriteString("    resolved: {},\n")
+	sb.WriteString("    cssMode: localStorage.getItem('themeCssMode') || 'single',\n")
+	sb.WriteString("    cssFilter: localStorage.getItem('themeCssFilter') || 'current',\n")
+	sb.WriteString("    contrastTab: 'colors',\n")
+	sb.WriteString("    contrastBase: 'primary',\n")
+	sb.WriteString("    contrastCustomFg: '#0f172a',\n")
+	sb.WriteString("    contrastCustomBg: '#ffffff',\n")
 	sb.WriteString("    copied: false,\n")
-	sb.WriteString("    currentCSS: '',\n")
-	sb.WriteString("    init() {\n")
-	sb.WriteString("      const update = () => {\n")
-	sb.WriteString("        const t = document.documentElement.getAttribute('data-theme') || 'minimal';\n")
-	sb.WriteString("        this.currentCSS = this.blocks[t] || 'Theme not found';\n")
-	sb.WriteString("      };\n")
-	sb.WriteString("      update();\n")
-	sb.WriteString("      new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });\n")
-	sb.WriteString("    },\n")
-	sb.WriteString("    copyCSS() {\n")
-	sb.WriteString("      navigator.clipboard.writeText(this.currentCSS).then(() => {\n")
-	sb.WriteString("        this.copied = true;\n")
-	sb.WriteString("        setTimeout(() => this.copied = false, 2000);\n")
-	sb.WriteString("      });\n")
-	sb.WriteString("    },\n")
+	sb.WriteString("    shareCopied: false,\n")
+
+	// lookup tables, written from Go so we don't risk template-escape surprises
+	sb.WriteString("    radiusMap: {")
+	for i, r := range radii {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s':'%s'", r.Key, r.CSS))
+	}
+	sb.WriteString("},\n")
+
+	sb.WriteString("    googleFontMap: {")
+	first := true
+	for _, f := range fonts {
+		if f.Google == "" {
+			continue
+		}
+		if !first {
+			sb.WriteString(",")
+		}
+		first = false
+		sb.WriteString(fmt.Sprintf("'%s':'%s'", f.Label, f.Google))
+	}
+	sb.WriteString("},\n")
+
+	// theme keys list
+	sb.WriteString("    allThemes: [")
+	for i, info := range infos {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s'", info.Key))
+	}
+	sb.WriteString("],\n")
+
+	// theme css blocks (used by CSS code section)
 	sb.WriteString("    blocks: {\n")
 	for key, css := range blocks {
 		sb.WriteString(fmt.Sprintf("      '%s': `%s`,\n", key, css))
 	}
-	sb.WriteString("    }\n")
+	sb.WriteString("    },\n")
+
+	// lifecycle
+	sb.WriteString(`    init() {
+      this.applyAll();
+      this.refreshResolved();
+      this.$watch('titleFont', v => { localStorage.setItem('themeTitleFont', v); this.applyFont('--font-title', v); });
+      this.$watch('bodyFont', v => { localStorage.setItem('themeBodyFont', v); this.applyFont('--font-body', v); });
+      this.$watch('radius', v => { localStorage.setItem('themeRadius', v); this.applyRadius(v); });
+      this.$watch('overrides', v => { localStorage.setItem('themeOverrides', JSON.stringify(v)); this.applyColors(); }, { deep: true });
+      this.$watch('cssMode', v => localStorage.setItem('themeCssMode', v));
+      this.$watch('cssFilter', v => localStorage.setItem('themeCssFilter', v));
+      this.$watch('theme', () => { this.applyAll(); requestAnimationFrame(() => this.refreshResolved()); });
+      // recompute resolved palette when dark mode toggles
+      window.addEventListener('darkmode-change', () => this.refreshResolved());
+      new MutationObserver(() => this.refreshResolved()).observe(document.documentElement, { attributes: true, attributeFilter: ['class','data-theme'] });
+    },
+    applyAll() {
+      this.applyFont('--font-title', this.titleFont);
+      this.applyFont('--font-body', this.bodyFont);
+      this.applyRadius(this.radius);
+      this.applyColors();
+    },
+    applyFont(varName, label) {
+      if (!label) { document.documentElement.style.removeProperty(varName); return; }
+      const gf = this.googleFontMap[label];
+      if (gf) this.loadGoogleFont(label, gf);
+      document.documentElement.style.setProperty(varName, "'" + label + "', sans-serif");
+    },
+    applyRadius(key) {
+      if (!key) { document.documentElement.style.removeProperty('--radius-radius'); return; }
+      const v = this.radiusMap[key];
+      if (v != null) document.documentElement.style.setProperty('--radius-radius', v);
+    },
+    applyColors() {
+      const seen = new Set();
+      Object.entries(this.overrides).forEach(([k, v]) => {
+        seen.add(k);
+        if (v) document.documentElement.style.setProperty('--color-' + k, v);
+        else document.documentElement.style.removeProperty('--color-' + k);
+      });
+    },
+    setColor(token, value) {
+      const next = Object.assign({}, this.overrides);
+      next[token] = value;
+      this.overrides = next;
+    },
+    clearColor(token) {
+      const next = Object.assign({}, this.overrides);
+      delete next[token];
+      this.overrides = next;
+    },
+    resetAll() {
+      this.titleFont = '';
+      this.bodyFont = '';
+      this.radius = '';
+      Object.keys(this.overrides).forEach(k => document.documentElement.style.removeProperty('--color-' + k));
+      this.overrides = {};
+      requestAnimationFrame(() => this.refreshResolved());
+    },
+    loadGoogleFont(label, query) {
+      const id = 'gfont-' + label.replace(/\s+/g, '-');
+      if (document.getElementById(id)) return;
+      const link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=' + query + ':wght@400;500;600;700&display=swap';
+      document.head.appendChild(link);
+    },
+    refreshResolved() {
+      const cs = getComputedStyle(document.documentElement);
+      const next = {};
+      this.allTokens.forEach(t => {
+        const raw = cs.getPropertyValue('--color-' + t).trim();
+        next[t] = this.normalizeColor(raw);
+      });
+      this.resolved = next;
+    },
+    normalizeColor(raw) {
+      if (!raw) return '#000000';
+      if (raw.startsWith('#')) return raw.length === 4 ? '#' + raw.slice(1).split('').map(c => c+c).join('') : raw;
+      // rgb()/rgba() or oklch etc.: paint to an offscreen canvas to coerce to hex.
+      const cnv = document.createElement('canvas');
+      cnv.width = 1; cnv.height = 1;
+      const ctx = cnv.getContext('2d');
+      ctx.fillStyle = raw;
+      const computed = ctx.fillStyle;
+      if (computed.startsWith('#')) return computed;
+      const m = computed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!m) return '#000000';
+      return '#' + [m[1], m[2], m[3]].map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('');
+    },
+    relLum(hex) {
+      const r = parseInt(hex.slice(1,3), 16) / 255;
+      const g = parseInt(hex.slice(3,5), 16) / 255;
+      const b = parseInt(hex.slice(5,7), 16) / 255;
+      const f = c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+    },
+    ratio(a, b) {
+      const la = this.relLum(a);
+      const lb = this.relLum(b);
+      const [hi, lo] = la > lb ? [la, lb] : [lb, la];
+      return (hi + 0.05) / (lo + 0.05);
+    },
+    grade(r) {
+      if (r >= 7) return 'AAA';
+      if (r >= 4.5) return 'AA';
+      if (r >= 3) return 'AA Large';
+      return 'Fail';
+    },
+    gradeClass(r) {
+      if (r >= 4.5) return 'bg-green-500/15 text-green-700 dark:text-green-300';
+      if (r >= 3) return 'bg-amber-500/15 text-amber-700 dark:text-amber-300';
+      return 'bg-red-500/15 text-red-700 dark:text-red-300';
+    },
+    cssCode() {
+      const order = ['arctic','high-contrast','minimal','modern','neo-brutalism','halloween','zombie','pastel','90s','christmas','prototype','news','industrial','totvs','dracula'];
+      const filterKey = this.cssFilter === 'current' ? (this.theme || 'minimal') : this.cssFilter;
+      if (this.cssMode === 'single') {
+        return this.blocks[filterKey] || ('/* theme ' + filterKey + ' not found */');
+      }
+      const keys = (filterKey === 'all') ? order : [filterKey];
+      const inner = keys.map(k => '    ' + (this.blocks[k] || '').split('\n').join('\n    ')).join('\n\n');
+      return '@layer base {\n' + inner + '\n}\n';
+    },
+    copyCSS() {
+      navigator.clipboard.writeText(this.cssCode()).then(() => {
+        this.copied = true;
+        setTimeout(() => this.copied = false, 2000);
+      });
+    },
+    share() {
+      const href = window.location.origin + window.location.pathname;
+      navigator.clipboard.writeText(href).then(() => {
+        this.shareCopied = true;
+        setTimeout(() => this.shareCopied = false, 2000);
+      });
+    },
+    contrastPairs() {
+      const base = this.resolved[this.contrastBase];
+      if (!base) return [];
+      return this.allTokens
+        .filter(t => t !== this.contrastBase)
+        .map(t => {
+          const c = this.resolved[t];
+          if (!c) return null;
+          const r = this.ratio(base, c);
+          return { token: t, color: c, ratio: r, grade: this.grade(r) };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.ratio - a.ratio);
+    },
+    customContrast() {
+      const r = this.ratio(this.contrastCustomFg, this.contrastCustomBg);
+      return { ratio: r, grade: this.grade(r) };
+    },
+`)
+
+	// allTokens list (light + dark + shared)
+	sb.WriteString("    allTokens: [")
+	tokens := allEditableTokens()
+	for i, t := range tokens {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s'", t.Key))
+	}
+	sb.WriteString("],\n")
+
 	sb.WriteString("  }));\n")
 	sb.WriteString("});\n")
 	return sb.String()
 }
 
-func themeCSSOutputScript() templ.Component {
+func themePageScriptTag() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -594,7 +920,7 @@ func themeCSSOutputScript() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.Raw("<script>"+themeCSSScript()+"</script>").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw("<script>"+themePageScript()+"</script>").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -652,35 +978,47 @@ func themeDemoContent() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = themeCSSOutputScript().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = themePageScriptTag().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12 max-w-6xl\"><!-- Page header --><div><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Theme Settings</h1><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">Browse ready-to-use themes. Click a theme to apply it across the site.</p></div><!-- Section 1: Theme Grid --><div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">Themes</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"themePage\" class=\"space-y-12 max-w-6xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = themeGrid().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = themeHeader().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- Section 2: Live Showcase --><div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">Theme Showcase</h2>")
+		templ_7745c5c3_Err = themeGridSection().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = themeShowcase().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = themeTypographySection().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Section 3: CSS Output --><div x-data=\"themeCssOutput\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">CSS Code</h2>")
+		templ_7745c5c3_Err = themeBorderSection().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = themeCSSOutput().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = themeColorEditorSection().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
+		templ_7745c5c3_Err = themePreviewSection().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = themeContrastSection().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = themeCSSSection().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -688,7 +1026,7 @@ func themeDemoContent() templ.Component {
 	})
 }
 
-func themeGrid() templ.Component {
+func themeHeader() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -709,135 +1047,7 @@ func themeGrid() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, t := range getThemeInfos() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button data-theme-key=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 606, Col: 26}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" @click=\"setTheme($el.dataset.themeKey)\" class=\"relative rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark p-4 text-left transition-all cursor-pointer\" :class=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 609, Col: 164}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><!-- Radio indicator + name row --><div class=\"flex items-center gap-2 mb-2\"><div class=\"size-4 rounded-full border-2 border-outline dark:border-outline-dark flex items-center justify-center\"><div class=\"size-2 rounded-full bg-primary dark:bg-primary-dark\" :class=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 616, Col: 68}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></div></div><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 619, Col: 106}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span></div><!-- Color dots --><div class=\"flex items-center gap-1.5 mb-1\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var9 = []any{t.PrimaryClass + " size-3 rounded-full"}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span class=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var9).String())
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"></span> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var11 = []any{t.SecondaryClass + " size-3 rounded-full"}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var11).String())
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"></span></div><!-- Mini preview --><div class=\"mt-3 flex gap-2\"><!-- Left section: text lines --><div class=\"flex-1 space-y-1.5\"><div class=\"h-2 w-3/4 rounded bg-on-surface/10 dark:bg-on-surface-dark/10\"></div><div class=\"h-2 w-full rounded bg-on-surface/10 dark:bg-on-surface-dark/10\"></div><div class=\"h-2 w-2/3 rounded bg-on-surface/10 dark:bg-on-surface-dark/10\"></div></div><!-- Right section: content block --><div class=\"flex-1 rounded bg-on-surface/5 dark:bg-on-surface-dark/5\"></div></div><!-- Primary color bar -->")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var13 = []any{"mt-2 h-4 w-12 rounded " + t.PrimaryClass}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var13).String())
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\"></div></button>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div><div class=\"flex items-start justify-between gap-4 flex-wrap\"><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Theme Settings</h1><button @click=\"share()\" class=\"inline-flex items-center gap-2 rounded-radius border border-outline dark:border-outline-dark px-3 py-1.5 text-sm font-medium text-on-surface dark:text-on-surface-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z\"></path></svg> <span x-text=\"shareCopied ? 'Link Copied!' : 'Share'\">Share</span></button></div><p class=\"mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark\">Goshtoso ships ready-to-use themes built on Tailwind v4 CSS variables. Pick one as-is, tweak its fonts, radius, or colors live, then export the CSS to drop into your own project.</p><button @click=\"resetAll()\" class=\"mt-3 text-xs font-medium text-primary dark:text-primary-dark hover:underline\">Reset all customizations</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -845,7 +1055,7 @@ func themeGrid() templ.Component {
 	})
 }
 
-func themeShowcase() templ.Component {
+func themeGridSection() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -861,12 +1071,140 @@ func themeShowcase() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<!-- Window chrome card --><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span></div><div class=\"bg-surface dark:bg-surface-dark p-6 space-y-8\"><!-- Color Palette --><div><h3 class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">Color Palette</h3><div class=\"grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3\"><div class=\"rounded-radius overflow-hidden\"><div class=\"h-12 bg-primary dark:bg-primary-dark\"></div><div class=\"px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark\">Primary</div></div><div class=\"rounded-radius overflow-hidden\"><div class=\"h-12 bg-secondary dark:bg-secondary-dark\"></div><div class=\"px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark\">Secondary</div></div><div class=\"rounded-radius overflow-hidden\"><div class=\"h-12 bg-info\"></div><div class=\"px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark\">Info</div></div><div class=\"rounded-radius overflow-hidden\"><div class=\"h-12 bg-danger\"></div><div class=\"px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark\">Danger</div></div><div class=\"rounded-radius overflow-hidden\"><div class=\"h-12 bg-warning\"></div><div class=\"px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark\">Warning</div></div><div class=\"rounded-radius overflow-hidden\"><div class=\"h-12 bg-success\"></div><div class=\"px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark\">Success</div></div></div></div><!-- Buttons --><div><h3 class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">Buttons</h3><div class=\"flex flex-wrap gap-3\"><button class=\"px-4 py-2 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Primary</button> <button class=\"px-4 py-2 rounded-radius bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Secondary</button> <button class=\"px-4 py-2 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">Outline</button></div></div><!-- Card --><div><h3 class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">Card</h3><div class=\"max-w-sm rounded-radius border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-5\"><div class=\"flex items-center gap-3 mb-3\"><div class=\"size-10 rounded-full bg-primary dark:bg-primary-dark flex items-center justify-center text-on-primary dark:text-on-primary-dark font-bold text-sm\">JD</div><div><p class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Jane Doe</p><p class=\"text-xs text-on-surface dark:text-on-surface-dark\">Product Designer</p></div></div><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">This is a sample card component that adapts to the current theme. The colors, borders, and radius all respond to CSS variables.</p></div></div><!-- Toggles --><div x-data=\"{ on1: true, on2: false }\"><h3 class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">Toggles</h3><div class=\"flex items-center gap-6\"><button @click=\"on1 = !on1\" class=\"relative inline-flex h-6 w-11 items-center rounded-full transition-colors\" :class=\"on1 ? 'bg-primary dark:bg-primary-dark' : 'bg-on-surface/20 dark:bg-on-surface-dark/20'\"><span class=\"inline-block size-4 transform rounded-full bg-white transition-transform\" :class=\"on1 ? 'translate-x-6' : 'translate-x-1'\"></span></button> <button @click=\"on2 = !on2\" class=\"relative inline-flex h-6 w-11 items-center rounded-full transition-colors\" :class=\"on2 ? 'bg-primary dark:bg-primary-dark' : 'bg-on-surface/20 dark:bg-on-surface-dark/20'\"><span class=\"inline-block size-4 transform rounded-full bg-white transition-transform\" :class=\"on2 ? 'translate-x-6' : 'translate-x-1'\"></span></button></div></div><!-- Step Indicators --><div><h3 class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">Steps</h3><div class=\"flex items-center gap-3\"><div class=\"size-8 rounded-full bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark flex items-center justify-center text-sm font-bold\">1</div><div class=\"size-8 rounded-full bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark flex items-center justify-center text-sm font-bold\">2</div><div class=\"size-8 rounded-full bg-secondary dark:bg-secondary-dark text-on-secondary dark:text-on-secondary-dark flex items-center justify-center text-sm font-bold\">3</div><div class=\"size-8 rounded-full bg-on-surface/10 dark:bg-on-surface-dark/10 text-on-surface dark:text-on-surface-dark flex items-center justify-center text-sm font-bold\">4</div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">Themes</h2><div class=\"grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, t := range getThemeInfos() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button data-theme-key=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 948, Col: 27}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" @click=\"setTheme($el.dataset.themeKey)\" class=\"relative rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark p-4 text-left transition-all cursor-pointer\" :class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 951, Col: 165}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><div class=\"flex items-center gap-2 mb-2\"><div class=\"size-4 rounded-full border-2 border-outline dark:border-outline-dark flex items-center justify-center\"><div class=\"size-2 rounded-full bg-primary dark:bg-primary-dark\" :class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 957, Col: 69}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></div></div><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 960, Col: 107}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span></div><div class=\"flex items-center gap-1.5 mb-1\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var10 = []any{t.PrimaryClass + " size-3 rounded-full"}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<span class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var11 string
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var10).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"></span> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var12 = []any{t.SecondaryClass + " size-3 rounded-full"}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var12).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"></span></div><div class=\"mt-3 flex gap-2\"><div class=\"flex-1 space-y-1.5\"><div class=\"h-2 w-3/4 rounded bg-on-surface/10 dark:bg-on-surface-dark/10\"></div><div class=\"h-2 w-full rounded bg-on-surface/10 dark:bg-on-surface-dark/10\"></div><div class=\"h-2 w-2/3 rounded bg-on-surface/10 dark:bg-on-surface-dark/10\"></div></div><div class=\"flex-1 rounded bg-on-surface/5 dark:bg-on-surface-dark/5\"></div></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 = []any{"mt-2 h-4 w-12 rounded " + t.PrimaryClass}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var14).String())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"></div></button>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -874,7 +1212,7 @@ func themeShowcase() templ.Component {
 	})
 }
 
-func themeCSSOutput() templ.Component {
+func themeTypographySection() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -895,12 +1233,877 @@ func themeCSSOutput() templ.Component {
 			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt\"><span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">CSS Variables</span> <button @click=\"copyCSS()\" class=\"flex items-center gap-1.5 rounded-radius px-3 py-1.5 text-xs font-medium bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\"><span x-text=\"copied ? 'Copied!' : 'Copy CSS'\">Copy CSS</span></button></div><pre class=\"p-4 text-sm bg-neutral-950 text-neutral-200 overflow-x-auto max-h-96 overflow-y-auto\"><code x-text=\"currentCSS\"></code></pre></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">Typography</h2><div class=\"grid gap-4 sm:grid-cols-2\"><label class=\"block\"><span class=\"block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Title Font Family</span> <select x-model=\"titleFont\" class=\"w-full rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, f := range getFontOptions() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<option value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(f.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 992, Col: 29}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var18 string
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(f.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 992, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</option>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</select></label> <label class=\"block\"><span class=\"block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Body Font Family</span> <select x-model=\"bodyFont\" class=\"w-full rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, f := range getFontOptions() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<option value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var19 string
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(f.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1003, Col: 29}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var20 string
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(f.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1003, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</option>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</select></label></div><p class=\"mt-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Picking a font lazy-loads it from Google Fonts. Choose \"Default\" to fall back to the active theme&apos;s font.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
+}
+
+func themeBorderSection() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var21 == nil {
+			templ_7745c5c3_Var21 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">Border</h2><div class=\"grid gap-6 md:grid-cols-2\"><div><span class=\"block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Border Color</span><div class=\"flex items-center gap-3\"><input type=\"color\" :value=\"resolved['outline'] || '#cccccc'\" @input=\"setColor('outline', $event.target.value)\" class=\"size-10 rounded-radius border border-outline dark:border-outline-dark cursor-pointer bg-surface dark:bg-surface-dark\" aria-label=\"Border color\"> <button @click=\"clearColor('outline')\" class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark\">Reset</button> <span class=\"text-xs font-mono text-on-surface-muted dark:text-on-surface-dark-muted\" x-text=\"resolved['outline']\"></span></div></div><div><span class=\"block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Border Radius</span><div class=\"inline-flex flex-wrap gap-1 rounded-radius border border-outline dark:border-outline-dark p-1 bg-surface-alt dark:bg-surface-dark-alt\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, r := range getRadiusOptions() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<button data-radius=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var22 string
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(r.Key)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1040, Col: 26}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" @click=\"radius = $el.dataset.radius\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius transition-colors\" :class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var23 string
+			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("radius === '%s' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark hover:bg-surface dark:hover:bg-surface-dark'", r.Key))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1043, Col: 221}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var24 string
+			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(r.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1044, Col: 16}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</button> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<button @click=\"radius = ''\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius transition-colors\" :class=\"radius === '' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark hover:bg-surface dark:hover:bg-surface-dark'\">auto</button></div></div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func themeColorEditorSection() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var25 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var25 == nil {
+			templ_7745c5c3_Var25 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">Colors</h2><div class=\"grid gap-8 lg:grid-cols-2\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = colorGroup("Light Mode Colors", getLightTokens()).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = colorGroup("Dark Mode Colors", getDarkTokens()).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = colorGroup("Shared Colors", getSharedTokens()).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func colorGroup(title string, tokens []colorToken) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var26 == nil {
+			templ_7745c5c3_Var26 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"mt-6 first:mt-0\"><h3 class=\"text-sm font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-3\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var27 string
+		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1070, Col: 127}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</h3><div class=\"grid grid-cols-1 sm:grid-cols-2 gap-3\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, t := range tokens {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<div class=\"flex items-center gap-3 rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark p-2\"><input type=\"color\" data-token=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var28 string
+			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1076, Col: 24}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" :value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var29 string
+			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue("resolved['" + t.Key + "'] || '#888888'")
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1077, Col: 55}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" @input=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var30 string
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("setColor('%s', $event.target.value)", t.Key))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1078, Col: 72}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "\" class=\"size-9 shrink-0 rounded-radius border border-outline dark:border-outline-dark cursor-pointer bg-surface dark:bg-surface-dark\" aria-label=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var31 string
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1080, Col: 26}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "\"><div class=\"min-w-0 flex-1\"><p class=\"text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong truncate\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var32 string
+			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1083, Col: 111}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</p><p class=\"text-[10px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" x-text=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var33 string
+			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue("resolved['" + t.Key + "']")
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1084, Col: 138}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\"></p></div><button data-token=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var34 string
+			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1087, Col: 24}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "\" @click=\"clearColor($el.dataset.token)\" class=\"text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark shrink-0\" aria-label=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var35 string
+			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue("Reset " + t.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1090, Col: 37}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\">Reset</button></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func themePreviewSection() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var36 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var36 == nil {
+			templ_7745c5c3_Var36 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4\">Preview</h2><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span></div><div class=\"bg-surface dark:bg-surface-dark p-6 space-y-8\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewTypography().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewButtons().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewSteps().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewToggles().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewAvatars().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewToasts().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func previewTypography() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var37 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var37 == nil {
+			templ_7745c5c3_Var37 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"space-y-3\"><h3 class=\"font-title text-4xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Main Title</h3><h4 class=\"font-title text-xl font-semibold text-primary dark:text-primary-dark\">Primary Subtitle</h4><p class=\"text-on-surface dark:text-on-surface-dark max-w-2xl\">The Goshtoso color palette consists of 28 different colors that you can customize and assign from the Tailwind CSS color options.</p><h4 class=\"font-title text-xl font-semibold text-secondary dark:text-secondary-dark mt-4\">Secondary Subtitle</h4><p class=\"text-on-surface dark:text-on-surface-dark max-w-2xl\">There are 10 different color options for each light and dark mode, with 8 colors shared across both modes.</p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func previewButtons() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var38 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var38 == nil {
+			templ_7745c5c3_Var38 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<div><h5 class=\"text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Buttons</h5><div class=\"flex flex-wrap gap-2\"><button class=\"px-4 py-2 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark text-sm font-medium hover:opacity-90 transition-opacity\">Primary</button> <button class=\"px-4 py-2 rounded-radius bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark text-sm font-medium hover:opacity-90 transition-opacity\">Secondary</button> <button class=\"px-4 py-2 rounded-radius bg-info text-on-info text-sm font-medium hover:opacity-90 transition-opacity\">Info</button> <button class=\"px-4 py-2 rounded-radius bg-danger text-on-danger text-sm font-medium hover:opacity-90 transition-opacity\">Danger</button> <button class=\"px-4 py-2 rounded-radius bg-warning text-on-warning text-sm font-medium hover:opacity-90 transition-opacity\">Warning</button> <button class=\"px-4 py-2 rounded-radius bg-success text-on-success text-sm font-medium hover:opacity-90 transition-opacity\">Success</button></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func previewSteps() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var39 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var39 == nil {
+			templ_7745c5c3_Var39 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div><h5 class=\"text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Steps</h5><ol class=\"flex items-center w-full max-w-xl\"><li class=\"flex w-full items-center text-primary dark:text-primary-dark after:content-[''] after:w-full after:h-1 after:border-b after:border-primary after:border-2 after:inline-block dark:after:border-primary-dark\"><span class=\"flex items-center justify-center size-8 rounded-full bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark shrink-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"3\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 13l4 4L19 7\"></path></svg></span></li><li class=\"flex w-full items-center text-on-surface dark:text-on-surface-dark after:content-[''] after:w-full after:h-1 after:border-b after:border-outline after:border-2 after:inline-block dark:after:border-outline-dark\"><span class=\"flex items-center justify-center size-8 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface-strong dark:text-on-surface-dark-strong shrink-0 text-sm font-semibold\">2</span></li><li class=\"flex w-full items-center text-on-surface dark:text-on-surface-dark after:content-[''] after:w-full after:h-1 after:border-b after:border-outline after:border-2 after:inline-block dark:after:border-outline-dark\"><span class=\"flex items-center justify-center size-8 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface-strong dark:text-on-surface-dark-strong shrink-0 text-sm font-semibold\">3</span></li><li class=\"flex items-center text-on-surface dark:text-on-surface-dark\"><span class=\"flex items-center justify-center size-8 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface-strong dark:text-on-surface-dark-strong shrink-0 text-sm font-semibold\">4</span></li></ol></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func previewToggles() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var40 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var40 == nil {
+			templ_7745c5c3_Var40 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div x-data=\"{ s: [true,false,true,true,false,true] }\"><h5 class=\"text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Toggles</h5><div class=\"flex flex-wrap items-center gap-4\"><template x-for=\"(v, i) in s\" :key=\"i\"><label class=\"flex items-center gap-2 text-sm text-on-surface dark:text-on-surface-dark\"><button type=\"button\" @click=\"s[i] = !s[i]\" class=\"relative inline-flex h-6 w-11 items-center rounded-full transition-colors\" :class=\"s[i] ? 'bg-primary dark:bg-primary-dark' : 'bg-on-surface/20 dark:bg-on-surface-dark/20'\"><span class=\"inline-block size-4 transform rounded-full bg-white transition-transform\" :class=\"s[i] ? 'translate-x-6' : 'translate-x-1'\"></span></button> <span>Toggle</span></label></template></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func previewAvatars() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var41 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var41 == nil {
+			templ_7745c5c3_Var41 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div><h5 class=\"text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Avatars</h5><div class=\"flex flex-wrap items-center gap-3\"><div class=\"size-10 rounded-full bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark flex items-center justify-center text-sm font-bold\">SH</div><div class=\"size-10 rounded-full bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark flex items-center justify-center text-sm font-bold\">SH</div><div class=\"size-10 rounded-full bg-info text-on-info flex items-center justify-center text-sm font-bold\">SH</div><div class=\"size-10 rounded-full bg-success text-on-success flex items-center justify-center text-sm font-bold\">SH</div><div class=\"size-10 rounded-full bg-warning text-on-warning flex items-center justify-center text-sm font-bold\">SH</div><div class=\"size-10 rounded-full bg-danger text-on-danger flex items-center justify-center text-sm font-bold\">SH</div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func previewToasts() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var42 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var42 == nil {
+			templ_7745c5c3_Var42 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<div><h5 class=\"text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Toast Notifications</h5><div class=\"space-y-2 max-w-md\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewToast("info", "Update Available", "A new version is available. Please update to the latest version.").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewToast("success", "Successfully Subscribed", "Success! You’ve subscribed to our newsletter. Welcome aboard!").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewToast("warning", "Credit Card Expires Soon", "Your credit card expires soon. Please update your payment information.").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = previewToast("danger", "Invalid Email Address", "The email address you entered is invalid. Please try again.").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func previewToast(kind, title, body string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var43 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var43 == nil {
+			templ_7745c5c3_Var43 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		var templ_7745c5c3_Var44 = []any{"flex items-start gap-3 rounded-radius border border-outline dark:border-outline-dark p-3 bg-surface dark:bg-surface-dark"}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var44...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<div class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var45 string
+		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var44).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var46 = []any{"mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-" + kind + " text-on-" + kind}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var46...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<span class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var47 string
+		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var46).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if kind == "success" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-3.5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"3\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 13l4 4L19 7\"></path></svg>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if kind == "warning" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-3.5\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 2L1 21h22L12 2zm0 6l7.5 13h-15L12 8zm-1 3v5h2v-5h-2zm0 6v2h2v-2h-2z\"></path></svg>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if kind == "danger" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-3.5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"3\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-3.5\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z\"></path></svg>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</span><div class=\"min-w-0 flex-1\"><p class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var48 string
+		templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1233, Col: 99}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "</p><p class=\"text-xs text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var49 string
+		templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(body)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1234, Col: 70}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</p></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func themeContrastSection() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var50 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var50 == nil {
+			templ_7745c5c3_Var50 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Color Contrast Checker</h2><p class=\"text-sm text-on-surface dark:text-on-surface-dark mb-4\">Pick a color to see its WCAG contrast ratio against the rest of the active theme&apos;s palette.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div role=\"tablist\" class=\"flex border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt\"><button role=\"tab\" @click=\"contrastTab = 'colors'\" :class=\"contrastTab === 'colors' ? 'bg-surface dark:bg-surface-dark border-b-2 border-primary dark:border-primary-dark text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark hover:bg-surface dark:hover:bg-surface-dark'\" class=\"px-4 py-2 text-sm font-medium transition-colors\">Colors</button> <button role=\"tab\" @click=\"contrastTab = 'css'\" :class=\"contrastTab === 'css' ? 'bg-surface dark:bg-surface-dark border-b-2 border-primary dark:border-primary-dark text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark hover:bg-surface dark:hover:bg-surface-dark'\" class=\"px-4 py-2 text-sm font-medium transition-colors\">CSS</button></div><div class=\"p-4 bg-surface dark:bg-surface-dark\"><div x-show=\"contrastTab === 'colors'\" class=\"space-y-4\"><label class=\"block max-w-xs\"><span class=\"block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Base color</span> <select x-model=\"contrastBase\" class=\"w-full rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, t := range allEditableTokens() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<option value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var51 string
+			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1267, Col: 29}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var51)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var52 string
+			templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1267, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "</option>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "</select></label><div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2\"><template x-for=\"row in contrastPairs()\" :key=\"row.token\"><div class=\"flex items-center gap-3 rounded-radius border border-outline dark:border-outline-dark p-2 bg-surface dark:bg-surface-dark\"><span class=\"size-7 rounded-radius border border-outline dark:border-outline-dark shrink-0\" :style=\"'background-color:' + row.color\"></span><div class=\"min-w-0 flex-1\"><p class=\"text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong truncate\" x-text=\"row.token\"></p><p class=\"text-[10px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" x-text=\"row.color\"></p></div><div class=\"flex items-center gap-2 shrink-0\"><span class=\"text-xs font-mono tabular-nums text-on-surface dark:text-on-surface-dark\" x-text=\"row.ratio.toFixed(2) + ':1'\"></span> <span class=\"text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded\" :class=\"gradeClass(row.ratio)\" x-text=\"row.grade\"></span></div></div></template></div></div><div x-show=\"contrastTab === 'css'\" x-cloak class=\"space-y-4\"><div class=\"grid gap-3 sm:grid-cols-2\"><label class=\"block\"><span class=\"block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Foreground</span><div class=\"flex items-center gap-2\"><input type=\"color\" x-model=\"contrastCustomFg\" class=\"size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer\"> <input type=\"text\" x-model=\"contrastCustomFg\" class=\"flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div></label> <label class=\"block\"><span class=\"block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Background</span><div class=\"flex items-center gap-2\"><input type=\"color\" x-model=\"contrastCustomBg\" class=\"size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer\"> <input type=\"text\" x-model=\"contrastCustomBg\" class=\"flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div></label></div><div class=\"rounded-radius border border-outline dark:border-outline-dark p-4 flex items-center justify-between gap-4\" :style=\"'background-color:' + contrastCustomBg + ';color:' + contrastCustomFg\"><p class=\"font-medium\">The quick brown fox jumps over the lazy dog.</p><div class=\"text-right shrink-0\"><p class=\"text-xl font-bold tabular-nums\" x-text=\"customContrast().ratio.toFixed(2) + ':1'\"></p><p class=\"text-xs font-semibold uppercase\" x-text=\"customContrast().grade\"></p></div></div></div></div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func themeCSSSection() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var53 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var53 == nil {
+			templ_7745c5c3_Var53 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Get CSS Code</h2><p class=\"text-sm text-on-surface dark:text-on-surface-dark mb-4\">Copy the code below and paste it into your CSS file.</p><div class=\"flex flex-wrap items-center gap-3 mb-3\"><label class=\"block\"><span class=\"sr-only\">Theme filter</span> <select x-model=\"cssFilter\" class=\"rounded-radius border border-outline bg-surface text-on-surface px-3 py-1.5 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"><option value=\"current\">Active theme</option> <option value=\"all\">All Themes</option> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, k := range sortedThemeKeys() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<option value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var54 string
+			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(k)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1334, Col: 23}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var55 string
+			templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.JoinStringErrs(themeLabel(k))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1334, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var55))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "</option>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "</select></label><div class=\"inline-flex rounded-radius border border-outline dark:border-outline-dark p-0.5 bg-surface-alt dark:bg-surface-dark-alt\"><button @click=\"cssMode = 'single'\" class=\"px-3 py-1 text-xs font-medium rounded-radius transition-colors\" :class=\"cssMode === 'single' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'\">Single Theme</button> <button @click=\"cssMode = 'multiple'\" class=\"px-3 py-1 text-xs font-medium rounded-radius transition-colors\" :class=\"cssMode === 'multiple' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'\">Multiple Themes</button></div></div><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt\"><span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">CSS Variables</span> <button @click=\"copyCSS()\" class=\"flex items-center gap-1.5 rounded-radius px-3 py-1.5 text-xs font-medium bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\"><span x-text=\"copied ? 'Copied!' : 'Copy CSS'\">Copy CSS</span></button></div><pre class=\"p-4 text-sm bg-neutral-950 text-neutral-200 overflow-x-auto max-h-96 overflow-y-auto\"><code x-text=\"cssCode()\"></code></pre></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func themeLabel(key string) string {
+	for _, t := range getThemeInfos() {
+		if t.Key == key {
+			return t.Label
+		}
+	}
+	return key
 }
 
 var _ = templruntime.GeneratedTemplate
