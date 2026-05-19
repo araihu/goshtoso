@@ -283,11 +283,11 @@ func comboboxDemoPreview() templ.Component {
 			Placeholder: "Select a user",
 			Name:        "user",
 			Options: []combobox.Option{
-				{Value: "aiden", Label: "Aiden Walker", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-1.webp"},
-				{Value: "bob", Label: "Bob Johnson", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-2.webp"},
-				{Value: "emily", Label: "Emily Rodriguez", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-3.webp"},
-				{Value: "emma", Label: "Emma Thompson", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-4.webp"},
-				{Value: "alex", Label: "Alex Martinez", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-5.webp"},
+				{Value: "aiden", Label: "Aiden Walker", Img: "/assets/images/avatars/avatar-1.webp"},
+				{Value: "bob", Label: "Bob Johnson", Img: "/assets/images/avatars/avatar-2.webp"},
+				{Value: "emily", Label: "Emily Rodriguez", Img: "/assets/images/avatars/avatar-3.webp"},
+				{Value: "emma", Label: "Emma Thompson", Img: "/assets/images/avatars/avatar-4.webp"},
+				{Value: "alex", Label: "Alex Martinez", Img: "/assets/images/avatars/avatar-5.webp"},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

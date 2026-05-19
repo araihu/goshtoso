@@ -152,7 +152,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:  "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:  "/assets/images/avatars/avatar-8.webp",
 			Alt:  "User Avatar",
 			Size: avatar.SizeMD,
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -160,7 +160,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:         "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:         "/assets/images/avatars/avatar-8.webp",
 			Alt:         "User Avatar Large",
 			Size:        avatar.SizeLG,
 			Border:      true,
@@ -170,7 +170,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:    "/assets/images/avatars/avatar-8.webp",
 			Alt:    "User with Status",
 			Size:   avatar.SizeMD,
 			Status: avatar.StatusSuccess,
@@ -179,7 +179,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:    "/assets/images/avatars/avatar-8.webp",
 			Alt:    "User Offline",
 			Size:   avatar.SizeMD,
 			Status: avatar.StatusOffline,
@@ -277,7 +277,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:    "/assets/images/avatars/avatar-8.webp",
 			Alt:    "Offline",
 			Size:   avatar.SizeMD,
 			Status: avatar.StatusOffline,
@@ -286,7 +286,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:    "/assets/images/avatars/avatar-8.webp",
 			Alt:    "Info",
 			Size:   avatar.SizeMD,
 			Status: avatar.StatusInfo,
@@ -295,7 +295,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:    "/assets/images/avatars/avatar-8.webp",
 			Alt:    "Online",
 			Size:   avatar.SizeMD,
 			Status: avatar.StatusSuccess,
@@ -304,7 +304,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:    "/assets/images/avatars/avatar-8.webp",
 			Alt:    "Away",
 			Size:   avatar.SizeMD,
 			Status: avatar.StatusWarning,
@@ -313,7 +313,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:    "/assets/images/avatars/avatar-8.webp",
 			Alt:    "Busy",
 			Size:   avatar.SizeMD,
 			Status: avatar.StatusDanger,
@@ -419,7 +419,7 @@ func avatarDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:   "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+			Src:   "/assets/images/avatars/avatar-8.webp",
 			Alt:   "Square",
 			Shape: avatar.ShapeSquare,
 			Size:  avatar.SizeMD,

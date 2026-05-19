@@ -158,7 +158,7 @@ func cardDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = card.Card(card.Config{
-			Image:       "https://penguinui.s3.amazonaws.com/component-assets/card-img-1.webp",
+			Image:       "/assets/images/cards/card-img-1.webp",
 			ImageAlt:    "A penguin robot talking with a human",
 			Tag:         "Features",
 			Title:       "Penguai can teach you Javascript",
@@ -172,7 +172,7 @@ func cardDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = card.Card(card.Config{
-			Image:       "https://penguinui.s3.amazonaws.com/component-assets/card-img-2.webp",
+			Image:       "/assets/images/cards/card-img-2.webp",
 			ImageAlt:    "Mediterranean coastal village",
 			Title:       "Mediterranean Escape",
 			Description: "Relax under the sun, savor delicious cuisine, and create memories that last a lifetime. Book your getaway now.",
@@ -187,7 +187,7 @@ func cardDemoPreview() templ.Component {
 		}
 		templ_7745c5c3_Err = card.Card(card.Config{
 			Layout:      card.LayoutHorizontal,
-			Image:       "https://penguinui.s3.amazonaws.com/component-assets/card-img-4.webp",
+			Image:       "/assets/images/cards/card-img-4.webp",
 			ImageAlt:    "Man wearing VR goggles",
 			Tag:         "Artificial Intelligence",
 			Title:       "AI-Powered VR Goggles Redefine Reality",
@@ -309,7 +309,7 @@ func ecommerceProductCard() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<article class=\"group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"h-44 md:h-64 overflow-hidden\"><img src=\"https://penguinui.s3.amazonaws.com/component-assets/card-img-3.webp\" class=\"object-cover transition duration-700 ease-out group-hover:scale-105\" alt=\"CASIO G-SHOCK GA2100\"></div><div class=\"flex flex-col gap-4 p-6\"><div class=\"flex flex-col md:flex-row gap-4 md:gap-12 justify-between\"><div class=\"flex flex-col\"><h3 class=\"text-lg lg:text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">CASIO G-SHOCK GA2100</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<article class=\"group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"h-44 md:h-64 overflow-hidden\"><img src=\"/assets/images/cards/card-img-3.webp\" class=\"object-cover transition duration-700 ease-out group-hover:scale-105\" alt=\"CASIO G-SHOCK GA2100\"></div><div class=\"flex flex-col gap-4 p-6\"><div class=\"flex flex-col md:flex-row gap-4 md:gap-12 justify-between\"><div class=\"flex flex-col\"><h3 class=\"text-lg lg:text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">CASIO G-SHOCK GA2100</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -436,7 +436,7 @@ func testimonialCard() templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<article class=\"group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-12 text-on-surface-strong dark:text-on-surface-dark-strong group-hover:scale-105 transition duration-500 ease-out\" aria-hidden=\"true\"><path d=\"M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388q0-.527.062-1.054.093-.558.31-.992t.559-.683q.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 9 7.558V11a1 1 0 0 0 1 1zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612q0-.527.062-1.054.094-.558.31-.992.217-.434.559-.683.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 3 7.558V11a1 1 0 0 0 1 1z\"></path></svg><p class=\"mt-2 text-pretty text-sm\">Simply put, this software transformed my workflow! Its intuitive interface and powerful features make tasks a breeze. A game-changer for productivity!</p><div class=\"flex flex-col-reverse md:flex-row md:items-center mt-8 justify-between gap-6\"><div class=\"flex items-center gap-2\"><img src=\"https://penguinui.s3.amazonaws.com/component-assets/avatar-1.webp\" class=\"size-10 rounded-full object-cover\" alt=\"Bob Johnson\"><div class=\"flex flex-col gap-1\"><h3 class=\"font-bold leading-4 text-on-surface-strong dark:text-on-surface-dark-strong\">Bob Johnson</h3><span class=\"text-xs\">CEO - TechNova</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<article class=\"group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-12 text-on-surface-strong dark:text-on-surface-dark-strong group-hover:scale-105 transition duration-500 ease-out\" aria-hidden=\"true\"><path d=\"M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388q0-.527.062-1.054.093-.558.31-.992t.559-.683q.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 9 7.558V11a1 1 0 0 0 1 1zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612q0-.527.062-1.054.094-.558.31-.992.217-.434.559-.683.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 3 7.558V11a1 1 0 0 0 1 1z\"></path></svg><p class=\"mt-2 text-pretty text-sm\">Simply put, this software transformed my workflow! Its intuitive interface and powerful features make tasks a breeze. A game-changer for productivity!</p><div class=\"flex flex-col-reverse md:flex-row md:items-center mt-8 justify-between gap-6\"><div class=\"flex items-center gap-2\"><img src=\"/assets/images/avatars/avatar-1.webp\" class=\"size-10 rounded-full object-cover\" alt=\"Bob Johnson\"><div class=\"flex flex-col gap-1\"><h3 class=\"font-bold leading-4 text-on-surface-strong dark:text-on-surface-dark-strong\">Bob Johnson</h3><span class=\"text-xs\">CEO - TechNova</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

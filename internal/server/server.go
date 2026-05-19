@@ -288,19 +288,19 @@ func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
 		Variant: carousel.WithText,
 		Slides: []carousel.Slide{
 			{
-				ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp",
+				ImgSrc:      "/assets/images/carousel/slide-1.webp",
 				ImgAlt:      "Vibrant abstract painting with swirling blue and light pink hues on a canvas.",
 				Title:       "Loaded via HTMX",
 				Description: fmt.Sprintf("This carousel was fetched from the server at %s.", time.Now().Format("15:04:05")),
 			},
 			{
-				ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp",
+				ImgSrc:      "/assets/images/carousel/slide-2.webp",
 				ImgAlt:      "Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.",
 				Title:       "Dynamic Content",
 				Description: "Slides can come from a database, API, or any backend source.",
 			},
 			{
-				ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-3.webp",
+				ImgSrc:      "/assets/images/carousel/slide-3.webp",
 				ImgAlt:      "Vibrant abstract painting with swirling blue and purple hues on a canvas.",
 				Title:       "HTMX + Alpine.js",
 				Description: "Server delivers HTML fragments, Alpine handles interactivity.",
