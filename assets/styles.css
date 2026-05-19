@@ -79,12 +79,14 @@
     --color-purple-400: oklch(71.4% 0.203 305.504);
     --color-purple-500: oklch(62.7% 0.265 303.9);
     --color-purple-600: oklch(55.8% 0.288 302.321);
+    --color-purple-700: oklch(49.6% 0.265 301.924);
     --color-purple-800: oklch(43.8% 0.218 303.724);
     --color-fuchsia-500: oklch(66.7% 0.295 322.15);
     --color-fuchsia-600: oklch(59.1% 0.293 322.896);
     --color-pink-400: oklch(71.8% 0.202 349.761);
     --color-pink-500: oklch(65.6% 0.241 354.308);
     --color-pink-600: oklch(59.2% 0.249 0.584);
+    --color-pink-700: oklch(52.5% 0.223 3.958);
     --color-rose-400: oklch(71.2% 0.194 13.428);
     --color-rose-500: oklch(64.5% 0.246 16.439);
     --color-slate-50: oklch(98.4% 0.003 247.858);
@@ -607,9 +609,6 @@
       max-width: 96rem;
     }
   }
-  .\!m-0 {
-    margin: calc(var(--spacing) * 0) !important;
-  }
   .mx-4 {
     margin-inline: calc(var(--spacing) * 4);
   }
@@ -905,9 +904,6 @@
   }
   .max-h-80 {
     max-height: calc(var(--spacing) * 80);
-  }
-  .max-h-96 {
-    max-height: calc(var(--spacing) * 96);
   }
   .max-h-svh {
     max-height: 100svh;
@@ -1463,9 +1459,6 @@
   .overflow-y-auto {
     overflow-y: auto;
   }
-  .\!rounded-none {
-    border-radius: 0 !important;
-  }
   .rounded {
     border-radius: 0.25rem;
   }
@@ -1706,9 +1699,6 @@
   .bg-emerald-700 {
     background-color: var(--color-emerald-700);
   }
-  .bg-green-100 {
-    background-color: var(--color-green-100);
-  }
   .bg-green-400 {
     background-color: var(--color-green-400);
   }
@@ -1765,9 +1755,6 @@
   }
   .bg-neutral-800 {
     background-color: var(--color-neutral-800);
-  }
-  .bg-neutral-950 {
-    background-color: var(--color-neutral-950);
   }
   .bg-on-surface {
     background-color: var(--color-on-surface);
@@ -2559,14 +2546,8 @@
   .text-green-700 {
     color: var(--color-green-700);
   }
-  .text-green-800 {
-    color: var(--color-green-800);
-  }
   .text-info {
     color: var(--color-info);
-  }
-  .text-neutral-200 {
-    color: var(--color-neutral-200);
   }
   .text-neutral-600 {
     color: var(--color-neutral-600);
@@ -4470,6 +4451,11 @@
       opacity: 50%;
     }
   }
+  .disabled\:opacity-60 {
+    &:disabled {
+      opacity: 60%;
+    }
+  }
   .disabled\:opacity-75 {
     &:disabled {
       opacity: 75%;
@@ -5136,11 +5122,6 @@
       }
     }
   }
-  .dark\:bg-green-900 {
-    &:where(.dark, .dark *) {
-      background-color: var(--color-green-900);
-    }
-  }
   .dark\:bg-info {
     &:where(.dark, .dark *) {
       background-color: var(--color-info);
@@ -5499,11 +5480,6 @@
   .dark\:text-danger {
     &:where(.dark, .dark *) {
       color: var(--color-danger);
-    }
-  }
-  .dark\:text-green-200 {
-    &:where(.dark, .dark *) {
-      color: var(--color-green-200);
     }
   }
   .dark\:text-green-300 {
@@ -7401,6 +7377,64 @@
     --color-danger: #ff5555;
     --color-on-danger: #282a36;
     --radius-radius: var(--radius-md);
+  }
+}
+.codeblock {
+  background-color: var(--color-surface-alt);
+  color: var(--color-on-surface);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+.dark .codeblock {
+  background-color: var(--color-surface-dark-alt);
+  color: var(--color-on-surface-dark);
+}
+.codeblock pre.ch-chroma {
+  background: transparent;
+  margin: 0;
+  padding: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.codeblock pre.ch-chroma code {
+  background: transparent;
+  padding: 0;
+  display: block;
+}
+.codeblock .ch-nt, .codeblock .ch-nf, .codeblock .ch-fm, .codeblock .ch-nc, .codeblock .ch-nd, .codeblock .ch-ne, .codeblock .ch-nl {
+  color: var(--color-pink-700);
+}
+.dark .codeblock .ch-nt, .dark .codeblock .ch-nf, .dark .codeblock .ch-fm, .dark .codeblock .ch-nc, .dark .codeblock .ch-nd, .dark .codeblock .ch-ne, .dark .codeblock .ch-nl {
+  color: var(--color-pink-400);
+}
+.codeblock .ch-k, .codeblock .ch-kc, .codeblock .ch-kd, .codeblock .ch-kn, .codeblock .ch-kp, .codeblock .ch-kr, .codeblock .ch-kt, .codeblock .ch-na, .codeblock .ch-nb, .codeblock .ch-bp, .codeblock .ch-no, .codeblock .ch-nn, .codeblock .ch-py, .codeblock .ch-nv, .codeblock .ch-vc, .codeblock .ch-vg, .codeblock .ch-vi, .codeblock .ch-vm, .codeblock .ch-ow {
+  color: var(--color-purple-700);
+}
+.dark .codeblock .ch-k, .dark .codeblock .ch-kc, .dark .codeblock .ch-kd, .dark .codeblock .ch-kn, .dark .codeblock .ch-kp, .dark .codeblock .ch-kr, .dark .codeblock .ch-kt, .dark .codeblock .ch-na, .dark .codeblock .ch-nb, .dark .codeblock .ch-bp, .dark .codeblock .ch-no, .dark .codeblock .ch-nn, .dark .codeblock .ch-py, .dark .codeblock .ch-nv, .dark .codeblock .ch-vc, .dark .codeblock .ch-vg, .dark .codeblock .ch-vi, .dark .codeblock .ch-vm, .dark .codeblock .ch-ow {
+  color: var(--color-purple-400);
+}
+.codeblock .ch-s, .codeblock .ch-s1, .codeblock .ch-s2, .codeblock .ch-sa, .codeblock .ch-sb, .codeblock .ch-sc, .codeblock .ch-sd, .codeblock .ch-se, .codeblock .ch-sh, .codeblock .ch-si, .codeblock .ch-sr, .codeblock .ch-ss, .codeblock .ch-sx, .codeblock .ch-dl, .codeblock .ch-m, .codeblock .ch-mi, .codeblock .ch-mf, .codeblock .ch-mh, .codeblock .ch-mo, .codeblock .ch-mb, .codeblock .ch-il {
+  color: var(--color-blue-700);
+}
+.dark .codeblock .ch-s, .dark .codeblock .ch-s1, .dark .codeblock .ch-s2, .dark .codeblock .ch-sa, .dark .codeblock .ch-sb, .dark .codeblock .ch-sc, .dark .codeblock .ch-sd, .dark .codeblock .ch-se, .dark .codeblock .ch-sh, .dark .codeblock .ch-si, .dark .codeblock .ch-sr, .dark .codeblock .ch-ss, .dark .codeblock .ch-sx, .dark .codeblock .ch-dl, .dark .codeblock .ch-m, .dark .codeblock .ch-mi, .dark .codeblock .ch-mf, .dark .codeblock .ch-mh, .dark .codeblock .ch-mo, .dark .codeblock .ch-mb, .dark .codeblock .ch-il {
+  color: var(--color-blue-400);
+}
+.codeblock .ch-c, .codeblock .ch-ch, .codeblock .ch-cm, .codeblock .ch-c1, .codeblock .ch-cs, .codeblock .ch-cp, .codeblock .ch-cpf {
+  color: var(--color-on-surface-muted);
+  font-style: italic;
+}
+.dark .codeblock .ch-c, .dark .codeblock .ch-ch, .dark .codeblock .ch-cm, .dark .codeblock .ch-c1, .dark .codeblock .ch-cs, .dark .codeblock .ch-cp, .dark .codeblock .ch-cpf {
+  color: var(--color-on-surface-dark-muted);
+}
+.codeblock .ch-p, .codeblock .ch-o {
+  color: color-mix(in srgb, oklch(26.9% 0 0) 70%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    color: color-mix(in srgb, var(--color-on-surface) 70%, transparent);
+  }
+}
+.dark .codeblock .ch-p, .dark .codeblock .ch-o {
+  color: color-mix(in srgb, oklch(87% 0 0) 70%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    color: color-mix(in srgb, var(--color-on-surface-dark) 70%, transparent);
   }
 }
 @font-face {

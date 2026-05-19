@@ -6,7 +6,8 @@ var idCounter int
 
 // Config holds configuration for the code block component
 type Config struct {
-	// Language is the Prism.js language class (e.g. "go", "bash", "html")
+	// Language selects the Chroma lexer (e.g. "go", "bash", "html", "css").
+	// "templ" aliases to the Go lexer. Unknown values fall back to plain text.
 	Language string
 	// Code is the source code to display
 	Code string

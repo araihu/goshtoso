@@ -11,6 +11,7 @@ import (
 
 	"github.com/araihu/goshtoso/components/carousel"
 	combobox "github.com/araihu/goshtoso/components/combobox/v2"
+	"github.com/araihu/goshtoso/internal/pages/demo"
 	"github.com/araihu/goshtoso/internal/pages/demo/components"
 )
 
@@ -76,85 +77,32 @@ func (s *Server) setupRoutes() {
 }
 
 func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
-	// Extract component name from URL
 	path := strings.TrimPrefix(r.URL.Path, "/components/")
 	if path == "" {
 		http.Redirect(w, r, "/components/button", http.StatusMovedPermanently)
 		return
 	}
-
 	componentName := strings.Split(path, "/")[0]
+	s.renderDemo(w, r, "components/"+componentName)
+}
 
-	switch componentName {
-	case "button":
-		components.ButtonDemoPage().Render(r.Context(), w)
-	case "accordion":
-		components.AccordionDemoPage().Render(r.Context(), w)
-	case "sidebar":
-		components.SidebarDemoPage().Render(r.Context(), w)
-	case "avatar":
-		components.AvatarDemoPage().Render(r.Context(), w)
-	case "badge":
-		components.BadgeDemoPage().Render(r.Context(), w)
-	case "banner":
-		components.BannerDemoPage().Render(r.Context(), w)
-	case "card":
-		components.CardDemoPage().Render(r.Context(), w)
-	case "combobox":
-		components.ComboboxDemoPage().Render(r.Context(), w)
-	case "combobox-new":
-		components.ComboboxNewPage().Render(r.Context(), w)
-	case "alert":
-		components.AlertDemoPage().Render(r.Context(), w)
-	case "modal":
-		components.ModalDemoPage().Render(r.Context(), w)
-	case "tabs":
-		components.TabsDemoPage().Render(r.Context(), w)
-	case "table":
-		components.TableDemoPage().Render(r.Context(), w)
-	case "toggle":
-		components.ToggleDemoPage().Render(r.Context(), w)
-	case "pagination":
-		components.PaginationDemoPage().Render(r.Context(), w)
-	case "checkbox":
-		components.CheckboxDemoPage().Render(r.Context(), w)
-	case "dropdown":
-		components.DropdownDemoPage().Render(r.Context(), w)
-	case "form":
-		components.FormDemoPage().Render(r.Context(), w)
-	case "select":
-		components.SelectDemoPage().Render(r.Context(), w)
-	case "spinner":
-		components.SpinnerDemoPage().Render(r.Context(), w)
-	case "steps":
-		components.StepsDemoPage().Render(r.Context(), w)
-	case "text-input":
-		components.TextInputDemoPage().Render(r.Context(), w)
-	case "textarea":
-		components.TextareaDemoPage().Render(r.Context(), w)
-	case "toast":
-		components.ToastDemoPage().Render(r.Context(), w)
-	case "tooltip":
-		components.TooltipDemoPage().Render(r.Context(), w)
-	case "breadcrumbs":
-		components.BreadcrumbsDemoPage().Render(r.Context(), w)
-	case "carousel":
-		components.CarouselDemoPage().Render(r.Context(), w)
-	case "navbar":
-		components.NavbarDemoPage().Render(r.Context(), w)
-	case "tags-list":
-		components.TagsListDemoPage().Render(r.Context(), w)
-	case "key-value":
-		components.KeyValueDemoPage().Render(r.Context(), w)
-	case "triplet":
-		components.TripletDemoPage().Render(r.Context(), w)
-	case "fileinput":
-		components.FileInputDemoPage().Render(r.Context(), w)
-	case "form-validation":
-		components.FormValidationDemoPage().Render(r.Context(), w)
-	default:
+// renderDemo picks the Layout (full document) or Fragment (HTMX swap) renderer
+// based on the HX-Request header, then looks the page up in the demo registry.
+// All sidebar-navigable pages flow through here so direct loads and fragment
+// nav stay in lock-step.
+func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) {
+	entry, ok := components.LookupDemo(key)
+	if !ok {
 		http.NotFound(w, r)
+		return
 	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content := entry.Content()
+	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+		demo.Fragment(entry.Title, entry.Active, content).Render(r.Context(), w)
+		return
+	}
+	demo.Layout(entry.Title, entry.Active, content).Render(r.Context(), w)
 }
 
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
@@ -270,11 +218,11 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
-	components.ThemeDemoPage().Render(r.Context(), w)
+	s.renderDemo(w, r, "docs/theme")
 }
 
 func (s *Server) handleGettingStarted(w http.ResponseWriter, r *http.Request) {
-	components.GettingStartedPage().Render(r.Context(), w)
+	s.renderDemo(w, r, "getting-started")
 }
 
 func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {

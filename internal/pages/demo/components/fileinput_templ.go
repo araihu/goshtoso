@@ -71,7 +71,6 @@ func fileInputDemoContent() templ.Component {
 				Description:   "A drag-and-drop file input component that allows users to browse or drag files into a drop zone.",
 				OriginalURL:   "/original/file-input/file-input-with-drag-and-drop.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			fileInputDemoPreview(),
 			`// Basic file input with drag and drop

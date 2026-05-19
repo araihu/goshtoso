@@ -71,7 +71,6 @@ func textInputDemoContent() templ.Component {
 				Description:   "Text inputs allow users to enter and edit text. Supports various types including password with toggle, search with icon, validation states, and input masks.",
 				OriginalURL:   "/original/text-input/default-text-input.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			textInputDemoPreview(),
 			`// Default text input

@@ -16,7 +16,6 @@ type ComponentDemoProps struct {
 	Description   string
 	OriginalURL   string // Link to original PenguinUI page
 	OriginalLabel string
-	GoshtosoLabel   string
 	Props         []PropDoc // Optional API reference table
 }
 
@@ -51,11 +50,6 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 
 		<!-- Demo Section -->
 		<div class="space-y-4">
-			<div class="flex items-center justify-between">
-				<h2 class="text-lg font-semibold font-title">{ props.GoshtosoLabel }</h2>
-				<span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Go + Templ</span>
-			</div>
-
 			<!-- Preview -->
 			<div class="border border-outline dark:border-outline-dark rounded-radius">
 				<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">

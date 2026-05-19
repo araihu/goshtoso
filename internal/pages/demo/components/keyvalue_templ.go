@@ -66,9 +66,8 @@ func keyValueDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Key Value",
-				Description:   "Dynamic key-value pair rows for labels, environment variables, and other map-style data. Powered by Alpine.js.",
-				GoshtosoLabel: "Goshtoso Component",
+				Title:       "Key Value",
+				Description: "Dynamic key-value pair rows for labels, environment variables, and other map-style data. Powered by Alpine.js.",
 			},
 			keyValueDemoPreview(),
 			`// Key-Value with initial entries

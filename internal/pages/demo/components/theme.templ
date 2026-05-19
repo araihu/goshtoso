@@ -5,8 +5,62 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/internal/pages/demo"
 )
+
+// themeCSSOrder is the deterministic visual order used by the "All Themes"
+// export so the multi-theme block reads top-down the same way the picker grid
+// does.
+var themeCSSOrder = []string{
+	"arctic", "high-contrast", "minimal", "modern", "neo-brutalism",
+	"halloween", "zombie", "pastel", "90s", "christmas",
+	"prototype", "news", "industrial", "totvs", "dracula",
+}
+
+func allThemesWrappedCSS() string {
+	blocks := getThemeCSSBlocks()
+	var sb strings.Builder
+	sb.WriteString("@layer base {\n")
+	for i, k := range themeCSSOrder {
+		if i > 0 {
+			sb.WriteString("\n")
+		}
+		// indent each block four spaces
+		for _, line := range strings.Split(blocks[k], "\n") {
+			if line == "" {
+				sb.WriteString("\n")
+				continue
+			}
+			sb.WriteString("    ")
+			sb.WriteString(line)
+			sb.WriteString("\n")
+		}
+	}
+	sb.WriteString("}\n")
+	return sb.String()
+}
+
+func wrapSingleTheme(key string) string {
+	blocks := getThemeCSSBlocks()
+	src, ok := blocks[key]
+	if !ok {
+		return ""
+	}
+	var sb strings.Builder
+	sb.WriteString("@layer base {\n")
+	for _, line := range strings.Split(src, "\n") {
+		if line == "" {
+			sb.WriteString("\n")
+			continue
+		}
+		sb.WriteString("    ")
+		sb.WriteString(line)
+		sb.WriteString("\n")
+	}
+	sb.WriteString("}\n")
+	return sb.String()
+}
 
 // ThemeInfo describes a theme tile in the picker grid.
 type ThemeInfo struct {
@@ -660,8 +714,13 @@ func themePageScript() string {
 	radii := getRadiusOptions()
 
 	var sb strings.Builder
-	sb.WriteString("document.addEventListener('alpine:init', () => {\n")
-	sb.WriteString("  Alpine.data('themePage', () => ({\n")
+	// Register immediately when Alpine is already up (HTMX-swapped re-visit
+	// of this page); fall back to alpine:init for the initial page load. The
+	// alpine:init listener only fires once per page, so a swap-injected
+	// script that arrives afterwards would never register.
+	sb.WriteString("(() => {\n")
+	sb.WriteString("  const register = () => {\n")
+	sb.WriteString("    Alpine.data('themePage', () => ({\n")
 	// state
 	sb.WriteString("    titleFont: localStorage.getItem('themeTitleFont') || '',\n")
 	sb.WriteString("    bodyFont: localStorage.getItem('themeBodyFont') || '',\n")
@@ -714,7 +773,7 @@ func themePageScript() string {
 	// theme css blocks (used by CSS code section)
 	sb.WriteString("    blocks: {\n")
 	for key, css := range blocks {
-		sb.WriteString(fmt.Sprintf("      '%s': `%s`,\n", key, css))
+		sb.WriteString(fmt.Sprintf("        '%s': `%s`,\n", key, css))
 	}
 	sb.WriteString("    },\n")
 
@@ -886,8 +945,17 @@ func themePageScript() string {
 	}
 	sb.WriteString("],\n")
 
-	sb.WriteString("  }));\n")
-	sb.WriteString("});\n")
+	sb.WriteString("    }));\n")
+	sb.WriteString("    document.querySelectorAll('[x-data=\"themePage\"]').forEach((el) => {\n")
+	sb.WriteString("      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);\n")
+	sb.WriteString("    });\n")
+	sb.WriteString("  };\n")
+	sb.WriteString("  if (window.Alpine && window.Alpine.version) {\n")
+	sb.WriteString("    register();\n")
+	sb.WriteString("  } else {\n")
+	sb.WriteString("    document.addEventListener('alpine:init', register);\n")
+	sb.WriteString("  }\n")
+	sb.WriteString("})();\n")
 	return sb.String()
 }
 
@@ -1318,15 +1386,21 @@ templ themeContrastSection() {
 }
 
 templ themeCSSSection() {
+	{{ blocks := getThemeCSSBlocks() }}
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Get CSS Code</h2>
-		<p class="text-sm text-on-surface dark:text-on-surface-dark mb-4">Copy the code below and paste it into your CSS file.</p>
+		<p class="text-sm text-on-surface dark:text-on-surface-dark mb-4">
+			Copy the code below and paste it into your CSS file. Pick a single theme or export every theme wrapped in a shared
+			<code class="rounded bg-surface-alt px-1 py-0.5 text-xs font-mono text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">{ "@layer base" }</code>
+			block.
+		</p>
 		<div class="flex flex-wrap items-center gap-3 mb-3">
 			<label class="block">
 				<span class="sr-only">Theme filter</span>
 				<select
 					x-model="cssFilter"
-					class="rounded-radius border border-outline bg-surface text-on-surface px-3 py-1.5 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
+					:disabled="cssMode === 'multiple' && cssFilter === 'all'"
+					class="rounded-radius border border-outline bg-surface text-on-surface px-3 py-1.5 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark disabled:opacity-60"
 				>
 					<option value="current">Active theme</option>
 					<option value="all">All Themes</option>
@@ -1348,19 +1422,67 @@ templ themeCSSSection() {
 				>Multiple Themes</button>
 			</div>
 		</div>
-		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
-			<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
-				<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">CSS Variables</span>
-				<button
-					@click="copyCSS()"
-					class="flex items-center gap-1.5 rounded-radius px-3 py-1.5 text-xs font-medium bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity"
-				>
-					<span x-text="copied ? 'Copied!' : 'Copy CSS'">Copy CSS</span>
-				</button>
+		<div class="space-y-3">
+			<!-- Single mode, per-theme blocks (and "all" concatenated). -->
+			for _, k := range themeCSSOrder {
+				<div x-show={ fmt.Sprintf("cssMode === 'single' && ((cssFilter === 'current' && (theme || 'minimal') === '%s') || cssFilter === '%s')", k, k) }>
+					@codeblock.CodeBlock(codeblock.Config{
+						Language:  "css",
+						Label:     themeLabel(k) + " — single",
+						Code:      blocks[k],
+						MaxHeight: "24rem",
+						ID:        "theme-css-single-" + k,
+					})
+				</div>
+			}
+			<div x-show="cssMode === 'single' && cssFilter === 'all'">
+				@codeblock.CodeBlock(codeblock.Config{
+					Language:  "css",
+					Label:     "All themes — single",
+					Code:      concatThemes(),
+					MaxHeight: "24rem",
+					ID:        "theme-css-single-all",
+				})
 			</div>
-			<pre class="p-4 text-sm bg-neutral-950 text-neutral-200 overflow-x-auto max-h-96 overflow-y-auto"><code x-text="cssCode()"></code></pre>
+			<!-- Multi mode, per-theme wrapped in @layer base. -->
+			for _, k := range themeCSSOrder {
+				<div x-show={ fmt.Sprintf("cssMode === 'multiple' && ((cssFilter === 'current' && (theme || 'minimal') === '%s') || cssFilter === '%s')", k, k) }>
+					@codeblock.CodeBlock(codeblock.Config{
+						Language:  "css",
+						Label:     themeLabel(k) + " — @layer base",
+						Code:      wrapSingleTheme(k),
+						MaxHeight: "24rem",
+						ID:        "theme-css-multi-" + k,
+					})
+				</div>
+			}
+			<div x-show="cssMode === 'multiple' && cssFilter === 'all'">
+				@codeblock.CodeBlock(codeblock.Config{
+					Language:  "css",
+					Label:     "All themes — @layer base",
+					Code:      allThemesWrappedCSS(),
+					MaxHeight: "24rem",
+					ID:        "theme-css-multi-all",
+				})
+			</div>
 		</div>
 	</div>
+}
+
+// concatThemes joins every theme block back-to-back for the "All Themes,
+// single mode" export so the user can drop them into a CSS file without the
+// @layer base wrapper.
+func concatThemes() string {
+	blocks := getThemeCSSBlocks()
+	var sb strings.Builder
+	for i, k := range themeCSSOrder {
+		if i > 0 {
+			sb.WriteString("\n\n")
+		}
+		sb.WriteString(blocks[k])
+		sb.WriteString("\n")
+	}
+	return sb.String()
 }
 
 func themeLabel(key string) string {

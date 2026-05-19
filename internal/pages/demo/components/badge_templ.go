@@ -71,7 +71,6 @@ func badgeDemoContent() templ.Component {
 				Description:   "A badge is a small label that displays additional information, status, or counts. Used for notifications, status indicators, and categorization.",
 				OriginalURL:   "/original/badge/default-badge.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			badgeDemoPreview(),
 			`// Simple Badge

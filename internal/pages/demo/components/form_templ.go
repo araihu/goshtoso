@@ -70,9 +70,8 @@ func formDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Form",
-				Description:   "A composable form layout with sections, collapsible areas, flip-card read/edit panels, and built-in Goshtoso field rendering. Supports HTMX validation and external submit triggers.",
-				GoshtosoLabel: "Goshtoso Component",
+				Title:       "Form",
+				Description: "A composable form layout with sections, collapsible areas, flip-card read/edit panels, and built-in Goshtoso field rendering. Supports HTMX validation and external submit triggers.",
 			},
 			formDemoPreview(),
 			formDemoCode,

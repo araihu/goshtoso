@@ -71,7 +71,6 @@ func paginationDemoContent() templ.Component {
 				Description:   "Pagination components allow users to navigate between pages of content. Supports simple prev/next and ellipsis variants.",
 				OriginalURL:   "/original/pagination/pagination-with-ellipsis.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			paginationDemoPreview(),
 			`// Simple pagination (prev/next only)

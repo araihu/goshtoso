@@ -71,7 +71,6 @@ func toastDemoContent() templ.Component {
 				Description:   "Stacking toast notifications with auto-dismiss, hover pause, and multiple variants. Supports both client-side Alpine.js events and server-side HTMX OOB swaps.",
 				OriginalURL:   "/original/toast-notification/stacking-toast-notification.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			toastDemoPreview(),
 			`// 1. Place the container once in your layout

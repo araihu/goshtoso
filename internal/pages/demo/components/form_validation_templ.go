@@ -68,9 +68,8 @@ func formValidationDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Form Validation",
-				Description:   "Server-side field validation with HTMX. Fields validate on change, dependent fields update automatically (e.g. slug from name), and full-form submit validates everything at once.",
-				GoshtosoLabel: "Goshtoso Component",
+				Title:       "Form Validation",
+				Description: "Server-side field validation with HTMX. Fields validate on change, dependent fields update automatically (e.g. slug from name), and full-form submit validates everything at once.",
 			},
 			formValidationDemoPreview(),
 			formValidationDemoCode,

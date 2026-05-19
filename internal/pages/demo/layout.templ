@@ -31,20 +31,37 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
 			<script defer src="/assets/js/vendor/alpine.min.js"></script>
 			<script src="/assets/js/vendor/htmx.min.js"></script>
-			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+			<script>
+				// Alpine nav store + htmx integration for fragment-swap sidebar navigation.
+				// The store's `path` field is read inside the sidebar wrapper's x-effect so
+				// the search filter re-applies after an OOB sidebar swap.
+				document.addEventListener('alpine:init', () => {
+					Alpine.store('nav', { path: window.location.pathname });
+				});
+				document.addEventListener('htmx:pushedIntoHistory', () => {
+					if (window.Alpine && Alpine.store('nav')) {
+						Alpine.store('nav').path = window.location.pathname;
+					}
+				});
+				// Sidebar OOB swap rebuilds the .sidebar-scroll element, so its scrollTop
+				// resets. Capture before each swap and restore right after.
+				var __sidebarScrollTop = 0;
+				document.addEventListener('htmx:beforeSwap', () => {
+					var el = document.querySelector('.sidebar-scroll');
+					if (el) __sidebarScrollTop = el.scrollTop;
+				});
+				document.addEventListener('htmx:afterSwap', (e) => {
+					if (e && e.detail && e.detail.target && window.Alpine && Alpine.initTree) {
+						Alpine.initTree(e.detail.target);
+					}
+					var sb = document.querySelector('.sidebar-scroll');
+					if (sb) sb.scrollTop = __sidebarScrollTop;
+					var main = document.querySelector('main');
+					if (main) main.scrollTo({ top: 0 });
+				});
+			</script>
 			<style>
 				[x-cloak] { display: none !important; }
-				.code-block { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
-				pre[class*="language-"] {
-					background: #1e1e1e !important;
-					margin: 0 !important;
-					padding: 1rem !important;
-					border-radius: 0 !important;
-				}
 				/* Hide scrollbar for sidebar */
 				.sidebar-scroll::-webkit-scrollbar {
 					display: none;
@@ -152,9 +169,9 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 				>
 						<div
 					class="h-full"
-					hx-boost="true"
 					x-data="{ q: '' }"
 					x-effect="
+						void $store.nav?.path;
 						const items = $el.querySelectorAll('[data-sidebar-item]');
 						const sections = $el.querySelectorAll('[data-sidebar-section]');
 						const term = q.toLowerCase();
@@ -167,12 +184,14 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 						});
 					"
 				>
-					@sidebar.Sidebar(sidebar.Config{
-						Items:             getSidebarTopItems(activeComponent),
-						SectionsTitle:     "Components",
-						Sections:          getSidebarSections(activeComponent),
-						SearchSlot:        sidebarSearchSlot(),
-					})
+					<div id="sidebar-nav-content" class="h-full">
+						@sidebar.Sidebar(sidebar.Config{
+							Items:             getSidebarTopItems(activeComponent),
+							SectionsTitle:     "Components",
+							Sections:          getSidebarSections(activeComponent),
+							SearchSlot:        sidebarSearchSlot(),
+						})
+					</div>
 				</div>
 				</div>
 
@@ -185,8 +204,8 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 				></div>
 
 				<!-- Main Content -->
-				<main class="flex-1 overflow-y-auto p-6 lg:p-8" hx-boost="true">
-					<div class="mx-auto max-w-5xl">
+				<main class="flex-1 overflow-y-auto p-6 lg:p-8">
+					<div id="main-content" class="mx-auto max-w-5xl">
 						@content
 						@componentNavFooter(activeComponent)
 					</div>
@@ -216,11 +235,27 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 	</html>
 }
 
+// navHxAttrs returns the HTMX attrs we attach to every sidebar/footer nav link
+// so clicking swaps only the main content area instead of reloading the page.
+// The plain `href` stays so middle-click / cmd-click / no-JS still works.
+func navHxAttrs(href, label string) templ.Attributes {
+	attrs := templ.Attributes{
+		"hx-get":      href,
+		"hx-target":   "#main-content",
+		"hx-swap":     "innerHTML",
+		"hx-push-url": "true",
+	}
+	if label != "" {
+		attrs["data-sidebar-item"] = label
+	}
+	return attrs
+}
+
 // getSidebarTopItems returns the top-level icon navigation items above the component sections
 func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
-		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == ""},
-		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme"},
+		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
+		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 	}
 }
 
@@ -255,11 +290,12 @@ templ sidebarThemeIcon() {
 }
 
 // sidebarItem creates a sidebar item with data-sidebar-item for search filtering
+// and HTMX attributes for fragment-swap navigation.
 func sItem(id, label, href, activeComponent string) sidebar.Item {
 	return sidebar.Item{
 		ID: id, Label: label, Href: href,
 		Active:    activeComponent == id,
-		LinkAttrs: templ.Attributes{"data-sidebar-item": label},
+		LinkAttrs: navHxAttrs(href, label),
 	}
 }
 
@@ -275,6 +311,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("banner", "Banner", "/components/banner", activeComponent),
 				sItem("card", "Card", "/components/card", activeComponent),
 				sItem("carousel", "Carousel", "/components/carousel", activeComponent),
+				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
 				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
 				sItem("table", "Table", "/components/table", activeComponent),
 				sItem("tabs", "Tabs", "/components/tabs", activeComponent),
@@ -336,6 +373,7 @@ var orderedComponents = []componentNavLink{
 	{"Banner", "/components/banner"},
 	{"Card", "/components/card"},
 	{"Carousel", "/components/carousel"},
+	{"Code Block", "/components/codeblock"},
 	{"Spinner", "/components/spinner"},
 	{"Table", "/components/table"},
 	{"Tabs", "/components/tabs"},
@@ -386,8 +424,10 @@ templ componentNavFooter(activeComponent string) {
 	if prev != nil || next != nil {
 		<div class="mt-12 flex items-center justify-between border-t border-outline dark:border-outline-dark pt-6 pb-4">
 			if prev != nil {
+				{{ prevAttrs := navHxAttrs(prev.Href, "") }}
 				<a
 					href={ templ.SafeURL(prev.Href) }
+					{ prevAttrs... }
 					class="group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -399,8 +439,10 @@ templ componentNavFooter(activeComponent string) {
 				<div></div>
 			}
 			if next != nil {
+				{{ nextAttrs := navHxAttrs(next.Href, "") }}
 				<a
 					href={ templ.SafeURL(next.Href) }
+					{ nextAttrs... }
 					class="group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors"
 				>
 					<span>{ next.Label }</span>

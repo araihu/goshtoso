@@ -71,7 +71,6 @@ func modalDemoContent() templ.Component {
 				Description:   "Modals display focused content that requires user attention or interaction. They support default and alert variants, with optional HTMX and JavaScript actions on buttons.",
 				OriginalURL:   "/original/modal/default-modal.html",
 				OriginalLabel: "Original PenguinUI",
-				GoshtosoLabel: "Goshtoso Component",
 			},
 			modalDemoPreview(),
 			`// Default Modal

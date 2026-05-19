@@ -66,9 +66,8 @@ func tripletDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Triplet",
-				Description:   "Dynamic 3-field rows for key-value-effect data (e.g., Kubernetes taints). Each row has two text inputs and a dropdown. Powered by Alpine.js.",
-				GoshtosoLabel: "Goshtoso Component",
+				Title:       "Triplet",
+				Description: "Dynamic 3-field rows for key-value-effect data (e.g., Kubernetes taints). Each row has two text inputs and a dropdown. Powered by Alpine.js.",
 			},
 			tripletDemoPreview(),
 			`// Triplet (K8s Taints example)

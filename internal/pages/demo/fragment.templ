@@ -1,0 +1,23 @@
+package demo
+
+import "github.com/araihu/goshtoso/components/sidebar"
+
+// Fragment renders the response body for an HTMX-driven sidebar navigation.
+// It emits a title element with hx-swap-oob so the browser tab title stays in
+// sync, an OOB sidebar swap so the active-state highlight follows the page,
+// the same inner content the full-page Layout renders, and the prev/next
+// navigation footer (which lives inside the swapped region so it tracks the
+// active page).
+templ Fragment(title string, activeComponent string, content templ.Component) {
+	<title hx-swap-oob="true">{ title } - Goshtoso PenguinUI</title>
+	<div id="sidebar-nav-content" hx-swap-oob="true" class="h-full">
+		@sidebar.Sidebar(sidebar.Config{
+			Items:         getSidebarTopItems(activeComponent),
+			SectionsTitle: "Components",
+			Sections:      getSidebarSections(activeComponent),
+			SearchSlot:    sidebarSearchSlot(),
+		})
+	</div>
+	@content
+	@componentNavFooter(activeComponent)
+}
