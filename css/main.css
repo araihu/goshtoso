@@ -20,6 +20,11 @@
 @source "../internal/**/*.templ";
 @source "../internal/**/*.go";
 
+/* Safelist the full Tailwind palette so the theme page palette popover
+   can render every swatch via `var(--color-{hue}-{shade})`. Without this
+   the JIT only emits color vars for shades actually used by themes. */
+@source inline("bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,100,200,300,400,500,600,700,800,900,950}");
+
 /* ============================================
    THEME SYSTEM
    Imported from all-themes.css which provides:

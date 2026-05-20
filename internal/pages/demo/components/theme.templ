@@ -2,11 +2,67 @@ package components
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
+	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
+// themeCSSOrder is the deterministic visual order used by the "All Themes"
+// export so the multi-theme block reads top-down the same way the picker grid
+// does.
+var themeCSSOrder = []string{
+	"arctic", "high-contrast", "minimal", "modern", "neo-brutalism",
+	"halloween", "zombie", "pastel", "90s", "christmas",
+	"prototype", "news", "industrial", "totvs", "dracula",
+}
+
+func allThemesWrappedCSS() string {
+	blocks := getThemeCSSBlocks()
+	var sb strings.Builder
+	sb.WriteString("@layer base {\n")
+	for i, k := range themeCSSOrder {
+		if i > 0 {
+			sb.WriteString("\n")
+		}
+		// indent each block four spaces
+		for _, line := range strings.Split(blocks[k], "\n") {
+			if line == "" {
+				sb.WriteString("\n")
+				continue
+			}
+			sb.WriteString("    ")
+			sb.WriteString(line)
+			sb.WriteString("\n")
+		}
+	}
+	sb.WriteString("}\n")
+	return sb.String()
+}
+
+func wrapSingleTheme(key string) string {
+	blocks := getThemeCSSBlocks()
+	src, ok := blocks[key]
+	if !ok {
+		return ""
+	}
+	var sb strings.Builder
+	sb.WriteString("@layer base {\n")
+	for _, line := range strings.Split(src, "\n") {
+		if line == "" {
+			sb.WriteString("\n")
+			continue
+		}
+		sb.WriteString("    ")
+		sb.WriteString(line)
+		sb.WriteString("\n")
+	}
+	sb.WriteString("}\n")
+	return sb.String()
+}
+
+// ThemeInfo describes a theme tile in the picker grid.
 type ThemeInfo struct {
 	Key            string
 	Label          string
@@ -32,6 +88,156 @@ func getThemeInfos() []ThemeInfo {
 		{Key: "totvs", Label: "TOTVS", PrimaryClass: "bg-cyan-400", SecondaryClass: "bg-violet-500"},
 		{Key: "dracula", Label: "Dracula", PrimaryClass: "bg-purple-400", SecondaryClass: "bg-pink-400"},
 	}
+}
+
+// FontOption is one entry in the typography font picker dropdowns.
+type FontOption struct {
+	Label  string // human-readable, also used as CSS font-family stack head
+	Google string // Google Fonts query name; empty = use system/local fallback
+}
+
+func getFontOptions() []FontOption {
+	return []FontOption{
+		{Label: "Default", Google: ""},
+		{Label: "Jost", Google: "Jost"},
+		{Label: "Inter", Google: "Inter"},
+		{Label: "Roboto", Google: "Roboto"},
+		{Label: "Lato", Google: "Lato"},
+		{Label: "Montserrat", Google: "Montserrat"},
+		{Label: "Instrument Sans", Google: "Instrument+Sans"},
+		{Label: "Open Sans", Google: "Open+Sans"},
+		{Label: "Oswald", Google: "Oswald"},
+		{Label: "Poppins", Google: "Poppins"},
+		{Label: "Raleway", Google: "Raleway"},
+		{Label: "Source Code Pro", Google: "Source+Code+Pro"},
+		{Label: "Playfair", Google: "Playfair+Display"},
+		{Label: "Merriweather", Google: "Merriweather"},
+		{Label: "Denk One", Google: "Denk+One"},
+		{Label: "Concert One", Google: "Concert+One"},
+		{Label: "Inconsolata", Google: "Inconsolata"},
+		{Label: "Space Mono", Google: "Space+Mono"},
+		{Label: "Playpen Sans", Google: "Playpen+Sans"},
+	}
+}
+
+type radiusOption struct {
+	Key   string // "none", "sm", "md", "lg", "xl", "2xl"
+	Label string
+	CSS   string // CSS value to write to --radius-radius
+}
+
+func getRadiusOptions() []radiusOption {
+	return []radiusOption{
+		{Key: "none", Label: "none", CSS: "0"},
+		{Key: "sm", Label: "sm", CSS: "0.25rem"},
+		{Key: "md", Label: "md", CSS: "0.375rem"},
+		{Key: "lg", Label: "lg", CSS: "0.5rem"},
+		{Key: "xl", Label: "xl", CSS: "0.75rem"},
+		{Key: "2xl", Label: "2xl", CSS: "1rem"},
+	}
+}
+
+// colorToken describes one editable CSS variable in the color editors section.
+type colorToken struct {
+	Key   string // CSS var suffix, e.g. "primary" -> --color-primary
+	Label string
+}
+
+func getLightTokens() []colorToken {
+	return []colorToken{
+		{"surface", "Surface"},
+		{"on-surface", "On Surface"},
+		{"on-surface-strong", "On Surface Strong"},
+		{"surface-alt", "Surface Alt"},
+		{"primary", "Primary"},
+		{"on-primary", "On Primary"},
+		{"secondary", "Secondary"},
+		{"on-secondary", "On Secondary"},
+		{"outline", "Outline"},
+		{"outline-strong", "Outline Strong"},
+	}
+}
+
+func getDarkTokens() []colorToken {
+	return []colorToken{
+		{"surface-dark", "Surface Dark"},
+		{"on-surface-dark", "On Surface Dark"},
+		{"on-surface-dark-strong", "On Surface Dark Strong"},
+		{"surface-dark-alt", "Surface Dark Alt"},
+		{"primary-dark", "Primary Dark"},
+		{"on-primary-dark", "On Primary Dark"},
+		{"secondary-dark", "Secondary Dark"},
+		{"on-secondary-dark", "On Secondary Dark"},
+		{"outline-dark", "Outline Dark"},
+		{"outline-dark-strong", "Outline Dark Strong"},
+	}
+}
+
+func getSharedTokens() []colorToken {
+	return []colorToken{
+		{"danger", "Danger"},
+		{"on-danger", "On Danger"},
+		{"info", "Info"},
+		{"on-info", "On Info"},
+		{"warning", "Warning"},
+		{"on-warning", "On Warning"},
+		{"success", "Success"},
+		{"on-success", "On Success"},
+	}
+}
+
+// allEditableTokens returns the full ordered list of tokens used to generate
+// the CSS code block and the contrast checker base-token dropdown.
+func allEditableTokens() []colorToken {
+	out := append([]colorToken{}, getLightTokens()...)
+	out = append(out, getDarkTokens()...)
+	out = append(out, getSharedTokens()...)
+	return out
+}
+
+// tailwindHues lists Tailwind v4's named hue families in display order.
+var tailwindHues = []string{
+	"red", "orange", "amber", "yellow", "lime",
+	"green", "emerald", "teal", "cyan", "sky",
+	"blue", "indigo", "violet", "purple", "fuchsia",
+	"pink", "rose", "slate", "gray", "zinc",
+	"neutral", "stone",
+}
+
+// tailwindShades lists the shade steps for each hue.
+var tailwindShades = []string{"50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"}
+
+// themeClassMap returns themeKey -> tokenName -> Tailwind class (e.g.
+// "blue-700") parsed from the per-theme CSS blocks. The contrast / palette
+// UI uses this to label what each token resolves to under the current theme,
+// even when the user has not overridden it.
+func themeClassMap() map[string]map[string]string {
+	out := map[string]map[string]string{}
+	for theme, css := range getThemeCSSBlocks() {
+		m := map[string]string{}
+		for _, raw := range strings.Split(css, "\n") {
+			line := strings.TrimSpace(raw)
+			if !strings.HasPrefix(line, "--color-") {
+				continue
+			}
+			colon := strings.Index(line, ":")
+			if colon == -1 {
+				continue
+			}
+			token := strings.TrimPrefix(line[:colon], "--color-")
+			value := strings.TrimSpace(line[colon+1:])
+			value = strings.TrimSuffix(value, ";")
+			if strings.HasPrefix(value, "var(--color-") {
+				inner := strings.TrimPrefix(value, "var(--color-")
+				inner = strings.TrimSuffix(inner, ")")
+				m[token] = inner
+			} else if strings.HasPrefix(value, "#") {
+				m[token] = value
+			}
+		}
+		out[theme] = m
+	}
+	return out
 }
 
 func getThemeCSSBlocks() map[string]string {
@@ -534,53 +740,356 @@ func getThemeCSSBlocks() map[string]string {
 	}
 }
 
-func themeCSSScript() string {
+func sortedThemeKeys() []string {
+	keys := make([]string, 0)
+	for _, t := range getThemeInfos() {
+		keys = append(keys, t.Key)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+// themePageScript builds the single Alpine component backing the entire page.
+// Lives in a <script> tag rather than inline x-data to escape templ's
+// attribute encoder (see CLAUDE.md "Templ escaping — the #1 source of bugs").
+func themePageScript() string {
 	blocks := getThemeCSSBlocks()
+	infos := getThemeInfos()
+	fonts := getFontOptions()
+	radii := getRadiusOptions()
+
 	var sb strings.Builder
-	// Register immediately when Alpine is already up (HTMX-swapped re-visit
-	// of this page); fall back to alpine:init for the initial page load. The
-	// alpine:init listener only fires once per page, so a swap-injected
-	// script that arrives afterwards would never register.
+	// Two registration paths so the page works on both initial load and an
+	// HTMX fragment swap:
+	//   * First load: Alpine hasn't run yet. Register the factory inside an
+	//     alpine:init listener and let Alpine's own DOM traversal bind both
+	//     the parent <html> x-data and our x-data="themePage" subtree. Don't
+	//     manually initTree here — running it before Alpine has bound the
+	//     parent leaves child expressions like `theme === 'arctic'` evaluated
+	//     against an empty scope chain, so :class never fires.
+	//   * HTMX swap: alpine:init already fired, so re-listening would never
+	//     resolve. Register the factory immediately and manually initTree
+	//     just the swapped-in subtree (parent <html> is already bound).
 	sb.WriteString("(() => {\n")
-	sb.WriteString("  const register = () => {\n")
-	sb.WriteString("    Alpine.data('themeCssOutput', () => ({\n")
-	sb.WriteString("      copied: false,\n")
-	sb.WriteString("      currentCSS: '',\n")
-	sb.WriteString("      init() {\n")
-	sb.WriteString("        const update = () => {\n")
-	sb.WriteString("          const t = document.documentElement.getAttribute('data-theme') || 'minimal';\n")
-	sb.WriteString("          this.currentCSS = this.blocks[t] || 'Theme not found';\n")
-	sb.WriteString("        };\n")
-	sb.WriteString("        update();\n")
-	sb.WriteString("        new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });\n")
-	sb.WriteString("      },\n")
-	sb.WriteString("      copyCSS() {\n")
-	sb.WriteString("        navigator.clipboard.writeText(this.currentCSS).then(() => {\n")
-	sb.WriteString("          this.copied = true;\n")
-	sb.WriteString("          setTimeout(() => this.copied = false, 2000);\n")
-	sb.WriteString("        });\n")
-	sb.WriteString("      },\n")
-	sb.WriteString("      blocks: {\n")
+	sb.WriteString("  const factory = () => ({\n")
+	// state
+	sb.WriteString("    titleFont: localStorage.getItem('themeTitleFont') || '',\n")
+	sb.WriteString("    bodyFont: localStorage.getItem('themeBodyFont') || '',\n")
+	sb.WriteString("    radius: localStorage.getItem('themeRadius') || '',\n")
+	sb.WriteString("    overrides: JSON.parse(localStorage.getItem('themeOverrides') || '{}'),\n")
+	sb.WriteString("    resolved: {},\n")
+	sb.WriteString("    cssMode: localStorage.getItem('themeCssMode') || 'single',\n")
+	sb.WriteString("    cssFilter: localStorage.getItem('themeCssFilter') || 'current',\n")
+	sb.WriteString("    openPalette: '',\n")
+	sb.WriteString("    contrastTab: 'colors',\n")
+	sb.WriteString("    contrastBase: 'primary',\n")
+	sb.WriteString("    contrastCustomFg: '#0f172a',\n")
+	sb.WriteString("    contrastCustomBg: '#ffffff',\n")
+	sb.WriteString("    copied: false,\n")
+	sb.WriteString("    shareCopied: false,\n")
+
+	// lookup tables, written from Go so we don't risk template-escape surprises
+	sb.WriteString("    radiusMap: {")
+	for i, r := range radii {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s':'%s'", r.Key, r.CSS))
+	}
+	sb.WriteString("},\n")
+
+	sb.WriteString("    googleFontMap: {")
+	first := true
+	for _, f := range fonts {
+		if f.Google == "" {
+			continue
+		}
+		if !first {
+			sb.WriteString(",")
+		}
+		first = false
+		sb.WriteString(fmt.Sprintf("'%s':'%s'", f.Label, f.Google))
+	}
+	sb.WriteString("},\n")
+
+	// theme keys list
+	sb.WriteString("    allThemes: [")
+	for i, info := range infos {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s'", info.Key))
+	}
+	sb.WriteString("],\n")
+
+	// themeClassMap: nested object themeKey -> token -> tailwind class.
+	// Used by the palette UI to show the "default" class for the active
+	// theme when the user has not overridden a token.
+	sb.WriteString("    themeClassMap: {\n")
+	tcMap := themeClassMap()
+	tcKeys := make([]string, 0, len(tcMap))
+	for k := range tcMap {
+		tcKeys = append(tcKeys, k)
+	}
+	sort.Strings(tcKeys)
+	for _, tk := range tcKeys {
+		sb.WriteString(fmt.Sprintf("      '%s': {", tk))
+		inner := tcMap[tk]
+		innerKeys := make([]string, 0, len(inner))
+		for k := range inner {
+			innerKeys = append(innerKeys, k)
+		}
+		sort.Strings(innerKeys)
+		for i, ik := range innerKeys {
+			if i > 0 {
+				sb.WriteString(",")
+			}
+			sb.WriteString(fmt.Sprintf("'%s':'%s'", ik, inner[ik]))
+		}
+		sb.WriteString("},\n")
+	}
+	sb.WriteString("    },\n")
+
+	// theme css blocks (used by CSS code section)
+	sb.WriteString("    blocks: {\n")
 	for key, css := range blocks {
 		sb.WriteString(fmt.Sprintf("        '%s': `%s`,\n", key, css))
 	}
-	sb.WriteString("      }\n")
-	sb.WriteString("    }));\n")
-	sb.WriteString("    document.querySelectorAll('[x-data=\"themeCssOutput\"]').forEach((el) => {\n")
+	sb.WriteString("    },\n")
+
+	// lifecycle
+	sb.WriteString(`    init() {
+      try { this.applyAll(); } catch (e) { console.error('themePage applyAll', e); }
+      try { this.refreshResolved(); } catch (e) { console.error('themePage refreshResolved', e); }
+      this.$watch('titleFont', v => { localStorage.setItem('themeTitleFont', v); this.applyFont('--font-title', v); });
+      this.$watch('bodyFont', v => { localStorage.setItem('themeBodyFont', v); this.applyFont('--font-body', v); });
+      this.$watch('radius', v => { localStorage.setItem('themeRadius', v); this.applyRadius(v); });
+      this.$watch('overrides', v => { localStorage.setItem('themeOverrides', JSON.stringify(v)); this.applyColors(); }, { deep: true });
+      this.$watch('cssMode', v => localStorage.setItem('themeCssMode', v));
+      this.$watch('cssFilter', v => localStorage.setItem('themeCssFilter', v));
+      // Theme + dark-mode changes are picked up via a MutationObserver on
+      // <html>; using $watch('theme', ...) here would try to subscribe to a
+      // property on a parent x-data scope and fail silently in some Alpine
+      // versions, taking the rest of init() down with it.
+      new MutationObserver(() => { this.applyAll(); this.refreshResolved(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['class','data-theme'] });
+    },
+    applyAll() {
+      this.applyFont('--font-title', this.titleFont);
+      this.applyFont('--font-body', this.bodyFont);
+      this.applyRadius(this.radius);
+      this.applyColors();
+    },
+    applyFont(varName, label) {
+      if (!label) { document.documentElement.style.removeProperty(varName); return; }
+      const gf = this.googleFontMap[label];
+      if (gf) this.loadGoogleFont(label, gf);
+      document.documentElement.style.setProperty(varName, "'" + label + "', sans-serif");
+    },
+    applyRadius(key) {
+      if (!key) { document.documentElement.style.removeProperty('--radius-radius'); return; }
+      const v = this.radiusMap[key];
+      if (v != null) document.documentElement.style.setProperty('--radius-radius', v);
+    },
+    applyColors() {
+      Object.entries(this.overrides).forEach(([k, v]) => {
+        if (!v) { document.documentElement.style.removeProperty('--color-' + k); return; }
+        const value = v.startsWith('#') ? v : ('var(--color-' + v + ')');
+        document.documentElement.style.setProperty('--color-' + k, value);
+      });
+    },
+    setColor(token, value) {
+      const next = Object.assign({}, this.overrides);
+      next[token] = value;
+      this.overrides = next;
+    },
+    pickColor(token, cls) {
+      this.setColor(token, cls);
+      this.openPalette = '';
+      requestAnimationFrame(() => this.refreshResolved());
+    },
+    togglePalette(token) {
+      this.openPalette = this.openPalette === token ? '' : token;
+    },
+    currentClass(token) {
+      const ov = this.overrides[token];
+      if (ov && !ov.startsWith('#')) return ov;
+      if (ov) return ov; // hex string falls through to display
+      const themeKey = this.theme || 'minimal';
+      return (this.themeClassMap[themeKey] || {})[token] || '';
+    },
+    classLabel(token) {
+      const cls = this.currentClass(token);
+      if (!cls) return '—';
+      if (cls.startsWith('#')) return cls;
+      // "blue-700" -> "Blue-700", "white" -> "White"
+      const idx = cls.indexOf('-');
+      if (idx === -1) return cls.charAt(0).toUpperCase() + cls.slice(1);
+      return cls.charAt(0).toUpperCase() + cls.slice(1, idx) + cls.slice(idx);
+    },
+    clearColor(token) {
+      const next = Object.assign({}, this.overrides);
+      delete next[token];
+      this.overrides = next;
+    },
+    resetAll() {
+      this.titleFont = '';
+      this.bodyFont = '';
+      this.radius = '';
+      Object.keys(this.overrides).forEach(k => document.documentElement.style.removeProperty('--color-' + k));
+      this.overrides = {};
+      requestAnimationFrame(() => this.refreshResolved());
+    },
+    loadGoogleFont(label, query) {
+      const id = 'gfont-' + label.replace(/\s+/g, '-');
+      if (document.getElementById(id)) return;
+      const link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=' + query + ':wght@400;500;600;700&display=swap';
+      document.head.appendChild(link);
+    },
+    refreshResolved() {
+      const cs = getComputedStyle(document.documentElement);
+      const next = {};
+      this.allTokens.forEach(t => {
+        const raw = cs.getPropertyValue('--color-' + t).trim();
+        next[t] = this.normalizeColor(raw);
+      });
+      this.resolved = next;
+    },
+    normalizeColor(raw) {
+      if (!raw) return '#000000';
+      if (raw.startsWith('#')) return raw.length === 4 ? '#' + raw.slice(1).split('').map(c => c+c).join('') : raw;
+      // rgb()/rgba() or oklch etc.: paint to an offscreen canvas to coerce to hex.
+      const cnv = document.createElement('canvas');
+      cnv.width = 1; cnv.height = 1;
+      const ctx = cnv.getContext('2d');
+      ctx.fillStyle = raw;
+      const computed = ctx.fillStyle;
+      if (computed.startsWith('#')) return computed;
+      const m = computed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!m) return '#000000';
+      return '#' + [m[1], m[2], m[3]].map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('');
+    },
+    relLum(hex) {
+      const r = parseInt(hex.slice(1,3), 16) / 255;
+      const g = parseInt(hex.slice(3,5), 16) / 255;
+      const b = parseInt(hex.slice(5,7), 16) / 255;
+      const f = c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+    },
+    ratio(a, b) {
+      const la = this.relLum(a);
+      const lb = this.relLum(b);
+      const [hi, lo] = la > lb ? [la, lb] : [lb, la];
+      return (hi + 0.05) / (lo + 0.05);
+    },
+    grade(r) {
+      if (r >= 7) return 'AAA';
+      if (r >= 4.5) return 'AA';
+      if (r >= 3) return 'AA Large';
+      return 'Fail';
+    },
+    gradeClass(r) {
+      if (r >= 4.5) return 'bg-green-500/15 text-green-700 dark:text-green-300';
+      if (r >= 3) return 'bg-amber-500/15 text-amber-700 dark:text-amber-300';
+      return 'bg-red-500/15 text-red-700 dark:text-red-300';
+    },
+    cssCode() {
+      const order = ['arctic','high-contrast','minimal','modern','neo-brutalism','halloween','zombie','pastel','90s','christmas','prototype','news','industrial','totvs','dracula'];
+      const filterKey = this.cssFilter === 'current' ? (this.theme || 'minimal') : this.cssFilter;
+      if (this.cssMode === 'single') {
+        return this.blocks[filterKey] || ('/* theme ' + filterKey + ' not found */');
+      }
+      const keys = (filterKey === 'all') ? order : [filterKey];
+      const inner = keys.map(k => '    ' + (this.blocks[k] || '').split('\n').join('\n    ')).join('\n\n');
+      return '@layer base {\n' + inner + '\n}\n';
+    },
+    copyCSS() {
+      navigator.clipboard.writeText(this.cssCode()).then(() => {
+        this.copied = true;
+        setTimeout(() => this.copied = false, 2000);
+      });
+    },
+    share() {
+      const href = window.location.origin + window.location.pathname;
+      navigator.clipboard.writeText(href).then(() => {
+        this.shareCopied = true;
+        setTimeout(() => this.shareCopied = false, 2000);
+      });
+    },
+    contrastPairs() {
+      const base = this.resolved[this.contrastBase];
+      if (!base) return [];
+      return this.allTokens
+        .filter(t => t !== this.contrastBase)
+        .map(t => {
+          const c = this.resolved[t];
+          if (!c) return null;
+          const r = this.ratio(base, c);
+          return { token: t, color: c, ratio: r, grade: this.grade(r) };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.ratio - a.ratio);
+    },
+    base() {
+      return this.resolved[this.contrastBase] || '#000000';
+    },
+    contrastMatrix() {
+      const baseColor = this.resolved[this.contrastBase];
+      if (!baseColor) return [];
+      return this.allTokens
+        .filter(t => t !== this.contrastBase)
+        .map(t => {
+          const c = this.resolved[t];
+          if (!c) return null;
+          const r = this.ratio(baseColor, c);
+          return { token: t, label: (this.tokenLabels[t] || t), color: c, ratio: r };
+        })
+        .filter(Boolean);
+    },
+    customContrast() {
+      const r = this.ratio(this.contrastCustomFg, this.contrastCustomBg);
+      return { ratio: r, grade: this.grade(r) };
+    },
+`)
+
+	// allTokens list (light + dark + shared)
+	sb.WriteString("    allTokens: [")
+	tokens := allEditableTokens()
+	for i, t := range tokens {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s'", t.Key))
+	}
+	sb.WriteString("],\n")
+
+	// tokenLabels: short labels used by the contrast matrix column headers
+	sb.WriteString("    tokenLabels: {")
+	for i, t := range tokens {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s':'%s'", t.Key, t.Label))
+	}
+	sb.WriteString("},\n")
+
+	sb.WriteString("  });\n")
+	sb.WriteString("  if (window.Alpine && window.Alpine.version) {\n")
+	sb.WriteString("    Alpine.data('themePage', factory);\n")
+	sb.WriteString("    document.querySelectorAll('[x-data=\"themePage\"]').forEach((el) => {\n")
 	sb.WriteString("      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);\n")
 	sb.WriteString("    });\n")
-	sb.WriteString("  };\n")
-	sb.WriteString("  if (window.Alpine && window.Alpine.version) {\n")
-	sb.WriteString("    register();\n")
 	sb.WriteString("  } else {\n")
-	sb.WriteString("    document.addEventListener('alpine:init', register);\n")
+	sb.WriteString("    document.addEventListener('alpine:init', () => Alpine.data('themePage', factory));\n")
 	sb.WriteString("  }\n")
 	sb.WriteString("})();\n")
 	return sb.String()
 }
 
-templ themeCSSOutputScript() {
-	@templ.Raw("<script>" + themeCSSScript() + "</script>")
+templ themePageScriptTag() {
+	@templ.Raw("<script>" + themePageScript() + "</script>")
 }
 
 templ ThemeDemoPage() {
@@ -588,196 +1097,721 @@ templ ThemeDemoPage() {
 }
 
 templ themeDemoContent() {
-	@themeCSSOutputScript()
-	<div class="space-y-12 max-w-6xl">
-		<!-- Page header -->
-		<div>
+	@themePageScriptTag()
+	<div x-data="themePage" class="space-y-12">
+		@themeHeader()
+		@themeGridSection()
+		<div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
+			<div class="space-y-10 min-w-0">
+				@themeTypographySection()
+				@themeBorderSection()
+				@themeColorEditorSection()
+			</div>
+			<div class="lg:sticky lg:top-6 min-w-0">
+				@themePreviewSection()
+			</div>
+		</div>
+		@themeContrastSection()
+		@themeCSSSection()
+	</div>
+}
+
+templ themeHeader() {
+	<div>
+		<div class="flex items-start justify-between gap-4 flex-wrap">
 			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Theme Settings</h1>
-			<p class="mt-2 text-on-surface dark:text-on-surface-dark">Browse ready-to-use themes. Click a theme to apply it across the site.</p>
-		</div>
-		<!-- Section 1: Theme Grid -->
-		<div>
-			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Themes</h2>
-			@themeGrid()
-		</div>
-		<!-- Section 2: Live Showcase -->
-		<div>
-			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Theme Showcase</h2>
-			@themeShowcase()
-		</div>
-		<!-- Section 3: CSS Output -->
-		<div x-data="themeCssOutput">
-			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">CSS Code</h2>
-			@themeCSSOutput()
-		</div>
-	</div>
-}
-
-templ themeGrid() {
-	<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-		for _, t := range getThemeInfos() {
 			<button
-				data-theme-key={ t.Key }
-				@click="setTheme($el.dataset.themeKey)"
-				class="relative rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark p-4 text-left transition-all cursor-pointer"
-				:class={ fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key) }
+				@click="share()"
+				class="inline-flex items-center gap-2 rounded-radius border border-outline dark:border-outline-dark px-3 py-1.5 text-sm font-medium text-on-surface dark:text-on-surface-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors"
 			>
-				<!-- Radio indicator + name row -->
-				<div class="flex items-center gap-2 mb-2">
-					<div class="size-4 rounded-full border-2 border-outline dark:border-outline-dark flex items-center justify-center">
-						<div
-							class="size-2 rounded-full bg-primary dark:bg-primary-dark"
-							:class={ fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key) }
-						></div>
-					</div>
-					<span class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ t.Label }</span>
-				</div>
-				<!-- Color dots -->
-				<div class="flex items-center gap-1.5 mb-1">
-					<span class={ t.PrimaryClass + " size-3 rounded-full" }></span>
-					<span class={ t.SecondaryClass + " size-3 rounded-full" }></span>
-				</div>
-				<!-- Mini preview -->
-				<div class="mt-3 flex gap-2">
-					<!-- Left section: text lines -->
-					<div class="flex-1 space-y-1.5">
-						<div class="h-2 w-3/4 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
-						<div class="h-2 w-full rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
-						<div class="h-2 w-2/3 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
-					</div>
-					<!-- Right section: content block -->
-					<div class="flex-1 rounded bg-on-surface/5 dark:bg-on-surface-dark/5"></div>
-				</div>
-				<!-- Primary color bar -->
-				<div class={ "mt-2 h-4 w-12 rounded " + t.PrimaryClass }></div>
+				<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"></path>
+				</svg>
+				<span x-text="shareCopied ? 'Link Copied!' : 'Share'">Share</span>
 			</button>
-		}
+		</div>
+		<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">
+			Goshtoso ships ready-to-use themes built on Tailwind v4 CSS variables. Pick one as-is, tweak its fonts, radius, or colors live, then export the CSS to drop into your own project.
+		</p>
+		<button
+			@click="resetAll()"
+			class="mt-3 text-xs font-medium text-primary dark:text-primary-dark hover:underline"
+		>
+			Reset all customizations
+		</button>
 	</div>
 }
 
-templ themeShowcase() {
-	<!-- Window chrome card -->
-	<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
-		<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
-			<span class="size-3 rounded-full bg-red-400"></span>
-			<span class="size-3 rounded-full bg-yellow-400"></span>
-			<span class="size-3 rounded-full bg-green-400"></span>
+templ themeGridSection() {
+	<div>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Themes</h2>
+		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+			for _, t := range getThemeInfos() {
+				<button
+					data-theme-key={ t.Key }
+					@click="setTheme($el.dataset.themeKey)"
+					class="relative rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark p-4 text-left transition-all cursor-pointer"
+					:class={ fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key) }
+				>
+					<div class="flex items-center gap-2 mb-2">
+						<div class="size-4 rounded-full border-2 border-outline dark:border-outline-dark flex items-center justify-center">
+							<div
+								class="size-2 rounded-full bg-primary dark:bg-primary-dark"
+								:class={ fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key) }
+							></div>
+						</div>
+						<span class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ t.Label }</span>
+					</div>
+					<div class="flex items-center gap-1.5 mb-1">
+						<span class={ t.PrimaryClass + " size-3 rounded-full" }></span>
+						<span class={ t.SecondaryClass + " size-3 rounded-full" }></span>
+					</div>
+					<div class="mt-3 flex gap-2">
+						<div class="flex-1 space-y-1.5">
+							<div class="h-2 w-3/4 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
+							<div class="h-2 w-full rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
+							<div class="h-2 w-2/3 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
+						</div>
+						<div class="flex-1 rounded bg-on-surface/5 dark:bg-on-surface-dark/5"></div>
+					</div>
+					<div class={ "mt-2 h-4 w-12 rounded " + t.PrimaryClass }></div>
+				</button>
+			}
 		</div>
-		<div class="bg-surface dark:bg-surface-dark p-6 space-y-8">
-			<!-- Color Palette -->
+	</div>
+}
+
+templ themeTypographySection() {
+	<div>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Typography</h2>
+		<div class="grid gap-4">
+			<label class="block">
+				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Title Font Family</span>
+				<select
+					x-model="titleFont"
+					class="w-full rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
+				>
+					for _, f := range getFontOptions() {
+						<option value={ f.Label }>{ f.Label }</option>
+					}
+				</select>
+			</label>
+			<label class="block">
+				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Body Font Family</span>
+				<select
+					x-model="bodyFont"
+					class="w-full rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
+				>
+					for _, f := range getFontOptions() {
+						<option value={ f.Label }>{ f.Label }</option>
+					}
+				</select>
+			</label>
+		</div>
+		<p class="mt-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Picking a font lazy-loads it from Google Fonts. Choose "Default" to fall back to the active theme&apos;s font.</p>
+	</div>
+}
+
+// radiusIconPath maps a radius key to the SVG corner path. Each icon shows a
+// 24×24 corner with a progressively larger top-left curve.
+func radiusIconPath(key string) string {
+	switch key {
+	case "none":
+		return "M3 21 V3 H21"
+	case "sm":
+		return "M3 21 V6 Q3 3 6 3 H21"
+	case "md":
+		return "M3 21 V8 Q3 3 8 3 H21"
+	case "lg":
+		return "M3 21 V11 Q3 3 11 3 H21"
+	case "xl":
+		return "M3 21 V14 Q3 3 14 3 H21"
+	case "2xl":
+		return "M3 21 V18 Q3 3 18 3 H21"
+	}
+	return "M3 21 V3 H21"
+}
+
+templ radiusIcon(key string) {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5">
+		<path d={ radiusIconPath(key) }></path>
+	</svg>
+}
+
+templ themeBorderSection() {
+	<div>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Border</h2>
+		<div class="space-y-6">
 			<div>
-				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Color Palette</h3>
-				<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-					<div class="rounded-radius overflow-hidden">
-						<div class="h-12 bg-primary dark:bg-primary-dark"></div>
-						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Primary</div>
-					</div>
-					<div class="rounded-radius overflow-hidden">
-						<div class="h-12 bg-secondary dark:bg-secondary-dark"></div>
-						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Secondary</div>
-					</div>
-					<div class="rounded-radius overflow-hidden">
-						<div class="h-12 bg-info"></div>
-						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Info</div>
-					</div>
-					<div class="rounded-radius overflow-hidden">
-						<div class="h-12 bg-danger"></div>
-						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Danger</div>
-					</div>
-					<div class="rounded-radius overflow-hidden">
-						<div class="h-12 bg-warning"></div>
-						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Warning</div>
-					</div>
-					<div class="rounded-radius overflow-hidden">
-						<div class="h-12 bg-success"></div>
-						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Success</div>
-					</div>
+				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Border Color</span>
+				@colorRow(colorToken{Key: "outline", Label: "Outline"})
+			</div>
+			<div>
+				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Border Radius</span>
+				<div class="flex w-full flex-wrap gap-1.5 rounded-radius border border-outline dark:border-outline-dark p-1.5 bg-surface-alt dark:bg-surface-dark-alt">
+					for _, r := range getRadiusOptions() {
+						<button
+							data-radius={ r.Key }
+							@click="radius = $el.dataset.radius"
+							class="group relative flex h-10 flex-1 min-w-10 items-center justify-center rounded-radius transition-colors"
+							:class={ fmt.Sprintf("radius === '%s' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark hover:bg-surface dark:hover:bg-surface-dark'", r.Key) }
+							aria-label={ "Radius " + r.Label }
+						>
+							@radiusIcon(r.Key)
+							<span class="pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-xs font-medium text-on-surface-dark-strong opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-surface dark:text-on-surface-strong">{ r.Label }</span>
+						</button>
+					}
 				</div>
 			</div>
-			<!-- Buttons -->
-			<div>
-				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Buttons</h3>
-				<div class="flex flex-wrap gap-3">
-					<button class="px-4 py-2 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity">
-						Primary
-					</button>
-					<button class="px-4 py-2 rounded-radius bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark font-medium text-sm hover:opacity-90 transition-opacity">
-						Secondary
-					</button>
-					<button class="px-4 py-2 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors">
-						Outline
-					</button>
+		</div>
+	</div>
+}
+
+templ themeColorEditorSection() {
+	<div>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Colors</h2>
+		<div x-show="!$store.darkMode.on">
+			@modeColorGroup("Light Mode Colors", getLightTokens(), true)
+		</div>
+		<div x-show="$store.darkMode.on" x-cloak>
+			@modeColorGroup("Dark Mode Colors", getDarkTokens(), false)
+		</div>
+		@colorGroup("Shared Colors", getSharedTokens())
+	</div>
+}
+
+// modeColorGroup is the Light / Dark variant: title row carries a sun/moon
+// button that flips the global dark-mode store so users can swap which
+// palette they're editing in place.
+templ modeColorGroup(title string, tokens []colorToken, isLight bool) {
+	<div>
+		<div class="mb-3 flex items-center justify-between gap-3">
+			<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h3>
+			<button
+				type="button"
+				@click="$store.darkMode.toggle()"
+				class="rounded-full p-1.5 text-on-surface-muted transition-colors hover:bg-surface-alt hover:text-primary dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt dark:hover:text-primary-dark"
+				aria-label="Switch mode"
+			>
+				if isLight {
+					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"></path></svg>
+				} else {
+					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"></path></svg>
+				}
+			</button>
+		</div>
+		<div class="flex flex-col gap-2">
+			for _, t := range tokens {
+				@colorRow(t)
+			}
+		</div>
+	</div>
+}
+
+templ colorGroup(title string, tokens []colorToken) {
+	<div class="mt-6">
+		<h3 class="mb-3 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h3>
+		<div class="flex flex-col gap-2">
+			for _, t := range tokens {
+				@colorRow(t)
+			}
+		</div>
+	</div>
+}
+
+templ colorRow(t colorToken) {
+	<div class="rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
+		<button
+			type="button"
+			data-token={ t.Key }
+			@click="togglePalette($el.dataset.token)"
+			class="flex w-full items-center gap-3 p-2 text-left"
+		>
+			<span
+				class="size-7 shrink-0 rounded border border-outline dark:border-outline-dark"
+				:style={ "'background-color:' + (resolved['" + t.Key + "'] || '#888')" }
+			></span>
+			<div class="min-w-0 flex-1">
+				<p class="text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong truncate">{ t.Label }</p>
+			</div>
+			<span class="shrink-0 text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted" x-text={ "classLabel('" + t.Key + "')" }></span>
+			<svg xmlns="http://www.w3.org/2000/svg" class="ml-1 size-3 shrink-0 text-on-surface-muted transition-transform dark:text-on-surface-dark-muted" :class={ "openPalette === '" + t.Key + "' ? 'rotate-180' : ''" } fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+			</svg>
+		</button>
+		<div x-show={ "openPalette === '" + t.Key + "'" } x-cloak x-collapse class="border-t border-outline dark:border-outline-dark">
+			@tailwindPalette(t.Key)
+		</div>
+	</div>
+}
+
+templ tailwindPalette(token string) {
+	<div x-data="{ hovered: '' }" class="p-2 space-y-2">
+		<div class="flex items-center gap-1">
+			<button
+				type="button"
+				data-token={ token }
+				data-cls="white"
+				@click="pickColor($el.dataset.token, $el.dataset.cls)"
+				class="h-5 w-5 rounded border border-outline bg-white hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
+				title="white"
+			></button>
+			<button
+				type="button"
+				data-token={ token }
+				data-cls="black"
+				@click="pickColor($el.dataset.token, $el.dataset.cls)"
+				class="h-5 w-5 rounded border border-outline bg-black hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
+				title="black"
+			></button>
+			<span class="ml-2 text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate" x-text={ "hovered || classLabel('" + token + "') || 'Pick a color'" }></span>
+			<button
+				type="button"
+				data-token={ token }
+				@click="clearColor($el.dataset.token); openPalette = ''"
+				class="ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark"
+			>Reset</button>
+		</div>
+		<div class="grid w-full gap-1 max-h-44 overflow-y-auto pr-1" style="grid-template-columns: repeat(11, minmax(0, 1fr));">
+			for _, hue := range tailwindHues {
+				for _, shade := range tailwindShades {
+					<button
+						type="button"
+						data-token={ token }
+						data-cls={ hue + "-" + shade }
+						data-label={ hue + "-" + shade }
+						@click="pickColor($el.dataset.token, $el.dataset.cls)"
+						@mouseenter="hovered = $el.dataset.label"
+						@mouseleave="hovered = ''"
+						@focus="hovered = $el.dataset.label"
+						@blur="hovered = ''"
+						class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
+						style={ "background-color: var(--color-" + hue + "-" + shade + ")" }
+						title={ hue + "-" + shade }
+					></button>
+				}
+			}
+		</div>
+	</div>
+}
+
+templ themePreviewSection() {
+	<div>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Theme Showcase</h2>
+		<div class="space-y-6 rounded-radius border border-outline bg-surface p-6 dark:border-outline-dark dark:bg-surface-dark sm:p-8">
+			@previewTypography()
+			<div class="grid gap-6">
+				<div class="space-y-6 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
+					@previewButtons()
+					@previewProgress()
+					@previewSteps()
+				</div>
+				<div class="space-y-6 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
+					@previewToggles()
+					@previewAvatars()
 				</div>
 			</div>
-			<!-- Card -->
-			<div>
-				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Card</h3>
-				<div class="max-w-sm rounded-radius border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-5">
-					<div class="flex items-center gap-3 mb-3">
-						<div class="size-10 rounded-full bg-primary dark:bg-primary-dark flex items-center justify-center text-on-primary dark:text-on-primary-dark font-bold text-sm">JD</div>
-						<div>
-							<p class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Jane Doe</p>
-							<p class="text-xs text-on-surface dark:text-on-surface-dark">Product Designer</p>
+			@previewUpdateBanner()
+		</div>
+	</div>
+}
+
+templ previewTypography() {
+	<div class="space-y-4">
+		<h3 class="font-title text-5xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Main Title</h3>
+		<h4 class="font-title text-2xl font-semibold text-primary dark:text-primary-dark">Primary Subtitle</h4>
+		<p class="max-w-2xl text-base text-on-surface dark:text-on-surface-dark">
+			The Goshtoso color palette consists of
+			<span class="font-semibold text-primary dark:text-primary-dark">28 different colors</span>
+			that you can customize and assign from the
+			<span class="font-semibold text-secondary dark:text-secondary-dark">Tailwind CSS color options</span>.
+		</p>
+		<h4 class="font-title pt-2 text-2xl font-semibold text-secondary dark:text-secondary-dark">Secondary Subtitle</h4>
+		<p class="max-w-2xl text-base text-on-surface dark:text-on-surface-dark">
+			There are 10 different color options for each light and dark mode, with
+			<span class="font-semibold text-primary dark:text-primary-dark">8 colors</span>
+			shared across both modes.
+		</p>
+	</div>
+}
+
+templ previewButtons() {
+	<div>
+		<h5 class="text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Buttons</h5>
+		<div class="flex flex-wrap gap-2">
+			<button class="px-4 py-2 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark text-sm font-medium hover:opacity-90 transition-opacity">Primary</button>
+			<button class="px-4 py-2 rounded-radius bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark text-sm font-medium hover:opacity-90 transition-opacity">Secondary</button>
+			<button class="px-4 py-2 rounded-radius bg-info text-on-info text-sm font-medium hover:opacity-90 transition-opacity">Info</button>
+			<button class="px-4 py-2 rounded-radius bg-danger text-on-danger text-sm font-medium hover:opacity-90 transition-opacity">Danger</button>
+			<button class="px-4 py-2 rounded-radius bg-warning text-on-warning text-sm font-medium hover:opacity-90 transition-opacity">Warning</button>
+			<button class="px-4 py-2 rounded-radius bg-success text-on-success text-sm font-medium hover:opacity-90 transition-opacity">Success</button>
+		</div>
+	</div>
+}
+
+templ previewSteps() {
+	<div>
+		<h5 class="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted">Steps</h5>
+		<div class="relative flex items-center justify-between">
+			<div class="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-0.5 bg-outline dark:bg-outline-dark"></div>
+			<div class="absolute left-4 top-1/2 h-0.5 w-1/3 -translate-y-1/2 bg-primary dark:bg-primary-dark"></div>
+			<span class="relative flex size-9 items-center justify-center rounded-full bg-primary text-on-primary ring-4 ring-surface-alt dark:bg-primary-dark dark:text-on-primary-dark dark:ring-surface-dark-alt">
+				<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+			</span>
+			<span class="relative flex size-9 items-center justify-center rounded-full border-2 border-primary bg-surface text-sm font-semibold text-primary ring-4 ring-surface-alt dark:border-primary-dark dark:bg-surface-dark dark:text-primary-dark dark:ring-surface-dark-alt">2</span>
+			<span class="relative flex size-9 items-center justify-center rounded-full border-2 border-outline bg-surface text-sm font-semibold text-on-surface ring-4 ring-surface-alt dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:ring-surface-dark-alt">3</span>
+			<span class="relative flex size-9 items-center justify-center rounded-full border-2 border-outline bg-surface text-sm font-semibold text-on-surface ring-4 ring-surface-alt dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:ring-surface-dark-alt">4</span>
+		</div>
+	</div>
+}
+
+templ previewProgress() {
+	<div>
+		<h5 class="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted">Progress</h5>
+		<div class="space-y-2">
+			@progressRow("bg-info", "w-[78%]")
+			@progressRow("bg-primary dark:bg-primary-dark", "w-[64%]")
+			@progressRow("bg-on-surface-strong dark:bg-on-surface-dark-strong", "w-[55%]")
+			@progressRow("bg-secondary dark:bg-secondary-dark", "w-[45%]")
+			@progressRow("bg-danger", "w-[33%]")
+			@progressRow("bg-warning", "w-[22%]")
+		</div>
+	</div>
+}
+
+templ progressRow(fillClass, widthClass string) {
+	<div class="h-2 w-full overflow-hidden rounded-full bg-outline/40 dark:bg-outline-dark/40">
+		<div class={ "h-full rounded-full " + fillClass + " " + widthClass }></div>
+	</div>
+}
+
+templ previewToggles() {
+	<div x-data="{ s: [true, true, true, true, true, true] }">
+		<h5 class="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted">Toggles</h5>
+		<div class="grid grid-cols-2 gap-3">
+			@toggleCell(0, "bg-primary dark:bg-primary-dark")
+			@toggleCell(1, "bg-secondary dark:bg-secondary-dark")
+			@toggleCell(2, "bg-info")
+			@toggleCell(3, "bg-warning")
+			@toggleCell(4, "bg-danger")
+			@toggleCell(5, "bg-success")
+		</div>
+	</div>
+}
+
+templ toggleCell(i int, onClass string) {
+	<label class="flex items-center justify-between gap-3 rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark">
+		<span>Toggle</span>
+		<button
+			type="button"
+			data-index={ fmt.Sprintf("%d", i) }
+			@click="s[$el.dataset.index] = !s[$el.dataset.index]"
+			class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors"
+			:class={ fmt.Sprintf("s[%d] ? '%s' : 'bg-outline dark:bg-outline-dark'", i, onClass) }
+			aria-label="Toggle"
+		>
+			<span
+				class="inline-block size-4 transform rounded-full bg-white transition-transform"
+				:class={ fmt.Sprintf("s[%d] ? 'translate-x-6' : 'translate-x-1'", i) }
+			></span>
+		</button>
+	</label>
+}
+
+templ previewAvatars() {
+	<div>
+		<h5 class="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted">Avatars</h5>
+		<div class="flex flex-wrap items-center gap-3">
+			@ringAvatar("B", "border-primary text-primary dark:border-primary-dark dark:text-primary-dark")
+			@ringAvatar("U", "border-secondary text-secondary dark:border-secondary-dark dark:text-secondary-dark")
+			@ringAvatar("PK", "border-info text-info")
+			@ringAvatar("IH", "border-danger text-danger")
+			@ringAvatar("QU", "border-warning text-warning")
+			@ringAvatar("U", "border-success text-success")
+		</div>
+	</div>
+}
+
+templ ringAvatar(label, classes string) {
+	<span class={ "inline-flex size-10 items-center justify-center rounded-full border-2 bg-surface text-sm font-bold dark:bg-surface-dark " + classes }>
+		{ label }
+	</span>
+}
+
+templ previewUpdateBanner() {
+	<div x-data="{ open: true }" x-show="open" x-transition class="flex items-start gap-4 rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt">
+		<span class="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-info text-on-info">
+			<svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+			</svg>
+		</span>
+		<div class="min-w-0 flex-1">
+			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Update Available</p>
+			<p class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">A new version is available. Please update to the latest version.</p>
+			<div class="mt-3 flex flex-wrap gap-2">
+				<button class="rounded-radius bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary hover:opacity-90 dark:bg-primary-dark dark:text-on-primary-dark">Update now</button>
+				<button @click="open = false" class="rounded-radius border border-outline px-3 py-1.5 text-xs font-semibold text-on-surface hover:bg-surface dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark">Later</button>
+			</div>
+		</div>
+		<button @click="open = false" aria-label="Dismiss" class="text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong">
+			<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+		</button>
+	</div>
+}
+
+templ themeContrastSection() {
+	<div>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Color Contrast Checker</h2>
+		<p class="text-sm text-on-surface dark:text-on-surface-dark mb-4">Select a color to check its contrast with the rest of the colors in the current theme.</p>
+		<div class="rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark">
+			<div role="tablist" class="flex border-b border-outline dark:border-outline-dark">
+				<button
+					role="tab"
+					@click="contrastTab = 'colors'"
+					:class="contrastTab === 'colors' ? 'border-primary text-on-surface-strong dark:border-primary-dark dark:text-on-surface-dark-strong' : 'border-transparent text-on-surface dark:text-on-surface-dark'"
+					class="border-b-2 px-4 py-2 text-sm font-medium transition-colors"
+				>Colors</button>
+				<button
+					role="tab"
+					@click="contrastTab = 'css'"
+					:class="contrastTab === 'css' ? 'border-primary text-on-surface-strong dark:border-primary-dark dark:text-on-surface-dark-strong' : 'border-transparent text-on-surface dark:text-on-surface-dark'"
+					class="border-b-2 px-4 py-2 text-sm font-medium transition-colors"
+				>CSS</button>
+			</div>
+			<div class="p-4">
+				<div x-show="contrastTab === 'colors'" class="space-y-4">
+					<label class="block max-w-sm">
+						<span class="sr-only">Base color</span>
+						<div class="flex items-center gap-2 rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark">
+							<span class="size-5 rounded-radius border border-outline dark:border-outline-dark" :style="'background-color:' + (resolved[contrastBase] || '#000')"></span>
+							<select
+								x-model="contrastBase"
+								class="flex-1 bg-transparent text-sm text-on-surface focus:outline-none dark:text-on-surface-dark"
+							>
+								for _, t := range allEditableTokens() {
+									<option value={ t.Key }>{ t.Label }</option>
+								}
+							</select>
+						</div>
+					</label>
+					<div class="overflow-x-auto -mx-4 px-4">
+						<table class="min-w-full border-separate border-spacing-0 text-center text-xs">
+							<thead>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="col.token">
+										<th class="border-b border-outline px-2 py-2 align-bottom text-[10px] font-semibold uppercase tracking-wide text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">
+											<span x-text="col.label"></span>
+										</th>
+									</template>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="'sample-' + col.token">
+										<td class="border-b border-outline px-1 py-2 dark:border-outline-dark">
+											<div class="flex items-center justify-center gap-1 rounded-radius p-2" :style="'background-color:' + col.color">
+												<span class="text-base" :style="'color:' + base()">Aa</span>
+												<span class="text-base font-bold" :style="'color:' + base()">Aa</span>
+											</div>
+										</td>
+									</template>
+								</tr>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="'ratio-' + col.token">
+										<td class="border-b border-outline px-2 py-2 font-mono tabular-nums text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark-strong">
+											<span x-text="col.ratio.toFixed(2) + ':1'"></span>
+										</td>
+									</template>
+								</tr>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="'aa-' + col.token">
+										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
+											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 4.5 ? 'text-success' : 'text-danger'">
+												AA
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 4.5 ? 'bg-success' : 'bg-danger'"></span>
+											</span>
+										</td>
+									</template>
+								</tr>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="'aaa-' + col.token">
+										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
+											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 7 ? 'text-success' : 'text-danger'">
+												AAA
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 7 ? 'bg-success' : 'bg-danger'"></span>
+											</span>
+										</td>
+									</template>
+								</tr>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="'aal-' + col.token">
+										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
+											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 3 ? 'text-success' : 'text-danger'">
+												AA L
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 3 ? 'bg-success' : 'bg-danger'"></span>
+											</span>
+										</td>
+									</template>
+								</tr>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="'aaal-' + col.token">
+										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
+											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 4.5 ? 'text-success' : 'text-danger'">
+												AAA L
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 4.5 ? 'bg-success' : 'bg-danger'"></span>
+											</span>
+										</td>
+									</template>
+								</tr>
+								<tr>
+									<template x-for="col in contrastMatrix()" :key="'face-' + col.token">
+										<td class="px-2 py-2 text-base" :class="col.ratio >= 4.5 ? 'text-success' : 'text-danger'">
+											<span x-text="col.ratio >= 4.5 ? '☺' : '☹'"></span>
+										</td>
+									</template>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div x-show="contrastTab === 'css'" x-cloak class="space-y-4">
+					<div class="grid gap-3 sm:grid-cols-2">
+						<label class="block">
+							<span class="block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Foreground</span>
+							<div class="flex items-center gap-2">
+								<input type="color" x-model="contrastCustomFg" class="size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer"/>
+								<input type="text" x-model="contrastCustomFg" class="flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"/>
+							</div>
+						</label>
+						<label class="block">
+							<span class="block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Background</span>
+							<div class="flex items-center gap-2">
+								<input type="color" x-model="contrastCustomBg" class="size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer"/>
+								<input type="text" x-model="contrastCustomBg" class="flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"/>
+							</div>
+						</label>
+					</div>
+					<div
+						class="rounded-radius border border-outline dark:border-outline-dark p-4 flex items-center justify-between gap-4"
+						:style="'background-color:' + contrastCustomBg + ';color:' + contrastCustomFg"
+					>
+						<p class="font-medium">The quick brown fox jumps over the lazy dog.</p>
+						<div class="text-right shrink-0">
+							<p class="text-xl font-bold tabular-nums" x-text="customContrast().ratio.toFixed(2) + ':1'"></p>
+							<p class="text-xs font-semibold uppercase" x-text="customContrast().grade"></p>
 						</div>
 					</div>
-					<p class="text-sm text-on-surface dark:text-on-surface-dark">
-						This is a sample card component that adapts to the current theme. The colors, borders, and radius all respond to CSS variables.
-					</p>
-				</div>
-			</div>
-			<!-- Toggles -->
-			<div x-data="{ on1: true, on2: false }">
-				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Toggles</h3>
-				<div class="flex items-center gap-6">
-					<button
-						@click="on1 = !on1"
-						class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-						:class="on1 ? 'bg-primary dark:bg-primary-dark' : 'bg-on-surface/20 dark:bg-on-surface-dark/20'"
-					>
-						<span
-							class="inline-block size-4 transform rounded-full bg-white transition-transform"
-							:class="on1 ? 'translate-x-6' : 'translate-x-1'"
-						></span>
-					</button>
-					<button
-						@click="on2 = !on2"
-						class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-						:class="on2 ? 'bg-primary dark:bg-primary-dark' : 'bg-on-surface/20 dark:bg-on-surface-dark/20'"
-					>
-						<span
-							class="inline-block size-4 transform rounded-full bg-white transition-transform"
-							:class="on2 ? 'translate-x-6' : 'translate-x-1'"
-						></span>
-					</button>
-				</div>
-			</div>
-			<!-- Step Indicators -->
-			<div>
-				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Steps</h3>
-				<div class="flex items-center gap-3">
-					<div class="size-8 rounded-full bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark flex items-center justify-center text-sm font-bold">1</div>
-					<div class="size-8 rounded-full bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark flex items-center justify-center text-sm font-bold">2</div>
-					<div class="size-8 rounded-full bg-secondary dark:bg-secondary-dark text-on-secondary dark:text-on-secondary-dark flex items-center justify-center text-sm font-bold">3</div>
-					<div class="size-8 rounded-full bg-on-surface/10 dark:bg-on-surface-dark/10 text-on-surface dark:text-on-surface-dark flex items-center justify-center text-sm font-bold">4</div>
 				</div>
 			</div>
 		</div>
 	</div>
 }
 
-templ themeCSSOutput() {
-	<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
-		<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">
-				CSS Variables
-			</span>
-			<button
-				@click="copyCSS()"
-				class="flex items-center gap-1.5 rounded-radius px-3 py-1.5 text-xs font-medium bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity"
-			>
-				<span x-text="copied ? 'Copied!' : 'Copy CSS'">Copy CSS</span>
-			</button>
+templ themeCSSSection() {
+	{{ blocks := getThemeCSSBlocks() }}
+	<div>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Get CSS Code</h2>
+		<p class="text-sm text-on-surface dark:text-on-surface-dark mb-4">
+			Copy the code below and paste it into your CSS file. Pick a single theme or export every theme wrapped in a shared
+			<code class="rounded bg-surface-alt px-1 py-0.5 text-xs font-mono text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">{ "@layer base" }</code>
+			block.
+		</p>
+		<div class="flex flex-wrap items-center gap-3 mb-3">
+			<label class="block">
+				<span class="sr-only">Theme filter</span>
+				<select
+					x-model="cssFilter"
+					:disabled="cssMode === 'multiple' && cssFilter === 'all'"
+					class="rounded-radius border border-outline bg-surface text-on-surface px-3 py-1.5 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark disabled:opacity-60"
+				>
+					<option value="current">Active theme</option>
+					<option value="all">All Themes</option>
+					for _, k := range sortedThemeKeys() {
+						<option value={ k }>{ themeLabel(k) }</option>
+					}
+				</select>
+			</label>
+			<div class="inline-flex rounded-radius border border-outline dark:border-outline-dark p-0.5 bg-surface-alt dark:bg-surface-dark-alt">
+				<button
+					@click="cssMode = 'single'"
+					class="px-3 py-1 text-xs font-medium rounded-radius transition-colors"
+					:class="cssMode === 'single' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'"
+				>Single Theme</button>
+				<button
+					@click="cssMode = 'multiple'"
+					class="px-3 py-1 text-xs font-medium rounded-radius transition-colors"
+					:class="cssMode === 'multiple' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'"
+				>Multiple Themes</button>
+			</div>
 		</div>
-		<pre class="p-4 text-sm bg-neutral-950 text-neutral-200 overflow-x-auto max-h-96 overflow-y-auto"><code x-text="currentCSS"></code></pre>
+		<div class="space-y-3">
+			<!-- Single mode, per-theme blocks (and "all" concatenated). -->
+			for _, k := range themeCSSOrder {
+				<div x-show={ fmt.Sprintf("cssMode === 'single' && ((cssFilter === 'current' && (theme || 'minimal') === '%s') || cssFilter === '%s')", k, k) }>
+					@codeblock.CodeBlock(codeblock.Config{
+						Language:  "css",
+						Label:     themeLabel(k) + " — single",
+						Code:      blocks[k],
+						MaxHeight: "24rem",
+						ID:        "theme-css-single-" + k,
+					})
+				</div>
+			}
+			<div x-show="cssMode === 'single' && cssFilter === 'all'">
+				@codeblock.CodeBlock(codeblock.Config{
+					Language:  "css",
+					Label:     "All themes — single",
+					Code:      concatThemes(),
+					MaxHeight: "24rem",
+					ID:        "theme-css-single-all",
+				})
+			</div>
+			<!-- Multi mode, per-theme wrapped in @layer base. -->
+			for _, k := range themeCSSOrder {
+				<div x-show={ fmt.Sprintf("cssMode === 'multiple' && ((cssFilter === 'current' && (theme || 'minimal') === '%s') || cssFilter === '%s')", k, k) }>
+					@codeblock.CodeBlock(codeblock.Config{
+						Language:  "css",
+						Label:     themeLabel(k) + " — @layer base",
+						Code:      wrapSingleTheme(k),
+						MaxHeight: "24rem",
+						ID:        "theme-css-multi-" + k,
+					})
+				</div>
+			}
+			<div x-show="cssMode === 'multiple' && cssFilter === 'all'">
+				@codeblock.CodeBlock(codeblock.Config{
+					Language:  "css",
+					Label:     "All themes — @layer base",
+					Code:      allThemesWrappedCSS(),
+					MaxHeight: "24rem",
+					ID:        "theme-css-multi-all",
+				})
+			</div>
+		</div>
 	</div>
+}
+
+// concatThemes joins every theme block back-to-back for the "All Themes,
+// single mode" export so the user can drop them into a CSS file without the
+// @layer base wrapper.
+func concatThemes() string {
+	blocks := getThemeCSSBlocks()
+	var sb strings.Builder
+	for i, k := range themeCSSOrder {
+		if i > 0 {
+			sb.WriteString("\n\n")
+		}
+		sb.WriteString(blocks[k])
+		sb.WriteString("\n")
+	}
+	return sb.String()
+}
+
+func themeLabel(key string) string {
+	for _, t := range getThemeInfos() {
+		if t.Key == key {
+			return t.Label
+		}
+	}
+	return key
 }
