@@ -56,8 +56,13 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					}
 					var sb = document.querySelector('.sidebar-scroll');
 					if (sb) sb.scrollTop = __sidebarScrollTop;
-					var main = document.querySelector('main');
-					if (main) main.scrollTo({ top: 0 });
+					// Only reset main scroll on full page-nav swaps (target = #main-content).
+					// In-page lazy swaps (accordions, tabs, table rows) must preserve scroll.
+					var tgt = e && e.detail && e.detail.target;
+					if (tgt && tgt.id === 'main-content') {
+						var main = document.querySelector('main');
+						if (main) main.scrollTo({ top: 0 });
+					}
 				});
 			</script>
 			<style>
