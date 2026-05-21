@@ -261,6 +261,7 @@
     --container-3xl: 48rem;
     --container-4xl: 56rem;
     --container-5xl: 64rem;
+    --container-6xl: 72rem;
     --container-7xl: 80rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: calc(1 / 0.75);
@@ -1030,6 +1031,9 @@
   .max-h-80 {
     max-height: calc(var(--spacing) * 80);
   }
+  .max-h-96 {
+    max-height: calc(var(--spacing) * 96);
+  }
   .max-h-svh {
     max-height: 100svh;
   }
@@ -1176,6 +1180,9 @@
   }
   .max-w-5xl {
     max-width: var(--container-5xl);
+  }
+  .max-w-6xl {
+    max-width: var(--container-6xl);
   }
   .max-w-7xl {
     max-width: var(--container-7xl);
@@ -2252,6 +2259,12 @@
     background-color: color-mix(in srgb, oklch(26.9% 0 0) 15%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-on-surface) 15%, transparent);
+    }
+  }
+  .bg-on-surface\/20 {
+    background-color: color-mix(in srgb, oklch(26.9% 0 0) 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-on-surface) 20%, transparent);
     }
   }
   .bg-on-surface\/30 {
@@ -3375,6 +3388,9 @@
   }
   .text-info {
     color: var(--color-info);
+  }
+  .text-neutral-200 {
+    color: var(--color-neutral-200);
   }
   .text-neutral-600 {
     color: var(--color-neutral-600);
@@ -5535,6 +5551,11 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
+  .sm\:grid-cols-3 {
+    @media (width >= 40rem) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
   .sm\:grid-cols-5 {
     @media (width >= 40rem) {
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -5708,6 +5729,11 @@
   .md\:grid-cols-3 {
     @media (width >= 48rem) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .md\:grid-cols-6 {
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
   .md\:grid-cols-8 {
@@ -6077,6 +6103,14 @@
       background-color: color-mix(in srgb, oklch(87% 0 0) 15%, transparent);
       @supports (color: color-mix(in lab, red, red)) {
         background-color: color-mix(in oklab, var(--color-on-surface-dark) 15%, transparent);
+      }
+    }
+  }
+  .dark\:bg-on-surface-dark\/20 {
+    &:where(.dark, .dark *) {
+      background-color: color-mix(in srgb, oklch(87% 0 0) 20%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-on-surface-dark) 20%, transparent);
       }
     }
   }
