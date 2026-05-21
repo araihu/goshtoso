@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	gocombobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/form"
+	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toggle"
@@ -250,7 +251,12 @@ func formDemoPreview() templ.Component {
 						}()
 					}
 					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = customTagsInput().Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = tagslist.TagsList(tagslist.Config{
+						ID:          "tags",
+						Name:        "tags",
+						Values:      []string{"production", "gpu"},
+						Placeholder: "Add a tag...",
+					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -667,9 +673,8 @@ func formDemoPreview() templ.Component {
 	})
 }
 
-// customTagsInput demonstrates using a custom component inside FieldGroup via { children... }.
-// This is a simple Alpine.js tag input — any templ.Component works here.
-func customTagsInput() templ.Component {
+// networkReadView renders the read-only summary for the Network flip section
+func networkReadView() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -690,37 +695,7 @@ func customTagsInput() templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div x-data=\"{ tags: ['production', 'gpu'], newTag: '' }\" class=\"flex flex-col gap-2\"><div class=\"flex flex-wrap gap-2\"><template x-for=\"(tag, i) in tags\" x-bind:key=\"i\"><span class=\"inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark\"><span x-text=\"tag\"></span> <button type=\"button\" x-on:click=\"tags.splice(i, 1)\" class=\"cursor-pointer hover:opacity-70\" aria-label=\"Remove tag\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3\"><path d=\"M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z\"></path></svg></button> <input type=\"hidden\" :name=\"'tags[' + i + ']'\" :value=\"tag\"></span></template></div><div class=\"flex gap-2\"><input type=\"text\" x-model=\"newTag\" placeholder=\"Add a tag...\" x-on:keydown.enter.prevent=\"if (newTag.trim()) { tags.push(newTag.trim()); newTag = '' }\" class=\"flex-1 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark text-on-surface-strong dark:text-on-surface-dark-strong placeholder:text-on-surface-muted dark:placeholder:text-on-surface-dark-muted focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark\"> <button type=\"button\" x-on:click=\"if (newTag.trim()) { tags.push(newTag.trim()); newTag = '' }\" class=\"cursor-pointer px-3 py-2 text-sm rounded-radius border border-dashed border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark hover:bg-outline/10 dark:hover:bg-outline-dark/20\">Add</button></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// networkReadView renders the read-only summary for the Network flip section
-func networkReadView() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var16 == nil {
-			templ_7745c5c3_Var16 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Pod Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.244.0.0/16</span></div><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Service Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.96.0.0/12</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Pod Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.244.0.0/16</span></div><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Service Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.96.0.0/12</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

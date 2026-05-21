@@ -1,24 +1,24 @@
 package tagslist
 
-import "encoding/json"
+import "strings"
 
 // Config holds configuration for the TagsList component.
-// TagsList renders a dynamic list of text inputs powered by Alpine.js.
-// Users can add and remove string values. Form submission uses indexed names: name[0], name[1], ...
+// TagsList renders a list of removable tag chips plus an input + Add button
+// for appending new tags. Values submit as name[0], name[1], ... via hidden inputs.
 type Config struct {
-	// ID is the element ID
+	// ID is the element ID for the outer container
 	ID string
 	// Name is the form field name prefix (submits as name[0], name[1], ...)
 	Name string
 	// Values is the initial list of tag values
 	Values []string
-	// Placeholder is shown in each input (e.g. "e.g. prod, critical")
+	// Placeholder is shown in the add-tag input
 	Placeholder string
-	// AddLabel is the "Add tag" button text (default: "Add tag")
+	// AddLabel is the add button text (default: "Add")
 	AddLabel string
-	// Disabled prevents adding/removing tags
+	// Disabled renders chips only (no remove buttons, no input row)
 	Disabled bool
-	// Class allows additional CSS classes on the container
+	// Class allows additional CSS classes on the outer container
 	Class string
 }
 
@@ -27,20 +27,34 @@ func (c Config) GetAddLabel() string {
 	if c.AddLabel != "" {
 		return c.AddLabel
 	}
-	return "Add tag"
+	return "Add"
 }
 
-// AlpineData returns the x-data JSON string for Alpine.js initialization
-func (c Config) AlpineData() string {
-	values := c.Values
-	if values == nil {
-		values = []string{}
+// GetPlaceholder returns the input placeholder with default
+func (c Config) GetPlaceholder() string {
+	if c.Placeholder != "" {
+		return c.Placeholder
 	}
-	b, _ := json.Marshal(struct {
-		Items []string `json:"items"`
-		Name  string   `json:"name"`
-	}{Items: values, Name: c.Name})
-	return string(b)
+	return "Add a tag..."
+}
+
+// AlpineData returns the x-data expression for Alpine.js initialization.
+// Uses unquoted JS keys + single-quoted strings to survive templ HTML escaping.
+func (c Config) AlpineData() string {
+	var sb strings.Builder
+	sb.WriteString("{ items: [")
+	for i, v := range c.Values {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString("'")
+		sb.WriteString(jsEscapeSingle(v))
+		sb.WriteString("'")
+	}
+	sb.WriteString("], newTag: '', name: '")
+	sb.WriteString(jsEscapeSingle(c.Name))
+	sb.WriteString("', addTag() { const v = this.newTag.trim(); if (v) { this.items.push(v); this.newTag = ''; } } }")
+	return sb.String()
 }
 
 // ContainerClasses returns CSS classes for the outer container
@@ -50,4 +64,28 @@ func (c Config) ContainerClasses() string {
 		return base + " " + c.Class
 	}
 	return base
+}
+
+// jsEscapeSingle escapes a string for safe use inside a single-quoted JS string
+// embedded in an HTML attribute. Escapes backslash, single quote, and newlines.
+func jsEscapeSingle(s string) string {
+	var sb strings.Builder
+	sb.Grow(len(s))
+	for _, r := range s {
+		switch r {
+		case '\\':
+			sb.WriteString(`\\`)
+		case '\'':
+			sb.WriteString(`\'`)
+		case '\n':
+			sb.WriteString(`\n`)
+		case '\r':
+			sb.WriteString(`\r`)
+		case '\t':
+			sb.WriteString(`\t`)
+		default:
+			sb.WriteRune(r)
+		}
+	}
+	return sb.String()
 }

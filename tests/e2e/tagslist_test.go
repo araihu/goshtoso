@@ -8,7 +8,24 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTagsList_AddAndRemoveTags(t *testing.T) {
+func gotoTagsList(t *testing.T, page playwright.Page) {
+	t.Helper()
+	_, err := page.Goto(baseURL+"/components/tags-list", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+}
+
+func fillAndDispatchInput(t *testing.T, locator playwright.Locator, value string) {
+	t.Helper()
+	require.NoError(t, locator.Fill(value))
+	_, err := locator.Evaluate(`(el) => el.dispatchEvent(new Event('input', {bubbles: true}))`, nil)
+	require.NoError(t, err)
+}
+
+func TestTagsList_RendersInitialChips(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -18,42 +35,131 @@ func TestTagsList_AddAndRemoveTags(t *testing.T) {
 	defer cleanupPW()
 
 	page := newPage(t, browser)
-
-	_, err := page.Goto(baseURL+"/components/tags-list", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-	})
-	require.NoError(t, err)
-
-	// Wait for Alpine to initialize
-	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
-	require.NoError(t, err)
+	gotoTagsList(t, page)
 
 	container := page.Locator("#tagsDemo")
 	require.NoError(t, container.WaitFor())
 
-	// Should have 3 initial tags (prod, critical, gpu)
-	inputs := container.Locator("input[type='text']")
-	count, err := inputs.Count()
+	chips := container.Locator("[data-tagslist-chips] > span")
+	count, err := chips.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 3, count, "should have 3 initial tags")
+	assert.Equal(t, 3, count, "should have 3 initial chips")
 
-	// Add a tag
-	addBtn := container.Locator("[data-add-tag]")
-	err = addBtn.Click()
+	// Hidden inputs submit indexed names
+	hidden := container.Locator("input[type='hidden'][name='tags[0]']")
+	val, err := hidden.GetAttribute("value")
 	require.NoError(t, err)
+	assert.Equal(t, "production", val)
+}
 
-	count, err = inputs.Count()
+func TestTagsList_AddTagViaButton(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	gotoTagsList(t, page)
+
+	container := page.Locator("#tagsDemo")
+	require.NoError(t, container.WaitFor())
+
+	input := container.Locator("[data-tagslist-input]")
+	fillAndDispatchInput(t, input, "staging")
+
+	addBtn := container.Locator("[data-tagslist-add]")
+	require.NoError(t, addBtn.Click())
+
+	chips := container.Locator("[data-tagslist-chips] > span")
+	count, err := chips.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 4, count, "should have 4 tags after adding")
+	assert.Equal(t, 4, count, "should have 4 chips after Add click")
 
-	// Remove first tag
+	// Input should be cleared
+	val, err := input.InputValue()
+	require.NoError(t, err)
+	assert.Equal(t, "", val, "input cleared after add")
+}
+
+func TestTagsList_AddTagViaEnter(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	gotoTagsList(t, page)
+
+	container := page.Locator("#labelsDemo")
+	require.NoError(t, container.WaitFor())
+
+	input := container.Locator("[data-tagslist-input]")
+	fillAndDispatchInput(t, input, "alpha")
+	require.NoError(t, input.Press("Enter"))
+
+	chips := container.Locator("[data-tagslist-chips] > span")
+	count, err := chips.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 1, count, "Enter key should add a chip")
+}
+
+func TestTagsList_EmptyInputDoesNotAdd(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	gotoTagsList(t, page)
+
+	container := page.Locator("#labelsDemo")
+	require.NoError(t, container.WaitFor())
+
+	addBtn := container.Locator("[data-tagslist-add]")
+	require.NoError(t, addBtn.Click())
+
+	// Whitespace-only too
+	input := container.Locator("[data-tagslist-input]")
+	fillAndDispatchInput(t, input, "   ")
+	require.NoError(t, addBtn.Click())
+
+	chips := container.Locator("[data-tagslist-chips] > span")
+	count, err := chips.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, count, "empty/whitespace input should not add chips")
+}
+
+func TestTagsList_RemoveChip(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	gotoTagsList(t, page)
+
+	container := page.Locator("#tagsDemo")
+	require.NoError(t, container.WaitFor())
+
 	removeBtn := container.Locator("button[aria-label='Remove tag']").First()
-	err = removeBtn.Click()
-	require.NoError(t, err)
+	require.NoError(t, removeBtn.Click())
 
-	count, err = inputs.Count()
+	chips := container.Locator("[data-tagslist-chips] > span")
+	count, err := chips.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 3, count, "should have 3 tags after removing one")
+	assert.Equal(t, 2, count, "should have 2 chips after removing one")
 }
 
 func TestTagsList_DisabledState(t *testing.T) {
@@ -66,26 +172,25 @@ func TestTagsList_DisabledState(t *testing.T) {
 	defer cleanupPW()
 
 	page := newPage(t, browser)
-
-	_, err := page.Goto(baseURL+"/components/tags-list", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-	})
-	require.NoError(t, err)
-
-	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
-	require.NoError(t, err)
+	gotoTagsList(t, page)
 
 	container := page.Locator("#disabledTagsDemo")
 	require.NoError(t, container.WaitFor())
 
-	// Should have inputs but no add button and no remove buttons
-	addBtn := container.Locator("[data-add-tag]")
-	addCount, err := addBtn.Count()
+	chips := container.Locator("[data-tagslist-chips] > span")
+	count, err := chips.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 0, addCount, "disabled tags list should not have add button")
+	assert.Equal(t, 2, count, "disabled list still renders chips")
 
-	removeBtn := container.Locator("button[aria-label='Remove tag']")
-	removeCount, err := removeBtn.Count()
+	addCount, err := container.Locator("[data-tagslist-add]").Count()
 	require.NoError(t, err)
-	assert.Equal(t, 0, removeCount, "disabled tags list should not have remove buttons")
+	assert.Equal(t, 0, addCount, "disabled list has no Add button")
+
+	inputCount, err := container.Locator("[data-tagslist-input]").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, inputCount, "disabled list has no input")
+
+	removeCount, err := container.Locator("button[aria-label='Remove tag']").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, removeCount, "disabled chips have no remove buttons")
 }

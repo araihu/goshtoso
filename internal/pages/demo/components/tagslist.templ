@@ -14,23 +14,31 @@ templ tagsListDemoContent() {
 	@demo.ComponentDemo(
 		demo.ComponentDemoProps{
 			Title:       "Tags List",
-			Description: "A dynamic list of text inputs for managing string values (tags). Add, remove, and edit items with Alpine.js reactivity.",
+			Description: "A list of removable tag chips with an input and Add button for appending new tags. Submits as name[0], name[1], ... via hidden inputs.",
 		},
 		tagsListDemoPreview(),
 		`// Tags List with initial values
 @tagslist.TagsList(tagslist.Config{
     ID:          "tags",
     Name:        "tags",
-    Values:      []string{"prod", "critical"},
-    Placeholder: "e.g. prod, critical",
+    Values:      []string{"production", "gpu"},
+    Placeholder: "Add a tag...",
 })
 
 // Empty Tags List
 @tagslist.TagsList(tagslist.Config{
     ID:          "labels",
     Name:        "labels",
-    Placeholder: "Add a label…",
-    AddLabel:    "Add label",
+    Placeholder: "Add a label...",
+    AddLabel:    "Add",
+})
+
+// Disabled (read-only chips)
+@tagslist.TagsList(tagslist.Config{
+    ID:       "lockedTags",
+    Name:     "locked",
+    Values:   []string{"locked", "readonly"},
+    Disabled: true,
 })`,
 	)
 }
@@ -43,33 +51,29 @@ templ tagsListDemoPreview() {
 				@tagslist.TagsList(tagslist.Config{
 					ID:          "tagsDemo",
 					Name:        "tags",
-					Values:      []string{"prod", "critical", "gpu"},
-					Placeholder: "e.g. prod, critical",
+					Values:      []string{"production", "critical", "gpu"},
+					Placeholder: "Add a tag...",
 				})
 			</div>
 		</div>
-
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Empty (Start Adding)</h4>
 			<div class="max-w-md">
 				@tagslist.TagsList(tagslist.Config{
 					ID:          "labelsDemo",
 					Name:        "labels",
-					Placeholder: "Add a label…",
-					AddLabel:    "Add label",
+					Placeholder: "Add a label...",
 				})
 			</div>
 		</div>
-
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
 			<div class="max-w-md">
 				@tagslist.TagsList(tagslist.Config{
-					ID:          "disabledTagsDemo",
-					Name:        "disabled-tags",
-					Values:      []string{"locked", "readonly"},
-					Placeholder: "Cannot edit",
-					Disabled:    true,
+					ID:       "disabledTagsDemo",
+					Name:     "disabled-tags",
+					Values:   []string{"locked", "readonly"},
+					Disabled: true,
 				})
 			</div>
 		</div>
