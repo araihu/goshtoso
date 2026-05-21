@@ -67,23 +67,31 @@ func tagsListDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Tags List",
-				Description: "A dynamic list of text inputs for managing string values (tags). Add, remove, and edit items with Alpine.js reactivity.",
+				Description: "A list of removable tag chips with an input and Add button for appending new tags. Submits as name[0], name[1], ... via hidden inputs.",
 			},
 			tagsListDemoPreview(),
 			`// Tags List with initial values
 @tagslist.TagsList(tagslist.Config{
     ID:          "tags",
     Name:        "tags",
-    Values:      []string{"prod", "critical"},
-    Placeholder: "e.g. prod, critical",
+    Values:      []string{"production", "gpu"},
+    Placeholder: "Add a tag...",
 })
 
 // Empty Tags List
 @tagslist.TagsList(tagslist.Config{
     ID:          "labels",
     Name:        "labels",
-    Placeholder: "Add a label…",
-    AddLabel:    "Add label",
+    Placeholder: "Add a label...",
+    AddLabel:    "Add",
+})
+
+// Disabled (read-only chips)
+@tagslist.TagsList(tagslist.Config{
+    ID:       "lockedTags",
+    Name:     "locked",
+    Values:   []string{"locked", "readonly"},
+    Disabled: true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -121,8 +129,8 @@ func tagsListDemoPreview() templ.Component {
 		templ_7745c5c3_Err = tagslist.TagsList(tagslist.Config{
 			ID:          "tagsDemo",
 			Name:        "tags",
-			Values:      []string{"prod", "critical", "gpu"},
-			Placeholder: "e.g. prod, critical",
+			Values:      []string{"production", "critical", "gpu"},
+			Placeholder: "Add a tag...",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -134,8 +142,7 @@ func tagsListDemoPreview() templ.Component {
 		templ_7745c5c3_Err = tagslist.TagsList(tagslist.Config{
 			ID:          "labelsDemo",
 			Name:        "labels",
-			Placeholder: "Add a label…",
-			AddLabel:    "Add label",
+			Placeholder: "Add a label...",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -145,11 +152,10 @@ func tagsListDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = tagslist.TagsList(tagslist.Config{
-			ID:          "disabledTagsDemo",
-			Name:        "disabled-tags",
-			Values:      []string{"locked", "readonly"},
-			Placeholder: "Cannot edit",
-			Disabled:    true,
+			ID:       "disabledTagsDemo",
+			Name:     "disabled-tags",
+			Values:   []string{"locked", "readonly"},
+			Disabled: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
