@@ -15,7 +15,7 @@ import (
 	"github.com/araihu/goshtoso/internal/pages/demo/components"
 )
 
-// Server handles HTTP requests for both original PenguinUI and Goshtoso components
+// Server handles HTTP requests for Goshtoso components
 type Server struct {
 	projectRoot string
 	mux         *http.ServeMux
@@ -36,11 +36,6 @@ func (s *Server) setupRoutes() {
 	assetsDir := filepath.Join(s.projectRoot, "assets")
 	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
 	s.mux.Handle("/assets/", assetsHandler)
-
-	// Original PenguinUI static files (for direct access if needed)
-	originalDir := filepath.Join(s.projectRoot)
-	originalHandler := http.StripPrefix("/original/", http.FileServer(http.Dir(originalDir)))
-	s.mux.Handle("/original/", originalHandler)
 
 	// Component comparison pages
 	s.mux.HandleFunc("/components/", s.handleComponent)

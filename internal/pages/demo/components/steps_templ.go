@@ -72,10 +72,8 @@ func stepsDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Steps",
-				Description:   "Steps show progress through multi-stage flows. Supports horizontal and vertical layouts, with optional labels, using Goshtoso theme tokens only.",
-				OriginalURL:   "https://www.penguinui.com/components/steps",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Steps",
+				Description: "Steps show progress through multi-stage flows. Supports horizontal and vertical layouts, with optional labels, using Goshtoso theme tokens only.",
 				Props: []demo.PropDoc{
 					{Name: "Steps", Type: "[]steps.Step", Default: "nil", Description: "Ordered progress items to render."},
 					{Name: "ID", Type: "string", Default: "\"\"", Description: "Stable root id for HTMX targets and swaps."},
@@ -310,7 +308,7 @@ func StepsHTMXFlow(current int) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", current))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/steps.templ`, Line: 146, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/steps.templ`, Line: 144, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -328,7 +326,7 @@ func StepsHTMXFlow(current int) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/api/components/steps/demo?step=%d", current-1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/steps.templ`, Line: 153, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/steps.templ`, Line: 151, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -356,7 +354,7 @@ func StepsHTMXFlow(current int) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/api/components/steps/demo?step=%d", current+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/steps.templ`, Line: 166, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/steps.templ`, Line: 164, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {

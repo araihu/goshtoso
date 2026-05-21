@@ -68,10 +68,8 @@ func cardDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Card",
-				Description:   "A card is a flexible container that groups related content and actions. Used for displaying products, articles, testimonials, and more.",
-				OriginalURL:   "/original/card/default-card.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Card",
+				Description: "A card is a flexible container that groups related content and actions. Used for displaying products, articles, testimonials, and more.",
 			},
 			cardDemoPreview(),
 			`// Simple Card

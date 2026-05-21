@@ -67,10 +67,8 @@ func toastDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Toast Notification",
-				Description:   "Stacking toast notifications with auto-dismiss, hover pause, and multiple variants. Supports both client-side Alpine.js events and server-side HTMX OOB swaps.",
-				OriginalURL:   "/original/toast-notification/stacking-toast-notification.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Toast Notification",
+				Description: "Stacking toast notifications with auto-dismiss, hover pause, and multiple variants. Supports both client-side Alpine.js events and server-side HTMX OOB swaps.",
 			},
 			toastDemoPreview(),
 			`// 1. Place the container once in your layout

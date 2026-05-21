@@ -15,8 +15,6 @@ templ codeBlockDemoContent() {
 		demo.ComponentDemoProps{
 			Title:         "Code Block",
 			Description:   "Syntax-highlighted code block rendered server-side via Chroma. Reacts to the active theme and dark mode. Includes a copy-to-clipboard button.",
-			OriginalURL:   "https://www.penguinui.com/components/tabs",
-			OriginalLabel: "PenguinUI Snippet Panels",
 			Props: []demo.PropDoc{
 				{Name: "Language", Type: "string", Default: `""`, Description: `Chroma lexer key (e.g. "go", "css", "html", "bash"). "templ" aliases to Go. Unknown values fall back to plain text.`},
 				{Name: "Code", Type: "string", Default: `""`, Description: "Source code to render. Passed verbatim to the highlighter."},

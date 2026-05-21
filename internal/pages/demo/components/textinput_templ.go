@@ -67,10 +67,8 @@ func textInputDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Text Input",
-				Description:   "Text inputs allow users to enter and edit text. Supports various types including password with toggle, search with icon, validation states, and input masks.",
-				OriginalURL:   "/original/text-input/default-text-input.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Text Input",
+				Description: "Text inputs allow users to enter and edit text. Supports various types including password with toggle, search with icon, validation states, and input masks.",
 			},
 			textInputDemoPreview(),
 			`// Default text input

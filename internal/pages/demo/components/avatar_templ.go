@@ -134,11 +134,9 @@ func avatarDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Avatar",
-				Description:   "A visual representation of a user or entity. Supports image, initials, icon placeholder, status indicator, square shape, and now an interactive size selector that drives every avatar on the page in lockstep via Alpine.js (matches PenguinUI's reference UX).",
-				OriginalURL:   "/original/avatar/default-avatar.html",
-				OriginalLabel: "Original PenguinUI",
-				AbovePreview:  avatarSizeSelector(),
+				Title:        "Avatar",
+				Description:  "A visual representation of a user or entity. Supports image, initials, icon placeholder, status indicator, square shape, and now an interactive size selector that drives every avatar on the page in lockstep via Alpine.js (matches PenguinUI's reference UX).",
+				AbovePreview: avatarSizeSelector(),
 			},
 			avatarDemoPreview(),
 			`// Interactive size selector: the demo page wraps avatars in an Alpine scope

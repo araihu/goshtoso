@@ -67,10 +67,8 @@ func bannerDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Banner",
-				Description:   "A banner displays a prominent message at the top of a page or section. Used for announcements, promotions, alerts, and cookie consent.",
-				OriginalURL:   "/original/banner/simple-banner.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Banner",
+				Description: "A banner displays a prominent message at the top of a page or section. Used for announcements, promotions, alerts, and cookie consent.",
 			},
 			bannerDemoPreview(),
 			`// Simple Banner (Dismissible by default)

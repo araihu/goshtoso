@@ -67,10 +67,8 @@ func badgeDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Badge",
-				Description:   "A badge is a small label that displays additional information, status, or counts. Used for notifications, status indicators, and categorization.",
-				OriginalURL:   "/original/badge/default-badge.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Badge",
+				Description: "A badge is a small label that displays additional information, status, or counts. Used for notifications, status indicators, and categorization.",
 			},
 			badgeDemoPreview(),
 			`// Simple Badge

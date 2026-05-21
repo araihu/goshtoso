@@ -67,10 +67,8 @@ func selectDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Select",
-				Description:   "A native select dropdown with label, validation states, and support for Alpine.js binding.",
-				OriginalURL:   "/original/select/default-select.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Select",
+				Description: "A native select dropdown with label, validation states, and support for Alpine.js binding.",
 			},
 			selectDemoPreview(),
 			`// Default Select

@@ -1,77 +1,11 @@
 package e2e
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
 )
-
-func TestButton_OriginalPenguinUI(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping E2E test in short mode")
-	}
-
-	cleanupServer := setupServer(t)
-	defer cleanupServer()
-
-	_, browser, cleanupPW := setupPlaywright(t)
-	defer cleanupPW()
-
-	page := newPage(t, browser)
-
-	_, err := page.Goto(baseURL+"/original/buttons/default-button.html", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-	})
-	require.NoError(t, err)
-
-	t.Run("AllVariantsPresent", func(t *testing.T) {
-		buttons := page.Locator("button")
-		count, err := buttons.Count()
-		require.NoError(t, err)
-		require.GreaterOrEqual(t, count, 8, "expected at least 8 buttons")
-
-		for i := 0; i < count; i++ {
-			button := buttons.Nth(i)
-			visible, err := button.IsVisible()
-			require.NoError(t, err)
-			require.True(t, visible, "button %d should be visible", i)
-		}
-
-		t.Logf("✓ Found %d buttons", count)
-	})
-
-	t.Run("PrimaryButtonStyling", func(t *testing.T) {
-		button := page.Locator("button").First()
-
-		text, err := button.TextContent()
-		require.NoError(t, err)
-		require.Contains(t, strings.ToLower(text), "primary", "first button should be Primary")
-
-		classAttr, err := button.GetAttribute("class")
-		require.NoError(t, err)
-
-		require.Contains(t, classAttr, "bg-primary", "should have bg-primary class")
-		require.Contains(t, classAttr, "text-on-primary", "should have text-on-primary class")
-		require.Contains(t, classAttr, "rounded-radius", "should have rounded-radius class")
-
-		t.Logf("✓ Primary button has correct styling")
-	})
-
-	t.Run("ButtonIsClickable", func(t *testing.T) {
-		button := page.Locator("button").First()
-
-		disabled, err := button.IsDisabled()
-		require.NoError(t, err)
-		require.False(t, disabled, "button should be enabled")
-
-		err = button.Click()
-		require.NoError(t, err)
-
-		t.Logf("✓ Button is clickable")
-	})
-}
 
 func TestButton_GoshtosoComponent(t *testing.T) {
 	if testing.Short() {

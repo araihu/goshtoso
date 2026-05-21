@@ -67,10 +67,8 @@ func tableDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Table",
-				Description:   "Tables display structured data in rows and columns. Supports static, sortable, lazy-loaded, paginated, and infinite scroll variants.",
-				OriginalURL:   "/original/table/default-table.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Table",
+				Description: "Tables display structured data in rows and columns. Supports static, sortable, lazy-loaded, paginated, and infinite scroll variants.",
 			},
 			tableDemoPreview(),
 			`// Default Table

@@ -67,10 +67,8 @@ func comboboxDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Combobox",
-				Description:   "A combobox is an input widget with an associated popup that enables users to select a value from a collection of possible values.",
-				OriginalURL:   "/original/combobox/simple-combobox.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Combobox",
+				Description: "A combobox is an input widget with an associated popup that enables users to select a value from a collection of possible values.",
 			},
 			comboboxDemoPreview(),
 			`// Simple Single-Select

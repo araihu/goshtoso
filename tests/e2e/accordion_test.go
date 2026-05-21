@@ -12,64 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAccordion_OriginalPenguinUI(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping E2E test in short mode")
-	}
-
-	cleanupServer := setupServer(t)
-	defer cleanupServer()
-
-	_, browser, cleanupPW := setupPlaywright(t)
-	defer cleanupPW()
-
-	page := newPage(t, browser)
-
-	_, err := page.Goto(baseURL+"/original/accordion/default-accordion.html", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-	})
-	require.NoError(t, err)
-	page.WaitForTimeout(150) // wait for Alpine.js hydration
-
-	t.Run("Structure_Correct", func(t *testing.T) {
-		container := page.Locator("div[class*='divide-y']")
-		visible, err := container.IsVisible()
-		require.NoError(t, err)
-		require.True(t, visible, "accordion container should be visible")
-
-		items := page.Locator("[id^='controlsAccordionItem']")
-		count, err := items.Count()
-		require.NoError(t, err)
-		require.GreaterOrEqual(t, count, 3, "should have at least 3 accordion items")
-
-		t.Logf("✓ Found %d accordion items", count)
-	})
-
-	t.Run("Alpine_Bindings_Present", func(t *testing.T) {
-		// Original PenguinUI HTML is a raw snippet without Alpine.js loaded,
-		// so we can only verify the bindings are declared, not that they work.
-		firstButton := page.Locator("button").First()
-
-		// Verify x-bind:aria-expanded is present
-		xBindAria, err := firstButton.GetAttribute("x-bind:aria-expanded")
-		require.NoError(t, err)
-		assert.NotEmpty(t, xBindAria, "should have x-bind:aria-expanded")
-
-		// Verify x-on:click handler is present
-		xOnClick, err := firstButton.GetAttribute("x-on:click")
-		require.NoError(t, err)
-		assert.NotEmpty(t, xOnClick, "should have x-on:click handler")
-
-		// Verify chevron has x-bind:class for rotation
-		svg := firstButton.Locator("svg")
-		xBindClass, err := svg.GetAttribute("x-bind:class")
-		require.NoError(t, err)
-		assert.Contains(t, xBindClass, "rotate-180", "chevron should have rotate-180 binding")
-
-		t.Log("✓ Alpine.js bindings present in original HTML")
-	})
-}
-
 func TestAccordion_GoshtosoComponent(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -118,37 +60,6 @@ func TestAccordion_GoshtosoComponent(t *testing.T) {
 		assert.Equal(t, "true", expanded)
 
 		t.Log("✓ Goshtoso accordion interactions work")
-	})
-}
-
-func TestAccordion_VisualParity(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping E2E test in short mode")
-	}
-
-	cleanupServer := setupServer(t)
-	defer cleanupServer()
-
-	screenshotDir := filepath.Join("test-results", "screenshots", "accordion")
-	require.NoError(t, os.MkdirAll(screenshotDir, 0755))
-
-	config := ScreenshotConfig{
-		OriginalURL:    baseURL + "/original/accordion/default-accordion.html",
-		GoshtosoURL:    baseURL + "/components/accordion",
-		ComponentName:  "accordion",
-		ViewportWidth:  1280,
-		ViewportHeight: 800,
-		Threshold:      0.50, // original vs comparison page are very different layouts
-	}
-
-	result := CompareScreenshots(t, config)
-
-	t.Run("Screenshot_Comparison", func(t *testing.T) {
-		assert.True(t, result.Passed,
-			"Visual parity should meet %.0f%% threshold, got %.2f%%",
-			config.Threshold*100, result.MatchPercentage*100)
-
-		t.Logf("✓ Visual parity: %.2f%%", result.MatchPercentage*100)
 	})
 }
 

@@ -67,10 +67,8 @@ func carouselDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Carousel",
-				Description:   "A carousel component for cycling through slides with images, text overlays, autoplay, touch support, and HTMX dynamic loading.",
-				OriginalURL:   "/original/carousel/default-carousel.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Carousel",
+				Description: "A carousel component for cycling through slides with images, text overlays, autoplay, touch support, and HTMX dynamic loading.",
 			},
 			carouselDemoPreview(),
 			carouselDemoCode,

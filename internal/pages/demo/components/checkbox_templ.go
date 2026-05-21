@@ -67,10 +67,8 @@ func checkboxDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Checkbox",
-				Description:   "A checkbox allows users to select one or more options from a set. Supports color variants, custom icons, animations, descriptions, containers, and groups.",
-				OriginalURL:   "/original/checkbox/default-checkbox.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Checkbox",
+				Description: "A checkbox allows users to select one or more options from a set. Supports color variants, custom icons, animations, descriptions, containers, and groups.",
 			},
 			checkboxDemoPreview(),
 			`// Default Checkbox

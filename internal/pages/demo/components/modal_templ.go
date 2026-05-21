@@ -67,10 +67,8 @@ func modalDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Modal",
-				Description:   "Modals display focused content that requires user attention or interaction. They support default and alert variants, with optional HTMX and JavaScript actions on buttons.",
-				OriginalURL:   "/original/modal/default-modal.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Modal",
+				Description: "Modals display focused content that requires user attention or interaction. They support default and alert variants, with optional HTMX and JavaScript actions on buttons.",
 			},
 			modalDemoPreview(),
 			`// Default Modal

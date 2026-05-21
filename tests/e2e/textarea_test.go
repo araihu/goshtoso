@@ -8,58 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestTextarea_OriginalPenguinUI tests the original PenguinUI textarea HTML
-func TestTextarea_OriginalPenguinUI(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping E2E test in short mode")
-	}
-
-	cleanupServer := setupServer(t)
-	defer cleanupServer()
-
-	_, browser, cleanupPW := setupPlaywright(t)
-	defer cleanupPW()
-
-	page := newPage(t, browser)
-
-	_, err := page.Goto(baseURL+"/original/text-area/default-textarea.html", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-	})
-	require.NoError(t, err)
-
-	t.Run("Textarea_Element_Exists", func(t *testing.T) {
-		ta := page.Locator("textarea#textArea")
-		visible, err := ta.IsVisible()
-		require.NoError(t, err)
-		assert.True(t, visible, "textarea should be visible")
-		t.Log("✓ Original textarea element exists and is visible")
-	})
-
-	t.Run("Label_Exists", func(t *testing.T) {
-		label := page.Locator("label[for='textArea']")
-		text, err := label.TextContent()
-		require.NoError(t, err)
-		assert.Equal(t, "Comment", text)
-		t.Log("✓ Original textarea has correct label")
-	})
-
-	t.Run("Placeholder_Text", func(t *testing.T) {
-		ta := page.Locator("textarea#textArea")
-		placeholder, err := ta.GetAttribute("placeholder")
-		require.NoError(t, err)
-		assert.Equal(t, "We'd love to hear from you...", placeholder)
-		t.Log("✓ Original textarea has correct placeholder")
-	})
-
-	t.Run("Rows_Attribute", func(t *testing.T) {
-		ta := page.Locator("textarea#textArea")
-		rows, err := ta.GetAttribute("rows")
-		require.NoError(t, err)
-		assert.Equal(t, "3", rows)
-		t.Log("✓ Original textarea has correct rows attribute")
-	})
-}
-
 // TestTextarea_GoshtosoComponent tests the Goshtoso textarea component
 func TestTextarea_GoshtosoComponent(t *testing.T) {
 	if testing.Short() {

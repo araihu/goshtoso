@@ -67,10 +67,8 @@ func alertDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Alert",
-				Description:   "Alerts display important messages to the user. They come in four color variants (info, success, warning, danger) and support dismiss functionality, action links, action buttons, and list content.",
-				OriginalURL:   "/original/alert/default-alert.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Alert",
+				Description: "Alerts display important messages to the user. They come in four color variants (info, success, warning, danger) and support dismiss functionality, action links, action buttons, and list content.",
 			},
 			alertDemoPreview(),
 			`// Default Alert (all 4 variants)

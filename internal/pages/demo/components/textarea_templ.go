@@ -67,10 +67,8 @@ func textareaDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Textarea",
-				Description:   "A textarea is a multi-line text input field for longer form content like comments, messages, and descriptions.",
-				OriginalURL:   "/original/text-area/default-textarea.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Textarea",
+				Description: "A textarea is a multi-line text input field for longer form content like comments, messages, and descriptions.",
 			},
 			textareaDemoPreview(),
 			`// Default Textarea

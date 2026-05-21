@@ -67,10 +67,8 @@ func toggleDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Toggle",
-				Description:   "A toggle switch allows users to turn an option on or off. It provides a visual indicator of the current state and supports multiple color variants.",
-				OriginalURL:   "/original/toggle/default-toggle.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Toggle",
+				Description: "A toggle switch allows users to turn an option on or off. It provides a visual indicator of the current state and supports multiple color variants.",
 			},
 			toggleDemoPreview(),
 			`// Default Toggle

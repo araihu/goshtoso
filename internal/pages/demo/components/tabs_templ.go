@@ -67,10 +67,8 @@ func tabsDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Tabs",
-				Description:   "Tabs organize content into multiple panels, allowing users to navigate between them. They support keyboard navigation, icons, and badges.",
-				OriginalURL:   "/original/tabs/default-tabs.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Tabs",
+				Description: "Tabs organize content into multiple panels, allowing users to navigate between them. They support keyboard navigation, icons, and badges.",
 			},
 			tabsDemoPreview(),
 			`// Default Tabs
@@ -268,7 +266,7 @@ func tabContent(name string) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/tabs.templ`, Line: 150, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/tabs.templ`, Line: 148, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

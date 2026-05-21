@@ -67,10 +67,8 @@ func spinnerDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Spinner",
-				Description:   "A spinner indicates loading state with an animated circular indicator. Available in multiple color variants and sizes.",
-				OriginalURL:   "/original/spinner/default-spinner.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Spinner",
+				Description: "A spinner indicates loading state with an animated circular indicator. Available in multiple color variants and sizes.",
 			},
 			spinnerDemoPreview(),
 			`// Default Spinner

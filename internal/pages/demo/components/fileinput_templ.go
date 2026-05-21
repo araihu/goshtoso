@@ -67,10 +67,8 @@ func fileInputDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "File Input",
-				Description:   "A drag-and-drop file input component that allows users to browse or drag files into a drop zone.",
-				OriginalURL:   "/original/file-input/file-input-with-drag-and-drop.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "File Input",
+				Description: "A drag-and-drop file input component that allows users to browse or drag files into a drop zone.",
 			},
 			fileInputDemoPreview(),
 			`// Basic file input with drag and drop

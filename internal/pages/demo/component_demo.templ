@@ -12,10 +12,8 @@ type PropDoc struct {
 
 // ComponentDemoProps holds configuration for component demo pages
 type ComponentDemoProps struct {
-	Title         string
-	Description   string
-	OriginalURL   string // Link to original PenguinUI page
-	OriginalLabel string
+	Title       string
+	Description string
 	// AbovePreview is an optional slot rendered between the header and the
 	// macOS-frame preview. Use for inline controls (e.g. an interactive
 	// size selector) that belong to the demo but should sit in page chrome
@@ -30,24 +28,11 @@ type DemoSectionProps struct {
 	Description string
 }
 
-// ComponentDemo renders a component demo page with link to original
 templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeExample string) {
 	<div>
 		<!-- Header Section -->
 		<div class="mb-6">
-			<div class="flex items-center gap-3 mb-2">
-				<h1 class="text-3xl font-bold font-title">{ props.Title }</h1>
-				<a
-					href={ templ.SafeURL(props.OriginalURL) }
-					target="_blank"
-					class="inline-flex items-center gap-1 text-sm px-3 py-1 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors border border-outline dark:border-outline-dark"
-				>
-					<span>View Original</span>
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-					</svg>
-				</a>
-			</div>
+			<h1 class="text-3xl font-bold font-title mb-2">{ props.Title }</h1>
 			<p class="text-lg text-on-surface-muted dark:text-on-surface-dark-muted max-w-3xl">
 				{ props.Description }
 			</p>

@@ -68,10 +68,8 @@ func radioDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Radio",
-				Description:   "Single-select form input. Supports color variants, sizes, descriptions, bordered containers, segmented pill bars, and exposes first-class HTMX + Alpine.js interaction primitives.",
-				OriginalURL:   "/original/radio/default-radio.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Radio",
+				Description: "Single-select form input. Supports color variants, sizes, descriptions, bordered containers, segmented pill bars, and exposes first-class HTMX + Alpine.js interaction primitives.",
 			},
 			radioDemoPreview(),
 			`// Default radio

@@ -67,10 +67,8 @@ func tooltipDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Tooltip",
-				Description:   "A tooltip displays informative text when users hover over, focus on, or click an element. Useful for providing additional context without cluttering the interface.",
-				OriginalURL:   "/original/tooltip/default-tooltip.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Tooltip",
+				Description: "A tooltip displays informative text when users hover over, focus on, or click an element. Useful for providing additional context without cluttering the interface.",
 			},
 			tooltipDemoPreview(),
 			`// Simple Tooltip (top, hover)

@@ -2,8 +2,6 @@ package e2e
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -614,41 +612,6 @@ func TestCombobox_Preselected(t *testing.T) {
 		assert.True(t, visible, "dropdown should be visible")
 
 		t.Log("✓ Preselected dropdown opens")
-	})
-}
-
-// TestCombobox_VisualParity tests visual comparison with original
-func TestCombobox_VisualParity(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping E2E test in short mode")
-	}
-
-	cleanupServer := setupServer(t)
-	defer cleanupServer()
-
-	screenshotDir := filepath.Join("test-results", "screenshots", "combobox")
-	require.NoError(t, os.MkdirAll(screenshotDir, 0755))
-
-	config := ScreenshotConfig{
-		OriginalURL:    baseURL + "/original/combobox/simple-combobox.html",
-		GoshtosoURL:    baseURL + "/components/combobox",
-		ComponentName:  "combobox",
-		ViewportWidth:  1280,
-		ViewportHeight: 800,
-		Threshold:      0.85, // 85% match (combobox is complex)
-	}
-
-	result := CompareScreenshots(t, config)
-
-	t.Run("Screenshot_Comparison", func(t *testing.T) {
-		assert.True(t, result.Passed,
-			"Visual parity should meet %.0f%% threshold, got %.2f%%",
-			config.Threshold*100, result.MatchPercentage*100)
-
-		t.Logf("✓ Visual parity: %.2f%%", result.MatchPercentage*100)
-		t.Logf("  Original: %s", result.OriginalScreenshotPath)
-		t.Logf("  Goshtoso: %s", result.GoshtosoScreenshotPath)
-		t.Logf("  Diff: %s", result.DiffScreenshotPath)
 	})
 }
 

@@ -67,10 +67,8 @@ func dropdownDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Dropdown",
-				Description:   "A dropdown menu displays a list of actions or options that a user can choose from. Supports click, hover, and context menu triggers with keyboard navigation.",
-				OriginalURL:   "/original/dropdowns/dropdown-with-click.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Dropdown",
+				Description: "A dropdown menu displays a list of actions or options that a user can choose from. Supports click, hover, and context menu triggers with keyboard navigation.",
 			},
 			dropdownDemoPreview(),
 			`// Click Dropdown

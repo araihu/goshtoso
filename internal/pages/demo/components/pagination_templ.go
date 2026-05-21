@@ -67,10 +67,8 @@ func paginationDemoContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:         "Pagination",
-				Description:   "Pagination components allow users to navigate between pages of content. Supports simple prev/next and ellipsis variants.",
-				OriginalURL:   "/original/pagination/pagination-with-ellipsis.html",
-				OriginalLabel: "Original PenguinUI",
+				Title:       "Pagination",
+				Description: "Pagination components allow users to navigate between pages of content. Supports simple prev/next and ellipsis variants.",
 			},
 			paginationDemoPreview(),
 			`// Simple pagination (prev/next only)
