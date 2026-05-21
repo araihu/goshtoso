@@ -16,12 +16,12 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			localStorage.setItem('theme', value);
 			document.documentElement.setAttribute('data-theme', value);
 		});
-		document.documentElement.setAttribute('data-theme', theme);
 	">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ title } - Goshtoso PenguinUI</title>
+			@templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'minimal';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -75,11 +75,29 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					-ms-overflow-style: none;
 					scrollbar-width: none;
 				}
+				/* First-paint entrance animations — masks layout shift on hard reload.
+				   Gated by html.boot which is stripped ~600ms after DOMContentLoaded,
+				   so HTMX partial swaps do not retrigger. */
+				@keyframes goshFadeIn { from { opacity: 0; } to { opacity: 1; } }
+				@keyframes goshSlideDown {
+					from { opacity: 0; transform: translate3d(0, -8px, 0); }
+					to   { opacity: 1; transform: none; }
+				}
+				@keyframes goshSlideRight {
+					from { opacity: 0; transform: translate3d(-12px, 0, 0); }
+					to   { opacity: 1; transform: none; }
+				}
+				html.boot [data-boot-anim="header"]  { animation: goshSlideDown 260ms ease-out both; }
+				html.boot [data-boot-anim="sidebar"] { animation: goshSlideRight 320ms ease-out 60ms both; }
+				html.boot [data-boot-anim="main"]    { animation: goshFadeIn 320ms ease-out 120ms both; }
+				@media (prefers-reduced-motion: reduce) {
+					html.boot [data-boot-anim] { animation: none; }
+				}
 			</style>
 		</head>
 		<body class="h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition">
 			<!-- Header -->
-			<header class="sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60">
+			<header data-boot-anim="header" class="sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60">
 				<div class="flex h-16 items-center justify-between px-4 lg:px-8">
 					<div class="flex items-center gap-4">
 						<button 
@@ -169,6 +187,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<div class="flex h-[calc(100vh-4rem)] overflow-hidden">
 				<!-- Sidebar Component -->
 				<div
+					data-boot-anim="sidebar"
 					class="fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 lg:h-full"
 					:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 				>
@@ -209,7 +228,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 				></div>
 
 				<!-- Main Content -->
-				<main class="flex-1 overflow-y-auto p-6 lg:p-8">
+				<main data-boot-anim="main" class="flex-1 overflow-y-auto p-6 lg:p-8">
 					<div id="main-content" class={ "mx-auto " + mainContentMaxWidth(activeComponent) }>
 						@content
 						@componentNavFooter(activeComponent)
