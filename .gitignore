@@ -42,6 +42,10 @@ Thumbs.db
 
 # Node modules (if using npm for anything)
 node_modules/
+node_modules
+
+# Claude Code local worktrees
+.claude/worktrees/
 
 # Test results
 test-results/
