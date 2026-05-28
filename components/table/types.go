@@ -515,11 +515,16 @@ func (cfg Config) NextPageURL() string {
 }
 
 // ContainerClasses returns the outer wrapper CSS classes.
-// Uses overflow-x-auto so tables can scroll horizontally on narrow screens
-// without pushing the parent layout wider. Legacy infinite scroll also uses
-// overflow-x-auto (page-level vertical scrolling, don't clip vertically).
+// overflow-x-auto lets the table scroll horizontally on narrow screens
+// without widening the parent. overflow-y-clip is paired explicitly:
+// CSS coerces a `visible` axis to `auto` when the other is non-visible,
+// so without it the wrapper becomes a Y scroll container too. During the
+// htmx-row-in append keyframe the briefly translateY-ed rows make
+// scrollHeight > clientHeight for ~100ms, painting a transient vertical
+// scrollbar that vanishes on settle — the layout-shift flicker reported
+// on infinite-scroll tables.
 func (cfg Config) ContainerClasses() string {
-	base := "overflow-x-auto w-full rounded-radius border border-outline dark:border-outline-dark"
+	base := "overflow-x-auto overflow-y-clip w-full rounded-radius border border-outline dark:border-outline-dark"
 	if cfg.Class != "" {
 		base += " " + cfg.Class
 	}
