@@ -25,6 +25,17 @@
    the JIT only emits color vars for shades actually used by themes. */
 @source inline("bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,100,200,300,400,500,600,700,800,900,950}");
 
+/* Safelist responsive position + visibility variants that tks-console
+   relies on. tks-console imports the full goshtoso-base.css, which means
+   goshtoso's tailwind utilities get emitted AFTER tks-console's own. Any
+   `md:*` override that tks-console uses on top of a base utility goshtoso
+   also emits (e.g. `fixed md:relative` on the sidebar) needs a matching
+   `md:*` rule in goshtoso's output — otherwise goshtoso's `.fixed` wins
+   at every viewport and the sidebar overlays the main column. */
+@source inline("md:{relative,fixed,absolute,sticky,hidden,block,flex,grid}");
+@source inline("md:translate-x-0");
+@source inline("md:w-64");
+
 /* ============================================
    THEME SYSTEM
    Imported from all-themes.css which provides:
