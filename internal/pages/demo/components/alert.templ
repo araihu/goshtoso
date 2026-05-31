@@ -10,42 +10,77 @@ templ AlertDemoPage() {
 	@demo.Layout("Alert", "alert", alertDemoContent())
 }
 
-// alertDemoContent renders the actual content inside the layout
+// alertDemoContent renders the demo. Each alert variant lives in its own preview
+// frame followed by its own code block (mirrors penguinui.com/components/alert).
+// Wrapped in #alert-fragment.
 templ alertDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Alert",
-			Description:   "Alerts display important messages to the user. They come in four color variants (info, success, warning, danger) and support dismiss functionality, action links, action buttons, and list content.",
-		},
-		alertDemoPreview(),
-		`// Default Alert (all 4 variants)
-@alert.Alert(alert.Config{
+	<div id="alert-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Alert",
+				Description: "Inline messages in four semantic colors (info, success, warning, danger). Supports dismiss, action links, action buttons, and list content.",
+			},
+			alertDefaultPreview(),
+			`@alert.Alert(alert.Config{
     Title:       "Update Available",
     Description: "A new version is available.",
     Variant:     alert.Info,
-})
+})`,
+		)
 
-// Dismissible Alert (with transition)
-@alert.Alert(alert.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Dismissible",
+				Description: "Dismissible: true adds a close button that fades the alert out via an Alpine transition.",
+			},
+			alertDismissiblePreview(),
+			`@alert.Alert(alert.Config{
     Title:       "Successfully Subscribed",
     Description: "Welcome aboard!",
     Variant:     alert.Success,
     Dismissible: true,
-})
+})`,
+		)
 
-// Alert with Link
-@alert.Alert(alert.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Link",
+				Description: "Attach a Link config to render a trailing action link.",
+			},
+			alertLinkPreview(),
+			`@alert.Alert(alert.Config{
     Title:       "Update Available",
     Description: "A new version is available.",
     Variant:     alert.Info,
-    Link: &alert.LinkConfig{
-        Text: "Details",
-        Href: "#",
-    },
-})
+    Link: &alert.LinkConfig{Text: "Details", Href: "#"},
+})`,
+		)
 
-// Alert with Action Buttons
-@alert.Alert(alert.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With List",
+				Description: "Pass ListItems to render a bulleted list under the description.",
+			},
+			alertListPreview(),
+			`@alert.Alert(alert.Config{
+    Title:       "Password Requirements",
+    Description: "Make sure your password:",
+    Variant:     alert.Info,
+    ListItems: []string{
+        "has minimum 8 characters",
+        "includes both upper and lower cases",
+        "contains at least one number",
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Action Buttons",
+				Description: "Attach an Action config for primary + dismiss buttons.",
+			},
+			alertActionPreview(),
+			`@alert.Alert(alert.Config{
     Title:       "Update Available",
     Description: "A new version is available.",
     Variant:     alert.Info,
@@ -54,29 +89,26 @@ templ alertDemoContent() {
         PrimaryOnClick: "alert('Updating...')",
         DismissText:    "Dismiss",
     },
-})
-
-// Alert with List
-@alert.Alert(alert.Config{
-    Title:       "Password Requirements",
-    Description: "Make sure your password:",
-    Variant:     alert.Info,
-    ListItems:   []string{
-        "has minimum 8 characters",
-        "includes both upper and lower cases",
-        "contains at least one number",
-    },
 })`,
-	)
+		)
+	</div>
+	// API reference lives outside #alert-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Title", Type: "string", Default: `""`, Description: "Alert heading."},
+		{Name: "Description", Type: "string", Default: `""`, Description: "Alert body text."},
+		{Name: "Variant", Type: "Variant", Default: "Info", Description: `Color: "info", "success", "warning", "danger".`},
+		{Name: "Dismissible", Type: "bool", Default: "false", Description: "Add a close button with a fade transition."},
+		{Name: "Link", Type: "*LinkConfig", Default: "nil", Description: "Trailing action link (Text + Href)."},
+		{Name: "Action", Type: "*ActionConfig", Default: "nil", Description: "Primary + dismiss action buttons."},
+		{Name: "ListItems", Type: "[]string", Default: "nil", Description: "Bulleted list rendered under the description."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the alert."},
+	})
 }
 
-// alertDemoPreview renders the Goshtoso alert preview
-templ alertDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Default Alerts
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Alert</h4>
-			<div class="space-y-3">
+// alertDefaultPreview renders the four default (non-dismissible) variants.
+templ alertDefaultPreview() {
+	<div id="alert-default" class="w-full max-w-2xl mx-auto">
+		<div class="space-y-3">
 				@alert.Alert(alert.Config{
 					Title:       "Update Available",
 					Description: "A new version is available. Please update to the latest version.",
@@ -99,11 +131,12 @@ templ alertDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Dismissible Alerts
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Dismissible Alert (with Transition)</h4>
-			<div class="space-y-3">
+// alertDismissiblePreview renders the four dismissible variants.
+templ alertDismissiblePreview() {
+	<div id="alert-dismissible" class="w-full max-w-2xl mx-auto">
+		<div class="space-y-3">
 				@alert.Alert(alert.Config{
 					Title:       "Update Available",
 					Description: "A new version is available. Please update to the latest version.",
@@ -130,11 +163,12 @@ templ alertDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Alert with Link
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Alert with Link</h4>
-			<div class="space-y-3">
+// alertLinkPreview renders the four link variants.
+templ alertLinkPreview() {
+	<div id="alert-link" class="w-full max-w-2xl mx-auto">
+		<div class="space-y-3">
 				@alert.Alert(alert.Config{
 					Title:       "Update Available",
 					Description: "A new version is available. Please update to the latest version.",
@@ -173,11 +207,12 @@ templ alertDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Alert with List
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Alert with List</h4>
-			<div class="space-y-3">
+// alertListPreview renders the list-content variants.
+templ alertListPreview() {
+	<div id="alert-list" class="w-full max-w-2xl mx-auto">
+		<div class="space-y-3">
 				@alert.Alert(alert.Config{
 					Title:       "Password is not strong",
 					Description: "The password you entered does not meet the requirements. Make sure your password:",
@@ -200,11 +235,12 @@ templ alertDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Alert with Action Buttons
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Alert with Action Buttons</h4>
-			<div class="space-y-3">
+// alertActionPreview renders the action-button variants.
+templ alertActionPreview() {
+	<div id="alert-action" class="w-full max-w-2xl mx-auto">
+		<div class="space-y-3">
 				@alert.Alert(alert.Config{
 					Title:       "Update Available",
 					Description: "A new version is available. Please update to the latest version.",
@@ -243,5 +279,4 @@ templ alertDemoPreview() {
 				})
 			</div>
 		</div>
-	</div>
 }

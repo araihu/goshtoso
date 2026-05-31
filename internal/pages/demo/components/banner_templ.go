@@ -43,7 +43,9 @@ func BannerDemoPage() templ.Component {
 	})
 }
 
-// bannerDemoContent renders the actual content inside the layout
+// bannerDemoContent renders the demo. Each banner variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/banner). Wrapped in #banner-fragment.
 func bannerDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,49 +67,75 @@ func bannerDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"banner-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Banner",
-				Description: "A banner displays a prominent message at the top of a page or section. Used for announcements, promotions, alerts, and cookie consent.",
+				Description: "A prominent page/section message for announcements, promotions, alerts, and cookie consent. Dismissible by default; supports CTAs, semantic colors, and a cookie-consent mode.",
 			},
-			bannerDemoPreview(),
-			`// Simple Banner (Dismissible by default)
-@banner.Banner(banner.Config{
-    Text: "Limited Time Offer! Check out our deals",
-})
-
-// Persistent Banner (Non-dismissible)
-@banner.Banner(banner.Config{
-    Text:       "Important announcement - cannot be dismissed",
+			bannerSimplePreview(),
+			`@banner.Banner(banner.Config{
+    Text: "Limited Time Offer! Explore exclusive deals & savings",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Persistent (Non-dismissible)",
+				Description: "Persistent: true removes the dismiss control so the message stays put.",
+			},
+			bannerPersistentPreview(),
+			`@banner.Banner(banner.Config{
+    Text:       "This banner cannot be dismissed by users",
     Persistent: true,
-})
-
-// Banner with CTA Button
-@banner.Banner(banner.Config{
-    Text: "Get Fit Anywhere, Anytime",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With CTA Button",
+				Description: "Attach a CTA config for an inline call-to-action (Href for a link, OnClick for an action).",
+			},
+			bannerCTAPreview(),
+			`@banner.Banner(banner.Config{
+    Text: "Get Fit Anywhere, Anytime 💪",
     CTA: &banner.CTAConfig{
         Text: "Start free trial",
         Href: "/signup",
     },
-})
-
-// Fixed Position Banner (stays at top)
-@banner.Banner(banner.Config{
-    Text: "Important system maintenance scheduled",
-    Position: banner.PositionFixed,
-    Variant:  banner.Warning,
-})
-
-// Colored Variants
-@banner.Banner(banner.Config{
-    Text: "Success! Your changes have been saved",
-    Variant: banner.Success,
-})
-
-// Cookie Consent Banner
-@banner.Banner(banner.Config{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Color Variants",
+				Description: "Set Variant for semantic coloring: Default, Primary, Info, Success, Warning, Danger.",
+			},
+			bannerVariantsPreview(),
+			`@banner.Banner(banner.Config{Text: "Success! Your changes have been saved", Variant: banner.Success})
+@banner.Banner(banner.Config{Text: "Warning: Please review your settings", Variant: banner.Warning})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Cookie Consent",
+				Description: "CookieBanner: true plus a CookieConfig renders a corner-anchored consent card with accept/reject actions.",
+			},
+			bannerCookiePreview(),
+			`@banner.Banner(banner.Config{
     CookieBanner: true,
-    Text: "We use cookies to improve your experience",
+    Text:         "We use cookies to improve your experience.",
     CookieConfig: &banner.CookieBannerConfig{
         Title:        "Cookie Settings",
         AcceptText:   "Accept All",
@@ -120,12 +148,30 @@ func bannerDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Text", Type: "string", Default: `""`, Description: "Banner message text."},
+			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "info", "success", "warning", "danger".`},
+			{Name: "Position", Type: "Position", Default: "PositionRelative", Description: `Layout: "relative" (inline) or "fixed" (pinned to top).`},
+			{Name: "Persistent", Type: "bool", Default: "false", Description: "Remove the dismiss control."},
+			{Name: "DismissAction", Type: "string", Default: `""`, Description: "Extra Alpine expression run when dismissed."},
+			{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (Text + Href or OnClick)."},
+			{Name: "CookieBanner", Type: "bool", Default: "false", Description: "Render as a corner cookie-consent card."},
+			{Name: "CookieConfig", Type: "*CookieBannerConfig", Default: "nil", Description: "Cookie card content + accept/reject actions."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }
 
-// bannerDemoPreview renders the Goshtoso banner preview
-func bannerDemoPreview() templ.Component {
+// bannerSimplePreview renders the default dismissible banner.
+func bannerSimplePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -146,7 +192,7 @@ func bannerDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Banner (Dismissible by Default)</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"banner-simple\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -156,7 +202,37 @@ func bannerDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Persistent Banner (Non-dismissible)</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// bannerPersistentPreview renders the non-dismissible banner.
+func bannerPersistentPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"banner-persistent\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -167,7 +243,37 @@ func bannerDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">With CTA Button</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// bannerCTAPreview renders a banner with a CTA button.
+func bannerCTAPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"banner-cta\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -181,53 +287,95 @@ func bannerDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Color Variants</h4><div class=\"space-y-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:    "Default variant banner",
-			Variant: banner.Default,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		return nil
+	})
+}
+
+// bannerVariantsPreview renders the semantic color variants.
+func bannerVariantsPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"banner-variants\" class=\"w-full max-w-2xl mx-auto\"><div class=\"space-y-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:    "Primary variant for promotions",
-			Variant: banner.Primary,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Default variant banner", Variant: banner.Default}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:    "Info variant for general information",
-			Variant: banner.Info,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Primary variant for promotions", Variant: banner.Primary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:    "Success! Operation completed successfully",
-			Variant: banner.Success,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Info variant for general information", Variant: banner.Info}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:    "Warning: Please review your settings",
-			Variant: banner.Warning,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Success! Operation completed successfully", Variant: banner.Success}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:    "Error: Something went wrong",
-			Variant: banner.Danger,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Warning: Please review your settings", Variant: banner.Warning}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><div class=\"relative h-48 overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><h4 class=\"absolute top-4 left-4 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong z-10\">Cookie Consent Banner (Bottom Right)</h4><div class=\"absolute inset-0 bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Error: Something went wrong", Variant: banner.Danger}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// bannerCookiePreview renders the cookie-consent banner inside a framed stage.
+func bannerCookiePreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"banner-cookie\" class=\"w-full max-w-2xl mx-auto\"><div class=\"relative h-48 overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"absolute inset-0 bg-surface dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -245,7 +393,7 @@ func bannerDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

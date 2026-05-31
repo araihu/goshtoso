@@ -10,51 +10,68 @@ templ BannerDemoPage() {
 	@demo.Layout("Banner", "banner", bannerDemoContent())
 }
 
-// bannerDemoContent renders the actual content inside the layout
+// bannerDemoContent renders the demo. Each banner variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/banner). Wrapped in #banner-fragment.
 templ bannerDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Banner",
-			Description:   "A banner displays a prominent message at the top of a page or section. Used for announcements, promotions, alerts, and cookie consent.",
-		},
-		bannerDemoPreview(),
-		`// Simple Banner (Dismissible by default)
-@banner.Banner(banner.Config{
-    Text: "Limited Time Offer! Check out our deals",
-})
+	<div id="banner-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Banner",
+				Description: "A prominent page/section message for announcements, promotions, alerts, and cookie consent. Dismissible by default; supports CTAs, semantic colors, and a cookie-consent mode.",
+			},
+			bannerSimplePreview(),
+			`@banner.Banner(banner.Config{
+    Text: "Limited Time Offer! Explore exclusive deals & savings",
+})`,
+		)
 
-// Persistent Banner (Non-dismissible)
-@banner.Banner(banner.Config{
-    Text:       "Important announcement - cannot be dismissed",
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Persistent (Non-dismissible)",
+				Description: "Persistent: true removes the dismiss control so the message stays put.",
+			},
+			bannerPersistentPreview(),
+			`@banner.Banner(banner.Config{
+    Text:       "This banner cannot be dismissed by users",
     Persistent: true,
-})
+})`,
+		)
 
-// Banner with CTA Button
-@banner.Banner(banner.Config{
-    Text: "Get Fit Anywhere, Anytime",
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With CTA Button",
+				Description: "Attach a CTA config for an inline call-to-action (Href for a link, OnClick for an action).",
+			},
+			bannerCTAPreview(),
+			`@banner.Banner(banner.Config{
+    Text: "Get Fit Anywhere, Anytime 💪",
     CTA: &banner.CTAConfig{
         Text: "Start free trial",
         Href: "/signup",
     },
-})
+})`,
+		)
 
-// Fixed Position Banner (stays at top)
-@banner.Banner(banner.Config{
-    Text: "Important system maintenance scheduled",
-    Position: banner.PositionFixed,
-    Variant:  banner.Warning,
-})
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Color Variants",
+				Description: "Set Variant for semantic coloring: Default, Primary, Info, Success, Warning, Danger.",
+			},
+			bannerVariantsPreview(),
+			`@banner.Banner(banner.Config{Text: "Success! Your changes have been saved", Variant: banner.Success})
+@banner.Banner(banner.Config{Text: "Warning: Please review your settings", Variant: banner.Warning})`,
+		)
 
-// Colored Variants
-@banner.Banner(banner.Config{
-    Text: "Success! Your changes have been saved",
-    Variant: banner.Success,
-})
-
-// Cookie Consent Banner
-@banner.Banner(banner.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Cookie Consent",
+				Description: "CookieBanner: true plus a CookieConfig renders a corner-anchored consent card with accept/reject actions.",
+			},
+			bannerCookiePreview(),
+			`@banner.Banner(banner.Config{
     CookieBanner: true,
-    Text: "We use cookies to improve your experience",
+    Text:         "We use cookies to improve your experience.",
     CookieConfig: &banner.CookieBannerConfig{
         Title:        "Cookie Settings",
         AcceptText:   "Accept All",
@@ -63,75 +80,72 @@ templ bannerDemoContent() {
         RejectAction: "show = false",
     },
 })`,
-	)
+		)
+	</div>
+	// API reference lives outside #banner-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Text", Type: "string", Default: `""`, Description: "Banner message text."},
+		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "info", "success", "warning", "danger".`},
+		{Name: "Position", Type: "Position", Default: "PositionRelative", Description: `Layout: "relative" (inline) or "fixed" (pinned to top).`},
+		{Name: "Persistent", Type: "bool", Default: "false", Description: "Remove the dismiss control."},
+		{Name: "DismissAction", Type: "string", Default: `""`, Description: "Extra Alpine expression run when dismissed."},
+		{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (Text + Href or OnClick)."},
+		{Name: "CookieBanner", Type: "bool", Default: "false", Description: "Render as a corner cookie-consent card."},
+		{Name: "CookieConfig", Type: "*CookieBannerConfig", Default: "nil", Description: "Cookie card content + accept/reject actions."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
+	})
 }
 
-// bannerDemoPreview renders the Goshtoso banner preview
-templ bannerDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Simple Banner (Dismissible by default)
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Banner (Dismissible by Default)</h4>
-			@banner.Banner(banner.Config{
-				Text: "Limited Time Offer! Explore exclusive deals & savings",
-			})
-		</div>
+// bannerSimplePreview renders the default dismissible banner.
+templ bannerSimplePreview() {
+	<div id="banner-simple" class="w-full max-w-2xl mx-auto">
+		@banner.Banner(banner.Config{
+			Text: "Limited Time Offer! Explore exclusive deals & savings",
+		})
+	</div>
+}
 
-		// Persistent Banner (Non-dismissible)
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Persistent Banner (Non-dismissible)</h4>
-			@banner.Banner(banner.Config{
-				Text:       "This banner cannot be dismissed by users",
-				Persistent: true,
-			})
-		</div>
+// bannerPersistentPreview renders the non-dismissible banner.
+templ bannerPersistentPreview() {
+	<div id="banner-persistent" class="w-full max-w-2xl mx-auto">
+		@banner.Banner(banner.Config{
+			Text:       "This banner cannot be dismissed by users",
+			Persistent: true,
+		})
+	</div>
+}
 
-		// Banner with CTA
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With CTA Button</h4>
-			@banner.Banner(banner.Config{
-				Text: "Get Fit Anywhere, Anytime 💪",
-				CTA: &banner.CTAConfig{
-					Text:    "Start free trial",
-					OnClick: "alert('Starting free trial...')",
-				},
-			})
-		</div>
+// bannerCTAPreview renders a banner with a CTA button.
+templ bannerCTAPreview() {
+	<div id="banner-cta" class="w-full max-w-2xl mx-auto">
+		@banner.Banner(banner.Config{
+			Text: "Get Fit Anywhere, Anytime 💪",
+			CTA: &banner.CTAConfig{
+				Text:    "Start free trial",
+				OnClick: "alert('Starting free trial...')",
+			},
+		})
+	</div>
+}
 
-		// Color Variants
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variants</h4>
-			<div class="space-y-2">
-				@banner.Banner(banner.Config{
-					Text:    "Default variant banner",
-					Variant: banner.Default,
-				})
-				@banner.Banner(banner.Config{
-					Text:    "Primary variant for promotions",
-					Variant: banner.Primary,
-				})
-				@banner.Banner(banner.Config{
-					Text:    "Info variant for general information",
-					Variant: banner.Info,
-				})
-				@banner.Banner(banner.Config{
-					Text:    "Success! Operation completed successfully",
-					Variant: banner.Success,
-				})
-				@banner.Banner(banner.Config{
-					Text:    "Warning: Please review your settings",
-					Variant: banner.Warning,
-				})
-				@banner.Banner(banner.Config{
-					Text:    "Error: Something went wrong",
-					Variant: banner.Danger,
-				})
-			</div>
+// bannerVariantsPreview renders the semantic color variants.
+templ bannerVariantsPreview() {
+	<div id="banner-variants" class="w-full max-w-2xl mx-auto">
+		<div class="space-y-2">
+			@banner.Banner(banner.Config{Text: "Default variant banner", Variant: banner.Default})
+			@banner.Banner(banner.Config{Text: "Primary variant for promotions", Variant: banner.Primary})
+			@banner.Banner(banner.Config{Text: "Info variant for general information", Variant: banner.Info})
+			@banner.Banner(banner.Config{Text: "Success! Operation completed successfully", Variant: banner.Success})
+			@banner.Banner(banner.Config{Text: "Warning: Please review your settings", Variant: banner.Warning})
+			@banner.Banner(banner.Config{Text: "Error: Something went wrong", Variant: banner.Danger})
 		</div>
+	</div>
+}
 
-		// Cookie Consent Banner
+// bannerCookiePreview renders the cookie-consent banner inside a framed stage.
+templ bannerCookiePreview() {
+	<div id="banner-cookie" class="w-full max-w-2xl mx-auto">
 		<div class="relative h-48 overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
-			<h4 class="absolute top-4 left-4 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong z-10">Cookie Consent Banner (Bottom Right)</h4>
 			<div class="absolute inset-0 bg-surface dark:bg-surface-dark">
 				@banner.Banner(banner.Config{
 					CookieBanner: true,
