@@ -968,16 +968,22 @@ func themePageScript() string {
     normalizeColor(raw) {
       if (!raw) return '#000000';
       if (raw.startsWith('#')) return raw.length === 4 ? '#' + raw.slice(1).split('').map(c => c+c).join('') : raw;
-      // rgb()/rgba() or oklch etc.: paint to an offscreen canvas to coerce to hex.
-      const cnv = document.createElement('canvas');
-      cnv.width = 1; cnv.height = 1;
-      const ctx = cnv.getContext('2d');
-      ctx.fillStyle = raw;
-      const computed = ctx.fillStyle;
-      if (computed.startsWith('#')) return computed;
-      const m = computed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (!m) return '#000000';
-      return '#' + [m[1], m[2], m[3]].map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('');
+      // Resolve any color string (rgb/oklch/color-mix) to hex by painting it and
+      // reading back the rendered pixel bytes. getImageData always yields integer
+      // RGBA — unlike ctx.fillStyle / getComputedStyle, which echo oklch() verbatim
+      // under CSS Color 4 and silently broke the parse (everything fell back to black).
+      if (!this._ctx) {
+        const cnv = document.createElement('canvas');
+        cnv.width = 1; cnv.height = 1;
+        this._ctx = cnv.getContext('2d', { willReadFrequently: true });
+      }
+      const ctx = this._ctx;
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = '#000000';
+      ctx.fillStyle = raw;        // left black if the browser cannot parse it
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
     },
     relLum(hex) {
       const r = parseInt(hex.slice(1,3), 16) / 255;
@@ -1547,11 +1553,11 @@ templ themeContrastSection() {
 						</div>
 					</label>
 					<div class="overflow-x-auto -mx-4 px-4">
-						<table class="min-w-full border-separate border-spacing-0 text-center text-xs">
+						<table class="min-w-full border-collapse text-center text-xs">
 							<thead>
 								<tr>
 									<template x-for="col in contrastMatrix()" :key="col.token">
-										<th class="border-b border-outline px-2 py-2 align-bottom text-[10px] font-semibold uppercase tracking-wide text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">
+										<th class="border border-outline px-2 py-2 align-bottom text-[10px] font-semibold uppercase tracking-wide text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">
 											<span x-text="col.label"></span>
 										</th>
 									</template>
@@ -1560,8 +1566,8 @@ templ themeContrastSection() {
 							<tbody>
 								<tr>
 									<template x-for="col in contrastMatrix()" :key="'sample-' + col.token">
-										<td class="border-b border-outline px-1 py-2 dark:border-outline-dark">
-											<div class="flex items-center justify-center gap-1 rounded-radius p-2" :style="'background-color:' + col.color">
+										<td class="border border-outline p-0 dark:border-outline-dark">
+											<div class="flex items-center justify-center gap-1 px-3 py-2" :style="'background-color:' + col.color">
 												<span class="text-base" :style="'color:' + base()">Aa</span>
 												<span class="text-base font-bold" :style="'color:' + base()">Aa</span>
 											</div>
@@ -1569,55 +1575,65 @@ templ themeContrastSection() {
 									</template>
 								</tr>
 								<tr>
+									<template x-for="col in contrastMatrix()" :key="'sampleinv-' + col.token">
+										<td class="border border-outline p-0 dark:border-outline-dark">
+											<div class="flex items-center justify-center gap-1 px-3 py-2" :style="'background-color:' + base()">
+												<span class="text-base" :style="'color:' + col.color">Aa</span>
+												<span class="text-base font-bold" :style="'color:' + col.color">Aa</span>
+											</div>
+										</td>
+									</template>
+								</tr>
+								<tr>
 									<template x-for="col in contrastMatrix()" :key="'ratio-' + col.token">
-										<td class="border-b border-outline px-2 py-2 font-mono tabular-nums text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark-strong">
+										<td class="border border-outline px-2 py-2 font-mono font-bold tabular-nums text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark-strong">
 											<span x-text="col.ratio.toFixed(2) + ':1'"></span>
 										</td>
 									</template>
 								</tr>
 								<tr>
 									<template x-for="col in contrastMatrix()" :key="'aa-' + col.token">
-										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
-											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 4.5 ? 'text-success' : 'text-danger'">
+										<td class="border border-outline px-2 py-1.5 dark:border-outline-dark" :class="col.ratio >= 4.5 ? 'bg-green-500/15' : 'bg-red-500/15'">
+											<span class="inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase" :class="col.ratio >= 4.5 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
 												AA
-												<span class="size-1.5 rounded-full" :class="col.ratio >= 4.5 ? 'bg-success' : 'bg-danger'"></span>
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 4.5 ? 'bg-green-600' : 'bg-red-500'"></span>
 											</span>
 										</td>
 									</template>
 								</tr>
 								<tr>
 									<template x-for="col in contrastMatrix()" :key="'aaa-' + col.token">
-										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
-											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 7 ? 'text-success' : 'text-danger'">
+										<td class="border border-outline px-2 py-1.5 dark:border-outline-dark" :class="col.ratio >= 7 ? 'bg-green-500/15' : 'bg-red-500/15'">
+											<span class="inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase" :class="col.ratio >= 7 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
 												AAA
-												<span class="size-1.5 rounded-full" :class="col.ratio >= 7 ? 'bg-success' : 'bg-danger'"></span>
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 7 ? 'bg-green-600' : 'bg-red-500'"></span>
 											</span>
 										</td>
 									</template>
 								</tr>
 								<tr>
 									<template x-for="col in contrastMatrix()" :key="'aal-' + col.token">
-										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
-											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 3 ? 'text-success' : 'text-danger'">
+										<td class="border border-outline px-2 py-1.5 dark:border-outline-dark" :class="col.ratio >= 3 ? 'bg-green-500/15' : 'bg-red-500/15'">
+											<span class="inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase" :class="col.ratio >= 3 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
 												AA L
-												<span class="size-1.5 rounded-full" :class="col.ratio >= 3 ? 'bg-success' : 'bg-danger'"></span>
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 3 ? 'bg-green-600' : 'bg-red-500'"></span>
 											</span>
 										</td>
 									</template>
 								</tr>
 								<tr>
 									<template x-for="col in contrastMatrix()" :key="'aaal-' + col.token">
-										<td class="border-b border-outline px-2 py-1.5 dark:border-outline-dark">
-											<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase" :class="col.ratio >= 4.5 ? 'text-success' : 'text-danger'">
+										<td class="border border-outline px-2 py-1.5 dark:border-outline-dark" :class="col.ratio >= 4.5 ? 'bg-green-500/15' : 'bg-red-500/15'">
+											<span class="inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase" :class="col.ratio >= 4.5 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
 												AAA L
-												<span class="size-1.5 rounded-full" :class="col.ratio >= 4.5 ? 'bg-success' : 'bg-danger'"></span>
+												<span class="size-1.5 rounded-full" :class="col.ratio >= 4.5 ? 'bg-green-600' : 'bg-red-500'"></span>
 											</span>
 										</td>
 									</template>
 								</tr>
 								<tr>
 									<template x-for="col in contrastMatrix()" :key="'face-' + col.token">
-										<td class="px-2 py-2 text-base" :class="col.ratio >= 4.5 ? 'text-success' : 'text-danger'">
+										<td class="border border-outline px-2 py-2 text-base dark:border-outline-dark" :class="col.ratio >= 4.5 ? 'bg-green-500/15 text-green-700 dark:text-green-300' : 'bg-red-500/15 text-red-700 dark:text-red-300'">
 											<span x-text="col.ratio >= 4.5 ? '☺' : '☹'"></span>
 										</td>
 									</template>

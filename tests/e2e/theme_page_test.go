@@ -353,7 +353,8 @@ func TestThemePage_ContrastMatrix_BaseColorSwitch(t *testing.T) {
 	// Capture an initial ratio cell value, switch the base color, expect
 	// the rendered ratios to change.
 	before, err := page.Evaluate(`() => {
-		const cells = document.querySelectorAll('table tbody tr:nth-child(2) td');
+		// Row 3 is the ratio row (rows 1-2 are the swatch + inverted swatch).
+		const cells = document.querySelectorAll('table tbody tr:nth-child(3) td');
 		return Array.from(cells).map(c => c.textContent.trim()).join('|');
 	}`, nil)
 	require.NoError(t, err)
@@ -363,7 +364,8 @@ func TestThemePage_ContrastMatrix_BaseColorSwitch(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = page.WaitForFunction(fmt.Sprintf(`() => {
-		const cells = document.querySelectorAll('table tbody tr:nth-child(2) td');
+		// Row 3 is the ratio row (rows 1-2 are the swatch + inverted swatch).
+		const cells = document.querySelectorAll('table tbody tr:nth-child(3) td');
 		return Array.from(cells).map(c => c.textContent.trim()).join('|') !== %q;
 	}`, before), nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 	require.NoError(t, err)

@@ -976,16 +976,22 @@ func themePageScript() string {
     normalizeColor(raw) {
       if (!raw) return '#000000';
       if (raw.startsWith('#')) return raw.length === 4 ? '#' + raw.slice(1).split('').map(c => c+c).join('') : raw;
-      // rgb()/rgba() or oklch etc.: paint to an offscreen canvas to coerce to hex.
-      const cnv = document.createElement('canvas');
-      cnv.width = 1; cnv.height = 1;
-      const ctx = cnv.getContext('2d');
-      ctx.fillStyle = raw;
-      const computed = ctx.fillStyle;
-      if (computed.startsWith('#')) return computed;
-      const m = computed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (!m) return '#000000';
-      return '#' + [m[1], m[2], m[3]].map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('');
+      // Resolve any color string (rgb/oklch/color-mix) to hex by painting it and
+      // reading back the rendered pixel bytes. getImageData always yields integer
+      // RGBA — unlike ctx.fillStyle / getComputedStyle, which echo oklch() verbatim
+      // under CSS Color 4 and silently broke the parse (everything fell back to black).
+      if (!this._ctx) {
+        const cnv = document.createElement('canvas');
+        cnv.width = 1; cnv.height = 1;
+        this._ctx = cnv.getContext('2d', { willReadFrequently: true });
+      }
+      const ctx = this._ctx;
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = '#000000';
+      ctx.fillStyle = raw;        // left black if the browser cannot parse it
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
     },
     relLum(hex) {
       const r = parseInt(hex.slice(1,3), 16) / 255;
@@ -1305,7 +1311,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1159, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1165, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -1318,7 +1324,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1162, Col: 165}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1168, Col: 165}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -1331,7 +1337,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1168, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1174, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
@@ -1344,7 +1350,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1171, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1177, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -1532,7 +1538,7 @@ func radiusIcon(key string) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(radiusIconPath(key))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1241, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1247, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 		if templ_7745c5c3_Err != nil {
@@ -1587,7 +1593,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(r.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1258, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1264, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 			if templ_7745c5c3_Err != nil {
@@ -1600,7 +1606,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("radius === '%s' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark hover:bg-surface dark:hover:bg-surface-dark'", r.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1261, Col: 221}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1267, Col: 221}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 			if templ_7745c5c3_Err != nil {
@@ -1613,7 +1619,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue("Radius " + r.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1262, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1268, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 			if templ_7745c5c3_Err != nil {
@@ -1634,7 +1640,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(r.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1265, Col: 342}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1271, Col: 342}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -1737,7 +1743,7 @@ func modeColorGroup(title string, tokens []colorToken, isLight bool) templ.Compo
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1293, Col: 100}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1299, Col: 100}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -1804,7 +1810,7 @@ func colorGroup(title string, tokens []colorToken) templ.Component {
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1317, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1323, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -1856,7 +1862,7 @@ func colorSwatch(token string) templ.Component {
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue("'background-color:' + (resolved['" + token + "'] || '#888')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1329, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1335, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 		if templ_7745c5c3_Err != nil {
@@ -1898,7 +1904,7 @@ func colorRow(t colorToken) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1334, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1340, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
 		if templ_7745c5c3_Err != nil {
@@ -2300,7 +2306,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		var templ_7745c5c3_Var44 string
 		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", i))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1459, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1465, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var44)
 		if templ_7745c5c3_Err != nil {
@@ -2313,7 +2319,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		var templ_7745c5c3_Var45 string
 		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("s[%d] ? '%s' : 'bg-outline dark:bg-outline-dark'", i, onClass))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1462, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1468, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 		if templ_7745c5c3_Err != nil {
@@ -2326,7 +2332,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		var templ_7745c5c3_Var46 string
 		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("s[%d] ? 'translate-x-6' : 'translate-x-1'", i))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1467, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1473, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 		if templ_7745c5c3_Err != nil {
@@ -2443,7 +2449,7 @@ func ringAvatar(label, classes string) templ.Component {
 		var templ_7745c5c3_Var51 string
 		templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1489, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1495, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 		if templ_7745c5c3_Err != nil {
@@ -2519,7 +2525,7 @@ func themeContrastSection() templ.Component {
 			var templ_7745c5c3_Var54 string
 			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1544, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1550, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 			if templ_7745c5c3_Err != nil {
@@ -2532,7 +2538,7 @@ func themeContrastSection() templ.Component {
 			var templ_7745c5c3_Var55 string
 			templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1544, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1550, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var55))
 			if templ_7745c5c3_Err != nil {
@@ -2543,7 +2549,7 @@ func themeContrastSection() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "</select></div></label><div class=\"overflow-x-auto -mx-4 px-4\"><table class=\"min-w-full border-separate border-spacing-0 text-center text-xs\"><thead><tr><template x-for=\"col in contrastMatrix()\" :key=\"col.token\"><th class=\"border-b border-outline px-2 py-2 align-bottom text-[10px] font-semibold uppercase tracking-wide text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\"><span x-text=\"col.label\"></span></th></template></tr></thead> <tbody><tr><template x-for=\"col in contrastMatrix()\" :key=\"'sample-' + col.token\"><td class=\"border-b border-outline px-1 py-2 dark:border-outline-dark\"><div class=\"flex items-center justify-center gap-1 rounded-radius p-2\" :style=\"'background-color:' + col.color\"><span class=\"text-base\" :style=\"'color:' + base()\">Aa</span> <span class=\"text-base font-bold\" :style=\"'color:' + base()\">Aa</span></div></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'ratio-' + col.token\"><td class=\"border-b border-outline px-2 py-2 font-mono tabular-nums text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark-strong\"><span x-text=\"col.ratio.toFixed(2) + ':1'\"></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aa-' + col.token\"><td class=\"border-b border-outline px-2 py-1.5 dark:border-outline-dark\"><span class=\"inline-flex items-center gap-1 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 4.5 ? 'text-success' : 'text-danger'\">AA <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 4.5 ? 'bg-success' : 'bg-danger'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aaa-' + col.token\"><td class=\"border-b border-outline px-2 py-1.5 dark:border-outline-dark\"><span class=\"inline-flex items-center gap-1 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 7 ? 'text-success' : 'text-danger'\">AAA <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 7 ? 'bg-success' : 'bg-danger'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aal-' + col.token\"><td class=\"border-b border-outline px-2 py-1.5 dark:border-outline-dark\"><span class=\"inline-flex items-center gap-1 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 3 ? 'text-success' : 'text-danger'\">AA L <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 3 ? 'bg-success' : 'bg-danger'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aaal-' + col.token\"><td class=\"border-b border-outline px-2 py-1.5 dark:border-outline-dark\"><span class=\"inline-flex items-center gap-1 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 4.5 ? 'text-success' : 'text-danger'\">AAA L <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 4.5 ? 'bg-success' : 'bg-danger'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'face-' + col.token\"><td class=\"px-2 py-2 text-base\" :class=\"col.ratio >= 4.5 ? 'text-success' : 'text-danger'\"><span x-text=\"col.ratio >= 4.5 ? '☺' : '☹'\"></span></td></template></tr></tbody></table></div></div><div x-show=\"contrastTab === 'css'\" x-cloak class=\"space-y-4\"><div class=\"grid gap-3 sm:grid-cols-2\"><label class=\"block\"><span class=\"block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Foreground</span><div class=\"flex items-center gap-2\"><input type=\"color\" x-model=\"contrastCustomFg\" class=\"size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer\"> <input type=\"text\" x-model=\"contrastCustomFg\" class=\"flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div></label> <label class=\"block\"><span class=\"block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Background</span><div class=\"flex items-center gap-2\"><input type=\"color\" x-model=\"contrastCustomBg\" class=\"size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer\"> <input type=\"text\" x-model=\"contrastCustomBg\" class=\"flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div></label></div><div class=\"rounded-radius border border-outline dark:border-outline-dark p-4 flex items-center justify-between gap-4\" :style=\"'background-color:' + contrastCustomBg + ';color:' + contrastCustomFg\"><p class=\"font-medium\">The quick brown fox jumps over the lazy dog.</p><div class=\"text-right shrink-0\"><p class=\"text-xl font-bold tabular-nums\" x-text=\"customContrast().ratio.toFixed(2) + ':1'\"></p><p class=\"text-xs font-semibold uppercase\" x-text=\"customContrast().grade\"></p></div></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "</select></div></label><div class=\"overflow-x-auto -mx-4 px-4\"><table class=\"min-w-full border-collapse text-center text-xs\"><thead><tr><template x-for=\"col in contrastMatrix()\" :key=\"col.token\"><th class=\"border border-outline px-2 py-2 align-bottom text-[10px] font-semibold uppercase tracking-wide text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\"><span x-text=\"col.label\"></span></th></template></tr></thead> <tbody><tr><template x-for=\"col in contrastMatrix()\" :key=\"'sample-' + col.token\"><td class=\"border border-outline p-0 dark:border-outline-dark\"><div class=\"flex items-center justify-center gap-1 px-3 py-2\" :style=\"'background-color:' + col.color\"><span class=\"text-base\" :style=\"'color:' + base()\">Aa</span> <span class=\"text-base font-bold\" :style=\"'color:' + base()\">Aa</span></div></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'sampleinv-' + col.token\"><td class=\"border border-outline p-0 dark:border-outline-dark\"><div class=\"flex items-center justify-center gap-1 px-3 py-2\" :style=\"'background-color:' + base()\"><span class=\"text-base\" :style=\"'color:' + col.color\">Aa</span> <span class=\"text-base font-bold\" :style=\"'color:' + col.color\">Aa</span></div></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'ratio-' + col.token\"><td class=\"border border-outline px-2 py-2 font-mono font-bold tabular-nums text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark-strong\"><span x-text=\"col.ratio.toFixed(2) + ':1'\"></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aa-' + col.token\"><td class=\"border border-outline px-2 py-1.5 dark:border-outline-dark\" :class=\"col.ratio >= 4.5 ? 'bg-green-500/15' : 'bg-red-500/15'\"><span class=\"inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 4.5 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'\">AA <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 4.5 ? 'bg-green-600' : 'bg-red-500'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aaa-' + col.token\"><td class=\"border border-outline px-2 py-1.5 dark:border-outline-dark\" :class=\"col.ratio >= 7 ? 'bg-green-500/15' : 'bg-red-500/15'\"><span class=\"inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 7 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'\">AAA <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 7 ? 'bg-green-600' : 'bg-red-500'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aal-' + col.token\"><td class=\"border border-outline px-2 py-1.5 dark:border-outline-dark\" :class=\"col.ratio >= 3 ? 'bg-green-500/15' : 'bg-red-500/15'\"><span class=\"inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 3 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'\">AA L <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 3 ? 'bg-green-600' : 'bg-red-500'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'aaal-' + col.token\"><td class=\"border border-outline px-2 py-1.5 dark:border-outline-dark\" :class=\"col.ratio >= 4.5 ? 'bg-green-500/15' : 'bg-red-500/15'\"><span class=\"inline-flex w-full items-center justify-center gap-1.5 text-[10px] font-semibold uppercase\" :class=\"col.ratio >= 4.5 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'\">AAA L <span class=\"size-1.5 rounded-full\" :class=\"col.ratio >= 4.5 ? 'bg-green-600' : 'bg-red-500'\"></span></span></td></template></tr><tr><template x-for=\"col in contrastMatrix()\" :key=\"'face-' + col.token\"><td class=\"border border-outline px-2 py-2 text-base dark:border-outline-dark\" :class=\"col.ratio >= 4.5 ? 'bg-green-500/15 text-green-700 dark:text-green-300' : 'bg-red-500/15 text-red-700 dark:text-red-300'\"><span x-text=\"col.ratio >= 4.5 ? '☺' : '☹'\"></span></td></template></tr></tbody></table></div></div><div x-show=\"contrastTab === 'css'\" x-cloak class=\"space-y-4\"><div class=\"grid gap-3 sm:grid-cols-2\"><label class=\"block\"><span class=\"block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Foreground</span><div class=\"flex items-center gap-2\"><input type=\"color\" x-model=\"contrastCustomFg\" class=\"size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer\"> <input type=\"text\" x-model=\"contrastCustomFg\" class=\"flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div></label> <label class=\"block\"><span class=\"block text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5\">Background</span><div class=\"flex items-center gap-2\"><input type=\"color\" x-model=\"contrastCustomBg\" class=\"size-9 rounded-radius border border-outline dark:border-outline-dark cursor-pointer\"> <input type=\"text\" x-model=\"contrastCustomBg\" class=\"flex-1 rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm font-mono dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div></label></div><div class=\"rounded-radius border border-outline dark:border-outline-dark p-4 flex items-center justify-between gap-4\" :style=\"'background-color:' + contrastCustomBg + ';color:' + contrastCustomFg\"><p class=\"font-medium\">The quick brown fox jumps over the lazy dog.</p><div class=\"text-right shrink-0\"><p class=\"text-xl font-bold tabular-nums\" x-text=\"customContrast().ratio.toFixed(2) + ':1'\"></p><p class=\"text-xs font-semibold uppercase\" x-text=\"customContrast().grade\"></p></div></div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2580,7 +2586,7 @@ func themeCSSSection() templ.Component {
 		var templ_7745c5c3_Var57 string
 		templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.JoinStringErrs("@layer base")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1668, Col: 166}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1684, Col: 166}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var57))
 		if templ_7745c5c3_Err != nil {
@@ -2611,7 +2617,7 @@ func themeCSSSection() templ.Component {
 			var templ_7745c5c3_Var58 string
 			templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("cssMode === 'single' && ((cssFilter === 'current' && (theme || 'minimal') === '%s') || cssFilter === '%s')", k, k))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1696, Col: 145}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1712, Col: 145}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var58)
 			if templ_7745c5c3_Err != nil {
@@ -2662,7 +2668,7 @@ func themeCSSSection() templ.Component {
 			var templ_7745c5c3_Var59 string
 			templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("cssMode === 'multiple' && ((cssFilter === 'current' && (theme || 'minimal') === '%s') || cssFilter === '%s')", k, k))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1717, Col: 147}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 1733, Col: 147}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var59)
 			if templ_7745c5c3_Err != nil {
