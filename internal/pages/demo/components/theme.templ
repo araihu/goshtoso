@@ -798,6 +798,8 @@ func themePageScript() string {
 	sb.WriteString("    contrastCustomBg: '#ffffff',\n")
 	sb.WriteString("    copied: false,\n")
 	sb.WriteString("    shareCopied: false,\n")
+	sb.WriteString("    confirmingReset: false,\n")
+	sb.WriteString("    resetDone: false,\n")
 
 	// lookup tables, written from Go so we don't risk template-escape surprises
 	sb.WriteString("    radiusMap: {")
@@ -946,6 +948,9 @@ func themePageScript() string {
       Object.keys(this.overrides).forEach(k => document.documentElement.style.removeProperty('--color-' + k));
       this.overrides = {};
       requestAnimationFrame(() => this.refreshResolved());
+      this.confirmingReset = false;
+      this.resetDone = true;
+      setTimeout(() => this.resetDone = false, 2500);
     },
     loadGoogleFont(label, query) {
       const id = 'gfont-' + label.replace(/\s+/g, '-');
@@ -1141,12 +1146,34 @@ templ themeHeader() {
 		<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">
 			Goshtoso ships ready-to-use themes built on Tailwind v4 CSS variables. Pick one as-is, tweak its fonts, radius, or colors live, then export the CSS to drop into your own project.
 		</p>
-		<button
-			@click="resetAll()"
-			class="mt-3 text-xs font-medium text-primary dark:text-primary-dark hover:underline"
-		>
-			Reset all customizations
-		</button>
+		<div class="mt-3 flex min-h-5 flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+			<button
+				type="button"
+				x-show="!confirmingReset"
+				@click="confirmingReset = true"
+				class="font-medium text-primary dark:text-primary-dark hover:underline"
+			>
+				Reset all customizations
+			</button>
+			<div x-show="confirmingReset" x-cloak class="flex flex-wrap items-center gap-2">
+				<span class="text-on-surface dark:text-on-surface-dark">Reset every font, radius, and color override?</span>
+				<button
+					type="button"
+					@click="resetAll()"
+					class="font-semibold text-danger hover:underline"
+				>
+					Yes, reset
+				</button>
+				<button
+					type="button"
+					@click="confirmingReset = false"
+					class="font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:underline"
+				>
+					Cancel
+				</button>
+			</div>
+			<span x-show="resetDone" x-cloak class="font-medium text-success">Cleared.</span>
+		</div>
 	</div>
 }
 
@@ -1273,7 +1300,10 @@ templ themeBorderSection() {
 
 templ themeColorEditorSection() {
 	<div>
-		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Colors</h2>
+		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-1">Colors</h2>
+		<p class="mb-4 max-w-prose text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+			Each role is a base color (Surface, Primary) paired with an <span class="font-medium text-on-surface dark:text-on-surface-dark">On</span> color for text and icons placed on top of it. Hover any row to see what it paints.
+		</p>
 		<div x-show="!$store.darkMode.on">
 			@modeColorGroup("Light Mode Colors", getLightTokens(), true)
 		</div>
@@ -1330,8 +1360,53 @@ templ colorSwatch(token string) {
 	></span>
 }
 
+// tokenHint returns a plain-language description of what a color role paints,
+// so the terse Tailwind role names aren't opaque. Light and dark share one
+// description per role; the "-dark" suffix is normalized away.
+func tokenHint(key string) string {
+	switch strings.ReplaceAll(key, "-dark", "") {
+	case "surface":
+		return "Main page background."
+	case "on-surface":
+		return "Default body text and icons."
+	case "on-surface-strong":
+		return "High-emphasis text, like headings."
+	case "surface-alt":
+		return "Secondary background for cards, inputs, and wells."
+	case "primary":
+		return "Primary brand color: main buttons and active states."
+	case "on-primary":
+		return "Text and icons on a primary-colored fill."
+	case "secondary":
+		return "Secondary accent color."
+	case "on-secondary":
+		return "Text and icons on a secondary-colored fill."
+	case "outline":
+		return "Borders and dividers."
+	case "outline-strong":
+		return "Higher-contrast borders."
+	case "danger":
+		return "Errors and destructive actions."
+	case "on-danger":
+		return "Text and icons on a danger-colored fill."
+	case "info":
+		return "Informational highlights."
+	case "on-info":
+		return "Text and icons on an info-colored fill."
+	case "warning":
+		return "Caution states."
+	case "on-warning":
+		return "Text and icons on a warning-colored fill."
+	case "success":
+		return "Success and confirmation states."
+	case "on-success":
+		return "Text and icons on a success-colored fill."
+	}
+	return ""
+}
+
 templ colorRow(t colorToken) {
-	<div data-token={ t.Key } x-on:select-close="pickColor($el.dataset.token, $event.detail)">
+	<div data-token={ t.Key } title={ tokenHint(t.Key) } x-on:select-close="pickColor($el.dataset.token, $event.detail)">
 		@selectfield.Select(selectfield.Config{
 			ID:             "color-" + t.Key,
 			Shell:          true,
@@ -1350,18 +1425,16 @@ templ colorRow(t colorToken) {
 templ themePreviewSection() {
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Theme Showcase</h2>
-		<div class="space-y-6 rounded-radius border border-outline bg-surface p-6 dark:border-outline-dark dark:bg-surface-dark sm:p-8">
+		<div class="space-y-8 rounded-radius border border-outline bg-surface p-6 dark:border-outline-dark dark:bg-surface-dark sm:p-8">
 			@previewTypography()
-			<div class="grid gap-6">
-				<div class="space-y-6 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
-					@previewButtons()
-					@previewProgress()
-					@previewSteps()
-				</div>
-				<div class="space-y-6 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
-					@previewToggles()
-					@previewAvatars()
-				</div>
+			<div class="space-y-6 border-t border-outline pt-8 dark:border-outline-dark">
+				@previewButtons()
+				@previewProgress()
+				@previewSteps()
+			</div>
+			<div class="space-y-6 border-t border-outline pt-8 dark:border-outline-dark">
+				@previewToggles()
+				@previewAvatars()
 			</div>
 			@previewUpdateBanner()
 		</div>
