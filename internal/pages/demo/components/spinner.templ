@@ -10,63 +10,79 @@ templ SpinnerDemoPage() {
 	@demo.Layout("Spinner", "spinner", spinnerDemoContent())
 }
 
-// spinnerDemoContent renders the actual content inside the layout
+// spinnerDemoContent renders the demo. Each spinner variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/spinner). Wrapped in #spinner-fragment.
 templ spinnerDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Spinner",
-			Description:   "A spinner indicates loading state with an animated circular indicator. Available in multiple color variants and sizes.",
-		},
-		spinnerDemoPreview(),
-		`// Default Spinner
-@spinner.Spinner(spinner.Config{})
+	<div id="spinner-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Spinner",
+				Description: "An animated circular loading indicator in six semantic colors and four sizes.",
+			},
+			spinnerDefaultPreview(),
+			`@spinner.Spinner(spinner.Config{})`,
+		)
 
-// Primary Spinner
-@spinner.Spinner(spinner.Config{
-    Variant: spinner.Primary,
-})
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Color Variants",
+				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+			},
+			spinnerVariantsPreview(),
+			`@spinner.Spinner(spinner.Config{Variant: spinner.Primary})
+@spinner.Spinner(spinner.Config{Variant: spinner.Danger})`,
+		)
 
-// Large Danger Spinner
-@spinner.Spinner(spinner.Config{
-    Variant: spinner.Danger,
-    Size:    spinner.SizeLG,
-})`,
-	)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Sizes",
+				Description: "Four sizes via Size: SizeSM, SizeMD (default), SizeLG, SizeXL.",
+			},
+			spinnerSizesPreview(),
+			`@spinner.Spinner(spinner.Config{Size: spinner.SizeSM})
+@spinner.Spinner(spinner.Config{Size: spinner.SizeXL})`,
+		)
+	</div>
+	// API reference lives outside #spinner-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
+		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg", "xl".`},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
+	})
 }
 
-// spinnerDemoPreview renders the Goshtoso spinner preview
-templ spinnerDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Default Spinner
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Spinner</h4>
-			<div class="flex items-center gap-4">
-				@spinner.Spinner(spinner.Config{})
-			</div>
+// spinnerDefaultPreview renders the default spinner.
+templ spinnerDefaultPreview() {
+	<div id="spinner-default" class="w-full max-w-md mx-auto">
+		<div class="flex items-center justify-center gap-4">
+			@spinner.Spinner(spinner.Config{})
 		</div>
+	</div>
+}
 
-		// Color Variants
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variants</h4>
-			<div class="flex items-center gap-4">
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Secondary})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Info})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Success})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Warning})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Danger})
-			</div>
+// spinnerVariantsPreview renders the six color variants.
+templ spinnerVariantsPreview() {
+	<div id="spinner-variants" class="w-full max-w-md mx-auto">
+		<div class="flex items-center justify-center gap-4">
+			@spinner.Spinner(spinner.Config{Variant: spinner.Primary})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Secondary})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Info})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Success})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Warning})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Danger})
 		</div>
+	</div>
+}
 
-		// Sizes
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Sizes</h4>
-			<div class="flex items-center gap-4">
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeSM})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeMD})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeLG})
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeXL})
-			</div>
+// spinnerSizesPreview renders the four sizes.
+templ spinnerSizesPreview() {
+	<div id="spinner-sizes" class="w-full max-w-md mx-auto">
+		<div class="flex items-center justify-center gap-4">
+			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeSM})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeMD})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeLG})
+			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeXL})
 		</div>
 	</div>
 }
