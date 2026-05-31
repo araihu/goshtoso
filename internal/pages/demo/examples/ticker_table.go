@@ -8,9 +8,9 @@ import (
 	"github.com/araihu/goshtoso/internal/examples/ticker"
 )
 
-// tickerPrice formats a symbol's price as a fixed 2-decimal string.
+// tickerPrice formats a symbol's price as a USD amount, e.g. "$190.00".
 func tickerPrice(s ticker.Symbol) string {
-	return fmt.Sprintf("%.2f", s.Price)
+	return fmt.Sprintf("$%.2f", s.Price)
 }
 
 // tickerChange formats the percent change with a sign, e.g. "+0.42%".
