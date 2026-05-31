@@ -69,14 +69,14 @@ func exampleCard(href, title, desc string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</h3><p class=\"text-sm text-on-surface-variant dark:text-on-surface-dark-variant\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(desc)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/index.templ`, Line: 13, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/index.templ`, Line: 13, Col: 81}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -112,7 +112,7 @@ func IndexContent() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"examples-fragment\" class=\"mx-auto max-w-4xl\"><h1 class=\"mb-2 text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Examples</h1><p class=\"mb-6 text-on-surface-variant dark:text-on-surface-dark-variant\">Small, real apps built from Goshtoso components.</p><div class=\"grid gap-4 sm:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"examples-fragment\" class=\"mx-auto max-w-4xl\"><h1 class=\"mb-2 text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Examples</h1><p class=\"mb-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Small, real apps built from Goshtoso components.</p><div class=\"grid gap-4 sm:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

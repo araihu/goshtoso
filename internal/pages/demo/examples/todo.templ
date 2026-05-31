@@ -28,7 +28,7 @@ func priorityVariant(p string) badge.Variant {
 // CountBadge is the live "N active" indicator. It carries hx-swap-oob so handlers
 // can replace it out of band on every mutation.
 templ CountBadge(active int) {
-	<span id="todo-count" hx-swap-oob="true" class="text-sm text-on-surface-variant dark:text-on-surface-dark-variant">
+	<span id="todo-count" hx-swap-oob="true" class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 		{ fmt.Sprintf("%d active", active) }
 	</span>
 }
@@ -36,6 +36,8 @@ templ CountBadge(active int) {
 // TodoRow renders one todo as a draggable <li> with toggle, title, priority
 // badge, optional due date, up/down reorder, and delete. Interactive controls
 // are explicit HTMX markup (the Checkbox/Button components expose no Attrs field).
+// All mutating controls (toggle, delete) target #todo-list with outerHTML swap
+// so membership and empty-state remain correct under any active filter.
 templ TodoRow(t todo.Todo) {
 	<li
 		id={ rowID(t.ID) }
@@ -47,7 +49,7 @@ templ TodoRow(t todo.Todo) {
 		x-on:dragend="onDragEnd()"
 		class="flex items-center gap-3 rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark"
 	>
-		<span class="cursor-grab select-none text-on-surface-variant dark:text-on-surface-dark-variant" aria-hidden="true">⠿</span>
+		<span class="cursor-grab select-none text-on-surface-muted dark:text-on-surface-dark-muted" aria-hidden="true">⠿</span>
 		<input
 			type="checkbox"
 			aria-label="Toggle done"
@@ -56,7 +58,7 @@ templ TodoRow(t todo.Todo) {
 				checked
 			}
 			hx-post={ fmt.Sprintf("/api/examples/todo/toggle?id=%d", t.ID) }
-			hx-target={ "#" + rowID(t.ID) }
+			hx-target="#todo-list"
 			hx-swap="outerHTML"
 		/>
 		<span
@@ -66,13 +68,13 @@ templ TodoRow(t todo.Todo) {
 			{ t.Title }
 		</span>
 		if t.Due != "" {
-			<span class="text-xs text-on-surface-variant dark:text-on-surface-dark-variant">{ t.Due }</span>
+			<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ t.Due }</span>
 		}
 		@badge.Badge(badge.Config{Variant: priorityVariant(t.Priority), Text: t.Priority})
 		<button
 			type="button"
 			aria-label="Move up"
-			class="rounded-radius px-1 text-on-surface-variant hover:bg-surface-alt dark:text-on-surface-dark-variant dark:hover:bg-surface-dark-alt"
+			class="rounded-radius px-1 text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt"
 			hx-post={ fmt.Sprintf("/api/examples/todo/move?id=%d&dir=up", t.ID) }
 			hx-target="#todo-list"
 			hx-swap="outerHTML"
@@ -80,7 +82,7 @@ templ TodoRow(t todo.Todo) {
 		<button
 			type="button"
 			aria-label="Move down"
-			class="rounded-radius px-1 text-on-surface-variant hover:bg-surface-alt dark:text-on-surface-dark-variant dark:hover:bg-surface-dark-alt"
+			class="rounded-radius px-1 text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt"
 			hx-post={ fmt.Sprintf("/api/examples/todo/move?id=%d&dir=down", t.ID) }
 			hx-target="#todo-list"
 			hx-swap="outerHTML"
@@ -88,9 +90,9 @@ templ TodoRow(t todo.Todo) {
 		<button
 			type="button"
 			aria-label="Delete"
-			class="rounded-radius px-1 text-danger hover:bg-danger/10 dark:text-danger-dark"
+			class="rounded-radius px-1 text-danger hover:bg-danger/10 dark:text-danger"
 			hx-post={ fmt.Sprintf("/api/examples/todo/delete?id=%d", t.ID) }
-			hx-target={ "#" + rowID(t.ID) }
+			hx-target="#todo-list"
 			hx-swap="outerHTML"
 		>✕</button>
 	</li>
@@ -101,7 +103,7 @@ templ TodoRow(t todo.Todo) {
 templ TodoList(s todo.State) {
 	<ul id="todo-list" class="flex flex-col gap-2" x-data="todoApp()">
 		if len(s.Visible()) == 0 {
-			<li class="rounded-radius border border-dashed border-outline px-3 py-8 text-center text-sm text-on-surface-variant dark:border-outline-dark dark:text-on-surface-dark-variant">
+			<li class="rounded-radius border border-dashed border-outline px-3 py-8 text-center text-sm text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">
 				Nothing here yet — add your first task above.
 			</li>
 		} else {
@@ -118,7 +120,7 @@ templ filterButton(label, value, current string) {
 		type="button"
 		class={ "rounded-radius px-3 py-1 text-sm",
 			templ.KV("bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark", value == current),
-			templ.KV("text-on-surface-variant hover:bg-surface-alt dark:text-on-surface-dark-variant dark:hover:bg-surface-dark-alt", value != current) }
+			templ.KV("text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt", value != current) }
 		hx-post={ "/api/examples/todo/filter?f=" + value }
 		hx-target="#todo-list"
 		hx-swap="outerHTML"
@@ -139,7 +141,7 @@ templ TodoApp(s todo.State) {
 					class="flex flex-col gap-3 sm:flex-row sm:items-end"
 					hx-post="/api/examples/todo/add"
 					hx-target="#todo-list"
-					hx-swap="beforeend"
+					hx-swap="outerHTML"
 					hx-on::after-request="if(event.detail.successful) this.reset()"
 				>
 					<div class="flex-1">
@@ -170,7 +172,7 @@ templ TodoApp(s todo.State) {
 					</div>
 					<button
 						type="button"
-						class="text-sm text-on-surface-variant hover:underline dark:text-on-surface-dark-variant"
+						class="text-sm text-on-surface-muted hover:underline dark:text-on-surface-dark-muted"
 						hx-post="/api/examples/todo/clear-completed"
 						hx-target="#todo-list"
 						hx-swap="outerHTML"
@@ -201,9 +203,11 @@ const todoScriptJS = `
 document.addEventListener('alpine:init', () => {
   Alpine.data('todoApp', () => ({
     dragId: null,
+    dropped: false,
     onDragStart(e, el) { this.dragId = el.dataset.todoId; e.dataTransfer.effectAllowed = 'move'; },
     onDragOver(e, el) { e.dataTransfer.dropEffect = 'move'; },
     onDrop(e, el) {
+      this.dropped = true;
       const list = this.$el;
       const dragged = list.querySelector('[data-todo-id="' + this.dragId + '"]');
       if (!dragged || dragged === el) return;
@@ -212,8 +216,12 @@ document.addEventListener('alpine:init', () => {
       list.insertBefore(dragged, after ? el.nextSibling : el);
     },
     onDragEnd() {
-      const ids = Array.from(this.$el.querySelectorAll('[data-todo-id]')).map(n => n.dataset.todoId);
+      const didDrop = this.dropped;
+      this.dropped = false;
       this.dragId = null;
+      if (!didDrop) return;
+      if (typeof htmx === 'undefined') return;
+      const ids = Array.from(this.$el.querySelectorAll('[data-todo-id]')).map(n => n.dataset.todoId);
       htmx.ajax('POST', '/api/examples/todo/reorder', { values: { ids: ids.join(',') }, swap: 'none' });
     },
   }));
