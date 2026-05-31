@@ -11,6 +11,28 @@ import (
 	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
+// fontSelectOptions builds Select options from the font list (value = label).
+func fontSelectOptions() []selectfield.Option {
+	fonts := getFontOptions()
+	opts := make([]selectfield.Option, len(fonts))
+	for i, f := range fonts {
+		opts[i] = selectfield.Option{Value: f.Label, Label: f.Label}
+	}
+	return opts
+}
+
+// cssFilterOptions builds Select options for the "Get CSS Code" theme filter.
+func cssFilterOptions() []selectfield.Option {
+	opts := []selectfield.Option{
+		{Value: "current", Label: "Active theme"},
+		{Value: "all", Label: "All Themes"},
+	}
+	for _, k := range sortedThemeKeys() {
+		opts = append(opts, selectfield.Option{Value: k, Label: themeLabel(k)})
+	}
+	return opts
+}
+
 // themeCSSOrder is the deterministic visual order used by the "All Themes"
 // export so the multi-theme block reads top-down the same way the picker grid
 // does.
@@ -1171,28 +1193,24 @@ templ themeTypographySection() {
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Typography</h2>
 		<div class="grid gap-4">
-			<label class="block">
+			<div>
 				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Title Font Family</span>
-				<select
-					x-model="titleFont"
-					class="w-full rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
-				>
-					for _, f := range getFontOptions() {
-						<option value={ f.Label }>{ f.Label }</option>
-					}
-				</select>
-			</label>
-			<label class="block">
+				@selectfield.Select(selectfield.Config{
+					ID:          "titleFont",
+					AlpineModel: "titleFont",
+					Placeholder: "Default",
+					Options:     fontSelectOptions(),
+				})
+			</div>
+			<div>
 				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Body Font Family</span>
-				<select
-					x-model="bodyFont"
-					class="w-full rounded-radius border border-outline bg-surface text-on-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
-				>
-					for _, f := range getFontOptions() {
-						<option value={ f.Label }>{ f.Label }</option>
-					}
-				</select>
-			</label>
+				@selectfield.Select(selectfield.Config{
+					ID:          "bodyFont",
+					AlpineModel: "bodyFont",
+					Placeholder: "Default",
+					Options:     fontSelectOptions(),
+				})
+			</div>
 		</div>
 		<p class="mt-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Picking a font lazy-loads it from Google Fonts. Choose "Default" to fall back to the active theme&apos;s font.</p>
 	</div>
@@ -1650,20 +1668,14 @@ templ themeCSSSection() {
 			block.
 		</p>
 		<div class="flex flex-wrap items-center gap-3 mb-3">
-			<label class="block">
-				<span class="sr-only">Theme filter</span>
-				<select
-					x-model="cssFilter"
-					:disabled="cssMode === 'multiple' && cssFilter === 'all'"
-					class="rounded-radius border border-outline bg-surface text-on-surface px-3 py-1.5 text-sm dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark disabled:opacity-60"
-				>
-					<option value="current">Active theme</option>
-					<option value="all">All Themes</option>
-					for _, k := range sortedThemeKeys() {
-						<option value={ k }>{ themeLabel(k) }</option>
-					}
-				</select>
-			</label>
+			<div class="w-48">
+				@selectfield.Select(selectfield.Config{
+					ID:                 "cssFilter",
+					AlpineModel:        "cssFilter",
+					AlpineBindDisabled: "cssMode === 'multiple' && cssFilter === 'all'",
+					Options:            cssFilterOptions(),
+				})
+			</div>
 			<div class="inline-flex rounded-radius border border-outline dark:border-outline-dark p-0.5 bg-surface-alt dark:bg-surface-dark-alt">
 				<button
 					@click="cssMode = 'single'"

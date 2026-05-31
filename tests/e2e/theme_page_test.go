@@ -386,10 +386,12 @@ func TestThemePage_CSSExport_FilterAndMode(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, hidden)
 
-	// Switch to All Themes + Multiple.
-	_, err = page.Locator("h2:has-text('Get CSS Code') ~ div select").First().
-		SelectOption(playwright.SelectOptionValues{Values: &[]string{"all"}})
-	require.NoError(t, err)
+	// Switch to All Themes + Multiple. cssFilter is the Goshtoso Select
+	// component (custom dropdown), so open the trigger and click the option.
+	require.NoError(t, page.Locator("#cssFilter-trigger").Click())
+	require.NoError(t, page.GetByRole("option", playwright.PageGetByRoleOptions{
+		Name: "All Themes", Exact: playwright.Bool(true),
+	}).Click())
 	require.NoError(t, page.Locator("button:has-text('Multiple Themes')").First().Click())
 
 	require.NoError(t, page.Locator("#theme-css-multi-all").WaitFor(playwright.LocatorWaitForOptions{
@@ -402,9 +404,10 @@ func TestThemePage_CSSExport_FilterAndMode(t *testing.T) {
 
 	// Switch back to a specific theme in single mode.
 	require.NoError(t, page.Locator("button:has-text('Single Theme')").First().Click())
-	_, err = page.Locator("h2:has-text('Get CSS Code') ~ div select").First().
-		SelectOption(playwright.SelectOptionValues{Values: &[]string{"arctic"}})
-	require.NoError(t, err)
+	require.NoError(t, page.Locator("#cssFilter-trigger").Click())
+	require.NoError(t, page.GetByRole("option", playwright.PageGetByRoleOptions{
+		Name: "Arctic", Exact: playwright.Bool(true),
+	}).Click())
 	require.NoError(t, page.Locator("#theme-css-single-arctic").WaitFor(playwright.LocatorWaitForOptions{
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(1500),

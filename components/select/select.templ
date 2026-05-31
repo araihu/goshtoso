@@ -48,6 +48,9 @@ templ Select(cfg Config) {
 					x-bind:aria-label="selectedOption ? selectedOption.label : placeholder"
 				}
 				disabled?={ cfg.IsEffectivelyDisabled() }
+				if cfg.AlpineBindDisabled != "" {
+					x-bind:disabled={ cfg.AlpineBindDisabled }
+				}
 				class={ cfg.TriggerClasses() }
 			>
 				if cfg.Shell {
@@ -205,13 +208,20 @@ func selectData(cfg Config) string {
 	if cfg.AlpineModel != "" {
 		alpineModelSync = fmt.Sprintf(`
 			init() {
-				this.$watch('selectedOption', (opt) => { if (opt) { %s = opt.value; } });
-				const initial = %s;
+				this.$watch('selectedOption', (opt) => { if (opt) { %[1]s = opt.value; } });
+				this.$watch('%[1]s', (v) => {
+					const cur = (this.selectedValues && this.selectedValues.length) ? this.selectedValues[0] : '';
+					if (v === cur) return;
+					if (!v) { this.selectedValues = []; return; }
+					const opt = this.allOptions.find(o => o.value === v);
+					this.selectedValues = opt ? [opt.value] : [];
+				});
+				const initial = %[1]s;
 				if (initial) {
 					const opt = this.allOptions.find(o => o.value === initial);
 					if (opt) this.selectedValues = [opt.value];
 				}
-			},`, cfg.AlpineModel, cfg.AlpineModel)
+			},`, cfg.AlpineModel)
 	}
 
 	return fmt.Sprintf(`{

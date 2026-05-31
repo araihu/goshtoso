@@ -107,7 +107,7 @@ func (cfg Config) SelectClasses() string {
 
 // TriggerClasses returns CSS classes for the custom dropdown trigger button
 func (cfg Config) TriggerClasses() string {
-	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
+	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:opacity-60"
 
 	if cfg.IsEffectivelyDisabled() {
 		return base + " border-outline bg-surface-alt/50 text-on-surface/50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt/30 dark:text-on-surface-dark/50"
