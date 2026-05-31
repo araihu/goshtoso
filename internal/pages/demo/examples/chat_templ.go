@@ -374,7 +374,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</form><!-- message log --><div id=\"chat-log\" role=\"log\" aria-live=\"polite\" aria-relevant=\"additions\" aria-label=\"Chat messages\" class=\"flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40\"></div><!-- composer: ws-send form. The hx-ext=\"ws\" wrapper must contain the form. --><div hx-ext=\"ws\" ws-connect=\"/api/examples/chat/ws\" class=\"border-t border-outline px-4 py-3 dark:border-outline-dark\"><form ws-send class=\"flex flex-col gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</form><!-- message log --><div id=\"chat-log\" role=\"log\" aria-live=\"polite\" aria-relevant=\"additions\" aria-label=\"Chat messages\" class=\"flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40\"></div><!-- composer: ws-send form. The hx-ext=\"ws\" wrapper must contain the form.\n\t\t     onsubmit=\"return false\" guards the htmx ws-send rebind race: on a\n\t\t     fragment-nav swap htmx binds ws-send a beat after the form lands in the\n\t\t     DOM. A submit fired in that window would otherwise fall through to the\n\t\t     browser's NATIVE submit — and because this form has no action, that\n\t\t     navigates to the current URL (?message=… as GET), reloading the page and\n\t\t     wiping the composer. The guard makes a race-lost click a harmless no-op\n\t\t     (htmx's own addEventListener handler still fires once bound), so the send\n\t\t     simply succeeds on the next attempt with the typed text intact. --><div hx-ext=\"ws\" ws-connect=\"/api/examples/chat/ws\" class=\"border-t border-outline px-4 py-3 dark:border-outline-dark\"><form ws-send onsubmit=\"return false\" class=\"flex flex-col gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -472,7 +472,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue("chat-hidden-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 156, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 164, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -485,7 +485,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 156, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 164, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -498,7 +498,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 156, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 164, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -542,7 +542,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 162, Col: 120}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 170, Col: 120}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -555,7 +555,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 163, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 171, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 		if templ_7745c5c3_Err != nil {
@@ -568,7 +568,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Color)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 164, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 172, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {

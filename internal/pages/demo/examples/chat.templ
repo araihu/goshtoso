@@ -122,9 +122,17 @@ templ ChatApp(me chat.Identity) {
 		</form>
 		<!-- message log -->
 		<div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages" class="flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40"></div>
-		<!-- composer: ws-send form. The hx-ext="ws" wrapper must contain the form. -->
+		<!-- composer: ws-send form. The hx-ext="ws" wrapper must contain the form.
+		     onsubmit="return false" guards the htmx ws-send rebind race: on a
+		     fragment-nav swap htmx binds ws-send a beat after the form lands in the
+		     DOM. A submit fired in that window would otherwise fall through to the
+		     browser's NATIVE submit — and because this form has no action, that
+		     navigates to the current URL (?message=… as GET), reloading the page and
+		     wiping the composer. The guard makes a race-lost click a harmless no-op
+		     (htmx's own addEventListener handler still fires once bound), so the send
+		     simply succeeds on the next attempt with the typed text intact. -->
 		<div hx-ext="ws" ws-connect="/api/examples/chat/ws" class="border-t border-outline px-4 py-3 dark:border-outline-dark">
-			<form ws-send class="flex flex-col gap-2">
+			<form ws-send onsubmit="return false" class="flex flex-col gap-2">
 				@chatHidden("nick", me.Nick)
 				@chatHidden("color", me.Color)
 				<div class="flex items-end gap-2">
