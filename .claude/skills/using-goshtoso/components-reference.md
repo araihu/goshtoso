@@ -1411,7 +1411,7 @@ import "github.com/araihu/goshtoso/components/textinput"  // package textinput
 
 **Entry points:** `TextInput(cfg Config)`
 
-- **InputType** — TypeText = "text", TypePassword = "password", TypeSearch = "search", TypeEmail = "email", TypeTel = "tel", TypeURL = "url", TypeNumber = "number"
+- **InputType** — TypeText = "text", TypePassword = "password", TypeSearch = "search", TypeEmail = "email", TypeTel = "tel", TypeURL = "url", TypeNumber = "number", TypeDate = "date", TypeDateTimeLocal = "datetime-local"
 - **State** — StateDefault = "", StateError = "error", StateSuccess = "success"
 
 **Config**
@@ -1455,6 +1455,11 @@ import "github.com/araihu/goshtoso/components/toast"  // package toast
 | `Message` | `string` | Message is the notification body text |
 | `Sender` | `*Sender` | Sender is used only for the Message variant |
 | `DisplayDuration` | `int` | DisplayDuration in milliseconds (default 8000) |
+| `ActionText` | `string` | ActionText, when set, renders an inline action button in the toast (e.g. |
+| `ActionHxGet` | `string` | ActionHxGet / ActionHxPost is the HTMX request URL the action button fires. |
+| `ActionHxPost` | `string` |  |
+| `ActionHxTarget` | `string` | ActionHxTarget / ActionHxSwap configure the action button's HTMX swap. |
+| `ActionHxSwap` | `string` |  |
 
 **ContainerConfig**
 

@@ -45,7 +45,20 @@ type Config struct {
 	Sender *Sender
 	// DisplayDuration in milliseconds (default 8000)
 	DisplayDuration int
+	// ActionText, when set, renders an inline action button in the toast (e.g.
+	// "Undo"). Clicking it fires the configured HTMX request and dismisses the
+	// toast. The close (dismiss) button is always present regardless.
+	ActionText string
+	// ActionHxGet / ActionHxPost is the HTMX request URL the action button fires.
+	ActionHxGet  string
+	ActionHxPost string
+	// ActionHxTarget / ActionHxSwap configure the action button's HTMX swap.
+	ActionHxTarget string
+	ActionHxSwap   string
 }
+
+// HasAction reports whether the toast should render an inline action button.
+func (cfg Config) HasAction() bool { return cfg.ActionText != "" }
 
 // ContainerConfig holds configuration for the toast container.
 // The container is the fixed-position wrapper that holds stacking notifications.

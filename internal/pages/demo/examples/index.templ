@@ -1,0 +1,28 @@
+package examples
+
+// exampleCard is one entry in the examples gallery.
+templ exampleCard(href, title, desc string) {
+	<a
+		href={ templ.SafeURL(href) }
+		hx-get={ href }
+		hx-target="#main-content"
+		hx-push-url="true"
+		class="block rounded-radius border border-outline bg-surface p-5 transition hover:border-primary dark:border-outline-dark dark:bg-surface-dark dark:hover:border-primary-dark"
+	>
+		<h3 class="mb-1 text-lg font-semibold text-on-surface dark:text-on-surface-dark">{ title }</h3>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ desc }</p>
+	</a>
+}
+
+// IndexContent is the /examples landing page: a gallery of example apps.
+templ IndexContent() {
+	<div id="examples-fragment" class="mx-auto max-w-4xl">
+		<h1 class="mb-2 text-2xl font-bold text-on-surface dark:text-on-surface-dark">Examples</h1>
+		<p class="mb-6 text-on-surface-muted dark:text-on-surface-dark-muted">
+			Small, real apps built from Goshtoso components.
+		</p>
+		<div class="grid gap-4 sm:grid-cols-2">
+			@exampleCard("/examples/todo", "Todo List", "Cookie-backed, HTMX-driven task list with priorities, filters, and drag reorder.")
+		</div>
+	</div>
+}

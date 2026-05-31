@@ -344,6 +344,46 @@ Query params: `order_by`, `order_dir`, `page`, `per_page`, `search`,
 - Dark mode uses `.dark` class on `<html>` via Alpine.js store
 - Default theme: **Minimal** (black/white, no border radius)
 
+## Example Apps (`/examples/*`)
+
+Full, runnable apps that showcase the components in real use (distinct from the
+per-component docs pages). They flow through the **same demo registry +
+`renderDemo`** (so theme, dark mode, and fragment-swap nav come for free) and get
+their own collapsible **"Examples"** sidebar section.
+
+- **Stateless by design:** per-user state is serialized into a cookie, never held
+  in server memory. The todo reference app uses cookie `gt_todo`
+  (base64url-JSON), capped by an encoded-size budget (`maxCookieBytes`) so the
+  browser never silently drops it.
+- **Layering:** pure domain logic in `internal/examples/<app>/` (HTTP-free,
+  unit-tested) → exported templ in `internal/pages/demo/examples/` (rendered by
+  both the page shell *and* the HTMX handlers) → thin handlers in
+  `internal/server/` (read cookie → mutate → write cookie → render fragment).
+- **HTMX pattern:** every membership-changing mutation re-renders the whole
+  `#todo-list` (`outerHTML`) plus an OOB count badge (and a toast where apt), so
+  empty-state and filter membership stay correct. Reorder is via up/down buttons
+  (`/move`); there is intentionally no drag-and-drop (native HTML5 DnD was
+  removed as unreliable).
+- **Components used (vs hand-rolled):** the filter is a segmented `radio` group
+  (native `:checked` is the active highlight, and it lives outside `#todo-list`
+  so it survives every swap); Clear-completed is a `button.Button` wrapped in a
+  `#todo-clear` OOB div so its disabled state can update; the undo-delete bar is
+  an `alert.Alert` whose primary action POSTs to `/restore`. The row's done
+  checkbox and the icon-only ↑/↓/✕ stay raw — the `checkbox` component has no
+  HTMX hook and `button` has no aria-label/attrs hook for icon-only buttons.
+- **OOB + fragment-nav gotcha:** an element that carries `hx-swap-oob` on first
+  paint will make htmx try to OOB-swap it (no target) when the page arrives via
+  a sidebar fragment swap → `htmx:oobErrorNoTarget`. Gate the attribute to
+  update-only (see `CountBadge`/`ClearButton` `oob bool`). Likewise, register
+  any `Alpine.data()` immediately when Alpine is already running, not only on
+  `alpine:init`, or it is undefined on fragment nav.
+
+**To add an example:** domain pkg under `internal/examples/` + templ in
+`internal/pages/demo/examples/` + a `Demos` registry entry + a sidebar item +
+E2E (cover the **sidebar fragment-nav** path and assert no console errors, not
+just direct loads). Reference app: `internal/pages/demo/examples/todo.templ`.
+Endpoints: `/api/examples/todo/{add,toggle,delete,edit,filter,move,clear-completed,restore}`.
+
 ## Current Status
 
 **Completed (22):** Accordion, Alert, Avatar, Badge, Banner, Button, Card,
@@ -351,3 +391,6 @@ Checkbox, Combobox, Dropdown, Modal, Pagination, Select, Sidebar, Spinner,
 Table, Tabs, Textarea, Text Input, Toast, Toggle, Tooltip.
 
 381 E2E tests passing, full suite ~2.5 minutes, no skipped tests.
+
+**Example apps:** Todo List (`/examples/todo`) — cookie-backed, HTMX-driven; the
+first entry in the `/examples/*` family.

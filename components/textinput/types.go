@@ -19,13 +19,15 @@ const (
 type InputType string
 
 const (
-	TypeText     InputType = "text"
-	TypePassword InputType = "password"
-	TypeSearch   InputType = "search"
-	TypeEmail    InputType = "email"
-	TypeTel      InputType = "tel"
-	TypeURL      InputType = "url"
-	TypeNumber   InputType = "number"
+	TypeText          InputType = "text"
+	TypePassword      InputType = "password"
+	TypeSearch        InputType = "search"
+	TypeEmail         InputType = "email"
+	TypeTel           InputType = "tel"
+	TypeURL           InputType = "url"
+	TypeNumber        InputType = "number"
+	TypeDate          InputType = "date"
+	TypeDateTimeLocal InputType = "datetime-local"
 )
 
 // Config holds configuration for the text input component
