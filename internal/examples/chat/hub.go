@@ -4,7 +4,10 @@ import "sync"
 
 // sendBuffer is the per-client outbound queue depth. A client whose queue is
 // full is treated as too slow and the message is dropped for that client only.
-const sendBuffer = 16
+// It must be >= the hub's ringMax (the handler constructs NewHub(50)) so that a
+// full backlog replay performed atomically by Join never overflows and silently
+// drops history.
+const sendBuffer = 64
 
 // Client is one connected socket from the hub's point of view: a buffered
 // channel of pre-rendered HTML frames that the handler's write pump drains.
@@ -42,6 +45,30 @@ func (h *Hub) Register(c *Client) {
 	h.mu.Unlock()
 }
 
+// Join atomically registers a client AND replays the current ring into its send
+// channel, all under a single lock. This is the correct way to admit a new
+// client: it guarantees each frame is delivered exactly once — either it is in
+// the snapshot replayed here, or it is delivered live by Broadcast, never both.
+// That holds because Broadcast appends-to-ring and sends-to-clients under the
+// same mutex: a Broadcast cannot interleave between this client being added to
+// the set and the ring being replayed, so no frame can both land in the ring
+// snapshot AND be fanned out to this client live.
+//
+// The replay uses a non-blocking send purely as a safety valve; with sendBuffer
+// >= ringMax it cannot actually drop, but the non-blocking form guarantees we
+// never block while holding the lock.
+func (h *Hub) Join(c *Client) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.clients[c] = struct{}{}
+	for _, frame := range h.ring {
+		select {
+		case c.Send <- frame:
+		default: // impossibly full (buffer >= ringMax) — never block under the lock
+		}
+	}
+}
+
 // Unregister removes a client and closes its send channel so the write pump
 // exits. Safe to call once per client.
 func (h *Hub) Unregister(c *Client) {
@@ -63,6 +90,23 @@ func (h *Hub) Broadcast(frame []byte) {
 	if len(h.ring) > h.ringMax {
 		h.ring = h.ring[len(h.ring)-h.ringMax:]
 	}
+	for c := range h.clients {
+		select {
+		case c.Send <- frame:
+		default: // slow client — drop this frame for them
+		}
+	}
+}
+
+// BroadcastEphemeral fans a frame out to every current client but does NOT
+// append it to the ring, so it is never replayed to clients that join later.
+// Use this for presence/transient frames (join/leave toasts, online-count
+// updates) that would otherwise show up as ghost toasts and stale counts in a
+// new joiner's replayed backlog. Like Broadcast, a full client is skipped.
+func (h *Hub) BroadcastEphemeral(frame []byte) {
+	frame = append([]byte(nil), frame...) // own the bytes; callers may reuse their buffer
+	h.mu.Lock()
+	defer h.mu.Unlock()
 	for c := range h.clients {
 		select {
 		case c.Send <- frame:

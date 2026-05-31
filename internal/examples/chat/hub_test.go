@@ -1,6 +1,9 @@
 package chat
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func drain(c *Client) []string {
 	var out []string
@@ -69,6 +72,52 @@ func TestHub_UnregisterClosesSend(t *testing.T) {
 	h.Unregister(a)
 	if _, ok := <-a.Send; ok {
 		t.Fatalf("Send channel should be closed after Unregister")
+	}
+}
+
+func TestHub_JoinReplaysBacklog(t *testing.T) {
+	h := NewHub(50)
+	// Push more frames than the old 16-deep send buffer so a too-small buffer
+	// (or a Register-then-Backlog replay) would have dropped the oldest ones.
+	const n = 30
+	for i := range n {
+		h.Broadcast(fmt.Appendf(nil, "m%d", i))
+	}
+
+	c := NewClient()
+	h.Join(c)
+
+	// Join must both register the client...
+	if h.Count() != 1 {
+		t.Fatalf("after Join count = %d, want 1", h.Count())
+	}
+	// ...and replay every ring frame, in order.
+	got := drain(c)
+	if len(got) != n {
+		t.Fatalf("replayed %d frames, want %d", len(got), n)
+	}
+	for i := range n {
+		want := fmt.Sprintf("m%d", i)
+		if got[i] != want {
+			t.Fatalf("frame %d = %q, want %q", i, got[i], want)
+		}
+	}
+}
+
+func TestHub_BroadcastEphemeralNotInRing(t *testing.T) {
+	h := NewHub(50)
+	c := NewClient()
+	h.Register(c)
+
+	h.BroadcastEphemeral([]byte("presence"))
+
+	// Reaches the current client...
+	if got := drain(c); len(got) != 1 || got[0] != "presence" {
+		t.Fatalf("client got %v, want [presence]", got)
+	}
+	// ...but is never retained in the ring, so future joiners don't replay it.
+	if got := h.Backlog(); len(got) != 0 {
+		t.Fatalf("backlog = %q, want empty", got)
 	}
 }
 

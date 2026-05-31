@@ -27,7 +27,6 @@ const (
 	chatMaxMessageLen = 500             // rune cap per message
 	chatMaxNickLen    = 24              // rune cap per nick
 	chatWriteTimeout  = 5 * time.Second // per-frame write deadline
-	chatBotDelay      = 400 * time.Millisecond
 )
 
 // registerChatRoutes wires the chat example's endpoints.
@@ -103,9 +102,11 @@ type wsFrame struct {
 // handleChatWS upgrades to a websocket, joins the room, replays backlog, then
 // loops reading messages and broadcasting rendered bubbles.
 func (s *Server) handleChatWS(w http.ResponseWriter, r *http.Request) {
-	conn, err := websocket.Accept(w, r, &websocket.AcceptOptions{
-		OriginPatterns: []string{"*"}, // same-origin demo; tests hit localhost
-	})
+	// Default same-origin check (no OriginPatterns override): this enforces the
+	// browser's Origin header matching the host, the correct default that blocks
+	// cross-site WebSocket hijacking. The demo page and this socket are
+	// same-origin, so it works for anyone copying this example.
+	conn, err := websocket.Accept(w, r, nil)
 	if err != nil {
 		return
 	}
@@ -113,47 +114,48 @@ func (s *Server) handleChatWS(w http.ResponseWriter, r *http.Request) {
 
 	me := identityFromRequest(r)
 	client := chat.NewClient()
-	chatHub.Register(client)
 
-	// Replay history to this client only (before joining the broadcast view).
-	for _, frame := range chatHub.Backlog() {
-		select {
-		case client.Send <- frame:
-		default:
-		}
-	}
-	// Announce arrival to everyone.
-	chatHub.Broadcast(renderFrame(examples.PresenceFrame(me.Nick+" joined", chatHub.Count())))
+	// Join atomically registers the client and replays the ring under one lock,
+	// so a racing Broadcast is either fully in the replayed snapshot or delivered
+	// live — never duplicated, never dropped.
+	chatHub.Join(client)
 
-	ctx := r.Context()
-	go chatWritePump(ctx, conn, client)
+	// Cancelable context shared by the read loop and the write pump: if the pump
+	// exits (write error/timeout), it cancels ctx so conn.Read unblocks and the
+	// deferred Unregister + leave-presence below fire promptly.
+	ctx, cancel := context.WithCancel(r.Context())
+	defer cancel()
+
+	// Announce arrival to everyone (ephemeral: not retained in the ring, so it is
+	// never replayed to future joiners). This client is already registered, so it
+	// receives its own join frame with the correct online count.
+	chatHub.BroadcastEphemeral(renderFrame(examples.PresenceFrame(me.Nick+" joined", chatHub.Count())))
+
+	go chatWritePump(ctx, cancel, conn, client)
 	defer func() {
 		chatHub.Unregister(client)
-		chatHub.Broadcast(renderFrame(examples.PresenceFrame(me.Nick+" left", chatHub.Count())))
+		chatHub.BroadcastEphemeral(renderFrame(examples.PresenceFrame(me.Nick+" left", chatHub.Count())))
 	}()
 
 	conn.SetReadLimit(8 << 10) // 8 KiB inbound cap
 	for {
 		_, data, err := conn.Read(ctx)
 		if err != nil {
-			return // client closed or errored
+			return // client closed, errored, or write pump canceled ctx
 		}
 		now, bot := buildMessageFrames(data, me.Nick)
 		if now != nil {
 			chatHub.Broadcast(now)
 		}
 		if bot != nil {
-			go func(frame []byte) {
-				time.Sleep(chatBotDelay)
-				chatHub.Broadcast(frame)
-			}(bot)
+			chatHub.Broadcast(bot)
 		}
 	}
 }
 
 // buildMessageFrames parses one inbound ws frame and renders the message bubble
-// to broadcast now, plus an optional ELIZA reply bubble to broadcast after a
-// short delay. Either return may be nil (blank message → now nil; bot off or no
+// to broadcast now, plus an optional ELIZA reply bubble to broadcast immediately
+// after it. Either return may be nil (blank message → now nil; bot off or no
 // match → bot nil). fallbackNick is used when the frame omits a nick.
 func buildMessageFrames(data []byte, fallbackNick string) (now, bot []byte) {
 	var f wsFrame
@@ -181,12 +183,15 @@ func buildMessageFrames(data []byte, fallbackNick string) (now, bot []byte) {
 	return now, bot
 }
 
-// chatWritePump drains a client's send channel to the socket until it closes.
-func chatWritePump(ctx context.Context, conn *websocket.Conn, client *chat.Client) {
+// chatWritePump drains a client's send channel to the socket until it closes or
+// a write fails. On return it cancels the shared context so the read loop's
+// blocked conn.Read unblocks and the handler tears the client down.
+func chatWritePump(ctx context.Context, cancel context.CancelFunc, conn *websocket.Conn, client *chat.Client) {
+	defer cancel()
 	for frame := range client.Send {
-		wctx, cancel := context.WithTimeout(ctx, chatWriteTimeout)
+		wctx, wcancel := context.WithTimeout(ctx, chatWriteTimeout)
 		err := conn.Write(wctx, websocket.MessageText, frame)
-		cancel()
+		wcancel()
 		if err != nil {
 			return
 		}
