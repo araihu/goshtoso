@@ -10,191 +10,204 @@ templ BadgeDemoPage() {
 	@demo.Layout("Badge", "badge", badgeDemoContent())
 }
 
-// badgeDemoContent renders the actual content inside the layout
+// badgeDemoContent renders the demo. Each badge variant lives in its own preview
+// frame followed by its own code block (mirrors penguinui.com/components/badge).
+// Wrapped in #badge-fragment.
 templ badgeDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Badge",
-			Description:   "A badge is a small label that displays additional information, status, or counts. Used for notifications, status indicators, and categorization.",
-		},
-		badgeDemoPreview(),
-		`// Simple Badge
-@badge.Badge(badge.Config{
-    Text:    "New",
-    Variant: badge.Primary,
-})
+	<div id="badge-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Badge",
+				Description: "A small label for status, counts, or categorization. Solid and soft styles, semantic colors, icons, indicators, notification counts, and animating dots.",
+			},
+			badgeSolidPreview(),
+			`@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default})
+@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary})
+@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success})
+@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger})`,
+		)
 
-// Soft Style Badge
-@badge.Badge(badge.Config{
-    Text:    "Active",
-    Variant: badge.Success,
-    Style:   badge.StyleSoft,
-})
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Soft Style",
+				Description: "Style: badge.StyleSoft swaps the solid fill for a subtle tinted background with a border.",
+			},
+			badgeSoftPreview(),
+			`@badge.Badge(badge.Config{Text: "Active", Variant: badge.Success, Style: badge.StyleSoft})`,
+		)
 
-// Badge with Icon
-@badge.Badge(badge.Config{
-    Text:    "Verified",
-    Variant: badge.Info,
-    Icon:    checkIcon,
-})
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Icons",
+				Description: "Pass any templ.Component as Icon to render it before the text.",
+			},
+			badgeIconsPreview(),
+			`@badge.Badge(badge.Config{Text: "Verified", Variant: badge.Info, Icon: checkIcon()})`,
+		)
 
-// Badge with Indicator
-@badge.Badge(badge.Config{
-    Text:      "Live",
-    Variant:   badge.Danger,
-    Indicator: true,
-})
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Indicators",
+				Description: "Indicator: true prepends a small status dot tinted to the variant.",
+			},
+			badgeIndicatorPreview(),
+			`@badge.Badge(badge.Config{Text: "Live", Variant: badge.Danger, Indicator: true})`,
+		)
 
-// Notification Badge on Button
-<button class="relative" aria-label="notifications">
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Notification Badges",
+				Description: "badge.NotificationBadge(n) renders a count bubble and badge.NotificationDot() a bare dot — position them on a relative parent (e.g. an icon button).",
+			},
+			badgeNotificationPreview(),
+			`<button class="relative" aria-label="notifications">
     @icons.Bell()
     @badge.NotificationBadge(5)
 </button>
-
-// Notification Dot
-<button class="relative" aria-label="messages">
-    @icons.Message()
+<button class="relative" aria-label="alerts">
+    @icons.Bell()
     @badge.NotificationDot()
-</button>
+</button>`,
+		)
 
-// Animating Notification Dot
-@badge.AnimatingDot(badge.Danger)`,
-	)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Animating Dots",
+				Description: "badge.AnimatingDot(variant) renders a pulsing presence dot.",
+			},
+			badgeAnimatingPreview(),
+			`@badge.AnimatingDot(badge.Danger)`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Sizes",
+				Description: "Three sizes via Size: badge.SizeSM, badge.SizeMD (default), badge.SizeLG.",
+			},
+			badgeSizesPreview(),
+			`@badge.Badge(badge.Config{Text: "Small", Variant: badge.Primary, Size: badge.SizeSM})
+@badge.Badge(badge.Config{Text: "Large", Variant: badge.Primary, Size: badge.SizeLG})`,
+		)
+	</div>
+	// API reference lives outside #badge-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Text", Type: "string", Default: `""`, Description: "Badge label text."},
+		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "inverse", "primary", "secondary", "info", "success", "warning", "danger".`},
+		{Name: "Style", Type: "Style", Default: "StyleSolid", Description: `Fill style: "solid" or "soft".`},
+		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg".`},
+		{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading icon component."},
+		{Name: "Indicator", Type: "bool", Default: "false", Description: "Prepend a small status dot."},
+		{Name: "IndicatorColor", Type: "string", Default: `""`, Description: "Override the indicator dot color."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the badge."},
+	})
 }
 
-// badgeDemoPreview renders the Goshtoso badge preview
-templ badgeDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Solid Badges (All Variants)
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Solid Badges</h4>
-			<div class="flex flex-wrap gap-2">
-				@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default})
-				@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary})
-				@badge.Badge(badge.Config{Text: "Secondary", Variant: badge.Secondary})
-				@badge.Badge(badge.Config{Text: "Info", Variant: badge.Info})
-				@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success})
-				@badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning})
-				@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger})
-			</div>
+// badgeSolidPreview renders all solid color variants.
+templ badgeSolidPreview() {
+	<div id="badge-solid" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-2">
+			@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default})
+			@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary})
+			@badge.Badge(badge.Config{Text: "Secondary", Variant: badge.Secondary})
+			@badge.Badge(badge.Config{Text: "Info", Variant: badge.Info})
+			@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success})
+			@badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning})
+			@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger})
 		</div>
+	</div>
+}
 
-		// Soft Style Badges
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Soft Style Badges</h4>
-			<div class="flex flex-wrap gap-2">
-				@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default, Style: badge.StyleSoft})
-				@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary, Style: badge.StyleSoft})
-				@badge.Badge(badge.Config{Text: "Secondary", Variant: badge.Secondary, Style: badge.StyleSoft})
-				@badge.Badge(badge.Config{Text: "Info", Variant: badge.Info, Style: badge.StyleSoft})
-				@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success, Style: badge.StyleSoft})
-				@badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Style: badge.StyleSoft})
-				@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger, Style: badge.StyleSoft})
-			</div>
+// badgeSoftPreview renders all soft-style variants.
+templ badgeSoftPreview() {
+	<div id="badge-soft" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-2">
+			@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default, Style: badge.StyleSoft})
+			@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary, Style: badge.StyleSoft})
+			@badge.Badge(badge.Config{Text: "Secondary", Variant: badge.Secondary, Style: badge.StyleSoft})
+			@badge.Badge(badge.Config{Text: "Info", Variant: badge.Info, Style: badge.StyleSoft})
+			@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success, Style: badge.StyleSoft})
+			@badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Style: badge.StyleSoft})
+			@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger, Style: badge.StyleSoft})
 		</div>
+	</div>
+}
 
-		// Badges with Icons
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Icons</h4>
-			<div class="flex flex-wrap gap-2">
-				@badge.Badge(badge.Config{
-					Text:    "Penguin",
-					Variant: badge.Primary,
-					Icon:    penguinIcon(),
-				})
-				@badge.Badge(badge.Config{
-					Text:    "Filter",
-					Variant: badge.Secondary,
-					Icon:    closeIcon(),
-				})
-				@badge.Badge(badge.Config{
-					Text:    "Verified",
-					Variant: badge.Info,
-					Icon:    checkIcon(),
-				})
-				@badge.Badge(badge.Config{
-					Text:    "Active",
-					Variant: badge.Success,
-					Icon:    checkCircleIcon(),
-				})
-				@badge.Badge(badge.Config{
-					Text:    "Warning",
-					Variant: badge.Warning,
-					Icon:    shieldIcon(),
-				})
-				@badge.Badge(badge.Config{
-					Text:    "Error",
-					Variant: badge.Danger,
-					Icon:    alertIcon(),
-				})
-			</div>
+// badgeIconsPreview renders badges with leading icons.
+templ badgeIconsPreview() {
+	<div id="badge-icons" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-2">
+			@badge.Badge(badge.Config{Text: "Penguin", Variant: badge.Primary, Icon: penguinIcon()})
+			@badge.Badge(badge.Config{Text: "Filter", Variant: badge.Secondary, Icon: closeIcon()})
+			@badge.Badge(badge.Config{Text: "Verified", Variant: badge.Info, Icon: checkIcon()})
+			@badge.Badge(badge.Config{Text: "Active", Variant: badge.Success, Icon: checkCircleIcon()})
+			@badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Icon: shieldIcon()})
+			@badge.Badge(badge.Config{Text: "Error", Variant: badge.Danger, Icon: alertIcon()})
 		</div>
+	</div>
+}
 
-		// Badges with Indicator
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Indicators</h4>
-			<div class="flex flex-wrap gap-2">
-				@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default, Indicator: true})
-				@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary, Indicator: true})
-				@badge.Badge(badge.Config{Text: "Info", Variant: badge.Info, Indicator: true})
-				@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success, Indicator: true})
-				@badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Indicator: true})
-				@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger, Indicator: true})
-			</div>
+// badgeIndicatorPreview renders badges with status indicators.
+templ badgeIndicatorPreview() {
+	<div id="badge-indicators" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-2">
+			@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default, Indicator: true})
+			@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary, Indicator: true})
+			@badge.Badge(badge.Config{Text: "Info", Variant: badge.Info, Indicator: true})
+			@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success, Indicator: true})
+			@badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Indicator: true})
+			@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger, Indicator: true})
 		</div>
+	</div>
+}
 
-		// Notification Badges
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Notification Badges</h4>
-			<div class="flex items-center gap-6">
-				// With count
-				<button class="relative w-fit text-on-surface dark:text-on-surface-dark" aria-label="notifications">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-8">
-						<path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clip-rule="evenodd"/>
-					</svg>
-					<span class="sr-only">notifications</span>
-					@badge.NotificationBadge(99)
-				</button>
-
-				// With count (low)
-				<button class="relative w-fit text-on-surface dark:text-on-surface-dark" aria-label="messages">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-8">
-						<path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97-1.94.284-3.916.455-5.922.505a.39.39 0 00-.266.112L8.78 21.53A.75.75 0 017.5 21v-3.955a48.842 48.842 0 01-2.652-.316c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z" clip-rule="evenodd"/>
-					</svg>
-					@badge.NotificationBadge(5)
-				</button>
-
-				// Just a dot
-				<button class="relative w-fit text-on-surface dark:text-on-surface-dark" aria-label="alerts">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-8">
-						<path fill-rule="evenodd" d="M10.339 2.53a.75.75 0 011.262 0 8.27 8.27 0 003.37 2.648.75.75 0 01-.383 1.45 6.77 6.77 0 01-2.613-2.122l-.008-.01a.75.75 0 00-1.188 0l-.008.01A6.77 6.77 0 018.41 6.628a.75.75 0 11-.383-1.45 8.27 8.27 0 003.37-2.648zM9.855 8.25a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-3a.75.75 0 01-.75-.75zM6.75 9.75a.75.75 0 000 1.5h.75v6a.75.75 0 001.5 0v-6h.75a.75.75 0 000-1.5h-3zm6.75 0a.75.75 0 000 1.5h.75v6a.75.75 0 001.5 0v-6h.75a.75.75 0 000-1.5h-3z" clip-rule="evenodd"/>
-					</svg>
-					@badge.NotificationDot()
-				</button>
-			</div>
+// badgeNotificationPreview renders notification count badges and dots.
+templ badgeNotificationPreview() {
+	<div id="badge-notification" class="w-full max-w-2xl mx-auto">
+		<div class="flex items-center gap-6">
+			<button class="relative w-fit text-on-surface dark:text-on-surface-dark" aria-label="notifications">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-8">
+					<path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clip-rule="evenodd"></path>
+				</svg>
+				<span class="sr-only">notifications</span>
+				@badge.NotificationBadge(99)
+			</button>
+			<button class="relative w-fit text-on-surface dark:text-on-surface-dark" aria-label="messages">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-8">
+					<path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97-1.94.284-3.916.455-5.922.505a.39.39 0 00-.266.112L8.78 21.53A.75.75 0 017.5 21v-3.955a48.842 48.842 0 01-2.652-.316c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z" clip-rule="evenodd"></path>
+				</svg>
+				@badge.NotificationBadge(5)
+			</button>
+			<button class="relative w-fit text-on-surface dark:text-on-surface-dark" aria-label="alerts">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-8">
+					<path fill-rule="evenodd" d="M10.339 2.53a.75.75 0 011.262 0 8.27 8.27 0 003.37 2.648.75.75 0 01-.383 1.45 6.77 6.77 0 01-2.613-2.122l-.008-.01a.75.75 0 00-1.188 0l-.008.01A6.77 6.77 0 018.41 6.628a.75.75 0 11-.383-1.45 8.27 8.27 0 003.37-2.648zM9.855 8.25a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-3a.75.75 0 01-.75-.75zM6.75 9.75a.75.75 0 000 1.5h.75v6a.75.75 0 001.5 0v-6h.75a.75.75 0 000-1.5h-3zm6.75 0a.75.75 0 000 1.5h.75v6a.75.75 0 001.5 0v-6h.75a.75.75 0 000-1.5h-3z" clip-rule="evenodd"></path>
+				</svg>
+				@badge.NotificationDot()
+			</button>
 		</div>
+	</div>
+}
 
-		// Animating Dots
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Animating Dots</h4>
-			<div class="flex items-center gap-4">
-				@badge.AnimatingDot(badge.Primary)
-				@badge.AnimatingDot(badge.Secondary)
-				@badge.AnimatingDot(badge.Info)
-				@badge.AnimatingDot(badge.Success)
-				@badge.AnimatingDot(badge.Warning)
-				@badge.AnimatingDot(badge.Danger)
-			</div>
+// badgeAnimatingPreview renders the animating presence dots.
+templ badgeAnimatingPreview() {
+	<div id="badge-animating" class="w-full max-w-2xl mx-auto">
+		<div class="flex items-center gap-4">
+			@badge.AnimatingDot(badge.Primary)
+			@badge.AnimatingDot(badge.Secondary)
+			@badge.AnimatingDot(badge.Info)
+			@badge.AnimatingDot(badge.Success)
+			@badge.AnimatingDot(badge.Warning)
+			@badge.AnimatingDot(badge.Danger)
 		</div>
+	</div>
+}
 
-		// Different Sizes
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Sizes</h4>
-			<div class="flex items-center gap-2">
-				@badge.Badge(badge.Config{Text: "Small", Variant: badge.Primary, Size: badge.SizeSM})
-				@badge.Badge(badge.Config{Text: "Medium", Variant: badge.Primary, Size: badge.SizeMD})
-				@badge.Badge(badge.Config{Text: "Large", Variant: badge.Primary, Size: badge.SizeLG})
-			</div>
+// badgeSizesPreview renders the three badge sizes.
+templ badgeSizesPreview() {
+	<div id="badge-sizes" class="w-full max-w-2xl mx-auto">
+		<div class="flex items-center gap-2">
+			@badge.Badge(badge.Config{Text: "Small", Variant: badge.Primary, Size: badge.SizeSM})
+			@badge.Badge(badge.Config{Text: "Medium", Variant: badge.Primary, Size: badge.SizeMD})
+			@badge.Badge(badge.Config{Text: "Large", Variant: badge.Primary, Size: badge.SizeLG})
 		</div>
 	</div>
 }

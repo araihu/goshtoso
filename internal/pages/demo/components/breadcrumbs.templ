@@ -10,101 +10,107 @@ templ BreadcrumbsDemoPage() {
 	@demo.Layout("Breadcrumbs", "breadcrumbs", breadcrumbsDemoContent())
 }
 
+// breadcrumbsDemoContent renders the demo. Each separator/icon variant lives in
+// its own preview frame followed by its own code block (mirrors
+// penguinui.com/components/breadcrumbs). Wrapped in #breadcrumbs-fragment.
 templ breadcrumbsDemoContent() {
-	<div class="space-y-12">
-		<div>
-			<h1 class="text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Breadcrumbs</h1>
-			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Tailwind CSS Breadcrumb Navigation</p>
-			<p class="mt-2 text-on-surface dark:text-on-surface-dark">Breadcrumbs show the user's current location in a site hierarchy. They support chevron and slash separators, optional icons, and custom attributes on links.</p>
-		</div>
+	<div id="breadcrumbs-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Breadcrumbs",
+				Description: "Show the user's location in a site hierarchy. Chevron or slash separators, optional item icons with tooltips, and custom link attributes.",
+			},
+			breadcrumbsChevronPreview(),
+			`@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+    Items: []breadcrumbs.Item{
+        {Label: "Home", Href: "#"},
+        {Label: "Components", Href: "#"},
+    },
+    Current: "Breadcrumb",
+})`,
+		)
 
-		@chevronBreadcrumbDemo()
-		@slashBreadcrumbDemo()
-		@iconBreadcrumbDemo()
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Slash Separator",
+				Description: "Separator: breadcrumbs.Slash renders a minimal \"/\" between items.",
+			},
+			breadcrumbsSlashPreview(),
+			`@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+    Items:     items,
+    Current:   "Breadcrumb",
+    Separator: breadcrumbs.Slash,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Icon",
+				Description: "Give an Item an Icon (and Tooltip) — e.g. a home glyph for the root crumb.",
+			},
+			breadcrumbsIconPreview(),
+			`@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+    Items: []breadcrumbs.Item{
+        {Label: "", Href: "#", Icon: homeIcon(), Tooltip: "Home"},
+        {Label: "Components", Href: "#"},
+    },
+    Current: "Breadcrumb",
+})`,
+		)
+	</div>
+	// API reference lives outside #breadcrumbs-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Items", Type: "[]Item", Default: "nil", Description: "The crumbs before the current page. Item: Label, Href, optional Icon, Tooltip, LinkAttrs."},
+		{Name: "Current", Type: "string", Default: `""`, Description: "Label of the current (non-link) page, rendered last."},
+		{Name: "Separator", Type: "SeparatorStyle", Default: "Chevron", Description: `Separator between items: "chevron" or "slash".`},
+		{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav> element."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+	})
+}
+
+// breadcrumbsChevronPreview renders the default chevron-separator breadcrumb.
+templ breadcrumbsChevronPreview() {
+	<div id="breadcrumbs-chevron" class="w-full">
+		@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+			Items: []breadcrumbs.Item{
+				{Label: "Home", Href: "#"},
+				{Label: "Components", Href: "#"},
+			},
+			Current: "Breadcrumb",
+		})
 	</div>
 }
 
-// --- Variant 1: Chevron Separator ---
-
-templ chevronBreadcrumbDemo() {
-	<div class="not-prose">
-		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Chevron Separator</h3>
-		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Default breadcrumb with chevron separators between items.</p>
-		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
-			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
-				<span class="size-3 rounded-full bg-red-400"></span>
-				<span class="size-3 rounded-full bg-yellow-400"></span>
-				<span class="size-3 rounded-full bg-green-400"></span>
-				<span class="ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Preview</span>
-			</div>
-			<div class="p-6 bg-surface dark:bg-surface-dark">
-				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
-					Items: []breadcrumbs.Item{
-						{Label: "Home", Href: "#"},
-						{Label: "Components", Href: "#"},
-					},
-					Current: "Breadcrumb",
-				})
-			</div>
-		</div>
+// breadcrumbsSlashPreview renders the slash-separator breadcrumb.
+templ breadcrumbsSlashPreview() {
+	<div id="breadcrumbs-slash" class="w-full">
+		@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+			Items: []breadcrumbs.Item{
+				{Label: "Home", Href: "#"},
+				{Label: "Components", Href: "#"},
+			},
+			Current:   "Breadcrumb",
+			Separator: breadcrumbs.Slash,
+		})
 	</div>
 }
 
-// --- Variant 2: Slash Separator ---
-
-templ slashBreadcrumbDemo() {
-	<div class="not-prose">
-		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Slash Separator</h3>
-		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Breadcrumb with slash separators for a minimal look.</p>
-		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
-			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
-				<span class="size-3 rounded-full bg-red-400"></span>
-				<span class="size-3 rounded-full bg-yellow-400"></span>
-				<span class="size-3 rounded-full bg-green-400"></span>
-				<span class="ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Preview</span>
-			</div>
-			<div class="p-6 bg-surface dark:bg-surface-dark">
-				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
-					Items: []breadcrumbs.Item{
-						{Label: "Home", Href: "#"},
-						{Label: "Components", Href: "#"},
-					},
-					Current:   "Breadcrumb",
-					Separator: breadcrumbs.Slash,
-				})
-			</div>
-		</div>
+// breadcrumbsIconPreview renders a breadcrumb with a home icon on the root item.
+templ breadcrumbsIconPreview() {
+	<div id="breadcrumbs-icon" class="w-full">
+		@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+			Items: []breadcrumbs.Item{
+				{Label: "", Href: "#", Icon: breadcrumbHomeIcon(), Tooltip: "Home"},
+				{Label: "Components", Href: "#"},
+			},
+			Current: "Breadcrumb",
+		})
 	</div>
 }
 
-// --- Variant 3: With Icon ---
-
+// breadcrumbHomeIcon renders a home glyph for the root breadcrumb item.
 templ breadcrumbHomeIcon() {
 	<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" class="size-4">
 		<path fill-rule="evenodd" clip-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"></path>
 	</svg>
-}
-
-templ iconBreadcrumbDemo() {
-	<div class="not-prose">
-		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">With Icon</h3>
-		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Breadcrumb items can include icons for better visual context.</p>
-		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
-			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
-				<span class="size-3 rounded-full bg-red-400"></span>
-				<span class="size-3 rounded-full bg-yellow-400"></span>
-				<span class="size-3 rounded-full bg-green-400"></span>
-				<span class="ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Preview</span>
-			</div>
-			<div class="p-6 bg-surface dark:bg-surface-dark">
-				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
-					Items: []breadcrumbs.Item{
-						{Label: "", Href: "#", Icon: breadcrumbHomeIcon(), Tooltip: "Home"},
-						{Label: "Components", Href: "#"},
-					},
-					Current: "Breadcrumb",
-				})
-			</div>
-		</div>
-	</div>
 }

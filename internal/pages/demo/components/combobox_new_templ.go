@@ -91,6 +91,9 @@ func ComboboxNewPage() templ.Component {
 	})
 }
 
+// comboboxNewDemoContent renders the v2 (HTMX SSR rewrite) combobox demo. Each
+// mode lives in its own preview frame followed by its own code block (mirrors
+// penguinui.com/components/combobox). Wrapped in #combobox-new-fragment.
 func comboboxNewDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -112,7 +115,112 @@ func comboboxNewDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><h1 class=\"text-2xl font-semibold\">Combobox v2 (client + server modes)</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Client-mode comboboxes (industry, skills) toggle entirely in the browser — no HTTP on open/select. Server-mode (users) keeps the HTMX lazy/search path for cases where options can't be pre-rendered.</p><div class=\"max-w-xs\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"combobox-new-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Combobox (v2 — client + server modes)",
+				Description: "The HTMX SSR rewrite. Client-mode comboboxes toggle entirely in the browser (no HTTP on open/select); server-mode keeps an HTMX lazy/search path for options that can't be pre-rendered.",
+			},
+			comboboxNewIndustryPreview(),
+			`// Client mode: options are pre-rendered, toggling happens in the browser.
+var IndustryCfg = combobox.Config{
+    ID: "industry", Name: "industry", Label: "Industry",
+    Mode:   combobox.ModeSingle,
+    Source: combobox.Source{Static: industryOptions},
+}
+@combobox.Combobox(IndustryCfg, combobox.State{Options: IndustryCfg.Source.Static})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Client Multi-Select",
+				Description: "Mode: combobox.ModeMultiple with EnableClearAll — still fully client-side.",
+			},
+			comboboxNewSkillsPreview(),
+			`var SkillsCfg = combobox.Config{
+    ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true,
+    Source: combobox.Source{Static: skillOptions},
+}
+@combobox.Combobox(SkillsCfg, combobox.State{Options: SkillsCfg.Source.Static})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Server Mode (lazy search)",
+				Description: "Set the Toggle/Options/Clear endpoints and a LazyEndpoint Source; the component fetches and searches options over HTMX.",
+			},
+			comboboxNewUsersPreview(),
+			`var UsersCfg = combobox.Config{
+    ID: "users", Name: "users", Mode: combobox.ModeMultiple,
+    EnableSearch: true, EnableClearAll: true,
+    ToggleEndpoint:  "/api/.../toggle",
+    OptionsEndpoint: "/api/.../options",
+    ClearEndpoint:   "/api/.../clear",
+    Source: combobox.Source{LazyEndpoint: "/api/.../options"},
+}
+@combobox.Combobox(UsersCfg, combobox.State{})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (seeds #<id>-trigger, options, hidden inputs)."},
+			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name (multi-select submits repeated hidden inputs)."},
+			{Name: "Label", Type: "string", Default: `""`, Description: "Label above the combobox."},
+			{Name: "Placeholder", Type: "string", Default: `""`, Description: "Trigger placeholder."},
+			{Name: "Mode", Type: "Mode", Default: "ModeSingle", Description: "combobox.ModeSingle or combobox.ModeMultiple."},
+			{Name: "Source", Type: "Source", Default: "{}", Description: "Options source: Static []Option (client mode) or LazyEndpoint (server mode)."},
+			{Name: "EnableSearch", Type: "bool", Default: "false", Description: "Show a search box (server mode queries the endpoint)."},
+			{Name: "EnableClearAll", Type: "bool", Default: "false", Description: "Show a clear-all action."},
+			{Name: "Required", Type: "bool", Default: "false", Description: "Mark the field required."},
+			{Name: "DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this combobox."},
+			{Name: "ToggleEndpoint", Type: "string", Default: `""`, Description: "Server URL for toggling a selection (server mode)."},
+			{Name: "OptionsEndpoint", Type: "string", Default: `""`, Description: "Server URL for fetching/searching options."},
+			{Name: "ClearEndpoint", Type: "string", Default: `""`, Description: "Server URL for clearing the selection."},
+			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// comboboxNewIndustryPreview renders the client-mode single-select.
+func comboboxNewIndustryPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"combobox-new-industry\" class=\"w-full max-w-xs mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -120,7 +228,37 @@ func comboboxNewDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"max-w-xs\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// comboboxNewSkillsPreview renders the client-mode multi-select.
+func comboboxNewSkillsPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"combobox-new-skills\" class=\"w-full max-w-xs mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -128,7 +266,37 @@ func comboboxNewDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"max-w-xs\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// comboboxNewUsersPreview renders the server-mode lazy-search multi-select.
+func comboboxNewUsersPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"combobox-new-users\" class=\"w-full max-w-xs mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -136,7 +304,7 @@ func comboboxNewDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

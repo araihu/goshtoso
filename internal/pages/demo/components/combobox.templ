@@ -10,73 +10,143 @@ templ ComboboxDemoPage() {
 	@demo.Layout("Combobox", "combobox", comboboxDemoContent())
 }
 
-// comboboxDemoContent renders the actual content inside the layout
+// comboboxDemoContent renders the demo. Each combobox variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/combobox). Wrapped in #combobox-fragment.
 templ comboboxDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Combobox",
-			Description:   "A combobox is an input widget with an associated popup that enables users to select a value from a collection of possible values.",
-		},
-		comboboxDemoPreview(),
-		`// Simple Single-Select
-@combobox.Combobox(combobox.Config{
+	<div id="combobox-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Combobox",
+				Description: "An input with an associated popup for selecting from a set of values. Single or multi-select, optional search, avatars, pre-selected values, clear-all, disabled, and HTMX lazy loading.",
+			},
+			comboboxSinglePreview(),
+			`@combobox.Combobox(combobox.Config{
     ID:          "industry",
     Label:       "Industry",
     Placeholder: "Select an industry",
     Options: []combobox.Option{
         {Value: "tech", Label: "Technology"},
-        {Value: "health", Label: "Healthcare"},
         {Value: "finance", Label: "Finance"},
     },
-})
+})`,
+		)
 
-// Multi-Select with Checkboxes
-@combobox.Combobox(combobox.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Single Select with Search",
+				Description: "EnableSearch: true adds a search box to filter options.",
+			},
+			comboboxSearchPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:           "make",
+    Label:        "Make",
+    EnableSearch: true,
+    Options:      makes,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Multi-Select with Checkboxes",
+				Description: "Mode: combobox.ModeMultiple shows checkboxes and keeps the popup open; EnableClearAll adds a clear-all action.",
+			},
+			comboboxMultiPreview(),
+			`@combobox.Combobox(combobox.Config{
     ID:             "skills",
     Label:          "Skills",
     Mode:           combobox.ModeMultiple,
     EnableClearAll: true,
-    Options: []combobox.Option{
-        {Value: "go", Label: "Go"},
-        {Value: "js", Label: "JavaScript"},
-        {Value: "py", Label: "Python"},
-    },
-})
-
-// With Search
-@combobox.Combobox(combobox.Config{
-    ID:           "country",
-    Label:        "Country",
-    EnableSearch: true,
-    Options:      countries,
-})
-
-// With Images (Avatars)
-@combobox.Combobox(combobox.Config{
-    ID:      "user",
-    Label:   "Share with",
-    Options: users, // Options with Img field
-})
-
-// HTMX Lazy Loading
-@combobox.Combobox(combobox.Config{
-    ID:              "products",
-    Label:           "Product",
-    HXMTEndpoint:    "/api/products",
-    EnableSearch:    true,
-    HTMXSearchParam: "q",
+    Options:        skills,
 })`,
-	)
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Multi-Select with Search",
+				Description: "Combine ModeMultiple with EnableSearch for a searchable multi-select.",
+			},
+			comboboxMultiSearchPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:             "languages",
+    Label:          "Languages",
+    Mode:           combobox.ModeMultiple,
+    EnableSearch:   true,
+    EnableClearAll: true,
+    Options:        languages,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Images",
+				Description: "Give each Option an Img to render an avatar beside its label.",
+			},
+			comboboxImagesPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:    "user",
+    Label: "Share with",
+    Options: []combobox.Option{
+        {Value: "aiden", Label: "Aiden Walker", Img: "/avatars/avatar-1.webp"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Pre-selected Values",
+				Description: "Pass Selected to seed the initial selection.",
+			},
+			comboboxPreselectedPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:       "preselected",
+    Label:    "Frameworks",
+    Mode:     combobox.ModeMultiple,
+    Selected: []string{"react", "vue"},
+    Options:  frameworks,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks interaction. (For server-driven options, set HXMTEndpoint + HTMXSearchParam for HTMX lazy loading.)",
+			},
+			comboboxDisabledPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:       "disabled",
+    Label:    "Disabled Combobox",
+    Disabled: true,
+    Options:  options,
+})`,
+		)
+	</div>
+	// API reference lives outside #combobox-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (seeds the trigger id <id>-trigger, label, and listbox)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name (multi-select submits as name[])."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the combobox."},
+		{Name: "Placeholder", Type: "string", Default: `""`, Description: "Trigger placeholder when nothing is selected."},
+		{Name: "Options", Type: "[]Option", Default: "nil", Description: "Options (Value, Label, optional Img)."},
+		{Name: "Selected", Type: "[]string", Default: "nil", Description: "Initially selected option values."},
+		{Name: "Mode", Type: "SelectionMode", Default: "single", Description: `Selection: single or combobox.ModeMultiple (checkboxes).`},
+		{Name: "EnableSearch", Type: "bool", Default: "false", Description: "Add a search box to filter options."},
+		{Name: "EnableClearAll", Type: "bool", Default: "false", Description: "Show a clear-all action (multi-select)."},
+		{Name: "State", Type: "State", Default: "StateDefault", Description: "Validation state (default/error/success)."},
+		{Name: "Size", Type: "Size", Default: "md", Description: "Control size."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+		{Name: "HXMTEndpoint", Type: "string", Default: `""`, Description: "Server URL for HTMX lazy-loaded options."},
+		{Name: "HTMXSearchParam", Type: "string", Default: `""`, Description: "Query param name for the search term sent to HXMTEndpoint."},
+		{Name: "NoResultsText", Type: "string", Default: `""`, Description: "Message shown when search yields no matches."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
 }
 
-// comboboxDemoPreview renders the Goshtoso combobox preview
-templ comboboxDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Simple Single-Select
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Single Select</h4>
-			@combobox.Combobox(combobox.Config{
-				ID:          "industry",
+// comboboxSinglePreview renders the simple single-select combobox.
+templ comboboxSinglePreview() {
+	<div id="combobox-single" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:          "industry",
 				Label:       "Industry",
 				Placeholder: "Select an industry",
 				Name:        "industry",
@@ -97,11 +167,13 @@ templ comboboxDemoPreview() {
 			})
 		</div>
 
-		// Single-Select with Search
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Single Select with Search</h4>
-			@combobox.Combobox(combobox.Config{
-				ID:           "make",
+}
+
+// comboboxSearchPreview renders the searchable single-select.
+templ comboboxSearchPreview() {
+	<div id="combobox-search" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:           "make",
 				Label:        "Make",
 				Placeholder:  "Select a make",
 				Name:         "make",
@@ -130,11 +202,13 @@ templ comboboxDemoPreview() {
 			})
 		</div>
 
-		// Multi-Select with Checkboxes
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Multi-Select with Checkboxes</h4>
-			@combobox.Combobox(combobox.Config{
-				ID:             "skills",
+}
+
+// comboboxMultiPreview renders the multi-select with checkboxes.
+templ comboboxMultiPreview() {
+	<div id="combobox-multi" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:             "skills",
 				Label:          "Skills",
 				Placeholder:    "Select skills",
 				Name:           "skills",
@@ -157,11 +231,13 @@ templ comboboxDemoPreview() {
 			})
 		</div>
 
-		// Multi-Select with Search
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Multi-Select with Search</h4>
-			@combobox.Combobox(combobox.Config{
-				ID:             "languages",
+}
+
+// comboboxMultiSearchPreview renders the searchable multi-select.
+templ comboboxMultiSearchPreview() {
+	<div id="combobox-multi-search" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:             "languages",
 				Label:          "Languages",
 				Placeholder:    "Select languages",
 				Name:           "languages",
@@ -185,11 +261,13 @@ templ comboboxDemoPreview() {
 			})
 		</div>
 
-		// With Images (Avatars)
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Images</h4>
-			@combobox.Combobox(combobox.Config{
-				ID:          "user",
+}
+
+// comboboxImagesPreview renders the combobox with avatar images.
+templ comboboxImagesPreview() {
+	<div id="combobox-images" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:          "user",
 				Label:       "Share with",
 				Placeholder: "Select a user",
 				Name:        "user",
@@ -203,11 +281,13 @@ templ comboboxDemoPreview() {
 			})
 		</div>
 
-		// Pre-selected Values
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pre-selected Values</h4>
-			@combobox.Combobox(combobox.Config{
-				ID:          "preselected",
+}
+
+// comboboxPreselectedPreview renders the combobox with pre-selected values.
+templ comboboxPreselectedPreview() {
+	<div id="combobox-preselected" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:          "preselected",
 				Label:       "Frameworks",
 				Placeholder: "Select frameworks",
 				Name:        "frameworks",
@@ -223,11 +303,13 @@ templ comboboxDemoPreview() {
 			})
 		</div>
 
-		// Disabled State
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled State</h4>
-			@combobox.Combobox(combobox.Config{
-				ID:       "disabled",
+}
+
+// comboboxDisabledPreview renders the disabled combobox.
+templ comboboxDisabledPreview() {
+	<div id="combobox-disabled" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:       "disabled",
 				Label:    "Disabled Combobox",
 				Name:     "disabled",
 				Disabled: true,
@@ -236,6 +318,5 @@ templ comboboxDemoPreview() {
 					{Value: "b", Label: "Option B"},
 				},
 			})
-		</div>
 	</div>
 }

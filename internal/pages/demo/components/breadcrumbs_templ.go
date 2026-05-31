@@ -43,6 +43,9 @@ func BreadcrumbsDemoPage() templ.Component {
 	})
 }
 
+// breadcrumbsDemoContent renders the demo. Each separator/icon variant lives in
+// its own preview frame followed by its own code block (mirrors
+// penguinui.com/components/breadcrumbs). Wrapped in #breadcrumbs-fragment.
 func breadcrumbsDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -64,19 +67,56 @@ func breadcrumbsDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12\"><div><h1 class=\"text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Breadcrumbs</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Tailwind CSS Breadcrumb Navigation</p><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">Breadcrumbs show the user's current location in a site hierarchy. They support chevron and slash separators, optional icons, and custom attributes on links.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"breadcrumbs-fragment\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = chevronBreadcrumbDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Breadcrumbs",
+				Description: "Show the user's location in a site hierarchy. Chevron or slash separators, optional item icons with tooltips, and custom link attributes.",
+			},
+			breadcrumbsChevronPreview(),
+			`@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+    Items: []breadcrumbs.Item{
+        {Label: "Home", Href: "#"},
+        {Label: "Components", Href: "#"},
+    },
+    Current: "Breadcrumb",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = slashBreadcrumbDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Slash Separator",
+				Description: "Separator: breadcrumbs.Slash renders a minimal \"/\" between items.",
+			},
+			breadcrumbsSlashPreview(),
+			`@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+    Items:     items,
+    Current:   "Breadcrumb",
+    Separator: breadcrumbs.Slash,
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = iconBreadcrumbDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Icon",
+				Description: "Give an Item an Icon (and Tooltip) — e.g. a home glyph for the root crumb.",
+			},
+			breadcrumbsIconPreview(),
+			`@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+    Items: []breadcrumbs.Item{
+        {Label: "", Href: "#", Icon: homeIcon(), Tooltip: "Home"},
+        {Label: "Components", Href: "#"},
+    },
+    Current: "Breadcrumb",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,12 +124,22 @@ func breadcrumbsDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Items", Type: "[]Item", Default: "nil", Description: "The crumbs before the current page. Item: Label, Href, optional Icon, Tooltip, LinkAttrs."},
+			{Name: "Current", Type: "string", Default: `""`, Description: "Label of the current (non-link) page, rendered last."},
+			{Name: "Separator", Type: "SeparatorStyle", Default: "Chevron", Description: `Separator between items: "chevron" or "slash".`},
+			{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav> element."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }
 
-// --- Variant 1: Chevron Separator ---
-func chevronBreadcrumbDemo() templ.Component {
+// breadcrumbsChevronPreview renders the default chevron-separator breadcrumb.
+func breadcrumbsChevronPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -110,7 +160,7 @@ func chevronBreadcrumbDemo() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Chevron Separator</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Default breadcrumb with chevron separators between items.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span> <span class=\"ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Preview</span></div><div class=\"p-6 bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"breadcrumbs-chevron\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -124,7 +174,7 @@ func chevronBreadcrumbDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,8 +182,8 @@ func chevronBreadcrumbDemo() templ.Component {
 	})
 }
 
-// --- Variant 2: Slash Separator ---
-func slashBreadcrumbDemo() templ.Component {
+// breadcrumbsSlashPreview renders the slash-separator breadcrumb.
+func breadcrumbsSlashPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -154,7 +204,7 @@ func slashBreadcrumbDemo() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Slash Separator</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Breadcrumb with slash separators for a minimal look.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span> <span class=\"ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Preview</span></div><div class=\"p-6 bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"breadcrumbs-slash\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -169,7 +219,7 @@ func slashBreadcrumbDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -177,8 +227,8 @@ func slashBreadcrumbDemo() templ.Component {
 	})
 }
 
-// --- Variant 3: With Icon ---
-func breadcrumbHomeIcon() templ.Component {
+// breadcrumbsIconPreview renders a breadcrumb with a home icon on the root item.
+func breadcrumbsIconPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -199,7 +249,21 @@ func breadcrumbHomeIcon() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 20 20\" aria-hidden=\"true\" class=\"size-4\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z\"></path></svg>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"breadcrumbs-icon\" class=\"w-full\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+			Items: []breadcrumbs.Item{
+				{Label: "", Href: "#", Icon: breadcrumbHomeIcon(), Tooltip: "Home"},
+				{Label: "Components", Href: "#"},
+			},
+			Current: "Breadcrumb",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -207,7 +271,8 @@ func breadcrumbHomeIcon() templ.Component {
 	})
 }
 
-func iconBreadcrumbDemo() templ.Component {
+// breadcrumbHomeIcon renders a home glyph for the root breadcrumb item.
+func breadcrumbHomeIcon() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -228,21 +293,7 @@ func iconBreadcrumbDemo() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">With Icon</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Breadcrumb items can include icons for better visual context.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span> <span class=\"ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Preview</span></div><div class=\"p-6 bg-surface dark:bg-surface-dark\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = breadcrumbs.Breadcrumbs(breadcrumbs.Config{
-			Items: []breadcrumbs.Item{
-				{Label: "", Href: "#", Icon: breadcrumbHomeIcon(), Tooltip: "Home"},
-				{Label: "Components", Href: "#"},
-			},
-			Current: "Breadcrumb",
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 20 20\" aria-hidden=\"true\" class=\"size-4\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z\"></path></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -10,94 +10,86 @@ templ ButtonDemoPage() {
 	@demo.Layout("Buttons", "button", buttonDemoContent())
 }
 
-// buttonDemoContent renders the actual content inside the layout
+// buttonDemoContent renders the demo. Each button variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/button). The docs wrapper is #button-docs-fragment so
+// it doesn't collide with ButtonFragment's #button-fragment variants grid (which
+// the e2e suite and the HTMX fragment endpoint target).
 templ buttonDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Buttons",
-			Description:   "Buttons are a fundamental element of any user interface. Users can use them to trigger actions, such as submitting a form, opening a modal, or navigating to another page.",
-		},
-		buttonDemoPreview(),
-		`// Primary Button
+	<div id="button-docs-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Buttons",
+				Description: "Trigger actions — submit a form, open a modal, navigate. Eight color variants, four sizes, disabled state, and first-class HTMX wiring (GET/POST/DELETE, confirm, loading indicator).",
+			},
+			buttonVariantsPreview(),
+			`@button.Button(button.Config{Variant: button.Primary, Type: "button"}) { Primary }
+@button.Button(button.Config{Variant: button.Secondary, Type: "button"}) { Secondary }
+@button.Button(button.Config{Variant: button.Danger, Type: "button"}) { Danger }
+@button.Button(button.Config{Variant: button.Success, Type: "button"}) { Success }`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Sizes",
+				Description: "Four sizes via Size: SizeSmall, SizeMedium, SizeLarge, SizeXLarge.",
+			},
+			buttonSizesPreview(),
+			`@button.Button(button.Config{Variant: button.Primary, Size: button.SizeSmall, Type: "button"}) { Small }
+@button.Button(button.Config{Variant: button.Primary, Size: button.SizeXLarge, Type: "button"}) { Extra Large }`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks interaction and dims the button.",
+			},
+			buttonDisabledPreview(),
+			`@button.Button(button.Config{Variant: button.Primary, Type: "button", Disabled: true}) { Primary }`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTMX Interactions",
+				Description: "Attach an HTMX config to fire a request on click. Supports Get/Post/Delete, a Confirm prompt, a loading Indicator, and LoadingText.",
+			},
+			buttonHTMXPreview(),
+			`@button.Button(button.Config{
+    Variant: button.Primary, Type: "button",
+    HTMX: &button.HTMXConfig{Post: "/api/hello", Target: "#result", Swap: "innerHTML"},
+}) { Send POST }
+
 @button.Button(button.Config{
-    Variant: button.Primary,
-    Type:    "button",
-}) {
-    Primary
+    Variant: button.Danger, Type: "button",
+    HTMX: &button.HTMXConfig{Delete: "/api/item/123", Confirm: "Are you sure?", Target: "#item"},
+}) { Delete }`,
+		)
+	</div>
+	// API reference lives outside #button-docs-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "alternate", "inverse", "info", "danger", "warning", "success".`},
+		{Name: "Size", Type: "Size", Default: "SizeMedium", Description: `Size: "sm", "md", "lg", "xl".`},
+		{Name: "Type", Type: "string", Default: `"button"`, Description: `Native button type: "button", "submit", "reset".`},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX wiring (Get/Post/Put/Delete, Target, Swap, Trigger, Confirm, Indicator)."},
+		{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Alpine.js directives for client-side behavior."},
+		{Name: "LoadingText", Type: "string", Default: `""`, Description: "Text shown while an HTMX request is in flight."},
+		{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the button."},
+	})
 }
 
-// Secondary Button  
-@button.Button(button.Config{
-    Variant: button.Secondary,
-    Type:    "button",
-}) {
-    Secondary
+// buttonVariantsPreview renders the eight color variants (the ButtonFragment grid).
+templ buttonVariantsPreview() {
+	<div id="button-variants" class="w-full">
+		@ButtonFragment(false)
+	</div>
 }
 
-// With HTMX - Basic POST
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Type:    "button",
-    HTMX: &button.HTMXConfig{
-        Post:   "/api/action",
-        Target: "#result",
-        Swap:   "innerHTML",
-    },
-}) {
-    Submit
-}
-
-// With HTMX - GET Request
-@button.Button(button.Config{
-    Variant: button.Info,
-    Type:    "button",
-    HTMX: &button.HTMXConfig{
-        Get:     "/api/data",
-        Target:  "#data-container",
-        Trigger: "click",
-    },
-}) {
-    Load Data
-}
-
-// With HTMX - With Loading State
-@button.Button(button.Config{
-    Variant:    button.Secondary,
-    Type:       "button",
-    LoadingText: "Loading...",
-    HTMX: &button.HTMXConfig{
-        Post:      "/api/process",
-        Target:    "#output",
-        Indicator: "#spinner",
-    },
-}) {
-    Process
-}
-
-// With HTMX - Confirm Dialog
-@button.Button(button.Config{
-    Variant: button.Danger,
-    Type:    "button",
-    HTMX: &button.HTMXConfig{
-        Delete:  "/api/item/123",
-        Confirm: "Are you sure you want to delete this?",
-        Target:  "#item-123",
-        Swap:    "outerHTML",
-    },
-}) {
-    Delete
-}`,
-	)
-}
-
-// buttonDemoPreview renders the Goshtoso button preview
-templ buttonDemoPreview() {
-	@ButtonFragment(false)
-
-	<!-- Sizes -->
-	<div class="space-y-3 p-8 pt-0">
-		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Sizes</h3>
-		<div class="flex flex-wrap items-center gap-4">
+// buttonSizesPreview renders the four button sizes.
+templ buttonSizesPreview() {
+	<div id="button-sizes" class="w-full">
+		<div class="flex flex-wrap items-center justify-center gap-4">
 			@button.Button(button.Config{Variant: button.Primary, Size: button.SizeSmall, Type: "button"}) {
 				Small
 			}
@@ -112,11 +104,12 @@ templ buttonDemoPreview() {
 			}
 		</div>
 	</div>
+}
 
-	<!-- Disabled -->
-	<div class="space-y-3 p-8 pt-0">
-		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h3>
-		<div class="flex flex-wrap items-center gap-4">
+// buttonDisabledPreview renders disabled buttons across variants.
+templ buttonDisabledPreview() {
+	<div id="button-disabled" class="w-full">
+		<div class="flex flex-wrap items-center justify-center gap-4">
 			@button.Button(button.Config{Variant: button.Primary, Type: "button", Disabled: true}) {
 				Primary
 			}
@@ -131,11 +124,12 @@ templ buttonDemoPreview() {
 			}
 		</div>
 	</div>
+}
 
-	<!-- With HTMX -->
-	<div class="space-y-3 p-8 pt-0">
-		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">HTMX Interactions</h3>
-		<div class="flex flex-wrap items-center gap-4">
+// buttonHTMXPreview renders the HTMX-wired buttons with their result targets.
+templ buttonHTMXPreview() {
+	<div id="button-htmx" class="w-full">
+		<div class="flex flex-wrap items-center justify-center gap-4">
 			<div class="flex items-center gap-3">
 				@button.Button(button.Config{
 					Variant: button.Primary,

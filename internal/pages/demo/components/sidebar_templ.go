@@ -43,7 +43,9 @@ func SidebarDemoPage() templ.Component {
 	})
 }
 
-// sidebarDemoContent renders all sidebar variant demos
+// sidebarDemoContent renders the demo. Each sidebar variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/sidebar). Wrapped in #sidebar-fragment.
 func sidebarDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,31 +67,107 @@ func sidebarDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12\"><div><h1 class=\"text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Sidebar</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Tailwind CSS and Alpine JS Sidebar</p><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">Sidebars help users find what they need by organizing navigation into clearly labelled sections. They support flat lists, grouped sections, nested sub-items, collapsible menus, and overlay modes.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"sidebar-fragment\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = simpleSidebarDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Sidebar",
+				Description: "Organize navigation into labelled sections. Flat item lists, grouped sections, nested sub-items, collapsible Alpine sections, and an overlay mode with a hamburger trigger.",
+			},
+			sidebarSimplePreview(),
+			`@sidebar.Sidebar(sidebar.Config{
+    LogoText:   "MyApp",
+    ShowSearch: true,
+    Items: []sidebar.Item{
+        {ID: "dashboard", Label: "Dashboard", Href: "#", Icon: dashboardIcon()},
+        {ID: "profile", Label: "Profile", Href: "#", Icon: profileIcon(), Active: true},
+        {ID: "inbox", Label: "Inbox", Href: "#", Icon: inboxIcon(), Badge: "3"},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = sectionsSidebarDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Sections",
+				Description: "Use Sections (each with a Title and Items) to group links logically.",
+			},
+			sidebarSectionsPreview(),
+			`@sidebar.Sidebar(sidebar.Config{
+    LogoText: "Docs",
+    Sections: []sidebar.Section{
+        {Title: "Getting Started", Items: gettingStartedItems},
+        {Title: "Components", Items: componentItems},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = subItemsSidebarDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Sub-Items",
+				Description: "An Item can carry nested Items (with their own Badge) for API-reference-style navigation.",
+			},
+			sidebarSubItemsPreview(),
+			`{ID: "ep-users", Label: "Users", Href: "#", Icon: usersIcon(), Items: []sidebar.Item{
+    {ID: "ep-create-user", Label: "Create User", Href: "#", Badge: "POST"},
+    {ID: "ep-get-user", Label: "Get User", Href: "#", Badge: "GET"},
+}}`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = collapsibleSidebarDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Collapsible Sections",
+				Description: "Compose collapsible groups with Alpine (x-data + x-collapse) when you need section headers that expand and collapse on click.",
+			},
+			sidebarCollapsiblePreview(),
+			`<div x-data="{ sections: { general: true, content: false } }">
+    <button x-on:click="sections.general = !sections.general">General</button>
+    <div x-show="sections.general" x-collapse> ...items... </div>
+</div>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = overlaySidebarDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Overlay Sidebar",
+				Description: "Render the sidebar in an off-canvas panel with a backdrop, toggled by a hamburger button via Alpine (x-data=\"{ showSidebar: false }\").",
+			},
+			sidebarOverlayPreview(),
+			`<div x-data="{ showSidebar: false }">
+    <button x-on:click="showSidebar = true" aria-label="Open sidebar">☰</button>
+    <div x-show="showSidebar" class="absolute inset-y-0 left-0 z-40 w-60" x-cloak>
+        @sidebar.Sidebar(cfg)
+    </div>
+</div>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Items", Type: "[]Item", Default: "nil", Description: "Flat item list. Item: ID, Label, Href, Icon, Active, Disabled, Badge, nested Items."},
+			{Name: "Sections", Type: "[]Section", Default: "nil", Description: "Grouped sections, each with a Title and Items (use instead of, or with, Items)."},
+			{Name: "SectionsTitle", Type: "string", Default: `""`, Description: "Optional heading above the sections."},
+			{Name: "Logo", Type: "templ.Component", Default: "nil", Description: "Custom logo content (overrides LogoText)."},
+			{Name: "LogoText", Type: "string", Default: `""`, Description: "Text logo shown at the top."},
+			{Name: "LogoHref", Type: "string", Default: `""`, Description: "Link target for the logo."},
+			{Name: "ShowSearch", Type: "bool", Default: "false", Description: "Render a search input below the logo."},
+			{Name: "SearchPlaceholder", Type: "string", Default: `""`, Description: "Placeholder for the search input."},
+			{Name: "SearchSlot", Type: "templ.Component", Default: "nil", Description: "Custom search-area content."},
+			{Name: "FooterSlot", Type: "templ.Component", Default: "nil", Description: "Content pinned to the bottom of the sidebar."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -98,7 +176,7 @@ func sidebarDemoContent() templ.Component {
 }
 
 // --- Variant 1: Simple Sidebar ---
-func simpleSidebarDemo() templ.Component {
+func sidebarSimplePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -119,7 +197,7 @@ func simpleSidebarDemo() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Simple Sidebar</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">A sidebar with a logo, search input, and icon navigation links. Profile is marked as active.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span></div><div class=\"flex h-[400px]\"><div class=\"w-60 shrink-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"sidebar-simple\" class=\"w-full\"><div class=\"flex h-[400px] border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"w-60 shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -146,7 +224,7 @@ func simpleSidebarDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -155,7 +233,7 @@ func simpleSidebarDemo() templ.Component {
 }
 
 // --- Variant 2: Sidebar with Sections ---
-func sectionsSidebarDemo() templ.Component {
+func sidebarSectionsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -176,7 +254,7 @@ func sectionsSidebarDemo() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Sidebar with Sections</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Grouped navigation with section titles for logical organization of links.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span></div><div class=\"flex h-[400px]\"><div class=\"w-60 shrink-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"sidebar-sections\" class=\"w-full\"><div class=\"flex h-[400px] border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"w-60 shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -219,7 +297,7 @@ func sectionsSidebarDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -228,7 +306,7 @@ func sectionsSidebarDemo() templ.Component {
 }
 
 // --- Variant 3: Sidebar with Sub-Items ---
-func subItemsSidebarDemo() templ.Component {
+func sidebarSubItemsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -249,7 +327,7 @@ func subItemsSidebarDemo() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Sidebar with Sub-Items</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Documentation-style sidebar with parent items and nested child links, similar to API reference navigation.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span></div><div class=\"flex h-[450px]\"><div class=\"w-64 shrink-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"sidebar-sub-items\" class=\"w-full\"><div class=\"flex h-[450px] border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"w-64 shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -292,7 +370,7 @@ func subItemsSidebarDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -301,7 +379,7 @@ func subItemsSidebarDemo() templ.Component {
 }
 
 // --- Variant 4: Collapsible Sidebar ---
-func collapsibleSidebarDemo() templ.Component {
+func sidebarCollapsiblePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -322,7 +400,7 @@ func collapsibleSidebarDemo() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Collapsible Sections</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Each section can be collapsed or expanded using Alpine.js. Click the section headers to toggle visibility.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span></div><div class=\"flex h-[450px]\"><div class=\"w-60 shrink-0\"><nav class=\"h-full w-full border-r border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark flex flex-col\" aria-label=\"sidebar navigation\"><div class=\"shrink-0 border-b border-outline dark:border-outline-dark p-4\"><a href=\"#\" class=\"flex items-center gap-2 text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\"><span>Dashboard</span></a></div><div class=\"flex-1 overflow-y-auto sidebar-scroll p-4\" x-data=\"{ sections: { general: true, content: false, system: false } }\"><div class=\"flex flex-col gap-4\"><!-- General section (open by default) --><div><button x-on:click=\"sections.general = !sections.general\" class=\"flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface-muted hover:text-on-surface-muted dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-muted\"><span>General</span> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4 transition-transform duration-200\" x-bind:class=\"sections.general ? 'rotate-180' : ''\"><path fill-rule=\"evenodd\" d=\"M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z\" clip-rule=\"evenodd\"></path></svg></button><div x-show=\"sections.general\" x-collapse><div class=\"mt-1 flex flex-col gap-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"sidebar-collapsible\" class=\"w-full\"><div class=\"flex h-[450px] border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"w-60 shrink-0\"><nav class=\"h-full w-full border-r border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark flex flex-col\" aria-label=\"sidebar navigation\"><div class=\"shrink-0 border-b border-outline dark:border-outline-dark p-4\"><a href=\"#\" class=\"flex items-center gap-2 text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\"><span>Dashboard</span></a></div><div class=\"flex-1 overflow-y-auto sidebar-scroll p-4\" x-data=\"{ sections: { general: true, content: false, system: false } }\"><div class=\"flex flex-col gap-4\"><!-- General section (open by default) --><div><button x-on:click=\"sections.general = !sections.general\" class=\"flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface-muted hover:text-on-surface-muted dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-muted\"><span>General</span> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4 transition-transform duration-200\" x-bind:class=\"sections.general ? 'rotate-180' : ''\"><path fill-rule=\"evenodd\" d=\"M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z\" clip-rule=\"evenodd\"></path></svg></button><div x-show=\"sections.general\" x-collapse><div class=\"mt-1 flex flex-col gap-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,7 +456,7 @@ func collapsibleSidebarDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -415,7 +493,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/sidebar.templ`, Line: 271, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/sidebar.templ`, Line: 309, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -433,7 +511,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/sidebar.templ`, Line: 275, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/sidebar.templ`, Line: 313, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -449,7 +527,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 }
 
 // --- Variant 5: Overlay Sidebar ---
-func overlaySidebarDemo() templ.Component {
+func sidebarOverlayPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -470,7 +548,7 @@ func overlaySidebarDemo() templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Overlay Sidebar</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">A sidebar that opens as an overlay with a dark backdrop, triggered by a hamburger button. Uses Alpine.js for toggle state.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span></div><div class=\"relative h-[400px] bg-surface dark:bg-surface-dark overflow-hidden\" x-data=\"{ showSidebar: false }\"><!-- Top bar with hamburger --><div class=\"flex items-center gap-3 border-b border-outline dark:border-outline-dark px-4 py-3\"><button x-on:click=\"showSidebar = true\" class=\"rounded-radius p-1.5 text-on-surface hover:bg-primary/5 dark:text-on-surface-dark dark:hover:bg-primary-dark/5\" aria-label=\"Open sidebar\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5\"><path fill-rule=\"evenodd\" d=\"M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z\" clip-rule=\"evenodd\"></path></svg></button> <span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Click the hamburger to open</span></div><!-- Content area --><div class=\"p-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div id=\"sidebar-overlay\" class=\"w-full\"><div class=\"relative h-[400px] bg-surface dark:bg-surface-dark overflow-hidden border border-outline dark:border-outline-dark rounded-radius\" x-data=\"{ showSidebar: false }\"><!-- Top bar with hamburger --><div class=\"flex items-center gap-3 border-b border-outline dark:border-outline-dark px-4 py-3\"><button x-on:click=\"showSidebar = true\" class=\"rounded-radius p-1.5 text-on-surface hover:bg-primary/5 dark:text-on-surface-dark dark:hover:bg-primary-dark/5\" aria-label=\"Open sidebar\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5\"><path fill-rule=\"evenodd\" d=\"M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z\" clip-rule=\"evenodd\"></path></svg></button> <span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Click the hamburger to open</span></div><!-- Content area --><div class=\"p-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -496,7 +574,7 @@ func overlaySidebarDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<!-- Close button inside sidebar --><button x-on:click=\"showSidebar = false\" class=\"absolute top-4 right-2 rounded-radius p-1 text-on-surface-muted hover:text-on-surface dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark\" aria-label=\"Close sidebar\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4\"><path d=\"M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z\"></path></svg></button></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<!-- Close button inside sidebar --><button x-on:click=\"showSidebar = false\" class=\"absolute top-4 right-2 rounded-radius p-1 text-on-surface-muted hover:text-on-surface dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark\" aria-label=\"Close sidebar\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4\"><path d=\"M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z\"></path></svg></button></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

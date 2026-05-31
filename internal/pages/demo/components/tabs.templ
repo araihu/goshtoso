@@ -10,136 +10,169 @@ templ TabsDemoPage() {
 	@demo.Layout("Tabs", "tabs", tabsDemoContent())
 }
 
-// tabsDemoContent renders all tab variant demos
+// tabsDemoContent renders the demo. Each tabs variant lives in its own preview
+// frame followed by its own code block (mirrors penguinui.com/components/tabs).
+// Wrapped in #tabs-fragment.
 templ tabsDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Tabs",
-			Description:   "Tabs organize content into multiple panels, allowing users to navigate between them. They support keyboard navigation, icons, and badges.",
-		},
-		tabsDemoPreview(),
-		`// Default Tabs
-@tabs.Tabs(tabs.Config{
+	<div id="tabs-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Tabs",
+				Description: "Organize content into switchable panels. Supports keyboard navigation, icons, badges, HTMX lazy-loaded panels, and URL-hash sync.",
+			},
+			tabsDefaultPreview(),
+			`@tabs.Tabs(tabs.Config{
     ID: "demo",
     Tabs: []tabs.Tab{
         {ID: "groups", Label: "Groups", Content: groupsContent()},
         {ID: "likes", Label: "Likes", Content: likesContent()},
-        {ID: "comments", Label: "Comments", Content: commentsContent()},
-        {ID: "saved", Label: "Saved", Content: savedContent()},
     },
-})
+})`,
+		)
 
-// Tabs with Icons
-@tabs.Tabs(tabs.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Icons",
+				Description: "Give each Tab an Icon component to render before its label.",
+			},
+			tabsIconPreview(),
+			`@tabs.Tabs(tabs.Config{
     ID: "icon-demo",
     Tabs: []tabs.Tab{
         {ID: "groups", Label: "Groups", Icon: groupsIcon(), Content: groupsContent()},
         {ID: "likes", Label: "Likes", Icon: likesIcon(), Content: likesContent()},
     },
-})
+})`,
+		)
 
-// Tabs with Icons and Badges
-@tabs.Tabs(tabs.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Icons and Badges",
+				Description: "Set Tab.Badge to show a count pill alongside the label.",
+			},
+			tabsBadgePreview(),
+			`@tabs.Tabs(tabs.Config{
     ID: "badge-demo",
     Tabs: []tabs.Tab{
         {ID: "groups", Label: "Groups", Icon: groupsIcon(), Badge: "2", Content: groupsContent()},
         {ID: "likes", Label: "Likes", Icon: likesIcon(), Badge: "3124", Content: likesContent()},
     },
-})
+})`,
+		)
 
-// Tabs with HTMX Lazy Loading
-@tabs.Tabs(tabs.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTMX Lazy Loading",
+				Description: "Give a Tab an HTMX config instead of Content; its panel is fetched from the server the first time it's opened.",
+			},
+			tabsHTMXPreview(),
+			`@tabs.Tabs(tabs.Config{
     ID: "htmx-demo",
     Tabs: []tabs.Tab{
         {ID: "overview", Label: "Overview", Content: overviewContent()},
         {ID: "details", Label: "Details", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/details"}},
-        {ID: "activity", Label: "Activity", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/activity"}},
     },
-})
+})`,
+		)
 
-// Tabs with URL Hash Sync
-@tabs.Tabs(tabs.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "URL Hash Sync",
+				Description: "SyncHash: true mirrors the active tab in the URL fragment, so switching updates the hash and deep links like #comments restore on load.",
+			},
+			tabsHashPreview(),
+			`@tabs.Tabs(tabs.Config{
     ID:       "my-tabs",
     SyncHash: true,
     Tabs: []tabs.Tab{
-        {ID: "members", Label: "Members", Content: membersContent()},
-        {ID: "clusters", Label: "Clusters", Content: clustersContent()},
+        {ID: "groups", Label: "Groups", Content: groupsContent()},
+        {ID: "comments", Label: "Comments", Content: commentsContent()},
     },
 })`,
-	)
+		)
+	</div>
+	// API reference lives outside #tabs-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique tab-set id (scopes Alpine state and panel ids)."},
+		{Name: "Tabs", Type: "[]Tab", Default: "nil", Description: "Tab definitions (ID, Label, optional Icon, Badge, Content, HTMX)."},
+		{Name: "DefaultTab", Type: "string", Default: `""`, Description: "ID of the initially active tab (defaults to the first)."},
+		{Name: "SyncHash", Type: "bool", Default: "false", Description: "Mirror the active tab in the URL fragment."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the tab-set container."},
+	})
 }
 
-// tabsDemoPreview renders all tab variants
-templ tabsDemoPreview() {
-	<div class="space-y-12">
-		<!-- Default Tabs -->
-		<div>
-			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Default Tabs</h3>
-			@tabs.Tabs(tabs.Config{
-				ID: "default",
-				Tabs: []tabs.Tab{
-					{ID: "groups", Label: "Groups", Content: tabContent("Groups")},
-					{ID: "likes", Label: "Likes", Content: tabContent("Likes")},
-					{ID: "comments", Label: "Comments", Content: tabContent("Comments")},
-					{ID: "saved", Label: "Saved", Content: tabContent("Saved")},
-				},
-			})
-		</div>
+// tabsDefaultPreview renders the default tabs.
+templ tabsDefaultPreview() {
+	<div id="tabs-default" class="w-full max-w-2xl mx-auto">
+		@tabs.Tabs(tabs.Config{
+			ID: "default",
+			Tabs: []tabs.Tab{
+				{ID: "groups", Label: "Groups", Content: tabContent("Groups")},
+				{ID: "likes", Label: "Likes", Content: tabContent("Likes")},
+				{ID: "comments", Label: "Comments", Content: tabContent("Comments")},
+				{ID: "saved", Label: "Saved", Content: tabContent("Saved")},
+			},
+		})
+	</div>
+}
 
-		<!-- Tabs with Icons -->
-		<div>
-			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with Icon</h3>
-			@tabs.Tabs(tabs.Config{
-				ID: "icon",
-				Tabs: []tabs.Tab{
-					{ID: "groups", Label: "Groups", Icon: groupsIcon(), Content: tabContent("Groups")},
-					{ID: "likes", Label: "Likes", Icon: likesIcon(), Content: tabContent("Likes")},
-					{ID: "comments", Label: "Comments", Icon: commentsIcon(), Content: tabContent("Comments")},
-					{ID: "saved", Label: "Saved", Icon: savedIcon(), Content: tabContent("Saved")},
-				},
-			})
-		</div>
+// tabsIconPreview renders tabs with icons.
+templ tabsIconPreview() {
+	<div id="tabs-icons" class="w-full max-w-2xl mx-auto">
+		@tabs.Tabs(tabs.Config{
+			ID: "icon",
+			Tabs: []tabs.Tab{
+				{ID: "groups", Label: "Groups", Icon: groupsIcon(), Content: tabContent("Groups")},
+				{ID: "likes", Label: "Likes", Icon: likesIcon(), Content: tabContent("Likes")},
+				{ID: "comments", Label: "Comments", Icon: commentsIcon(), Content: tabContent("Comments")},
+				{ID: "saved", Label: "Saved", Icon: savedIcon(), Content: tabContent("Saved")},
+			},
+		})
+	</div>
+}
 
-		<!-- Tabs with Icons and Badges -->
-		<div>
-			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with Icon and Badge</h3>
-			@tabs.Tabs(tabs.Config{
-				ID: "badge",
-				Tabs: []tabs.Tab{
-					{ID: "groups", Label: "Groups", Icon: groupsIcon(), Badge: "2", Content: tabContent("Groups")},
-					{ID: "likes", Label: "Likes", Icon: likesIcon(), Badge: "3124", Content: tabContent("Likes")},
-					{ID: "comments", Label: "Comments", Icon: commentsIcon(), Badge: "243", Content: tabContent("Comments")},
-					{ID: "saved", Label: "Saved", Icon: savedIcon(), Badge: "32", Content: tabContent("Saved")},
-				},
-			})
-		</div>
-		<!-- Tabs with HTMX Lazy Loading -->
-		<div>
-			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with HTMX Lazy Loading</h3>
-			@tabs.Tabs(tabs.Config{
-				ID: "htmx",
-				Tabs: []tabs.Tab{
-					{ID: "overview", Label: "Overview", Content: tabContent("Overview")},
-					{ID: "details", Label: "Details", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/details"}},
-					{ID: "activity", Label: "Activity", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/activity"}},
-				},
-			})
-		</div>
-		<!-- Tabs with Hash Sync -->
-		<div>
-			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with URL Hash Sync</h3>
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Selected tab syncs with the URL fragment. Try switching tabs — the hash updates. Refresh with <code class="bg-surface-alt dark:bg-surface-dark-alt px-1 rounded">#comments</code> in the URL.</p>
-			@tabs.Tabs(tabs.Config{
-				ID:       "hash-sync",
-				SyncHash: true,
-				Tabs: []tabs.Tab{
-					{ID: "groups", Label: "Groups", Icon: groupsIcon(), Content: tabContent("Groups")},
-					{ID: "likes", Label: "Likes", Icon: likesIcon(), Content: tabContent("Likes")},
-					{ID: "comments", Label: "Comments", Icon: commentsIcon(), Content: tabContent("Comments")},
-					{ID: "saved", Label: "Saved", Icon: savedIcon(), Content: tabContent("Saved")},
-				},
-			})
-		</div>
+// tabsBadgePreview renders tabs with icons and badges.
+templ tabsBadgePreview() {
+	<div id="tabs-badges" class="w-full max-w-2xl mx-auto">
+		@tabs.Tabs(tabs.Config{
+			ID: "badge",
+			Tabs: []tabs.Tab{
+				{ID: "groups", Label: "Groups", Icon: groupsIcon(), Badge: "2", Content: tabContent("Groups")},
+				{ID: "likes", Label: "Likes", Icon: likesIcon(), Badge: "3124", Content: tabContent("Likes")},
+				{ID: "comments", Label: "Comments", Icon: commentsIcon(), Badge: "243", Content: tabContent("Comments")},
+				{ID: "saved", Label: "Saved", Icon: savedIcon(), Badge: "32", Content: tabContent("Saved")},
+			},
+		})
+	</div>
+}
+
+// tabsHTMXPreview renders HTMX lazy-loaded tabs.
+templ tabsHTMXPreview() {
+	<div id="tabs-htmx" class="w-full max-w-2xl mx-auto">
+		@tabs.Tabs(tabs.Config{
+			ID: "htmx",
+			Tabs: []tabs.Tab{
+				{ID: "overview", Label: "Overview", Content: tabContent("Overview")},
+				{ID: "details", Label: "Details", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/details"}},
+				{ID: "activity", Label: "Activity", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/activity"}},
+			},
+		})
+	</div>
+}
+
+// tabsHashPreview renders the URL-hash-synced tabs.
+templ tabsHashPreview() {
+	<div id="tabs-hash" class="w-full max-w-2xl mx-auto">
+		@tabs.Tabs(tabs.Config{
+			ID:       "hash-sync",
+			SyncHash: true,
+			Tabs: []tabs.Tab{
+				{ID: "groups", Label: "Groups", Icon: groupsIcon(), Content: tabContent("Groups")},
+				{ID: "likes", Label: "Likes", Icon: likesIcon(), Content: tabContent("Likes")},
+				{ID: "comments", Label: "Comments", Icon: commentsIcon(), Content: tabContent("Comments")},
+				{ID: "saved", Label: "Saved", Icon: savedIcon(), Content: tabContent("Saved")},
+			},
+		})
 	</div>
 }
 

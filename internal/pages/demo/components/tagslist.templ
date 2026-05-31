@@ -11,71 +11,92 @@ templ TagsListDemoPage() {
 }
 
 templ tagsListDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:       "Tags List",
-			Description: "A list of removable tag chips with an input and Add button for appending new tags. Submits as name[0], name[1], ... via hidden inputs.",
-		},
-		tagsListDemoPreview(),
-		`// Tags List with initial values
-@tagslist.TagsList(tagslist.Config{
+	<div id="tagslist-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Tags List",
+				Description: "Removable tag chips with an input and Add button for appending new tags. Submits as name[0], name[1], ... via hidden inputs.",
+			},
+			tagsListInitialPreview(),
+			`@tagslist.TagsList(tagslist.Config{
     ID:          "tags",
     Name:        "tags",
     Values:      []string{"production", "gpu"},
     Placeholder: "Add a tag...",
-})
+})`,
+		)
 
-// Empty Tags List
-@tagslist.TagsList(tagslist.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Empty (Start Adding)",
+				Description: "With no Values, the list starts empty and grows as the user adds tags.",
+			},
+			tagsListEmptyPreview(),
+			`@tagslist.TagsList(tagslist.Config{
     ID:          "labels",
     Name:        "labels",
     Placeholder: "Add a label...",
     AddLabel:    "Add",
-})
+})`,
+		)
 
-// Disabled (read-only chips)
-@tagslist.TagsList(tagslist.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true renders read-only chips with no input or remove buttons.",
+			},
+			tagsListDisabledPreview(),
+			`@tagslist.TagsList(tagslist.Config{
     ID:       "lockedTags",
     Name:     "locked",
     Values:   []string{"locked", "readonly"},
     Disabled: true,
 })`,
-	)
+		)
+	</div>
+	// API reference lives outside #tagslist-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the tags-list root and input."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Base form field name (submits as name[0], name[1], ...)."},
+		{Name: "Values", Type: "[]string", Default: "nil", Description: "Initial tag values."},
+		{Name: "Placeholder", Type: "string", Default: `""`, Description: "Input placeholder."},
+		{Name: "AddLabel", Type: "string", Default: `"Add"`, Description: "Label of the add button."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Render read-only chips (no input/remove)."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
 }
 
-templ tagsListDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Initial Values</h4>
-			<div class="max-w-md">
-				@tagslist.TagsList(tagslist.Config{
-					ID:          "tagsDemo",
-					Name:        "tags",
-					Values:      []string{"production", "critical", "gpu"},
-					Placeholder: "Add a tag...",
-				})
-			</div>
-		</div>
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Empty (Start Adding)</h4>
-			<div class="max-w-md">
-				@tagslist.TagsList(tagslist.Config{
-					ID:          "labelsDemo",
-					Name:        "labels",
-					Placeholder: "Add a label...",
-				})
-			</div>
-		</div>
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
-			<div class="max-w-md">
-				@tagslist.TagsList(tagslist.Config{
-					ID:       "disabledTagsDemo",
-					Name:     "disabled-tags",
-					Values:   []string{"locked", "readonly"},
-					Disabled: true,
-				})
-			</div>
-		</div>
+// tagsListInitialPreview renders a tags list with initial values.
+templ tagsListInitialPreview() {
+	<div id="tagslist-initial" class="w-full max-w-md mx-auto">
+		@tagslist.TagsList(tagslist.Config{
+			ID:          "tagsDemo",
+			Name:        "tags",
+			Values:      []string{"production", "critical", "gpu"},
+			Placeholder: "Add a tag...",
+		})
+	</div>
+}
+
+// tagsListEmptyPreview renders an empty tags list.
+templ tagsListEmptyPreview() {
+	<div id="tagslist-empty" class="w-full max-w-md mx-auto">
+		@tagslist.TagsList(tagslist.Config{
+			ID:          "labelsDemo",
+			Name:        "labels",
+			Placeholder: "Add a label...",
+		})
+	</div>
+}
+
+// tagsListDisabledPreview renders a disabled (read-only) tags list.
+templ tagsListDisabledPreview() {
+	<div id="tagslist-disabled" class="w-full max-w-md mx-auto">
+		@tagslist.TagsList(tagslist.Config{
+			ID:       "disabledTagsDemo",
+			Name:     "disabled-tags",
+			Values:   []string{"locked", "readonly"},
+			Disabled: true,
+		})
 	</div>
 }

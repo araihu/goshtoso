@@ -44,7 +44,8 @@ func CardDemoPage() templ.Component {
 	})
 }
 
-// cardDemoContent renders the actual content inside the layout
+// cardDemoContent renders the demo. Each card recipe lives in its own preview
+// frame followed by its own code block (mirrors penguinui.com/components/card).
 func cardDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -66,61 +67,142 @@ func cardDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"card-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Card",
-				Description: "A card is a flexible container that groups related content and actions. Used for displaying products, articles, testimonials, and more.",
+				Description: "A flexible container that groups related content and actions — products, articles, testimonials, pricing, and more.",
 			},
-			cardDemoPreview(),
-			`// Simple Card
-@card.Card(card.Config{
-    Image:       "https://example.com/image.jpg",
-    ImageAlt:    "Description",
+			cardDefaultPreview(),
+			`@card.Card(card.Config{
+    Image:       "/assets/images/cards/card-img-1.webp",
+    ImageAlt:    "A penguin robot talking with a human",
     Tag:         "Features",
-    Title:       "Card Title",
-    Description: "Card description text...",
-})
-
-// Card with Button
-@card.Card(card.Config{
-    Image:       "https://example.com/image.jpg",
-    Title:       "Mediterranean Escape",
-    Description: "Relax under the sun and savor delicious cuisine",
-    Footer:      bookButton(),
-})
-
-// Horizontal Layout Card
-@card.Card(card.Config{
-    Layout:      card.LayoutHorizontal,
-    Image:       "https://example.com/image.jpg",
-    Title:       "AI-Powered VR Goggles",
-    Description: "Experience the next level of augmented reality",
-})
-
-// E-commerce Product Card
-@card.Card(card.Config{
-    Image:       "product.jpg",
-    Title:       "Product Name",
-    Description: "Product description",
-    Price:       "$99.99",
-    Rating:      4,
-})
-
-// Testimonial Card
-@card.Card(card.Config{
-    Title:       "Testimonial",
-    Description: "Quote text...",
-    Footer:      testimonialFooter(),
-})
-
-// Pricing Card (Primary variant)
-@card.Card(card.Config{
-    Variant:     card.Primary,
-    Title:       "Premium",
-    Description: "Best tools for productivity",
-    Footer:      pricingFooter(),
+    Title:       "Penguai can teach you Javascript",
+    Description: "Learning JavaScript doesn't need to be difficult...",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Card with Button",
+				Description: "Pass any templ.Component as Footer to add actions below the body.",
+			},
+			cardButtonPreview(),
+			`@card.Card(card.Config{
+    Image:       "/assets/images/cards/card-img-2.webp",
+    Title:       "Mediterranean Escape",
+    Description: "Relax under the sun and savor delicious cuisine.",
+    Footer:      bookNowButton(),
+})
+
+templ bookNowButton() {
+    <div class="mt-2">
+        @button.Button(button.Config{Variant: button.Primary, Type: "button"}) { Book Now }
+    </div>
+}`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Horizontal Layout",
+				Description: "Set Layout: card.LayoutHorizontal to place the image beside the content instead of above it.",
+			},
+			cardHorizontalPreview(),
+			`@card.Card(card.Config{
+    Layout:      card.LayoutHorizontal,
+    Image:       "/assets/images/cards/card-img-4.webp",
+    Tag:         "Artificial Intelligence",
+    Title:       "AI-Powered VR Goggles Redefine Reality",
+    Description: "Experience the next level of augmented reality...",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Product Card",
+				Description: "An e-commerce recipe: compose a bordered article with card.StarRating, a price, and an Add to Cart button. (Config.Price/Rating are exposed but rendered by the caller, not the base template.)",
+			},
+			cardProductPreview(),
+			`<article class="group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt ...">
+    <div class="h-44 md:h-64 overflow-hidden">
+        <img src="/assets/images/cards/card-img-3.webp" alt="CASIO G-SHOCK GA2100" />
+    </div>
+    <div class="flex flex-col gap-4 p-6">
+        <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
+        @card.StarRating(3)
+        <span class="text-xl font-medium">$99.99</span>
+        @button.Button(button.Config{Variant: button.Primary}) { Add to Cart }
+    </div>
+</article>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Pricing Card",
+				Description: "A pricing recipe using the primary border accent and a full-width CTA. Composed as a custom article.",
+			},
+			cardPricingPreview(),
+			`<article class="group flex rounded-radius max-w-xs flex-col overflow-hidden border-2 border-primary bg-surface-alt p-6 ...">
+    <span class="ml-auto w-fit rounded-radius bg-primary px-2 py-1 text-xs text-on-primary">TOP CHOICE</span>
+    <h3 class="text-xl font-bold">Premium</h3>
+    <span class="mt-8 text-3xl font-medium">$8.99</span>
+    <ul class="mt-4 list-inside list-disc space-y-2 text-sm">...</ul>
+    @button.Button(button.Config{Variant: button.Primary, Class: "w-full"}) { Start your free trial }
+</article>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Testimonial Card",
+				Description: "A quote recipe pairing a person, role, and card.StarRating in the footer row.",
+			},
+			cardTestimonialPreview(),
+			`<article class="group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 ...">
+    <svg class="size-12">...</svg>
+    <p class="mt-2 text-sm">Simply put, this software transformed my workflow!...</p>
+    <div class="flex mt-8 justify-between gap-6">
+        <div class="flex items-center gap-2">
+            <img src="/assets/images/avatars/avatar-1.webp" class="size-10 rounded-full" alt="Bob Johnson" />
+            <div><h3 class="font-bold">Bob Johnson</h3><span class="text-xs">CEO - TechNova</span></div>
+        </div>
+        @card.StarRating(4)
+    </div>
+</article>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Image", Type: "string", Default: `""`, Description: "Card image URL (rendered above the body, or beside it in horizontal layout)."},
+			{Name: "ImageAlt", Type: "string", Default: `""`, Description: "Alt text for the image."},
+			{Name: "Tag", Type: "string", Default: `""`, Description: "Optional category/tag shown above the title."},
+			{Name: "Title", Type: "string", Default: `""`, Description: "Card title (also seeds the aria-describedby id)."},
+			{Name: "Description", Type: "string", Default: `""`, Description: "Body text."},
+			{Name: "Footer", Type: "templ.Component", Default: "nil", Description: "Optional footer content (buttons, links, ratings) rendered below the body."},
+			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default" or "primary" (adds a 2px primary border accent).`},
+			{Name: "Layout", Type: "Layout", Default: "LayoutVertical", Description: `Layout: "vertical" (image top) or "horizontal" (image beside content).`},
+			{Name: "Price", Type: "string", Default: `""`, Description: "Exposed for ecommerce recipes; render via a custom Footer (base template does not emit it)."},
+			{Name: "Rating", Type: "int", Default: "0", Description: "Exposed for ecommerce recipes; render with card.StarRating in a Footer."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the article container."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -128,8 +210,8 @@ func cardDemoContent() templ.Component {
 	})
 }
 
-// cardDemoPreview renders the Goshtoso card preview
-func cardDemoPreview() templ.Component {
+// cardDefaultPreview renders the simple default card.
+func cardDefaultPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -150,7 +232,7 @@ func cardDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-5xl mx-auto space-y-12\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Default Card</h4><div class=\"flex flex-wrap gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"card-default\" class=\"w-full max-w-sm mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -164,7 +246,37 @@ func cardDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Card with Button</h4><div class=\"flex flex-wrap gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// cardButtonPreview renders a card with a footer button.
+func cardButtonPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"card-button\" class=\"w-full max-w-sm mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -178,7 +290,37 @@ func cardDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Horizontal Layout</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// cardHorizontalPreview renders the horizontal-layout card.
+func cardHorizontalPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"card-horizontal\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -193,7 +335,37 @@ func cardDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Product Card</h4><div class=\"flex flex-wrap gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// cardProductPreview renders the e-commerce product card recipe.
+func cardProductPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"card-product\" class=\"w-full max-w-sm mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -201,7 +373,37 @@ func cardDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pricing Card</h4><div class=\"flex flex-wrap gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// cardPricingPreview renders the pricing card recipe.
+func cardPricingPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"card-pricing\" class=\"w-full max-w-xs mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -209,7 +411,37 @@ func cardDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Testimonial Card</h4><div class=\"flex flex-wrap gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// cardTestimonialPreview renders the testimonial card recipe.
+func cardTestimonialPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"card-testimonial\" class=\"w-full max-w-md mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -217,7 +449,7 @@ func cardDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -242,16 +474,16 @@ func bookNowButton() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"mt-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"mt-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -263,7 +495,7 @@ func bookNowButton() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "Book Now")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Book Now")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -272,11 +504,11 @@ func bookNowButton() templ.Component {
 		templ_7745c5c3_Err = button.Button(button.Config{
 			Variant: button.Primary,
 			Type:    "button",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -301,12 +533,12 @@ func ecommerceProductCard() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<article class=\"group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"h-44 md:h-64 overflow-hidden\"><img src=\"/assets/images/cards/card-img-3.webp\" class=\"object-cover transition duration-700 ease-out group-hover:scale-105\" alt=\"CASIO G-SHOCK GA2100\"></div><div class=\"flex flex-col gap-4 p-6\"><div class=\"flex flex-col md:flex-row gap-4 md:gap-12 justify-between\"><div class=\"flex flex-col\"><h3 class=\"text-lg lg:text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">CASIO G-SHOCK GA2100</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<article class=\"group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"h-44 md:h-64 overflow-hidden\"><img src=\"/assets/images/cards/card-img-3.webp\" class=\"object-cover transition duration-700 ease-out group-hover:scale-105\" alt=\"CASIO G-SHOCK GA2100\"></div><div class=\"flex flex-col gap-4 p-6\"><div class=\"flex flex-col md:flex-row gap-4 md:gap-12 justify-between\"><div class=\"flex flex-col\"><h3 class=\"text-lg lg:text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">CASIO G-SHOCK GA2100</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -314,11 +546,11 @@ func ecommerceProductCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><span class=\"text-xl font-medium\">$99.99</span></div><p class=\"mb-2 text-pretty text-sm\">The Casio G-Shock GA2100 is simply designed for easy timekeeping, featuring a sleek profile and clear display.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div><span class=\"text-xl font-medium\">$99.99</span></div><p class=\"mb-2 text-pretty text-sm\">The Casio G-Shock GA2100 is simply designed for easy timekeeping, featuring a sleek profile and clear display.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -330,7 +562,7 @@ func ecommerceProductCard() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "Add to Cart")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "Add to Cart")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -339,11 +571,11 @@ func ecommerceProductCard() templ.Component {
 		templ_7745c5c3_Err = button.Button(button.Config{
 			Variant: button.Primary,
 			Type:    "button",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -368,16 +600,16 @@ func pricingCard() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<article class=\"group flex rounded-radius w-full max-w-xs flex-col overflow-hidden border-2 border-primary bg-surface-alt p-6 text-on-surface dark:border-primary-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><span class=\"ml-auto w-fit rounded-radius bg-primary px-2 py-1 text-xs font-medium text-on-primary dark:bg-primary-dark dark:text-on-primary-dark\">TOP CHOICE</span><h3 class=\"text-xl text-balance md:text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Premium</h3><p class=\"mt-2 text-pretty text-xs font-medium\">Best tools for productivity</p><span class=\"mt-8 text-balance text-3xl md:text-4xl font-medium text-on-surface dark:text-on-surface-dark\">$8.99</span> <span class=\"mt-2 text-pretty text-xs font-medium\">Per month</span><h4 class=\"mt-12 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Features</h4><ul class=\"mt-4 list-inside list-disc space-y-2 text-sm font-medium marker:text-lg marker:text-primary dark:marker:text-primary-dark\"><li>Unlimited access to all courses</li><li>Personalized learning plan</li><li>Offline viewing</li><li>No ads</li><li>High quality video</li><li>Cancel anytime</li></ul><div class=\"mt-12\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<article class=\"group flex rounded-radius w-full max-w-xs flex-col overflow-hidden border-2 border-primary bg-surface-alt p-6 text-on-surface dark:border-primary-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><span class=\"ml-auto w-fit rounded-radius bg-primary px-2 py-1 text-xs font-medium text-on-primary dark:bg-primary-dark dark:text-on-primary-dark\">TOP CHOICE</span><h3 class=\"text-xl text-balance md:text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Premium</h3><p class=\"mt-2 text-pretty text-xs font-medium\">Best tools for productivity</p><span class=\"mt-8 text-balance text-3xl md:text-4xl font-medium text-on-surface dark:text-on-surface-dark\">$8.99</span> <span class=\"mt-2 text-pretty text-xs font-medium\">Per month</span><h4 class=\"mt-12 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Features</h4><ul class=\"mt-4 list-inside list-disc space-y-2 text-sm font-medium marker:text-lg marker:text-primary dark:marker:text-primary-dark\"><li>Unlimited access to all courses</li><li>Personalized learning plan</li><li>Offline viewing</li><li>No ads</li><li>High quality video</li><li>Cancel anytime</li></ul><div class=\"mt-12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -389,7 +621,7 @@ func pricingCard() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Start your free trial")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "Start your free trial")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -399,11 +631,11 @@ func pricingCard() templ.Component {
 			Variant: button.Primary,
 			Type:    "button",
 			Class:   "w-full",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -428,12 +660,12 @@ func testimonialCard() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<article class=\"group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-12 text-on-surface-strong dark:text-on-surface-dark-strong group-hover:scale-105 transition duration-500 ease-out\" aria-hidden=\"true\"><path d=\"M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388q0-.527.062-1.054.093-.558.31-.992t.559-.683q.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 9 7.558V11a1 1 0 0 0 1 1zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612q0-.527.062-1.054.094-.558.31-.992.217-.434.559-.683.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 3 7.558V11a1 1 0 0 0 1 1z\"></path></svg><p class=\"mt-2 text-pretty text-sm\">Simply put, this software transformed my workflow! Its intuitive interface and powerful features make tasks a breeze. A game-changer for productivity!</p><div class=\"flex flex-col-reverse md:flex-row md:items-center mt-8 justify-between gap-6\"><div class=\"flex items-center gap-2\"><img src=\"/assets/images/avatars/avatar-1.webp\" class=\"size-10 rounded-full object-cover\" alt=\"Bob Johnson\"><div class=\"flex flex-col gap-1\"><h3 class=\"font-bold leading-4 text-on-surface-strong dark:text-on-surface-dark-strong\">Bob Johnson</h3><span class=\"text-xs\">CEO - TechNova</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<article class=\"group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-12 text-on-surface-strong dark:text-on-surface-dark-strong group-hover:scale-105 transition duration-500 ease-out\" aria-hidden=\"true\"><path d=\"M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388q0-.527.062-1.054.093-.558.31-.992t.559-.683q.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 9 7.558V11a1 1 0 0 0 1 1zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612q0-.527.062-1.054.094-.558.31-.992.217-.434.559-.683.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 3 7.558V11a1 1 0 0 0 1 1z\"></path></svg><p class=\"mt-2 text-pretty text-sm\">Simply put, this software transformed my workflow! Its intuitive interface and powerful features make tasks a breeze. A game-changer for productivity!</p><div class=\"flex flex-col-reverse md:flex-row md:items-center mt-8 justify-between gap-6\"><div class=\"flex items-center gap-2\"><img src=\"/assets/images/avatars/avatar-1.webp\" class=\"size-10 rounded-full object-cover\" alt=\"Bob Johnson\"><div class=\"flex flex-col gap-1\"><h3 class=\"font-bold leading-4 text-on-surface-strong dark:text-on-surface-dark-strong\">Bob Johnson</h3><span class=\"text-xs\">CEO - TechNova</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -441,7 +673,7 @@ func testimonialCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

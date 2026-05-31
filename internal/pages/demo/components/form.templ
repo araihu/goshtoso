@@ -16,14 +16,60 @@ templ FormDemoPage() {
 }
 
 templ formDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:       "Form",
-			Description: "A composable form layout with sections, collapsible areas, flip-card read/edit panels, and built-in Goshtoso field rendering. Supports HTMX validation and external submit triggers.",
-		},
-		formDemoPreview(),
-		formDemoCode,
-	)
+	<div id="form-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Form",
+				Description: "A composable form layout with sections, collapsible areas, flip-card read/edit panels, sub-sections, and built-in Goshtoso field rendering. Supports HTMX validation and external submit triggers.",
+			},
+			formCompletePreview(),
+			formDemoCode,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Field Validation States",
+				Description: "FieldGroup surfaces success/error input states, error messages (Errors), and helper hints (Hints).",
+			},
+			formValidationPreview(),
+			`@form.FieldGroup(form.FieldGroupConfig{
+    ID: "error-field", Label: "Error Field", Required: true,
+    Errors: []string{"This cluster ID is already taken"},
+    Input:  &textinput.Config{ID: "error-field", Name: "error", State: textinput.StateError},
+})
+@form.FieldGroup(form.FieldGroupConfig{
+    ID: "hint-field", Label: "Field with Hints",
+    Hints: []string{"Must be 3-63 characters", "Lowercase letters, numbers, hyphens"},
+    Input: &textinput.Config{ID: "hint-field", Name: "hints"},
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "External Submit (Modal Pattern)",
+				Description: "Render the form with no Footer; a button outside the form uses the form=\"...\" attribute to submit it — the typical modal pattern.",
+			},
+			formExternalPreview(),
+			`@form.Form(form.Config{ID: "external-form", Action: "#"}) {
+    @form.Section(form.SectionConfig{Title: "Upgrade"}) { ... }
+}
+<button type="submit" form="external-form">Upgrade (External Button)</button>`,
+		)
+	</div>
+	// API reference lives outside #form-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Form element id (target of external submit buttons via form=\"...\")."},
+		{Name: "Action", Type: "string", Default: `""`, Description: "Non-HTMX form action URL."},
+		{Name: "Method", Type: "string", Default: `"post"`, Description: "HTTP method for non-HTMX submits."},
+		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX submit config (Post/Put/Target/Swap, inline validation)."},
+		{Name: "PreventEnterSubmit", Type: "*bool", Default: "nil", Description: "When true, Enter in a field does not submit the form."},
+		{Name: "Footer", Type: "*FooterConfig", Default: "nil", Description: "Submit/cancel footer; omit for the external-submit pattern."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the <form>."},
+		{Name: "FieldGroup", Type: "FieldGroupConfig", Default: "—", Description: "Per-field wrapper: Label, Required, Errors, Hints + one built-in (Input/Combobox/Textarea/Toggle/...) or children."},
+		{Name: "Section / SubSection", Type: "SectionConfig", Default: "—", Description: "Group fields under a titled section; SubSection nests within a Section."},
+		{Name: "CollapsibleSection", Type: "CollapsibleSectionConfig", Default: "—", Description: "A Section that collapses, with a Summary shown when collapsed."},
+		{Name: "FlipSection", Type: "FlipSectionConfig", Default: "—", Description: "A section with a read-only front view and an editable back."},
+	})
 }
 
 var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, Toggle, etc. directly
@@ -55,13 +101,11 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
 @form.Form(form.Config{ID: "modal-form", HTMX: &form.HTMXConfig{Post: "/api", Swap: "none"}}) { ... }
 <button type="submit" form="modal-form">Submit</button>`
 
-templ formDemoPreview() {
-	<div class="space-y-12">
-		<!-- Full Form Demo -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Complete Form (built-in field types)</h4>
-			@form.Form(form.Config{
-				ID:     "demo-form",
+// formCompletePreview renders the full composable form.
+templ formCompletePreview() {
+	<div id="form-complete" class="w-full max-w-2xl mx-auto">
+		@form.Form(form.Config{
+			ID:     "demo-form",
 				Action: "#",
 				Footer: &form.FooterConfig{
 					SubmitText: "Create Cluster",
@@ -243,10 +287,12 @@ templ formDemoPreview() {
 			}
 		</div>
 
-		<!-- Validation States Demo -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Field Validation States</h4>
-			@form.Section(form.SectionConfig{Title: "Validation Examples"}) {
+}
+
+// formValidationPreview renders the validation-state examples.
+templ formValidationPreview() {
+	<div id="form-validation-states" class="w-full max-w-2xl mx-auto">
+		@form.Section(form.SectionConfig{Title: "Validation Examples"}) {
 				@form.FieldGroup(form.FieldGroupConfig{
 					ID:       "valid-field",
 					Label:    "Valid Field",
@@ -283,13 +329,12 @@ templ formDemoPreview() {
 			}
 		</div>
 
-		<!-- External Submit (Modal Pattern) -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">External Submit (Modal Pattern)</h4>
-			<p class="mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				The form has no footer. The submit button uses <code class="text-xs bg-surface-alt dark:bg-surface-dark-alt px-1 py-0.5 rounded">form="external-form"</code> to trigger submission from outside.
-			</p>
-			<div class="flex flex-col gap-4">
+}
+
+// formExternalPreview renders the external-submit (modal) pattern.
+templ formExternalPreview() {
+	<div id="form-external" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-col gap-4">
 				@form.Form(form.Config{
 					ID:     "external-form",
 					Action: "#",
@@ -323,7 +368,6 @@ templ formDemoPreview() {
 				</div>
 			</div>
 		</div>
-	</div>
 }
 
 

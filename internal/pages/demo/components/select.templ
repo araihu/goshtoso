@@ -10,16 +10,18 @@ templ SelectDemoPage() {
 	@demo.Layout("Select", "select", selectDemoContent())
 }
 
-// selectDemoContent renders the actual content inside the layout
+// selectDemoContent renders the demo. Each select variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/select). Wrapped in #select-fragment.
 templ selectDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Select",
-			Description:   "A native select dropdown with label, validation states, and support for Alpine.js binding.",
-		},
-		selectDemoPreview(),
-		`// Default Select
-@selectfield.Select(selectfield.Config{
+	<div id="select-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Select",
+				Description: "A select dropdown with label, validation states, large lists, Alpine.js binding for dependent selects, and disabled/readonly modes.",
+			},
+			selectDefaultPreview(),
+			`@selectfield.Select(selectfield.Config{
     ID:    "os",
     Name:  "os",
     Label: "Operating System",
@@ -28,24 +30,32 @@ templ selectDemoContent() {
         {Value: "windows", Label: "Windows"},
         {Value: "linux", Label: "Linux"},
     },
-})
+})`,
+		)
 
-// Select with Error State
-@selectfield.Select(selectfield.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Error State",
+				Description: "State: selectfield.StateError recolors the field and shows HelperText as an error.",
+			},
+			selectErrorPreview(),
+			`@selectfield.Select(selectfield.Config{
     ID:         "os-error",
     Name:       "os",
     Label:      "Operating System",
     State:      selectfield.StateError,
     HelperText: "Error: Please select an operating system",
-    Options: []selectfield.Option{
-        {Value: "mac", Label: "Mac"},
-        {Value: "windows", Label: "Windows"},
-        {Value: "linux", Label: "Linux"},
-    },
-})
+    Options:    options,
+})`,
+		)
 
-// Select with Success State
-@selectfield.Select(selectfield.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Success State",
+				Description: "State: selectfield.StateSuccess applies the success styling. Mark an Option Selected for the initial value.",
+			},
+			selectSuccessPreview(),
+			`@selectfield.Select(selectfield.Config{
     ID:    "os-success",
     Name:  "os",
     Label: "Operating System",
@@ -53,46 +63,108 @@ templ selectDemoContent() {
     Options: []selectfield.Option{
         {Value: "mac", Label: "Mac", Selected: true},
         {Value: "windows", Label: "Windows"},
-        {Value: "linux", Label: "Linux"},
     },
-})
+})`,
+		)
 
-// Disabled Select
-@selectfield.Select(selectfield.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Large List",
+				Description: "Selects handle long option lists (e.g. a country picker) with native scrolling.",
+			},
+			selectCountryPreview(),
+			`@selectfield.Select(selectfield.Config{
+    ID:           "country",
+    Name:         "country",
+    Label:        "Country",
+    Autocomplete: "country",
+    Options:      countryOptions(),
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Dependent Selects (Alpine.js)",
+				Description: "Bind AlpineModel to share state; AlpineBindDisabled keeps the second select disabled until the first has a value.",
+			},
+			selectDependentPreview(),
+			`<div x-data="{ firstValue: '', secondValue: '' }">
+    @selectfield.Select(selectfield.Config{ID: "modelName", AlpineModel: "firstValue", Options: models})
+    @selectfield.Select(selectfield.Config{ID: "year", AlpineModel: "secondValue", AlpineBindDisabled: "!firstValue", Options: years})
+</div>`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks interaction.",
+			},
+			selectDisabledPreview(),
+			`@selectfield.Select(selectfield.Config{
     ID:       "os-disabled",
     Name:     "os",
     Label:    "Operating System",
     Disabled: true,
-    Options: []selectfield.Option{
-        {Value: "mac", Label: "Mac"},
-    },
+    Options:  options,
 })`,
-	)
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Readonly",
+				Description: "Readonly: true keeps the selected value submittable but prevents the user from changing it.",
+			},
+			selectReadonlyPreview(),
+			`@selectfield.Select(selectfield.Config{
+    ID:       "os-readonly",
+    Name:     "os-readonly",
+    Label:    "Operating System",
+    Readonly: true,
+    Options:  options,
+})`,
+		)
+	</div>
+	// API reference lives outside #select-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (seeds the trigger id <id>-trigger and option ids)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the select."},
+		{Name: "Placeholder", Type: "string", Default: `""`, Description: "Placeholder option shown when nothing is selected."},
+		{Name: "Options", Type: "[]Option", Default: "nil", Description: "Options (Value, Label, Selected)."},
+		{Name: "State", Type: "State", Default: "StateDefault", Description: `Validation state: "" (default), "error", "success".`},
+		{Name: "HelperText", Type: "string", Default: `""`, Description: "Text below the field, recolored by State."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable the select."},
+		{Name: "Readonly", Type: "bool", Default: "false", Description: "Non-editable but submittable."},
+		{Name: "Autocomplete", Type: "string", Default: `""`, Description: "HTML autocomplete attribute."},
+		{Name: "AlpineModel", Type: "string", Default: `""`, Description: "x-model expression bound to the select value."},
+		{Name: "AlpineBindDisabled", Type: "string", Default: `""`, Description: "x-bind:disabled expression."},
+		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the select."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
 }
 
-// selectDemoPreview renders the Goshtoso select preview
-templ selectDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Default Select
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Select</h4>
-			@selectfield.Select(selectfield.Config{
-				ID:    "os",
-				Name:  "os",
-				Label: "Operating System",
-				Options: []selectfield.Option{
-					{Value: "mac", Label: "Mac"},
-					{Value: "windows", Label: "Windows"},
-					{Value: "linux", Label: "Linux"},
-				},
-			})
-		</div>
+// selectDefaultPreview renders the default select.
+templ selectDefaultPreview() {
+	<div id="select-default" class="w-full max-w-xs mx-auto">
+		@selectfield.Select(selectfield.Config{
+			ID:    "os",
+			Name:  "os",
+			Label: "Operating System",
+			Options: []selectfield.Option{
+				{Value: "mac", Label: "Mac"},
+				{Value: "windows", Label: "Windows"},
+				{Value: "linux", Label: "Linux"},
+			},
+		})
+	</div>
 
-		// Select with Error State
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Error State</h4>
-			@selectfield.Select(selectfield.Config{
-				ID:         "os-error",
+}
+
+// selectErrorPreview renders the error-state select.
+templ selectErrorPreview() {
+	<div id="select-error" class="w-full max-w-xs mx-auto">
+		@selectfield.Select(selectfield.Config{
+			ID:         "os-error",
 				Name:       "os-error",
 				Label:      "Operating System",
 				State:      selectfield.StateError,
@@ -105,11 +177,13 @@ templ selectDemoPreview() {
 			})
 		</div>
 
-		// Select with Success State
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Success State</h4>
-			@selectfield.Select(selectfield.Config{
-				ID:    "os-success",
+}
+
+// selectSuccessPreview renders the success-state select.
+templ selectSuccessPreview() {
+	<div id="select-success" class="w-full max-w-xs mx-auto">
+		@selectfield.Select(selectfield.Config{
+			ID:    "os-success",
 				Name:  "os-success",
 				Label: "Operating System",
 				State: selectfield.StateSuccess,
@@ -121,11 +195,13 @@ templ selectDemoPreview() {
 			})
 		</div>
 
-		// Country Select (large list)
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Country Select</h4>
-			@selectfield.Select(selectfield.Config{
-				ID:           "country",
+}
+
+// selectCountryPreview renders a select with a large option list.
+templ selectCountryPreview() {
+	<div id="select-country" class="w-full max-w-xs mx-auto">
+		@selectfield.Select(selectfield.Config{
+			ID:           "country",
 				Name:         "country",
 				Label:        "Country",
 				Autocomplete: "country",
@@ -133,10 +209,12 @@ templ selectDemoPreview() {
 			})
 		</div>
 
-		// Dependent Selects with Alpine.js
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Dependent Selects</h4>
-			<div x-data="{ firstValue: '', secondValue: '' }" class="flex w-full flex-col gap-4">
+}
+
+// selectDependentPreview renders the Alpine-bound dependent selects.
+templ selectDependentPreview() {
+	<div id="select-dependent" class="w-full max-w-xs mx-auto">
+		<div x-data="{ firstValue: '', secondValue: '' }" class="flex w-full flex-col gap-4">
 				@selectfield.Select(selectfield.Config{
 					ID:          "modelName",
 					Name:        "modelName",
@@ -169,11 +247,13 @@ templ selectDemoPreview() {
 			</div>
 		</div>
 
-		// Disabled Select
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
-			@selectfield.Select(selectfield.Config{
-				ID:       "os-disabled",
+}
+
+// selectDisabledPreview renders the disabled select.
+templ selectDisabledPreview() {
+	<div id="select-disabled" class="w-full max-w-xs mx-auto">
+		@selectfield.Select(selectfield.Config{
+			ID:       "os-disabled",
 				Name:     "os-disabled",
 				Label:    "Operating System",
 				Disabled: true,
@@ -185,10 +265,12 @@ templ selectDemoPreview() {
 			})
 		</div>
 
-		// Readonly Select
-		<div class="max-w-xs">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Readonly</h4>
-			<form id="readonlySelectForm" method="get" action="javascript:void(0)">
+}
+
+// selectReadonlyPreview renders the readonly select inside a form.
+templ selectReadonlyPreview() {
+	<div id="select-readonly" class="w-full max-w-xs mx-auto">
+		<form id="readonlySelectForm" method="get" action="javascript:void(0)">
 				@selectfield.Select(selectfield.Config{
 					ID:       "os-readonly",
 					Name:     "os-readonly",
@@ -202,7 +284,6 @@ templ selectDemoPreview() {
 				})
 			</form>
 		</div>
-	</div>
 }
 
 func countryOptions() []selectfield.Option {

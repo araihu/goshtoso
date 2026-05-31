@@ -44,7 +44,9 @@ func PaletteDemoPage() templ.Component {
 	})
 }
 
-// paletteDemoContent renders the actual content inside the layout
+// paletteDemoContent renders the demo. Both palette variants share one
+// x-data="{ picked, shellPicked }" scope so the standalone "Selected:" readout
+// and the shell trigger both react to picks. Wrapped in #palette-fragment.
 func paletteDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -66,24 +68,35 @@ func paletteDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ picked: '', shellPicked: '' }\"><div id=\"palette-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Palette",
-				Description: "A color palette picker spanning Tailwind's named hues and shades. Bind it to an Alpine model or host it inside a Select shell. On pick it dispatches a bubbling select-close event with the chosen value.",
+				Description: "A color palette picker spanning Tailwind's named hues and shades. Bind it to an Alpine model or host it inside a Select shell; on pick it dispatches a bubbling select-close event with the chosen value.",
 			},
-			paletteDemoPreview(),
-			`// Standalone palette bound to an Alpine model
-<div x-data="{ picked: '' }">
+			paletteStandalonePreview(),
+			`<div x-data="{ picked: '' }">
     @palette.Palette(palette.Config{
         ID:          "demo-palette",
         AlpineModel: "picked",
         ShowHex:     true,
     })
     <p>Selected: <span x-text="picked || '—'"></span></p>
-</div>
-
-// Palette hosted inside a Select shell
-<div x-data="{ shellPicked: '' }">
+</div>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Inside a Select Shell",
+				Description: "Host the palette inside a Select with Shell: true; the trigger label reflects the picked value via ValueExpr.",
+			},
+			paletteShellPreview(),
+			`<div x-data="{ shellPicked: '' }">
     @selectfield.Select(selectfield.Config{
         ID:        "demo-shell",
         Shell:     true,
@@ -100,12 +113,33 @@ func paletteDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the palette root (swatch buttons + Alpine scope)."},
+			{Name: "AlpineModel", Type: "string", Default: `""`, Description: "x-model expression that receives the picked color class (e.g. \"blue-700\")."},
+			{Name: "Hues", Type: "[]string", Default: "all", Description: "Restrict to specific Tailwind hues (default: the full set)."},
+			{Name: "Shades", Type: "[]string", Default: "all", Description: "Restrict to specific shades (e.g. \"500\", \"700\")."},
+			{Name: "HideNeutral", Type: "bool", Default: "false", Description: "Hide the neutral (gray) row."},
+			{Name: "HideReset", Type: "bool", Default: "false", Description: "Hide the reset/clear control."},
+			{Name: "ShowHex", Type: "bool", Default: "false", Description: "Show the hex value of the hovered/selected swatch."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the palette container."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }
 
-// paletteDemoPreview renders the Goshtoso palette preview
-func paletteDemoPreview() templ.Component {
+// paletteStandalonePreview renders the standalone palette with a Selected readout.
+func paletteStandalonePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -126,7 +160,7 @@ func paletteDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\" x-data=\"{ picked: '', shellPicked: '' }\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Standalone Palette</h4><div class=\"max-w-md rounded-radius border border-outline dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"palette-standalone\" class=\"w-full max-w-md mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,11 +172,41 @@ func paletteDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Selected: <span x-text=\"picked || '—'\"></span></p></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Inside a Select shell</h4><div class=\"max-w-xs\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Selected: <span x-text=\"picked || '—'\"></span></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		return nil
+	})
+}
+
+// paletteShellPreview renders the palette hosted inside a Select shell.
+func paletteShellPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"palette-shell\" class=\"w-full max-w-xs mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -168,11 +232,11 @@ func paletteDemoPreview() templ.Component {
 			ID:        "demo-shell",
 			Shell:     true,
 			ValueExpr: "shellPicked || 'Pick a color'",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -43,7 +43,9 @@ func ToggleDemoPage() templ.Component {
 	})
 }
 
-// toggleDemoContent renders the actual content inside the layout
+// toggleDemoContent renders the demo. Each toggle variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/toggle). Wrapped in #toggle-fragment.
 func toggleDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,42 +67,79 @@ func toggleDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"toggle-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Toggle",
-				Description: "A toggle switch allows users to turn an option on or off. It provides a visual indicator of the current state and supports multiple color variants.",
+				Description: "An on/off switch with a visual state indicator, six color variants, an optional bordered container style, and disabled states.",
 			},
-			toggleDemoPreview(),
-			`// Default Toggle
-@toggle.Toggle(toggle.Config{
+			toggleDefaultPreview(),
+			`@toggle.Toggle(toggle.Config{
     ID:      "myToggle",
     Label:   "Toggle",
     Checked: true,
-})
-
-// Toggle with Variant
-@toggle.Toggle(toggle.Config{
-    ID:      "successToggle",
-    Label:   "success",
-    Variant: toggle.Success,
-    Checked: true,
-})
-
-// Toggle with Container
-@toggle.Toggle(toggle.Config{
-    ID:    "containerToggle",
-    Label: "Toggle",
-    Style: toggle.StyleContainer,
-    Checked: true,
-})
-
-// Disabled Toggle
-@toggle.Toggle(toggle.Config{
-    ID:       "disabledToggle",
-    Label:    "Disabled",
-    Disabled: true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Container",
+				Description: "Style: toggle.StyleContainer wraps the switch and label in a bordered container.",
+			},
+			toggleContainerPreview(),
+			`@toggle.Toggle(toggle.Config{
+    ID:      "containerToggle",
+    Label:   "Toggle",
+    Style:   toggle.StyleContainer,
+    Checked: true,
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Color Variations",
+				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+			},
+			toggleColorsPreview(),
+			`@toggle.Toggle(toggle.Config{ID: "successToggle", Label: "success", Variant: toggle.Success, Checked: true})
+@toggle.Toggle(toggle.Config{ID: "dangerToggle", Label: "danger", Variant: toggle.Danger, Checked: true})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled States",
+				Description: "Disabled: true blocks interaction in both the off and on positions.",
+			},
+			toggleDisabledPreview(),
+			`@toggle.Toggle(toggle.Config{ID: "offToggle", Label: "Disabled (off)", Disabled: true})
+@toggle.Toggle(toggle.Config{ID: "onToggle", Label: "Disabled (on)", Checked: true, Disabled: true})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the toggle input (and label's for target)."},
+			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
+			{Name: "Label", Type: "string", Default: `""`, Description: "Label text beside the switch."},
+			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial on state."},
+			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
+			{Name: "Style", Type: "Style", Default: "StyleDefault", Description: `Layout: "default" (inline) or "container" (bordered).`},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the toggle root."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -108,8 +147,8 @@ func toggleDemoContent() templ.Component {
 	})
 }
 
-// toggleDemoPreview renders the Goshtoso toggle preview
-func toggleDemoPreview() templ.Component {
+// toggleDefaultPreview renders the default toggle.
+func toggleDefaultPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -130,111 +169,153 @@ func toggleDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Default Toggle</h4><div class=\"flex flex-wrap gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"toggle-default\" class=\"w-full max-w-md mx-auto\"><div class=\"flex flex-wrap gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoDefault",
-			Label:   "Toggle",
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDefault", Label: "Toggle", Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Toggle with Container</h4><div class=\"flex flex-wrap gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoContainer",
-			Label:   "Toggle",
-			Style:   toggle.StyleContainer,
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		return nil
+	})
+}
+
+// toggleContainerPreview renders the container-style toggle.
+func toggleContainerPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"toggle-container\" class=\"w-full max-w-md mx-auto\"><div class=\"flex flex-wrap gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Color Variations</h4><div class=\"flex flex-wrap gap-4\">")
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoContainer", Label: "Toggle", Style: toggle.StyleContainer, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoPrimary",
-			Label:   "primary",
-			Variant: toggle.Primary,
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoSecondary",
-			Label:   "secondary",
-			Variant: toggle.Secondary,
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		return nil
+	})
+}
+
+// toggleColorsPreview renders the six color variants.
+func toggleColorsPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"toggle-colors\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoSuccess",
-			Label:   "success",
-			Variant: toggle.Success,
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoPrimary", Label: "primary", Variant: toggle.Primary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoWarning",
-			Label:   "warning",
-			Variant: toggle.Warning,
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSecondary", Label: "secondary", Variant: toggle.Secondary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoDanger",
-			Label:   "danger",
-			Variant: toggle.Danger,
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSuccess", Label: "success", Variant: toggle.Success, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:      "demoInfo",
-			Label:   "info",
-			Variant: toggle.Info,
-			Checked: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoWarning", Label: "warning", Variant: toggle.Warning, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Disabled States</h4><div class=\"flex flex-wrap gap-4\">")
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDanger", Label: "danger", Variant: toggle.Danger, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:       "demoDisabledOff",
-			Label:    "Disabled (off)",
-			Disabled: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoInfo", Label: "info", Variant: toggle.Info, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
-			ID:       "demoDisabledOn",
-			Label:    "Disabled (on)",
-			Checked:  true,
-			Disabled: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div>")
+		return nil
+	})
+}
+
+// toggleDisabledPreview renders the disabled off/on states.
+func toggleDisabledPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"toggle-disabled\" class=\"w-full max-w-md mx-auto\"><div class=\"flex flex-wrap gap-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDisabledOff", Label: "Disabled (off)", Disabled: true}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDisabledOn", Label: "Disabled (on)", Checked: true, Disabled: true}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

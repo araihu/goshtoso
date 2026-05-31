@@ -10,133 +10,109 @@ templ ToggleDemoPage() {
 	@demo.Layout("Toggle", "toggle", toggleDemoContent())
 }
 
-// toggleDemoContent renders the actual content inside the layout
+// toggleDemoContent renders the demo. Each toggle variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/toggle). Wrapped in #toggle-fragment.
 templ toggleDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Toggle",
-			Description:   "A toggle switch allows users to turn an option on or off. It provides a visual indicator of the current state and supports multiple color variants.",
-		},
-		toggleDemoPreview(),
-		`// Default Toggle
-@toggle.Toggle(toggle.Config{
+	<div id="toggle-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Toggle",
+				Description: "An on/off switch with a visual state indicator, six color variants, an optional bordered container style, and disabled states.",
+			},
+			toggleDefaultPreview(),
+			`@toggle.Toggle(toggle.Config{
     ID:      "myToggle",
     Label:   "Toggle",
     Checked: true,
-})
-
-// Toggle with Variant
-@toggle.Toggle(toggle.Config{
-    ID:      "successToggle",
-    Label:   "success",
-    Variant: toggle.Success,
-    Checked: true,
-})
-
-// Toggle with Container
-@toggle.Toggle(toggle.Config{
-    ID:    "containerToggle",
-    Label: "Toggle",
-    Style: toggle.StyleContainer,
-    Checked: true,
-})
-
-// Disabled Toggle
-@toggle.Toggle(toggle.Config{
-    ID:       "disabledToggle",
-    Label:    "Disabled",
-    Disabled: true,
 })`,
-	)
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Container",
+				Description: "Style: toggle.StyleContainer wraps the switch and label in a bordered container.",
+			},
+			toggleContainerPreview(),
+			`@toggle.Toggle(toggle.Config{
+    ID:      "containerToggle",
+    Label:   "Toggle",
+    Style:   toggle.StyleContainer,
+    Checked: true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Color Variations",
+				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+			},
+			toggleColorsPreview(),
+			`@toggle.Toggle(toggle.Config{ID: "successToggle", Label: "success", Variant: toggle.Success, Checked: true})
+@toggle.Toggle(toggle.Config{ID: "dangerToggle", Label: "danger", Variant: toggle.Danger, Checked: true})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled States",
+				Description: "Disabled: true blocks interaction in both the off and on positions.",
+			},
+			toggleDisabledPreview(),
+			`@toggle.Toggle(toggle.Config{ID: "offToggle", Label: "Disabled (off)", Disabled: true})
+@toggle.Toggle(toggle.Config{ID: "onToggle", Label: "Disabled (on)", Checked: true, Disabled: true})`,
+		)
+	</div>
+	// API reference lives outside #toggle-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the toggle input (and label's for target)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Label text beside the switch."},
+		{Name: "Checked", Type: "bool", Default: "false", Description: "Initial on state."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+		{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
+		{Name: "Style", Type: "Style", Default: "StyleDefault", Description: `Layout: "default" (inline) or "container" (bordered).`},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the toggle root."},
+	})
 }
 
-// toggleDemoPreview renders the Goshtoso toggle preview
-templ toggleDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Default Toggle
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Toggle</h4>
-			<div class="flex flex-wrap gap-4">
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoDefault",
-					Label:   "Toggle",
-					Checked: true,
-				})
-			</div>
+// toggleDefaultPreview renders the default toggle.
+templ toggleDefaultPreview() {
+	<div id="toggle-default" class="w-full max-w-md mx-auto">
+		<div class="flex flex-wrap gap-4">
+			@toggle.Toggle(toggle.Config{ID: "demoDefault", Label: "Toggle", Checked: true})
 		</div>
+	</div>
+}
 
-		// Toggle with Container
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Toggle with Container</h4>
-			<div class="flex flex-wrap gap-4">
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoContainer",
-					Label:   "Toggle",
-					Style:   toggle.StyleContainer,
-					Checked: true,
-				})
-			</div>
+// toggleContainerPreview renders the container-style toggle.
+templ toggleContainerPreview() {
+	<div id="toggle-container" class="w-full max-w-md mx-auto">
+		<div class="flex flex-wrap gap-4">
+			@toggle.Toggle(toggle.Config{ID: "demoContainer", Label: "Toggle", Style: toggle.StyleContainer, Checked: true})
 		</div>
+	</div>
+}
 
-		// Color Variations
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variations</h4>
-			<div class="flex flex-wrap gap-4">
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoPrimary",
-					Label:   "primary",
-					Variant: toggle.Primary,
-					Checked: true,
-				})
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoSecondary",
-					Label:   "secondary",
-					Variant: toggle.Secondary,
-					Checked: true,
-				})
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoSuccess",
-					Label:   "success",
-					Variant: toggle.Success,
-					Checked: true,
-				})
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoWarning",
-					Label:   "warning",
-					Variant: toggle.Warning,
-					Checked: true,
-				})
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoDanger",
-					Label:   "danger",
-					Variant: toggle.Danger,
-					Checked: true,
-				})
-				@toggle.Toggle(toggle.Config{
-					ID:      "demoInfo",
-					Label:   "info",
-					Variant: toggle.Info,
-					Checked: true,
-				})
-			</div>
+// toggleColorsPreview renders the six color variants.
+templ toggleColorsPreview() {
+	<div id="toggle-colors" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-4">
+			@toggle.Toggle(toggle.Config{ID: "demoPrimary", Label: "primary", Variant: toggle.Primary, Checked: true})
+			@toggle.Toggle(toggle.Config{ID: "demoSecondary", Label: "secondary", Variant: toggle.Secondary, Checked: true})
+			@toggle.Toggle(toggle.Config{ID: "demoSuccess", Label: "success", Variant: toggle.Success, Checked: true})
+			@toggle.Toggle(toggle.Config{ID: "demoWarning", Label: "warning", Variant: toggle.Warning, Checked: true})
+			@toggle.Toggle(toggle.Config{ID: "demoDanger", Label: "danger", Variant: toggle.Danger, Checked: true})
+			@toggle.Toggle(toggle.Config{ID: "demoInfo", Label: "info", Variant: toggle.Info, Checked: true})
 		</div>
+	</div>
+}
 
-		// Disabled States
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled States</h4>
-			<div class="flex flex-wrap gap-4">
-				@toggle.Toggle(toggle.Config{
-					ID:       "demoDisabledOff",
-					Label:    "Disabled (off)",
-					Disabled: true,
-				})
-				@toggle.Toggle(toggle.Config{
-					ID:       "demoDisabledOn",
-					Label:    "Disabled (on)",
-					Checked:  true,
-					Disabled: true,
-				})
-			</div>
+// toggleDisabledPreview renders the disabled off/on states.
+templ toggleDisabledPreview() {
+	<div id="toggle-disabled" class="w-full max-w-md mx-auto">
+		<div class="flex flex-wrap gap-4">
+			@toggle.Toggle(toggle.Config{ID: "demoDisabledOff", Label: "Disabled (off)", Disabled: true})
+			@toggle.Toggle(toggle.Config{ID: "demoDisabledOn", Label: "Disabled (on)", Checked: true, Disabled: true})
 		</div>
 	</div>
 }

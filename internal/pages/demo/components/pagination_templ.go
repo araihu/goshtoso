@@ -43,7 +43,9 @@ func PaginationDemoPage() templ.Component {
 	})
 }
 
-// paginationDemoContent renders the actual content inside the layout
+// paginationDemoContent renders the demo. Each pagination variant lives in its
+// own preview frame followed by its own code block (mirrors
+// penguinui.com/components/pagination). Wrapped in #pagination-fragment.
 func paginationDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,30 +67,97 @@ func paginationDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"pagination-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Pagination",
-				Description: "Pagination components allow users to navigate between pages of content. Supports simple prev/next and ellipsis variants.",
+				Description: "Navigate between pages of content. Simple prev/next and ellipsis page-number variants, with optional HTMX wiring.",
 			},
-			paginationDemoPreview(),
-			`// Simple pagination (prev/next only)
-@pagination.Pagination(pagination.Config{
+			paginationSimplePreview(),
+			`@pagination.Pagination(pagination.Config{
     Variant:     pagination.Simple,
     CurrentPage: 3,
     TotalPages:  10,
     BaseURL:     "/items",
-})
-
-// With ellipsis and page numbers
-@pagination.Pagination(pagination.Config{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Simple — First Page",
+				Description: "The Previous control auto-disables on the first page (and Next on the last).",
+			},
+			paginationFirstPreview(),
+			`@pagination.Pagination(pagination.Config{
+    Variant:     pagination.Simple,
+    CurrentPage: 1,
+    TotalPages:  10,
+    BaseURL:     "/items",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Ellipsis — Beginning",
+				Description: "Variant: pagination.WithEllipsis shows page numbers, collapsing large ranges with an ellipsis.",
+			},
+			paginationEllipsisBeginPreview(),
+			`@pagination.Pagination(pagination.Config{
     Variant:     pagination.WithEllipsis,
     CurrentPage: 2,
     TotalPages:  30,
     BaseURL:     "/items",
-})
-
-// With HTMX integration
-@pagination.Pagination(pagination.Config{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Ellipsis — Middle",
+				Description: "A current page in the middle collapses both sides with ellipses.",
+			},
+			paginationEllipsisMidPreview(),
+			`@pagination.Pagination(pagination.Config{
+    Variant:     pagination.WithEllipsis,
+    CurrentPage: 15,
+    TotalPages:  30,
+    BaseURL:     "/items",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Ellipsis — End",
+				Description: "Near the end, only the leading range collapses.",
+			},
+			paginationEllipsisEndPreview(),
+			`@pagination.Pagination(pagination.Config{
+    Variant:     pagination.WithEllipsis,
+    CurrentPage: 29,
+    TotalPages:  30,
+    BaseURL:     "/items",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Small Page Count",
+				Description: "With 7 or fewer pages, every page number is shown (no ellipsis). Add HTMXTarget + HTMXSwap to swap content in place instead of navigating.",
+			},
+			paginationSmallPreview(),
+			`@pagination.Pagination(pagination.Config{
     Variant:     pagination.WithEllipsis,
     CurrentPage: 5,
     TotalPages:  30,
@@ -100,12 +169,29 @@ func paginationDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Variant", Type: "Variant", Default: "WithEllipsis", Description: `Style: "simple" (prev/next only) or "ellipsis" (page numbers).`},
+			{Name: "CurrentPage", Type: "int", Default: "1", Description: "The active page (1-indexed)."},
+			{Name: "TotalPages", Type: "int", Default: "1", Description: "Total number of pages."},
+			{Name: "BaseURL", Type: "string", Default: `""`, Description: "Base href for page links (page appended as a query/path)."},
+			{Name: "HTMXTarget", Type: "string", Default: `""`, Description: "CSS selector to swap on click (enables in-place HTMX navigation)."},
+			{Name: "HTMXSwap", Type: "string", Default: `""`, Description: "HTMX swap strategy used with HTMXTarget."},
+			{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id on the nav."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }
 
-// paginationDemoPreview renders the Goshtoso pagination preview
-func paginationDemoPreview() templ.Component {
+// paginationSimplePreview renders the simple prev/next variant.
+func paginationSimplePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -126,85 +212,205 @@ func paginationDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-3xl mx-auto space-y-12\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Pagination (Prev/Next)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">A minimal pagination with only previous and next buttons.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"pagination-simple\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-			Variant:     pagination.Simple,
-			CurrentPage: 3,
-			TotalPages:  10,
-			BaseURL:     "#",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 3, TotalPages: 10, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Pagination (First Page)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Previous button is disabled on the first page.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-			Variant:     pagination.Simple,
-			CurrentPage: 1,
-			TotalPages:  10,
-			BaseURL:     "#",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		return nil
+	})
+}
+
+// paginationFirstPreview renders the simple variant on the first page.
+func paginationFirstPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"pagination-first\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 2 of 30)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Shows page numbers with ellipsis for large page ranges.</p>")
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 1, TotalPages: 10, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-			Variant:     pagination.WithEllipsis,
-			CurrentPage: 2,
-			TotalPages:  30,
-			BaseURL:     "#",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 15 of 30)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Current page in the middle shows ellipsis on both sides.</p>")
+		return nil
+	})
+}
+
+// paginationEllipsisBeginPreview renders ellipsis pagination near the start.
+func paginationEllipsisBeginPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"pagination-ellipsis-begin\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-			Variant:     pagination.WithEllipsis,
-			CurrentPage: 15,
-			TotalPages:  30,
-			BaseURL:     "#",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 2, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 29 of 30)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Near the end, ellipsis only appears before the range.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-			Variant:     pagination.WithEllipsis,
-			CurrentPage: 29,
-			TotalPages:  30,
-			BaseURL:     "#",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		return nil
+	})
+}
+
+// paginationEllipsisMidPreview renders ellipsis pagination in the middle.
+func paginationEllipsisMidPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"pagination-ellipsis-mid\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Small Page Count (No Ellipsis)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">When total pages are 7 or fewer, all pages are shown.</p>")
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 15, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-			Variant:     pagination.WithEllipsis,
-			CurrentPage: 3,
-			TotalPages:  5,
-			BaseURL:     "#",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div>")
+		return nil
+	})
+}
+
+// paginationEllipsisEndPreview renders ellipsis pagination near the end.
+func paginationEllipsisEndPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"pagination-ellipsis-end\" class=\"w-full max-w-2xl mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 29, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// paginationSmallPreview renders a small page count (no ellipsis).
+func paginationSmallPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"pagination-small\" class=\"w-full max-w-2xl mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 3, TotalPages: 5, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -10,76 +10,123 @@ templ DropdownDemoPage() {
 	@demo.Layout("Dropdown", "dropdown", dropdownDemoContent())
 }
 
-// dropdownDemoContent renders the actual content inside the layout
+// dropdownDemoContent renders the demo. Each dropdown variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/dropdown). Wrapped in #dropdown-fragment.
 templ dropdownDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Dropdown",
-			Description:   "A dropdown menu displays a list of actions or options that a user can choose from. Supports click, hover, and context menu triggers with keyboard navigation.",
-		},
-		dropdownDemoPreview(),
-		`// Click Dropdown
-@dropdown.Dropdown(dropdown.Config{
+	<div id="dropdown-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Dropdown",
+				Description: "A menu of actions or options triggered by click, hover, or right-click (context). Supports sections/dividers, item icons, keyboard navigation, button items with handlers, disabled and danger items, and an icon-only trigger.",
+			},
+			dropdownClickPreview(),
+			`@dropdown.Dropdown(dropdown.Config{
     Label: "Actions Menu",
     Sections: []dropdown.Section{
         {Items: []dropdown.Item{
             {Label: "Dashboard", Href: "#"},
-            {Label: "Subscription", Href: "#"},
             {Label: "Settings", Href: "#"},
             {Label: "Sign Out", Href: "#"},
-        }},
-    },
-})
-
-// Hover Dropdown
-@dropdown.Dropdown(dropdown.Config{
-    Label:       "Actions Menu",
-    TriggerMode: dropdown.TriggerHover,
-    Sections:    []dropdown.Section{...},
-})
-
-// Dropdown with Dividers
-@dropdown.Dropdown(dropdown.Config{
-    Label: "Actions Menu",
-    Sections: []dropdown.Section{
-        {Items: []dropdown.Item{
-            {Label: "Dashboard", Href: "#"},
-            {Label: "Messages", Href: "#"},
-        }},
-        {Items: []dropdown.Item{
-            {Label: "Profile", Href: "#"},
-            {Label: "Settings", Href: "#"},
-        }},
-        {Items: []dropdown.Item{
-            {Label: "Sign Out", Href: "#"},
-        }},
-    },
-})
-
-// Context Menu
-@dropdown.Dropdown(dropdown.Config{
-    TriggerMode: dropdown.TriggerContext,
-    Sections: []dropdown.Section{
-        {Items: []dropdown.Item{
-            {Label: "Undo", Icon: undoIcon(), Shortcut: "Z"},
-        }},
-        {Items: []dropdown.Item{
-            {Label: "Cut", Icon: cutIcon(), Shortcut: "X"},
-            {Label: "Copy", Icon: copyIcon(), Shortcut: "C"},
-            {Label: "Paste", Icon: pasteIcon(), Shortcut: "V"},
         }},
     },
 })`,
-	)
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Hover to Open",
+				Description: "TriggerMode: dropdown.TriggerHover opens the menu on pointer hover.",
+			},
+			dropdownHoverPreview(),
+			`@dropdown.Dropdown(dropdown.Config{
+    Label:       "Actions Menu",
+    TriggerMode: dropdown.TriggerHover,
+    Sections:    sections,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Dividers",
+				Description: "Each dropdown.Section is separated by a divider — group related items.",
+			},
+			dropdownDividerPreview(),
+			`@dropdown.Dropdown(dropdown.Config{
+    Label: "Actions Menu",
+    Sections: []dropdown.Section{
+        {Items: []dropdown.Item{{Label: "Dashboard", Href: "#"}, {Label: "Messages", Href: "#"}}},
+        {Items: []dropdown.Item{{Label: "Profile", Href: "#"}, {Label: "Settings", Href: "#"}}},
+        {Items: []dropdown.Item{{Label: "Sign Out", Href: "#"}}},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Icons",
+				Description: "Give each dropdown.Item an Icon component for a leading glyph.",
+			},
+			dropdownIconsPreview(),
+			`@dropdown.Dropdown(dropdown.Config{
+    Label: "Actions Menu",
+    Sections: []dropdown.Section{
+        {Items: []dropdown.Item{{Label: "Dashboard", Href: "#", Icon: dashboardIcon()}}},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Context Menu",
+				Description: "TriggerMode: dropdown.TriggerContext opens on right-click. Items can carry a Shortcut hint.",
+			},
+			dropdownContextPreview(),
+			`@dropdown.Dropdown(dropdown.Config{
+    TriggerMode: dropdown.TriggerContext,
+    Sections: []dropdown.Section{
+        {Items: []dropdown.Item{{Label: "Undo", Icon: undoIcon(), Shortcut: "Z"}}},
+        {Items: []dropdown.Item{{Label: "Copy", Icon: copyIcon(), Shortcut: "C"}}},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Action Items (onclick / disabled / danger)",
+				Description: "Items can run OnClick handlers, be Disabled (with a Tooltip), or be styled Danger. Pair with an icon-only trigger via TriggerIcon + TriggerIconOnly.",
+			},
+			dropdownActionsPreview(),
+			`@dropdown.Dropdown(dropdown.Config{
+    Label:           "cluster actions",
+    TriggerIcon:     dotsVerticalIcon(),
+    TriggerIconOnly: true,
+    Sections: []dropdown.Section{
+        {Items: []dropdown.Item{
+            {Label: "Edit", Icon: settingsIcon(), OnClick: "editOpen = true"},
+            {Label: "Archive", Disabled: true, Tooltip: "Not available"},
+        }},
+        {Items: []dropdown.Item{{Label: "Delete", Danger: true, OnClick: "deleteOpen = true"}}},
+    },
+})`,
+		)
+	</div>
+	// API reference lives outside #dropdown-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Label", Type: "string", Default: `""`, Description: "Trigger button text (also the aria-label for icon-only triggers)."},
+		{Name: "TriggerMode", Type: "TriggerMode", Default: "TriggerClick", Description: `Open on: "click", "hover", or "context" (right-click).`},
+		{Name: "Sections", Type: "[]Section", Default: "nil", Description: "Groups of Items; each section is divider-separated. Item: Label, Href/OnClick, Icon, Shortcut, Disabled, Danger, Tooltip, ID."},
+		{Name: "TriggerIcon", Type: "templ.Component", Default: "nil", Description: "Custom trigger icon."},
+		{Name: "TriggerIconOnly", Type: "bool", Default: "false", Description: "Render only the icon as the trigger (uses Label for aria-label)."},
+		{Name: "MenuAlign", Type: "MenuAlign", Default: "left", Description: "Horizontal alignment of the menu relative to the trigger."},
+		{Name: "ID", Type: "string", Default: `""`, Description: "Container id (scopes the menu and Alpine state)."},
+	})
 }
 
-// dropdownDemoPreview renders the Goshtoso dropdown preview
-templ dropdownDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-12">
-		// Click Dropdown
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Click to Open</h4>
-			<div class="pb-2">
+// dropdownClickPreview renders the click-trigger dropdown.
+templ dropdownClickPreview() {
+	<div id="dropdown-click-box" class="w-full max-w-md mx-auto">
+		<div class="flex justify-center pb-2">
 				@dropdown.Dropdown(dropdown.Config{
 					ID:    "dropdown-click",
 					Label: "Actions Menu",
@@ -94,11 +141,12 @@ templ dropdownDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Hover Dropdown
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Hover to Open</h4>
-			<div class="pb-2">
+// dropdownHoverPreview renders the hover-trigger dropdown.
+templ dropdownHoverPreview() {
+	<div id="dropdown-hover-box" class="w-full max-w-md mx-auto">
+		<div class="flex justify-center pb-2">
 				@dropdown.Dropdown(dropdown.Config{
 					ID:          "dropdown-hover",
 					Label:       "Actions Menu",
@@ -114,11 +162,12 @@ templ dropdownDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Dropdown with Dividers
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Dividers</h4>
-			<div class="pb-2">
+// dropdownDividerPreview renders the multi-section (divider) dropdown.
+templ dropdownDividerPreview() {
+	<div id="dropdown-divider-box" class="w-full max-w-md mx-auto">
+		<div class="flex justify-center pb-2">
 				@dropdown.Dropdown(dropdown.Config{
 					ID:    "dropdown-divider",
 					Label: "Actions Menu",
@@ -139,11 +188,12 @@ templ dropdownDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Dropdown with Icons
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Icons</h4>
-			<div class="pb-2">
+// dropdownIconsPreview renders the dropdown with item icons.
+templ dropdownIconsPreview() {
+	<div id="dropdown-icons-box" class="w-full max-w-md mx-auto">
+		<div class="flex justify-center pb-2">
 				@dropdown.Dropdown(dropdown.Config{
 					ID:    "dropdown-icons",
 					Label: "Actions Menu",
@@ -164,11 +214,12 @@ templ dropdownDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Context Menu
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Context Menu</h4>
-			<div class="pb-2">
+// dropdownContextPreview renders the right-click context menu.
+templ dropdownContextPreview() {
+	<div id="dropdown-context-box" class="w-full max-w-md mx-auto">
+		<div class="flex justify-center pb-2">
 				@dropdown.Dropdown(dropdown.Config{
 					ID:          "dropdown-context",
 					TriggerMode: dropdown.TriggerContext,
@@ -188,13 +239,12 @@ templ dropdownDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Actions Menu — button items with click handlers, disabled, danger
-		<div x-data="{ editOpen: false, deleteOpen: false, editCount: 0 }">
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">
-				Actions Menu (button items: onclick / disabled / danger / icon-only trigger)
-			</h4>
-			<div class="pb-2 flex items-center gap-4">
+// dropdownActionsPreview renders the action-items dropdown with an icon-only trigger.
+templ dropdownActionsPreview() {
+	<div id="dropdown-actions-box" class="w-full max-w-md mx-auto" x-data="{ editOpen: false, deleteOpen: false, editCount: 0 }">
+		<div class="pb-2 flex items-center justify-center gap-4">
 				@dropdown.Dropdown(dropdown.Config{
 					ID:              "dropdown-actions",
 					Label:           "cluster actions",
@@ -234,7 +284,6 @@ templ dropdownDemoPreview() {
 				</div>
 			</div>
 		</div>
-	</div>
 }
 
 // ddDotsVerticalIcon renders a vertical three-dots icon for overflow triggers

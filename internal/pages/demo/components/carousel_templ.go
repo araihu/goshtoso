@@ -43,7 +43,9 @@ func CarouselDemoPage() templ.Component {
 	})
 }
 
-// carouselDemoContent renders all carousel variant demos
+// carouselDemoContent renders the demo. Each carousel variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/carousel). Wrapped in #carousel-fragment.
 func carouselDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,14 +67,145 @@ func carouselDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"carousel-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Carousel",
-				Description: "A carousel component for cycling through slides with images, text overlays, autoplay, touch support, and HTMX dynamic loading.",
+				Description: "Cycle through slides with images, text overlays, CTAs, autoplay, touch/swipe, fixed aspect ratios, card framing, and HTMX dynamic loading.",
 			},
-			carouselDemoPreview(),
-			carouselDemoCode,
+			carouselDefaultPreview(),
+			`@carousel.Carousel(carousel.Config{
+    Slides: []carousel.Slide{
+        {ImgSrc: "slide-1.webp", ImgAlt: "Slide 1"},
+        {ImgSrc: "slide-2.webp", ImgAlt: "Slide 2"},
+    },
+})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Text Overlay",
+				Description: "Variant: carousel.WithText adds a gradient title + description overlay per slide.",
+			},
+			carouselTextPreview(),
+			`@carousel.Carousel(carousel.Config{
+    Variant: carousel.WithText,
+    Slides: []carousel.Slide{
+        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Front end developers", Description: "The architects of the digital world."},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With CTA Button",
+				Description: "Variant: carousel.WithCTA adds a call-to-action button using each slide's CTAUrl + CTAText.",
+			},
+			carouselCTAPreview(),
+			`@carousel.Carousel(carousel.Config{
+    Variant: carousel.WithCTA,
+    Slides: []carousel.Slide{
+        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Build faster", Description: "Pre-built UI components.", CTAUrl: "#", CTAText: "Get Started"},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Autoplay",
+				Description: "Pass an Autoplay config to advance slides automatically every Interval milliseconds.",
+			},
+			carouselAutoplayPreview(),
+			`@carousel.Carousel(carousel.Config{
+    Variant:  carousel.WithText,
+    Autoplay: &carousel.AutoplayConfig{Interval: 4000},
+    Slides:   slides,
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Fixed Aspect Ratio (3:1)",
+				Description: "Set AspectRatio (e.g. \"3/1\") to lock the frame's proportions.",
+			},
+			carouselAspectPreview(),
+			`@carousel.Carousel(carousel.Config{
+    AspectRatio: "3/1",
+    Slides:      slides,
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Touch / Swipe",
+				Description: "Touch: true enables left/right swipe gestures on touch devices.",
+			},
+			carouselTouchPreview(),
+			`@carousel.Carousel(carousel.Config{
+    Touch:  true,
+    Slides: slides,
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "On Card",
+				Description: "Variant: carousel.OnCard frames the carousel in an article card with product info below.",
+			},
+			carouselCardPreview(),
+			`@carousel.Carousel(carousel.Config{
+    Variant: carousel.OnCard,
+    Slides: []carousel.Slide{
+        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Abstract Blue Series", Description: "Limited edition print. $49.99"},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTMX Dynamic Loading",
+				Description: "Provide an HTMX config and the slides are fetched from the server on page load.",
+			},
+			carouselHTMXPreview(),
+			`@carousel.Carousel(carousel.Config{
+    HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Slides", Type: "[]Slide", Default: "nil", Description: "Slide data (ImgSrc, ImgAlt, Title, Description, CTAUrl, CTAText)."},
+			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default", "with-text", "with-cta", "on-card".`},
+			{Name: "Autoplay", Type: "*AutoplayConfig", Default: "nil", Description: "Auto-advance config (Interval in ms)."},
+			{Name: "Touch", Type: "bool", Default: "false", Description: "Enable left/right swipe gestures."},
+			{Name: "AspectRatio", Type: "string", Default: `""`, Description: `Lock the frame ratio (e.g. "3/1", "16/9").`},
+			{Name: "Height", Type: "string", Default: `""`, Description: "Explicit height override (when AspectRatio is unset)."},
+			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Fetch slides from the server (Get URL)."},
+			{Name: "ID", Type: "string", Default: "auto", Description: "Container id used for Alpine state scoping; auto-generated when empty."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the carousel container."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,63 +213,8 @@ func carouselDemoContent() templ.Component {
 	})
 }
 
-var carouselDemoCode = `// Default Carousel
-@carousel.Carousel(carousel.Config{
-    Slides: []carousel.Slide{
-        {ImgSrc: "img1.webp", ImgAlt: "Slide 1"},
-        {ImgSrc: "img2.webp", ImgAlt: "Slide 2"},
-    },
-})
-
-// With Text Overlay
-@carousel.Carousel(carousel.Config{
-    Variant: carousel.WithText,
-    Slides: []carousel.Slide{
-        {ImgSrc: "img1.webp", ImgAlt: "...", Title: "Hello", Description: "World"},
-    },
-})
-
-// With CTA Button
-@carousel.Carousel(carousel.Config{
-    Variant: carousel.WithCTA,
-    Slides: []carousel.Slide{
-        {ImgSrc: "img1.webp", ImgAlt: "...", Title: "Title", Description: "Desc", CTAUrl: "/link", CTAText: "Learn More"},
-    },
-})
-
-// With Autoplay
-@carousel.Carousel(carousel.Config{
-    Autoplay: &carousel.AutoplayConfig{Interval: 4000},
-    Variant:  carousel.WithText,
-    Slides:   slides,
-})
-
-// Fixed Aspect Ratio (3:1)
-@carousel.Carousel(carousel.Config{
-    AspectRatio: "3/1",
-    Slides:      slides,
-})
-
-// With Touch / Swipe
-@carousel.Carousel(carousel.Config{
-    Touch:  true,
-    Slides: slides,
-})
-
-// On Card
-@carousel.Carousel(carousel.Config{
-    Variant: carousel.OnCard,
-    Slides: []carousel.Slide{
-        {ImgSrc: "img.webp", ImgAlt: "...", Title: "Product", Description: "$29.99"},
-    },
-})
-
-// HTMX Dynamic Loading
-@carousel.Carousel(carousel.Config{
-    HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
-})`
-
-func carouselDemoPreview() templ.Component {
+// carouselDefaultPreview renders the image-only default carousel.
+func carouselDefaultPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -157,43 +235,137 @@ func carouselDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12\"><!-- Default --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Default</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"carousel-default\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:     "carousel-default-c",
 			Slides: defaultSlides(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- With Text --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">With Text Overlay</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// carouselTextPreview renders the text-overlay variant.
+func carouselTextPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"carousel-text\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:      "carousel-text-c",
 			Variant: carousel.WithText,
 			Slides:  textSlides(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- With CTA --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">With CTA Button</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// carouselCTAPreview renders the CTA-button variant.
+func carouselCTAPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"carousel-cta\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:      "carousel-cta-c",
 			Variant: carousel.WithCTA,
 			Slides:  ctaSlides(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- With Autoplay --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">With Autoplay</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// carouselAutoplayPreview renders the autoplay variant.
+func carouselAutoplayPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"carousel-autoplay\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:       "carousel-autoplay-c",
 			Variant:  carousel.WithText,
 			Autoplay: &carousel.AutoplayConfig{Interval: 4000},
 			Slides:   textSlides(),
@@ -201,50 +373,174 @@ func carouselDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><!-- Fixed Aspect Ratio --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Fixed Aspect Ratio (3:1)</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// carouselAspectPreview renders the fixed-aspect-ratio variant.
+func carouselAspectPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"carousel-aspect\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:          "carousel-aspect-c",
 			AspectRatio: "3/1",
 			Slides:      defaultSlides(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><!-- With Touch --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">With Touch / Swipe</h4><p class=\"mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Swipe left or right on touch devices</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// carouselTouchPreview renders the touch/swipe variant.
+func carouselTouchPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"carousel-touch\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:     "carousel-touch-c",
 			Touch:  true,
 			Slides: defaultSlides(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><!-- On Card --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">On Card</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// carouselCardPreview renders the on-card variant.
+func carouselCardPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div id=\"carousel-card\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:      "carousel-card-c",
 			Variant: carousel.OnCard,
 			Slides:  cardSlides(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><!-- HTMX Dynamic --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">HTMX Dynamic Loading</h4><p class=\"mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Slides fetched from the server via HTMX on page load</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// carouselHTMXPreview renders the HTMX dynamic-loading variant.
+func carouselHTMXPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"carousel-htmx\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = carousel.Carousel(carousel.Config{
+			ID:   "carousel-htmx-c",
 			HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
