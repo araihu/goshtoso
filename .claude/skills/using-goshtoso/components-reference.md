@@ -1497,6 +1497,7 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 | `Checked` | `bool` | Checked sets the initial checked state |
 | `Disabled` | `bool` | Disabled disables the toggle |
 | `Name` | `string` | Name is the form field name |
+| `Value` | `string` | Value, when set together with Name, makes the checkbox itself submit this |
 | `Class` | `string` | Class allows additional CSS classes on the label |
 
 ## tooltip

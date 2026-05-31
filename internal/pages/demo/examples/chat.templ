@@ -9,6 +9,7 @@ import (
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toast"
+	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/internal/examples/chat"
 )
 
@@ -133,21 +134,12 @@ templ ChatApp(me chat.Identity) {
 						Send
 					}
 				</div>
-				<!-- eliza toggle: raw checkbox so ws-send serializes the checked state correctly.
-				     The toggle component's hidden input always emits "off"; a named checkbox
-				     emits "on" only when checked (absent = off), which isToggleOn() handles. -->
-				<label for="chat-eliza" class="inline-flex cursor-pointer items-center gap-3">
-					<input
-						id="chat-eliza"
-						type="checkbox"
-						name="eliza"
-						value="on"
-						class="peer sr-only"
-						role="switch"
-					/>
-					<span class="text-sm font-medium text-on-surface peer-checked:text-on-surface-strong peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-on-surface-dark dark:peer-checked:text-on-surface-dark-strong">ELIZA bot replies</span>
-					<div class="relative h-6 w-11 rounded-full border border-outline bg-surface-alt after:absolute after:bottom-0 after:left-[0.0625rem] after:top-0 after:my-auto after:h-5 after:w-5 after:rounded-full after:bg-on-surface after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-5 peer-checked:after:bg-on-primary peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-outline-strong peer-active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:after:bg-on-surface-dark dark:peer-checked:bg-primary-dark dark:peer-checked:after:bg-on-primary-dark dark:peer-focus:outline-outline-dark-strong" aria-hidden="true"></div>
-				</label>
+				@toggle.Toggle(toggle.Config{
+					ID:    "chat-eliza",
+					Name:  "eliza",
+					Value: "on",
+					Label: "ELIZA bot replies",
+				})
 			</form>
 		</div>
 	</div>

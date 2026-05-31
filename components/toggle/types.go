@@ -36,6 +36,10 @@ type Config struct {
 	Disabled bool
 	// Name is the form field name
 	Name string
+	// Value, when set together with Name, makes the checkbox itself submit this
+	// value when checked (and omits the always-off hidden input), so the toggle
+	// works as a real form control.
+	Value string
 	// Class allows additional CSS classes on the label
 	Class string
 }
