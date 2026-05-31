@@ -40,6 +40,7 @@ var Demos = map[string]DemoEntry{
 	"components/modal":           {"Modal", "modal", modalDemoContent},
 	"components/navbar":          {"Navbar", "navbar", navbarDemoContent},
 	"components/pagination":      {"Pagination", "pagination", paginationDemoContent},
+	"components/palette":         {"Palette", "palette", paletteDemoContent},
 	"components/radio":           {"Radio", "radio", radioDemoContent},
 	"components/select":          {"Select", "select", selectDemoContent},
 	"components/sidebar":         {"Sidebar", "sidebar", sidebarDemoContent},
