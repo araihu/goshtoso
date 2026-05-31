@@ -39,3 +39,34 @@ func (s *State) Add(title, priority, due string) {
 func (s *State) indexByID(id int) int {
 	return slices.IndexFunc(s.Todos, func(t Todo) bool { return t.ID == id })
 }
+
+// Toggle flips Done for the todo with id. Unknown id is a no-op.
+func (s *State) Toggle(id int) {
+	if i := s.indexByID(id); i >= 0 {
+		s.Todos[i].Done = !s.Todos[i].Done
+	}
+}
+
+// Delete removes the todo with id. Unknown id is a no-op.
+func (s *State) Delete(id int) {
+	if i := s.indexByID(id); i >= 0 {
+		s.Todos = slices.Delete(s.Todos, i, i+1)
+	}
+}
+
+// Edit updates priority and due always; the title only when the trimmed input
+// is non-empty (a blank title never overwrites an existing one).
+func (s *State) Edit(id int, title, priority, due string) {
+	i := s.indexByID(id)
+	if i < 0 {
+		return
+	}
+	if t := strings.TrimSpace(title); t != "" {
+		if len(t) > MaxTitleLen {
+			t = t[:MaxTitleLen]
+		}
+		s.Todos[i].Title = t
+	}
+	s.Todos[i].Priority = normalizePriority(priority)
+	s.Todos[i].Due = due
+}

@@ -48,3 +48,48 @@ func TestAddRejectsBlankAndRespectsCap(t *testing.T) {
 		t.Fatalf("cap not enforced: %d", len(s.Todos))
 	}
 }
+
+func seeded() State {
+	var s State
+	s.Add("a", "low", "")  // ID 1
+	s.Add("b", "high", "") // ID 2
+	return s
+}
+
+func TestToggleFlipsDone(t *testing.T) {
+	s := seeded()
+	s.Toggle(1)
+	if !s.Todos[0].Done {
+		t.Fatalf("toggle should set done")
+	}
+	s.Toggle(1)
+	if s.Todos[0].Done {
+		t.Fatalf("toggle should clear done")
+	}
+	s.Toggle(999) // unknown id: no-op, no panic
+}
+
+func TestDeleteRemovesByID(t *testing.T) {
+	s := seeded()
+	s.Delete(1)
+	if len(s.Todos) != 1 || s.Todos[0].ID != 2 {
+		t.Fatalf("delete failed: %+v", s.Todos)
+	}
+	s.Delete(999) // unknown id: no-op
+}
+
+func TestEditUpdatesFieldsAndDefaults(t *testing.T) {
+	s := seeded()
+	s.Edit(2, "  renamed  ", "bogus", "2026-07-01")
+	got := s.Todos[1]
+	if got.Title != "renamed" || got.Priority != "med" || got.Due != "2026-07-01" {
+		t.Fatalf("edit mismatch: %+v", got)
+	}
+	s.Edit(2, "   ", "low", "") // blank title ignored, other fields still applied
+	if s.Todos[1].Title != "renamed" {
+		t.Fatalf("blank title should not overwrite")
+	}
+	if s.Todos[1].Priority != "low" {
+		t.Fatalf("priority should update even when title blank")
+	}
+}
