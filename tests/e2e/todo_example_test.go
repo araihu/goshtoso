@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -89,7 +90,8 @@ func TestTodoExample_ToggleDelete(t *testing.T) {
 		"() => !document.querySelector('#todo-list > li [data-todo-id]')")
 }
 
-// TestTodoExample_Filters verifies the All/Active/Done filter segmented buttons.
+// TestTodoExample_Filters verifies the All/Active/Done segmented radio filter:
+// the list filters AND the selected radio is checked (the active highlight).
 func TestTodoExample_Filters(t *testing.T) {
 	page := newIsolatedPage(t)
 	gotoTodo(t, page)
@@ -97,25 +99,89 @@ func TestTodoExample_Filters(t *testing.T) {
 	addTodo(t, page, "active one")
 	addTodo(t, page, "done one")
 
-	// Mark the second todo done. Use Array.from+some to ensure boolean return.
+	// Mark the second todo done. Use Array.from+filter to ensure boolean return.
 	clickUntil(t, page,
 		page.Locator("#todo-list > li").Nth(1).Locator("input[type='checkbox']"),
 		"() => Array.from(document.querySelectorAll('#todo-list li span')).filter(s => s.className.includes('line-through')).length === 1")
 
-	// Active filter → only the not-done todo visible.
+	// Active filter → only the not-done todo visible, and its radio is checked
+	// (the highlight survives the list swap because the radios live outside it).
 	clickUntil(t, page,
-		page.Locator("#todo-fragment button:has-text('Active')"),
-		"() => document.querySelectorAll('#todo-list > li').length === 1")
+		page.Locator("label[for='todo-filter-active']"),
+		"() => document.querySelectorAll('#todo-list > li').length === 1 && document.querySelector('#todo-filter-active').checked")
 
-	// Done filter → only the done todo visible.
+	// Done filter → only the done todo visible, Done radio checked.
 	clickUntil(t, page,
-		page.Locator("#todo-fragment button:has-text('Done')"),
-		"() => Array.from(document.querySelectorAll('#todo-list li span')).some(s => s.className.includes('line-through')) && document.querySelectorAll('#todo-list > li').length === 1")
+		page.Locator("label[for='todo-filter-done']"),
+		"() => document.querySelectorAll('#todo-list > li').length === 1 && document.querySelector('#todo-list li span.line-through') && document.querySelector('#todo-filter-done').checked")
 
-	// All filter → both todos visible.
+	// All filter → both todos visible, All radio checked.
 	clickUntil(t, page,
-		page.Locator("#todo-fragment button:has-text('All')"),
-		"() => document.querySelectorAll('#todo-list > li').length === 2")
+		page.Locator("label[for='todo-filter-all']"),
+		"() => document.querySelectorAll('#todo-list > li').length === 2 && document.querySelector('#todo-filter-all').checked")
+}
+
+// TestTodoExample_DragReorder verifies native HTML5 drag reorder fires a /reorder
+// request and persists. This guards the Alpine `todoApp` registration that breaks
+// when the page arrives via a fragment nav (alpine:init does not re-fire).
+func TestTodoExample_DragReorder(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoTodo(t, page)
+
+	addTodo(t, page, "alpha")
+	addTodo(t, page, "bravo")
+
+	var reorderFired bool
+	page.On("request", func(r playwright.Request) {
+		if strings.Contains(r.URL(), "/api/examples/todo/reorder") {
+			reorderFired = true
+		}
+	})
+
+	require.NoError(t, page.Locator("#todo-list > li").Nth(0).DragTo(page.Locator("#todo-list > li").Nth(1)))
+	_, err := page.WaitForFunction("() => true", nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
+	require.NoError(t, err)
+	require.True(t, reorderFired, "native drag should POST /reorder (todoApp Alpine component must be registered)")
+}
+
+// TestTodoExample_FragmentNavNoErrors lands elsewhere, navigates to the todo app
+// via the sidebar link (htmx fragment swap), and verifies there are no console /
+// page errors and that a filter radio and a reorder arrow both work through that
+// path. This is the regression guard for the SPA-style navigation a real user
+// takes, which a direct-load test cannot catch.
+func TestTodoExample_FragmentNavNoErrors(t *testing.T) {
+	page := newIsolatedPage(t)
+
+	var jsErrors []string
+	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })
+	page.On("console", func(m playwright.ConsoleMessage) {
+		if m.Type() == "error" {
+			jsErrors = append(jsErrors, m.Text())
+		}
+	})
+
+	// Land on another page first, then navigate via the sidebar (fragment swap).
+	_, err := page.Goto(baseURL + "/getting-started")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("a[href='/examples/todo']").First().Click())
+	_, err = page.WaitForFunction("() => !!document.querySelector('#todo-list > li')", nil)
+	require.NoError(t, err)
+
+	// Filter via radio works through the fragment-loaded page.
+	clickUntil(t, page,
+		page.Locator("label[for='todo-filter-active']"),
+		"() => document.querySelector('#todo-filter-active').checked && !!document.querySelector('#todo-list > li')")
+
+	// Reorder arrow works through the fragment-loaded page.
+	before, err := page.Evaluate("() => document.querySelector('#todo-list > li').getAttribute('data-todo-id')")
+	require.NoError(t, err)
+	clickUntil(t, page,
+		page.Locator("#todo-list > li").Nth(1).Locator("button[aria-label='Move up']"),
+		fmt.Sprintf("() => document.querySelector('#todo-list > li').getAttribute('data-todo-id') !== %q", before))
+
+	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav todo page: %v", jsErrors)
 }
 
 // TestTodoExample_ReorderButtons verifies the ↑/↓ reorder buttons.

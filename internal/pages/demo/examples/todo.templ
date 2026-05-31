@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/radio"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toast"
@@ -26,20 +27,30 @@ func priorityVariant(p string) badge.Variant {
 	}
 }
 
-// CountBadge is the live "N active" indicator. It carries hx-swap-oob so handlers
-// can replace it out of band on every mutation.
-templ CountBadge(active int) {
-	<span id="todo-count" hx-swap-oob="true" class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+// CountBadge is the live "N active" indicator. Pass oob=true when rendering it
+// as an out-of-band update from a handler; oob=false on first paint inside
+// TodoApp. (A first-paint hx-swap-oob would make htmx try to OOB-swap it with no
+// existing target when TodoApp arrives via a fragment nav, throwing oobErrorNoTarget.)
+templ CountBadge(active int, oob bool) {
+	<span
+		id="todo-count"
+		if oob {
+			hx-swap-oob="true"
+		}
+		class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
+	>
 		{ fmt.Sprintf("%d active", active) }
 	</span>
 }
 
-// ClearButton renders the "Clear completed" button with disabled state when
-// doneCount == 0. It carries hx-swap-oob so handlers can update it out of band.
-templ ClearButton(doneCount int) {
+// ClearButton renders the "Clear completed" button, disabled when doneCount == 0.
+// Pass oob=true for handler updates, oob=false on first paint (see CountBadge).
+templ ClearButton(doneCount int, oob bool) {
 	<button
 		id="todo-clear"
-		hx-swap-oob="true"
+		if oob {
+			hx-swap-oob="true"
+		}
 		type="button"
 		class="text-sm text-on-surface-muted hover:underline dark:text-on-surface-dark-muted disabled:opacity-40 disabled:cursor-not-allowed"
 		hx-post="/api/examples/todo/clear-completed"
@@ -169,17 +180,25 @@ templ TodoList(s todo.State) {
 	</ul>
 }
 
-// filterButton renders one segment of the All/Active/Done filter group.
-templ filterButton(label, value, current string) {
-	<button
-		type="button"
-		class={ "rounded-radius px-3 py-1 text-sm",
-			templ.KV("bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark", value == current),
-			templ.KV("text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt", value != current) }
-		hx-post={ "/api/examples/todo/filter?f=" + value }
-		hx-target="#todo-list"
-		hx-swap="outerHTML"
-	>{ label }</button>
+// filterRadio renders one segment of the All/Active/Done filter as a Goshtoso
+// segmented radio wired to HTMX. The radios live outside #todo-list, so the
+// browser's native checked state survives every list swap, giving the active
+// highlight for free (no out-of-band re-render needed). Selecting one fires a
+// change-triggered POST that swaps the filtered list into #todo-list.
+templ filterRadio(label, value, current string) {
+	@radio.Radio(radio.Config{
+		ID:        "todo-filter-" + value,
+		Name:      "todo-filter",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Checked:   value == current,
+		HTMX: &radio.HTMXConfig{
+			Post:   "/api/examples/todo/filter?f=" + value,
+			Target: "#todo-list",
+			Swap:   "outerHTML",
+		},
+	})
 }
 
 // TodoApp is the interactive card (add form, filter group, list, count). It is
@@ -205,7 +224,7 @@ templ TodoApp(s todo.State) {
 			<div class="flex flex-col gap-4 p-4">
 				<div class="flex items-center justify-between">
 					<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Your tasks</h2>
-					@CountBadge(s.ActiveCount())
+					@CountBadge(s.ActiveCount(), false)
 				</div>
 				<form
 					class="flex flex-col gap-3"
@@ -238,12 +257,12 @@ templ TodoApp(s todo.State) {
 					</div>
 				</form>
 				<div class="flex items-center justify-between border-t border-outline pt-3 dark:border-outline-dark">
-					<div class="flex gap-1">
-						@filterButton("All", "all", s.Filter)
-						@filterButton("Active", "active", s.Filter)
-						@filterButton("Done", "done", s.Filter)
-					</div>
-					@ClearButton(s.DoneCount())
+					@radio.RadioBar() {
+						@filterRadio("All", "all", s.Filter)
+						@filterRadio("Active", "active", s.Filter)
+						@filterRadio("Done", "done", s.Filter)
+					}
+					@ClearButton(s.DoneCount(), false)
 				</div>
 				<div id="todo-undo"></div>
 				@TodoList(s)
@@ -268,30 +287,39 @@ templ todoScript() {
 }
 
 const todoScriptJS = `
-document.addEventListener('alpine:init', () => {
-  Alpine.data('todoApp', () => ({
-    dragId: null,
-    dropped: false,
-    onDragStart(e, el) { this.dragId = el.dataset.todoId; e.dataTransfer.effectAllowed = 'move'; },
-    onDragOver(e, el) { e.dataTransfer.dropEffect = 'move'; },
-    onDrop(e, el) {
-      this.dropped = true;
-      const list = this.$el;
-      const dragged = list.querySelector('[data-todo-id="' + this.dragId + '"]');
-      if (!dragged || dragged === el) return;
-      const rect = el.getBoundingClientRect();
-      const after = e.clientY > rect.top + rect.height / 2;
-      list.insertBefore(dragged, after ? el.nextSibling : el);
-    },
-    onDragEnd() {
-      const didDrop = this.dropped;
-      this.dropped = false;
-      this.dragId = null;
-      if (!didDrop) return;
-      if (typeof htmx === 'undefined') return;
-      const ids = Array.from(this.$el.querySelectorAll('[data-todo-id]')).map(n => n.dataset.todoId);
-      htmx.ajax('POST', '/api/examples/todo/reorder', { values: { ids: ids.join(',') }, swap: 'none' });
-    },
-  }));
-});
+(function () {
+  var factory = function () {
+    return {
+      dragId: null,
+      dropped: false,
+      onDragStart(e, el) { this.dragId = el.dataset.todoId; e.dataTransfer.effectAllowed = 'move'; },
+      onDragOver(e, el) { e.dataTransfer.dropEffect = 'move'; },
+      onDrop(e, el) {
+        this.dropped = true;
+        const list = this.$el;
+        const dragged = list.querySelector('[data-todo-id="' + this.dragId + '"]');
+        if (!dragged || dragged === el) return;
+        const rect = el.getBoundingClientRect();
+        const after = e.clientY > rect.top + rect.height / 2;
+        list.insertBefore(dragged, after ? el.nextSibling : el);
+      },
+      onDragEnd() {
+        const didDrop = this.dropped;
+        this.dropped = false;
+        this.dragId = null;
+        if (!didDrop) return;
+        if (typeof htmx === 'undefined') return;
+        const ids = Array.from(this.$el.querySelectorAll('[data-todo-id]')).map(n => n.dataset.todoId);
+        htmx.ajax('POST', '/api/examples/todo/reorder', { values: { ids: ids.join(',') }, swap: 'none' });
+      },
+    };
+  };
+  var register = function () { if (window.Alpine && window.Alpine.data) window.Alpine.data('todoApp', factory); };
+  // Full page load: Alpine boots after this script, so wait for alpine:init.
+  // HTMX fragment load (sidebar nav): Alpine is already running and alpine:init
+  // will not fire again, so register immediately or the x-data throws
+  // "todoApp is not defined" and drag-and-drop breaks.
+  if (window.Alpine && window.Alpine.data) { register(); }
+  document.addEventListener('alpine:init', register);
+})();
 `

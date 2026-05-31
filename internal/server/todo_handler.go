@@ -15,13 +15,13 @@ import (
 // most common outputs shared by every mutation handler.
 func writeListAndCount(r *http.Request, w http.ResponseWriter, st todo.State) {
 	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+	_ = examples.CountBadge(st.ActiveCount(), true).Render(r.Context(), w)
 }
 
 // writeClearButton renders the ClearButton OOB fragment so the button's
 // disabled/enabled state tracks the current doneCount on every mutation.
 func writeClearButton(r *http.Request, w http.ResponseWriter, st todo.State) {
-	_ = examples.ClearButton(st.DoneCount()).Render(r.Context(), w)
+	_ = examples.ClearButton(st.DoneCount(), true).Render(r.Context(), w)
 }
 
 // registerTodoRoutes wires all /api/examples/todo/* endpoints.
@@ -327,7 +327,7 @@ func (s *Server) handleTodoReorder(w http.ResponseWriter, r *http.Request) {
 	st.Reorder(ids)
 	todo.SetCookie(w, st)
 	writeHTML(w)
-	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+	_ = examples.CountBadge(st.ActiveCount(), true).Render(r.Context(), w)
 }
 
 // intParam reads a named query param as an int. Returns def on missing/invalid.
