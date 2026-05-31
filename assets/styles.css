@@ -1512,11 +1512,6 @@
   .border-separate {
     border-collapse: separate;
   }
-  .border-spacing-0 {
-    --tw-border-spacing-x: calc(var(--spacing) * 0);
-    --tw-border-spacing-y: calc(var(--spacing) * 0);
-    border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
-  }
   .origin-\(--radix-select-content-transform-origin\) {
     transform-origin: var(--radix-select-content-transform-origin);
   }
@@ -1658,6 +1653,9 @@
   }
   .cursor-default {
     cursor: default;
+  }
+  .cursor-grab {
+    cursor: grab;
   }
   .cursor-not-allowed {
     cursor: not-allowed;
@@ -3825,6 +3823,9 @@
   .object-right-top {
     object-position: right top;
   }
+  .p-0 {
+    padding: calc(var(--spacing) * 0);
+  }
   .p-0\.5 {
     padding: calc(var(--spacing) * 0.5);
   }
@@ -3929,6 +3930,9 @@
   }
   .pt-2 {
     padding-top: calc(var(--spacing) * 2);
+  }
+  .pt-3 {
+    padding-top: calc(var(--spacing) * 3);
   }
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);
@@ -4521,6 +4525,9 @@
   }
   .accent-auto {
     accent-color: auto;
+  }
+  .accent-primary {
+    accent-color: var(--color-primary);
   }
   .scheme-dark {
     color-scheme: dark;
@@ -5711,6 +5718,16 @@
       }
     }
   }
+  .hover\:bg-danger\/10 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in srgb, oklch(65.6% 0.241 354.308) 10%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
+        }
+      }
+    }
+  }
   .hover\:bg-outline\/10 {
     &:hover {
       @media (hover: hover) {
@@ -6575,6 +6592,11 @@
       align-items: center;
     }
   }
+  .sm\:items-end {
+    @media (width >= 40rem) {
+      align-items: flex-end;
+    }
+  }
   .sm\:p-8 {
     @media (width >= 40rem) {
       padding: calc(var(--spacing) * 8);
@@ -7391,6 +7413,11 @@
   .dark\:text-warning {
     &:where(.dark, .dark *) {
       color: var(--color-warning);
+    }
+  }
+  .dark\:accent-primary-dark {
+    &:where(.dark, .dark *) {
+      accent-color: var(--color-primary-dark);
     }
   }
   .dark\:ring-primary-dark {
@@ -8908,16 +8935,6 @@
     background-color: var(--color-outline-dark-strong);
   }
 }
-@property --tw-border-spacing-x {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0;
-}
-@property --tw-border-spacing-y {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0;
-}
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;
@@ -9310,8 +9327,6 @@
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
-      --tw-border-spacing-x: 0;
-      --tw-border-spacing-y: 0;
       --tw-translate-x: 0;
       --tw-translate-y: 0;
       --tw-translate-z: 0;
