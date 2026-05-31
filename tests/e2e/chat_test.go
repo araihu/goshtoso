@@ -57,9 +57,13 @@ func sendChat(t *testing.T, page playwright.Page, msg string) {
 	require.NoError(t, page.Locator("form[ws-send] button[type='submit']").Click())
 }
 
-// logHas builds a JS predicate asserting some #chat-log <p> bubble body equals s.
+// logHas builds a JS predicate asserting some #chat-log message-bubble body
+// equals s. The chatbubble component renders the message text in a leaf <div>
+// (the only #chat-log element whose own trimmed textContent equals the message,
+// since rows also contain the nick + timestamp), so we match leaf elements.
 func logHas(s string) string {
-	return "() => Array.from(document.querySelectorAll('#chat-log p')).some(p => p.textContent.trim() === " + jsString(s) + ")"
+	return "() => Array.from(document.querySelectorAll('#chat-log *'))" +
+		".some(e => e.children.length === 0 && e.textContent.trim() === " + jsString(s) + ")"
 }
 
 // jsString quotes a Go string as a JS single-quoted literal (test inputs are
@@ -78,6 +82,81 @@ func jsString(s string) string {
 		}
 	}
 	return out.String() + "'"
+}
+
+// logRowMine builds a JS predicate asserting some #chat-log row containing text
+// s has the given data-mine value. The row is the [data-sender] element the
+// chatbubble component emits; the mine-detection script flips its data-mine.
+func logRowMine(s, mine string) string {
+	return "() => Array.from(document.querySelectorAll('#chat-log [data-sender]')).some(r => " +
+		"r.textContent.includes(" + jsString(s) + ") && r.getAttribute('data-mine') === " + jsString(mine) + ")"
+}
+
+// TestChat_OwnMessageAligned proves the own-message detector: the sender's own
+// bubble row flips to data-mine='true' (right/sent) and carries their nick as
+// data-sender, while on a second context the same message stays data-mine='false'
+// (received).
+func TestChat_OwnMessageAligned(t *testing.T) {
+	pageA := newIsolatedPage(t)
+	pageB := newIsolatedPage(t)
+	gotoChat(t, pageA)
+	gotoChat(t, pageB)
+
+	sendChat(t, pageA, "mine-aligned-A")
+
+	// On A: the row is mine (right/sent).
+	_, err := pageA.WaitForFunction(logRowMine("mine-aligned-A", "true"), nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+	require.NoError(t, err, "sender's own bubble should be data-mine='true'")
+
+	// Its data-sender equals A's current nick (read from the composer hidden input).
+	matches, err := pageA.Evaluate(
+		`() => { const me = document.querySelector('#chat-hidden-nick').value;
+		         const row = Array.from(document.querySelectorAll('#chat-log [data-mine="true"]'))
+		           .find(r => r.textContent.includes('mine-aligned-A'));
+		         return row && row.getAttribute('data-sender') === me; }`, nil)
+	require.NoError(t, err)
+	require.Equal(t, true, matches, "mine row's data-sender should equal the viewer's nick")
+
+	// On B (a different viewer): the same message is received, data-mine='false'.
+	_, err = pageB.WaitForFunction(logRowMine("mine-aligned-A", "false"), nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+	require.NoError(t, err, "the same message on another viewer should be data-mine='false' (received)")
+}
+
+// TestChat_EnterToSend proves Enter submits the composer (no button click) and
+// Shift+Enter does not send (it inserts a newline instead).
+func TestChat_EnterToSend(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoChat(t, page)
+
+	// Shift+Enter must NOT send: type text, press Shift+Enter, assert no bubble and
+	// a newline was inserted into the textarea value.
+	require.NoError(t, page.Locator("#chat-message").Fill("no-send-shift"))
+	require.NoError(t, page.Locator("#chat-message").Press("Shift+Enter"))
+	val, err := page.Locator("#chat-message").InputValue()
+	require.NoError(t, err)
+	require.Contains(t, val, "\n", "Shift+Enter should insert a newline, not send")
+	noBubble, err := page.Evaluate(
+		`() => !Array.from(document.querySelectorAll('#chat-log *')).some(e => e.children.length === 0 && e.textContent.includes('no-send-shift'))`, nil)
+	require.NoError(t, err)
+	require.Equal(t, true, noBubble, "Shift+Enter should not broadcast a message")
+
+	// Enter SENDS without clicking the submit button. The ws-send rebind race can
+	// drop the first submit after the socket binds, so re-fire Enter until the
+	// bubble round-trips (a lost send produces no bubble, so re-pressing is safe).
+	require.NoError(t, page.Locator("#chat-message").Fill("enter-sends-me"))
+	for attempt := 1; attempt <= 5; attempt++ {
+		require.NoError(t, page.Locator("#chat-message").Press("Enter"))
+		if _, err := page.WaitForFunction(logHas("enter-sends-me"), nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)}); err == nil {
+			return
+		}
+		// ws-send does not reset the textarea, so the value persists; re-fill
+		// defensively in case a prior keystroke mutated it.
+		_ = page.Locator("#chat-message").Fill("enter-sends-me")
+	}
+	t.Fatal("Enter did not send the message after 5 attempts")
 }
 
 // TestChat_Broadcast opens two independent browser contexts, sends from A, and

@@ -6,6 +6,7 @@ import (
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/chatbubble"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toast"
@@ -21,7 +22,6 @@ type Message struct {
 	Text  string
 	Time  string // "15:04"
 	IsBot bool
-	IsYou bool
 }
 
 // OnlineBadge is the live "N online" indicator. Pass oob=true when pushing it as
@@ -43,33 +43,28 @@ templ OnlineBadge(count int, oob bool) {
 	</span>
 }
 
-// MessageBubble renders one chat line: avatar + nick (+ BOT/you badges) + text,
-// with a hover-title timestamp. All user text is a templ text node (escaped).
+// MessageBubble renders one chat line via the chatbubble component with
+// Side=Auto: every broadcast bubble carries data-sender so the viewer's own
+// client can flip data-mine="true" (right-aligned, primary) on its own
+// messages. The bot uses the "info" avatar variant and a fixed "ELIZA" sender;
+// humans use their color as the avatar variant and their nick as the sender.
 templ MessageBubble(m Message) {
-	{{ variant := avatar.Variant(m.Color)
+	{{ variant := m.Color
+	sender := m.Nick
 	if m.IsBot {
-		variant = avatar.Info
+		variant = "info"
+		sender = "ELIZA"
 	} }}
-	<div class="flex items-start gap-3 px-4 py-2" title={ m.Time }>
-		@avatar.Avatar(avatar.Config{
-			Name:    m.Nick,
-			Size:    avatar.SizeSM,
-			Variant: variant,
-		})
-		<div class="min-w-0">
-			<div class="flex items-center gap-2">
-				<span class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">{ m.Nick }</span>
-				if m.IsBot {
-					@badge.Badge(badge.Config{Text: "BOT", Variant: badge.Info, Size: badge.SizeSM})
-				}
-				if m.IsYou {
-					@badge.Badge(badge.Config{Text: "you", Variant: badge.Secondary, Size: badge.SizeSM, Style: badge.StyleSoft})
-				}
-				<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ m.Time }</span>
-			</div>
-			<p class="break-words text-sm text-on-surface dark:text-on-surface-dark">{ m.Text }</p>
-		</div>
-	</div>
+	@chatbubble.ChatBubble(chatbubble.Config{
+		Side:          chatbubble.Auto,
+		Sender:        sender,
+		SenderName:    m.Nick,
+		Message:       m.Text,
+		Timestamp:     m.Time,
+		ShowAvatar:    true,
+		IsBot:         m.IsBot,
+		AvatarVariant: variant,
+	})
 }
 
 // MessageFrame is the exact bytes pushed over the socket for one message: the
@@ -86,6 +81,53 @@ templ MessageFrame(m Message) {
 templ PresenceFrame(text string, count int) {
 	@toast.OOBToast(toast.Config{Variant: toast.Info, Message: text})
 	@OnlineBadge(count, true)
+}
+
+// chatMineScript is the vanilla-JS own-message detector. Each broadcast bubble
+// is rendered Side=Auto (data-mine="false" + data-sender). This script flips
+// data-mine="true" on any #chat-log row whose data-sender equals the viewer's
+// current nick (read live from #chat-hidden-nick.value, so renames track), which
+// drives the Tailwind group-data-[mine=true]: variants to right-align + recolor.
+//
+// It is emitted via templ.Raw so templ does not escape the JS. Built with plain
+// string concatenation (no backticks, no quotes that templ would mangle) and
+// guarded by a data-mine-observer flag on #chat-log so it is idempotent and safe
+// across fragment-nav (htmx executes <script> in swapped content). The observer
+// is wired immediately — Alpine/htmx are already running on a fragment swap, so
+// we must not defer to a one-shot init event.
+const chatMineScript = "" +
+	"(function(){" +
+	"  var log = document.getElementById('chat-log');" +
+	"  if (!log || log.dataset.mineObserver === '1') return;" +
+	"  log.dataset.mineObserver = '1';" +
+	"  function myNick(){" +
+	"    var h = document.getElementById('chat-hidden-nick');" +
+	"    return h ? h.value : '';" +
+	"  }" +
+	"  function mark(row){" +
+	"    if (!row || row.nodeType !== 1 || !row.hasAttribute('data-sender')) return;" +
+	"    var mine = row.getAttribute('data-sender') === myNick();" +
+	"    row.setAttribute('data-mine', mine ? 'true' : 'false');" +
+	"  }" +
+	"  function process(node){" +
+	"    if (!node || node.nodeType !== 1) return;" +
+	"    mark(node);" +
+	"    var kids = node.querySelectorAll ? node.querySelectorAll('[data-sender]') : [];" +
+	"    for (var i = 0; i < kids.length; i++) mark(kids[i]);" +
+	"  }" +
+	"  process(log);" +
+	"  var obs = new MutationObserver(function(muts){" +
+	"    for (var i = 0; i < muts.length; i++) {" +
+	"      var added = muts[i].addedNodes;" +
+	"      for (var j = 0; j < added.length; j++) process(added[j]);" +
+	"    }" +
+	"  });" +
+	"  obs.observe(log, { childList: true, subtree: true });" +
+	"})();"
+
+// chatMineDetector emits the own-message detection script verbatim.
+templ chatMineDetector() {
+	@templ.Raw("<script>" + chatMineScript + "</script>")
 }
 
 // ChatApp is the first-paint shell for /examples/chat. me carries the visitor
@@ -142,6 +184,12 @@ templ ChatApp(me chat.Identity) {
 						Name:        "message",
 						Placeholder: "Type a message…",
 						Rows:        1,
+						// Enter sends (requestSubmit fires htmx's ws-send submit
+						// listener; the form's onsubmit="return false" only blocks
+						// the NATIVE submit). Shift+Enter falls through to insert a
+						// newline. Handler string carries no quotes or && so templ's
+						// attribute escaping cannot corrupt it.
+						Attrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
 					})
 					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
 						Send
@@ -155,6 +203,7 @@ templ ChatApp(me chat.Identity) {
 				})
 			</form>
 		</div>
+		@chatMineDetector()
 	</div>
 }
 
