@@ -62,6 +62,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					if (tgt && tgt.id === 'main-content') {
 						var main = document.querySelector('main');
 						if (main) main.scrollTo({ top: 0 });
+						if (window.buildTOC) window.buildTOC();
 					}
 				});
 			</script>
@@ -234,6 +235,14 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 						@componentNavFooter(activeComponent)
 					</div>
 				</main>
+
+				<!-- Right rail: "On this page" section nav, built from [data-toc-heading]. -->
+				<aside id="toc-rail" data-boot-anim="main" class="hidden xl:block w-60 shrink-0 overflow-y-auto border-l border-outline dark:border-outline-dark">
+					<div class="sticky top-0 px-6 py-8">
+						<p class="mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">On this page</p>
+						<nav id="toc-list" aria-label="On this page" class="flex flex-col border-l border-outline dark:border-outline-dark"></nav>
+					</div>
+				</aside>
 			</div>
 			<!-- Cookie Consent -->
 			<div
@@ -255,6 +264,66 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					</button>
 				</div>
 			</div>
+			<!-- Right-rail "On this page" TOC: built from #main-content [data-toc-heading].
+			     Rebuilt on every main-content HTMX swap via window.buildTOC (see head script). -->
+			<script>
+				(function () {
+					var spy = null;
+					function clearActive(nav) {
+						nav.querySelectorAll('[data-toc-link]').forEach(function (a) {
+							a.classList.remove('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');
+							a.classList.add('border-transparent');
+						});
+					}
+					function setActive(nav, id) {
+						var a = nav.querySelector('[data-toc-link="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
+						if (!a) return;
+						clearActive(nav);
+						a.classList.remove('border-transparent');
+						a.classList.add('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');
+					}
+					window.buildTOC = function () {
+						var rail = document.getElementById('toc-rail');
+						var nav = document.getElementById('toc-list');
+						var main = document.getElementById('main-content');
+						if (!rail || !nav || !main) return;
+						if (spy) { spy.disconnect(); spy = null; }
+						var heads = Array.prototype.slice.call(main.querySelectorAll('[data-toc-heading]'));
+						nav.innerHTML = '';
+						// One heading (just the page title) isn't worth a rail — hide it.
+						if (heads.length < 2) { rail.style.display = 'none'; return; }
+						rail.style.display = '';
+						heads.forEach(function (h) {
+							if (!h.id) return;
+							var a = document.createElement('a');
+							a.href = '#' + h.id;
+							a.textContent = (h.textContent || '').trim();
+							a.setAttribute('data-toc-link', h.id);
+							a.className = 'block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong';
+							a.addEventListener('click', function (ev) {
+								ev.preventDefault();
+								h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+								history.replaceState(null, '', '#' + h.id);
+								setActive(nav, h.id);
+							});
+							nav.appendChild(a);
+						});
+						// Scroll-spy: main is the scroll container, so it's the observer root.
+						spy = new IntersectionObserver(function (entries) {
+							entries.forEach(function (en) {
+								if (en.isIntersecting) setActive(nav, en.target.id);
+							});
+						}, { root: main, rootMargin: '0px 0px -75% 0px', threshold: 0 });
+						heads.forEach(function (h) { if (h.id) spy.observe(h); });
+						setActive(nav, heads[0].id);
+					};
+					if (document.readyState === 'loading') {
+						document.addEventListener('DOMContentLoaded', window.buildTOC);
+					} else {
+						window.buildTOC();
+					}
+				})();
+			</script>
 		</body>
 	</html>
 }
