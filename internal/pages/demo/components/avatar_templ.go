@@ -103,6 +103,10 @@ document.addEventListener('alpine:init', () => {
 // The x-data wrapper hoists Alpine state above the ComponentDemo macOS-frame
 // so the size selector sits in the page chrome (matching PenguinUI), while
 // every reactive avatar inside the frame still inherits the same scope.
+// The whole demo stays inside one x-data="avatarShowcase" scope so the single
+// size selector (AbovePreview) drives every Reactive avatar across all the
+// per-variant DemoSection boxes in lockstep. Each variant box still carries its
+// e2e data-testid; the API reference sits after #avatar-fragment.
 func avatarDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -128,63 +132,111 @@ func avatarDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"avatarShowcase\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"avatarShowcase\"><div id=\"avatar-fragment\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:        "Avatar",
-				Description:  "A visual representation of a user or entity. Supports image, initials, icon placeholder, status indicator, square shape, and now an interactive size selector that drives every avatar on the page in lockstep via Alpine.js (matches PenguinUI's reference UX).",
+				Description:  "A visual representation of a user or entity — image, initials, icon placeholder, status indicator, and square shape. The size selector above drives every avatar on the page in lockstep via Alpine.js (Reactive: true).",
 				AbovePreview: avatarSizeSelector(),
 			},
-			avatarDemoPreview(),
-			`// Interactive size selector: the demo page wraps avatars in an Alpine scope
-// that exposes 'avatarSizeClass' + 'avatarStatusSizeClass'. Setting
-// Reactive: true on the avatar Config makes the component read those bindings
-// instead of baking SizeClasses() into the rendered HTML.
-//
-// <div x-data="avatarShowcase">
-//   ... segmented radio group bound to `+"`selected`"+` ...
-//   @avatar.Avatar(avatar.Config{Reactive: true, Initials: "JD", ...})
-// </div>
-
-// Image Avatar (reactive — sized by parent Alpine scope)
+			avatarImagePreview(),
+			`// Image Avatar (reactive — sized by the shared Alpine scope)
 @avatar.Avatar(avatar.Config{
     Src:      "/assets/images/avatars/avatar-8.webp",
     Alt:      "John Doe",
     Reactive: true,
 })
 
-// Initials Avatar (also reactive)
-@avatar.Avatar(avatar.Config{
-    Initials: "JS",
-    Variant:  avatar.Primary,
-    Reactive: true,
-})
-
-// With Status Indicator (status dot resizes via avatarStatusSizeClass)
-@avatar.Avatar(avatar.Config{
-    Src:      "/assets/images/avatars/avatar-8.webp",
-    Status:   avatar.StatusSuccess,
-    Reactive: true,
-})
-
-// Size selector — uses the new radio.Segmented variant + Alpine primitives
-@radio.RadioBar() {
-    @radio.Radio(radio.Config{
-        Name: "avatar-size", Value: "md", Label: "md", Segmented: true,
-        Alpine: &radio.AlpineConfig{
-            BindChecked: "selected === 'md'",
-            OnChange:    "selected = 'md'",
-        },
-    })
-}`,
+// Bordered + status variants
+@avatar.Avatar(avatar.Config{Src: "...", Border: true, BorderColor: "border-primary", Reactive: true})
+@avatar.Avatar(avatar.Config{Src: "...", Status: avatar.StatusSuccess, Reactive: true})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Initials",
+				Description: "Set Initials and a Variant for a colored monogram fallback.",
+			},
+			avatarInitialsPreview(),
+			`@avatar.Avatar(avatar.Config{Initials: "JD", Variant: avatar.Primary, Reactive: true})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Icon Placeholder",
+				Description: "With neither Src nor Initials, the avatar shows a generic user icon in the Variant color.",
+			},
+			avatarIconPreview(),
+			`@avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Status Indicator",
+				Description: "Set Status: StatusOffline, StatusInfo, StatusSuccess, StatusWarning, or StatusDanger for a corner presence dot.",
+			},
+			avatarStatusPreview(),
+			`@avatar.Avatar(avatar.Config{Src: "...", Status: avatar.StatusSuccess, Reactive: true})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Square Shape",
+				Description: "Shape: avatar.ShapeSquare renders a rounded-square avatar instead of a circle.",
+			},
+			avatarSquarePreview(),
+			`@avatar.Avatar(avatar.Config{Initials: "SQ", Shape: avatar.ShapeSquare, Variant: avatar.Info, Reactive: true})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Fixed Size (image load/error)",
+				Description: "Set an explicit Size (not Reactive) for a fixed avatar. With a Name and no/failed Src, the avatar falls back to initials.",
+			},
+			avatarFixturesPreview(),
+			`@avatar.Avatar(avatar.Config{Src: imgURL, Name: "Load Test", Size: avatar.SizeMD})
+@avatar.Avatar(avatar.Config{Src: "/missing.png", Name: "Error Fallback", Size: avatar.SizeMD})
+@avatar.Avatar(avatar.Config{Name: "Initials Only", Size: avatar.SizeMD, Variant: avatar.Primary})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Src", Type: "string", Default: `""`, Description: "Image URL (falls back to initials/icon on error)."},
+			{Name: "Alt", Type: "string", Default: `""`, Description: "Image alt text."},
+			{Name: "Name", Type: "string", Default: `""`, Description: "Full name used to derive initials when Src is missing/broken."},
+			{Name: "Initials", Type: "string", Default: `""`, Description: "Explicit initials (overrides Name-derived)."},
+			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Fixed size: "xs", "sm", "md", "lg", "xl", "2xl" (ignored when Reactive).`},
+			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color for initials/icon: default, primary, secondary, info, success, warning, danger.`},
+			{Name: "Shape", Type: "Shape", Default: "ShapeCircle", Description: `Shape: "circle" or "square".`},
+			{Name: "Border", Type: "bool", Default: "false", Description: "Add a ring border."},
+			{Name: "BorderColor", Type: "string", Default: `""`, Description: "Tailwind border color class for the ring."},
+			{Name: "Status", Type: "Status", Default: `""`, Description: `Presence dot: "offline", "info", "success", "warning", "danger".`},
+			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Custom placeholder icon (overrides the default user icon)."},
+			{Name: "Reactive", Type: "bool", Default: "false", Description: "Read size classes from the parent Alpine scope (avatarSizeClass) instead of Size."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the avatar root."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -215,7 +267,7 @@ func avatarSizeSelector() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mb-3 flex items-center gap-4\"><label class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Size</label><div data-testid=\"avatar-size-selector\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"mb-3 flex items-center gap-4\"><label class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Size</label><div data-testid=\"avatar-size-selector\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -235,7 +287,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -243,7 +295,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -251,7 +303,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -259,7 +311,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -267,7 +319,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -281,7 +333,7 @@ func avatarSizeSelector() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><span class=\"sr-only\" data-testid=\"avatar-size-selected\" x-text=\"selected\"></span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><span class=\"sr-only\" data-testid=\"avatar-size-selected\" x-text=\"selected\"></span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -329,10 +381,8 @@ func sizeOption(value, label string) templ.Component {
 	})
 }
 
-// avatarDemoPreview renders the Goshtoso avatar preview. Selector lives
-// outside the preview frame (see avatarDemoContent + avatarSizeSelector);
-// this template inherits the avatarShowcase Alpine scope from its parent.
-func avatarDemoPreview() templ.Component {
+// avatarImagePreview renders the reactive image avatars (default ComponentDemo box).
+func avatarImagePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -353,7 +403,7 @@ func avatarDemoPreview() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"w-full max-w-4xl mx-auto\"><div class=\"space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Image Avatars</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-image\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"avatar-image\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-image\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -393,7 +443,37 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Initials Avatars</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-initials\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// avatarInitialsPreview renders the colored-initials avatars.
+func avatarInitialsPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"avatar-initials\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-initials\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -425,7 +505,37 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Icon Placeholders</h4><div class=\"flex flex-wrap items-center gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// avatarIconPreview renders the icon-placeholder avatars.
+func avatarIconPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div id=\"avatar-icon\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -441,7 +551,37 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Status Indicators</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-status\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// avatarStatusPreview renders the status-indicator avatars.
+func avatarStatusPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"avatar-status\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-status\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -465,7 +605,37 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Square Shape</h4><div class=\"flex flex-wrap items-center gap-4\" data-testid=\"avatar-section-square\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// avatarSquarePreview renders the square-shape avatars.
+func avatarSquarePreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div id=\"avatar-square\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-square\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -481,7 +651,38 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></div><div data-testid=\"avatar-e2e-fixtures\"><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">E2E Test Fixtures (fixed size)</h4><div class=\"flex flex-wrap items-center gap-4\"><div data-testid=\"avatar-test-loaded\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// avatarFixturesPreview renders the fixed-size avatars used by the image
+// load/error e2e tests. These intentionally do NOT respond to the size selector.
+func avatarFixturesPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div id=\"avatar-fixtures\" class=\"w-full max-w-2xl mx-auto\" data-testid=\"avatar-e2e-fixtures\"><div class=\"flex flex-wrap items-center justify-center gap-4\"><div data-testid=\"avatar-test-loaded\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -495,7 +696,7 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div data-testid=\"avatar-test-error\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div><div data-testid=\"avatar-test-error\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -509,7 +710,7 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><div data-testid=\"avatar-test-initials\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div><div data-testid=\"avatar-test-initials\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -521,7 +722,7 @@ func avatarDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

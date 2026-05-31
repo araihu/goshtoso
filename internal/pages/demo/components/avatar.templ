@@ -45,58 +45,95 @@ document.addEventListener('alpine:init', () => {
 // The x-data wrapper hoists Alpine state above the ComponentDemo macOS-frame
 // so the size selector sits in the page chrome (matching PenguinUI), while
 // every reactive avatar inside the frame still inherits the same scope.
+// The whole demo stays inside one x-data="avatarShowcase" scope so the single
+// size selector (AbovePreview) drives every Reactive avatar across all the
+// per-variant DemoSection boxes in lockstep. Each variant box still carries its
+// e2e data-testid; the API reference sits after #avatar-fragment.
 templ avatarDemoContent() {
 	@avatarShowcaseScript()
 	<div x-data="avatarShowcase">
-		@demo.ComponentDemo(
-			demo.ComponentDemoProps{
-				Title:         "Avatar",
-				Description:   "A visual representation of a user or entity. Supports image, initials, icon placeholder, status indicator, square shape, and now an interactive size selector that drives every avatar on the page in lockstep via Alpine.js (matches PenguinUI's reference UX).",
-				AbovePreview:  avatarSizeSelector(),
-			},
-			avatarDemoPreview(),
-			`// Interactive size selector: the demo page wraps avatars in an Alpine scope
-// that exposes 'avatarSizeClass' + 'avatarStatusSizeClass'. Setting
-// Reactive: true on the avatar Config makes the component read those bindings
-// instead of baking SizeClasses() into the rendered HTML.
-//
-// <div x-data="avatarShowcase">
-//   ... segmented radio group bound to ` + "`selected`" + ` ...
-//   @avatar.Avatar(avatar.Config{Reactive: true, Initials: "JD", ...})
-// </div>
-
-// Image Avatar (reactive — sized by parent Alpine scope)
+		<div id="avatar-fragment">
+			@demo.ComponentDemo(
+				demo.ComponentDemoProps{
+					Title:        "Avatar",
+					Description:  "A visual representation of a user or entity — image, initials, icon placeholder, status indicator, and square shape. The size selector above drives every avatar on the page in lockstep via Alpine.js (Reactive: true).",
+					AbovePreview: avatarSizeSelector(),
+				},
+				avatarImagePreview(),
+				`// Image Avatar (reactive — sized by the shared Alpine scope)
 @avatar.Avatar(avatar.Config{
     Src:      "/assets/images/avatars/avatar-8.webp",
     Alt:      "John Doe",
     Reactive: true,
 })
 
-// Initials Avatar (also reactive)
-@avatar.Avatar(avatar.Config{
-    Initials: "JS",
-    Variant:  avatar.Primary,
-    Reactive: true,
-})
+// Bordered + status variants
+@avatar.Avatar(avatar.Config{Src: "...", Border: true, BorderColor: "border-primary", Reactive: true})
+@avatar.Avatar(avatar.Config{Src: "...", Status: avatar.StatusSuccess, Reactive: true})`,
+			)
 
-// With Status Indicator (status dot resizes via avatarStatusSizeClass)
-@avatar.Avatar(avatar.Config{
-    Src:      "/assets/images/avatars/avatar-8.webp",
-    Status:   avatar.StatusSuccess,
-    Reactive: true,
-})
+			@demo.DemoSection(
+				demo.DemoSectionProps{
+					Title:       "Initials",
+					Description: "Set Initials and a Variant for a colored monogram fallback.",
+				},
+				avatarInitialsPreview(),
+				`@avatar.Avatar(avatar.Config{Initials: "JD", Variant: avatar.Primary, Reactive: true})`,
+			)
 
-// Size selector — uses the new radio.Segmented variant + Alpine primitives
-@radio.RadioBar() {
-    @radio.Radio(radio.Config{
-        Name: "avatar-size", Value: "md", Label: "md", Segmented: true,
-        Alpine: &radio.AlpineConfig{
-            BindChecked: "selected === 'md'",
-            OnChange:    "selected = 'md'",
-        },
-    })
-}`,
-		)
+			@demo.DemoSection(
+				demo.DemoSectionProps{
+					Title:       "Icon Placeholder",
+					Description: "With neither Src nor Initials, the avatar shows a generic user icon in the Variant color.",
+				},
+				avatarIconPreview(),
+				`@avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true})`,
+			)
+
+			@demo.DemoSection(
+				demo.DemoSectionProps{
+					Title:       "Status Indicator",
+					Description: "Set Status: StatusOffline, StatusInfo, StatusSuccess, StatusWarning, or StatusDanger for a corner presence dot.",
+				},
+				avatarStatusPreview(),
+				`@avatar.Avatar(avatar.Config{Src: "...", Status: avatar.StatusSuccess, Reactive: true})`,
+			)
+
+			@demo.DemoSection(
+				demo.DemoSectionProps{
+					Title:       "Square Shape",
+					Description: "Shape: avatar.ShapeSquare renders a rounded-square avatar instead of a circle.",
+				},
+				avatarSquarePreview(),
+				`@avatar.Avatar(avatar.Config{Initials: "SQ", Shape: avatar.ShapeSquare, Variant: avatar.Info, Reactive: true})`,
+			)
+
+			@demo.DemoSection(
+				demo.DemoSectionProps{
+					Title:       "Fixed Size (image load/error)",
+					Description: "Set an explicit Size (not Reactive) for a fixed avatar. With a Name and no/failed Src, the avatar falls back to initials.",
+				},
+				avatarFixturesPreview(),
+				`@avatar.Avatar(avatar.Config{Src: imgURL, Name: "Load Test", Size: avatar.SizeMD})
+@avatar.Avatar(avatar.Config{Src: "/missing.png", Name: "Error Fallback", Size: avatar.SizeMD})
+@avatar.Avatar(avatar.Config{Name: "Initials Only", Size: avatar.SizeMD, Variant: avatar.Primary})`,
+			)
+		</div>
+		@demo.APIReference([]demo.PropDoc{
+			{Name: "Src", Type: "string", Default: `""`, Description: "Image URL (falls back to initials/icon on error)."},
+			{Name: "Alt", Type: "string", Default: `""`, Description: "Image alt text."},
+			{Name: "Name", Type: "string", Default: `""`, Description: "Full name used to derive initials when Src is missing/broken."},
+			{Name: "Initials", Type: "string", Default: `""`, Description: "Explicit initials (overrides Name-derived)."},
+			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Fixed size: "xs", "sm", "md", "lg", "xl", "2xl" (ignored when Reactive).`},
+			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color for initials/icon: default, primary, secondary, info, success, warning, danger.`},
+			{Name: "Shape", Type: "Shape", Default: "ShapeCircle", Description: `Shape: "circle" or "square".`},
+			{Name: "Border", Type: "bool", Default: "false", Description: "Add a ring border."},
+			{Name: "BorderColor", Type: "string", Default: `""`, Description: "Tailwind border color class for the ring."},
+			{Name: "Status", Type: "Status", Default: `""`, Description: `Presence dot: "offline", "info", "success", "warning", "danger".`},
+			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Custom placeholder icon (overrides the default user icon)."},
+			{Name: "Reactive", Type: "bool", Default: "false", Description: "Read size classes from the parent Alpine scope (avatarSizeClass) instead of Size."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the avatar root."},
+		})
 	</div>
 }
 
@@ -134,121 +171,117 @@ templ sizeOption(value, label string) {
 	})
 }
 
-// avatarDemoPreview renders the Goshtoso avatar preview. Selector lives
-// outside the preview frame (see avatarDemoContent + avatarSizeSelector);
-// this template inherits the avatarShowcase Alpine scope from its parent.
-templ avatarDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto">
-		<div class="space-y-8">
-			// Image Avatars
-			<div>
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Image Avatars</h4>
-				<div class="flex flex-wrap items-center gap-4" data-testid="avatar-section-image">
-					@avatar.Avatar(avatar.Config{
-						Src:      "/assets/images/avatars/avatar-8.webp",
-						Alt:      "User Avatar",
-						Reactive: true,
-					})
-					@avatar.Avatar(avatar.Config{
-						Src:         "/assets/images/avatars/avatar-8.webp",
-						Alt:         "User Avatar with border",
-						Border:      true,
-						BorderColor: "border-primary",
-						Reactive:    true,
-					})
-					@avatar.Avatar(avatar.Config{
-						Src:      "/assets/images/avatars/avatar-8.webp",
-						Alt:      "User with Status",
-						Status:   avatar.StatusSuccess,
-						Reactive: true,
-					})
-					@avatar.Avatar(avatar.Config{
-						Src:      "/assets/images/avatars/avatar-8.webp",
-						Alt:      "User Offline",
-						Status:   avatar.StatusOffline,
-						Reactive: true,
-					})
-				</div>
-			</div>
+// avatarImagePreview renders the reactive image avatars (default ComponentDemo box).
+templ avatarImagePreview() {
+	<div id="avatar-image" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center justify-center gap-4" data-testid="avatar-section-image">
+			@avatar.Avatar(avatar.Config{
+				Src:      "/assets/images/avatars/avatar-8.webp",
+				Alt:      "User Avatar",
+				Reactive: true,
+			})
+			@avatar.Avatar(avatar.Config{
+				Src:         "/assets/images/avatars/avatar-8.webp",
+				Alt:         "User Avatar with border",
+				Border:      true,
+				BorderColor: "border-primary",
+				Reactive:    true,
+			})
+			@avatar.Avatar(avatar.Config{
+				Src:      "/assets/images/avatars/avatar-8.webp",
+				Alt:      "User with Status",
+				Status:   avatar.StatusSuccess,
+				Reactive: true,
+			})
+			@avatar.Avatar(avatar.Config{
+				Src:      "/assets/images/avatars/avatar-8.webp",
+				Alt:      "User Offline",
+				Status:   avatar.StatusOffline,
+				Reactive: true,
+			})
+		</div>
+	</div>
+}
 
-			// Initials Avatars
-			<div>
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Initials Avatars</h4>
-				<div class="flex flex-wrap items-center gap-4" data-testid="avatar-section-initials">
-					@avatar.Avatar(avatar.Config{Initials: "JD", Variant: avatar.Default, Reactive: true})
-					@avatar.Avatar(avatar.Config{Initials: "AB", Variant: avatar.Primary, Reactive: true})
-					@avatar.Avatar(avatar.Config{Initials: "CD", Variant: avatar.Secondary, Reactive: true})
-					@avatar.Avatar(avatar.Config{Initials: "EF", Variant: avatar.Info, Reactive: true})
-					@avatar.Avatar(avatar.Config{Initials: "GH", Variant: avatar.Success, Reactive: true})
-					@avatar.Avatar(avatar.Config{Initials: "IJ", Variant: avatar.Warning, Reactive: true})
-					@avatar.Avatar(avatar.Config{Initials: "KL", Variant: avatar.Danger, Reactive: true})
-				</div>
-			</div>
+// avatarInitialsPreview renders the colored-initials avatars.
+templ avatarInitialsPreview() {
+	<div id="avatar-initials" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center justify-center gap-4" data-testid="avatar-section-initials">
+			@avatar.Avatar(avatar.Config{Initials: "JD", Variant: avatar.Default, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "AB", Variant: avatar.Primary, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "CD", Variant: avatar.Secondary, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "EF", Variant: avatar.Info, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "GH", Variant: avatar.Success, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "IJ", Variant: avatar.Warning, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "KL", Variant: avatar.Danger, Reactive: true})
+		</div>
+	</div>
+}
 
-			// Icon Placeholders
-			<div>
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Icon Placeholders</h4>
-				<div class="flex flex-wrap items-center gap-4">
-					@avatar.Avatar(avatar.Config{Variant: avatar.Default, Reactive: true})
-					@avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true})
-					@avatar.Avatar(avatar.Config{Variant: avatar.Info, Reactive: true})
-				</div>
-			</div>
+// avatarIconPreview renders the icon-placeholder avatars.
+templ avatarIconPreview() {
+	<div id="avatar-icon" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center justify-center gap-4">
+			@avatar.Avatar(avatar.Config{Variant: avatar.Default, Reactive: true})
+			@avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true})
+			@avatar.Avatar(avatar.Config{Variant: avatar.Info, Reactive: true})
+		</div>
+	</div>
+}
 
-			// Status Indicators
-			<div>
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Status Indicators</h4>
-				<div class="flex flex-wrap items-center gap-4" data-testid="avatar-section-status">
-					@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Offline", Status: avatar.StatusOffline, Reactive: true})
-					@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Info", Status: avatar.StatusInfo, Reactive: true})
-					@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Online", Status: avatar.StatusSuccess, Reactive: true})
-					@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Away", Status: avatar.StatusWarning, Reactive: true})
-					@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Busy", Status: avatar.StatusDanger, Reactive: true})
-				</div>
-			</div>
+// avatarStatusPreview renders the status-indicator avatars.
+templ avatarStatusPreview() {
+	<div id="avatar-status" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center justify-center gap-4" data-testid="avatar-section-status">
+			@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Offline", Status: avatar.StatusOffline, Reactive: true})
+			@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Info", Status: avatar.StatusInfo, Reactive: true})
+			@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Online", Status: avatar.StatusSuccess, Reactive: true})
+			@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Away", Status: avatar.StatusWarning, Reactive: true})
+			@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Busy", Status: avatar.StatusDanger, Reactive: true})
+		</div>
+	</div>
+}
 
-			// Square Shape
-			<div>
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Square Shape</h4>
-				<div class="flex flex-wrap items-center gap-4" data-testid="avatar-section-square">
-					@avatar.Avatar(avatar.Config{Initials: "SQ", Variant: avatar.Info, Shape: avatar.ShapeSquare, Reactive: true})
-					@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Square", Shape: avatar.ShapeSquare, Reactive: true})
-					@avatar.Avatar(avatar.Config{Initials: "SQ", Variant: avatar.Success, Shape: avatar.ShapeSquare, Status: avatar.StatusSuccess, Reactive: true})
-				</div>
-			</div>
+// avatarSquarePreview renders the square-shape avatars.
+templ avatarSquarePreview() {
+	<div id="avatar-square" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center justify-center gap-4" data-testid="avatar-section-square">
+			@avatar.Avatar(avatar.Config{Initials: "SQ", Variant: avatar.Info, Shape: avatar.ShapeSquare, Reactive: true})
+			@avatar.Avatar(avatar.Config{Src: "/assets/images/avatars/avatar-8.webp", Alt: "Square", Shape: avatar.ShapeSquare, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "SQ", Variant: avatar.Success, Shape: avatar.ShapeSquare, Status: avatar.StatusSuccess, Reactive: true})
+		</div>
+	</div>
+}
 
-			// E2E test fixtures — kept at fixed SizeMD so existing tests for image
-			// load/error behavior remain stable. These intentionally do NOT respond
-			// to the size selector.
-			<div data-testid="avatar-e2e-fixtures">
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">E2E Test Fixtures (fixed size)</h4>
-				<div class="flex flex-wrap items-center gap-4">
-					<div data-testid="avatar-test-loaded">
-						@avatar.Avatar(avatar.Config{
-							Src:     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230089d6'/%3E%3Ccircle cx='32' cy='32' r='18' fill='white'/%3E%3C/svg%3E",
-							Alt:     "Loaded",
-							Name:    "Load Test",
-							Size:    avatar.SizeMD,
-							Variant: avatar.Default,
-						})
-					</div>
-					<div data-testid="avatar-test-error">
-						@avatar.Avatar(avatar.Config{
-							Src:     "/assets/images/does-not-exist-404.png",
-							Alt:     "Error",
-							Name:    "Error Fallback",
-							Size:    avatar.SizeMD,
-							Variant: avatar.Default,
-						})
-					</div>
-					<div data-testid="avatar-test-initials">
-						@avatar.Avatar(avatar.Config{
-							Name:    "Initials Only",
-							Size:    avatar.SizeMD,
-							Variant: avatar.Primary,
-						})
-					</div>
-				</div>
+// avatarFixturesPreview renders the fixed-size avatars used by the image
+// load/error e2e tests. These intentionally do NOT respond to the size selector.
+templ avatarFixturesPreview() {
+	<div id="avatar-fixtures" class="w-full max-w-2xl mx-auto" data-testid="avatar-e2e-fixtures">
+		<div class="flex flex-wrap items-center justify-center gap-4">
+			<div data-testid="avatar-test-loaded">
+				@avatar.Avatar(avatar.Config{
+					Src:     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230089d6'/%3E%3Ccircle cx='32' cy='32' r='18' fill='white'/%3E%3C/svg%3E",
+					Alt:     "Loaded",
+					Name:    "Load Test",
+					Size:    avatar.SizeMD,
+					Variant: avatar.Default,
+				})
+			</div>
+			<div data-testid="avatar-test-error">
+				@avatar.Avatar(avatar.Config{
+					Src:     "/assets/images/does-not-exist-404.png",
+					Alt:     "Error",
+					Name:    "Error Fallback",
+					Size:    avatar.SizeMD,
+					Variant: avatar.Default,
+				})
+			</div>
+			<div data-testid="avatar-test-initials">
+				@avatar.Avatar(avatar.Config{
+					Name:    "Initials Only",
+					Size:    avatar.SizeMD,
+					Variant: avatar.Primary,
+				})
 			</div>
 		</div>
 	</div>
