@@ -46,7 +46,9 @@ func gotoTodo(t *testing.T, page playwright.Page) {
 	require.NoError(t, page.AddInitScript(playwright.Script{
 		Content: playwright.String("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
 	}))
-	_, err := page.Goto(baseURL + "/examples/todo")
+	// seed=0 opts out of the first-visit sample data so tests start with an
+	// empty list and assert exact counts.
+	_, err := page.Goto(baseURL + "/examples/todo?seed=0")
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)

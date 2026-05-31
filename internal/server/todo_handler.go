@@ -41,7 +41,15 @@ func (s *Server) registerTodoRoutes() {
 // from the cookie (defaulting Filter to "all" when empty) and renders either a
 // full Layout or an HTMX Fragment depending on the HX-Request header.
 func (s *Server) renderTodoPage(w http.ResponseWriter, r *http.Request) {
-	st := todo.FromRequest(r)
+	var st todo.State
+	if _, err := r.Cookie(todo.CookieName); err != nil && r.URL.Query().Get("seed") != "0" {
+		// First visit (no cookie): seed a small starter list so the example
+		// never opens empty, and persist it. `?seed=0` opts out (used by e2e).
+		st = todo.Sample()
+		todo.SetCookie(w, st)
+	} else {
+		st = todo.FromRequest(r)
+	}
 	if st.Filter == "" {
 		st.Filter = "all"
 	}

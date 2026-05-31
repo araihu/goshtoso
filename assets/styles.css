@@ -4725,6 +4725,11 @@
       left: auto;
     }
   }
+  .sm\:ml-auto {
+    @media (width >= 40rem) {
+      margin-left: auto;
+    }
+  }
   .sm\:flex {
     @media (width >= 40rem) {
       display: flex;
@@ -4753,6 +4758,16 @@
   .sm\:w-8 {
     @media (width >= 40rem) {
       width: calc(var(--spacing) * 8);
+    }
+  }
+  .sm\:w-40 {
+    @media (width >= 40rem) {
+      width: calc(var(--spacing) * 40);
+    }
+  }
+  .sm\:w-44 {
+    @media (width >= 40rem) {
+      width: calc(var(--spacing) * 44);
     }
   }
   .sm\:max-w-sm {

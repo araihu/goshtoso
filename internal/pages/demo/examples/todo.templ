@@ -185,7 +185,7 @@ templ filterButton(label, value, current string) {
 // TodoApp is the interactive card (add form, filter group, list, count). It is
 // the content rendered both on first load and as the registry fragment.
 templ TodoApp(s todo.State) {
-	<div id="todo-fragment" class="mx-auto max-w-2xl">
+	<div id="todo-fragment" class="mx-auto max-w-3xl">
 		<header class="mb-6">
 			<h1 class="text-2xl font-bold text-on-surface dark:text-on-surface-dark">Todo List</h1>
 			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">
@@ -208,28 +208,34 @@ templ TodoApp(s todo.State) {
 					@CountBadge(s.ActiveCount())
 				</div>
 				<form
-					class="flex flex-col gap-3 sm:flex-row sm:items-end"
+					class="flex flex-col gap-3"
 					hx-post="/api/examples/todo/add"
 					hx-target="#todo-list"
 					hx-swap="outerHTML"
 					hx-on::after-request="if(event.detail.successful) this.reset()"
 				>
-					<div class="flex-1">
-						@textinput.TextInput(textinput.Config{Name: "title", Label: "Task", Placeholder: "What needs doing?"})
+					@textinput.TextInput(textinput.Config{Name: "title", Label: "Task", Placeholder: "What needs doing?"})
+					<div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+						<div class="sm:w-40">
+							@selectfield.Select(selectfield.Config{
+								Name:  "priority",
+								Label: "Priority",
+								Options: []selectfield.Option{
+									{Value: "low", Label: "Low"},
+									{Value: "med", Label: "Medium", Selected: true},
+									{Value: "high", Label: "High"},
+								},
+							})
+						</div>
+						<div class="sm:w-44">
+							@textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "due", Label: "Due"})
+						</div>
+						<div class="sm:ml-auto">
+							@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+								Add task
+							}
+						</div>
 					</div>
-					@selectfield.Select(selectfield.Config{
-						Name:  "priority",
-						Label: "Priority",
-						Options: []selectfield.Option{
-							{Value: "low", Label: "Low"},
-							{Value: "med", Label: "Medium", Selected: true},
-							{Value: "high", Label: "High"},
-						},
-					})
-					@textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "due", Label: "Due"})
-					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
-						Add
-					}
 				</form>
 				<div class="flex items-center justify-between border-t border-outline pt-3 dark:border-outline-dark">
 					<div class="flex gap-1">
