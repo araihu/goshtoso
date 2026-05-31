@@ -65,6 +65,7 @@ var Demos = map[string]DemoEntry{
 	"examples/todo":              {"Todo List", "todo", examples.TodoContent},
 	"examples/logs":              {"Live Log Feed", "logs", examples.LogsContent},
 	"examples/profile":           {"Profile", "profile", examples.ProfileContent},
+	"examples/ticker":            {"Live Ticker", "ticker", examples.TickerContent},
 }
 
 // LookupDemo returns the entry for a given canonical key (no leading slash).
