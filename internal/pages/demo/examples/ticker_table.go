@@ -30,30 +30,51 @@ func tickerBadgeVariant(s ticker.Symbol) badge.Variant {
 	}
 }
 
-// tickerTableConfig builds the live board: each price cell renders a span that
-// subscribes to its symbol's SSE event; each row's click loads the spotlight.
-func tickerTableConfig(symbols []ticker.Symbol) table.Config {
+// tickerRows builds the table rows for the given symbols. Each price cell renders
+// a span that subscribes to its symbol's SSE event (via TickerCell), so rows
+// stay live after a filter swap once htmx re-binds the swapped-in spans.
+func tickerRows(symbols []ticker.Symbol) []table.Row {
 	rows := make([]table.Row, 0, len(symbols))
 	for _, sym := range symbols {
 		rows = append(rows, table.Row{
-			ID:       sym.Ticker,
-			HXGet:    "/api/examples/ticker/spotlight?symbol=" + sym.Ticker,
-			HXTarget: "#ticker-spotlight",
-			HXSwap:   "innerHTML",
+			ID: sym.Ticker,
 			Cells: map[string]table.Cell{
 				"symbol": {Text: sym.Ticker, Description: sym.Name},
 				"price":  {Component: TickerCell(sym)},
 			},
 		})
 	}
+	return rows
+}
+
+// TickerTableConfig builds the bottom live board: a filterable table whose
+// search box posts to the rows endpoint for a server-side filter. Exported so
+// the rows handler can reuse the same Columns when rendering filtered rows.
+func TickerTableConfig(symbols []ticker.Symbol) table.Config {
 	return table.Config{
-		ID: "ticker-table",
+		ID:           "ticker-table",
+		HTMXEndpoint: "/api/examples/ticker/rows",
 		Columns: []table.Column{
 			{Key: "symbol", Label: "Symbol"},
 			{Key: "price", Label: "Price", Align: "right"},
 		},
-		Rows: rows,
+		Rows: tickerRows(symbols),
+		Filters: &table.FilterConfig{
+			Filters: []table.Filter{
+				{
+					Key:         "search",
+					Label:       "Filter",
+					Type:        table.FilterSearch,
+					Placeholder: "Search symbol or name…",
+				},
+			},
+		},
 	}
+}
+
+// tickerTableConfig is the unexported alias used by the templ view.
+func tickerTableConfig(symbols []ticker.Symbol) table.Config {
+	return TickerTableConfig(symbols)
 }
 
 // tickerPaneJS registers the Alpine component for the ticker pane. `connected`

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/internal/examples/ticker"
 	"github.com/araihu/goshtoso/internal/pages/demo/examples"
 )
@@ -13,7 +14,7 @@ import (
 // registerTickerRoutes wires the /api/examples/ticker/* endpoints.
 func (s *Server) registerTickerRoutes() {
 	s.mux.HandleFunc("/api/examples/ticker/stream", s.handleTickerStream)
-	s.mux.HandleFunc("/api/examples/ticker/spotlight", s.handleTickerSpotlight)
+	s.mux.HandleFunc("/api/examples/ticker/rows", s.handleTickerRows)
 }
 
 // handleTickerStream is the SSE endpoint. It subscribes to the shared broker and
@@ -47,15 +48,22 @@ func (s *Server) handleTickerStream(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handleTickerSpotlight returns the spotlight card for the requested symbol.
-func (s *Server) handleTickerSpotlight(w http.ResponseWriter, r *http.Request) {
-	sym, ok := s.tickerBroker.Find(r.URL.Query().Get("symbol"))
-	if !ok {
-		http.NotFound(w, r)
-		return
+// handleTickerRows returns the filtered table rows (tbody innerHTML) for the
+// search box. Rows carry live SSE price cells; htmx re-binds the swapped-in
+// spans to the existing stream after the swap.
+func (s *Server) handleTickerRows(w http.ResponseWriter, r *http.Request) {
+	search := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("search")))
+	snap := s.tickerBroker.Snapshot()
+	matched := make([]ticker.Symbol, 0, len(snap.Symbols))
+	for _, sym := range snap.Symbols {
+		if search == "" ||
+			strings.Contains(strings.ToLower(sym.Ticker), search) ||
+			strings.Contains(strings.ToLower(sym.Name), search) {
+			matched = append(matched, sym)
+		}
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = examples.TickerSpotlight(sym).Render(r.Context(), w)
+	_ = table.TableRows(examples.TickerTableConfig(matched)).Render(r.Context(), w)
 }
 
 // writeTickerSnapshot renders each symbol's price fragment and emits it as a

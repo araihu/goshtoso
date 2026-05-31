@@ -22,6 +22,8 @@ func tickerCellText(t *testing.T, page playwright.Page, symbol string) string {
 	return txt
 }
 
+// TestTicker_StreamUpdatesCells loads the page and asserts a table price cell
+// changes as ticks stream in.
 func TestTicker_StreamUpdatesCells(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	_, err := page.Goto(baseURL + "/examples/ticker")
@@ -34,29 +36,58 @@ func TestTicker_StreamUpdatesCells(t *testing.T) {
 		"(b) => { const el = document.querySelector('#ticker-cell-AAPL'); return el && el.textContent.trim() !== b; }",
 		before,
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(6000)})
-	require.NoError(t, err, "price cell should change as SSE ticks arrive")
+	require.NoError(t, err, "table price cell should change as SSE ticks arrive")
 }
 
-func TestTicker_SpotlightOnRowClick(t *testing.T) {
+// TestTicker_CardsUpdateLive asserts the top card grid updates off the same
+// shared SSE stream as the table.
+func TestTicker_CardsUpdateLive(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	_, err := page.Goto(baseURL + "/examples/ticker")
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
-	tickerCellText(t, page, "MSFT")
 
-	// The table <tr> does not receive id={row.ID} — Row.ID is only used in
-	// Alpine x-on:click expressions. Use :has() to target the MSFT row via its
-	// price cell child.
-	require.NoError(t, page.Locator("#ticker-table tr:has(#ticker-cell-MSFT)").First().Click())
-	_, err = page.WaitForFunction(
-		"() => { const el = document.querySelector('#ticker-spotlight'); return el && el.textContent.includes('Microsoft'); }",
-		nil,
-		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(4000)})
-	require.NoError(t, err, "spotlight should show the clicked symbol")
 	require.NoError(t, page.Locator("#ticker-card-MSFT").WaitFor())
+	before, err := page.Locator("#ticker-card-MSFT").TextContent()
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(
+		"(b) => { const el = document.querySelector('#ticker-card-MSFT'); return el && el.textContent.trim() !== b; }",
+		before,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(6000)})
+	require.NoError(t, err, "the top card should update live off the SSE stream")
 }
 
+// TestTicker_TableFilterServerSide types a query, asserts the server returns only
+// matching rows, and that the filtered-in cell keeps updating after the swap.
+func TestTicker_TableFilterServerSide(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL + "/examples/ticker")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+	tickerCellText(t, page, "AAPL") // table rendered with all rows
+
+	fillSearchInput(t, page, "NVDA")
+	_, err = page.WaitForFunction(
+		"() => { const b = document.querySelector('#ticker-table-tbody'); "+
+			"return b && b.querySelector('#ticker-cell-NVDA') && !b.querySelector('#ticker-cell-AAPL'); }",
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(4000)})
+	require.NoError(t, err, "server filter should leave only NVDA in the table")
+
+	// The filtered-in cell rebinds to the stream and keeps updating.
+	before, err := page.Locator("#ticker-cell-NVDA").TextContent()
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(
+		"(b) => { const el = document.querySelector('#ticker-cell-NVDA'); return el && el.textContent.trim() !== b; }",
+		before,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(6000)})
+	require.NoError(t, err, "filtered row should still update live after the swap")
+}
+
+// TestTicker_PauseStopsUpdates verifies pause freezes the cells and resume
+// restarts them. Pause cancels SSE swaps; it does not close the stream.
 func TestTicker_PauseStopsUpdates(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	_, err := page.Goto(baseURL + "/examples/ticker")
@@ -86,6 +117,9 @@ func TestTicker_PauseStopsUpdates(t *testing.T) {
 	require.NoError(t, err, "updates should resume after unpausing")
 }
 
+// TestTicker_FragmentNavNoErrors lands elsewhere, navigates to the ticker via the
+// sidebar (htmx fragment swap), and asserts no console/page errors plus a live
+// cell update — the SPA path a direct load can't catch.
 func TestTicker_FragmentNavNoErrors(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 
