@@ -1,5 +1,7 @@
 package toggle
 
+import "github.com/a-h/templ"
+
 // Variant represents toggle color variants
 type Variant string
 
@@ -38,6 +40,9 @@ type Config struct {
 	Name string
 	// Class allows additional CSS classes on the label
 	Class string
+	// Attrs are extra attributes applied to the <input> element
+	// (e.g. x-on:change, x-bind:checked for Alpine binding).
+	Attrs templ.Attributes
 }
 
 // ToggleClasses returns the CSS classes for the toggle track div
