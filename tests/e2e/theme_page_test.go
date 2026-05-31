@@ -208,19 +208,23 @@ func TestThemePage_ColorPalette_TogglesOpen(t *testing.T) {
 	page := newPage(t, browser)
 	gotoThemePage(t, page)
 
-	primaryRow := page.Locator("button[data-token='primary']").First()
-	require.NoError(t, primaryRow.Click())
-	// Primary palette should be rendered with tiles visible.
-	tile := page.Locator("button[data-token='primary'][data-cls='blue-700']").First()
+	// Open the Primary color picker via its Select trigger.
+	require.NoError(t, page.Locator("#color-primary-trigger").Click())
+	// Primary palette should be rendered with swatches visible.
+	tile := page.Locator(`#palette-primary button[data-cls="blue-700"]`).First()
 	require.NoError(t, tile.WaitFor(playwright.LocatorWaitForOptions{
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(1500),
 	}))
 
-	// Open Secondary — Primary should close (single-open invariant).
-	secondaryRow := page.Locator("button[data-token='secondary']").First()
-	require.NoError(t, secondaryRow.Click())
-	require.NoError(t, page.Locator("button[data-token='secondary'][data-cls='blue-700']").First().
+	// Open Secondary — clicking its trigger fires the Primary dropdown's
+	// click-outside handler, so Primary should close (single-open invariant).
+	// The open Primary dropdown (absolute, z-30) overlaps the Secondary row and
+	// would intercept a real pointer click, so dispatch the click via JS: it
+	// still bubbles, so both Secondary's @click and Primary's click.outside fire.
+	_, err := page.Evaluate(`() => document.querySelector('#color-secondary-trigger').click()`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Locator(`#palette-secondary button[data-cls="blue-700"]`).First().
 		WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateVisible,
 			Timeout: playwright.Float(1500),
@@ -239,8 +243,8 @@ func TestThemePage_ColorPalette_PickAppliesVar(t *testing.T) {
 	page := newPage(t, browser)
 	gotoThemePage(t, page)
 
-	require.NoError(t, page.Locator("button[data-token='primary']").First().Click())
-	require.NoError(t, page.Locator("button[data-token='primary'][data-cls='fuchsia-500']").First().Click())
+	require.NoError(t, page.Locator("#color-primary-trigger").Click())
+	require.NoError(t, page.Locator(`#palette-primary button[data-cls="fuchsia-500"]`).First().Click())
 
 	// applyColors writes `var(--color-fuchsia-500)` inline on <html>.
 	_, err := page.WaitForFunction(
@@ -249,11 +253,13 @@ func TestThemePage_ColorPalette_PickAppliesVar(t *testing.T) {
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 	require.NoError(t, err)
 
-	// The row label should now read "Fuchsia-500".
-	label := page.Locator("button[data-token='primary'] span.font-mono").First()
-	text, err := label.TextContent()
+	// The trigger value (driven by x-text="classLabel('primary')") should now
+	// read "Fuchsia-500".
+	_, err = page.WaitForFunction(
+		`() => document.querySelector('#color-primary-trigger').textContent.includes('Fuchsia-500')`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 	require.NoError(t, err)
-	assert.Equal(t, "Fuchsia-500", text)
 }
 
 func TestThemePage_ColorPalette_BlackWhiteApply(t *testing.T) {
@@ -264,9 +270,9 @@ func TestThemePage_ColorPalette_BlackWhiteApply(t *testing.T) {
 	page := newPage(t, browser)
 	gotoThemePage(t, page)
 
-	require.NoError(t, page.Locator("button[data-token='primary']").First().Click())
-	// The two preset chips above the grid are tagged data-cls="white" / "black".
-	require.NoError(t, page.Locator("button[data-token='primary'][data-cls='white']").First().Click())
+	require.NoError(t, page.Locator("#color-primary-trigger").Click())
+	// The two preset chips in the palette are tagged data-cls="white" / "black".
+	require.NoError(t, page.Locator(`#palette-primary button[data-cls="white"]`).First().Click())
 	_, err := page.WaitForFunction(
 		`() => document.documentElement.style.getPropertyValue('--color-primary').includes('--color-white')`,
 		nil,
@@ -456,8 +462,8 @@ func TestThemePage_ResetAll_ClearsOverrides(t *testing.T) {
 	gotoThemePage(t, page)
 
 	// Apply a couple of overrides first.
-	require.NoError(t, page.Locator("button[data-token='primary']").First().Click())
-	require.NoError(t, page.Locator("button[data-token='primary'][data-cls='emerald-500']").First().Click())
+	require.NoError(t, page.Locator("#color-primary-trigger").Click())
+	require.NoError(t, page.Locator(`#palette-primary button[data-cls="emerald-500"]`).First().Click())
 	_, err := page.WaitForFunction(
 		`() => document.documentElement.style.getPropertyValue('--color-primary').includes('--color-emerald-500')`,
 		nil,
@@ -490,8 +496,8 @@ func TestThemePage_OverridesSurviveReload(t *testing.T) {
 	page := newPage(t, browser)
 	gotoThemePage(t, page)
 
-	require.NoError(t, page.Locator("button[data-token='primary']").First().Click())
-	require.NoError(t, page.Locator("button[data-token='primary'][data-cls='rose-600']").First().Click())
+	require.NoError(t, page.Locator("#color-primary-trigger").Click())
+	require.NoError(t, page.Locator(`#palette-primary button[data-cls="rose-600"]`).First().Click())
 	_, err := page.WaitForFunction(
 		`() => document.documentElement.style.getPropertyValue('--color-primary').includes('--color-rose-600')`,
 		nil,
