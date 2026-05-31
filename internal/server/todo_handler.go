@@ -33,7 +33,6 @@ func (s *Server) registerTodoRoutes() {
 	s.mux.HandleFunc("/api/examples/todo/filter", s.handleTodoFilter)
 	s.mux.HandleFunc("/api/examples/todo/move", s.handleTodoMove)
 	s.mux.HandleFunc("/api/examples/todo/clear-completed", s.handleTodoClearCompleted)
-	s.mux.HandleFunc("/api/examples/todo/reorder", s.handleTodoReorder)
 	s.mux.HandleFunc("/api/examples/todo/restore", s.handleTodoRestore)
 }
 
@@ -82,23 +81,6 @@ func idParam(r *http.Request) int {
 		return 0
 	}
 	return n
-}
-
-// parseIDs splits a comma-separated string of ints.
-func parseIDs(raw string) []int {
-	parts := strings.Split(raw, ",")
-	out := make([]int, 0, len(parts))
-	for _, p := range parts {
-		p = strings.TrimSpace(p)
-		if p == "" {
-			continue
-		}
-		n, err := strconv.Atoi(p)
-		if err == nil {
-			out = append(out, n)
-		}
-	}
-	return out
 }
 
 // moveByButton moves the todo with the given id one step up or down within the
@@ -313,21 +295,6 @@ func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request
 		Title:   "Cleared",
 		Message: "Completed tasks removed.",
 	}).Render(r.Context(), w)
-}
-
-func (s *Server) handleTodoReorder(w http.ResponseWriter, r *http.Request) {
-	if onlyPost(w, r) {
-		return
-	}
-	st := todo.FromRequest(r)
-	if st.Filter == "" {
-		st.Filter = "all"
-	}
-	ids := parseIDs(r.FormValue("ids"))
-	st.Reorder(ids)
-	todo.SetCookie(w, st)
-	writeHTML(w)
-	_ = examples.CountBadge(st.ActiveCount(), true).Render(r.Context(), w)
 }
 
 // intParam reads a named query param as an int. Returns def on missing/invalid.

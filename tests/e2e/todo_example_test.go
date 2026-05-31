@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -121,29 +120,6 @@ func TestTodoExample_Filters(t *testing.T) {
 		"() => document.querySelectorAll('#todo-list > li').length === 2 && document.querySelector('#todo-filter-all').checked")
 }
 
-// TestTodoExample_DragReorder verifies native HTML5 drag reorder fires a /reorder
-// request and persists. This guards the Alpine `todoApp` registration that breaks
-// when the page arrives via a fragment nav (alpine:init does not re-fire).
-func TestTodoExample_DragReorder(t *testing.T) {
-	page := newIsolatedPage(t)
-	gotoTodo(t, page)
-
-	addTodo(t, page, "alpha")
-	addTodo(t, page, "bravo")
-
-	var reorderFired bool
-	page.On("request", func(r playwright.Request) {
-		if strings.Contains(r.URL(), "/api/examples/todo/reorder") {
-			reorderFired = true
-		}
-	})
-
-	require.NoError(t, page.Locator("#todo-list > li").Nth(0).DragTo(page.Locator("#todo-list > li").Nth(1)))
-	_, err := page.WaitForFunction("() => true", nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
-	require.NoError(t, err)
-	require.True(t, reorderFired, "native drag should POST /reorder (todoApp Alpine component must be registered)")
-}
-
 // TestTodoExample_FragmentNavNoErrors lands elsewhere, navigates to the todo app
 // via the sidebar link (htmx fragment swap), and verifies there are no console /
 // page errors and that a filter radio and a reorder arrow both work through that
@@ -192,9 +168,7 @@ func TestTodoExample_ReorderButtons(t *testing.T) {
 	addTodo(t, page, "first")
 	addTodo(t, page, "second")
 
-	// Move "second" (row index 1) up — should now be the first row.
-	// The first span is the ⠿ grab handle; the title span is the second one.
-	// Use Array.from + indexing to get the title span of the first li.
+	// Move "second" (row index 1) up — it should become the first row.
 	clickUntil(t, page,
 		page.Locator("#todo-list > li").Nth(1).Locator("button[aria-label='Move up']"),
 		"() => { const spans = Array.from(document.querySelectorAll('#todo-list > li:first-child span')); return spans.some(s => s.textContent.trim() === 'second'); }")
@@ -227,22 +201,22 @@ func TestTodoExample_ClearCompletedDisabled(t *testing.T) {
 
 	addTodo(t, page, "only task")
 
-	// Button must be disabled — no completed tasks yet. Use JS .disabled property
-	// (the IDL attribute) which is a boolean, reliable across Playwright versions.
-	isDisabled, err := page.Evaluate("() => document.querySelector('#todo-clear').disabled", nil)
+	// The Clear-completed Button lives inside the #todo-clear OOB wrapper.
+	// Must be disabled — no completed tasks yet.
+	isDisabled, err := page.Evaluate("() => document.querySelector('#todo-clear button').disabled", nil)
 	require.NoError(t, err)
-	require.Equal(t, true, isDisabled, "#todo-clear should be disabled when no done tasks")
+	require.Equal(t, true, isDisabled, "Clear completed should be disabled when no done tasks")
 
 	// Mark the task done. Wait for the ClearButton OOB swap to land and the
 	// button to become enabled.
 	clickUntil(t, page,
 		page.Locator("#todo-list > li").First().Locator("input[type='checkbox']"),
-		"() => document.querySelector('#todo-clear') && !document.querySelector('#todo-clear').disabled")
+		"() => document.querySelector('#todo-clear button') && !document.querySelector('#todo-clear button').disabled")
 
 	// Button must now be enabled.
-	isDisabled2, err := page.Evaluate("() => document.querySelector('#todo-clear').disabled", nil)
+	isDisabled2, err := page.Evaluate("() => document.querySelector('#todo-clear button').disabled", nil)
 	require.NoError(t, err)
-	require.Equal(t, false, isDisabled2, "#todo-clear should be enabled when there is a done task")
+	require.Equal(t, false, isDisabled2, "Clear completed should be enabled when there is a done task")
 }
 
 // TestTodoExample_UndoDelete adds a todo, deletes it, then clicks Undo and
@@ -253,14 +227,14 @@ func TestTodoExample_UndoDelete(t *testing.T) {
 
 	addTodo(t, page, "restore me")
 
-	// Delete the todo. Wait for the undo bar to appear.
+	// Delete the todo. Wait for the undo Alert (with its Undo action) to appear.
 	clickUntil(t, page,
 		page.Locator("#todo-list > li button[aria-label='Delete']").First(),
-		"() => document.querySelector('#todo-undo button') !== null")
+		"() => Array.from(document.querySelectorAll('#todo-undo button')).some(b => b.textContent.trim() === 'Undo')")
 
-	// Click Undo. Wait for the todo to reappear in the list.
+	// Click the Alert's Undo action. Wait for the todo to reappear in the list.
 	clickUntil(t, page,
-		page.Locator("#todo-undo button"),
+		page.Locator("#todo-undo button", playwright.PageLocatorOptions{HasText: "Undo"}),
 		fmt.Sprintf("() => Array.from(document.querySelectorAll('#todo-list li span')).some(s => s.textContent.trim() === %q)", "restore me"))
 }
 

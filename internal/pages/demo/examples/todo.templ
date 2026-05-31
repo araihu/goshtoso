@@ -3,6 +3,8 @@ package examples
 import (
 	"fmt"
 	"net/url"
+
+	"github.com/araihu/goshtoso/components/alert"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/radio"
@@ -43,23 +45,31 @@ templ CountBadge(active int, oob bool) {
 	</span>
 }
 
-// ClearButton renders the "Clear completed" button, disabled when doneCount == 0.
-// Pass oob=true for handler updates, oob=false on first paint (see CountBadge).
+// ClearButton renders the Goshtoso Button for "Clear completed", disabled when
+// doneCount == 0. The button itself has no OOB hook, so it is wrapped in a
+// #todo-clear div that carries hx-swap-oob when oob=true; handlers re-render the
+// wrapper so the disabled state tracks doneCount. oob=false on first paint.
 templ ClearButton(doneCount int, oob bool) {
-	<button
+	<div
 		id="todo-clear"
 		if oob {
 			hx-swap-oob="true"
 		}
-		type="button"
-		class="text-sm text-on-surface-muted hover:underline dark:text-on-surface-dark-muted disabled:opacity-40 disabled:cursor-not-allowed"
-		hx-post="/api/examples/todo/clear-completed"
-		hx-target="#todo-list"
-		hx-swap="outerHTML"
-		if doneCount == 0 {
-			disabled
+	>
+		@button.Button(button.Config{
+			Variant:  button.Secondary,
+			Size:     button.SizeSmall,
+			Type:     "button",
+			Disabled: doneCount == 0,
+			HTMX: &button.HTMXConfig{
+				Post:   "/api/examples/todo/clear-completed",
+				Target: "#todo-list",
+				Swap:   "outerHTML",
+			},
+		}) {
+			Clear completed
 		}
-	>Clear completed</button>
+	</div>
 }
 
 // ClearUndo renders an empty #todo-undo slot via OOB swap, clearing any visible
@@ -68,54 +78,53 @@ templ ClearUndo() {
 	<div id="todo-undo" hx-swap-oob="true"></div>
 }
 
-// UndoBar renders a bordered row inside #todo-undo (via OOB swap) with a
-// "Task deleted" label and an Undo button. It auto-dismisses after 8 s via
-// Alpine. The hx-post URL carries all fields needed by the restore endpoint so
-// the server can reconstruct the todo without any server-side memory.
+// UndoBar renders the Goshtoso Alert inside #todo-undo (via OOB swap) after a
+// delete. Its primary action ("Undo") POSTs the deleted todo's fields to the
+// restore endpoint so the server can reconstruct it with no server-side memory;
+// the secondary action dismisses the alert. Any later mutation clears the slot
+// via ClearUndo.
 templ UndoBar(t todo.Todo) {
-	<div
-		id="todo-undo"
-		hx-swap-oob="true"
-		x-data="{}"
-		x-init={ fmt.Sprintf("setTimeout(() => { $el.remove() }, %d)", 8000) }
-		class="mb-2 flex items-center justify-between rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
-	>
-		<span>Task deleted</span>
-		<button
-			type="button"
-			class="ml-4 font-medium text-primary underline hover:opacity-75 dark:text-primary-dark"
-			hx-post={ fmt.Sprintf(
-				"/api/examples/todo/restore?id=%d&title=%s&done=%t&priority=%s&due=%s&order=%d",
-				t.ID,
-				url.QueryEscape(t.Title),
-				t.Done,
-				url.QueryEscape(t.Priority),
-				url.QueryEscape(t.Due),
-				t.Order,
-			) }
-			hx-target="#todo-list"
-			hx-swap="outerHTML"
-		>Undo</button>
+	<div id="todo-undo" hx-swap-oob="true">
+		@alert.Alert(alert.Config{
+			Variant:     alert.Info,
+			Title:       "Task deleted",
+			Description: t.Title,
+			Class:       "mb-2",
+			// Action (not Dismissible) — the alert renders the Undo primary button
+			// plus its own Dismiss button. Dismissible would take precedence and
+			// suppress the action buttons (alert.templ renders one OR the other).
+			Action: &alert.ActionConfig{
+				PrimaryText: "Undo",
+				PrimaryHxPost: fmt.Sprintf(
+					"/api/examples/todo/restore?id=%d&title=%s&done=%t&priority=%s&due=%s&order=%d",
+					t.ID,
+					url.QueryEscape(t.Title),
+					t.Done,
+					url.QueryEscape(t.Priority),
+					url.QueryEscape(t.Due),
+					t.Order,
+				),
+				PrimaryHxTarget: "#todo-list",
+				PrimaryHxSwap:   "outerHTML",
+				DismissText:     "Dismiss",
+			},
+		})
 	</div>
 }
 
-// TodoRow renders one todo as a draggable <li> with toggle, title, priority
-// badge, optional due date, up/down reorder, and delete. Interactive controls
-// are explicit HTMX markup (the Checkbox/Button components expose no Attrs field).
-// All mutating controls (toggle, delete) target #todo-list with outerHTML swap
-// so membership and empty-state remain correct under any active filter.
+// TodoRow renders one todo as a list item: toggle, title, priority badge,
+// optional due date, up/down reorder, and delete. Reordering is via the up/down
+// buttons (no drag-and-drop). The toggle is a raw <input> and the icon buttons
+// are raw <button>s because the Checkbox/Button components expose neither an
+// HTMX hook for the checkbox nor an aria-label/attrs hook for icon-only buttons.
+// All mutating controls target #todo-list with outerHTML swap so membership and
+// empty-state remain correct under any active filter.
 templ TodoRow(t todo.Todo) {
 	<li
 		id={ rowID(t.ID) }
 		data-todo-id={ fmt.Sprintf("%d", t.ID) }
-		draggable="true"
-		x-on:dragstart="onDragStart($event, $el)"
-		x-on:dragover.prevent="onDragOver($event, $el)"
-		x-on:drop.prevent="onDrop($event, $el)"
-		x-on:dragend="onDragEnd()"
 		class="flex items-center gap-2 rounded-radius border border-outline bg-surface px-3 py-1.5 dark:border-outline-dark dark:bg-surface-dark"
 	>
-		<span class="hidden cursor-grab select-none text-on-surface-muted sm:inline-flex dark:text-on-surface-dark-muted" aria-hidden="true">⠿</span>
 		<input
 			type="checkbox"
 			aria-label="Toggle done"
@@ -167,7 +176,7 @@ templ TodoRow(t todo.Todo) {
 // TodoList renders the <ul> of visible todos (or an empty state). It is the
 // reorder/filter swap target (#todo-list).
 templ TodoList(s todo.State) {
-	<ul id="todo-list" class="flex flex-col gap-2" x-data="todoApp()">
+	<ul id="todo-list" class="flex flex-col gap-2">
 		if len(s.Visible()) == 0 {
 			<li class="rounded-radius border border-dashed border-outline px-3 py-8 text-center text-sm text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">
 				Nothing here yet. Add your first task above.
@@ -213,11 +222,11 @@ templ TodoApp(s todo.State) {
 				that returns rendered HTML, not JSON.
 			</p>
 			<ul class="mt-3 list-disc pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				<li>Server-side state via signed cookie, zero in-memory persistence</li>
-				<li>HTMX fragment swaps with out-of-band live count and toast notifications</li>
-				<li>TextInput, Select, Button, Badge, and Toast components composed into a real screen</li>
-				<li>Alpine-powered native drag-and-drop reorder with accessible up/down fallbacks</li>
-				<li>Filter (All / Active / Done) without a page reload</li>
+				<li>Server-side state in a cookie, zero in-memory persistence</li>
+				<li>HTMX fragment swaps with out-of-band live count, toast, and undo</li>
+				<li>TextInput, Select, Button, Badge, Radio, Alert, and Toast composed into a real screen</li>
+				<li>Reorder with up/down controls; filter (All / Active / Done) without a page reload</li>
+				<li>Undo a delete, with a guard that disables Clear completed when nothing is done</li>
 			</ul>
 		</header>
 		<div class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
@@ -269,7 +278,6 @@ templ TodoApp(s todo.State) {
 			</div>
 		</div>
 		@toast.Container(toast.ContainerConfig{})
-		@todoScript()
 	</div>
 }
 
@@ -280,46 +288,3 @@ templ TodoContent() {
 	@TodoApp(todo.State{Filter: "all"})
 }
 
-// todoScript registers the Alpine component powering native drag-and-drop. Wrapped
-// in a <script> + templ.Raw so templ does not escape the JS (per CLAUDE.md).
-templ todoScript() {
-	@templ.Raw("<script>" + todoScriptJS + "</script>")
-}
-
-const todoScriptJS = `
-(function () {
-  var factory = function () {
-    return {
-      dragId: null,
-      dropped: false,
-      onDragStart(e, el) { this.dragId = el.dataset.todoId; e.dataTransfer.effectAllowed = 'move'; },
-      onDragOver(e, el) { e.dataTransfer.dropEffect = 'move'; },
-      onDrop(e, el) {
-        this.dropped = true;
-        const list = this.$el;
-        const dragged = list.querySelector('[data-todo-id="' + this.dragId + '"]');
-        if (!dragged || dragged === el) return;
-        const rect = el.getBoundingClientRect();
-        const after = e.clientY > rect.top + rect.height / 2;
-        list.insertBefore(dragged, after ? el.nextSibling : el);
-      },
-      onDragEnd() {
-        const didDrop = this.dropped;
-        this.dropped = false;
-        this.dragId = null;
-        if (!didDrop) return;
-        if (typeof htmx === 'undefined') return;
-        const ids = Array.from(this.$el.querySelectorAll('[data-todo-id]')).map(n => n.dataset.todoId);
-        htmx.ajax('POST', '/api/examples/todo/reorder', { values: { ids: ids.join(',') }, swap: 'none' });
-      },
-    };
-  };
-  var register = function () { if (window.Alpine && window.Alpine.data) window.Alpine.data('todoApp', factory); };
-  // Full page load: Alpine boots after this script, so wait for alpine:init.
-  // HTMX fragment load (sidebar nav): Alpine is already running and alpine:init
-  // will not fire again, so register immediately or the x-data throws
-  // "todoApp is not defined" and drag-and-drop breaks.
-  if (window.Alpine && window.Alpine.data) { register(); }
-  document.addEventListener('alpine:init', register);
-})();
-`
