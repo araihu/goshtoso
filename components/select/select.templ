@@ -2,6 +2,13 @@ package selectfield
 
 import "fmt"
 
+// shellValueSpan builds the trigger value <span> for shell mode as raw HTML so
+// the Alpine x-text expression (which contains single quotes) is emitted
+// verbatim rather than HTML-escaped by templ's attribute writer.
+func shellValueSpan(valueExpr string) string {
+	return fmt.Sprintf(`<span class="truncate text-sm font-normal" x-text="%s"></span>`, valueExpr)
+}
+
 // Select renders a custom dropdown select with Alpine.js, matching
 // the combobox component styling. Supports validation states,
 // disabled/readonly, Alpine.js binding, and hidden input for form submission.
@@ -23,7 +30,12 @@ templ Select(cfg Config) {
 			</label>
 		}
 		<div
-			x-data={ selectData(cfg) }
+			if cfg.Shell {
+				x-data={ shellData() }
+				x-on:select-close="isOpen = false; openedWithKeyboard = false"
+			} else {
+				x-data={ selectData(cfg) }
+			}
 			x-on:keydown.esc.window="isOpen = false; openedWithKeyboard = false"
 			class="relative"
 		>
@@ -37,14 +49,22 @@ templ Select(cfg Config) {
 				x-on:keydown.down.prevent="openedWithKeyboard = true"
 				x-on:keydown.enter.prevent="openedWithKeyboard = true"
 				x-on:keydown.space.prevent="openedWithKeyboard = true"
-				x-bind:aria-label="selectedOption ? selectedOption.label : placeholder"
+				if cfg.Shell {
+					x-bind:aria-label={ cfg.ValueExpr }
+				} else {
+					x-bind:aria-label="selectedOption ? selectedOption.label : placeholder"
+				}
 				disabled?={ cfg.IsEffectivelyDisabled() }
 				class={ cfg.TriggerClasses() }
 			>
-				<span
-					class="truncate text-sm font-normal"
-					x-text="selectedOption ? selectedOption.label : placeholder"
-				></span>
+				if cfg.Shell {
+					if cfg.TriggerLeading != nil {
+						@cfg.TriggerLeading
+					}
+					@templ.Raw(shellValueSpan(cfg.ValueExpr))
+				} else {
+					<span class="truncate text-sm font-normal" x-text="selectedOption ? selectedOption.label : placeholder"></span>
+				}
 				<!-- Chevron -->
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -58,21 +78,23 @@ templ Select(cfg Config) {
 						fill-rule="evenodd"
 						d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
 						clip-rule="evenodd"
-					/>
+					></path>
 				</svg>
 			</button>
 			<!-- Hidden input for form submission -->
-			<input
-				id={ cfg.ID }
-				name={ cfg.Name }
-				type="text"
-				hidden
-				x-ref="hiddenInput"
-				x-bind:value="selectedOption ? selectedOption.value : ''"
-				if cfg.Autocomplete != "" {
-					autocomplete={ cfg.Autocomplete }
-				}
-			/>
+			if !cfg.Shell {
+				<input
+					id={ cfg.ID }
+					name={ cfg.Name }
+					type="text"
+					hidden
+					x-ref="hiddenInput"
+					x-bind:value="selectedOption ? selectedOption.value : ''"
+					if cfg.Autocomplete != "" {
+						autocomplete={ cfg.Autocomplete }
+					}
+				/>
+			}
 			<!-- Dropdown -->
 			<div
 				x-cloak
@@ -84,39 +106,43 @@ templ Select(cfg Config) {
 				x-bind:aria-label={ cfg.Label + " list" }
 				x-trap="openedWithKeyboard"
 			>
-				<ul class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
-					<template x-for="(item, index) in allOptions" x-bind:key="item.value">
-						<li
-							role="option"
-							class="combobox-option inline-flex justify-between items-center gap-4 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong cursor-pointer"
-							x-on:click="selectOption(item)"
-							x-on:keydown.enter.prevent="selectOption(item)"
-							x-bind:id={ "'" + cfg.ID + "-option-' + index" }
-							tabindex="0"
-							x-on:keydown.down.prevent="$focus.wrap().next()"
-							x-on:keydown.up.prevent="$focus.wrap().previous()"
-						>
-							<span
-								x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
-								x-text="item.label"
-							></span>
-							<!-- Checkmark for selected item -->
-							<svg
-								x-cloak
-								x-show="selectedOption && selectedOption.value === item.value"
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								fill="none"
-								stroke-width="2"
-								class="size-4"
-								aria-hidden="true"
+				if cfg.Shell {
+					{ children... }
+				} else {
+					<ul class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
+						<template x-for="(item, index) in allOptions" x-bind:key="item.value">
+							<li
+								role="option"
+								class="combobox-option inline-flex justify-between items-center gap-4 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong cursor-pointer"
+								x-on:click="selectOption(item)"
+								x-on:keydown.enter.prevent="selectOption(item)"
+								x-bind:id={ "'" + cfg.ID + "-option-' + index" }
+								tabindex="0"
+								x-on:keydown.down.prevent="$focus.wrap().next()"
+								x-on:keydown.up.prevent="$focus.wrap().previous()"
 							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
-							</svg>
-						</li>
-					</template>
-				</ul>
+								<span
+									x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
+									x-text="item.label"
+								></span>
+								<!-- Checkmark for selected item -->
+								<svg
+									x-cloak
+									x-show="selectedOption && selectedOption.value === item.value"
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									fill="none"
+									stroke-width="2"
+									class="size-4"
+									aria-hidden="true"
+								>
+									<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
+								</svg>
+							</li>
+						</template>
+					</ul>
+				}
 			</div>
 		</div>
 		if cfg.HelperText != "" {

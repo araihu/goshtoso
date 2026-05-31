@@ -69,6 +69,16 @@ type Config struct {
 	Readonly bool
 	// Attrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator)
 	Attrs templ.Attributes
+	// Shell enables "shell mode": the Select renders its trigger + dropdown
+	// chrome but hosts arbitrary templ children as the dropdown body instead
+	// of an option list. Used to wrap custom pickers (e.g. a color palette).
+	Shell bool
+	// TriggerLeading is optional content rendered at the start of the trigger
+	// in shell mode (e.g. a color swatch). Ignored when Shell is false.
+	TriggerLeading templ.Component
+	// ValueExpr is an Alpine expression (x-text) for the trigger's value text
+	// in shell mode. Resolves against the host page's x-data scope.
+	ValueExpr string
 }
 
 // ContainerClasses returns CSS classes for the outer wrapper.
@@ -148,4 +158,10 @@ func (cfg Config) SelectedValue() string {
 // IsEffectivelyDisabled returns true if the select should render as disabled (Disabled or Readonly)
 func (cfg Config) IsEffectivelyDisabled() bool {
 	return cfg.Disabled || cfg.Readonly
+}
+
+// shellData returns the slim Alpine x-data for shell mode: only open state,
+// since the hosted content owns the value.
+func shellData() string {
+	return `{ isOpen: false, openedWithKeyboard: false }`
 }
