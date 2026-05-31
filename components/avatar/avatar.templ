@@ -86,7 +86,11 @@ templ layerInitials(cfg Config, withImageOverlay bool) {
 		class={ classes }
 		aria-hidden="true"
 		if withImageOverlay {
-			x-show="!imgLoaded || imgError"
+			if cfg.SrcExpr != "" {
+				x-show={ fmt.Sprintf("!(%s) || !imgLoaded || imgError", cfg.SrcExpr) }
+			} else {
+				x-show="!imgLoaded || imgError"
+			}
 		}
 	>
 		if cfg.Icon != nil {
@@ -99,10 +103,16 @@ templ layerInitials(cfg Config, withImageOverlay bool) {
 	</span>
 }
 
-// layerLoading renders a spinner overlay while the image loads
+// layerLoading renders a spinner overlay while the image loads.
+// When SrcExpr is set the spinner is also gated on the expression being truthy —
+// an empty/nil SrcExpr should not cause the spinner to show forever.
 templ layerLoading(cfg Config) {
 	<span
-		x-show="!imgLoaded && !imgError"
+		if cfg.SrcExpr != "" {
+			x-show={ fmt.Sprintf("(%s) && !imgLoaded && !imgError", cfg.SrcExpr) }
+		} else {
+			x-show="!imgLoaded && !imgError"
+		}
 		class="absolute inset-0 flex items-center justify-center bg-surface-alt dark:bg-surface-dark-alt"
 		aria-hidden="true"
 	>
@@ -118,13 +128,20 @@ templ layerLoading(cfg Config) {
 // Alpine attaches x-on:load / x-on:error. In that case neither event fires and
 // the spinner gets stuck. $el.complete tells us the fetch is done; naturalWidth
 // distinguishes success (>0) from error (==0).
+//
+// When cfg.SrcExpr is set, x-bind:src binds to the parent-scope expression
+// instead of a static src attribute, enabling client-set sources (object URLs, etc.).
 templ layerImage(cfg Config) {
 	<img
 		x-show="!imgError"
 		x-init="if ($el.complete) { if ($el.naturalWidth > 0) imgLoaded = true; else imgError = true; }"
 		x-on:load="imgLoaded = true"
 		x-on:error={ fmt.Sprintf("imgError = true; console.warn('[avatar] failed to load image:', '%s')", cfg.Src) }
-		src={ cfg.Src }
+		if cfg.SrcExpr != "" {
+			x-bind:src={ cfg.SrcExpr }
+		} else {
+			src={ cfg.Src }
+		}
 		alt={ cfg.Alt }
 		class="absolute inset-0 h-full w-full object-cover object-center"
 	/>
