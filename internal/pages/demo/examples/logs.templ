@@ -115,7 +115,13 @@ templ logFilterStyle() {
 templ LogsApp() {
 	@logFilterStyle()
 	@logFeedScript()
-	<div id="logs-fragment" x-data="logFeed" class="mx-auto max-w-3xl">
+	<div
+		id="logs-fragment"
+		x-data="logFeed"
+		x-on:htmx:sse-open="connected = true"
+		x-on:htmx:sse-error="connected = false"
+		class="mx-auto max-w-3xl"
+	>
 		<header class="mb-6">
 			<h1 class="text-2xl font-bold text-on-surface dark:text-on-surface-dark">Live Log Feed</h1>
 			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">
@@ -170,8 +176,6 @@ templ LogsApp() {
 				<div
 					x-ref="feedWrap"
 					x-on:htmx:after-swap="onSwap($event)"
-					x-on:htmx:sse-open="connected = true"
-					x-on:htmx:sse-error="connected = false"
 					class="flt-all rounded-radius border border-outline dark:border-outline-dark"
 				>
 					<div id="log-feed" class="h-80 overflow-y-auto"></div>

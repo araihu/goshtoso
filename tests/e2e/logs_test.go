@@ -177,3 +177,22 @@ func TestLogFeed_SidebarScrollPreservedDuringStream(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, start, toInt(after), "nav sidebar scroll must not reset while logs stream")
 }
+
+// TestLogFeed_StatusReachesConnected guards against the connection-status sticking
+// on "Connecting": the htmx:sseOpen listener must sit on an ancestor of the
+// sse-connect connector so the bubbled event flips `connected` to true once the
+// stream opens (rows can stream while connected stays false if the listener is on
+// a sibling element, never receiving the event).
+func TestLogFeed_StatusReachesConnected(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoLogs(t, page)
+	waitForRows(t, page)
+
+	_, err := page.WaitForFunction(
+		"() => { const d = Alpine.$data(document.getElementById('logs-fragment')); return d && d.connected === true; }", nil)
+	require.NoError(t, err)
+	// The visible status text reads "Connected", not "Connecting".
+	_, err = page.WaitForFunction(
+		"() => document.querySelector('#logs-fragment [x-text=\"statusText\"]').textContent.trim() === 'Connected'", nil)
+	require.NoError(t, err)
+}
