@@ -135,6 +135,26 @@ after introducing any new utility class (CSS is embedded).
 `internal/pages/demo/components/accordion.templ`. Invoke the skill before
 creating or restructuring any demo page.
 
+## Codex Integration
+
+The **Codex CLI** (OpenAI) is wired into this repo via the `codex` plugin as a
+second engine for review and parallel work. Auth is ChatGPT login; the shared
+runtime starts on demand on the first review/task command.
+
+- **Stop-time review gate is ON.** A fresh Codex review is required before a
+  Claude session can stop. Don't disable it casually.
+- **Use Codex for code review.** After a non-trivial change — and always before
+  finishing a branch/PR — hand the diff to Codex for an independent second
+  opinion (`codex:rescue` skill, or the review gate). Treat its findings as a
+  reviewer's, not gospel: confirm against the code before acting.
+- **Use Codex for parallel work when it fits.** When a task splits into
+  independent slices (e.g. several components, a broad migration, a sweep), or
+  when a hard problem benefits from a second implementation/diagnosis pass,
+  delegate a slice to Codex via the `codex:codex-rescue` agent / `codex:rescue`
+  skill and work the rest in parallel. Reserve for genuinely independent or
+  stuck work — not routine single-file edits.
+- Setup/health check: `/codex:setup`. Manual login if auth lapses: `!codex login`.
+
 ## Critical Rules
 
 ### Always work in a git worktree
