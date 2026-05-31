@@ -145,8 +145,8 @@ func (s *Server) handleTodoAdd(w http.ResponseWriter, r *http.Request) {
 		st.Filter = "all"
 	}
 	seqBefore := st.Seq
-	_ = r.ParseForm()
-	title := r.FormValue("title")
+	// FormValue parses the body lazily on first access; no explicit ParseForm needed.
+	title := strings.TrimSpace(r.FormValue("title"))
 	priority := r.FormValue("priority")
 	due := r.FormValue("due")
 	st.Add(title, priority, due)
@@ -211,7 +211,6 @@ func (s *Server) handleTodoEdit(w http.ResponseWriter, r *http.Request) {
 	if st.Filter == "" {
 		st.Filter = "all"
 	}
-	_ = r.ParseForm()
 	st.Edit(idParam(r), r.FormValue("title"), r.FormValue("priority"), r.FormValue("due"))
 	todo.SetCookie(w, st)
 	writeHTML(w)
@@ -276,7 +275,6 @@ func (s *Server) handleTodoReorder(w http.ResponseWriter, r *http.Request) {
 	if st.Filter == "" {
 		st.Filter = "all"
 	}
-	_ = r.ParseForm()
 	ids := parseIDs(r.FormValue("ids"))
 	st.Reorder(ids)
 	todo.SetCookie(w, st)
