@@ -23,3 +23,28 @@ func TestChangePctAndDirection(t *testing.T) {
 	zero := ticker.Symbol{Ticker: "DDD", Price: 5, PrevPrice: 0}
 	assert.InDelta(t, 0.0, zero.ChangePct(), 0.0001)
 }
+
+func TestSimulatorIsDeterministicForSeed(t *testing.T) {
+	a := ticker.NewSimulator(42)
+	b := ticker.NewSimulator(42)
+	for i := 0; i < 5; i++ {
+		sa := a.Tick()
+		sb := b.Tick()
+		assert.Equal(t, sb.Symbols, sa.Symbols, "same seed must produce identical ticks")
+	}
+}
+
+func TestTickSetsPrevPriceAndStaysPositive(t *testing.T) {
+	s := ticker.NewSimulator(1)
+	before := s.Snapshot()
+	snap := s.Tick()
+	assert.Len(t, snap.Symbols, len(before.Symbols))
+	for i, sym := range snap.Symbols {
+		assert.Equal(t, before.Symbols[i].Price, sym.PrevPrice, "PrevPrice should be last tick's Price")
+		assert.Greater(t, sym.Price, 0.0, "price must stay positive")
+	}
+}
+
+func TestInitialSymbolsNonEmpty(t *testing.T) {
+	assert.NotEmpty(t, ticker.InitialSymbols())
+}
