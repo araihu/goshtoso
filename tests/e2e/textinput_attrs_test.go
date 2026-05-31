@@ -99,7 +99,7 @@ func TestTextInput_MaxLengthAttribute(t *testing.T) {
 	// Type more than 7 chars — browser should truncate
 	err = input.Fill("")
 	require.NoError(t, err)
-	err = input.Type("abcdefghij")
+	err = input.PressSequentially("abcdefghij")
 	require.NoError(t, err)
 	val, err := input.InputValue()
 	require.NoError(t, err)

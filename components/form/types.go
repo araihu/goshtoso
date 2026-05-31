@@ -234,14 +234,6 @@ type FieldMeta struct {
 	DependsOn string
 }
 
-// hasBuiltinField returns true if a built-in field type is configured
-func (c FieldGroupConfig) hasBuiltinField() bool {
-	return c.Input != nil || c.Combobox != nil ||
-		c.Textarea != nil || c.Toggle != nil || c.Checkbox != nil ||
-		c.TagsList != nil || c.KeyValue != nil || c.Triplet != nil ||
-		c.FileInput != nil
-}
-
 // ValidationConfig configures HTMX field validation
 type ValidationConfig struct {
 	// Endpoint is the hx-post URL for validation

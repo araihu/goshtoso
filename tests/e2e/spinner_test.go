@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -36,7 +37,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 
 	t.Run("Spinner_SVGs_Are_Rendered", func(t *testing.T) {
 		// Wait for Alpine.js
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Check that spinner SVGs exist on the page
 		spinners := page.Locator("svg.motion-safe\\:animate-spin")
@@ -47,7 +48,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 	})
 
 	t.Run("Spinner_Has_Correct_Attributes", func(t *testing.T) {
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Check first spinner has correct attributes
 		firstSpinner := page.Locator("svg.motion-safe\\:animate-spin").First()
@@ -63,7 +64,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 	})
 
 	t.Run("Spinner_Color_Variants_Exist", func(t *testing.T) {
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Check for color variant classes
 		variants := []string{
@@ -85,7 +86,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 	})
 
 	t.Run("Spinner_Size_Variants_Exist", func(t *testing.T) {
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Check for size variant classes
 		sizes := []string{"size-4", "size-5", "size-8", "size-12"}

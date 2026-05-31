@@ -54,24 +54,13 @@ func TestSteps_HTMXFlowProgressesAndRegresses(t *testing.T) {
 		HasText: "Back",
 	})
 
-	require.NoError(t, next.Click())
-	_, err = page.WaitForFunction(`() => {
-		const root = document.querySelector('#steps-htmx');
-		return root && root.getAttribute('data-current-step') === '3';
-	}`, nil, playwright.PageWaitForFunctionOptions{
-		Timeout: playwright.Float(3000),
-	})
-	require.NoError(t, err)
+	// The Next/Back buttons live inside #steps-demo-shell, which each click
+	// replaces via hx-swap="outerHTML". clickUntil re-fires a click dropped by
+	// the htmx rebind race (see its doc) so the regression step can't be lost.
+	clickUntil(t, page, next, `() => document.querySelector('#steps-htmx')?.getAttribute('data-current-step') === '3'`)
 	assert.Contains(t, currentStepLabel(), "Checkout")
 
-	require.NoError(t, back.Click())
-	_, err = page.WaitForFunction(`() => {
-		const root = document.querySelector('#steps-htmx');
-		return root && root.getAttribute('data-current-step') === '2';
-	}`, nil, playwright.PageWaitForFunctionOptions{
-		Timeout: playwright.Float(3000),
-	})
-	require.NoError(t, err)
+	clickUntil(t, page, back, `() => document.querySelector('#steps-htmx')?.getAttribute('data-current-step') === '2'`)
 	assert.Contains(t, currentStepLabel(), "Select a plan")
 
 	completedCount, err := page.Locator("#steps-htmx svg").Count()

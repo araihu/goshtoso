@@ -176,7 +176,7 @@ func generateAlpineData(cfg Config) string {
 		if interval <= 0 {
 			interval = 4000
 		}
-		b.WriteString(fmt.Sprintf(",autoplayIntervalTime:%d,isPaused:false,autoplayInterval:null,", interval))
+		fmt.Fprintf(&b, ",autoplayIntervalTime:%d,isPaused:false,autoplayInterval:null,", interval)
 		b.WriteString("autoplay:function(){this.autoplayInterval=setInterval(()=>{if(!this.isPaused){this.next()}},this.autoplayIntervalTime)},")
 		b.WriteString("setAutoplayInterval:function(t){clearInterval(this.autoplayInterval);this.autoplayIntervalTime=t;this.autoplay()}")
 	}
@@ -202,18 +202,18 @@ func slidesToJSON(slides []Slide) string {
 			b.WriteString(",")
 		}
 		b.WriteString("{")
-		b.WriteString(fmt.Sprintf("imgSrc:'%s',imgAlt:'%s'", jsEscape(s.ImgSrc), jsEscape(s.ImgAlt)))
+		fmt.Fprintf(&b, "imgSrc:'%s',imgAlt:'%s'", jsEscape(s.ImgSrc), jsEscape(s.ImgAlt))
 		if s.Title != "" {
-			b.WriteString(fmt.Sprintf(",title:'%s'", jsEscape(s.Title)))
+			fmt.Fprintf(&b, ",title:'%s'", jsEscape(s.Title))
 		}
 		if s.Description != "" {
-			b.WriteString(fmt.Sprintf(",description:'%s'", jsEscape(s.Description)))
+			fmt.Fprintf(&b, ",description:'%s'", jsEscape(s.Description))
 		}
 		if s.CTAUrl != "" {
-			b.WriteString(fmt.Sprintf(",ctaUrl:'%s'", jsEscape(s.CTAUrl)))
+			fmt.Fprintf(&b, ",ctaUrl:'%s'", jsEscape(s.CTAUrl))
 		}
 		if s.CTAText != "" {
-			b.WriteString(fmt.Sprintf(",ctaText:'%s'", jsEscape(s.CTAText)))
+			fmt.Fprintf(&b, ",ctaText:'%s'", jsEscape(s.CTAText))
 		}
 		b.WriteString("}")
 	}

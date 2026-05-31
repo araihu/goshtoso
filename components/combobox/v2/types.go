@@ -3,6 +3,7 @@ package v2
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -105,12 +106,7 @@ func (c Config) Validate() error {
 
 // IsSelected reports whether value is in the selected set.
 func (s State) IsSelected(value string) bool {
-	for _, v := range s.Selected {
-		if v == value {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(s.Selected, value)
 }
 
 // DepsSelector returns the CSS selector for dependency hidden inputs,

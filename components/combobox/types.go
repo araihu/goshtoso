@@ -1,5 +1,7 @@
 package combobox
 
+import "slices"
+
 // SelectionMode determines if combobox supports single or multi-select
 type SelectionMode string
 
@@ -191,12 +193,7 @@ func (cfg Config) HasSelection() bool {
 
 // IsSelected returns true if the given value is selected
 func (cfg Config) IsSelected(value string) bool {
-	for _, v := range cfg.Selected {
-		if v == value {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(cfg.Selected, value)
 }
 
 // GetSearchPlaceholder returns the search placeholder text

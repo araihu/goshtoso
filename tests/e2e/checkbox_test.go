@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -60,7 +61,7 @@ func TestCheckbox(t *testing.T) {
 		// Click to check
 		err := input.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		checked, err := input.IsChecked()
 		require.NoError(t, err)
@@ -69,7 +70,7 @@ func TestCheckbox(t *testing.T) {
 		// Click to uncheck
 		err = input.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		checked, err = input.IsChecked()
 		require.NoError(t, err)

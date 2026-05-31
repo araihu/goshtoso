@@ -542,7 +542,7 @@ func TestThemePage_PaletteVariablesExist(t *testing.T) {
 		return missing;
 	}`, nil)
 	require.NoError(t, err)
-	if arr, ok := missing.([]interface{}); ok {
+	if arr, ok := missing.([]any); ok {
 		assert.Empty(t, arr, "every Tailwind palette CSS variable should resolve")
 	}
 }

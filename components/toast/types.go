@@ -2,6 +2,7 @@ package toast
 
 import (
 	"fmt"
+	"strings"
 	"sync/atomic"
 )
 
@@ -187,16 +188,16 @@ func singleToastAlpineData(duration int) string {
 
 // jsEscapeSingle escapes single quotes and backslashes for safe JS string embedding
 func jsEscapeSingle(s string) string {
-	result := ""
+	var result strings.Builder
 	for _, c := range s {
 		switch c {
 		case '\'':
-			result += `\'`
+			result.WriteString(`\'`)
 		case '\\':
-			result += `\\`
+			result.WriteString(`\\`)
 		default:
-			result += string(c)
+			result.WriteString(string(c))
 		}
 	}
-	return result
+	return result.String()
 }

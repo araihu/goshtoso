@@ -3,6 +3,7 @@ package e2e
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -54,7 +55,7 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		err = trigger.Click()
 		require.NoError(t, err)
 		// Wait for Alpine.js animation
-		page.WaitForTimeout(600)
+		time.Sleep(600 * time.Millisecond)
 
 		// Should be open
 		expanded, err = trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -84,13 +85,13 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		if fmt.Sprintf("%v", expanded) == "true" {
 			err := trigger.Click()
 			require.NoError(t, err)
-			page.WaitForTimeout(300)
+			time.Sleep(300 * time.Millisecond)
 		}
 
 		// Open the dropdown
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(600)
+		time.Sleep(600 * time.Millisecond)
 
 		// Verify it's open
 		expanded, err = trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -132,12 +133,12 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		// Ensure closed first
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		time.Sleep(200 * time.Millisecond)
 		expanded, _ := trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		if fmt.Sprintf("%v", expanded) == "true" {
 			err = trigger.Click()
 			require.NoError(t, err)
-			page.WaitForTimeout(200)
+			time.Sleep(200 * time.Millisecond)
 		}
 
 		// Get initial class when closed
@@ -147,7 +148,7 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		// Open
 		err = trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(400)
+		time.Sleep(400 * time.Millisecond)
 
 		// Get class when open
 		openClass, err := svg.GetAttribute("class")
@@ -167,7 +168,7 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		require.NoError(t, err)
 		err = trigger.Press("Enter")
 		require.NoError(t, err)
-		page.WaitForTimeout(400)
+		time.Sleep(400 * time.Millisecond)
 
 		expanded, err := trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
@@ -176,7 +177,7 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		// Close with Escape
 		err = trigger.Press("Escape")
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		time.Sleep(300 * time.Millisecond)
 
 		expanded, err = trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
@@ -191,7 +192,7 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		// Open
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(400)
+		time.Sleep(400 * time.Millisecond)
 
 		// Verify open
 		expanded, _ := trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -200,7 +201,7 @@ func TestCombobox_SingleSelect(t *testing.T) {
 		// Click outside (on page title)
 		err = page.Locator("h1").First().Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		time.Sleep(300 * time.Millisecond)
 
 		// Should close
 		expanded, err = trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -239,7 +240,7 @@ func TestCombobox_MultiSelect(t *testing.T) {
 			WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 		})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		// Get trigger again after reload
 		trigger = page.Locator("#skills-trigger").First()
@@ -253,7 +254,7 @@ func TestCombobox_MultiSelect(t *testing.T) {
 		// Open
 		err = trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(1000)
+		time.Sleep(1000 * time.Millisecond)
 
 		// Find dropdown
 		dropdown := page.Locator("#skills-trigger").Locator("xpath=../div[@role='listbox']")
@@ -289,14 +290,14 @@ func TestCombobox_MultiSelect(t *testing.T) {
 			WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 		})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		trigger := page.Locator("#skills-trigger").First()
 
 		// Open
 		err = trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(1000)
+		time.Sleep(1000 * time.Millisecond)
 
 		// Get dropdown
 		dropdown := page.Locator("#skills-trigger").Locator("xpath=../div[@role='listbox']")
@@ -313,7 +314,7 @@ func TestCombobox_MultiSelect(t *testing.T) {
 		checkboxes := dropdown.Locator("ul[role='listbox'] input[type='checkbox']")
 
 		// Wait a bit more for Alpine.js to render the checkboxes
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		count, err = checkboxes.Count()
 		require.NoError(t, err)
@@ -351,14 +352,14 @@ func TestCombobox_MultiSelect(t *testing.T) {
 			WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 		})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		trigger := page.Locator("#skills-trigger").First()
 
 		// Open
 		err = trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(1000)
+		time.Sleep(1000 * time.Millisecond)
 
 		// Get dropdown
 		dropdown := page.Locator("#skills-trigger").Locator("xpath=../div[@role='listbox']")
@@ -426,7 +427,7 @@ func TestCombobox_WithSearch(t *testing.T) {
 		// Open
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(600)
+		time.Sleep(600 * time.Millisecond)
 
 		// Get dropdown
 		dropdown := page.Locator("#make-trigger").Locator("xpath=../div[@role='listbox']")
@@ -455,7 +456,7 @@ func TestCombobox_WithSearch(t *testing.T) {
 			Delay: playwright.Float(50),
 		})
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		value, err := searchInput.InputValue()
 		require.NoError(t, err)
@@ -491,7 +492,7 @@ func TestCombobox_WithImages(t *testing.T) {
 		// Open
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(600)
+		time.Sleep(600 * time.Millisecond)
 
 		// Should be open
 		expanded, err := trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -552,7 +553,7 @@ func TestCombobox_Disabled(t *testing.T) {
 		// Use TryClick which doesn't wait as long
 		_ = trigger.Click()
 
-		page.WaitForTimeout(200)
+		time.Sleep(200 * time.Millisecond)
 
 		// Should still be collapsed
 		expanded, err = trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -599,7 +600,7 @@ func TestCombobox_Preselected(t *testing.T) {
 		// Open
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(600)
+		time.Sleep(600 * time.Millisecond)
 
 		expanded, err := trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
@@ -654,7 +655,7 @@ func TestCombobox_CSSClassParity(t *testing.T) {
 		// Open to check dropdown classes
 		err = trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(400)
+		time.Sleep(400 * time.Millisecond)
 
 		// Check dropdown has required classes
 		dropdown := page.Locator("#industry-trigger").Locator("xpath=../div[@role='listbox']")
@@ -703,18 +704,18 @@ func TestCombobox_Events(t *testing.T) {
 		trigger := page.Locator("#industry-trigger").First()
 		err = trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(600)
+		time.Sleep(600 * time.Millisecond)
 
 		// Close it
 		err = trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		time.Sleep(200 * time.Millisecond)
 
 		// Check if we can access the events array
 		events, err := page.Evaluate(`() => window.comboboxEvents`)
 		require.NoError(t, err)
 
-		t.Logf("Event listener is active, captured %d events", len(events.([]interface{})))
+		t.Logf("Event listener is active, captured %d events", len(events.([]any)))
 		t.Log("✓ Change events can be captured")
 	})
 }

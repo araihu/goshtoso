@@ -3,6 +3,7 @@ package e2e
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -48,11 +49,11 @@ func TestComboboxV2_ClientMode_NoHTTPOnToggle(t *testing.T) {
 
 	trigger := page.Locator("#industry-trigger").First()
 	require.NoError(t, trigger.Click())
-	page.WaitForTimeout(300)
+	time.Sleep(300 * time.Millisecond)
 
 	option := page.Locator(`#industry [data-combobox-option][data-value="tech"]`).First()
 	require.NoError(t, option.Click())
-	page.WaitForTimeout(300)
+	time.Sleep(300 * time.Millisecond)
 
 	// 1. Option marked selected client-side.
 	aria, err := option.Evaluate("el => el.getAttribute('aria-selected')", nil)
@@ -108,13 +109,13 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 
 	trigger := page.Locator("#skills-trigger").First()
 	require.NoError(t, trigger.Click())
-	page.WaitForTimeout(300)
+	time.Sleep(300 * time.Millisecond)
 
 	// Toggle two options.
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())
-	page.WaitForTimeout(100)
+	time.Sleep(100 * time.Millisecond)
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="rust"]`).First().Click())
-	page.WaitForTimeout(100)
+	time.Sleep(100 * time.Millisecond)
 
 	// Trigger label shows "2 selected".
 	label, err := page.Locator(`#skills-trigger-label`).TextContent()
@@ -128,7 +129,7 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 
 	// Deselect "go" by clicking it again (toggle off).
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())
-	page.WaitForTimeout(100)
+	time.Sleep(100 * time.Millisecond)
 
 	// Label back to single-option label; one hidden input remains.
 	label, err = page.Locator(`#skills-trigger-label`).TextContent()
@@ -141,12 +142,12 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 
 	// Re-select "go" so we have 2 selected again, then use clear-all.
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())
-	page.WaitForTimeout(100)
+	time.Sleep(100 * time.Millisecond)
 
 	// Clear-all button visible now.
 	clearBtn := page.Locator(`#skills [data-combobox-clear]`).First()
 	require.NoError(t, clearBtn.Click())
-	page.WaitForTimeout(100)
+	time.Sleep(100 * time.Millisecond)
 
 	label, err = page.Locator(`#skills-trigger-label`).TextContent()
 	require.NoError(t, err)

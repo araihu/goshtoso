@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -32,7 +33,7 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		button := page.Locator("#dropdown-click button").First()
 
 		// Wait for Alpine.js to process x-show/x-cloak
-		page.WaitForFunction("() => { const m = document.querySelector('#dropdown-click [role=\"menu\"]'); return m && (m.style.display === 'none' || m.offsetParent === null); }", nil, playwright.PageWaitForFunctionOptions{
+		_, _ = page.WaitForFunction("() => { const m = document.querySelector('#dropdown-click [role=\"menu\"]'); return m && (m.style.display === 'none' || m.offsetParent === null); }", nil, playwright.PageWaitForFunctionOptions{
 			Timeout: playwright.Float(3000),
 		})
 
@@ -44,7 +45,7 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		// Click to open
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Menu should now be visible
 		menu := page.Locator("#dropdown-click [role='menu']")
@@ -55,7 +56,7 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		// Click again to close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		visible, err = menu.IsVisible()
 		require.NoError(t, err)
@@ -68,7 +69,7 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		button := page.Locator("#dropdown-click button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Check menu items
 		items := page.Locator("#dropdown-click [role='menuitem']")
@@ -84,14 +85,14 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		t.Log("Click dropdown has correct menu items")
 	})
 
 	t.Run("Aria_Expanded_Updates", func(t *testing.T) {
 		button := page.Locator("#dropdown-click button").First()
-		page.WaitForTimeout(150) // Wait for Alpine.js hydration
+		time.Sleep(150 * time.Millisecond) // Wait for Alpine.js hydration
 
 		// Initially aria-expanded should be false (Alpine.js binding)
 		expanded, err := button.Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -101,7 +102,7 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		// Click to open
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		expanded, err = button.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
@@ -110,7 +111,7 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		t.Log("aria-expanded updates correctly")
 	})
@@ -139,7 +140,7 @@ func TestDropdown_WithDividers(t *testing.T) {
 		button := page.Locator("#dropdown-divider button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Should have dividers (divide-y class on menu)
 		menu := page.Locator("#dropdown-divider [role='menu']")
@@ -156,7 +157,7 @@ func TestDropdown_WithDividers(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		t.Log("Divider dropdown has correct sections")
 	})
@@ -185,7 +186,7 @@ func TestDropdown_WithIcons(t *testing.T) {
 		button := page.Locator("#dropdown-icons button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Items should contain SVG icons
 		firstItem := page.Locator("#dropdown-icons [role='menuitem']").First()
@@ -197,7 +198,7 @@ func TestDropdown_WithIcons(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		t.Log("Icon dropdown has correct icons")
 	})
@@ -226,7 +227,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		button := page.Locator("#dropdown-context button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Menu should be visible
 		menu := page.Locator("#dropdown-context [role='menu']")
@@ -243,7 +244,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		t.Log("Context menu opens and shows items correctly")
 	})
@@ -252,7 +253,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		button := page.Locator("#dropdown-context button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Should show shortcut labels
 		undoItem := page.Locator("#dropdown-context [role='menuitem']").First()
@@ -264,7 +265,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		t.Log("Context menu shows keyboard shortcuts")
 	})
@@ -366,7 +367,7 @@ func TestDropdown_ActionsMenu(t *testing.T) {
 			return
 		}
 		require.NoError(t, trigger.Click())
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 	}
 
 	t.Run("IconOnly_Trigger_Has_AriaLabel_And_No_Chevron", func(t *testing.T) {
@@ -395,7 +396,7 @@ func TestDropdown_ActionsMenu(t *testing.T) {
 		assert.Equal(t, "button", tag, "OnClick item must render as <button>")
 
 		require.NoError(t, editItem.Click())
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Alpine state should reflect the click. Read the scoped x-data via the
 		// wrapper's __x.$data — the wrapping div is the closest ancestor with x-data.

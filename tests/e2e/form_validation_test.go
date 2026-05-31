@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -54,7 +55,7 @@ func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, val
 	require.NoError(t, err)
 
 	// Wait for the HTMX swap to settle
-	page.WaitForTimeout(500)
+	time.Sleep(500 * time.Millisecond)
 }
 
 // fillWithoutValidation sets input value directly without triggering events.
@@ -75,7 +76,7 @@ func TestFormValidation_SubmitEmpty(t *testing.T) {
 
 	// Submit without filling any fields
 	require.NoError(t, page.Locator("button[type='submit']").Click())
-	page.WaitForTimeout(800)
+	time.Sleep(800 * time.Millisecond)
 
 	// Check for error messages on all 3 required fields
 	nameErrors := page.Locator("#goshtoso-field-name > .text-danger")
@@ -109,7 +110,7 @@ func TestFormValidation_SubmitValid(t *testing.T) {
 
 	// Submit the form
 	require.NoError(t, page.Locator("button[type='submit']").Click())
-	page.WaitForTimeout(800)
+	time.Sleep(800 * time.Millisecond)
 
 	// Verify success message
 	successMsg := page.Locator("#form-result")

@@ -44,7 +44,7 @@ func ExtractClassesFromPage(t *testing.T, page playwright.Page, selector string)
 
 	var results []ElementClasses
 
-	for i := 0; i < count; i++ {
+	for i := range count {
 		locator := locators.Nth(i)
 
 		// Get tag name
@@ -78,12 +78,9 @@ func CompareElementClasses(t *testing.T, originalClasses, goshtosoClasses []Elem
 
 	var results []ClassComparisonResult
 
-	minLen := len(originalClasses)
-	if len(goshtosoClasses) < minLen {
-		minLen = len(goshtosoClasses)
-	}
+	minLen := min(len(goshtosoClasses), len(originalClasses))
 
-	for i := 0; i < minLen; i++ {
+	for i := range minLen {
 		orig := originalClasses[i]
 		goshtoso := goshtosoClasses[i]
 

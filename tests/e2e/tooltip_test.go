@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -67,7 +68,7 @@ func TestTooltip_DefaultHover(t *testing.T) {
 		trigger := page.Locator("[aria-describedby='demoTop']")
 		err := trigger.Hover()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Tooltip should become visible via peer-hover
 		tooltip := page.Locator("#demoTop")
@@ -136,7 +137,7 @@ func TestTooltip_ClickTooltip(t *testing.T) {
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
-	page.WaitForTimeout(150) // Wait for Alpine.js
+	time.Sleep(150 * time.Millisecond) // Wait for Alpine.js
 
 	t.Run("Click_Tooltip_Initially_Hidden", func(t *testing.T) {
 		tooltip := page.Locator("#clickTop")
@@ -151,7 +152,7 @@ func TestTooltip_ClickTooltip(t *testing.T) {
 		trigger := page.Locator("[aria-describedby='clickTop']")
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Tooltip should be visible
 		tooltip := page.Locator("#clickTop")
@@ -166,13 +167,13 @@ func TestTooltip_ClickTooltip(t *testing.T) {
 		trigger := page.Locator("[aria-describedby='clickTop']")
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Click outside (use body to ensure it's a valid target)
-		page.Locator("body").Click(playwright.LocatorClickOptions{
+		_ = page.Locator("body").Click(playwright.LocatorClickOptions{
 			Position: &playwright.Position{X: 10, Y: 10},
 		})
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Tooltip should be hidden
 		tooltip := page.Locator("#clickTop")

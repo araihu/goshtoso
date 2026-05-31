@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
@@ -135,7 +136,7 @@ func TestTextInput_GoshtosoComponent(t *testing.T) {
 	})
 
 	t.Run("PasswordToggleWorks", func(t *testing.T) {
-		page.WaitForTimeout(150) // Wait for Alpine.js
+		time.Sleep(150 * time.Millisecond) // Wait for Alpine.js
 
 		input := page.Locator("#passwordInput")
 
@@ -149,7 +150,7 @@ func TestTextInput_GoshtosoComponent(t *testing.T) {
 		err = toggleBtn.Click()
 		require.NoError(t, err)
 
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Should now be text type
 		inputType, err = input.GetAttribute("type")
@@ -160,7 +161,7 @@ func TestTextInput_GoshtosoComponent(t *testing.T) {
 		err = toggleBtn.Click()
 		require.NoError(t, err)
 
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Should be back to password
 		inputType, err = input.GetAttribute("type")

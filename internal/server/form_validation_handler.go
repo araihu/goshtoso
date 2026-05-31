@@ -125,7 +125,7 @@ func validateDemoField(ctx validation.ValidationContext, name string, fg *form.F
 func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		// Render the demo page (same as /components/form-validation)
-		components.FormValidationDemoPage().Render(r.Context(), w)
+		_ = components.FormValidationDemoPage().Render(r.Context(), w)
 		return
 	}
 
@@ -133,7 +133,7 @@ func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
 	result := validation.Handle(r, def, validateDemoField)
 
 	if validation.IsFieldValidation(r) {
-		validation.RenderFieldResponse(r.Context(), w, *result)
+		_ = validation.RenderFieldResponse(r.Context(), w, *result)
 		return
 	}
 
@@ -141,7 +141,7 @@ func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
 	if !result.Valid {
 		// Re-render the form section with validation errors
 		w.Header().Set("Content-Type", "text/html")
-		components.FormValidationFormSection(
+		_ = components.FormValidationFormSection(
 			def.Fields["name"].FieldGroup,
 			def.Fields["slug"].FieldGroup,
 			def.Fields["email"].FieldGroup,
@@ -151,5 +151,5 @@ func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
 
 	// Success
 	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(`<div class="p-6 text-center text-success font-medium">Form submitted successfully!</div>`))
+	_, _ = w.Write([]byte(`<div class="p-6 text-center text-success font-medium">Form submitted successfully!</div>`))
 }

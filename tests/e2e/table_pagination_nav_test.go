@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -92,7 +93,7 @@ func TestTablePaginationNav(t *testing.T) {
 
 		err = page2Link.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500) // Wait for HTMX swap + OOB
+		time.Sleep(500 * time.Millisecond) // Wait for HTMX swap + OOB
 	})
 
 	t.Run("Page2_RowsChanged", func(t *testing.T) {
@@ -159,7 +160,7 @@ func TestTablePaginationNav(t *testing.T) {
 		page4Link := page.Locator("#paginated-table-pagination a[aria-label='page 4']")
 		err := page4Link.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 	})
 
 	t.Run("Page4_RowsAreLastRecords", func(t *testing.T) {
@@ -201,19 +202,19 @@ func TestTablePaginationNav(t *testing.T) {
 		// Page 4 -> 3
 		err := prevLink.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		// Page 3 -> 2
 		prevLink = page.Locator("#paginated-table-pagination a[aria-label='previous page']")
 		err = prevLink.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		// Page 2 -> 1
 		prevLink = page.Locator("#paginated-table-pagination a[aria-label='previous page']")
 		err = prevLink.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 	})
 
 	t.Run("BackOnPage1_StateRestored", func(t *testing.T) {
@@ -240,7 +241,7 @@ func TestTablePaginationNav(t *testing.T) {
 		nextLink := page.Locator("#paginated-table-pagination a[aria-label='next page']")
 		err := nextLink.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		pageInfo, err := page.Locator("#paginated-table-pagination").TextContent()
 		require.NoError(t, err)

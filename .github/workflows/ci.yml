@@ -15,6 +15,7 @@ env:
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.5700.1'
   TAILWIND_VERSION: 'v4.3.0'
+  GOLANGCI_LINT_VERSION: 'v2.12.2'
 
 jobs:
   lint-build:
@@ -67,6 +68,13 @@ jobs:
 
       - name: go vet
         run: go vet ./...
+
+      - name: golangci-lint
+        run: |
+          set -euo pipefail
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
+            | sh -s -- -b "$(go env GOPATH)/bin" "${GOLANGCI_LINT_VERSION}"
+          "$(go env GOPATH)/bin/golangci-lint" run --timeout 5m
 
       - name: Build server
         run: go build -o bin/server ./cmd/server

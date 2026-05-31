@@ -53,7 +53,7 @@ func TestAccordion_GoshtosoComponent(t *testing.T) {
 
 		err := firstButton.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		expanded, err := firstButton.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
@@ -143,7 +143,7 @@ func TestAccordion_Variants(t *testing.T) {
 		require.NoError(t, err)
 
 		found := false
-		for i := 0; i < count; i++ {
+		for i := range count {
 			classAttr, err := accordions.Nth(i).GetAttribute("class")
 			require.NoError(t, err)
 			// NoBackground has bg-surface but not bg-surface-alt
@@ -173,11 +173,11 @@ func TestAccordion_Variants(t *testing.T) {
 		// Click first, then second
 		err = buttons.Nth(0).Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		err = buttons.Nth(1).Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		expanded0, _ := buttons.Nth(0).Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		expanded1, _ := buttons.Nth(1).Evaluate("el => el.getAttribute('aria-expanded')", nil)
@@ -244,7 +244,7 @@ func TestAccordion_Accessibility(t *testing.T) {
 
 		err = page.Keyboard().Press("Enter")
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		expanded, err := firstButton.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
@@ -252,7 +252,7 @@ func TestAccordion_Accessibility(t *testing.T) {
 
 		err = page.Keyboard().Press("Enter")
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		collapsed, err := firstButton.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
@@ -291,8 +291,8 @@ func TestAccordion_AllThemes(t *testing.T) {
 
 		screenshotPath := filepath.Join(screenshotDir, fmt.Sprintf("accordion-theme-default-%d.png", time.Now().Unix()))
 		_, err := page.Screenshot(playwright.PageScreenshotOptions{
-			Path:     playwright.String(screenshotPath),
-			FullPage: playwright.Bool(false),
+			Path:     new(screenshotPath),
+			FullPage: new(false),
 		})
 		require.NoError(t, err)
 
@@ -307,7 +307,7 @@ func TestAccordion_AllThemes(t *testing.T) {
 		toggleBtn := page.Locator("#darkModeToggleBtn")
 		err = toggleBtn.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		hasDarkAfter, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
 		require.NoError(t, err)

@@ -45,7 +45,30 @@ go test ./tests/e2e/... -count=1 -timeout 5m -run TestDropdown
 
 # Build server binary
 go build -o bin/server ./cmd/server
+
+# Lint (gates PRs in CI — must be clean before merge)
+golangci-lint run
+
+# Apply go fix modernizations (also runs automatically via the pre-commit hook)
+go fix ./...
 ```
+
+### Linting & modernization
+
+- **golangci-lint** gates every PR (`lint-build` job in `.github/workflows/ci.yml`).
+  Config is `.golangci.yml`: the standard linters (errcheck, govet, ineffassign,
+  staticcheck, unused) plus **cyclop** with a hard **cyclomatic-complexity ceiling
+  of 20**. Keep new functions under 20 — extract helpers instead of suppressing.
+- Generated `*_templ.go` files are excluded from linting (strict generated header).
+- **`go fix`** ([go.dev/blog/gofix](https://go.dev/blog/gofix)) applies AST-safe
+  modernizations (e.g. `slices.Contains`, `min`, `for i := range n`). It runs via
+  the committed **pre-commit hook** — enable it once per clone:
+  ```bash
+  git config core.hooksPath .githooks
+  ```
+  The hook applies `go fix ./...`, never touches generated files, and re-stages
+  any modernized staged files (review with `git diff --cached`, then commit again).
+  It is intentionally NOT a CI gate — run `go fix ./...` locally before committing.
 
 ## Repository Structure
 
@@ -224,6 +247,21 @@ Key helpers:
 - Playwright `Locator.Fill()` does NOT fire a native `input` event — Alpine
   `x-model` won't update. Tests using debounced inputs must dispatch `input`
   manually (`fillSearchInput` helper).
+
+### HTMX swap rebind race — clicking a just-swapped control
+
+When a click triggers an HTMX swap that **replaces the control itself**
+(`hx-swap="outerHTML"` on a wrapper, or a thead/paginator OOB swap), htmx
+re-binds the swapped-in element a beat *after* it appears in the DOM. A test
+that clicks the new control in that window fires **no request** — the state
+never advances and the click is lost forever. This is load-sensitive: it passes
+in isolation but fails under full-suite browser pressure (it sank `TestSteps`
+and `TestTableHTMX_SortCycling`).
+
+Don't wait on a proxy attribute then click — use the **`clickUntil(t, page,
+loc, jsCondition)`** helper (`e2e_test.go`). It clicks and waits for the
+condition, re-firing only when state hasn't moved (a lost click fires no
+request, so it never double-advances a stateful control).
 
 ## Table Component
 
