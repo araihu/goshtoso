@@ -1,7 +1,7 @@
 # Live Ticker (SSE) — Example App Design
 
 **Date:** 2026-05-31
-**Branch:** `example-live-ticker-sse`
+**Branch:** `worktree-example-live-ticker-sse`
 **Status:** Approved design, pre-implementation
 
 ## Summary
@@ -41,6 +41,29 @@ symbol), **Spinner** (connection state), **Toggle** (pause/resume).
 | SSE transport | Bundle the htmx SSE extension (`sse.js`); server pushes HTML |
 | Scope | Watchlist board (Table + spotlight Card + Spinner + pause Toggle) |
 
+## Components used (vs hand-rolled)
+
+**Hard requirement: lean on real Goshtoso components, not hand-rolled markup.**
+The point of an example is to show the library in real use. Verified feasibility:
+
+| Need | Goshtoso component | How it carries the SSE/Alpine wiring |
+|------|--------------------|--------------------------------------|
+| Live board | **`table`** | `table.Cell.Attributes` (per-cell `templ.Attributes`) carries `sse-swap="<SYM>"` on each price/change cell; `table.Row.Attributes` carries the row's `hx-get` spotlight trigger. Confirmed: `Cell{Value, Badge *badge.Config, Raw templ.Component, Attributes templ.Attributes}` and `Row{Cells, Attributes}` already exist. |
+| Up/down change | **`badge`** | `table.Cell.Badge` renders the direction badge inline in the cell; the SSE-pushed cell fragment re-renders the same `badge` component (green/red) per tick. |
+| Spotlight | **`card`** | Card wrapper holds the selected symbol; body via `card` slots / `Cell.Raw`-style component composition. The wrapper element carries `sse-swap="<selected>"`. |
+| Connection state | **`spinner`** | Shown while the SSE connection is opening / on the htmx `sse:open` vs pre-connect state. |
+| Pause / resume | **`toggle`** | Drives the Alpine wrapper that opens/closes the `EventSource`. |
+
+The **SSE connection root** (`hx-ext="sse" sse-connect=…`) sits on the table's
+wrapping element — set via the table config's wrapper attributes if exposed, else
+a thin wrapping `<div>` around `@table.Table(cfg)` (a wrapper div is acceptable;
+the *cells, rows, badges, card, spinner, toggle* are all real components).
+
+**If a real component genuinely lacks a hook** (as happened in Todo with
+icon-only buttons / raw checkboxes), document why before falling back to raw
+markup — do not hand-roll by default. Prefer a small, upstreamable extension to
+the component over a one-off raw element.
+
 ## Architecture
 
 Three layers, mirroring the Todo example.
@@ -66,9 +89,11 @@ Three layers, mirroring the Todo example.
   `Card`, a connection `Spinner`, and a pause/resume `Toggle`. Follows the
   example/demo registry render path so theme, dark mode, and fragment-swap nav
   come for free.
-- **Fragment helpers** rendered server-side and reused by the SSE handler:
-  - per-symbol price/change cell (the unit pushed on each tick),
-  - spotlight card body for a given symbol.
+- **Fragment helpers** rendered server-side and reused by the SSE handler. These
+  render *real components*, not bespoke HTML:
+  - per-symbol price/change cell content — renders the `badge` component for
+    direction (the unit pushed on each tick),
+  - spotlight `card` body for a given symbol.
 
 ### 3. Handler — `internal/server/ticker_handler.go`
 
