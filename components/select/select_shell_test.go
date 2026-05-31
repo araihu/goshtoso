@@ -32,7 +32,10 @@ func TestSelect_ShellMode_RendersValueExprAndChildren(t *testing.T) {
 
 	assert.Contains(t, html, `x-data="{ isOpen: false, openedWithKeyboard: false }"`)
 	assert.NotContains(t, html, "allOptions")
-	assert.Contains(t, html, `x-text="classLabel('surface')"`)
+	// templ HTML-escapes single quotes in dynamic { } attribute values; the
+	// browser decodes them before Alpine reads the attribute, so this works at
+	// runtime — the same path the original colorRow used in production.
+	assert.Contains(t, html, `x-text="classLabel(&#39;surface&#39;)"`)
 	assert.Contains(t, html, "select-close")
 	assert.Contains(t, html, "data-test-body")
 	assert.Equal(t, 0, strings.Count(html, `role="option"`))

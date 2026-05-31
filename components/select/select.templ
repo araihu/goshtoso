@@ -2,13 +2,6 @@ package selectfield
 
 import "fmt"
 
-// shellValueSpan builds the trigger value <span> for shell mode as raw HTML so
-// the Alpine x-text expression (which contains single quotes) is emitted
-// verbatim rather than HTML-escaped by templ's attribute writer.
-func shellValueSpan(valueExpr string) string {
-	return fmt.Sprintf(`<span class="truncate text-sm font-normal" x-text="%s"></span>`, valueExpr)
-}
-
 // Select renders a custom dropdown select with Alpine.js, matching
 // the combobox component styling. Supports validation states,
 // disabled/readonly, Alpine.js binding, and hidden input for form submission.
@@ -61,7 +54,7 @@ templ Select(cfg Config) {
 					if cfg.TriggerLeading != nil {
 						@cfg.TriggerLeading
 					}
-					@templ.Raw(shellValueSpan(cfg.ValueExpr))
+					<span class="truncate text-sm font-normal" x-text={ cfg.ValueExpr }></span>
 				} else {
 					<span class="truncate text-sm font-normal" x-text="selectedOption ? selectedOption.label : placeholder"></span>
 				}
