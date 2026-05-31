@@ -120,6 +120,13 @@ Each component is `components/<name>/` with:
 
 ## Critical Rules
 
+### Always work in a git worktree
+
+Make changes in an isolated git worktree, never directly on a shared branch in
+the main checkout. Use the `superpowers:using-git-worktrees` skill to create one
+before starting feature work, bugfixes, or any non-trivial edit. This keeps the
+main checkout clean and lets multiple changes proceed without collision.
+
 ### Templ escaping — the #1 source of bugs
 
 Templ's `EscapeString` converts `"` → `&quot;`, `'` → `&#39;`, `&` → `&amp;` in

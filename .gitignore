@@ -68,3 +68,4 @@ tests/e2e/test-results/
 dist/
 build/
 og-site/
+.claude/scheduled_tasks.lock
