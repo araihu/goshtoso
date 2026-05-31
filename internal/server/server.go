@@ -40,6 +40,11 @@ func (s *Server) setupRoutes() {
 	// Component comparison pages
 	s.mux.HandleFunc("/components/", s.handleComponent)
 
+	// Examples pages
+	s.mux.HandleFunc("/examples", s.handleExample)
+	s.mux.HandleFunc("/examples/", s.handleExample)
+	s.registerTodoRoutes()
+
 	// API endpoints for HTMX demos
 	s.mux.HandleFunc("/api/hello", s.handleAPIHello)
 	s.mux.HandleFunc("/api/components/button", s.handleButtonFragment)
@@ -80,6 +85,21 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 	}
 	componentName := strings.Split(path, "/")[0]
 	s.renderDemo(w, r, "components/"+componentName)
+}
+
+func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
+	// Strip leading "/examples" then any leading slash → canonical name.
+	sub := strings.TrimPrefix(r.URL.Path, "/examples")
+	sub = strings.TrimPrefix(sub, "/")
+
+	switch sub {
+	case "", "index":
+		s.renderDemo(w, r, "examples")
+	case "todo":
+		s.renderTodoPage(w, r)
+	default:
+		http.NotFound(w, r)
+	}
 }
 
 // renderDemo picks the Layout (full document) or Fragment (HTMX swap) renderer

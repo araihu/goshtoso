@@ -1,6 +1,9 @@
 package components
 
-import "github.com/a-h/templ"
+import (
+	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/internal/pages/demo/examples"
+)
 
 // DemoEntry describes a single navigable demo page: its title for <title>
 // and the sidebar "active" key used by Layout/sidebar to highlight the
@@ -57,6 +60,8 @@ var Demos = map[string]DemoEntry{
 	"components/triplet":         {"Triplet", "triplet", tripletDemoContent},
 	"docs/theme":                 {"Theme", "theme", themeDemoContent},
 	"getting-started":            {"Getting Started", "", gettingStartedContent},
+	"examples":                   {"Examples", "examples", examples.IndexContent},
+	"examples/todo":              {"Todo List", "todo", examples.TodoContent},
 }
 
 // LookupDemo returns the entry for a given canonical key (no leading slash).
