@@ -68,7 +68,13 @@ func TestTicker_TableFilterServerSide(t *testing.T) {
 	require.NoError(t, err)
 	tickerCellText(t, page, "AAPL") // table rendered with all rows
 
-	fillSearchInput(t, page, "NVDA")
+	// Fill the ticker table's own search input (the shared fillSearchInput helper
+	// is hardcoded to the components-demo table id). Dispatch input so Alpine's
+	// x-model + debounced applyFilters() fires the htmx.ajax to the rows endpoint.
+	search := page.Locator("#ticker-table-filters-search")
+	require.NoError(t, search.Fill("NVDA"))
+	_, err = search.Evaluate(`(el) => el.dispatchEvent(new Event('input', {bubbles: true}))`, nil)
+	require.NoError(t, err)
 	_, err = page.WaitForFunction(
 		"() => { const b = document.querySelector('#ticker-table-tbody'); "+
 			"return b && b.querySelector('#ticker-cell-NVDA') && !b.querySelector('#ticker-cell-AAPL'); }",
