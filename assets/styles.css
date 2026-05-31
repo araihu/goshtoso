@@ -1101,6 +1101,9 @@
   .max-w-none {
     max-width: none;
   }
+  .max-w-prose {
+    max-width: 65ch;
+  }
   .max-w-sm {
     max-width: var(--container-sm);
   }
