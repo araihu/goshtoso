@@ -64,14 +64,17 @@ func tripletDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"triplet-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Triplet",
-				Description: "Dynamic 3-field rows for key-value-effect data (e.g., Kubernetes taints). Each row has two text inputs and a dropdown. Powered by Alpine.js.",
+				Description: "Dynamic 3-field rows for key-value-effect data (e.g. Kubernetes taints). Each row has two text inputs and an effect dropdown. Powered by Alpine.js.",
 			},
-			tripletDemoPreview(),
-			`// Triplet (K8s Taints example)
-@triplet.Triplet(triplet.Config{
+			tripletTaintsPreview(),
+			`@triplet.Triplet(triplet.Config{
     ID:   "taints",
     Name: "taints",
     Entries: []triplet.Entry{
@@ -79,7 +82,6 @@ func tripletDemoContent() templ.Component {
     },
     EffectOptions: []triplet.EffectOption{
         {Value: "NoSchedule", Display: "NoSchedule"},
-        {Value: "PreferNoSchedule", Display: "PreferNoSchedule"},
         {Value: "NoExecute", Display: "NoExecute"},
     },
     KeyPlaceholder:   "key",
@@ -90,11 +92,52 @@ func tripletDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Generic Priority Rows",
+				Description: "The same component with a different EffectOptions set and no initial Entries.",
+			},
+			tripletGenericPreview(),
+			`@triplet.Triplet(triplet.Config{
+    ID:   "rules",
+    Name: "rules",
+    EffectOptions: []triplet.EffectOption{
+        {Value: "high", Display: "High"},
+        {Value: "low", Display: "Low"},
+    },
+    KeyPlaceholder:   "rule name",
+    ValuePlaceholder: "condition",
+    AddLabel:         "Add rule",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the triplet root (Alpine scope)."},
+			{Name: "Name", Type: "string", Default: `""`, Description: "Base form field name for the submitted rows."},
+			{Name: "Entries", Type: "[]Entry", Default: "nil", Description: "Initial rows (Key, Value, Effect)."},
+			{Name: "EffectOptions", Type: "[]EffectOption", Default: "nil", Description: "Options for the per-row effect dropdown (Value, Display)."},
+			{Name: "DefaultEffect", Type: "string", Default: `""`, Description: "Effect value applied to newly added rows."},
+			{Name: "KeyPlaceholder", Type: "string", Default: `""`, Description: "Placeholder for the key input."},
+			{Name: "ValuePlaceholder", Type: "string", Default: `""`, Description: "Placeholder for the value input."},
+			{Name: "AddLabel", Type: "string", Default: `"Add"`, Description: "Label of the add-row button."},
+			{Name: "Disabled", Type: "bool", Default: "false", Description: "Render read-only rows."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }
 
-func tripletDemoPreview() templ.Component {
+// tripletTaintsPreview renders the Kubernetes-taints example.
+func tripletTaintsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -115,7 +158,7 @@ func tripletDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Kubernetes Taints</h4><div class=\"max-w-2xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"triplet-taints\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -137,7 +180,37 @@ func tripletDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Generic Priority Rows</h4><div class=\"max-w-2xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// tripletGenericPreview renders the generic priority-rows example.
+func tripletGenericPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"triplet-generic\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -156,7 +229,7 @@ func tripletDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

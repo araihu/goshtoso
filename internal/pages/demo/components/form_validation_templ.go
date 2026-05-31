@@ -66,6 +66,10 @@ func formValidationDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"form-validation-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Form Validation",
@@ -74,6 +78,24 @@ func formValidationDemoContent() templ.Component {
 			formValidationDemoPreview(),
 			formValidationDemoCode,
 		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "FormDef.FormID", Type: "string", Default: `""`, Description: "DOM id of the form (must match form.Config.ID)."},
+			{Name: "FormDef.Endpoint", Type: "string", Default: `""`, Description: "Server URL that handles field + full-form validation requests."},
+			{Name: "FormDef.Fields", Type: "map[string]*FieldDef", Default: "nil", Description: "Per-field definitions keyed by field name."},
+			{Name: "FieldDef.Name", Type: "string", Default: `""`, Description: "Form field name (matches the input's Name)."},
+			{Name: "FieldDef.FieldGroup", Type: "*form.FieldGroupConfig", Default: "nil", Description: "The field's FieldGroup (label, input, hints, errors)."},
+			{Name: "FieldDef.OnChange", Type: "bool", Default: "false", Description: "Validate this field on change (blur), not just on submit."},
+			{Name: "FieldDef.DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this field's validation (e.g. slug depends on name)."},
+			{Name: "def.Bind()", Type: "method", Default: "—", Description: "Wires HTMX attributes + metadata onto each FieldGroup; call once after defining."},
+			{Name: "validation.Handle", Type: "func", Default: "—", Description: "Server entry point: routes field vs full-form requests and runs your per-field validator."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -160,7 +182,7 @@ func formValidationDemoPreview() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		def := buildDemoValidationFormDef()
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-2xl mx-auto space-y-6\"><div><h4 class=\"mb-2 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Try it out</h4><p class=\"mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Type in the fields below and tab out to see validation in action. The slug field auto-generates from name. Try \"admin\", \"test\", or \"demo\" as slugs to see the uniqueness check.</p></div><div id=\"form-result\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-2xl mx-auto space-y-6\"><div><h4 class=\"mb-2 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Try it out</h4><p class=\"mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Type in the fields below and tab out to see validation in action. The slug field auto-generates from name. Try \"admin\", \"test\", or \"demo\" as slugs to see the uniqueness check.</p></div><div id=\"form-result\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -172,7 +194,7 @@ func formValidationDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -267,7 +289,7 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -275,7 +297,7 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

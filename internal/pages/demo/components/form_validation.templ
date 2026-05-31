@@ -13,14 +13,29 @@ templ FormValidationDemoPage() {
 }
 
 templ formValidationDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:       "Form Validation",
-			Description: "Server-side field validation with HTMX. Fields validate on change, dependent fields update automatically (e.g. slug from name), and full-form submit validates everything at once.",
-		},
-		formValidationDemoPreview(),
-		formValidationDemoCode,
-	)
+	<div id="form-validation-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Form Validation",
+				Description: "Server-side field validation with HTMX. Fields validate on change, dependent fields update automatically (e.g. slug from name), and full-form submit validates everything at once.",
+			},
+			formValidationDemoPreview(),
+			formValidationDemoCode,
+		)
+	</div>
+	// API reference lives outside #form-validation-fragment. These document the
+	// validation package types used to wire up HTMX field validation.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "FormDef.FormID", Type: "string", Default: `""`, Description: "DOM id of the form (must match form.Config.ID)."},
+		{Name: "FormDef.Endpoint", Type: "string", Default: `""`, Description: "Server URL that handles field + full-form validation requests."},
+		{Name: "FormDef.Fields", Type: "map[string]*FieldDef", Default: "nil", Description: "Per-field definitions keyed by field name."},
+		{Name: "FieldDef.Name", Type: "string", Default: `""`, Description: "Form field name (matches the input's Name)."},
+		{Name: "FieldDef.FieldGroup", Type: "*form.FieldGroupConfig", Default: "nil", Description: "The field's FieldGroup (label, input, hints, errors)."},
+		{Name: "FieldDef.OnChange", Type: "bool", Default: "false", Description: "Validate this field on change (blur), not just on submit."},
+		{Name: "FieldDef.DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this field's validation (e.g. slug depends on name)."},
+		{Name: "def.Bind()", Type: "method", Default: "—", Description: "Wires HTMX attributes + metadata onto each FieldGroup; call once after defining."},
+		{Name: "validation.Handle", Type: "func", Default: "—", Description: "Server entry point: routes field vs full-form requests and runs your per-field validator."},
+	})
 }
 
 var formValidationDemoCode = `// 1. Define the form fields and validation rules
