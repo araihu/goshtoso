@@ -1,10 +1,25 @@
 #!/usr/bin/env bash
 #
-# Goshtoso pre-commit hook — apply `go fix` modernizations automatically.
-# See https://go.dev/blog/gofix. Generated templ files (*_templ.go) are never
-# touched. Enable once with:  git config core.hooksPath .githooks
+# Goshtoso pre-commit hook. Two jobs:
+#   1. Regenerate the using-goshtoso skill reference when a component changes.
+#   2. Apply `go fix` modernizations automatically (https://go.dev/blog/gofix).
+# Generated templ files (*_templ.go) are never modernized. Enable once with:
+#   git config core.hooksPath .githooks
 #
 set -euo pipefail
+
+# --- Keep the using-goshtoso skill reference in sync with component source ----
+# The reference is generated from components/*/types.go and the entry-point
+# signatures in *_templ.go, so detect either. Regenerate and re-stage it.
+comp_staged=$(git diff --cached --name-only --diff-filter=d | grep '^components/.*\.go$' || true)
+if [ -n "$comp_staged" ]; then
+  go run ./scripts/skillgen >/dev/null 2>&1 || true
+  ref=".claude/skills/using-goshtoso/components-reference.md"
+  if [ -f "$ref" ] && ! git diff --quiet -- "$ref"; then
+    git add -- "$ref"
+    echo "skillgen: regenerated and staged $ref"
+  fi
+fi
 
 # Bail early unless this commit stages a non-generated Go file.
 staged=$(git diff --cached --name-only --diff-filter=d | grep '\.go$' | grep -v '_templ\.go$' || true)

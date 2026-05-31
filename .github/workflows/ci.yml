@@ -51,6 +51,12 @@ jobs:
           git diff --exit-code -- assets/styles.css \
             || { echo "::error::tailwind drift — run 'tailwindcss -i css/main.css -o assets/styles.css' and commit"; exit 1; }
 
+      - name: using-goshtoso skill reference drift check
+        run: |
+          go run ./scripts/skillgen
+          git diff --exit-code -- .claude/skills/using-goshtoso/components-reference.md \
+            || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./scripts/skillgen' and commit"; exit 1; }
+
       - name: go mod tidy drift check
         run: |
           go mod tidy

@@ -114,6 +114,11 @@ goshtoso/
 5. **Add to sidebar** — Add entry in `internal/pages/demo/layout.templ:getSidebarItems()`
 6. **Write E2E tests** — `tests/e2e/<name>_test.go`
 7. **Build & verify** — `templ generate && go build -o bin/server ./cmd/server`
+8. **Sync the usage skill** — `go run ./scripts/skillgen` regenerates
+   `.claude/skills/using-goshtoso/components-reference.md` from the component
+   source. The pre-commit hook does this automatically when `components/**.go`
+   is staged; CI fails if it is stale. Run it after any change to a component's
+   `types.go` or entry points. Never hand-edit the generated reference.
 
 Each component is `components/<name>/` with:
 - `types.go` — Config struct, variant constants, CSS class methods
