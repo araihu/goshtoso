@@ -144,3 +144,36 @@ func TestLogFeed_ClearEmptiesFeed(t *testing.T) {
 	_, err = page.WaitForFunction("() => document.querySelectorAll('#log-feed .log-row').length === 0", nil)
 	require.NoError(t, err)
 }
+
+// TestLogFeed_SidebarScrollPreservedDuringStream guards a layout regression: the
+// global htmx:afterSwap sidebar-scroll restore used to fire on EVERY htmx swap,
+// so each SSE log append snapped the nav sidebar back to the top. The restore is
+// now gated to #main-content (page-nav) swaps only; an in-page feed swap must
+// leave the nav scroll position alone.
+func TestLogFeed_SidebarScrollPreservedDuringStream(t *testing.T) {
+	page := newIsolatedPage(t)
+	// Force the nav list to overflow so it is actually scrollable (width >= lg so
+	// the sidebar is visible; short height so the component list overflows).
+	require.NoError(t, page.SetViewportSize(1100, 600))
+	gotoLogs(t, page)
+	waitForRows(t, page)
+
+	// Scroll the nav sidebar down and confirm it moved.
+	scrolled, err := page.Evaluate("() => { const sb = document.querySelector('.sidebar-scroll'); sb.scrollTop = 120; return sb.scrollTop; }")
+	require.NoError(t, err)
+	require.Greater(t, toInt(scrolled), 0, "nav sidebar must be scrollable for this test to be meaningful")
+	start := toInt(scrolled)
+
+	// Let several more SSE rows stream in — each previously reset the sidebar.
+	v, err := page.Evaluate("() => document.querySelectorAll('#log-feed .log-row').length")
+	require.NoError(t, err)
+	base := toInt(v)
+	_, err = page.WaitForFunction(
+		fmt.Sprintf("() => document.querySelectorAll('#log-feed .log-row').length >= %d", base+3), nil)
+	require.NoError(t, err)
+
+	// Sidebar scroll position must be unchanged by the log appends.
+	after, err := page.Evaluate("() => document.querySelector('.sidebar-scroll').scrollTop")
+	require.NoError(t, err)
+	require.Equal(t, start, toInt(after), "nav sidebar scroll must not reset while logs stream")
+}

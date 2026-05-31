@@ -55,12 +55,15 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					if (e && e.detail && e.detail.target && window.Alpine && Alpine.initTree) {
 						Alpine.initTree(e.detail.target);
 					}
-					var sb = document.querySelector('.sidebar-scroll');
-					if (sb) sb.scrollTop = __sidebarScrollTop;
-					// Only reset main scroll on full page-nav swaps (target = #main-content).
-					// In-page lazy swaps (accordions, tabs, table rows) must preserve scroll.
+					// Sidebar scroll-restore and main scroll-reset apply ONLY to full
+					// page-nav swaps (target = #main-content), where the sidebar OOB-rebuilds.
+					// In-page swaps (accordions, tabs, table rows, the SSE log feed) must not
+					// touch sidebar/main scroll — an ungated sidebar restore here reset the
+					// nav to the top on every SSE log append.
 					var tgt = e && e.detail && e.detail.target;
 					if (tgt && tgt.id === 'main-content') {
+						var sb = document.querySelector('.sidebar-scroll');
+						if (sb) sb.scrollTop = __sidebarScrollTop;
 						var main = document.querySelector('main');
 						if (main) main.scrollTo({ top: 0 });
 						if (window.buildTOC) window.buildTOC();
