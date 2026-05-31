@@ -188,7 +188,19 @@ func logFeedScript() templ.Component {
 					while (feed.children.length > this.cap) feed.removeChild(feed.firstElementChild);
 					if (this.autoScroll) feed.scrollTop = feed.scrollHeight;
 				},
-				togglePause() { this.paused = !this.paused; if (this.paused) this.connected = false; },
+				togglePause() {
+						this.paused = !this.paused;
+						if (this.paused) {
+							this.connected = false;
+						} else {
+							// x-if re-adds the SSE connector on next tick; tell htmx to
+							// process the new element so the SSE extension can reconnect.
+							this.$nextTick(() => {
+								const el = document.querySelector('#logs-fragment [sse-connect]');
+								if (el && window.htmx) htmx.process(el);
+							});
+						}
+					},
 				clearFeed() { const f = document.getElementById('log-feed'); if (f) f.replaceChildren(); },
 				get statusText() { return this.paused ? 'Paused' : (this.connected ? 'Connected' : 'Connecting'); },
 			}));
