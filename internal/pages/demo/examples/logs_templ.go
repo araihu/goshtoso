@@ -240,8 +240,8 @@ func logFilterStyle() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templ.Raw(`<style>
-	.flt-warn .log-level-debug, .flt-warn .log-level-info { display: none; }
-	.flt-error .log-level-debug, .flt-error .log-level-info, .flt-error .log-level-warn { display: none; }
+	#logs-fragment .flt-warn .log-level-debug, #logs-fragment .flt-warn .log-level-info { display: none; }
+	#logs-fragment .flt-error .log-level-debug, #logs-fragment .flt-error .log-level-info, #logs-fragment .flt-error .log-level-warn { display: none; }
 	</style>`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -305,7 +305,7 @@ func LogsApp() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div class=\"ml-auto flex items-center gap-3 self-center pt-5\"><span class=\"flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><span x-show=\"!connected && !paused\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div class=\"ml-auto flex items-center gap-3 self-center pt-5\"><span role=\"status\" aria-live=\"polite\" class=\"flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><span x-show=\"!connected && !paused\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

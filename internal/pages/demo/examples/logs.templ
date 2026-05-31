@@ -106,8 +106,8 @@ templ logFeedScript() {
 // carries flt-all / flt-warn / flt-error; rows carry log-level-<level>.
 templ logFilterStyle() {
 	@templ.Raw(`<style>
-	.flt-warn .log-level-debug, .flt-warn .log-level-info { display: none; }
-	.flt-error .log-level-debug, .flt-error .log-level-info, .flt-error .log-level-warn { display: none; }
+	#logs-fragment .flt-warn .log-level-debug, #logs-fragment .flt-warn .log-level-info { display: none; }
+	#logs-fragment .flt-error .log-level-debug, #logs-fragment .flt-error .log-level-info, #logs-fragment .flt-error .log-level-warn { display: none; }
 	</style>`)
 }
 
@@ -145,7 +145,7 @@ templ LogsApp() {
 						@toggle.Toggle(toggle.Config{ID: "log-autoscroll", Label: "Auto-scroll", Checked: true})
 					</div>
 					<div class="ml-auto flex items-center gap-3 self-center pt-5">
-						<span class="flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+						<span role="status" aria-live="polite" class="flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 							<span x-show="!connected && !paused">
 								@spinner.Spinner(spinner.Config{Size: spinner.SizeSM})
 							</span>
