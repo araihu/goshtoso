@@ -15,6 +15,10 @@ linters:
     # Skip generated files (templ *_templ.go carry the strict
     # "// Code generated ... DO NOT EDIT." header).
     generated: strict
+    # `generated: strict` alone does not exclude templ output under
+    # golangci-lint v2.12.x, so exclude the *_templ.go paths explicitly too.
+    paths:
+      - ".*_templ\\.go$"
 
 issues:
   # Report every finding — no per-linter or duplicate suppression — so the
