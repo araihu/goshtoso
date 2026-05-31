@@ -321,7 +321,10 @@ func TestToggleAttrsPassthrough(t *testing.T) {
 	if _, err := page.Goto(baseURL + "/components/toggle"); err != nil {
 		t.Fatalf("goto: %v", err)
 	}
-	page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	if err != nil {
+		t.Fatalf("wait for Alpine: %v", err)
+	}
 
 	count, err := page.Locator("input[role='switch']").Count()
 	if err != nil {

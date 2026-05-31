@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -66,7 +67,12 @@ func TestProfileFragmentNavNoConsoleErrors(t *testing.T) {
 	require.NoError(t, err)
 
 	// Let Alpine init the swapped-in component (IndexedDB hydrate, etc.).
-	page.WaitForTimeout(300)
+	// Wait for Alpine to have initialized the profileImages x-data on #profile-fragment
+	// (_x_dataStack is set by Alpine v3 when it initialises an element).
+	_, err = page.WaitForFunction(
+		"() => { const el = document.querySelector('#profile-fragment'); return !!(el && el._x_dataStack); }",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "profileImages Alpine component should initialise on fragment-nav")
 
 	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav profile page: %v", jsErrors)
 }
@@ -106,7 +112,12 @@ func TestProfileDarkToggle(t *testing.T) {
 	require.NoError(t, err)
 
 	require.NoError(t, page.Locator("label[for='profile-dark']").Click())
-	page.WaitForTimeout(200)
+	// Wait for the <html> .dark class to actually flip rather than sleeping blindly.
+	beforeBool, _ := before.(bool)
+	_, err = page.WaitForFunction(
+		fmt.Sprintf("() => document.documentElement.classList.contains('dark') === %t", !beforeBool),
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "dark mode class on <html> should flip after toggling")
 
 	after, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
 	require.NoError(t, err)
@@ -173,7 +184,14 @@ func TestProfileOversizeRejected(t *testing.T) {
 		MimeType: "image/png",
 		Buffer:   make([]byte, 1024*1024+10),
 	}))
-	page.WaitForTimeout(300)
+	// The rejection path in onFile is synchronous: size check fires before any
+	// async call, clears the input value, and dispatches a 'notify' event.
+	// Wait for the file input to be cleared (ev.target.value='') as a positive
+	// signal that the handler ran and rejected the file.
+	_, err := page.WaitForFunction(
+		"() => { const el = document.querySelector('#profile-avatar-input'); return el && el.value === ''; }",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "oversize file input should be cleared by rejection handler")
 
 	isBlob, err := page.Evaluate(
 		"() => { const img = document.querySelector('#profile-avatar img'); return !!(img && img.src.startsWith('blob:')); }", nil)
