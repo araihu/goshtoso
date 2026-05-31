@@ -56,6 +56,7 @@ func (h *Hub) Unregister(c *Client) {
 // Broadcast appends the frame to the ring and fans it out to every client. A
 // client whose buffer is full is skipped (dropped), never blocked on.
 func (h *Hub) Broadcast(frame []byte) {
+	frame = append([]byte(nil), frame...) // own the bytes; callers may reuse their buffer
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	h.ring = append(h.ring, frame)

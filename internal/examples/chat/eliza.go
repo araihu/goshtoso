@@ -42,6 +42,10 @@ func Reply(msg string) (reply string, matched bool) {
 			arg := strings.TrimSpace(m[1])
 			// Trim a trailing question mark the capture may have swallowed.
 			arg = strings.TrimRight(arg, "?. ")
+			// Skip this rule if the capture is empty — avoids bare-placeholder replies.
+			if arg == "" {
+				continue
+			}
 			return strings.Replace(r.reply, "%s", arg, 1), true
 		}
 		return r.reply, true

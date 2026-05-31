@@ -50,11 +50,12 @@ func Decode(s string) (Identity, error) {
 // NewGuest builds a deterministic guest identity from a numeric seed (e.g. a
 // connection counter). Same seed → same nick + color, so behavior is reproducible.
 func NewGuest(seed int64) Identity {
+	u := uint64(seed)
 	if seed < 0 {
-		seed = -seed
+		u = uint64(-(seed + 1)) + 1 // safe abs, no overflow for math.MinInt64
 	}
 	return Identity{
-		Nick:  fmt.Sprintf("Guest-%04x", uint16(seed*2654435761)),
-		Color: palette[seed%int64(len(palette))],
+		Nick:  fmt.Sprintf("Guest-%04x", uint16(u*2654435761)),
+		Color: palette[u%uint64(len(palette))],
 	}
 }

@@ -1,6 +1,9 @@
 package chat
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestReply_Greeting(t *testing.T) {
 	got, ok := Reply("hello there")
@@ -42,5 +45,13 @@ func TestReply_Deterministic(t *testing.T) {
 	b, _ := Reply("i feel sad")
 	if a != b {
 		t.Fatalf("Reply must be deterministic: %q != %q", a, b)
+	}
+}
+
+func TestReply_EmptyCaptureDoesNotProduceBareTemplate(t *testing.T) {
+	// A whitespace-only capture after "i feel" must not produce "Why do you feel ?"
+	got, ok := Reply("i feel   ")
+	if ok && strings.Contains(got, "feel ?") {
+		t.Fatalf("bare-placeholder reply produced for empty capture: %q", got)
 	}
 }

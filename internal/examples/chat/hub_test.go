@@ -81,4 +81,8 @@ func TestHub_SlowClientDoesNotBlock(t *testing.T) {
 		h.Broadcast([]byte("flood"))
 	}
 	// If we reach here without deadlock, the drop-on-full path works.
+	// The buffer must have been capped at sendBuffer, not grown unbounded.
+	if len(slow.Send) != sendBuffer {
+		t.Fatalf("slow client buffer = %d, want %d", len(slow.Send), sendBuffer)
+	}
 }
