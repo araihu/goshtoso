@@ -1,6 +1,9 @@
 package profile
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestEncodeDecodeRoundTrip(t *testing.T) {
 	in := State{Name: "Ada Lovelace", Bio: "First programmer."}
@@ -26,5 +29,19 @@ func TestDecodeEmptyYieldsZero(t *testing.T) {
 func TestDecodeCorruptReturnsError(t *testing.T) {
 	if _, err := Decode([]byte("!!!not-base64!!!")); err == nil {
 		t.Fatal("expected error for corrupt input")
+	}
+}
+
+func TestSanitize(t *testing.T) {
+	over := State{
+		Name: strings.Repeat("n", MaxNameLen+50),
+		Bio:  strings.Repeat("b", MaxBioLen+100),
+	}
+	got := over.Sanitize()
+	if nameRunes := len([]rune(got.Name)); nameRunes != MaxNameLen {
+		t.Errorf("Sanitize Name: got %d runes, want %d", nameRunes, MaxNameLen)
+	}
+	if bioRunes := len([]rune(got.Bio)); bioRunes != MaxBioLen {
+		t.Errorf("Sanitize Bio: got %d runes, want %d", bioRunes, MaxBioLen)
 	}
 }

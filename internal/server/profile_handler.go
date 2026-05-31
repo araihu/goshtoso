@@ -40,7 +40,7 @@ func (s *Server) handleProfileIdentity(w http.ResponseWriter, r *http.Request) {
 	if onlyPost(w, r) {
 		return
 	}
-	st := profile.FromRequest(r)
+	var st profile.State
 	st.SetName(strings.TrimSpace(r.FormValue("name")))
 	st.SetBio(strings.TrimSpace(r.FormValue("bio")))
 	profile.SetCookie(w, st)

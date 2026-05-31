@@ -52,3 +52,9 @@ func Decode(raw []byte) (State, error) {
 	}
 	return s, nil
 }
+
+// Sanitize clamps Name and Bio to their rune caps. Applied to any state decoded
+// from an untrusted cookie so a hand-crafted cookie cannot exceed the limits.
+func (s State) Sanitize() State {
+	return State{Name: capRunes(s.Name, MaxNameLen), Bio: capRunes(s.Bio, MaxBioLen)}
+}

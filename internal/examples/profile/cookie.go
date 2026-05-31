@@ -19,7 +19,7 @@ func FromRequest(r *http.Request) State {
 	if err != nil {
 		return State{}
 	}
-	return s
+	return s.Sanitize()
 }
 
 // SetCookie writes the encoded State as a cookie. Path "/" so it reaches both

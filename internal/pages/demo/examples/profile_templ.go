@@ -35,6 +35,7 @@ import (
 func profileImagesScript() string {
 	return `(() => {
   const DB = 'gt_profile', STORE = 'images', MAX = 1024 * 1024;
+  const OK_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
   function open() {
     return new Promise((res, rej) => {
       const r = indexedDB.open(DB, 1);
@@ -67,7 +68,7 @@ func profileImagesScript() string {
       onFile(kind, ev) {
         const file = ev.target.files && ev.target.files[0];
         if (!file) return;
-        if (!file.type.startsWith('image/')) { this._toast('danger','Not an image','Pick a PNG, JPG, or WebP file.'); ev.target.value=''; return; }
+        if (!OK_TYPES.includes(file.type)) { this._toast('danger','Unsupported type','Use PNG, JPG, WebP, or GIF.'); ev.target.value=''; return; }
         if (file.size > MAX) { this._toast('danger','Too large','Images must be 1 MB or smaller.'); ev.target.value=''; return; }
         const old = this[kind+'Src']; if (old) URL.revokeObjectURL(old);
         this[kind+'Src'] = URL.createObjectURL(file);
@@ -76,6 +77,10 @@ func profileImagesScript() string {
         ev.target.value='';
       },
       remove(kind) { const old=this[kind+'Src']; if (old) URL.revokeObjectURL(old); this[kind+'Src']=''; if (this._supported) idbDel(kind).catch(()=>{}); },
+      destroy() {
+        if (this.avatarSrc) URL.revokeObjectURL(this.avatarSrc);
+        if (this.bannerSrc) URL.revokeObjectURL(this.bannerSrc);
+      },
       _toast(variant, title, message) {
         try {
           window.dispatchEvent(new CustomEvent('notify', { detail: { variant: variant, title: title, message: message } }));
@@ -352,7 +357,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><p class=\"px-4 pb-4 text-center text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Images stay on this device (IndexedDB). PNG, JPG, or WebP, up to 1 MB.</p></section><!-- Identity: name + bio, cookie-backed via HTMX --><section id=\"profile-identity-section\" class=\"mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Identity</h2><form class=\"flex flex-col gap-4\" hx-post=\"/api/examples/profile/identity\" hx-target=\"#profile-identity\" hx-swap=\"outerHTML\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><p class=\"px-4 pb-4 text-center text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Images stay on this device (IndexedDB). PNG, JPG, WebP, or GIF, up to 1 MB.</p></section><!-- Identity: name + bio, cookie-backed via HTMX --><section id=\"profile-identity-section\" class=\"mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Identity</h2><form class=\"flex flex-col gap-4\" hx-post=\"/api/examples/profile/identity\" hx-target=\"#profile-identity\" hx-swap=\"outerHTML\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
