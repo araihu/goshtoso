@@ -46,12 +46,15 @@ templ OnlineBadge(count int, oob bool) {
 // MessageBubble renders one chat line: avatar + nick (+ BOT/you badges) + text,
 // with a hover-title timestamp. All user text is a templ text node (escaped).
 templ MessageBubble(m Message) {
+	{{ variant := avatar.Variant(m.Color)
+	if m.IsBot {
+		variant = avatar.Info
+	} }}
 	<div class="flex items-start gap-3 px-4 py-2" title={ m.Time }>
 		@avatar.Avatar(avatar.Config{
-			Name:        m.Nick,
-			Size:        avatar.SizeSM,
-			BorderColor: m.Color,
-			Border:      true,
+			Name:    m.Nick,
+			Size:    avatar.SizeSM,
+			Variant: variant,
 		})
 		<div class="min-w-0">
 			<div class="flex items-center gap-2">
@@ -94,7 +97,7 @@ templ ChatApp(me chat.Identity) {
 		<!-- header: identity bar + online badge + rename -->
 		<div class="flex items-center justify-between gap-3 border-b border-outline px-4 py-3 dark:border-outline-dark">
 			<div class="flex items-center gap-3">
-				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, BorderColor: me.Color, Border: true})
+				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color)})
 				<span id="chat-me" class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">{ me.Nick }</span>
 			</div>
 			@OnlineBadge(1, false)
@@ -105,6 +108,7 @@ templ ChatApp(me chat.Identity) {
 			hx-post="/api/examples/chat/rename"
 			hx-swap="none"
 		>
+			<label for="chat-nick-input" class="sr-only">Display name</label>
 			@textinput.TextInput(textinput.Config{
 				ID:          "chat-nick-input",
 				Name:        "nick",
@@ -117,13 +121,14 @@ templ ChatApp(me chat.Identity) {
 			}
 		</form>
 		<!-- message log -->
-		<div id="chat-log" class="flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40"></div>
+		<div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages" class="flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40"></div>
 		<!-- composer: ws-send form. The hx-ext="ws" wrapper must contain the form. -->
 		<div hx-ext="ws" ws-connect="/api/examples/chat/ws" class="border-t border-outline px-4 py-3 dark:border-outline-dark">
 			<form ws-send class="flex flex-col gap-2">
 				@chatHidden("nick", me.Nick)
 				@chatHidden("color", me.Color)
 				<div class="flex items-end gap-2">
+					<label for="chat-message" class="sr-only">Message</label>
 					@textarea.Textarea(textarea.Config{
 						ID:          "chat-message",
 						Name:        "message",

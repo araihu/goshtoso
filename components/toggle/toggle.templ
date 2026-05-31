@@ -25,29 +25,23 @@ package toggle
 //	})
 templ Toggle(cfg Config) {
 	<label for={ cfg.ID } class={ cfg.LabelClasses() }>
-		if cfg.Name != "" && cfg.Value != "" {
-			if cfg.Checked && cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" name={ cfg.Name } value={ cfg.Value } checked disabled/>
-			} else if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" name={ cfg.Name } value={ cfg.Value } checked/>
-			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" name={ cfg.Name } value={ cfg.Value } disabled/>
-			} else {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" name={ cfg.Name } value={ cfg.Value }/>
+		<input
+			id={ cfg.ID }
+			type="checkbox"
+			class="peer sr-only"
+			role="switch"
+			if cfg.Name != "" && cfg.Value != "" {
+				name={ cfg.Name }
+				value={ cfg.Value }
 			}
-		} else {
-			if cfg.Checked && cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" checked disabled/>
-			} else if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" checked/>
-			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" disabled/>
-			} else {
-				<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch"/>
+			if cfg.Name != "" && cfg.Value == "" {
+				name={ cfg.Name }
 			}
-			if cfg.Name != "" {
-				<input type="hidden" name={ cfg.Name } value="off"/>
-			}
+			checked?={ cfg.Checked }
+			disabled?={ cfg.Disabled }
+		/>
+		if cfg.Name != "" && cfg.Value == "" {
+			<input type="hidden" name={ cfg.Name } value="off"/>
 		}
 		<span class="trancking-wide text-sm font-medium text-on-surface peer-checked:text-on-surface-strong peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-on-surface-dark dark:peer-checked:text-on-surface-dark-strong">
 			{ cfg.Label }
