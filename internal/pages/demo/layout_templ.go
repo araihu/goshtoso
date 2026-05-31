@@ -279,14 +279,6 @@ func sItem(id, label, href, activeComponent string) sidebar.Item {
 func getSidebarSections(activeComponent string) []sidebar.Section {
 	return []sidebar.Section{
 		{
-			Title:       "Examples",
-			Collapsible: true,
-			Items: []sidebar.Item{
-				sItem("examples", "Overview", "/examples", activeComponent),
-				sItem("todo", "Todo List", "/examples/todo", activeComponent),
-			},
-		},
-		{
 			Title: "Display",
 			Items: []sidebar.Item{
 				sItem("accordion", "Accordion", "/components/accordion", activeComponent),
@@ -340,6 +332,14 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("breadcrumbs", "Breadcrumbs", "/components/breadcrumbs", activeComponent),
 				sItem("navbar", "Navbar", "/components/navbar", activeComponent),
 				sItem("sidebar", "Sidebar", "/components/sidebar", activeComponent),
+			},
+		},
+		{
+			Title:       "Examples",
+			Collapsible: true,
+			Items: []sidebar.Item{
+				sItem("examples", "Overview", "/examples", activeComponent),
+				sItem("todo", "Todo List", "/examples/todo", activeComponent),
 			},
 		},
 	}
