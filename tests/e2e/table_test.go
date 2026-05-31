@@ -117,8 +117,9 @@ func TestTable_StripedVariant(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Striped_Rows_Have_Even_Classes", func(t *testing.T) {
-		stripedHeading := page.Locator("h4:has-text('Striped Table')")
-		stripedSection := stripedHeading.Locator("xpath=..")
+		// Scope to the per-variant preview wrapper (#table-striped) so the
+		// codeblock's syntax-highlight spans never leak into the table query.
+		stripedSection := page.Locator("#table-striped")
 
 		rows := stripedSection.Locator("table tbody tr")
 		count, err := rows.Count()
@@ -154,8 +155,7 @@ func TestTable_WithCheckbox(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Checkbox_Table_Has_Checkboxes", func(t *testing.T) {
-		checkboxHeading := page.Locator("h4:has-text('Table with Checkbox')")
-		checkboxSection := checkboxHeading.Locator("xpath=..")
+		checkboxSection := page.Locator("#table-checkbox")
 
 		checkboxes := checkboxSection.Locator("input[type='checkbox']")
 		count, err := checkboxes.Count()
@@ -166,8 +166,7 @@ func TestTable_WithCheckbox(t *testing.T) {
 	})
 
 	t.Run("Check_All_Selects_All_Rows", func(t *testing.T) {
-		checkboxHeading := page.Locator("h4:has-text('Table with Checkbox')")
-		checkboxSection := checkboxHeading.Locator("xpath=..")
+		checkboxSection := page.Locator("#table-checkbox")
 
 		headerCheckbox := checkboxSection.Locator("thead input[type='checkbox']")
 		err := headerCheckbox.Click()
@@ -208,8 +207,7 @@ func TestTable_WithAction(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Action_Table_Has_Edit_Buttons", func(t *testing.T) {
-		actionHeading := page.Locator("h4:has-text('Table with Action')")
-		actionSection := actionHeading.Locator("xpath=..")
+		actionSection := page.Locator("#table-action")
 
 		editButtons := actionSection.Locator("button:has-text('Edit')")
 		count, err := editButtons.Count()
@@ -245,8 +243,7 @@ func TestTable_UsersTable(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Users_Table_Has_Avatars", func(t *testing.T) {
-		usersHeading := page.Locator("h4:has-text('Users Table')")
-		usersSection := usersHeading.Locator("xpath=..")
+		usersSection := page.Locator("#table-users")
 
 		avatars := usersSection.Locator("td img[src*='avatar-']")
 		count, err := avatars.Count()
@@ -257,8 +254,7 @@ func TestTable_UsersTable(t *testing.T) {
 	})
 
 	t.Run("Users_Table_Has_Status_Badges", func(t *testing.T) {
-		usersHeading := page.Locator("h4:has-text('Users Table')")
-		usersSection := usersHeading.Locator("xpath=..")
+		usersSection := page.Locator("#table-users")
 
 		activeBadges := usersSection.Locator("span:has-text('Active')")
 		activeCount, err := activeBadges.Count()
