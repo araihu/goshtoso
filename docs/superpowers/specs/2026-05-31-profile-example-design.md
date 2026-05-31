@@ -4,6 +4,16 @@
 **Branch:** `worktree-profile-example`
 **Status:** Approved (brainstorm), pending spec review
 
+## Amendments (planning, 2026-05-31)
+
+Decided while writing the implementation plan; these override the body below where they conflict:
+
+1. **Cookie holds only `Name` + `Bio`.** No `Theme`/`Dark`/`Seq`. `Seq` was unused (no IDs); theme/dark are client-side.
+2. **Theme + dark are NOT in the cookie.** They reuse the app's existing client engine (`theme` on the layout root x-data + `localStorage`, and `$store.darkMode`) — one source of truth, applies live. The repo already persists both in `localStorage`; a cookie copy would be a second, conflicting source.
+3. **Select needs no extension.** Its existing `AlpineModel` field bound to the root `theme` property is the onChange hook. Only **Avatar** (`SrcExpr`) and **Toggle** (`Attrs`) are extended.
+4. **Upload uses the existing File Input component** (`components/fileinput`, has `Accept` + `Attrs`), not a raw `<input>`.
+5. **Tabs / Modal / Tooltip / Banner dropped (YAGNI).** Layout is plain card sections; remove-photo is an `x-show`-gated button, not a Modal. Re-add later if desired.
+
 ## Goal
 
 Add a second example app to Goshtoso: a **user profile page** with avatar +
