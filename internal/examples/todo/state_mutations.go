@@ -116,6 +116,23 @@ func (s *State) ClearCompleted() {
 	s.Todos = slices.DeleteFunc(s.Todos, func(t Todo) bool { return t.Done })
 }
 
+// Restore re-inserts a todo back into the list, preserving its original ID,
+// Order, Done, Priority, and Due fields. It respects MaxTodos and the cookie-size
+// budget (like Add does); if the list is full or the encoded state would exceed
+// maxCookieBytes, Restore is a no-op. The list is re-sorted by Order after
+// insertion so the item lands back in its original position relative to others.
+func (s *State) Restore(t Todo) {
+	if len(s.Todos) >= MaxTodos {
+		return
+	}
+	candidate := append(slices.Clone(s.Todos), t)
+	slices.SortStableFunc(candidate, func(a, b Todo) int { return a.Order - b.Order })
+	if len(Encode(State{Todos: candidate, Filter: s.Filter, Seq: s.Seq})) > maxCookieBytes {
+		return
+	}
+	s.Todos = candidate
+}
+
 // SetFilter sets the view filter; unknown values fall back to "all".
 func (s *State) SetFilter(f string) {
 	switch f {

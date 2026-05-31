@@ -187,6 +187,51 @@ func TestClearCompletedAndCounts(t *testing.T) {
 	}
 }
 
+func TestRestoreReturnsItemToOriginalPosition(t *testing.T) {
+	var s State
+	s.Add("a", "low", "")  // ID 1, Order 0
+	s.Add("b", "high", "") // ID 2, Order 1
+	s.Add("c", "med", "")  // ID 3, Order 2
+
+	// Capture the todo before deleting it.
+	idx := s.indexByID(2)
+	deleted := s.Todos[idx]
+
+	s.Delete(2)
+	if len(s.Todos) != 2 {
+		t.Fatalf("want 2 after delete, got %d", len(s.Todos))
+	}
+
+	// Restore it.
+	s.Restore(deleted)
+	if len(s.Todos) != 3 {
+		t.Fatalf("want 3 after restore, got %d", len(s.Todos))
+	}
+
+	// Find the restored item.
+	var got *Todo
+	for i := range s.Todos {
+		if s.Todos[i].ID == 2 {
+			got = &s.Todos[i]
+		}
+	}
+	if got == nil {
+		t.Fatal("restored todo not found")
+	}
+	if got.Title != "b" || got.Priority != "high" || got.Done != deleted.Done || got.Order != deleted.Order {
+		t.Fatalf("restored fields mismatch: %+v, want %+v", *got, deleted)
+	}
+
+	// Position in Visible() should be between a (Order 0) and c (Order 2).
+	vis := s.Visible()
+	if len(vis) != 3 {
+		t.Fatalf("visible want 3, got %d", len(vis))
+	}
+	if vis[0].ID != 1 || vis[1].ID != 2 || vis[2].ID != 3 {
+		t.Fatalf("order not preserved: %+v", vis)
+	}
+}
+
 func TestSetFilterRejectsUnknown(t *testing.T) {
 	var s State
 	s.SetFilter("garbage")
