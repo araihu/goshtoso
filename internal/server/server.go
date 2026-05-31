@@ -44,6 +44,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/examples", s.handleExample)
 	s.mux.HandleFunc("/examples/", s.handleExample)
 	s.registerTodoRoutes()
+	s.registerLogsRoutes()
 
 	// API endpoints for HTMX demos
 	s.mux.HandleFunc("/api/hello", s.handleAPIHello)
