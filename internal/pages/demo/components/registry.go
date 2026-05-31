@@ -31,6 +31,7 @@ var Demos = map[string]DemoEntry{
 	"components/button":          {"Buttons", "button", buttonDemoContent},
 	"components/card":            {"Card", "card", cardDemoContent},
 	"components/carousel":        {"Carousel", "carousel", carouselDemoContent},
+	"components/chatbubble":      {"Chat Bubble", "chatbubble", chatBubbleDemoContent},
 	"components/checkbox":        {"Checkbox", "checkbox", checkboxDemoContent},
 	"components/codeblock":       {"Code Block", "codeblock", codeBlockDemoContent},
 	"components/combobox":        {"Combobox", "combobox", comboboxDemoContent},
