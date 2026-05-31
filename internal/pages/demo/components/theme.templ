@@ -1336,6 +1336,7 @@ templ colorRow(t colorToken) {
 			ID:             "color-" + t.Key,
 			Shell:          true,
 			TriggerLeading: colorSwatch(t.Key),
+			TriggerLabel:   t.Label,
 			ValueExpr:      "classLabel('" + t.Key + "')",
 		}) {
 			@palettecomp.Palette(palettecomp.Config{

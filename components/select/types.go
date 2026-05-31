@@ -79,6 +79,10 @@ type Config struct {
 	// ValueExpr is an Alpine expression (x-text) for the trigger's value text
 	// in shell mode. Resolves against the host page's x-data scope.
 	ValueExpr string
+	// TriggerLabel is optional static text shown left-aligned in the trigger
+	// in shell mode (e.g. a token/role name). When set, the ValueExpr value is
+	// pushed to the right and rendered muted, matching a "Name … Value" row.
+	TriggerLabel string
 }
 
 // ContainerClasses returns CSS classes for the outer wrapper.

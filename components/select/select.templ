@@ -57,7 +57,12 @@ templ Select(cfg Config) {
 					if cfg.TriggerLeading != nil {
 						@cfg.TriggerLeading
 					}
-					<span class="truncate text-sm font-normal" x-text={ cfg.ValueExpr }></span>
+					if cfg.TriggerLabel != "" {
+						<span class="flex-1 truncate text-left text-sm font-normal">{ cfg.TriggerLabel }</span>
+						<span class="truncate text-sm font-normal text-on-surface-muted dark:text-on-surface-dark-muted" x-text={ cfg.ValueExpr }></span>
+					} else {
+						<span class="truncate text-sm font-normal" x-text={ cfg.ValueExpr }></span>
+					}
 				} else {
 					<span class="truncate text-sm font-normal" x-text="selectedOption ? selectedOption.label : placeholder"></span>
 				}
