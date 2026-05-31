@@ -109,6 +109,7 @@ goshtoso/
 1. **Analyze reference** — Read PenguinUI HTML in `/<component-name>/`
 2. **Create component** — `components/<name>/types.go` + `<name>.templ`
 3. **Create demo page** — `internal/pages/demo/components/<name>.templ`
+   (MUST follow the docs-page pattern — see below)
 4. **Register route** — Add case in `internal/server/server.go:handleComponent()`
 5. **Add to sidebar** — Add entry in `internal/pages/demo/layout.templ:getSidebarItems()`
 6. **Write E2E tests** — `tests/e2e/<name>_test.go`
@@ -118,7 +119,30 @@ Each component is `components/<name>/` with:
 - `types.go` — Config struct, variant constants, CSS class methods
 - `<name>.templ` — Template with public entry point + private helpers
 
+### Demo/docs page pattern (mandatory for ALL components)
+
+Every demo page MUST follow the shared docs pattern, mirroring penguinui.com:
+**one preview box + one code box per variant** (`demo.ComponentDemo` for the
+first/primary variant, `demo.DemoSection` for each additional one), an
+**`demo.APIReference` table at the bottom** (outside the `#<name>-fragment`
+e2e anchor), and the **right-rail "On this page" TOC** which auto-builds from
+the `data-toc-heading` headings the helpers emit. Give each variant container a
+unique ID (`<name>-default`, `<name>-split`, …). Rebuild Tailwind + `go build`
+after introducing any new utility class (CSS is embedded).
+
+**Full reference + skeleton + pitfalls:** the **`component-docs` skill**
+(`.claude/skills/component-docs/SKILL.md`). Canonical example:
+`internal/pages/demo/components/accordion.templ`. Invoke the skill before
+creating or restructuring any demo page.
+
 ## Critical Rules
+
+### Always work in a git worktree
+
+Make changes in an isolated git worktree, never directly on a shared branch in
+the main checkout. Use the `superpowers:using-git-worktrees` skill to create one
+before starting feature work, bugfixes, or any non-trivial edit. This keeps the
+main checkout clean and lets multiple changes proceed without collision.
 
 ### Templ escaping — the #1 source of bugs
 

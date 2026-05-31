@@ -43,7 +43,9 @@ func AccordionDemoPage() templ.Component {
 	})
 }
 
-// accordionDemoContent renders the actual content inside the layout
+// accordionDemoContent renders the demo. Each accordion variant lives in its own
+// preview frame followed by its own code block (mirrors penguinui.com/components/accordion).
+// The whole set stays wrapped in #accordion-fragment so the e2e selectors keep working.
 func accordionDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,66 +67,122 @@ func accordionDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"accordion-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Accordion",
 				Description: "An accordion is a vertically stacked list of headers that reveal or hide associated sections of content when clicked.",
 			},
-			accordionDemoPreview(),
-			`// Basic Accordion
-@accordion.Accordion(accordion.AccordionConfig{
+			accordionDefaultPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
     Items: []accordion.AccordionItem{
         {
-            ID:      "item1",
+            ID:      "default-1",
             Title:   "What browsers are supported?",
             Content: templ.Raw("Our website is optimized for Chrome, Firefox, Safari, and Edge."),
         },
         {
-            ID:      "item2",
-            Title:   "How can I contact support?",
+            ID:      "default-2",
+            Title:   "How can I contact customer support?",
             Content: templ.Raw("Reach out via email at support@example.com."),
         },
     },
-})
-
-// Multiple open items
-@accordion.Accordion(accordion.AccordionConfig{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "No Background",
+				Description: "Drops the tinted fill for a cleaner look on plain surfaces. Set Variant: accordion.NoBackground.",
+			},
+			accordionNoBgPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
+    Variant: accordion.NoBackground,
+    Items: []accordion.AccordionItem{
+        {ID: "nobg-1", Title: "First section without background", Content: content1},
+        {ID: "nobg-2", Title: "Second section", Content: content2},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Split",
+				Description: "Each section becomes its own gapped, bordered card instead of a single divided block. Set Variant: accordion.Split.",
+			},
+			accordionSplitPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
+    Variant:       accordion.Split,
     AllowMultiple: true,
     Items: []accordion.AccordionItem{
-        {ID: "item1", Title: "Section 1", Content: content1},
-        {ID: "item2", Title: "Section 2", Content: content2},
+        {ID: "split-1", Title: "What browsers are supported?", Content: content1},
+        {ID: "split-2", Title: "How can I contact customer support?", Content: content2},
     },
-})
-
-// No background variant
-@accordion.Accordion(accordion.AccordionConfig{
-    Variant: accordion.NoBackground,
-    Items:   items,
-})
-
-// Server-loaded content with HTMX
-@accordion.Accordion(accordion.AccordionConfig{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Allow Multiple Open",
+				Description: "With AllowMultiple: true, several sections can stay expanded at the same time instead of collapsing each other.",
+			},
+			accordionMultiPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
+    AllowMultiple: true,
     Items: []accordion.AccordionItem{
-        {
-            ID:      "lazy-1",
-            Title:   "Dynamic Content (click to load)",
-            Content: lazyLoadingContent("lazy-content-1"),
-        },
+        {ID: "multi-1", Title: "Section A (can stay open)", Content: content1},
+        {ID: "multi-2", Title: "Section B (can also stay open)", Content: content2},
     },
-})
-
-// lazyLoadingContent template
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Server-Loaded Content (HTMX)",
+				Description: "Defer heavy content: the body fetches from the server when the section scrolls into view (hx-trigger=\"intersect once\").",
+			},
+			accordionLazyPreview(),
+			`// Content template fetches from the server on first reveal
 templ lazyLoadingContent(targetID string) {
-    <div id={ targetID } 
+    <div id={ targetID }
          hx-get={ "/api/components/accordion-content/" + targetID }
          hx-trigger="intersect once"
          hx-swap="innerHTML">
-        <div class="flex items-center gap-2">
-            <span>Loading...</span>
-        </div>
+        <span>Loading...</span>
     </div>
-}`,
+}
+
+@accordion.Accordion(accordion.AccordionConfig{
+    Items: []accordion.AccordionItem{
+        {ID: "lazy-1", Title: "Dynamic Content (click to load)", Content: lazyLoadingContent("lazy-content-a")},
+    },
+})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Items", Type: "[]AccordionItem", Default: "nil", Description: "The accordion sections (ID, Title, Content, optional Icon/Disabled/InitiallyExpanded)."},
+			{Name: "AllowMultiple", Type: "bool", Default: "false", Description: "Allow multiple sections open at once. When false, opening one closes the others."},
+			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Visual style: "default", "no-background", or "split".`},
+			{Name: "ID", Type: "string", Default: `"accordion"`, Description: "Container element ID used for accessibility wiring."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the container."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,8 +190,8 @@ templ lazyLoadingContent(targetID string) {
 	})
 }
 
-// accordionDemoPreview renders the Goshtoso accordion preview
-func accordionDemoPreview() templ.Component {
+// accordionDefaultPreview renders the default variant.
+func accordionDefaultPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -154,11 +212,12 @@ func accordionDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-2xl mx-auto space-y-8\" id=\"accordion-fragment\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Default</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
+			ID: "accordion-default",
 			Items: []accordion.AccordionItem{
 				{
 					ID:      "default-1",
@@ -180,72 +239,7 @@ func accordionDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">No Background</h4>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
-			Variant: accordion.NoBackground,
-			Items: []accordion.AccordionItem{
-				{
-					ID:      "nobg-1",
-					Title:   "First section without background",
-					Content: demoContent("This accordion variant has no background styling for a cleaner look."),
-				},
-				{
-					ID:      "nobg-2",
-					Title:   "Second section",
-					Content: demoContent("The content area maintains proper spacing and typography."),
-				},
-			},
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Allow Multiple Open</h4>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
-			AllowMultiple: true,
-			Items: []accordion.AccordionItem{
-				{
-					ID:      "multi-1",
-					Title:   "Section A (can stay open)",
-					Content: demoContent("With AllowMultiple: true, you can have multiple sections expanded simultaneously."),
-				},
-				{
-					ID:      "multi-2",
-					Title:   "Section B (can also stay open)",
-					Content: demoContent("This provides a different user experience for certain use cases."),
-				},
-			},
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Server-Loaded Content (HTMX)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-3\">Content loads from server when section is expanded</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
-			Items: []accordion.AccordionItem{
-				{
-					ID:      "lazy-1",
-					Title:   "Dynamic Content A (click to load)",
-					Content: lazyLoadingContent("lazy-content-a"),
-				},
-				{
-					ID:      "lazy-2",
-					Title:   "Dynamic Content B (click to load)",
-					Content: lazyLoadingContent("lazy-content-b"),
-				},
-			},
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -253,8 +247,8 @@ func accordionDemoPreview() templ.Component {
 	})
 }
 
-// demoContent creates content with a link
-func demoContent(text string) templ.Component {
+// accordionNoBgPreview renders the no-background variant.
+func accordionNoBgPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -275,12 +269,229 @@ func demoContent(text string) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(text)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/accordion.templ`, Line: 168, Col: 7}
+			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
+			ID:      "accordion-nobg",
+			Variant: accordion.NoBackground,
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "nobg-1",
+					Title:   "First section without background",
+					Content: demoContent("This accordion variant has no background styling for a cleaner look."),
+				},
+				{
+					ID:      "nobg-2",
+					Title:   "Second section",
+					Content: demoContent("The content area maintains proper spacing and typography."),
+				},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// accordionSplitPreview renders the split variant (each item is its own card).
+func accordionSplitPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"w-full max-w-2xl mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
+			ID:            "accordion-split",
+			Variant:       accordion.Split,
+			AllowMultiple: true,
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "split-1",
+					Title:   "What browsers are supported?",
+					Content: demoContent("Our website is optimized for the latest versions of Chrome, Firefox, Safari, and Edge."),
+				},
+				{
+					ID:      "split-2",
+					Title:   "How can I contact customer support?",
+					Content: demoContent("Reach out to our dedicated support team via email at support@example.com during business hours."),
+				},
+				{
+					ID:      "split-3",
+					Title:   "What is the refund policy?",
+					Content: demoContent("Refer to our refund policy page for eligibility, timeframes, and the request process."),
+				},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// accordionMultiPreview renders the allow-multiple-open variant.
+func accordionMultiPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"w-full max-w-2xl mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
+			ID:            "accordion-multi",
+			AllowMultiple: true,
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "multi-1",
+					Title:   "Section A (can stay open)",
+					Content: demoContent("With AllowMultiple: true, you can have multiple sections expanded simultaneously."),
+				},
+				{
+					ID:      "multi-2",
+					Title:   "Section B (can also stay open)",
+					Content: demoContent("This provides a different user experience for certain use cases."),
+				},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// accordionLazyPreview renders the HTMX server-loaded variant.
+func accordionLazyPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"w-full max-w-2xl mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
+			ID: "accordion-lazy",
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "lazy-1",
+					Title:   "Dynamic Content A (click to load)",
+					Content: lazyLoadingContent("lazy-content-a"),
+				},
+				{
+					ID:      "lazy-2",
+					Title:   "Dynamic Content B (click to load)",
+					Content: lazyLoadingContent("lazy-content-b"),
+				},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// demoContent renders plain text body content for a section.
+func demoContent(text string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(text)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/accordion.templ`, Line: 241, Col: 7}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -305,68 +516,38 @@ func lazyLoadingContent(targetID string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(targetID)
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(targetID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/accordion.templ`, Line: 173, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/accordion.templ`, Line: 246, Col: 19}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue("/api/components/accordion-content/" + targetID)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/accordion.templ`, Line: 173, Col: 78}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-trigger=\"intersect once\" hx-swap=\"innerHTML\"><div class=\"flex items-center gap-2 text-on-surface-muted dark:text-on-surface-dark-muted\"><svg class=\"animate-spin h-4 w-4\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span class=\"text-sm\">Loading content...</span></div></div>")
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue("/api/components/accordion-content/" + targetID)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/accordion.templ`, Line: 246, Col: 78}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		return nil
-	})
-}
-
-// AccordionFragment renders just the accordion for HTMX updates
-func AccordionFragment(variant string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = accordionDemoPreview().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" hx-trigger=\"intersect once\" hx-swap=\"innerHTML\"><div class=\"flex items-center gap-2 text-on-surface-muted dark:text-on-surface-dark-muted\"><svg class=\"animate-spin h-4 w-4\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span class=\"text-sm\">Loading content...</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -63,6 +63,12 @@ type AccordionItemData struct {
 
 // ContainerClasses returns the container CSS classes based on variant
 func (cfg AccordionConfig) ContainerClasses() string {
+	// Split renders each item as its own gapped card, so the container drops
+	// the shared divider/border/background and just lays the cards out vertically.
+	if cfg.Variant == Split {
+		return "flex w-full flex-col gap-4 text-on-surface dark:text-on-surface-dark"
+	}
+
 	base := "w-full divide-y divide-outline overflow-hidden rounded-radius border border-outline text-on-surface dark:divide-outline-dark dark:border-outline-dark dark:text-on-surface-dark"
 
 	switch cfg.Variant {
@@ -71,6 +77,16 @@ func (cfg AccordionConfig) ContainerClasses() string {
 	default:
 		return base + " bg-surface-alt/40 dark:bg-surface-dark-alt/50"
 	}
+}
+
+// ItemContainerClasses returns per-item wrapper classes. Only the Split variant
+// uses these: each item becomes a self-contained bordered card. Other variants
+// return "" since the shared container already provides borders and dividers.
+func (data AccordionItemData) ItemContainerClasses() string {
+	if data.Variant == Split {
+		return "overflow-hidden rounded-radius border border-outline bg-surface-alt/40 dark:border-outline-dark dark:bg-surface-dark-alt/50"
+	}
+	return ""
 }
 
 // ItemButtonClasses returns button classes based on variant and state

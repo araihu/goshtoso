@@ -69,7 +69,11 @@ templ accordionItem(data AccordionItemData) {
 	{{ showBinding := "isOpen(" + idx + ")" }}
 	{{ chevronBinding := "isOpen(" + idx + ") ? 'rotate-180' : ''" }}
 	
-	<div>
+	<div
+		if data.Variant == Split {
+			class={ data.ItemContainerClasses() }
+		}
+	>
 		<button
 			id={ controlID }
 			type="button"

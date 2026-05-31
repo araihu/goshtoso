@@ -315,7 +315,8 @@ func TestAccordion_AllVariants(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Default_Variant", func(t *testing.T) {
-		defaultAccordion := page.Locator("text=Default").Locator("xpath=../..//div[contains(@class, 'divide-y')]").First()
+		// Each variant now lives in its own demo box with a stable container ID.
+		defaultAccordion := page.Locator("#accordion-default")
 		classAttr, err := defaultAccordion.GetAttribute("class")
 		require.NoError(t, err)
 
@@ -325,17 +326,36 @@ func TestAccordion_AllVariants(t *testing.T) {
 	})
 
 	t.Run("NoBackground_Variant", func(t *testing.T) {
-		nobgAccordion := page.Locator("text=No Background").Locator("xpath=../..//div[contains(@class, 'divide-y')]").First()
+		nobgAccordion := page.Locator("#accordion-nobg")
 		classAttr, err := nobgAccordion.GetAttribute("class")
 		require.NoError(t, err)
 
-		// Should have surface background, not surface-alt
+		// Should have plain surface background, not the tinted surface-alt
 		assert.Contains(t, classAttr, "bg-surface", "no-background variant should have surface background")
+		assert.NotContains(t, classAttr, "bg-surface-alt", "no-background variant should not use surface-alt")
 		t.Log("✓ NoBackground variant renders correctly")
 	})
 
+	t.Run("Split_Variant", func(t *testing.T) {
+		splitAccordion := page.Locator("#accordion-split")
+		classAttr, err := splitAccordion.GetAttribute("class")
+		require.NoError(t, err)
+
+		// Split lays cards out with a gap and drops the shared divider/border.
+		assert.Contains(t, classAttr, "flex", "split container should be a flex column")
+		assert.Contains(t, classAttr, "gap-4", "split container should gap its cards")
+		assert.NotContains(t, classAttr, "divide-y", "split should not use a shared divider")
+
+		// Each item should be its own bordered card.
+		firstCard := splitAccordion.Locator("xpath=./div").First()
+		cardClass, err := firstCard.GetAttribute("class")
+		require.NoError(t, err)
+		assert.Contains(t, cardClass, "border", "each split item should be a bordered card")
+		t.Log("✓ Split variant renders independent cards")
+	})
+
 	t.Run("ServerLoaded_Variant", func(t *testing.T) {
-		lazyAccordion := page.Locator("text=Server-Loaded Content").Locator("xpath=../..//div[contains(@class, 'divide-y')]").First()
+		lazyAccordion := page.Locator("#accordion-lazy")
 
 		// Should have buttons with lazy-loaded content
 		buttons := lazyAccordion.Locator("button")

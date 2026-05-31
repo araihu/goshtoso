@@ -1,6 +1,31 @@
 package demo
 
-import "github.com/araihu/goshtoso/components/codeblock"
+import (
+	"strings"
+
+	"github.com/araihu/goshtoso/components/codeblock"
+)
+
+// slugify turns a section title into a stable, URL-fragment-safe id used both
+// as the heading anchor (#default-accordion) and the right-rail TOC link target.
+// Lowercases, keeps alphanumerics, collapses every other run into a single dash.
+func slugify(title string) string {
+	var b strings.Builder
+	prevDash := false
+	for _, r := range strings.ToLower(title) {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			b.WriteRune(r)
+			prevDash = false
+		default:
+			if !prevDash && b.Len() > 0 {
+				b.WriteByte('-')
+				prevDash = true
+			}
+		}
+	}
+	return strings.Trim(b.String(), "-")
+}
 
 // PropDoc documents a single Config struct field for the API reference table
 type PropDoc struct {
@@ -32,7 +57,7 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 	<div>
 		<!-- Header Section -->
 		<div class="mb-6">
-			<h1 class="text-3xl font-bold font-title mb-2">{ props.Title }</h1>
+			<h1 id={ slugify(props.Title) } data-toc-heading class="scroll-mt-8 text-3xl font-bold font-title mb-2">{ props.Title }</h1>
 			<p class="text-lg text-on-surface-muted dark:text-on-surface-dark-muted max-w-3xl">
 				{ props.Description }
 			</p>
@@ -69,42 +94,48 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 			})
 
 			<!-- Props Reference Table -->
-			if len(props.Props) > 0 {
-				<div class="mt-8">
-					<h2 class="text-lg font-semibold font-title mb-4">API Reference</h2>
-					<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
-						<table class="w-full text-sm text-left border-collapse">
-							<thead class="bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark">
-								<tr>
-									<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Prop</th>
-									<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Type</th>
-									<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Default</th>
-									<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Description</th>
-								</tr>
-							</thead>
-							<tbody class="divide-y divide-outline dark:divide-outline-dark">
-								for _, p := range props.Props {
-									<tr class="bg-surface dark:bg-surface-dark">
-										<td class="px-4 py-2.5"><code class="font-mono text-xs bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded">{ p.Name }</code></td>
-										<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ p.Type }</code></td>
-										<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ p.Default }</code></td>
-										<td class="px-4 py-2.5 text-on-surface dark:text-on-surface-dark">{ p.Description }</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			}
+			@APIReference(props.Props)
 		</div>
 	</div>
+}
+
+// APIReference renders the prop documentation table. No-op when props is empty,
+// so it can be dropped at the bottom of a page or inlined inside ComponentDemo.
+templ APIReference(props []PropDoc) {
+	if len(props) > 0 {
+		<div class="mt-8">
+			<h2 id="api-reference" data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-4">API Reference</h2>
+			<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
+				<table class="w-full text-sm text-left border-collapse">
+					<thead class="bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark">
+						<tr>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Prop</th>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Type</th>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Default</th>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Description</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-outline dark:divide-outline-dark">
+						for _, p := range props {
+							<tr class="bg-surface dark:bg-surface-dark">
+								<td class="px-4 py-2.5"><code class="font-mono text-xs bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded">{ p.Name }</code></td>
+								<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ p.Type }</code></td>
+								<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ p.Default }</code></td>
+								<td class="px-4 py-2.5 text-on-surface dark:text-on-surface-dark">{ p.Description }</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	}
 }
 
 // DemoSection renders an additional demo section with its own preview and code block.
 // Use after ComponentDemo to show variant-specific examples with separate code snippets.
 templ DemoSection(props DemoSectionProps, preview templ.Component, code string) {
 	<div class="mt-10">
-		<h2 class="text-lg font-semibold font-title mb-1">{ props.Title }</h2>
+		<h2 id={ slugify(props.Title) } data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-1">{ props.Title }</h2>
 		if props.Description != "" {
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">{ props.Description }</p>
 		}
