@@ -43,6 +43,10 @@ func NavbarDemoPage() templ.Component {
 	})
 }
 
+// navbarDemoContent renders the demo. Each navbar variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/navbar). The simple navbar stays first so the e2e
+// .First() selectors keep resolving to it. Wrapped in #navbar-fragment.
 func navbarDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -64,19 +68,60 @@ func navbarDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12\"><div><h1 class=\"text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Navbar</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Tailwind CSS and Alpine JS Responsive Navbar</p><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">A responsive navigation bar with brand, links, user avatar dropdown, and mobile menu. Supports custom right-side slots for additional controls.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"navbar-fragment\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = simpleNavbarDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Navbar",
+				Description: "A responsive navigation bar with brand, links, a user-avatar dropdown, a custom right-side slot, and a mobile menu. Built with Alpine.js.",
+			},
+			navbarSimplePreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand: brand(),
+    Links: []navbar.NavLink{
+        {Label: "Products", Href: "#", Active: true},
+        {Label: "Pricing", Href: "#"},
+        {Label: "Blog", Href: "#"},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = navbarWithUserDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With User Profile",
+				Description: "Pass a User and UserMenu to render an avatar button that opens a dropdown with name, email, and action items.",
+			},
+			navbarWithUserPreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand: brand(),
+    Links: links,
+    User:  &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
+    UserMenu: []navbar.UserMenuItem{
+        {Label: "Dashboard", Href: "#"},
+        {Label: "Sign Out", Href: "#", Danger: true},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = navbarWithRightSlotDemo().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Right Slot",
+				Description: "RightSlot takes any templ.Component (e.g. a dark-mode toggle) rendered beside the user avatar.",
+			},
+			navbarWithRightSlotPreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand:     brand(),
+    RightSlot: darkModeToggle(),
+    User:      &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
+    UserMenu:  menu,
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,12 +129,26 @@ func navbarDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Brand", Type: "templ.Component", Default: "nil", Description: "Brand/logo content shown at the start of the bar."},
+			{Name: "BrandHref", Type: "string", Default: `""`, Description: "Link target for the brand."},
+			{Name: "Links", Type: "[]NavLink", Default: "nil", Description: "Primary nav links (Label, Href, Active)."},
+			{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Trailing action items (buttons/links)."},
+			{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile (Name, Email, Avatar) — renders the avatar dropdown trigger."},
+			{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown (Label, Href, Danger)."},
+			{Name: "RightSlot", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
+			{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav>."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }
 
-// --- Variant 1: Simple Navbar ---
-func simpleNavbarDemo() templ.Component {
+// navbarSimplePreview renders the basic navbar (kept first for e2e .First()).
+func navbarSimplePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -110,7 +169,7 @@ func simpleNavbarDemo() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Simple Navbar</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Basic navbar with brand and navigation links.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span> <span class=\"ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Preview</span></div><div class=\"bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"navbar-simple\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -126,7 +185,7 @@ func simpleNavbarDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,8 +193,8 @@ func simpleNavbarDemo() templ.Component {
 	})
 }
 
-// --- Variant 2: With User Profile ---
-func navbarWithUserDemo() templ.Component {
+// navbarWithUserPreview renders the navbar with a user-profile dropdown.
+func navbarWithUserPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -156,7 +215,7 @@ func navbarWithUserDemo() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">With User Profile</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Navbar with an avatar button that opens a user dropdown menu with name, email, and action items.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span> <span class=\"ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Preview</span></div><div class=\"bg-surface dark:bg-surface-dark\" style=\"min-height: 200px;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"navbar-user\" class=\"w-full\" style=\"min-height: 200px;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -180,7 +239,7 @@ func navbarWithUserDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -188,8 +247,8 @@ func navbarWithUserDemo() templ.Component {
 	})
 }
 
-// --- Variant 3: With Right Slot ---
-func navbarWithRightSlotDemo() templ.Component {
+// navbarWithRightSlotPreview renders the navbar with a custom right slot.
+func navbarWithRightSlotPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -210,7 +269,7 @@ func navbarWithRightSlotDemo() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"not-prose\"><h3 class=\"text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">With Right Slot</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Navbar with a custom right slot for additional controls (e.g., dark mode toggle) alongside the user avatar.</p><div class=\"border border-outline dark:border-outline-dark rounded-radius overflow-hidden\"><div class=\"flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark\"><span class=\"size-3 rounded-full bg-red-400\"></span> <span class=\"size-3 rounded-full bg-yellow-400\"></span> <span class=\"size-3 rounded-full bg-green-400\"></span> <span class=\"ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Preview</span></div><div class=\"bg-surface dark:bg-surface-dark\" style=\"min-height: 200px;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"navbar-right-slot\" class=\"w-full\" style=\"min-height: 200px;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -229,7 +288,7 @@ func navbarWithRightSlotDemo() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
