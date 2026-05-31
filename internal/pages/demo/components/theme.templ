@@ -798,6 +798,8 @@ func themePageScript() string {
 	sb.WriteString("    contrastCustomBg: '#ffffff',\n")
 	sb.WriteString("    copied: false,\n")
 	sb.WriteString("    shareCopied: false,\n")
+	sb.WriteString("    confirmingReset: false,\n")
+	sb.WriteString("    resetDone: false,\n")
 
 	// lookup tables, written from Go so we don't risk template-escape surprises
 	sb.WriteString("    radiusMap: {")
@@ -946,6 +948,9 @@ func themePageScript() string {
       Object.keys(this.overrides).forEach(k => document.documentElement.style.removeProperty('--color-' + k));
       this.overrides = {};
       requestAnimationFrame(() => this.refreshResolved());
+      this.confirmingReset = false;
+      this.resetDone = true;
+      setTimeout(() => this.resetDone = false, 2500);
     },
     loadGoogleFont(label, query) {
       const id = 'gfont-' + label.replace(/\s+/g, '-');
@@ -1141,12 +1146,34 @@ templ themeHeader() {
 		<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">
 			Goshtoso ships ready-to-use themes built on Tailwind v4 CSS variables. Pick one as-is, tweak its fonts, radius, or colors live, then export the CSS to drop into your own project.
 		</p>
-		<button
-			@click="resetAll()"
-			class="mt-3 text-xs font-medium text-primary dark:text-primary-dark hover:underline"
-		>
-			Reset all customizations
-		</button>
+		<div class="mt-3 flex min-h-5 flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+			<button
+				type="button"
+				x-show="!confirmingReset"
+				@click="confirmingReset = true"
+				class="font-medium text-primary dark:text-primary-dark hover:underline"
+			>
+				Reset all customizations
+			</button>
+			<div x-show="confirmingReset" x-cloak class="flex flex-wrap items-center gap-2">
+				<span class="text-on-surface dark:text-on-surface-dark">Reset every font, radius, and color override?</span>
+				<button
+					type="button"
+					@click="resetAll()"
+					class="font-semibold text-danger hover:underline"
+				>
+					Yes, reset
+				</button>
+				<button
+					type="button"
+					@click="confirmingReset = false"
+					class="font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:underline"
+				>
+					Cancel
+				</button>
+			</div>
+			<span x-show="resetDone" x-cloak class="font-medium text-success">Cleared.</span>
+		</div>
 	</div>
 }
 

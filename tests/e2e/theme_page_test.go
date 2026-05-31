@@ -481,8 +481,10 @@ func TestThemePage_ResetAll_ClearsOverrides(t *testing.T) {
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 	require.NoError(t, err)
 
-	// Hit "Reset all customizations" in the header.
+	// Reset is a two-step confirm: the link reveals an inline prompt, then
+	// "Yes, reset" performs the wipe.
 	require.NoError(t, page.Locator("button:has-text('Reset all customizations')").First().Click())
+	require.NoError(t, page.Locator("button:has-text('Yes, reset')").First().Click())
 
 	_, err = page.WaitForFunction(`() => {
 		const s = document.documentElement.style;
