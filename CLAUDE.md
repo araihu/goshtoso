@@ -130,6 +130,11 @@ the `data-toc-heading` headings the helpers emit. Give each variant container a
 unique ID (`<name>-default`, `<name>-split`, …). Rebuild Tailwind + `go build`
 after introducing any new utility class (CSS is embedded).
 
+All 36 component demo pages follow this pattern (API reference via a bottom
+`demo.APIReference` call, or the inline `Props:` field on `ComponentDemoProps` —
+both render the same table). The only exempt pages are the non-component
+specials: **getting-started**, **landing**, and **theme** (no variants/API).
+
 **Full reference + skeleton + pitfalls:** the **`component-docs` skill**
 (`.claude/skills/component-docs/SKILL.md`). Canonical example:
 `internal/pages/demo/components/accordion.templ`. Invoke the skill before
