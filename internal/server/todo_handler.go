@@ -158,7 +158,6 @@ func (s *Server) handleTodoAdd(w http.ResponseWriter, r *http.Request) {
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
-	_ = examples.ClearUndo().Render(r.Context(), w)
 	if st.Seq != seqBefore {
 		// A todo was actually added.
 		msg := title
@@ -193,7 +192,6 @@ func (s *Server) handleTodoToggle(w http.ResponseWriter, r *http.Request) {
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
-	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
@@ -219,14 +217,17 @@ func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
-	_ = toast.OOBToast(toast.Config{
-		Variant: toast.Info,
-		Title:   "Deleted",
-		Message: "Task removed.",
-	}).Render(r.Context(), w)
+	cfg := toast.Config{Variant: toast.Info, Title: "Task deleted"}
 	if deleted != nil {
-		_ = examples.UndoBar(*deleted).Render(r.Context(), w)
+		// The toast itself carries the Undo action (no separate undo bar); the
+		// toast's own close button handles dismissal.
+		cfg.Message = deleted.Title
+		cfg.ActionText = "Undo"
+		cfg.ActionHxPost = examples.RestoreURL(*deleted)
+		cfg.ActionHxTarget = "#todo-list"
+		cfg.ActionHxSwap = "outerHTML"
 	}
+	_ = toast.OOBToast(cfg).Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoEdit(w http.ResponseWriter, r *http.Request) {
@@ -242,7 +243,6 @@ func (s *Server) handleTodoEdit(w http.ResponseWriter, r *http.Request) {
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
-	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoFilter(w http.ResponseWriter, r *http.Request) {
@@ -257,7 +257,6 @@ func (s *Server) handleTodoFilter(w http.ResponseWriter, r *http.Request) {
 	todo.SetCookie(w, st)
 	writeHTML(w)
 	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoMove(w http.ResponseWriter, r *http.Request) {
@@ -273,7 +272,6 @@ func (s *Server) handleTodoMove(w http.ResponseWriter, r *http.Request) {
 	todo.SetCookie(w, st)
 	writeHTML(w)
 	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request) {
@@ -289,7 +287,6 @@ func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
-	_ = examples.ClearUndo().Render(r.Context(), w)
 	_ = toast.OOBToast(toast.Config{
 		Variant: toast.Info,
 		Title:   "Cleared",
@@ -332,6 +329,4 @@ func (s *Server) handleTodoRestore(w http.ResponseWriter, r *http.Request) {
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
-	// Clear the undo bar after restoring.
-	_ = examples.ClearUndo().Render(r.Context(), w)
 }

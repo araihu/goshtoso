@@ -262,6 +262,27 @@ templ serverVariantToast(cfg Config, durationStr string) {
 				if cfg.Message != "" {
 					<p class="text-pretty text-sm">{ cfg.Message }</p>
 				}
+				if cfg.HasAction() {
+					// No Alpine dismiss here: removing the element on click would
+					// race the HTMX request and cancel it. The toast auto-dismisses
+					// on its timer; the action fires its HTMX request cleanly.
+					<button
+						type="button"
+						class="w-fit text-sm font-semibold underline underline-offset-2 hover:opacity-75"
+						if cfg.ActionHxGet != "" {
+							hx-get={ cfg.ActionHxGet }
+						}
+						if cfg.ActionHxPost != "" {
+							hx-post={ cfg.ActionHxPost }
+						}
+						if cfg.ActionHxTarget != "" {
+							hx-target={ cfg.ActionHxTarget }
+						}
+						if cfg.ActionHxSwap != "" {
+							hx-swap={ cfg.ActionHxSwap }
+						}
+					>{ cfg.ActionText }</button>
+				}
 			</div>
 			<!-- Dismiss Button -->
 			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click={ fmt.Sprintf("isVisible = false; $dispatch('toast-dismiss', { id: '%s' })", jsEscapeSingle(toastID)) }>

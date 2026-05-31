@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/araihu/goshtoso/components/alert"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/radio"
@@ -72,44 +71,19 @@ templ ClearButton(doneCount int, oob bool) {
 	</div>
 }
 
-// ClearUndo renders an empty #todo-undo slot via OOB swap, clearing any visible
-// undo bar. Call from add/toggle/edit/filter/move/clear-completed handlers.
-templ ClearUndo() {
-	<div id="todo-undo" hx-swap-oob="true"></div>
-}
-
-// UndoBar renders the Goshtoso Alert inside #todo-undo (via OOB swap) after a
-// delete. Its primary action ("Undo") POSTs the deleted todo's fields to the
-// restore endpoint so the server can reconstruct it with no server-side memory;
-// the secondary action dismisses the alert. Any later mutation clears the slot
-// via ClearUndo.
-templ UndoBar(t todo.Todo) {
-	<div id="todo-undo" hx-swap-oob="true">
-		@alert.Alert(alert.Config{
-			Variant:     alert.Info,
-			Title:       "Task deleted",
-			Description: t.Title,
-			Class:       "mb-2",
-			// Action (not Dismissible) — the alert renders the Undo primary button
-			// plus its own Dismiss button. Dismissible would take precedence and
-			// suppress the action buttons (alert.templ renders one OR the other).
-			Action: &alert.ActionConfig{
-				PrimaryText: "Undo",
-				PrimaryHxPost: fmt.Sprintf(
-					"/api/examples/todo/restore?id=%d&title=%s&done=%t&priority=%s&due=%s&order=%d",
-					t.ID,
-					url.QueryEscape(t.Title),
-					t.Done,
-					url.QueryEscape(t.Priority),
-					url.QueryEscape(t.Due),
-					t.Order,
-				),
-				PrimaryHxTarget: "#todo-list",
-				PrimaryHxSwap:   "outerHTML",
-				DismissText:     "Dismiss",
-			},
-		})
-	</div>
+// RestoreURL builds the /restore endpoint URL carrying a deleted todo's fields
+// as query params (url-encoded), so the server can reconstruct it with no
+// server-side memory. Used as the "Undo" action on the delete toast.
+func RestoreURL(t todo.Todo) string {
+	return fmt.Sprintf(
+		"/api/examples/todo/restore?id=%d&title=%s&done=%t&priority=%s&due=%s&order=%d",
+		t.ID,
+		url.QueryEscape(t.Title),
+		t.Done,
+		url.QueryEscape(t.Priority),
+		url.QueryEscape(t.Due),
+		t.Order,
+	)
 }
 
 // TodoRow renders one todo as a list item: toggle, title, priority badge,

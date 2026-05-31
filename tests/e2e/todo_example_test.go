@@ -227,14 +227,14 @@ func TestTodoExample_UndoDelete(t *testing.T) {
 
 	addTodo(t, page, "restore me")
 
-	// Delete the todo. Wait for the undo Alert (with its Undo action) to appear.
+	// Delete the todo. Wait for the toast (carrying an Undo action) to appear.
 	clickUntil(t, page,
 		page.Locator("#todo-list > li button[aria-label='Delete']").First(),
-		"() => Array.from(document.querySelectorAll('#todo-undo button')).some(b => b.textContent.trim() === 'Undo')")
+		"() => Array.from(document.querySelectorAll('#toast-container button')).some(b => b.textContent.trim() === 'Undo')")
 
-	// Click the Alert's Undo action. Wait for the todo to reappear in the list.
+	// Click the toast's Undo action. Wait for the todo to reappear in the list.
 	clickUntil(t, page,
-		page.Locator("#todo-undo button", playwright.PageLocatorOptions{HasText: "Undo"}),
+		page.Locator("#toast-container button", playwright.PageLocatorOptions{HasText: "Undo"}),
 		fmt.Sprintf("() => Array.from(document.querySelectorAll('#todo-list li span')).some(s => s.textContent.trim() === %q)", "restore me"))
 }
 
