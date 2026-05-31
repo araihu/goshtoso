@@ -46,18 +46,23 @@ symbol), **Spinner** (connection state), **Toggle** (pause/resume).
 **Hard requirement: lean on real Goshtoso components, not hand-rolled markup.**
 The point of an example is to show the library in real use. Verified feasibility:
 
-| Need | Goshtoso component | How it carries the SSE/Alpine wiring |
-|------|--------------------|--------------------------------------|
-| Live board | **`table`** | `table.Cell.Attributes` (per-cell `templ.Attributes`) carries `sse-swap="<SYM>"` on each price/change cell; `table.Row.Attributes` carries the row's `hx-get` spotlight trigger. Confirmed: `Cell{Value, Badge *badge.Config, Raw templ.Component, Attributes templ.Attributes}` and `Row{Cells, Attributes}` already exist. |
-| Up/down change | **`badge`** | `table.Cell.Badge` renders the direction badge inline in the cell; the SSE-pushed cell fragment re-renders the same `badge` component (green/red) per tick. |
-| Spotlight | **`card`** | Card wrapper holds the selected symbol; body via `card` slots / `Cell.Raw`-style component composition. The wrapper element carries `sse-swap="<selected>"`. |
-| Connection state | **`spinner`** | Shown while the SSE connection is opening / on the htmx `sse:open` vs pre-connect state. |
-| Pause / resume | **`toggle`** | Drives the Alpine wrapper that opens/closes the `EventSource`. |
+Verified against the real component APIs (`components/table/types.go`,
+`card`, `badge`, `toggle`, `spinner`):
 
-The **SSE connection root** (`hx-ext="sse" sse-connect=…`) sits on the table's
-wrapping element — set via the table config's wrapper attributes if exposed, else
-a thin wrapping `<div>` around `@table.Table(cfg)` (a wrapper div is acceptable;
-the *cells, rows, badges, card, spinner, toggle* are all real components).
+| Need | Goshtoso component | How it carries the SSE/Alpine wiring (real API) |
+|------|--------------------|--------------------------------------|
+| Live board | **`table`** (`table.Table(cfg)`) | Each live price/change cell uses **`table.Cell.Component`** — a `templ.Component` that overrides all other cell fields — to render `<span sse-swap="<SYM>" hx-swap="innerHTML">…</span>`. (`Cell` has no `Attributes` field; `Component` is the supported hook for arbitrary cell markup. Plain fields: `Text, Component, Description, BadgeColor, Code`.) |
+| Row → spotlight | **`table`** (`table.Row`) | The row's click trigger uses the existing **`Row.HXGet` + `Row.HXTarget` + `Row.HXSwap`** fields: `HXGet:"/api/examples/ticker/spotlight?symbol=X"`, `HXTarget:"#spotlight"`, `HXSwap:"outerHTML"`. No hand-rolled row markup. |
+| Up/down change | **`badge`** (`badge.Badge(cfg)`) | Rendered **inside** the cell's `Cell.Component` span (green/red by direction). The SSE-pushed fragment re-renders that same badge+price HTML each tick. (`Cell.BadgeColor` is a simpler string shortcut but can't live-swap, so we use the badge component inside `Component`.) |
+| Spotlight | **`card`** (`card.Card(cfg)`) | The spotlight wrapper element carries `sse-swap="<selected>"`; its body is a real `card.Config` (`Title`, `Description`, `Footer` slot). |
+| Connection state | **`spinner`** (`spinner.Spinner(cfg)`) | Shown pre-connect / while the SSE connection opens (toggled on htmx `htmx:sseOpen`). |
+| Pause / resume | **`toggle`** (`toggle.Toggle(cfg)`) | Bound to the Alpine wrapper that opens/closes the `EventSource`. |
+
+The **SSE connection root** (`hx-ext="sse" sse-connect=…`) sits on a thin
+wrapping `<div>` around `@table.Table(cfg)`. The table component has no
+wrapper-attribute pass-through, so a single connection-root `<div>` is the
+accepted seam — every interactive surface inside it (cells, rows, badges, card,
+spinner, toggle) is a real Goshtoso component.
 
 **If a real component genuinely lacks a hook** (as happened in Todo with
 icon-only buttons / raw checkboxes), document why before falling back to raw
