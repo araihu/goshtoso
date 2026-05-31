@@ -54,7 +54,7 @@ templ tickerPane(symbols []ticker.Symbol) {
 // TickerCell is the live price cell placed in the table via Cell.Component. The
 // span subscribes to the symbol's SSE event; ticks replace its inner content.
 templ TickerCell(sym ticker.Symbol) {
-	<span id={ "ticker-cell-" + sym.Ticker } sse-swap={ sym.Ticker } hx-swap="innerHTML">
+	<span id={ "ticker-cell-" + sym.Ticker } sse-swap={ sym.Ticker } hx-swap="innerHTML" hx-target="this">
 		@TickerCellInner(sym)
 	</span>
 }
