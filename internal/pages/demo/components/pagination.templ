@@ -10,32 +10,88 @@ templ PaginationDemoPage() {
 	@demo.Layout("Pagination", "pagination", paginationDemoContent())
 }
 
-// paginationDemoContent renders the actual content inside the layout
+// paginationDemoContent renders the demo. Each pagination variant lives in its
+// own preview frame followed by its own code block (mirrors
+// penguinui.com/components/pagination). Wrapped in #pagination-fragment.
 templ paginationDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Pagination",
-			Description:   "Pagination components allow users to navigate between pages of content. Supports simple prev/next and ellipsis variants.",
-		},
-		paginationDemoPreview(),
-		`// Simple pagination (prev/next only)
-@pagination.Pagination(pagination.Config{
+	<div id="pagination-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Pagination",
+				Description: "Navigate between pages of content. Simple prev/next and ellipsis page-number variants, with optional HTMX wiring.",
+			},
+			paginationSimplePreview(),
+			`@pagination.Pagination(pagination.Config{
     Variant:     pagination.Simple,
     CurrentPage: 3,
     TotalPages:  10,
     BaseURL:     "/items",
-})
+})`,
+		)
 
-// With ellipsis and page numbers
-@pagination.Pagination(pagination.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Simple — First Page",
+				Description: "The Previous control auto-disables on the first page (and Next on the last).",
+			},
+			paginationFirstPreview(),
+			`@pagination.Pagination(pagination.Config{
+    Variant:     pagination.Simple,
+    CurrentPage: 1,
+    TotalPages:  10,
+    BaseURL:     "/items",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Ellipsis — Beginning",
+				Description: "Variant: pagination.WithEllipsis shows page numbers, collapsing large ranges with an ellipsis.",
+			},
+			paginationEllipsisBeginPreview(),
+			`@pagination.Pagination(pagination.Config{
     Variant:     pagination.WithEllipsis,
     CurrentPage: 2,
     TotalPages:  30,
     BaseURL:     "/items",
-})
+})`,
+		)
 
-// With HTMX integration
-@pagination.Pagination(pagination.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Ellipsis — Middle",
+				Description: "A current page in the middle collapses both sides with ellipses.",
+			},
+			paginationEllipsisMidPreview(),
+			`@pagination.Pagination(pagination.Config{
+    Variant:     pagination.WithEllipsis,
+    CurrentPage: 15,
+    TotalPages:  30,
+    BaseURL:     "/items",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Ellipsis — End",
+				Description: "Near the end, only the leading range collapses.",
+			},
+			paginationEllipsisEndPreview(),
+			`@pagination.Pagination(pagination.Config{
+    Variant:     pagination.WithEllipsis,
+    CurrentPage: 29,
+    TotalPages:  30,
+    BaseURL:     "/items",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Small Page Count",
+				Description: "With 7 or fewer pages, every page number is shown (no ellipsis). Add HTMXTarget + HTMXSwap to swap content in place instead of navigating.",
+			},
+			paginationSmallPreview(),
+			`@pagination.Pagination(pagination.Config{
     Variant:     pagination.WithEllipsis,
     CurrentPage: 5,
     TotalPages:  30,
@@ -43,82 +99,59 @@ templ paginationDemoContent() {
     HTMXTarget:  "#items-tbody",
     HTMXSwap:    "innerHTML",
 })`,
-	)
+		)
+	</div>
+	// API reference lives outside #pagination-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Variant", Type: "Variant", Default: "WithEllipsis", Description: `Style: "simple" (prev/next only) or "ellipsis" (page numbers).`},
+		{Name: "CurrentPage", Type: "int", Default: "1", Description: "The active page (1-indexed)."},
+		{Name: "TotalPages", Type: "int", Default: "1", Description: "Total number of pages."},
+		{Name: "BaseURL", Type: "string", Default: `""`, Description: "Base href for page links (page appended as a query/path)."},
+		{Name: "HTMXTarget", Type: "string", Default: `""`, Description: "CSS selector to swap on click (enables in-place HTMX navigation)."},
+		{Name: "HTMXSwap", Type: "string", Default: `""`, Description: "HTMX swap strategy used with HTMXTarget."},
+		{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id on the nav."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+	})
 }
 
-// paginationDemoPreview renders the Goshtoso pagination preview
-templ paginationDemoPreview() {
-	<div class="w-full max-w-3xl mx-auto space-y-12">
-		// Simple Pagination (prev/next only)
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Pagination (Prev/Next)</h4>
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4">A minimal pagination with only previous and next buttons.</p>
-			@pagination.Pagination(pagination.Config{
-				Variant:     pagination.Simple,
-				CurrentPage: 3,
-				TotalPages:  10,
-				BaseURL:     "#",
-			})
-		</div>
+// paginationSimplePreview renders the simple prev/next variant.
+templ paginationSimplePreview() {
+	<div id="pagination-simple" class="w-full max-w-2xl mx-auto">
+		@pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 3, TotalPages: 10, BaseURL: "#"})
+	</div>
+}
 
-		// Simple Pagination - First Page (prev disabled)
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Pagination (First Page)</h4>
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Previous button is disabled on the first page.</p>
-			@pagination.Pagination(pagination.Config{
-				Variant:     pagination.Simple,
-				CurrentPage: 1,
-				TotalPages:  10,
-				BaseURL:     "#",
-			})
-		</div>
+// paginationFirstPreview renders the simple variant on the first page.
+templ paginationFirstPreview() {
+	<div id="pagination-first" class="w-full max-w-2xl mx-auto">
+		@pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 1, TotalPages: 10, BaseURL: "#"})
+	</div>
+}
 
-		// With Ellipsis - Beginning
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pagination with Ellipsis (Page 2 of 30)</h4>
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Shows page numbers with ellipsis for large page ranges.</p>
-			@pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
-				CurrentPage: 2,
-				TotalPages:  30,
-				BaseURL:     "#",
-			})
-		</div>
+// paginationEllipsisBeginPreview renders ellipsis pagination near the start.
+templ paginationEllipsisBeginPreview() {
+	<div id="pagination-ellipsis-begin" class="w-full max-w-2xl mx-auto">
+		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 2, TotalPages: 30, BaseURL: "#"})
+	</div>
+}
 
-		// With Ellipsis - Middle
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pagination with Ellipsis (Page 15 of 30)</h4>
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Current page in the middle shows ellipsis on both sides.</p>
-			@pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
-				CurrentPage: 15,
-				TotalPages:  30,
-				BaseURL:     "#",
-			})
-		</div>
+// paginationEllipsisMidPreview renders ellipsis pagination in the middle.
+templ paginationEllipsisMidPreview() {
+	<div id="pagination-ellipsis-mid" class="w-full max-w-2xl mx-auto">
+		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 15, TotalPages: 30, BaseURL: "#"})
+	</div>
+}
 
-		// With Ellipsis - End
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pagination with Ellipsis (Page 29 of 30)</h4>
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Near the end, ellipsis only appears before the range.</p>
-			@pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
-				CurrentPage: 29,
-				TotalPages:  30,
-				BaseURL:     "#",
-			})
-		</div>
+// paginationEllipsisEndPreview renders ellipsis pagination near the end.
+templ paginationEllipsisEndPreview() {
+	<div id="pagination-ellipsis-end" class="w-full max-w-2xl mx-auto">
+		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 29, TotalPages: 30, BaseURL: "#"})
+	</div>
+}
 
-		// Small page count (no ellipsis needed)
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Small Page Count (No Ellipsis)</h4>
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4">When total pages are 7 or fewer, all pages are shown.</p>
-			@pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
-				CurrentPage: 3,
-				TotalPages:  5,
-				BaseURL:     "#",
-			})
-		</div>
+// paginationSmallPreview renders a small page count (no ellipsis).
+templ paginationSmallPreview() {
+	<div id="pagination-small" class="w-full max-w-2xl mx-auto">
+		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 3, TotalPages: 5, BaseURL: "#"})
 	</div>
 }
