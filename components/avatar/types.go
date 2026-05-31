@@ -89,6 +89,7 @@ type Config struct {
 	// always rendered and binds x-bind:src to this expression; the initials
 	// layer shows whenever the expression is falsy. Use for client-set sources
 	// (object URLs, late-loaded images) where no static Src exists at render.
+	// SrcExpr is a trusted developer-authored Alpine expression — never interpolate untrusted/user input into it (it is evaluated as JavaScript on the client).
 	SrcExpr string
 	// Reactive defers the size + status-indicator size classes to the parent
 	// Alpine scope. When true, the avatar root and status dot read their size

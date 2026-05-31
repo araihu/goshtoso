@@ -131,17 +131,26 @@ templ layerLoading(cfg Config) {
 //
 // When cfg.SrcExpr is set, x-bind:src binds to the parent-scope expression
 // instead of a static src attribute, enabling client-set sources (object URLs, etc.).
+//
+// SrcExpr mode: the x-init naturalWidth check is guarded on the expression being
+// truthy at mount — an empty/no src (e.g. while IndexedDB hydrates) is reported
+// by browsers as complete with naturalWidth==0, which would latch imgError=true
+// and keep the image hidden forever even after the real URL arrives.
+// An x-effect clears imgError whenever the expression becomes truthy, allowing
+// the subsequent x-on:load/x-on:error to set the correct state from the real fetch.
 templ layerImage(cfg Config) {
 	<img
 		x-show="!imgError"
-		x-init="if ($el.complete) { if ($el.naturalWidth > 0) imgLoaded = true; else imgError = true; }"
-		x-on:load="imgLoaded = true"
-		x-on:error={ fmt.Sprintf("imgError = true; console.warn('[avatar] failed to load image:', '%s')", cfg.Src) }
 		if cfg.SrcExpr != "" {
+			x-init={ fmt.Sprintf("if ((%[1]s) && $el.complete) { if ($el.naturalWidth > 0) imgLoaded = true; else imgError = true; }", cfg.SrcExpr) }
+			x-effect={ fmt.Sprintf("if (%s) { imgError = false; }", cfg.SrcExpr) }
 			x-bind:src={ cfg.SrcExpr }
 		} else {
+			x-init="if ($el.complete) { if ($el.naturalWidth > 0) imgLoaded = true; else imgError = true; }"
 			src={ cfg.Src }
 		}
+		x-on:load="imgLoaded = true"
+		x-on:error={ fmt.Sprintf("imgError = true; console.warn('[avatar] failed to load image:', '%s')", cfg.Src) }
 		alt={ cfg.Alt }
 		class="absolute inset-0 h-full w-full object-cover object-center"
 	/>
