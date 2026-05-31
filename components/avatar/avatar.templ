@@ -150,7 +150,7 @@ templ layerImage(cfg Config) {
 			src={ cfg.Src }
 		}
 		x-on:load="imgLoaded = true"
-		x-on:error={ fmt.Sprintf("imgError = true; console.warn('[avatar] failed to load image:', '%s')", cfg.Src) }
+		x-on:error={ fmt.Sprintf("imgError = true; console.warn('[avatar] failed to load image:', '%s')", jsEscapeSingle(cfg.Src)) }
 		alt={ cfg.Alt }
 		class="absolute inset-0 h-full w-full object-cover object-center"
 	/>

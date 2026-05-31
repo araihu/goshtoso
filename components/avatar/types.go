@@ -293,6 +293,25 @@ func toUpper(b byte) string {
 	return string(b)
 }
 
+// jsEscapeSingle escapes a string for safe embedding inside a single-quoted
+// JS string literal. Without this, a Src containing a single quote (data URIs
+// frequently do, e.g. `viewBox='0 0 64 64'`) would terminate the string early
+// and break the x-on:error handler with a SyntaxError at Alpine compile time.
+func jsEscapeSingle(s string) string {
+	result := ""
+	for _, c := range s {
+		switch c {
+		case '\'':
+			result += `\'`
+		case '\\':
+			result += `\\`
+		default:
+			result += string(c)
+		}
+	}
+	return result
+}
+
 func splitWords(s string) []string {
 	var result []string
 	var current string

@@ -129,6 +129,64 @@ func TestAvatar_CachedReload(t *testing.T) {
 		"initials should still be hidden after cached reload")
 }
 
+// TestAvatar_FragmentNav_ShowcaseRegistered reproduces the first-render bug:
+// the demo registered Alpine.data('avatarShowcase') only on the 'alpine:init'
+// event, which does NOT re-fire on htmx fragment navigation. Arriving via the
+// sidebar (fragment swap) left x-data="avatarShowcase" undefined, so reactive
+// avatars never received a size class and the preview rendered broken until a
+// full-page refresh. Direct page.Goto (every other avatar test) never exercised
+// this path.
+func TestAvatar_FragmentNav_ShowcaseRegistered(t *testing.T) {
+	page := newIsolatedPage(t)
+
+	// pageErrors captures uncaught JS exceptions. The avatar component used to
+	// interpolate cfg.Src unescaped into the x-on:error single-quoted JS string;
+	// a data-URI Src (with embedded single quotes) broke it with a SyntaxError.
+	var pageErrors []string
+	page.On("pageerror", func(err error) { pageErrors = append(pageErrors, err.Error()) })
+
+	// consoleErrors captures console.error, EXCLUDING the intentional 404 from
+	// the error-fallback fixture (does-not-exist-404.png), which is expected.
+	var consoleErrors []string
+	page.On("console", func(m playwright.ConsoleMessage) {
+		if m.Type() == "error" && !strings.Contains(m.Text(), "404") {
+			consoleErrors = append(consoleErrors, m.Text())
+		}
+	})
+
+	// Land elsewhere first, then navigate via the sidebar (fragment swap).
+	_, err := page.Goto(baseURL + "/getting-started")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("a[href='/components/avatar']").First().Click())
+
+	// Wait for the avatar fragment to land.
+	require.NoError(t, page.Locator("[data-testid='avatar-section-image']").WaitFor(
+		playwright.LocatorWaitForOptions{
+			State:   playwright.WaitForSelectorStateAttached,
+			Timeout: playwright.Float(3000),
+		}))
+
+	// avatarShowcase must be registered after fragment nav: the size selector
+	// must drive the reactive avatars. Click 2xl and confirm a reactive avatar
+	// root picks up size-32. If avatarShowcase is undefined, the binding never
+	// applies and this times out.
+	require.NoError(t, page.Locator("label[for='avatar-size-2xl']").Click())
+	_, err = page.WaitForFunction(
+		`() => {
+			const roots = document.querySelectorAll("[data-testid='avatar-section-image'] .relative.inline-flex");
+			return Array.from(roots).some(el => (el.getAttribute('class') || '').includes('size-32'));
+		}`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
+	require.NoError(t, err, "avatarShowcase must be registered after fragment nav so the size selector drives reactive avatars")
+
+	require.Empty(t, pageErrors, "no uncaught JS exceptions on fragment-nav avatar page: %v", pageErrors)
+	require.Empty(t, consoleErrors, "no unexpected console errors on fragment-nav avatar page: %v", consoleErrors)
+}
+
 // TestAvatar_SizeSelector_RendersSixPills verifies the interactive size selector
 // rendered six segmented radio pills (xs/sm/md/lg/xl/2xl).
 func TestAvatar_SizeSelector_RendersSixPills(t *testing.T) {
