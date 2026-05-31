@@ -20,8 +20,9 @@ templating system. Hard fork of PenguinUI targeting 99.99% visual parity.
 | Alpine.js | v3.x | Reactive UI components |
 | Playwright | v0.5700.1 | E2E testing |
 
-Alpine.js + HTMX are bundled locally under `assets/js/vendor/` (no CDN at
-runtime). Page loads are deterministic in E2E.
+Alpine.js, HTMX, and the htmx SSE extension (`htmx-ext-sse.min.js`) are bundled
+locally under `assets/js/vendor/` (no CDN at runtime). Page loads are
+deterministic in E2E.
 
 ## Quick Commands
 
@@ -378,6 +379,23 @@ their own collapsible **"Examples"** sidebar section.
   any `Alpine.data()` immediately when Alpine is already running, not only on
   `alpine:init`, or it is undefined on fragment nav.
 
+- **Live Log Feed** (`/examples/logs`) is the first SSE / server-push example.
+  Transport: the vendored htmx SSE extension (`htmx-ext-sse`); markup uses
+  `hx-ext="sse"` + `sse-connect`. The server endpoint
+  (`/api/examples/logs/stream`, query params `interval` + `max`) emits one
+  server-rendered `LogRow` per tick and returns on `ctx.Done()` — no shared
+  state, only the per-connection goroutine. Division of labour: htmx owns row
+  *insertion* (append into `#log-feed`); Alpine (`x-data="logFeed"`, registered
+  via `<script>` + `Alpine.data()`, immediately if Alpine is already running so
+  fragment-nav works) owns row cap (last 100), the min-severity filter (pure
+  scoped CSS), auto-scroll, pause/resume, and connection status. Pause removes
+  the `sse-connect` *connector* element (which closes the `EventSource`) while
+  the persistent `#log-feed` retains its rows because the connector targets it
+  via `hx-target`; on resume the re-added connector is processed with
+  `htmx.process()` (htmx does not auto-process Alpine-inserted nodes).
+  Components showcased: Badge (levels + status), Button (pause/clear), Select
+  (min-level filter), Spinner (connecting), Toggle (auto-scroll), Tooltip.
+
 **To add an example:** domain pkg under `internal/examples/` + templ in
 `internal/pages/demo/examples/` + a `Demos` registry entry + a sidebar item +
 E2E (cover the **sidebar fragment-nav** path and assert no console errors, not
@@ -393,4 +411,6 @@ Table, Tabs, Textarea, Text Input, Toast, Toggle, Tooltip.
 381 E2E tests passing, full suite ~2.5 minutes, no skipped tests.
 
 **Example apps:** Todo List (`/examples/todo`) — cookie-backed, HTMX-driven; the
-first entry in the `/examples/*` family.
+first entry in the `/examples/*` family. Live Log Feed (`/examples/logs`) —
+SSE-streamed synthetic logs over htmx-ext-sse + Alpine; the first server-push
+example.
