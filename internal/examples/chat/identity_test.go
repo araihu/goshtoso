@@ -3,7 +3,7 @@ package chat
 import "testing"
 
 func TestEncodeDecode_Roundtrip(t *testing.T) {
-	in := Identity{Nick: "Ada", Color: "#3b82f6"}
+	in := Identity{Nick: "Ada", Color: "info"} // Color holds an avatar variant token, not a hex
 	enc := in.Encode()
 	if enc == "" {
 		t.Fatalf("Encode produced empty string")

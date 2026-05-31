@@ -50,7 +50,12 @@ func identityFromRequest(r *http.Request) chat.Identity {
 // renders either the full Layout or an HTMX Fragment.
 func (s *Server) renderChatPage(w http.ResponseWriter, r *http.Request) {
 	me := identityFromRequest(r)
-	if _, err := r.Cookie(chat.CookieName); err != nil {
+	// Seed (or repair) the cookie when the request carries no usable identity —
+	// missing OR undecodable — so the page HTML and the subsequent ws upgrade
+	// resolve to the same guest instead of two different fallbacks.
+	if c, err := r.Cookie(chat.CookieName); err != nil {
+		setChatCookie(w, me)
+	} else if _, derr := chat.Decode(c.Value); derr != nil {
 		setChatCookie(w, me)
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
