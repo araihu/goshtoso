@@ -70,3 +70,78 @@ func (s *State) Edit(id int, title, priority, due string) {
 	s.Todos[i].Priority = normalizePriority(priority)
 	s.Todos[i].Due = due
 }
+
+// Reorder reassigns Order so the todos named in ids come first in that sequence;
+// any todo not listed keeps its relative order and trails after. Unknown ids are
+// ignored.
+func (s *State) Reorder(ids []int) {
+	rank := make(map[int]int, len(ids))
+	for pos, id := range ids {
+		rank[id] = pos
+	}
+	next := len(ids)
+	// Stable trailing order: walk current Order, assign trailing ranks in order.
+	trailing := make([]Todo, 0, len(s.Todos))
+	for _, td := range s.Todos {
+		if _, ok := rank[td.ID]; !ok {
+			trailing = append(trailing, td)
+		}
+	}
+	slices.SortStableFunc(trailing, func(a, b Todo) int { return a.Order - b.Order })
+	for _, td := range trailing {
+		rank[td.ID] = next
+		next++
+	}
+	for i := range s.Todos {
+		s.Todos[i].Order = rank[s.Todos[i].ID]
+	}
+}
+
+// ClearCompleted removes all done todos.
+func (s *State) ClearCompleted() {
+	s.Todos = slices.DeleteFunc(s.Todos, func(t Todo) bool { return t.Done })
+}
+
+// SetFilter sets the view filter; unknown values fall back to "all".
+func (s *State) SetFilter(f string) {
+	switch f {
+	case "all", "active", "done":
+		s.Filter = f
+	default:
+		s.Filter = "all"
+	}
+}
+
+// Visible returns the todos for the current filter, sorted by Order.
+func (s State) Visible() []Todo {
+	out := make([]Todo, 0, len(s.Todos))
+	for _, t := range s.Todos {
+		switch s.Filter {
+		case "active":
+			if t.Done {
+				continue
+			}
+		case "done":
+			if !t.Done {
+				continue
+			}
+		}
+		out = append(out, t)
+	}
+	slices.SortStableFunc(out, func(a, b Todo) int { return a.Order - b.Order })
+	return out
+}
+
+// ActiveCount returns the number of not-done todos.
+func (s State) ActiveCount() int {
+	n := 0
+	for _, t := range s.Todos {
+		if !t.Done {
+			n++
+		}
+	}
+	return n
+}
+
+// DoneCount returns the number of done todos.
+func (s State) DoneCount() int { return len(s.Todos) - s.ActiveCount() }
