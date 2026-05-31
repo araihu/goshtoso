@@ -11,206 +11,308 @@ templ RadioDemoPage() {
 	@demo.Layout("Radio", "radio", radioDemoContent())
 }
 
-// radioDemoContent renders the actual content inside the layout
+// radioDemoContent renders the demo. Each radio variant lives in its own preview
+// frame followed by its own code block (mirrors penguinui.com/components/radio).
+// The variant set stays wrapped in #radio-fragment so the e2e selectors keep working.
 templ radioDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Radio",
-			Description:   "Single-select form input. Supports color variants, sizes, descriptions, bordered containers, segmented pill bars, and exposes first-class HTMX + Alpine.js interaction primitives.",
-		},
-		radioDemoPreview(),
-		`// Default radio
-@radio.Radio(radio.Config{
+	<div id="radio-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Radio",
+				Description: "Single-select form input. Supports color variants, sizes, descriptions, bordered containers, segmented pill bars, and first-class HTMX + Alpine.js interaction primitives.",
+			},
+			radioDefaultPreview(),
+			`@radio.Radio(radio.Config{
     ID: "r-mac", Name: "os", Value: "mac", Label: "Mac", Checked: true,
 })
-
-// Container variant
 @radio.Radio(radio.Config{
+    ID: "r-win", Name: "os", Value: "windows", Label: "Windows",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Container",
+				Description: "Wraps each option in a bordered container with Container: true.",
+			},
+			radioContainerPreview(),
+			`@radio.Radio(radio.Config{
     ID: "r-c-mac", Name: "os-c", Value: "mac", Label: "Mac",
     Container: true, Checked: true,
-})
+})`,
+		)
 
-// Segmented variant — true segmented control (connected pill bar)
-@radio.RadioBar() {
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Segmented",
+				Description: "A true segmented control (connected pill bar). Set Segmented: true and group inside RadioBar.",
+			},
+			radioSegmentedPreview(),
+			`@radio.RadioBar() {
     @radio.Radio(radio.Config{ID: "r-seg-a", Name: "g", Value: "a", Label: "A", Segmented: true, Checked: true})
     @radio.Radio(radio.Config{ID: "r-seg-b", Name: "g", Value: "b", Label: "B", Segmented: true})
-}
+}`,
+		)
 
-// Alpine: client-side state
-@radio.Radio(radio.Config{
-    ID: "r-a-md", Name: "size-a", Value: "md", Label: "md",
-    Segmented: true,
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Description",
+				Description: "Add helper text under the label via Description (wire DescriptionID for aria-describedby).",
+			},
+			radioDescriptionPreview(),
+			`@radio.Radio(radio.Config{
+    ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
+    Description:   "For macOS Big Sur and higher.",
+    DescriptionID: "r-desc-mac-desc",
+    Checked:       true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Color Variants",
+				Description: "Six semantic colors via Variant: Primary, Secondary, Info, Success, Warning, Danger.",
+			},
+			radioColorPreview(),
+			`@radio.Radio(radio.Config{ID: "r-success", Name: "v", Value: "su", Label: "Success", Variant: radio.Success, Checked: true})
+@radio.Radio(radio.Config{ID: "r-danger", Name: "v2", Value: "d", Label: "Danger", Variant: radio.Danger, Checked: true})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Sizes",
+				Description: "Four box sizes via Size: SizeSM, SizeMD (default), SizeLG, SizeXL.",
+			},
+			radioSizesPreview(),
+			`@radio.Radio(radio.Config{ID: "r-sm", Name: "sz", Value: "sm", Label: "Small", Size: radio.SizeSM, Checked: true})
+@radio.Radio(radio.Config{ID: "r-xl", Name: "sz2", Value: "xl", Label: "XL", Size: radio.SizeXL, Checked: true})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks interaction and dims the control.",
+			},
+			radioDisabledPreview(),
+			`@radio.Radio(radio.Config{ID: "r-d1", Name: "dis", Value: "a", Label: "Disabled unchecked", Disabled: true})
+@radio.Radio(radio.Config{ID: "r-d2", Name: "dis", Value: "b", Label: "Disabled checked", Disabled: true, Checked: true})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Alpine — client state",
+				Description: "Wire AlpineConfig for client-only state. Clicks update local x-data without a server roundtrip.",
+			},
+			radioAlpinePreview(),
+			`@radio.Radio(radio.Config{
+    ID: "r-a-md", Name: "size-a", Value: "md", Label: "md", Segmented: true,
     Alpine: &radio.AlpineConfig{
         BindChecked: "selected === 'md'",
         OnChange:    "selected = 'md'",
     },
-})
+})`,
+		)
 
-// HTMX: server roundtrip on change
-@radio.Radio(radio.Config{
-    ID: "r-h-md", Name: "size-h", Value: "md", Label: "md",
-    Segmented: true,
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTMX — server roundtrip",
+				Description: "Wire HTMXConfig for a server roundtrip on change. The response swaps into the target.",
+			},
+			radioHTMXPreview(),
+			`@radio.Radio(radio.Config{
+    ID: "r-h-md", Name: "size-h", Value: "md", Label: "md", Segmented: true,
     HTMX: &radio.HTMXConfig{
         Get:    "/api/components/radio/echo?value=md",
         Target: "#radio-htmx-out",
         Swap:   "innerHTML",
     },
 })`,
-	)
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Hybrid — Alpine state + HTMX persistence",
+				Description: "Set both Alpine and HTMX: a single click updates client state and fires the server roundtrip.",
+			},
+			radioHybridPreview(),
+			`@radio.Radio(radio.Config{
+    ID: "r-hy-md", Name: "size-hy", Value: "md", Label: "md", Segmented: true,
+    Alpine: &radio.AlpineConfig{BindChecked: "selected === 'md'", OnChange: "selected = 'md'"},
+    HTMX:   &radio.HTMXConfig{Get: "/api/components/radio/echo?value=md", Target: "#radio-hybrid-out", Swap: "innerHTML"},
+})`,
+		)
+	</div>
+	// API reference lives outside #radio-fragment so its table rows don't pollute
+	// the radio group selectors the e2e suite relies on.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the radio input (also the label's for target)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name shared by all radios in a group."},
+		{Name: "Value", Type: "string", Default: `""`, Description: "Form field value submitted when selected."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Text displayed next to the radio."},
+		{Name: "Checked", Type: "bool", Default: "false", Description: "Initial checked state."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables interaction and dims the control."},
+		{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color scheme: "primary", "secondary", "info", "success", "warning", "danger".`},
+		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Box size: "sm", "md", "lg", "xl".`},
+		{Name: "Description", Type: "string", Default: `""`, Description: "Helper text rendered below the label."},
+		{Name: "DescriptionID", Type: "string", Default: `""`, Description: "ID of the description element for aria-describedby wiring."},
+		{Name: "Container", Type: "bool", Default: "false", Description: "Wraps the radio in a bordered container."},
+		{Name: "Segmented", Type: "bool", Default: "false", Description: "Renders a segmented-control pill (sr-only input); group inside RadioBar."},
+		{Name: "BadgeColor", Type: "string", Default: `""`, Description: "Wraps the label in a semi-solid badge of the given color."},
+		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Server interaction on change (Get/Post/Target/Swap/...)."},
+		{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side state (Model/OnChange/BindChecked/...)."},
+		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the input; wins on conflict."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the label root."},
+	})
 }
 
-// radioDemoPreview renders the Goshtoso radio preview sections
-templ radioDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-10">
-		// Default Radio
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Radio</h4>
-			<div class="flex flex-col gap-2" data-testid="radio-default-group">
-				@radio.Radio(radio.Config{ID: "r-d-mac", Name: "os-default", Value: "mac", Label: "Mac", Checked: true})
-				@radio.Radio(radio.Config{ID: "r-d-win", Name: "os-default", Value: "windows", Label: "Windows"})
-				@radio.Radio(radio.Config{ID: "r-d-linux", Name: "os-default", Value: "linux", Label: "Linux"})
-			</div>
+// radioDefaultPreview renders the default exclusive radio group.
+templ radioDefaultPreview() {
+	<div id="radio-default" class="w-full max-w-md mx-auto">
+		<div class="flex flex-col gap-2" data-testid="radio-default-group">
+			@radio.Radio(radio.Config{ID: "r-d-mac", Name: "os-default", Value: "mac", Label: "Mac", Checked: true})
+			@radio.Radio(radio.Config{ID: "r-d-win", Name: "os-default", Value: "windows", Label: "Windows"})
+			@radio.Radio(radio.Config{ID: "r-d-linux", Name: "os-default", Value: "linux", Label: "Linux"})
 		</div>
+	</div>
+}
 
-		// Container Variant
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Container</h4>
-			<div class="flex flex-wrap gap-2" data-testid="radio-container-group">
-				@radio.Radio(radio.Config{ID: "r-c-mac", Name: "os-container", Value: "mac", Label: "Mac", Container: true, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-c-win", Name: "os-container", Value: "windows", Label: "Windows", Container: true})
-				@radio.Radio(radio.Config{ID: "r-c-linux", Name: "os-container", Value: "linux", Label: "Linux", Container: true})
-			</div>
+// radioContainerPreview renders the bordered-container variant.
+templ radioContainerPreview() {
+	<div id="radio-container" class="w-full max-w-md mx-auto">
+		<div class="flex flex-wrap gap-2" data-testid="radio-container-group">
+			@radio.Radio(radio.Config{ID: "r-c-mac", Name: "os-container", Value: "mac", Label: "Mac", Container: true, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-c-win", Name: "os-container", Value: "windows", Label: "Windows", Container: true})
+			@radio.Radio(radio.Config{ID: "r-c-linux", Name: "os-container", Value: "linux", Label: "Linux", Container: true})
 		</div>
+	</div>
+}
 
-		// Segmented Variant
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Segmented (connected pill bar)</h4>
-			<div data-testid="radio-segmented-group">
-				@radio.RadioBar() {
-					@radio.Radio(radio.Config{ID: "r-seg-mac", Name: "os-seg", Value: "mac", Label: "Mac", Segmented: true, Checked: true})
-					@radio.Radio(radio.Config{ID: "r-seg-win", Name: "os-seg", Value: "windows", Label: "Windows", Segmented: true})
-					@radio.Radio(radio.Config{ID: "r-seg-linux", Name: "os-seg", Value: "linux", Label: "Linux", Segmented: true})
-				}
-			</div>
+// radioSegmentedPreview renders the connected pill-bar segmented variant.
+templ radioSegmentedPreview() {
+	<div id="radio-segmented" class="w-full max-w-md mx-auto">
+		<div data-testid="radio-segmented-group">
+			@radio.RadioBar() {
+				@radio.Radio(radio.Config{ID: "r-seg-mac", Name: "os-seg", Value: "mac", Label: "Mac", Segmented: true, Checked: true})
+				@radio.Radio(radio.Config{ID: "r-seg-win", Name: "os-seg", Value: "windows", Label: "Windows", Segmented: true})
+				@radio.Radio(radio.Config{ID: "r-seg-linux", Name: "os-seg", Value: "linux", Label: "Linux", Segmented: true})
+			}
 		</div>
+	</div>
+}
 
-		// With Description
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Description</h4>
-			<div class="flex flex-col gap-3">
-				@radio.Radio(radio.Config{
-					ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
-					Description:   "For macOS Big Sur and higher.",
-					DescriptionID: "r-desc-mac-desc",
-					Checked:       true,
-				})
-				@radio.Radio(radio.Config{
-					ID: "r-desc-win", Name: "os-desc", Value: "windows", Label: "Windows",
-					Description:   "Windows 10 and Windows 11.",
-					DescriptionID: "r-desc-win-desc",
-				})
-			</div>
+// radioDescriptionPreview renders radios with helper descriptions.
+templ radioDescriptionPreview() {
+	<div id="radio-description" class="w-full max-w-md mx-auto">
+		<div class="flex flex-col gap-3">
+			@radio.Radio(radio.Config{
+				ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
+				Description:   "For macOS Big Sur and higher.",
+				DescriptionID: "r-desc-mac-desc",
+				Checked:       true,
+			})
+			@radio.Radio(radio.Config{
+				ID: "r-desc-win", Name: "os-desc", Value: "windows", Label: "Windows",
+				Description:   "Windows 10 and Windows 11.",
+				DescriptionID: "r-desc-win-desc",
+			})
 		</div>
+	</div>
+}
 
-		// Color Variants
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variants</h4>
-			<div class="flex flex-wrap gap-4" data-testid="radio-color-variants">
-				@radio.Radio(radio.Config{ID: "r-v-primary", Name: "v-primary", Value: "p", Label: "Primary", Variant: radio.Primary, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-v-secondary", Name: "v-secondary", Value: "s", Label: "Secondary", Variant: radio.Secondary, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-v-info", Name: "v-info", Value: "i", Label: "Info", Variant: radio.Info, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-v-success", Name: "v-success", Value: "su", Label: "Success", Variant: radio.Success, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-v-warning", Name: "v-warning", Value: "w", Label: "Warning", Variant: radio.Warning, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-v-danger", Name: "v-danger", Value: "d", Label: "Danger", Variant: radio.Danger, Checked: true})
-			</div>
+// radioColorPreview renders the six semantic color variants.
+templ radioColorPreview() {
+	<div id="radio-colors" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-4" data-testid="radio-color-variants">
+			@radio.Radio(radio.Config{ID: "r-v-primary", Name: "v-primary", Value: "p", Label: "Primary", Variant: radio.Primary, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-v-secondary", Name: "v-secondary", Value: "s", Label: "Secondary", Variant: radio.Secondary, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-v-info", Name: "v-info", Value: "i", Label: "Info", Variant: radio.Info, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-v-success", Name: "v-success", Value: "su", Label: "Success", Variant: radio.Success, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-v-warning", Name: "v-warning", Value: "w", Label: "Warning", Variant: radio.Warning, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-v-danger", Name: "v-danger", Value: "d", Label: "Danger", Variant: radio.Danger, Checked: true})
 		</div>
+	</div>
+}
 
-		// Sizes
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Sizes</h4>
-			<div class="flex items-center gap-4" data-testid="radio-sizes">
-				@radio.Radio(radio.Config{ID: "r-size-sm", Name: "sz-sm", Value: "sm", Label: "Small", Size: radio.SizeSM, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-size-md", Name: "sz-md", Value: "md", Label: "Medium", Size: radio.SizeMD, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-size-lg", Name: "sz-lg", Value: "lg", Label: "Large", Size: radio.SizeLG, Checked: true})
-				@radio.Radio(radio.Config{ID: "r-size-xl", Name: "sz-xl", Value: "xl", Label: "XL", Size: radio.SizeXL, Checked: true})
-			</div>
+// radioSizesPreview renders the four input sizes.
+templ radioSizesPreview() {
+	<div id="radio-sizes" class="w-full max-w-md mx-auto">
+		<div class="flex items-center gap-4" data-testid="radio-sizes">
+			@radio.Radio(radio.Config{ID: "r-size-sm", Name: "sz-sm", Value: "sm", Label: "Small", Size: radio.SizeSM, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-size-md", Name: "sz-md", Value: "md", Label: "Medium", Size: radio.SizeMD, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-size-lg", Name: "sz-lg", Value: "lg", Label: "Large", Size: radio.SizeLG, Checked: true})
+			@radio.Radio(radio.Config{ID: "r-size-xl", Name: "sz-xl", Value: "xl", Label: "XL", Size: radio.SizeXL, Checked: true})
 		</div>
+	</div>
+}
 
-		// Disabled
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
-			<div class="flex flex-col gap-2">
-				@radio.Radio(radio.Config{ID: "r-dis-1", Name: "dis", Value: "a", Label: "Disabled unchecked", Disabled: true})
-				@radio.Radio(radio.Config{ID: "r-dis-2", Name: "dis", Value: "b", Label: "Disabled checked", Disabled: true, Checked: true})
-			</div>
+// radioDisabledPreview renders disabled radios.
+templ radioDisabledPreview() {
+	<div id="radio-disabled" class="w-full max-w-md mx-auto">
+		<div class="flex flex-col gap-2">
+			@radio.Radio(radio.Config{ID: "r-dis-1", Name: "dis", Value: "a", Label: "Disabled unchecked", Disabled: true})
+			@radio.Radio(radio.Config{ID: "r-dis-2", Name: "dis", Value: "b", Label: "Disabled checked", Disabled: true, Checked: true})
 		</div>
+	</div>
+}
 
-		// Interaction Primitives Showcase
-		<div class="pt-6 border-t border-outline dark:border-outline-dark">
-			<h3 class="text-base font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-1">Interaction primitives</h3>
-			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-6">
-				Radio exposes both Alpine.js and HTMX primitives via typed Config fields. Use Alpine for client-only
-				state, HTMX for server-driven side effects, or combine both for hybrid flows.
-			</p>
+// radioAlpinePreview renders the Alpine-only client-state showcase.
+templ radioAlpinePreview() {
+	<div id="radio-alpine" class="w-full max-w-md mx-auto" x-data="{ selected: 'md' }">
+		<div class="mb-3" data-testid="radio-alpine-group">
+			@radio.RadioBar() {
+				@radio.Radio(radio.Config{ID: "r-a-sm", Name: "size-a", Value: "sm", Label: "sm", Segmented: true,
+					Alpine: &radio.AlpineConfig{BindChecked: "selected === 'sm'", OnChange: "selected = 'sm'"}})
+				@radio.Radio(radio.Config{ID: "r-a-md", Name: "size-a", Value: "md", Label: "md", Segmented: true,
+					Alpine: &radio.AlpineConfig{BindChecked: "selected === 'md'", OnChange: "selected = 'md'"}})
+				@radio.Radio(radio.Config{ID: "r-a-lg", Name: "size-a", Value: "lg", Label: "lg", Segmented: true,
+					Alpine: &radio.AlpineConfig{BindChecked: "selected === 'lg'", OnChange: "selected = 'lg'"}})
+			}
+		</div>
+		<div class="text-sm text-on-surface dark:text-on-surface-dark" data-testid="radio-alpine-out">
+			Selected: <span x-text="selected" class="font-mono font-semibold"></span>
+		</div>
+	</div>
+}
 
-			// Alpine-only
-			<div class="mb-8" x-data="{ selected: 'md' }">
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Alpine only — client state</h4>
-				<div class="mb-3" data-testid="radio-alpine-group">
-					@radio.RadioBar() {
-						@radio.Radio(radio.Config{ID: "r-a-sm", Name: "size-a", Value: "sm", Label: "sm", Segmented: true,
-							Alpine: &radio.AlpineConfig{BindChecked: "selected === 'sm'", OnChange: "selected = 'sm'"}})
-						@radio.Radio(radio.Config{ID: "r-a-md", Name: "size-a", Value: "md", Label: "md", Segmented: true,
-							Alpine: &radio.AlpineConfig{BindChecked: "selected === 'md'", OnChange: "selected = 'md'"}})
-						@radio.Radio(radio.Config{ID: "r-a-lg", Name: "size-a", Value: "lg", Label: "lg", Segmented: true,
-							Alpine: &radio.AlpineConfig{BindChecked: "selected === 'lg'", OnChange: "selected = 'lg'"}})
-					}
-				</div>
-				<div class="text-sm text-on-surface dark:text-on-surface-dark" data-testid="radio-alpine-out">
-					Selected: <span x-text="selected" class="font-mono font-semibold"></span>
-				</div>
-			</div>
+// radioHTMXPreview renders the HTMX-only server-roundtrip showcase.
+templ radioHTMXPreview() {
+	<div id="radio-htmx" class="w-full max-w-md mx-auto">
+		<div class="mb-3" data-testid="radio-htmx-group">
+			@radio.RadioBar() {
+				@radio.Radio(radio.Config{ID: "r-h-sm", Name: "size-h", Value: "sm", Label: "sm", Segmented: true,
+					HTMX: &radio.HTMXConfig{Get: "/api/components/radio/echo?value=sm", Target: "#radio-htmx-out", Swap: "innerHTML"}})
+				@radio.Radio(radio.Config{ID: "r-h-md", Name: "size-h", Value: "md", Label: "md", Segmented: true,
+					HTMX: &radio.HTMXConfig{Get: "/api/components/radio/echo?value=md", Target: "#radio-htmx-out", Swap: "innerHTML"}})
+				@radio.Radio(radio.Config{ID: "r-h-lg", Name: "size-h", Value: "lg", Label: "lg", Segmented: true,
+					HTMX: &radio.HTMXConfig{Get: "/api/components/radio/echo?value=lg", Target: "#radio-htmx-out", Swap: "innerHTML"}})
+			}
+		</div>
+		<div id="radio-htmx-out" class="text-sm text-on-surface dark:text-on-surface-dark" data-testid="radio-htmx-out">
+			<span class="text-on-surface-muted dark:text-on-surface-dark-muted">No selection yet.</span>
+		</div>
+	</div>
+}
 
-			// HTMX-only
-			<div class="mb-8">
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">HTMX only — server roundtrip on change</h4>
-				<div class="mb-3" data-testid="radio-htmx-group">
-					@radio.RadioBar() {
-						@radio.Radio(radio.Config{ID: "r-h-sm", Name: "size-h", Value: "sm", Label: "sm", Segmented: true,
-							HTMX: &radio.HTMXConfig{Get: "/api/components/radio/echo?value=sm", Target: "#radio-htmx-out", Swap: "innerHTML"}})
-						@radio.Radio(radio.Config{ID: "r-h-md", Name: "size-h", Value: "md", Label: "md", Segmented: true,
-							HTMX: &radio.HTMXConfig{Get: "/api/components/radio/echo?value=md", Target: "#radio-htmx-out", Swap: "innerHTML"}})
-						@radio.Radio(radio.Config{ID: "r-h-lg", Name: "size-h", Value: "lg", Label: "lg", Segmented: true,
-							HTMX: &radio.HTMXConfig{Get: "/api/components/radio/echo?value=lg", Target: "#radio-htmx-out", Swap: "innerHTML"}})
-					}
-				</div>
-				<div id="radio-htmx-out" class="text-sm text-on-surface dark:text-on-surface-dark" data-testid="radio-htmx-out">
-					<span class="text-on-surface-muted dark:text-on-surface-dark-muted">No selection yet.</span>
-				</div>
-			</div>
-
-			// Hybrid
-			<div x-data="{ selected: 'md' }">
-				<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Hybrid — Alpine state + HTMX persistence</h4>
-				<div class="mb-3" data-testid="radio-hybrid-group">
-					@radio.RadioBar() {
-						@radio.Radio(radio.Config{ID: "r-hy-sm", Name: "size-hy", Value: "sm", Label: "sm", Segmented: true,
-							Alpine: &radio.AlpineConfig{BindChecked: "selected === 'sm'", OnChange: "selected = 'sm'"},
-							HTMX:   &radio.HTMXConfig{Get: "/api/components/radio/echo?value=sm", Target: "#radio-hybrid-out", Swap: "innerHTML"}})
-						@radio.Radio(radio.Config{ID: "r-hy-md", Name: "size-hy", Value: "md", Label: "md", Segmented: true,
-							Alpine: &radio.AlpineConfig{BindChecked: "selected === 'md'", OnChange: "selected = 'md'"},
-							HTMX:   &radio.HTMXConfig{Get: "/api/components/radio/echo?value=md", Target: "#radio-hybrid-out", Swap: "innerHTML"}})
-						@radio.Radio(radio.Config{ID: "r-hy-lg", Name: "size-hy", Value: "lg", Label: "lg", Segmented: true,
-							Alpine: &radio.AlpineConfig{BindChecked: "selected === 'lg'", OnChange: "selected = 'lg'"},
-							HTMX:   &radio.HTMXConfig{Get: "/api/components/radio/echo?value=lg", Target: "#radio-hybrid-out", Swap: "innerHTML"}})
-					}
-				</div>
-				<div class="text-sm text-on-surface dark:text-on-surface-dark space-y-1">
-					<div>Alpine: <span x-text="selected" class="font-mono font-semibold" data-testid="radio-hybrid-alpine-out"></span></div>
-					<div id="radio-hybrid-out" data-testid="radio-hybrid-htmx-out">
-						<span class="text-on-surface-muted dark:text-on-surface-dark-muted">Server: not called yet.</span>
-					</div>
-				</div>
+// radioHybridPreview renders the hybrid Alpine-state + HTMX-persistence showcase.
+templ radioHybridPreview() {
+	<div id="radio-hybrid" class="w-full max-w-md mx-auto" x-data="{ selected: 'md' }">
+		<div class="mb-3" data-testid="radio-hybrid-group">
+			@radio.RadioBar() {
+				@radio.Radio(radio.Config{ID: "r-hy-sm", Name: "size-hy", Value: "sm", Label: "sm", Segmented: true,
+					Alpine: &radio.AlpineConfig{BindChecked: "selected === 'sm'", OnChange: "selected = 'sm'"},
+					HTMX:   &radio.HTMXConfig{Get: "/api/components/radio/echo?value=sm", Target: "#radio-hybrid-out", Swap: "innerHTML"}})
+				@radio.Radio(radio.Config{ID: "r-hy-md", Name: "size-hy", Value: "md", Label: "md", Segmented: true,
+					Alpine: &radio.AlpineConfig{BindChecked: "selected === 'md'", OnChange: "selected = 'md'"},
+					HTMX:   &radio.HTMXConfig{Get: "/api/components/radio/echo?value=md", Target: "#radio-hybrid-out", Swap: "innerHTML"}})
+				@radio.Radio(radio.Config{ID: "r-hy-lg", Name: "size-hy", Value: "lg", Label: "lg", Segmented: true,
+					Alpine: &radio.AlpineConfig{BindChecked: "selected === 'lg'", OnChange: "selected = 'lg'"},
+					HTMX:   &radio.HTMXConfig{Get: "/api/components/radio/echo?value=lg", Target: "#radio-hybrid-out", Swap: "innerHTML"}})
+			}
+		</div>
+		<div class="text-sm text-on-surface dark:text-on-surface-dark space-y-1">
+			<div>Alpine: <span x-text="selected" class="font-mono font-semibold" data-testid="radio-hybrid-alpine-out"></span></div>
+			<div id="radio-hybrid-out" data-testid="radio-hybrid-htmx-out">
+				<span class="text-on-surface-muted dark:text-on-surface-dark-muted">Server: not called yet.</span>
 			</div>
 		</div>
 	</div>
