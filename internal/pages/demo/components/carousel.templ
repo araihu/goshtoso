@@ -10,148 +10,213 @@ templ CarouselDemoPage() {
 	@demo.Layout("Carousel", "carousel", carouselDemoContent())
 }
 
-// carouselDemoContent renders all carousel variant demos
+// carouselDemoContent renders the demo. Each carousel variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/carousel). Wrapped in #carousel-fragment.
 templ carouselDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Carousel",
-			Description:   "A carousel component for cycling through slides with images, text overlays, autoplay, touch support, and HTMX dynamic loading.",
-		},
-		carouselDemoPreview(),
-		carouselDemoCode,
-	)
-}
-
-var carouselDemoCode = `// Default Carousel
-@carousel.Carousel(carousel.Config{
+	<div id="carousel-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Carousel",
+				Description: "Cycle through slides with images, text overlays, CTAs, autoplay, touch/swipe, fixed aspect ratios, card framing, and HTMX dynamic loading.",
+			},
+			carouselDefaultPreview(),
+			`@carousel.Carousel(carousel.Config{
     Slides: []carousel.Slide{
-        {ImgSrc: "img1.webp", ImgAlt: "Slide 1"},
-        {ImgSrc: "img2.webp", ImgAlt: "Slide 2"},
+        {ImgSrc: "slide-1.webp", ImgAlt: "Slide 1"},
+        {ImgSrc: "slide-2.webp", ImgAlt: "Slide 2"},
     },
-})
+})`,
+		)
 
-// With Text Overlay
-@carousel.Carousel(carousel.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Text Overlay",
+				Description: "Variant: carousel.WithText adds a gradient title + description overlay per slide.",
+			},
+			carouselTextPreview(),
+			`@carousel.Carousel(carousel.Config{
     Variant: carousel.WithText,
     Slides: []carousel.Slide{
-        {ImgSrc: "img1.webp", ImgAlt: "...", Title: "Hello", Description: "World"},
+        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Front end developers", Description: "The architects of the digital world."},
     },
-})
+})`,
+		)
 
-// With CTA Button
-@carousel.Carousel(carousel.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With CTA Button",
+				Description: "Variant: carousel.WithCTA adds a call-to-action button using each slide's CTAUrl + CTAText.",
+			},
+			carouselCTAPreview(),
+			`@carousel.Carousel(carousel.Config{
     Variant: carousel.WithCTA,
     Slides: []carousel.Slide{
-        {ImgSrc: "img1.webp", ImgAlt: "...", Title: "Title", Description: "Desc", CTAUrl: "/link", CTAText: "Learn More"},
+        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Build faster", Description: "Pre-built UI components.", CTAUrl: "#", CTAText: "Get Started"},
     },
-})
+})`,
+		)
 
-// With Autoplay
-@carousel.Carousel(carousel.Config{
-    Autoplay: &carousel.AutoplayConfig{Interval: 4000},
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Autoplay",
+				Description: "Pass an Autoplay config to advance slides automatically every Interval milliseconds.",
+			},
+			carouselAutoplayPreview(),
+			`@carousel.Carousel(carousel.Config{
     Variant:  carousel.WithText,
+    Autoplay: &carousel.AutoplayConfig{Interval: 4000},
     Slides:   slides,
-})
+})`,
+		)
 
-// Fixed Aspect Ratio (3:1)
-@carousel.Carousel(carousel.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Fixed Aspect Ratio (3:1)",
+				Description: "Set AspectRatio (e.g. \"3/1\") to lock the frame's proportions.",
+			},
+			carouselAspectPreview(),
+			`@carousel.Carousel(carousel.Config{
     AspectRatio: "3/1",
     Slides:      slides,
-})
+})`,
+		)
 
-// With Touch / Swipe
-@carousel.Carousel(carousel.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Touch / Swipe",
+				Description: "Touch: true enables left/right swipe gestures on touch devices.",
+			},
+			carouselTouchPreview(),
+			`@carousel.Carousel(carousel.Config{
     Touch:  true,
     Slides: slides,
-})
+})`,
+		)
 
-// On Card
-@carousel.Carousel(carousel.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "On Card",
+				Description: "Variant: carousel.OnCard frames the carousel in an article card with product info below.",
+			},
+			carouselCardPreview(),
+			`@carousel.Carousel(carousel.Config{
     Variant: carousel.OnCard,
     Slides: []carousel.Slide{
-        {ImgSrc: "img.webp", ImgAlt: "...", Title: "Product", Description: "$29.99"},
+        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Abstract Blue Series", Description: "Limited edition print. $49.99"},
     },
-})
+})`,
+		)
 
-// HTMX Dynamic Loading
-@carousel.Carousel(carousel.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTMX Dynamic Loading",
+				Description: "Provide an HTMX config and the slides are fetched from the server on page load.",
+			},
+			carouselHTMXPreview(),
+			`@carousel.Carousel(carousel.Config{
     HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
-})`
+})`,
+		)
+	</div>
+	// API reference lives outside #carousel-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Slides", Type: "[]Slide", Default: "nil", Description: "Slide data (ImgSrc, ImgAlt, Title, Description, CTAUrl, CTAText)."},
+		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default", "with-text", "with-cta", "on-card".`},
+		{Name: "Autoplay", Type: "*AutoplayConfig", Default: "nil", Description: "Auto-advance config (Interval in ms)."},
+		{Name: "Touch", Type: "bool", Default: "false", Description: "Enable left/right swipe gestures."},
+		{Name: "AspectRatio", Type: "string", Default: `""`, Description: `Lock the frame ratio (e.g. "3/1", "16/9").`},
+		{Name: "Height", Type: "string", Default: `""`, Description: "Explicit height override (when AspectRatio is unset)."},
+		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Fetch slides from the server (Get URL)."},
+		{Name: "ID", Type: "string", Default: "auto", Description: "Container id used for Alpine state scoping; auto-generated when empty."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the carousel container."},
+	})
+}
 
-templ carouselDemoPreview() {
-	<div class="space-y-12">
-		<!-- Default -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Default</h4>
-			@carousel.Carousel(carousel.Config{
-				Slides: defaultSlides(),
-			})
-		</div>
+// carouselDefaultPreview renders the image-only default carousel.
+templ carouselDefaultPreview() {
+	<div id="carousel-default" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:     "carousel-default-c",
+			Slides: defaultSlides(),
+		})
+	</div>
+}
 
-		<!-- With Text -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With Text Overlay</h4>
-			@carousel.Carousel(carousel.Config{
-				Variant: carousel.WithText,
-				Slides:  textSlides(),
-			})
-		</div>
+// carouselTextPreview renders the text-overlay variant.
+templ carouselTextPreview() {
+	<div id="carousel-text" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:      "carousel-text-c",
+			Variant: carousel.WithText,
+			Slides:  textSlides(),
+		})
+	</div>
+}
 
-		<!-- With CTA -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With CTA Button</h4>
-			@carousel.Carousel(carousel.Config{
-				Variant: carousel.WithCTA,
-				Slides:  ctaSlides(),
-			})
-		</div>
+// carouselCTAPreview renders the CTA-button variant.
+templ carouselCTAPreview() {
+	<div id="carousel-cta" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:      "carousel-cta-c",
+			Variant: carousel.WithCTA,
+			Slides:  ctaSlides(),
+		})
+	</div>
+}
 
-		<!-- With Autoplay -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With Autoplay</h4>
-			@carousel.Carousel(carousel.Config{
-				Variant:  carousel.WithText,
-				Autoplay: &carousel.AutoplayConfig{Interval: 4000},
-				Slides:   textSlides(),
-			})
-		</div>
+// carouselAutoplayPreview renders the autoplay variant.
+templ carouselAutoplayPreview() {
+	<div id="carousel-autoplay" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:       "carousel-autoplay-c",
+			Variant:  carousel.WithText,
+			Autoplay: &carousel.AutoplayConfig{Interval: 4000},
+			Slides:   textSlides(),
+		})
+	</div>
+}
 
-		<!-- Fixed Aspect Ratio -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Fixed Aspect Ratio (3:1)</h4>
-			@carousel.Carousel(carousel.Config{
-				AspectRatio: "3/1",
-				Slides:      defaultSlides(),
-			})
-		</div>
+// carouselAspectPreview renders the fixed-aspect-ratio variant.
+templ carouselAspectPreview() {
+	<div id="carousel-aspect" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:          "carousel-aspect-c",
+			AspectRatio: "3/1",
+			Slides:      defaultSlides(),
+		})
+	</div>
+}
 
-		<!-- With Touch -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With Touch / Swipe</h4>
-			<p class="mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Swipe left or right on touch devices</p>
-			@carousel.Carousel(carousel.Config{
-				Touch:  true,
-				Slides: defaultSlides(),
-			})
-		</div>
+// carouselTouchPreview renders the touch/swipe variant.
+templ carouselTouchPreview() {
+	<div id="carousel-touch" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:     "carousel-touch-c",
+			Touch:  true,
+			Slides: defaultSlides(),
+		})
+	</div>
+}
 
-		<!-- On Card -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">On Card</h4>
-			@carousel.Carousel(carousel.Config{
-				Variant: carousel.OnCard,
-				Slides:  cardSlides(),
-			})
-		</div>
+// carouselCardPreview renders the on-card variant.
+templ carouselCardPreview() {
+	<div id="carousel-card" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:      "carousel-card-c",
+			Variant: carousel.OnCard,
+			Slides:  cardSlides(),
+		})
+	</div>
+}
 
-		<!-- HTMX Dynamic -->
-		<div>
-			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">HTMX Dynamic Loading</h4>
-			<p class="mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Slides fetched from the server via HTMX on page load</p>
-			@carousel.Carousel(carousel.Config{
-				HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
-			})
-		</div>
+// carouselHTMXPreview renders the HTMX dynamic-loading variant.
+templ carouselHTMXPreview() {
+	<div id="carousel-htmx" class="w-full max-w-2xl mx-auto">
+		@carousel.Carousel(carousel.Config{
+			ID:   "carousel-htmx-c",
+			HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
+		})
 	</div>
 }
 
