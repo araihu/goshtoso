@@ -217,17 +217,28 @@ func PresenceFrame(text string, count int) templ.Component {
 // current nick (read live from #chat-hidden-nick.value, so renames track), which
 // drives the Tailwind group-data-[mine=true]: variants to right-align + recolor.
 //
-// It is emitted via templ.Raw so templ does not escape the JS. Built with plain
-// string concatenation (no backticks, no quotes that templ would mangle) and
-// guarded by a data-mine-observer flag on #chat-log so it is idempotent and safe
-// across fragment-nav (htmx executes <script> in swapped content). The observer
-// is wired immediately — Alpine/htmx are already running on a fragment swap, so
-// we must not defer to a one-shot init event.
+// NICK-COLLISION LIMITATION: "mine" is decided by comparing a broadcast bubble's
+// data-sender (a display nick) to the viewer's nick. Two users who pick the same
+// nick will each see the other's messages as "mine". This is acceptable for a
+// broadcast demo (collisions are self-inflicted via the rename field); a
+// production app would key on a stable per-session ID instead of the display nick.
+//
+// LEAK-FREE / FRAGMENT-NAV SAFE: a SINGLE page-lifetime MutationObserver is
+// installed exactly once on document.body (which always exists), guarded by the
+// window.__gtChatMineInit flag. Because this <script> lives inside the chat
+// fragment, htmx re-executes it on every swap-in; the guard makes the 2nd+ run a
+// no-op, so fragment-nav never stacks observers and nothing ever needs
+// disconnecting. #chat-log is replaced on each nav, but the body-level observer
+// keeps marking new bubbles regardless. If the first page the user lands on is
+// not the chat page, the script simply runs (and installs the observer) when the
+// chat fragment first arrives. The observer is wired immediately — Alpine/htmx
+// are already running on a fragment swap, so we must not defer to a one-shot init
+// event. Built with plain string concatenation (no backticks, no quotes templ
+// would mangle) and emitted via templ.Raw so templ does not escape the JS.
 const chatMineScript = "" +
 	"(function(){" +
-	"  var log = document.getElementById('chat-log');" +
-	"  if (!log || log.dataset.mineObserver === '1') return;" +
-	"  log.dataset.mineObserver = '1';" +
+	"  if (window.__gtChatMineInit) return;" +
+	"  window.__gtChatMineInit = true;" +
 	"  function myNick(){" +
 	"    var h = document.getElementById('chat-hidden-nick');" +
 	"    return h ? h.value : '';" +
@@ -237,23 +248,37 @@ const chatMineScript = "" +
 	"    var mine = row.getAttribute('data-sender') === myNick();" +
 	"    row.setAttribute('data-mine', mine ? 'true' : 'false');" +
 	"  }" +
+	"  function inLog(node){" +
+	"    var log = document.getElementById('chat-log');" +
+	"    return !!log && log.contains(node);" +
+	"  }" +
 	"  function process(node){" +
-	"    if (!node || node.nodeType !== 1) return;" +
+	"    if (!node || node.nodeType !== 1 || !inLog(node)) return;" +
 	"    mark(node);" +
 	"    var kids = node.querySelectorAll ? node.querySelectorAll('[data-sender]') : [];" +
 	"    for (var i = 0; i < kids.length; i++) mark(kids[i]);" +
 	"  }" +
-	"  process(log);" +
+	"  function processExisting(){" +
+	"    var log = document.getElementById('chat-log');" +
+	"    if (!log) return;" +
+	"    var rows = log.querySelectorAll('[data-sender]');" +
+	"    for (var i = 0; i < rows.length; i++) mark(rows[i]);" +
+	"  }" +
+	"  processExisting();" +
 	"  var obs = new MutationObserver(function(muts){" +
 	"    for (var i = 0; i < muts.length; i++) {" +
 	"      var added = muts[i].addedNodes;" +
 	"      for (var j = 0; j < added.length; j++) process(added[j]);" +
 	"    }" +
 	"  });" +
-	"  obs.observe(log, { childList: true, subtree: true });" +
+	"  obs.observe(document.body, { childList: true, subtree: true });" +
 	"})();"
 
 // chatMineDetector emits the own-message detection script verbatim.
+//
+// See chatMineScript above for the nick-collision limitation: own-message
+// detection compares display nicks, so two users sharing a nick see each other's
+// messages as "mine". A production app would key on a stable per-session ID.
 func chatMineDetector() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -330,7 +355,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 143, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 168, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -492,7 +517,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue("chat-hidden-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 213, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 238, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -505,7 +530,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 213, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 238, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -518,7 +543,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 213, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 238, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -562,7 +587,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 219, Col: 120}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 244, Col: 120}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -575,7 +600,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 220, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 245, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -588,7 +613,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Color)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 221, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 246, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 		if templ_7745c5c3_Err != nil {
