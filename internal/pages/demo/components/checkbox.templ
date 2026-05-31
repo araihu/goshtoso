@@ -10,48 +10,87 @@ templ CheckboxDemoPage() {
 	@demo.Layout("Checkbox", "checkbox", checkboxDemoContent())
 }
 
-// checkboxDemoContent renders the actual content inside the layout
+// checkboxDemoContent renders the demo. Each checkbox variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/checkbox). Wrapped in #checkbox-fragment.
 templ checkboxDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "Checkbox",
-			Description:   "A checkbox allows users to select one or more options from a set. Supports color variants, custom icons, animations, descriptions, containers, and groups.",
-		},
-		checkboxDemoPreview(),
-		`// Default Checkbox
-@checkbox.Checkbox(checkbox.Config{
+	<div id="checkbox-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Checkbox",
+				Description: "Select one or more options. Supports color variants, custom icons, animations, descriptions, a bordered container, groups, and disabled states.",
+			},
+			checkboxDefaultPreview(),
+			`@checkbox.Checkbox(checkbox.Config{
     ID:      "notifications",
     Label:   "Notifications",
     Checked: true,
-})
+})`,
+		)
 
-// Color Variant
-@checkbox.Checkbox(checkbox.Config{
-    ID:      "success",
-    Label:   "Success",
-    Variant: checkbox.Success,
-    Checked: true,
-})
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Color Variants",
+				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+			},
+			checkboxColorsPreview(),
+			`@checkbox.Checkbox(checkbox.Config{ID: "success", Label: "Success", Variant: checkbox.Success, Checked: true})`,
+		)
 
-// With Description
-@checkbox.Checkbox(checkbox.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Custom Icons",
+				Description: "Swap the check glyph with Icon: checkbox.IconXmark, IconMinus, or IconPlus.",
+			},
+			checkboxIconsPreview(),
+			`@checkbox.Checkbox(checkbox.Config{ID: "iconPlus", Label: "Plus", Icon: checkbox.IconPlus, Checked: true})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Animations",
+				Description: "Set Animation: checkbox.AnimationSlideUp, AnimationScaleUp, or AnimationSlideDown for an animated check transition.",
+			},
+			checkboxAnimationsPreview(),
+			`@checkbox.Checkbox(checkbox.Config{ID: "anim", Label: "Slide Up", Animation: checkbox.AnimationSlideUp, Checked: true})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Description",
+				Description: "Add Description (and DescriptionID for aria-describedby) for helper text under the label.",
+			},
+			checkboxDescriptionPreview(),
+			`@checkbox.Checkbox(checkbox.Config{
     ID:            "email",
     Label:         "Email Updates",
     Description:   "You only gonna get good news, promise.",
     DescriptionID: "emailDesc",
     Checked:       true,
-})
+})`,
+		)
 
-// With Container
-@checkbox.Checkbox(checkbox.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Container",
+				Description: "Container: true wraps the checkbox and label in a bordered, justify-between container.",
+			},
+			checkboxContainerPreview(),
+			`@checkbox.Checkbox(checkbox.Config{
     ID:        "containerCheck",
     Label:     "Notifications",
     Container: true,
     Checked:   true,
-})
+})`,
+		)
 
-// Checkbox Group
-@checkbox.CheckboxGroup(checkbox.GroupConfig{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Checkbox Group",
+				Description: "checkbox.CheckboxGroup renders a titled set of related checkboxes.",
+			},
+			checkboxGroupPreview(),
+			`@checkbox.CheckboxGroup(checkbox.GroupConfig{
     Title: "Notifications",
     Items: []checkbox.Config{
         {ID: "email", Label: "Email notifications", Value: "email", Checked: true},
@@ -59,32 +98,56 @@ templ checkboxDemoContent() {
         {ID: "sms", Label: "SMS alerts", Value: "sms", Checked: true},
     },
 })`,
-	)
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks interaction in both the checked and unchecked states.",
+			},
+			checkboxDisabledPreview(),
+			`@checkbox.Checkbox(checkbox.Config{ID: "off", Label: "Disabled unchecked", Disabled: true})
+@checkbox.Checkbox(checkbox.Config{ID: "on", Label: "Disabled checked", Disabled: true, Checked: true})`,
+		)
+	</div>
+	// API reference lives outside #checkbox-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
+		{Name: "Value", Type: "string", Default: `""`, Description: "Form field value when checked."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Label text beside the box."},
+		{Name: "Checked", Type: "bool", Default: "false", Description: "Initial checked state."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+		{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
+		{Name: "Icon", Type: "Icon", Default: "IconCheck", Description: `Check glyph: "check", "xmark", "minus", "plus".`},
+		{Name: "Animation", Type: "Animation", Default: "AnimationNone", Description: `Check transition: "", "slide-up", "scale-up", "slide-down".`},
+		{Name: "Description", Type: "string", Default: `""`, Description: "Helper text below the label."},
+		{Name: "DescriptionID", Type: "string", Default: `""`, Description: "ID of the description for aria-describedby."},
+		{Name: "Container", Type: "bool", Default: "false", Description: "Wrap in a bordered container."},
+	})
 }
 
-// checkboxDemoPreview renders the Goshtoso checkbox preview
-templ checkboxDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Default Checkbox
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Checkbox</h4>
-			<div class="flex flex-wrap gap-4">
-				@checkbox.Checkbox(checkbox.Config{
-					ID:      "defaultChecked",
-					Label:   "Notifications",
-					Checked: true,
-				})
-				@checkbox.Checkbox(checkbox.Config{
-					ID:    "defaultUnchecked",
-					Label: "Unchecked",
-				})
-			</div>
+// checkboxDefaultPreview renders the default checked/unchecked pair.
+templ checkboxDefaultPreview() {
+	<div id="checkbox-default" class="w-full max-w-md mx-auto">
+		<div class="flex flex-wrap gap-4">
+			@checkbox.Checkbox(checkbox.Config{
+				ID:      "defaultChecked",
+				Label:   "Notifications",
+				Checked: true,
+			})
+			@checkbox.Checkbox(checkbox.Config{
+				ID:    "defaultUnchecked",
+				Label: "Unchecked",
+			})
 		</div>
+	</div>
+}
 
-		// Color Variants
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variants</h4>
-			<div class="flex flex-wrap gap-4">
+// checkboxColorsPreview renders the six color variants.
+templ checkboxColorsPreview() {
+	<div id="checkbox-colors" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-4">
 				@checkbox.Checkbox(checkbox.Config{
 					ID:      "variantPrimary",
 					Label:   "Primary",
@@ -123,11 +186,12 @@ templ checkboxDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Custom Icons
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Custom Icons</h4>
-			<div class="flex flex-wrap gap-4">
+// checkboxIconsPreview renders the custom-icon variants.
+templ checkboxIconsPreview() {
+	<div id="checkbox-icons" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-4">
 				@checkbox.Checkbox(checkbox.Config{
 					ID:      "iconXmark",
 					Label:   "Xmark",
@@ -148,11 +212,12 @@ templ checkboxDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// Animations
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Animations</h4>
-			<div class="flex flex-wrap gap-4">
+// checkboxAnimationsPreview renders the animation variants.
+templ checkboxAnimationsPreview() {
+	<div id="checkbox-animations" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-4">
 				@checkbox.Checkbox(checkbox.Config{
 					ID:        "animSlideUp",
 					Label:     "Slide Up",
@@ -173,34 +238,37 @@ templ checkboxDemoPreview() {
 				})
 			</div>
 		</div>
+}
 
-		// With Description
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Description</h4>
-			@checkbox.Checkbox(checkbox.Config{
-				ID:            "descriptionCheckbox",
+// checkboxDescriptionPreview renders a checkbox with a description.
+templ checkboxDescriptionPreview() {
+	<div id="checkbox-description" class="w-full max-w-md mx-auto">
+		@checkbox.Checkbox(checkbox.Config{
+			ID:            "descriptionCheckbox",
 				Label:         "Email Updates",
 				Description:   "You only gonna get good news, promise.",
 				DescriptionID: "checkboxDescription",
 				Checked:       true,
 			})
 		</div>
+}
 
-		// With Container
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Container</h4>
-			@checkbox.Checkbox(checkbox.Config{
-				ID:        "containerCheckbox",
+// checkboxContainerPreview renders the container-style checkbox.
+templ checkboxContainerPreview() {
+	<div id="checkbox-container" class="w-full max-w-md mx-auto">
+		@checkbox.Checkbox(checkbox.Config{
+			ID:        "containerCheckbox",
 				Label:     "Notifications",
 				Container: true,
 				Checked:   true,
 			})
 		</div>
+}
 
-		// Checkbox Group
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Checkbox Group</h4>
-			@checkbox.CheckboxGroup(checkbox.GroupConfig{
+// checkboxGroupPreview renders a titled checkbox group.
+templ checkboxGroupPreview() {
+	<div id="checkbox-group" class="w-full max-w-md mx-auto">
+		@checkbox.CheckboxGroup(checkbox.GroupConfig{
 				Title: "Notifications",
 				Items: []checkbox.Config{
 					{ID: "groupEmail", Label: "Email notifications", Value: "Email notifications", Checked: true},
@@ -209,11 +277,12 @@ templ checkboxDemoPreview() {
 				},
 			})
 		</div>
+}
 
-		// Disabled State
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
-			<div class="flex flex-wrap gap-4">
+// checkboxDisabledPreview renders the disabled states.
+templ checkboxDisabledPreview() {
+	<div id="checkbox-disabled" class="w-full max-w-md mx-auto">
+		<div class="flex flex-wrap gap-4">
 				@checkbox.Checkbox(checkbox.Config{
 					ID:       "disabledUnchecked",
 					Label:    "Disabled unchecked",
@@ -227,5 +296,4 @@ templ checkboxDemoPreview() {
 				})
 			</div>
 		</div>
-	</div>
 }
