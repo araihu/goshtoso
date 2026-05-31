@@ -10,6 +10,7 @@
 //   - /assets/styles.css — compiled Tailwind CSS with all theme definitions
 //   - /assets/js/vendor/alpine.min.js — Alpine.js
 //   - /assets/js/vendor/htmx.min.js — HTMX
+//   - /assets/js/vendor/htmx-ext-sse.min.js — HTMX SSE extension
 //   - /assets/js/vendor/alpine-collapse.min.js — Alpine collapse plugin
 //   - /assets/js/vendor/alpine-focus.min.js — Alpine focus plugin
 //   - /assets/js/darkmode.js — Alpine dark mode store
