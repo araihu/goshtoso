@@ -31,6 +31,28 @@ func TestStreamLogsFraming(t *testing.T) {
 	}
 }
 
+func TestWriteSSEMessageFraming(t *testing.T) {
+	cases := []struct {
+		name, in, want string
+	}{
+		{"single", "hello", "event: message\ndata: hello\n\n"},
+		{"trailing newline", "a\n", "event: message\ndata: a\n\n"},
+		{"interior blank", "a\n\nb", "event: message\ndata: a\ndata: \ndata: b\n\n"},
+		{"empty", "", "event: message\ndata: \n\n"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			if err := writeSSEMessage(rec, c.in); err != nil {
+				t.Fatalf("writeSSEMessage: %v", err)
+			}
+			if got := rec.Body.String(); got != c.want {
+				t.Fatalf("got %q, want %q", got, c.want)
+			}
+		})
+	}
+}
+
 func TestStreamLogsStopsOnContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // already cancelled

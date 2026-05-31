@@ -43,8 +43,15 @@ func (s *Server) handleLogsStream(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("X-Accel-Buffering", "no")
 	interval := durParam(r, "interval", 500*time.Millisecond)
 	maxN := intParam(r, "max", 0) // 0 = unbounded; intParam is defined in todo_handler.go
+	if maxN < 0 {
+		maxN = 0
+	}
+	if maxN > 10000 {
+		maxN = 10000
+	}
 	streamLogs(r.Context(), w, flusher, interval, maxN)
 }
 
@@ -66,7 +73,9 @@ func streamLogs(ctx context.Context, w http.ResponseWriter, flusher http.Flusher
 			if err := examples.LogRow(line).Render(ctx, &buf); err != nil {
 				return
 			}
-			writeSSEMessage(w, buf.String())
+			if err := writeSSEMessage(w, buf.String()); err != nil {
+				return
+			}
 			flusher.Flush()
 		}
 	}
@@ -75,10 +84,15 @@ func streamLogs(ctx context.Context, w http.ResponseWriter, flusher http.Flusher
 // writeSSEMessage frames an HTML fragment as one SSE `message` event. templ
 // output is multi-line, but a `data:` field is single-line, so each output
 // line becomes its own `data:` field; the htmx SSE ext rejoins them with "\n".
-func writeSSEMessage(w http.ResponseWriter, html string) {
-	fmt.Fprint(w, "event: message\n")
-	for _, line := range strings.Split(strings.TrimRight(html, "\n"), "\n") {
-		fmt.Fprintf(w, "data: %s\n", line)
+func writeSSEMessage(w http.ResponseWriter, html string) error {
+	if _, err := fmt.Fprint(w, "event: message\n"); err != nil {
+		return err
 	}
-	fmt.Fprint(w, "\n")
+	for _, line := range strings.Split(strings.TrimRight(html, "\n"), "\n") {
+		if _, err := fmt.Fprintf(w, "data: %s\n", line); err != nil {
+			return err
+		}
+	}
+	_, err := fmt.Fprint(w, "\n")
+	return err
 }
