@@ -136,8 +136,9 @@ fails). For depth, use the `templ` and `htmx` skills. The rules:
 
 **The full catalog — every package, entry point, config struct, field, and enum
 — lives in [`components-reference.md`](components-reference.md), generated from
-the `components/` source.** Read it to look up any component. There are 37
-component packages.
+the `components/` source.** Read it to look up any component. It covers every
+public package under `components/`, including nested ones (e.g. `combobox/v2`,
+whose package is `v2` → `@v2.Combobox(...)`).
 
 The **table** is the most complex: sortable columns, HTMX OOB-swap pagination,
 filter bar/inline variants, infinite scroll. Its HTMX endpoint contract is

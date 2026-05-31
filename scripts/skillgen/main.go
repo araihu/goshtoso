@@ -66,16 +66,13 @@ func main() {
 }
 
 func run() error {
-	dirs, err := os.ReadDir(componentsDir)
+	dirs, err := componentDirs()
 	if err != nil {
 		return err
 	}
 	var pkgs []pkgAPI
-	for _, d := range dirs {
-		if !d.IsDir() {
-			continue
-		}
-		api, ok, err := parsePkg(filepath.Join(componentsDir, d.Name()), d.Name())
+	for _, rel := range dirs {
+		api, ok, err := parsePkg(filepath.Join(componentsDir, rel), rel)
 		if err != nil {
 			return err
 		}
@@ -85,6 +82,32 @@ func run() error {
 	}
 	sort.Slice(pkgs, func(i, j int) bool { return pkgs[i].dir < pkgs[j].dir })
 	return os.WriteFile(outPath, []byte(render(pkgs)), 0o644)
+}
+
+// componentDirs returns every directory under components/ (recursively, so
+// nested packages like combobox/v2 are included) that directly contains Go
+// source, as paths relative to componentsDir.
+func componentDirs() ([]string, error) {
+	var dirs []string
+	err := filepath.WalkDir(componentsDir, func(path string, d os.DirEntry, err error) error {
+		if err != nil || !d.IsDir() {
+			return err
+		}
+		matches, gerr := filepath.Glob(filepath.Join(path, "*.go"))
+		if gerr != nil {
+			return gerr
+		}
+		rel, rerr := filepath.Rel(componentsDir, path)
+		if rerr != nil {
+			return rerr
+		}
+		if len(matches) > 0 && rel != "." {
+			dirs = append(dirs, rel)
+		}
+		return nil
+	})
+	sort.Strings(dirs)
+	return dirs, err
 }
 
 // parsePkg extracts the public API of one component package directory.
