@@ -940,6 +940,9 @@
   .h-52 {
     height: calc(var(--spacing) * 52);
   }
+  .h-80 {
+    height: calc(var(--spacing) * 80);
+  }
   .h-\[400px\] {
     height: 400px;
   }
@@ -1039,6 +1042,12 @@
   .w-12 {
     width: calc(var(--spacing) * 12);
   }
+  .w-16 {
+    width: calc(var(--spacing) * 16);
+  }
+  .w-20 {
+    width: calc(var(--spacing) * 20);
+  }
   .w-24 {
     width: calc(var(--spacing) * 24);
   }
@@ -1047,6 +1056,9 @@
   }
   .w-36 {
     width: calc(var(--spacing) * 36);
+  }
+  .w-40 {
+    width: calc(var(--spacing) * 40);
   }
   .w-48 {
     width: calc(var(--spacing) * 48);
@@ -1500,6 +1512,9 @@
     :where(& > :not(:last-child)) {
       border-color: var(--color-outline);
     }
+  }
+  .self-center {
+    align-self: center;
   }
   .self-start {
     align-self: flex-start;
