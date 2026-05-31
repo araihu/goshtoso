@@ -129,7 +129,7 @@ func TodoRow(t todo.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" draggable=\"true\" x-on:dragstart=\"onDragStart($event, $el)\" x-on:dragover.prevent=\"onDragOver($event, $el)\" x-on:drop.prevent=\"onDrop($event, $el)\" x-on:dragend=\"onDragEnd()\" class=\"flex items-center gap-3 rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark\"><span class=\"cursor-grab select-none text-on-surface-muted dark:text-on-surface-dark-muted\" aria-hidden=\"true\">⠿</span> <input type=\"checkbox\" aria-label=\"Toggle done\" class=\"size-4 shrink-0 rounded-radius accent-primary dark:accent-primary-dark\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" draggable=\"true\" x-on:dragstart=\"onDragStart($event, $el)\" x-on:dragover.prevent=\"onDragOver($event, $el)\" x-on:drop.prevent=\"onDrop($event, $el)\" x-on:dragend=\"onDragEnd()\" class=\"flex items-center gap-2 rounded-radius border border-outline bg-surface px-3 py-1.5 dark:border-outline-dark dark:bg-surface-dark\"><span class=\"hidden cursor-grab select-none text-on-surface-muted sm:inline-flex dark:text-on-surface-dark-muted\" aria-hidden=\"true\">⠿</span> <input type=\"checkbox\" aria-label=\"Toggle done\" class=\"size-5 shrink-0 rounded-radius accent-primary dark:accent-primary-dark\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -156,7 +156,7 @@ func TodoRow(t todo.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 = []any{"flex-1 text-sm text-on-surface dark:text-on-surface-dark",
+		var templ_7745c5c3_Var7 = []any{"min-w-0 flex-1 truncate text-sm text-on-surface dark:text-on-surface-dark",
 			templ.KV("line-through opacity-60", t.Done)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
@@ -193,14 +193,14 @@ func TodoRow(t todo.Todo) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if t.Due != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"shrink-0 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(t.Due)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/todo.templ`, Line: 71, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/todo.templ`, Line: 71, Col: 95}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -215,7 +215,7 @@ func TodoRow(t todo.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<button type=\"button\" aria-label=\"Move up\" class=\"rounded-radius px-1 text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt\" hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<button type=\"button\" aria-label=\"Move up\" class=\"inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-radius text-on-surface-muted hover:bg-surface-alt sm:h-8 sm:w-8 dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -228,7 +228,7 @@ func TodoRow(t todo.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" hx-target=\"#todo-list\" hx-swap=\"outerHTML\">↑</button> <button type=\"button\" aria-label=\"Move down\" class=\"rounded-radius px-1 text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt\" hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" hx-target=\"#todo-list\" hx-swap=\"outerHTML\">↑</button> <button type=\"button\" aria-label=\"Move down\" class=\"inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-radius text-on-surface-muted hover:bg-surface-alt sm:h-8 sm:w-8 dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -241,7 +241,7 @@ func TodoRow(t todo.Todo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-target=\"#todo-list\" hx-swap=\"outerHTML\">↓</button> <button type=\"button\" aria-label=\"Delete\" class=\"rounded-radius px-1 text-danger hover:bg-danger/10 dark:text-danger\" hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-target=\"#todo-list\" hx-swap=\"outerHTML\">↓</button> <button type=\"button\" aria-label=\"Delete\" class=\"inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-radius text-danger hover:bg-danger/10 sm:h-8 sm:w-8 dark:text-danger\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -290,7 +290,7 @@ func TodoList(s todo.State) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if len(s.Visible()) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li class=\"rounded-radius border border-dashed border-outline px-3 py-8 text-center text-sm text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">Nothing here yet — add your first task above.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li class=\"rounded-radius border border-dashed border-outline px-3 py-8 text-center text-sm text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">Nothing here yet. Add your first task above.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -409,7 +409,7 @@ func TodoApp(s todo.State) templ.Component {
 			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div id=\"todo-fragment\" class=\"mx-auto max-w-2xl\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Todo List</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A classic task list built entirely from Goshtoso components. State lives in a cookie — the server keeps nothing in memory — and every change is an HTMX round-trip that returns rendered HTML, not JSON.</p><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><span class=\"font-semibold text-on-surface dark:text-on-surface-dark\">Demonstrates:</span> server-side state via signed-free cookie · HTMX fragment swaps with out-of-band updates (live count + toasts) · Text Input, Select, Button, Badge, Card and Toast components composed into a real screen · Alpine-powered native drag-and-drop reorder with accessible ↑/↓ fallbacks · filter without page reload.</p></header><div class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><div class=\"flex items-center justify-between\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Your tasks</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div id=\"todo-fragment\" class=\"mx-auto max-w-2xl\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Todo List</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A classic task list built entirely from Goshtoso components. State lives in a cookie (the server keeps nothing in memory), and every change is an HTMX round-trip that returns rendered HTML, not JSON.</p><ul class=\"mt-3 list-disc pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><li>Server-side state via signed cookie, zero in-memory persistence</li><li>HTMX fragment swaps with out-of-band live count and toast notifications</li><li>TextInput, Select, Button, Badge, and Toast components composed into a real screen</li><li>Alpine-powered native drag-and-drop reorder with accessible up/down fallbacks</li><li>Filter (All / Active / Done) without a page reload</li></ul></header><div class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><div class=\"flex items-center justify-between\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Your tasks</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -441,7 +441,7 @@ func TodoApp(s todo.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div><label class=\"mb-1 block text-sm text-on-surface dark:text-on-surface-dark\">Due</label> <input type=\"date\" name=\"due\" class=\"rounded-radius border border-outline bg-surface px-2 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div>")
+		templ_7745c5c3_Err = textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "due", Label: "Due"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -457,7 +457,7 @@ func TodoApp(s todo.State) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "Add")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "Add")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -467,7 +467,7 @@ func TodoApp(s todo.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</form><div class=\"flex items-center justify-between border-t border-outline pt-3 dark:border-outline-dark\"><div class=\"flex gap-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</form><div class=\"flex items-center justify-between border-t border-outline pt-3 dark:border-outline-dark\"><div class=\"flex gap-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -483,7 +483,7 @@ func TodoApp(s todo.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><button type=\"button\" class=\"text-sm text-on-surface-muted hover:underline dark:text-on-surface-dark-muted\" hx-post=\"/api/examples/todo/clear-completed\" hx-target=\"#todo-list\" hx-swap=\"outerHTML\">Clear completed</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div><button type=\"button\" class=\"text-sm text-on-surface-muted hover:underline dark:text-on-surface-dark-muted\" hx-post=\"/api/examples/todo/clear-completed\" hx-target=\"#todo-list\" hx-swap=\"outerHTML\">Clear completed</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -491,7 +491,7 @@ func TodoApp(s todo.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -503,7 +503,7 @@ func TodoApp(s todo.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
