@@ -1377,18 +1377,16 @@ templ colorRow(t colorToken) {
 templ themePreviewSection() {
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Theme Showcase</h2>
-		<div class="space-y-6 rounded-radius border border-outline bg-surface p-6 dark:border-outline-dark dark:bg-surface-dark sm:p-8">
+		<div class="space-y-8 rounded-radius border border-outline bg-surface p-6 dark:border-outline-dark dark:bg-surface-dark sm:p-8">
 			@previewTypography()
-			<div class="grid gap-6">
-				<div class="space-y-6 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
-					@previewButtons()
-					@previewProgress()
-					@previewSteps()
-				</div>
-				<div class="space-y-6 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
-					@previewToggles()
-					@previewAvatars()
-				</div>
+			<div class="space-y-6 border-t border-outline pt-8 dark:border-outline-dark">
+				@previewButtons()
+				@previewProgress()
+				@previewSteps()
+			</div>
+			<div class="space-y-6 border-t border-outline pt-8 dark:border-outline-dark">
+				@previewToggles()
+				@previewAvatars()
 			</div>
 			@previewUpdateBanner()
 		</div>
