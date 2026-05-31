@@ -43,7 +43,9 @@ func TooltipDemoPage() templ.Component {
 	})
 }
 
-// tooltipDemoContent renders the actual content inside the layout
+// tooltipDemoContent renders the demo. Each tooltip variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/tooltip). Wrapped in #tooltip-fragment.
 func tooltipDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,37 +67,49 @@ func tooltipDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"tooltip-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Tooltip",
-				Description: "A tooltip displays informative text when users hover over, focus on, or click an element. Useful for providing additional context without cluttering the interface.",
+				Description: "Informative text shown on hover, focus, or click. Four positions (top, bottom, left, right), optional rich description, and hover or click triggers.",
 			},
-			tooltipDemoPreview(),
-			`// Simple Tooltip (top, hover)
-@tooltip.Tooltip(tooltip.Config{
+			tooltipDefaultPreview(),
+			`@tooltip.Tooltip(tooltip.Config{
     ID:          "myTooltip",
     Text:        "Tooltip top",
-    TriggerText: "Hover Me",
-})
-
-// Tooltip with position
-@tooltip.Tooltip(tooltip.Config{
-    ID:          "bottomTooltip",
-    Text:        "Tooltip bottom",
-    Position:    tooltip.Bottom,
-    TriggerText: "Hover Me",
-})
-
-// Rich tooltip with description
-@tooltip.Tooltip(tooltip.Config{
+    Position:    tooltip.Top,
+    TriggerText: "Top",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Description",
+				Description: "Add a Description for a richer two-line tooltip.",
+			},
+			tooltipRichPreview(),
+			`@tooltip.Tooltip(tooltip.Config{
     ID:          "richTooltip",
     Text:        "Tooltip top",
     Description: "A rich tooltip with longer text.",
     TriggerText: "Hover Me",
-})
-
-// Click tooltip
-@tooltip.Tooltip(tooltip.Config{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Click Trigger",
+				Description: "Set Trigger: tooltip.Click to toggle the tooltip on click instead of hover.",
+			},
+			tooltipClickPreview(),
+			`@tooltip.Tooltip(tooltip.Config{
     ID:          "clickTooltip",
     Text:        "Tooltip top",
     Trigger:     tooltip.Click,
@@ -105,12 +119,28 @@ func tooltipDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the tooltip for accessibility)."},
+			{Name: "Text", Type: "string", Default: `""`, Description: "Tooltip text (heading line)."},
+			{Name: "Description", Type: "string", Default: `""`, Description: "Optional secondary line for a rich tooltip."},
+			{Name: "Position", Type: "Position", Default: "Top", Description: `Placement: "top", "bottom", "left", "right".`},
+			{Name: "Trigger", Type: "Trigger", Default: "Hover", Description: `Activation: "hover" (hover/focus) or "click".`},
+			{Name: "TriggerText", Type: "string", Default: `""`, Description: "Text of the trigger element."},
+			{Name: "TriggerContent", Type: "templ.Component", Default: "nil", Description: "Custom trigger content (overrides TriggerText)."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		return nil
 	})
 }
 
-// tooltipDemoPreview renders the Goshtoso tooltip preview
-func tooltipDemoPreview() templ.Component {
+// tooltipDefaultPreview renders the four hover positions.
+func tooltipDefaultPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -131,7 +161,7 @@ func tooltipDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Default Tooltip (Hover)</h4><div class=\"flex flex-wrap items-center gap-8 py-8 justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"tooltip-default\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center gap-8 py-8 justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -171,7 +201,37 @@ func tooltipDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Tooltip with Description</h4><div class=\"flex flex-wrap items-center gap-8 py-8 justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// tooltipRichPreview renders the rich (description) tooltips.
+func tooltipRichPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"tooltip-rich\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center gap-8 py-8 justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -195,7 +255,37 @@ func tooltipDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Click Tooltip</h4><div class=\"flex flex-wrap items-center gap-8 py-8 justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// tooltipClickPreview renders the click-trigger tooltips.
+func tooltipClickPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"tooltip-click\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center gap-8 py-8 justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -219,7 +309,7 @@ func tooltipDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
