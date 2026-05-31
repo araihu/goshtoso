@@ -39,6 +39,13 @@ func addTodo(t *testing.T, page playwright.Page, title string) {
 // gotoTodo navigates to the todo page and waits for Alpine.js to be ready.
 func gotoTodo(t *testing.T, page playwright.Page) {
 	t.Helper()
+	// Suppress the first-run cookie/localStorage notice: a dismissable fixed
+	// banner pinned bottom-right (layout.templ). On a fresh browser context it
+	// would overlap the right-hand row controls (move/delete) and intercept
+	// their clicks; a returning user has already dismissed it.
+	require.NoError(t, page.AddInitScript(playwright.Script{
+		Content: playwright.String("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
+	}))
 	_, err := page.Goto(baseURL + "/examples/todo")
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)

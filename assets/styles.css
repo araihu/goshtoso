@@ -1031,6 +1031,9 @@
   .w-9 {
     width: calc(var(--spacing) * 9);
   }
+  .w-10 {
+    width: calc(var(--spacing) * 10);
+  }
   .w-11 {
     width: calc(var(--spacing) * 11);
   }
@@ -2859,6 +2862,9 @@
   }
   .pl-4 {
     padding-left: calc(var(--spacing) * 4);
+  }
+  .pl-5 {
+    padding-left: calc(var(--spacing) * 5);
   }
   .pl-7 {
     padding-left: calc(var(--spacing) * 7);
@@ -4732,6 +4738,16 @@
   .sm\:inline-flex {
     @media (width >= 40rem) {
       display: inline-flex;
+    }
+  }
+  .sm\:h-8 {
+    @media (width >= 40rem) {
+      height: calc(var(--spacing) * 8);
+    }
+  }
+  .sm\:w-8 {
+    @media (width >= 40rem) {
+      width: calc(var(--spacing) * 8);
     }
   }
   .sm\:max-w-sm {
