@@ -79,34 +79,28 @@ func TestLogFeed_FragmentNavNoErrors(t *testing.T) {
 	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav log feed: %v", jsErrors)
 }
 
-// TestLogFeed_PauseStopsAndResumes verifies Pause stops new rows (status→Paused)
-// and Resume restarts the stream.
+// TestLogFeed_PauseStopsAndResumes verifies Pause closes the SSE stream (the
+// connector element is removed) and Resume reconnects and the feed grows again.
 func TestLogFeed_PauseStopsAndResumes(t *testing.T) {
 	page := newIsolatedPage(t)
 	gotoLogs(t, page)
 	waitForRows(t, page)
 
-	pauseBtn := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Pause"})
-	require.NoError(t, pauseBtn.First().Click())
+	pause := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Pause"})
+	require.NoError(t, pause.Click())
+	// Paused: Alpine flag set AND the SSE connector removed (stream closed) — no
+	// more rows can arrive, asserted without any wall-clock wait.
 	_, err := page.WaitForFunction(
-		"() => Alpine.$data(document.getElementById('logs-fragment'))?.paused === true",
-		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+		"() => { const d = Alpine.$data(document.getElementById('logs-fragment')); return d && d.paused === true && !document.querySelector('#logs-fragment [sse-connect]'); }",
+		nil)
 	require.NoError(t, err)
 
-	// Let any in-flight swap settle, then confirm the row count is stable across a
-	// window in which an un-paused feed (50ms ticks) would have grown.
-	page.WaitForTimeout(100)
-	v1, err := page.Evaluate("() => document.querySelectorAll('#log-feed .log-row').length")
+	// Capture the frozen count, then Resume and assert the feed grows past it.
+	v, err := page.Evaluate("() => document.querySelectorAll('#log-feed .log-row').length")
 	require.NoError(t, err)
-	page.WaitForTimeout(400)
-	v2, err := page.Evaluate("() => document.querySelectorAll('#log-feed .log-row').length")
-	require.NoError(t, err)
-	require.Equal(t, toInt(v1), toInt(v2), "row count must not grow while paused")
-
-	// Resume → rows grow again.
-	before := toInt(v2)
-	resumeBtn := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Resume"})
-	require.NoError(t, resumeBtn.First().Click())
+	before := toInt(v)
+	resume := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Resume"})
+	require.NoError(t, resume.Click())
 	_, err = page.WaitForFunction(
 		fmt.Sprintf("() => document.querySelectorAll('#log-feed .log-row').length > %d", before), nil)
 	require.NoError(t, err)
@@ -131,22 +125,22 @@ func TestLogFeed_FilterHidesLowerLevels(t *testing.T) {
 	require.Equal(t, 0, toInt(visibleLower), "debug/info rows must be hidden under the error filter")
 }
 
-// TestLogFeed_ClearEmptiesFeed pauses (so the stream cannot refill mid-assert),
-// then Clear empties the feed.
+// TestLogFeed_ClearEmptiesFeed pauses (closing the stream so it cannot refill
+// mid-assert), then Clear empties the feed.
 func TestLogFeed_ClearEmptiesFeed(t *testing.T) {
 	page := newIsolatedPage(t)
 	gotoLogs(t, page)
 	waitForRows(t, page)
 
-	pauseBtn := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Pause"})
-	require.NoError(t, pauseBtn.First().Click())
+	pause := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Pause"})
+	require.NoError(t, pause.Click())
 	_, err := page.WaitForFunction(
-		"() => Alpine.$data(document.getElementById('logs-fragment'))?.paused === true",
-		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+		"() => { const d = Alpine.$data(document.getElementById('logs-fragment')); return d && d.paused === true && !document.querySelector('#logs-fragment [sse-connect]'); }",
+		nil)
 	require.NoError(t, err)
-	page.WaitForTimeout(100)
 
-	require.NoError(t, page.Locator("button", playwright.PageLocatorOptions{HasText: "Clear"}).First().Click())
+	clear := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Clear"})
+	require.NoError(t, clear.Click())
 	_, err = page.WaitForFunction("() => document.querySelectorAll('#log-feed .log-row').length === 0", nil)
 	require.NoError(t, err)
 }
