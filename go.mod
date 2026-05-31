@@ -5,12 +5,12 @@ go 1.26.1
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/alecthomas/chroma/v2 v2.24.1
+	github.com/coder/websocket v1.8.14
 	github.com/playwright-community/playwright-go v0.5700.1
 	github.com/stretchr/testify v1.11.1
 )
 
 require (
-	github.com/coder/websocket v1.8.14 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/deckarep/golang-set/v2 v2.8.0 // indirect
 	github.com/dlclark/regexp2 v1.12.0 // indirect

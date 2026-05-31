@@ -44,6 +44,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/examples", s.handleExample)
 	s.mux.HandleFunc("/examples/", s.handleExample)
 	s.registerTodoRoutes()
+	s.registerChatRoutes()
 
 	// API endpoints for HTMX demos
 	s.mux.HandleFunc("/api/hello", s.handleAPIHello)
@@ -97,6 +98,8 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 		s.renderDemo(w, r, "examples")
 	case "todo":
 		s.renderTodoPage(w, r)
+	case "chat":
+		s.renderChatPage(w, r)
 	default:
 		http.NotFound(w, r)
 	}
