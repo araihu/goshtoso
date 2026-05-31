@@ -126,7 +126,7 @@ func TestHub_SlowClientDoesNotBlock(t *testing.T) {
 	slow := NewClient()
 	h.Register(slow)
 	// Fill the slow client's buffer beyond capacity; Broadcast must not block.
-	for i := 0; i < sendBuffer+5; i++ {
+	for range sendBuffer + 5 {
 		h.Broadcast([]byte("flood"))
 	}
 	// If we reach here without deadlock, the drop-on-full path works.

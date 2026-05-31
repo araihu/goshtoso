@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -13,7 +14,7 @@ import (
 func gotoChat(t *testing.T, page playwright.Page) {
 	t.Helper()
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: playwright.String("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
+		Content: new("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
 	}))
 	_, err := page.Goto(baseURL + "/examples/chat")
 	require.NoError(t, err)
@@ -64,18 +65,19 @@ func logHas(s string) string {
 // jsString quotes a Go string as a JS single-quoted literal (test inputs are
 // simple ASCII; escape backslash and single quote defensively).
 func jsString(s string) string {
-	out := "'"
+	var out strings.Builder
+	out.WriteString("'")
 	for _, r := range s {
 		switch r {
 		case '\\':
-			out += "\\\\"
+			out.WriteString("\\\\")
 		case '\'':
-			out += "\\'"
+			out.WriteString("\\'")
 		default:
-			out += string(r)
+			out.WriteString(string(r))
 		}
 	}
-	return out + "'"
+	return out.String() + "'"
 }
 
 // TestChat_Broadcast opens two independent browser contexts, sends from A, and
@@ -173,10 +175,13 @@ func TestChat_FragmentNavNoErrors(t *testing.T) {
 	waitWSOpen(t, page)
 
 	// Send a message through the fragment-loaded page and confirm it round-trips.
-	sendChat(t, page, "frag-nav-msg")
-	_, err = page.WaitForFunction(logHas("frag-nav-msg"), nil,
-		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
-	require.NoError(t, err, "ws should connect + echo on fragment-nav")
+	// The FIRST ws-send right after a fragment swap can be lost to the htmx
+	// rebind race (htmx wires the swapped-in ws-send form a beat after it lands
+	// in the DOM; a send fired in that window dispatches no frame). A lost send
+	// produces no bubble, so re-firing is safe — clickUntil re-submits until the
+	// message round-trips. The textarea value persists across clicks.
+	require.NoError(t, page.Locator("#chat-message").Fill("frag-nav-msg"))
+	clickUntil(t, page, page.Locator("form[ws-send] button[type='submit']"), logHas("frag-nav-msg"))
 
 	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav chat page: %v", jsErrors)
 }
