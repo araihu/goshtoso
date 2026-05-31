@@ -230,6 +230,21 @@ git commit -m "feat(select): add shell mode (leading slot, value expr, children 
 - Create: `components/palette/palette.templ`
 - Test: `components/palette/palette_test.go`
 
+**ESCAPING (read first):** templ v0.3.1020 escapes single quotes (`'` → `&#39;`)
+in **dynamic** `{ goExpr }` attribute values (via `ResolveAttributeValue` →
+`html.EscapeString`). It does NOT touch **static** attribute literals (written
+raw). Therefore: keep every Alpine handler a STATIC literal string in the
+`.templ` source, and put per-button dynamic data in quote-free `data-*`
+attributes. The pick action is an event dispatch — consumers react via static
+listeners. This mirrors the existing `tailwindPalette` pattern this replaces.
+
+Pick contract: every swatch/reset/hex change dispatches a bubbling
+`select-close` event whose `detail` is the chosen value (`"blue-700"`,
+`"white"`, `""`, `"#aabbcc"`). A hosting Select shell already closes on
+`select-close` (Task 1). If `AlpineModel` is set, the palette's own root sets it
+from `$event.detail`. Host side-effects (e.g. `pickColor`) are wired by the
+consumer with its own static `select-close` listener (see Task 4).
+
 - [ ] **Step 1: Write the failing render test**
 
 Create `components/palette/palette_test.go`:
@@ -254,38 +269,37 @@ func render(t *testing.T, cfg Config) string {
 	return buf.String()
 }
 
-func TestPalette_GridCountAndPickExpr(t *testing.T) {
-	html := render(t, Config{
-		ID:           "palette-surface",
-		OnSelectExpr: "pickColor('surface', $value)",
-	})
-	// one swatch button per hue×shade
+func TestPalette_GridAndStaticDispatch(t *testing.T) {
+	html := render(t, Config{ID: "palette-surface"})
+	// one grid swatch per hue×shade (count the live-color style, grid-only)
 	want := len(DefaultHues) * len(DefaultShades)
-	assert.Equal(t, want, strings.Count(html, `data-cls=`), "one button per hue×shade")
-	// pick wires the host expr with the concrete value + closes the shell
-	assert.Contains(t, html, `@click="pickColor('surface', 'blue-700'); $dispatch('select-close')"`)
-	// white/black + reset present by default
-	assert.Contains(t, html, `@click="pickColor('surface', 'white'); $dispatch('select-close')"`)
-	assert.Contains(t, html, `@click="pickColor('surface', ''); $dispatch('select-close')"`)
+	assert.Equal(t, want, strings.Count(html, "background-color: var(--color-"), "one grid button per hue×shade")
+	// a known grid swatch carries its class in data-cls + a live var() style
+	assert.Contains(t, html, `data-cls="blue-700"`)
+	assert.Contains(t, html, `style="background-color: var(--color-blue-700)"`)
+	// the pick handler is a STATIC literal: dispatch select-close carrying the value
+	assert.Contains(t, html, `@click="$dispatch('select-close', $el.dataset.cls)"`)
+	// white/black quick swatches + Reset present by default
+	assert.Contains(t, html, `data-cls="white"`)
+	assert.Contains(t, html, `data-cls="black"`)
+	assert.Contains(t, html, `@click="$dispatch('select-close', '')"`)
+	assert.Contains(t, html, "Reset")
 	// no hex section unless requested
 	assert.NotContains(t, html, `type="color"`)
 }
 
 func TestPalette_AlpineModelAndHex(t *testing.T) {
-	html := render(t, Config{
-		ID:          "p",
-		AlpineModel: "myColor",
-		ShowHex:     true,
-	})
-	assert.Contains(t, html, `@click="myColor = 'blue-700'; $dispatch('select-close')"`)
+	html := render(t, Config{ID: "p", AlpineModel: "myColor", ShowHex: true})
+	// model is set from the bubbled event detail (quote-free dynamic expr — safe)
+	assert.Contains(t, html, `x-on:select-close="myColor = $event.detail"`)
 	assert.Contains(t, html, `type="color"`)
-	assert.Contains(t, html, `@change="myColor = $event.target.value; $dispatch('select-close')"`)
+	assert.Contains(t, html, `@change="$dispatch('select-close', $event.target.value)"`)
 }
 
 func TestPalette_HideFlags(t *testing.T) {
 	html := render(t, Config{ID: "p", HideNeutral: true, HideReset: true})
 	assert.NotContains(t, html, "Reset")
-	assert.NotContains(t, html, `bg-white`)
+	assert.NotContains(t, html, `data-cls="white"`)
 }
 ```
 
@@ -302,14 +316,14 @@ Create `components/palette/types.go`:
 // Package palette renders a generic color picker grid: a Tailwind hue×shade
 // matrix plus optional white/black swatches, a Reset action, and a hex input.
 // It has no trigger of its own — wrap it in a Select shell (Shell: true) to get
-// a dropdown. On pick it sets AlpineModel and/or runs OnSelectExpr (with $value
-// substituted) and dispatches a `select-close` event so a hosting shell closes.
+// a dropdown.
+//
+// On every pick the palette dispatches a bubbling `select-close` event whose
+// detail is the chosen value ("blue-700" / "white" / "" / "#aabbcc"). A hosting
+// Select shell closes on that event; consumers wire side-effects with their own
+// `x-on:select-close` listener. If AlpineModel is set, the palette's own root
+// assigns it from $event.detail.
 package palette
-
-import (
-	"fmt"
-	"strings"
-)
 
 // DefaultHues lists Tailwind v4's named hue families in display order.
 var DefaultHues = []string{
@@ -327,11 +341,10 @@ var DefaultShades = []string{"50", "100", "200", "300", "400", "500", "600", "70
 type Config struct {
 	// ID is the wrapper element id.
 	ID string
-	// AlpineModel, when set, is assigned the picked value (a JS lvalue).
+	// AlpineModel, when set, is a JS lvalue assigned the picked value (from the
+	// dispatched event detail). Quote-free identifier/path expected, e.g.
+	// "picked" or "form.color".
 	AlpineModel string
-	// OnSelectExpr, when set, is an Alpine expression run on pick. The literal
-	// substring "$value" is replaced with the chosen value.
-	OnSelectExpr string
 	// Hues / Shades override the default Tailwind sets.
 	Hues   []string
 	Shades []string
@@ -368,43 +381,45 @@ func (c Config) ContainerClasses() string {
 	return base
 }
 
-// pickExpr builds the Alpine @click/@change expression run when a value is
-// chosen. valueJS is a JS expression evaluating to the chosen value string
-// (e.g. "'blue-700'" or "$event.target.value"). Single quotes only — safe for
-// raw templ attribute rendering.
-func (c Config) pickExpr(valueJS string) string {
-	parts := make([]string, 0, 3)
-	if c.AlpineModel != "" {
-		parts = append(parts, fmt.Sprintf("%s = %s", c.AlpineModel, valueJS))
+// modelAssignExpr is the (quote-free → templ-safe) Alpine expression the root
+// runs on select-close to set AlpineModel from the event detail. Empty when no
+// model is configured.
+func (c Config) modelAssignExpr() string {
+	if c.AlpineModel == "" {
+		return ""
 	}
-	if c.OnSelectExpr != "" {
-		parts = append(parts, strings.ReplaceAll(c.OnSelectExpr, "$value", valueJS))
-	}
-	parts = append(parts, "$dispatch('select-close')")
-	return strings.Join(parts, "; ")
+	return c.AlpineModel + " = $event.detail"
 }
-
-// classValueJS returns the single-quoted JS literal for a hue-shade class.
-func classValueJS(hue, shade string) string { return "'" + hue + "-" + shade + "'" }
 ```
 
 - [ ] **Step 4: Create palette.templ**
 
-Create `components/palette/palette.templ`:
+Create `components/palette/palette.templ`. NOTE: every `@click`/`@change`/
+`@mouseenter`/`x-text` is a STATIC literal (rendered raw). The only dynamic
+`{ }` attributes are `data-cls`, `style`, `title` (no single quotes) and the
+root's `x-on:select-close` model expr (quote-free) — all escaping-safe.
 
 ```templ
 package palette
 
 templ Palette(cfg Config) {
-	<div x-data="{ hovered: '' }" data-palette id={ cfg.ID } class={ cfg.ContainerClasses() }>
+	<div
+		x-data="{ hovered: '' }"
+		data-palette
+		id={ cfg.ID }
+		class={ cfg.ContainerClasses() }
+		if cfg.modelAssignExpr() != "" {
+			x-on:select-close={ cfg.modelAssignExpr() }
+		}
+	>
 		if !cfg.HideNeutral || !cfg.HideReset {
 			<div class="flex items-center gap-1">
 				if !cfg.HideNeutral {
 					<button
 						type="button"
 						data-cls="white"
-						@click={ cfg.pickExpr("'white'") }
-						@mouseenter="hovered = 'white'"
+						@click="$dispatch('select-close', $el.dataset.cls)"
+						@mouseenter="hovered = $el.dataset.cls"
 						@mouseleave="hovered = ''"
 						class="h-5 w-5 rounded border border-outline bg-white hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
 						title="white"
@@ -412,8 +427,8 @@ templ Palette(cfg Config) {
 					<button
 						type="button"
 						data-cls="black"
-						@click={ cfg.pickExpr("'black'") }
-						@mouseenter="hovered = 'black'"
+						@click="$dispatch('select-close', $el.dataset.cls)"
+						@mouseenter="hovered = $el.dataset.cls"
 						@mouseleave="hovered = ''"
 						class="h-5 w-5 rounded border border-outline bg-black hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
 						title="black"
@@ -423,7 +438,7 @@ templ Palette(cfg Config) {
 				if !cfg.HideReset {
 					<button
 						type="button"
-						@click={ cfg.pickExpr("''") }
+						@click="$dispatch('select-close', '')"
 						class="ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark"
 					>Reset</button>
 				}
@@ -435,10 +450,10 @@ templ Palette(cfg Config) {
 					<button
 						type="button"
 						data-cls={ hue + "-" + shade }
-						@click={ cfg.pickExpr(classValueJS(hue, shade)) }
-						@mouseenter={ "hovered = '" + hue + "-" + shade + "'" }
+						@click="$dispatch('select-close', $el.dataset.cls)"
+						@mouseenter="hovered = $el.dataset.cls"
 						@mouseleave="hovered = ''"
-						@focus={ "hovered = '" + hue + "-" + shade + "'" }
+						@focus="hovered = $el.dataset.cls"
 						@blur="hovered = ''"
 						class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
 						style={ "background-color: var(--color-" + hue + "-" + shade + ")" }
@@ -451,14 +466,14 @@ templ Palette(cfg Config) {
 			<div class="flex items-center gap-2 pt-1">
 				<input
 					type="color"
-					@change={ cfg.pickExpr("$event.target.value") }
+					@change="$dispatch('select-close', $event.target.value)"
 					class="size-7 rounded border border-outline dark:border-outline-dark cursor-pointer"
 					title="Custom color"
 				/>
 				<input
 					type="text"
 					placeholder="#000000"
-					@change={ cfg.pickExpr("$event.target.value") }
+					@change="$dispatch('select-close', $event.target.value)"
 					class="w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 				/>
 			</div>
@@ -479,15 +494,12 @@ Expected: PASS (all three tests).
 
 - [ ] **Step 7: Verify no escaping corruption**
 
-The `TestPalette_GridCountAndPickExpr` assertion in Step 1 already proves the
-`@click` renders unescaped (it asserts the exact literal
-`@click="pickColor('surface', 'blue-700'); $dispatch('select-close')"`). As a
-belt-and-suspenders grep against the generated file:
-
-Run: `grep -c '&#39;\|&quot;' components/palette/palette_templ.go || true`
-Expected: the only matches (if any) are inside Go string-literal helper code,
-not inside emitted `@click`/`@change` attribute strings. The Step-1 PASS is the
-authoritative check.
+Run: `grep -n '&#39;\|&quot;' components/palette/palette_templ.go || true`
+Expected: NO matches in emitted attribute strings (handlers are static literals;
+the only dynamic attrs — `data-cls`, `style`, `title`, `x-on:select-close` model
+expr — contain no single/double quotes). The Step-1 PASS asserting the exact
+static `@click="$dispatch('select-close', $el.dataset.cls)"` is the authoritative
+check.
 
 - [ ] **Step 8: Commit**
 
@@ -655,20 +667,31 @@ templ colorSwatch(token string) {
 }
 
 templ colorRow(t colorToken) {
-	@selectfield.Select(selectfield.Config{
-		ID:             "color-" + t.Key,
-		Shell:          true,
-		TriggerLeading: colorSwatch(t.Key),
-		ValueExpr:      "classLabel('" + t.Key + "')",
-	}) {
-		@palettecomp.Palette(palettecomp.Config{
-			ID:           "palette-" + t.Key,
-			OnSelectExpr: "pickColor('" + t.Key + "', $value)",
-			ShowHex:      true,
-		})
-	}
+	<div data-token={ t.Key } x-on:select-close="pickColor($el.dataset.token, $event.detail)">
+		@selectfield.Select(selectfield.Config{
+			ID:             "color-" + t.Key,
+			Shell:          true,
+			TriggerLeading: colorSwatch(t.Key),
+			ValueExpr:      "classLabel('" + t.Key + "')",
+		}) {
+			@palettecomp.Palette(palettecomp.Config{
+				ID:      "palette-" + t.Key,
+				ShowHex: true,
+			})
+		}
+	</div>
 }
 ```
+
+How the wiring works: a swatch click dispatches a bubbling `select-close`
+carrying the chosen value. It bubbles through the Select shell (which closes)
+up to this wrapper `<div>`, whose STATIC listener runs
+`pickColor($el.dataset.token, $event.detail)` — `$el` is the wrapper (so
+`dataset.token` = the token), `$event.detail` is the value. The handler is a
+static literal (rendered raw) and `data-token` is quote-free, so nothing is
+escape-corrupted. `pickColor` already refreshes the resolved colors, so the
+trigger's swatch + `classLabel` value update; empty value (Reset) clears the
+override.
 
 - [ ] **Step 3: Delete the now-dead helpers**
 
