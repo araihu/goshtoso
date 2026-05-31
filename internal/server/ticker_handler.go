@@ -23,6 +23,9 @@ func (s *Server) handleTickerStream(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
+	// Disable proxy buffering (nginx etc.) so each flushed event is forwarded
+	// immediately instead of being held back, which would freeze the stream.
+	w.Header().Set("X-Accel-Buffering", "no")
 
 	rc := http.NewResponseController(w)
 	ch, unsubscribe := s.tickerBroker.Subscribe()
