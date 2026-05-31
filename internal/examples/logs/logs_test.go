@@ -18,9 +18,9 @@ func TestLineCyclesSamplePool(t *testing.T) {
 }
 
 func TestSeverityOrdering(t *testing.T) {
-	if !(Debug.Severity() < Info.Severity() &&
-		Info.Severity() < Warn.Severity() &&
-		Warn.Severity() < Error.Severity()) {
+	if Debug.Severity() >= Info.Severity() ||
+		Info.Severity() >= Warn.Severity() ||
+		Warn.Severity() >= Error.Severity() {
 		t.Fatal("severity must order Debug < Info < Warn < Error")
 	}
 }

@@ -98,6 +98,8 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 		s.renderDemo(w, r, "examples")
 	case "todo":
 		s.renderTodoPage(w, r)
+	case "logs":
+		s.renderDemo(w, r, "examples/logs")
 	default:
 		http.NotFound(w, r)
 	}
