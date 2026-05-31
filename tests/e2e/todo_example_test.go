@@ -151,6 +151,51 @@ func TestTodoExample_ClearCompleted(t *testing.T) {
 		"() => document.querySelectorAll('#todo-list > li').length === 1")
 }
 
+// TestTodoExample_ClearCompletedDisabled verifies that #todo-clear is disabled
+// when no task is done and becomes enabled after marking a task done.
+func TestTodoExample_ClearCompletedDisabled(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoTodo(t, page)
+
+	addTodo(t, page, "only task")
+
+	// Button must be disabled — no completed tasks yet. Use JS .disabled property
+	// (the IDL attribute) which is a boolean, reliable across Playwright versions.
+	isDisabled, err := page.Evaluate("() => document.querySelector('#todo-clear').disabled", nil)
+	require.NoError(t, err)
+	require.Equal(t, true, isDisabled, "#todo-clear should be disabled when no done tasks")
+
+	// Mark the task done. Wait for the ClearButton OOB swap to land and the
+	// button to become enabled.
+	clickUntil(t, page,
+		page.Locator("#todo-list > li").First().Locator("input[type='checkbox']"),
+		"() => document.querySelector('#todo-clear') && !document.querySelector('#todo-clear').disabled")
+
+	// Button must now be enabled.
+	isDisabled2, err := page.Evaluate("() => document.querySelector('#todo-clear').disabled", nil)
+	require.NoError(t, err)
+	require.Equal(t, false, isDisabled2, "#todo-clear should be enabled when there is a done task")
+}
+
+// TestTodoExample_UndoDelete adds a todo, deletes it, then clicks Undo and
+// verifies the task reappears in #todo-list.
+func TestTodoExample_UndoDelete(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoTodo(t, page)
+
+	addTodo(t, page, "restore me")
+
+	// Delete the todo. Wait for the undo bar to appear.
+	clickUntil(t, page,
+		page.Locator("#todo-list > li button[aria-label='Delete']").First(),
+		"() => document.querySelector('#todo-undo button') !== null")
+
+	// Click Undo. Wait for the todo to reappear in the list.
+	clickUntil(t, page,
+		page.Locator("#todo-undo button"),
+		fmt.Sprintf("() => Array.from(document.querySelectorAll('#todo-list li span')).some(s => s.textContent.trim() === %q)", "restore me"))
+}
+
 // TestTodoExample_SidebarPresent verifies the sidebar has an Examples section
 // and the Todo List navigation link.
 func TestTodoExample_SidebarPresent(t *testing.T) {

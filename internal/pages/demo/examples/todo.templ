@@ -2,6 +2,7 @@ package examples
 
 import (
 	"fmt"
+	"net/url"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	selectfield "github.com/araihu/goshtoso/components/select"
@@ -31,6 +32,60 @@ templ CountBadge(active int) {
 	<span id="todo-count" hx-swap-oob="true" class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 		{ fmt.Sprintf("%d active", active) }
 	</span>
+}
+
+// ClearButton renders the "Clear completed" button with disabled state when
+// doneCount == 0. It carries hx-swap-oob so handlers can update it out of band.
+templ ClearButton(doneCount int) {
+	<button
+		id="todo-clear"
+		hx-swap-oob="true"
+		type="button"
+		class="text-sm text-on-surface-muted hover:underline dark:text-on-surface-dark-muted disabled:opacity-40 disabled:cursor-not-allowed"
+		hx-post="/api/examples/todo/clear-completed"
+		hx-target="#todo-list"
+		hx-swap="outerHTML"
+		if doneCount == 0 {
+			disabled
+		}
+	>Clear completed</button>
+}
+
+// ClearUndo renders an empty #todo-undo slot via OOB swap, clearing any visible
+// undo bar. Call from add/toggle/edit/filter/move/clear-completed handlers.
+templ ClearUndo() {
+	<div id="todo-undo" hx-swap-oob="true"></div>
+}
+
+// UndoBar renders a bordered row inside #todo-undo (via OOB swap) with a
+// "Task deleted" label and an Undo button. It auto-dismisses after 8 s via
+// Alpine. The hx-post URL carries all fields needed by the restore endpoint so
+// the server can reconstruct the todo without any server-side memory.
+templ UndoBar(t todo.Todo) {
+	<div
+		id="todo-undo"
+		hx-swap-oob="true"
+		x-data="{}"
+		x-init={ fmt.Sprintf("setTimeout(() => { $el.remove() }, %d)", 8000) }
+		class="mb-2 flex items-center justify-between rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
+	>
+		<span>Task deleted</span>
+		<button
+			type="button"
+			class="ml-4 font-medium text-primary underline hover:opacity-75 dark:text-primary-dark"
+			hx-post={ fmt.Sprintf(
+				"/api/examples/todo/restore?id=%d&title=%s&done=%t&priority=%s&due=%s&order=%d",
+				t.ID,
+				url.QueryEscape(t.Title),
+				t.Done,
+				url.QueryEscape(t.Priority),
+				url.QueryEscape(t.Due),
+				t.Order,
+			) }
+			hx-target="#todo-list"
+			hx-swap="outerHTML"
+		>Undo</button>
+	</div>
 }
 
 // TodoRow renders one todo as a draggable <li> with toggle, title, priority
@@ -182,14 +237,9 @@ templ TodoApp(s todo.State) {
 						@filterButton("Active", "active", s.Filter)
 						@filterButton("Done", "done", s.Filter)
 					</div>
-					<button
-						type="button"
-						class="text-sm text-on-surface-muted hover:underline dark:text-on-surface-dark-muted"
-						hx-post="/api/examples/todo/clear-completed"
-						hx-target="#todo-list"
-						hx-swap="outerHTML"
-					>Clear completed</button>
+					@ClearButton(s.DoneCount())
 				</div>
+				<div id="todo-undo"></div>
 				@TodoList(s)
 			</div>
 		</div>

@@ -11,6 +11,19 @@ import (
 	"github.com/araihu/goshtoso/internal/pages/demo/examples"
 )
 
+// writeListAndCount renders the TodoList and CountBadge OOB fragments, the two
+// most common outputs shared by every mutation handler.
+func writeListAndCount(r *http.Request, w http.ResponseWriter, st todo.State) {
+	_ = examples.TodoList(st).Render(r.Context(), w)
+	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+}
+
+// writeClearButton renders the ClearButton OOB fragment so the button's
+// disabled/enabled state tracks the current doneCount on every mutation.
+func writeClearButton(r *http.Request, w http.ResponseWriter, st todo.State) {
+	_ = examples.ClearButton(st.DoneCount()).Render(r.Context(), w)
+}
+
 // registerTodoRoutes wires all /api/examples/todo/* endpoints.
 func (s *Server) registerTodoRoutes() {
 	s.mux.HandleFunc("/api/examples/todo/add", s.handleTodoAdd)
@@ -21,6 +34,7 @@ func (s *Server) registerTodoRoutes() {
 	s.mux.HandleFunc("/api/examples/todo/move", s.handleTodoMove)
 	s.mux.HandleFunc("/api/examples/todo/clear-completed", s.handleTodoClearCompleted)
 	s.mux.HandleFunc("/api/examples/todo/reorder", s.handleTodoReorder)
+	s.mux.HandleFunc("/api/examples/todo/restore", s.handleTodoRestore)
 }
 
 // renderTodoPage is the first-load handler for /examples/todo. It reads state
@@ -152,8 +166,9 @@ func (s *Server) handleTodoAdd(w http.ResponseWriter, r *http.Request) {
 	st.Add(title, priority, due)
 	todo.SetCookie(w, st)
 	writeHTML(w)
-	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+	writeListAndCount(r, w, st)
+	writeClearButton(r, w, st)
+	_ = examples.ClearUndo().Render(r.Context(), w)
 	if st.Seq != seqBefore {
 		// A todo was actually added.
 		msg := title
@@ -164,6 +179,13 @@ func (s *Server) handleTodoAdd(w http.ResponseWriter, r *http.Request) {
 			Variant: toast.Success,
 			Title:   "Added",
 			Message: msg,
+		}).Render(r.Context(), w)
+	} else if title != "" {
+		// Non-blank title but add was rejected — list is full.
+		_ = toast.OOBToast(toast.Config{
+			Variant: toast.Warning,
+			Title:   "List full",
+			Message: "Remove a task before adding more.",
 		}).Render(r.Context(), w)
 	}
 }
@@ -179,8 +201,9 @@ func (s *Server) handleTodoToggle(w http.ResponseWriter, r *http.Request) {
 	st.Toggle(idParam(r))
 	todo.SetCookie(w, st)
 	writeHTML(w)
-	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+	writeListAndCount(r, w, st)
+	writeClearButton(r, w, st)
+	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
@@ -191,16 +214,29 @@ func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
 	if st.Filter == "" {
 		st.Filter = "all"
 	}
-	st.Delete(idParam(r))
+	id := idParam(r)
+	// Capture the todo before deleting so we can populate the undo bar.
+	var deleted *todo.Todo
+	for i := range st.Todos {
+		if st.Todos[i].ID == id {
+			cp := st.Todos[i]
+			deleted = &cp
+			break
+		}
+	}
+	st.Delete(id)
 	todo.SetCookie(w, st)
 	writeHTML(w)
-	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+	writeListAndCount(r, w, st)
+	writeClearButton(r, w, st)
 	_ = toast.OOBToast(toast.Config{
 		Variant: toast.Info,
 		Title:   "Deleted",
 		Message: "Task removed.",
 	}).Render(r.Context(), w)
+	if deleted != nil {
+		_ = examples.UndoBar(*deleted).Render(r.Context(), w)
+	}
 }
 
 func (s *Server) handleTodoEdit(w http.ResponseWriter, r *http.Request) {
@@ -214,8 +250,9 @@ func (s *Server) handleTodoEdit(w http.ResponseWriter, r *http.Request) {
 	st.Edit(idParam(r), r.FormValue("title"), r.FormValue("priority"), r.FormValue("due"))
 	todo.SetCookie(w, st)
 	writeHTML(w)
-	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+	writeListAndCount(r, w, st)
+	writeClearButton(r, w, st)
+	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoFilter(w http.ResponseWriter, r *http.Request) {
@@ -230,6 +267,7 @@ func (s *Server) handleTodoFilter(w http.ResponseWriter, r *http.Request) {
 	todo.SetCookie(w, st)
 	writeHTML(w)
 	_ = examples.TodoList(st).Render(r.Context(), w)
+	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoMove(w http.ResponseWriter, r *http.Request) {
@@ -245,6 +283,7 @@ func (s *Server) handleTodoMove(w http.ResponseWriter, r *http.Request) {
 	todo.SetCookie(w, st)
 	writeHTML(w)
 	_ = examples.TodoList(st).Render(r.Context(), w)
+	_ = examples.ClearUndo().Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request) {
@@ -258,8 +297,9 @@ func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request
 	st.ClearCompleted()
 	todo.SetCookie(w, st)
 	writeHTML(w)
-	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+	writeListAndCount(r, w, st)
+	writeClearButton(r, w, st)
+	_ = examples.ClearUndo().Render(r.Context(), w)
 	_ = toast.OOBToast(toast.Config{
 		Variant: toast.Info,
 		Title:   "Cleared",
@@ -280,4 +320,43 @@ func (s *Server) handleTodoReorder(w http.ResponseWriter, r *http.Request) {
 	todo.SetCookie(w, st)
 	writeHTML(w)
 	_ = examples.CountBadge(st.ActiveCount()).Render(r.Context(), w)
+}
+
+// intParam reads a named query param as an int. Returns def on missing/invalid.
+func intParam(r *http.Request, name string, def int) int {
+	raw := r.URL.Query().Get(name)
+	if raw == "" {
+		return def
+	}
+	n, err := strconv.Atoi(raw)
+	if err != nil {
+		return def
+	}
+	return n
+}
+
+func (s *Server) handleTodoRestore(w http.ResponseWriter, r *http.Request) {
+	if onlyPost(w, r) {
+		return
+	}
+	st := todo.FromRequest(r)
+	if st.Filter == "" {
+		st.Filter = "all"
+	}
+	q := r.URL.Query()
+	t := todo.Todo{
+		ID:       intParam(r, "id", 0),
+		Title:    q.Get("title"),
+		Done:     q.Get("done") == "true",
+		Priority: q.Get("priority"),
+		Due:      q.Get("due"),
+		Order:    intParam(r, "order", 0),
+	}
+	st.Restore(t)
+	todo.SetCookie(w, st)
+	writeHTML(w)
+	writeListAndCount(r, w, st)
+	writeClearButton(r, w, st)
+	// Clear the undo bar after restoring.
+	_ = examples.ClearUndo().Render(r.Context(), w)
 }
