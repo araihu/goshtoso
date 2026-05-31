@@ -25,15 +25,15 @@ package toggle
 //	})
 templ Toggle(cfg Config) {
 	<label for={ cfg.ID } class={ cfg.LabelClasses() }>
-		if cfg.Checked && cfg.Disabled {
-			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" checked disabled/>
-		} else if cfg.Checked {
-			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" checked/>
-		} else if cfg.Disabled {
-			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" disabled/>
-		} else {
-			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch"/>
-		}
+		<input
+			id={ cfg.ID }
+			type="checkbox"
+			class="peer sr-only"
+			role="switch"
+			checked?={ cfg.Checked }
+			disabled?={ cfg.Disabled }
+			{ cfg.Attrs... }
+		/>
 		if cfg.Name != "" {
 			<input type="hidden" name={ cfg.Name } value="off"/>
 		}

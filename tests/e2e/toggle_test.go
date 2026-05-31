@@ -307,3 +307,30 @@ func TestToggle_Accessibility(t *testing.T) {
 		t.Log("✓ Toggle responds to keyboard space press")
 	})
 }
+
+// TestToggleAttrsPassthrough confirms the Attrs passthrough refactor did not
+// break rendering: the toggle demo page must contain at least one
+// input[role='switch'] after the 4-branch input block was collapsed to a
+// single element using checked?= / disabled?= / { cfg.Attrs... }.
+func TestToggleAttrsPassthrough(t *testing.T) {
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	if _, err := page.Goto(baseURL + "/components/toggle"); err != nil {
+		t.Fatalf("goto: %v", err)
+	}
+	_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	if err != nil {
+		t.Fatalf("wait for Alpine: %v", err)
+	}
+
+	count, err := page.Locator("input[role='switch']").Count()
+	if err != nil {
+		t.Fatalf("count: %v", err)
+	}
+	if count == 0 {
+		t.Fatal("expected at least one toggle input on the toggle demo page")
+	}
+}
