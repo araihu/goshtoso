@@ -1,0 +1,80 @@
+package palette
+
+templ Palette(cfg Config) {
+	<div
+		x-data="{ hovered: '' }"
+		data-palette
+		id={ cfg.ID }
+		class={ cfg.ContainerClasses() }
+		if cfg.modelAssignExpr() != "" {
+			x-on:select-close={ cfg.modelAssignExpr() }
+		}
+	>
+		if !cfg.HideNeutral || !cfg.HideReset {
+			<div class="flex items-center gap-1">
+				if !cfg.HideNeutral {
+					<button
+						type="button"
+						data-cls="white"
+						@click="$dispatch('select-close', $el.dataset.cls)"
+						@mouseenter="hovered = $el.dataset.cls"
+						@mouseleave="hovered = ''"
+						class="h-5 w-5 rounded border border-outline bg-white hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
+						title="white"
+					></button>
+					<button
+						type="button"
+						data-cls="black"
+						@click="$dispatch('select-close', $el.dataset.cls)"
+						@mouseenter="hovered = $el.dataset.cls"
+						@mouseleave="hovered = ''"
+						class="h-5 w-5 rounded border border-outline bg-black hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
+						title="black"
+					></button>
+				}
+				<span class="ml-2 text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate" x-text="hovered || 'Pick a color'"></span>
+				if !cfg.HideReset {
+					<button
+						type="button"
+						@click="$dispatch('select-close', '')"
+						class="ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark"
+					>Reset</button>
+				}
+			</div>
+		}
+		<div class="grid w-full gap-1 max-h-44 overflow-y-auto pr-1" style="grid-template-columns: repeat(11, minmax(0, 1fr));">
+			for _, hue := range cfg.hues() {
+				for _, shade := range cfg.shades() {
+					<button
+						type="button"
+						data-cls={ hue + "-" + shade }
+						@click="$dispatch('select-close', $el.dataset.cls)"
+						@mouseenter="hovered = $el.dataset.cls"
+						@mouseleave="hovered = ''"
+						@focus="hovered = $el.dataset.cls"
+						@blur="hovered = ''"
+						class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
+						{ swatchStyle(hue, shade)... }
+						title={ hue + "-" + shade }
+					></button>
+				}
+			}
+		</div>
+		if cfg.ShowHex {
+			<div class="flex items-center gap-2 pt-1">
+				<input
+					type="color"
+					@change="$dispatch('select-close', $event.target.value)"
+					class="size-7 rounded border border-outline dark:border-outline-dark cursor-pointer"
+					title="Custom color"
+				/>
+				<input
+					type="text"
+					placeholder="#000000"
+					@change="$dispatch('select-close', $event.target.value)"
+					class="w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
+				/>
+			</div>
+		}
+	</div>
+}
