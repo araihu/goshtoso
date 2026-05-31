@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/araihu/goshtoso/components/codeblock"
+	palettecomp "github.com/araihu/goshtoso/components/palette"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/internal/pages/demo"
 )
 
@@ -194,18 +196,6 @@ func allEditableTokens() []colorToken {
 	out = append(out, getSharedTokens()...)
 	return out
 }
-
-// tailwindHues lists Tailwind v4's named hue families in display order.
-var tailwindHues = []string{
-	"red", "orange", "amber", "yellow", "lime",
-	"green", "emerald", "teal", "cyan", "sky",
-	"blue", "indigo", "violet", "purple", "fuchsia",
-	"pink", "rose", "slate", "gray", "zinc",
-	"neutral", "stone",
-}
-
-// tailwindShades lists the shade steps for each hue.
-var tailwindShades = []string{"50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"}
 
 // themeClassMap returns themeKey -> tokenName -> Tailwind class (e.g.
 // "blue-700") parsed from the per-theme CSS blocks. The contrast / palette
@@ -780,7 +770,6 @@ func themePageScript() string {
 	sb.WriteString("    resolved: {},\n")
 	sb.WriteString("    cssMode: localStorage.getItem('themeCssMode') || 'single',\n")
 	sb.WriteString("    cssFilter: localStorage.getItem('themeCssFilter') || 'current',\n")
-	sb.WriteString("    openPalette: '',\n")
 	sb.WriteString("    contrastTab: 'colors',\n")
 	sb.WriteString("    contrastBase: 'primary',\n")
 	sb.WriteString("    contrastCustomFg: '#0f172a',\n")
@@ -903,12 +892,9 @@ func themePageScript() string {
       this.overrides = next;
     },
     pickColor(token, cls) {
-      this.setColor(token, cls);
-      this.openPalette = '';
+      if (!cls) { this.clearColor(token); }
+      else { this.setColor(token, cls); }
       requestAnimationFrame(() => this.refreshResolved());
-    },
-    togglePalette(token) {
-      this.openPalette = this.openPalette === token ? '' : token;
     },
     currentClass(token) {
       const ov = this.overrides[token];
@@ -1319,79 +1305,26 @@ templ colorGroup(title string, tokens []colorToken) {
 	</div>
 }
 
-templ colorRow(t colorToken) {
-	<div class="rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
-		<button
-			type="button"
-			data-token={ t.Key }
-			@click="togglePalette($el.dataset.token)"
-			class="flex w-full items-center gap-3 p-2 text-left"
-		>
-			<span
-				class="size-7 shrink-0 rounded border border-outline dark:border-outline-dark"
-				:style={ "'background-color:' + (resolved['" + t.Key + "'] || '#888')" }
-			></span>
-			<div class="min-w-0 flex-1">
-				<p class="text-xs font-medium text-on-surface-strong dark:text-on-surface-dark-strong truncate">{ t.Label }</p>
-			</div>
-			<span class="shrink-0 text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted" x-text={ "classLabel('" + t.Key + "')" }></span>
-			<svg xmlns="http://www.w3.org/2000/svg" class="ml-1 size-3 shrink-0 text-on-surface-muted transition-transform dark:text-on-surface-dark-muted" :class={ "openPalette === '" + t.Key + "' ? 'rotate-180' : ''" } fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-			</svg>
-		</button>
-		<div x-show={ "openPalette === '" + t.Key + "'" } x-cloak x-collapse class="border-t border-outline dark:border-outline-dark">
-			@tailwindPalette(t.Key)
-		</div>
-	</div>
+templ colorSwatch(token string) {
+	<span
+		class="size-7 shrink-0 rounded border border-outline dark:border-outline-dark"
+		:style={ "'background-color:' + (resolved['" + token + "'] || '#888')" }
+	></span>
 }
 
-templ tailwindPalette(token string) {
-	<div x-data="{ hovered: '' }" class="p-2 space-y-2">
-		<div class="flex items-center gap-1">
-			<button
-				type="button"
-				data-token={ token }
-				data-cls="white"
-				@click="pickColor($el.dataset.token, $el.dataset.cls)"
-				class="h-5 w-5 rounded border border-outline bg-white hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
-				title="white"
-			></button>
-			<button
-				type="button"
-				data-token={ token }
-				data-cls="black"
-				@click="pickColor($el.dataset.token, $el.dataset.cls)"
-				class="h-5 w-5 rounded border border-outline bg-black hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark"
-				title="black"
-			></button>
-			<span class="ml-2 text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate" x-text={ "hovered || classLabel('" + token + "') || 'Pick a color'" }></span>
-			<button
-				type="button"
-				data-token={ token }
-				@click="clearColor($el.dataset.token); openPalette = ''"
-				class="ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark"
-			>Reset</button>
-		</div>
-		<div class="grid w-full gap-1 max-h-44 overflow-y-auto pr-1" style="grid-template-columns: repeat(11, minmax(0, 1fr));">
-			for _, hue := range tailwindHues {
-				for _, shade := range tailwindShades {
-					<button
-						type="button"
-						data-token={ token }
-						data-cls={ hue + "-" + shade }
-						data-label={ hue + "-" + shade }
-						@click="pickColor($el.dataset.token, $el.dataset.cls)"
-						@mouseenter="hovered = $el.dataset.label"
-						@mouseleave="hovered = ''"
-						@focus="hovered = $el.dataset.label"
-						@blur="hovered = ''"
-						class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
-						style={ "background-color: var(--color-" + hue + "-" + shade + ")" }
-						title={ hue + "-" + shade }
-					></button>
-				}
-			}
-		</div>
+templ colorRow(t colorToken) {
+	<div data-token={ t.Key } x-on:select-close="pickColor($el.dataset.token, $event.detail)">
+		@selectfield.Select(selectfield.Config{
+			ID:             "color-" + t.Key,
+			Shell:          true,
+			TriggerLeading: colorSwatch(t.Key),
+			ValueExpr:      "classLabel('" + t.Key + "')",
+		}) {
+			@palettecomp.Palette(palettecomp.Config{
+				ID:      "palette-" + t.Key,
+				ShowHex: true,
+			})
+		}
 	</div>
 }
 
