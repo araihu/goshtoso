@@ -6,6 +6,18 @@ import (
 	"strings"
 )
 
+// truncateTitle caps s to MaxTitleLen runes without splitting a multibyte rune.
+func truncateTitle(s string) string {
+	if len(s) <= MaxTitleLen {
+		return s
+	}
+	r := []rune(s)
+	if len(r) <= MaxTitleLen {
+		return s // already <= MaxTitleLen runes; long only in bytes
+	}
+	return string(r[:MaxTitleLen])
+}
+
 func normalizePriority(p string) string {
 	switch p {
 	case "low", "med", "high":
@@ -16,23 +28,28 @@ func normalizePriority(p string) string {
 }
 
 // Add appends a todo. Blank titles are ignored; the title is trimmed and capped
-// to MaxTitleLen; the list is capped to MaxTodos. ID comes from the Seq counter.
+// to MaxTitleLen runes. The list is capped to MaxTodos (coarse fast-path) and
+// also refused when the resulting encoded state would exceed maxCookieBytes.
+// ID comes from the Seq counter. Callers can detect whether the add succeeded
+// by comparing len(s.Todos) or s.Seq before and after.
 func (s *State) Add(title, priority, due string) {
 	title = strings.TrimSpace(title)
 	if title == "" || len(s.Todos) >= MaxTodos {
 		return
 	}
-	if len(title) > MaxTitleLen {
-		title = title[:MaxTitleLen]
-	}
-	s.Seq++
-	s.Todos = append(s.Todos, Todo{
-		ID:       s.Seq,
+	title = truncateTitle(title)
+	candidate := append(slices.Clone(s.Todos), Todo{
+		ID:       s.Seq + 1,
 		Title:    title,
 		Priority: normalizePriority(priority),
 		Due:      due,
 		Order:    len(s.Todos),
 	})
+	if len(Encode(State{Todos: candidate, Filter: s.Filter, Seq: s.Seq + 1})) > maxCookieBytes {
+		return
+	}
+	s.Seq++
+	s.Todos = candidate
 }
 
 // indexByID returns the slice index of the todo with id, or -1.
@@ -61,10 +78,7 @@ func (s *State) Edit(id int, title, priority, due string) {
 	if i < 0 {
 		return
 	}
-	if t := strings.TrimSpace(title); t != "" {
-		if len(t) > MaxTitleLen {
-			t = t[:MaxTitleLen]
-		}
+	if t := truncateTitle(strings.TrimSpace(title)); t != "" {
 		s.Todos[i].Title = t
 	}
 	s.Todos[i].Priority = normalizePriority(priority)
@@ -73,7 +87,7 @@ func (s *State) Edit(id int, title, priority, due string) {
 
 // Reorder reassigns Order so the todos named in ids come first in that sequence;
 // any todo not listed keeps its relative order and trails after. Unknown ids are
-// ignored.
+// ignored. Duplicate ids in the input resolve to last-position-wins.
 func (s *State) Reorder(ids []int) {
 	rank := make(map[int]int, len(ids))
 	for pos, id := range ids {

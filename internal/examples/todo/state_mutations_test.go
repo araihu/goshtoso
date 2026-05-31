@@ -4,6 +4,7 @@ package todo
 import (
 	"strings"
 	"testing"
+	"unicode/utf8"
 )
 
 func TestAddAssignsIncrementingIDsAndOrder(t *testing.T) {
@@ -32,6 +33,38 @@ func TestAddTruncatesTitleAndDefaultsPriority(t *testing.T) {
 	}
 	if s.Todos[0].Priority != "med" {
 		t.Fatalf("unknown priority should default to med, got %q", s.Todos[0].Priority)
+	}
+}
+
+func TestAddTruncatesMultibyteTitle(t *testing.T) {
+	// Each '世' is 3 UTF-8 bytes. A byte-slice truncation would split the rune.
+	var s State
+	long := strings.Repeat("世", MaxTitleLen+5)
+	s.Add(long, "low", "")
+	if len(s.Todos) != 1 {
+		t.Fatalf("expected 1 todo, got %d", len(s.Todos))
+	}
+	title := s.Todos[0].Title
+	if utf8.RuneCountInString(title) != MaxTitleLen {
+		t.Fatalf("expected %d runes, got %d", MaxTitleLen, utf8.RuneCountInString(title))
+	}
+	if !utf8.ValidString(title) {
+		t.Fatalf("truncated title is not valid UTF-8")
+	}
+}
+
+func TestAddRespectsCookieSizeBudget(t *testing.T) {
+	var s State
+	bigTitle := strings.Repeat("世", 200) // 200 runes × 3 bytes = 600 bytes each
+	for i := 0; i < 60; i++ {
+		s.Add(bigTitle, "high", "2026-06-01")
+	}
+	if len(s.Todos) == 0 {
+		t.Fatalf("expected at least one todo to be added")
+	}
+	encoded := Encode(s)
+	if len(encoded) > maxCookieBytes {
+		t.Fatalf("encoded size %d exceeds maxCookieBytes %d", len(encoded), maxCookieBytes)
 	}
 }
 
@@ -92,13 +125,19 @@ func TestEditUpdatesFieldsAndDefaults(t *testing.T) {
 	if s.Todos[1].Priority != "low" {
 		t.Fatalf("priority should update even when title blank")
 	}
+	// Unknown id is a no-op.
+	before := s.Todos
+	s.Edit(999, "x", "low", "")
+	if len(s.Todos) != len(before) || s.Todos[0].Title != before[0].Title || s.Todos[1].Title != before[1].Title {
+		t.Fatalf("edit of unknown id should be no-op, got %+v", s.Todos)
+	}
 }
 
 func TestReorderReassignsOrderAndTrailsOmitted(t *testing.T) {
 	var s State
-	s.Add("a", "low", "") // ID 1
-	s.Add("b", "low", "") // ID 2
-	s.Add("c", "low", "") // ID 3
+	s.Add("a", "low", "")  // ID 1
+	s.Add("b", "low", "")  // ID 2
+	s.Add("c", "low", "")  // ID 3
 	s.Reorder([]int{3, 1}) // 2 omitted, unknown 99 ignored if present
 	byID := map[int]int{}
 	for _, td := range s.Todos {

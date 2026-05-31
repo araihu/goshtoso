@@ -8,10 +8,15 @@ import (
 )
 
 const (
-	// MaxTodos caps the list so the encoded cookie stays well under the ~4KB limit.
+	// MaxTodos is a coarse upper bound on the list length. The real size guarantee
+	// is enforced by maxCookieBytes: Add refuses to append when the resulting
+	// encoded state would exceed that budget.
 	MaxTodos = 50
-	// MaxTitleLen bounds a single title's stored length.
+	// MaxTitleLen bounds a single title's stored length in runes.
 	MaxTitleLen = 200
+	// maxCookieBytes bounds the encoded cookie value so the browser never silently
+	// drops it (browsers cap a cookie near 4KB).
+	maxCookieBytes = 3800
 )
 
 // Todo is a single task. ID is assigned from State.Seq (deterministic, no rand).
@@ -32,8 +37,12 @@ type State struct {
 }
 
 // Encode serializes State to a base64url(JSON) string for cookie storage.
+// State is always serializable; a marshal error is a programmer error and panics.
 func Encode(s State) string {
-	b, _ := json.Marshal(s)
+	b, err := json.Marshal(s)
+	if err != nil {
+		panic("todo.Encode: " + err.Error())
+	}
 	return base64.RawURLEncoding.EncodeToString(b)
 }
 

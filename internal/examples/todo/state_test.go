@@ -24,10 +24,24 @@ func TestEncodeDecodeRoundTrip(t *testing.T) {
 }
 
 func TestDecodeMalformedReturnsEmpty(t *testing.T) {
-	for _, in := range []string{"", "not-base64!!!", "YWJj" /* base64 "abc", invalid json */} {
-		got, err := Decode([]byte(in))
-		if err == nil && (len(got.Todos) != 0 || got.Seq != 0) {
-			t.Fatalf("expected empty state for %q, got %+v", in, got)
+	cases := []struct {
+		input   string
+		wantErr bool
+	}{
+		{"", false},             // empty input → zero state, no error
+		{"not-base64!!!", true}, // invalid base64 → error + empty
+		{"YWJj", true},          // base64("abc") → valid base64 but invalid JSON → error + empty
+	}
+	for _, tc := range cases {
+		got, err := Decode([]byte(tc.input))
+		if tc.wantErr && err == nil {
+			t.Errorf("Decode(%q): expected error, got nil", tc.input)
+		}
+		if !tc.wantErr && err != nil {
+			t.Errorf("Decode(%q): unexpected error: %v", tc.input, err)
+		}
+		if len(got.Todos) != 0 || got.Seq != 0 || got.Filter != "" {
+			t.Errorf("Decode(%q): expected empty state, got %+v", tc.input, got)
 		}
 	}
 }
