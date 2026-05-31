@@ -2,6 +2,7 @@ package tabs
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/a-h/templ"
 )
@@ -68,12 +69,12 @@ func tabsData(cfg Config) string {
 	for i, t := range cfg.Tabs {
 		jsIDs[i] = "'" + jsEscapeSingle(t.ID) + "'"
 	}
-	validArr := ""
+	var validArr strings.Builder
 	for i, id := range jsIDs {
 		if i > 0 {
-			validArr += ","
+			validArr.WriteString(",")
 		}
-		validArr += id
+		validArr.WriteString(id)
 	}
 
 	return fmt.Sprintf(
@@ -83,7 +84,7 @@ func tabsData(cfg Config) string {
 			`if(h&&v.includes(h))this.selectedTab=h;`+
 			`this.$watch('selectedTab',function(t){history.replaceState(null,'','#'+t)});`+
 			`}}`,
-		jsEscapeSingle(defaultTab), validArr)
+		jsEscapeSingle(defaultTab), validArr.String())
 }
 
 // ActiveClasses returns the CSS classes for the active tab button

@@ -9,7 +9,7 @@ import (
 // It parses the request, populates field values, runs the validation hook,
 // and returns a Result.
 func Handle(r *http.Request, def *FormDef, validate ValidateFunc) *Result {
-	r.ParseForm()
+	_ = r.ParseForm()
 
 	// Parse all form values
 	formValues := make(map[string]string, len(r.Form))
@@ -78,7 +78,7 @@ func Handle(r *http.Request, def *FormDef, validate ValidateFunc) *Result {
 // IsFieldValidation returns true if the request is a field-level validation
 // (as opposed to a full form submit).
 func IsFieldValidation(r *http.Request) bool {
-	r.ParseForm()
+	_ = r.ParseForm()
 	return r.FormValue("X-Goshtoso-Validation") == "field"
 }
 

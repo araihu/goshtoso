@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -171,13 +172,13 @@ func TestTable_WithCheckbox(t *testing.T) {
 		headerCheckbox := checkboxSection.Locator("thead input[type='checkbox']")
 		err := headerCheckbox.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		rowCheckboxes := checkboxSection.Locator("tbody input[type='checkbox']")
 		rowCount, err := rowCheckboxes.Count()
 		require.NoError(t, err)
 
-		for i := 0; i < rowCount; i++ {
+		for i := range rowCount {
 			checked, err := rowCheckboxes.Nth(i).IsChecked()
 			require.NoError(t, err)
 			assert.True(t, checked, "row checkbox %d should be checked", i)
@@ -327,7 +328,7 @@ func TestTable_SortableTable(t *testing.T) {
 		require.NoError(t, err)
 
 		// Wait for HTMX to swap content
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Verify the tbody still has rows (HTMX replaced content)
 		rows := sortableTable.Locator("tbody tr")
@@ -364,7 +365,7 @@ func TestTable_LazyLoad(t *testing.T) {
 		// The tbody should have hx-get and hx-trigger="load" initially
 		// After load completes, HTMX replaces the inner HTML
 		// Wait for content to load
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// After loading, should have actual data rows
 		rows := lazyTbody.Locator("tr")
@@ -447,7 +448,7 @@ func TestTable_Pagination(t *testing.T) {
 
 		err = nextBtn.First().Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		paginatedTable := page.Locator("#paginated-table")
 		rows := paginatedTable.Locator("tbody tr")
@@ -521,7 +522,7 @@ func TestTable_API(t *testing.T) {
 	t.Run("Table_Rows_API_Returns_HTML", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 		assert.Equal(t, "text/html", resp.Header.Get("Content-Type"))
@@ -539,7 +540,7 @@ func TestTable_API(t *testing.T) {
 	t.Run("Table_Rows_API_Sorting", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows?order_by=name&order_dir=desc&per_page=20")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		require.NoError(t, err)
@@ -556,7 +557,7 @@ func TestTable_API(t *testing.T) {
 	t.Run("Table_Rows_API_Pagination", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows?page=2&per_page=3")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		require.NoError(t, err)
@@ -572,7 +573,7 @@ func TestTable_API(t *testing.T) {
 	t.Run("Table_Rows_API_Lazy_Load", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows?variant=lazy")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 
@@ -589,7 +590,7 @@ func TestTable_API(t *testing.T) {
 	t.Run("Table_Rows_API_Infinite_Scroll", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows?variant=infinite&page=2")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		body, err := io.ReadAll(resp.Body)
 		require.NoError(t, err)
@@ -614,7 +615,7 @@ func TestTable_AllVariantsRender(t *testing.T) {
 	t.Run("Table_Page_Returns_200", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/components/table")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 		t.Log("✓ Table page returns 200")
@@ -623,7 +624,7 @@ func TestTable_AllVariantsRender(t *testing.T) {
 	t.Run("Table_Rows_API_Returns_200", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 		t.Log("✓ Table rows API returns 200")

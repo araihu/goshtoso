@@ -65,7 +65,7 @@ func (s *Server) setupRoutes() {
 	// Landing page
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			components.LandingPage().Render(r.Context(), w)
+			_ = components.LandingPage().Render(r.Context(), w)
 			return
 		}
 		http.NotFound(w, r)
@@ -95,10 +95,10 @@ func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := entry.Content()
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		demo.Fragment(entry.Title, entry.Active, content).Render(r.Context(), w)
+		_ = demo.Fragment(entry.Title, entry.Active, content).Render(r.Context(), w)
 		return
 	}
-	demo.Layout(entry.Title, entry.Active, content).Render(r.Context(), w)
+	_ = demo.Layout(entry.Title, entry.Active, content).Render(r.Context(), w)
 }
 
 // handleRadioEcho returns a small HTML fragment for the radio demo's HTMX showcase.
@@ -109,7 +109,7 @@ func (s *Server) handleRadioEcho(w http.ResponseWriter, r *http.Request) {
 	if value == "" {
 		value = "(empty)"
 	}
-	fmt.Fprintf(w, `Server: you picked <span class="font-mono font-semibold">%s</span> at %s.`,
+	_, _ = fmt.Fprintf(w, `Server: you picked <span class="font-mono font-semibold">%s</span> at %s.`,
 		htmlEscape(value), time.Now().Format("15:04:05.000"))
 }
 
@@ -127,7 +127,7 @@ func htmlEscape(s string) string {
 
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
 }
 
 func (s *Server) handleStepsDemo(w http.ResponseWriter, r *http.Request) {
@@ -147,7 +147,7 @@ func (s *Server) handleStepsDemo(w http.ResponseWriter, r *http.Request) {
 		current = 4
 	}
 
-	components.StepsHTMXFlow(current).Render(r.Context(), w)
+	_ = components.StepsHTMXFlow(current).Render(r.Context(), w)
 }
 
 func (s *Server) handleButtonFragment(w http.ResponseWriter, r *http.Request) {
@@ -157,7 +157,7 @@ func (s *Server) handleButtonFragment(w http.ResponseWriter, r *http.Request) {
 	disabled := r.URL.Query().Get("disabled") == "true"
 
 	// Render just the button grid fragment
-	components.ButtonFragment(disabled).Render(r.Context(), w)
+	_ = components.ButtonFragment(disabled).Render(r.Context(), w)
 }
 
 func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) {
@@ -173,7 +173,7 @@ func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) 
 	// Return different content based on the ID
 	switch contentID {
 	case "lazy-content-a":
-		fmt.Fprintf(w, `<div class="space-y-2">
+		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
 			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Server Response A</h5>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">This content was loaded from the server at <strong>%s</strong>.</p>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">You can use this pattern to load large datasets, forms, or any dynamic content on demand.</p>
@@ -183,7 +183,7 @@ func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) 
 			</div>
 		</div>`, time.Now().Format("15:04:05"))
 	case "lazy-content-b":
-		fmt.Fprintf(w, `<div class="space-y-2">
+		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
 			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Server Response B</h5>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">This is another example of lazy-loaded content fetched at <strong>%s</strong>.</p>
 			<div class="p-3 bg-surface-alt dark:bg-surface-dark-alt rounded text-sm">
@@ -192,13 +192,13 @@ func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) 
 			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mt-2">Perfect for performance optimization - content only loads when needed!</p>
 		</div>`, time.Now().Format("15:04:05"), r.URL.Path)
 	case "lazy-content-1":
-		fmt.Fprintf(w, `<div class="space-y-2">
+		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
 			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Dynamic Content Loaded!</h5>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">Loaded at %s</p>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">This demonstrates how you can defer loading heavy content until the user actually needs it.</p>
 		</div>`, time.Now().Format("15:04:05"))
 	default:
-		fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown content ID: %s</div>`, contentID)
+		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown content ID: %s</div>`, contentID)
 	}
 }
 
@@ -213,7 +213,7 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 
 	switch tabID {
 	case "details":
-		fmt.Fprintf(w, `<div class="space-y-2">
+		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
 			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Details (Lazy Loaded)</h5>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">This content was fetched from the server at <strong>%s</strong> via HTMX.</p>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">The panel only made the request when the tab was first selected, saving bandwidth and server load.</p>
@@ -223,7 +223,7 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 			</div>
 		</div>`, time.Now().Format("15:04:05"))
 	case "activity":
-		fmt.Fprintf(w, `<div class="space-y-2">
+		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
 			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Recent Activity</h5>
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">Fetched at <strong>%s</strong>.</p>
 			<ul class="text-sm text-on-surface dark:text-on-surface-dark list-disc list-inside space-y-1 mt-2">
@@ -233,7 +233,7 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 			</ul>
 		</div>`, time.Now().Format("15:04:05"))
 	default:
-		fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown tab content: %s</div>`, tabID)
+		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown tab content: %s</div>`, tabID)
 	}
 }
 
@@ -275,7 +275,7 @@ func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 	}
-	carousel.Carousel(cfg).Render(r.Context(), w)
+	_ = carousel.Carousel(cfg).Render(r.Context(), w)
 }
 
 // usersProvider is an OptionsProvider for the combobox-new users demo.

@@ -7,8 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
-	"sync"
 	"syscall"
 	"testing"
 	"time"
@@ -27,7 +25,6 @@ var (
 	sharedPW      *playwright.Playwright
 	sharedBrowser playwright.Browser
 	serverCmd     *exec.Cmd
-	serverOnce    sync.Once
 )
 
 // freePort finds an available TCP port
@@ -37,7 +34,7 @@ func freePort() (int, error) {
 		return 0, err
 	}
 	port := l.Addr().(*net.TCPAddr).Port
-	l.Close()
+	_ = l.Close()
 	return port, nil
 }
 
@@ -72,7 +69,7 @@ func TestMain(m *testing.M) {
 	deadline := time.Now().Add(10 * time.Second)
 	for time.Now().Before(deadline) {
 		if resp, err := http.Get(baseURL); err == nil {
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			break
 		}
 		time.Sleep(100 * time.Millisecond)
@@ -87,11 +84,11 @@ func TestMain(m *testing.M) {
 	sharedPW = pw
 
 	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
-		Headless: playwright.Bool(true),
+		Headless: new(true),
 	})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to launch browser: %v\n", err)
-		pw.Stop()
+		_ = pw.Stop()
 		os.Exit(1)
 	}
 	sharedBrowser = browser
@@ -100,11 +97,11 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	// Cleanup
-	browser.Close()
-	pw.Stop()
+	_ = browser.Close()
+	_ = pw.Stop()
 	if serverCmd != nil && serverCmd.Process != nil {
-		syscall.Kill(-serverCmd.Process.Pid, syscall.SIGTERM)
-		serverCmd.Wait()
+		_ = syscall.Kill(-serverCmd.Process.Pid, syscall.SIGTERM)
+		_ = serverCmd.Wait()
 	}
 
 	os.Exit(code)
@@ -136,29 +133,41 @@ func newPage(t *testing.T, browser playwright.Browser, opts ...playwright.Browse
 	require.NoError(t, err)
 	page.SetDefaultTimeout(2000)
 	page.SetDefaultNavigationTimeout(3000)
-	t.Cleanup(func() { page.Close() })
+	t.Cleanup(func() { _ = page.Close() })
 	return page
+}
+
+// clickUntil clicks loc and waits for jsCondition to hold, retrying the click
+// if it was dropped by an HTMX swap rebind race. When a control is replaced by a
+// swap (outerHTML or OOB), htmx re-binds the new element a beat after it appears
+// in the DOM; a click landing in that window fires no request and the UI state
+// never advances. Because a dropped click leaves state unchanged (no request)
+// while a real click lands in tens of ms, retrying only ever re-fires genuinely
+// lost clicks — it never double-advances stateful controls. Fast path: 1 click.
+func clickUntil(t *testing.T, page playwright.Page, loc playwright.Locator, jsCondition string) {
+	t.Helper()
+	for attempt := 1; attempt <= 5; attempt++ {
+		require.NoError(t, loc.Click())
+		if _, err := page.WaitForFunction(jsCondition, nil, playwright.PageWaitForFunctionOptions{
+			Timeout: playwright.Float(2000),
+		}); err == nil {
+			return
+		}
+	}
+	t.Fatalf("clickUntil: condition never satisfied after 5 click attempts: %s", jsCondition)
 }
 
 // takeScreenshot captures a screenshot for debugging
 func takeScreenshot(t *testing.T, page playwright.Page, name string) {
-	os.MkdirAll(screenshotDir, 0755)
+	_ = os.MkdirAll(screenshotDir, 0755)
 	path := filepath.Join(screenshotDir, fmt.Sprintf("%s-%d.png", name, time.Now().Unix()))
 	_, err := page.Screenshot(playwright.PageScreenshotOptions{
-		Path:     playwright.String(path),
-		FullPage: playwright.Bool(true),
+		Path:     new(path),
+		FullPage: new(true),
 	})
 	if err != nil {
 		t.Logf("failed to take screenshot: %v", err)
 	} else {
 		t.Logf("Screenshot saved: %s", path)
 	}
-}
-
-// normalizeHTMLSimple normalizes HTML for comparison (simple version)
-func normalizeHTMLSimple(html string) string {
-	html = strings.ReplaceAll(html, ">\n<", "><")
-	html = strings.ReplaceAll(html, ">  <", "><")
-	fields := strings.Fields(html)
-	return strings.Join(fields, " ")
 }

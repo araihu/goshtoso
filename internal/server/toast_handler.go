@@ -38,5 +38,5 @@ func (s *Server) handleToastOOB(w http.ResponseWriter, r *http.Request) {
 		Message: message,
 	}
 
-	toast.OOBToast(cfg).Render(r.Context(), w)
+	_ = toast.OOBToast(cfg).Render(r.Context(), w)
 }

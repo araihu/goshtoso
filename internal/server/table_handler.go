@@ -100,6 +100,23 @@ func filterRecords(recs []tableRecord, search string, membership string) []table
 	return filtered
 }
 
+// parsePageParams reads page/per_page from their raw query strings, falling
+// back to the demo defaults (page 1, 3 rows) when absent or invalid.
+func parsePageParams(pageStr, perPageStr string) (page, perPage int) {
+	page, perPage = 1, 3
+	if pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+	if perPageStr != "" {
+		if pp, err := strconv.Atoi(perPageStr); err == nil && pp > 0 {
+			perPage = pp
+		}
+	}
+	return page, perPage
+}
+
 func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
@@ -132,18 +149,7 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse pagination params
-	page := 1
-	perPage := 3
-	if pageStr != "" {
-		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
-			page = p
-		}
-	}
-	if perPageStr != "" {
-		if pp, err := strconv.Atoi(perPageStr); err == nil && pp > 0 {
-			perPage = pp
-		}
-	}
+	page, perPage := parsePageParams(pageStr, perPageStr)
 
 	totalPages := (len(records) + perPage - 1) / perPage
 
@@ -153,10 +159,7 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 		start = 0
 		page = 1
 	}
-	end := start + perPage
-	if end > len(records) {
-		end = len(records)
-	}
+	end := min(start+perPage, len(records))
 	pageRecords := records[start:end]
 	rows := recordsToRows(pageRecords)
 
@@ -184,7 +187,7 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 				HasMore:  true,
 			}
 		}
-		table.TableRows(cfg).Render(r.Context(), w)
+		_ = table.TableRows(cfg).Render(r.Context(), w)
 		return
 	}
 
@@ -208,24 +211,24 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 
 	// Render just the table rows (tbody inner content)
 	for _, row := range rows {
-		table.TableRow(cfg, row).Render(r.Context(), w)
+		_ = table.TableRow(cfg, row).Render(r.Context(), w)
 	}
 
 	// OOB swap: update sort headers so icons and next-sort URLs reflect current state.
 	// Wrapped in <template> so the HTML parser doesn't strip <thead>/<tr> elements
 	// when they appear alongside tbody <tr> rows in the response.
 	if tableID != "" {
-		fmt.Fprintf(w, `<template><thead id="%s" hx-swap-oob="outerHTML" class="%s">`,
+		_, _ = fmt.Fprintf(w, `<template><thead id="%s" hx-swap-oob="outerHTML" class="%s">`,
 			cfg.TheadID(), cfg.TheadClasses())
-		table.TableHeadContent(cfg).Render(r.Context(), w)
-		fmt.Fprintf(w, `</thead></template>`)
+		_ = table.TableHeadContent(cfg).Render(r.Context(), w)
+		_, _ = fmt.Fprintf(w, `</thead></template>`)
 	}
 
 	// OOB swap: update pagination controls so active page, prev/next states refresh
 	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
-		fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">`, cfg.PaginationID())
-		fmt.Fprintf(w, `<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">Page %d of %d</div>`, page, totalPages)
-		table.TablePaginationNav(cfg).Render(r.Context(), w)
-		fmt.Fprintf(w, `</div>`)
+		_, _ = fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">`, cfg.PaginationID())
+		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">Page %d of %d</div>`, page, totalPages)
+		_ = table.TablePaginationNav(cfg).Render(r.Context(), w)
+		_, _ = fmt.Fprintf(w, `</div>`)
 	}
 }

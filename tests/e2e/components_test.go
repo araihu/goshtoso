@@ -43,7 +43,7 @@ func TestAccordion_StaticContent(t *testing.T) {
 		// Click to expand
 		err = firstButton.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Now expanded
 		ariaExpanded, err = firstButton.GetAttribute("aria-expanded")
@@ -67,12 +67,12 @@ func TestAccordion_StaticContent(t *testing.T) {
 		// Open first section
 		err := buttons.Nth(0).Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Open second section
 		err = buttons.Nth(1).Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Both should be expanded
 		expanded0, _ := buttons.Nth(0).GetAttribute("aria-expanded")
@@ -167,7 +167,7 @@ func TestAccordion_ServerLoadedContent(t *testing.T) {
 		// Test API endpoint directly
 		resp, err := http.Get(baseURL + "/api/components/accordion-content/lazy-content-a")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 		assert.Equal(t, "text/html", resp.Header.Get("Content-Type"))
@@ -263,7 +263,7 @@ func TestButton_HTMXInteractions(t *testing.T) {
 		page.On("dialog", func(dialog playwright.Dialog) {
 			dialogShown = true
 			assert.Contains(t, dialog.Message(), "sure")
-			dialog.Dismiss()
+			_ = dialog.Dismiss()
 		})
 
 		// Click the button
@@ -271,7 +271,7 @@ func TestButton_HTMXInteractions(t *testing.T) {
 		require.NoError(t, err)
 
 		// Wait for dialog
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		if dialogShown {
 			t.Log("✓ HTMX confirm dialog shown")
@@ -376,7 +376,7 @@ func TestComponent_DarkMode(t *testing.T) {
 		toggleBtn := page.Locator("#darkModeToggleBtn")
 		err = toggleBtn.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Verify dark class changed
 		hasDarkAfter, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
@@ -389,8 +389,8 @@ func TestComponent_DarkMode(t *testing.T) {
 	t.Run("Dark_Mode_Persists_In_LocalStorage", func(t *testing.T) {
 		// Toggle dark mode on
 		toggleBtn := page.Locator("#darkModeToggleBtn")
-		toggleBtn.Click()
-		page.WaitForTimeout(50)
+		_ = toggleBtn.Click()
+		time.Sleep(50 * time.Millisecond)
 
 		// Check localStorage
 		darkModeValue, err := page.Evaluate("() => localStorage.getItem('darkMode')", nil)
@@ -415,7 +415,7 @@ func TestAPIEndpoints(t *testing.T) {
 	t.Run("Hello_API_Returns_Correct_Response", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/hello")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 		assert.Equal(t, "text/html", resp.Header.Get("Content-Type"))
@@ -434,7 +434,7 @@ func TestAPIEndpoints(t *testing.T) {
 	t.Run("Button_Fragment_API_Works", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/button?disabled=true")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 		assert.Equal(t, "text/html", resp.Header.Get("Content-Type"))
@@ -457,7 +457,7 @@ func TestAPIEndpoints(t *testing.T) {
 
 		bodyA := make([]byte, 1024)
 		nA, _ := respA.Body.Read(bodyA)
-		respA.Body.Close()
+		_ = respA.Body.Close()
 		bodyStrA := string(bodyA[:nA])
 
 		// Test content B
@@ -466,7 +466,7 @@ func TestAPIEndpoints(t *testing.T) {
 
 		bodyB := make([]byte, 1024)
 		nB, _ := respB.Body.Read(bodyB)
-		respB.Body.Close()
+		_ = respB.Body.Close()
 		bodyStrB := string(bodyB[:nB])
 
 		// Should be different
@@ -508,8 +508,8 @@ func TestAccordion_Visual_Parity(t *testing.T) {
 		screenshotPath := fmt.Sprintf("%s/accordion-parity-%d.png", screenshotDir, time.Now().Unix())
 
 		_, err := page.Screenshot(playwright.PageScreenshotOptions{
-			Path:     playwright.String(screenshotPath),
-			FullPage: playwright.Bool(false),
+			Path:     new(screenshotPath),
+			FullPage: new(false),
 		})
 		require.NoError(t, err)
 
@@ -547,7 +547,7 @@ func TestPerformance(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/accordion-content/lazy-content-a")
 		elapsed := time.Since(start)
 		require.NoError(t, err)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 
 		// Should load within reasonable time (server has 500ms simulated delay)
 		assert.Less(t, elapsed, 15*time.Second, "API should respond within 15 seconds")
@@ -603,7 +603,7 @@ func TestIntegration(t *testing.T) {
 		err = buttonLink.Click()
 		require.NoError(t, err)
 
-		page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{
+		_ = page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{
 			State: playwright.LoadStateNetworkidle,
 		})
 
@@ -623,7 +623,7 @@ func TestIntegration(t *testing.T) {
 		staticButton := page.Locator("#accordion-fragment button").First()
 		err = staticButton.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Expand lazy-loaded section
 		lazyButton := page.Locator("text=Dynamic Content A").First()
@@ -642,7 +642,7 @@ func TestIntegration(t *testing.T) {
 		err = toggleBtn.Click()
 		require.NoError(t, err)
 
-		page.WaitForTimeout(50)
+		time.Sleep(50 * time.Millisecond)
 
 		// Verify content still visible after theme change
 		content := page.Locator("text=Server Response A")
@@ -665,7 +665,7 @@ func TestErrorHandling(t *testing.T) {
 	t.Run("API_Returns_Error_For_Invalid_Content_ID", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/accordion-content/invalid-id")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 

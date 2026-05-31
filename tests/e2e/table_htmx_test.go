@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,7 @@ func tableAPI(t *testing.T, params string) string {
 	}
 	resp, err := http.Get(url)
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	require.Equal(t, 200, resp.StatusCode)
 	body, err := io.ReadAll(resp.Body)
 	require.NoError(t, err)
@@ -372,7 +373,7 @@ func TestTableHTMX_BrowserSorting(t *testing.T) {
 
 		err = nameHeader.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500) // Wait for HTMX swap
+		time.Sleep(500 * time.Millisecond) // Wait for HTMX swap
 
 		// Get new first row text - should be different if sort changed
 		newFirst, err := page.Locator("#sortable-table tbody tr").First().TextContent()
@@ -436,11 +437,18 @@ func TestTableHTMX_SortCycling(t *testing.T) {
 		return fmt.Sprintf("%v", result)
 	}
 
-	// clickNameHeader clicks the Name sort header.
-	clickNameHeader := func(t *testing.T) {
-		t.Helper()
-		err := page.Locator("#sortable-table-thead th:has-text('Name')").Click()
-		require.NoError(t, err)
+	// nameHeader re-resolves each use, so it finds the fresh <th> after the sort
+	// OOB swap replaces the thead.
+	nameHeader := page.Locator("#sortable-table-thead th:has-text('Name')")
+
+	// nameHeaderURLHas builds a WaitForFunction predicate that holds once the Name
+	// header's next-sort hx-get URL contains (present) or omits (!present) substr.
+	nameHeaderURLHas := func(substr string, present bool) string {
+		test := "th.getAttribute('hx-get').includes('" + substr + "')"
+		if !present {
+			test = "!" + test
+		}
+		return `() => { var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]'); for (var th of ths) { if (th.textContent.includes('Name') && ` + test + `) return true; } return false; }`
 	}
 
 	t.Run("InitialState_NameIsNeutral", func(t *testing.T) {
@@ -450,50 +458,20 @@ func TestTableHTMX_SortCycling(t *testing.T) {
 	})
 
 	t.Run("Click1_NameSortsAsc", func(t *testing.T) {
-		clickNameHeader(t)
-
-		// Wait for OOB swap: the Name header's URL should now point to desc (next click)
-		_, err := page.WaitForFunction(`() => {
-			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
-			for (var th of ths) {
-				if (th.textContent.includes('Name') && th.getAttribute('hx-get').includes('order_dir=desc')) return true;
-			}
-			return false;
-		}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
-		require.NoError(t, err, "name header should update to point to desc after asc click")
-
+		// After an asc click the header's next-sort URL points to desc.
+		clickUntil(t, page, nameHeader, nameHeaderURLHas("order_dir=desc", true))
 		assert.Equal(t, "asc", getSortState(), "after 1st click, should show asc icon")
 	})
 
 	t.Run("Click2_NameSortsDesc", func(t *testing.T) {
-		clickNameHeader(t)
-
-		// After desc, next click resets to neutral — URL should not contain order_dir
-		_, err := page.WaitForFunction(`() => {
-			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
-			for (var th of ths) {
-				if (th.textContent.includes('Name') && !th.getAttribute('hx-get').includes('order_dir=')) return true;
-			}
-			return false;
-		}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
-		require.NoError(t, err, "name header should point to neutral after desc click")
-
+		// After desc, next click resets to neutral — URL omits order_dir.
+		clickUntil(t, page, nameHeader, nameHeaderURLHas("order_dir=", false))
 		assert.Equal(t, "desc", getSortState(), "after 2nd click, should show desc icon")
 	})
 
 	t.Run("Click3_NameReturnsToNeutral", func(t *testing.T) {
-		clickNameHeader(t)
-
-		// Neutral: next click goes to asc — URL should contain order_dir=asc
-		_, err := page.WaitForFunction(`() => {
-			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
-			for (var th of ths) {
-				if (th.textContent.includes('Name') && th.getAttribute('hx-get').includes('order_dir=asc')) return true;
-			}
-			return false;
-		}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
-		require.NoError(t, err, "name header should point to asc after neutral reset")
-
+		// Neutral: next click goes to asc — URL contains order_dir=asc.
+		clickUntil(t, page, nameHeader, nameHeaderURLHas("order_dir=asc", true))
 		assert.Equal(t, "neutral", getSortState(), "after 3rd click, should return to neutral icon")
 	})
 
@@ -548,7 +526,7 @@ func TestTableHTMX_BrowserPagination(t *testing.T) {
 
 		err = nextBtn.First().Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		time.Sleep(500 * time.Millisecond)
 
 		newRows, err := page.Locator("#paginated-table tbody").TextContent()
 		require.NoError(t, err)
@@ -573,7 +551,7 @@ func TestTableHTMX_BrowserLazyLoad(t *testing.T) {
 
 	t.Run("LazyTable_LoadsRows", func(t *testing.T) {
 		// Wait for HTMX lazy load to complete (has 500ms server delay)
-		page.WaitForTimeout(1500)
+		time.Sleep(1500 * time.Millisecond)
 
 		lazyTbody := page.Locator("#lazy-table tbody")
 		rows := lazyTbody.Locator("tr")
@@ -628,7 +606,7 @@ func TestTableHTMX_ResponseFormat(t *testing.T) {
 	t.Run("ContentType_IsHTML", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		ct := resp.Header.Get("Content-Type")
 		assert.Contains(t, ct, "text/html")
 	})
@@ -670,14 +648,14 @@ func TestTableHTMX_EdgeCases(t *testing.T) {
 	t.Run("InvalidPage_Handled", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows?page=-1")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		assert.Equal(t, 200, resp.StatusCode, "invalid page should not crash")
 	})
 
 	t.Run("InvalidPerPage_Handled", func(t *testing.T) {
 		resp, err := http.Get(baseURL + "/api/components/table/rows?per_page=abc")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		assert.Equal(t, 200, resp.StatusCode, "non-numeric per_page should not crash")
 	})
 

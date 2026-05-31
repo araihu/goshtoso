@@ -23,7 +23,7 @@ func fillSearchInput(t *testing.T, page playwright.Page, value string) {
 // ensureFiltersExpanded ensures the filter bar is expanded by checking Alpine state.
 func ensureFiltersExpanded(t *testing.T, page playwright.Page) {
 	t.Helper()
-	page.Evaluate(`() => {
+	_, _ = page.Evaluate(`() => {
 		var el = document.querySelector('[x-data="filteredTableFilters"]');
 		if (el) { Alpine.$data(el).filtersExpanded = true; }
 	}`, nil)

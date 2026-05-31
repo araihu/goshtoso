@@ -2,6 +2,7 @@ package table
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/a-h/templ"
 )
@@ -715,14 +716,15 @@ func hyphenToCamel(s string) string {
 // filterScriptData generates a JS script block that registers an Alpine.data component.
 // This avoids templ's HTML attribute escaping that breaks & and quotes.
 func filterScriptData(cfg Config) string {
-	filters := "{"
+	var filters strings.Builder
+	filters.WriteString("{")
 	for i, f := range cfg.Filters.Filters {
 		if i > 0 {
-			filters += ", "
+			filters.WriteString(", ")
 		}
-		filters += f.Key + ": '" + jsEscape(f.DefaultValue) + "'"
+		filters.WriteString(f.Key + ": '" + jsEscape(f.DefaultValue) + "'")
 	}
-	filters += "}"
+	filters.WriteString("}")
 
 	expanded := "true"
 	if cfg.Filters.Collapsible && !cfg.Filters.InitiallyExpanded {
@@ -792,7 +794,7 @@ func filterScriptData(cfg Config) string {
 				evt.detail.parameters[k] = v;
 			}
 		}
-	});`, name, expanded, filters, endpoint, perPage, extra, hxTarget, hxSwap, name)
+	});`, name, expanded, filters.String(), endpoint, perPage, extra, hxTarget, hxSwap, name)
 }
 
 // jsEscape escapes a string for safe embedding in single-quoted JS literals

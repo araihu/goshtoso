@@ -3,6 +3,7 @@ package e2e
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -141,7 +142,7 @@ func TestTheme_DarkMode_Toggle(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("DarkMode_Toggle_Adds_Class", func(t *testing.T) {
-		page.WaitForTimeout(150) // Wait for Alpine.js store init
+		time.Sleep(150 * time.Millisecond) // Wait for Alpine.js store init
 
 		// Get initial state
 		initialDark, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
@@ -151,7 +152,7 @@ func TestTheme_DarkMode_Toggle(t *testing.T) {
 		toggleBtn := page.Locator("#darkModeToggleBtn")
 		err = toggleBtn.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(150)
+		time.Sleep(150 * time.Millisecond)
 
 		// Should have toggled
 		afterDark, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)

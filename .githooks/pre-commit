@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Goshtoso pre-commit hook — apply `go fix` modernizations automatically.
+# See https://go.dev/blog/gofix. Generated templ files (*_templ.go) are never
+# touched. Enable once with:  git config core.hooksPath .githooks
+#
+set -euo pipefail
+
+# Bail early unless this commit stages a non-generated Go file.
+staged=$(git diff --cached --name-only --diff-filter=d | grep '\.go$' | grep -v '_templ\.go$' || true)
+[ -z "$staged" ] && exit 0
+
+# Apply modernizations across the module (fast; conservative, AST-safe).
+go fix ./... >/dev/null 2>&1 || true
+
+# Never modernize generated output — restore it verbatim.
+git checkout -- '*_templ.go' 2>/dev/null || true
+
+# Re-stage only files that were ALREADY staged and that go fix changed, so we
+# don't sweep in a developer's unrelated working-tree edits.
+restage=""
+for f in $staged; do
+  if [ -f "$f" ] && ! git diff --quiet -- "$f"; then
+    restage="$restage $f"
+  fi
+done
+
+if [ -n "$restage" ]; then
+  echo "go fix applied modernizations to staged files:"
+  # shellcheck disable=SC2086
+  for f in $restage; do echo "  $f"; done
+  echo "Re-staged them — review with 'git diff --cached', then re-run the commit."
+  # shellcheck disable=SC2086
+  git add -- $restage
+  exit 1
+fi
+
+exit 0
