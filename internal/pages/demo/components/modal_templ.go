@@ -43,7 +43,9 @@ func ModalDemoPage() templ.Component {
 	})
 }
 
-// modalDemoContent renders the actual content inside the layout
+// modalDemoContent renders the demo. Each modal variant lives in its own preview
+// frame followed by its own code block (mirrors penguinui.com/components/modal).
+// Wrapped in #modal-fragment.
 func modalDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -65,24 +67,35 @@ func modalDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"modal-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Modal",
-				Description: "Modals display focused content that requires user attention or interaction. They support default and alert variants, with optional HTMX and JavaScript actions on buttons.",
+				Description: "Focused overlay content with default and alert variants, plus optional HTMX or JavaScript actions on the primary/secondary buttons.",
 			},
-			modalDemoPreview(),
-			`// Default Modal
-@modal.Modal(modal.Config{
+			modalDefaultPreview(),
+			`@modal.Modal(modal.Config{
     ID:            "offer",
     Title:         "Special Offer",
     Body:          "Upgrade your account now to unlock premium features.",
     TriggerText:   "Open Modal",
     PrimaryText:   "Upgrade Now",
     SecondaryText: "Remind me later",
-})
-
-// Alert Modal (Success)
-@modal.Modal(modal.Config{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Alert Modals",
+				Description: "AlertMode: true plus a Variant renders a compact, icon-led alert dialog (Success, Info, Warning, Danger).",
+			},
+			modalAlertPreview(),
+			`@modal.Modal(modal.Config{
     ID:          "txComplete",
     Title:       "Transaction Complete",
     Body:        "Your funds transfer was successful.",
@@ -90,10 +103,18 @@ func modalDemoContent() templ.Component {
     PrimaryText: "Go to My Balance",
     Variant:     modal.Success,
     AlertMode:   true,
-})
-
-// Modal with HTMX action
-@modal.Modal(modal.Config{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With HTMX Action",
+				Description: "Give a button a PrimaryAction with hx-* fields to fire a server request on confirm.",
+			},
+			modalHTMXPreview(),
+			`@modal.Modal(modal.Config{
     ID:            "htmxDemo",
     Title:         "Confirm Action",
     Body:          "This will send a request to the server.",
@@ -102,24 +123,50 @@ func modalDemoContent() templ.Component {
     SecondaryText: "Cancel",
     PrimaryAction: &modal.ButtonAction{
         HxPost:   "/api/hello",
-        HxTarget: "#result",
+        HxTarget: "#modal-htmx-result",
         HxSwap:   "innerHTML",
     },
-})
-
-// Modal with JS action
-@modal.Modal(modal.Config{
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With JavaScript Action",
+				Description: "Use PrimaryAction.OnClick for a client-side handler.",
+			},
+			modalJSPreview(),
+			`@modal.Modal(modal.Config{
     ID:            "jsDemo",
     Title:         "Confirm Delete",
     Body:          "Are you sure? This cannot be undone.",
     TriggerText:   "JS Action Modal",
     PrimaryText:   "Delete",
     SecondaryText: "Cancel",
-    PrimaryAction: &modal.ButtonAction{
-        OnClick: "alert('Deleted!')",
-    },
+    PrimaryAction: &modal.ButtonAction{OnClick: "alert('Deleted!')"},
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the dialog and scopes Alpine state)."},
+			{Name: "Title", Type: "string", Default: `""`, Description: "Dialog heading."},
+			{Name: "Body", Type: "string", Default: `""`, Description: "Dialog body text."},
+			{Name: "TriggerText", Type: "string", Default: `""`, Description: "Label of the button that opens the modal."},
+			{Name: "PrimaryText", Type: "string", Default: `""`, Description: "Primary button label."},
+			{Name: "PrimaryAction", Type: "*ButtonAction", Default: "nil", Description: "Primary button behavior (OnClick or hx-* fields)."},
+			{Name: "SecondaryText", Type: "string", Default: `""`, Description: "Secondary button label (omit to hide)."},
+			{Name: "SecondaryAction", Type: "*ButtonAction", Default: "nil", Description: "Secondary button behavior."},
+			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Alert color: "default", "success", "info", "warning", "danger".`},
+			{Name: "AlertMode", Type: "bool", Default: "false", Description: "Render the compact icon-led alert dialog layout."},
+			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the dialog."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -127,8 +174,8 @@ func modalDemoContent() templ.Component {
 	})
 }
 
-// modalDemoPreview renders the Goshtoso modal preview
-func modalDemoPreview() templ.Component {
+// modalDefaultPreview renders the default modal trigger.
+func modalDefaultPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -149,7 +196,7 @@ func modalDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Default Modal</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"modal-default\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -164,7 +211,37 @@ func modalDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Alert Modals</h4><div class=\"flex flex-wrap gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// modalAlertPreview renders the four alert-mode variants.
+func modalAlertPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"modal-alert\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -216,7 +293,37 @@ func modalDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Modal with HTMX Action</h4><div class=\"space-y-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// modalHTMXPreview renders the HTMX-action modal and its result target.
+func modalHTMXPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"modal-htmx\" class=\"w-full max-w-2xl mx-auto\"><div class=\"space-y-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -236,7 +343,37 @@ func modalDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"modal-htmx-result\" class=\"mt-2 text-sm min-h-[1.5rem]\"></div></div></div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Modal with JavaScript Action</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div id=\"modal-htmx-result\" class=\"mt-2 text-sm min-h-[1.5rem]\"></div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// modalJSPreview renders the JavaScript-action modal.
+func modalJSPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"modal-js\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -254,7 +391,7 @@ func modalDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

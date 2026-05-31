@@ -10,100 +10,132 @@ templ FileInputDemoPage() {
 	@demo.Layout("File Input", "fileinput", fileInputDemoContent())
 }
 
-// fileInputDemoContent renders the actual content inside the layout
+// fileInputDemoContent renders the demo. Each file-input variant lives in its
+// own preview frame followed by its own code block (mirrors
+// penguinui.com/components/file-input). Wrapped in #fileinput-fragment.
 templ fileInputDemoContent() {
-	@demo.ComponentDemo(
-		demo.ComponentDemoProps{
-			Title:         "File Input",
-			Description:   "A drag-and-drop file input component that allows users to browse or drag files into a drop zone.",
-		},
-		fileInputDemoPreview(),
-		`// Basic file input with drag and drop
-@fileinput.FileInput(fileinput.Config{
+	<div id="fileinput-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "File Input",
+				Description: "A drag-and-drop drop zone that lets users browse or drag files. Supports Accept filters, helper text, required, and disabled states.",
+			},
+			fileInputDefaultPreview(),
+			`@fileinput.FileInput(fileinput.Config{
     ID:         "coverPicture",
     Name:       "cover",
     Label:      "Cover Picture",
     Accept:     "image/*",
     HelperText: "PNG, JPG, WebP - Max 5MB",
-})
+})`,
+		)
 
-// Required file input
-@fileinput.FileInput(fileinput.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Required",
+				Description: "Required: true marks the field as required for form submission.",
+			},
+			fileInputRequiredPreview(),
+			`@fileinput.FileInput(fileinput.Config{
     ID:         "document",
     Name:       "document",
     Label:      "Upload Document",
     Accept:     ".pdf,.doc,.docx",
     HelperText: "PDF, DOC, DOCX - Max 10MB",
     Required:   true,
-})
+})`,
+		)
 
-// Disabled file input
-@fileinput.FileInput(fileinput.Config{
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks browsing and drops and dims the zone.",
+			},
+			fileInputDisabledPreview(),
+			`@fileinput.FileInput(fileinput.Config{
     ID:       "disabled",
     Name:     "disabled",
     Label:    "Disabled Upload",
     Disabled: true,
 })`,
-	)
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Without Label",
+				Description: "Omit Label for a bare drop zone (e.g. inside a labelled field group).",
+			},
+			fileInputNoLabelPreview(),
+			`@fileinput.FileInput(fileinput.Config{
+    ID:         "attachment",
+    Name:       "attachment",
+    Accept:     "image/*,.pdf",
+    HelperText: "Any image or PDF - Max 5MB",
+})`,
+		)
+	</div>
+	// API reference lives outside #fileinput-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the drop zone (omit for none)."},
+		{Name: "Accept", Type: "string", Default: `""`, Description: `Accepted file types (e.g. "image/*", ".pdf,.doc").`},
+		{Name: "HelperText", Type: "string", Default: `""`, Description: "Hint text shown inside/under the zone."},
+		{Name: "Required", Type: "bool", Default: "false", Description: "Mark the field as required."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable browsing and drops."},
+		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <input>."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
 }
 
-// fileInputDemoPreview renders the Goshtoso file input preview
-templ fileInputDemoPreview() {
-	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Default drag and drop
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Drag and Drop</h4>
-			<div class="flex flex-wrap gap-4">
-				@fileinput.FileInput(fileinput.Config{
-					ID:         "demoCoverPicture",
-					Name:       "cover",
-					Label:      "Cover Picture",
-					Accept:     "image/*",
-					HelperText: "PNG, JPG, WebP - Max 5MB",
-				})
-			</div>
-		</div>
+// fileInputDefaultPreview renders the default drag-and-drop input.
+templ fileInputDefaultPreview() {
+	<div id="fileinput-default" class="w-full max-w-md mx-auto">
+		@fileinput.FileInput(fileinput.Config{
+			ID:         "demoCoverPicture",
+			Name:       "cover",
+			Label:      "Cover Picture",
+			Accept:     "image/*",
+			HelperText: "PNG, JPG, WebP - Max 5MB",
+		})
+	</div>
+}
 
-		// Required
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Required</h4>
-			<div class="flex flex-wrap gap-4">
-				@fileinput.FileInput(fileinput.Config{
-					ID:         "demoDocument",
-					Name:       "document",
-					Label:      "Upload Document",
-					Accept:     ".pdf,.doc,.docx",
-					HelperText: "PDF, DOC, DOCX - Max 10MB",
-					Required:   true,
-				})
-			</div>
-		</div>
+// fileInputRequiredPreview renders the required input.
+templ fileInputRequiredPreview() {
+	<div id="fileinput-required" class="w-full max-w-md mx-auto">
+		@fileinput.FileInput(fileinput.Config{
+			ID:         "demoDocument",
+			Name:       "document",
+			Label:      "Upload Document",
+			Accept:     ".pdf,.doc,.docx",
+			HelperText: "PDF, DOC, DOCX - Max 10MB",
+			Required:   true,
+		})
+	</div>
+}
 
-		// Disabled
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
-			<div class="flex flex-wrap gap-4">
-				@fileinput.FileInput(fileinput.Config{
-					ID:         "demoDisabled",
-					Name:       "disabled",
-					Label:      "Disabled Upload",
-					HelperText: "Uploads are currently disabled",
-					Disabled:   true,
-				})
-			</div>
-		</div>
+// fileInputDisabledPreview renders the disabled input.
+templ fileInputDisabledPreview() {
+	<div id="fileinput-disabled" class="w-full max-w-md mx-auto">
+		@fileinput.FileInput(fileinput.Config{
+			ID:         "demoDisabled",
+			Name:       "disabled",
+			Label:      "Disabled Upload",
+			HelperText: "Uploads are currently disabled",
+			Disabled:   true,
+		})
+	</div>
+}
 
-		// No label
-		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Without Label</h4>
-			<div class="flex flex-wrap gap-4">
-				@fileinput.FileInput(fileinput.Config{
-					ID:         "demoNoLabel",
-					Name:       "attachment",
-					Accept:     "image/*,.pdf",
-					HelperText: "Any image or PDF - Max 5MB",
-				})
-			</div>
-		</div>
+// fileInputNoLabelPreview renders the unlabelled input.
+templ fileInputNoLabelPreview() {
+	<div id="fileinput-nolabel" class="w-full max-w-md mx-auto">
+		@fileinput.FileInput(fileinput.Config{
+			ID:         "demoNoLabel",
+			Name:       "attachment",
+			Accept:     "image/*,.pdf",
+			HelperText: "Any image or PDF - Max 5MB",
+		})
 	</div>
 }
