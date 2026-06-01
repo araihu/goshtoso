@@ -62,6 +62,7 @@ var Demos = map[string]DemoEntry{
 	"getting-started":            {"Getting Started", "", gettingStartedContent},
 	"examples":                   {"Examples", "examples", examples.IndexContent},
 	"examples/todo":              {"Todo List", "todo", examples.TodoContent},
+	"examples/logs":              {"Live Log Feed", "logs", examples.LogsContent},
 	"examples/profile":           {"Profile", "profile", examples.ProfileContent},
 }
 
