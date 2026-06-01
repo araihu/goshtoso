@@ -18,7 +18,7 @@ var palette = []string{"primary", "secondary", "info", "success", "warning", "da
 // Identity is a visitor's display name and avatar variant. Stored in the gt_chat
 // cookie; also sent in each message frame so renames take effect live.
 type Identity struct {
-	Nick  string `json:"n"`
+	Nick string `json:"n"`
 	// Color holds an avatar.Variant token (e.g. "info", "primary") — consumed
 	// as avatar.Variant in templates. A hex value would be an invalid Tailwind
 	// class and produce no visible color.
