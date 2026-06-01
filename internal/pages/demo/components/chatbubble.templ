@@ -141,7 +141,7 @@ templ chatBubbleDemoContent() {
 	@demo.APIReference([]demo.PropDoc{
 		{Name: "Side", Type: "Side", Default: `"received"`, Description: `Alignment + color: Received (left/neutral), Sent (right/primary), or Auto (resolved client-side via data-mine).`},
 		{Name: "Message", Type: "string", Default: `""`, Description: "The bubble text."},
-		{Name: "SenderName", Type: "string", Default: `""`, Description: "Name shown in the header line above the bubble (hidden when Grouped)."},
+		{Name: "SenderName", Type: "string", Default: `""`, Description: "Name shown bold inside the bubble, above the message (hidden on own/Sent bubbles and when Grouped)."},
 		{Name: "Timestamp", Type: "string", Default: `""`, Description: `Send time shown next to the sender name, e.g. "11:32 AM".`},
 		{Name: "Status", Type: "Status", Default: "StatusNone", Description: "Delivery state under a sent bubble: StatusSending, StatusDelivered, or StatusSeen."},
 		{Name: "AvatarSrc", Type: "string", Default: `""`, Description: "Optional avatar image URL; takes precedence over initials."},
@@ -158,7 +158,7 @@ templ chatBubbleDemoContent() {
 
 // chatBubbleDefaultPreview renders a short received/sent conversation.
 templ chatBubbleDefaultPreview() {
-	<div id="chatbubble-default" class="w-full max-w-md mx-auto">
+	<div id="chatbubble-default" class="w-full">
 		@chatbubble.ChatBubble(chatbubble.Config{
 			Side:       chatbubble.Received,
 			SenderName: "Penguin UI",
@@ -178,7 +178,7 @@ templ chatBubbleDefaultPreview() {
 
 // chatBubbleTimestampPreview renders bubbles with header timestamps.
 templ chatBubbleTimestampPreview() {
-	<div id="chatbubble-timestamp" class="w-full max-w-md mx-auto space-y-1">
+	<div id="chatbubble-timestamp" class="w-full">
 		@chatbubble.ChatBubble(chatbubble.Config{
 			Side:       chatbubble.Received,
 			SenderName: "Ada",
@@ -196,7 +196,7 @@ templ chatBubbleTimestampPreview() {
 
 // chatBubbleAvatarPreview renders bubbles with the avatar column.
 templ chatBubbleAvatarPreview() {
-	<div id="chatbubble-avatar" class="w-full max-w-md mx-auto space-y-1">
+	<div id="chatbubble-avatar" class="w-full">
 		@chatbubble.ChatBubble(chatbubble.Config{
 			Side:           chatbubble.Received,
 			Message:        "Welcome to the team channel!",
@@ -216,7 +216,7 @@ templ chatBubbleAvatarPreview() {
 
 // chatBubbleStatusPreview renders a sender name + delivery statuses.
 templ chatBubbleStatusPreview() {
-	<div id="chatbubble-status" class="w-full max-w-md mx-auto space-y-1">
+	<div id="chatbubble-status" class="w-full">
 		@chatbubble.ChatBubble(chatbubble.Config{
 			Side:       chatbubble.Received,
 			SenderName: "Grace",
@@ -237,7 +237,7 @@ templ chatBubbleStatusPreview() {
 
 // chatBubbleGroupedPreview renders a non-grouped lead bubble followed by grouped ones.
 templ chatBubbleGroupedPreview() {
-	<div id="chatbubble-grouped" class="w-full max-w-md mx-auto space-y-1">
+	<div id="chatbubble-grouped" class="w-full">
 		@chatbubble.ChatBubble(chatbubble.Config{
 			Side:           chatbubble.Received,
 			SenderName:     "Ada",
@@ -261,7 +261,7 @@ templ chatBubbleGroupedPreview() {
 
 // chatBubbleTypingPreview renders the typing indicator.
 templ chatBubbleTypingPreview() {
-	<div id="chatbubble-typing" class="w-full max-w-md mx-auto">
+	<div id="chatbubble-typing" class="w-full">
 		@chatbubble.TypingIndicator(chatbubble.Config{
 			ShowAvatar:     true,
 			AvatarInitials: "AL",

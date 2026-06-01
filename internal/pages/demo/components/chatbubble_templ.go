@@ -211,7 +211,7 @@ func chatBubbleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "Side", Type: "Side", Default: `"received"`, Description: `Alignment + color: Received (left/neutral), Sent (right/primary), or Auto (resolved client-side via data-mine).`},
 			{Name: "Message", Type: "string", Default: `""`, Description: "The bubble text."},
-			{Name: "SenderName", Type: "string", Default: `""`, Description: "Name shown in the header line above the bubble (hidden when Grouped)."},
+			{Name: "SenderName", Type: "string", Default: `""`, Description: "Name shown bold inside the bubble, above the message (hidden on own/Sent bubbles and when Grouped)."},
 			{Name: "Timestamp", Type: "string", Default: `""`, Description: `Send time shown next to the sender name, e.g. "11:32 AM".`},
 			{Name: "Status", Type: "Status", Default: "StatusNone", Description: "Delivery state under a sent bubble: StatusSending, StatusDelivered, or StatusSeen."},
 			{Name: "AvatarSrc", Type: "string", Default: `""`, Description: "Optional avatar image URL; takes precedence over initials."},
@@ -253,7 +253,7 @@ func chatBubbleDefaultPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"chatbubble-default\" class=\"w-full max-w-md mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"chatbubble-default\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -310,7 +310,7 @@ func chatBubbleTimestampPreview() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"chatbubble-timestamp\" class=\"w-full max-w-md mx-auto space-y-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"chatbubble-timestamp\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -362,7 +362,7 @@ func chatBubbleAvatarPreview() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"chatbubble-avatar\" class=\"w-full max-w-md mx-auto space-y-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"chatbubble-avatar\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -416,7 +416,7 @@ func chatBubbleStatusPreview() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"chatbubble-status\" class=\"w-full max-w-md mx-auto space-y-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"chatbubble-status\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -474,7 +474,7 @@ func chatBubbleGroupedPreview() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"chatbubble-grouped\" class=\"w-full max-w-md mx-auto space-y-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"chatbubble-grouped\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -535,7 +535,7 @@ func chatBubbleTypingPreview() templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"chatbubble-typing\" class=\"w-full max-w-md mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"chatbubble-typing\" class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

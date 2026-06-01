@@ -38,7 +38,7 @@ templ ChatBubble(cfg Config) {
 		if cfg.HasAvatar() {
 			@bubbleAvatar(cfg)
 		}
-		<div class="flex min-w-0 flex-col gap-1 group-data-[mine=true]:items-end">
+		<div class="flex min-w-0 flex-1 flex-col gap-1 group-data-[mine=true]:items-end">
 			<div class={ cfg.BubbleClasses() }>
 				if cfg.HasHeader() {
 					@bubbleHeader(cfg)
