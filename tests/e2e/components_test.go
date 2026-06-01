@@ -114,7 +114,7 @@ func TestAccordion_ServerLoadedContent(t *testing.T) {
 		// Wait for HTMX to fetch content (max 5 seconds)
 		err = page.Locator("text=Server Response A").WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateVisible,
-			Timeout: playwright.Float(2000),
+			Timeout: playwright.Float(5000),
 		})
 		require.NoError(t, err, "server-loaded content should appear")
 
@@ -156,7 +156,7 @@ func TestAccordion_ServerLoadedContent(t *testing.T) {
 		// Wait for content to load
 		err = page.Locator("text=Server Response B").WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateVisible,
-			Timeout: playwright.Float(2000),
+			Timeout: playwright.Float(5000),
 		})
 		require.NoError(t, err)
 
@@ -653,7 +653,7 @@ func TestIntegration(t *testing.T) {
 		// Wait for content
 		err = page.Locator("text=Server Response A").WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateVisible,
-			Timeout: playwright.Float(2000),
+			Timeout: playwright.Float(5000),
 		})
 		require.NoError(t, err)
 
