@@ -29,10 +29,25 @@ var rules = []rule{
 	{regexp.MustCompile(`(?i)\?\s*$`), "Why do you ask?"},
 }
 
+// fallbacks are generic deflections used when no rule matches, so ELIZA always
+// says something (like the original). Picked deterministically by message length.
+var fallbacks = []string{
+	"Tell me more.",
+	"How does that make you feel?",
+	"Why do you say that?",
+	"I see. Please go on.",
+	"Can you elaborate on that?",
+	"What does that suggest to you?",
+}
+
 // Reply returns a deterministic ELIZA-style response for msg. matched is false
-// when no rule fires, so the caller can choose to stay silent.
+// only for empty input; any non-empty message gets either a rule reply or a
+// generic fallback, so the bot is never silent when enabled.
 func Reply(msg string) (reply string, matched bool) {
 	trimmed := strings.TrimSpace(msg)
+	if trimmed == "" {
+		return "", false
+	}
 	for _, r := range rules {
 		m := r.re.FindStringSubmatch(trimmed)
 		if m == nil {
@@ -50,5 +65,6 @@ func Reply(msg string) (reply string, matched bool) {
 		}
 		return r.reply, true
 	}
-	return "", false
+	// No rule matched: deflect deterministically rather than stay silent.
+	return fallbacks[len(trimmed)%len(fallbacks)], true
 }

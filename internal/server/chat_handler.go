@@ -133,13 +133,13 @@ func (s *Server) handleChatWS(w http.ResponseWriter, r *http.Request) {
 
 	// Announce arrival to everyone (ephemeral: not retained in the ring, so it is
 	// never replayed to future joiners). This client is already registered, so it
-	// receives its own join frame with the correct online count.
-	chatHub.BroadcastEphemeral(renderFrame(examples.PresenceFrame(me.Nick+" joined", chatHub.Count())))
+	// receives its own join notice with the correct online count.
+	chatHub.BroadcastEphemeral(presenceEvent(me.Nick + " joined"))
 
 	go chatWritePump(ctx, cancel, conn, client)
 	defer func() {
 		chatHub.Unregister(client)
-		chatHub.BroadcastEphemeral(renderFrame(examples.PresenceFrame(me.Nick+" left", chatHub.Count())))
+		chatHub.BroadcastEphemeral(presenceEvent(me.Nick + " left"))
 	}()
 
 	conn.SetReadLimit(8 << 10) // 8 KiB inbound cap
@@ -148,54 +148,72 @@ func (s *Server) handleChatWS(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return // client closed, errored, or write pump canceled ctx
 		}
-		now, bot := buildMessageFrames(data, me.Nick)
-		if now != nil {
-			chatHub.Broadcast(now)
-		}
-		if bot != nil {
-			chatHub.Broadcast(bot)
+		for _, ev := range buildChatEvents(data, me.Nick, client.ConnID) {
+			chatHub.Broadcast(ev)
 		}
 	}
 }
 
-// buildMessageFrames parses one inbound ws frame and renders the message bubble
-// to broadcast now, plus an optional ELIZA reply bubble to broadcast immediately
-// after it. Either return may be nil (blank message → now nil; bot off or no
-// match → bot nil). fallbackNick is used when the frame omits a nick.
-func buildMessageFrames(data []byte, fallbackNick string) (now, bot []byte) {
+// presenceEvent builds a presence Event stamped with the current online count.
+func presenceEvent(text string) chat.Event {
+	return chat.Event{Kind: chat.EventPresence, SystemText: text, Count: chatHub.Count()}
+}
+
+// buildChatEvents parses one inbound ws frame into the domain Events to
+// broadcast: the sender's message, plus an optional ELIZA reply right after it.
+// Returns nil for a blank message. ConnID stamps the message with the sending
+// connection so each recipient can decide "mine" at render time; the bot reply
+// carries ConnID 0 (never anyone's own). fallbackNick covers a frame with no nick.
+func buildChatEvents(data []byte, fallbackNick string, connID uint64) []chat.Event {
 	var f wsFrame
 	if err := json.Unmarshal(data, &f); err != nil {
-		return nil, nil
+		return nil
 	}
 	text := truncateRunes(strings.TrimSpace(f.Message), chatMaxMessageLen)
 	if text == "" {
-		return nil, nil
+		return nil
 	}
 	nick := truncateRunes(strings.TrimSpace(f.Nick), chatMaxNickLen)
 	if nick == "" {
 		nick = fallbackNick
 	}
-	now = renderFrame(examples.MessageFrame(examples.Message{
-		Nick: nick, Color: f.Color, Text: text, Time: time.Now().Format("15:04"),
-	}))
+	now := time.Now().Format("15:04")
+	events := []chat.Event{{
+		Kind: chat.EventMessage, ConnID: connID, Nick: nick, Color: f.Color, Text: text, Time: now,
+	}}
 	if isToggleOn(f.Eliza) {
 		if reply, ok := chat.Reply(text); ok {
-			bot = renderFrame(examples.MessageFrame(examples.Message{
-				Nick: "ELIZA", Text: reply, Time: time.Now().Format("15:04"), IsBot: true,
-			}))
+			events = append(events, chat.Event{
+				Kind: chat.EventMessage, Nick: "ELIZA", Text: reply, Time: time.Now().Format("15:04"), IsBot: true,
+			})
 		}
 	}
-	return now, bot
+	return events
 }
 
-// chatWritePump drains a client's send channel to the socket until it closes or
-// a write fails. On return it cancels the shared context so the read loop's
-// blocked conn.Read unblocks and the handler tears the client down.
+// renderChatEvent renders an Event into the HTML frame for one specific viewer.
+// A message is "mine" (right-aligned, primary fill) only when its sending
+// connection equals the viewer's — decided here, server-side, per connection, so
+// no client JavaScript is needed to align own messages.
+func renderChatEvent(viewerConnID uint64, ev chat.Event) []byte {
+	if ev.Kind == chat.EventPresence {
+		return renderFrame(examples.PresenceFrame(ev.SystemText, ev.Count))
+	}
+	mine := !ev.IsBot && ev.ConnID == viewerConnID
+	return renderFrame(examples.MessageFrame(examples.Message{
+		Nick: ev.Nick, Color: ev.Color, Text: ev.Text, Time: ev.Time, IsBot: ev.IsBot, Mine: mine,
+	}))
+}
+
+// chatWritePump drains a client's send channel, rendering each Event for THIS
+// client and writing it to the socket, until the channel closes or a write
+// fails. On return it cancels the shared context so the read loop's blocked
+// conn.Read unblocks and the handler tears the client down.
 func chatWritePump(ctx context.Context, cancel context.CancelFunc, conn *websocket.Conn, client *chat.Client) {
 	defer cancel()
-	for frame := range client.Send {
+	for ev := range client.Send {
 		wctx, wcancel := context.WithTimeout(ctx, chatWriteTimeout)
-		err := conn.Write(wctx, websocket.MessageText, frame)
+		err := conn.Write(wctx, websocket.MessageText, renderChatEvent(client.ConnID, ev))
 		wcancel()
 		if err != nil {
 			return

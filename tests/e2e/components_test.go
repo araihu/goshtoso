@@ -111,6 +111,10 @@ func TestAccordion_ServerLoadedContent(t *testing.T) {
 		err := lazySection.Click()
 		require.NoError(t, err)
 
+		lazyContent := page.Locator("#lazy-content-a")
+		err = lazyContent.ScrollIntoViewIfNeeded()
+		require.NoError(t, err)
+
 		// Wait for HTMX to fetch content (max 5 seconds)
 		err = page.Locator("text=Server Response A").WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateVisible,
@@ -144,6 +148,10 @@ func TestAccordion_ServerLoadedContent(t *testing.T) {
 
 		// Click to expand
 		err = lazySection.Click()
+		require.NoError(t, err)
+
+		lazyContent := page.Locator("#lazy-content-b")
+		err = lazyContent.ScrollIntoViewIfNeeded()
 		require.NoError(t, err)
 
 		// Should show loading indicator immediately
@@ -648,6 +656,10 @@ func TestIntegration(t *testing.T) {
 		// Expand lazy-loaded section
 		lazyButton := page.Locator("text=Dynamic Content A").First()
 		err = lazyButton.Click()
+		require.NoError(t, err)
+
+		lazyContent := page.Locator("#lazy-content-a")
+		err = lazyContent.ScrollIntoViewIfNeeded()
 		require.NoError(t, err)
 
 		// Wait for content

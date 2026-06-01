@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -41,8 +42,9 @@ func waitWSOpen(t *testing.T, page playwright.Page) {
 				const internal = el['htmx-internal-data'];
 				if (internal && internal.webSocket && internal.webSocket.readyState === 1) return true;
 			} catch (e) {}
-			// Fallback: a presence toast proves a frame already round-tripped.
-			return !!document.querySelector('#toast-container [role], #toast-container > *');
+			// Fallback: the server's "joined" system line in the log proves a
+			// frame already round-tripped (presence is now in-chat, not a toast).
+			return !!document.querySelector('#chat-log > div');
 		}`,
 		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
 	require.NoError(t, err, "websocket should open (ws extension bound + socket open)")
@@ -84,18 +86,19 @@ func jsString(s string) string {
 	return out.String() + "'"
 }
 
-// logRowMine builds a JS predicate asserting some #chat-log row containing text
-// s has the given data-mine value. The row is the [data-sender] element the
-// chatbubble component emits; the mine-detection script flips its data-mine.
+// logRowMine builds a JS predicate asserting some #chat-log bubble row
+// containing text s has the given data-mine value. The chatbubble component
+// emits data-mine on every row; the server renders it true ("Sent") for the
+// connection that sent the message and false ("Received") for everyone else.
 func logRowMine(s, mine string) string {
-	return "() => Array.from(document.querySelectorAll('#chat-log [data-sender]')).some(r => " +
+	return "() => Array.from(document.querySelectorAll('#chat-log [data-mine]')).some(r => " +
 		"r.textContent.includes(" + jsString(s) + ") && r.getAttribute('data-mine') === " + jsString(mine) + ")"
 }
 
-// TestChat_OwnMessageAligned proves the own-message detector: the sender's own
-// bubble row flips to data-mine='true' (right/sent) and carries their nick as
-// data-sender, while on a second context the same message stays data-mine='false'
-// (received).
+// TestChat_OwnMessageAligned proves server-side per-connection alignment: the
+// sender's own bubble renders data-mine='true' (right/Sent) on their connection,
+// while on a second connection the same broadcast message renders
+// data-mine='false' (left/Received) — no client-side mine detection involved.
 func TestChat_OwnMessageAligned(t *testing.T) {
 	pageA := newIsolatedPage(t)
 	pageB := newIsolatedPage(t)
@@ -104,21 +107,12 @@ func TestChat_OwnMessageAligned(t *testing.T) {
 
 	sendChat(t, pageA, "mine-aligned-A")
 
-	// On A: the row is mine (right/sent).
+	// On A (the sender's connection): the row is mine (right/Sent).
 	_, err := pageA.WaitForFunction(logRowMine("mine-aligned-A", "true"), nil,
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
-	require.NoError(t, err, "sender's own bubble should be data-mine='true'")
+	require.NoError(t, err, "sender's own bubble should render data-mine='true'")
 
-	// Its data-sender equals A's current nick (read from the composer hidden input).
-	matches, err := pageA.Evaluate(
-		`() => { const me = document.querySelector('#chat-hidden-nick').value;
-		         const row = Array.from(document.querySelectorAll('#chat-log [data-mine="true"]'))
-		           .find(r => r.textContent.includes('mine-aligned-A'));
-		         return row && row.getAttribute('data-sender') === me; }`, nil)
-	require.NoError(t, err)
-	require.Equal(t, true, matches, "mine row's data-sender should equal the viewer's nick")
-
-	// On B (a different viewer): the same message is received, data-mine='false'.
+	// On B (a different connection): the same message is received, data-mine='false'.
 	_, err = pageB.WaitForFunction(logRowMine("mine-aligned-A", "false"), nil,
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
 	require.NoError(t, err, "the same message on another viewer should be data-mine='false' (received)")
@@ -272,4 +266,38 @@ func TestChat_SidebarPresent(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, page.Locator("text=Examples").First().WaitFor())
 	require.NoError(t, page.Locator("a[href='/examples/chat']").First().WaitFor())
+}
+
+// TestChat_ComposerClearsOnSend verifies the composer textarea empties after a
+// message is sent (htmx ws-send does not reset the form; a wsAfterSend listener does).
+func TestChat_ComposerClearsOnSend(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoChat(t, page)
+	sendChat(t, page, "clears-after-send")
+	_, err := page.WaitForFunction(logHas("clears-after-send"), nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => document.getElementById('chat-message').value === ''", nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
+	require.NoError(t, err, "textarea should clear after send")
+}
+
+// TestChat_ScrollsToBottomOnSend verifies the log auto-scrolls to the newest
+// message as messages are sent (an htmx:oobAfterSwap listener pins it to bottom).
+func TestChat_ScrollsToBottomOnSend(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoChat(t, page)
+	// Send enough messages to overflow the log, waiting for each to land.
+	for i := 0; i < 12; i++ {
+		msg := fmt.Sprintf("scroll filler message number %d here", i)
+		sendChat(t, page, msg)
+		_, err := page.WaitForFunction(logHas(msg), nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+		require.NoError(t, err)
+	}
+	// The htmx:oobAfterSwap listener pins the log to the bottom on each append.
+	_, err := page.WaitForFunction(
+		"() => { var l=document.getElementById('chat-log'); return l.scrollHeight - l.clientHeight - l.scrollTop < 4; }",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "chat log should be scrolled to the bottom after sending")
 }

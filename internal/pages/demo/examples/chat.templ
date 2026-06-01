@@ -9,19 +9,20 @@ import (
 	"github.com/araihu/goshtoso/components/chatbubble"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
-	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/internal/examples/chat"
 )
 
-// Message is a single rendered chat line. It is the unit both the ws push path
-// (MessageFrame) and any future first-paint history share.
+// Message is a single rendered chat line. The handler renders it per recipient,
+// setting Mine=true only for the connection that sent it, so own messages are
+// right-aligned server-side — no client JS decides alignment.
 type Message struct {
 	Nick  string
 	Color string
 	Text  string
 	Time  string // "15:04"
 	IsBot bool
+	Mine  bool // true when rendered for the sender's own connection
 }
 
 // OnlineBadge is the live "N online" indicator. Pass oob=true when pushing it as
@@ -43,21 +44,23 @@ templ OnlineBadge(count int, oob bool) {
 	</span>
 }
 
-// MessageBubble renders one chat line via the chatbubble component with
-// Side=Auto: every broadcast bubble carries data-sender so the viewer's own
-// client can flip data-mine="true" (right-aligned, primary) on its own
-// messages. The bot uses the "info" avatar variant and a fixed "ELIZA" sender;
-// humans use their color as the avatar variant and their nick as the sender.
+// MessageBubble renders one chat line via the chatbubble component. The side is
+// decided server-side per recipient: Sent (right, primary, no name) when the
+// message is the viewer's own, otherwise Received (left, neutral, named). The
+// bot always renders Received with the "info" avatar variant.
 templ MessageBubble(m Message) {
-	{{ variant := m.Color
-	sender := m.Nick
-	if m.IsBot {
-		variant = "info"
-		sender = "ELIZA"
-	} }}
+	{{
+		variant := m.Color
+		side := chatbubble.Received
+		if m.Mine {
+			side = chatbubble.Sent
+		}
+		if m.IsBot {
+			variant = "info"
+		}
+	}}
 	@chatbubble.ChatBubble(chatbubble.Config{
-		Side:          chatbubble.Auto,
-		Sender:        sender,
+		Side:          side,
 		SenderName:    m.Nick,
 		Message:       m.Text,
 		Timestamp:     m.Time,
@@ -76,119 +79,91 @@ templ MessageFrame(m Message) {
 	</div>
 }
 
-// PresenceFrame pushes a presence toast (join/left) plus an OOB online-count
-// update in a single socket frame.
+// PresenceFrame appends a centered in-chat system line (join/left) to #chat-log
+// and pushes an OOB online-count update, in a single socket frame.
 templ PresenceFrame(text string, count int) {
-	@toast.OOBToast(toast.Config{Variant: toast.Info, Message: text})
+	<div hx-swap-oob="beforeend:#chat-log">
+		@SystemMessage(text)
+	</div>
 	@OnlineBadge(count, true)
 }
 
-// chatMineScript is the vanilla-JS own-message detector. Each broadcast bubble
-// is rendered Side=Auto (data-mine="false" + data-sender). This script flips
-// data-mine="true" on any #chat-log row whose data-sender equals the viewer's
-// current nick (read live from #chat-hidden-nick.value, so renames track), which
-// drives the Tailwind group-data-[mine=true]: variants to right-align + recolor.
-//
-// NICK-COLLISION LIMITATION: "mine" is decided by comparing a broadcast bubble's
-// data-sender (a display nick) to the viewer's nick. Two users who pick the same
-// nick will each see the other's messages as "mine". This is acceptable for a
-// broadcast demo (collisions are self-inflicted via the rename field); a
-// production app would key on a stable per-session ID instead of the display nick.
-//
-// LEAK-FREE / FRAGMENT-NAV SAFE: a SINGLE page-lifetime MutationObserver is
-// installed exactly once on document.body (which always exists), guarded by the
-// window.__gtChatMineInit flag. Because this <script> lives inside the chat
-// fragment, htmx re-executes it on every swap-in; the guard makes the 2nd+ run a
-// no-op, so fragment-nav never stacks observers and nothing ever needs
-// disconnecting. #chat-log is replaced on each nav, but the body-level observer
-// keeps marking new bubbles regardless. If the first page the user lands on is
-// not the chat page, the script simply runs (and installs the observer) when the
-// chat fragment first arrives. The observer is wired immediately — Alpine/htmx
-// are already running on a fragment swap, so we must not defer to a one-shot init
-// event. Built with plain string concatenation (no backticks, no quotes templ
-// would mangle) and emitted via templ.Raw so templ does not escape the JS.
-const chatMineScript = "" +
+// SystemMessage is a centered, muted notice rendered inline in the chat log
+// (e.g. "Guest-xyz joined"). It carries no data-mine, so it is never aligned.
+templ SystemMessage(text string) {
+	<div class="my-3 flex justify-center">
+		<span class="rounded-full bg-surface-alt px-3 py-1 text-xs text-on-surface-muted dark:bg-surface-dark-alt dark:text-on-surface-dark-muted">{ text }</span>
+	</div>
+}
+
+// chatScript is the only client JS the chat needs: two small htmx event
+// listeners. Own-message alignment is decided SERVER-SIDE (the handler renders
+// each Event per connection, setting data-mine), so there is no mine-detection
+// and no MutationObserver here.
+//   - htmx:wsAfterSend — ws-send does not reset the form, so clear + refocus the
+//     composer textarea after a message is sent.
+//   - htmx:oobAfterSwap — when a bubble/system line is appended to #chat-log,
+//     pin the log to the bottom so it follows the conversation.
+// Guarded by window.__gtChatInit (the <script> re-runs on every fragment
+// swap-in), and built with plain string concatenation + templ.Raw so templ does
+// not escape the JS.
+const chatScript = "" +
 	"(function(){" +
-	"  if (window.__gtChatMineInit) return;" +
-	"  window.__gtChatMineInit = true;" +
-	"  function myNick(){" +
-	"    var h = document.getElementById('chat-hidden-nick');" +
-	"    return h ? h.value : '';" +
-	"  }" +
-	"  function mark(row){" +
-	"    if (!row || row.nodeType !== 1 || !row.hasAttribute('data-sender')) return;" +
-	"    var mine = row.getAttribute('data-sender') === myNick();" +
-	"    row.setAttribute('data-mine', mine ? 'true' : 'false');" +
-	"  }" +
-	"  function inLog(node){" +
-	"    var log = document.getElementById('chat-log');" +
-	"    return !!log && log.contains(node);" +
-	"  }" +
-	"  function process(node){" +
-	"    if (!node || node.nodeType !== 1 || !inLog(node)) return;" +
-	"    mark(node);" +
-	"    var kids = node.querySelectorAll ? node.querySelectorAll('[data-sender]') : [];" +
-	"    for (var i = 0; i < kids.length; i++) mark(kids[i]);" +
-	"  }" +
-	"  function processExisting(){" +
-	"    var log = document.getElementById('chat-log');" +
-	"    if (!log) return;" +
-	"    var rows = log.querySelectorAll('[data-sender]');" +
-	"    for (var i = 0; i < rows.length; i++) mark(rows[i]);" +
-	"  }" +
-	"  processExisting();" +
-	"  var obs = new MutationObserver(function(muts){" +
-	"    for (var i = 0; i < muts.length; i++) {" +
-	"      var added = muts[i].addedNodes;" +
-	"      for (var j = 0; j < added.length; j++) process(added[j]);" +
-	"    }" +
+	"  if (window.__gtChatInit) return;" +
+	"  window.__gtChatInit = true;" +
+	"  document.body.addEventListener('htmx:wsAfterSend', function(){" +
+	"    var t = document.getElementById('chat-message');" +
+	"    if (t) { t.value = ''; t.focus(); }" +
 	"  });" +
-	"  obs.observe(document.body, { childList: true, subtree: true });" +
+	"  document.body.addEventListener('htmx:oobAfterSwap', function(e){" +
+	"    var log = document.getElementById('chat-log');" +
+	"    if (log && e.detail && e.detail.target === log) { log.scrollTop = log.scrollHeight; }" +
+	"  });" +
 	"})();"
 
-// chatMineDetector emits the own-message detection script verbatim.
-//
-// See chatMineScript above for the nick-collision limitation: own-message
-// detection compares display nicks, so two users sharing a nick see each other's
-// messages as "mine". A production app would key on a stable per-session ID.
-templ chatMineDetector() {
-	@templ.Raw("<script>" + chatMineScript + "</script>")
+// chatScripts emits the small composer-clear + scroll-to-bottom listeners.
+templ chatScripts() {
+	@templ.Raw("<script>" + chatScript + "</script>")
 }
 
 // ChatApp is the first-paint shell for /examples/chat. me carries the visitor
 // identity from the cookie; the composer's hidden nick/color inputs seed every
 // outgoing frame and are OOB-swapped on rename.
 templ ChatApp(me chat.Identity) {
-	<div id="chat-fragment" class="mx-auto flex h-[70vh] max-w-3xl flex-col">
-		@toast.Container(toast.ContainerConfig{})
-		<!-- header: identity bar + online badge + rename -->
-		<div class="flex items-center justify-between gap-3 border-b border-outline px-4 py-3 dark:border-outline-dark">
-			<div class="flex items-center gap-3">
-				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color)})
-				<span id="chat-me" class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">{ me.Nick }</span>
+	<div id="chat-fragment" class="mx-auto flex h-[78vh] max-w-2xl flex-col overflow-hidden rounded-radius border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark">
+		<!-- header: identity + presence -->
+		<header class="flex items-center justify-between gap-3 border-b border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+			<div class="flex min-w-0 items-center gap-3">
+				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color), Status: avatar.StatusSuccess})
+				<div class="min-w-0 leading-tight">
+					<div id="chat-me" class="truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ me.Nick }</div>
+					<div class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Chatting as you</div>
+				</div>
 			</div>
 			@OnlineBadge(1, false)
-		</div>
-		<!-- rename form (plain hx-post: sets cookie + OOB-swaps hidden inputs) -->
+		</header>
+		<!-- rename row (plain hx-post: sets cookie + OOB-swaps hidden inputs) -->
 		<form
-			class="flex items-end gap-2 border-b border-outline px-4 py-2 dark:border-outline-dark"
+			class="flex items-center gap-2 border-b border-outline px-4 py-2 dark:border-outline-dark"
 			hx-post="/api/examples/chat/rename"
 			hx-swap="none"
 		>
 			<label for="chat-nick-input" class="sr-only">Display name</label>
-			@textinput.TextInput(textinput.Config{
-				ID:          "chat-nick-input",
-				Name:        "nick",
-				Placeholder: "Change your name",
-				MaxLength:   24,
-				Value:       me.Nick,
-			})
+			<div class="flex-1">
+				@textinput.TextInput(textinput.Config{
+					ID:          "chat-nick-input",
+					Name:        "nick",
+					Placeholder: "Change your name",
+					MaxLength:   24,
+					Value:       me.Nick,
+				})
+			</div>
 			@button.Button(button.Config{Type: "submit", Variant: button.Secondary, Size: button.SizeSmall}) {
 				Rename
 			}
 		</form>
 		<!-- message log -->
-		<div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages" class="flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40"></div>
+		<div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages" class="flex-1 overflow-y-auto px-4 pb-4 pt-1"></div>
 		<!-- composer: ws-send form. The hx-ext="ws" wrapper must contain the form.
 		     onsubmit="return false" guards the htmx ws-send rebind race: on a
 		     fragment-nav swap htmx binds ws-send a beat after the form lands in the
@@ -198,24 +173,26 @@ templ ChatApp(me chat.Identity) {
 		     wiping the composer. The guard makes a race-lost click a harmless no-op
 		     (htmx's own addEventListener handler still fires once bound), so the send
 		     simply succeeds on the next attempt with the typed text intact. -->
-		<div hx-ext="ws" ws-connect="/api/examples/chat/ws" class="border-t border-outline px-4 py-3 dark:border-outline-dark">
+		<div hx-ext="ws" ws-connect="/api/examples/chat/ws" class="border-t border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
 			<form ws-send onsubmit="return false" class="flex flex-col gap-2">
 				@chatHidden("nick", me.Nick)
 				@chatHidden("color", me.Color)
 				<div class="flex items-end gap-2">
 					<label for="chat-message" class="sr-only">Message</label>
-					@textarea.Textarea(textarea.Config{
-						ID:          "chat-message",
-						Name:        "message",
-						Placeholder: "Type a message…",
-						Rows:        1,
-						// Enter sends (requestSubmit fires htmx's ws-send submit
-						// listener; the form's onsubmit="return false" only blocks
-						// the NATIVE submit). Shift+Enter falls through to insert a
-						// newline. Handler string carries no quotes or && so templ's
-						// attribute escaping cannot corrupt it.
-						Attrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
-					})
+					<div class="flex-1">
+						@textarea.Textarea(textarea.Config{
+							ID:          "chat-message",
+							Name:        "message",
+							Placeholder: "Type a message…",
+							Rows:        1,
+							// Enter sends (requestSubmit fires htmx's ws-send submit
+							// listener; the form's onsubmit="return false" only blocks
+							// the NATIVE submit). Shift+Enter falls through to insert a
+							// newline. Handler string carries no quotes or && so templ's
+							// attribute escaping cannot corrupt it.
+							Attrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
+						})
+					</div>
 					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
 						Send
 					}
@@ -228,7 +205,7 @@ templ ChatApp(me chat.Identity) {
 				})
 			</form>
 		</div>
-		@chatMineDetector()
+		@chatScripts()
 	</div>
 }
 
@@ -241,7 +218,7 @@ templ chatHidden(name, value string) {
 // RenameResult is the OOB response to a rename: updates the visible nick and both
 // hidden composer inputs so the next message carries the new identity.
 templ RenameResult(me chat.Identity) {
-	<span id="chat-me" hx-swap-oob="true" class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">{ me.Nick }</span>
+	<div id="chat-me" hx-swap-oob="true" class="truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ me.Nick }</div>
 	<input type="hidden" id="chat-hidden-nick" hx-swap-oob="true" name="nick" value={ me.Nick }/>
 	<input type="hidden" id="chat-hidden-color" hx-swap-oob="true" name="color" value={ me.Color }/>
 }

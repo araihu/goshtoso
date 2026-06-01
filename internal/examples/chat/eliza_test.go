@@ -33,10 +33,18 @@ func TestReply_Question(t *testing.T) {
 	}
 }
 
-func TestReply_NoMatch(t *testing.T) {
-	_, ok := Reply("xyzzy plugh")
-	if ok {
-		t.Fatalf("expected no match for nonsense input")
+func TestReply_NonMatchingGetsFallback(t *testing.T) {
+	// Non-matching input must still get a (non-empty) deflection, so the bot is
+	// never silent when enabled.
+	got, ok := Reply("xyzzy plugh")
+	if !ok || got == "" {
+		t.Fatalf("expected a fallback deflection for nonsense input, got %q ok=%v", got, ok)
+	}
+}
+
+func TestReply_EmptyIsSilent(t *testing.T) {
+	if _, ok := Reply("   "); ok {
+		t.Fatalf("empty/whitespace input must not produce a reply")
 	}
 }
 
