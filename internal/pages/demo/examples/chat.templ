@@ -9,7 +9,6 @@ import (
 	"github.com/araihu/goshtoso/components/chatbubble"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
-	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/internal/examples/chat"
 )
@@ -78,11 +77,21 @@ templ MessageFrame(m Message) {
 	</div>
 }
 
-// PresenceFrame pushes a presence toast (join/left) plus an OOB online-count
-// update in a single socket frame.
+// PresenceFrame appends a centered in-chat system line (join/left) to #chat-log
+// and pushes an OOB online-count update, in a single socket frame.
 templ PresenceFrame(text string, count int) {
-	@toast.OOBToast(toast.Config{Variant: toast.Info, Message: text})
+	<div hx-swap-oob="beforeend:#chat-log">
+		@SystemMessage(text)
+	</div>
 	@OnlineBadge(count, true)
+}
+
+// SystemMessage is a centered, muted notice rendered inline in the chat log
+// (e.g. "Guest-xyz joined"). No data-sender, so the own-message detector skips it.
+templ SystemMessage(text string) {
+	<div class="my-3 flex justify-center">
+		<span class="rounded-full bg-surface-alt px-3 py-1 text-xs text-on-surface-muted dark:bg-surface-dark-alt dark:text-on-surface-dark-muted">{ text }</span>
+	</div>
 }
 
 // chatMineScript is the vanilla-JS own-message detector. Each broadcast bubble
@@ -166,7 +175,6 @@ templ chatMineDetector() {
 // outgoing frame and are OOB-swapped on rename.
 templ ChatApp(me chat.Identity) {
 	<div id="chat-fragment" class="mx-auto flex h-[78vh] max-w-2xl flex-col overflow-hidden rounded-radius border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark">
-		@toast.Container(toast.ContainerConfig{})
 		<!-- header: identity + presence -->
 		<header class="flex items-center justify-between gap-3 border-b border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
 			<div class="flex min-w-0 items-center gap-3">

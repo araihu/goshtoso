@@ -41,8 +41,9 @@ func waitWSOpen(t *testing.T, page playwright.Page) {
 				const internal = el['htmx-internal-data'];
 				if (internal && internal.webSocket && internal.webSocket.readyState === 1) return true;
 			} catch (e) {}
-			// Fallback: a presence toast proves a frame already round-tripped.
-			return !!document.querySelector('#toast-container [role], #toast-container > *');
+			// Fallback: the server's "joined" system line in the log proves a
+			// frame already round-tripped (presence is now in-chat, not a toast).
+			return !!document.querySelector('#chat-log > div');
 		}`,
 		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
 	require.NoError(t, err, "websocket should open (ws extension bound + socket open)")
