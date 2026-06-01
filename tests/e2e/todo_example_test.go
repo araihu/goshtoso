@@ -44,7 +44,7 @@ func gotoTodo(t *testing.T, page playwright.Page) {
 	// would overlap the right-hand row controls (move/delete) and intercept
 	// their clicks; a returning user has already dismissed it.
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: playwright.String("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
+		Content: playwright.String("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
 	}))
 	// seed=0 opts out of the first-visit sample data so tests start with an
 	// empty list and assert exact counts.

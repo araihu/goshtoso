@@ -136,7 +136,11 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></main><!-- Right rail: \"On this page\" section nav, built from [data-toc-heading]. --><aside id=\"toc-rail\" data-boot-anim=\"main\" class=\"hidden xl:block w-60 shrink-0 overflow-y-auto border-l border-outline dark:border-outline-dark\"><div class=\"sticky top-0 px-6 py-8\"><p class=\"mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">On this page</p><nav id=\"toc-list\" aria-label=\"On this page\" class=\"flex flex-col border-l border-outline dark:border-outline-dark\"></nav></div></aside></div><!-- Cookie Consent --><div x-data=\"{ show: !localStorage.getItem('cookieConsent') }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 max-w-none sm:max-w-sm rounded-radius border border-outline bg-surface p-4 shadow-lg dark:border-outline-dark dark:bg-surface-dark\"><p class=\"text-sm text-on-surface dark:text-on-surface-dark mb-3\">This site uses localStorage to remember your theme preference. No tracking cookies.</p><div class=\"flex gap-2 justify-end\"><button @click=\"localStorage.setItem('cookieConsent', 'accepted'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div><!-- Right-rail \"On this page\" TOC: built from #main-content [data-toc-heading].\n\t\t\t     Rebuilt on every main-content HTMX swap via window.buildTOC (see head script). --><script>\n\t\t\t\t(function () {\n\t\t\t\t\tvar spy = null;\n\t\t\t\t\tfunction clearActive(nav) {\n\t\t\t\t\t\tnav.querySelectorAll('[data-toc-link]').forEach(function (a) {\n\t\t\t\t\t\t\ta.classList.remove('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t\t\ta.classList.add('border-transparent');\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t\tfunction setActive(nav, id) {\n\t\t\t\t\t\tvar a = nav.querySelector('[data-toc-link=\"' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '\"]');\n\t\t\t\t\t\tif (!a) return;\n\t\t\t\t\t\tclearActive(nav);\n\t\t\t\t\t\ta.classList.remove('border-transparent');\n\t\t\t\t\t\ta.classList.add('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t}\n\t\t\t\t\twindow.buildTOC = function () {\n\t\t\t\t\t\tvar rail = document.getElementById('toc-rail');\n\t\t\t\t\t\tvar nav = document.getElementById('toc-list');\n\t\t\t\t\t\tvar main = document.getElementById('main-content');\n\t\t\t\t\t\tif (!rail || !nav || !main) return;\n\t\t\t\t\t\tif (spy) { spy.disconnect(); spy = null; }\n\t\t\t\t\t\tvar heads = Array.prototype.slice.call(main.querySelectorAll('[data-toc-heading]'));\n\t\t\t\t\t\tnav.innerHTML = '';\n\t\t\t\t\t\t// One heading (just the page title) isn't worth a rail — hide it.\n\t\t\t\t\t\tif (heads.length < 2) { rail.style.display = 'none'; return; }\n\t\t\t\t\t\trail.style.display = '';\n\t\t\t\t\t\theads.forEach(function (h) {\n\t\t\t\t\t\t\tif (!h.id) return;\n\t\t\t\t\t\t\tvar a = document.createElement('a');\n\t\t\t\t\t\t\ta.href = '#' + h.id;\n\t\t\t\t\t\t\ta.textContent = (h.textContent || '').trim();\n\t\t\t\t\t\t\ta.setAttribute('data-toc-link', h.id);\n\t\t\t\t\t\t\ta.className = 'block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong';\n\t\t\t\t\t\t\ta.addEventListener('click', function (ev) {\n\t\t\t\t\t\t\t\tev.preventDefault();\n\t\t\t\t\t\t\t\th.scrollIntoView({ behavior: 'smooth', block: 'start' });\n\t\t\t\t\t\t\t\thistory.replaceState(null, '', '#' + h.id);\n\t\t\t\t\t\t\t\tsetActive(nav, h.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\tnav.appendChild(a);\n\t\t\t\t\t\t});\n\t\t\t\t\t\t// Scroll-spy: main is the scroll container, so it's the observer root.\n\t\t\t\t\t\tspy = new IntersectionObserver(function (entries) {\n\t\t\t\t\t\t\tentries.forEach(function (en) {\n\t\t\t\t\t\t\t\tif (en.isIntersecting) setActive(nav, en.target.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}, { root: main, rootMargin: '0px 0px -75% 0px', threshold: 0 });\n\t\t\t\t\t\theads.forEach(function (h) { if (h.id) spy.observe(h); });\n\t\t\t\t\t\tsetActive(nav, heads[0].id);\n\t\t\t\t\t};\n\t\t\t\t\tif (document.readyState === 'loading') {\n\t\t\t\t\t\tdocument.addEventListener('DOMContentLoaded', window.buildTOC);\n\t\t\t\t\t} else {\n\t\t\t\t\t\twindow.buildTOC();\n\t\t\t\t\t}\n\t\t\t\t})();\n\t\t\t</script></body></html>")
+		templ_7745c5c3_Err = siteFooter().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></main><!-- Right rail: \"On this page\" section nav, built from [data-toc-heading]. --><aside id=\"toc-rail\" data-boot-anim=\"main\" class=\"hidden xl:block w-60 shrink-0 overflow-y-auto border-l border-outline dark:border-outline-dark\"><div class=\"sticky top-0 px-6 py-8\"><p class=\"mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">On this page</p><nav id=\"toc-list\" aria-label=\"On this page\" class=\"flex flex-col border-l border-outline dark:border-outline-dark\"></nav></div></aside></div><!-- Cookie Consent — functional-cookie notice. Shows until the visitor\n\t\t\t     acknowledges the CURRENT version ('v1'); any prior/legacy stored value\n\t\t\t     re-shows the updated copy. Bump 'v1' here AND in landing.templ's\n\t\t\t     cookieConsent() in lock-step whenever the copy materially changes. --><div x-data=\"{ show: localStorage.getItem('cookieConsent') !== 'v1' }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-sm flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><span class=\"text-2xl\" aria-hidden=\"true\">🍪</span><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional cookies</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso stores a few <strong>functional</strong> values in your browser — your theme preference and the example apps' own state (e.g. the Todo demo). They are strictly necessary to make those features work; there is no tracking, no analytics, and no third&#8209;party cookies. Clearing your browser storage resets them. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex justify-end gap-2 px-4 pb-4\"><button @click=\"localStorage.setItem('cookieConsent', 'v1'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div><!-- Right-rail \"On this page\" TOC: built from #main-content [data-toc-heading].\n\t\t\t     Rebuilt on every main-content HTMX swap via window.buildTOC (see head script). --><script>\n\t\t\t\t(function () {\n\t\t\t\t\tvar spy = null;\n\t\t\t\t\tfunction clearActive(nav) {\n\t\t\t\t\t\tnav.querySelectorAll('[data-toc-link]').forEach(function (a) {\n\t\t\t\t\t\t\ta.classList.remove('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t\t\ta.classList.add('border-transparent');\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t\tfunction setActive(nav, id) {\n\t\t\t\t\t\tvar a = nav.querySelector('[data-toc-link=\"' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '\"]');\n\t\t\t\t\t\tif (!a) return;\n\t\t\t\t\t\tclearActive(nav);\n\t\t\t\t\t\ta.classList.remove('border-transparent');\n\t\t\t\t\t\ta.classList.add('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t}\n\t\t\t\t\twindow.buildTOC = function () {\n\t\t\t\t\t\tvar rail = document.getElementById('toc-rail');\n\t\t\t\t\t\tvar nav = document.getElementById('toc-list');\n\t\t\t\t\t\tvar main = document.getElementById('main-content');\n\t\t\t\t\t\tif (!rail || !nav || !main) return;\n\t\t\t\t\t\tif (spy) { spy.disconnect(); spy = null; }\n\t\t\t\t\t\tvar heads = Array.prototype.slice.call(main.querySelectorAll('[data-toc-heading]'));\n\t\t\t\t\t\tnav.innerHTML = '';\n\t\t\t\t\t\t// One heading (just the page title) isn't worth a rail — hide it.\n\t\t\t\t\t\tif (heads.length < 2) { rail.style.display = 'none'; return; }\n\t\t\t\t\t\trail.style.display = '';\n\t\t\t\t\t\theads.forEach(function (h) {\n\t\t\t\t\t\t\tif (!h.id) return;\n\t\t\t\t\t\t\tvar a = document.createElement('a');\n\t\t\t\t\t\t\ta.href = '#' + h.id;\n\t\t\t\t\t\t\ta.textContent = (h.textContent || '').trim();\n\t\t\t\t\t\t\ta.setAttribute('data-toc-link', h.id);\n\t\t\t\t\t\t\ta.className = 'block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong';\n\t\t\t\t\t\t\ta.addEventListener('click', function (ev) {\n\t\t\t\t\t\t\t\tev.preventDefault();\n\t\t\t\t\t\t\t\th.scrollIntoView({ behavior: 'smooth', block: 'start' });\n\t\t\t\t\t\t\t\thistory.replaceState(null, '', '#' + h.id);\n\t\t\t\t\t\t\t\tsetActive(nav, h.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\tnav.appendChild(a);\n\t\t\t\t\t\t});\n\t\t\t\t\t\t// Scroll-spy: main is the scroll container, so it's the observer root.\n\t\t\t\t\t\tspy = new IntersectionObserver(function (entries) {\n\t\t\t\t\t\t\tentries.forEach(function (en) {\n\t\t\t\t\t\t\t\tif (en.isIntersecting) setActive(nav, en.target.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}, { root: main, rootMargin: '0px 0px -75% 0px', threshold: 0 });\n\t\t\t\t\t\theads.forEach(function (h) { if (h.id) spy.observe(h); });\n\t\t\t\t\t\tsetActive(nav, heads[0].id);\n\t\t\t\t\t};\n\t\t\t\t\tif (document.readyState === 'loading') {\n\t\t\t\t\t\tdocument.addEventListener('DOMContentLoaded', window.buildTOC);\n\t\t\t\t\t} else {\n\t\t\t\t\t\twindow.buildTOC();\n\t\t\t\t\t}\n\t\t\t\t})();\n\t\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -175,6 +179,8 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
+		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebarAttributionsIcon(), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
+		{ID: "license", Label: "License", Href: "/license", Icon: sidebarLicenseIcon(), Active: activeComponent == "license", LinkAttrs: navHxAttrs("/license", "")},
 	}
 }
 
@@ -258,6 +264,64 @@ func sidebarThemeIcon() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-full h-full\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z\"></path></svg>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func sidebarAttributionsIcon() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-full h-full\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z\"></path></svg>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func sidebarLicenseIcon() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-full h-full\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z\"></path></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -428,33 +492,33 @@ func componentNavFooter(activeComponent string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		prev, next := getComponentNav(activeComponent)
 		if prev != nil || next != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"mt-12 flex items-center justify-between border-t border-outline dark:border-outline-dark pt-6 pb-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"mt-12 flex items-center justify-between border-t border-outline dark:border-outline-dark pt-6 pb-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if prev != nil {
 				prevAttrs := navHxAttrs(prev.Href, "")
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 templ.SafeURL
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
+				var templ_7745c5c3_Var13 templ.SafeURL
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 554, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 583, Col: 36}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -462,45 +526,45 @@ func componentNavFooter(activeComponent string) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15 19l-7-7 7-7\"></path></svg> <span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15 19l-7-7 7-7\"></path></svg> <span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 561, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 590, Col: 23}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span></a> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span></a> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if next != nil {
 				nextAttrs := navHxAttrs(next.Href, "")
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 templ.SafeURL
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
+				var templ_7745c5c3_Var15 templ.SafeURL
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 569, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 598, Col: 36}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -508,33 +572,92 @@ func componentNavFooter(activeComponent string) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors\"><span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 573, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/layout.templ`, Line: 602, Col: 23}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 5l7 7-7 7\"></path></svg></a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 5l7 7-7 7\"></path></svg></a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+		}
+		return nil
+	})
+}
+
+// siteFooter renders the global footer shown beneath every page's content
+// (inside #main-content, so it survives fragment-swap navigation). Mirrors
+// PenguinUI's footer: brand line, legal nav, and social links.
+func siteFooter() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		privacyAttrs := navHxAttrs("/privacy", "")
+		attrAttrs := navHxAttrs("/attributions", "")
+		licenseAttrs := navHxAttrs("/license", "")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<footer class=\"mt-16 border-t border-outline dark:border-outline-dark pt-8 pb-10 text-center\"><p class=\"font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Goshtoso <span class=\"font-normal text-on-surface-muted dark:text-on-surface-dark-muted\">2026</span></p><nav class=\"mt-3 flex items-center justify-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><a href=\"/privacy\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, privacyAttrs)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors\">Privacy</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/attributions\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, attrAttrs)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors\">Attributions</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/license\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, licenseAttrs)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors\">License</a></nav><div class=\"mt-4 flex items-center justify-center gap-4\"><a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" rel=\"noopener\" aria-label=\"GitHub\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong transition-colors\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\" class=\"size-5\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z\"></path></svg></a></div></footer>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		return nil
 	})
