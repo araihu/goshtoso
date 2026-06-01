@@ -38,12 +38,12 @@ templ ChatBubble(cfg Config) {
 		if cfg.HasAvatar() {
 			@bubbleAvatar(cfg)
 		}
-		<div class="flex flex-col gap-1 group-data-[mine=true]:items-end">
-			if cfg.HasHeader() {
-				@bubbleHeader(cfg)
-			}
+		<div class="flex min-w-0 flex-col gap-1 group-data-[mine=true]:items-end">
 			<div class={ cfg.BubbleClasses() }>
-				{ cfg.Message }
+				if cfg.HasHeader() {
+					@bubbleHeader(cfg)
+				}
+				<p class="whitespace-pre-wrap break-words">{ cfg.Message }</p>
 			</div>
 			if cfg.Status != "" {
 				<span class="px-1 text-xs text-on-surface/60 dark:text-on-surface-dark/60">
@@ -93,17 +93,20 @@ templ bubbleAvatar(cfg Config) {
 	</div>
 }
 
-// bubbleHeader renders the sender name, optional BOT badge, and timestamp.
+// bubbleHeader renders the sender name (bold), optional BOT badge, and timestamp
+// INSIDE the bubble (PenguinUI default style). Colors inherit the bubble's text
+// color so it reads on both the neutral and primary fills. Hidden on own
+// messages — like PenguinUI's sent bubble, your own messages carry no name.
 templ bubbleHeader(cfg Config) {
-	<div class="flex items-center gap-2 px-1">
-		<span class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">
+	<div class="mb-1 flex items-baseline gap-2 group-data-[mine=true]:hidden">
+		<span class="text-sm font-semibold">
 			{ cfg.SenderName }
 		</span>
 		if cfg.IsBot {
 			@badge.Badge(badge.Config{Text: "BOT", Variant: badge.Info, Size: badge.SizeSM})
 		}
 		if cfg.Timestamp != "" {
-			<span class="text-xs text-on-surface/60 dark:text-on-surface-dark/60">
+			<span class="text-xs font-normal opacity-70">
 				{ cfg.Timestamp }
 			</span>
 		}

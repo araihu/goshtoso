@@ -79,12 +79,13 @@ func chatBubbleDemoContent() templ.Component {
 			},
 			chatBubbleDefaultPreview(),
 			`@chatbubble.ChatBubble(chatbubble.Config{
-    Side:    chatbubble.Received,
-    Message: "Hey! Are we still on for the design review at 3pm?",
+    Side:       chatbubble.Received,
+    SenderName: "Penguin UI",
+    Message:    "Hi there! How can I assist you today?",
 })
 @chatbubble.ChatBubble(chatbubble.Config{
     Side:    chatbubble.Sent,
-    Message: "Yep, see you then. I'll bring the mockups.",
+    Message: "I accidentally deleted some important files. Can they be recovered?",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -252,20 +253,29 @@ func chatBubbleDefaultPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"chatbubble-default\" class=\"w-full max-w-md mx-auto space-y-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"chatbubble-default\" class=\"w-full max-w-md mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = chatbubble.ChatBubble(chatbubble.Config{
-			Side:    chatbubble.Received,
-			Message: "Hey! Are we still on for the design review at 3pm?",
+			Side:       chatbubble.Received,
+			SenderName: "Penguin UI",
+			Message:    "Hi there! How can I assist you today?",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = chatbubble.ChatBubble(chatbubble.Config{
 			Side:    chatbubble.Sent,
-			Message: "Yep, see you then. I'll bring the mockups.",
+			Message: "I accidentally deleted some important files. Can they be recovered?",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = chatbubble.ChatBubble(chatbubble.Config{
+			Side:       chatbubble.Received,
+			SenderName: "Penguin UI",
+			Message:    "I'm sorry to hear that. Let me guide you through the process to resolve it.",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -23,12 +23,13 @@ templ chatBubbleDemoContent() {
 			},
 			chatBubbleDefaultPreview(),
 			`@chatbubble.ChatBubble(chatbubble.Config{
-    Side:    chatbubble.Received,
-    Message: "Hey! Are we still on for the design review at 3pm?",
+    Side:       chatbubble.Received,
+    SenderName: "Penguin UI",
+    Message:    "Hi there! How can I assist you today?",
 })
 @chatbubble.ChatBubble(chatbubble.Config{
     Side:    chatbubble.Sent,
-    Message: "Yep, see you then. I'll bring the mockups.",
+    Message: "I accidentally deleted some important files. Can they be recovered?",
 })`,
 		)
 
@@ -157,14 +158,20 @@ templ chatBubbleDemoContent() {
 
 // chatBubbleDefaultPreview renders a short received/sent conversation.
 templ chatBubbleDefaultPreview() {
-	<div id="chatbubble-default" class="w-full max-w-md mx-auto space-y-1">
+	<div id="chatbubble-default" class="w-full max-w-md mx-auto">
 		@chatbubble.ChatBubble(chatbubble.Config{
-			Side:    chatbubble.Received,
-			Message: "Hey! Are we still on for the design review at 3pm?",
+			Side:       chatbubble.Received,
+			SenderName: "Penguin UI",
+			Message:    "Hi there! How can I assist you today?",
 		})
 		@chatbubble.ChatBubble(chatbubble.Config{
 			Side:    chatbubble.Sent,
-			Message: "Yep, see you then. I'll bring the mockups.",
+			Message: "I accidentally deleted some important files. Can they be recovered?",
+		})
+		@chatbubble.ChatBubble(chatbubble.Config{
+			Side:       chatbubble.Received,
+			SenderName: "Penguin UI",
+			Message:    "I'm sorry to hear that. Let me guide you through the process to resolve it.",
 		})
 	</div>
 }
