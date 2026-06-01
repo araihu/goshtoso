@@ -1,0 +1,108 @@
+package examples
+
+import (
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/card"
+	"github.com/araihu/goshtoso/components/spinner"
+	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/internal/examples/ticker"
+)
+
+// TickerContent is the registry entry point for /examples/ticker.
+templ TickerContent() {
+	@tickerPane(ticker.InitialSymbols())
+}
+
+// tickerPane is the page shell: header (spinner + pause toggle), a grid of live
+// cards (one per symbol), and a filterable live table at the bottom. The Alpine
+// component lives on the outer div so the spinner/toggle (outside the SSE root)
+// share its connected/paused state. The cards grid and the table tbody both sit
+// inside the single sse-connect root, so both rebind off one shared stream.
+templ tickerPane(symbols []ticker.Symbol) {
+	<div id="ticker-fragment" x-data="tickerPane()" class="mx-auto max-w-5xl">
+		<div class="mb-6 flex items-center justify-between">
+			<div>
+				<h1 class="text-2xl font-bold text-on-surface dark:text-on-surface-dark">Live Ticker</h1>
+				<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+					Simulated prices streamed over Server-Sent Events.
+				</p>
+			</div>
+			<div class="flex items-center gap-4">
+				<span x-show="!connected" class="inline-flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+					@spinner.Spinner(spinner.Config{Size: spinner.SizeSM})
+					Connecting…
+				</span>
+				<div x-on:change="paused = $event.target.checked">
+					@toggle.Toggle(toggle.Config{ID: "ticker-pause", Label: "Pause"})
+				</div>
+			</div>
+		</div>
+		<div
+			x-ref="sse"
+			x-init="$nextTick(() => connect($refs.sse))"
+			hx-ext="sse"
+			sse-connect="/api/examples/ticker/stream"
+		>
+			<div id="ticker-cards" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				for _, sym := range symbols {
+					@TickerCard(sym)
+				}
+			</div>
+			<div class="mt-8">
+				<h2 class="mb-3 text-lg font-semibold text-on-surface dark:text-on-surface-dark">All symbols</h2>
+				@table.Table(tickerTableConfig(symbols))
+			</div>
+		</div>
+		@tickerPaneScript()
+	</div>
+}
+
+// TickerCard is one live card in the top grid. Its price span subscribes to the
+// symbol's SSE event so the card updates off the same stream as the table cell.
+templ TickerCard(sym ticker.Symbol) {
+	@card.Card(card.Config{
+		Tag:    sym.Ticker,
+		Title:  sym.Name,
+		Footer: tickerCardPrice(sym),
+	})
+}
+
+templ tickerCardPrice(sym ticker.Symbol) {
+	<div class="text-2xl">
+		<span id={ "ticker-card-" + sym.Ticker } sse-swap={ sym.Ticker } hx-target="this" hx-swap="innerHTML">
+			@TickerCellInner(sym)
+		</span>
+	</div>
+}
+
+// TickerCell is the live price cell placed in the table via Cell.Component. The
+// span subscribes to the symbol's SSE event; ticks replace its inner content.
+// hx-target="this" prevents inheriting the table/row hx-target.
+templ TickerCell(sym ticker.Symbol) {
+	<span id={ "ticker-cell-" + sym.Ticker } sse-swap={ sym.Ticker } hx-target="this" hx-swap="innerHTML">
+		@TickerCellInner(sym)
+	</span>
+}
+
+// TickerCellInner is the price + change-badge unit. It is rendered both at first
+// paint and on every SSE tick (the handler pushes exactly this fragment).
+templ TickerCellInner(sym ticker.Symbol) {
+	<span class="inline-flex items-center gap-2">
+		<span class="font-mono tabular-nums">{ tickerPrice(sym) }</span>
+		@badge.Badge(badge.Config{
+			Variant: tickerBadgeVariant(sym),
+			Style:   badge.StyleSoft,
+			Size:    badge.SizeSM,
+			Text:    tickerChange(sym),
+		})
+	</span>
+}
+
+// tickerPaneScript registers the Alpine component. It uses templ.Raw + a
+// <script> block (not an x-data string) to avoid templ attribute-escaping, and
+// registers eagerly when Alpine is already running (fragment nav) — otherwise on
+// alpine:init. `connect` attaches the SSE listeners that drive connected/paused.
+templ tickerPaneScript() {
+	@templ.Raw("<script>" + tickerPaneJS + "</script>")
+}

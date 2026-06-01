@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -11,24 +12,42 @@ import (
 
 	"github.com/araihu/goshtoso/components/carousel"
 	combobox "github.com/araihu/goshtoso/components/combobox/v2"
+	"github.com/araihu/goshtoso/internal/examples/ticker"
 	"github.com/araihu/goshtoso/internal/pages/demo"
 	"github.com/araihu/goshtoso/internal/pages/demo/components"
 )
 
 // Server handles HTTP requests for Goshtoso components
 type Server struct {
-	projectRoot string
-	mux         *http.ServeMux
+	projectRoot  string
+	mux          *http.ServeMux
+	tickerBroker *ticker.Broker
 }
 
 // New creates a new server instance
 func New(projectRoot string) *Server {
+	broker := ticker.NewBroker(ticker.NewSimulator(1), tickerInterval())
+	// Process-lifetime stream shared by all viewers; never cancelled.
+	go broker.Run(context.Background())
+
 	s := &Server{
-		projectRoot: projectRoot,
-		mux:         http.NewServeMux(),
+		projectRoot:  projectRoot,
+		mux:          http.NewServeMux(),
+		tickerBroker: broker,
 	}
 	s.setupRoutes()
 	return s
+}
+
+// tickerInterval is the simulator tick rate, overridable via GOSHTOSO_TICKER_MS
+// (milliseconds) for fast, deterministic E2E. Defaults to 1s.
+func tickerInterval() time.Duration {
+	if v := os.Getenv("GOSHTOSO_TICKER_MS"); v != "" {
+		if ms, err := strconv.Atoi(v); err == nil && ms > 0 {
+			return time.Duration(ms) * time.Millisecond
+		}
+	}
+	return time.Second
 }
 
 func (s *Server) setupRoutes() {
@@ -47,6 +66,7 @@ func (s *Server) setupRoutes() {
 	s.registerChatRoutes()
 	s.registerLogsRoutes()
 	s.registerProfileRoutes()
+	s.registerTickerRoutes()
 
 	// API endpoints for HTMX demos
 	s.mux.HandleFunc("/api/hello", s.handleAPIHello)
@@ -106,6 +126,8 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 		s.renderDemo(w, r, "examples/logs")
 	case "profile":
 		s.renderProfilePage(w, r)
+	case "ticker":
+		s.renderDemo(w, r, "examples/ticker")
 	default:
 		http.NotFound(w, r)
 	}
