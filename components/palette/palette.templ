@@ -42,24 +42,13 @@ templ Palette(cfg Config) {
 				}
 			</div>
 		}
-		<div class="grid w-full gap-1 max-h-44 overflow-y-auto pr-1" style="grid-template-columns: repeat(11, minmax(0, 1fr));">
-			for _, hue := range cfg.hues() {
-				for _, shade := range cfg.shades() {
-					<button
-						type="button"
-						data-cls={ hue + "-" + shade }
-						@click="$dispatch('select-close', $el.dataset.cls)"
-						@mouseenter="hovered = $el.dataset.cls"
-						@mouseleave="hovered = ''"
-						@focus="hovered = $el.dataset.cls"
-						@blur="hovered = ''"
-						class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
-						{ swatchStyle(hue, shade)... }
-						title={ hue + "-" + shade }
-					></button>
-				}
-			}
-		</div>
+		if cfg.LazyWhen != "" {
+			<template x-if={ cfg.LazyWhen }>
+				@swatchGrid(cfg)
+			</template>
+		} else {
+			@swatchGrid(cfg)
+		}
 		if cfg.ShowHex {
 			<div class="flex items-center gap-2 pt-1">
 				<input
@@ -75,6 +64,27 @@ templ Palette(cfg Config) {
 					class="w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 				/>
 			</div>
+		}
+	</div>
+}
+
+templ swatchGrid(cfg Config) {
+	<div class="grid w-full gap-1 max-h-44 overflow-y-auto pr-1" style="grid-template-columns: repeat(11, minmax(0, 1fr));">
+		for _, hue := range cfg.hues() {
+			for _, shade := range cfg.shades() {
+				<button
+					type="button"
+					data-cls={ hue + "-" + shade }
+					@click="$dispatch('select-close', $el.dataset.cls)"
+					@mouseenter="hovered = $el.dataset.cls"
+					@mouseleave="hovered = ''"
+					@focus="hovered = $el.dataset.cls"
+					@blur="hovered = ''"
+					class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
+					{ swatchStyle(hue, shade)... }
+					title={ hue + "-" + shade }
+				></button>
+			}
 		}
 	</div>
 }

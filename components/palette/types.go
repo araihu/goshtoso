@@ -43,6 +43,11 @@ type Config struct {
 	ShowHex bool
 	// Class appends classes to the wrapper.
 	Class string
+	// LazyWhen is an Alpine expression; when non-empty, the swatch grid is
+	// wrapped in <template x-if=...> so it mounts only when the expression is
+	// truthy (e.g. inside a Select dropdown, pass the dropdown's open
+	// expression). Keeps the initial DOM light.
+	LazyWhen string
 }
 
 func (c Config) hues() []string {

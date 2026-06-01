@@ -981,6 +981,7 @@ import "github.com/araihu/goshtoso/components/palette"  // package palette
 | `HideReset` | `bool` | HideReset hides the Reset action (shown by default). |
 | `ShowHex` | `bool` | ShowHex adds a native color input + hex text field (off by default). |
 | `Class` | `string` | Class appends classes to the wrapper. |
+| `LazyWhen` | `string` | LazyWhen is an Alpine expression; when non-empty, the swatch grid is |
 
 ## radio
 
