@@ -13,11 +13,14 @@ import (
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/modal"
 	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/tabs"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/internal/examples/profile"
 )
 
@@ -233,7 +236,60 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"profile-fragment\" class=\"mx-auto max-w-3xl\" x-data=\"profileImages\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Profile</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A profile screen built from Goshtoso components. Your name and bio live in a cookie (HTMX form, no server-side memory); your avatar and cover image stay on your device in IndexedDB — the server never receives the bytes; and theme + dark mode reuse the app's own appearance engine.</p></header><!-- Photos: avatar + cover, stored client-side in IndexedDB --><section id=\"profile-photos\" class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"relative\"><!-- Cover image area --><div class=\"h-40 w-full overflow-hidden rounded-t-radius bg-surface dark:bg-surface-dark\"><img x-show=\"bannerSrc\" x-bind:src=\"bannerSrc\" alt=\"Cover image\" class=\"h-40 w-full object-cover\"><div x-show=\"!bannerSrc\" class=\"flex h-40 w-full items-center justify-center text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">No cover image</div></div><!-- Avatar, overlapping the cover --><div id=\"profile-avatar\" class=\"-mt-12 flex justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"profile-fragment\" class=\"mx-auto max-w-3xl\" x-data=\"profileImages\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Profile</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A profile screen built from Goshtoso components. Your name and bio live in a cookie (HTMX form, no server-side memory); your avatar and cover image stay on your device in IndexedDB — the server never receives the bytes; and theme + dark mode reuse the app's own appearance engine.</p></header>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = tabs.Tabs(tabs.Config{
+			ID:         "profile-tabs",
+			DefaultTab: "profile",
+			Tabs: []tabs.Tab{
+				{ID: "profile", Label: "Profile", Content: profileMainPanel(s)},
+				{ID: "appearance", Label: "Appearance", Content: profileAppearancePanel()},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// profileMainPanel is the "Profile" tab: photos (avatar + cover, IndexedDB) and
+// identity (name + bio, cookie-backed via HTMX). It lives inside the
+// #profile-fragment x-data="profileImages" wrapper, so avatarSrc/bannerSrc and
+// the avatar <img> persist across tab switches (tab panels are x-show toggled,
+// never unmounted).
+func profileMainPanel(s profile.State) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<!-- Photos: avatar + cover, stored client-side in IndexedDB --><section id=\"profile-photos\" class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"relative\"><!-- Cover image area --><div class=\"h-40 w-full overflow-hidden rounded-t-radius bg-surface dark:bg-surface-dark\"><img x-show=\"bannerSrc\" x-bind:src=\"bannerSrc\" alt=\"Cover image\" class=\"h-40 w-full object-cover\"><div x-show=\"!bannerSrc\" class=\"flex h-40 w-full items-center justify-center text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">No cover image</div></div><!-- Avatar, overlapping the cover --><div id=\"profile-avatar\" class=\"-mt-12 flex justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -247,7 +303,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><!-- Hidden file inputs driven by the Upload buttons -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div><!-- Hidden file inputs driven by the Upload buttons -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -269,34 +325,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"flex flex-wrap items-center justify-center gap-3 p-4\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "Upload avatar")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Size:    button.SizeSmall,
-			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex flex-wrap items-center justify-center gap-3 p-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -312,7 +341,7 @@ func ProfileApp(s profile.State) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "Upload cover")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "Upload avatar")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -322,7 +351,7 @@ func ProfileApp(s profile.State) templ.Component {
 			Variant: button.Secondary,
 			Size:    button.SizeSmall,
 			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
+			Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -339,25 +368,52 @@ func ProfileApp(s profile.State) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "Remove photos")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "Upload cover")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Danger,
+			Variant: button.Secondary,
 			Size:    button.SizeSmall,
 			Type:    "button",
-			Alpine: &button.AlpineConfig{
-				OnClick: "remove('avatar'); remove('banner')",
-				Show:    "avatarSrc || bannerSrc",
-			},
+			Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><p class=\"px-4 pb-4 text-center text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Images stay on this device (IndexedDB). PNG, JPG, WebP, or GIF, up to 1 MB.</p></section><!-- Identity: name + bio, cookie-backed via HTMX --><section id=\"profile-identity-section\" class=\"mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Identity</h2><form class=\"flex flex-col gap-4\" hx-post=\"/api/examples/profile/identity\" hx-target=\"#profile-identity\" hx-swap=\"outerHTML\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<!-- Tooltip: upload requirements hint (hover/focus) -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
+			ID:          "profile-upload-hint",
+			Text:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+			Position:    tooltip.Top,
+			TriggerText: "Upload requirements",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!-- Modal-confirmed photo removal; only meaningful when an image exists --><span x-show=\"avatarSrc || bannerSrc\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = modal.Modal(modal.Config{
+			ID:            "profileRemoveModal",
+			Title:         "Remove photos?",
+			Body:          "This removes your avatar and cover image from this browser. It cannot be undone.",
+			TriggerText:   "Remove photos",
+			Variant:       modal.Danger,
+			PrimaryText:   "Remove",
+			PrimaryAction: &modal.ButtonAction{OnClick: "remove('avatar'); remove('banner')"},
+			SecondaryText: "Cancel",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span></div><p class=\"px-4 pb-4 text-center text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Images stay on this device (IndexedDB). PNG, JPG, WebP, or GIF, up to 1 MB.</p></section><!-- Identity: name + bio, cookie-backed via HTMX --><section id=\"profile-identity-section\" class=\"mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Identity</h2><form class=\"flex flex-col gap-4\" hx-post=\"/api/examples/profile/identity\" hx-target=\"#profile-identity\" hx-swap=\"outerHTML\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -365,7 +421,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"flex justify-end\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"flex justify-end\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -381,7 +437,7 @@ func ProfileApp(s profile.State) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Save")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Save")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -391,7 +447,38 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></form></div></section><!-- Appearance: theme + dark mode, reusing the app's existing engine --><section id=\"profile-appearance\" class=\"mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><div class=\"flex items-center gap-2\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Appearance</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></form></div></section>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// profileAppearancePanel is the "Appearance" tab: theme Select + dark Toggle,
+// reusing the app's own theme engine (root x-data `theme` + $store.darkMode).
+func profileAppearancePanel() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<!-- Appearance: theme + dark mode, reusing the app's existing engine --><section id=\"profile-appearance\" class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><div class=\"flex items-center gap-2\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Appearance</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -399,7 +486,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">These reuse the app's own theme engine — changes apply instantly and persist in your browser.</p><div class=\"sm:w-64\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">These reuse the app's own theme engine — changes apply instantly and persist in your browser.</p><div class=\"sm:w-64\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -413,7 +500,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -428,15 +515,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></section>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -463,9 +542,9 @@ func ProfileContent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = ProfileApp(profile.State{}).Render(ctx, templ_7745c5c3_Buffer)
