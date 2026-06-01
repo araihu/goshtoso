@@ -5,11 +5,14 @@ import (
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/modal"
 	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/tabs"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/internal/examples/profile"
 )
 
@@ -153,131 +156,161 @@ templ ProfileApp(s profile.State) {
 				mode reuse the app's own appearance engine.
 			</p>
 		</header>
-		<!-- Photos: avatar + cover, stored client-side in IndexedDB -->
-		<section id="profile-photos" class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
-			<div class="relative">
-				<!-- Cover image area -->
-				<div class="h-40 w-full overflow-hidden rounded-t-radius bg-surface dark:bg-surface-dark">
-					<img
-						x-show="bannerSrc"
-						x-bind:src="bannerSrc"
-						alt="Cover image"
-						class="h-40 w-full object-cover"
-					/>
-					<div
-						x-show="!bannerSrc"
-						class="flex h-40 w-full items-center justify-center text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
-					>
-						No cover image
-					</div>
-				</div>
-				<!-- Avatar, overlapping the cover -->
-				<div id="profile-avatar" class="-mt-12 flex justify-center">
-					@avatar.Avatar(avatar.Config{
-						SrcExpr: "avatarSrc",
-						Name:    s.Name,
-						Size:    avatar.SizeXL,
-						Shape:   avatar.ShapeCircle,
-						Border:  true,
-					})
-				</div>
-			</div>
-			<!-- Hidden file inputs driven by the Upload buttons -->
-			@fileinput.FileInput(fileinput.Config{
-				ID:     "profile-avatar-input",
-				Accept: "image/*",
-				Class:  "hidden",
-				Attrs:  templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
-			})
-			@fileinput.FileInput(fileinput.Config{
-				ID:     "profile-banner-input",
-				Accept: "image/*",
-				Class:  "hidden",
-				Attrs:  templ.Attributes{"x-on:change": "onFile('banner', $event)"},
-			})
-			<div class="flex flex-wrap items-center justify-center gap-3 p-4">
-				@button.Button(button.Config{
-					Variant: button.Secondary,
-					Size:    button.SizeSmall,
-					Type:    "button",
-					Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
-				}) {
-					Upload avatar
-				}
-				@button.Button(button.Config{
-					Variant: button.Secondary,
-					Size:    button.SizeSmall,
-					Type:    "button",
-					Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
-				}) {
-					Upload cover
-				}
-				@button.Button(button.Config{
-					Variant: button.Danger,
-					Size:    button.SizeSmall,
-					Type:    "button",
-					Alpine: &button.AlpineConfig{
-						OnClick: "remove('avatar'); remove('banner')",
-						Show:    "avatarSrc || bannerSrc",
-					},
-				}) {
-					Remove photos
-				}
-			</div>
-			<p class="px-4 pb-4 text-center text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
-				Images stay on this device (IndexedDB). PNG, JPG, WebP, or GIF, up to 1 MB.
-			</p>
-		</section>
-		<!-- Identity: name + bio, cookie-backed via HTMX -->
-		<section id="profile-identity-section" class="mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
-			<div class="flex flex-col gap-4 p-4">
-				<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Identity</h2>
-				<form
-					class="flex flex-col gap-4"
-					hx-post="/api/examples/profile/identity"
-					hx-target="#profile-identity"
-					hx-swap="outerHTML"
-				>
-					@IdentityFields(s)
-					<div class="flex justify-end">
-						@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
-							Save
-						}
-					</div>
-				</form>
-			</div>
-		</section>
-		<!-- Appearance: theme + dark mode, reusing the app's existing engine -->
-		<section id="profile-appearance" class="mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
-			<div class="flex flex-col gap-4 p-4">
-				<div class="flex items-center gap-2">
-					<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Appearance</h2>
-					@badge.Badge(badge.Config{Variant: badge.Secondary, Text: "live"})
-				</div>
-				<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-					These reuse the app's own theme engine — changes apply instantly and persist in your browser.
-				</p>
-				<div class="sm:w-64">
-					@selectfield.Select(selectfield.Config{
-						ID:          "profile-theme",
-						Name:        "theme",
-						Label:       "Theme",
-						AlpineModel: "theme",
-						Options:     themeOptions(""),
-					})
-				</div>
-				@toggle.Toggle(toggle.Config{
-					ID:    "profile-dark",
-					Label: "Dark mode",
-					Attrs: templ.Attributes{
-						"x-bind:checked": "$store.darkMode.on",
-						"x-on:change":    "$store.darkMode.toggle()",
-					},
-				})
-			</div>
-		</section>
+		@tabs.Tabs(tabs.Config{
+			ID:         "profile-tabs",
+			DefaultTab: "profile",
+			Tabs: []tabs.Tab{
+				{ID: "profile", Label: "Profile", Content: profileMainPanel(s)},
+				{ID: "appearance", Label: "Appearance", Content: profileAppearancePanel()},
+			},
+		})
 		@toast.Container(toast.ContainerConfig{})
 	</div>
+}
+
+// profileMainPanel is the "Profile" tab: photos (avatar + cover, IndexedDB) and
+// identity (name + bio, cookie-backed via HTMX). It lives inside the
+// #profile-fragment x-data="profileImages" wrapper, so avatarSrc/bannerSrc and
+// the avatar <img> persist across tab switches (tab panels are x-show toggled,
+// never unmounted).
+templ profileMainPanel(s profile.State) {
+	<!-- Photos: avatar + cover, stored client-side in IndexedDB -->
+	<section id="profile-photos" class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+		<div class="relative">
+			<!-- Cover image area -->
+			<div class="h-40 w-full overflow-hidden rounded-t-radius bg-surface dark:bg-surface-dark">
+				<img
+					x-show="bannerSrc"
+					x-bind:src="bannerSrc"
+					alt="Cover image"
+					class="h-40 w-full object-cover"
+				/>
+				<div
+					x-show="!bannerSrc"
+					class="flex h-40 w-full items-center justify-center text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
+				>
+					No cover image
+				</div>
+			</div>
+			<!-- Avatar, overlapping the cover -->
+			<div id="profile-avatar" class="-mt-12 flex justify-center">
+				@avatar.Avatar(avatar.Config{
+					SrcExpr: "avatarSrc",
+					Name:    s.Name,
+					Size:    avatar.SizeXL,
+					Shape:   avatar.ShapeCircle,
+					Border:  true,
+				})
+			</div>
+		</div>
+		<!-- Hidden file inputs driven by the Upload buttons -->
+		@fileinput.FileInput(fileinput.Config{
+			ID:     "profile-avatar-input",
+			Accept: "image/*",
+			Class:  "hidden",
+			Attrs:  templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
+		})
+		@fileinput.FileInput(fileinput.Config{
+			ID:     "profile-banner-input",
+			Accept: "image/*",
+			Class:  "hidden",
+			Attrs:  templ.Attributes{"x-on:change": "onFile('banner', $event)"},
+		})
+		<div class="flex flex-wrap items-center justify-center gap-3 p-4">
+			@button.Button(button.Config{
+				Variant: button.Secondary,
+				Size:    button.SizeSmall,
+				Type:    "button",
+				Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
+			}) {
+				Upload avatar
+			}
+			@button.Button(button.Config{
+				Variant: button.Secondary,
+				Size:    button.SizeSmall,
+				Type:    "button",
+				Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
+			}) {
+				Upload cover
+			}
+			<!-- Tooltip: upload requirements hint (hover/focus) -->
+			@tooltip.Tooltip(tooltip.Config{
+				ID:          "profile-upload-hint",
+				Text:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+				Position:    tooltip.Top,
+				TriggerText: "Upload requirements",
+			})
+			<!-- Modal-confirmed photo removal; only meaningful when an image exists -->
+			<span x-show="avatarSrc || bannerSrc">
+				@modal.Modal(modal.Config{
+					ID:            "profileRemoveModal",
+					Title:         "Remove photos?",
+					Body:          "This removes your avatar and cover image from this browser. It cannot be undone.",
+					TriggerText:   "Remove photos",
+					Variant:       modal.Danger,
+					PrimaryText:   "Remove",
+					PrimaryAction: &modal.ButtonAction{OnClick: "remove('avatar'); remove('banner')"},
+					SecondaryText: "Cancel",
+				})
+			</span>
+		</div>
+		<p class="px-4 pb-4 text-center text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
+			Images stay on this device (IndexedDB). PNG, JPG, WebP, or GIF, up to 1 MB.
+		</p>
+	</section>
+	<!-- Identity: name + bio, cookie-backed via HTMX -->
+	<section id="profile-identity-section" class="mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+		<div class="flex flex-col gap-4 p-4">
+			<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Identity</h2>
+			<form
+				class="flex flex-col gap-4"
+				hx-post="/api/examples/profile/identity"
+				hx-target="#profile-identity"
+				hx-swap="outerHTML"
+			>
+				@IdentityFields(s)
+				<div class="flex justify-end">
+					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+						Save
+					}
+				</div>
+			</form>
+		</div>
+	</section>
+}
+
+// profileAppearancePanel is the "Appearance" tab: theme Select + dark Toggle,
+// reusing the app's own theme engine (root x-data `theme` + $store.darkMode).
+templ profileAppearancePanel() {
+	<!-- Appearance: theme + dark mode, reusing the app's existing engine -->
+	<section id="profile-appearance" class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+		<div class="flex flex-col gap-4 p-4">
+			<div class="flex items-center gap-2">
+				<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Appearance</h2>
+				@badge.Badge(badge.Config{Variant: badge.Secondary, Text: "live"})
+			</div>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+				These reuse the app's own theme engine — changes apply instantly and persist in your browser.
+			</p>
+			<div class="sm:w-64">
+				@selectfield.Select(selectfield.Config{
+					ID:          "profile-theme",
+					Name:        "theme",
+					Label:       "Theme",
+					AlpineModel: "theme",
+					Options:     themeOptions(""),
+				})
+			</div>
+			@toggle.Toggle(toggle.Config{
+				ID:    "profile-dark",
+				Label: "Dark mode",
+				Attrs: templ.Attributes{
+					"x-bind:checked": "$store.darkMode.on",
+					"x-on:change":    "$store.darkMode.toggle()",
+				},
+			})
+		</div>
+	</section>
 }
 
 // ProfileContent is the registry entry point: renders an empty-state app for
