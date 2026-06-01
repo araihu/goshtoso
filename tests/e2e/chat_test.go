@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -287,4 +288,24 @@ func TestChat_ComposerClearsOnSend(t *testing.T) {
 	_, err = page.WaitForFunction("() => document.getElementById('chat-message').value === ''", nil,
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 	require.NoError(t, err, "textarea should clear after send")
+}
+
+// TestChat_ScrollsToBottomOnSend verifies the log auto-scrolls to the newest
+// message as messages are sent (a MutationObserver on the log pins it to bottom).
+func TestChat_ScrollsToBottomOnSend(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoChat(t, page)
+	// Send enough messages to overflow the log, waiting for each to land.
+	for i := 0; i < 12; i++ {
+		msg := fmt.Sprintf("scroll filler message number %d here", i)
+		sendChat(t, page, msg)
+		_, err := page.WaitForFunction(logHas(msg), nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+		require.NoError(t, err)
+	}
+	// The observer pins the log to the bottom on each append.
+	_, err := page.WaitForFunction(
+		"() => { var l=document.getElementById('chat-log'); return l.scrollHeight - l.clientHeight - l.scrollTop < 4; }",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "chat log should be scrolled to the bottom after sending")
 }

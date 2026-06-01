@@ -147,12 +147,21 @@ const chatMineScript = "" +
 	"    var rows = log.querySelectorAll('[data-sender]');" +
 	"    for (var i = 0; i < rows.length; i++) mark(rows[i]);" +
 	"  }" +
-	"  processExisting();" +
+	"  function scrollLog(){" +
+	"    var log = document.getElementById('chat-log');" +
+	"    if (log) log.scrollTop = log.scrollHeight;" +
+	"  }" +
+	"  processExisting(); scrollLog();" +
 	"  var obs = new MutationObserver(function(muts){" +
+	"    var touched = false;" +
 	"    for (var i = 0; i < muts.length; i++) {" +
 	"      var added = muts[i].addedNodes;" +
-	"      for (var j = 0; j < added.length; j++) process(added[j]);" +
+	"      for (var j = 0; j < added.length; j++) {" +
+	"        process(added[j]);" +
+	"        if (inLog(added[j])) touched = true;" +
+	"      }" +
 	"    }" +
+	"    if (touched) scrollLog();" +
 	"  });" +
 	"  obs.observe(document.body, { childList: true, subtree: true });" +
 	"  document.body.addEventListener('htmx:wsAfterSend', function(){" +
