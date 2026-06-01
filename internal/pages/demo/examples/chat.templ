@@ -49,12 +49,14 @@ templ OnlineBadge(count int, oob bool) {
 // messages. The bot uses the "info" avatar variant and a fixed "ELIZA" sender;
 // humans use their color as the avatar variant and their nick as the sender.
 templ MessageBubble(m Message) {
-	{{ variant := m.Color
-	sender := m.Nick
-	if m.IsBot {
-		variant = "info"
-		sender = "ELIZA"
-	} }}
+	{{
+		variant := m.Color
+		sender := m.Nick
+		if m.IsBot {
+			variant = "info"
+			sender = "ELIZA"
+		}
+	}}
 	@chatbubble.ChatBubble(chatbubble.Config{
 		Side:          chatbubble.Auto,
 		Sender:        sender,
@@ -146,11 +148,11 @@ const chatMineScript = "" +
 	"  obs.observe(document.body, { childList: true, subtree: true });" +
 	"})();"
 
-// chatMineDetector emits the own-message detection script verbatim.
-//
-// See chatMineScript above for the nick-collision limitation: own-message
-// detection compares display nicks, so two users sharing a nick see each other's
-// messages as "mine". A production app would key on a stable per-session ID.
+	// chatMineDetector emits the own-message detection script verbatim.
+	//
+	// See chatMineScript above for the nick-collision limitation: own-message
+	// detection compares display nicks, so two users sharing a nick see each other's
+	// messages as "mine". A production app would key on a stable per-session ID.
 templ chatMineDetector() {
 	@templ.Raw("<script>" + chatMineScript + "</script>")
 }
@@ -159,36 +161,41 @@ templ chatMineDetector() {
 // identity from the cookie; the composer's hidden nick/color inputs seed every
 // outgoing frame and are OOB-swapped on rename.
 templ ChatApp(me chat.Identity) {
-	<div id="chat-fragment" class="mx-auto flex h-[70vh] max-w-3xl flex-col">
+	<div id="chat-fragment" class="mx-auto flex h-[78vh] max-w-2xl flex-col overflow-hidden rounded-radius border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark">
 		@toast.Container(toast.ContainerConfig{})
-		<!-- header: identity bar + online badge + rename -->
-		<div class="flex items-center justify-between gap-3 border-b border-outline px-4 py-3 dark:border-outline-dark">
-			<div class="flex items-center gap-3">
-				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color)})
-				<span id="chat-me" class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">{ me.Nick }</span>
+		<!-- header: identity + presence -->
+		<header class="flex items-center justify-between gap-3 border-b border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+			<div class="flex min-w-0 items-center gap-3">
+				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color), Status: avatar.StatusSuccess})
+				<div class="min-w-0 leading-tight">
+					<div id="chat-me" class="truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ me.Nick }</div>
+					<div class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Chatting as you</div>
+				</div>
 			</div>
 			@OnlineBadge(1, false)
-		</div>
-		<!-- rename form (plain hx-post: sets cookie + OOB-swaps hidden inputs) -->
+		</header>
+		<!-- rename row (plain hx-post: sets cookie + OOB-swaps hidden inputs) -->
 		<form
-			class="flex items-end gap-2 border-b border-outline px-4 py-2 dark:border-outline-dark"
+			class="flex items-center gap-2 border-b border-outline px-4 py-2 dark:border-outline-dark"
 			hx-post="/api/examples/chat/rename"
 			hx-swap="none"
 		>
 			<label for="chat-nick-input" class="sr-only">Display name</label>
-			@textinput.TextInput(textinput.Config{
-				ID:          "chat-nick-input",
-				Name:        "nick",
-				Placeholder: "Change your name",
-				MaxLength:   24,
-				Value:       me.Nick,
-			})
+			<div class="flex-1">
+				@textinput.TextInput(textinput.Config{
+					ID:          "chat-nick-input",
+					Name:        "nick",
+					Placeholder: "Change your name",
+					MaxLength:   24,
+					Value:       me.Nick,
+				})
+			</div>
 			@button.Button(button.Config{Type: "submit", Variant: button.Secondary, Size: button.SizeSmall}) {
 				Rename
 			}
 		</form>
 		<!-- message log -->
-		<div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages" class="flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40"></div>
+		<div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages" class="flex-1 overflow-y-auto px-4 pb-4 pt-1"></div>
 		<!-- composer: ws-send form. The hx-ext="ws" wrapper must contain the form.
 		     onsubmit="return false" guards the htmx ws-send rebind race: on a
 		     fragment-nav swap htmx binds ws-send a beat after the form lands in the
@@ -198,24 +205,26 @@ templ ChatApp(me chat.Identity) {
 		     wiping the composer. The guard makes a race-lost click a harmless no-op
 		     (htmx's own addEventListener handler still fires once bound), so the send
 		     simply succeeds on the next attempt with the typed text intact. -->
-		<div hx-ext="ws" ws-connect="/api/examples/chat/ws" class="border-t border-outline px-4 py-3 dark:border-outline-dark">
+		<div hx-ext="ws" ws-connect="/api/examples/chat/ws" class="border-t border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
 			<form ws-send onsubmit="return false" class="flex flex-col gap-2">
 				@chatHidden("nick", me.Nick)
 				@chatHidden("color", me.Color)
 				<div class="flex items-end gap-2">
 					<label for="chat-message" class="sr-only">Message</label>
-					@textarea.Textarea(textarea.Config{
-						ID:          "chat-message",
-						Name:        "message",
-						Placeholder: "Type a message…",
-						Rows:        1,
-						// Enter sends (requestSubmit fires htmx's ws-send submit
-						// listener; the form's onsubmit="return false" only blocks
-						// the NATIVE submit). Shift+Enter falls through to insert a
-						// newline. Handler string carries no quotes or && so templ's
-						// attribute escaping cannot corrupt it.
-						Attrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
-					})
+					<div class="flex-1">
+						@textarea.Textarea(textarea.Config{
+							ID:          "chat-message",
+							Name:        "message",
+							Placeholder: "Type a message…",
+							Rows:        1,
+							// Enter sends (requestSubmit fires htmx's ws-send submit
+							// listener; the form's onsubmit="return false" only blocks
+							// the NATIVE submit). Shift+Enter falls through to insert a
+							// newline. Handler string carries no quotes or && so templ's
+							// attribute escaping cannot corrupt it.
+							Attrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
+						})
+					</div>
 					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
 						Send
 					}
@@ -241,7 +250,7 @@ templ chatHidden(name, value string) {
 // RenameResult is the OOB response to a rename: updates the visible nick and both
 // hidden composer inputs so the next message carries the new identity.
 templ RenameResult(me chat.Identity) {
-	<span id="chat-me" hx-swap-oob="true" class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">{ me.Nick }</span>
+	<div id="chat-me" hx-swap-oob="true" class="truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ me.Nick }</div>
 	<input type="hidden" id="chat-hidden-nick" hx-swap-oob="true" name="nick" value={ me.Nick }/>
 	<input type="hidden" id="chat-hidden-color" hx-swap-oob="true" name="color" value={ me.Color }/>
 }

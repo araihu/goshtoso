@@ -274,11 +274,12 @@ const chatMineScript = "" +
 	"  obs.observe(document.body, { childList: true, subtree: true });" +
 	"})();"
 
-// chatMineDetector emits the own-message detection script verbatim.
-//
-// See chatMineScript above for the nick-collision limitation: own-message
-// detection compares display nicks, so two users sharing a nick see each other's
-// messages as "mine". A production app would key on a stable per-session ID.
+	// chatMineDetector emits the own-message detection script verbatim.
+	//
+	// See chatMineScript above for the nick-collision limitation: own-message
+	// detection compares display nicks, so two users sharing a nick see each other's
+	// messages as "mine". A production app would key on a stable per-session ID.
+
 func chatMineDetector() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -332,7 +333,7 @@ func ChatApp(me chat.Identity) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"chat-fragment\" class=\"mx-auto flex h-[70vh] max-w-3xl flex-col\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"chat-fragment\" class=\"mx-auto flex h-[78vh] max-w-2xl flex-col overflow-hidden rounded-radius border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -340,28 +341,28 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!-- header: identity bar + online badge + rename --><div class=\"flex items-center justify-between gap-3 border-b border-outline px-4 py-3 dark:border-outline-dark\"><div class=\"flex items-center gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!-- header: identity + presence --><header class=\"flex items-center justify-between gap-3 border-b border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex min-w-0 items-center gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color)}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color), Status: avatar.StatusSuccess}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span id=\"chat-me\" class=\"text-sm font-semibold text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"min-w-0 leading-tight\"><div id=\"chat-me\" class=\"truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 168, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 171, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Chatting as you</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -369,7 +370,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><!-- rename form (plain hx-post: sets cookie + OOB-swaps hidden inputs) --><form class=\"flex items-end gap-2 border-b border-outline px-4 py-2 dark:border-outline-dark\" hx-post=\"/api/examples/chat/rename\" hx-swap=\"none\"><label for=\"chat-nick-input\" class=\"sr-only\">Display name</label>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</header><!-- rename row (plain hx-post: sets cookie + OOB-swaps hidden inputs) --><form class=\"flex items-center gap-2 border-b border-outline px-4 py-2 dark:border-outline-dark\" hx-post=\"/api/examples/chat/rename\" hx-swap=\"none\"><label for=\"chat-nick-input\" class=\"sr-only\">Display name</label><div class=\"flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -380,6 +381,10 @@ func ChatApp(me chat.Identity) templ.Component {
 			MaxLength:   24,
 			Value:       me.Nick,
 		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -395,7 +400,7 @@ func ChatApp(me chat.Identity) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "Rename")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "Rename")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -405,7 +410,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</form><!-- message log --><div id=\"chat-log\" role=\"log\" aria-live=\"polite\" aria-relevant=\"additions\" aria-label=\"Chat messages\" class=\"flex-1 divide-y divide-outline/40 overflow-y-auto dark:divide-outline-dark/40\"></div><!-- composer: ws-send form. The hx-ext=\"ws\" wrapper must contain the form.\n\t\t     onsubmit=\"return false\" guards the htmx ws-send rebind race: on a\n\t\t     fragment-nav swap htmx binds ws-send a beat after the form lands in the\n\t\t     DOM. A submit fired in that window would otherwise fall through to the\n\t\t     browser's NATIVE submit — and because this form has no action, that\n\t\t     navigates to the current URL (?message=… as GET), reloading the page and\n\t\t     wiping the composer. The guard makes a race-lost click a harmless no-op\n\t\t     (htmx's own addEventListener handler still fires once bound), so the send\n\t\t     simply succeeds on the next attempt with the typed text intact. --><div hx-ext=\"ws\" ws-connect=\"/api/examples/chat/ws\" class=\"border-t border-outline px-4 py-3 dark:border-outline-dark\"><form ws-send onsubmit=\"return false\" class=\"flex flex-col gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</form><!-- message log --><div id=\"chat-log\" role=\"log\" aria-live=\"polite\" aria-relevant=\"additions\" aria-label=\"Chat messages\" class=\"flex-1 overflow-y-auto px-4 pb-4 pt-1\"></div><!-- composer: ws-send form. The hx-ext=\"ws\" wrapper must contain the form.\n\t\t     onsubmit=\"return false\" guards the htmx ws-send rebind race: on a\n\t\t     fragment-nav swap htmx binds ws-send a beat after the form lands in the\n\t\t     DOM. A submit fired in that window would otherwise fall through to the\n\t\t     browser's NATIVE submit — and because this form has no action, that\n\t\t     navigates to the current URL (?message=… as GET), reloading the page and\n\t\t     wiping the composer. The guard makes a race-lost click a harmless no-op\n\t\t     (htmx's own addEventListener handler still fires once bound), so the send\n\t\t     simply succeeds on the next attempt with the typed text intact. --><div hx-ext=\"ws\" ws-connect=\"/api/examples/chat/ws\" class=\"border-t border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt\"><form ws-send onsubmit=\"return false\" class=\"flex flex-col gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -417,7 +422,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex items-end gap-2\"><label for=\"chat-message\" class=\"sr-only\">Message</label>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex items-end gap-2\"><label for=\"chat-message\" class=\"sr-only\">Message</label><div class=\"flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -436,6 +441,10 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -448,7 +457,7 @@ func ChatApp(me chat.Identity) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Send")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Send")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -458,7 +467,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -471,7 +480,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</form></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -479,7 +488,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -510,46 +519,46 @@ func chatHidden(name, value string) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<input type=\"hidden\" id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<input type=\"hidden\" id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue("chat-hidden-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 238, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 247, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" name=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" name=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 238, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 247, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 238, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 247, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -580,46 +589,46 @@ func RenameResult(me chat.Identity) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<span id=\"chat-me\" hx-swap-oob=\"true\" class=\"text-sm font-semibold text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div id=\"chat-me\" hx-swap-oob=\"true\" class=\"truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 244, Col: 120}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 253, Col: 142}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</span> <input type=\"hidden\" id=\"chat-hidden-nick\" hx-swap-oob=\"true\" name=\"nick\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><input type=\"hidden\" id=\"chat-hidden-nick\" hx-swap-oob=\"true\" name=\"nick\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 245, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 254, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\"> <input type=\"hidden\" id=\"chat-hidden-color\" hx-swap-oob=\"true\" name=\"color\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"> <input type=\"hidden\" id=\"chat-hidden-color\" hx-swap-oob=\"true\" name=\"color\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Color)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 246, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 255, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -89,12 +89,12 @@ func (cfg Config) RowClasses() string {
 // the sent look. Tails flip with data-mine: received tail bottom-left
 // (rounded-es-sm), sent tail bottom-right (rounded-ee-sm).
 func (cfg Config) BubbleClasses() string {
-	return "max-w-[75%] px-4 py-2 text-sm break-words" +
+	return "w-fit max-w-[78%] px-3.5 py-2 text-sm leading-relaxed break-words" +
 		" bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark" +
-		" rounded-2xl rounded-es-sm" +
+		" rounded-radius rounded-es-none" +
 		" group-data-[mine=true]:bg-primary group-data-[mine=true]:text-on-primary" +
 		" group-data-[mine=true]:dark:bg-primary-dark group-data-[mine=true]:dark:text-on-primary-dark" +
-		" group-data-[mine=true]:rounded-es-2xl group-data-[mine=true]:rounded-ee-sm"
+		" group-data-[mine=true]:rounded-es-radius group-data-[mine=true]:rounded-ee-none"
 }
 
 // HasAvatar reports whether the avatar column should render.

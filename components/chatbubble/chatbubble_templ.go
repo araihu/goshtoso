@@ -254,7 +254,7 @@ func TypingIndicator(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"flex items-center gap-1 rounded-2xl rounded-es-sm bg-surface-alt px-4 py-3 dark:bg-surface-dark-alt\"><span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:150ms] dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:300ms] dark:bg-on-surface-dark/40\"></span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"flex items-center gap-1 rounded-radius rounded-es-none bg-surface-alt px-4 py-3 dark:bg-surface-dark-alt\"><span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:150ms] dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:300ms] dark:bg-on-surface-dark/40\"></span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -291,6 +291,7 @@ func bubbleAvatar(cfg Config) templ.Component {
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
 			Src:      cfg.AvatarSrc,
+			Name:     cfg.SenderName,
 			Initials: cfg.AvatarInitials,
 			Variant:  avatar.Variant(cfg.AvatarVariant),
 			Size:     avatar.SizeSM,
@@ -335,7 +336,7 @@ func bubbleHeader(cfg Config) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.SenderName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/chatbubble/chatbubble.templ`, Line: 99, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/chatbubble/chatbubble.templ`, Line: 100, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -359,7 +360,7 @@ func bubbleHeader(cfg Config) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Timestamp)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/chatbubble/chatbubble.templ`, Line: 106, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/chatbubble/chatbubble.templ`, Line: 107, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
