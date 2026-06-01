@@ -106,6 +106,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 | `Status` | `Status` | Status adds a status indicator dot |
 | `Icon` | `templ.Component` | Icon is an optional icon component (replaces initials in the base layer) |
 | `Class` | `string` | Class allows additional CSS classes |
+| `SrcExpr` | `string` | SrcExpr is an Alpine expression evaluated in the parent scope that yields |
 | `Reactive` | `bool` | Reactive defers the size + status-indicator size classes to the parent |
 
 ## badge
@@ -1531,6 +1532,7 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 | `Name` | `string` | Name is the form field name |
 | `Value` | `string` | Value makes the checkbox submit this value when checked, turning the toggle into a real form control. |
 | `Class` | `string` | Class allows additional CSS classes on the label |
+| `Attrs` | `templ.Attributes` | Attrs are extra attributes applied to the <input> element |
 
 ## tooltip
 

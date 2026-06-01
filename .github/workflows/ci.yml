@@ -27,7 +27,11 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache: true
+          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
+          # self-hosted araihu runner. setup-go's own cache tars+uploads that
+          # same tree to the GHA cache backend on every go.sum change — a ~9min
+          # post-job step that buys nothing here. Disable it.
+          cache: false
 
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
@@ -94,7 +98,11 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache: true
+          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
+          # self-hosted araihu runner. setup-go's own cache tars+uploads that
+          # same tree to the GHA cache backend on every go.sum change — a ~9min
+          # post-job step that buys nothing here. Disable it.
+          cache: false
 
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
@@ -123,7 +131,11 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache: true
+          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
+          # self-hosted araihu runner. setup-go's own cache tars+uploads that
+          # same tree to the GHA cache backend on every go.sum change — a ~9min
+          # post-job step that buys nothing here. Disable it.
+          cache: false
 
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}

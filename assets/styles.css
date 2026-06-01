@@ -626,6 +626,9 @@
   .right-full {
     right: 100%;
   }
+  .-bottom-10 {
+    bottom: calc(var(--spacing) * -10);
+  }
   .bottom-0 {
     bottom: calc(var(--spacing) * 0);
   }
@@ -721,6 +724,9 @@
   }
   .my-2 {
     margin-block: calc(var(--spacing) * 2);
+  }
+  .-mt-12 {
+    margin-top: calc(var(--spacing) * -12);
   }
   .mt-0\.5 {
     margin-top: calc(var(--spacing) * 0.5);
@@ -931,6 +937,12 @@
   .h-16 {
     height: calc(var(--spacing) * 16);
   }
+  .h-36 {
+    height: calc(var(--spacing) * 36);
+  }
+  .h-40 {
+    height: calc(var(--spacing) * 40);
+  }
   .h-44 {
     height: calc(var(--spacing) * 44);
   }
@@ -939,6 +951,9 @@
   }
   .h-52 {
     height: calc(var(--spacing) * 52);
+  }
+  .h-80 {
+    height: calc(var(--spacing) * 80);
   }
   .h-\[70vh\] {
     height: 70vh;
@@ -1042,6 +1057,12 @@
   .w-12 {
     width: calc(var(--spacing) * 12);
   }
+  .w-16 {
+    width: calc(var(--spacing) * 16);
+  }
+  .w-20 {
+    width: calc(var(--spacing) * 20);
+  }
   .w-24 {
     width: calc(var(--spacing) * 24);
   }
@@ -1050,6 +1071,9 @@
   }
   .w-36 {
     width: calc(var(--spacing) * 36);
+  }
+  .w-40 {
+    width: calc(var(--spacing) * 40);
   }
   .w-48 {
     width: calc(var(--spacing) * 48);
@@ -1520,6 +1544,9 @@
         border-color: color-mix(in oklab, var(--color-outline) 40%, transparent);
       }
     }
+  }
+  .self-center {
+    align-self: center;
   }
   .self-start {
     align-self: flex-start;
@@ -2840,6 +2867,9 @@
   .pt-10 {
     padding-top: calc(var(--spacing) * 10);
   }
+  .pt-12 {
+    padding-top: calc(var(--spacing) * 12);
+  }
   .pr-0\.5 {
     padding-right: calc(var(--spacing) * 0.5);
   }
@@ -3270,6 +3300,9 @@
   }
   .ring-primary {
     --tw-ring-color: var(--color-primary);
+  }
+  .ring-surface {
+    --tw-ring-color: var(--color-surface);
   }
   .ring-surface-alt {
     --tw-ring-color: var(--color-surface-alt);
@@ -4837,6 +4870,11 @@
       width: calc(var(--spacing) * 44);
     }
   }
+  .sm\:w-64 {
+    @media (width >= 40rem) {
+      width: calc(var(--spacing) * 64);
+    }
+  }
   .sm\:max-w-sm {
     @media (width >= 40rem) {
       max-width: var(--container-sm);
@@ -5700,6 +5738,11 @@
   .dark\:ring-primary-dark {
     &:where(.dark, .dark *) {
       --tw-ring-color: var(--color-primary-dark);
+    }
+  }
+  .dark\:ring-surface-dark {
+    &:where(.dark, .dark *) {
+      --tw-ring-color: var(--color-surface-dark);
     }
   }
   .dark\:ring-surface-dark-alt {

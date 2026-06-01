@@ -84,6 +84,13 @@ type Config struct {
 	Icon templ.Component
 	// Class allows additional CSS classes
 	Class string
+	// SrcExpr is an Alpine expression evaluated in the parent scope that yields
+	// the image src at runtime (e.g. "avatarSrc"). When set, the image layer is
+	// always rendered and binds x-bind:src to this expression; the initials
+	// layer shows whenever the expression is falsy. Use for client-set sources
+	// (object URLs, late-loaded images) where no static Src exists at render.
+	// SrcExpr is a trusted developer-authored Alpine expression — never interpolate untrusted/user input into it (it is evaluated as JavaScript on the client).
+	SrcExpr string
 	// Reactive defers the size + status-indicator size classes to the parent
 	// Alpine scope. When true, the avatar root and status dot read their size
 	// class from `avatarSizeClass` and `avatarStatusSizeClass` respectively
@@ -246,7 +253,7 @@ func (cfg Config) SpinnerSizeClasses() string {
 
 // HasImage returns true if avatar uses an image
 func (cfg Config) HasImage() bool {
-	return cfg.Src != ""
+	return cfg.Src != "" || cfg.SrcExpr != ""
 }
 
 // HasInitials returns true if avatar uses initials
@@ -284,6 +291,25 @@ func toUpper(b byte) string {
 		return string(b - 32)
 	}
 	return string(b)
+}
+
+// jsEscapeSingle escapes a string for safe embedding inside a single-quoted
+// JS string literal. Without this, a Src containing a single quote (data URIs
+// frequently do, e.g. `viewBox='0 0 64 64'`) would terminate the string early
+// and break the x-on:error handler with a SyntaxError at Alpine compile time.
+func jsEscapeSingle(s string) string {
+	result := ""
+	for _, c := range s {
+		switch c {
+		case '\'':
+			result += `\'`
+		case '\\':
+			result += `\\`
+		default:
+			result += string(c)
+		}
+	}
+	return result
 }
 
 func splitWords(s string) []string {
