@@ -126,21 +126,36 @@ templ landingContent() {
 	</div>
 }
 
-// cookieConsent renders a cookie consent banner that shows once per browser
+// cookieConsent renders the functional-cookie notice. It shows until the
+// visitor acknowledges the CURRENT notice version: stored value must equal the
+// version token ('v1'), so any prior/legacy value re-shows the updated copy.
+// Bump the token here AND in layout.templ's banner whenever the copy materially
+// changes. Keep both banners in lock-step.
 templ cookieConsent() {
 	<div
-		x-data="{ show: !localStorage.getItem('cookieConsent') }"
+		x-data="{ show: localStorage.getItem('cookieConsent') !== 'v1' }"
 		x-show="show"
 		x-cloak
 		x-transition
-		class="fixed bottom-4 right-4 z-50 max-w-sm rounded-radius border border-outline bg-surface p-4 shadow-lg dark:border-outline-dark dark:bg-surface-dark"
+		class="fixed bottom-4 right-4 z-50 flex max-w-sm flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
+		role="dialog"
+		aria-modal="false"
+		aria-labelledby="landing-cookie-title"
 	>
-		<p class="text-sm text-on-surface dark:text-on-surface-dark mb-3">
-			This site uses localStorage to remember your theme preference. No tracking cookies.
+		<div class="flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark">
+			<span class="text-2xl" aria-hidden="true">🍪</span>
+			<h3 id="landing-cookie-title" class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Functional cookies</h3>
+		</div>
+		<p class="px-4 text-sm text-on-surface dark:text-on-surface-dark">
+			Goshtoso stores a few <strong>functional</strong> values in your browser — your theme
+			preference and the example apps' own state (e.g. the Todo demo). They are strictly
+			necessary to make those features work; there is no tracking, no analytics, and no
+			third&#8209;party cookies. Clearing your browser storage resets them. Details in our
+			<a href="/privacy" class="text-primary dark:text-primary-dark underline underline-offset-2">Privacy Policy</a>.
 		</p>
-		<div class="flex gap-2 justify-end">
+		<div class="flex justify-end gap-2 px-4 pb-4">
 			<button
-				@click="localStorage.setItem('cookieConsent', 'accepted'); show = false"
+				@click="localStorage.setItem('cookieConsent', 'v1'); show = false"
 				class="px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity"
 			>
 				Got it

@@ -89,6 +89,9 @@ func (s *Server) setupRoutes() {
 	// Docs pages
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
+	s.mux.HandleFunc("/attributions", s.handleAttributions)
+	s.mux.HandleFunc("/license", s.handleLicense)
+	s.mux.HandleFunc("/privacy", s.handlePrivacy)
 
 	// Landing page
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -294,6 +297,18 @@ func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleGettingStarted(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "getting-started")
+}
+
+func (s *Server) handleAttributions(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "attributions")
+}
+
+func (s *Server) handleLicense(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "license")
+}
+
+func (s *Server) handlePrivacy(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "privacy")
 }
 
 func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
