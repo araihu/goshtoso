@@ -14,7 +14,7 @@ import (
 func gotoChat(t *testing.T, page playwright.Page) {
 	t.Helper()
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
+		Content: new("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
 	}))
 	_, err := page.Goto(baseURL + "/examples/chat")
 	require.NoError(t, err)

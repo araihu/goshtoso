@@ -15,7 +15,7 @@ func gotoProfile(t *testing.T, page playwright.Page, query string) {
 	// Suppress the first-run cookie/localStorage notice so its fixed banner can
 	// never intercept clicks on the appearance controls.
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: playwright.String("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
+		Content: playwright.String("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
 	}))
 	_, err := page.Goto(baseURL + "/examples/profile" + query)
 	require.NoError(t, err)
@@ -69,7 +69,7 @@ func TestProfileFragmentNavNoConsoleErrors(t *testing.T) {
 	})
 
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: playwright.String("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
+		Content: playwright.String("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
 	}))
 	// Land on the examples gallery first (seed=0 keeps state out of it).
 	_, err := page.Goto(baseURL + "/examples?seed=0")

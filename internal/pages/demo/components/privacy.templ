@@ -1,0 +1,50 @@
+package components
+
+import "github.com/araihu/goshtoso/internal/pages/demo"
+
+templ PrivacyPage() {
+	@demo.Layout("Privacy Policy", "privacy", privacyContent())
+}
+
+templ privacyContent() {
+	<div class="space-y-10">
+		<div>
+			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Privacy Policy</h1>
+			<p class="mt-2 text-on-surface dark:text-on-surface-dark">
+				Goshtoso is an open-source component library and documentation site. It collects no
+				personal data, runs no analytics, and makes no third-party network requests at runtime —
+				everything ships locally with the site.
+			</p>
+		</div>
+
+		@privacySection("Information we collect", "We do not collect personal information. There is no account, no newsletter, and no server-side tracking of visitors. The site does not run Google Analytics or any other analytics service.")
+
+		@privacySection("Local storage & cookies", "The only data stored is kept locally in your browser and never leaves your device:")
+		<ul class="-mt-6 space-y-2 text-on-surface dark:text-on-surface-dark">
+			<li class="flex gap-2"><span class="text-primary dark:text-primary-dark font-bold">•</span> <span><code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">theme</code> / dark-mode preference — remembers your selected theme.</span></li>
+			<li class="flex gap-2"><span class="text-primary dark:text-primary-dark font-bold">•</span> <span><code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">cookieConsent</code> — remembers that you dismissed the notice.</span></li>
+			<li class="flex gap-2"><span class="text-primary dark:text-primary-dark font-bold">•</span> <span>Example-app state (e.g. the Todo demo's <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">gt_todo</code> cookie) — a self-contained cookie so the demo survives a refresh. Read and written only by your browser and the demo's own handlers; never shared.</span></li>
+		</ul>
+
+		@privacySection("Third-party assets", "Bundled libraries (Alpine.js, htmx, Tailwind CSS) and icon sets (Heroicons, Bootstrap Icons) are served locally from this site, not from a CDN, so no third party sees your requests. Each retains its own license — see the Attributions and License pages.")
+
+		@privacySection("Children's privacy", "This site is a developer documentation tool and is not directed at children under 13. We do not knowingly collect any data from anyone.")
+
+		@privacySection("Your choices", "Because nothing is stored server-side, you are fully in control. Clearing your browser's local storage and cookies for this site removes every value listed above. The site keeps working — you'll just see defaults again.")
+
+		<div class="pb-8">
+			<h2 data-toc-heading="Contact" class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Contact</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">
+				Questions or concerns? Open an issue at
+				<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" class="text-primary dark:text-primary-dark underline underline-offset-2">github.com/araihu/goshtoso</a>.
+			</p>
+		</div>
+	</div>
+}
+
+templ privacySection(title, body string) {
+	<div>
+		<h2 data-toc-heading={ title } class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">{ title }</h2>
+		<p class="text-on-surface dark:text-on-surface-dark">{ body }</p>
+	</div>
+}

@@ -27,7 +27,7 @@ func gotoLogs(t *testing.T, page playwright.Page) {
 	t.Helper()
 	// Dismiss the first-run cookie banner so it can't intercept control clicks.
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: playwright.String("try{localStorage.setItem('cookieConsent','accepted')}catch(e){}"),
+		Content: playwright.String("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
 	}))
 	_, err := page.Goto(baseURL + "/examples/logs?interval=50ms")
 	require.NoError(t, err)
