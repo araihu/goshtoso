@@ -84,6 +84,13 @@ type Config struct {
 	Icon templ.Component
 	// Class allows additional CSS classes
 	Class string
+	// SrcExpr is an Alpine expression evaluated in the parent scope that yields
+	// the image src at runtime (e.g. "avatarSrc"). When set, the image layer is
+	// always rendered and binds x-bind:src to this expression; the initials
+	// layer shows whenever the expression is falsy. Use for client-set sources
+	// (object URLs, late-loaded images) where no static Src exists at render.
+	// SrcExpr is a trusted developer-authored Alpine expression — never interpolate untrusted/user input into it (it is evaluated as JavaScript on the client).
+	SrcExpr string
 	// Reactive defers the size + status-indicator size classes to the parent
 	// Alpine scope. When true, the avatar root and status dot read their size
 	// class from `avatarSizeClass` and `avatarStatusSizeClass` respectively
@@ -246,7 +253,7 @@ func (cfg Config) SpinnerSizeClasses() string {
 
 // HasImage returns true if avatar uses an image
 func (cfg Config) HasImage() bool {
-	return cfg.Src != ""
+	return cfg.Src != "" || cfg.SrcExpr != ""
 }
 
 // HasInitials returns true if avatar uses initials
