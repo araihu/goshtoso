@@ -71,8 +71,8 @@ func avatarShowcaseScript() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templ.Raw(`<script>
-document.addEventListener('alpine:init', () => {
-  Alpine.data('avatarShowcase', () => ({
+(function () {
+  var factory = () => ({
     selected: 'md',
     sizes: ['xs','sm','md','lg','xl','2xl'],
     sizeMap: {
@@ -89,8 +89,20 @@ document.addEventListener('alpine:init', () => {
     },
     get avatarSizeClass()       { return this.sizeMap[this.selected]; },
     get avatarStatusSizeClass() { return this.statusSizeMap[this.selected]; }
-  }));
-});
+  });
+  // Full page load: Alpine isn't running yet, so defer to alpine:init.
+  // htmx fragment nav: Alpine is already running and alpine:init never
+  // re-fires, so register immediately and re-init any x-data="avatarShowcase"
+  // the layout's htmx:afterSwap initTree may have walked before this script ran.
+  if (window.Alpine && window.Alpine.version) {
+    Alpine.data('avatarShowcase', factory);
+    document.querySelectorAll('[x-data="avatarShowcase"]').forEach((el) => {
+      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);
+    });
+  } else {
+    document.addEventListener('alpine:init', () => Alpine.data('avatarShowcase', factory));
+  }
+})();
 </script>`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
