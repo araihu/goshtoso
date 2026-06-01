@@ -1,5 +1,7 @@
 package textarea
 
+import "github.com/a-h/templ"
+
 // State represents textarea validation state
 type State string
 
@@ -33,6 +35,8 @@ type Config struct {
 	HelperText string
 	// Class allows additional CSS classes on the container
 	Class string
+	// Attrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*).
+	Attrs templ.Attributes
 }
 
 // ContainerClasses returns CSS classes for the outer container.

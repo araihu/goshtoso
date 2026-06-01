@@ -31,6 +31,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
 			<script defer src="/assets/js/vendor/alpine.min.js"></script>
 			<script src="/assets/js/vendor/htmx.min.js"></script>
+			<script src="/assets/js/vendor/htmx-ext-ws.js"></script>
 			<script src="/assets/js/vendor/htmx-ext-sse.min.js"></script>
 			<script>
 				// Alpine nav store + htmx integration for fragment-swap sidebar navigation.
@@ -418,6 +419,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("banner", "Banner", "/components/banner", activeComponent),
 				sItem("card", "Card", "/components/card", activeComponent),
 				sItem("carousel", "Carousel", "/components/carousel", activeComponent),
+				sItem("chatbubble", "Chat Bubble", "/components/chatbubble", activeComponent),
 				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
 				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
 				sItem("table", "Table", "/components/table", activeComponent),
@@ -471,6 +473,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			Items: []sidebar.Item{
 				sItem("examples", "Overview", "/examples", activeComponent),
 				sItem("todo", "Todo List", "/examples/todo", activeComponent),
+				sItem("chat", "Chat", "/examples/chat", activeComponent),
 				sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
 				sItem("profile", "Profile", "/examples/profile", activeComponent),
 			},
@@ -492,6 +495,7 @@ var orderedComponents = []componentNavLink{
 	{"Banner", "/components/banner"},
 	{"Card", "/components/card"},
 	{"Carousel", "/components/carousel"},
+	{"Chat Bubble", "/components/chatbubble"},
 	{"Code Block", "/components/codeblock"},
 	{"Spinner", "/components/spinner"},
 	{"Table", "/components/table"},

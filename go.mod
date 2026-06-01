@@ -5,6 +5,7 @@ go 1.26.1
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/alecthomas/chroma/v2 v2.24.1
+	github.com/coder/websocket v1.8.14
 	github.com/playwright-community/playwright-go v0.5700.1
 	github.com/stretchr/testify v1.11.1
 )

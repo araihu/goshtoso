@@ -43,6 +43,7 @@ templ Textarea(cfg Config) {
 			if cfg.ReadOnly {
 				readonly
 			}
+			{ cfg.Attrs... }
 		>{ cfg.Value }</textarea>
 		if cfg.HelperText != "" {
 			<small class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
@@ -71,6 +72,7 @@ templ TextareaWithActions(cfg Config) {
 				if cfg.ReadOnly {
 					readonly
 				}
+				{ cfg.Attrs... }
 			>{ cfg.Value }</textarea>
 		</div>
 		<!-- Footer Container -->

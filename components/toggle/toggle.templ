@@ -30,11 +30,18 @@ templ Toggle(cfg Config) {
 			type="checkbox"
 			class="peer sr-only"
 			role="switch"
+			if cfg.Name != "" && cfg.Value != "" {
+				name={ cfg.Name }
+				value={ cfg.Value }
+			}
+			if cfg.Name != "" && cfg.Value == "" {
+				name={ cfg.Name }
+			}
 			checked?={ cfg.Checked }
 			disabled?={ cfg.Disabled }
 			{ cfg.Attrs... }
 		/>
-		if cfg.Name != "" {
+		if cfg.Name != "" && cfg.Value == "" {
 			<input type="hidden" name={ cfg.Name } value="off"/>
 		}
 		<span class="trancking-wide text-sm font-medium text-on-surface peer-checked:text-on-surface-strong peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-on-surface-dark dark:peer-checked:text-on-surface-dark-strong">

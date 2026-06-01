@@ -1421,8 +1421,9 @@ templ colorRow(t colorToken) {
 			ValueExpr:      "classLabel('" + t.Key + "')",
 		}) {
 			@palettecomp.Palette(palettecomp.Config{
-				ID:      "palette-" + t.Key,
-				ShowHex: true,
+				ID:       "palette-" + t.Key,
+				ShowHex:  true,
+				LazyWhen: "isOpen || openedWithKeyboard",
 			})
 		}
 	</div>

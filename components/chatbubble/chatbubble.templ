@@ -1,0 +1,110 @@
+package chatbubble
+
+import (
+	"github.com/araihu/goshtoso/components/avatar"
+	"github.com/araihu/goshtoso/components/badge"
+)
+
+// ChatBubble renders a single chat message.
+//
+// A single render path is keyed off the row's data-mine attribute:
+//   - Received -> data-mine="false" (neutral bubble, left-aligned)
+//   - Sent     -> data-mine="true"  (primary bubble, right-aligned)
+//   - Auto     -> data-mine="false" + data-sender; a client may flip data-mine
+//     to "true" once it knows the message is the viewer's own. The bubble color,
+//     corner tails, avatar side, and alignment all flip via Tailwind
+//     group-data-[mine=true]: variants — no second render path.
+//
+// Usage:
+//
+//	@chatbubble.ChatBubble(chatbubble.Config{
+//	    Side:           chatbubble.Received,
+//	    Message:        "Hey, are we still on for 3pm?",
+//	    SenderName:     "Ada",
+//	    Timestamp:      "11:32 AM",
+//	    ShowAvatar:     true,
+//	    AvatarInitials: "AL",
+//	    AvatarVariant:  "info",
+//	})
+templ ChatBubble(cfg Config) {
+	<div
+		class={ cfg.RowClasses() }
+		data-mine={ cfg.DataMine() }
+		if cfg.Side == Auto && cfg.Sender != "" {
+			data-sender={ cfg.Sender }
+		}
+		{ cfg.Attrs... }
+	>
+		if cfg.HasAvatar() {
+			@bubbleAvatar(cfg)
+		}
+		<div class="flex flex-col gap-1 group-data-[mine=true]:items-end">
+			if cfg.HasHeader() {
+				@bubbleHeader(cfg)
+			}
+			<div class={ cfg.BubbleClasses() }>
+				{ cfg.Message }
+			</div>
+			if cfg.Status != "" {
+				<span class="px-1 text-xs text-on-surface/60 dark:text-on-surface-dark/60">
+					{ string(cfg.Status) }
+				</span>
+			}
+		</div>
+	</div>
+}
+
+// TypingIndicator renders a received-style row with three animated dots and no
+// message text. Useful while a sender composes a reply.
+//
+// Usage:
+//
+//	@chatbubble.TypingIndicator(chatbubble.Config{
+//	    ShowAvatar:     true,
+//	    AvatarInitials: "AL",
+//	    AvatarVariant:  "info",
+//	})
+templ TypingIndicator(cfg Config) {
+	<div class={ cfg.RowClasses() } data-mine="false" aria-label="typing" aria-live="polite">
+		if cfg.HasAvatar() {
+			@bubbleAvatar(cfg)
+		}
+		<div
+			class="flex items-center gap-1 rounded-2xl rounded-es-sm bg-surface-alt px-4 py-3 dark:bg-surface-dark-alt"
+		>
+			<span class="size-2 animate-bounce rounded-full bg-on-surface/40 dark:bg-on-surface-dark/40"></span>
+			<span class="size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:150ms] dark:bg-on-surface-dark/40"></span>
+			<span class="size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:300ms] dark:bg-on-surface-dark/40"></span>
+		</div>
+	</div>
+}
+
+// bubbleAvatar renders the avatar column. flex-row-reverse on the mine row
+// moves it to the correct side automatically.
+templ bubbleAvatar(cfg Config) {
+	<div class="shrink-0">
+		@avatar.Avatar(avatar.Config{
+			Src:      cfg.AvatarSrc,
+			Initials: cfg.AvatarInitials,
+			Variant:  avatar.Variant(cfg.AvatarVariant),
+			Size:     avatar.SizeSM,
+		})
+	</div>
+}
+
+// bubbleHeader renders the sender name, optional BOT badge, and timestamp.
+templ bubbleHeader(cfg Config) {
+	<div class="flex items-center gap-2 px-1">
+		<span class="text-sm font-semibold text-on-surface dark:text-on-surface-dark">
+			{ cfg.SenderName }
+		</span>
+		if cfg.IsBot {
+			@badge.Badge(badge.Config{Text: "BOT", Variant: badge.Info, Size: badge.SizeSM})
+		}
+		if cfg.Timestamp != "" {
+			<span class="text-xs text-on-surface/60 dark:text-on-surface-dark/60">
+				{ cfg.Timestamp }
+			</span>
+		}
+	</div>
+}
