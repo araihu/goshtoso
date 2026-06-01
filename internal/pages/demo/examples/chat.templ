@@ -146,6 +146,10 @@ const chatMineScript = "" +
 	"    }" +
 	"  });" +
 	"  obs.observe(document.body, { childList: true, subtree: true });" +
+	"  document.body.addEventListener('htmx:wsAfterSend', function(){" +
+	"    var t = document.getElementById('chat-message');" +
+	"    if (t) { t.value = ''; t.focus(); }" +
+	"  });" +
 	"})();"
 
 	// chatMineDetector emits the own-message detection script verbatim.

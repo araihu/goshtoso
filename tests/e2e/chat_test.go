@@ -273,3 +273,17 @@ func TestChat_SidebarPresent(t *testing.T) {
 	require.NoError(t, page.Locator("text=Examples").First().WaitFor())
 	require.NoError(t, page.Locator("a[href='/examples/chat']").First().WaitFor())
 }
+
+// TestChat_ComposerClearsOnSend verifies the composer textarea empties after a
+// message is sent (htmx ws-send does not reset the form; a wsAfterSend listener does).
+func TestChat_ComposerClearsOnSend(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoChat(t, page)
+	sendChat(t, page, "clears-after-send")
+	_, err := page.WaitForFunction(logHas("clears-after-send"), nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => document.getElementById('chat-message').value === ''", nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
+	require.NoError(t, err, "textarea should clear after send")
+}
