@@ -27,6 +27,22 @@ func gotoProfile(t *testing.T, page playwright.Page, query string) {
 	}))
 }
 
+// activateAppearanceTab clicks the "Appearance" tab button (the theme/dark
+// controls live in that tab, which is NOT the default and is x-show-hidden on
+// load) and waits for the theme Select trigger to become visible. The tabs
+// component renders tab buttons as role="tab"; selecting by accessible text is
+// stable across tab markup changes.
+func activateAppearanceTab(t *testing.T, page playwright.Page) {
+	t.Helper()
+	require.NoError(t, page.Locator("button[role='tab']", playwright.PageLocatorOptions{
+		HasText: "Appearance",
+	}).Click())
+	require.NoError(t, page.Locator("#profile-theme-trigger").WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+}
+
 // onePxPNG is a valid 1x1 PNG used as a small uploadable image.
 var onePxPNG = []byte{
 	0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
@@ -107,6 +123,7 @@ func TestProfileIdentityPersists(t *testing.T) {
 func TestProfileDarkToggle(t *testing.T) {
 	page := newIsolatedPage(t)
 	gotoProfile(t, page, "?seed=0")
+	activateAppearanceTab(t, page)
 
 	before, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
 	require.NoError(t, err)
@@ -130,6 +147,7 @@ func TestProfileDarkToggle(t *testing.T) {
 func TestProfileThemePicker(t *testing.T) {
 	page := newIsolatedPage(t)
 	gotoProfile(t, page, "?seed=0")
+	activateAppearanceTab(t, page)
 
 	// Open the Select dropdown.
 	require.NoError(t, page.Locator("#profile-theme-trigger").Click())
@@ -197,4 +215,50 @@ func TestProfileOversizeRejected(t *testing.T) {
 		"() => { const img = document.querySelector('#profile-avatar img'); return !!(img && img.src.startsWith('blob:')); }", nil)
 	require.NoError(t, err)
 	require.Equal(t, false, isBlob, "oversize image must be rejected client-side (no blob: preview)")
+}
+
+// TestProfileRemoveModal uploads an avatar (so the Remove modal trigger becomes
+// visible), opens the confirm modal, clicks Remove, and asserts the avatar img
+// no longer has a blob: src. Proves the Modal PrimaryAction.OnClick
+// ("remove('avatar'); remove('banner')") resolves against the ancestor
+// profileImages x-data and clears the image.
+func TestProfileRemoveModal(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoProfile(t, page, "?seed=0")
+
+	// Upload a small PNG so an image exists → the Remove modal trigger shows.
+	require.NoError(t, page.Locator("#profile-avatar-input").SetInputFiles(playwright.InputFile{
+		Name:     "avatar.png",
+		MimeType: "image/png",
+		Buffer:   onePxPNG,
+	}))
+	_, err := page.WaitForFunction(
+		"() => { const img = document.querySelector('#profile-avatar img'); return img && img.src.startsWith('blob:'); }",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "avatar img should get a blob: src after upload")
+
+	// Open the confirm modal via its trigger button.
+	trigger := page.Locator("#profile-photos button", playwright.PageLocatorOptions{HasText: "Remove photos"})
+	require.NoError(t, trigger.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+	require.NoError(t, trigger.Click())
+
+	// The modal dialog (role="dialog", aria-labelledby="profile-remove-modalTitle").
+	dialog := page.Locator("div[role='dialog'][aria-labelledby='profileRemoveModalTitle']")
+	require.NoError(t, dialog.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+
+	// Click the modal's primary "Remove" button.
+	confirm := dialog.Locator("button", playwright.LocatorLocatorOptions{HasText: "Remove"})
+	require.NoError(t, confirm.Click())
+
+	// The avatar img should no longer have a blob: src (removed).
+	_, err = page.WaitForFunction(
+		"() => { const img = document.querySelector('#profile-avatar img'); return !img || !img.src.startsWith('blob:'); }",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "avatar img blob: src should be cleared after confirming remove in modal")
 }
