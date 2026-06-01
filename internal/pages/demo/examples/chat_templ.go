@@ -21,14 +21,16 @@ import (
 	"github.com/araihu/goshtoso/internal/examples/chat"
 )
 
-// Message is a single rendered chat line. It is the unit both the ws push path
-// (MessageFrame) and any future first-paint history share.
+// Message is a single rendered chat line. The handler renders it per recipient,
+// setting Mine=true only for the connection that sent it, so own messages are
+// right-aligned server-side — no client JS decides alignment.
 type Message struct {
 	Nick  string
 	Color string
 	Text  string
 	Time  string // "15:04"
 	IsBot bool
+	Mine  bool // true when rendered for the sender's own connection
 }
 
 // OnlineBadge is the live "N online" indicator. Pass oob=true when pushing it as
@@ -86,11 +88,10 @@ func OnlineBadge(count int, oob bool) templ.Component {
 	})
 }
 
-// MessageBubble renders one chat line via the chatbubble component with
-// Side=Auto: every broadcast bubble carries data-sender so the viewer's own
-// client can flip data-mine="true" (right-aligned, primary) on its own
-// messages. The bot uses the "info" avatar variant and a fixed "ELIZA" sender;
-// humans use their color as the avatar variant and their nick as the sender.
+// MessageBubble renders one chat line via the chatbubble component. The side is
+// decided server-side per recipient: Sent (right, primary, no name) when the
+// message is the viewer's own, otherwise Received (left, neutral, named). The
+// bot always renders Received with the "info" avatar variant.
 func MessageBubble(m Message) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -113,14 +114,15 @@ func MessageBubble(m Message) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		variant := m.Color
-		sender := m.Nick
+		side := chatbubble.Received
+		if m.Mine {
+			side = chatbubble.Sent
+		}
 		if m.IsBot {
 			variant = "info"
-			sender = "ELIZA"
 		}
 		templ_7745c5c3_Err = chatbubble.ChatBubble(chatbubble.Config{
-			Side:          chatbubble.Auto,
-			Sender:        sender,
+			Side:          side,
 			SenderName:    m.Nick,
 			Message:       m.Text,
 			Timestamp:     m.Time,
@@ -219,7 +221,7 @@ func PresenceFrame(text string, count int) templ.Component {
 }
 
 // SystemMessage is a centered, muted notice rendered inline in the chat log
-// (e.g. "Guest-xyz joined"). No data-sender, so the own-message detector skips it.
+// (e.g. "Guest-xyz joined"). It carries no data-mine, so it is never aligned.
 func SystemMessage(text string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -248,7 +250,7 @@ func SystemMessage(text string) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 93, Col: 147}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 95, Col: 147}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -262,89 +264,34 @@ func SystemMessage(text string) templ.Component {
 	})
 }
 
-// chatMineScript is the vanilla-JS own-message detector. Each broadcast bubble
-// is rendered Side=Auto (data-mine="false" + data-sender). This script flips
-// data-mine="true" on any #chat-log row whose data-sender equals the viewer's
-// current nick (read live from #chat-hidden-nick.value, so renames track), which
-// drives the Tailwind group-data-[mine=true]: variants to right-align + recolor.
+// chatScript is the only client JS the chat needs: two small htmx event
+// listeners. Own-message alignment is decided SERVER-SIDE (the handler renders
+// each Event per connection, setting data-mine), so there is no mine-detection
+// and no MutationObserver here.
+//   - htmx:wsAfterSend — ws-send does not reset the form, so clear + refocus the
+//     composer textarea after a message is sent.
+//   - htmx:oobAfterSwap — when a bubble/system line is appended to #chat-log,
+//     pin the log to the bottom so it follows the conversation.
 //
-// NICK-COLLISION LIMITATION: "mine" is decided by comparing a broadcast bubble's
-// data-sender (a display nick) to the viewer's nick. Two users who pick the same
-// nick will each see the other's messages as "mine". This is acceptable for a
-// broadcast demo (collisions are self-inflicted via the rename field); a
-// production app would key on a stable per-session ID instead of the display nick.
-//
-// LEAK-FREE / FRAGMENT-NAV SAFE: a SINGLE page-lifetime MutationObserver is
-// installed exactly once on document.body (which always exists), guarded by the
-// window.__gtChatMineInit flag. Because this <script> lives inside the chat
-// fragment, htmx re-executes it on every swap-in; the guard makes the 2nd+ run a
-// no-op, so fragment-nav never stacks observers and nothing ever needs
-// disconnecting. #chat-log is replaced on each nav, but the body-level observer
-// keeps marking new bubbles regardless. If the first page the user lands on is
-// not the chat page, the script simply runs (and installs the observer) when the
-// chat fragment first arrives. The observer is wired immediately — Alpine/htmx
-// are already running on a fragment swap, so we must not defer to a one-shot init
-// event. Built with plain string concatenation (no backticks, no quotes templ
-// would mangle) and emitted via templ.Raw so templ does not escape the JS.
-const chatMineScript = "" +
+// Guarded by window.__gtChatInit (the <script> re-runs on every fragment
+// swap-in), and built with plain string concatenation + templ.Raw so templ does
+// not escape the JS.
+const chatScript = "" +
 	"(function(){" +
-	"  if (window.__gtChatMineInit) return;" +
-	"  window.__gtChatMineInit = true;" +
-	"  function myNick(){" +
-	"    var h = document.getElementById('chat-hidden-nick');" +
-	"    return h ? h.value : '';" +
-	"  }" +
-	"  function mark(row){" +
-	"    if (!row || row.nodeType !== 1 || !row.hasAttribute('data-sender')) return;" +
-	"    var mine = row.getAttribute('data-sender') === myNick();" +
-	"    row.setAttribute('data-mine', mine ? 'true' : 'false');" +
-	"  }" +
-	"  function inLog(node){" +
-	"    var log = document.getElementById('chat-log');" +
-	"    return !!log && log.contains(node);" +
-	"  }" +
-	"  function process(node){" +
-	"    if (!node || node.nodeType !== 1 || !inLog(node)) return;" +
-	"    mark(node);" +
-	"    var kids = node.querySelectorAll ? node.querySelectorAll('[data-sender]') : [];" +
-	"    for (var i = 0; i < kids.length; i++) mark(kids[i]);" +
-	"  }" +
-	"  function processExisting(){" +
-	"    var log = document.getElementById('chat-log');" +
-	"    if (!log) return;" +
-	"    var rows = log.querySelectorAll('[data-sender]');" +
-	"    for (var i = 0; i < rows.length; i++) mark(rows[i]);" +
-	"  }" +
-	"  function scrollLog(){" +
-	"    var log = document.getElementById('chat-log');" +
-	"    if (log) log.scrollTop = log.scrollHeight;" +
-	"  }" +
-	"  processExisting(); scrollLog();" +
-	"  var obs = new MutationObserver(function(muts){" +
-	"    var touched = false;" +
-	"    for (var i = 0; i < muts.length; i++) {" +
-	"      var added = muts[i].addedNodes;" +
-	"      for (var j = 0; j < added.length; j++) {" +
-	"        process(added[j]);" +
-	"        if (inLog(added[j])) touched = true;" +
-	"      }" +
-	"    }" +
-	"    if (touched) scrollLog();" +
-	"  });" +
-	"  obs.observe(document.body, { childList: true, subtree: true });" +
+	"  if (window.__gtChatInit) return;" +
+	"  window.__gtChatInit = true;" +
 	"  document.body.addEventListener('htmx:wsAfterSend', function(){" +
 	"    var t = document.getElementById('chat-message');" +
 	"    if (t) { t.value = ''; t.focus(); }" +
 	"  });" +
+	"  document.body.addEventListener('htmx:oobAfterSwap', function(e){" +
+	"    var log = document.getElementById('chat-log');" +
+	"    if (log && e.detail && e.detail.target === log) { log.scrollTop = log.scrollHeight; }" +
+	"  });" +
 	"})();"
 
-	// chatMineDetector emits the own-message detection script verbatim.
-	//
-	// See chatMineScript above for the nick-collision limitation: own-message
-	// detection compares display nicks, so two users sharing a nick see each other's
-	// messages as "mine". A production app would key on a stable per-session ID.
-
-func chatMineDetector() templ.Component {
+// chatScripts emits the small composer-clear + scroll-to-bottom listeners.
+func chatScripts() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -365,7 +312,7 @@ func chatMineDetector() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.Raw("<script>"+chatMineScript+"</script>").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw("<script>"+chatScript+"</script>").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -412,7 +359,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 192, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 139, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -540,7 +487,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = chatMineDetector().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = chatScripts().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -582,7 +529,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue("chat-hidden-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 268, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 215, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -595,7 +542,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 268, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 215, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -608,7 +555,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 268, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 215, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -652,7 +599,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 274, Col: 142}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 221, Col: 142}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -665,7 +612,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 275, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 222, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 		if templ_7745c5c3_Err != nil {
@@ -678,7 +625,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(me.Color)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 276, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/chat.templ`, Line: 223, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 		if templ_7745c5c3_Err != nil {
