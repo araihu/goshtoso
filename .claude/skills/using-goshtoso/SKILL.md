@@ -88,32 +88,70 @@ fields directly, read `components/<dir>/types.go`; every field is doc-commented.
 
 ## Page setup — load dependencies once
 
-Put the asset tags in your `<head>` via the `head` package:
+Two things are required, and **both are needed or the page renders unstyled**:
+
+1. **Emit the asset tags** in your `<head>` via the `head` package.
+2. **Serve the embedded assets** by mounting `assets.Handler()` at `/assets/`.
+   `head.Dependencies()` links `/assets/styles.css` and `/assets/js/*`; without
+   the mount those 404 and the page has no CSS (and Alpine/HTMX never load).
 
 ```go
+// page.templ
 import "github.com/araihu/goshtoso/components/head"
 
 templ Layout() {
     <html>
         <head>
-            @head.Dependencies()        // Alpine + collapse/focus plugins + HTMX + Tailwind
-            // or @head.DependenciesMinimal() — Alpine core + HTMX + Tailwind only
+            @head.Dependencies()        // CSS + Alpine + collapse/focus plugins + HTMX + combobox nav
+            // or @head.DependenciesMinimal() — CSS + Alpine core + HTMX + combobox nav (no collapse/focus plugins)
         </head>
         ...
     </html>
 }
 ```
 
-`Dependencies()` uses CDN tags. The Goshtoso repo itself bundles Alpine/HTMX
-locally under `assets/js/vendor/` and ships a prebuilt `assets/styles.css`; in
-your own app, serve those or use the CDN tags above.
+```go
+// main.go — mount the embedded assets the tags point at
+import "github.com/araihu/goshtoso/assets"
+
+func main() {
+    http.Handle("/assets/", assets.Handler()) // self-strips /assets/ — do NOT wrap in StripPrefix
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        Layout().Render(r.Context(), w)
+    })
+    http.ListenAndServe(":8080", nil)
+}
+```
+
+Assets are bundled with the module (compiled `styles.css`, vendored Alpine/HTMX
+under `js/vendor/`) and served from the Go `embed.FS` — **no runtime CDN**, so
+page loads are deterministic. Note: stock CDN Tailwind will *not* style
+components — the theme tokens (`bg-primary`, `text-on-surface`, …) live only in
+the compiled `styles.css`, which is why you must serve it.
+
+> **Gotcha — `assets.Handler()` already strips `/assets/`.** Mount it as
+> `http.Handle("/assets/", assets.Handler())`. Wrapping it in your own
+> `http.StripPrefix("/assets/", …)` double-strips the prefix → every asset 404s
+> with no error.
 
 ## Build steps (after editing .templ or CSS)
 
+Goshtoso ships its own components **pre-generated** — you never run `templ
+generate` against the library. You only generate *your own* `.templ` pages, which
+needs the templ toolchain in your module:
+
 ```bash
-templ generate                                    # .templ → _templ.go (REQUIRED)
-tailwindcss -i css/main.css -o assets/styles.css  # only if you added utility classes
+go get github.com/a-h/templ                       # templ runtime (your generated code imports it)
+go install github.com/a-h/templ/cmd/templ@latest  # the templ CLI, if not already installed
+
+templ generate                                    # YOUR .templ → _templ.go (REQUIRED)
 ```
+
+You normally do **not** need Tailwind: components are styled by the bundled
+`styles.css` you serve via `assets.Handler()`. Only run Tailwind if you add your
+*own* utility classes, building against Goshtoso's source so the theme tokens
+resolve (`tailwindcss -i your.css -o your-out.css`; pull the compiled base with
+`assets.StylesCSS()` or `@import` it).
 
 Never edit `*_templ.go` or `assets/styles.css` by hand — both are generated.
 
@@ -167,3 +205,13 @@ Themes are `[data-theme="name"]` selectors in `all-themes.css` (13 themes);
 default is **Minimal** (black/white, no border radius). Dark mode toggles the
 `.dark` class on `<html>`. Always pair light + dark utilities on custom classes:
 `bg-surface dark:bg-surface-dark text-on-surface dark:text-on-surface-dark`.
+
+### Running your own Tailwind
+
+Two paths (full detail in `docs/USAGE.md` → "Using your own Tailwind build"):
+
+- **Path A (recommended):** serve our prebuilt `styles.css` via `assets.Handler()`
+  and run your own Tailwind into a *separate* file. No coupling.
+- **Path B (unified):** `goshtoso -theme -out=…` extracts the theme source to
+  `@import`, and `goshtoso -source-path` prints the components dir to `@source`.
+  Your Tailwind must match `goshtoso -version` (also in `VERSIONS.md`).

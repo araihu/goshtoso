@@ -31,8 +31,9 @@ deterministic in E2E.
 templ generate
 # or: just gp-generate
 
-# Build Tailwind CSS (REQUIRED after editing CSS)
-tailwindcss -i css/main.css -o assets/styles.css
+# Build Tailwind CSS with the pinned version (REQUIRED after editing CSS)
+# Reads assets/tailwind.version; regenerates the theme source; no global tailwind needed.
+just css
 
 # Run dev server (default port 8090)
 go run cmd/server/main.go

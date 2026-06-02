@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  TEMPL_VERSION: 'v0.3.1020'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.1'
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
+
+      - name: Install Tailwind CSS (pinned)
+        run: |
+          ver="$(cat assets/tailwind.version)"
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
+          chmod +x /tmp/tailwindcss
+          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
+
+      - name: Build assets (pinned, reproducible)
+        run: |
+          templ generate
+          go run ./scripts/themegen
+          tailwindcss -i css/main.css -o assets/styles.css
+
+      - name: Verify committed assets match a pinned rebuild
+        run: |
+          git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null \
+            || { echo "::error::release assets are not committed at this tag — run 'just css' and commit them"; exit 1; }
+          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css '*_templ.go' \
+            || { echo "::error::tag has stale assets/generated code — run 'templ generate' + 'just css' and re-tag"; exit 1; }
+
+      - name: Release notes
+        run: |
+          ver="$(cat assets/tailwind.version)"
+          {
+            echo "Built with Tailwind CSS ${ver}."
+            echo
+            echo "Assets attached: \`styles.css\` (serve directly) and \`goshtoso-theme.css\` (import into your own Tailwind v4 build)."
+          } > release-notes.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release-notes.md
+          files: |
+            assets/styles.css
+            assets/goshtoso-theme.css

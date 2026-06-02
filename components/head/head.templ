@@ -1,41 +1,47 @@
 package head
 
-// CDN script/link versions — update these when new versions are released
-const (
-	AlpineVersion  = "3.15.8"
-	HTMXVersion    = "2.0.8"
-	TailwindVersion = "4.2.2"
-)
-
-// Dependencies renders the required CDN script and stylesheet tags for Goshtoso components.
-// Include this in your <head> element.
+// Dependencies renders the local <script>/<link> tags for every Goshtoso runtime
+// asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
+// text-on-primary, etc.), Alpine core + collapse/focus plugins, HTMX, and the
+// combobox keyboard-nav script.
 //
-// Usage:
+// Everything loads from /assets/*, which you MUST serve by mounting the embedded
+// asset handler — the tags 404 (unstyled page) without it:
+//
+//	import "github.com/araihu/goshtoso/assets"
+//
+//	http.Handle("/assets/", assets.Handler()) // Handler already strips /assets/
+//
+// Then in your page:
 //
 //	<head>
 //	    @head.Dependencies()
 //	</head>
+//
+// Assets are bundled with the module (no runtime CDN), so page loads are
+// deterministic. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
+// tokens, which only exist in the compiled styles.css.
 templ Dependencies() {
+	<link rel="stylesheet" href="/assets/styles.css"/>
 	<!-- Alpine.js Collapse Plugin (must load before Alpine core) -->
-	<script defer src={ "https://cdn.jsdelivr.net/npm/@alpinejs/collapse@" + AlpineVersion + "/dist/cdn.min.js" }></script>
+	<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
 	<!-- Alpine.js Focus Plugin -->
-	<script defer src={ "https://cdn.jsdelivr.net/npm/@alpinejs/focus@" + AlpineVersion + "/dist/cdn.min.js" }></script>
+	<script defer src="/assets/js/vendor/alpine-focus.min.js"></script>
 	<!-- Alpine.js Core -->
-	<script defer src={ "https://cdn.jsdelivr.net/npm/alpinejs@" + AlpineVersion + "/dist/cdn.min.js" }></script>
+	<script defer src="/assets/js/vendor/alpine.min.js"></script>
 	<!-- HTMX -->
-	<script src={ "https://unpkg.com/htmx.org@" + HTMXVersion + "/dist/htmx.min.js" }></script>
+	<script src="/assets/js/vendor/htmx.min.js"></script>
 	<!-- Combobox keyboard nav -->
 	<script defer src="/assets/js/combobox.js"></script>
-	<!-- Tailwind CSS v4 -->
-	<link href={ "https://cdn.jsdelivr.net/npm/tailwindcss@" + TailwindVersion + "/dist/tailwind.min.css" } rel="stylesheet"/>
 }
 
-// DependenciesMinimal renders just Alpine.js core + HTMX + Tailwind (no plugins).
-// Use this if your page doesn't need collapse or focus plugins.
+// DependenciesMinimal renders just the CSS, Alpine core, HTMX, and combobox nav
+// (no collapse/focus plugins). Use it when your page needs neither the accordion
+// nor a focus trap. Same /assets/ mount requirement as Dependencies.
 templ DependenciesMinimal() {
-	<script defer src={ "https://cdn.jsdelivr.net/npm/alpinejs@" + AlpineVersion + "/dist/cdn.min.js" }></script>
-	<script src={ "https://unpkg.com/htmx.org@" + HTMXVersion + "/dist/htmx.min.js" }></script>
+	<link rel="stylesheet" href="/assets/styles.css"/>
+	<script defer src="/assets/js/vendor/alpine.min.js"></script>
+	<script src="/assets/js/vendor/htmx.min.js"></script>
 	<!-- Combobox keyboard nav -->
 	<script defer src="/assets/js/combobox.js"></script>
-	<link href={ "https://cdn.jsdelivr.net/npm/tailwindcss@" + TailwindVersion + "/dist/tailwind.min.css" } rel="stylesheet"/>
 }
