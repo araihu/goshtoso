@@ -406,7 +406,7 @@ Query params: `order_by`, `order_dir`, `page`, `per_page`, `search`,
 
 - Themes defined in `all-themes.css` using `[data-theme="name"]` selectors (13 themes)
 - Dark mode uses `.dark` class on `<html>` via Alpine.js store
-- Default theme: **Minimal** (black/white, no border radius)
+- Default theme: **Goshtoso** (brand theme — Yale Blue primary, mascot-derived palette)
 
 ## Example Apps (`/examples/*`)
 
