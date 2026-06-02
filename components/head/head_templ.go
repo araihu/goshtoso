@@ -8,21 +8,27 @@ package head
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// CDN script/link versions — update these when new versions are released
-const (
-	AlpineVersion   = "3.15.8"
-	HTMXVersion     = "2.0.8"
-	TailwindVersion = "4.2.2"
-)
-
-// Dependencies renders the required CDN script and stylesheet tags for Goshtoso components.
-// Include this in your <head> element.
+// Dependencies renders the local <script>/<link> tags for every Goshtoso runtime
+// asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
+// text-on-primary, etc.), Alpine core + collapse/focus plugins, HTMX, and the
+// combobox keyboard-nav script.
 //
-// Usage:
+// Everything loads from /assets/*, which you MUST serve by mounting the embedded
+// asset handler — the tags 404 (unstyled page) without it:
+//
+//	import "github.com/araihu/goshtoso/assets"
+//
+//	http.Handle("/assets/", assets.Handler()) // Handler already strips /assets/
+//
+// Then in your page:
 //
 //	<head>
 //	    @head.Dependencies()
 //	</head>
+//
+// Assets are bundled with the module (no runtime CDN), so page loads are
+// deterministic. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
+// tokens, which only exist in the compiled styles.css.
 func Dependencies() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -44,72 +50,7 @@ func Dependencies() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Alpine.js Collapse Plugin (must load before Alpine core) --><script defer src=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue("https://cdn.jsdelivr.net/npm/@alpinejs/collapse@" + AlpineVersion + "/dist/cdn.min.js")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 20, Col: 108}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"></script><!-- Alpine.js Focus Plugin --><script defer src=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue("https://cdn.jsdelivr.net/npm/@alpinejs/focus@" + AlpineVersion + "/dist/cdn.min.js")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 22, Col: 105}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"></script><!-- Alpine.js Core --><script defer src=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue("https://cdn.jsdelivr.net/npm/alpinejs@" + AlpineVersion + "/dist/cdn.min.js")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 24, Col: 98}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script><!-- HTMX --><script src=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue("https://unpkg.com/htmx.org@" + HTMXVersion + "/dist/htmx.min.js")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 26, Col: 80}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></script><!-- Combobox keyboard nav --><script defer src=\"/assets/js/combobox.js\"></script><!-- Tailwind CSS v4 --><link href=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 templ.SafeURL
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs("https://cdn.jsdelivr.net/npm/tailwindcss@" + TailwindVersion + "/dist/tailwind.min.css")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 30, Col: 102}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" rel=\"stylesheet\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<link rel=\"stylesheet\" href=\"/assets/styles.css\"><!-- Alpine.js Collapse Plugin (must load before Alpine core) --><script defer src=\"/assets/js/vendor/alpine-collapse.min.js\"></script><!-- Alpine.js Focus Plugin --><script defer src=\"/assets/js/vendor/alpine-focus.min.js\"></script><!-- Alpine.js Core --><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><!-- HTMX --><script src=\"/assets/js/vendor/htmx.min.js\"></script><!-- Combobox keyboard nav --><script defer src=\"/assets/js/combobox.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -117,8 +58,9 @@ func Dependencies() templ.Component {
 	})
 }
 
-// DependenciesMinimal renders just Alpine.js core + HTMX + Tailwind (no plugins).
-// Use this if your page doesn't need collapse or focus plugins.
+// DependenciesMinimal renders just the CSS, Alpine core, HTMX, and combobox nav
+// (no collapse/focus plugins). Use it when your page needs neither the accordion
+// nor a focus trap. Same /assets/ mount requirement as Dependencies.
 func DependenciesMinimal() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -135,51 +77,12 @@ func DependenciesMinimal() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script defer src=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue("https://cdn.jsdelivr.net/npm/alpinejs@" + AlpineVersion + "/dist/cdn.min.js")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 36, Col: 98}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></script><script src=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue("https://unpkg.com/htmx.org@" + HTMXVersion + "/dist/htmx.min.js")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 37, Col: 80}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></script><!-- Combobox keyboard nav --><script defer src=\"/assets/js/combobox.js\"></script><link href=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var10 templ.SafeURL
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs("https://cdn.jsdelivr.net/npm/tailwindcss@" + TailwindVersion + "/dist/tailwind.min.css")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 40, Col: 102}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" rel=\"stylesheet\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<link rel=\"stylesheet\" href=\"/assets/styles.css\"><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><!-- Combobox keyboard nav --><script defer src=\"/assets/js/combobox.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

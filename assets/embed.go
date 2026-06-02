@@ -26,8 +26,14 @@ import (
 //go:embed styles.css js fonts images
 var files embed.FS
 
-// Handler returns an http.Handler that serves the embedded Goshtoso assets.
-// Mount it at /assets/ in your router.
+// Handler returns an http.Handler that serves the embedded Goshtoso assets
+// (styles.css, js/, fonts/, images/) — the files head.Dependencies() links.
+//
+// Mount it at /assets/ WITHOUT wrapping it in your own StripPrefix — the
+// handler already strips the /assets/ prefix internally:
+//
+//	http.Handle("/assets/", assets.Handler())             // correct
+//	http.Handle("/assets/", http.StripPrefix("/assets/", assets.Handler())) // WRONG: double-strip → 404
 func Handler() http.Handler {
 	return http.StripPrefix("/assets/", http.FileServer(http.FS(files)))
 }

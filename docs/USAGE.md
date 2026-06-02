@@ -10,7 +10,50 @@ This guide explains how to use Goshtoso (Go + Alpine.js + Tailwind CSS + HTMX + 
 go get github.com/araihu/goshtoso@latest
 ```
 
-### 2. Extract Goshtoso CSS
+Goshtoso's own components ship **pre-generated** — you never run `templ generate`
+against the library. But your *own* `.templ` pages do need the templ toolchain:
+
+```bash
+go get github.com/a-h/templ                       # runtime (your generated code imports it)
+go install github.com/a-h/templ/cmd/templ@latest  # the CLI, if not already installed
+templ generate                                    # YOUR .templ → _templ.go
+```
+
+### 2. Serve the bundled assets (recommended)
+
+The fastest, deterministic path: serve Goshtoso's embedded assets and let
+`head.Dependencies()` link them. No CDN, no Tailwind build, no extraction.
+
+```go
+// main.go
+import "github.com/araihu/goshtoso/assets"
+
+http.Handle("/assets/", assets.Handler()) // serves styles.css + js/ + fonts/ + images/
+                                          // NOTE: self-strips /assets/ — don't wrap in StripPrefix
+```
+
+```go
+// page.templ — emits the matching /assets/* <link>/<script> tags
+import "github.com/araihu/goshtoso/components/head"
+
+templ Layout() {
+    <html>
+        <head>
+            @head.Dependencies()        // CSS + Alpine + collapse/focus + HTMX + combobox nav
+            // or @head.DependenciesMinimal() — CSS + Alpine core + HTMX + combobox nav (no collapse/focus plugins)
+        </head>
+        ...
+    </html>
+}
+```
+
+The served `styles.css` already carries every component style + the theme system
+(13 themes). **Stock CDN Tailwind will not work** — the theme tokens
+(`bg-primary`, `text-on-surface`, …) live only in this compiled CSS.
+
+Skip the rest of this section unless you maintain your own Tailwind build.
+
+### 2b. Extract Goshtoso CSS (only for a custom Tailwind build)
 
 Goshtoso ships a CLI that extracts the pre-built CSS from embedded assets. Register it as a Go tool for version-pinned reproducibility:
 
@@ -41,17 +84,23 @@ The extracted CSS includes all Goshtoso component styles, the theme system (13 t
 
 ### 3. Required JavaScript
 
-Include these CDN links in your HTML head:
+If you use `@head.Dependencies()` (section 2), the JS is already wired — skip
+this. Only hand-roll the tags if you are not using the `head` package. In that
+case mirror what `head.Dependencies()` emits, in this order (plugins **before**
+Alpine core):
 
 ```html
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<script src="https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js"></script>
+<link rel="stylesheet" href="/assets/styles.css"/>
+<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
+<script defer src="/assets/js/vendor/alpine-focus.min.js"></script>
+<script defer src="/assets/js/vendor/alpine.min.js"></script>
+<script src="/assets/js/vendor/htmx.min.js"></script>
+<script defer src="/assets/js/combobox.js"></script>
 ```
 
-For components using Alpine.js collapse plugin (like Accordion):
-```html
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-```
+These are the vendored files `assets.Handler()` serves — pin them to the module
+version instead of a floating CDN tag. Don't forget `combobox.js` (the combobox
+component's keyboard nav is dead without it).
 
 ## Component Catalog
 
