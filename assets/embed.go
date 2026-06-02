@@ -56,3 +56,12 @@ func TailwindVersion() string {
 	}
 	return strings.TrimSpace(string(b))
 }
+
+// ThemeCSS returns the Goshtoso theme SOURCE (tokens, @custom-variant, the 13
+// [data-theme] blocks, base + utility layers) for importing into your OWN
+// Tailwind v4 build. Unlike StylesCSS (compiled output you serve directly),
+// this is source your Tailwind compiles. Pair it with a @source pointing at
+// Goshtoso's components dir (see `goshtoso -source-path`).
+func ThemeCSS() ([]byte, error) {
+	return files.ReadFile("goshtoso-theme.css")
+}
