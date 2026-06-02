@@ -20,6 +20,7 @@ package assets
 
 import (
 	"embed"
+	"encoding/json"
 	"net/http"
 	"strings"
 )
@@ -65,3 +66,37 @@ func TailwindVersion() string {
 func ThemeCSS() ([]byte, error) {
 	return files.ReadFile("goshtoso-theme.css")
 }
+
+// vendorDep mirrors one entry in js/vendor/versions.json.
+type vendorDep struct {
+	Version string `json:"version"`
+	File    string `json:"file"`
+	URL     string `json:"url"`
+}
+
+// vendorVersion returns the pinned version of a vendored module from the
+// embedded manifest (js/vendor/versions.json), or "" if absent.
+func vendorVersion(module string) string {
+	b, err := files.ReadFile("js/vendor/versions.json")
+	if err != nil {
+		return ""
+	}
+	var m map[string]vendorDep
+	if json.Unmarshal(b, &m) != nil {
+		return ""
+	}
+	return m[module].Version
+}
+
+// AlpineVersion returns the Alpine.js version Goshtoso vendors (core, collapse,
+// and focus share this version). Pinned in js/vendor/versions.json.
+func AlpineVersion() string { return vendorVersion("alpinejs") }
+
+// HTMXVersion returns the vendored HTMX version (js/vendor/versions.json).
+func HTMXVersion() string { return vendorVersion("htmx.org") }
+
+// HTMXExtSSEVersion returns the vendored htmx-ext-sse version.
+func HTMXExtSSEVersion() string { return vendorVersion("htmx-ext-sse") }
+
+// HTMXExtWSVersion returns the vendored htmx-ext-ws version.
+func HTMXExtWSVersion() string { return vendorVersion("htmx-ext-ws") }
