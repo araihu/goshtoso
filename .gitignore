@@ -69,3 +69,6 @@ dist/
 build/
 og-site/
 .claude/scheduled_tasks.lock
+
+# Pinned Tailwind standalone binary cache (fetched by `just css`)
+.tools/
