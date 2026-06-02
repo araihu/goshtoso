@@ -8,6 +8,39 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+type exampleApp struct {
+	Title string
+	Desc  string
+	URL   string
+}
+
+func getExampleApps() []exampleApp {
+	return []exampleApp{
+		{Title: "Todo List", Desc: "Cookie-backed, fully HTMX-driven CRUD — no server-side session state.", URL: "/examples/todo"},
+		{Title: "Chat", Desc: "Real-time messaging over a WebSocket, server-rendered bubbles.", URL: "/examples/chat"},
+		{Title: "Live Log Feed", Desc: "Server-push log stream over SSE (htmx-ext-sse) with client-side filtering.", URL: "/examples/logs"},
+		{Title: "Profile", Desc: "An account settings screen composed from form components.", URL: "/examples/profile"},
+		{Title: "Live Ticker", Desc: "A streaming price table that updates rows in place.", URL: "/examples/ticker"},
+	}
+}
+
+type themeChip struct {
+	Key   string
+	Label string
+}
+
+// curated subset of the 15 themes — visually distinct, not the whole set
+func getThemeChips() []themeChip {
+	return []themeChip{
+		{Key: "minimal", Label: "Minimal"},
+		{Key: "modern", Label: "Modern"},
+		{Key: "dracula", Label: "Dracula"},
+		{Key: "90s", Label: "90s"},
+		{Key: "pastel", Label: "Pastel"},
+		{Key: "neo-brutalism", Label: "Neo Brutalism"},
+	}
+}
+
 type stackInfo struct {
 	Title string
 	Desc  string
@@ -46,7 +79,7 @@ func LandingPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data x-init=\"\n\t\tconst t = localStorage.getItem('theme') || 'minimal';\n\t\tdocument.documentElement.setAttribute('data-theme', t);\n\t\tif (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Goshtoso — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><style>[x-cloak] { display: none !important; }</style></head><body class=\"min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data x-init=\"\n\t\tconst t = localStorage.getItem('theme') || 'minimal';\n\t\tdocument.documentElement.setAttribute('data-theme', t);\n\t\tif (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Goshtoso — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><style>[x-cloak] { display: none !important; }</style></head><body class=\"min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,7 +120,7 @@ func landingContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mx-auto max-w-5xl px-6 space-y-16 py-16\"><!-- Hero --><div class=\"flex flex-col items-center text-center\"><img src=\"/assets/images/goshtoso-art.png\" alt=\"Goshtoso mascot — a blue Go gopher in sunglasses and a Hawaiian shirt at Copacabana\" class=\"w-64 h-auto rounded-radius mb-8\"><h1 class=\"text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Goshtoso</h1><p class=\"mt-2 text-lg text-on-surface dark:text-on-surface-dark\"><a href=\"https://go.dev/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Go</a> + <a href=\"https://alpinejs.dev/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Alpine.js</a> + <a href=\"https://tailwindcss.com/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Tailwind CSS</a> + <a href=\"https://templ.guide/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Templ</a> + <a href=\"https://htmx.org/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">HTMX</a></p><p class=\"mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark\">A UI component library that replicates <a href=\"https://penguinui.com\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">PenguinUI</a> components using Go's templating ecosystem. Ship server-rendered, interactive UIs without writing JavaScript build tooling.</p><div class=\"mt-8 flex flex-wrap gap-4 justify-center\"><a href=\"/components/button\" class=\"px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Browse Components</a> <a href=\"/docs/theme\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">Explore Themes</a> <a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">GitHub</a></div></div><!-- The Stack --><div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center\">The Stack</h2><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mx-auto max-w-5xl px-6 space-y-16 py-16\"><!-- Hero --><div id=\"hero\" class=\"flex flex-col items-center text-center\"><img src=\"/assets/images/goshtoso-art.png\" alt=\"Goshtoso mascot — a blue Go gopher in sunglasses and a Hawaiian shirt at Copacabana\" class=\"w-32 h-auto rounded-radius mb-6\"><h1 class=\"text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Build interactive UIs in Go.</h1><p class=\"mt-3 text-lg md:text-xl text-on-surface dark:text-on-surface-dark\">No JavaScript build step.</p><p class=\"mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark\">Goshtoso is a server-rendered UI component library for Go. Templates render HTML, HTMX swaps fragments, and Alpine.js adds local interactivity — all shipped as a single binary.</p><div class=\"mt-8 flex flex-wrap gap-4 justify-center\"><a href=\"/components/button\" class=\"px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Browse components</a> <a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">GitHub</a> <a href=\"/getting-started\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">Get started</a></div></div><!-- The Stack --><div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center\">The Stack</h2><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -99,7 +132,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(s.URL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 87, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 116, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -112,7 +145,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(s.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 89, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 118, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -125,7 +158,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(s.Desc)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 92, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 121, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
