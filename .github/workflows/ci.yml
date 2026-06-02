@@ -62,6 +62,11 @@ jobs:
           git diff --exit-code -- .claude/skills/using-goshtoso/components-reference.md \
             || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./scripts/skillgen' and commit"; exit 1; }
 
+      - name: vendor JS constants drift check
+        run: |
+          go run ./scripts/vendorgen -check \
+            || { echo "::error::assets/vendor_gen.go is stale — run 'go run ./scripts/vendorgen' and commit"; exit 1; }
+
       - name: go mod tidy drift check
         run: |
           go mod tidy
