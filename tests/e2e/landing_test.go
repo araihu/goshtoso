@@ -38,4 +38,23 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.NoError(t, err)
 		require.True(t, visible, "Browse components CTA should be visible")
 	})
+
+	t.Run("ThemeChipSwitchesTheme", func(t *testing.T) {
+		_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+		require.NoError(t, err)
+		// click the Dracula chip
+		require.NoError(t, page.Locator("#playground button[data-theme-key='dracula']").Click())
+		got, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
+		require.NoError(t, err)
+		require.Equal(t, "dracula", got, "clicking a chip should set data-theme on <html>")
+	})
+
+	t.Run("LiveTableLoadsRows", func(t *testing.T) {
+		// lazy table fetches rows via HTMX on load
+		_, err := page.WaitForFunction(
+			"() => document.querySelectorAll('#home-table tbody tr').length > 0", nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)},
+		)
+		require.NoError(t, err, "live HTMX table should populate rows")
+	})
 }

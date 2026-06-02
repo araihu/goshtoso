@@ -1,5 +1,12 @@
 package components
 
+import (
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/components/toggle"
+)
+
 type exampleApp struct {
 	Title string
 	Desc  string
@@ -30,23 +37,6 @@ func getThemeChips() []themeChip {
 		{Key: "90s", Label: "90s"},
 		{Key: "pastel", Label: "Pastel"},
 		{Key: "neo-brutalism", Label: "Neo Brutalism"},
-	}
-}
-
-type stackInfo struct {
-	Title string
-	Desc  string
-	URL   string
-}
-
-func getStackItems() []stackInfo {
-	return []stackInfo{
-		{Title: "Go", Desc: "The backbone. Compiles to a single binary, serves HTML, handles routing. No Node.js, no bundlers, no package.json.", URL: "https://go.dev/"},
-		{Title: "Templ", Desc: "Type-safe HTML templates that compile to Go code. Components are functions, not strings. Catch errors at build time.", URL: "https://templ.guide/"},
-		{Title: "Tailwind CSS v4", Desc: "Utility-first styling with a CSS-first config. 14 built-in themes with design tokens that switch instantly.", URL: "https://tailwindcss.com/"},
-		{Title: "Alpine.js", Desc: "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", URL: "https://alpinejs.dev/"},
-		{Title: "HTMX", Desc: "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", URL: "https://htmx.org/"},
-		{Title: "PenguinUI", Desc: "The design system. 23 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", URL: "https://penguinui.com/"},
 	}
 }
 
@@ -108,20 +98,50 @@ templ landingContent() {
 			</div>
 		</div>
 
-		<!-- The Stack -->
-		<div>
-			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center">The Stack</h2>
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				for _, s := range getStackItems() {
-					<a href={ templ.SafeURL(s.URL) } target="_blank" class="block border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark hover:border-primary dark:hover:border-primary-dark transition-colors group">
-						<h3 class="text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 group-hover:text-primary dark:group-hover:text-primary-dark transition-colors">
-							{ s.Title }
-						</h3>
-						<p class="text-sm text-on-surface dark:text-on-surface-dark leading-relaxed">
-							{ s.Desc }
-						</p>
-					</a>
+		<!-- Live playground -->
+		<div id="playground">
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 text-center">See it live</h2>
+			<p class="text-center text-on-surface dark:text-on-surface-dark mb-6">
+				Pick a theme — every component below recolors instantly. These are real Goshtoso components, not screenshots.
+			</p>
+			<div class="flex flex-wrap gap-2 justify-center mb-8">
+				for _, c := range getThemeChips() {
+					<button
+						type="button"
+						data-theme-key={ c.Key }
+						@click="document.documentElement.setAttribute('data-theme', $el.dataset.themeKey); localStorage.setItem('theme', $el.dataset.themeKey)"
+						class="px-4 py-1.5 rounded-radius border border-outline dark:border-outline-dark text-sm text-on-surface dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors"
+					>
+						{ c.Label }
+					</button>
 				}
+				<a href="/docs/theme" class="px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center">
+					All 15 themes →
+				</a>
+			</div>
+			<div class="border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6">
+				<div class="flex flex-wrap items-center gap-4">
+					@button.Button(button.Config{Variant: button.Primary, Type: "button"}) {
+						Primary
+					}
+					@button.Button(button.Config{Variant: button.Secondary, Type: "button"}) {
+						Secondary
+					}
+					@badge.Badge(badge.Config{Text: "Active", Variant: badge.Success})
+					@badge.Badge(badge.Config{Text: "Pending", Variant: badge.Warning})
+					@toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true})
+				</div>
+				@table.Table(table.Config{
+					ID:           "home-table",
+					HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+					LazyLoad:     true,
+					Columns: []table.Column{
+						{Key: "id", Label: "CustomerID", Sortable: true},
+						{Key: "name", Label: "Name", Sortable: true},
+						{Key: "email", Label: "Email"},
+						{Key: "membership", Label: "Membership", Sortable: true},
+					},
+				})
 			</div>
 		</div>
 

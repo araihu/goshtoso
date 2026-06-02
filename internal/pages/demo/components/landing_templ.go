@@ -8,6 +8,13 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/components/toggle"
+)
+
 type exampleApp struct {
 	Title string
 	Desc  string
@@ -38,23 +45,6 @@ func getThemeChips() []themeChip {
 		{Key: "90s", Label: "90s"},
 		{Key: "pastel", Label: "Pastel"},
 		{Key: "neo-brutalism", Label: "Neo Brutalism"},
-	}
-}
-
-type stackInfo struct {
-	Title string
-	Desc  string
-	URL   string
-}
-
-func getStackItems() []stackInfo {
-	return []stackInfo{
-		{Title: "Go", Desc: "The backbone. Compiles to a single binary, serves HTML, handles routing. No Node.js, no bundlers, no package.json.", URL: "https://go.dev/"},
-		{Title: "Templ", Desc: "Type-safe HTML templates that compile to Go code. Components are functions, not strings. Catch errors at build time.", URL: "https://templ.guide/"},
-		{Title: "Tailwind CSS v4", Desc: "Utility-first styling with a CSS-first config. 14 built-in themes with design tokens that switch instantly.", URL: "https://tailwindcss.com/"},
-		{Title: "Alpine.js", Desc: "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", URL: "https://alpinejs.dev/"},
-		{Title: "HTMX", Desc: "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", URL: "https://htmx.org/"},
-		{Title: "PenguinUI", Desc: "The design system. 23 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", URL: "https://penguinui.com/"},
 	}
 }
 
@@ -120,56 +110,121 @@ func landingContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mx-auto max-w-5xl px-6 space-y-16 py-16\"><!-- Hero --><div id=\"hero\" class=\"flex flex-col items-center text-center\"><img src=\"/assets/images/goshtoso-art.png\" alt=\"Goshtoso mascot — a blue Go gopher in sunglasses and a Hawaiian shirt at Copacabana\" class=\"w-32 h-auto rounded-radius mb-6\"><h1 class=\"text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Build interactive UIs in Go.</h1><p class=\"mt-3 text-lg md:text-xl text-on-surface dark:text-on-surface-dark\">No JavaScript build step.</p><p class=\"mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark\">Goshtoso is a server-rendered UI component library for Go. Templates render HTML, HTMX swaps fragments, and Alpine.js adds local interactivity — all shipped as a single binary.</p><div class=\"mt-8 flex flex-wrap gap-4 justify-center\"><a href=\"/components/button\" class=\"px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Browse components</a> <a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">GitHub</a> <a href=\"/getting-started\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">Get started</a></div></div><!-- The Stack --><div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center\">The Stack</h2><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mx-auto max-w-5xl px-6 space-y-16 py-16\"><!-- Hero --><div id=\"hero\" class=\"flex flex-col items-center text-center\"><img src=\"/assets/images/goshtoso-art.png\" alt=\"Goshtoso mascot — a blue Go gopher in sunglasses and a Hawaiian shirt at Copacabana\" class=\"w-32 h-auto rounded-radius mb-6\"><h1 class=\"text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Build interactive UIs in Go.</h1><p class=\"mt-3 text-lg md:text-xl text-on-surface dark:text-on-surface-dark\">No JavaScript build step.</p><p class=\"mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark\">Goshtoso is a server-rendered UI component library for Go. Templates render HTML, HTMX swaps fragments, and Alpine.js adds local interactivity — all shipped as a single binary.</p><div class=\"mt-8 flex flex-wrap gap-4 justify-center\"><a href=\"/components/button\" class=\"px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Browse components</a> <a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">GitHub</a> <a href=\"/getting-started\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">Get started</a></div></div><!-- Live playground --><div id=\"playground\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 text-center\">See it live</h2><p class=\"text-center text-on-surface dark:text-on-surface-dark mb-6\">Pick a theme — every component below recolors instantly. These are real Goshtoso components, not screenshots.</p><div class=\"flex flex-wrap gap-2 justify-center mb-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, s := range getStackItems() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<a href=\"")
+		for _, c := range getThemeChips() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button type=\"button\" data-theme-key=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 templ.SafeURL
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(s.URL))
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(c.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 116, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 111, Col: 28}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" target=\"_blank\" class=\"block border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark hover:border-primary dark:hover:border-primary-dark transition-colors group\"><h3 class=\"text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 group-hover:text-primary dark:group-hover:text-primary-dark transition-colors\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" @click=\"document.documentElement.setAttribute('data-theme', $el.dataset.themeKey); localStorage.setItem('theme', $el.dataset.themeKey)\" class=\"px-4 py-1.5 rounded-radius border border-outline dark:border-outline-dark text-sm text-on-surface dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(s.Title)
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(c.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 118, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 115, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h3><p class=\"text-sm text-on-surface dark:text-on-surface-dark leading-relaxed\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(s.Desc)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 121, Col: 15}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><!-- Why --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center\">Why?</h2><div class=\"space-y-4 text-on-surface dark:text-on-surface-dark\"><p>Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration — a mountain of tooling between you and shipping a page.</p><p>Goshtoso takes a different path: <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">the server renders HTML, the browser shows it.</strong> When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.</p><p>The result is a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">single binary</strong> that serves a complete UI with theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components — all in a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">37MB Docker image</strong>.</p></div></div><!-- Footer --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">23 components · 14 themes · 386 E2E tests · <a href=\"/getting-started\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Get started</a></p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<a href=\"/docs/theme\" class=\"px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center\">All 15 themes →</a></div><div class=\"border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6\"><div class=\"flex flex-wrap items-center gap-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "Primary")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Primary, Type: "button"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "Secondary")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Secondary, Type: "button"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Active", Variant: badge.Success}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Pending", Variant: badge.Warning}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:           "home-table",
+			HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+			LazyLoad:     true,
+			Columns: []table.Column{
+				{Key: "id", Label: "CustomerID", Sortable: true},
+				{Key: "name", Label: "Name", Sortable: true},
+				{Key: "email", Label: "Email"},
+				{Key: "membership", Label: "Membership", Sortable: true},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><!-- Why --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center\">Why?</h2><div class=\"space-y-4 text-on-surface dark:text-on-surface-dark\"><p>Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration — a mountain of tooling between you and shipping a page.</p><p>Goshtoso takes a different path: <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">the server renders HTML, the browser shows it.</strong> When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.</p><p>The result is a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">single binary</strong> that serves a complete UI with theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components — all in a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">37MB Docker image</strong>.</p></div></div><!-- Footer --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">23 components · 14 themes · 386 E2E tests · <a href=\"/getting-started\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Get started</a></p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -198,12 +253,12 @@ func cookieConsent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div x-data=\"{ show: localStorage.getItem('cookieConsent') !== 'v1' }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 right-4 z-50 flex max-w-sm flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><span class=\"text-2xl\" aria-hidden=\"true\">🍪</span><h3 id=\"landing-cookie-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional cookies</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso stores a few <strong>functional</strong> values in your browser — your theme preference and the example apps' own state (e.g. the Todo demo). They are strictly necessary to make those features work; there is no tracking, no analytics, and no third&#8209;party cookies. Clearing your browser storage resets them. Details in our <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex justify-end gap-2 px-4 pb-4\"><button @click=\"localStorage.setItem('cookieConsent', 'v1'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div x-data=\"{ show: localStorage.getItem('cookieConsent') !== 'v1' }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 right-4 z-50 flex max-w-sm flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><span class=\"text-2xl\" aria-hidden=\"true\">🍪</span><h3 id=\"landing-cookie-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional cookies</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso stores a few <strong>functional</strong> values in your browser — your theme preference and the example apps' own state (e.g. the Todo demo). They are strictly necessary to make those features work; there is no tracking, no analytics, and no third&#8209;party cookies. Clearing your browser storage resets them. Details in our <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex justify-end gap-2 px-4 pb-4\"><button @click=\"localStorage.setItem('cookieConsent', 'v1'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
