@@ -21,9 +21,10 @@ package assets
 import (
 	"embed"
 	"net/http"
+	"strings"
 )
 
-//go:embed styles.css js fonts images
+//go:embed styles.css goshtoso-theme.css tailwind.version js fonts images
 var files embed.FS
 
 // Handler returns an http.Handler that serves the embedded Goshtoso assets
@@ -42,4 +43,16 @@ func Handler() http.Handler {
 // Use this to extract the CSS to disk for Tailwind's @import directive.
 func StylesCSS() ([]byte, error) {
 	return files.ReadFile("styles.css")
+}
+
+// TailwindVersion returns the Tailwind CSS version that styles.css and
+// goshtoso-theme.css were built with — the single-source pin in
+// assets/tailwind.version (e.g. "4.3.0", no leading "v"). Match your own
+// Tailwind build to this when compiling Goshtoso's theme source yourself.
+func TailwindVersion() string {
+	b, err := files.ReadFile("tailwind.version")
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(b))
 }
