@@ -1,5 +1,7 @@
 package head
 
+import "github.com/araihu/goshtoso/assets"
+
 // Dependencies renders the local <script>/<link> tags for every Goshtoso runtime
 // asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
 // text-on-primary, etc.), Alpine core + collapse/focus plugins, HTMX, and the
@@ -24,13 +26,13 @@ package head
 templ Dependencies() {
 	<link rel="stylesheet" href="/assets/styles.css"/>
 	<!-- Alpine.js Collapse Plugin (must load before Alpine core) -->
-	<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
+	<script defer src={ assets.AlpineCollapseURL }></script>
 	<!-- Alpine.js Focus Plugin -->
-	<script defer src="/assets/js/vendor/alpine-focus.min.js"></script>
+	<script defer src={ assets.AlpineFocusURL }></script>
 	<!-- Alpine.js Core -->
-	<script defer src="/assets/js/vendor/alpine.min.js"></script>
+	<script defer src={ assets.AlpineJSURL }></script>
 	<!-- HTMX -->
-	<script src="/assets/js/vendor/htmx.min.js"></script>
+	<script src={ assets.HTMXURL }></script>
 	<!-- Combobox keyboard nav -->
 	<script defer src="/assets/js/combobox.js"></script>
 }
@@ -40,8 +42,8 @@ templ Dependencies() {
 // nor a focus trap. Same /assets/ mount requirement as Dependencies.
 templ DependenciesMinimal() {
 	<link rel="stylesheet" href="/assets/styles.css"/>
-	<script defer src="/assets/js/vendor/alpine.min.js"></script>
-	<script src="/assets/js/vendor/htmx.min.js"></script>
+	<script defer src={ assets.AlpineJSURL }></script>
+	<script src={ assets.HTMXURL }></script>
 	<!-- Combobox keyboard nav -->
 	<script defer src="/assets/js/combobox.js"></script>
 }
