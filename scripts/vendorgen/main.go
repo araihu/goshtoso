@@ -148,6 +148,3 @@ func main() {
 	}
 	fmt.Printf("vendorgen: wrote %s (%d deps)\n", outPath, len(deps))
 }
-
-// Temporary stub — replaced by download.go in Task 8.
-func downloadAll(map[string]dep) error { return fmt.Errorf("-download not yet implemented") }
