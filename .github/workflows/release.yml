@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+env:
+  TEMPL_VERSION: 'v0.3.1020'
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -19,7 +22,7 @@ jobs:
           go-version: '1.26.1'
 
       - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@v0.3.1020
+        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
 
       - name: Install Tailwind CSS (pinned)
         run: |
@@ -36,8 +39,10 @@ jobs:
 
       - name: Verify committed assets match a pinned rebuild
         run: |
-          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css \
-            || { echo "::error::tag has stale assets — run 'just css' and re-tag"; exit 1; }
+          git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null \
+            || { echo "::error::release assets are not committed at this tag — run 'just css' and commit them"; exit 1; }
+          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css '*_templ.go' \
+            || { echo "::error::tag has stale assets/generated code — run 'templ generate' + 'just css' and re-tag"; exit 1; }
 
       - name: Release notes
         run: |
