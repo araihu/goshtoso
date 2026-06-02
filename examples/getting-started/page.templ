@@ -1,6 +1,9 @@
 package main
 
-import "github.com/araihu/goshtoso/components/table"
+import (
+	"github.com/araihu/goshtoso/components/head"
+	"github.com/araihu/goshtoso/components/table"
+)
 
 // Page renders the dog breeds page using the Goshtoso table component.
 // Filtering, sorting, and pagination are all built into the component —
@@ -19,12 +22,10 @@ templ Page(cfg table.Config) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Dog Breeds — Goshtoso Getting Started</title>
-			<!-- Embedded Goshtoso assets (CSS with themes + JS) -->
-			<link rel="stylesheet" href="/assets/styles.css"/>
-			<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
-			<script defer src="/assets/js/vendor/alpine-focus.min.js"></script>
-			<script defer src="/assets/js/vendor/alpine.min.js"></script>
-			<script src="/assets/js/vendor/htmx.min.js"></script>
+			<!-- Goshtoso runtime assets: CSS (themes) + Alpine + collapse/focus + HTMX.
+			     Served from /assets/ by assets.Handler() (mounted in main.go) — no CDN. -->
+			@head.Dependencies()
+			<!-- darkmode.js drives the theme/dark toggle; not part of Dependencies(). -->
 			<script src="/assets/js/darkmode.js"></script>
 			<style>[x-cloak] { display: none !important; }</style>
 		</head>

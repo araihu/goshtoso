@@ -83,7 +83,7 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Step 3 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">3. Create the server</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">main.go</code> — serves the page and handles the HTMX API endpoint for filtering, searching, and sorting:</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Step 3 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">3. Create the server</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">main.go</code> — it mounts <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">assets.Handler()</code> to serve the bundled CSS + JS from <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">/assets/</code> (no CDN, works offline), serves the page, and handles the HTMX API endpoint for filtering, searching, and sorting:</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -111,10 +111,7 @@ func step1Code() string {
 	return `mkdir dog-breeds && cd dog-breeds
 go mod init dog-breeds
 go get github.com/a-h/templ@latest
-go get github.com/araihu/goshtoso@latest
-
-# Extract Goshtoso CSS (themes, component styles, utilities)
-go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=goshtoso.css`
+go get github.com/araihu/goshtoso@latest`
 }
 
 // readExampleFile reads a source file from examples/getting-started/

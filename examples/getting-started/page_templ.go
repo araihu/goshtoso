@@ -8,7 +8,10 @@ package main
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/araihu/goshtoso/components/table"
+import (
+	"github.com/araihu/goshtoso/components/head"
+	"github.com/araihu/goshtoso/components/table"
+)
 
 // Page renders the dog breeds page using the Goshtoso table component.
 // Filtering, sorting, and pagination are all built into the component —
@@ -37,7 +40,15 @@ func Page(cfg table.Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data x-init=\"\n\t\tconst t = localStorage.getItem('theme') || 'goshtoso';\n\t\tdocument.documentElement.setAttribute('data-theme', t);\n\t\tif (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Dog Breeds — Goshtoso Getting Started</title><!-- Embedded Goshtoso assets (CSS with themes + JS) --><link rel=\"stylesheet\" href=\"/assets/styles.css\"><script defer src=\"/assets/js/vendor/alpine-collapse.min.js\"></script><script defer src=\"/assets/js/vendor/alpine-focus.min.js\"></script><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><script src=\"/assets/js/darkmode.js\"></script><style>[x-cloak] { display: none !important; }</style></head><body class=\"min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold font-title mb-2 text-on-surface-strong dark:text-on-surface-dark-strong\">Dog Breeds</h1><p class=\"text-on-surface-muted dark:text-on-surface-dark-muted mb-8\">A filterable, sortable, paginated table built with <a href=\"https://github.com/araihu/goshtoso\" class=\"underline text-primary dark:text-primary-dark\">Goshtoso</a> — Go + Alpine.js + Tailwind CSS + Templ + HTMX.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data x-init=\"\n\t\tconst t = localStorage.getItem('theme') || 'goshtoso';\n\t\tdocument.documentElement.setAttribute('data-theme', t);\n\t\tif (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Dog Breeds — Goshtoso Getting Started</title><!-- Goshtoso runtime assets: CSS (themes) + Alpine + collapse/focus + HTMX.\n\t\t\t     Served from /assets/ by assets.Handler() (mounted in main.go) — no CDN. -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = head.Dependencies().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- darkmode.js drives the theme/dark toggle; not part of Dependencies(). --><script src=\"/assets/js/darkmode.js\"></script><style>[x-cloak] { display: none !important; }</style></head><body class=\"min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold font-title mb-2 text-on-surface-strong dark:text-on-surface-dark-strong\">Dog Breeds</h1><p class=\"text-on-surface-muted dark:text-on-surface-dark-muted mb-8\">A filterable, sortable, paginated table built with <a href=\"https://github.com/araihu/goshtoso\" class=\"underline text-primary dark:text-primary-dark\">Goshtoso</a> — Go + Alpine.js + Tailwind CSS + Templ + HTMX.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -45,7 +56,7 @@ func Page(cfg table.Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"mt-6 text-xs text-on-surface-muted dark:text-on-surface-dark-muted text-center\">Built with <a href=\"https://github.com/araihu/goshtoso\" class=\"underline\">Goshtoso</a></p></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p class=\"mt-6 text-xs text-on-surface-muted dark:text-on-surface-dark-muted text-center\">Built with <a href=\"https://github.com/araihu/goshtoso\" class=\"underline\">Goshtoso</a></p></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
