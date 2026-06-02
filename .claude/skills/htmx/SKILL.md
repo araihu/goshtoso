@@ -69,10 +69,22 @@ Return plain HTML, plus optional `HX-*` response headers to control the client:
 
 Inbound, htmx sends `HX-Request: true`, `HX-Trigger`, `HX-Target`, `HX-Current-URL`, `HX-Boosted`, `HX-Prompt`. Branch on `HX-Request` to return a fragment vs. a full page.
 
+## Updating more than the target — pick the lightest of three
+
+When one action must refresh several regions, escalate only as far as you need:
+
+1. **Expand the selection (simplest).** Make `hx-target` a common ancestor and return the whole block in one fragment. No coordination, no ids to keep in sync. Reach for this first; only move on when the regions are too far apart to share a sensible parent.
+2. **Out-of-band swaps.** Keep the primary target small, append extra fragments tagged `hx-swap-oob="true"` (matched by `id`) for the stragglers — counters, badges, toasts. One response, several disjoint updates. See `reference/patterns.md`.
+3. **Event-driven (most decoupled).** Respond with `HX-Trigger: {"thing-updated":{}}`; unrelated elements listen via `hx-trigger="thing-updated from:body"` and re-fetch themselves. The handler never names them — cleanest for many independent consumers, but the indirection is harder to trace. Use when OOB coupling gets unwieldy.
+
+## One handler, both full page and fragment — `hx-select` / `HX-Reselect`
+
+Let a handler always render the **full page**, and have htmx pluck out the part it needs: `hx-get="/page" hx-select="#content" hx-target="#content"`. The same URL works for a normal navigation (no-JS / refresh / paste) and for an htmx swap — no `HX-Request` branching, no duplicate fragment template. Server-side override: `HX-Reselect: #content`. Trade-off: the server renders (and ships) the whole page each time, so skip it on hot paths where a dedicated fragment is cheaper.
+
 ## Detailed references (load when needed)
 
 - **`reference/cheatsheet.md`** — every attribute, all HX request/response headers, all events, the full JS API (`htmx.ajax`, `htmx.process`, `htmx.on`, `htmx.swap`, ...), CSS classes, and every `htmx.config.*` option. Go here for exact names/signatures.
-- **`reference/patterns.md`** — copy-paste recipes: active search, infinite scroll, lazy load, click-to-load, inline edit, delete row, polling, indicators, OOB swaps, CSRF headers, auth headers, custom confirm.
+- **`reference/patterns.md`** — copy-paste recipes: active search, infinite scroll, lazy load, click-to-load, inline edit, delete row, polling, indicators, OOB swaps, `hx-select` (full-page→fragment), CSRF headers, auth headers, custom confirm, **debugging a silent interaction** (`htmx.logAll`, `monitorEvents`, `configRequest`/`beforeSwap`).
 - **`reference/gotchas.md`** — attribute escaping (templ/Alpine), security (`selfRequestsOnly`, `hx-disable`, XSS), attribute inheritance, settling/transitions, common silent failures.
 
 ## Common mistakes
