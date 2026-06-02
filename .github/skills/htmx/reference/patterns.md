@@ -93,6 +93,16 @@ Request targets `#main`; the response also updates an unrelated counter:
 
 `hx-swap-oob="true"` matches the existing element by `id` and swaps it `outerHTML`. Use `hx-swap-oob="innerHTML"` or `hx-swap-oob="beforeend:#log"` for other strategies. **Wrap OOB `<tr>`/`<td>`/`<option>` in `<template>`** so the browser doesn't strip them.
 
+## Select a fragment from a full-page response (`hx-select`)
+
+One handler renders the whole page; htmx swaps in only the part it asked for. The same URL serves a real navigation *and* an htmx swap — no `HX-Request` branching, one template.
+
+```html
+<a hx-get="/dashboard" hx-select="#content" hx-target="#content" hx-swap="outerHTML">Refresh</a>
+```
+
+Server can override per-response with `HX-Reselect: #content`. Cost: the full page is rendered/shipped each time — prefer a dedicated fragment on hot paths.
+
 ## Server-triggered client events
 
 Response header:
@@ -157,6 +167,25 @@ const html = await (await fetch("/frag")).text();
 container.innerHTML = html;
 htmx.process(container);   // REQUIRED: htmx only scans content it swapped itself
 ```
+
+## Debugging an htmx interaction (when a request silently does nothing)
+
+Work outward from "did it even fire":
+
+```javascript
+htmx.logAll();                          // log every htmx event to the console
+monitorEvents(document.getElementById("thing"));  // Chrome DevTools: every DOM event on an element
+```
+
+- **No request fired?** Check the *default trigger* (a `<form>` fires on `submit`, an `<input>` on `change`, everything else on `click`) and confirm the element was actually processed by htmx (it must have been swapped in by htmx or passed to `htmx.process` — see below).
+- **Request fired, wrong params/headers?** Listen on `htmx:configRequest` and inspect/patch `e.detail.parameters`, `e.detail.headers`, `e.detail.target`, `e.detail.verb` before it sends.
+- **Response came back but didn't swap?** Non-2xx/3xx won't swap by default (see gotchas). Inspect/override the swap in `htmx:beforeSwap` — `e.detail.shouldSwap`, `e.detail.target`, `e.detail.serverResponse`:
+  ```javascript
+  document.body.addEventListener("htmx:beforeSwap", e => {
+    if (e.detail.xhr.status === 422) { e.detail.shouldSwap = true; e.detail.isError = false; }
+  });
+  ```
+- **Attribute looks right in source but dead in browser?** Inspect the *rendered* DOM in devtools for `&quot;`/`&#39;` — templ escaped it. See `gotchas.md`.
 
 ## Server: detect htmx vs full-page request (Go)
 
