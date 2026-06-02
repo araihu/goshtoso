@@ -797,7 +797,6 @@ func themePageScript() string {
 	sb.WriteString("    contrastCustomFg: '#0f172a',\n")
 	sb.WriteString("    contrastCustomBg: '#ffffff',\n")
 	sb.WriteString("    copied: false,\n")
-	sb.WriteString("    shareCopied: false,\n")
 	sb.WriteString("    confirmingReset: false,\n")
 	sb.WriteString("    resetDone: false,\n")
 
@@ -1030,13 +1029,6 @@ func themePageScript() string {
         setTimeout(() => this.copied = false, 2000);
       });
     },
-    share() {
-      const href = window.location.origin + window.location.pathname;
-      navigator.clipboard.writeText(href).then(() => {
-        this.shareCopied = true;
-        setTimeout(() => this.shareCopied = false, 2000);
-      });
-    },
     contrastPairs() {
       const base = this.resolved[this.contrastBase];
       if (!base) return [];
@@ -1137,18 +1129,7 @@ templ themeDemoContent() {
 
 templ themeHeader() {
 	<div>
-		<div class="flex items-start justify-between gap-4 flex-wrap">
-			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Theme Settings</h1>
-			<button
-				@click="share()"
-				class="inline-flex items-center gap-2 rounded-radius border border-outline dark:border-outline-dark px-3 py-1.5 text-sm font-medium text-on-surface dark:text-on-surface-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors"
-			>
-				<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"></path>
-				</svg>
-				<span x-text="shareCopied ? 'Link Copied!' : 'Share'">Share</span>
-			</button>
-		</div>
+		<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Theme Settings</h1>
 		<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">
 			Goshtoso ships ready-to-use themes built on Tailwind v4 CSS variables. Pick one as-is, tweak its fonts, radius, or colors live, then export the CSS to drop into your own project.
 		</p>

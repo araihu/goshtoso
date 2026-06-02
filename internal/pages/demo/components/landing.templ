@@ -47,6 +47,11 @@ templ LandingPage() {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Goshtoso — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title>
+			<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
+			<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+			<link rel="shortcut icon" href="/favicon.ico"/>
+			<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+			<link rel="manifest" href="/site.webmanifest"/>
 			// Apply the persisted theme + dark mode synchronously, before first
 			// paint — identical to the demo layout's boot script (layout.templ).
 			// Doing this here (not in Alpine x-init) keeps the homepage's theme in
@@ -194,7 +199,6 @@ templ landingContent() {
 				<a href="https://tailwindcss.com/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">Tailwind CSS</a>
 				<a href="https://alpinejs.dev/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">Alpine.js</a>
 				<a href="https://htmx.org/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">HTMX</a>
-				<a href="https://penguinui.com/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">PenguinUI</a>
 			</div>
 		</div>
 		<!-- Footer -->

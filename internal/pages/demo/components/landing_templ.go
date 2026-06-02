@@ -69,7 +69,7 @@ func LandingPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Goshtoso — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Goshtoso — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title><link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -130,7 +130,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(c.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 113, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 118, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -143,7 +143,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(c.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 117, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 122, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -244,7 +244,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var7 templ.SafeURL
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.URL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 158, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 163, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -257,7 +257,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(a.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 160, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 165, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -270,7 +270,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(a.Desc)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 163, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 168, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -281,7 +281,7 @@ func landingContent() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div><!-- How it works --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center\">How it works</h2><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\"><div class=\"text-center\"><div class=\"text-2xl font-bold text-primary dark:text-primary-dark mb-2\">1</div><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Write a typed <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">.templ</code> component — HTML that compiles to Go.</p></div><div class=\"text-center\"><div class=\"text-2xl font-bold text-primary dark:text-primary-dark mb-2\">2</div><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Add an <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">hx-get</code> and the server swaps a rendered fragment — no fetch, no JSON.</p></div><div class=\"text-center\"><div class=\"text-2xl font-bold text-primary dark:text-primary-dark mb-2\">3</div><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Build one binary. No bundler, no <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">node_modules</code>, no client routing.</p></div></div></div><!-- Stack strip --><div id=\"stack-strip\" class=\"text-center\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-3\">Built on</p><div class=\"flex flex-wrap gap-x-6 gap-y-2 justify-center text-sm\"><a href=\"https://go.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Go</a> <a href=\"https://templ.guide/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Templ</a> <a href=\"https://tailwindcss.com/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Tailwind CSS</a> <a href=\"https://alpinejs.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Alpine.js</a> <a href=\"https://htmx.org/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">HTMX</a> <a href=\"https://penguinui.com/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">PenguinUI</a></div></div><!-- Footer --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">23 components · 15 themes · 386 E2E tests · <a href=\"/getting-started\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Get started</a></p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div><!-- How it works --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center\">How it works</h2><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\"><div class=\"text-center\"><div class=\"text-2xl font-bold text-primary dark:text-primary-dark mb-2\">1</div><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Write a typed <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">.templ</code> component — HTML that compiles to Go.</p></div><div class=\"text-center\"><div class=\"text-2xl font-bold text-primary dark:text-primary-dark mb-2\">2</div><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Add an <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">hx-get</code> and the server swaps a rendered fragment — no fetch, no JSON.</p></div><div class=\"text-center\"><div class=\"text-2xl font-bold text-primary dark:text-primary-dark mb-2\">3</div><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Build one binary. No bundler, no <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">node_modules</code>, no client routing.</p></div></div></div><!-- Stack strip --><div id=\"stack-strip\" class=\"text-center\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-3\">Built on</p><div class=\"flex flex-wrap gap-x-6 gap-y-2 justify-center text-sm\"><a href=\"https://go.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Go</a> <a href=\"https://templ.guide/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Templ</a> <a href=\"https://tailwindcss.com/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Tailwind CSS</a> <a href=\"https://alpinejs.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Alpine.js</a> <a href=\"https://htmx.org/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">HTMX</a></div></div><!-- Footer --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">23 components · 15 themes · 386 E2E tests · <a href=\"/getting-started\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Get started</a></p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
