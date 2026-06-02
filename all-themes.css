@@ -583,4 +583,46 @@
         --radius-radius: var(--radius-md);
     }
 
+    [data-theme=goshtoso] {
+        /* Goshtoso brand theme — palette pulled from the mascot art:
+           Yale Blue (sky/sea) / Lime Moss + Forest Moss (palms, shirt) /
+           Blue Slate (calçadão) / Sky Aqua (the gopher's fur).
+           on-* colors picked for AA contrast. */
+        --font-body: 'Inter', sans-serif;
+        --font-title: 'Poppins', sans-serif;
+        /* Light */
+        --color-surface: #ffffff;
+        --color-surface-alt: #eaf4fb;            /* yale-blue-50 */
+        --color-on-surface: #3a4b5f;             /* blue-slate-700 */
+        --color-on-surface-strong: #081d2b;      /* yale-blue-900 */
+        --color-primary: #2276aa;                /* yale-blue-600 */
+        --color-on-primary: #ffffff;
+        --color-secondary: #4b7d1c;              /* forest-moss-700 */
+        --color-on-secondary: #ffffff;
+        --color-outline: #c0cbd8;                /* blue-slate-200 */
+        --color-outline-strong: #3a4b5f;         /* blue-slate-700 */
+        /* Dark */
+        --color-surface-dark: #131920;           /* blue-slate-900 */
+        --color-surface-dark-alt: #06151e;       /* yale-blue-950 */
+        --color-on-surface-dark: #c0cbd8;        /* blue-slate-200 */
+        --color-on-surface-dark-strong: #ffffff;
+        --color-primary-dark: #3bcef7;           /* sky-aqua-400 */
+        --color-on-primary-dark: #06151e;        /* yale-blue-950 */
+        --color-secondary-dark: #d3d75b;         /* lime-moss-400 */
+        --color-on-secondary-dark: #131920;      /* blue-slate-900 */
+        --color-outline-dark: #3a4b5f;           /* blue-slate-700 */
+        --color-outline-dark-strong: #a0b1c5;    /* blue-slate-300 */
+        /* Status */
+        --color-info: #0ac2f5;                   /* sky-aqua-500 */
+        --color-on-info: #000000;
+        --color-success: #4b7d1c;                /* forest-moss-700 */
+        --color-on-success: #ffffff;
+        --color-warning: #d3d75b;                /* lime-moss-400 */
+        --color-on-warning: #000000;
+        --color-danger: #dc2626;                 /* no red in palette */
+        --color-on-danger: #ffffff;
+        /* Border */
+        --radius-radius: var(--radius-lg);
+    }
+
 }

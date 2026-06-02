@@ -6,7 +6,7 @@ import "github.com/araihu/goshtoso/components/sidebar"
 templ Layout(title string, activeComponent string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en" x-data="{
-		theme: localStorage.getItem('theme') || 'minimal',
+		theme: localStorage.getItem('theme') || 'goshtoso',
 		sidebarOpen: false,
 		showThemeDropdown: false,
 		setTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }
@@ -26,7 +26,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<link rel="shortcut icon" href="/favicon.ico"/>
 			<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 			<link rel="manifest" href="/site.webmanifest"/>
-			@templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'minimal';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
+			@templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -650,6 +650,7 @@ type themeOption struct {
 
 func getThemeOptions() []themeOption {
 	return []themeOption{
+		{Key: "goshtoso", Label: "Goshtoso"},
 		{Key: "minimal", Label: "Minimal"},
 		{Key: "modern", Label: "Modern"},
 		{Key: "arctic", Label: "Arctic"},

@@ -11,7 +11,7 @@ import "github.com/araihu/goshtoso/components/table"
 templ Page(cfg table.Config) {
 	<!DOCTYPE html>
 	<html lang="en" x-data x-init="
-		const t = localStorage.getItem('theme') || 'minimal';
+		const t = localStorage.getItem('theme') || 'goshtoso';
 		document.documentElement.setAttribute('data-theme', t);
 		if (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');
 	">

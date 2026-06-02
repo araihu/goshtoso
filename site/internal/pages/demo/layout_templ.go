@@ -32,7 +32,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data=\"{\n\t\ttheme: localStorage.getItem('theme') || 'minimal',\n\t\tsidebarOpen: false,\n\t\tshowThemeDropdown: false,\n\t\tsetTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }\n\t}\" x-init=\"\n\t\t$watch('theme', value => {\n\t\t\tlocalStorage.setItem('theme', value);\n\t\t\tdocument.documentElement.setAttribute('data-theme', value);\n\t\t});\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data=\"{\n\t\ttheme: localStorage.getItem('theme') || 'goshtoso',\n\t\tsidebarOpen: false,\n\t\tshowThemeDropdown: false,\n\t\tsetTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }\n\t}\" x-init=\"\n\t\t$watch('theme', value => {\n\t\t\tlocalStorage.setItem('theme', value);\n\t\t\tdocument.documentElement.setAttribute('data-theme', value);\n\t\t});\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -49,7 +49,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'minimal';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -670,6 +670,7 @@ type themeOption struct {
 
 func getThemeOptions() []themeOption {
 	return []themeOption{
+		{Key: "goshtoso", Label: "Goshtoso"},
 		{Key: "minimal", Label: "Minimal"},
 		{Key: "modern", Label: "Modern"},
 		{Key: "arctic", Label: "Arctic"},
