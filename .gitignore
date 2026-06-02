@@ -54,6 +54,11 @@ test-results/
 *.jpeg
 # Keep brand artwork bundled with the library
 !assets/images/*.png
+# Keep favicons (RealFaviconGenerator) bundled
+!assets/favicon-96x96.png
+!assets/apple-touch-icon.png
+!assets/web-app-manifest-192x192.png
+!assets/web-app-manifest-512x512.png
 !assets/images/*.jpg
 !assets/images/*.jpeg
 

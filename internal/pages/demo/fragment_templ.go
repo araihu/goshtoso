@@ -50,7 +50,7 @@ func Fragment(title string, activeComponent string, content templ.Component) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Goshtoso PenguinUI</title><div id=\"sidebar-nav-content\" hx-swap-oob=\"true\" class=\"h-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Goshtoso</title><div id=\"sidebar-nav-content\" hx-swap-oob=\"true\" class=\"h-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

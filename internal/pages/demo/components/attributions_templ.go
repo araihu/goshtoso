@@ -72,8 +72,8 @@ func attributionsContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = attrSection("Design & components", "The visual design, component set, and 99.99% parity target.", []attribution{
-			{Name: "PenguinUI", Href: "https://www.penguinui.com", License: "Source", Note: "Base project — components replicated via Go templ"},
+		templ_7745c5c3_Err = attrSection("Design & components", "The design system and component set Goshtoso draws from.", []attribution{
+			{Name: "PenguinUI", Href: "https://www.penguinui.com", License: "Source", Note: "Design system Goshtoso is based on; reinterpreted in Go templ"},
 			{Name: "Heroicons", Href: "https://heroicons.com", License: "MIT", Note: "Some icons sourced from this set"},
 			{Name: "Bootstrap Icons", Href: "https://icons.getbootstrap.com", License: "MIT", Note: "Some icons sourced from this set"},
 		}).Render(ctx, templ_7745c5c3_Buffer)

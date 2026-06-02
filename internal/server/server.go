@@ -56,6 +56,21 @@ func (s *Server) setupRoutes() {
 	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
 	s.mux.Handle("/assets/", assetsHandler)
 
+	// Favicons (RealFaviconGenerator) — referenced at root paths from <head>,
+	// so served from the root mux, but the files live alongside the other
+	// assets on disk. Exact-match patterns; no path traversal possible.
+	for _, name := range []string{
+		"favicon.ico", "favicon.svg", "favicon-96x96.png", "apple-touch-icon.png",
+		"site.webmanifest", "web-app-manifest-192x192.png", "web-app-manifest-512x512.png",
+	} {
+		s.mux.HandleFunc("/"+name, func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasSuffix(r.URL.Path, ".webmanifest") {
+				w.Header().Set("Content-Type", "application/manifest+json")
+			}
+			http.ServeFile(w, r, filepath.Join(assetsDir, r.URL.Path[1:]))
+		})
+	}
+
 	// Component comparison pages
 	s.mux.HandleFunc("/components/", s.handleComponent)
 
