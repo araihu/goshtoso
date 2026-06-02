@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/table"
@@ -62,8 +63,8 @@ templ LandingPage() {
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-			<script defer src="/assets/js/vendor/alpine.min.js"></script>
-			<script src="/assets/js/vendor/htmx.min.js"></script>
+			<script defer src={ assets.AlpineJSURL }></script>
+			<script src={ assets.HTMXURL }></script>
 			<style>[x-cloak] { display: none !important; }</style>
 		</head>
 		<body class="min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
