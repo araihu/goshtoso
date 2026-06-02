@@ -14,7 +14,6 @@ env:
   GO_VERSION: '1.26.1'
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.5700.1'
-  TAILWIND_VERSION: 'v4.3.0'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
 
 jobs:
@@ -39,7 +38,8 @@ jobs:
       - name: Install Tailwind CSS standalone
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          ver="$(cat assets/tailwind.version)"
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
           chmod +x /tmp/tailwindcss
           sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
@@ -49,11 +49,12 @@ jobs:
           git diff --exit-code -- '*_templ.go' \
             || { echo "::error::templ generate drift — run 'templ generate' and commit"; exit 1; }
 
-      - name: Tailwind CSS drift check
+      - name: Tailwind CSS + theme drift check
         run: |
+          go run ./scripts/themegen
           tailwindcss -i css/main.css -o assets/styles.css
-          git diff --exit-code -- assets/styles.css \
-            || { echo "::error::tailwind drift — run 'tailwindcss -i css/main.css -o assets/styles.css' and commit"; exit 1; }
+          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css \
+            || { echo "::error::css/theme drift — run 'just css' and commit assets/styles.css + assets/goshtoso-theme.css"; exit 1; }
 
       - name: using-goshtoso skill reference drift check
         run: |
@@ -110,7 +111,8 @@ jobs:
       - name: Install Tailwind CSS standalone
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          ver="$(cat assets/tailwind.version)"
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
           chmod +x /tmp/tailwindcss
           sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
@@ -143,7 +145,8 @@ jobs:
       - name: Install Tailwind CSS standalone
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          ver="$(cat assets/tailwind.version)"
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
           chmod +x /tmp/tailwindcss
           sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
