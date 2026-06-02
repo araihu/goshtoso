@@ -9,6 +9,8 @@
 package main
 
 import (
+	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -36,6 +38,10 @@ func sourcePath(moduleDir string) string {
 func moduleDir() (string, error) {
 	out, err := exec.Command("go", "list", "-m", "-f", "{{.Dir}}", "github.com/araihu/goshtoso").Output()
 	if err != nil {
+		var ee *exec.ExitError
+		if errors.As(err, &ee) && len(bytes.TrimSpace(ee.Stderr)) > 0 {
+			return "", fmt.Errorf("go list (run from a module that requires goshtoso): %s", bytes.TrimSpace(ee.Stderr))
+		}
 		return "", fmt.Errorf("go list (run from a module that requires goshtoso): %w", err)
 	}
 	return strings.TrimSpace(string(out)), nil
