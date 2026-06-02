@@ -82,3 +82,38 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.LessOrEqual(t, cnt, 6, "stack strip should be condensed, not a card grid")
 	})
 }
+
+// TestLanding_NoConsoleErrors loads the homepage and asserts no JS console or
+// page errors — the silent-Alpine-failure guard (broken x-data fails quietly).
+func TestLanding_NoConsoleErrors(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	var jsErrors []string
+	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })
+	page.On("console", func(m playwright.ConsoleMessage) {
+		if m.Type() == "error" {
+			jsErrors = append(jsErrors, m.Text())
+		}
+	})
+
+	_, err := page.Goto(baseURL+"/", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+
+	title, err := page.Title()
+	require.NoError(t, err)
+	require.Contains(t, title, "Goshtoso")
+
+	require.Empty(t, jsErrors, "no JS console/page errors on homepage: %v", jsErrors)
+}
