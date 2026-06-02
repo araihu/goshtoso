@@ -3,6 +3,9 @@
 bin
 tmp
 tests
+site/tests
+go.work
+go.work.sum
 node_modules
 *.test
 *.md

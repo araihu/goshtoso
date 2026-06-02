@@ -1,0 +1,255 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/accordion"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// AccordionDemoPage renders the Accordion component demo
+templ AccordionDemoPage() {
+	@demo.Layout("Accordion", "accordion", accordionDemoContent())
+}
+
+// accordionDemoContent renders the demo. Each accordion variant lives in its own
+// preview frame followed by its own code block (mirrors penguinui.com/components/accordion).
+// The whole set stays wrapped in #accordion-fragment so the e2e selectors keep working.
+templ accordionDemoContent() {
+	<div id="accordion-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Accordion",
+				Description: "An accordion is a vertically stacked list of headers that reveal or hide associated sections of content when clicked.",
+			},
+			accordionDefaultPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
+    Items: []accordion.AccordionItem{
+        {
+            ID:      "default-1",
+            Title:   "What browsers are supported?",
+            Content: templ.Raw("Our website is optimized for Chrome, Firefox, Safari, and Edge."),
+        },
+        {
+            ID:      "default-2",
+            Title:   "How can I contact customer support?",
+            Content: templ.Raw("Reach out via email at support@example.com."),
+        },
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "No Background",
+				Description: "Drops the tinted fill for a cleaner look on plain surfaces. Set Variant: accordion.NoBackground.",
+			},
+			accordionNoBgPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
+    Variant: accordion.NoBackground,
+    Items: []accordion.AccordionItem{
+        {ID: "nobg-1", Title: "First section without background", Content: content1},
+        {ID: "nobg-2", Title: "Second section", Content: content2},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Split",
+				Description: "Each section becomes its own gapped, bordered card instead of a single divided block. Set Variant: accordion.Split.",
+			},
+			accordionSplitPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
+    Variant:       accordion.Split,
+    AllowMultiple: true,
+    Items: []accordion.AccordionItem{
+        {ID: "split-1", Title: "What browsers are supported?", Content: content1},
+        {ID: "split-2", Title: "How can I contact customer support?", Content: content2},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Allow Multiple Open",
+				Description: "With AllowMultiple: true, several sections can stay expanded at the same time instead of collapsing each other.",
+			},
+			accordionMultiPreview(),
+			`@accordion.Accordion(accordion.AccordionConfig{
+    AllowMultiple: true,
+    Items: []accordion.AccordionItem{
+        {ID: "multi-1", Title: "Section A (can stay open)", Content: content1},
+        {ID: "multi-2", Title: "Section B (can also stay open)", Content: content2},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Server-Loaded Content (HTMX)",
+				Description: "Defer heavy content: the body fetches from the server when the section scrolls into view (hx-trigger=\"intersect once\").",
+			},
+			accordionLazyPreview(),
+			`// Content template fetches from the server on first reveal
+templ lazyLoadingContent(targetID string) {
+    <div id={ targetID }
+         hx-get={ "/api/components/accordion-content/" + targetID }
+         hx-trigger="intersect once"
+         hx-swap="innerHTML">
+        <span>Loading...</span>
+    </div>
+}
+
+@accordion.Accordion(accordion.AccordionConfig{
+    Items: []accordion.AccordionItem{
+        {ID: "lazy-1", Title: "Dynamic Content (click to load)", Content: lazyLoadingContent("lazy-content-a")},
+    },
+})`,
+		)
+	</div>
+	// API reference lives outside #accordion-fragment so its table rows don't
+	// pollute the .divide-y accordion selectors the e2e suite relies on.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Items", Type: "[]AccordionItem", Default: "nil", Description: "The accordion sections (ID, Title, Content, optional Icon/Disabled/InitiallyExpanded)."},
+		{Name: "AllowMultiple", Type: "bool", Default: "false", Description: "Allow multiple sections open at once. When false, opening one closes the others."},
+		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Visual style: "default", "no-background", or "split".`},
+		{Name: "ID", Type: "string", Default: `"accordion"`, Description: "Container element ID used for accessibility wiring."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the container."},
+	})
+}
+
+// accordionDefaultPreview renders the default variant.
+templ accordionDefaultPreview() {
+	<div class="w-full max-w-2xl mx-auto">
+		@accordion.Accordion(accordion.AccordionConfig{
+			ID: "accordion-default",
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "default-1",
+					Title:   "What browsers are supported?",
+					Content: demoContent("Our website is optimized for the latest versions of Chrome, Firefox, Safari, and Edge. Check our documentation for additional information."),
+				},
+				{
+					ID:      "default-2",
+					Title:   "How can I contact customer support?",
+					Content: demoContent("Reach out to our dedicated support team via email at support@example.com or call our toll-free number at 1-800-123-4567 during business hours."),
+				},
+				{
+					ID:      "default-3",
+					Title:   "What is the refund policy?",
+					Content: demoContent("Please refer to our refund policy page on the website for detailed information regarding eligibility, timeframes, and the process for requesting a refund."),
+				},
+			},
+		})
+	</div>
+}
+
+// accordionNoBgPreview renders the no-background variant.
+templ accordionNoBgPreview() {
+	<div class="w-full max-w-2xl mx-auto">
+		@accordion.Accordion(accordion.AccordionConfig{
+			ID:      "accordion-nobg",
+			Variant: accordion.NoBackground,
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "nobg-1",
+					Title:   "First section without background",
+					Content: demoContent("This accordion variant has no background styling for a cleaner look."),
+				},
+				{
+					ID:      "nobg-2",
+					Title:   "Second section",
+					Content: demoContent("The content area maintains proper spacing and typography."),
+				},
+			},
+		})
+	</div>
+}
+
+// accordionSplitPreview renders the split variant (each item is its own card).
+templ accordionSplitPreview() {
+	<div class="w-full max-w-2xl mx-auto">
+		@accordion.Accordion(accordion.AccordionConfig{
+			ID:            "accordion-split",
+			Variant:       accordion.Split,
+			AllowMultiple: true,
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "split-1",
+					Title:   "What browsers are supported?",
+					Content: demoContent("Our website is optimized for the latest versions of Chrome, Firefox, Safari, and Edge."),
+				},
+				{
+					ID:      "split-2",
+					Title:   "How can I contact customer support?",
+					Content: demoContent("Reach out to our dedicated support team via email at support@example.com during business hours."),
+				},
+				{
+					ID:      "split-3",
+					Title:   "What is the refund policy?",
+					Content: demoContent("Refer to our refund policy page for eligibility, timeframes, and the request process."),
+				},
+			},
+		})
+	</div>
+}
+
+// accordionMultiPreview renders the allow-multiple-open variant.
+templ accordionMultiPreview() {
+	<div class="w-full max-w-2xl mx-auto">
+		@accordion.Accordion(accordion.AccordionConfig{
+			ID:            "accordion-multi",
+			AllowMultiple: true,
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "multi-1",
+					Title:   "Section A (can stay open)",
+					Content: demoContent("With AllowMultiple: true, you can have multiple sections expanded simultaneously."),
+				},
+				{
+					ID:      "multi-2",
+					Title:   "Section B (can also stay open)",
+					Content: demoContent("This provides a different user experience for certain use cases."),
+				},
+			},
+		})
+	</div>
+}
+
+// accordionLazyPreview renders the HTMX server-loaded variant.
+templ accordionLazyPreview() {
+	<div class="w-full max-w-2xl mx-auto">
+		@accordion.Accordion(accordion.AccordionConfig{
+			ID: "accordion-lazy",
+			Items: []accordion.AccordionItem{
+				{
+					ID:      "lazy-1",
+					Title:   "Dynamic Content A (click to load)",
+					Content: lazyLoadingContent("lazy-content-a"),
+				},
+				{
+					ID:      "lazy-2",
+					Title:   "Dynamic Content B (click to load)",
+					Content: lazyLoadingContent("lazy-content-b"),
+				},
+			},
+		})
+	</div>
+}
+
+// demoContent renders plain text body content for a section.
+templ demoContent(text string) {
+	{ text }
+}
+
+// lazyLoadingContent creates an HTMX-powered lazy loading container
+templ lazyLoadingContent(targetID string) {
+	<div id={ targetID } hx-get={ "/api/components/accordion-content/" + targetID } hx-trigger="intersect once" hx-swap="innerHTML">
+		<div class="flex items-center gap-2 text-on-surface-muted dark:text-on-surface-dark-muted">
+			<svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+			</svg>
+			<span class="text-sm">Loading content...</span>
+		</div>
+	</div>
+}

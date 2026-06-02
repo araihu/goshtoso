@@ -150,7 +150,7 @@ so mount it regardless of which path you choose.
 
 ## Component Catalog
 
-All components are imported from `github.com/araihu/goshtoso/components/<name>`. Run the demo server (`go run cmd/server/main.go`) to see interactive examples.
+All components are imported from `github.com/araihu/goshtoso/components/<name>`. Run the demo server (`go run ./site/cmd/server`) to see interactive examples.
 
 | Component | Import | Description |
 |-----------|--------|-------------|
@@ -602,7 +602,7 @@ Run the demo server:
 
 ```bash
 cd /path/to/goshtoso
-go run cmd/server/main.go -port 8090
+go run ./site/cmd/server -port 8090
 ```
 
 Then visit:
@@ -615,7 +615,7 @@ To add new components:
 
 1. Create component in `components/<name>/`
 2. Copy original HTML to `fixtures/`
-3. Create demo page in `internal/pages/demo/components/`
+3. Create demo page in `site/internal/pages/demo/components/`
 4. Write E2E tests with visual parity checks
 5. Document in this guide
 

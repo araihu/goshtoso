@@ -60,11 +60,12 @@ See [docs/USAGE.md](docs/USAGE.md) for full setup instructions.
 
 ## Project Structure
 
+Two Go modules in one repo (a workspace): the library at the root and the demo
+site under `site/`.
+
 ```
-goshtoso/
-├── cmd/
-│   ├── server/              # Demo server
-│   └── goshtoso/              # CSS extraction CLI tool
+goshtoso/                    # ROOT MODULE — library (github.com/araihu/goshtoso)
+├── cmd/goshtoso/            # CSS extraction CLI tool
 ├── components/              # Goshtoso component library (32 components)
 │   └── badge/
 │       ├── types.go         # Configuration types
@@ -74,10 +75,11 @@ goshtoso/
 │   ├── styles.css           # Compiled Tailwind CSS
 │   ├── js/                  # Alpine.js, HTMX, plugins
 │   └── fonts/               # TOTVS brand fonts
-├── internal/
-│   └── pages/demo/          # Demo pages
-├── tests/e2e/               # Playwright E2E tests
-└── docs/                    # Integration guides
+├── docs/                    # Integration guides
+└── site/                    # SITE MODULE — demo + examples (…/goshtoso/site)
+    ├── cmd/server/          # Demo server
+    ├── internal/pages/demo/ # Demo pages
+    └── tests/e2e/           # Playwright E2E tests
 ```
 
 ## Running the Demo
@@ -103,10 +105,10 @@ make dev-air
 # Install dependencies
 make install
 
-# Run the demo server
+# Run the demo server (run `go work init . ./site` once per clone for local dev)
 make dev
 # or
-go run cmd/server/main.go
+go run ./site/cmd/server
 
 # Server will start on http://localhost:8090
 # - Original PenguinUI: http://localhost:8090/original/
@@ -123,7 +125,7 @@ just gp-test-e2e                    # Run all E2E tests
 just gp-test-e2e-one TestButton     # Run specific test
 
 # Or directly
-go test ./goshtoso/tests/e2e/... -v
+go test ./site/tests/e2e/... -v
 
 # First time setup - install Playwright browsers
 just gp-install-playwright

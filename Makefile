@@ -5,11 +5,11 @@ all: css build
 
 # Build CSS and server
 build: css
-	go build -o bin/server cmd/server/main.go
+	go build -o bin/server ./site/cmd/server
 
 # Run development server (builds CSS first)
 dev: css
-	go run cmd/server/main.go
+	go run ./site/cmd/server
 
 # Development with CSS watching (requires GNU parallel or manual two terminals)
 dev-watch: css
@@ -43,14 +43,15 @@ css-watch:
 # Run Go tests
 test:
 	go test ./...
+	cd site && go test $$(go list ./... | grep -v /tests/e2e)
 
 # Run E2E tests (builds CSS first)
 test-e2e: css
-	go test ./tests/e2e/... -v
+	cd site && go test ./tests/e2e/... -v
 
 # Run specific E2E test
 test-e2e-one:
-	go test ./tests/e2e/... -v -run $(TEST)
+	cd site && go test ./tests/e2e/... -v -run $(TEST)
 
 # Install dependencies
 install: install-templ install-playwright install-air
@@ -73,15 +74,17 @@ generate:
 clean:
 	rm -rf bin/
 	rm -rf assets/styles.css
-	rm -rf tests/e2e/test-results/
+	rm -rf site/tests/e2e/test-results/
 
 # Format code
 fmt:
 	go fmt ./...
+	cd site && go fmt ./...
 
 # Lint
 lint:
 	go vet ./...
+	cd site && go vet ./...
 
 # Show help
 help:

@@ -80,15 +80,26 @@ jobs:
       - name: go vet
         run: go vet ./...
 
-      - name: golangci-lint
+      - name: golangci-lint (library, root module)
         run: |
           set -euo pipefail
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
             | sh -s -- -b "$(go env GOPATH)/bin" "${GOLANGCI_LINT_VERSION}"
           "$(go env GOPATH)/bin/golangci-lint" run --timeout 5m
 
+      # The site module builds against the in-repo library at this commit via a
+      # throwaway workspace (go.work is gitignored — it never lands in the tree).
+      - name: Create dev workspace (root library + site)
+        run: go work init . ./site
+
+      - name: go vet (site module)
+        run: cd site && go vet ./...
+
+      - name: golangci-lint (site module)
+        run: cd site && "$(go env GOPATH)/bin/golangci-lint" run --timeout 5m
+
       - name: Build server
-        run: go build -o bin/server ./cmd/server
+        run: go build -o bin/server ./site/cmd/server
 
   unit-test:
     name: Unit tests
@@ -121,8 +132,14 @@ jobs:
           templ generate
           tailwindcss -i css/main.css -o assets/styles.css
 
-      - name: Unit tests (exclude e2e)
-        run: go test $(go list ./... | grep -v /tests/e2e) -count=1
+      - name: Unit tests — library (root module)
+        run: go test ./... -count=1
+
+      - name: Create dev workspace (root library + site)
+        run: go work init . ./site
+
+      - name: Unit tests — site (exclude e2e)
+        run: cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1
 
   e2e:
     name: E2E (Playwright)
@@ -160,15 +177,18 @@ jobs:
           templ generate
           tailwindcss -i css/main.css -o assets/styles.css
 
+      - name: Create dev workspace (root library + site)
+        run: go work init . ./site
+
       - name: E2E tests
-        run: go test ./tests/e2e/... -count=1 -timeout 15m
+        run: go test ./site/tests/e2e/... -count=1 -timeout 15m
 
       - name: Upload E2E artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-results
-          path: tests/e2e/test-results/
+          path: site/tests/e2e/test-results/
           retention-days: 7
           if-no-files-found: ignore
 

@@ -60,3 +60,24 @@ jobs:
           files: |
             assets/styles.css
             assets/goshtoso-theme.css
+
+      # The site module tracks released library tags (not every main SHA).
+      # Bump its require to this tag and commit the pin back to main.
+      - name: Bump site module to released library tag
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          git fetch origin main
+          git checkout -B main origin/main
+          # GOPROXY=direct fetches the tag straight from the VCS — the public
+          # module proxy can lag minutes behind a freshly pushed tag.
+          (cd site && GOPROXY=direct go get "github.com/araihu/goshtoso@${tag}" && go mod tidy)
+          if git diff --quiet -- site/go.mod site/go.sum; then
+            echo "site already pinned to ${tag} — nothing to commit"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add site/go.mod site/go.sum
+          git commit -m "chore(site): pin library to ${tag} [skip ci]"
+          git push origin main

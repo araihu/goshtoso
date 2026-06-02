@@ -1,5 +1,7 @@
 package avatar
 
+import "strings"
+
 import "github.com/a-h/templ"
 
 // Size represents avatar size variants
@@ -298,18 +300,18 @@ func toUpper(b byte) string {
 // frequently do, e.g. `viewBox='0 0 64 64'`) would terminate the string early
 // and break the x-on:error handler with a SyntaxError at Alpine compile time.
 func jsEscapeSingle(s string) string {
-	result := ""
+	var result strings.Builder
 	for _, c := range s {
 		switch c {
 		case '\'':
-			result += `\'`
+			result.WriteString(`\'`)
 		case '\\':
-			result += `\\`
+			result.WriteString(`\\`)
 		default:
-			result += string(c)
+			result.WriteString(string(c))
 		}
 	}
-	return result
+	return result.String()
 }
 
 func splitWords(s string) []string {

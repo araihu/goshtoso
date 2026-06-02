@@ -36,25 +36,50 @@ templ generate
 # Reads assets/tailwind.version; regenerates the theme source; no global tailwind needed.
 just css
 
+# Local dev across both modules: create the gitignored workspace ONCE per clone
+# so the site builds against your working-tree library (not a published version).
+go work init . ./site
+
 # Run dev server (default port 8090)
-go run cmd/server/main.go
+go run ./site/cmd/server
 # or: just gp-dev
 
 # Run E2E tests (full suite ~2.5 min)
-go test ./tests/e2e/... -count=1 -timeout 15m
+go test ./site/tests/e2e/... -count=1 -timeout 15m
 
 # Run specific E2E test
-go test ./tests/e2e/... -count=1 -timeout 5m -run TestDropdown
+go test ./site/tests/e2e/... -count=1 -timeout 5m -run TestDropdown
 
 # Build server binary
-go build -o bin/server ./cmd/server
+go build -o bin/server ./site/cmd/server
 
-# Lint (gates PRs in CI — must be clean before merge)
-golangci-lint run
+# Lint (gates PRs in CI — must be clean before merge). Run per module:
+golangci-lint run                 # library (root module)
+cd site && golangci-lint run      # site + examples module
 
 # Apply go fix modernizations (also runs automatically via the pre-commit hook)
-go fix ./...
+go fix ./... && (cd site && go fix ./...)
 ```
+
+### Two modules (library + site)
+
+This repo is a **Go workspace with two modules**:
+
+- **`github.com/araihu/goshtoso`** (repo root) — the publishable component
+  **library**. Slim deps (templ, chroma); what consumers `go get`.
+- **`github.com/araihu/goshtoso/site`** (`site/`) — the **demo website + example
+  apps** (`cmd/server`, `internal/`, `tests/e2e`). Carries the heavy/dev-only
+  deps (Playwright, websocket). Not published.
+
+The library never imports `site/`. The site imports the library by its normal
+module path, so `components/...` / `assets` import paths are unchanged.
+
+`go.work` is **gitignored** — each clone runs `go work init . ./site` once for
+local dev (overlays the working-tree library so library edits show up in the
+site without a release). Fresh clones still build the site without a workspace:
+`site/go.mod` pins a real, fetchable library version. CI builds the site against
+the in-repo library via a throwaway workspace; `site/go.mod`'s pin only advances
+on a tagged release (`release.yml`).
 
 ### Linting & modernization
 
@@ -76,36 +101,44 @@ go fix ./...
 ## Repository Structure
 
 ```
-goshtoso/
-├── cmd/server/main.go          # Server entry point
+goshtoso/                       # ── ROOT MODULE: library (github.com/araihu/goshtoso)
+├── go.mod  go.sum              # library module (templ, chroma deps only)
+├── cmd/goshtoso/               # asset/version extraction CLI (library tool)
 ├── components/                 # Reusable UI components (22 total)
 │   └── <name>/
 │       ├── <name>.templ        # Component template
 │       ├── types.go            # Config types and variant classes
 │       └── <name>_templ.go     # Generated (DO NOT EDIT)
-├── internal/
-│   ├── server/
-│   │   ├── server.go           # Route handlers
-│   │   └── table_handler.go    # Table HTMX endpoint (/api/components/table/rows)
-│   └── pages/demo/
-│       ├── layout.templ        # Main layout, sidebar, theme selector
-│       └── components/         # Demo pages per component
 ├── css/main.css                # Tailwind source + theme imports
 ├── all-themes.css              # 13 theme definitions
 ├── assets/
 │   ├── embed.go                # Embedded assets + StylesCSS() accessor
 │   ├── js/vendor/              # Bundled Alpine.js + HTMX
 │   └── styles.css              # Generated CSS (DO NOT EDIT)
-├── tests/e2e/                  # Playwright E2E tests
-│   ├── e2e_test.go             # TestMain, shared browser, helpers
-│   ├── visual_helpers.go       # Screenshot comparison utilities
-│   ├── class_verifier.go       # CSS class extraction/comparison
-│   ├── table_htmx_test.go      # Table API-level tests (pagination, sort, filter)
-│   ├── table_pagination_nav_test.go  # Browser paginator style tests
-│   ├── table_filter_test.go    # Browser filter interaction tests (bar + inline variants)
-│   └── sidebar_test.go         # All-components-present test
-└── <component-name>/           # Original PenguinUI HTML (for reference/parity)
+├── scripts/                    # skillgen (reads components/), themegen (writes assets/)
+│
+└── site/                       # ── SITE MODULE: demo + examples (…/goshtoso/site)
+    ├── go.mod  go.sum          # site module (library + playwright + websocket)
+    ├── cmd/server/main.go      # Server entry point
+    ├── internal/
+    │   ├── server/
+    │   │   ├── server.go       # Route handlers
+    │   │   └── table_handler.go  # Table HTMX endpoint (/api/components/table/rows)
+    │   ├── pages/demo/
+    │   │   ├── layout.templ    # Main layout, sidebar, theme selector
+    │   │   └── components/     # Demo pages per component
+    │   └── examples/           # Example app domain logic (todo, logs, …)
+    └── tests/e2e/              # Playwright E2E tests
+        ├── e2e_test.go         # TestMain, shared browser, helpers
+        ├── visual_helpers.go   # Screenshot comparison utilities
+        ├── class_verifier.go   # CSS class extraction/comparison
+        ├── table_htmx_test.go  # Table API-level tests (pagination, sort, filter)
+        └── sidebar_test.go     # All-components-present test
 ```
+
+Note: paths in the sections below are written relative to whichever module owns
+them — e.g. `internal/server/server.go` lives at `site/internal/server/server.go`,
+and `components/<name>/` lives at the repo root.
 
 ## Component Development Workflow
 
@@ -115,8 +148,8 @@ goshtoso/
    (MUST follow the docs-page pattern — see below)
 4. **Register route** — Add case in `internal/server/server.go:handleComponent()`
 5. **Add to sidebar** — Add entry in `internal/pages/demo/layout.templ:getSidebarItems()`
-6. **Write E2E tests** — `tests/e2e/<name>_test.go`
-7. **Build & verify** — `templ generate && go build -o bin/server ./cmd/server`
+6. **Write E2E tests** — `site/tests/e2e/<name>_test.go`
+7. **Build & verify** — `templ generate && go build -o bin/server ./site/cmd/server`
 8. **Sync the usage skill** — `go run ./scripts/skillgen` regenerates
    `.claude/skills/using-goshtoso/components-reference.md` from the component
    source. The pre-commit hook does this automatically when `components/**.go`
