@@ -21,11 +21,13 @@ css:
       mkdir -p .tools
       _uname="$(uname -s | tr '[:upper:]' '[:lower:]')"
       case "$_uname" in darwin) os=macos;; linux) os=linux;; *) os="$_uname";; esac
-      arch="$(uname -m)"; case "$arch" in arm64|aarch64) arch=arm64;; x86_64) arch=x64;; esac
+      arch="$(uname -m)"; case "$arch" in arm64|aarch64) arch=arm64;; x86_64) arch=x64;; *) echo "unsupported arch: $arch" >&2; exit 1;; esac
       echo "fetching tailwindcss v${ver} (${os}-${arch})..."
-      curl -fsSL -o "$bin" \
+      tmp="$(mktemp .tools/tailwindcss.XXXXXX)"
+      curl -fsSL -o "$tmp" \
         "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-${os}-${arch}"
-      chmod +x "$bin"
+      chmod +x "$tmp"
+      mv "$tmp" "$bin"
     fi
     "$bin" -i css/main.css -o assets/styles.css
     echo "css: built assets/styles.css with tailwindcss v${ver}"
