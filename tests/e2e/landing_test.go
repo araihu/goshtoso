@@ -57,4 +57,16 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		)
 		require.NoError(t, err, "live HTMX table should populate rows")
 	})
+
+	t.Run("ExampleGalleryLinks", func(t *testing.T) {
+		for _, route := range []string{
+			"/examples/todo", "/examples/chat", "/examples/logs",
+			"/examples/profile", "/examples/ticker",
+		} {
+			loc := page.Locator("#examples a[href='" + route + "']")
+			cnt, err := loc.Count()
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, cnt, 1, "gallery should link to "+route)
+		}
+	})
 }

@@ -145,23 +145,23 @@ templ landingContent() {
 			</div>
 		</div>
 
-		<!-- Why -->
-		<div class="max-w-3xl mx-auto">
-			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center">Why?</h2>
-			<div class="space-y-4 text-on-surface dark:text-on-surface-dark">
-				<p>
-					Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration —
-					a mountain of tooling between you and shipping a page.
-				</p>
-				<p>
-					Goshtoso takes a different path: <strong class="text-on-surface-strong dark:text-on-surface-dark-strong">the server renders HTML, the browser shows it.</strong>
-					When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.
-				</p>
-				<p>
-					The result is a <strong class="text-on-surface-strong dark:text-on-surface-dark-strong">single binary</strong> that serves a complete UI with
-					theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components —
-					all in a <strong class="text-on-surface-strong dark:text-on-surface-dark-strong">37MB Docker image</strong>.
-				</p>
+		<!-- Example apps gallery -->
+		<div id="examples">
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 text-center">Built with Goshtoso</h2>
+			<p class="text-center text-on-surface dark:text-on-surface-dark mb-6">
+				Full, runnable apps composed entirely from these components.
+			</p>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				for _, a := range getExampleApps() {
+					<a href={ templ.SafeURL(a.URL) } class="block border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark hover:border-primary dark:hover:border-primary-dark transition-colors group">
+						<h3 class="text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 group-hover:text-primary dark:group-hover:text-primary-dark transition-colors">
+							{ a.Title }
+						</h3>
+						<p class="text-sm text-on-surface dark:text-on-surface-dark leading-relaxed">
+							{ a.Desc }
+						</p>
+					</a>
+				}
 			</div>
 		</div>
 
