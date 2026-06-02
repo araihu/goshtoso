@@ -69,3 +69,5 @@ dist/
 build/
 og-site/
 .claude/scheduled_tasks.lock
+
+.superpowers/
