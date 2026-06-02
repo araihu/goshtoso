@@ -169,6 +169,34 @@ runtime starts on demand on the first review/task command.
 
 ## Critical Rules
 
+### Frontend interactivity hierarchy: htmx → Alpine.js → vanilla JS
+
+When adding any client behavior, pick the **highest** tier that solves the
+problem, never a lower one for convenience:
+
+1. **Server-side rendering driven by htmx (default, idiomatic).** Prefer a
+   server round-trip that returns rendered HTML (templ) swapped by htmx over
+   holding state or building markup on the client. Reach first for `hx-get`/
+   `hx-post`, swaps, OOB swaps, and `HX-*` response headers. Most "interactive"
+   needs (filtering, pagination, inline edit, lazy load, validation, toasts)
+   are SSR + htmx, not JavaScript.
+2. **Alpine.js — only for genuinely client-side interactivity.** Use Alpine
+   when the behavior is **not achievable via SSR, or a server round-trip would
+   be too expensive / too laggy** for the interaction: purely local UI state
+   (open/closed, tabs, hover, focus traps), instant input feedback, and
+   transitions where a network hop would feel wrong. Don't use Alpine to do
+   what htmx already does.
+3. **Vanilla JS — last resort.** Only when neither htmx nor Alpine fits (a niche
+   browser API, a one-off integration). Justify it; prefer wrapping it in an
+   `Alpine.directive`/`Alpine.magic` so it composes with the rest.
+
+**Solutions must play nicely with htmx first.** Anything you add has to survive
+htmx swaps and fragment-nav: register `Alpine.data()` immediately (not only on
+`alpine:init`) so swapped-in nodes can find it, call `htmx.process()` on nodes
+you insert yourself, and gate `hx-swap-oob` to update-only so first paint
+doesn't error. See the **`htmx`** and **`alpinejs`** skills (and
+`alpinejs/reference/gotchas.md`) for the escaping and swap pitfalls.
+
 ### Always work in a git worktree
 
 Make changes in an isolated git worktree, never directly on a shared branch in
