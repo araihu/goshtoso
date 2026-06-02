@@ -205,3 +205,13 @@ Themes are `[data-theme="name"]` selectors in `all-themes.css` (13 themes);
 default is **Minimal** (black/white, no border radius). Dark mode toggles the
 `.dark` class on `<html>`. Always pair light + dark utilities on custom classes:
 `bg-surface dark:bg-surface-dark text-on-surface dark:text-on-surface-dark`.
+
+### Running your own Tailwind
+
+Two paths (full detail in `docs/USAGE.md` → "Using your own Tailwind build"):
+
+- **Path A (recommended):** serve our prebuilt `styles.css` via `assets.Handler()`
+  and run your own Tailwind into a *separate* file. No coupling.
+- **Path B (unified):** `goshtoso -theme -out=…` extracts the theme source to
+  `@import`, and `goshtoso -source-path` prints the components dir to `@source`.
+  Your Tailwind must match `goshtoso -version` (also in `VERSIONS.md`).

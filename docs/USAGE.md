@@ -102,6 +102,52 @@ These are the vendored files `assets.Handler()` serves — pin them to the modul
 version instead of a floating CDN tag. Don't forget `combobox.js` (the combobox
 component's keyboard nav is dead without it).
 
+## Using your own Tailwind build
+
+`goshtoso -version` prints the Tailwind version Goshtoso's CSS was built with
+(also in [`VERSIONS.md`](../VERSIONS.md)). Match your own Tailwind to it.
+
+### Path A — two stylesheets (recommended, low coupling)
+
+Serve Goshtoso's prebuilt CSS and run your own Tailwind into a *separate* file.
+No recompiling Goshtoso.
+
+```html
+<link rel="stylesheet" href="/assets/styles.css"/>  <!-- Goshtoso, via assets.Handler() -->
+<link rel="stylesheet" href="/css/app.css"/>          <!-- your own Tailwind output -->
+```
+
+```css
+/* your app.css — your own tokens/classes only */
+@import "tailwindcss";
+@theme { --color-brand: oklch(0.7 0.15 250); }
+```
+
+### Path B — unified build (one tree-shaken stylesheet)
+
+Compile Goshtoso's theme source together with your own. Requires your Tailwind
+to match `goshtoso -version`.
+
+```bash
+# 1. extract the theme SOURCE next to your CSS
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -theme -out=css/goshtoso-theme.css
+
+# 2. discover the components dir Tailwind must scan
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
+# -> /…/go/pkg/mod/github.com/araihu/goshtoso@vX.Y.Z/components
+```
+
+```css
+/* your main.css */
+@import "tailwindcss";
+@import "./goshtoso-theme.css";                 /* tokens + variants + themes */
+@source "/…/goshtoso@vX.Y.Z/components";        /* emit Goshtoso's classes (path from -source-path) */
+@theme { --color-brand: oklch(0.7 0.15 250); }  /* your own tokens too */
+```
+
+Goshtoso's fonts/images are still served by `assets.Handler()` at `/assets/`,
+so mount it regardless of which path you choose.
+
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`. Run the demo server (`go run cmd/server/main.go`) to see interactive examples.
