@@ -1,0 +1,108 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/triplet"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// TripletDemoPage renders the Triplet component demo
+templ TripletDemoPage() {
+	@demo.Layout("Triplet", "triplet", tripletDemoContent())
+}
+
+templ tripletDemoContent() {
+	<div id="triplet-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Triplet",
+				Description: "Dynamic 3-field rows for key-value-effect data (e.g. Kubernetes taints). Each row has two text inputs and an effect dropdown. Powered by Alpine.js.",
+			},
+			tripletTaintsPreview(),
+			`@triplet.Triplet(triplet.Config{
+    ID:   "taints",
+    Name: "taints",
+    Entries: []triplet.Entry{
+        {Key: "node-role.kubernetes.io/control-plane", Value: "true", Effect: "NoSchedule"},
+    },
+    EffectOptions: []triplet.EffectOption{
+        {Value: "NoSchedule", Display: "NoSchedule"},
+        {Value: "NoExecute", Display: "NoExecute"},
+    },
+    KeyPlaceholder:   "key",
+    ValuePlaceholder: "value",
+    AddLabel:         "Add taint",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Generic Priority Rows",
+				Description: "The same component with a different EffectOptions set and no initial Entries.",
+			},
+			tripletGenericPreview(),
+			`@triplet.Triplet(triplet.Config{
+    ID:   "rules",
+    Name: "rules",
+    EffectOptions: []triplet.EffectOption{
+        {Value: "high", Display: "High"},
+        {Value: "low", Display: "Low"},
+    },
+    KeyPlaceholder:   "rule name",
+    ValuePlaceholder: "condition",
+    AddLabel:         "Add rule",
+})`,
+		)
+	</div>
+	// API reference lives outside #triplet-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the triplet root (Alpine scope)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Base form field name for the submitted rows."},
+		{Name: "Entries", Type: "[]Entry", Default: "nil", Description: "Initial rows (Key, Value, Effect)."},
+		{Name: "EffectOptions", Type: "[]EffectOption", Default: "nil", Description: "Options for the per-row effect dropdown (Value, Display)."},
+		{Name: "DefaultEffect", Type: "string", Default: `""`, Description: "Effect value applied to newly added rows."},
+		{Name: "KeyPlaceholder", Type: "string", Default: `""`, Description: "Placeholder for the key input."},
+		{Name: "ValuePlaceholder", Type: "string", Default: `""`, Description: "Placeholder for the value input."},
+		{Name: "AddLabel", Type: "string", Default: `"Add"`, Description: "Label of the add-row button."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Render read-only rows."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
+}
+
+// tripletTaintsPreview renders the Kubernetes-taints example.
+templ tripletTaintsPreview() {
+	<div id="triplet-taints" class="w-full max-w-2xl mx-auto">
+		@triplet.Triplet(triplet.Config{
+			ID:   "taintsDemo",
+			Name: "taints",
+			Entries: []triplet.Entry{
+				{Key: "node-role.kubernetes.io/control-plane", Value: "true", Effect: "NoSchedule"},
+			},
+			EffectOptions: []triplet.EffectOption{
+				{Value: "NoSchedule", Display: "NoSchedule"},
+				{Value: "PreferNoSchedule", Display: "PreferNoSchedule"},
+				{Value: "NoExecute", Display: "NoExecute"},
+			},
+			KeyPlaceholder:   "key (e.g. node-role.kubernetes.io/control-plane)",
+			ValuePlaceholder: "value (e.g. true)",
+			AddLabel:         "Add taint",
+		})
+	</div>
+}
+
+// tripletGenericPreview renders the generic priority-rows example.
+templ tripletGenericPreview() {
+	<div id="triplet-generic" class="w-full max-w-2xl mx-auto">
+		@triplet.Triplet(triplet.Config{
+			ID:   "priorityDemo",
+			Name: "rules",
+			EffectOptions: []triplet.EffectOption{
+				{Value: "high", Display: "High"},
+				{Value: "medium", Display: "Medium"},
+				{Value: "low", Display: "Low"},
+			},
+			KeyPlaceholder:   "rule name",
+			ValuePlaceholder: "condition",
+			AddLabel:         "Add rule",
+		})
+	</div>
+}

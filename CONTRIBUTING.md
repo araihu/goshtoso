@@ -20,7 +20,7 @@ agree to uphold it.
 | templ | v0.3.x | `go install github.com/a-h/templ/cmd/templ@latest` |
 | Tailwind CSS | v4 | standalone CLI or `npm i` |
 | golangci-lint | latest | https://golangci-lint.run |
-| Playwright (E2E) | v0.5700.1 | resolved by `go test ./tests/e2e/...` |
+| Playwright (E2E) | v0.5700.1 | resolved by `go test ./site/tests/e2e/...` |
 
 ## Getting started
 
@@ -32,7 +32,7 @@ cd goshtoso
 git config core.hooksPath .githooks
 
 # run the dev server (port 8090)
-go run cmd/server/main.go
+go run ./site/cmd/server
 ```
 
 ## Development workflow
@@ -47,7 +47,7 @@ templ generate
 # after editing CSS / introducing a new Tailwind utility class
 tailwindcss -i css/main.css -o assets/styles.css
 
-go build -o bin/server ./cmd/server
+go build -o bin/server ./site/cmd/server
 ```
 
 ### Adding a component
@@ -81,9 +81,9 @@ Run the full gate locally — CI enforces all of it:
 templ generate
 golangci-lint run                                   # cyclomatic ceiling: 20
 go fix ./...                                         # also runs via pre-commit hook
-go build -o bin/server ./cmd/server
+go build -o bin/server ./site/cmd/server
 go test ./... -count=1                               # unit tests
-go test ./tests/e2e/... -count=1 -timeout 15m        # full E2E (~2.5 min)
+go test ./site/tests/e2e/... -count=1 -timeout 15m        # full E2E (~2.5 min)
 ```
 
 Test components in **both light and dark mode** across themes (especially

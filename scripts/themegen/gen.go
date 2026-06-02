@@ -14,7 +14,7 @@ func generateTheme(mainCSS string, imports map[string]string) string {
 	b.WriteString("   Goshtoso theme source for your OWN Tailwind v4 build.\n")
 	b.WriteString("   Add this file after tailwindcss is imported in your own CSS. */\n\n")
 
-	for _, line := range strings.Split(mainCSS, "\n") {
+	for line := range strings.SplitSeq(mainCSS, "\n") {
 		trimmed := strings.TrimSpace(line)
 		switch {
 		case trimmed == `@import "tailwindcss";`:

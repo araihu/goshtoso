@@ -25,8 +25,9 @@ fi
 staged=$(git diff --cached --name-only --diff-filter=d | grep '\.go$' | grep -v '_templ\.go$' || true)
 [ -z "$staged" ] && exit 0
 
-# Apply modernizations across the module (fast; conservative, AST-safe).
+# Apply modernizations across both modules (fast; conservative, AST-safe).
 go fix ./... >/dev/null 2>&1 || true
+(cd site && go fix ./... >/dev/null 2>&1) || true
 
 # Never modernize generated output — restore it verbatim.
 git checkout -- '*_templ.go' 2>/dev/null || true

@@ -1,6 +1,6 @@
 ---
 name: component-docs
-description: Use when creating or editing a Goshtoso component demo/documentation page under internal/pages/demo/components/ — adding a new component page, adding or restructuring variant examples, adding an API reference, or wiring the right-rail "On this page" table of contents. Covers demo.ComponentDemo, demo.DemoSection, demo.APIReference, the data-toc-heading anchor contract, and the #<component>-fragment e2e anchor.
+description: Use when creating or editing a Goshtoso component demo/documentation page under site/internal/pages/demo/components/ — adding a new component page, adding or restructuring variant examples, adding an API reference, or wiring the right-rail "On this page" table of contents. Covers demo.ComponentDemo, demo.DemoSection, demo.APIReference, the data-toc-heading anchor contract, and the #<component>-fragment e2e anchor.
 ---
 
 # Goshtoso Component Docs Page Pattern
@@ -9,7 +9,7 @@ description: Use when creating or editing a Goshtoso component demo/documentatio
 
 Every component demo page mirrors [penguinui.com](https://penguinui.com) layout: a header, then **one preview box + one code box per variant**, an **API reference table at the bottom**, and a **right-rail "On this page" TOC** auto-built from section headings. This pattern is mandatory for all 22+ components so docs stay consistent.
 
-Helpers live in `internal/pages/demo/component_demo.templ`. The page file lives in `internal/pages/demo/components/<name>.templ`.
+Helpers live in `site/internal/pages/demo/component_demo.templ`. The page file lives in `site/internal/pages/demo/components/<name>.templ`.
 
 ## The Rule
 
@@ -51,13 +51,13 @@ The rail in `layout.templ` builds itself from `[data-toc-heading]` elements insi
 
 ## Workflow Checklist
 
-1. Create `internal/pages/demo/components/<name>.templ` using the skeleton.
+1. Create `site/internal/pages/demo/components/<name>.templ` using the skeleton.
 2. One `DemoSection` per variant; give each a unique container ID.
 3. `APIReference` at the bottom, **outside** `#<name>-fragment`.
 4. Register route (`server.go`) + sidebar entry (`layout.templ`) per CLAUDE.md.
 5. `templ generate` (force-regen if "0 updates": `rm <name>_templ.go && templ generate`).
 6. **Rebuild Tailwind** if you introduced any new utility class: `tailwindcss -i css/main.css -o assets/styles.css` — CSS is embedded, so also `go build`. Forgetting this is why a class like `xl:block` silently does nothing.
-7. E2E: target `#<name>-fragment` and the per-variant container IDs; `templ generate && go build && go test ./tests/e2e/... -run Test<Name>`.
+7. E2E: target `#<name>-fragment` and the per-variant container IDs; `templ generate && go build && go test ./site/tests/e2e/... -run Test<Name>`.
 
 ## Common Mistakes
 
@@ -71,6 +71,6 @@ The rail in `layout.templ` builds itself from `[data-toc-heading]` elements insi
 
 ## Reference
 
-- Helpers: `internal/pages/demo/component_demo.templ` (`ComponentDemo`, `DemoSection`, `APIReference`, `slugify`).
-- Rail + scroll-spy: `internal/pages/demo/layout.templ` (`#toc-rail`, `window.buildTOC`, `data-toc-heading`).
-- Canonical example: `internal/pages/demo/components/accordion.templ`.
+- Helpers: `site/internal/pages/demo/component_demo.templ` (`ComponentDemo`, `DemoSection`, `APIReference`, `slugify`).
+- Rail + scroll-spy: `site/internal/pages/demo/layout.templ` (`#toc-rail`, `window.buildTOC`, `data-toc-heading`).
+- Canonical example: `site/internal/pages/demo/components/accordion.templ`.

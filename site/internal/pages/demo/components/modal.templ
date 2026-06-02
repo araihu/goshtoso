@@ -1,0 +1,200 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/modal"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// ModalDemoPage renders the Modal component demo
+templ ModalDemoPage() {
+	@demo.Layout("Modal", "modal", modalDemoContent())
+}
+
+// modalDemoContent renders the demo. Each modal variant lives in its own preview
+// frame followed by its own code block (mirrors penguinui.com/components/modal).
+// Wrapped in #modal-fragment.
+templ modalDemoContent() {
+	<div id="modal-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Modal",
+				Description: "Focused overlay content with default and alert variants, plus optional HTMX or JavaScript actions on the primary/secondary buttons.",
+			},
+			modalDefaultPreview(),
+			`@modal.Modal(modal.Config{
+    ID:            "offer",
+    Title:         "Special Offer",
+    Body:          "Upgrade your account now to unlock premium features.",
+    TriggerText:   "Open Modal",
+    PrimaryText:   "Upgrade Now",
+    SecondaryText: "Remind me later",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Alert Modals",
+				Description: "AlertMode: true plus a Variant renders a compact, icon-led alert dialog (Success, Info, Warning, Danger).",
+			},
+			modalAlertPreview(),
+			`@modal.Modal(modal.Config{
+    ID:          "txComplete",
+    Title:       "Transaction Complete",
+    Body:        "Your funds transfer was successful.",
+    TriggerText: "Success Modal",
+    PrimaryText: "Go to My Balance",
+    Variant:     modal.Success,
+    AlertMode:   true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With HTMX Action",
+				Description: "Give a button a PrimaryAction with hx-* fields to fire a server request on confirm.",
+			},
+			modalHTMXPreview(),
+			`@modal.Modal(modal.Config{
+    ID:            "htmxDemo",
+    Title:         "Confirm Action",
+    Body:          "This will send a request to the server.",
+    TriggerText:   "HTMX Modal",
+    PrimaryText:   "Confirm",
+    SecondaryText: "Cancel",
+    PrimaryAction: &modal.ButtonAction{
+        HxPost:   "/api/hello",
+        HxTarget: "#modal-htmx-result",
+        HxSwap:   "innerHTML",
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With JavaScript Action",
+				Description: "Use PrimaryAction.OnClick for a client-side handler.",
+			},
+			modalJSPreview(),
+			`@modal.Modal(modal.Config{
+    ID:            "jsDemo",
+    Title:         "Confirm Delete",
+    Body:          "Are you sure? This cannot be undone.",
+    TriggerText:   "JS Action Modal",
+    PrimaryText:   "Delete",
+    SecondaryText: "Cancel",
+    PrimaryAction: &modal.ButtonAction{OnClick: "alert('Deleted!')"},
+})`,
+		)
+	</div>
+	// API reference lives outside #modal-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the dialog and scopes Alpine state)."},
+		{Name: "Title", Type: "string", Default: `""`, Description: "Dialog heading."},
+		{Name: "Body", Type: "string", Default: `""`, Description: "Dialog body text."},
+		{Name: "TriggerText", Type: "string", Default: `""`, Description: "Label of the button that opens the modal."},
+		{Name: "PrimaryText", Type: "string", Default: `""`, Description: "Primary button label."},
+		{Name: "PrimaryAction", Type: "*ButtonAction", Default: "nil", Description: "Primary button behavior (OnClick or hx-* fields)."},
+		{Name: "SecondaryText", Type: "string", Default: `""`, Description: "Secondary button label (omit to hide)."},
+		{Name: "SecondaryAction", Type: "*ButtonAction", Default: "nil", Description: "Secondary button behavior."},
+		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Alert color: "default", "success", "info", "warning", "danger".`},
+		{Name: "AlertMode", Type: "bool", Default: "false", Description: "Render the compact icon-led alert dialog layout."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the dialog."},
+	})
+}
+
+// modalDefaultPreview renders the default modal trigger.
+templ modalDefaultPreview() {
+	<div id="modal-default" class="w-full max-w-2xl mx-auto">
+		@modal.Modal(modal.Config{
+			ID:            "defaultDemo",
+			Title:         "Special Offer",
+			Body:          "As a token of appreciation, we have an exclusive offer just for you. Upgrade your account now to unlock premium features and enjoy a seamless experience.",
+			TriggerText:   "Open Modal",
+			PrimaryText:   "Upgrade Now",
+			SecondaryText: "Remind me later",
+		})
+	</div>
+}
+
+// modalAlertPreview renders the four alert-mode variants.
+templ modalAlertPreview() {
+	<div id="modal-alert" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap gap-3">
+				@modal.Modal(modal.Config{
+					ID:          "successDemo",
+					Title:       "Transaction Complete",
+					Body:        "Your funds transfer was successful. Check your balance for confirmation.",
+					TriggerText: "Success Modal",
+					PrimaryText: "Go to My Balance",
+					Variant:     modal.Success,
+					AlertMode:   true,
+				})
+				@modal.Modal(modal.Config{
+					ID:          "infoDemo",
+					Title:       "New Update Available",
+					Body:        "A new version of the application is ready for download. Enhance your experience with the latest features and improvements.",
+					TriggerText: "Info Modal",
+					PrimaryText: "Install Updates Now",
+					Variant:     modal.Info,
+					AlertMode:   true,
+				})
+				@modal.Modal(modal.Config{
+					ID:          "warningDemo",
+					Title:       "Forgot your password?",
+					Body:        "Your account will be locked after three unsuccessful login attempts.",
+					TriggerText: "Warning Modal",
+					PrimaryText: "Recover My Password",
+					Variant:     modal.Warning,
+					AlertMode:   true,
+				})
+				@modal.Modal(modal.Config{
+					ID:          "dangerDemo",
+					Title:       "Update Required",
+					Body:        "You are missing critical security updates, putting your system at risk of potential vulnerabilities.",
+					TriggerText: "Danger Modal",
+					PrimaryText: "Install Updates Now",
+					Variant:     modal.Danger,
+					AlertMode:   true,
+				})
+			</div>
+		</div>
+}
+
+// modalHTMXPreview renders the HTMX-action modal and its result target.
+templ modalHTMXPreview() {
+	<div id="modal-htmx" class="w-full max-w-2xl mx-auto">
+		<div class="space-y-3">
+				@modal.Modal(modal.Config{
+					ID:            "htmxDemo",
+					Title:         "Confirm Action",
+					Body:          "Clicking confirm will send a POST request to the server via HTMX.",
+					TriggerText:   "Open HTMX Modal",
+					PrimaryText:   "Confirm",
+					SecondaryText: "Cancel",
+					PrimaryAction: &modal.ButtonAction{
+						HxPost:   "/api/hello",
+						HxTarget: "#modal-htmx-result",
+						HxSwap:   "innerHTML",
+					},
+				})
+				<div id="modal-htmx-result" class="mt-2 text-sm min-h-[1.5rem]"></div>
+			</div>
+		</div>
+}
+
+// modalJSPreview renders the JavaScript-action modal.
+templ modalJSPreview() {
+	<div id="modal-js" class="w-full max-w-2xl mx-auto">
+		@modal.Modal(modal.Config{
+			ID:            "jsDemo",
+				Title:         "Confirm Delete",
+				Body:          "Are you sure you want to delete this item? This action cannot be undone.",
+				TriggerText:   "Open JS Modal",
+				PrimaryText:   "Delete",
+				SecondaryText: "Cancel",
+				PrimaryAction: &modal.ButtonAction{
+					OnClick: "alert('Item deleted successfully!')",
+				},
+			})
+	</div>
+}

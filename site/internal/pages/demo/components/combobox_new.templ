@@ -1,0 +1,150 @@
+package components
+
+import (
+	combobox "github.com/araihu/goshtoso/components/combobox/v2"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// IndustryCfg: client-mode single-select.
+var IndustryCfg = combobox.Config{
+	ID:          "industry",
+	Name:        "industry",
+	Label:       "Industry (client mode)",
+	Placeholder: "Select an industry",
+	Mode:        combobox.ModeSingle,
+	Source: combobox.Source{Static: []combobox.Option{
+		{Value: "tech", Label: "Technology"},
+		{Value: "health", Label: "Healthcare"},
+		{Value: "finance", Label: "Finance"},
+		{Value: "retail", Label: "Retail"},
+		{Value: "education", Label: "Education"},
+	}},
+}
+
+// SkillsCfg: client-mode multi-select with clear-all.
+var SkillsCfg = combobox.Config{
+	ID:             "skills",
+	Name:           "skills",
+	Label:          "Skills (client mode)",
+	Placeholder:    "Pick some skills",
+	Mode:           combobox.ModeMultiple,
+	EnableClearAll: true,
+	Source: combobox.Source{Static: []combobox.Option{
+		{Value: "go", Label: "Go"},
+		{Value: "rust", Label: "Rust"},
+		{Value: "ts", Label: "TypeScript"},
+		{Value: "py", Label: "Python"},
+		{Value: "kt", Label: "Kotlin"},
+	}},
+}
+
+// UsersCfg: server-mode multi-select with lazy search.
+var UsersCfg = combobox.Config{
+	ID:              "users",
+	Name:            "users",
+	Label:           "Users (server mode, lazy)",
+	Placeholder:     "Search users",
+	Mode:            combobox.ModeMultiple,
+	EnableSearch:    true,
+	EnableClearAll:  true,
+	ToggleEndpoint:  "/api/components/combobox-new/users/toggle",
+	OptionsEndpoint: "/api/components/combobox-new/users/options",
+	ClearEndpoint:   "/api/components/combobox-new/users/clear",
+	Source:          combobox.Source{LazyEndpoint: "/api/components/combobox-new/users/options"},
+}
+
+// ComboboxNewPage renders the HTMX SSR combobox demo.
+templ ComboboxNewPage() {
+	@demo.Layout("Combobox (HTMX SSR rewrite)", "combobox-new", comboboxNewDemoContent())
+}
+
+// comboboxNewDemoContent renders the v2 (HTMX SSR rewrite) combobox demo. Each
+// mode lives in its own preview frame followed by its own code block (mirrors
+// penguinui.com/components/combobox). Wrapped in #combobox-new-fragment.
+templ comboboxNewDemoContent() {
+	<div id="combobox-new-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Combobox (v2 — client + server modes)",
+				Description: "The HTMX SSR rewrite. Client-mode comboboxes toggle entirely in the browser (no HTTP on open/select); server-mode keeps an HTMX lazy/search path for options that can't be pre-rendered.",
+			},
+			comboboxNewIndustryPreview(),
+			`// Client mode: options are pre-rendered, toggling happens in the browser.
+var IndustryCfg = combobox.Config{
+    ID: "industry", Name: "industry", Label: "Industry",
+    Mode:   combobox.ModeSingle,
+    Source: combobox.Source{Static: industryOptions},
+}
+@combobox.Combobox(IndustryCfg, combobox.State{Options: IndustryCfg.Source.Static})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Client Multi-Select",
+				Description: "Mode: combobox.ModeMultiple with EnableClearAll — still fully client-side.",
+			},
+			comboboxNewSkillsPreview(),
+			`var SkillsCfg = combobox.Config{
+    ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true,
+    Source: combobox.Source{Static: skillOptions},
+}
+@combobox.Combobox(SkillsCfg, combobox.State{Options: SkillsCfg.Source.Static})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Server Mode (lazy search)",
+				Description: "Set the Toggle/Options/Clear endpoints and a LazyEndpoint Source; the component fetches and searches options over HTMX.",
+			},
+			comboboxNewUsersPreview(),
+			`var UsersCfg = combobox.Config{
+    ID: "users", Name: "users", Mode: combobox.ModeMultiple,
+    EnableSearch: true, EnableClearAll: true,
+    ToggleEndpoint:  "/api/.../toggle",
+    OptionsEndpoint: "/api/.../options",
+    ClearEndpoint:   "/api/.../clear",
+    Source: combobox.Source{LazyEndpoint: "/api/.../options"},
+}
+@combobox.Combobox(UsersCfg, combobox.State{})`,
+		)
+	</div>
+	// API reference lives outside #combobox-new-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (seeds #<id>-trigger, options, hidden inputs)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name (multi-select submits repeated hidden inputs)."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the combobox."},
+		{Name: "Placeholder", Type: "string", Default: `""`, Description: "Trigger placeholder."},
+		{Name: "Mode", Type: "Mode", Default: "ModeSingle", Description: "combobox.ModeSingle or combobox.ModeMultiple."},
+		{Name: "Source", Type: "Source", Default: "{}", Description: "Options source: Static []Option (client mode) or LazyEndpoint (server mode)."},
+		{Name: "EnableSearch", Type: "bool", Default: "false", Description: "Show a search box (server mode queries the endpoint)."},
+		{Name: "EnableClearAll", Type: "bool", Default: "false", Description: "Show a clear-all action."},
+		{Name: "Required", Type: "bool", Default: "false", Description: "Mark the field required."},
+		{Name: "DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this combobox."},
+		{Name: "ToggleEndpoint", Type: "string", Default: `""`, Description: "Server URL for toggling a selection (server mode)."},
+		{Name: "OptionsEndpoint", Type: "string", Default: `""`, Description: "Server URL for fetching/searching options."},
+		{Name: "ClearEndpoint", Type: "string", Default: `""`, Description: "Server URL for clearing the selection."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
+}
+
+// comboboxNewIndustryPreview renders the client-mode single-select.
+templ comboboxNewIndustryPreview() {
+	<div id="combobox-new-industry" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(IndustryCfg, combobox.State{Options: IndustryCfg.Source.Static})
+	</div>
+}
+
+// comboboxNewSkillsPreview renders the client-mode multi-select.
+templ comboboxNewSkillsPreview() {
+	<div id="combobox-new-skills" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(SkillsCfg, combobox.State{Options: SkillsCfg.Source.Static})
+	</div>
+}
+
+// comboboxNewUsersPreview renders the server-mode lazy-search multi-select.
+templ comboboxNewUsersPreview() {
+	<div id="combobox-new-users" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(UsersCfg, combobox.State{})
+	</div>
+}

@@ -6,7 +6,7 @@ gp-generate:
 
 # Run dev server (builds CSS first)
 gp-dev: css
-    go run cmd/server/main.go
+    go run ./site/cmd/server
 
 # Build assets/styles.css with the PINNED Tailwind (assets/tailwind.version),
 # regenerating the embeddable theme source first. Fetches the standalone binary

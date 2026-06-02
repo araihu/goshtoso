@@ -5,14 +5,14 @@ tmp_dir = "tmp"
 [build]
   args_bin = ["-port", "8090"]
   bin = "./tmp/main"
-  cmd = "make generate && go build -o ./tmp/main ./cmd/server"
+  cmd = "make generate && go build -o ./tmp/main ./site/cmd/server"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "og-site", "tests", "test-results", "bin"]
   exclude_file = ["Makefile", "README.md", ".gitignore", "assets/styles.css"]
   exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false
   follow_symlink = false
-  include_dir = ["cmd", "internal", "components", "css"]
+  include_dir = ["components", "css", "site/cmd", "site/internal"]
   include_ext = ["go", "templ", "html", "css"]
   kill_delay = "0s"
   log = "build-errors.log"

@@ -1,0 +1,148 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// NavbarDemoPage renders the Navbar component demo
+templ NavbarDemoPage() {
+	@demo.Layout("Navbar", "navbar", navbarDemoContent())
+}
+
+// navbarDemoContent renders the demo. Each navbar variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/navbar). The simple navbar stays first so the e2e
+// .First() selectors keep resolving to it. Wrapped in #navbar-fragment.
+templ navbarDemoContent() {
+	<div id="navbar-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Navbar",
+				Description: "A responsive navigation bar with brand, links, a user-avatar dropdown, a custom right-side slot, and a mobile menu. Built with Alpine.js.",
+			},
+			navbarSimplePreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand: brand(),
+    Links: []navbar.NavLink{
+        {Label: "Products", Href: "#", Active: true},
+        {Label: "Pricing", Href: "#"},
+        {Label: "Blog", Href: "#"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With User Profile",
+				Description: "Pass a User and UserMenu to render an avatar button that opens a dropdown with name, email, and action items.",
+			},
+			navbarWithUserPreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand: brand(),
+    Links: links,
+    User:  &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
+    UserMenu: []navbar.UserMenuItem{
+        {Label: "Dashboard", Href: "#"},
+        {Label: "Sign Out", Href: "#", Danger: true},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Right Slot",
+				Description: "RightSlot takes any templ.Component (e.g. a dark-mode toggle) rendered beside the user avatar.",
+			},
+			navbarWithRightSlotPreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand:     brand(),
+    RightSlot: darkModeToggle(),
+    User:      &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
+    UserMenu:  menu,
+})`,
+		)
+	</div>
+	// API reference lives outside #navbar-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Brand", Type: "templ.Component", Default: "nil", Description: "Brand/logo content shown at the start of the bar."},
+		{Name: "BrandHref", Type: "string", Default: `""`, Description: "Link target for the brand."},
+		{Name: "Links", Type: "[]NavLink", Default: "nil", Description: "Primary nav links (Label, Href, Active)."},
+		{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Trailing action items (buttons/links)."},
+		{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile (Name, Email, Avatar) — renders the avatar dropdown trigger."},
+		{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown (Label, Href, Danger)."},
+		{Name: "RightSlot", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
+		{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav>."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+	})
+}
+
+// navbarSimplePreview renders the basic navbar (kept first for e2e .First()).
+templ navbarSimplePreview() {
+	<div id="navbar-simple" class="w-full">
+		@navbar.Navbar(navbar.Config{
+			Brand: demoBrandText(),
+			Links: []navbar.NavLink{
+				{Label: "Products", Href: "#", Active: true},
+				{Label: "Pricing", Href: "#"},
+				{Label: "Blog", Href: "#"},
+				{Label: "Login", Href: "#"},
+			},
+		})
+	</div>
+}
+
+// navbarWithUserPreview renders the navbar with a user-profile dropdown.
+templ navbarWithUserPreview() {
+	<div id="navbar-user" class="w-full" style="min-height: 200px;">
+		@navbar.Navbar(navbar.Config{
+			Brand: demoBrandText(),
+			Links: []navbar.NavLink{
+				{Label: "Products", Href: "#", Active: true},
+				{Label: "Pricing", Href: "#"},
+				{Label: "Blog", Href: "#"},
+			},
+			User: &navbar.UserProfile{
+				Name:  "Alice Brown",
+				Email: "alice.brown@example.com",
+			},
+			UserMenu: []navbar.UserMenuItem{
+				{Label: "Dashboard", Href: "#"},
+				{Label: "Settings", Href: "#"},
+				{Label: "Sign Out", Href: "#", Danger: true},
+			},
+		})
+	</div>
+}
+
+// navbarWithRightSlotPreview renders the navbar with a custom right slot.
+templ navbarWithRightSlotPreview() {
+	<div id="navbar-right-slot" class="w-full" style="min-height: 200px;">
+		@navbar.Navbar(navbar.Config{
+			Brand:     demoBrandText(),
+			RightSlot: demoRightSlot(),
+			User: &navbar.UserProfile{
+				Name:  "Alice Brown",
+				Email: "alice.brown@example.com",
+			},
+			UserMenu: []navbar.UserMenuItem{
+				{Label: "Settings", Href: "#"},
+				{Label: "Sign Out", Href: "#", Danger: true},
+			},
+		})
+	</div>
+}
+
+// --- Demo Helpers ---
+
+templ demoBrandText() {
+	<span>Peng<span class="text-primary dark:text-primary-dark">ui</span>n</span>
+}
+
+templ demoRightSlot() {
+	<button class="p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors rounded-radius" aria-label="Toggle dark mode">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="h-5 w-5">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>
+		</svg>
+	</button>
+}

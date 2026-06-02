@@ -1,0 +1,322 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// ComboboxDemoPage renders the Combobox component demo
+templ ComboboxDemoPage() {
+	@demo.Layout("Combobox", "combobox", comboboxDemoContent())
+}
+
+// comboboxDemoContent renders the demo. Each combobox variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/combobox). Wrapped in #combobox-fragment.
+templ comboboxDemoContent() {
+	<div id="combobox-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Combobox",
+				Description: "An input with an associated popup for selecting from a set of values. Single or multi-select, optional search, avatars, pre-selected values, clear-all, disabled, and HTMX lazy loading.",
+			},
+			comboboxSinglePreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:          "industry",
+    Label:       "Industry",
+    Placeholder: "Select an industry",
+    Options: []combobox.Option{
+        {Value: "tech", Label: "Technology"},
+        {Value: "finance", Label: "Finance"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Single Select with Search",
+				Description: "EnableSearch: true adds a search box to filter options.",
+			},
+			comboboxSearchPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:           "make",
+    Label:        "Make",
+    EnableSearch: true,
+    Options:      makes,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Multi-Select with Checkboxes",
+				Description: "Mode: combobox.ModeMultiple shows checkboxes and keeps the popup open; EnableClearAll adds a clear-all action.",
+			},
+			comboboxMultiPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:             "skills",
+    Label:          "Skills",
+    Mode:           combobox.ModeMultiple,
+    EnableClearAll: true,
+    Options:        skills,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Multi-Select with Search",
+				Description: "Combine ModeMultiple with EnableSearch for a searchable multi-select.",
+			},
+			comboboxMultiSearchPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:             "languages",
+    Label:          "Languages",
+    Mode:           combobox.ModeMultiple,
+    EnableSearch:   true,
+    EnableClearAll: true,
+    Options:        languages,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Images",
+				Description: "Give each Option an Img to render an avatar beside its label.",
+			},
+			comboboxImagesPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:    "user",
+    Label: "Share with",
+    Options: []combobox.Option{
+        {Value: "aiden", Label: "Aiden Walker", Img: "/avatars/avatar-1.webp"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Pre-selected Values",
+				Description: "Pass Selected to seed the initial selection.",
+			},
+			comboboxPreselectedPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:       "preselected",
+    Label:    "Frameworks",
+    Mode:     combobox.ModeMultiple,
+    Selected: []string{"react", "vue"},
+    Options:  frameworks,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks interaction. (For server-driven options, set HXMTEndpoint + HTMXSearchParam for HTMX lazy loading.)",
+			},
+			comboboxDisabledPreview(),
+			`@combobox.Combobox(combobox.Config{
+    ID:       "disabled",
+    Label:    "Disabled Combobox",
+    Disabled: true,
+    Options:  options,
+})`,
+		)
+	</div>
+	// API reference lives outside #combobox-fragment.
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (seeds the trigger id <id>-trigger, label, and listbox)."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name (multi-select submits as name[])."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the combobox."},
+		{Name: "Placeholder", Type: "string", Default: `""`, Description: "Trigger placeholder when nothing is selected."},
+		{Name: "Options", Type: "[]Option", Default: "nil", Description: "Options (Value, Label, optional Img)."},
+		{Name: "Selected", Type: "[]string", Default: "nil", Description: "Initially selected option values."},
+		{Name: "Mode", Type: "SelectionMode", Default: "single", Description: `Selection: single or combobox.ModeMultiple (checkboxes).`},
+		{Name: "EnableSearch", Type: "bool", Default: "false", Description: "Add a search box to filter options."},
+		{Name: "EnableClearAll", Type: "bool", Default: "false", Description: "Show a clear-all action (multi-select)."},
+		{Name: "State", Type: "State", Default: "StateDefault", Description: "Validation state (default/error/success)."},
+		{Name: "Size", Type: "Size", Default: "md", Description: "Control size."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
+		{Name: "HXMTEndpoint", Type: "string", Default: `""`, Description: "Server URL for HTMX lazy-loaded options."},
+		{Name: "HTMXSearchParam", Type: "string", Default: `""`, Description: "Query param name for the search term sent to HXMTEndpoint."},
+		{Name: "NoResultsText", Type: "string", Default: `""`, Description: "Message shown when search yields no matches."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
+}
+
+// comboboxSinglePreview renders the simple single-select combobox.
+templ comboboxSinglePreview() {
+	<div id="combobox-single" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:          "industry",
+				Label:       "Industry",
+				Placeholder: "Select an industry",
+				Name:        "industry",
+				Options: []combobox.Option{
+					{Value: "agriculture", Label: "Agriculture"},
+					{Value: "construction", Label: "Construction"},
+					{Value: "education", Label: "Education"},
+					{Value: "entertainment", Label: "Entertainment"},
+					{Value: "finance", Label: "Finance"},
+					{Value: "healthcare", Label: "Healthcare"},
+					{Value: "hospitality", Label: "Hospitality"},
+					{Value: "it", Label: "IT"},
+					{Value: "manufacturing", Label: "Manufacturing"},
+					{Value: "marketing", Label: "Marketing"},
+					{Value: "retail", Label: "Retail"},
+					{Value: "transportation", Label: "Transportation"},
+				},
+			})
+		</div>
+
+}
+
+// comboboxSearchPreview renders the searchable single-select.
+templ comboboxSearchPreview() {
+	<div id="combobox-search" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:           "make",
+				Label:        "Make",
+				Placeholder:  "Select a make",
+				Name:         "make",
+				EnableSearch: true,
+				Options: []combobox.Option{
+					{Value: "acura", Label: "Acura"},
+					{Value: "audi", Label: "Audi"},
+					{Value: "bmw", Label: "BMW"},
+					{Value: "chevrolet", Label: "Chevrolet"},
+					{Value: "ferrari", Label: "Ferrari"},
+					{Value: "ford", Label: "Ford"},
+					{Value: "honda", Label: "Honda"},
+					{Value: "hyundai", Label: "Hyundai"},
+					{Value: "jaguar", Label: "Jaguar"},
+					{Value: "kia", Label: "Kia"},
+					{Value: "lexus", Label: "Lexus"},
+					{Value: "mazda", Label: "Mazda"},
+					{Value: "mercedes", Label: "Mercedes-Benz"},
+					{Value: "nissan", Label: "Nissan"},
+					{Value: "porsche", Label: "Porsche"},
+					{Value: "tesla", Label: "Tesla"},
+					{Value: "toyota", Label: "Toyota"},
+					{Value: "volkswagen", Label: "Volkswagen"},
+					{Value: "volvo", Label: "Volvo"},
+				},
+			})
+		</div>
+
+}
+
+// comboboxMultiPreview renders the multi-select with checkboxes.
+templ comboboxMultiPreview() {
+	<div id="combobox-multi" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:             "skills",
+				Label:          "Skills",
+				Placeholder:    "Select skills",
+				Name:           "skills",
+				Mode:           combobox.ModeMultiple,
+				EnableClearAll: true,
+				Options: []combobox.Option{
+					{Value: "cpp", Label: "C++"},
+					{Value: "css", Label: "CSS"},
+					{Value: "go", Label: "Go"},
+					{Value: "html", Label: "HTML"},
+					{Value: "java", Label: "Java"},
+					{Value: "js", Label: "JavaScript"},
+					{Value: "kotlin", Label: "Kotlin"},
+					{Value: "php", Label: "PHP"},
+					{Value: "python", Label: "Python"},
+					{Value: "ruby", Label: "Ruby"},
+					{Value: "rust", Label: "Rust"},
+					{Value: "ts", Label: "TypeScript"},
+				},
+			})
+		</div>
+
+}
+
+// comboboxMultiSearchPreview renders the searchable multi-select.
+templ comboboxMultiSearchPreview() {
+	<div id="combobox-multi-search" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:             "languages",
+				Label:          "Languages",
+				Placeholder:    "Select languages",
+				Name:           "languages",
+				Mode:           combobox.ModeMultiple,
+				EnableSearch:   true,
+				EnableClearAll: true,
+				Options: []combobox.Option{
+					{Value: "en", Label: "English"},
+					{Value: "es", Label: "Spanish"},
+					{Value: "fr", Label: "French"},
+					{Value: "de", Label: "German"},
+					{Value: "it", Label: "Italian"},
+					{Value: "pt", Label: "Portuguese"},
+					{Value: "ru", Label: "Russian"},
+					{Value: "zh", Label: "Chinese"},
+					{Value: "ja", Label: "Japanese"},
+					{Value: "ko", Label: "Korean"},
+					{Value: "ar", Label: "Arabic"},
+					{Value: "hi", Label: "Hindi"},
+				},
+			})
+		</div>
+
+}
+
+// comboboxImagesPreview renders the combobox with avatar images.
+templ comboboxImagesPreview() {
+	<div id="combobox-images" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:          "user",
+				Label:       "Share with",
+				Placeholder: "Select a user",
+				Name:        "user",
+				Options: []combobox.Option{
+					{Value: "aiden", Label: "Aiden Walker", Img: "/assets/images/avatars/avatar-1.webp"},
+					{Value: "bob", Label: "Bob Johnson", Img: "/assets/images/avatars/avatar-2.webp"},
+					{Value: "emily", Label: "Emily Rodriguez", Img: "/assets/images/avatars/avatar-3.webp"},
+					{Value: "emma", Label: "Emma Thompson", Img: "/assets/images/avatars/avatar-4.webp"},
+					{Value: "alex", Label: "Alex Martinez", Img: "/assets/images/avatars/avatar-5.webp"},
+				},
+			})
+		</div>
+
+}
+
+// comboboxPreselectedPreview renders the combobox with pre-selected values.
+templ comboboxPreselectedPreview() {
+	<div id="combobox-preselected" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:          "preselected",
+				Label:       "Frameworks",
+				Placeholder: "Select frameworks",
+				Name:        "frameworks",
+				Mode:        combobox.ModeMultiple,
+				EnableClearAll: true,
+				Selected:    []string{"react", "vue"},
+				Options: []combobox.Option{
+					{Value: "angular", Label: "Angular"},
+					{Value: "react", Label: "React"},
+					{Value: "svelte", Label: "Svelte"},
+					{Value: "vue", Label: "Vue"},
+				},
+			})
+		</div>
+
+}
+
+// comboboxDisabledPreview renders the disabled combobox.
+templ comboboxDisabledPreview() {
+	<div id="combobox-disabled" class="w-full max-w-xs mx-auto">
+		@combobox.Combobox(combobox.Config{
+			ID:       "disabled",
+				Label:    "Disabled Combobox",
+				Name:     "disabled",
+				Disabled: true,
+				Options: []combobox.Option{
+					{Value: "a", Label: "Option A"},
+					{Value: "b", Label: "Option B"},
+				},
+			})
+	</div>
+}
