@@ -69,4 +69,16 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 			require.GreaterOrEqual(t, cnt, 1, "gallery should link to "+route)
 		}
 	})
+
+	t.Run("StackStripCondensed", func(t *testing.T) {
+		strip := page.Locator("#stack-strip")
+		visible, err := strip.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "condensed stack strip should be present")
+		// it is a single strip, not six cards: at most a handful of links
+		links := page.Locator("#stack-strip a")
+		cnt, err := links.Count()
+		require.NoError(t, err)
+		require.LessOrEqual(t, cnt, 6, "stack strip should be condensed, not a card grid")
+	})
 }
