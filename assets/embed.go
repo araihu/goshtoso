@@ -8,11 +8,12 @@
 //
 // This serves:
 //   - /assets/styles.css — compiled Tailwind CSS with all theme definitions
-//   - /assets/js/vendor/alpine.min.js — Alpine.js
-//   - /assets/js/vendor/htmx.min.js — HTMX
-//   - /assets/js/vendor/htmx-ext-sse.min.js — HTMX SSE extension
-//   - /assets/js/vendor/alpine-collapse.min.js — Alpine collapse plugin
-//   - /assets/js/vendor/alpine-focus.min.js — Alpine focus plugin
+//   - /assets/js/vendor/alpinejs/3.14.9/alpine.min.js — Alpine.js
+//   - /assets/js/vendor/htmx.org/2.0.8/htmx.min.js — HTMX
+//   - /assets/js/vendor/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js — HTMX SSE extension
+//   - /assets/js/vendor/alpinejs-collapse/3.14.9/alpine-collapse.min.js — Alpine collapse plugin
+//   - /assets/js/vendor/alpinejs-focus/3.14.9/alpine-focus.min.js — Alpine focus plugin
+//   - vendored JS versions are pinned in js/vendor/versions.json (see AlpineVersion()/HTMXVersion())
 //   - /assets/js/darkmode.js — Alpine dark mode store
 //   - /assets/fonts/* — TOTVS brand font files
 //   - /assets/images/* — brand artwork (mascot, logos)

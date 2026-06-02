@@ -21,9 +21,11 @@ grown into its own thing.
 | Alpine.js | v3.x | Reactive UI components |
 | Playwright | v0.5700.1 | E2E testing |
 
-Alpine.js, HTMX, and the htmx SSE extension (`htmx-ext-sse.min.js`) are bundled
-locally under `assets/js/vendor/` (no CDN at runtime). Page loads are
-deterministic in E2E.
+Alpine.js, HTMX, and the htmx SSE extension are bundled locally under
+`assets/js/vendor/<module>/<version>/` (versions pinned in
+`assets/js/vendor/versions.json`, served via `assets.Handler()`; no CDN at
+runtime). Regenerate the URL constants with `go run ./scripts/vendorgen` and
+upgrade pinned deps with `just vendor-js`. Page loads are deterministic in E2E.
 
 ## Quick Commands
 

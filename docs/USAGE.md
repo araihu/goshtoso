@@ -90,17 +90,21 @@ case mirror what `head.Dependencies()` emits, in this order (plugins **before**
 Alpine core):
 
 ```html
+<!-- Versions are pinned in assets/js/vendor/versions.json
+     (see assets.AlpineVersion(), assets.HTMXVersion()). -->
 <link rel="stylesheet" href="/assets/styles.css"/>
-<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
-<script defer src="/assets/js/vendor/alpine-focus.min.js"></script>
-<script defer src="/assets/js/vendor/alpine.min.js"></script>
-<script src="/assets/js/vendor/htmx.min.js"></script>
+<script defer src="/assets/js/vendor/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
+<script defer src="/assets/js/vendor/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
+<script defer src="/assets/js/vendor/alpinejs/3.14.9/alpine.min.js"></script>
+<script src="/assets/js/vendor/htmx.org/2.0.8/htmx.min.js"></script>
 <script defer src="/assets/js/combobox.js"></script>
 ```
 
-These are the vendored files `assets.Handler()` serves — pin them to the module
-version instead of a floating CDN tag. Don't forget `combobox.js` (the combobox
-component's keyboard nav is dead without it).
+These are the vendored files `assets.Handler()` serves — the version is in the
+path, so there is no floating CDN tag to drift. **These versioned paths change
+when you upgrade a dep; prefer `@head.Dependencies()` so you never hardcode
+them.** Don't forget `combobox.js` (the combobox component's keyboard nav is dead
+without it) — it is first-party, so it stays unversioned at `/assets/js/`.
 
 ## Using your own Tailwind build
 
