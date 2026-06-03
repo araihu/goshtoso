@@ -550,6 +550,10 @@ func TestTableHTMX_BrowserLazyLoad(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("LazyTable_LoadsRows", func(t *testing.T) {
+		loadButton := page.Locator("#load-lazy-table")
+		err := loadButton.Click()
+		require.NoError(t, err)
+
 		// Wait for HTMX lazy load to complete (has 500ms server delay)
 		time.Sleep(1500 * time.Millisecond)
 

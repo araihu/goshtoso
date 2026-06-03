@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -122,13 +123,14 @@ templ tableDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Lazy-Loaded Table",
-				Description: "Set LazyLoad: true and the tbody fetches from HTMXEndpoint on page load (hx-trigger=\"load\").",
+				Description: "Set LazyLoad: true to render a loading tbody, then choose when HTMX fetches rows. The default trigger is page load; this example waits for a button click.",
 			},
 			tableLazyPreview(),
 			`@table.Table(table.Config{
     ID:           "lazy-table",
     HTMXEndpoint: "/api/components/table/rows?variant=lazy",
     LazyLoad:     true,
+    LazyTrigger:  "click from:#load-lazy-table",
     Columns:      columns,
 })`,
 		)
@@ -220,7 +222,8 @@ templ tableDemoContent() {
 		{Name: "SortDir", Type: "SortDir", Default: "SortNone", Description: `Initial sort direction: "asc", "desc", or "" (none).`},
 		{Name: "HTMXEndpoint", Type: "string", Default: `""`, Description: "Server URL that returns row HTML for sort/page/filter/lazy/infinite."},
 		{Name: "HTMXTarget", Type: "string", Default: `""`, Description: "Override the default tbody swap target."},
-		{Name: "LazyLoad", Type: "bool", Default: "false", Description: "Fetch the tbody from HTMXEndpoint on page load."},
+		{Name: "LazyLoad", Type: "bool", Default: "false", Description: "Render a loading tbody that fetches row HTML from HTMXEndpoint."},
+		{Name: "LazyTrigger", Type: "string", Default: `"load"`, Description: `HTMX trigger for lazy tbody loading, such as "load" or "click from:#load-lazy-table".`},
 		{Name: "Pagination", Type: "*PaginationConfig", Default: "nil", Description: "Pagination/infinite-scroll config (CurrentPage, TotalPages, PerPage, Mode, ...)."},
 		{Name: "Filters", Type: "*FilterConfig", Default: "nil", Description: "Filter bar config (Variant, Collapsible, Filters[]: search/select/toggle)."},
 		{Name: "ExtraQueryParams", Type: "string", Default: `""`, Description: "Extra query string appended to every HTMX request."},
@@ -296,11 +299,24 @@ templ tableSortablePreview() {
 
 // tableLazyPreview renders the lazy-loaded table.
 templ tableLazyPreview() {
-	<div id="table-lazy" class="w-full">
+	<div id="table-lazy" class="w-full space-y-4">
+		<div class="flex flex-wrap items-center justify-between gap-3">
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+				The table renders its headers first. Rows are fetched only after you request them.
+			</p>
+			@button.Button(button.Config{
+				ID:      "load-lazy-table",
+				Type:    "button",
+				Variant: button.Primary,
+			}) {
+				Load table
+			}
+		</div>
 		@table.Table(table.Config{
 			ID:           "lazy-table",
 			HTMXEndpoint: "/api/components/table/rows?variant=lazy",
 			LazyLoad:     true,
+			LazyTrigger:  "click from:#load-lazy-table",
 			Columns:      defaultColumns(),
 		})
 	</div>
