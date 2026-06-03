@@ -4,96 +4,7 @@ import (
 	"github.com/araihu/goshtoso/components/form"
 	"github.com/araihu/goshtoso/components/form/validation"
 	"github.com/araihu/goshtoso/components/textinput"
-	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-// FormValidationDemoPage renders the Form Validation demo page
-templ FormValidationDemoPage() {
-	@demo.Layout("Form Validation", "form-validation", formValidationDemoContent())
-}
-
-templ formValidationDemoContent() {
-	<div id="form-validation-fragment">
-		@demo.ComponentDemo(
-			demo.ComponentDemoProps{
-				Title:       "Form Validation",
-				Description: "Server-side field validation with HTMX. Fields validate on change, dependent fields update automatically (e.g. slug from name), and full-form submit validates everything at once.",
-			},
-			formValidationDemoPreview(),
-			formValidationDemoCode,
-		)
-	</div>
-	// API reference lives outside #form-validation-fragment. These document the
-	// validation package types used to wire up HTMX field validation.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "FormDef.FormID", Type: "string", Default: `""`, Description: "DOM id of the form (must match form.Config.ID)."},
-		{Name: "FormDef.Endpoint", Type: "string", Default: `""`, Description: "Server URL that handles field + full-form validation requests."},
-		{Name: "FormDef.Fields", Type: "map[string]*FieldDef", Default: "nil", Description: "Per-field definitions keyed by field name."},
-		{Name: "FieldDef.Name", Type: "string", Default: `""`, Description: "Form field name (matches the input's Name)."},
-		{Name: "FieldDef.FieldGroup", Type: "*form.FieldGroupConfig", Default: "nil", Description: "The field's FieldGroup (label, input, hints, errors)."},
-		{Name: "FieldDef.OnChange", Type: "bool", Default: "false", Description: "Validate this field on change (blur), not just on submit."},
-		{Name: "FieldDef.DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this field's validation (e.g. slug depends on name)."},
-		{Name: "def.Bind()", Type: "method", Default: "—", Description: "Wires HTMX attributes + metadata onto each FieldGroup; call once after defining."},
-		{Name: "validation.Handle", Type: "func", Default: "—", Description: "Server entry point: routes field vs full-form requests and runs your per-field validator."},
-	})
-}
-
-var formValidationDemoCode = `// 1. Define the form fields and validation rules
-def := &validation.FormDef{
-    FormID:   "demo-validation",
-    Endpoint: "/api/components/form-validation",
-    Fields: map[string]*validation.FieldDef{
-        "name":  {Name: "name", FieldGroup: nameField, OnChange: true},
-        "slug":  {Name: "slug", FieldGroup: slugField, OnChange: true, DependsOn: []string{"name"}},
-        "email": {Name: "email", FieldGroup: emailField, OnChange: true},
-    },
-}
-def.Bind() // wires up HTMX attributes and metadata
-
-// 2. In the templ, render the form with FieldGroups
-@form.Form(form.Config{
-    ID: "demo-validation",
-    HTMX: &form.HTMXConfig{Post: "/api/components/form-validation", Target: "#form-result", Swap: "innerHTML"},
-    Footer: &form.FooterConfig{SubmitText: "Submit", CancelText: "Reset"},
-}) {
-    @form.Section(form.SectionConfig{Title: "Project Details"}) {
-        @form.FieldGroup(*nameField)
-        @form.FieldGroup(*slugField)
-        @form.FieldGroup(*emailField)
-    }
-}
-
-// 3. Handle validation in Go
-func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
-    def := buildDemoFormDef()
-    result := validation.Handle(r, def, validateDemoField)
-    if validation.IsFieldValidation(r) {
-        validation.RenderFieldResponse(r.Context(), w, *result)
-        return
-    }
-    // full submit...
-}
-
-// 4. Per-field validation hook
-func validateDemoField(ctx validation.ValidationContext, name string, fg *form.FieldGroupConfig) bool {
-    switch name {
-    case "name":
-        val := ctx.FormValues["name"]
-        if len(val) < 3 {
-            fg.Errors = []string{"Name must be at least 3 characters."}
-            fg.Input.State = textinput.StateError
-            return false
-        }
-        fg.Input.State = textinput.StateSuccess
-        return true
-    case "slug":
-        // auto-generate from name on dependency trigger
-        if ctx.Type == validation.ValidationDependency && val == "" { ... }
-        // uniqueness check against takenSlugs map
-    case "email":
-        // format validation
-    }
-}`
 
 templ formValidationDemoPreview() {
 	{{ def := buildDemoValidationFormDef() }}
@@ -165,7 +76,7 @@ templ FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *for
 		Footer: &form.FooterConfig{
 			SubmitText: "Submit",
 			CancelText: "Reset",
-			CancelHref: "/components/form-validation",
+			CancelHref: "/form",
 		},
 	}) {
 		@form.Section(form.SectionConfig{Title: "Project Details"}) {
