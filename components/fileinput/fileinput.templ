@@ -11,11 +11,21 @@ package fileinput
 //	    HelperText: "PNG, JPG, WebP - Max 5MB",
 //	})
 templ FileInput(cfg Config) {
+	if cfg.IsUpload() {
+		@uploadInput(cfg)
+	} else {
+		@dropZoneInput(cfg)
+	}
+}
+
+// dropZoneInput renders the drag-and-drop file input variant.
+templ dropZoneInput(cfg Config) {
 	<div class={ cfg.ContainerClasses() }>
 		if cfg.Label != "" {
 			<span class={ cfg.LabelClasses() }>{ cfg.Label }</span>
 		}
 		<div
+			data-fileinput-variant="dropzone"
 			x-data="{ dragging: false }"
 			@dragover.prevent=""
 			@dragenter="dragging = true"
@@ -54,8 +64,51 @@ templ FileInput(cfg Config) {
 				 or drag and drop here
 			</div>
 			if cfg.HelperText != "" {
-				<small id={ cfg.ID + "-helper" }>{ cfg.HelperText }</small>
+				<small id={ cfg.ID + "-helper" } class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
 			}
 		</div>
+	</div>
+}
+
+// uploadInput renders the compact text-input-style upload variant.
+templ uploadInput(cfg Config) {
+	<div class={ cfg.UploadContainerClasses() }>
+		if cfg.Label != "" {
+			<label for={ cfg.ID } class={ cfg.LabelClasses() }>{ cfg.Label }</label>
+		}
+		<label
+			for={ cfg.ID }
+			data-fileinput-variant="upload"
+			x-data="{ fileName: '' }"
+			x-on:change.capture="fileName = $event.target.files.length ? $event.target.files[0].name : ''"
+			class={ cfg.UploadControlClasses() }
+		>
+			<input
+				id={ cfg.ID }
+				name={ cfg.Name }
+				type="file"
+				class="sr-only"
+				if cfg.Accept != "" {
+					accept={ cfg.Accept }
+				}
+				if cfg.Required {
+					required
+				}
+				if cfg.Disabled {
+					disabled
+				}
+				if cfg.HelperText != "" {
+					aria-describedby={ cfg.ID + "-helper" }
+				}
+				{ cfg.Attrs... }
+			/>
+			<span class={ cfg.UploadFileNameClasses() }>
+				<span class="truncate" x-text="fileName || 'No file selected'">No file selected</span>
+			</span>
+			<span aria-hidden="true" class={ cfg.UploadButtonClasses() }>Browse</span>
+		</label>
+		if cfg.HelperText != "" {
+			<small id={ cfg.ID + "-helper" } class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
+		}
 	</div>
 }

@@ -1402,6 +1402,9 @@
   .items-start {
     align-items: flex-start;
   }
+  .items-stretch {
+    align-items: stretch;
+  }
   .justify-between {
     justify-content: space-between;
   }
@@ -4131,6 +4134,22 @@
       }
     }
   }
+  .focus-within\:outline-2 {
+    &:focus-within {
+      outline-style: var(--tw-outline-style);
+      outline-width: 2px;
+    }
+  }
+  .focus-within\:outline-offset-2 {
+    &:focus-within {
+      outline-offset: 2px;
+    }
+  }
+  .focus-within\:outline-primary {
+    &:focus-within {
+      outline-color: var(--color-primary);
+    }
+  }
   .hover\:scale-110 {
     &:hover {
       @media (hover: hover) {
@@ -6205,6 +6224,13 @@
           content: var(--tw-content);
           background-color: var(--color-warning);
         }
+      }
+    }
+  }
+  .dark\:focus-within\:outline-primary-dark {
+    &:where(.dark, .dark *) {
+      &:focus-within {
+        outline-color: var(--color-primary-dark);
       }
     }
   }
