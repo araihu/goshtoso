@@ -54,9 +54,9 @@ func (s *Server) renderChatPage(w http.ResponseWriter, r *http.Request) {
 	// missing OR undecodable — so the page HTML and the subsequent ws upgrade
 	// resolve to the same guest instead of two different fallbacks.
 	if c, err := r.Cookie(chat.CookieName); err != nil {
-		setChatCookie(w, me)
+		setChatCookie(r, w, me)
 	} else if _, derr := chat.Decode(c.Value); derr != nil {
-		setChatCookie(w, me)
+		setChatCookie(r, w, me)
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := examples.ChatApp(me)
@@ -69,7 +69,10 @@ func (s *Server) renderChatPage(w http.ResponseWriter, r *http.Request) {
 
 // setChatCookie persists the visitor identity in the gt_chat cookie. HttpOnly is
 // false so the cookie is also readable client-side if ever needed; SameSite=Lax.
-func setChatCookie(w http.ResponseWriter, me chat.Identity) {
+func setChatCookie(r *http.Request, w http.ResponseWriter, me chat.Identity) {
+	if !storageAllowed(r) {
+		return
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     chat.CookieName,
 		Value:    me.Encode(),
@@ -90,7 +93,7 @@ func (s *Server) handleChatRename(w http.ResponseWriter, r *http.Request) {
 	if nick := strings.TrimSpace(r.FormValue("nick")); nick != "" {
 		me.Nick = truncateRunes(nick, chatMaxNickLen)
 	}
-	setChatCookie(w, me)
+	setChatCookie(r, w, me)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = examples.RenameResult(me).Render(r.Context(), w)
 }

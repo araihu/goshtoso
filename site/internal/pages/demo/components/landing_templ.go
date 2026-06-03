@@ -75,7 +75,11 @@ func LandingPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = storageConsentScript().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!c||c.allowed();var t=canStore?(localStorage.getItem('theme')||'goshtoso'):'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -86,7 +90,7 @@ func LandingPage() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineJSURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 67, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 68, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -99,7 +103,7 @@ func LandingPage() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 68, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 69, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -158,20 +162,20 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(c.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 120, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 121, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" @click=\"document.documentElement.setAttribute('data-theme', $el.dataset.themeKey); localStorage.setItem('theme', $el.dataset.themeKey)\" class=\"px-4 py-1.5 rounded-radius border border-outline dark:border-outline-dark text-sm text-on-surface dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" @click=\"document.documentElement.setAttribute('data-theme', $el.dataset.themeKey); if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) localStorage.setItem('theme', $el.dataset.themeKey)\" class=\"px-4 py-1.5 rounded-radius border border-outline dark:border-outline-dark text-sm text-on-surface dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(c.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 124, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 125, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -272,7 +276,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var9 templ.SafeURL
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.URL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 165, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 166, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -285,7 +289,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(a.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 167, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 168, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -298,7 +302,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(a.Desc)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 170, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 171, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -317,11 +321,8 @@ func landingContent() templ.Component {
 	})
 }
 
-// cookieConsent renders the functional-cookie notice. It shows until the
-// visitor acknowledges the CURRENT notice version: stored value must equal the
-// version token ('v1'), so any prior/legacy value re-shows the updated copy.
-// Bump the token here AND in layout.templ's banner whenever the copy materially
-// changes. Keep both banners in lock-step.
+// cookieConsent renders the browser-storage notice. Keep in lock-step with the
+// demo layout's banner.
 func cookieConsent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -343,7 +344,36 @@ func cookieConsent() templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div x-data=\"{ show: localStorage.getItem('cookieConsent') !== 'v1' }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 right-4 z-50 flex max-w-sm flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><span class=\"text-2xl\" aria-hidden=\"true\">🍪</span><h3 id=\"landing-cookie-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional cookies</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso stores a few <strong>functional</strong> values in your browser — your theme preference and the example apps' own state (e.g. the Todo demo). They are strictly necessary to make those features work; there is no tracking, no analytics, and no third&#8209;party cookies. Clearing your browser storage resets them. Details in our <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex justify-end gap-2 px-4 pb-4\"><button @click=\"localStorage.setItem('cookieConsent', 'v1'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div x-data=\"{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"landing-cookie-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func storageConsentScript() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templ.Raw(`<script>(function(){if(window.goshtosoStorageConsent)return;var pref='gt_storage';var maxAge=15552000;var demoCookies=['gt_todo','gt_profile','gt_chat'];var localKeys=['theme','darkMode','themeOverrides','themeTitleFont','themeBodyFont','themeRadius','themeCssMode','themeCssFilter','cookieConsent'];function cookieValue(name){var parts=document.cookie?document.cookie.split('; '):[];for(var i=0;i<parts.length;i++){var p=parts[i];var eq=p.indexOf('=');var key=eq>=0?p.slice(0,eq):p;if(key===name)return eq>=0?decodeURIComponent(p.slice(eq+1)):'';}return '';}function setCookie(name,value,age){document.cookie=name+'='+encodeURIComponent(value)+'; Path=/; Max-Age='+age+'; SameSite=Lax';}function expireCookie(name){setCookie(name,'',0);}function clearLocalStorage(){try{localKeys.forEach(function(key){localStorage.removeItem(key);});}catch(e){}}function clearIndexedDB(){try{if(window.indexedDB&&indexedDB.deleteDatabase)indexedDB.deleteDatabase('gt_profile');}catch(e){}}window.goshtosoStorageConsent={shouldShow:function(){var v=cookieValue(pref);return v!=='allowed'&&v!=='denied';},allowed:function(){return cookieValue(pref)!=='denied';},allow:function(){setCookie(pref,'allowed',maxAge);try{localStorage.setItem('cookieConsent','v2');}catch(e){}},deny:function(){setCookie(pref,'denied',maxAge);demoCookies.forEach(expireCookie);clearLocalStorage();clearIndexedDB();}};if(cookieValue(pref)==='denied'){clearLocalStorage();clearIndexedDB();}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
