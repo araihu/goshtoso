@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/guilhermecastro/repos/araihu/goshtoso/.codex/hooks/session-start.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}
