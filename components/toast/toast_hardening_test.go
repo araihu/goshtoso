@@ -58,8 +58,16 @@ func TestToast_RenderedDismissExpressionsUseGeneratedSafeID(t *testing.T) {
 }
 
 func TestSingleToastAlpineData_UsesNumericDuration(t *testing.T) {
-	data := singleToastAlpineData(1250)
+	data := singleToastAlpineData(1250, false)
 
 	assert.Contains(t, data, "}, 1250);")
 	assert.NotContains(t, data, "}, '1250');")
+}
+
+func TestSingleToastAlpineData_PersistentHasNoAutoDismiss(t *testing.T) {
+	data := singleToastAlpineData(1250, true)
+
+	assert.Contains(t, data, "isVisible: true")
+	assert.NotContains(t, data, "setTimeout")
+	assert.NotContains(t, data, "toast-dismiss")
 }

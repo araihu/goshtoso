@@ -51,7 +51,7 @@ templ Container(cfg ContainerConfig) {
 				</div>
 			</template>
 			<!-- OOB server-rendered toasts get appended here -->
-			<div id={ cfg.effectiveID() + "-oob" }></div>
+			<div id={ cfg.effectiveID() + "-oob" } class="flex flex-col gap-2"></div>
 		</div>
 	</div>
 }
@@ -223,7 +223,7 @@ templ serverVariantToast(cfg Config, durationStr string) {
 	<div
 		id={ toastID }
 		data-toast-id={ toastID }
-		x-data={ singleToastAlpineData(cfg.effectiveDuration()) }
+		x-data={ singleToastAlpineData(cfg.effectiveDuration(), cfg.DisplayDuration < 0) }
 		x-cloak
 		x-show="isVisible"
 		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
@@ -300,7 +300,7 @@ templ serverMessageToast(cfg Config, durationStr string) {
 	<div
 		id={ toastID }
 		data-toast-id={ toastID }
-		x-data={ singleToastAlpineData(cfg.effectiveDuration()) }
+		x-data={ singleToastAlpineData(cfg.effectiveDuration(), cfg.DisplayDuration < 0) }
 		x-cloak
 		x-show="isVisible"
 		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
