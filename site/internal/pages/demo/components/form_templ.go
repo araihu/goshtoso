@@ -149,7 +149,10 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
 })
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "provider", Label: "Provider",
-    Combobox: &gocombobox.Config{ID: "provider", Name: "provider", Options: opts},
+    Combobox: &gocombobox.Config{
+        ID: "provider", Name: "provider",
+        Source: gocombobox.Source{Static: opts},
+    },
 })
 
 // Custom component — use { children... } for anything not built-in
@@ -265,12 +268,12 @@ func formCompletePreview() templ.Component {
 					Combobox: &gocombobox.Config{
 						ID:   "provider",
 						Name: "provider",
-						Options: []gocombobox.Option{
+						Source: gocombobox.Source{Static: []gocombobox.Option{
 							{Value: "aws", Label: "AWS"},
 							{Value: "azure", Label: "Azure"},
 							{Value: "gcp", Label: "GCP"},
 							{Value: "maas", Label: "MAAS"},
-						},
+						}},
 						Selected: []string{"maas"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -411,12 +414,12 @@ func formCompletePreview() templ.Component {
 					Combobox: &gocombobox.Config{
 						ID:   "log-level",
 						Name: "log_level",
-						Options: []gocombobox.Option{
+						Source: gocombobox.Source{Static: []gocombobox.Option{
 							{Value: "info", Label: "Info"},
 							{Value: "debug", Label: "Debug"},
 							{Value: "warn", Label: "Warning"},
 							{Value: "error", Label: "Error"},
-						},
+						}},
 						Selected: []string{"info"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -501,10 +504,10 @@ func formCompletePreview() templ.Component {
 						Combobox: &gocombobox.Config{
 							ID:   "cp-instance",
 							Name: "cp_instance_type",
-							Options: []gocombobox.Option{
+							Source: gocombobox.Source{Static: []gocombobox.Option{
 								{Value: "m5.large", Label: "m5.large (2 vCPU, 8 GB)"},
 								{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
-							},
+							}},
 							Selected: []string{"m5.large"},
 						},
 					}).Render(ctx, templ_7745c5c3_Buffer)
@@ -556,10 +559,10 @@ func formCompletePreview() templ.Component {
 						Combobox: &gocombobox.Config{
 							ID:   "worker-instance",
 							Name: "worker_instance_type",
-							Options: []gocombobox.Option{
+							Source: gocombobox.Source{Static: []gocombobox.Option{
 								{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
 								{Value: "m5.2xlarge", Label: "m5.2xlarge (8 vCPU, 32 GB)"},
-							},
+							}},
 							Selected: []string{"m5.xlarge"},
 						},
 					}).Render(ctx, templ_7745c5c3_Buffer)
@@ -758,11 +761,11 @@ func formExternalPreview() templ.Component {
 					Combobox: &gocombobox.Config{
 						ID:   "version",
 						Name: "version",
-						Options: []gocombobox.Option{
+						Source: gocombobox.Source{Static: []gocombobox.Option{
 							{Value: "1.32.0", Label: "v1.32.0"},
 							{Value: "1.31.5", Label: "v1.31.5"},
 							{Value: "1.30.8", Label: "v1.30.8"},
-						},
+						}},
 						Selected: []string{"1.31.5"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
