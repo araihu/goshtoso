@@ -121,7 +121,7 @@ func (s *Server) setupRoutes() {
 func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/components/")
 	if path == "" {
-		http.Redirect(w, r, "/components/button", http.StatusMovedPermanently)
+		http.Redirect(w, r, "/components/accordion", http.StatusMovedPermanently)
 		return
 	}
 	componentName := strings.Split(path, "/")[0]

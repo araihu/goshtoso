@@ -96,7 +96,6 @@ make dev-air
 
 # Server will start on http://localhost:8090
 # Accordion Demo: http://localhost:8090/components/accordion
-# Button Demo: http://localhost:8090/components/button
 ```
 
 ### Standard Development
