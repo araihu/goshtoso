@@ -39,6 +39,19 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.True(t, visible, "Browse components CTA should be visible")
 	})
 
+	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {
+		got, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
+		require.NoError(t, err)
+		require.Equal(t, "goshtoso", got, "homepage should default to the Goshtoso theme")
+	})
+
+	t.Run("GoshtosoThemeChipAvailable", func(t *testing.T) {
+		chip := page.Locator("#playground button[data-theme-key='goshtoso']")
+		visible, err := chip.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "Goshtoso should be available in the homepage theme picker")
+	})
+
 	t.Run("ThemeChipSwitchesTheme", func(t *testing.T) {
 		_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 		require.NoError(t, err)

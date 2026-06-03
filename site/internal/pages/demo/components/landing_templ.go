@@ -37,9 +37,10 @@ type themeChip struct {
 	Label string
 }
 
-// curated subset of the 15 themes — visually distinct, not the whole set
+// curated subset of themes — visually distinct, not the whole set
 func getThemeChips() []themeChip {
 	return []themeChip{
+		{Key: "goshtoso", Label: "Goshtoso"},
 		{Key: "minimal", Label: "Minimal"},
 		{Key: "modern", Label: "Modern"},
 		{Key: "dracula", Label: "Dracula"},
@@ -85,7 +86,7 @@ func LandingPage() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineJSURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 66, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 67, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -98,7 +99,7 @@ func LandingPage() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 67, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 68, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -157,7 +158,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(c.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 119, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 120, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -170,7 +171,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(c.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 123, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 124, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -181,7 +182,7 @@ func landingContent() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<a href=\"/docs/theme\" class=\"px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center\">All 15 themes →</a></div><div class=\"border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6\"><div class=\"flex flex-wrap items-center gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<a href=\"/docs/theme\" class=\"px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center\">All 16 themes →</a></div><div class=\"border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6\"><div class=\"flex flex-wrap items-center gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -271,7 +272,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var9 templ.SafeURL
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.URL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 164, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 165, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -284,7 +285,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(a.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 166, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 167, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -297,7 +298,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(a.Desc)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 169, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 170, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
