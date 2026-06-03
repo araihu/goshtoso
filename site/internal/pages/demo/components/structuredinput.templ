@@ -17,7 +17,7 @@ templ structuredInputDemoContent() {
 				Title:       "Structured Input",
 				Description: "Repeatable rows of structured form inputs for metadata, taints, rules, and similar list-shaped data.",
 			},
-			structuredInputKeyValuePreview(),
+			structuredInputMetadataPreview(),
 			`@structuredinput.StructuredInput(structuredinput.Config{
     ID:   "labels",
     Name: "labels",
@@ -100,8 +100,8 @@ templ structuredInputDemoContent() {
 	})
 }
 
-templ structuredInputKeyValuePreview() {
-	<div id="structured-input-key-value" class="w-full max-w-lg mx-auto">
+templ structuredInputMetadataPreview() {
+	<div id="structured-input-metadata" class="w-full max-w-lg mx-auto">
 		@structuredinput.StructuredInput(structuredinput.Config{
 			ID:   "labelsDemo",
 			Name: "labels",

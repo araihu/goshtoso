@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestStructuredInput_AddAndRemoveKeyValueRows(t *testing.T) {
+func TestStructuredInput_AddAndRemoveMetadataRows(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}

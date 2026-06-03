@@ -73,7 +73,7 @@ func structuredInputDemoContent() templ.Component {
 				Title:       "Structured Input",
 				Description: "Repeatable rows of structured form inputs for metadata, taints, rules, and similar list-shaped data.",
 			},
-			structuredInputKeyValuePreview(),
+			structuredInputMetadataPreview(),
 			`@structuredinput.StructuredInput(structuredinput.Config{
     ID:   "labels",
     Name: "labels",
@@ -171,7 +171,7 @@ func structuredInputDemoContent() templ.Component {
 	})
 }
 
-func structuredInputKeyValuePreview() templ.Component {
+func structuredInputMetadataPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -192,7 +192,7 @@ func structuredInputKeyValuePreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"structured-input-key-value\" class=\"w-full max-w-lg mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"structured-input-metadata\" class=\"w-full max-w-lg mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
