@@ -24,8 +24,58 @@ var legalPages = []struct {
 func dismissCookieBanner(t *testing.T, page playwright.Page) {
 	t.Helper()
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
+		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
 	}))
+}
+
+func TestBrowserStorageNoticeOffersChoice(t *testing.T) {
+	page := newIsolatedPage(t)
+
+	_, err := page.Goto(baseURL + "/getting-started")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
+		Name: "Browser storage",
+	}).WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, page.GetByRole("button", playwright.PageGetByRoleOptions{
+		Name: "Allow browser storage",
+	}).WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, page.GetByRole("button", playwright.PageGetByRoleOptions{
+		Name: "Use without storage",
+	}).WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, page.GetByText("Some examples use cookies and IndexedDB to persist local demo state.").WaitFor(
+		playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+}
+
+func TestBrowserStorageNoticeCanDisableDemoCookies(t *testing.T) {
+	page := newIsolatedPage(t)
+
+	_, err := page.Goto(baseURL + "/getting-started")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.GetByRole("button", playwright.PageGetByRoleOptions{
+		Name: "Use without storage",
+	}).Click())
+
+	pref, err := page.Evaluate(`() => document.cookie`, nil)
+	require.NoError(t, err)
+	require.Contains(t, pref, "gt_storage=denied")
+
+	_, err = page.Goto(baseURL + "/examples/todo")
+	require.NoError(t, err)
+	cookies, err := page.Evaluate(`() => document.cookie`, nil)
+	require.NoError(t, err)
+	require.NotContains(t, cookies, "gt_todo=")
 }
 
 // TestLegalPages_DirectLoad asserts each page loads, shows its heading and the
@@ -64,6 +114,25 @@ func TestLegalPages_DirectLoad(t *testing.T) {
 
 			require.Empty(t, jsErrors, "no JS console/page errors on %s: %v", p.path, jsErrors)
 		})
+	}
+}
+
+func TestPrivacyPageExplainsBrowserStorageChoices(t *testing.T) {
+	page := newIsolatedPage(t)
+	dismissCookieBanner(t, page)
+
+	_, err := page.Goto(baseURL + "/privacy")
+	require.NoError(t, err)
+
+	for _, text := range []string{
+		"Browser storage",
+		"localStorage",
+		"cookies such as gt_todo",
+		"IndexedDB",
+		"Use without storage",
+	} {
+		require.NoError(t, page.GetByText(text).First().WaitFor(
+			playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}), text)
 	}
 }
 

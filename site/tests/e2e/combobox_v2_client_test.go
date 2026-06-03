@@ -23,16 +23,16 @@ func TestComboboxV2_ClientMode_NoHTTPOnToggle(t *testing.T) {
 
 	page := newPage(t, browser)
 
-	// Record all requests to the combobox-new demo endpoints; start BEFORE goto.
+	// Record all requests to the combobox demo endpoints; start BEFORE goto.
 	var demoReqs []string
 	page.On("request", func(req playwright.Request) {
 		url := req.URL()
-		if strings.Contains(url, "/combobox-new/industry/") || strings.Contains(url, "/combobox-new/skills/") {
+		if strings.Contains(url, "/combobox/industry/") || strings.Contains(url, "/combobox/skills/") {
 			demoReqs = append(demoReqs, url)
 		}
 	})
 
-	_, err := page.Goto(baseURL+"/components/combobox-new", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
@@ -56,7 +56,7 @@ func TestComboboxV2_ClientMode_NoHTTPOnToggle(t *testing.T) {
 	time.Sleep(300 * time.Millisecond)
 
 	// 1. Option marked selected client-side.
-	aria, err := option.Evaluate("el => el.getAttribute('aria-selected')", nil)
+	aria, err := page.Evaluate(`() => document.querySelector('#industry [data-combobox-option][data-value="tech"]').getAttribute('aria-selected')`, nil)
 	require.NoError(t, err)
 	assert.Equal(t, "true", aria, "option marked selected client-side")
 
@@ -72,6 +72,15 @@ func TestComboboxV2_ClientMode_NoHTTPOnToggle(t *testing.T) {
 	label, err := page.Locator(`#industry-trigger-label`).TextContent()
 	require.NoError(t, err)
 	assert.Equal(t, "Technology", label)
+
+	// 5. Single-select closes the dropdown after choosing an option.
+	expanded, err := trigger.GetAttribute("aria-expanded")
+	require.NoError(t, err)
+	assert.Equal(t, "false", expanded)
+
+	visible, err := page.Locator(`#industry [data-combobox-body]`).First().IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "single-select dropdown should close after selection")
 }
 
 func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
@@ -90,12 +99,12 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 	var skillsReqs []string
 	page.On("request", func(req playwright.Request) {
 		url := req.URL()
-		if strings.Contains(url, "/combobox-new/skills/") {
+		if strings.Contains(url, "/combobox/skills/") {
 			skillsReqs = append(skillsReqs, url)
 		}
 	})
 
-	_, err := page.Goto(baseURL+"/components/combobox-new", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
@@ -114,6 +123,11 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 	// Toggle two options.
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())
 	time.Sleep(100 * time.Millisecond)
+
+	expanded, err := trigger.GetAttribute("aria-expanded")
+	require.NoError(t, err)
+	assert.Equal(t, "true", expanded, "multi-select should stay open after selecting an option")
+
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="rust"]`).First().Click())
 	time.Sleep(100 * time.Millisecond)
 

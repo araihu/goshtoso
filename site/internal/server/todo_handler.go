@@ -24,6 +24,12 @@ func writeClearButton(r *http.Request, w http.ResponseWriter, st todo.State) {
 	_ = examples.ClearButton(st.DoneCount(), true).Render(r.Context(), w)
 }
 
+func persistTodo(r *http.Request, w http.ResponseWriter, st todo.State) {
+	if storageAllowed(r) {
+		todo.SetCookie(w, st)
+	}
+}
+
 // registerTodoRoutes wires all /api/examples/todo/* endpoints.
 func (s *Server) registerTodoRoutes() {
 	s.mux.HandleFunc("/api/examples/todo/add", s.handleTodoAdd)
@@ -45,7 +51,7 @@ func (s *Server) renderTodoPage(w http.ResponseWriter, r *http.Request) {
 		// First visit (no cookie): seed a small starter list so the example
 		// never opens empty, and persist it. `?seed=0` opts out (used by e2e).
 		st = todo.Sample()
-		todo.SetCookie(w, st)
+		persistTodo(r, w, st)
 	} else {
 		st = todo.FromRequest(r)
 	}
@@ -154,7 +160,7 @@ func (s *Server) handleTodoAdd(w http.ResponseWriter, r *http.Request) {
 	priority := r.FormValue("priority")
 	due := r.FormValue("due")
 	st.Add(title, priority, due)
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
@@ -188,7 +194,7 @@ func (s *Server) handleTodoToggle(w http.ResponseWriter, r *http.Request) {
 		st.Filter = "all"
 	}
 	st.Toggle(idParam(r))
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
@@ -213,7 +219,7 @@ func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	st.Delete(id)
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
@@ -239,7 +245,7 @@ func (s *Server) handleTodoEdit(w http.ResponseWriter, r *http.Request) {
 		st.Filter = "all"
 	}
 	st.Edit(idParam(r), r.FormValue("title"), r.FormValue("priority"), r.FormValue("due"))
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
@@ -254,7 +260,7 @@ func (s *Server) handleTodoFilter(w http.ResponseWriter, r *http.Request) {
 		st.Filter = "all"
 	}
 	st.SetFilter(r.URL.Query().Get("f"))
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	_ = examples.TodoList(st).Render(r.Context(), w)
 }
@@ -269,7 +275,7 @@ func (s *Server) handleTodoMove(w http.ResponseWriter, r *http.Request) {
 	}
 	dir := r.URL.Query().Get("dir")
 	moveByButton(&st, idParam(r), dir)
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	_ = examples.TodoList(st).Render(r.Context(), w)
 }
@@ -283,7 +289,7 @@ func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request
 		st.Filter = "all"
 	}
 	st.ClearCompleted()
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
@@ -325,7 +331,7 @@ func (s *Server) handleTodoRestore(w http.ResponseWriter, r *http.Request) {
 		Order:    intParam(r, "order", 0),
 	}
 	st.Restore(t)
-	todo.SetCookie(w, st)
+	persistTodo(r, w, st)
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)

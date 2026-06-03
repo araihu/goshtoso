@@ -72,6 +72,46 @@ func TestTextInput_PatternAttribute(t *testing.T) {
 	assert.Equal(t, "t[a-z0-9]{6}", pattern)
 }
 
+func TestTextInput_PatternValidationFeedback(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/text-input", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+
+	input := page.Locator("#patternInput")
+	require.NoError(t, input.WaitFor())
+	feedback := page.Locator("#patternInput-feedback")
+
+	require.NoError(t, input.PressSequentially("fasds"))
+	require.NoError(t, feedback.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	text, err := feedback.TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, text, "Needs a leading t plus 6 lowercase letters or numbers")
+
+	require.NoError(t, input.Fill(""))
+	require.NoError(t, input.PressSequentially("tabc123"))
+	text, err = feedback.TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, text, "Looks good")
+	valid, err := input.Evaluate("el => el.checkValidity()", nil)
+	require.NoError(t, err)
+	assert.Equal(t, true, valid)
+}
+
 func TestTextInput_MaxLengthAttribute(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")

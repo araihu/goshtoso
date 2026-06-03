@@ -21,7 +21,9 @@ func (s *Server) renderProfilePage(w http.ResponseWriter, r *http.Request) {
 	var st profile.State
 	if _, err := r.Cookie(profile.CookieName); err != nil && r.URL.Query().Get("seed") != "0" {
 		st = profile.Sample()
-		profile.SetCookie(w, st)
+		if storageAllowed(r) {
+			profile.SetCookie(w, st)
+		}
 	} else {
 		st = profile.FromRequest(r)
 	}
@@ -43,7 +45,9 @@ func (s *Server) handleProfileIdentity(w http.ResponseWriter, r *http.Request) {
 	var st profile.State
 	st.SetName(strings.TrimSpace(r.FormValue("name")))
 	st.SetBio(strings.TrimSpace(r.FormValue("bio")))
-	profile.SetCookie(w, st)
+	if storageAllowed(r) {
+		profile.SetCookie(w, st)
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = examples.IdentityFields(st).Render(r.Context(), w)
 	_ = toast.OOBToast(toast.Config{

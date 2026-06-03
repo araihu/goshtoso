@@ -219,7 +219,7 @@ templ menuItem(cfg Config, item Item) {
 // menuItemLink renders a single menu item as an anchor
 templ menuItemLink(cfg Config, item Item) {
 	<a
-		href={ templ.SafeURL(item.Href) }
+		href={ templ.URL(item.Href) }
 		if item.Tooltip != "" {
 			title={ item.Tooltip }
 		}

@@ -405,9 +405,9 @@ func Select(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var22 string
-			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue("'" + cfg.ID + "-option-' + index")
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(jsStringLiteral(cfg.ID+"-option-") + " + index")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 120, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 120, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 			if templ_7745c5c3_Err != nil {
@@ -491,6 +491,10 @@ func jsEscapeSingle(s string) string {
 		}
 	}
 	return result
+}
+
+func jsStringLiteral(s string) string {
+	return "'" + jsEscapeSingle(s) + "'"
 }
 
 func optionsToJS(options []Option) string {

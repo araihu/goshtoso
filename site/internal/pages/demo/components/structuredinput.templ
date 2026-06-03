@@ -1,0 +1,170 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/structuredinput"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// StructuredInputDemoPage renders the Structured Input component demo.
+templ StructuredInputDemoPage() {
+	@demo.Layout("Structured Input", "structured-input", structuredInputDemoContent())
+}
+
+templ structuredInputDemoContent() {
+	<div id="structured-input-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Structured Input",
+				Description: "Repeatable rows of structured form inputs for metadata, taints, rules, and similar list-shaped data.",
+			},
+			structuredInputMetadataPreview(),
+			`@structuredinput.StructuredInput(structuredinput.Config{
+    ID:   "labels",
+    Name: "labels",
+    Columns: []structuredinput.Column{
+        {Key: "key", Label: "Key", Placeholder: "key", Separator: "="},
+        {Key: "value", Label: "Value", Placeholder: "value"},
+    },
+    Entries: []structuredinput.Entry{
+        {"key": "app", "value": "web"},
+        {"key": "env", "value": "prod"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Select Column",
+				Description: "Rows can combine text inputs with select columns for enumerated values like Kubernetes taint effects.",
+			},
+			structuredInputTaintsPreview(),
+			`@structuredinput.StructuredInput(structuredinput.Config{
+    ID:   "taints",
+    Name: "taints",
+    Columns: []structuredinput.Column{
+        {Key: "key", Label: "Key", Placeholder: "key", Separator: "="},
+        {Key: "value", Label: "Value", Placeholder: "value", Separator: ":"},
+        {
+            Key: "effect",
+            Label: "Effect",
+            Type: structuredinput.ColumnSelect,
+            Options: []structuredinput.Option{
+                {Value: "NoSchedule", Label: "NoSchedule"},
+                {Value: "PreferNoSchedule", Label: "PreferNoSchedule"},
+                {Value: "NoExecute", Label: "NoExecute"},
+            },
+        },
+    },
+    Entries: []structuredinput.Entry{
+        {"key": "node-role.kubernetes.io/control-plane", "value": "true", "effect": "NoSchedule"},
+    },
+    AddLabel: "Add taint",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Empty Starter",
+				Description: "With no entries the list starts empty and adds rows from the configured column defaults.",
+			},
+			structuredInputEmptyPreview(),
+			`@structuredinput.StructuredInput(structuredinput.Config{
+    ID:   "rules",
+    Name: "rules",
+    Columns: []structuredinput.Column{
+        {Key: "name", Label: "Name", Placeholder: "rule name"},
+        {Key: "condition", Label: "Condition", Placeholder: "condition"},
+        {
+            Key: "priority",
+            Label: "Priority",
+            Type: structuredinput.ColumnSelect,
+            Options: []structuredinput.Option{
+                {Value: "high", Label: "High"},
+                {Value: "medium", Label: "Medium"},
+                {Value: "low", Label: "Low"},
+            },
+        },
+    },
+    AddLabel: "Add rule",
+})`,
+		)
+	</div>
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the structured input root."},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Base form field name; submitted inputs use name[index][columnKey]."},
+		{Name: "Columns", Type: "[]Column", Default: "nil", Description: "Column schema for every repeatable row."},
+		{Name: "Column.Separator", Type: "string", Default: `""`, Description: "Optional short visual separator rendered after a column, such as = or :."},
+		{Name: "Entries", Type: "[]Entry", Default: "nil", Description: "Initial row values keyed by column key."},
+		{Name: "AddLabel", Type: "string", Default: `"Add row"`, Description: "Label of the add-row button."},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable controls and hide add/remove actions."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+	})
+}
+
+templ structuredInputMetadataPreview() {
+	<div id="structured-input-metadata" class="w-full max-w-lg mx-auto">
+		@structuredinput.StructuredInput(structuredinput.Config{
+			ID:   "labelsDemo",
+			Name: "labels",
+			Columns: []structuredinput.Column{
+				{Key: "key", Label: "Key", Placeholder: "key", Separator: "="},
+				{Key: "value", Label: "Value", Placeholder: "value"},
+			},
+			Entries: []structuredinput.Entry{
+				{"key": "app", "value": "web"},
+				{"key": "env", "value": "prod"},
+			},
+		})
+	</div>
+}
+
+templ structuredInputTaintsPreview() {
+	<div id="structured-input-taints" class="w-full max-w-2xl mx-auto">
+		@structuredinput.StructuredInput(structuredinput.Config{
+			ID:   "taintsDemo",
+			Name: "taints",
+			Columns: []structuredinput.Column{
+				{Key: "key", Label: "Key", Placeholder: "key (e.g. node-role.kubernetes.io/control-plane)", Separator: "="},
+				{Key: "value", Label: "Value", Placeholder: "value (e.g. true)", Separator: ":"},
+				{
+					Key:   "effect",
+					Label: "Effect",
+					Type:  structuredinput.ColumnSelect,
+					Options: []structuredinput.Option{
+						{Value: "NoSchedule", Label: "NoSchedule"},
+						{Value: "PreferNoSchedule", Label: "PreferNoSchedule"},
+						{Value: "NoExecute", Label: "NoExecute"},
+					},
+				},
+			},
+			Entries: []structuredinput.Entry{
+				{"key": "node-role.kubernetes.io/control-plane", "value": "true", "effect": "NoSchedule"},
+			},
+			AddLabel: "Add taint",
+		})
+	</div>
+}
+
+templ structuredInputEmptyPreview() {
+	<div id="structured-input-empty" class="w-full max-w-2xl mx-auto">
+		@structuredinput.StructuredInput(structuredinput.Config{
+			ID:   "rulesDemo",
+			Name: "rules",
+			Columns: []structuredinput.Column{
+				{Key: "name", Label: "Name", Placeholder: "rule name"},
+				{Key: "condition", Label: "Condition", Placeholder: "condition"},
+				{
+					Key:   "priority",
+					Label: "Priority",
+					Type:  structuredinput.ColumnSelect,
+					Options: []structuredinput.Option{
+						{Value: "high", Label: "High"},
+						{Value: "medium", Label: "Medium"},
+						{Value: "low", Label: "Low"},
+					},
+				},
+			},
+			AddLabel: "Add rule",
+		})
+	</div>
+}

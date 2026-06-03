@@ -148,7 +148,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			{Name: "Title", Type: "string", Default: `""`, Description: "Toast heading (omitted by the message variant)."},
 			{Name: "Message", Type: "string", Default: `""`, Description: "Toast body text."},
 			{Name: "Sender", Type: "*Sender", Default: "nil", Description: "Message-variant sender (Name + Avatar); adds avatar and reply button."},
-			{Name: "DisplayDuration", Type: "int", Default: "0", Description: "Auto-dismiss delay in ms (0 uses the container default)."},
+			{Name: "DisplayDuration", Type: "int", Default: "0", Description: "Auto-dismiss delay in ms (0 uses the container default; negative keeps a server-rendered toast visible until dismissed)."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -179,7 +179,7 @@ func toastAlpinePreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"toast-alpine\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-3\"><!-- Message Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'message', sender: { name: 'Jack Ellis', avatar: '/assets/images/avatars/avatar-2.webp' }, message: 'Hey, can you review the PR I just submitted? Let me know if you spot any issues!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\">Message</button><!-- Info Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'info', title: 'Update Available', message: 'A new version of the app is ready for you. Update now to enjoy the latest features!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0\">Info</button><!-- Success Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'success', title: 'Success!', message: 'Your changes have been saved. Keep up the great work!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0\">Success</button><!-- Danger Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'danger', title: 'Oops!', message: 'Something went wrong. Please try again. If the problem persists, we&#39;re here to help!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0\">Danger</button><!-- Warning Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'warning', title: 'Action Needed', message: 'Your storage is getting low. Consider upgrading your plan.' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-warning px-4 py-2 text-center text-sm font-medium tracking-wide text-on-warning transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning active:opacity-100 active:outline-offset-0\">Warning</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"toast-alpine\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-3\"><!-- Message Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'message', sender: { name: 'Jack Ellis', avatar: '/assets/images/avatars/avatar-2.webp' }, message: 'Hey, can you review the PR I just submitted? Let me know if you spot any issues!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\">Message</button><!-- Info Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'info', title: 'Update Available', message: 'A new version of the app is ready for you. Update now to enjoy the latest features!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0\">Info</button><!-- Success Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'success', title: 'Success!', message: 'Your changes have been saved. Keep up the great work!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0\">Success</button><!-- Danger Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'danger', title: 'Oops!', message: 'Something went wrong. Please try again. If the problem persists, we are here to help!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0\">Danger</button><!-- Warning Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'warning', title: 'Action Needed', message: 'Your storage is getting low. Consider upgrading your plan.' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-warning px-4 py-2 text-center text-sm font-medium tracking-wide text-on-warning transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning active:opacity-100 active:outline-offset-0\">Warning</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -244,40 +244,45 @@ func toastStaticPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant: toast.Info,
-			Title:   "Update Available",
-			Message: "A new version of the app is ready.",
+			Variant:         toast.Info,
+			Title:           "Update Available",
+			Message:         "A new version of the app is ready.",
+			DisplayDuration: -1,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant: toast.Success,
-			Title:   "Success!",
-			Message: "Your changes have been saved.",
+			Variant:         toast.Success,
+			Title:           "Success!",
+			Message:         "Your changes have been saved.",
+			DisplayDuration: -1,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant: toast.Warning,
-			Title:   "Action Needed",
-			Message: "Your storage is getting low.",
+			Variant:         toast.Warning,
+			Title:           "Action Needed",
+			Message:         "Your storage is getting low.",
+			DisplayDuration: -1,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant: toast.Danger,
-			Title:   "Oops!",
-			Message: "Something went wrong.",
+			Variant:         toast.Danger,
+			Title:           "Oops!",
+			Message:         "Something went wrong.",
+			DisplayDuration: -1,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant: toast.Message,
-			Message: "Hey, can you review the PR I just submitted?",
+			Variant:         toast.Message,
+			Message:         "Hey, can you review the PR I just submitted?",
+			DisplayDuration: -1,
 			Sender: &toast.Sender{
 				Name:   "Jack Ellis",
 				Avatar: "/assets/images/avatars/avatar-2.webp",

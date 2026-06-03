@@ -51,6 +51,9 @@ type ComponentDemoProps struct {
 type DemoSectionProps struct {
 	Title       string
 	Description string
+	// AbovePreview is an optional slot rendered between the section copy and
+	// the macOS-frame preview.
+	AbovePreview templ.Component
 }
 
 templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeExample string) {
@@ -136,10 +139,13 @@ templ APIReference(props []PropDoc) {
 templ DemoSection(props DemoSectionProps, preview templ.Component, code string) {
 	<div class="mt-10">
 		<h2 id={ slugify(props.Title) } data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-1">{ props.Title }</h2>
-		if props.Description != "" {
-			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">{ props.Description }</p>
-		}
-		<!-- Preview -->
+	if props.Description != "" {
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">{ props.Description }</p>
+	}
+	if props.AbovePreview != nil {
+		@props.AbovePreview
+	}
+	<!-- Preview -->
 		<div class="border border-outline dark:border-outline-dark rounded-radius mb-4">
 			<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">
 				<div class="flex gap-1.5">

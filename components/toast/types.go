@@ -43,7 +43,7 @@ type Config struct {
 	Message string
 	// Sender is used only for the Message variant
 	Sender *Sender
-	// DisplayDuration in milliseconds (default 8000)
+	// DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually.
 	DisplayDuration int
 	// ActionText, when set, renders an inline action button in the toast (e.g.
 	// "Undo"). Clicking it fires the configured HTMX request and dismisses the
@@ -188,7 +188,10 @@ func containerAlpineData(cfg ContainerConfig) string {
 }
 
 // singleToastAlpineData returns the Alpine.js x-data for an individual toast item
-func singleToastAlpineData(duration int) string {
+func singleToastAlpineData(duration int, persistent bool) string {
+	if persistent {
+		return `{ isVisible: true }`
+	}
 	return fmt.Sprintf(`{
         isVisible: false,
         timeout: null,

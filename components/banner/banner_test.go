@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func renderBanner(t *testing.T, cfg Config) string {
+func renderPositionBanner(t *testing.T, cfg Config) string {
 	t.Helper()
 
 	var html strings.Builder
@@ -17,7 +17,7 @@ func renderBanner(t *testing.T, cfg Config) string {
 }
 
 func TestCookieBannerPositionClasses(t *testing.T) {
-	fixedHTML := renderBanner(t, Config{
+	fixedHTML := renderPositionBanner(t, Config{
 		CookieBanner: true,
 		Text:         "Cookies",
 	})
@@ -25,7 +25,7 @@ func TestCookieBannerPositionClasses(t *testing.T) {
 		t.Fatalf("default cookie banner should stay viewport fixed; got %q", fixedHTML)
 	}
 
-	relativeHTML := renderBanner(t, Config{
+	relativeHTML := renderPositionBanner(t, Config{
 		CookieBanner: true,
 		Position:     PositionRelative,
 		Text:         "Cookies",

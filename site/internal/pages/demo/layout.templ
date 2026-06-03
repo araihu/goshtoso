@@ -9,14 +9,18 @@ import (
 templ Layout(title string, activeComponent string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en" x-data="{
-		theme: localStorage.getItem('theme') || 'goshtoso',
+		theme: (window.goshtosoStorageConsent && !window.goshtosoStorageConsent.allowed()) ? 'goshtoso' : (localStorage.getItem('theme') || 'goshtoso'),
 		sidebarOpen: false,
 		showThemeDropdown: false,
 		setTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }
 	}" 
 	x-init="
 		$watch('theme', value => {
-			localStorage.setItem('theme', value);
+			if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) {
+				localStorage.setItem('theme', value);
+			} else {
+				localStorage.removeItem('theme');
+			}
 			document.documentElement.setAttribute('data-theme', value);
 		});
 	">
@@ -29,7 +33,8 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<link rel="shortcut icon" href="/favicon.ico"/>
 			<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 			<link rel="manifest" href="/site.webmanifest"/>
-			@templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
+			@storageConsentScript()
+			@templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!c||c.allowed();var t=canStore?(localStorage.getItem('theme')||'goshtoso'):'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -257,37 +262,41 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					</div>
 				</aside>
 			</div>
-			<!-- Cookie Consent — functional-cookie notice. Shows until the visitor
-			     acknowledges the CURRENT version ('v1'); any prior/legacy stored value
-			     re-shows the updated copy. Bump 'v1' here AND in landing.templ's
-			     cookieConsent() in lock-step whenever the copy materially changes. -->
+			<!-- Browser storage notice. Shows until the visitor chooses allowed or denied
+			     storage via the gt_storage preference cookie. Keep in lock-step with
+			     landing.templ's cookieConsent(). -->
 			<div
-				x-data="{ show: localStorage.getItem('cookieConsent') !== 'v1' }"
+				x-data="{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }"
 				x-show="show"
 				x-cloak
 				x-transition
-				class="fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-sm flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
+				class="fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 				role="dialog"
 				aria-modal="false"
 				aria-labelledby="cookie-banner-title"
 			>
 				<div class="flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark">
-					<span class="text-2xl" aria-hidden="true">🍪</span>
-					<h3 id="cookie-banner-title" class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Functional cookies</h3>
+					<h3 id="cookie-banner-title" class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Browser storage</h3>
 				</div>
 				<p class="px-4 text-sm text-on-surface dark:text-on-surface-dark">
-					Goshtoso stores a few <strong>functional</strong> values in your browser — your theme
-					preference and the example apps' own state (e.g. the Todo demo). They are strictly
-					necessary to make those features work; there is no tracking, no analytics, and no
-					third&#8209;party cookies. Clearing your browser storage resets them. Details in our
+					Goshtoso can store preferences and demo state in your browser. Some examples use
+					cookies and IndexedDB to persist local demo state. There is no analytics, advertising,
+					or third-party tracking. You can use the site without storage, but preferences and
+					some examples will reset or stop persisting. Details in our
 					<a href="/privacy" hx-get="/privacy" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" @click="show = false" class="text-primary dark:text-primary-dark underline underline-offset-2">Privacy Policy</a>.
 				</p>
-				<div class="flex justify-end gap-2 px-4 pb-4">
+				<div class="flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end">
 					<button
-						@click="localStorage.setItem('cookieConsent', 'v1'); show = false"
+						@click="deny()"
+						class="px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors"
+					>
+						Use without storage
+					</button>
+					<button
+						@click="allow()"
 						class="px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity"
 					>
-						Got it
+						Allow browser storage
 					</button>
 				</div>
 			</div>
@@ -385,6 +394,7 @@ func mainContentMaxWidth(activeComponent string) string {
 func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
+		{ID: "examples", Label: "Examples", Href: "/examples", Icon: sidebarExamplesIcon(), Active: activeComponent == "examples", LinkAttrs: navHxAttrs("/examples", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebarAttributionsIcon(), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
 		{ID: "license", Label: "License", Href: "/license", Icon: sidebarLicenseIcon(), Active: activeComponent == "license", LinkAttrs: navHxAttrs("/license", "")},
@@ -412,6 +422,12 @@ templ sidebarSearchSlot() {
 templ sidebarHomeIcon() {
 	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
 		<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+	</svg>
+}
+
+templ sidebarExamplesIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h3.75A2.25 2.25 0 0112 6v3.75A2.25 2.25 0 019.75 12H6a2.25 2.25 0 01-2.25-2.25V6ZM14.25 6A2.25 2.25 0 0116.5 3.75H18A2.25 2.25 0 0120.25 6v1.5A2.25 2.25 0 0118 9.75h-1.5a2.25 2.25 0 01-2.25-2.25V6ZM14.25 14.25A2.25 2.25 0 0116.5 12H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-1.5A2.25 2.25 0 0114.25 18v-3.75ZM3.75 16.5A2.25 2.25 0 016 14.25h3.75A2.25 2.25 0 0112 16.5V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-1.5Z"/>
 	</svg>
 }
 
@@ -468,21 +484,19 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("button", "Button", "/components/button", activeComponent),
 				sItem("checkbox", "Checkbox", "/components/checkbox", activeComponent),
 				sItem("combobox", "Combobox", "/components/combobox", activeComponent),
-				sItem("combobox-new", "Combobox (new)", "/components/combobox-new", activeComponent),
 				sItem("dropdown", "Dropdown", "/components/dropdown", activeComponent),
 				sItem("fileinput", "File Input", "/components/fileinput", activeComponent),
 				sItem("form", "Form", "/components/form", activeComponent),
 				sItem("form-validation", "Form Validation", "/components/form-validation", activeComponent),
-				sItem("key-value", "Key Value", "/components/key-value", activeComponent),
 				sItem("pagination", "Pagination", "/components/pagination", activeComponent),
 				sItem("radio", "Radio", "/components/radio", activeComponent),
 				sItem("palette", "Palette", "/components/palette", activeComponent),
 				sItem("select", "Select", "/components/select", activeComponent),
+				sItem("structured-input", "Structured Input", "/components/structured-input", activeComponent),
 				sItem("tags-list", "Tags List", "/components/tags-list", activeComponent),
 				sItem("text-input", "Text Input", "/components/text-input", activeComponent),
 				sItem("textarea", "Textarea", "/components/textarea", activeComponent),
 				sItem("toggle", "Toggle", "/components/toggle", activeComponent),
-				sItem("triplet", "Triplet", "/components/triplet", activeComponent),
 			},
 		},
 		{
@@ -504,10 +518,9 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			},
 		},
 		{
-			Title:       "Examples",
+			Title:       "Example Apps",
 			Collapsible: true,
 			Items: []sidebar.Item{
-				sItem("examples", "Overview", "/examples", activeComponent),
 				sItem("todo", "Todo List", "/examples/todo", activeComponent),
 				sItem("chat", "Chat", "/examples/chat", activeComponent),
 				sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
@@ -540,20 +553,18 @@ var orderedComponents = []componentNavLink{
 	{"Button", "/components/button"},
 	{"Checkbox", "/components/checkbox"},
 	{"Combobox", "/components/combobox"},
-	{"Combobox (new)", "/components/combobox-new"},
 	{"Dropdown", "/components/dropdown"},
 	{"File Input", "/components/fileinput"},
 	{"Form", "/components/form"},
 	{"Form Validation", "/components/form-validation"},
-	{"Key Value", "/components/key-value"},
 	{"Pagination", "/components/pagination"},
 	{"Select", "/components/select"},
 	{"Palette", "/components/palette"},
+	{"Structured Input", "/components/structured-input"},
 	{"Tags List", "/components/tags-list"},
 	{"Text Input", "/components/text-input"},
 	{"Textarea", "/components/textarea"},
 	{"Toggle", "/components/toggle"},
-	{"Triplet", "/components/triplet"},
 	{"Alert", "/components/alert"},
 	{"Modal", "/components/modal"},
 	{"Steps", "/components/steps"},
@@ -618,6 +629,10 @@ templ componentNavFooter(activeComponent string) {
 	}
 }
 
+templ storageConsentScript() {
+	@templ.Raw(`<script>(function(){if(window.goshtosoStorageConsent)return;var pref='gt_storage';var maxAge=15552000;var demoCookies=['gt_todo','gt_profile','gt_chat'];var localKeys=['theme','darkMode','themeOverrides','themeTitleFont','themeBodyFont','themeRadius','themeCssMode','themeCssFilter','cookieConsent'];function cookieValue(name){var parts=document.cookie?document.cookie.split('; '):[];for(var i=0;i<parts.length;i++){var p=parts[i];var eq=p.indexOf('=');var key=eq>=0?p.slice(0,eq):p;if(key===name)return eq>=0?decodeURIComponent(p.slice(eq+1)):'';}return '';}function setCookie(name,value,age){document.cookie=name+'='+encodeURIComponent(value)+'; Path=/; Max-Age='+age+'; SameSite=Lax';}function expireCookie(name){setCookie(name,'',0);}function clearLocalStorage(){try{localKeys.forEach(function(key){localStorage.removeItem(key);});}catch(e){}}function clearIndexedDB(){try{if(window.indexedDB&&indexedDB.deleteDatabase)indexedDB.deleteDatabase('gt_profile');}catch(e){}}window.goshtosoStorageConsent={shouldShow:function(){var v=cookieValue(pref);return v!=='allowed'&&v!=='denied';},allowed:function(){return cookieValue(pref)!=='denied';},allow:function(){setCookie(pref,'allowed',maxAge);try{localStorage.setItem('cookieConsent','v2');}catch(e){}},deny:function(){setCookie(pref,'denied',maxAge);demoCookies.forEach(expireCookie);clearLocalStorage();clearIndexedDB();}};if(cookieValue(pref)==='denied'){clearLocalStorage();clearIndexedDB();}})();</script>`)
+}
+
 // siteFooter renders the global footer shown beneath every page's content
 // (inside #main-content, so it survives fragment-swap navigation). Mirrors
 // PenguinUI's footer: brand line, legal nav, and social links.
@@ -667,7 +682,6 @@ func getThemeOptions() []themeOption {
 		{Key: "halloween", Label: "Halloween"},
 		{Key: "zombie", Label: "Halloween II"},
 		{Key: "prototype", Label: "Prototype"},
-		{Key: "totvs", Label: "TOTVS"},
 		{Key: "dracula", Label: "Dracula"},
 	}
 }

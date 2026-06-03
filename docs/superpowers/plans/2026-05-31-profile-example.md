@@ -764,7 +764,7 @@ func themeOptions(current string) []selectfield.Option {
 		{"high-contrast", "High Contrast"}, {"neo-brutalism", "Neo Brutalism"},
 		{"news", "News"}, {"industrial", "Industrial"}, {"90s", "90s"},
 		{"pastel", "Pastel"}, {"christmas", "Christmas"}, {"halloween", "Halloween"},
-		{"zombie", "Halloween II"}, {"prototype", "Prototype"}, {"totvs", "TOTVS"},
+		{"zombie", "Halloween II"}, {"prototype", "Prototype"},
 		{"dracula", "Dracula"},
 	}
 	out := make([]selectfield.Option, 0, len(pairs))

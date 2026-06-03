@@ -117,7 +117,7 @@ templ Select(cfg Config) {
 								class="combobox-option inline-flex justify-between items-center gap-4 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong cursor-pointer"
 								x-on:click="selectOption(item)"
 								x-on:keydown.enter.prevent="selectOption(item)"
-								x-bind:id={ "'" + cfg.ID + "-option-' + index" }
+								x-bind:id={ jsStringLiteral(cfg.ID+"-option-") + " + index" }
 								tabindex="0"
 								x-on:keydown.down.prevent="$focus.wrap().next()"
 								x-on:keydown.up.prevent="$focus.wrap().previous()"
@@ -178,6 +178,10 @@ func jsEscapeSingle(s string) string {
 		}
 	}
 	return result
+}
+
+func jsStringLiteral(s string) string {
+	return "'" + jsEscapeSingle(s) + "'"
 }
 
 func optionsToJS(options []Option) string {

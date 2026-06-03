@@ -11,7 +11,8 @@ import (
 	"time"
 
 	"github.com/araihu/goshtoso/components/carousel"
-	combobox "github.com/araihu/goshtoso/components/combobox/v2"
+	combobox "github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
@@ -91,15 +92,17 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
 	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
 	s.mux.HandleFunc("/api/components/carousel/slides", s.handleCarouselSlides)
+	s.mux.HandleFunc("/api/components/form/external-submit", s.handleFormExternalSubmit)
 	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
 	s.mux.HandleFunc("/api/components/steps/demo", s.handleStepsDemo)
 	s.mux.HandleFunc("/api/components/radio/echo", s.handleRadioEcho)
+	s.registerGettingStartedRoutes()
 
 	// HTMX SSR combobox (v2) — users demo runs server-mode lazy search.
 	usersHandler := combobox.Handler(components.UsersCfg, usersProvider)
-	s.mux.Handle("/api/components/combobox-new/users/options", usersHandler)
-	s.mux.Handle("/api/components/combobox-new/users/toggle", usersHandler)
-	s.mux.Handle("/api/components/combobox-new/users/clear", usersHandler)
+	s.mux.Handle("/api/components/combobox/users/options", usersHandler)
+	s.mux.Handle("/api/components/combobox/users/toggle", usersHandler)
+	s.mux.Handle("/api/components/combobox/users/clear", usersHandler)
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
@@ -121,7 +124,7 @@ func (s *Server) setupRoutes() {
 func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/components/")
 	if path == "" {
-		http.Redirect(w, r, "/components/button", http.StatusMovedPermanently)
+		http.Redirect(w, r, "/components/accordion", http.StatusMovedPermanently)
 		return
 	}
 	componentName := strings.Split(path, "/")[0]
@@ -197,6 +200,26 @@ func htmlEscape(s string) string {
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+}
+
+func (s *Server) handleFormExternalSubmit(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	version := r.FormValue("version")
+	if version == "" {
+		version = "selected version"
+	} else {
+		version = "v" + version
+	}
+	_ = toast.OOBToast(toast.Config{
+		Variant: toast.Success,
+		Title:   "Upgrade request submitted",
+		Message: fmt.Sprintf("Target version: %s", version),
+	}).Render(r.Context(), w)
 }
 
 func (s *Server) handleStepsDemo(w http.ResponseWriter, r *http.Request) {
@@ -359,7 +382,7 @@ func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
 	_ = carousel.Carousel(cfg).Render(r.Context(), w)
 }
 
-// usersProvider is an OptionsProvider for the combobox-new users demo.
+// usersProvider is an OptionsProvider for the combobox users demo.
 // Filters a static seed list by substring match on the search query — good
 // enough to exercise the lazy/search path without touching a real backend.
 func usersProvider(_ context.Context, search string, _ map[string]string) ([]combobox.Option, error) {

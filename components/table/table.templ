@@ -2,6 +2,7 @@ package table
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/pagination"
@@ -119,6 +120,13 @@ func showTraditionalPagination(cfg Config) bool {
 	return cfg.Pagination != nil && !cfg.Pagination.IsInfiniteScroll()
 }
 
+func filterBarBodyClasses(cfg Config) string {
+	if cfg.Filters.Collapsible {
+		return "px-4 pb-4"
+	}
+	return "px-4 py-4"
+}
+
 // filterBar renders the filter controls above the table. Two variants:
 //
 //   - FilterVariantBar (default) — bordered block, optional collapsible
@@ -155,10 +163,7 @@ templ filterBar(cfg Config) {
 			<div
 				x-show="filtersExpanded"
 				x-collapse
-				class="px-4 pb-4"
-				if !cfg.Filters.Collapsible {
-					class="px-4 py-4"
-				}
+				class={ filterBarBodyClasses(cfg) }
 			>
 				<div class="flex flex-wrap items-end gap-4">
 					for _, filter := range cfg.Filters.Filters {
@@ -452,11 +457,12 @@ templ cellContent(cell Cell) {
 //   - LinkBoost: swaps full <body> via HTMX (like hx-boost, avoids white flash)
 //   - LinkFull: plain JS navigation (window.location.href), no HTMX
 func rowLinkAttrs(row Row) templ.Attributes {
-	auxclick := fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", row.Link)
+	link := jsStringSingle(row.Link)
+	auxclick := fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", link)
 
 	if row.LinkMode == LinkFull {
 		return templ.Attributes{
-			"onclick":    fmt.Sprintf("window.location.href='%s'", row.Link),
+			"onclick":    fmt.Sprintf("window.location.href='%s'", link),
 			"onauxclick": auxclick,
 		}
 	}
@@ -476,6 +482,29 @@ func rowLinkAttrs(row Row) templ.Attributes {
 		attrs["hx-swap"] = "innerHTML"
 	}
 	return attrs
+}
+
+func jsStringSingle(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch r {
+		case '\\':
+			b.WriteString(`\\`)
+		case '\'':
+			b.WriteString(`\'`)
+		case '\n':
+			b.WriteString(`\n`)
+		case '\r':
+			b.WriteString(`\r`)
+		case '\u2028':
+			b.WriteString(`\u2028`)
+		case '\u2029':
+			b.WriteString(`\u2029`)
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }
 
 func interactiveRowClasses(row Row) string {
@@ -679,30 +708,30 @@ templ StatusBadge(label string, status string) {
 	<span class={ StatusBadgeClasses(status) }>{ label }</span>
 }
 
-// UserCell renders a user cell with avatar, name, and email.
-// When avatarURL is provided, shows the image; otherwise falls back to initials
-// derived from the name/email.
-templ UserCell(avatarURL string, name string, email string) {
+// ImageCell renders a compact image, primary label, and optional secondary label.
+// When imageURL is provided, shows the image; otherwise falls back to initials
+// derived from the label/detail.
+templ ImageCell(imageURL string, label string, detail string) {
 	<div class="flex w-max items-center gap-2">
-		if avatarURL != "" {
+		if imageURL != "" {
 			@avatar.Avatar(avatar.Config{
-				Src:   avatarURL,
-				Alt:   name,
+				Src:   imageURL,
+				Alt:   label,
 				Size:  avatar.SizeSM,
 				Shape: avatar.ShapeCircle,
 			})
 		} else {
 			@avatar.Avatar(avatar.Config{
-				Initials: avatar.GetInitials(name, email),
+				Initials: avatar.GetInitials(label, detail),
 				Size:     avatar.SizeSM,
 				Shape:    avatar.ShapeCircle,
 			})
 		}
 		<div class="flex flex-col">
-			if name != "" {
-				<span class="text-on-surface-strong dark:text-on-surface-dark-strong">{ name }</span>
+			if label != "" {
+				<span class="text-on-surface-strong dark:text-on-surface-dark-strong">{ label }</span>
 			}
-			<span class="text-sm text-on-surface dark:text-on-surface-dark">{ email }</span>
+			<span class="text-sm text-on-surface dark:text-on-surface-dark">{ detail }</span>
 		</div>
 	</div>
 }

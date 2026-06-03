@@ -48,7 +48,7 @@ templ simpleBanner(cfg Config) {
 			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
 				<p class={ cfg.TextClasses() }>{ cfg.Text }</p>
 				if cfg.CTA.Href != "" {
-					<a href={ templ.SafeURL(cfg.CTA.Href) } class={ cfg.CTAClasses() }>
+					<a href={ templ.URL(cfg.CTA.Href) } class={ cfg.CTAClasses() }>
 						{ cfg.CTA.Text }
 					</a>
 				} else {

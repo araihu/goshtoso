@@ -6,12 +6,11 @@ import (
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/fileinput"
-	"github.com/araihu/goshtoso/components/keyvalue"
+	"github.com/araihu/goshtoso/components/structuredinput"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toggle"
-	"github.com/araihu/goshtoso/components/triplet"
 )
 
 // Config holds the form configuration
@@ -206,15 +205,14 @@ type FieldGroupConfig struct {
 
 	// Built-in Goshtoso field types (mutually exclusive — first non-nil wins).
 	// If none are set, FieldGroup renders { children... } instead.
-	Input     *textinput.Config
-	Combobox  *combobox.Config
-	Textarea  *textarea.Config
-	Toggle    *toggle.Config
-	Checkbox  *checkbox.Config
-	TagsList  *tagslist.Config
-	KeyValue  *keyvalue.Config
-	Triplet   *triplet.Config
-	FileInput *fileinput.Config
+	Input           *textinput.Config
+	Combobox        *combobox.Config
+	Textarea        *textarea.Config
+	Toggle          *toggle.Config
+	Checkbox        *checkbox.Config
+	TagsList        *tagslist.Config
+	StructuredInput *structuredinput.Config
+	FileInput       *fileinput.Config
 
 	// OOB enables hx-swap-oob="true" on the wrapper div for out-of-band HTMX updates.
 	OOB bool

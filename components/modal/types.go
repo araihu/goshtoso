@@ -1,5 +1,10 @@
 package modal
 
+import (
+	"strings"
+	"unicode"
+)
+
 // Variant represents modal color variants (used in alert mode)
 type Variant string
 
@@ -51,6 +56,18 @@ type Config struct {
 	Class string
 }
 
+func (cfg Config) StateVar() string {
+	return safeJSIdentifier(cfg.ID, "modal") + "IsOpen"
+}
+
+func (cfg Config) TitleID() string {
+	base := cfg.ID
+	if base == "" {
+		base = "modal"
+	}
+	return base + "Title"
+}
+
 // TriggerClasses returns the trigger button CSS classes
 func (cfg Config) TriggerClasses() string {
 	if cfg.AlertMode {
@@ -85,6 +102,36 @@ func (cfg Config) DialogClasses() string {
 		base += " " + cfg.Class
 	}
 	return base
+}
+
+func safeJSIdentifier(raw, fallback string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		raw = fallback
+	}
+	var b strings.Builder
+	upperNext := false
+	for _, r := range raw {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
+			if b.Len() == 0 && unicode.IsDigit(r) {
+				b.WriteString(fallback)
+			}
+			if upperNext {
+				b.WriteRune(unicode.ToUpper(r))
+				upperNext = false
+			} else {
+				b.WriteRune(r)
+			}
+			continue
+		}
+		if b.Len() > 0 {
+			upperNext = true
+		}
+	}
+	if b.Len() == 0 {
+		return fallback
+	}
+	return b.String()
 }
 
 // HeaderClasses returns the dialog header CSS classes

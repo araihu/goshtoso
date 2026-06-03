@@ -90,13 +90,13 @@ case mirror what `head.Dependencies()` emits, in this order (plugins **before**
 Alpine core):
 
 ```html
-<!-- Versions are pinned in assets/js/vendor/versions.json
+<!-- Versions are pinned in assets/js/runtime/versions.json
      (see assets.AlpineVersion(), assets.HTMXVersion()). -->
 <link rel="stylesheet" href="/assets/styles.css"/>
-<script defer src="/assets/js/vendor/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
-<script defer src="/assets/js/vendor/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
-<script defer src="/assets/js/vendor/alpinejs/3.14.9/alpine.min.js"></script>
-<script src="/assets/js/vendor/htmx.org/2.0.8/htmx.min.js"></script>
+<script defer src="/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
+<script defer src="/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
+<script defer src="/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"></script>
+<script src="/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"></script>
 <script defer src="/assets/js/combobox.js"></script>
 ```
 
@@ -172,13 +172,13 @@ All components are imported from `github.com/araihu/goshtoso/components/<name>`.
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
 | `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |
 | `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
-| `keyvalue` | `components/keyvalue` | Dynamic key-value pair editor (for labels, env vars) |
 | `modal` | `components/modal` | Dialogs with info/danger/warning variants, custom actions |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
 | `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
 | `spinner` | `components/spinner` | Loading spinner with size and color variants |
+| `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |
 | `table` | `components/table` | Data table with sorting, pagination, infinite scroll, filters, row links |
 | `tabs` | `components/tabs` | Tab navigation with badges, HTMX lazy content loading |
 | `tagslist` | `components/tagslist` | Dynamic tag list editor (add/remove string tags) |
@@ -187,7 +187,6 @@ All components are imported from `github.com/araihu/goshtoso/components/<name>`.
 | `toast` | `components/toast` | Toast notifications with auto-dismiss, position, sender avatar |
 | `toggle` | `components/toggle` | Toggle switch with 6 color variants |
 | `tooltip` | `components/tooltip` | Hover tooltips with position options, rich content support |
-| `triplet` | `components/triplet` | Key-value-effect editor (for Kubernetes taints) |
 
 ## Detailed Examples
 
@@ -610,7 +609,6 @@ go run ./site/cmd/server -port 8090
 ```
 
 Then visit:
-- http://localhost:8090/components/button
 - http://localhost:8090/components/accordion
 
 ## Contributing
