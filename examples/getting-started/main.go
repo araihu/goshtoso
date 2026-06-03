@@ -100,7 +100,7 @@ func dogsToRows(dogs []Dog) []table.Row {
 		rows[i] = table.Row{
 			ID: d.Breed,
 			Cells: map[string]table.Cell{
-				"breed":       {Component: table.ImageCell(d.Image, d.Breed, "")},
+				"breed":       {Component: table.ImageCell(d.Image, d.Breed, d.Group)},
 				"group":       {Text: d.Group},
 				"origin":      {Text: d.Origin},
 				"size":        {Text: d.Size},
