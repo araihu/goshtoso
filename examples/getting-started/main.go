@@ -44,6 +44,8 @@ var breeds = []Dog{
 	{Breed: "Chihuahua", Group: "Toy", Origin: "Mexico", Size: "Small", Temperament: "Charming"},
 }
 
+const perPage = 5
+
 // columns defines the table headers
 func columns() []table.Column {
 	return []table.Column{
@@ -141,9 +143,7 @@ func filterAndSort(search, group, orderBy, orderDir string) []Dog {
 	return filtered
 }
 
-func main() {
-	const perPage = 5
-
+func appMux() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// Serve embedded Goshtoso assets (CSS with themes, Alpine.js, HTMX, fonts)
@@ -156,7 +156,7 @@ func main() {
 			return
 		}
 		dogs := filterAndSort("", "", "breed", "asc")
-		totalPages := (len(dogs) + perPage - 1) / perPage
+		totalPages := max(1, (len(dogs)+perPage-1)/perPage)
 		pageRows := dogsToRows(dogs[:min(perPage, len(dogs))])
 
 		Page(table.Config{
@@ -199,7 +199,7 @@ func main() {
 				pp = p
 			}
 		}
-		totalPages := (len(dogs) + pp - 1) / pp
+		totalPages := max(1, (len(dogs)+pp-1)/pp)
 		start := (page - 1) * pp
 		if start >= len(dogs) {
 			start = 0
@@ -225,16 +225,19 @@ func main() {
 			table.TableRow(cfg, row).Render(r.Context(), w)
 		}
 
-		// OOB: update pagination controls
-		if totalPages > 1 {
-			fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-gray-200 px-4 py-3">`, cfg.PaginationID())
-			fmt.Fprintf(w, `<div class="text-sm text-gray-500">Page %d of %d</div>`, page, totalPages)
-			table.TablePaginationNav(cfg).Render(r.Context(), w)
-			fmt.Fprintf(w, `</div>`)
-		}
+		// OOB: always update pagination controls so filtered one-page results
+		// clear any stale paginator from the previous unfiltered table state.
+		fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-gray-200 px-4 py-3">`, cfg.PaginationID())
+		fmt.Fprintf(w, `<div class="text-sm text-gray-500">Page %d of %d</div>`, page, totalPages)
+		table.TablePaginationNav(cfg).Render(r.Context(), w)
+		fmt.Fprintf(w, `</div>`)
 	})
 
+	return mux
+}
+
+func main() {
 	addr := ":3000"
 	log.Printf("Dog breeds app running at http://localhost%s", addr)
-	log.Fatal(http.ListenAndServe(addr, mux))
+	log.Fatal(http.ListenAndServe(addr, appMux()))
 }

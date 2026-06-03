@@ -29,12 +29,13 @@ templ Drawer(cfg Config) {
 	{{ state := cfg.StateVar() }}
 	{{ titleID := cfg.TitleID() }}
 	{{ bodyID := cfg.GetBodyID() }}
-	{{ closeReq := fmt.Sprintf("$dispatch('drawer:close-request', {id: '%s'})", cfg.ID) }}
+	{{ eventID := cfg.eventIDLiteral() }}
+	{{ closeReq := fmt.Sprintf("$dispatch('drawer:close-request', {id: '%s'})", eventID) }}
 	<div
 		x-data={ fmt.Sprintf("{%s: false}", state) }
-		x-on:drawer:open.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s') { %s = true }", cfg.ID, state) }
-		x-on:drawer:close.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s') { %s = false }", cfg.ID, state) }
-		x-on:drawer:close-request.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s' && !$event.defaultPrevented) { %s = false }", cfg.ID, state) }
+		x-on:drawer:open.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s') { %s = true }", eventID, state) }
+		x-on:drawer:close.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s') { %s = false }", eventID, state) }
+		x-on:drawer:close-request.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s' && !$event.defaultPrevented) { %s = false }", eventID, state) }
 	>
 		<!-- Overlay -->
 		<div

@@ -22,8 +22,8 @@ grown into its own thing.
 | Playwright | v0.5700.1 | E2E testing |
 
 Alpine.js, HTMX, and the htmx SSE extension are bundled locally under
-`assets/js/vendor/<module>/<version>/` (versions pinned in
-`assets/js/vendor/versions.json`, served via `assets.Handler()`; no CDN at
+`assets/js/runtime/<module>/<version>/` (versions pinned in
+`assets/js/runtime/versions.json`, served via `assets.Handler()`; no CDN at
 runtime). Regenerate the URL constants with `go run ./scripts/vendorgen` and
 upgrade pinned deps with `just vendor-js`. Page loads are deterministic in E2E.
 
@@ -115,7 +115,7 @@ goshtoso/                       # ── ROOT MODULE: library (github.com/araihu
 ├── all-themes.css              # 13 theme definitions
 ├── assets/
 │   ├── embed.go                # Embedded assets + StylesCSS() accessor
-│   ├── js/vendor/              # Bundled Alpine.js + HTMX
+│   ├── js/runtime/             # Bundled Alpine.js + HTMX
 │   └── styles.css              # Generated CSS (DO NOT EDIT)
 ├── scripts/                    # skillgen (reads components/), themegen (writes assets/)
 │

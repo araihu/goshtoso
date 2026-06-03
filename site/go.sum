@@ -6,10 +6,11 @@ github.com/alecthomas/chroma/v2 v2.24.1 h1:m5ffpfZbIb++k8AqFEKy9uVgY12xIQtBsQlc6
 github.com/alecthomas/chroma/v2 v2.24.1/go.mod h1:l+ohZ9xRXIbGe7cIW+YZgOGbvuVLjMps/FYN/CwuabI=
 github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
-github.com/araihu/goshtoso v0.0.0-20260602052940-39b8ee3cd7b1 h1:wlI/D/9aur2d9KTEtMAq41jCmVvkgYFCxBDe96OHDjM=
-github.com/araihu/goshtoso v0.0.0-20260602052940-39b8ee3cd7b1/go.mod h1:2Mtkql7G0hHS5IqQF1nT/pctarPoPfHXy6fKZTZOtOY=
+github.com/araihu/goshtoso v0.0.3 h1:C4UXjT2JdksjgHeOs+ti0rOszSiMGWlNF9vyHJQeQEs=
+github.com/araihu/goshtoso v0.0.3/go.mod h1:pEJfw8LGHQpyX60yGckzuxog5XwwtGfvKI7Y8f7PP24=
 github.com/coder/websocket v1.8.14 h1:9L0p0iKiNOibykf283eHkKUHHrpG7f65OE3BhhO7v9g=
 github.com/coder/websocket v1.8.14/go.mod h1:NX3SzP+inril6yawo5CQXx8+fk145lPDC6pumgx0mVg=
+github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

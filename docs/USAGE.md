@@ -90,13 +90,13 @@ case mirror what `head.Dependencies()` emits, in this order (plugins **before**
 Alpine core):
 
 ```html
-<!-- Versions are pinned in assets/js/vendor/versions.json
+<!-- Versions are pinned in assets/js/runtime/versions.json
      (see assets.AlpineVersion(), assets.HTMXVersion()). -->
 <link rel="stylesheet" href="/assets/styles.css"/>
-<script defer src="/assets/js/vendor/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
-<script defer src="/assets/js/vendor/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
-<script defer src="/assets/js/vendor/alpinejs/3.14.9/alpine.min.js"></script>
-<script src="/assets/js/vendor/htmx.org/2.0.8/htmx.min.js"></script>
+<script defer src="/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
+<script defer src="/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
+<script defer src="/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"></script>
+<script src="/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"></script>
 <script defer src="/assets/js/combobox.js"></script>
 ```
 
