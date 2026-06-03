@@ -45,21 +45,24 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.Equal(t, "goshtoso", got, "homepage should default to the Goshtoso theme")
 	})
 
-	t.Run("GoshtosoThemeChipAvailable", func(t *testing.T) {
-		chip := page.Locator("#playground button[data-theme-key='goshtoso']")
-		visible, err := chip.IsVisible()
+	t.Run("GoshtosoThemeSegmentAvailable", func(t *testing.T) {
+		segment := page.Locator("#home-theme-picker label:has(input[data-theme-key='goshtoso'])")
+		visible, err := segment.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "Goshtoso should be available in the homepage theme picker")
 	})
 
-	t.Run("ThemeChipSwitchesTheme", func(t *testing.T) {
+	t.Run("ThemeSegmentSwitchesTheme", func(t *testing.T) {
 		_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 		require.NoError(t, err)
-		// click the Dracula chip
-		require.NoError(t, page.Locator("#playground button[data-theme-key='dracula']").Click())
+		// click the Dracula segment
+		require.NoError(t, page.Locator("#home-theme-picker label:has(input[data-theme-key='dracula'])").Click())
 		got, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
-		require.Equal(t, "dracula", got, "clicking a chip should set data-theme on <html>")
+		require.Equal(t, "dracula", got, "clicking a segment should set data-theme on <html>")
+		checked, err := page.Locator("#home-theme-picker input[data-theme-key='dracula']").IsChecked()
+		require.NoError(t, err)
+		require.True(t, checked, "selected theme segment should be checked")
 	})
 
 	t.Run("LiveTableLoadsRows", func(t *testing.T) {
