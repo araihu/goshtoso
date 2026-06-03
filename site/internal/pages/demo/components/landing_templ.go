@@ -181,7 +181,7 @@ func landingContent() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<a href=\"/docs/theme\" class=\"px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center\">All 15 themes →</a></div><div class=\"border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6\"><div class=\"flex flex-wrap items-center gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<a href=\"/docs/theme\" class=\"px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center\">All themes →</a></div><div class=\"border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6\"><div class=\"flex flex-wrap items-center gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
