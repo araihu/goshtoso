@@ -83,8 +83,9 @@ import "github.com/araihu/goshtoso/components/alert"  // package alert
 import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 ```
 
-**Entry points:** `Avatar(cfg Config)` · `UserIcon()`
+**Entry points:** `Avatar(cfg Config)` · `AvatarStack(cfg StackConfig)` · `UserIcon()`
 
+- **Radius** — RadiusDefault = "", RadiusNone = "none", RadiusXS = "xs", RadiusSM = "sm", RadiusMD = "md", RadiusLG = "lg"
 - **Shape** — ShapeCircle = "circle", ShapeSquare = "square"
 - **Size** — SizeXS = "xs", SizeSM = "sm", SizeMD = "md", SizeLG = "lg", SizeXL = "xl", Size2XL = "2xl"
 - **Status** — StatusOffline = "offline", StatusInfo = "info", StatusSuccess = "success", StatusWarning = "warning", StatusDanger = "danger"
@@ -101,6 +102,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 | `Size` | `Size` | Size of the avatar |
 | `Variant` | `Variant` | Variant determines the color scheme (for initials/icon placeholders) |
 | `Shape` | `Shape` | Shape of the avatar (circle or square) |
+| `Radius` | `Radius` | Radius controls the corner radius for square avatars. |
 | `Border` | `bool` | Border adds a colored border (for image avatars) |
 | `BorderColor` | `string` | BorderColor is the border color (defaults to variant color if empty) |
 | `Status` | `Status` | Status adds a status indicator dot |
@@ -108,6 +110,16 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 | `Class` | `string` | Class allows additional CSS classes |
 | `SrcExpr` | `string` | SrcExpr is an Alpine expression evaluated in the parent scope that yields |
 | `Reactive` | `bool` | Reactive defers the size + status-indicator size classes to the parent |
+| `ReactiveRadius` | `bool` | ReactiveRadius defers square-avatar radius classes to the parent Alpine |
+
+**StackConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Items` | `[]Config` | Items are rendered as overlapping avatars from left to right. |
+| `Label` | `string` | Label describes the group for assistive technology. |
+| `Class` | `string` | Class allows additional CSS classes on the stack root. |
+| `Reactive` | `bool` | Reactive defers each avatar's size classes to the parent Alpine scope. |
 
 ## badge
 
