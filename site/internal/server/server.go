@@ -73,6 +73,7 @@ func (s *Server) setupRoutes() {
 	}
 
 	// Component comparison pages
+	s.mux.HandleFunc("/form", s.handleFormPage)
 	s.mux.HandleFunc("/components/", s.handleComponent)
 
 	// Examples pages
@@ -128,7 +129,19 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	componentName := strings.Split(path, "/")[0]
+	if componentName == "form-validation" {
+		http.Redirect(w, r, "/form#server-side-validation", http.StatusMovedPermanently)
+		return
+	}
 	s.renderDemo(w, r, "components/"+componentName)
+}
+
+func (s *Server) handleFormPage(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/form" {
+		http.NotFound(w, r)
+		return
+	}
+	s.renderDemo(w, r, "components/form")
 }
 
 func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {

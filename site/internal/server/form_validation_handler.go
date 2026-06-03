@@ -124,8 +124,7 @@ func validateDemoField(ctx validation.ValidationContext, name string, fg *form.F
 
 func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		// Render the demo page (same as /components/form-validation)
-		_ = components.FormValidationDemoPage().Render(r.Context(), w)
+		_ = components.FormDemoPage().Render(r.Context(), w)
 		return
 	}
 

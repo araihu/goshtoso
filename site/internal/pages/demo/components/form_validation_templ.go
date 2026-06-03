@@ -12,11 +12,9 @@ import (
 	"github.com/araihu/goshtoso/components/form"
 	"github.com/araihu/goshtoso/components/form/validation"
 	"github.com/araihu/goshtoso/components/textinput"
-	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
-// FormValidationDemoPage renders the Form Validation demo page
-func FormValidationDemoPage() templ.Component {
+func formValidationDemoPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -37,152 +35,8 @@ func FormValidationDemoPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = demo.Layout("Form Validation", "form-validation", formValidationDemoContent()).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func formValidationDemoContent() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"form-validation-fragment\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.ComponentDemo(
-			demo.ComponentDemoProps{
-				Title:       "Form Validation",
-				Description: "Server-side field validation with HTMX. Fields validate on change, dependent fields update automatically (e.g. slug from name), and full-form submit validates everything at once.",
-			},
-			formValidationDemoPreview(),
-			formValidationDemoCode,
-		).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "FormDef.FormID", Type: "string", Default: `""`, Description: "DOM id of the form (must match form.Config.ID)."},
-			{Name: "FormDef.Endpoint", Type: "string", Default: `""`, Description: "Server URL that handles field + full-form validation requests."},
-			{Name: "FormDef.Fields", Type: "map[string]*FieldDef", Default: "nil", Description: "Per-field definitions keyed by field name."},
-			{Name: "FieldDef.Name", Type: "string", Default: `""`, Description: "Form field name (matches the input's Name)."},
-			{Name: "FieldDef.FieldGroup", Type: "*form.FieldGroupConfig", Default: "nil", Description: "The field's FieldGroup (label, input, hints, errors)."},
-			{Name: "FieldDef.OnChange", Type: "bool", Default: "false", Description: "Validate this field on change (blur), not just on submit."},
-			{Name: "FieldDef.DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this field's validation (e.g. slug depends on name)."},
-			{Name: "def.Bind()", Type: "method", Default: "—", Description: "Wires HTMX attributes + metadata onto each FieldGroup; call once after defining."},
-			{Name: "validation.Handle", Type: "func", Default: "—", Description: "Server entry point: routes field vs full-form requests and runs your per-field validator."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-var formValidationDemoCode = `// 1. Define the form fields and validation rules
-def := &validation.FormDef{
-    FormID:   "demo-validation",
-    Endpoint: "/api/components/form-validation",
-    Fields: map[string]*validation.FieldDef{
-        "name":  {Name: "name", FieldGroup: nameField, OnChange: true},
-        "slug":  {Name: "slug", FieldGroup: slugField, OnChange: true, DependsOn: []string{"name"}},
-        "email": {Name: "email", FieldGroup: emailField, OnChange: true},
-    },
-}
-def.Bind() // wires up HTMX attributes and metadata
-
-// 2. In the templ, render the form with FieldGroups
-@form.Form(form.Config{
-    ID: "demo-validation",
-    HTMX: &form.HTMXConfig{Post: "/api/components/form-validation", Target: "#form-result", Swap: "innerHTML"},
-    Footer: &form.FooterConfig{SubmitText: "Submit", CancelText: "Reset"},
-}) {
-    @form.Section(form.SectionConfig{Title: "Project Details"}) {
-        @form.FieldGroup(*nameField)
-        @form.FieldGroup(*slugField)
-        @form.FieldGroup(*emailField)
-    }
-}
-
-// 3. Handle validation in Go
-func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
-    def := buildDemoFormDef()
-    result := validation.Handle(r, def, validateDemoField)
-    if validation.IsFieldValidation(r) {
-        validation.RenderFieldResponse(r.Context(), w, *result)
-        return
-    }
-    // full submit...
-}
-
-// 4. Per-field validation hook
-func validateDemoField(ctx validation.ValidationContext, name string, fg *form.FieldGroupConfig) bool {
-    switch name {
-    case "name":
-        val := ctx.FormValues["name"]
-        if len(val) < 3 {
-            fg.Errors = []string{"Name must be at least 3 characters."}
-            fg.Input.State = textinput.StateError
-            return false
-        }
-        fg.Input.State = textinput.StateSuccess
-        return true
-    case "slug":
-        // auto-generate from name on dependency trigger
-        if ctx.Type == validation.ValidationDependency && val == "" { ... }
-        // uniqueness check against takenSlugs map
-    case "email":
-        // format validation
-    }
-}`
-
-func formValidationDemoPreview() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
 		def := buildDemoValidationFormDef()
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-2xl mx-auto space-y-6\"><div><h4 class=\"mb-2 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Try it out</h4><p class=\"mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Type in the fields below and tab out to see validation in action. The slug field auto-generates from name. Try \"admin\", \"test\", or \"demo\" as slugs to see the uniqueness check.</p></div><div id=\"form-result\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-2xl mx-auto space-y-6\"><div><h4 class=\"mb-2 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Try it out</h4><p class=\"mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Type in the fields below and tab out to see validation in action. The slug field auto-generates from name. Try \"admin\", \"test\", or \"demo\" as slugs to see the uniqueness check.</p></div><div id=\"form-result\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -194,7 +48,7 @@ func formValidationDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -256,12 +110,12 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -273,7 +127,7 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -289,7 +143,7 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -297,7 +151,7 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -307,7 +161,7 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Project Details"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Project Details"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -323,9 +177,9 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 			Footer: &form.FooterConfig{
 				SubmitText: "Submit",
 				CancelText: "Reset",
-				CancelHref: "/components/form-validation",
+				CancelHref: "/form",
 			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

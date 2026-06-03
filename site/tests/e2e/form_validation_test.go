@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const formValidationPath = "/components/form-validation"
+const formValidationPath = "/form"
 
 func navigateToFormValidation(t *testing.T, page playwright.Page) {
 	t.Helper()
@@ -19,6 +19,22 @@ func navigateToFormValidation(t *testing.T, page playwright.Page) {
 		WaitUntil: playwright.WaitUntilStateNetworkidle,
 	})
 	require.NoError(t, err)
+}
+
+func TestFormValidation_MergedIntoFormPage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	require.NoError(t, page.Locator("#form-fragment #demo-validation").WaitFor())
+	count, err := page.Locator("aside a", playwright.PageLocatorOptions{
+		HasText: "Form Validation",
+	}).Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, count, "Form Validation should not be a separate sidebar component")
 }
 
 // fillAndTriggerValidation sets a field value and triggers HTMX field-level
@@ -75,7 +91,7 @@ func TestFormValidation_SubmitEmpty(t *testing.T) {
 	navigateToFormValidation(t, page)
 
 	// Submit without filling any fields
-	require.NoError(t, page.Locator("button[type='submit']").Click())
+	require.NoError(t, page.Locator("#demo-validation button[type='submit']").Click())
 	time.Sleep(800 * time.Millisecond)
 
 	// Check for error messages on all 3 required fields
@@ -109,7 +125,7 @@ func TestFormValidation_SubmitValid(t *testing.T) {
 	fillWithoutValidation(t, page, "email", "test@example.com")
 
 	// Submit the form
-	require.NoError(t, page.Locator("button[type='submit']").Click())
+	require.NoError(t, page.Locator("#demo-validation button[type='submit']").Click())
 	time.Sleep(800 * time.Millisecond)
 
 	// Verify success message
