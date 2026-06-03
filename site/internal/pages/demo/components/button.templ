@@ -55,13 +55,18 @@ templ buttonDemoContent() {
 			},
 			buttonHTMXPreview(),
 			`@button.Button(button.Config{
-    Variant: button.Primary, Type: "button",
-    HTMX: &button.HTMXConfig{Post: "/api/hello", Target: "#result", Swap: "innerHTML"},
+    Variant: button.Primary, Type: "button", Class: "w-full sm:w-44 justify-center",
+    HTMX: &button.HTMXConfig{Post: "/api/hello", Target: "#htmx-result-post", Swap: "innerHTML"},
 }) { Send POST }
 
 @button.Button(button.Config{
-    Variant: button.Danger, Type: "button",
-    HTMX: &button.HTMXConfig{Delete: "/api/item/123", Confirm: "Are you sure?", Target: "#item"},
+    Variant: button.Info, Type: "button", Class: "w-full sm:w-44 justify-center",
+    HTMX: &button.HTMXConfig{Get: "/api/hello", Target: "#htmx-result-get", Swap: "innerHTML"},
+}) { Send GET }
+
+@button.Button(button.Config{
+    Variant: button.Danger, Type: "button", Class: "w-full sm:w-44 justify-center",
+    HTMX: &button.HTMXConfig{Delete: "/api/hello", Confirm: "Are you sure?", Target: "#htmx-result-delete", Swap: "innerHTML"},
 }) { Delete }`,
 		)
 	</div>
@@ -129,53 +134,60 @@ templ buttonDisabledPreview() {
 // buttonHTMXPreview renders the HTMX-wired buttons with their result targets.
 templ buttonHTMXPreview() {
 	<div id="button-htmx" class="w-full">
-		<div class="flex flex-wrap items-center justify-center gap-4">
-			<div class="flex items-center gap-3">
+		<div class="mx-auto flex w-full max-w-3xl flex-col gap-3">
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 				@button.Button(button.Config{
 					Variant: button.Primary,
 					Type:    "button",
+					Class:   "w-full sm:w-44 justify-center",
 					HTMX: &button.HTMXConfig{
 						Post:   "/api/hello",
-						Target: "#htmx-result-1",
+						Target: "#htmx-result-post",
 						Swap:   "innerHTML",
 					},
 				}) {
 					Send POST
 				}
-				<span id="htmx-result-1" class="text-sm text-on-surface dark:text-on-surface-dark">
-					<em class="text-on-surface-muted dark:text-on-surface-dark-muted">Click to load...</em>
-				</span>
+				@buttonHTMXResult("htmx-result-post")
 			</div>
-			<div class="flex items-center gap-3">
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 				@button.Button(button.Config{
 					Variant: button.Info,
 					Type:    "button",
+					Class:   "w-full sm:w-44 justify-center",
 					HTMX: &button.HTMXConfig{
 						Get:    "/api/hello",
-						Target: "#htmx-result-2",
+						Target: "#htmx-result-get",
 						Swap:   "innerHTML",
 					},
 				}) {
 					Send GET
 				}
-				<span id="htmx-result-2" class="text-sm text-on-surface dark:text-on-surface-dark">
-					<em class="text-on-surface-muted dark:text-on-surface-dark-muted">Click to load...</em>
-				</span>
+				@buttonHTMXResult("htmx-result-get")
 			</div>
-			@button.Button(button.Config{
-				Variant: button.Danger,
-				Type:    "button",
-				HTMX: &button.HTMXConfig{
-					Delete:  "/api/hello",
-					Confirm: "Are you sure?",
-					Target:  "#htmx-result-3",
-					Swap:    "innerHTML",
-				},
-			}) {
-				Delete (confirm)
-			}
-			<span id="htmx-result-3"></span>
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+				@button.Button(button.Config{
+					Variant: button.Danger,
+					Type:    "button",
+					Class:   "w-full sm:w-44 justify-center",
+					HTMX: &button.HTMXConfig{
+						Delete:  "/api/hello",
+						Confirm: "Are you sure?",
+						Target:  "#htmx-result-delete",
+						Swap:    "innerHTML",
+					},
+				}) {
+					Delete (confirm)
+				}
+				@buttonHTMXResult("htmx-result-delete")
+			</div>
 		</div>
+	</div>
+}
+
+templ buttonHTMXResult(id string) {
+	<div id={ id } class="flex min-h-[2.75rem] flex-1 items-center rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark">
+		<em class="text-on-surface-muted dark:text-on-surface-dark-muted">Waiting for server response...</em>
 	</div>
 }
 
