@@ -98,9 +98,10 @@ func paletteDemoContent() templ.Component {
 			paletteShellPreview(),
 			`<div x-data="{ shellPicked: '' }">
     @selectfield.Select(selectfield.Config{
-        ID:        "demo-shell",
-        Shell:     true,
-        ValueExpr: "shellPicked || 'Pick a color'",
+        ID:             "demo-shell",
+        Shell:          true,
+        TriggerLeading: paletteShellTriggerSwatch(),
+        ValueExpr:      "shellPicked || 'Pick a color'",
     }) {
         @palette.Palette(palette.Config{
             ID:          "demo-shell-palette",
@@ -229,14 +230,44 @@ func paletteShellPreview() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
-			ID:        "demo-shell",
-			Shell:     true,
-			ValueExpr: "shellPicked || 'Pick a color'",
+			ID:             "demo-shell",
+			Shell:          true,
+			TriggerLeading: paletteShellTriggerSwatch(),
+			ValueExpr:      "shellPicked || 'Pick a color'",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func paletteShellTriggerSwatch() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span data-shell-selected-preview aria-hidden=\"true\" class=\"size-4 shrink-0 rounded-sm border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark\" x-bind:style=\"{ backgroundColor: shellPicked ? (shellPicked[0] === '#' ? shellPicked : (shellPicked === 'white' || shellPicked === 'black' ? shellPicked : 'var(--color-' + shellPicked + ')')) : 'transparent' }\"></span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
