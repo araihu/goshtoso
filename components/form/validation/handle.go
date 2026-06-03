@@ -100,6 +100,6 @@ func (fd *FormDef) PopulateValues(values map[string]string) {
 		if fg.Checkbox != nil {
 			fg.Checkbox.Checked = val == "on"
 		}
-		// Combobox, TagsList, KeyValue, etc. can be added as needed
+		// Combobox, TagsList, StructuredInput, etc. can be added as needed
 	}
 }

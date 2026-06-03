@@ -4,12 +4,11 @@ import (
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/fileinput"
-	"github.com/araihu/goshtoso/components/keyvalue"
+	"github.com/araihu/goshtoso/components/structuredinput"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toggle"
-	"github.com/araihu/goshtoso/components/triplet"
 )
 
 // Form renders a <form> element with enter-key prevention and optional HTMX/footer.
@@ -298,10 +297,8 @@ templ FieldGroup(cfg FieldGroupConfig) {
 			@checkbox.Checkbox(*cfg.Checkbox)
 		} else if cfg.TagsList != nil {
 			@tagslist.TagsList(*cfg.TagsList)
-		} else if cfg.KeyValue != nil {
-			@keyvalue.KeyValue(*cfg.KeyValue)
-		} else if cfg.Triplet != nil {
-			@triplet.Triplet(*cfg.Triplet)
+		} else if cfg.StructuredInput != nil {
+			@structuredinput.StructuredInput(*cfg.StructuredInput)
 		} else if cfg.FileInput != nil {
 			@fileinput.FileInput(*cfg.FileInput)
 		} else {

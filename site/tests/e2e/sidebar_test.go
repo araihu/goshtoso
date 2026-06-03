@@ -49,7 +49,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		{"/components/combobox", "Combobox"},
 		{"/components/dropdown", "Dropdown"},
 		{"/components/form", "Form"},
-		{"/components/key-value", "Key Value"},
+		{"/components/structured-input", "Structured Input"},
 		{"/components/modal", "Modal"},
 		{"/components/navbar", "Navbar"},
 		{"/components/pagination", "Pagination"},
@@ -66,7 +66,6 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		{"/components/toast", "Toast"},
 		{"/components/toggle", "Toggle"},
 		{"/components/tooltip", "Tooltip"},
-		{"/components/triplet", "Triplet"},
 	}
 
 	for _, comp := range expectedComponents {

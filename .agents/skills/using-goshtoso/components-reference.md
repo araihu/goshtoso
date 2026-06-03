@@ -623,8 +623,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `Toggle` | `*toggle.Config` |  |
 | `Checkbox` | `*checkbox.Config` |  |
 | `TagsList` | `*tagslist.Config` |  |
-| `KeyValue` | `*keyvalue.Config` |  |
-| `Triplet` | `*triplet.Config` |  |
+| `StructuredInput` | `*structuredinput.Config` |  |
 | `FileInput` | `*fileinput.Config` |  |
 | `OOB` | `bool` | OOB enables hx-swap-oob="true" on the wrapper div for out-of-band HTMX updates. |
 | `Meta` | `*FieldMeta` | Meta holds validation metadata rendered as data-* attributes. |
@@ -761,34 +760,6 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 ```
 
 **Entry points:** `Dependencies()` · `DependenciesMinimal()`
-
-## keyvalue
-
-```go
-import "github.com/araihu/goshtoso/components/keyvalue"  // package keyvalue
-```
-
-**Entry points:** `KeyValue(cfg Config)`
-
-**Config**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `ID` | `string` | ID is the element ID |
-| `Name` | `string` | Name is the form field name prefix (submits as name[key]=value) |
-| `Entries` | `[]Entry` | Entries is the initial list of key-value pairs |
-| `KeyPlaceholder` | `string` | KeyPlaceholder is shown in each key input |
-| `ValuePlaceholder` | `string` | ValuePlaceholder is shown in each value input |
-| `AddLabel` | `string` | AddLabel is the "Add row" button text (default: "Add row") |
-| `Disabled` | `bool` | Disabled prevents adding/removing entries |
-| `Class` | `string` | Class allows additional CSS classes on the container |
-
-**Entry**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `Key` | `string` | Key is the entry key. |
-| `Value` | `string` | Value is the entry value. |
 
 ## modal
 
@@ -1182,6 +1153,47 @@ import "github.com/araihu/goshtoso/components/steps"  // package steps
 | `Status` | `Status` | Status controls visual styling. |
 | `Attrs` | `templ.Attributes` | Attrs appends arbitrary attributes to the list item. |
 
+## structuredinput
+
+```go
+import "github.com/araihu/goshtoso/components/structuredinput"  // package structuredinput
+```
+
+**Entry points:** `StructuredInput(cfg Config)`
+
+- **ColumnType** — ColumnText = "text", ColumnSelect = "select"
+
+**Column**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Key` | `string` |  |
+| `Label` | `string` |  |
+| `Type` | `ColumnType` |  |
+| `Placeholder` | `string` |  |
+| `Separator` | `string` |  |
+| `Options` | `[]Option` |  |
+| `Default` | `string` |  |
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` |  |
+| `Name` | `string` |  |
+| `Columns` | `[]Column` |  |
+| `Entries` | `[]Entry` |  |
+| `AddLabel` | `string` |  |
+| `Disabled` | `bool` |  |
+| `Class` | `string` |  |
+
+**Option**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Value` | `string` |  |
+| `Label` | `string` |  |
+
 ## table
 
 ```go
@@ -1509,42 +1521,4 @@ import "github.com/araihu/goshtoso/components/tooltip"  // package tooltip
 | `Trigger` | `Trigger` | Trigger determines how the tooltip is activated |
 | `TriggerText` | `string` | TriggerText is the text shown on the trigger button |
 | `TriggerContent` | `templ.Component` | TriggerContent is an optional custom trigger element (overrides TriggerText) |
-
-## triplet
-
-```go
-import "github.com/araihu/goshtoso/components/triplet"  // package triplet
-```
-
-**Entry points:** `Triplet(cfg Config)`
-
-**Config**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `ID` | `string` | ID is the element ID |
-| `Name` | `string` | Name is the form field name prefix (submits as name[key]=value:effect) |
-| `Entries` | `[]Entry` | Entries is the initial list of entries |
-| `EffectOptions` | `[]EffectOption` | EffectOptions is the list of dropdown options for the third column |
-| `DefaultEffect` | `string` | DefaultEffect is the default value for new rows (defaults to first option's value) |
-| `KeyPlaceholder` | `string` | KeyPlaceholder is shown in each key input |
-| `ValuePlaceholder` | `string` | ValuePlaceholder is shown in each value input |
-| `AddLabel` | `string` | AddLabel is the "Add row" button text (default: "Add row") |
-| `Disabled` | `bool` | Disabled prevents adding/removing entries |
-| `Class` | `string` | Class allows additional CSS classes on the container |
-
-**EffectOption**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `Value` | `string` | Value is the form submission value. |
-| `Display` | `string` | Display is the display text. |
-
-**Entry**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `Key` | `string` | Key is the entry key. |
-| `Value` | `string` | Value is the entry value. |
-| `Effect` | `string` | Effect is the selected effect/category. |
 
