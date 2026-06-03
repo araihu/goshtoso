@@ -24,3 +24,35 @@ func TestBreedsAPIUpdatesPaginatorForOnePageFilter(t *testing.T) {
 		t.Fatalf("one-page filtered response must not keep stale page 2 controls:\n%s", body)
 	}
 }
+
+func TestBreedsPageRendersRoundDogPhotos(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+
+	appMux().ServeHTTP(rec, req)
+
+	body := rec.Body.String()
+	if !strings.Contains(body, `/dog-images/australian-shepherd.webp`) {
+		t.Fatalf("page must render dog image cells:\n%s", body)
+	}
+	if !strings.Contains(body, `rounded-full`) {
+		t.Fatalf("dog photos must use round thumbnail styling:\n%s", body)
+	}
+}
+
+func TestDogImagesAreServed(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/dog-images/labrador-retriever.webp", nil)
+	rec := httptest.NewRecorder()
+
+	appMux().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("dog image status = %d, want 200", rec.Code)
+	}
+	if ct := rec.Header().Get("Content-Type"); !strings.Contains(ct, "image/webp") {
+		t.Fatalf("dog image content-type = %q, want image/webp", ct)
+	}
+	if size := rec.Body.Len(); size == 0 {
+		t.Fatal("dog image body is empty")
+	}
+}

@@ -1200,7 +1200,7 @@ import "github.com/araihu/goshtoso/components/structuredinput"  // package struc
 import "github.com/araihu/goshtoso/components/table"  // package table
 ```
 
-**Entry points:** `ActionButton(label string)` · `StatusBadge(label string, status string)` · `Table(cfg Config)` · `TableBody(cfg Config)` · `TableHead(cfg Config)` · `TableHeadContent(cfg Config)` · `TablePagination(cfg Config)` · `TablePaginationNav(cfg Config)` · `TableRow(cfg Config, row Row)` · `TableRows(cfg Config)` · `UserCell(avatarURL string, name string, email string)`
+**Entry points:** `ActionButton(label string)` · `ImageCell(imageURL string, label string, detail string)` · `StatusBadge(label string, status string)` · `Table(cfg Config)` · `TableBody(cfg Config)` · `TableHead(cfg Config)` · `TableHeadContent(cfg Config)` · `TablePagination(cfg Config)` · `TablePaginationNav(cfg Config)` · `TableRow(cfg Config, row Row)` · `TableRows(cfg Config)`
 
 - **FilterType** — FilterSearch = "search", FilterSelect = "select", FilterToggle = "toggle"
 - **FilterVariant** — FilterVariantBar = "", FilterVariantInline = "inline"
