@@ -24,6 +24,9 @@ templ StructuredInput(cfg Config) {
 					} else {
 						@textColumn(col, columnIndex, cfg.Disabled)
 					}
+					if col.Separator != "" {
+						@columnSeparator(col.Separator)
+					}
 					<input
 						type="hidden"
 						data-column-key={ col.Key }
@@ -67,6 +70,14 @@ templ textColumn(col Column, columnIndex int, disabled bool) {
 			disabled
 		}
 	/>
+}
+
+templ columnSeparator(separator string) {
+	<span
+		class="shrink-0 select-none text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted"
+		aria-hidden="true"
+		data-column-separator="true"
+	>{ separator }</span>
 }
 
 templ selectColumn(col Column, columnIndex int, disabled bool) {

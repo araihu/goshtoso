@@ -1171,6 +1171,7 @@ import "github.com/araihu/goshtoso/components/structuredinput"  // package struc
 | `Label` | `string` |  |
 | `Type` | `ColumnType` |  |
 | `Placeholder` | `string` |  |
+| `Separator` | `string` |  |
 | `Options` | `[]Option` |  |
 | `Default` | `string` |  |
 

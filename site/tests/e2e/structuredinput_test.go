@@ -37,6 +37,15 @@ func TestStructuredInput_AddAndRemoveMetadataRows(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "labels[0][key]", name)
 
+	separators := container.Locator("[data-column-separator='true']")
+	separatorCount, err := separators.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 2, separatorCount, "two metadata rows should each render one separator")
+
+	text, err := separators.First().TextContent()
+	require.NoError(t, err)
+	assert.Equal(t, "=", text)
+
 	addBtn := container.Locator("[data-add-row]")
 	require.NoError(t, addBtn.Click())
 	count, err = hiddenInputs.Count()
@@ -89,4 +98,37 @@ func TestStructuredInput_SelectColumnDefaults(t *testing.T) {
 	count, err = hiddenInputs.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 3, count, "one three-column row should render three hidden inputs")
+}
+
+func TestStructuredInput_SelectColumnSeparators(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	_, err := page.Goto(baseURL+"/components/structured-input", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+
+	container := page.Locator("#taintsDemo")
+	require.NoError(t, container.WaitFor())
+
+	separators := container.Locator("[data-column-separator='true']")
+	separatorCount, err := separators.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 2, separatorCount)
+
+	first, err := separators.Nth(0).TextContent()
+	require.NoError(t, err)
+	second, err := separators.Nth(1).TextContent()
+	require.NoError(t, err)
+	assert.Equal(t, "=", first)
+	assert.Equal(t, ":", second)
 }

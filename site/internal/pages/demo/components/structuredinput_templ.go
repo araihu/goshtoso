@@ -78,7 +78,7 @@ func structuredInputDemoContent() templ.Component {
     ID:   "labels",
     Name: "labels",
     Columns: []structuredinput.Column{
-        {Key: "key", Label: "Key", Placeholder: "key"},
+        {Key: "key", Label: "Key", Placeholder: "key", Separator: "="},
         {Key: "value", Label: "Value", Placeholder: "value"},
     },
     Entries: []structuredinput.Entry{
@@ -100,8 +100,8 @@ func structuredInputDemoContent() templ.Component {
     ID:   "taints",
     Name: "taints",
     Columns: []structuredinput.Column{
-        {Key: "key", Label: "Key", Placeholder: "key"},
-        {Key: "value", Label: "Value", Placeholder: "value"},
+        {Key: "key", Label: "Key", Placeholder: "key", Separator: "="},
+        {Key: "value", Label: "Value", Placeholder: "value", Separator: ":"},
         {
             Key: "effect",
             Label: "Effect",
@@ -159,6 +159,7 @@ func structuredInputDemoContent() templ.Component {
 			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the structured input root."},
 			{Name: "Name", Type: "string", Default: `""`, Description: "Base form field name; submitted inputs use name[index][columnKey]."},
 			{Name: "Columns", Type: "[]Column", Default: "nil", Description: "Column schema for every repeatable row."},
+			{Name: "Column.Separator", Type: "string", Default: `""`, Description: "Optional short visual separator rendered after a column, such as = or :."},
 			{Name: "Entries", Type: "[]Entry", Default: "nil", Description: "Initial row values keyed by column key."},
 			{Name: "AddLabel", Type: "string", Default: `"Add row"`, Description: "Label of the add-row button."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable controls and hide add/remove actions."},
@@ -200,7 +201,7 @@ func structuredInputMetadataPreview() templ.Component {
 			ID:   "labelsDemo",
 			Name: "labels",
 			Columns: []structuredinput.Column{
-				{Key: "key", Label: "Key", Placeholder: "key"},
+				{Key: "key", Label: "Key", Placeholder: "key", Separator: "="},
 				{Key: "value", Label: "Value", Placeholder: "value"},
 			},
 			Entries: []structuredinput.Entry{
@@ -248,8 +249,8 @@ func structuredInputTaintsPreview() templ.Component {
 			ID:   "taintsDemo",
 			Name: "taints",
 			Columns: []structuredinput.Column{
-				{Key: "key", Label: "Key", Placeholder: "key (e.g. node-role.kubernetes.io/control-plane)"},
-				{Key: "value", Label: "Value", Placeholder: "value (e.g. true)"},
+				{Key: "key", Label: "Key", Placeholder: "key (e.g. node-role.kubernetes.io/control-plane)", Separator: "="},
+				{Key: "value", Label: "Value", Placeholder: "value (e.g. true)", Separator: ":"},
 				{
 					Key:   "effect",
 					Label: "Effect",

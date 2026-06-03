@@ -25,6 +25,7 @@ type Column struct {
 	Label       string
 	Type        ColumnType
 	Placeholder string
+	Separator   string
 	Options     []Option
 	Default     string
 }

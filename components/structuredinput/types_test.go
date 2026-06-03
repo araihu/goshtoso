@@ -146,3 +146,27 @@ func TestStructuredInputRendersSelectColumn(t *testing.T) {
 		}
 	}
 }
+
+func TestStructuredInputRendersColumnSeparators(t *testing.T) {
+	var buf strings.Builder
+	err := StructuredInput(Config{
+		ID:   "taintsDemo",
+		Name: "taints",
+		Columns: []Column{
+			{Key: "key", Separator: "="},
+			{Key: "value", Separator: ":"},
+			{Key: "effect", Type: ColumnSelect, Options: []Option{{Value: "NoSchedule", Label: "NoSchedule"}}},
+		},
+		Entries: []Entry{{"key": "node", "value": "true", "effect": "NoSchedule"}},
+	}).Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
+
+	html := buf.String()
+	for _, want := range []string{`data-column-separator="true">=</span>`, `data-column-separator="true">:</span>`} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("rendered HTML missing %s:\n%s", want, html)
+		}
+	}
+}
