@@ -29,9 +29,10 @@ type themeChip struct {
 	Label string
 }
 
-// curated subset of the 15 themes — visually distinct, not the whole set
+// curated subset of themes — visually distinct, not the whole set
 func getThemeChips() []themeChip {
 	return []themeChip{
+		{Key: "goshtoso", Label: "Goshtoso"},
 		{Key: "minimal", Label: "Minimal"},
 		{Key: "modern", Label: "Modern"},
 		{Key: "dracula", Label: "Dracula"},
@@ -124,7 +125,7 @@ templ landingContent() {
 					</button>
 				}
 				<a href="/docs/theme" class="px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center">
-					All 15 themes →
+					All 16 themes →
 				</a>
 			</div>
 			<div class="border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6">
