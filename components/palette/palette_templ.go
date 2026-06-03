@@ -34,14 +34,14 @@ func Palette(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ hovered: '' }\" data-palette id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{\n\t\t\thovered: '',\n\t\t\tselectedHex: '#000000',\n\t\t\thexInput: '',\n\t\t\thexInvalid: false,\n\t\t\tpick(value, el) {\n\t\t\t\tthis.syncHex(value, el)\n\t\t\t\tthis.$dispatch('select-close', value)\n\t\t\t},\n\t\t\tcommitHex(value) {\n\t\t\t\tconst hex = this.normalizeHex(value)\n\t\t\t\tif (!hex) {\n\t\t\t\t\tthis.hexInvalid = true\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tthis.hexInvalid = false\n\t\t\t\tthis.selectedHex = hex\n\t\t\t\tthis.hexInput = hex\n\t\t\t\tthis.$dispatch('select-close', hex)\n\t\t\t},\n\t\t\tpreviewHex(value) {\n\t\t\t\tthis.hexInput = value\n\t\t\t\tconst hex = this.normalizeHex(value)\n\t\t\t\tthis.hexInvalid = this.hexInput !== '' && !hex\n\t\t\t\tif (hex) {\n\t\t\t\t\tthis.selectedHex = hex\n\t\t\t\t\tthis.hexInput = hex\n\t\t\t\t\tthis.$dispatch('select-close', hex)\n\t\t\t\t}\n\t\t\t},\n\t\t\tsyncHex(value, el) {\n\t\t\t\tthis.hexInvalid = false\n\t\t\t\tif (!value) {\n\t\t\t\t\tthis.selectedHex = '#000000'\n\t\t\t\t\tthis.hexInput = ''\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (value[0] === '#') {\n\t\t\t\t\tconst hex = this.normalizeHex(value)\n\t\t\t\t\tif (hex) {\n\t\t\t\t\t\tthis.selectedHex = hex\n\t\t\t\t\t\tthis.hexInput = hex\n\t\t\t\t\t}\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (value === 'white') {\n\t\t\t\t\tthis.selectedHex = '#ffffff'\n\t\t\t\t\tthis.hexInput = '#ffffff'\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (value === 'black') {\n\t\t\t\t\tthis.selectedHex = '#000000'\n\t\t\t\t\tthis.hexInput = '#000000'\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (el) {\n\t\t\t\t\tconst hex = this.colorToHex(getComputedStyle(el).backgroundColor)\n\t\t\t\t\tthis.selectedHex = hex\n\t\t\t\t\tthis.hexInput = hex\n\t\t\t\t}\n\t\t\t},\n\t\t\tnormalizeHex(value) {\n\t\t\t\tconst raw = (value || '').trim()\n\t\t\t\tconst short = raw.match(/^#([0-9a-fA-F]{3})$/)\n\t\t\t\tif (short) {\n\t\t\t\t\treturn '#' + short[1].split('').map(ch => ch + ch).join('').toLowerCase()\n\t\t\t\t}\n\t\t\t\tconst full = raw.match(/^#([0-9a-fA-F]{6})$/)\n\t\t\t\treturn full ? '#' + full[1].toLowerCase() : ''\n\t\t\t},\n\t\t\tcolorToHex(color) {\n\t\t\t\tif (!this._ctx) {\n\t\t\t\t\tconst canvas = document.createElement('canvas')\n\t\t\t\t\tcanvas.width = 1\n\t\t\t\t\tcanvas.height = 1\n\t\t\t\t\tthis._ctx = canvas.getContext('2d', { willReadFrequently: true })\n\t\t\t\t}\n\t\t\t\tconst ctx = this._ctx\n\t\t\t\tctx.clearRect(0, 0, 1, 1)\n\t\t\t\tctx.fillStyle = '#000000'\n\t\t\t\tctx.fillStyle = color\n\t\t\t\tctx.fillRect(0, 0, 1, 1)\n\t\t\t\tconst [r, g, b] = ctx.getImageData(0, 0, 1, 1).data\n\t\t\t\treturn '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')\n\t\t\t},\n\t\t}\" data-palette id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 7, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 92, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -72,7 +72,7 @@ func Palette(cfg Config) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.modelAssignExpr())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 10, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 95, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -87,47 +87,37 @@ func Palette(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if !cfg.HideNeutral || !cfg.HideReset {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex items-center gap-1\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if !cfg.HideNeutral {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<button type=\"button\" data-cls=\"white\" @click=\"$dispatch('select-close', $el.dataset.cls)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" class=\"h-5 w-5 rounded border border-outline bg-white hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark\" title=\"white\"></button> <button type=\"button\" data-cls=\"black\" @click=\"$dispatch('select-close', $el.dataset.cls)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" class=\"h-5 w-5 rounded border border-outline bg-black hover:ring-2 hover:ring-primary dark:border-outline-dark dark:hover:ring-primary-dark\" title=\"black\"></button> ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span class=\"ml-2 text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" x-text=\"hovered || 'Pick a color'\"></span> ")
+		if !cfg.HideReset {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex items-center gap-2\"><span class=\"text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" x-text=\"hovered || 'Pick a color'\"></span> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if !cfg.HideReset {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<button type=\"button\" @click=\"$dispatch('select-close', '')\" class=\"ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark\">Reset</button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<button type=\"button\" @click=\"pick('', null)\" class=\"ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark\">Reset</button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if cfg.LazyWhen != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<template x-if=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<template x-if=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.LazyWhen)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 46, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 111, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -135,7 +125,7 @@ func Palette(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</template>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</template>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -146,12 +136,12 @@ func Palette(cfg Config) templ.Component {
 			}
 		}
 		if cfg.ShowHex {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex items-center gap-2 pt-1\"><input type=\"color\" @change=\"$dispatch('select-close', $event.target.value)\" class=\"size-7 rounded border border-outline dark:border-outline-dark cursor-pointer\" title=\"Custom color\"> <input type=\"text\" placeholder=\"#000000\" @change=\"$dispatch('select-close', $event.target.value)\" class=\"w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"flex items-center gap-2 pt-1\"><label data-selected-preview class=\"relative size-7 overflow-hidden rounded border border-outline shadow-sm dark:border-outline-dark cursor-pointer\" title=\"Custom color\" :style=\"{ backgroundColor: selectedHex }\"><input type=\"color\" :value=\"selectedHex\" @input=\"commitHex($event.target.value)\" @change=\"commitHex($event.target.value)\" class=\"absolute inset-0 size-full cursor-pointer opacity-0\" aria-label=\"Custom color\"></label> <input type=\"text\" x-model=\"hexInput\" pattern=\"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$\" placeholder=\"#000000\" @input=\"previewHex(hexInput)\" @change=\"commitHex(hexInput)\" @keydown.enter.prevent=\"commitHex(hexInput)\" @blur=\"commitHex(hexInput)\" :aria-invalid=\"hexInvalid ? 'true' : 'false'\" class=\"w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[invalid=true]:border-danger aria-[invalid=true]:text-danger dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -180,26 +170,32 @@ func swatchGrid(cfg Config) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		if !cfg.HideNeutral {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<button type=\"button\" data-cls=\"white\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"white\"></button> <button type=\"button\" data-cls=\"black\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"black\"></button> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
 		for _, hue := range cfg.hues() {
 			for _, shade := range cfg.shades() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<button type=\"button\" data-cls=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button type=\"button\" data-cls=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 77, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 181, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" @click=\"$dispatch('select-close', $el.dataset.cls)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -207,26 +203,26 @@ func swatchGrid(cfg Config) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " title=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " title=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 85, Col: 30}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 189, Col: 30}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"></button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\"></button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
