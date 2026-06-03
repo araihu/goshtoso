@@ -1024,6 +1024,9 @@
   .min-h-\[1\.5rem\] {
     min-height: 1.5rem;
   }
+  .min-h-\[2\.75rem\] {
+    min-height: 2.75rem;
+  }
   .min-h-\[50svh\] {
     min-height: 50svh;
   }
