@@ -568,10 +568,13 @@ import "github.com/araihu/goshtoso/components/fileinput"  // package fileinput
 
 **Entry points:** `FileInput(cfg Config)`
 
+- **Variant** — VariantDropZone = "", VariantUpload = "upload"
+
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `Variant` | `Variant` | Variant controls the visual style (default: drop zone) |
 | `ID` | `string` | ID is the HTML id for the file input element |
 | `Name` | `string` | Name is the form field name |
 | `Label` | `string` | Label text displayed above the drop zone (e.g. "Cover Picture") |

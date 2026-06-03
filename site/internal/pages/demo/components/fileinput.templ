@@ -32,6 +32,22 @@ templ fileInputDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Upload",
+				Description: "VariantUpload uses a compact text-input-style control for dense forms.",
+			},
+			fileInputUploadPreview(),
+			`@fileinput.FileInput(fileinput.Config{
+    Variant:    fileinput.VariantUpload,
+    ID:         "resume",
+    Name:       "resume",
+    Label:      "Resume",
+    Accept:     ".pdf,.docx",
+    HelperText: "PDF or DOCX - Max 10MB",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "Required",
 				Description: "Required: true marks the field as required for form submission.",
 			},
@@ -76,6 +92,7 @@ templ fileInputDemoContent() {
 	</div>
 	// API reference lives outside #fileinput-fragment.
 	@demo.APIReference([]demo.PropDoc{
+		{Name: "Variant", Type: "fileinput.Variant", Default: "fileinput.VariantDropZone", Description: "Visual style: VariantDropZone or VariantUpload."},
 		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
 		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
 		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the drop zone (omit for none)."},
@@ -97,6 +114,20 @@ templ fileInputDefaultPreview() {
 			Label:      "Cover Picture",
 			Accept:     "image/*",
 			HelperText: "PNG, JPG, WebP - Max 5MB",
+		})
+	</div>
+}
+
+// fileInputUploadPreview renders the compact upload input.
+templ fileInputUploadPreview() {
+	<div id="fileinput-upload" class="w-full max-w-md mx-auto">
+		@fileinput.FileInput(fileinput.Config{
+			Variant:    fileinput.VariantUpload,
+			ID:         "demoUpload",
+			Name:       "resume",
+			Label:      "Resume",
+			Accept:     ".pdf,.docx",
+			HelperText: "PDF or DOCX - Max 10MB",
 		})
 	</div>
 }
