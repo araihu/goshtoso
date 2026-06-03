@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestKeyValue_AddAndRemoveRows(t *testing.T) {
+func TestStructuredInput_AddAndRemoveKeyValueRows(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -18,48 +18,39 @@ func TestKeyValue_AddAndRemoveRows(t *testing.T) {
 	defer cleanupPW()
 
 	page := newPage(t, browser)
-
-	_, err := page.Goto(baseURL+"/components/key-value", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/structured-input", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
-
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
 
 	container := page.Locator("#labelsDemo")
 	require.NoError(t, container.WaitFor())
 
-	// Should have 2 initial rows (app=web, env=prod)
-	rows := container.Locator("template + div") // Alpine x-for rows
-	// Count hidden inputs as proxy for row count
 	hiddenInputs := container.Locator("input[type='hidden']")
 	count, err := hiddenInputs.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 2, count, "should have 2 initial key-value rows")
+	assert.Equal(t, 4, count, "two rows with two columns should render four hidden inputs")
 
-	// Add a row
+	name, err := hiddenInputs.First().GetAttribute("name")
+	require.NoError(t, err)
+	assert.Equal(t, "labels[0][key]", name)
+
 	addBtn := container.Locator("[data-add-row]")
-	err = addBtn.Click()
-	require.NoError(t, err)
-
+	require.NoError(t, addBtn.Click())
 	count, err = hiddenInputs.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 3, count, "should have 3 rows after adding")
+	assert.Equal(t, 6, count, "adding one two-column row should add two hidden inputs")
 
-	// Remove first row
 	removeBtn := container.Locator("button[aria-label='Remove row']").First()
-	err = removeBtn.Click()
-	require.NoError(t, err)
-
+	require.NoError(t, removeBtn.Click())
 	count, err = hiddenInputs.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 2, count, "should have 2 rows after removing")
-
-	_ = rows
+	assert.Equal(t, 4, count, "removing one two-column row should remove two hidden inputs")
 }
 
-func TestKeyValue_EmptyStartAndFillRow(t *testing.T) {
+func TestStructuredInput_SelectColumnDefaults(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -69,30 +60,33 @@ func TestKeyValue_EmptyStartAndFillRow(t *testing.T) {
 	defer cleanupPW()
 
 	page := newPage(t, browser)
-
-	_, err := page.Goto(baseURL+"/components/key-value", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/structured-input", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
-
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
 
-	container := page.Locator("#envVarsDemo")
+	container := page.Locator("#rulesDemo")
 	require.NoError(t, container.WaitFor())
 
-	// Should start empty
 	hiddenInputs := container.Locator("input[type='hidden']")
 	count, err := hiddenInputs.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 0, count, "should start with 0 rows")
+	assert.Equal(t, 0, count, "empty starter should start with no rows")
 
-	// Add a row
-	addBtn := container.Locator("[data-add-row]")
-	err = addBtn.Click()
+	require.NoError(t, container.Locator("[data-add-row]").Click())
+
+	selects := container.Locator("select")
+	selectCount, err := selects.Count()
 	require.NoError(t, err)
+	assert.Equal(t, 1, selectCount, "new row should include the select column")
+
+	value, err := selects.First().InputValue()
+	require.NoError(t, err)
+	assert.Equal(t, "high", value, "select should default to first option")
 
 	count, err = hiddenInputs.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 1, count, "should have 1 row after clicking add")
+	assert.Equal(t, 3, count, "one three-column row should render three hidden inputs")
 }
