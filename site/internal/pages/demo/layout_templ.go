@@ -823,7 +823,6 @@ func getThemeOptions() []themeOption {
 		{Key: "halloween", Label: "Halloween"},
 		{Key: "zombie", Label: "Halloween II"},
 		{Key: "prototype", Label: "Prototype"},
-		{Key: "totvs", Label: "TOTVS"},
 		{Key: "dracula", Label: "Dracula"},
 	}
 }

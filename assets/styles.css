@@ -7086,39 +7086,6 @@
     --color-on-danger: var(--color-white);
     --radius-radius: var(--radius-none);
   }
-  [data-theme=totvs] {
-    --font-body: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
-    --font-title: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
-    --color-surface: #f0f4f8;
-    --color-surface-alt: #e6e6e6;
-    --color-on-surface: #545454;
-    --color-on-surface-strong: #002b33;
-    --color-primary: #002233;
-    --color-on-primary: #ffffff;
-    --color-secondary: #a44dff;
-    --color-on-secondary: #002233;
-    --color-outline: #9c9c9c;
-    --color-outline-strong: #002b33;
-    --color-surface-dark: #002233;
-    --color-surface-dark-alt: #002b33;
-    --color-on-surface-dark: #9c9c9c;
-    --color-on-surface-dark-strong: #ececec;
-    --color-primary-dark: #00dbff;
-    --color-on-primary-dark: #002233;
-    --color-secondary-dark: #a44dff;
-    --color-on-secondary-dark: #002233;
-    --color-outline-dark: #545454;
-    --color-outline-dark-strong: #9c9c9c;
-    --color-info: #00dbff;
-    --color-on-info: #002233;
-    --color-success: #00ffd4;
-    --color-on-success: #002233;
-    --color-warning: #ffb800;
-    --color-on-warning: #002233;
-    --color-danger: #ff009e;
-    --color-on-danger: #002233;
-    --radius-radius: var(--radius-lg);
-  }
   [data-theme=dracula] {
     --font-body: 'Fira Code', 'JetBrains Mono', monospace;
     --font-title: 'Fira Code', 'JetBrains Mono', monospace;
@@ -7243,48 +7210,6 @@
   @supports (color: color-mix(in lab, red, red)) {
     color: color-mix(in srgb, var(--color-on-surface-dark) 70%, transparent);
   }
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-ExtraLight.ttf') format('truetype');
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-ExtraBold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
 }
 @layer base {
   html {

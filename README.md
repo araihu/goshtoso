@@ -74,7 +74,6 @@ goshtoso/                    # ROOT MODULE — library (github.com/araihu/goshto
 │   ├── embed.go             # Embedded assets + StylesCSS() accessor
 │   ├── styles.css           # Compiled Tailwind CSS
 │   ├── js/                  # Alpine.js, HTMX, plugins
-│   └── fonts/               # TOTVS brand fonts
 ├── docs/                    # Integration guides
 └── site/                    # SITE MODULE — demo + examples (…/goshtoso/site)
     ├── cmd/server/          # Demo server
