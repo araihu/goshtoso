@@ -94,6 +94,12 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.NoError(t, err)
 		require.LessOrEqual(t, cnt, 6, "stack strip should be condensed, not a card grid")
 	})
+
+	t.Run("FooterThemeCount", func(t *testing.T) {
+		body, err := page.Locator("body").InnerText()
+		require.NoError(t, err)
+		require.Contains(t, body, "16 themes", "homepage footer should match the theme picker count")
+	})
 }
 
 // TestLanding_NoConsoleErrors loads the homepage and asserts no JS console or
