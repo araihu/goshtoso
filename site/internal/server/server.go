@@ -12,6 +12,7 @@ import (
 
 	"github.com/araihu/goshtoso/components/carousel"
 	combobox "github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
@@ -91,6 +92,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
 	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
 	s.mux.HandleFunc("/api/components/carousel/slides", s.handleCarouselSlides)
+	s.mux.HandleFunc("/api/components/form/external-submit", s.handleFormExternalSubmit)
 	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
 	s.mux.HandleFunc("/api/components/steps/demo", s.handleStepsDemo)
 	s.mux.HandleFunc("/api/components/radio/echo", s.handleRadioEcho)
@@ -198,6 +200,26 @@ func htmlEscape(s string) string {
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+}
+
+func (s *Server) handleFormExternalSubmit(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	version := r.FormValue("version")
+	if version == "" {
+		version = "selected version"
+	} else {
+		version = "v" + version
+	}
+	_ = toast.OOBToast(toast.Config{
+		Variant: toast.Success,
+		Title:   "Upgrade request submitted",
+		Message: fmt.Sprintf("Target version: %s", version),
+	}).Render(r.Context(), w)
 }
 
 func (s *Server) handleStepsDemo(w http.ResponseWriter, r *http.Request) {
