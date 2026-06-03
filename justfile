@@ -31,3 +31,8 @@ css:
     fi
     "$bin" -i css/main.css -o assets/styles.css
     echo "css: built assets/styles.css with tailwindcss v${ver}"
+
+# Download the PINNED vendored JS (assets/js/vendor/versions.json) into
+# versioned dirs and regenerate the URL constants. Mirrors `just css`.
+vendor-js:
+    go run ./scripts/vendorgen -download

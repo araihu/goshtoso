@@ -1,6 +1,9 @@
 package demo
 
-import "github.com/araihu/goshtoso/components/sidebar"
+import (
+	"github.com/araihu/goshtoso/assets"
+	"github.com/araihu/goshtoso/components/sidebar"
+)
 
 // Layout renders the main layout with sidebar navigation and global theme selector
 templ Layout(title string, activeComponent string, content templ.Component) {
@@ -32,12 +35,12 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 			<script src="/assets/js/darkmode.js"></script>
-			<script defer src="/assets/js/vendor/alpine-focus.min.js"></script>
-			<script defer src="/assets/js/vendor/alpine-collapse.min.js"></script>
-			<script defer src="/assets/js/vendor/alpine.min.js"></script>
-			<script src="/assets/js/vendor/htmx.min.js"></script>
-			<script src="/assets/js/vendor/htmx-ext-ws.js"></script>
-			<script src="/assets/js/vendor/htmx-ext-sse.min.js"></script>
+			<script defer src={ assets.AlpineFocusURL }></script>
+			<script defer src={ assets.AlpineCollapseURL }></script>
+			<script defer src={ assets.AlpineJSURL }></script>
+			<script src={ assets.HTMXURL }></script>
+			<script src={ assets.HTMXExtWSURL }></script>
+			<script src={ assets.HTMXExtSSEURL }></script>
 			<script>
 				// Alpine nav store + htmx integration for fragment-swap sidebar navigation.
 				// The store's `path` field is read inside the sidebar wrapper's x-effect so

@@ -8,11 +8,12 @@
 //
 // This serves:
 //   - /assets/styles.css — compiled Tailwind CSS with all theme definitions
-//   - /assets/js/vendor/alpine.min.js — Alpine.js
-//   - /assets/js/vendor/htmx.min.js — HTMX
-//   - /assets/js/vendor/htmx-ext-sse.min.js — HTMX SSE extension
-//   - /assets/js/vendor/alpine-collapse.min.js — Alpine collapse plugin
-//   - /assets/js/vendor/alpine-focus.min.js — Alpine focus plugin
+//   - /assets/js/vendor/alpinejs/3.14.9/alpine.min.js — Alpine.js
+//   - /assets/js/vendor/htmx.org/2.0.8/htmx.min.js — HTMX
+//   - /assets/js/vendor/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js — HTMX SSE extension
+//   - /assets/js/vendor/alpinejs-collapse/3.14.9/alpine-collapse.min.js — Alpine collapse plugin
+//   - /assets/js/vendor/alpinejs-focus/3.14.9/alpine-focus.min.js — Alpine focus plugin
+//   - vendored JS versions are pinned in js/vendor/versions.json (see AlpineVersion()/HTMXVersion())
 //   - /assets/js/darkmode.js — Alpine dark mode store
 //   - /assets/fonts/* — TOTVS brand font files
 //   - /assets/images/* — brand artwork (mascot, logos)
@@ -20,6 +21,7 @@ package assets
 
 import (
 	"embed"
+	"encoding/json"
 	"net/http"
 	"strings"
 )
@@ -65,3 +67,37 @@ func TailwindVersion() string {
 func ThemeCSS() ([]byte, error) {
 	return files.ReadFile("goshtoso-theme.css")
 }
+
+// vendorDep mirrors one entry in js/vendor/versions.json.
+type vendorDep struct {
+	Version string `json:"version"`
+	File    string `json:"file"`
+	URL     string `json:"url"`
+}
+
+// vendorVersion returns the pinned version of a vendored module from the
+// embedded manifest (js/vendor/versions.json), or "" if absent.
+func vendorVersion(module string) string {
+	b, err := files.ReadFile("js/vendor/versions.json")
+	if err != nil {
+		return ""
+	}
+	var m map[string]vendorDep
+	if json.Unmarshal(b, &m) != nil {
+		return ""
+	}
+	return m[module].Version
+}
+
+// AlpineVersion returns the Alpine.js version Goshtoso vendors (core, collapse,
+// and focus share this version). Pinned in js/vendor/versions.json.
+func AlpineVersion() string { return vendorVersion("alpinejs") }
+
+// HTMXVersion returns the vendored HTMX version (js/vendor/versions.json).
+func HTMXVersion() string { return vendorVersion("htmx.org") }
+
+// HTMXExtSSEVersion returns the vendored htmx-ext-sse version.
+func HTMXExtSSEVersion() string { return vendorVersion("htmx-ext-sse") }
+
+// HTMXExtWSVersion returns the vendored htmx-ext-ws version.
+func HTMXExtWSVersion() string { return vendorVersion("htmx-ext-ws") }
