@@ -4,9 +4,12 @@ import "testing"
 
 func TestURLPath(t *testing.T) {
 	got := urlPath("alpinejs", dep{Version: "3.14.9", File: "alpine.min.js"})
-	want := "/assets/js/vendor/alpinejs/3.14.9/alpine.min.js"
+	want := "/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"
 	if got != want {
 		t.Fatalf("urlPath = %q, want %q", got, want)
+	}
+	if indexOf(got, "/vendor/") >= 0 {
+		t.Fatalf("urlPath must avoid /vendor/ because Go module zips omit vendor dirs: %q", got)
 	}
 }
 

@@ -24,7 +24,7 @@ func TestCombobox_Toggle_PreservesIsOpen(t *testing.T) {
 
 	page := newPage(t, browser)
 
-	_, err := page.Goto(baseURL+"/components/combobox-new", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)

@@ -15,7 +15,7 @@ func gotoProfile(t *testing.T, page playwright.Page, query string) {
 	// Suppress the first-run cookie/localStorage notice so its fixed banner can
 	// never intercept clicks on the appearance controls.
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
+		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
 	}))
 	_, err := page.Goto(baseURL + "/examples/profile" + query)
 	require.NoError(t, err)
@@ -52,6 +52,24 @@ var onePxPNG = []byte{
 	0x42, 0x60, 0x82,
 }
 
+func waitForProfileImageStored(t *testing.T, page playwright.Page, kind string) {
+	t.Helper()
+	_, err := page.WaitForFunction(
+		`kind => new Promise(resolve => {
+			const open = indexedDB.open('gt_profile', 1);
+			open.onerror = () => resolve(false);
+			open.onsuccess = () => {
+				const db = open.result;
+				const tx = db.transaction('images', 'readonly');
+				const req = tx.objectStore('images').get(kind);
+				req.onsuccess = () => resolve(!!req.result);
+				req.onerror = () => resolve(false);
+			};
+		})`,
+		kind, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(10000)})
+	require.NoError(t, err, "%s image should be stored in IndexedDB before reload", kind)
+}
+
 // TestProfileFragmentNavNoConsoleErrors lands on the examples gallery, then
 // navigates to the profile app via the gallery card (htmx fragment swap), and
 // asserts there are zero console/page errors. This guards the examples mandate:
@@ -69,7 +87,7 @@ func TestProfileFragmentNavNoConsoleErrors(t *testing.T) {
 	})
 
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
+		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
 	}))
 	// Land on the examples gallery first (seed=0 keeps state out of it).
 	_, err := page.Goto(baseURL + "/examples?seed=0")
@@ -182,6 +200,7 @@ func TestProfileAvatarUploadPersists(t *testing.T) {
 		"() => { const img = document.querySelector('#profile-avatar img'); return img && img.src.startsWith('blob:'); }",
 		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err, "avatar img should get a blob: src after upload")
+	waitForProfileImageStored(t, page, "avatar")
 
 	// Reload (same browser context → same IndexedDB) and verify rehydration.
 	gotoProfile(t, page, "")

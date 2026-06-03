@@ -40,6 +40,31 @@ templ Avatar(cfg Config) {
 	}
 }
 
+// AvatarStack renders an overlapping group of avatars.
+templ AvatarStack(cfg StackConfig) {
+	{{
+		label := cfg.Label
+		if label == "" {
+			label = "Avatar group"
+		}
+		rootClasses := "flex items-center " + cfg.Class
+	}}
+	<div class={ rootClasses } role="list" aria-label={ label }>
+		for i, item := range cfg.Items {
+			{{
+				item.Reactive = item.Reactive || cfg.Reactive
+				item.Class = "ring-2 ring-surface dark:ring-surface-dark " + item.Class
+				if i > 0 {
+					item.Class = "-ml-3 " + item.Class
+				}
+			}}
+			<div role="listitem">
+				@Avatar(item)
+			</div>
+		}
+	</div>
+}
+
 // avatarLayers renders the 3-layer stack.
 //
 // When cfg.Reactive is true, the size classes (size-X text-Y) are omitted
@@ -51,28 +76,61 @@ templ avatarLayers(cfg Config) {
 		if cfg.Reactive {
 			sizePart = ""
 		}
-		containerClasses := "relative inline-flex " + sizePart + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.VariantClasses() + " " + cfg.Class
+		radiusPart := cfg.ShapeClasses()
+		if cfg.ReactiveRadius {
+			radiusPart = ""
+		}
+		bindClass := ""
+		if cfg.Reactive && cfg.ReactiveRadius {
+			bindClass = "[avatarSizeClass, avatarRadiusClass]"
+		} else if cfg.Reactive {
+			bindClass = "avatarSizeClass"
+		} else if cfg.ReactiveRadius {
+			bindClass = "avatarRadiusClass"
+		}
+		rootSkinClasses := cfg.VariantClasses()
+		layerSkinClasses := ""
+		if cfg.Border {
+			rootSkinClasses = ""
+			layerSkinClasses = cfg.VariantFillClasses()
+		}
+		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.Class
+		layerBoxClasses := "relative block size-full overflow-hidden " + radiusPart + " " + layerSkinClasses
 	}}
 	if cfg.HasImage() {
 		<div
 			x-data="{ imgLoaded: false, imgError: false }"
 			class={ containerClasses }
-			if cfg.Reactive {
-				x-bind:class="avatarSizeClass"
+			if bindClass != "" {
+				x-bind:class={ bindClass }
 			}
 		>
-			@layerInitials(cfg, true)
-			@layerLoading(cfg)
-			@layerImage(cfg)
+			<span
+				class={ layerBoxClasses }
+				if cfg.ReactiveRadius {
+					x-bind:class="avatarRadiusClass"
+				}
+			>
+				@layerInitials(cfg, true)
+				@layerLoading(cfg)
+				@layerImage(cfg)
+			</span>
 		</div>
 	} else {
 		<div
 			class={ containerClasses }
-			if cfg.Reactive {
-				x-bind:class="avatarSizeClass"
+			if bindClass != "" {
+				x-bind:class={ bindClass }
 			}
 		>
-			@layerInitials(cfg, false)
+			<span
+				class={ layerBoxClasses }
+				if cfg.ReactiveRadius {
+					x-bind:class="avatarRadiusClass"
+				}
+			>
+				@layerInitials(cfg, false)
+			</span>
 		</div>
 	}
 }

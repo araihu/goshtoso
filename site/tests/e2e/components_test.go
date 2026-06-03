@@ -192,11 +192,8 @@ func TestAccordion_ServerLoadedContent(t *testing.T) {
 	})
 }
 
-// TestButton_HTMXInteractions tests button HTMX functionality
-// Note: HTMX demo buttons are not rendered on the /components/button page,
-// they exist as a separate template (HTMXButtonDemos) not wired into the demo.
+// TestButton_HTMXInteractions tests button HTMX functionality in the docs demo.
 func TestButton_HTMXInteractions(t *testing.T) {
-	t.Skip("HTMX button demos not yet wired into the button demo page")
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -215,22 +212,19 @@ func TestButton_HTMXInteractions(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("HTMX_POST_Request_Works", func(t *testing.T) {
-		// Find HTMX button by looking for POST attribute
-		htmxButton := page.Locator("button:has-text('Send POST Request')").First()
+		htmxButton := page.Locator("#button-htmx button:has-text('Send POST')").First()
 
-		// Click the button
 		err := htmxButton.Click()
 		require.NoError(t, err)
 
-		// Wait for HTMX response
-		err = page.Locator("text=Hello from HTMX!").WaitFor(playwright.LocatorWaitForOptions{
+		result := page.Locator("#htmx-result-post")
+		err = result.Locator("text=Hello from HTMX!").WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateVisible,
 			Timeout: playwright.Float(3000),
 		})
 		require.NoError(t, err, "HTMX response should appear")
 
-		// Verify response content
-		responseText, err := page.Locator("#htmx-result-1").TextContent()
+		responseText, err := result.TextContent()
 		require.NoError(t, err)
 		assert.Contains(t, responseText, "Hello from HTMX!")
 		assert.Contains(t, responseText, "POST")
@@ -239,53 +233,66 @@ func TestButton_HTMXInteractions(t *testing.T) {
 	})
 
 	t.Run("HTMX_GET_Request_Works", func(t *testing.T) {
-		// Find HTMX GET button
-		htmxButton := page.Locator("button:has-text('Load with Spinner')").First()
+		htmxButton := page.Locator("#button-htmx button:has-text('Send GET')").First()
 
-		// Click the button
 		err := htmxButton.Click()
 		require.NoError(t, err)
 
-		// Wait for response
-		err = page.Locator("text=Hello from HTMX!").WaitFor(playwright.LocatorWaitForOptions{
+		result := page.Locator("#htmx-result-get")
+		err = result.Locator("text=Hello from HTMX!").WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateVisible,
 			Timeout: playwright.Float(3000),
 		})
 		require.NoError(t, err)
 
+		responseText, err := result.TextContent()
+		require.NoError(t, err)
+		assert.Contains(t, responseText, "GET")
+
 		t.Log("✓ HTMX GET request works")
 	})
 
 	t.Run("HTMX_Confirm_Dialog_Works", func(t *testing.T) {
-		// Navigate to button page
-		_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
-			WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-		})
-		require.NoError(t, err)
+		deleteButton := page.Locator("#button-htmx button:has-text('Delete')").First()
 
-		// Find delete button
-		deleteButton := page.Locator("button:has-text('Delete')").First()
-
-		// Set up dialog handler
 		dialogShown := false
 		page.On("dialog", func(dialog playwright.Dialog) {
 			dialogShown = true
 			assert.Contains(t, dialog.Message(), "sure")
-			_ = dialog.Dismiss()
+			_ = dialog.Accept()
 		})
 
-		// Click the button
 		err = deleteButton.Click()
 		require.NoError(t, err)
 
-		// Wait for dialog
-		time.Sleep(50 * time.Millisecond)
+		result := page.Locator("#htmx-result-delete")
+		err = result.Locator("text=Hello from HTMX!").WaitFor(playwright.LocatorWaitForOptions{
+			State:   playwright.WaitForSelectorStateVisible,
+			Timeout: playwright.Float(3000),
+		})
+		require.NoError(t, err)
 
-		if dialogShown {
-			t.Log("✓ HTMX confirm dialog shown")
-		} else {
-			t.Log("Note: Confirm dialog may require browser focus")
-		}
+		responseText, err := result.TextContent()
+		require.NoError(t, err)
+		require.True(t, dialogShown, "HTMX confirm dialog should be shown")
+		assert.Contains(t, responseText, "DELETE")
+		t.Log("✓ HTMX confirm dialog shown")
+	})
+
+	t.Run("HTMX_Action_Rows_Stay_Aligned", func(t *testing.T) {
+		aligned, err := page.Evaluate(`() => {
+			const rows = Array.from(document.querySelectorAll('#button-htmx > div > div'));
+			return rows.every(row => {
+				const button = row.querySelector('button');
+				const result = row.querySelector('[id^="htmx-result-"]');
+				if (!button || !result) return false;
+				const b = button.getBoundingClientRect();
+				const r = result.getBoundingClientRect();
+				return r.left > b.right && Math.abs((b.top + b.height / 2) - (r.top + r.height / 2)) < 2;
+			});
+		}`)
+		require.NoError(t, err)
+		require.Equal(t, true, aligned, "HTMX action rows should keep buttons and results aligned")
 	})
 
 	t.Run("Button_Variants_Render_Correctly", func(t *testing.T) {

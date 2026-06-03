@@ -126,7 +126,6 @@ Shared across light and dark modes (no `-dark` variants):
 | `prototype` | Playpen Sans | Black | none | Wireframe/sketch style |
 | `news` | Inter / Merriweather | Sky | sm | Editorial, serif headings |
 | `industrial` | Poppins / Oswald | Amber | none | Bold, utilitarian |
-| `totvs` | TOTVS | Cyan (#00dbff) | lg | TOTVS brand identity |
 | `dracula` | Fira Code | Purple (#bd93f9) | md | Developer-focused dark theme |
 
 ## Creating a Custom Theme

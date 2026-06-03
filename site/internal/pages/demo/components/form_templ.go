@@ -11,9 +11,11 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	gocombobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/form"
+	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -110,10 +112,26 @@ func formDemoContent() templ.Component {
 				Description: "Render the form with no Footer; a button outside the form uses the form=\"...\" attribute to submit it — the typical modal pattern.",
 			},
 			formExternalPreview(),
-			`@form.Form(form.Config{ID: "external-form", Action: "#"}) {
+			`@form.Form(form.Config{
+    ID: "external-form",
+    HTMX: &form.HTMXConfig{
+        Post: "/api/components/form/external-submit",
+        Swap: "none",
+    },
+}) {
     @form.Section(form.SectionConfig{Title: "Upgrade"}) { ... }
 }
-<button type="submit" form="external-form">Upgrade (External Button)</button>`,
+@modal.Modal(modal.Config{
+    ID:            "externalSubmitConfirm",
+    Title:         "Confirm upgrade",
+    TriggerText:   "Upgrade (External Button)",
+    PrimaryText:   "Confirm upgrade",
+    SecondaryText: "Cancel",
+    PrimaryAction: &modal.ButtonAction{
+        OnClick: "document.getElementById('external-form').requestSubmit()",
+    },
+})
+@toast.Container(toast.ContainerConfig{})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -149,7 +167,10 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
 })
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "provider", Label: "Provider",
-    Combobox: &gocombobox.Config{ID: "provider", Name: "provider", Options: opts},
+    Combobox: &gocombobox.Config{
+        ID: "provider", Name: "provider",
+        Source: gocombobox.Source{Static: opts},
+    },
 })
 
 // Custom component — use { children... } for anything not built-in
@@ -167,9 +188,25 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
     })
 }
 
-// External submit (modal pattern — no footer, button uses form="..." attribute)
-@form.Form(form.Config{ID: "modal-form", HTMX: &form.HTMXConfig{Post: "/api", Swap: "none"}}) { ... }
-<button type="submit" form="modal-form">Submit</button>`
+// External submit (modal pattern — no footer, modal confirmation calls requestSubmit)
+@form.Form(form.Config{
+    ID: "modal-form",
+    HTMX: &form.HTMXConfig{
+        Post: "/api/submit",
+        Swap: "none",
+    },
+}) { ... }
+@modal.Modal(modal.Config{
+    ID:            "modalSubmitConfirm",
+    Title:         "Confirm submit",
+    TriggerText:   "Submit",
+    PrimaryText:   "Confirm submit",
+    SecondaryText: "Cancel",
+    PrimaryAction: &modal.ButtonAction{
+        OnClick: "document.getElementById('modal-form').requestSubmit()",
+    },
+})
+@toast.Container(toast.ContainerConfig{})`
 
 // formCompletePreview renders the full composable form.
 func formCompletePreview() templ.Component {
@@ -265,12 +302,12 @@ func formCompletePreview() templ.Component {
 					Combobox: &gocombobox.Config{
 						ID:   "provider",
 						Name: "provider",
-						Options: []gocombobox.Option{
+						Source: gocombobox.Source{Static: []gocombobox.Option{
 							{Value: "aws", Label: "AWS"},
 							{Value: "azure", Label: "Azure"},
 							{Value: "gcp", Label: "GCP"},
 							{Value: "maas", Label: "MAAS"},
-						},
+						}},
 						Selected: []string{"maas"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -411,12 +448,12 @@ func formCompletePreview() templ.Component {
 					Combobox: &gocombobox.Config{
 						ID:   "log-level",
 						Name: "log_level",
-						Options: []gocombobox.Option{
+						Source: gocombobox.Source{Static: []gocombobox.Option{
 							{Value: "info", Label: "Info"},
 							{Value: "debug", Label: "Debug"},
 							{Value: "warn", Label: "Warning"},
 							{Value: "error", Label: "Error"},
-						},
+						}},
 						Selected: []string{"info"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -501,10 +538,10 @@ func formCompletePreview() templ.Component {
 						Combobox: &gocombobox.Config{
 							ID:   "cp-instance",
 							Name: "cp_instance_type",
-							Options: []gocombobox.Option{
+							Source: gocombobox.Source{Static: []gocombobox.Option{
 								{Value: "m5.large", Label: "m5.large (2 vCPU, 8 GB)"},
 								{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
-							},
+							}},
 							Selected: []string{"m5.large"},
 						},
 					}).Render(ctx, templ_7745c5c3_Buffer)
@@ -556,10 +593,10 @@ func formCompletePreview() templ.Component {
 						Combobox: &gocombobox.Config{
 							ID:   "worker-instance",
 							Name: "worker_instance_type",
-							Options: []gocombobox.Option{
+							Source: gocombobox.Source{Static: []gocombobox.Option{
 								{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
 								{Value: "m5.2xlarge", Label: "m5.2xlarge (8 vCPU, 32 GB)"},
-							},
+							}},
 							Selected: []string{"m5.xlarge"},
 						},
 					}).Render(ctx, templ_7745c5c3_Buffer)
@@ -758,11 +795,11 @@ func formExternalPreview() templ.Component {
 					Combobox: &gocombobox.Config{
 						ID:   "version",
 						Name: "version",
-						Options: []gocombobox.Option{
+						Source: gocombobox.Source{Static: []gocombobox.Option{
 							{Value: "1.32.0", Label: "v1.32.0"},
 							{Value: "1.31.5", Label: "v1.31.5"},
 							{Value: "1.30.8", Label: "v1.30.8"},
-						},
+						}},
 						Selected: []string{"1.31.5"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -778,13 +815,42 @@ func formExternalPreview() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = form.Form(form.Config{
-			ID:     "external-form",
-			Action: "#",
+			ID: "external-form",
+			HTMX: &form.HTMXConfig{
+				Post: "/api/components/form/external-submit",
+				Swap: "none",
+			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<!-- External button --><div class=\"flex justify-end\"><button type=\"submit\" form=\"external-form\" class=\"inline-flex items-center justify-center px-6 py-2.5 rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:opacity-75 transition\">Upgrade (External Button)</button></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<!-- External button --><div class=\"flex justify-end\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = modal.Modal(modal.Config{
+			ID:            "externalSubmitConfirm",
+			Title:         "Confirm upgrade",
+			Body:          "Submit the upgrade request with the selected target version.",
+			TriggerText:   "Upgrade (External Button)",
+			PrimaryText:   "Confirm upgrade",
+			SecondaryText: "Cancel",
+			PrimaryAction: &modal.ButtonAction{
+				OnClick: "document.getElementById('external-form').requestSubmit()",
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -814,7 +880,7 @@ func networkReadView() templ.Component {
 			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Pod Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.244.0.0/16</span></div><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Service Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.96.0.0/12</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Pod Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.244.0.0/16</span></div><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Service Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.96.0.0/12</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

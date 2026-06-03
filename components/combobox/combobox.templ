@@ -1,605 +1,291 @@
 package combobox
 
-import "fmt"
+import (
+	"encoding/json"
+	"strconv"
+)
 
-// Combobox renders a combobox component with support for:
-// - Single or multi-select
-// - Search/filter functionality
-// - Image avatars/icons
-// - Static or HTMX-loaded options
-// - Keyboard navigation
-//
-// Usage:
-//
-//	// Simple single-select
-//	@combobox.Combobox(combobox.Config{
-//	    ID:          "industry",
-//	    Label:       "Industry",
-//	    Placeholder: "Select an industry",
-//	    Options: []combobox.Option{
-//	        {Value: "tech", Label: "Technology"},
-//	        {Value: "health", Label: "Healthcare"},
-//	    },
-//	})
-//
-//	// Multi-select with search
-//	@combobox.Combobox(combobox.Config{
-//	    ID:           "skills",
-//	    Label:        "Skills",
-//	    Mode:         combobox.ModeMultiple,
-//	    EnableSearch: true,
-//	    EnableClearAll: true,
-//	    Options:      skills,
-//	})
-//
-//	// With images
-//	@combobox.Combobox(combobox.Config{
-//	    ID:      "user",
-//	    Label:   "Share with",
-//	    Options: users, // Options with Img field
-//	})
-//
-//	// HTMX lazy loading
-//	@combobox.Combobox(combobox.Config{
-//	    ID:              "products",
-//	    Label:           "Product",
-//	    HXMTEndpoint:    "/api/products",
-//	    EnableSearch:    true,
-//	    HTMXSearchParam: "q",
-//	})
-templ Combobox(cfg Config) {
-	if cfg.IsMultiple() {
-		@multiSelectCombobox(cfg)
-	} else {
-		@singleSelectCombobox(cfg)
+// triggerLabelText returns the text for the trigger button.
+func triggerLabelText(cfg Config, state State) string {
+	switch {
+	case len(state.Selected) == 0:
+		if cfg.Placeholder != "" {
+			return cfg.Placeholder
+		}
+		return "Select…"
+	case cfg.Mode == ModeSingle:
+		for _, opt := range state.Options {
+			if opt.Value == state.Selected[0] {
+				return opt.Label
+			}
+		}
+		return state.Selected[0]
+	case len(state.Selected) == 1:
+		for _, opt := range state.Options {
+			if opt.Value == state.Selected[0] {
+				return opt.Label
+			}
+		}
+		return state.Selected[0]
+	default:
+		return strconv.Itoa(len(state.Selected)) + " selected"
 	}
 }
 
-// singleSelectCombobox renders a single-select combobox
-templ singleSelectCombobox(cfg Config) {
-	{{
-		optsJS := optionsToJS(cfg.Options)
-		selectedJS := selectedToJS(cfg.Selected)
-		placeholder := cfg.GetPlaceholder()
-	}}
+// Body renders the swappable region: hidden inputs + trigger label + options ul.
+// Do NOT use this directly as the top-level combobox; use Combobox which wraps it in the Alpine shell.
+templ Body(cfg Config, state State) {
+	<div data-combobox-body id={ cfg.ID + "-body" } class="flex flex-col">
+		@bodyInner(cfg, state)
+	</div>
+}
+
+templ bodyInner(cfg Config, state State) {
+	for _, v := range state.Selected {
+		<input type="hidden" name={ cfg.Name } value={ v }/>
+	}
+	if cfg.EnableClearAll {
+		if cfg.IsClientMode() {
+			<button
+				type="button"
+				data-combobox-clear-all
+				data-combobox-clear
+				if len(state.Selected) == 0 {
+					hidden
+				}
+				class="w-full px-4 py-2 text-left text-xs font-medium text-primary hover:bg-primary/5 dark:text-primary-dark dark:hover:bg-primary-dark/10"
+			>Clear all</button>
+		} else if len(state.Selected) > 0 {
+			<button
+				type="button"
+				data-combobox-clear-all
+				class="w-full px-4 py-2 text-left text-xs font-medium text-primary hover:bg-primary/5 dark:text-primary-dark dark:hover:bg-primary-dark/10"
+				hx-post={ cfg.ClearEndpoint }
+				hx-target="closest [data-combobox-body]"
+				hx-swap="outerHTML"
+				hx-include={ cfg.HXIncludeSelector() }
+			>Clear all</button>
+		}
+	}
+	if cfg.EnableSearch {
+		<div class="relative border-b border-outline dark:border-outline-dark">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50" aria-hidden="true">
+				<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+			</svg>
+			<input
+				type="text"
+				data-combobox-search
+				value={ state.Search }
+				placeholder="Search…"
+				class="w-full bg-transparent py-2.5 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface/40 focus:outline-none dark:text-on-surface-dark dark:placeholder:text-on-surface-dark/40"
+				hx-get={ cfg.OptionsEndpoint }
+				hx-trigger="input changed delay:200ms"
+				hx-target={ "#" + cfg.ID + "-options" }
+				hx-swap="outerHTML"
+				hx-include={ cfg.HXIncludeSelector() }
+				name="q"
+			/>
+		</div>
+	}
+	@OptionsList(cfg, state)
+}
+
+// hxValsJSON returns the JSON payload for hx-vals carrying the toggled value.
+func hxValsJSON(value string) string {
+	b, _ := json.Marshal(map[string]string{"value": value})
+	return string(b)
+}
+
+// OptionsList renders just the <ul>. Swap target for search and lazy first-load.
+templ OptionsList(cfg Config, state State) {
+	<ul id={ cfg.ID + "-options" } class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
+		if len(state.Options) == 0 {
+			<li class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60">No matches found</li>
+		}
+		for _, opt := range state.Options {
+			if cfg.IsClientMode() {
+				@clientOptionLI(cfg, state, opt)
+			} else {
+				@serverOptionLI(cfg, state, opt)
+			}
+		}
+	</ul>
+}
+
+templ clientOptionLI(cfg Config, state State, opt Option) {
+	<li
+		role="option"
+		data-combobox-option
+		data-value={ opt.Value }
+		aria-selected={ strconv.FormatBool(state.IsSelected(opt.Value)) }
+		if opt.Disabled {
+			aria-disabled="true"
+			tabindex="-1"
+			class={ "flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.IsSelected(opt.Value)) }
+		} else {
+			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.IsSelected(opt.Value)) }
+		}
+	>
+		if cfg.Mode == ModeMultiple {
+			@optionCheckbox(state.IsSelected(opt.Value))
+		}
+		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.IsSelected(opt.Value)) }>{ opt.Label }</span>
+	</li>
+}
+
+templ serverOptionLI(cfg Config, state State, opt Option) {
+	<li
+		role="option"
+		data-combobox-option
+		data-value={ opt.Value }
+		aria-selected={ strconv.FormatBool(state.IsSelected(opt.Value)) }
+		if opt.Disabled {
+			aria-disabled="true"
+			tabindex="-1"
+			class={ "flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.IsSelected(opt.Value)) }
+		} else {
+			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.IsSelected(opt.Value)) }
+			hx-post={ cfg.ToggleEndpoint }
+			hx-target="closest [data-combobox-body]"
+			hx-swap="outerHTML"
+			hx-vals={ hxValsJSON(opt.Value) }
+			hx-include={ cfg.HXIncludeSelector() }
+		}
+	>
+		if cfg.Mode == ModeMultiple {
+			@optionCheckbox(state.IsSelected(opt.Value))
+		}
+		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.IsSelected(opt.Value)) }>{ opt.Label }</span>
+	</li>
+}
+
+templ optionCheckbox(selected bool) {
+	<div class="relative flex shrink-0 items-center">
+		<input
+			type="checkbox"
+			class="peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface-alt before:absolute before:inset-0 before:content-[''] checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark"
+			checked?={ selected }
+			tabindex="-1"
+		/>
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+		</svg>
+	</div>
+}
+
+// ClientScript emits the delegated client-side listener as an inline script.
+// The IIFE guard (window.__goshtosoComboboxV2Init) makes repeated renders safe.
+templ ClientScript() {
+	@templ.Raw("<script>" + clientJS + "</script>")
+}
+
+// Combobox is the top-level component. Alpine lives here with ephemeral UI state
+// only (isOpen, openedWithKeyboard, focusIndex). Data state (options, selection,
+// search) lives server-side and in DOM.
+templ Combobox(cfg Config, state State) {
 	<div
-		x-data={ singleSelectData(cfg.ID, optsJS, selectedJS, placeholder, cfg.EnableSearch) }
-		x-on:keydown.esc.window="isOpen = false; openedWithKeyboard = false"
-		class={ "relative " + cfg.SizeClasses() + " " + cfg.Class }
+		data-combobox
+		data-combobox-mode={ comboboxModeAttr(cfg) }
+		data-combobox-name={ cfg.Name }
+		data-combobox-multi={ comboboxMultiAttr(cfg) }
+		data-combobox-close-on-select={ comboboxCloseOnSelectAttr(cfg) }
+		data-combobox-placeholder={ cfg.Placeholder }
+		hx-disinherit="hx-replace-url"
+		id={ cfg.ID }
+		class={ "relative " + cfg.Class }
+		x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"
+		x-on:keydown.esc.window="isOpen=false; openedWithKeyboard=false; focusIndex=-1"
+		x-on:htmx:after-swap="focusIndex=-1"
 	>
 		if cfg.Label != "" {
-			<label
-				for={ cfg.ID }
-				class={ cfg.LabelClasses() }
-			>
-				{ cfg.Label }
-			</label>
+			<label for={ cfg.ID + "-trigger" } class="block pb-1 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.Label }</label>
 		}
-		<!-- Trigger button -->
 		<button
 			type="button"
-			role="combobox"
 			id={ cfg.ID + "-trigger" }
-			x-bind:aria-expanded="isOpen || openedWithKeyboard"
-			x-on:click="isOpen = !isOpen"
-			x-on:keydown.down.prevent="openedWithKeyboard = true"
-			x-on:keydown.enter.prevent="openedWithKeyboard = true"
-			x-on:keydown.space.prevent="openedWithKeyboard = true"
-			x-bind:aria-label="selectedOption ? selectedOption.label : placeholder"
+			role="combobox"
 			disabled?={ cfg.Disabled }
-			class={ cfg.TriggerClasses() }
-			x-bind:class={ "selectedOption ? '" + cfg.TriggerStateClasses(true) + "' : '" + cfg.TriggerStateClasses(false) + "'" }
+			class={ "inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state) }
+			x-on:click="isOpen = !isOpen"
+			x-on:keydown.down.prevent="openedWithKeyboard = true; isOpen = true"
+			x-on:keydown.enter.prevent="openedWithKeyboard = true; isOpen = true"
+			x-on:keydown.space.prevent="openedWithKeyboard = true; isOpen = true"
+			x-bind:aria-expanded="isOpen || openedWithKeyboard"
 		>
-			<span class="flex items-center gap-2 truncate">
-				<!-- Selected option avatar -->
-				<template x-if="selectedOption && selectedOption.img">
-					<img x-bind:src="selectedOption.img" class="size-6 shrink-0 rounded-full object-cover" alt="" aria-hidden="true"/>
-				</template>
-				<template x-if="selectedOption && !selectedOption.img && selectedOption.initials">
-					<span class="flex size-6 shrink-0 items-center justify-center rounded-full border border-outline bg-surface-alt text-xs font-bold dark:border-outline-dark dark:bg-surface-dark-alt" x-text="selectedOption.initials"></span>
-				</template>
-				<span
-					class="truncate text-sm font-normal"
-					x-text="selectedOption ? selectedOption.label : placeholder"
-				></span>
-			</span>
-			<!-- Chevron -->
-			<svg 
-				xmlns="http://www.w3.org/2000/svg" 
-				viewBox="0 0 20 20" 
-				fill="currentColor" 
-				class="size-5 shrink-0 transition-transform duration-150"
-				x-bind:class="isOpen || openedWithKeyboard ? 'rotate-180' : ''"
-				aria-hidden="true"
-			>
-				<path 
-					fill-rule="evenodd" 
-					d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" 
-					clip-rule="evenodd"
-				/>
+			<span id={ cfg.ID + "-trigger-label" } data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class={ "size-4 shrink-0 transition-transform duration-150 " + chevronClass(state) } x-bind:class="isOpen ? 'rotate-180' : ''">
+				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
 			</svg>
 		</button>
-
-		<!-- Hidden input for form submission -->
-		<input 
-			id={ cfg.ID }
-			name={ cfg.Name }
-			type="text"
-			x-ref="hiddenInput"
-			hidden
-			x-bind:value="selectedOption ? selectedOption.value : ''"
-		/>
-
-		<!-- Dropdown -->
 		<div
 			x-cloak
 			x-show="isOpen || openedWithKeyboard"
 			x-transition
 			x-on:click.outside="isOpen = false; openedWithKeyboard = false"
-			class={ cfg.DropdownClasses() }
-			role="listbox"
-			x-bind:aria-label={ cfg.Label + " list" }
-			x-trap="openedWithKeyboard"
+			class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 		>
-			if cfg.EnableSearch {
-				<!-- Search field -->
-				<div class="relative border-b border-outline dark:border-outline-dark">
-					<svg 
-						xmlns="http://www.w3.org/2000/svg" 
-						viewBox="0 0 24 24" 
-						stroke="currentColor" 
-						fill="none" 
-						stroke-width="1.5" 
-						class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted"
-						aria-hidden="true"
-					>
-						<path 
-							stroke-linecap="round" 
-							stroke-linejoin="round" 
-							d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-						/>
-					</svg>
-					<input
-						type="text"
-						x-ref="searchField"
-						x-model="search"
-						placeholder={ cfg.GetSearchPlaceholder() }
-						class={ cfg.SearchFieldClasses() }
-					/>
-				</div>
-			}
-			
-			<!-- Options list -->
-			<ul class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
-				<!-- No results message -->
-				<li
-					x-show="filteredOptions.length === 0"
-					class="px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
-				>
-					{ cfg.GetNoResultsText() }
-				</li>
-				
-				<!-- HTMX placeholder for lazy-loaded content -->
-				if cfg.HXMTEndpoint != "" {
-					<div
-						hx-get={ cfg.HXMTEndpoint }
-						hx-trigger={ cfg.GetHTMXTrigger() }
-						hx-target={ "#" + cfg.ID + "-options" }
-						hx-swap="innerHTML"
-						x-show="!optionsLoaded"
-						class="px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
-					>
-						Loading...
-					</div>
-					<div id={ cfg.ID + "-options" }></div>
-				}
-				
-				<template x-for="(item, index) in filteredOptions" x-bind:key="item.value">
-					<li 
-						role="option"
-						class={ cfg.OptionClasses() }
-						x-on:click="selectOption(item)"
-						x-on:keydown.enter.prevent="selectOption(item)"
-						x-bind:id={ "'" + cfg.ID + "-option-' + index" }
-						tabindex="0"
-						x-on:keydown.down.prevent="$focus.wrap().next()"
-						x-on:keydown.up.prevent="$focus.wrap().previous()"
-					>
-						<div class="flex items-center gap-2">
-							<!-- Avatar: image or initials -->
-							<template x-if="item.img">
-								<img
-									x-bind:src="item.img"
-									class="size-8 shrink-0 rounded-full object-cover"
-									alt=""
-									aria-hidden="true"
-								/>
-							</template>
-							<template x-if="!item.img && item.initials">
-								<span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-outline bg-surface-alt text-xs font-bold dark:border-outline-dark dark:bg-surface-dark-alt" x-text="item.initials"></span>
-							</template>
-							<div class="flex flex-col">
-								<!-- Label + optional badge -->
-								<span class="flex items-center gap-1.5">
-									<span
-										x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
-										x-text="item.label"
-									></span>
-									<template x-if="item.badge">
-										<span
-											class="inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium border"
-											x-bind:class="(() => { switch(item.badgeColor) { case 'info': return 'border-info bg-info/10 text-info'; case 'success': return 'border-success bg-success/10 text-success'; case 'warning': return 'border-warning bg-warning/10 text-warning'; case 'danger': return 'border-danger bg-danger/10 text-danger'; case 'primary': return 'border-primary bg-primary/10 text-primary dark:border-primary-dark dark:text-primary-dark'; case 'secondary': return 'border-secondary bg-secondary/10 text-secondary dark:border-secondary-dark'; case 'neutral': return 'border-outline bg-on-surface/10 text-on-surface dark:border-outline-dark dark:text-on-surface-dark'; default: return 'border-outline dark:border-outline-dark'; } })()"
-											x-text="item.badge"
-										></span>
-									</template>
-								</span>
-								<!-- Optional meta text -->
-								<template x-if="item.meta">
-									<span
-										class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
-										x-text="item.meta"
-									></span>
-								</template>
-							</div>
-						</div>
-						
-						<!-- Screen reader selected indicator -->
-						<span class="sr-only" x-text="selectedOption && selectedOption.value === item.value ? 'selected' : ''"></span>
-						
-						<!-- Checkmark for selected item -->
-						<svg 
-							x-cloak
-							x-show="selectedOption && selectedOption.value === item.value"
-							xmlns="http://www.w3.org/2000/svg" 
-							viewBox="0 0 24 24" 
-							stroke="currentColor" 
-							fill="none" 
-							stroke-width="2" 
-							class="size-4"
-							aria-hidden="true"
-						>
-							<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
-						</svg>
-					</li>
-				</template>
-			</ul>
+			@Body(cfg, state)
 		</div>
+		if cfg.IsClientMode() {
+			@ClientScript()
+		}
 	</div>
 }
 
-// multiSelectCombobox renders a multi-select combobox with checkboxes
-templ multiSelectCombobox(cfg Config) {
-	{{
-		optsJS := optionsToJS(cfg.Options)
-		selectedJS := selectedToJS(cfg.Selected)
-		placeholder := cfg.GetPlaceholder()
-	}}
-	<div
-		x-data={ multiSelectData(cfg.ID, optsJS, selectedJS, placeholder, cfg.EnableSearch) }
-		x-on:keydown.esc.window="isOpen = false"
-		class={ "relative " + cfg.SizeClasses() + " " + cfg.Class }
-	>
-		if cfg.Label != "" {
-			<label
-				for={ cfg.ID }
-				class={ cfg.LabelClasses() }
-			>
-				{ cfg.Label }
-			</label>
-		}
-		<!-- Trigger button -->
-		<button
-			type="button"
-			role="combobox"
-			id={ cfg.ID + "-trigger" }
-			x-bind:aria-expanded="isOpen"
-			x-on:click="isOpen = !isOpen; $nextTick(() => { isOpen && $refs.searchField && $refs.searchField.focus(); })"
-			disabled?={ cfg.Disabled }
-			class={ cfg.TriggerClasses() }
-			x-bind:class={ "selectedValues.length > 0 ? '" + cfg.TriggerStateClasses(true) + "' : '" + cfg.TriggerStateClasses(false) + "'" }
-		>
-			<span 
-				class="truncate text-sm font-normal"
-				x-text="labelText"
-				x-bind:class="selectedValues.length > 0 ? 'font-medium text-secondary dark:text-secondary-dark' : 'text-on-surface dark:text-on-surface-dark'"
-			></span>
-			<!-- Chevron -->
-			<svg 
-				xmlns="http://www.w3.org/2000/svg" 
-				viewBox="0 0 20 20" 
-				fill="currentColor" 
-				class="size-4 shrink-0 transition-transform duration-150"
-				x-bind:class="(selectedValues.length > 0 ? 'text-secondary dark:text-secondary-dark ' : '') + (isOpen ? 'rotate-180' : '')"
-				aria-hidden="true"
-			>
-				<path 
-					fill-rule="evenodd" 
-					d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" 
-					clip-rule="evenodd"
-				/>
-			</svg>
-		</button>
+// CSS class helpers for state-driven styling.
 
-		<!-- Hidden inputs for form submission -->
-		<template x-for="value in selectedValues" x-bind:key="value">
-			<input 
-				type="hidden"
-				name={ cfg.Name }
-				x-bind:value="value"
-			/>
-		</template>
-
-		<!-- Dropdown -->
-		<div
-			x-cloak
-			x-show="isOpen"
-			x-transition
-			x-on:click.outside="isOpen = false"
-			class={ cfg.DropdownClasses() }
-			role="listbox"
-		>
-			if cfg.EnableSearch {
-				<!-- Search field -->
-				<div class="relative border-b border-outline dark:border-outline-dark">
-					<svg 
-						xmlns="http://www.w3.org/2000/svg" 
-						viewBox="0 0 24 24" 
-						stroke="currentColor" 
-						fill="none" 
-						stroke-width="1.5" 
-						class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted"
-						aria-hidden="true"
-					>
-						<path 
-							stroke-linecap="round" 
-							stroke-linejoin="round" 
-							d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-						/>
-					</svg>
-					<input
-						type="text"
-						x-ref="searchField"
-						x-model="search"
-						placeholder={ cfg.GetSearchPlaceholder() }
-						class={ cfg.SearchFieldClasses() }
-					/>
-				</div>
-			}
-			
-			<!-- Options list -->
-			<ul class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
-				<!-- Clear all button -->
-				if cfg.EnableClearAll {
-					<li 
-						x-show="selectedValues.length > 0" 
-						class="border-b border-outline/50 dark:border-outline-dark/50"
-					>
-						<button
-							type="button"
-							x-on:click="clearAll()"
-							class="w-full px-4 py-2 text-left text-xs font-medium text-primary hover:bg-primary/5 dark:text-primary-dark dark:hover:bg-primary-dark/10"
-						>
-							{ cfg.GetClearAllText() }
-						</button>
-					</li>
-				}
-				
-				<!-- No results message -->
-				<li
-					x-show="filteredOptions.length === 0"
-					class="px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
-				>
-					{ cfg.GetNoResultsText() }
-				</li>
-				
-				<template x-for="(item, index) in filteredOptions" x-bind:key="item.value">
-					<li role="option">
-						<label
-							class="flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5"
-							x-bind:for={ "'" + cfg.ID + "-cb-' + item.value" }
-						>
-							<div class="relative flex shrink-0 items-center">
-								<input
-									type="checkbox"
-									class={ cfg.CheckboxClasses() }
-									x-bind:id={ "'" + cfg.ID + "-cb-' + item.value" }
-									x-bind:checked="item.checked"
-									x-on:change="toggle(item)"
-								/>
-								<svg 
-									xmlns="http://www.w3.org/2000/svg" 
-									viewBox="0 0 24 24" 
-									stroke="currentColor" 
-									fill="none" 
-									stroke-width="4" 
-									class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark"
-									aria-hidden="true"
-								>
-									<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-								</svg>
-							</div>
-							<div class="flex flex-col">
-								<span 
-									x-text="item.label"
-									x-bind:class="item.checked ? 'font-semibold text-on-surface-strong dark:text-on-surface-dark-strong' : ''"
-								></span>
-								<template x-if="item.meta">
-									<span 
-										class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
-										x-text="item.meta"
-									></span>
-								</template>
-							</div>
-						</label>
-					</li>
-				</template>
-			</ul>
-		</div>
-	</div>
+func triggerBtnClass(state State) string {
+	if len(state.Selected) > 0 {
+		return "border-secondary bg-secondary/10 text-on-surface-strong dark:border-secondary-dark dark:bg-secondary-dark/15 dark:text-on-surface-dark-strong"
+	}
+	return "border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
 }
 
-// jsEscapeSingle escapes a string for use inside JS single quotes
-func jsEscapeSingle(s string) string {
-	result := ""
-	for _, c := range s {
-		switch c {
-		case '\'':
-			result += `\'`
-		case '\\':
-			result += `\\`
-		default:
-			result += string(c)
-		}
+func triggerLabelClass(state State) string {
+	if len(state.Selected) > 0 {
+		return "font-medium text-secondary dark:text-secondary-dark"
 	}
-	return result
+	return "font-normal text-on-surface dark:text-on-surface-dark"
 }
 
-// optionsToJS converts options to a JS array literal using single quotes
-// (avoids double-quote escaping issues when inside HTML x-data attributes)
-func optionsToJS(options []Option) string {
-	if len(options) == 0 {
-		return "[]"
+func chevronClass(state State) string {
+	if len(state.Selected) > 0 {
+		return "text-secondary dark:text-secondary-dark"
 	}
-	result := "["
-	for i, opt := range options {
-		if i > 0 {
-			result += ","
-		}
-		result += fmt.Sprintf("{value:'%s',label:'%s'", jsEscapeSingle(opt.Value), jsEscapeSingle(opt.Label))
-		if opt.Img != "" {
-			result += fmt.Sprintf(",img:'%s'", jsEscapeSingle(opt.Img))
-		}
-		if opt.Initials != "" {
-			result += fmt.Sprintf(",initials:'%s'", jsEscapeSingle(opt.Initials))
-		}
-		if opt.Meta != "" {
-			result += fmt.Sprintf(",meta:'%s'", jsEscapeSingle(opt.Meta))
-		}
-		if opt.Badge != "" {
-			result += fmt.Sprintf(",badge:'%s'", jsEscapeSingle(opt.Badge))
-		}
-		if opt.BadgeColor != "" {
-			result += fmt.Sprintf(",badgeColor:'%s'", jsEscapeSingle(opt.BadgeColor))
-		}
-		result += "}"
-	}
-	result += "]"
-	return result
+	return ""
 }
 
-// selectedToJS converts selected values to a JS array literal using single quotes
-func selectedToJS(selected []string) string {
-	if len(selected) == 0 {
-		return "[]"
+func optSelectedClass(selected bool) string {
+	if selected {
+		return "font-semibold text-on-surface-strong dark:text-on-surface-dark-strong"
 	}
-	result := "["
-	for i, v := range selected {
-		if i > 0 {
-			result += ","
-		}
-		result += fmt.Sprintf("'%s'", jsEscapeSingle(v))
-	}
-	result += "]"
-	return result
+	return "text-on-surface dark:text-on-surface-dark"
 }
 
-// singleSelectData generates Alpine.js data for single-select combobox
-func singleSelectData(id, optionsJS, selectedJS, placeholder string, enableSearch bool) string {
-	return fmt.Sprintf(`{
-		id: '%s',
-		placeholder: '%s',
-		allOptions: %s,
-		selectedValues: %s,
-		search: '',
-		isOpen: false,
-		openedWithKeyboard: false,
-		optionsLoaded: false,
-		enableSearch: %t,
-		get selectedOption() {
-			if (!this.selectedValues || this.selectedValues.length === 0) return null;
-			const value = this.selectedValues[0];
-			return this.allOptions.find(o => o.value === value) || null;
-		},
-		get filteredOptions() {
-			if (!this.enableSearch || !this.search) return this.allOptions;
-			const q = this.search.toLowerCase();
-			return this.allOptions.filter(o => o.label.toLowerCase().includes(q));
-		},
-		selectOption(option) {
-			this.selectedValues = [option.value];
-			this.isOpen = false;
-			this.openedWithKeyboard = false;
-			// Alpine batches reactive effects via queueMicrotask. Dispatching
-			// synchronously would fire the event before x-bind:value on the
-			// hidden input updates, so HTMX would serialize the stale value.
-			// $nextTick waits for the flush, guaranteeing the form sees the
-			// new value.
-			this.$nextTick(() => {
-				this.$dispatch('combobox-change', { id: this.id, value: option.value, label: option.label });
-			});
-		},
-		highlightFirstMatchingOption(pressedKey) {
-			if (!this.isOpen && !this.openedWithKeyboard) return;
-			const option = this.allOptions.find(o =>
-				o.label.toLowerCase().startsWith(pressedKey.toLowerCase())
-			);
-			if (option) {
-				const index = this.allOptions.indexOf(option);
-				const el = document.getElementById(this.id + '-option-' + index);
-				if (el) el.focus();
-			}
-		}
-	}`, jsEscapeSingle(id), jsEscapeSingle(placeholder), optionsJS, selectedJS, enableSearch)
+func optLabelClass(selected bool) string {
+	if selected {
+		return "font-semibold text-on-surface-strong dark:text-on-surface-dark-strong"
+	}
+	return "text-on-surface dark:text-on-surface-dark"
 }
 
-// multiSelectData generates Alpine.js data for multi-select combobox
-func multiSelectData(id, optionsJS, selectedJS, placeholder string, enableSearch bool) string {
-	return fmt.Sprintf(`{
-		id: '%s',
-		placeholder: '%s',
-		allOptions: %s.map(o => ({...o, checked: (%s).includes(o.value)})),
-		search: '',
-		isOpen: false,
-		enableSearch: %t,
-		get filteredOptions() {
-			if (!this.enableSearch || !this.search) return this.allOptions;
-			const q = this.search.toLowerCase();
-			return this.allOptions.filter(o => o.label.toLowerCase().includes(q));
-		},
-		get selectedValues() {
-			return this.allOptions.filter(o => o.checked).map(o => o.value);
-		},
-		get labelText() {
-			if (this.selectedValues.length === 0) return this.placeholder;
-			const count = this.selectedValues.length;
-			if (count === 1) {
-				const opt = this.allOptions.find(o => o.checked);
-				return opt ? opt.label : this.placeholder;
-			}
-			return count + ' selected';
-		},
-		toggle(item) {
-			const orig = this.allOptions.find(o => o.value === item.value);
-			if (orig) {
-				orig.checked = !orig.checked;
-				// See note in singleSelectData.selectOption: defer dispatch so
-				// hidden-input x-for bindings flush before HTMX reads the form.
-				this.$nextTick(() => {
-					this.$dispatch('combobox-change', {
-						id: this.id,
-						values: this.selectedValues,
-						added: orig.checked ? item.value : null,
-						removed: orig.checked ? null : item.value
-					});
-				});
-			}
-		},
-		clearAll() {
-			this.allOptions.forEach(o => { o.checked = false; });
-			this.search = '';
-			this.$nextTick(() => {
-				this.$dispatch('combobox-change', { id: this.id, values: [] });
-			});
-		}
-	}`, jsEscapeSingle(id), jsEscapeSingle(placeholder), optionsJS, selectedJS, enableSearch)
+func comboboxModeAttr(cfg Config) string {
+	if cfg.IsClientMode() {
+		return "client"
+	}
+	return "server"
+}
+
+func comboboxMultiAttr(cfg Config) string {
+	if cfg.Mode == ModeMultiple {
+		return "true"
+	}
+	return "false"
+}
+
+func comboboxCloseOnSelectAttr(cfg Config) string {
+	if cfg.Mode == ModeSingle {
+		return "true"
+	}
+	return "false"
 }

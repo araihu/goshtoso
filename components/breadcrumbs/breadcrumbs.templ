@@ -20,7 +20,7 @@ templ Breadcrumbs(cfg Config) {
 			for _, item := range cfg.Items {
 				<li class={ itemClasses(cfg.Separator) }>
 					<a
-						href={ templ.SafeURL(item.Href) }
+						href={ templ.URL(item.Href) }
 						{ item.LinkAttrs... }
 						class="flex items-center gap-1 hover:text-on-surface-strong dark:hover:text-on-surface-dark-strong"
 					>

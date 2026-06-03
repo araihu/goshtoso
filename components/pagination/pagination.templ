@@ -44,7 +44,7 @@ templ Pagination(cfg Config) {
 				if cfg.HasPrevious() {
 					if cfg.HTMXTarget != "" {
 						<a
-							href={ templ.SafeURL(cfg.PageURL(cfg.PreviousPage())) }
+							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
 							class={ cfg.PrevNextClasses(true) }
 							aria-label="previous page"
 							hx-get={ cfg.PageURL(cfg.PreviousPage()) }
@@ -56,7 +56,7 @@ templ Pagination(cfg Config) {
 						</a>
 					} else {
 						<a
-							href={ templ.SafeURL(cfg.PageURL(cfg.PreviousPage())) }
+							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
 							class={ cfg.PrevNextClasses(true) }
 							aria-label="previous page"
 						>
@@ -83,7 +83,7 @@ templ Pagination(cfg Config) {
 					} else if item.IsCurrent {
 						<li>
 							<a
-								href={ templ.SafeURL(cfg.PageURL(item.Page)) }
+								href={ templ.URL(cfg.PageURL(item.Page)) }
 								class={ cfg.PageClasses(true) }
 								aria-current="page"
 								aria-label={ "page " + itoa(item.Page) }
@@ -95,7 +95,7 @@ templ Pagination(cfg Config) {
 						<li>
 							if cfg.HTMXTarget != "" {
 								<a
-									href={ templ.SafeURL(cfg.PageURL(item.Page)) }
+									href={ templ.URL(cfg.PageURL(item.Page)) }
 									class={ cfg.PageClasses(false) }
 									aria-label={ "page " + itoa(item.Page) }
 									hx-get={ cfg.PageURL(item.Page) }
@@ -106,7 +106,7 @@ templ Pagination(cfg Config) {
 								</a>
 							} else {
 								<a
-									href={ templ.SafeURL(cfg.PageURL(item.Page)) }
+									href={ templ.URL(cfg.PageURL(item.Page)) }
 									class={ cfg.PageClasses(false) }
 									aria-label={ "page " + itoa(item.Page) }
 								>
@@ -122,7 +122,7 @@ templ Pagination(cfg Config) {
 				if cfg.HasNext() {
 					if cfg.HTMXTarget != "" {
 						<a
-							href={ templ.SafeURL(cfg.PageURL(cfg.NextPage())) }
+							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
 							class={ cfg.PrevNextClasses(true) }
 							aria-label="next page"
 							hx-get={ cfg.PageURL(cfg.NextPage()) }
@@ -134,7 +134,7 @@ templ Pagination(cfg Config) {
 						</a>
 					} else {
 						<a
-							href={ templ.SafeURL(cfg.PageURL(cfg.NextPage())) }
+							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
 							class={ cfg.PrevNextClasses(true) }
 							aria-label="next page"
 						>

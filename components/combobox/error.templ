@@ -1,0 +1,12 @@
+package combobox
+
+// ProviderError renders the inline error list shown when an OptionsProvider
+// returns an error. Rendered via templ so cfg values are HTML-escaped.
+templ ProviderError(cfg Config) {
+	<ul id={ cfg.ID + "-options" } role="listbox">
+		<li class="px-4 py-3 text-sm text-danger">
+			Failed to load.
+			<button type="button" hx-get={ cfg.OptionsEndpoint } hx-target={ "#" + cfg.ID + "-options" } hx-swap="outerHTML" class="underline">Retry</button>
+		</li>
+	</ul>
+}

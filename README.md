@@ -74,7 +74,6 @@ goshtoso/                    # ROOT MODULE — library (github.com/araihu/goshto
 │   ├── embed.go             # Embedded assets + StylesCSS() accessor
 │   ├── styles.css           # Compiled Tailwind CSS
 │   ├── js/                  # Alpine.js, HTMX, plugins
-│   └── fonts/               # TOTVS brand fonts
 ├── docs/                    # Integration guides
 └── site/                    # SITE MODULE — demo + examples (…/goshtoso/site)
     ├── cmd/server/          # Demo server
@@ -96,7 +95,6 @@ make dev-air
 
 # Server will start on http://localhost:8090
 # Accordion Demo: http://localhost:8090/components/accordion
-# Button Demo: http://localhost:8090/components/button
 ```
 
 ### Standard Development

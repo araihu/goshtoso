@@ -1,5 +1,10 @@
 package drawer
 
+import (
+	"strings"
+	"unicode"
+)
+
 // Side is the edge the drawer slides from.
 type Side string
 
@@ -53,7 +58,11 @@ type Config struct {
 
 // stateVar returns the Alpine state-variable name for this drawer's open bit.
 func (cfg Config) StateVar() string {
-	return cfg.ID + "IsOpen"
+	return safeJSIdentifier(cfg.ID, "drawer") + "IsOpen"
+}
+
+func (cfg Config) eventIDLiteral() string {
+	return jsStringSingle(cfg.ID)
 }
 
 // GetBodyID returns the resolved body slot id.
@@ -115,4 +124,57 @@ func (cfg Config) EnterStart() string {
 // EnterEnd returns the Alpine transition enter-end classes.
 func (cfg Config) EnterEnd() string {
 	return "translate-x-0"
+}
+
+func safeJSIdentifier(raw, fallback string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		raw = fallback
+	}
+	var b strings.Builder
+	upperNext := false
+	for _, r := range raw {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
+			if b.Len() == 0 && unicode.IsDigit(r) {
+				b.WriteString(fallback)
+			}
+			if upperNext {
+				b.WriteRune(unicode.ToUpper(r))
+				upperNext = false
+			} else {
+				b.WriteRune(r)
+			}
+			continue
+		}
+		if b.Len() > 0 {
+			upperNext = true
+		}
+	}
+	if b.Len() == 0 {
+		return fallback
+	}
+	return b.String()
+}
+
+func jsStringSingle(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch r {
+		case '\\':
+			b.WriteString(`\\`)
+		case '\'':
+			b.WriteString(`\'`)
+		case '\n':
+			b.WriteString(`\n`)
+		case '\r':
+			b.WriteString(`\r`)
+		case '\u2028':
+			b.WriteString(`\u2028`)
+		case '\u2029':
+			b.WriteString(`\u2029`)
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }

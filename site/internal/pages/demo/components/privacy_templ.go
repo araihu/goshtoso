@@ -68,11 +68,11 @@ func privacyContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = privacySection("Local storage & cookies", "The only data stored is kept locally in your browser and never leaves your device:").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = privacySection("Browser storage", "The only data stored is kept locally in your browser and never leaves your device:").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<ul class=\"-mt-6 space-y-2 text-on-surface dark:text-on-surface-dark\"><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> <span><code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">theme</code> / dark-mode preference — remembers your selected theme.</span></li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> <span><code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">cookieConsent</code> — remembers that you dismissed the notice.</span></li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> <span>Example-app state (e.g. the Todo demo's <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">gt_todo</code> cookie) — a self-contained cookie so the demo survives a refresh. Read and written only by your browser and the demo's own handlers; never shared.</span></li></ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<ul class=\"-mt-6 space-y-2 text-on-surface dark:text-on-surface-dark\"><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> <span><code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">gt_storage</code> — remembers whether you allowed browser storage or chose Use without storage.</span></li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> <span><code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">localStorage</code> values such as theme and dark-mode preferences — remember your selected appearance when storage is allowed.</span></li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> <span>Example-app cookies such as <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">gt_todo</code>, <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">gt_profile</code>, and <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">gt_chat</code> — self-contained demo state so examples can survive a refresh.</span></li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> <span><code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">IndexedDB</code> in the Profile example — stores avatar and cover image files locally on your device.</span></li></ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,7 +84,7 @@ func privacyContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = privacySection("Your choices", "Because nothing is stored server-side, you are fully in control. Clearing your browser's local storage and cookies for this site removes every value listed above. The site keeps working — you'll just see defaults again.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = privacySection("Your choices", "Choose Use without storage to clear Goshtoso's local demo storage and stop example cookies from being set. The site keeps working, but preferences and some examples reset or stop persisting.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -124,7 +124,7 @@ func privacySection(title, body string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/privacy.templ`, Line: 47, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/privacy.templ`, Line: 48, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -137,7 +137,7 @@ func privacySection(title, body string) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/privacy.templ`, Line: 47, Col: 138}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/privacy.templ`, Line: 48, Col: 138}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -150,7 +150,7 @@ func privacySection(title, body string) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(body)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/privacy.templ`, Line: 48, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/privacy.templ`, Line: 49, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

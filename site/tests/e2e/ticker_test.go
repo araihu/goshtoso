@@ -128,6 +128,7 @@ func TestTicker_PauseStopsUpdates(t *testing.T) {
 // cell update — the SPA path a direct load can't catch.
 func TestTicker_FragmentNavNoErrors(t *testing.T) {
 	page := newPage(t, sharedBrowser)
+	dismissCookieBanner(t, page)
 
 	var jsErrors []string
 	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })

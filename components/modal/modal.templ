@@ -23,8 +23,8 @@ func buttonClickExpr(stateVar string, action *ButtonAction) string {
 
 // defaultModal renders a standard modal with header/body/footer
 templ defaultModal(cfg Config) {
-	{{ titleID := fmt.Sprintf("%sTitle", cfg.ID) }}
-	{{ stateVar := fmt.Sprintf("%sIsOpen", cfg.ID) }}
+	{{ titleID := cfg.TitleID() }}
+	{{ stateVar := cfg.StateVar() }}
 	<div x-data={ fmt.Sprintf("{%s: false}", stateVar) }>
 		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.TriggerClasses() }>
 			{ cfg.TriggerText }
@@ -73,8 +73,8 @@ templ defaultModal(cfg Config) {
 
 // alertModal renders an alert-style modal with icon, centered text, and single CTA
 templ alertModal(cfg Config) {
-	{{ titleID := fmt.Sprintf("%sTitle", cfg.ID) }}
-	{{ stateVar := fmt.Sprintf("%sIsOpen", cfg.ID) }}
+	{{ titleID := cfg.TitleID() }}
+	{{ stateVar := cfg.StateVar() }}
 	<div x-data={ fmt.Sprintf("{%s: false}", stateVar) }>
 		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.TriggerClasses() }>
 			{ cfg.TriggerText }

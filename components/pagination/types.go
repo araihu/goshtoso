@@ -1,5 +1,7 @@
 package pagination
 
+import "net/url"
+
 // Variant represents pagination style variants
 type Variant string
 
@@ -73,21 +75,14 @@ func (cfg Config) PageURL(page int) string {
 	if cfg.BaseURL == "" {
 		return "#"
 	}
-	url := cfg.BaseURL
-	// Check if URL already has query params
-	hasQuery := false
-	for _, c := range url {
-		if c == '?' {
-			hasQuery = true
-			break
-		}
+	u, err := url.Parse(cfg.BaseURL)
+	if err != nil {
+		return "#"
 	}
-	if hasQuery {
-		url += "&page=" + itoa(page)
-	} else {
-		url += "?page=" + itoa(page)
-	}
-	return url
+	q := u.Query()
+	q.Set("page", itoa(page))
+	u.RawQuery = q.Encode()
+	return u.String()
 }
 
 // SwapStrategy returns the HTMX swap strategy, defaulting to innerHTML

@@ -15,7 +15,7 @@ import (
 func gotoChat(t *testing.T, page playwright.Page) {
 	t.Helper()
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
+		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
 	}))
 	_, err := page.Goto(baseURL + "/examples/chat")
 	require.NoError(t, err)
@@ -229,6 +229,7 @@ func TestChat_Rename(t *testing.T) {
 // or page errors — the load-bearing regression guard.
 func TestChat_FragmentNavNoErrors(t *testing.T) {
 	page := newIsolatedPage(t)
+	dismissCookieBanner(t, page)
 
 	var jsErrors []string
 	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })

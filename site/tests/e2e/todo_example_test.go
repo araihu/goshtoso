@@ -44,7 +44,7 @@ func gotoTodo(t *testing.T, page playwright.Page) {
 	// would overlap the right-hand row controls (move/delete) and intercept
 	// their clicks; a returning user has already dismissed it.
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
+		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
 	}))
 	// seed=0 opts out of the first-visit sample data so tests start with an
 	// empty list and assert exact counts.
@@ -127,6 +127,7 @@ func TestTodoExample_Filters(t *testing.T) {
 // takes, which a direct-load test cannot catch.
 func TestTodoExample_FragmentNavNoErrors(t *testing.T) {
 	page := newIsolatedPage(t)
+	dismissCookieBanner(t, page)
 
 	var jsErrors []string
 	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })

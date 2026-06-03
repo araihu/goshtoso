@@ -11,10 +11,6 @@ import (
 // TestCombobox_BFCache_RestoresSelection asserts that selecting options,
 // navigating away, then pressing the back button restores the combobox
 // with options rendered and selection intact.
-//
-// Against the current Alpine combobox this test is expected to FAIL
-// because x-data re-initialization on bfcache restore wipes the options
-// array. Against the HTMX SSR rewrite it must PASS.
 func TestCombobox_BFCache_RestoresSelection(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -28,7 +24,7 @@ func TestCombobox_BFCache_RestoresSelection(t *testing.T) {
 
 	page := newPage(t, browser)
 
-	_, err := page.Goto(baseURL+"/components/combobox-new", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)

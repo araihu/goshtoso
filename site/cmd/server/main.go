@@ -23,7 +23,7 @@ func main() {
 
 	addr := fmt.Sprintf(":%s", port)
 	log.Printf("Starting server on http://localhost%s", addr)
-	log.Printf("Button Component Demo: http://localhost%s/components/button", addr)
+	log.Printf("Accordion Component Demo: http://localhost%s/components/accordion", addr)
 
 	if err := http.ListenAndServe(addr, srv); err != nil {
 		log.Fatalf("Server error: %v", err)

@@ -3,9 +3,11 @@ package components
 import (
 	"github.com/araihu/goshtoso/components/form"
 	gocombobox "github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -50,10 +52,26 @@ templ formDemoContent() {
 				Description: "Render the form with no Footer; a button outside the form uses the form=\"...\" attribute to submit it — the typical modal pattern.",
 			},
 			formExternalPreview(),
-			`@form.Form(form.Config{ID: "external-form", Action: "#"}) {
+			`@form.Form(form.Config{
+    ID: "external-form",
+    HTMX: &form.HTMXConfig{
+        Post: "/api/components/form/external-submit",
+        Swap: "none",
+    },
+}) {
     @form.Section(form.SectionConfig{Title: "Upgrade"}) { ... }
 }
-<button type="submit" form="external-form">Upgrade (External Button)</button>`,
+@modal.Modal(modal.Config{
+    ID:            "externalSubmitConfirm",
+    Title:         "Confirm upgrade",
+    TriggerText:   "Upgrade (External Button)",
+    PrimaryText:   "Confirm upgrade",
+    SecondaryText: "Cancel",
+    PrimaryAction: &modal.ButtonAction{
+        OnClick: "document.getElementById('external-form').requestSubmit()",
+    },
+})
+@toast.Container(toast.ContainerConfig{})`,
 		)
 	</div>
 	// API reference lives outside #form-fragment.
@@ -79,7 +97,10 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
 })
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "provider", Label: "Provider",
-    Combobox: &gocombobox.Config{ID: "provider", Name: "provider", Options: opts},
+    Combobox: &gocombobox.Config{
+        ID: "provider", Name: "provider",
+        Source: gocombobox.Source{Static: opts},
+    },
 })
 
 // Custom component — use { children... } for anything not built-in
@@ -97,9 +118,25 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
     })
 }
 
-// External submit (modal pattern — no footer, button uses form="..." attribute)
-@form.Form(form.Config{ID: "modal-form", HTMX: &form.HTMXConfig{Post: "/api", Swap: "none"}}) { ... }
-<button type="submit" form="modal-form">Submit</button>`
+// External submit (modal pattern — no footer, modal confirmation calls requestSubmit)
+@form.Form(form.Config{
+    ID: "modal-form",
+    HTMX: &form.HTMXConfig{
+        Post: "/api/submit",
+        Swap: "none",
+    },
+}) { ... }
+@modal.Modal(modal.Config{
+    ID:            "modalSubmitConfirm",
+    Title:         "Confirm submit",
+    TriggerText:   "Submit",
+    PrimaryText:   "Confirm submit",
+    SecondaryText: "Cancel",
+    PrimaryAction: &modal.ButtonAction{
+        OnClick: "document.getElementById('modal-form').requestSubmit()",
+    },
+})
+@toast.Container(toast.ContainerConfig{})`
 
 // formCompletePreview renders the full composable form.
 templ formCompletePreview() {
@@ -141,12 +178,12 @@ templ formCompletePreview() {
 						Combobox: &gocombobox.Config{
 							ID:   "provider",
 							Name: "provider",
-							Options: []gocombobox.Option{
+							Source: gocombobox.Source{Static: []gocombobox.Option{
 								{Value: "aws", Label: "AWS"},
 								{Value: "azure", Label: "Azure"},
 								{Value: "gcp", Label: "GCP"},
 								{Value: "maas", Label: "MAAS"},
-							},
+							}},
 							Selected: []string{"maas"},
 						},
 					})
@@ -211,12 +248,12 @@ templ formCompletePreview() {
 						Combobox: &gocombobox.Config{
 							ID:   "log-level",
 							Name: "log_level",
-							Options: []gocombobox.Option{
+							Source: gocombobox.Source{Static: []gocombobox.Option{
 								{Value: "info", Label: "Info"},
 								{Value: "debug", Label: "Debug"},
 								{Value: "warn", Label: "Warning"},
 								{Value: "error", Label: "Error"},
-							},
+							}},
 							Selected: []string{"info"},
 						},
 					})
@@ -250,10 +287,10 @@ templ formCompletePreview() {
 							Combobox: &gocombobox.Config{
 								ID:   "cp-instance",
 								Name: "cp_instance_type",
-								Options: []gocombobox.Option{
+								Source: gocombobox.Source{Static: []gocombobox.Option{
 									{Value: "m5.large", Label: "m5.large (2 vCPU, 8 GB)"},
 									{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
-								},
+								}},
 								Selected: []string{"m5.large"},
 							},
 						})
@@ -275,10 +312,10 @@ templ formCompletePreview() {
 							Combobox: &gocombobox.Config{
 								ID:   "worker-instance",
 								Name: "worker_instance_type",
-								Options: []gocombobox.Option{
+								Source: gocombobox.Source{Static: []gocombobox.Option{
 									{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
 									{Value: "m5.2xlarge", Label: "m5.2xlarge (8 vCPU, 32 GB)"},
-								},
+								}},
 								Selected: []string{"m5.xlarge"},
 							},
 						})
@@ -336,36 +373,44 @@ templ formExternalPreview() {
 	<div id="form-external" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-col gap-4">
 				@form.Form(form.Config{
-					ID:     "external-form",
-					Action: "#",
+					ID: "external-form",
+					HTMX: &form.HTMXConfig{
+						Post: "/api/components/form/external-submit",
+						Swap: "none",
+					},
 				}) {
 					@form.Section(form.SectionConfig{Title: "Upgrade"}) {
 						@form.FieldGroup(form.FieldGroupConfig{
 							ID:    "version",
 							Label: "Target Version",
-							Combobox: &gocombobox.Config{
-								ID:   "version",
-								Name: "version",
-								Options: []gocombobox.Option{
-									{Value: "1.32.0", Label: "v1.32.0"},
-									{Value: "1.31.5", Label: "v1.31.5"},
-									{Value: "1.30.8", Label: "v1.30.8"},
+								Combobox: &gocombobox.Config{
+									ID:   "version",
+									Name: "version",
+									Source: gocombobox.Source{Static: []gocombobox.Option{
+										{Value: "1.32.0", Label: "v1.32.0"},
+										{Value: "1.31.5", Label: "v1.31.5"},
+										{Value: "1.30.8", Label: "v1.30.8"},
+									}},
+									Selected: []string{"1.31.5"},
 								},
-								Selected: []string{"1.31.5"},
-							},
 						})
 					}
 				}
 				<!-- External button -->
 				<div class="flex justify-end">
-					<button
-						type="submit"
-						form="external-form"
-						class="inline-flex items-center justify-center px-6 py-2.5 rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:opacity-75 transition"
-					>
-						Upgrade (External Button)
-					</button>
+					@modal.Modal(modal.Config{
+						ID:            "externalSubmitConfirm",
+						Title:         "Confirm upgrade",
+						Body:          "Submit the upgrade request with the selected target version.",
+						TriggerText:   "Upgrade (External Button)",
+						PrimaryText:   "Confirm upgrade",
+						SecondaryText: "Cancel",
+						PrimaryAction: &modal.ButtonAction{
+							OnClick: "document.getElementById('external-form').requestSubmit()",
+						},
+					})
 				</div>
+				@toast.Container(toast.ContainerConfig{})
 			</div>
 		</div>
 }
