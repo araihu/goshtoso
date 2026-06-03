@@ -394,6 +394,7 @@ func mainContentMaxWidth(activeComponent string) string {
 func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
+		{ID: "examples", Label: "Examples", Href: "/examples", Icon: sidebarExamplesIcon(), Active: activeComponent == "examples", LinkAttrs: navHxAttrs("/examples", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebarAttributionsIcon(), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
 		{ID: "license", Label: "License", Href: "/license", Icon: sidebarLicenseIcon(), Active: activeComponent == "license", LinkAttrs: navHxAttrs("/license", "")},
@@ -421,6 +422,12 @@ templ sidebarSearchSlot() {
 templ sidebarHomeIcon() {
 	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
 		<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+	</svg>
+}
+
+templ sidebarExamplesIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h3.75A2.25 2.25 0 0112 6v3.75A2.25 2.25 0 019.75 12H6a2.25 2.25 0 01-2.25-2.25V6ZM14.25 6A2.25 2.25 0 0116.5 3.75H18A2.25 2.25 0 0120.25 6v1.5A2.25 2.25 0 0118 9.75h-1.5a2.25 2.25 0 01-2.25-2.25V6ZM14.25 14.25A2.25 2.25 0 0116.5 12H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-1.5A2.25 2.25 0 0114.25 18v-3.75ZM3.75 16.5A2.25 2.25 0 016 14.25h3.75A2.25 2.25 0 0112 16.5V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-1.5Z"/>
 	</svg>
 }
 
@@ -511,10 +518,9 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			},
 		},
 		{
-			Title:       "Examples",
+			Title:       "Example Apps",
 			Collapsible: true,
 			Items: []sidebar.Item{
-				sItem("examples", "Overview", "/examples", activeComponent),
 				sItem("todo", "Todo List", "/examples/todo", activeComponent),
 				sItem("chat", "Chat", "/examples/chat", activeComponent),
 				sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),

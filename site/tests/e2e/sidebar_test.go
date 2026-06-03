@@ -118,3 +118,42 @@ func TestSidebar_LinksNavigate(t *testing.T) {
 		})
 	}
 }
+
+func TestSidebar_ExamplesTopItemNavigatesToOverview(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	sidebar := page.Locator("nav[aria-label='sidebar navigation']")
+	require.NoError(t, sidebar.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+
+	examplesLink := sidebar.Locator("a[href='/examples']")
+	count, err := examplesLink.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 1, count, "Examples overview should have a single top-level sidebar link")
+
+	oldOverviewItem := sidebar.Locator("a[href='/examples'][data-sidebar-item='Overview']")
+	count, err = oldOverviewItem.Count()
+	require.NoError(t, err)
+	assert.Zero(t, count, "old Examples > Overview nav item should be gone")
+
+	require.NoError(t, examplesLink.Click())
+	require.NoError(t, page.WaitForURL("**/examples"))
+	require.NoError(t, page.Locator("main h1", playwright.PageLocatorOptions{HasText: "Examples"}).WaitFor())
+}
