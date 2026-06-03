@@ -14,6 +14,7 @@ import (
 	"runtime"
 
 	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -67,15 +68,31 @@ func gettingStartedContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-10\"><div><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Getting Started</h1><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">Build a filterable, sortable table of dog breeds with <a href=\"https://go.dev/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Go</a> + <a href=\"https://templ.guide/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Templ</a> + <a href=\"https://htmx.org/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">HTMX</a> + <a href=\"https://alpinejs.dev/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Alpine.js</a>. No Node.js, no bundlers.</p></div><!-- Step 1 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">1. Create your project</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12\"><div><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Getting Started</h1><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">Start with a complete dog-breeds app built with <a href=\"https://go.dev/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Go</a> + <a href=\"https://templ.guide/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Templ</a> + <a href=\"https://htmx.org/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">HTMX</a> + <a href=\"https://alpinejs.dev/\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Alpine.js</a>. Clone it, run it, then read how it works.</p></div><section id=\"getting-started-preview\" class=\"space-y-4\"><div class=\"flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between\"><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Expected outcome</h2><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">This is the starter app's table running inside the docs. Try search, filtering, sorting, and pagination.</p></div><a href=\"https://github.com/araihu/goshtoso-getting-started\" target=\"_blank\" rel=\"noopener\" class=\"inline-flex w-fit items-center justify-center rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary transition-opacity hover:opacity-90 dark:bg-primary-dark dark:text-on-primary-dark\">Starter repository</a></div><div class=\"overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: step1Code()}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = table.Table(gettingStartedInitialConfig()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- Step 2 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">2. Create the page template</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">page.templ</code> — Alpine.js handles the filter bar state, HTMX loads and swaps table rows from the server:</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></section><section class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Use the starter repo</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">The starter includes the Go server, templ page, generated templ output, and dog images.</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: starterRepoCode()}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</section><section class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">How assets work</h2><ul class=\"grid gap-3 text-sm text-on-surface dark:text-on-surface-dark md:grid-cols-2\"><li class=\"rounded-radius border border-outline p-4 dark:border-outline-dark\"><p class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Goshtoso runtime assets</p><p class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">CSS, themes, Alpine.js, HTMX, fonts, and library artwork are served from <code class=\"font-mono\">/assets/</code> by <code class=\"font-mono\">assets.Handler()</code>.</p></li><li class=\"rounded-radius border border-outline p-4 dark:border-outline-dark\"><p class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Starter app assets</p><p class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">Dog images live in <code class=\"font-mono\">assets/dogs</code>, are embedded with Go, and are served by the starter app from <code class=\"font-mono\">/dog-images/</code>.</p></li></ul></section><section class=\"space-y-8\"><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">Build it manually</h2><p class=\"text-on-surface dark:text-on-surface-dark\">The starter repo is the fastest path. The walkthrough below shows the moving parts if you want to build the same app from scratch.</p></div><div><h3 class=\"text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">1. Create your project</h3>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: manualSetupCode()}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div><h3 class=\"text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">2. Create the page template</h3><p class=\"text-on-surface dark:text-on-surface-dark mb-3\"><code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">page.templ</code> renders the table and loads Goshtoso's runtime dependencies.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -83,7 +100,7 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Step 3 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">3. Create the server</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">main.go</code> — it mounts <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">assets.Handler()</code> to serve the bundled CSS + JS from <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">/assets/</code> (no CDN, works offline), serves the page, and handles the HTMX API endpoint for filtering, searching, and sorting:</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div><h3 class=\"text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">3. Create the server</h3><p class=\"text-on-surface dark:text-on-surface-dark mb-3\"><code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">main.go</code> mounts Goshtoso runtime assets, serves embedded dog images, renders the page, and returns HTMX table fragments.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -91,7 +108,7 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Step 4 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">4. Generate and run</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div><h3 class=\"text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">4. Generate and run</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -99,7 +116,7 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><!-- What you get --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">What you get</h2><ul class=\"space-y-2 text-on-surface dark:text-on-surface-dark\"><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> 20 dog breeds in a sortable table — click any column header</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Live search with 300ms debounce via Alpine.js <code class=\"text-xs bg-surface-alt dark:bg-surface-dark-alt px-1 rounded\">x-model</code></li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Group filter dropdown (Sporting, Herding, Working, Hound, Non-Sporting, Toy)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Server-rendered HTML fragments via HTMX — no JSON, no fetch, no client state</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Single Go binary, zero JavaScript build tools</li></ul></div><!-- Source --><div class=\"pb-8\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Full source: <a href=\"https://github.com/araihu/goshtoso/tree/main/examples/getting-started\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">examples/getting-started</a></p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><div class=\"pb-8 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><p>Starter source: <a href=\"https://github.com/araihu/goshtoso-getting-started\" target=\"_blank\" rel=\"noopener\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">araihu/goshtoso-getting-started</a></p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -107,7 +124,14 @@ func gettingStartedContent() templ.Component {
 	})
 }
 
-func step1Code() string {
+func starterRepoCode() string {
+	return `git clone https://github.com/araihu/goshtoso-getting-started dog-breeds
+cd dog-breeds
+go run .
+# Open http://localhost:3000`
+}
+
+func manualSetupCode() string {
 	return `mkdir dog-breeds && cd dog-breeds
 go mod init dog-breeds
 go get github.com/a-h/templ@latest
