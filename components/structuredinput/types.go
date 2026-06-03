@@ -1,6 +1,9 @@
 package structuredinput
 
-import "strings"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 // ColumnType is the rendered control kind for a structured input column.
 type ColumnType string
@@ -93,74 +96,51 @@ func (c Config) ContainerClasses() string {
 	return base
 }
 
-// AlpineData returns the x-data object literal.
-func (c Config) AlpineData() string {
-	cols := c.NormalizedColumns()
-	return "{ name: '" + jsEscapeSingle(c.Name) + "', columns: " + columnsLiteral(cols) + ", entries: " + entriesLiteral(c.Entries, cols) + " }"
+// EntriesJSON returns ordered row values for Alpine initialization.
+func (c Config) EntriesJSON() string {
+	rows := c.entryRows()
+	b, err := json.Marshal(rows)
+	if err != nil {
+		return "[]"
+	}
+	return string(b)
 }
 
-// NewRowLiteral returns the JavaScript object literal pushed by the add button.
-func (c Config) NewRowLiteral() string {
-	parts := make([]string, 0, len(c.NormalizedColumns()))
+// NewRowJSON returns ordered default values for new rows.
+func (c Config) NewRowJSON() string {
+	row := make([]string, 0, len(c.NormalizedColumns()))
 	for _, col := range c.NormalizedColumns() {
-		parts = append(parts, "'"+jsEscapeSingle(col.Key)+"': '"+jsEscapeSingle(col.DefaultValue())+"'")
+		row = append(row, col.DefaultValue())
 	}
-	return "{ " + strings.Join(parts, ", ") + " }"
+	b, err := json.Marshal(row)
+	if err != nil {
+		return "[]"
+	}
+	return string(b)
 }
 
 // EntryAccessor returns a JavaScript expression for this column's entry value.
-func (c Column) EntryAccessor() string {
-	return "entry['" + jsEscapeSingle(c.Key) + "']"
+func (c Column) EntryAccessor(index int) string {
+	return "entry[" + strconv.Itoa(index) + "]"
 }
 
 // NameBinding returns a JavaScript expression for this column's hidden input name.
 func (c Column) NameBinding() string {
-	return "name + '[' + index + '][" + jsEscapeSingle(c.Key) + "]'"
+	return "inputName(index, $el.dataset.columnKey)"
 }
 
-func columnsLiteral(cols []Column) string {
-	if len(cols) == 0 {
-		return "[]"
+func (c Config) entryRows() [][]string {
+	cols := c.NormalizedColumns()
+	if len(c.Entries) == 0 {
+		return [][]string{}
 	}
-	items := make([]string, 0, len(cols))
-	for _, col := range cols {
-		items = append(items, "{ key: '"+jsEscapeSingle(col.Key)+"', type: '"+jsEscapeSingle(string(col.Type))+"', placeholder: '"+jsEscapeSingle(col.Placeholder)+"' }")
-	}
-	return "[" + strings.Join(items, ", ") + "]"
-}
-
-func entriesLiteral(entries []Entry, cols []Column) string {
-	if len(entries) == 0 {
-		return "[]"
-	}
-	items := make([]string, 0, len(entries))
-	for _, entry := range entries {
-		values := make([]string, 0, len(cols))
+	rows := make([][]string, 0, len(c.Entries))
+	for _, entry := range c.Entries {
+		row := make([]string, 0, len(cols))
 		for _, col := range cols {
-			values = append(values, "'"+jsEscapeSingle(col.Key)+"': '"+jsEscapeSingle(entry[col.Key])+"'")
+			row = append(row, entry[col.Key])
 		}
-		items = append(items, "{ "+strings.Join(values, ", ")+" }")
+		rows = append(rows, row)
 	}
-	return "[" + strings.Join(items, ", ") + "]"
-}
-
-func jsEscapeSingle(s string) string {
-	var b strings.Builder
-	for _, r := range s {
-		switch r {
-		case '\\':
-			b.WriteString(`\\`)
-		case '\'':
-			b.WriteString(`\'`)
-		case '\n':
-			b.WriteString(`\n`)
-		case '\r':
-			b.WriteString(`\r`)
-		case '\t':
-			b.WriteString(`\t`)
-		default:
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
+	return rows
 }

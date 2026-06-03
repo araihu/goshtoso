@@ -1,6 +1,7 @@
 package structuredinput
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -31,17 +32,17 @@ func TestNormalizedColumnsDropsEmptyAndDuplicateKeys(t *testing.T) {
 func TestInitialEntriesNeverSerializesNull(t *testing.T) {
 	cfg := Config{Name: "labels", Entries: nil}
 
-	data := cfg.AlpineData()
+	data := cfg.EntriesJSON()
 
 	if strings.Contains(data, "entries: null") {
-		t.Fatalf("AlpineData() = %s, must use [] for nil entries", data)
+		t.Fatalf("EntriesJSON() = %s, must use [] for nil entries", data)
 	}
-	if !strings.Contains(data, "entries: []") {
-		t.Fatalf("AlpineData() = %s, want entries: []", data)
+	if data != "[]" {
+		t.Fatalf("EntriesJSON() = %s, want []", data)
 	}
 }
 
-func TestAlpineDataEscapesSingleQuotedStrings(t *testing.T) {
+func TestEntriesJSONEscapesStrings(t *testing.T) {
 	cfg := Config{
 		Name: "labels",
 		Columns: []Column{
@@ -53,20 +54,17 @@ func TestAlpineDataEscapesSingleQuotedStrings(t *testing.T) {
 		},
 	}
 
-	data := cfg.AlpineData()
+	data := cfg.EntriesJSON()
 
-	if !strings.Contains(data, `owner\'s key`) {
-		t.Fatalf("AlpineData() = %s, want escaped placeholder", data)
-	}
-	if !strings.Contains(data, `team\'s app`) {
-		t.Fatalf("AlpineData() = %s, want escaped entry value", data)
+	if !strings.Contains(data, `"team's app"`) {
+		t.Fatalf("EntriesJSON() = %s, want JSON entry value", data)
 	}
 	if !strings.Contains(data, `web\\api`) {
-		t.Fatalf("AlpineData() = %s, want escaped backslash", data)
+		t.Fatalf("EntriesJSON() = %s, want escaped backslash", data)
 	}
 }
 
-func TestNewRowLiteralUsesColumnDefaults(t *testing.T) {
+func TestNewRowJSONUsesColumnDefaults(t *testing.T) {
 	cfg := Config{
 		Columns: []Column{
 			{Key: "key"},
@@ -75,11 +73,11 @@ func TestNewRowLiteralUsesColumnDefaults(t *testing.T) {
 		},
 	}
 
-	row := cfg.NewRowLiteral()
+	row := cfg.NewRowJSON()
 
-	for _, want := range []string{"'key': ''", "'effect': 'NoSchedule'", "'priority': 'high'"} {
+	for _, want := range []string{`""`, `"NoSchedule"`, `"high"`} {
 		if !strings.Contains(row, want) {
-			t.Fatalf("NewRowLiteral() = %s, missing %s", row, want)
+			t.Fatalf("NewRowJSON() = %s, missing %s", row, want)
 		}
 	}
 }
@@ -87,10 +85,64 @@ func TestNewRowLiteralUsesColumnDefaults(t *testing.T) {
 func TestColumnAccessorsUseBracketNotation(t *testing.T) {
 	col := Column{Key: "app.kubernetes.io/name"}
 
-	if got := col.EntryAccessor(); got != "entry['app.kubernetes.io/name']" {
-		t.Fatalf("EntryAccessor() = %s, want bracket notation", got)
+	if got := col.EntryAccessor(2); got != "entry[2]" {
+		t.Fatalf("EntryAccessor() = %s, want array index notation", got)
 	}
-	if got := col.NameBinding(); got != "name + '[' + index + '][app.kubernetes.io/name]'" {
-		t.Fatalf("NameBinding() = %s, want structured input name binding", got)
+	if got := col.NameBinding(); got != "inputName(index, $el.dataset.columnKey)" {
+		t.Fatalf("NameBinding() = %s, want data-key based name binding", got)
+	}
+}
+
+func TestStructuredInputRendersHiddenStructuredNames(t *testing.T) {
+	var buf strings.Builder
+	err := StructuredInput(Config{
+		ID:   "labelsDemo",
+		Name: "labels",
+		Columns: []Column{
+			{Key: "key", Placeholder: "key"},
+			{Key: "value", Placeholder: "value"},
+		},
+		Entries: []Entry{{"key": "app", "value": "web"}},
+	}).Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
+
+	html := buf.String()
+	for _, want := range []string{
+		`id="labelsDemo"`,
+		`x-data="structuredInput($el)"`,
+		`data-column-key="key"`,
+		`data-column-key="value"`,
+		`x-bind:name="inputName(index, $el.dataset.columnKey)"`,
+		`x-bind:value="entry[0]"`,
+		`x-bind:value="entry[1]"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("rendered HTML missing %s:\n%s", want, html)
+		}
+	}
+}
+
+func TestStructuredInputRendersSelectColumn(t *testing.T) {
+	var buf strings.Builder
+	err := StructuredInput(Config{
+		ID:   "taintsDemo",
+		Name: "taints",
+		Columns: []Column{
+			{Key: "key"},
+			{Key: "effect", Type: ColumnSelect, Options: []Option{{Value: "NoSchedule", Label: "NoSchedule"}}},
+		},
+		Entries: []Entry{{"key": "node", "effect": "NoSchedule"}},
+	}).Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
+
+	html := buf.String()
+	for _, want := range []string{`<select`, `x-model="entry[1]"`, `<option value="NoSchedule">NoSchedule</option>`} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("rendered HTML missing %s:\n%s", want, html)
+		}
 	}
 }
