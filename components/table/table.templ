@@ -2,6 +2,7 @@ package table
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/pagination"
@@ -452,11 +453,12 @@ templ cellContent(cell Cell) {
 //   - LinkBoost: swaps full <body> via HTMX (like hx-boost, avoids white flash)
 //   - LinkFull: plain JS navigation (window.location.href), no HTMX
 func rowLinkAttrs(row Row) templ.Attributes {
-	auxclick := fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", row.Link)
+	link := jsStringSingle(row.Link)
+	auxclick := fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", link)
 
 	if row.LinkMode == LinkFull {
 		return templ.Attributes{
-			"onclick":    fmt.Sprintf("window.location.href='%s'", row.Link),
+			"onclick":    fmt.Sprintf("window.location.href='%s'", link),
 			"onauxclick": auxclick,
 		}
 	}
@@ -476,6 +478,29 @@ func rowLinkAttrs(row Row) templ.Attributes {
 		attrs["hx-swap"] = "innerHTML"
 	}
 	return attrs
+}
+
+func jsStringSingle(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch r {
+		case '\\':
+			b.WriteString(`\\`)
+		case '\'':
+			b.WriteString(`\'`)
+		case '\n':
+			b.WriteString(`\n`)
+		case '\r':
+			b.WriteString(`\r`)
+		case '\u2028':
+			b.WriteString(`\u2028`)
+		case '\u2029':
+			b.WriteString(`\u2029`)
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }
 
 func interactiveRowClasses(row Row) string {

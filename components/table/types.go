@@ -2,6 +2,8 @@ package table
 
 import (
 	"fmt"
+	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -422,16 +424,15 @@ func (cfg Config) PaginationID() string {
 
 // PaginationBaseURL returns the base URL for pagination links with per_page and sort params
 func (cfg Config) PaginationBaseURL() string {
-	url := cfg.HTMXEndpoint
-	sep := "?"
+	params := map[string]string{}
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
-		url += sep + "per_page=" + itoa(cfg.Pagination.PerPage)
-		sep = "&"
+		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 	}
-	if cfg.SortBy != "" {
-		url += sep + "order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
+	if cfg.SortBy != "" && cfg.SortDir != SortNone {
+		params["order_by"] = cfg.SortBy
+		params["order_dir"] = string(cfg.SortDir)
 	}
-	return url
+	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
 }
 
 // HasSortableColumns returns true if any column is sortable
@@ -465,54 +466,96 @@ func (cfg Config) NextSortDir(key string) SortDir {
 // When direction cycles back to SortNone, omits sort params to reset to natural order.
 func (cfg Config) SortURL(key string) string {
 	dir := cfg.NextSortDir(key)
-	if dir == SortNone {
-		url := cfg.HTMXEndpoint + "?table_id=" + cfg.GetID()
-		if cfg.Pagination != nil {
-			url += "&per_page=" + itoa(cfg.Pagination.PerPage)
-		}
-		return url + cfg.ExtraQueryParams
+	params := map[string]string{"table_id": cfg.GetID()}
+	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
+		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 	}
-	url := cfg.HTMXEndpoint + "?table_id=" + cfg.GetID() + "&order_by=" + key + "&order_dir=" + string(dir)
-	if cfg.Pagination != nil {
-		url += "&per_page=" + itoa(cfg.Pagination.PerPage)
+	if dir != SortNone {
+		params["order_by"] = key
+		params["order_dir"] = string(dir)
 	}
-	return url + cfg.ExtraQueryParams
+	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
 }
 
 // PageURL builds the HTMX URL for a specific page
 func (cfg Config) PageURL(page int) string {
-	url := cfg.HTMXEndpoint + "?page=" + itoa(page)
-	if cfg.Pagination != nil {
-		url += "&per_page=" + itoa(cfg.Pagination.PerPage)
+	params := map[string]string{"page": strconv.Itoa(page)}
+	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
+		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 	}
-	if cfg.SortBy != "" {
-		url += "&order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
+	if cfg.SortBy != "" && cfg.SortDir != SortNone {
+		params["order_by"] = cfg.SortBy
+		params["order_dir"] = string(cfg.SortDir)
 	}
-	return url + cfg.ExtraQueryParams
+	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
 }
 
 // NextPageURL builds the HTMX URL for infinite scroll
 func (cfg Config) NextPageURL() string {
 	// Support new PaginationConfig infinite scroll mode
 	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() {
-		url := cfg.HTMXEndpoint + "?page=" + itoa(cfg.Pagination.NextPage()) + "&variant=infinite"
+		params := map[string]string{
+			"page":    strconv.Itoa(cfg.Pagination.NextPage()),
+			"variant": "infinite",
+		}
 		if cfg.Pagination.PerPage > 0 {
-			url += "&per_page=" + itoa(cfg.Pagination.PerPage)
+			params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 		}
-		if cfg.SortBy != "" {
-			url += "&order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
+		if cfg.SortBy != "" && cfg.SortDir != SortNone {
+			params["order_by"] = cfg.SortBy
+			params["order_dir"] = string(cfg.SortDir)
 		}
-		return url + cfg.ExtraQueryParams
+		return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
 	}
 	// Legacy InfiniteScrollConfig support
 	if cfg.InfiniteScroll == nil {
 		return ""
 	}
-	url := cfg.HTMXEndpoint + "?page=" + itoa(cfg.InfiniteScroll.NextPage)
-	if cfg.SortBy != "" {
-		url += "&order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
+	params := map[string]string{"page": strconv.Itoa(cfg.InfiniteScroll.NextPage)}
+	if cfg.SortBy != "" && cfg.SortDir != SortNone {
+		params["order_by"] = cfg.SortBy
+		params["order_dir"] = string(cfg.SortDir)
 	}
-	return url + cfg.ExtraQueryParams
+	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
+}
+
+func tableURL(endpoint string, params map[string]string, extra string) string {
+	u, err := url.Parse(endpoint)
+	if err != nil {
+		u = &url.URL{Path: endpoint}
+	}
+	q := u.Query()
+	for key, value := range parseExtraQuery(extra) {
+		q.Set(key, value)
+	}
+	for key, value := range params {
+		if value == "" {
+			q.Del(key)
+			continue
+		}
+		q.Set(key, value)
+	}
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
+func parseExtraQuery(extra string) map[string]string {
+	out := map[string]string{}
+	extra = strings.TrimPrefix(extra, "?")
+	extra = strings.TrimPrefix(extra, "&")
+	if extra == "" {
+		return out
+	}
+	values, err := url.ParseQuery(extra)
+	if err != nil {
+		return out
+	}
+	for key, vals := range values {
+		if len(vals) > 0 {
+			out[key] = vals[len(vals)-1]
+		}
+	}
+	return out
 }
 
 // ContainerClasses returns the outer wrapper CSS classes.
