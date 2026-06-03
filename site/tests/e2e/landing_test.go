@@ -33,7 +33,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 	})
 
 	t.Run("BrowseComponentsCTA", func(t *testing.T) {
-		cta := page.Locator("#hero a[href='/components/button']")
+		cta := page.Locator("#hero a[href='/components/accordion']")
 		visible, err := cta.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "Browse components CTA should be visible")

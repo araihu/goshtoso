@@ -609,7 +609,6 @@ go run ./site/cmd/server -port 8090
 ```
 
 Then visit:
-- http://localhost:8090/components/button
 - http://localhost:8090/components/accordion
 
 ## Contributing
