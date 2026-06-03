@@ -626,14 +626,13 @@ func TestIntegration(t *testing.T) {
 		title, _ := page.Title()
 		assert.Contains(t, title, "Accordion")
 
-		// Navigate to button
+		// Navigate to button. Sidebar links are htmx fragment-nav: the swapped-in
+		// link is re-bound a beat after it appears, so a plain Click can be lost
+		// under full-suite load (the documented HTMX rebind race — see CLAUDE.md).
+		// clickUntil re-fires until the title actually flips; htmx updates
+		// document.title from the swapped fragment's <title>.
 		buttonLink := page.Locator("a:has-text('Button')")
-		err = buttonLink.Click()
-		require.NoError(t, err)
-
-		_ = page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{
-			State: playwright.LoadStateNetworkidle,
-		})
+		clickUntil(t, page, buttonLink, "() => document.title.includes('Button')")
 
 		title, _ = page.Title()
 		assert.Contains(t, title, "Button")
