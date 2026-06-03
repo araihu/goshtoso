@@ -77,6 +77,10 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 			assert.Equal(t, 1, count, "%s should have a sidebar link to %s", comp.label, comp.href)
 		})
 	}
+
+	legacyLinkCount, err := sidebar.Locator("a[href='/components/combobox-new']").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, legacyLinkCount, "combobox-new must not be exposed after v2 becomes canonical")
 }
 
 func TestSidebar_LinksNavigate(t *testing.T) {

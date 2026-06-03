@@ -289,7 +289,7 @@ templ FieldGroup(cfg FieldGroupConfig) {
 		if cfg.Input != nil {
 			@textinput.TextInput(*cfg.Input)
 		} else if cfg.Combobox != nil {
-			@combobox.Combobox(*cfg.Combobox)
+			@combobox.Combobox(*cfg.Combobox, cfg.Combobox.InitialState())
 		} else if cfg.Textarea != nil {
 			@textarea.Textarea(*cfg.Textarea)
 		} else if cfg.Toggle != nil {

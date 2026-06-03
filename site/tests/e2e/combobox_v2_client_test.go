@@ -23,16 +23,16 @@ func TestComboboxV2_ClientMode_NoHTTPOnToggle(t *testing.T) {
 
 	page := newPage(t, browser)
 
-	// Record all requests to the combobox-new demo endpoints; start BEFORE goto.
+	// Record all requests to the combobox demo endpoints; start BEFORE goto.
 	var demoReqs []string
 	page.On("request", func(req playwright.Request) {
 		url := req.URL()
-		if strings.Contains(url, "/combobox-new/industry/") || strings.Contains(url, "/combobox-new/skills/") {
+		if strings.Contains(url, "/combobox/industry/") || strings.Contains(url, "/combobox/skills/") {
 			demoReqs = append(demoReqs, url)
 		}
 	})
 
-	_, err := page.Goto(baseURL+"/components/combobox-new", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
@@ -90,12 +90,12 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 	var skillsReqs []string
 	page.On("request", func(req playwright.Request) {
 		url := req.URL()
-		if strings.Contains(url, "/combobox-new/skills/") {
+		if strings.Contains(url, "/combobox/skills/") {
 			skillsReqs = append(skillsReqs, url)
 		}
 	})
 
-	_, err := page.Goto(baseURL+"/components/combobox-new", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)

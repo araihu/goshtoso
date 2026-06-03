@@ -1188,7 +1188,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if cfg.Combobox != nil {
-			templ_7745c5c3_Err = combobox.Combobox(*cfg.Combobox).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = combobox.Combobox(*cfg.Combobox, cfg.Combobox.InitialState()).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

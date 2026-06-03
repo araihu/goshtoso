@@ -35,7 +35,6 @@ var Demos = map[string]DemoEntry{
 	"components/checkbox":        {"Checkbox", "checkbox", checkboxDemoContent},
 	"components/codeblock":       {"Code Block", "codeblock", codeBlockDemoContent},
 	"components/combobox":        {"Combobox", "combobox", comboboxDemoContent},
-	"components/combobox-new":    {"Combobox (HTMX SSR rewrite)", "combobox-new", comboboxNewDemoContent},
 	"components/dropdown":        {"Dropdown", "dropdown", dropdownDemoContent},
 	"components/fileinput":       {"File Input", "fileinput", fileInputDemoContent},
 	"components/form":            {"Form", "form", formDemoContent},
