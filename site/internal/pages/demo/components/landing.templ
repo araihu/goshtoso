@@ -4,6 +4,7 @@ import (
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
 )
@@ -114,19 +115,29 @@ templ landingContent() {
 			<p class="text-center text-on-surface dark:text-on-surface-dark mb-6">
 				Pick a theme — every component below recolors instantly. These are real Goshtoso components, not screenshots.
 			</p>
-			<div class="flex flex-wrap gap-2 justify-center mb-8">
-				for _, c := range getThemeChips() {
-					<button
-						type="button"
-						data-theme-key={ c.Key }
-						@click="document.documentElement.setAttribute('data-theme', $el.dataset.themeKey); if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) localStorage.setItem('theme', $el.dataset.themeKey)"
-						class="px-4 py-1.5 rounded-radius border border-outline dark:border-outline-dark text-sm text-on-surface dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors"
-					>
-						{ c.Label }
-					</button>
-				}
+			<div class="mb-8 flex flex-col items-center gap-3" x-data="{ theme: document.documentElement.dataset.theme }">
+				<div id="home-theme-picker" class="max-w-full overflow-x-auto pb-1" role="radiogroup" aria-label="Homepage theme">
+					@radio.RadioBar() {
+						for _, c := range getThemeChips() {
+							@radio.Radio(radio.Config{
+								ID:        "home-theme-" + c.Key,
+								Name:      "home-theme",
+								Value:     c.Key,
+								Label:     c.Label,
+								Checked:   c.Key == "goshtoso",
+								Segmented: true,
+								Class:     "min-w-28 px-4",
+								Alpine: &radio.AlpineConfig{
+									BindChecked: "theme === $el.value",
+									OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme; if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) localStorage.theme = theme",
+								},
+								Attrs: templ.Attributes{"data-theme-key": c.Key},
+							})
+						}
+					}
+				</div>
 				<a href="/docs/theme" class="px-4 py-1.5 rounded-radius text-sm text-primary dark:text-primary-dark underline underline-offset-2 self-center">
-					All 16 themes →
+					All Themes
 				</a>
 			</div>
 			<div class="border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6">
