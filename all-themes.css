@@ -603,7 +603,7 @@
         --color-outline-strong: #3a4b5f;         /* blue-slate-700 */
         /* Dark */
         --color-surface-dark: #131920;           /* blue-slate-900 */
-        --color-surface-dark-alt: #06151e;       /* yale-blue-950 */
+        --color-surface-dark-alt: #263847;       /* raised blue-slate */
         --color-on-surface-dark: #c0cbd8;        /* blue-slate-200 */
         --color-on-surface-dark-strong: #ffffff;
         --color-primary-dark: #3bcef7;           /* sky-aqua-400 */
@@ -613,12 +613,12 @@
         --color-outline-dark: #3a4b5f;           /* blue-slate-700 */
         --color-outline-dark-strong: #a0b1c5;    /* blue-slate-300 */
         /* Status */
-        --color-info: #0ac2f5;                   /* sky-aqua-500 */
-        --color-on-info: #000000;
-        --color-success: #4b7d1c;                /* forest-moss-700 */
-        --color-on-success: #ffffff;
-        --color-warning: #d3d75b;                /* lime-moss-400 */
-        --color-on-warning: #000000;
+        --color-info: #0f766e;                   /* teal */
+        --color-on-info: #f5fcff;
+        --color-success: #047857;                /* emerald */
+        --color-on-success: #f0fdf4;
+        --color-warning: #f59e0b;                /* amber */
+        --color-on-warning: #211606;
         --color-danger: #dc2626;                 /* no red in palette */
         --color-on-danger: #ffffff;
         /* Border */

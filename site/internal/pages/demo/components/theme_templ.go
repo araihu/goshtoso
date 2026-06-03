@@ -772,7 +772,7 @@ func getThemeCSSBlocks() map[string]string {
     --color-outline: #c0cbd8;
     --color-outline-strong: #3a4b5f;
     --color-surface-dark: #131920;
-    --color-surface-dark-alt: #06151e;
+    --color-surface-dark-alt: #263847;
     --color-on-surface-dark: #c0cbd8;
     --color-on-surface-dark-strong: #ffffff;
     --color-primary-dark: #3bcef7;
@@ -781,12 +781,12 @@ func getThemeCSSBlocks() map[string]string {
     --color-on-secondary-dark: #131920;
     --color-outline-dark: #3a4b5f;
     --color-outline-dark-strong: #a0b1c5;
-    --color-info: #0ac2f5;
-    --color-on-info: #000000;
-    --color-success: #4b7d1c;
-    --color-on-success: #ffffff;
-    --color-warning: #d3d75b;
-    --color-on-warning: #000000;
+    --color-info: #0f766e;
+    --color-on-info: #f5fcff;
+    --color-success: #047857;
+    --color-on-success: #f0fdf4;
+    --color-warning: #f59e0b;
+    --color-on-warning: #211606;
     --color-danger: #dc2626;
     --color-on-danger: #ffffff;
     --radius-radius: var(--radius-lg);
