@@ -1,6 +1,6 @@
 (function () {
-  if (window.__goshtosoComboboxV2Init) return;
-  window.__goshtosoComboboxV2Init = true;
+  if (window.__goshtosoComboboxInit) return;
+  window.__goshtosoComboboxInit = true;
 
   function clientRoot(target) {
     if (!target || !target.closest) return null;
@@ -23,7 +23,7 @@
   }
 
   function storageKey(cfg) {
-    return 'goshtoso:combobox:v2:' + cfg.id + ':selected';
+    return 'goshtoso:combobox:' + cfg.id + ':selected';
   }
 
   function saveSelected(cfg, selected) {

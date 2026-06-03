@@ -85,7 +85,7 @@ func run() error {
 }
 
 // componentDirs returns every directory under components/ (recursively, so
-// nested packages like combobox/v2 are included) that directly contains Go
+// nested component packages are included) that directly contains Go
 // source, as paths relative to componentsDir.
 func componentDirs() ([]string, error) {
 	var dirs []string
