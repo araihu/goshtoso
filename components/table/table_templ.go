@@ -2634,10 +2634,10 @@ func StatusBadge(label string, status string) templ.Component {
 	})
 }
 
-// UserCell renders a user cell with avatar, name, and email.
-// When avatarURL is provided, shows the image; otherwise falls back to initials
-// derived from the name/email.
-func UserCell(avatarURL string, name string, email string) templ.Component {
+// ImageCell renders a compact image, primary label, and optional secondary label.
+// When imageURL is provided, shows the image; otherwise falls back to initials
+// derived from the label/detail.
+func ImageCell(imageURL string, label string, detail string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -2662,10 +2662,10 @@ func UserCell(avatarURL string, name string, email string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if avatarURL != "" {
+		if imageURL != "" {
 			templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-				Src:   avatarURL,
-				Alt:   name,
+				Src:   imageURL,
+				Alt:   label,
 				Size:  avatar.SizeSM,
 				Shape: avatar.ShapeCircle,
 			}).Render(ctx, templ_7745c5c3_Buffer)
@@ -2674,7 +2674,7 @@ func UserCell(avatarURL string, name string, email string) templ.Component {
 			}
 		} else {
 			templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-				Initials: avatar.GetInitials(name, email),
+				Initials: avatar.GetInitials(label, detail),
 				Size:     avatar.SizeSM,
 				Shape:    avatar.ShapeCircle,
 			}).Render(ctx, templ_7745c5c3_Buffer)
@@ -2686,15 +2686,15 @@ func UserCell(avatarURL string, name string, email string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if name != "" {
+		if label != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 164, "<span class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var127 string
-			templ_7745c5c3_Var127, templ_7745c5c3_Err = templ.JoinStringErrs(name)
+			templ_7745c5c3_Var127, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 728, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 728, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var127))
 			if templ_7745c5c3_Err != nil {
@@ -2710,9 +2710,9 @@ func UserCell(avatarURL string, name string, email string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var128 string
-		templ_7745c5c3_Var128, templ_7745c5c3_Err = templ.JoinStringErrs(email)
+		templ_7745c5c3_Var128, templ_7745c5c3_Err = templ.JoinStringErrs(detail)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 730, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 730, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var128))
 		if templ_7745c5c3_Err != nil {

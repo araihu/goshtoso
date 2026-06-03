@@ -81,14 +81,14 @@ templ tableDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Users Table",
-				Description: "Compose rich cells: table.UserCell (avatar + name + email), table.StatusBadge, and table.ActionButton.",
+				Description: "Compose rich cells: table.ImageCell (image + label + detail), table.StatusBadge, and table.ActionButton.",
 			},
 			tableUsersPreview(),
 			`@table.Table(table.Config{
     Columns: usersColumns(),
     Rows: []table.Row{
         {ID: "2335", Cells: map[string]table.Cell{
-            "user":   {Component: table.UserCell("/.../avatar-8.webp", "Alice Brown", "alice.brown@gmail.com")},
+            "user":   {Component: table.ImageCell("/.../avatar-8.webp", "Alice Brown", "alice.brown@gmail.com")},
             "id":     {Text: "2335"},
             "since":  {Text: "Nov 14, 2021"},
             "status": {Component: table.StatusBadge("Active", "success")},
@@ -565,35 +565,35 @@ func checkboxRows() []table.Row {
 func usersRows() []table.Row {
 	return []table.Row{
 		{ID: "2335", Cells: map[string]table.Cell{
-			"user":   {Component: table.UserCell("/assets/images/avatars/avatar-8.webp", "Alice Brown", "alice.brown@gmail.com")},
+			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-8.webp", "Alice Brown", "alice.brown@gmail.com")},
 			"id":     {Text: "2335"},
 			"since":  {Text: "Nov 14, 2021"},
 			"status": {Component: table.StatusBadge("Active", "success")},
 			"action": {Component: table.ActionButton("Edit")},
 		}},
 		{ID: "2338", Cells: map[string]table.Cell{
-			"user":   {Component: table.UserCell("/assets/images/avatars/avatar-1.webp", "Bob Johnson", "johnson.bob@penguinui.com")},
+			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-1.webp", "Bob Johnson", "johnson.bob@penguinui.com")},
 			"id":     {Text: "2338"},
 			"since":  {Text: "Aug 20, 2020"},
 			"status": {Component: table.StatusBadge("Active", "success")},
 			"action": {Component: table.ActionButton("Edit")},
 		}},
 		{ID: "2346", Cells: map[string]table.Cell{
-			"user":   {Component: table.UserCell("/assets/images/avatars/avatar-2.webp", "Ryan Thompson", "ryan.thompson@penguinui.com")},
+			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-2.webp", "Ryan Thompson", "ryan.thompson@penguinui.com")},
 			"id":     {Text: "2346"},
 			"since":  {Text: "Feb 5, 2022"},
 			"status": {Component: table.StatusBadge("Canceled", "danger")},
 			"action": {Component: table.ActionButton("Edit")},
 		}},
 		{ID: "2349", Cells: map[string]table.Cell{
-			"user":   {Component: table.UserCell("/assets/images/avatars/avatar-4.webp", "Emily Rodriguez", "emily.rodriguez@penguinui.com")},
+			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-4.webp", "Emily Rodriguez", "emily.rodriguez@penguinui.com")},
 			"id":     {Text: "2349"},
 			"since":  {Text: "Jun 14, 2022"},
 			"status": {Component: table.StatusBadge("Active", "success")},
 			"action": {Component: table.ActionButton("Edit")},
 		}},
 		{ID: "2345", Cells: map[string]table.Cell{
-			"user":   {Component: table.UserCell("/assets/images/avatars/avatar-7.webp", "Alex Martinez", "alex.martinez@penguinui.com")},
+			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-7.webp", "Alex Martinez", "alex.martinez@penguinui.com")},
 			"id":     {Text: "2345"},
 			"since":  {Text: "Sep 17, 2018"},
 			"status": {Component: table.StatusBadge("Active", "success")},

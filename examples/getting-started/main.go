@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"sort"
@@ -15,6 +17,7 @@ import (
 // Dog represents a dog breed with metadata
 type Dog struct {
 	Breed       string
+	Image       string
 	Group       string
 	Origin      string
 	Size        string
@@ -22,29 +25,32 @@ type Dog struct {
 }
 
 var breeds = []Dog{
-	{Breed: "Labrador Retriever", Group: "Sporting", Origin: "Canada", Size: "Large", Temperament: "Friendly"},
-	{Breed: "German Shepherd", Group: "Herding", Origin: "Germany", Size: "Large", Temperament: "Loyal"},
-	{Breed: "Golden Retriever", Group: "Sporting", Origin: "Scotland", Size: "Large", Temperament: "Gentle"},
-	{Breed: "French Bulldog", Group: "Non-Sporting", Origin: "France", Size: "Small", Temperament: "Playful"},
-	{Breed: "Bulldog", Group: "Non-Sporting", Origin: "England", Size: "Medium", Temperament: "Calm"},
-	{Breed: "Poodle", Group: "Non-Sporting", Origin: "Germany", Size: "Medium", Temperament: "Intelligent"},
-	{Breed: "Beagle", Group: "Hound", Origin: "England", Size: "Small", Temperament: "Curious"},
-	{Breed: "Rottweiler", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Confident"},
-	{Breed: "Dachshund", Group: "Hound", Origin: "Germany", Size: "Small", Temperament: "Clever"},
-	{Breed: "Yorkshire Terrier", Group: "Toy", Origin: "England", Size: "Small", Temperament: "Spirited"},
-	{Breed: "Boxer", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Energetic"},
-	{Breed: "Siberian Husky", Group: "Working", Origin: "Russia", Size: "Medium", Temperament: "Outgoing"},
-	{Breed: "Shih Tzu", Group: "Toy", Origin: "China", Size: "Small", Temperament: "Affectionate"},
-	{Breed: "Border Collie", Group: "Herding", Origin: "Scotland", Size: "Medium", Temperament: "Smart"},
-	{Breed: "Doberman", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Alert"},
-	{Breed: "Corgi", Group: "Herding", Origin: "Wales", Size: "Small", Temperament: "Happy"},
-	{Breed: "Australian Shepherd", Group: "Herding", Origin: "USA", Size: "Medium", Temperament: "Active"},
-	{Breed: "Cavalier King Charles", Group: "Toy", Origin: "England", Size: "Small", Temperament: "Graceful"},
-	{Breed: "Great Dane", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Patient"},
-	{Breed: "Chihuahua", Group: "Toy", Origin: "Mexico", Size: "Small", Temperament: "Charming"},
+	{Breed: "Labrador Retriever", Image: "/dog-images/labrador-retriever.webp", Group: "Sporting", Origin: "Canada", Size: "Large", Temperament: "Friendly"},
+	{Breed: "German Shepherd", Image: "/dog-images/german-shepherd.webp", Group: "Herding", Origin: "Germany", Size: "Large", Temperament: "Loyal"},
+	{Breed: "Golden Retriever", Image: "/dog-images/golden-retriever.webp", Group: "Sporting", Origin: "Scotland", Size: "Large", Temperament: "Gentle"},
+	{Breed: "French Bulldog", Image: "/dog-images/french-bulldog.webp", Group: "Non-Sporting", Origin: "France", Size: "Small", Temperament: "Playful"},
+	{Breed: "Bulldog", Image: "/dog-images/bulldog.webp", Group: "Non-Sporting", Origin: "England", Size: "Medium", Temperament: "Calm"},
+	{Breed: "Poodle", Image: "/dog-images/poodle.webp", Group: "Non-Sporting", Origin: "Germany", Size: "Medium", Temperament: "Intelligent"},
+	{Breed: "Beagle", Image: "/dog-images/beagle.webp", Group: "Hound", Origin: "England", Size: "Small", Temperament: "Curious"},
+	{Breed: "Rottweiler", Image: "/dog-images/rottweiler.webp", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Confident"},
+	{Breed: "Dachshund", Image: "/dog-images/dachshund.webp", Group: "Hound", Origin: "Germany", Size: "Small", Temperament: "Clever"},
+	{Breed: "Yorkshire Terrier", Image: "/dog-images/yorkshire-terrier.webp", Group: "Toy", Origin: "England", Size: "Small", Temperament: "Spirited"},
+	{Breed: "Boxer", Image: "/dog-images/boxer.webp", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Energetic"},
+	{Breed: "Siberian Husky", Image: "/dog-images/siberian-husky.webp", Group: "Working", Origin: "Russia", Size: "Medium", Temperament: "Outgoing"},
+	{Breed: "Shih Tzu", Image: "/dog-images/shih-tzu.webp", Group: "Toy", Origin: "China", Size: "Small", Temperament: "Affectionate"},
+	{Breed: "Border Collie", Image: "/dog-images/border-collie.webp", Group: "Herding", Origin: "Scotland", Size: "Medium", Temperament: "Smart"},
+	{Breed: "Doberman", Image: "/dog-images/doberman.webp", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Alert"},
+	{Breed: "Corgi", Image: "/dog-images/corgi.webp", Group: "Herding", Origin: "Wales", Size: "Small", Temperament: "Happy"},
+	{Breed: "Australian Shepherd", Image: "/dog-images/australian-shepherd.webp", Group: "Herding", Origin: "USA", Size: "Medium", Temperament: "Active"},
+	{Breed: "Cavalier King Charles", Image: "/dog-images/cavalier-king-charles.webp", Group: "Toy", Origin: "England", Size: "Small", Temperament: "Graceful"},
+	{Breed: "Great Dane", Image: "/dog-images/great-dane.webp", Group: "Working", Origin: "Germany", Size: "Large", Temperament: "Patient"},
+	{Breed: "Chihuahua", Image: "/dog-images/chihuahua.webp", Group: "Toy", Origin: "Mexico", Size: "Small", Temperament: "Charming"},
 }
 
 const perPage = 5
+
+//go:embed assets/dogs/*.webp
+var dogImageFiles embed.FS
 
 // columns defines the table headers
 func columns() []table.Column {
@@ -94,7 +100,7 @@ func dogsToRows(dogs []Dog) []table.Row {
 		rows[i] = table.Row{
 			ID: d.Breed,
 			Cells: map[string]table.Cell{
-				"breed":       {Text: d.Breed},
+				"breed":       {Component: table.ImageCell(d.Image, d.Breed, "")},
 				"group":       {Text: d.Group},
 				"origin":      {Text: d.Origin},
 				"size":        {Text: d.Size},
@@ -148,6 +154,12 @@ func appMux() *http.ServeMux {
 
 	// Serve embedded Goshtoso assets (CSS with themes, Alpine.js, HTMX, fonts)
 	mux.Handle("/assets/", assets.Handler())
+
+	dogImages, err := fs.Sub(dogImageFiles, "assets/dogs")
+	if err != nil {
+		panic(err)
+	}
+	mux.Handle("/dog-images/", http.StripPrefix("/dog-images/", http.FileServer(http.FS(dogImages))))
 
 	// Main page — renders the full table with filters, sorting, and pagination
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
