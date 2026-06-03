@@ -76,7 +76,7 @@ func verifyBytes(module string, d dep, body []byte) error {
 	return nil
 }
 
-// pruneStale removes assets/js/vendor/<module>/<otherVersion> dirs that are not
+// pruneStale removes assets/js/runtime/<module>/<otherVersion> dirs that are not
 // the pinned version, so only the current version ships.
 func pruneStale(module, keep string) error {
 	dir := filepath.Join(vendorRoot, module)

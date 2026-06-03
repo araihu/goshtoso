@@ -50,12 +50,12 @@ func TestVendorVersions(t *testing.T) {
 
 func TestVendorFilesEmbedded(t *testing.T) {
 	for _, p := range []string{
-		"js/vendor/alpinejs/3.14.9/alpine.min.js",
-		"js/vendor/alpinejs-collapse/3.14.9/alpine-collapse.min.js",
-		"js/vendor/alpinejs-focus/3.14.9/alpine-focus.min.js",
-		"js/vendor/htmx.org/2.0.8/htmx.min.js",
-		"js/vendor/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js",
-		"js/vendor/htmx-ext-ws/2.0.3/htmx-ext-ws.js",
+		"js/runtime/alpinejs/3.14.9/alpine.min.js",
+		"js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js",
+		"js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js",
+		"js/runtime/htmx.org/2.0.8/htmx.min.js",
+		"js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js",
+		"js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js",
 	} {
 		if _, err := files.ReadFile(p); err != nil {
 			t.Errorf("embedded file missing: %s: %v", p, err)
