@@ -38,6 +38,18 @@ const (
 	ShapeSquare Shape = "square" // Rounded corners
 )
 
+// Radius represents square-avatar corner radius variants.
+type Radius string
+
+const (
+	RadiusDefault Radius = ""     // Default square radius
+	RadiusNone    Radius = "none" // No radius
+	RadiusXS      Radius = "xs"   // Extra small radius
+	RadiusSM      Radius = "sm"   // Small radius
+	RadiusMD      Radius = "md"   // Medium radius
+	RadiusLG      Radius = "lg"   // Large radius
+)
+
 // Status represents online/offline status indicator
 type Status string
 
@@ -76,6 +88,8 @@ type Config struct {
 	Variant Variant
 	// Shape of the avatar (circle or square)
 	Shape Shape
+	// Radius controls the corner radius for square avatars.
+	Radius Radius
 	// Border adds a colored border (for image avatars)
 	Border bool
 	// BorderColor is the border color (defaults to variant color if empty)
@@ -108,6 +122,21 @@ type Config struct {
 	//     get avatarSizeClass() { return this.sizeMap[this.selected]; },
 	//     get avatarStatusSizeClass() { return this.statusSizeMap[this.selected]; },
 	//   }"
+	Reactive bool
+	// ReactiveRadius defers square-avatar radius classes to the parent Alpine
+	// scope via `avatarRadiusClass`. Use with ShapeSquare for live radius demos.
+	ReactiveRadius bool
+}
+
+// StackConfig holds configuration for a stacked avatar group.
+type StackConfig struct {
+	// Items are rendered as overlapping avatars from left to right.
+	Items []Config
+	// Label describes the group for assistive technology.
+	Label string
+	// Class allows additional CSS classes on the stack root.
+	Class string
+	// Reactive defers each avatar's size classes to the parent Alpine scope.
 	Reactive bool
 }
 
@@ -146,9 +175,25 @@ func (cfg Config) SizeClasses() string {
 func (cfg Config) ShapeClasses() string {
 	switch cfg.Shape {
 	case ShapeSquare:
-		return "rounded-md"
+		return cfg.RadiusClasses()
 	default:
 		return "rounded-full"
+	}
+}
+
+// RadiusClasses returns the CSS classes for square avatar radius.
+func (cfg Config) RadiusClasses() string {
+	switch cfg.Radius {
+	case RadiusNone:
+		return "rounded-none"
+	case RadiusXS:
+		return "rounded-xs"
+	case RadiusSM:
+		return "rounded-sm"
+	case RadiusLG:
+		return "rounded-lg"
+	default:
+		return "rounded-md"
 	}
 }
 
@@ -171,6 +216,28 @@ func (cfg Config) VariantClasses() string {
 		return "border border-danger bg-danger text-on-danger/80"
 	default:
 		return "border border-outline bg-surface-alt text-on-surface/80 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark/80"
+	}
+}
+
+// VariantFillClasses returns variant classes without border color.
+func (cfg Config) VariantFillClasses() string {
+	switch cfg.Variant {
+	case Inverse:
+		return "bg-surface-dark-alt text-on-surface-dark/80 dark:bg-surface-alt dark:text-on-surface/80"
+	case Primary:
+		return "bg-primary text-on-primary/80 dark:bg-primary-dark dark:text-on-primary-dark/80"
+	case Secondary:
+		return "bg-secondary text-on-secondary/80 dark:bg-secondary-dark dark:text-on-secondary-dark/80"
+	case Info:
+		return "bg-info text-on-info/80"
+	case Success:
+		return "bg-success text-on-success/80"
+	case Warning:
+		return "bg-warning text-on-warning/80"
+	case Danger:
+		return "bg-danger text-on-danger/80"
+	default:
+		return "bg-surface-alt text-on-surface/80 dark:bg-surface-dark-alt dark:text-on-surface-dark/80"
 	}
 }
 

@@ -260,6 +260,59 @@ func TestAvatar_SizeSelector_DrivesReactiveAvatars(t *testing.T) {
 	assert.Equal(t, "xs", txt)
 }
 
+// TestAvatar_RadiusSelector_DrivesSquareAvatar verifies the PenguinUI-style
+// square avatar radius selector updates the reactive square preview.
+func TestAvatar_RadiusSelector_DrivesSquareAvatar(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	navigateToAvatarDemo(t, page)
+
+	require.NoError(t, page.Locator("label[for='avatar-radius-none']").Click())
+	_, err := page.WaitForFunction(
+		`() => {
+			const root = document.querySelector("[data-testid='avatar-section-square'] .relative.inline-flex");
+			return root && (root.getAttribute('class') || '').includes('rounded-none');
+		}`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)},
+	)
+	require.NoError(t, err, "after clicking none, square avatar root should carry rounded-none")
+
+	require.NoError(t, page.Locator("label[for='avatar-radius-lg']").Click())
+	_, err = page.WaitForFunction(
+		`() => {
+			const root = document.querySelector("[data-testid='avatar-section-square'] .relative.inline-flex");
+			return root && (root.getAttribute('class') || '').includes('rounded-lg');
+		}`,
+		nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)},
+	)
+	require.NoError(t, err, "after clicking lg, square avatar root should carry rounded-lg")
+}
+
+func TestAvatar_StackedAvatars_RenderOverlappedGroup(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	navigateToAvatarDemo(t, page)
+
+	stack := page.Locator("[data-testid='avatar-section-stacked'] [role='list']")
+	require.NoError(t, stack.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateAttached,
+		Timeout: playwright.Float(3000),
+	}))
+
+	label, err := stack.GetAttribute("aria-label")
+	require.NoError(t, err)
+	assert.Equal(t, "Team members", label)
+
+	count, err := stack.Locator("[role='listitem']").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 4, count)
+
+	cls, err := stack.Locator("[role='listitem']").Nth(1).Locator(".relative.inline-flex").GetAttribute("class")
+	require.NoError(t, err)
+	assert.Contains(t, cls, "-ml-3")
+	assert.Contains(t, cls, "ring-2")
+}
+
 // TestAvatar_SizeSelector_FixturesUnchanged verifies that the E2E test fixtures
 // section stays at fixed SizeMD even when the selector changes.
 func TestAvatar_SizeSelector_FixturesUnchanged(t *testing.T) {

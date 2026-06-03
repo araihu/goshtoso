@@ -59,6 +59,9 @@ type ComponentDemoProps struct {
 type DemoSectionProps struct {
 	Title       string
 	Description string
+	// AbovePreview is an optional slot rendered between the section copy and
+	// the macOS-frame preview.
+	AbovePreview templ.Component
 }
 
 func ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeExample string) templ.Component {
@@ -89,7 +92,7 @@ func ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeEx
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(slugify(props.Title))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 60, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 63, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -102,7 +105,7 @@ func ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeEx
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 60, Col: 120}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 63, Col: 120}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -115,7 +118,7 @@ func ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeEx
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 62, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 65, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -205,7 +208,7 @@ func APIReference(props []PropDoc) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 121, Col: 134}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 124, Col: 134}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -218,7 +221,7 @@ func APIReference(props []PropDoc) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.Type)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 122, Col: 126}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 125, Col: 126}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -231,7 +234,7 @@ func APIReference(props []PropDoc) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(p.Default)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 123, Col: 129}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 126, Col: 129}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -244,7 +247,7 @@ func APIReference(props []PropDoc) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(p.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 124, Col: 89}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 127, Col: 89}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -294,7 +297,7 @@ func DemoSection(props DemoSectionProps, preview templ.Component, code string) t
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(slugify(props.Title))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 138, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 141, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -307,7 +310,7 @@ func DemoSection(props DemoSectionProps, preview templ.Component, code string) t
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 138, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 141, Col: 122}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -325,13 +328,19 @@ func DemoSection(props DemoSectionProps, preview templ.Component, code string) t
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(props.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 140, Col: 100}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/component_demo.templ`, Line: 143, Col: 99}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if props.AbovePreview != nil {
+			templ_7745c5c3_Err = props.AbovePreview.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
