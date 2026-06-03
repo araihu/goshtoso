@@ -1,6 +1,8 @@
 package table
 
 import (
+	"bytes"
+	"context"
 	"strings"
 	"testing"
 )
@@ -153,5 +155,29 @@ func TestFilterScriptData_PreservesExtraQueryParams(t *testing.T) {
 	out := filterScriptData(cfg)
 	if !strings.Contains(out, "?_filter=1&addon_name=argo-cd") {
 		t.Fatalf("filterScriptData lost ExtraQueryParams in filter URL; got:\n%s", out)
+	}
+}
+
+func TestFilterBar_NonCollapsibleBodyHasTopPadding(t *testing.T) {
+	cfg := Config{
+		ID:           "ticker-table",
+		HTMXEndpoint: "/api/examples/ticker/rows",
+		Columns:      []Column{{Key: "symbol", Label: "Symbol"}},
+		Rows:         []Row{{ID: "AAPL", Cells: map[string]Cell{"symbol": {Text: "AAPL"}}}},
+		Filters: &FilterConfig{
+			Filters: []Filter{{Key: "search", Label: "Filter", Type: FilterSearch}},
+		},
+	}
+
+	var buf bytes.Buffer
+	if err := Table(cfg).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("render table: %v", err)
+	}
+	out := buf.String()
+	if strings.Contains(out, `class="px-4 pb-4" class="px-4 py-4"`) {
+		t.Fatalf("non-collapsible filter body rendered duplicate classes without top padding:\n%s", out)
+	}
+	if !strings.Contains(out, `x-collapse class="px-4 py-4"`) {
+		t.Fatalf("non-collapsible filter body missing top padding class; got:\n%s", out)
 	}
 }

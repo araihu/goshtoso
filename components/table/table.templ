@@ -120,6 +120,13 @@ func showTraditionalPagination(cfg Config) bool {
 	return cfg.Pagination != nil && !cfg.Pagination.IsInfiniteScroll()
 }
 
+func filterBarBodyClasses(cfg Config) string {
+	if cfg.Filters.Collapsible {
+		return "px-4 pb-4"
+	}
+	return "px-4 py-4"
+}
+
 // filterBar renders the filter controls above the table. Two variants:
 //
 //   - FilterVariantBar (default) — bordered block, optional collapsible
@@ -156,10 +163,7 @@ templ filterBar(cfg Config) {
 			<div
 				x-show="filtersExpanded"
 				x-collapse
-				class="px-4 pb-4"
-				if !cfg.Filters.Collapsible {
-					class="px-4 py-4"
-				}
+				class={ filterBarBodyClasses(cfg) }
 			>
 				<div class="flex flex-wrap items-end gap-4">
 					for _, filter := range cfg.Filters.Filters {
