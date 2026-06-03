@@ -88,7 +88,7 @@ templ cookieBanner(cfg Config) {
 		x-data="{ show: true }"
 		x-show="show"
 		x-cloak
-		class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius"
+		class={ cfg.CookieContainerClasses() }
 		role="dialog"
 		aria-label="Cookie consent"
 	>

@@ -135,6 +135,7 @@ func bannerDemoContent() templ.Component {
 			bannerCookiePreview(),
 			`@banner.Banner(banner.Config{
     CookieBanner: true,
+    Position:     banner.PositionRelative,
     Text:         "We use cookies to improve your experience.",
     CookieConfig: &banner.CookieBannerConfig{
         Title:        "Cookie Settings",
@@ -375,12 +376,13 @@ func bannerCookiePreview() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"banner-cookie\" class=\"w-full max-w-2xl mx-auto\"><div class=\"relative h-48 overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"absolute inset-0 bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"banner-cookie\" class=\"w-full max-w-2xl mx-auto\"><div class=\"relative h-80 overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"absolute inset-0 bg-surface dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
 			CookieBanner: true,
+			Position:     banner.PositionRelative,
 			Text:         "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
 			CookieConfig: &banner.CookieBannerConfig{
 				Title:        "Cookie Time!",
