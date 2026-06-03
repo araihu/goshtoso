@@ -79,8 +79,8 @@ func defaultModal(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		titleID := fmt.Sprintf("%sTitle", cfg.ID)
-		stateVar := fmt.Sprintf("%sIsOpen", cfg.ID)
+		titleID := cfg.TitleID()
+		stateVar := cfg.StateVar()
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -368,8 +368,8 @@ func alertModal(cfg Config) templ.Component {
 			templ_7745c5c3_Var22 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		titleID := fmt.Sprintf("%sTitle", cfg.ID)
-		stateVar := fmt.Sprintf("%sIsOpen", cfg.ID)
+		titleID := cfg.TitleID()
+		stateVar := cfg.StateVar()
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
