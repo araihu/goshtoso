@@ -188,14 +188,20 @@ func textInputDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Pattern Validation",
-				Description: "Pattern sets the HTML pattern attribute for native regex validation on submit.",
+				Description: "Pattern sets the HTML pattern attribute; pair it with input events when you want live native-validity feedback.",
 			},
 			textInputPatternPreview(),
 			`@textinput.TextInput(textinput.Config{
     ID: "cluster", Name: "cluster_id", Label: "Cluster ID",
     Placeholder: "tabc123",
     Pattern:     "t[a-z0-9]{6}",
-    HelperText:  "Must match: t[a-z0-9]{6}",
+    Attrs: templ.Attributes{
+        "x-on:input": "touched = true; valid = $event.target.checkValidity()",
+        "x-on:blur":  "touched = true; valid = $event.target.checkValidity()",
+        "x-bind:class": "touched ? (valid ? 'border-success' : 'border-danger') : ''",
+        "x-bind:aria-invalid": "touched && !valid ? 'true' : 'false'",
+        "aria-describedby": "patternInput-feedback",
+    },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -585,7 +591,7 @@ func textInputPatternPreview() templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"textinput-pattern\" class=\"w-full max-w-sm mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"textinput-pattern\" class=\"w-full max-w-sm mx-auto\" x-data=\"{ touched: false, valid: false, message() { if (!this.touched) return 'Try tabc123'; return this.valid ? 'Looks good' : 'Needs a leading t plus 6 lowercase letters or numbers'; } }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -595,12 +601,18 @@ func textInputPatternPreview() templ.Component {
 			Label:       "Cluster ID",
 			Placeholder: "tabc123",
 			Pattern:     "t[a-z0-9]{6}",
-			HelperText:  "Must match: t[a-z0-9]{6}",
+			Attrs: templ.Attributes{
+				"x-on:input":          "touched = true; valid = $event.target.checkValidity()",
+				"x-on:blur":           "touched = true; valid = $event.target.checkValidity()",
+				"x-bind:class":        "touched ? (valid ? 'border-success' : 'border-danger') : ''",
+				"x-bind:aria-invalid": "touched && !valid ? 'true' : 'false'",
+				"aria-describedby":    "patternInput-feedback",
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<small id=\"patternInput-feedback\" class=\"mt-1 block pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60\" x-text=\"message()\" x-bind:class=\"touched ? (valid ? 'text-success' : 'text-danger') : 'text-on-surface/60 dark:text-on-surface-dark/60'\" aria-live=\"polite\"></small></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
