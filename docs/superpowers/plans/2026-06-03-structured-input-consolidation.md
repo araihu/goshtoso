@@ -115,10 +115,21 @@ func TestNewRowLiteralUsesColumnDefaults(t *testing.T) {
 
 	row := cfg.NewRowLiteral()
 
-	for _, want := range []string{"key: ''", "effect: 'NoSchedule'", "priority: 'high'"} {
+	for _, want := range []string{"'key': ''", "'effect': 'NoSchedule'", "'priority': 'high'"} {
 		if !strings.Contains(row, want) {
 			t.Fatalf("NewRowLiteral() = %s, missing %s", row, want)
 		}
+	}
+}
+
+func TestColumnAccessorsUseBracketNotation(t *testing.T) {
+	col := Column{Key: "app.kubernetes.io/name"}
+
+	if got := col.EntryAccessor(); got != "entry['app.kubernetes.io/name']" {
+		t.Fatalf("EntryAccessor() = %s, want bracket notation", got)
+	}
+	if got := col.NameBinding(); got != "name + '[' + index + '][app.kubernetes.io/name]'" {
+		t.Fatalf("NameBinding() = %s, want structured input name binding", got)
 	}
 }
 ```
@@ -242,9 +253,19 @@ func (c Config) AlpineData() string {
 func (c Config) NewRowLiteral() string {
 	parts := make([]string, 0, len(c.NormalizedColumns()))
 	for _, col := range c.NormalizedColumns() {
-		parts = append(parts, col.Key+": '"+jsEscapeSingle(col.DefaultValue())+"'")
+		parts = append(parts, "'"+jsEscapeSingle(col.Key)+"': '"+jsEscapeSingle(col.DefaultValue())+"'")
 	}
 	return "{ " + strings.Join(parts, ", ") + " }"
+}
+
+// EntryAccessor returns a JavaScript expression for this column's entry value.
+func (c Column) EntryAccessor() string {
+	return "entry['" + jsEscapeSingle(c.Key) + "']"
+}
+
+// NameBinding returns a JavaScript expression for this column's hidden input name.
+func (c Column) NameBinding() string {
+	return "name + '[' + index + '][" + jsEscapeSingle(c.Key) + "]'"
 }
 
 func columnsLiteral(cols []Column) string {
@@ -266,7 +287,7 @@ func entriesLiteral(entries []Entry, cols []Column) string {
 	for _, entry := range entries {
 		values := make([]string, 0, len(cols))
 		for _, col := range cols {
-			values = append(values, col.Key+": '"+jsEscapeSingle(entry[col.Key])+"'")
+			values = append(values, "'"+jsEscapeSingle(col.Key)+"': '"+jsEscapeSingle(entry[col.Key])+"'")
 		}
 		items = append(items, "{ "+strings.Join(values, ", ")+" }")
 	}
@@ -349,8 +370,8 @@ func TestStructuredInputRendersHiddenStructuredNames(t *testing.T) {
 		`id="labelsDemo"`,
 		`x-bind:name="name + '[' + index + '][key]'"`,
 		`x-bind:name="name + '[' + index + '][value]'"`,
-		`x-bind:value="entry.key"`,
-		`x-bind:value="entry.value"`,
+		`x-bind:value="entry['key']"`,
+		`x-bind:value="entry['value']"`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("rendered HTML missing %s:\n%s", want, html)
@@ -374,7 +395,7 @@ func TestStructuredInputRendersSelectColumn(t *testing.T) {
 	}
 
 	html := buf.String()
-	for _, want := range []string{`<select`, `x-model="entry.effect"`, `<option value="NoSchedule">NoSchedule</option>`} {
+	for _, want := range []string{`<select`, `x-model="entry['effect']"`, `<option value="NoSchedule">NoSchedule</option>`} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("rendered HTML missing %s:\n%s", want, html)
 		}
@@ -409,8 +430,6 @@ Create `components/structuredinput/structuredinput.templ`:
 ```go
 package structuredinput
 
-import "fmt"
-
 // StructuredInput renders repeatable structured form rows powered by Alpine.js.
 //
 // Submitted hidden inputs use name[index][columnKey]=value.
@@ -433,8 +452,8 @@ templ StructuredInput(cfg Config) {
 					}
 					<input
 						type="hidden"
-						x-bind:name={ fmt.Sprintf("name + '[' + index + '][%s]'", col.Key) }
-						x-bind:value={ fmt.Sprintf("entry.%s", col.Key) }
+						x-bind:name={ col.NameBinding() }
+						x-bind:value={ col.EntryAccessor() }
 					/>
 				}
 				if !cfg.Disabled {
@@ -465,7 +484,7 @@ templ StructuredInput(cfg Config) {
 templ textColumn(col Column, disabled bool) {
 	<input
 		type="text"
-		x-model={ "entry." + col.Key }
+		x-model={ col.EntryAccessor() }
 		placeholder={ col.Placeholder }
 		aria-label={ col.Label }
 		class="flex-1 min-w-24 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt/50 text-on-surface dark:text-on-surface-dark placeholder:text-on-surface-muted dark:placeholder:text-on-surface-dark-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
@@ -478,7 +497,7 @@ templ textColumn(col Column, disabled bool) {
 templ selectColumn(col Column, disabled bool) {
 	<div class="relative shrink-0">
 		<select
-			x-model={ "entry." + col.Key }
+			x-model={ col.EntryAccessor() }
 			aria-label={ col.Label }
 			class="appearance-none min-w-32 px-3 py-2 pr-9 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt/50 text-on-surface dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
 			if disabled {
