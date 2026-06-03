@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestComboboxV2_ClientMode_NoHTTPOnToggle(t *testing.T) {
+func TestCombobox_ClientMode_NoHTTPOnToggle(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -83,7 +83,7 @@ func TestComboboxV2_ClientMode_NoHTTPOnToggle(t *testing.T) {
 	assert.False(t, visible, "single-select dropdown should close after selection")
 }
 
-func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
+func TestCombobox_ClientMode_MultiToggleAndClear(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -120,7 +120,7 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 	require.NoError(t, trigger.Click())
 	time.Sleep(300 * time.Millisecond)
 
-	// Toggle two options.
+	// Toggle two options by row click, then one by clicking directly on the visible checkbox square.
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())
 	time.Sleep(100 * time.Millisecond)
 
@@ -130,29 +130,39 @@ func TestComboboxV2_ClientMode_MultiToggleAndClear(t *testing.T) {
 
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="rust"]`).First().Click())
 	time.Sleep(100 * time.Millisecond)
+	kotlinCheckbox := page.Locator(`#skills [data-combobox-option][data-value="kt"] input[type=checkbox]`).First()
+	kotlinBox, err := kotlinCheckbox.BoundingBox()
+	require.NoError(t, err)
+	require.NotNil(t, kotlinBox)
+	require.NoError(t, page.Mouse().Click(kotlinBox.X+kotlinBox.Width/2, kotlinBox.Y+kotlinBox.Height/2))
+	time.Sleep(100 * time.Millisecond)
 
-	// Trigger label shows "2 selected".
+	// Trigger label shows "3 selected".
 	label, err := page.Locator(`#skills-trigger-label`).TextContent()
 	require.NoError(t, err)
-	assert.Equal(t, "2 selected", label)
+	assert.Equal(t, "3 selected", label)
 
-	// Two hidden inputs present.
+	// Three hidden inputs present.
 	hiddenCount, err := page.Locator(`#skills input[type=hidden][name="skills"]`).Count()
 	require.NoError(t, err)
-	assert.Equal(t, 2, hiddenCount)
+	assert.Equal(t, 3, hiddenCount)
+
+	kotlinChecked, err := kotlinCheckbox.IsChecked()
+	require.NoError(t, err)
+	assert.True(t, kotlinChecked, "direct checkbox click should keep selected option visually checked")
 
 	// Deselect "go" by clicking it again (toggle off).
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())
 	time.Sleep(100 * time.Millisecond)
 
-	// Label back to single-option label; one hidden input remains.
+	// Label still shows multiple selections; two hidden inputs remain.
 	label, err = page.Locator(`#skills-trigger-label`).TextContent()
 	require.NoError(t, err)
-	assert.Equal(t, "Rust", label)
+	assert.Equal(t, "2 selected", label)
 
 	hiddenCount, err = page.Locator(`#skills input[type=hidden][name="skills"]`).Count()
 	require.NoError(t, err)
-	assert.Equal(t, 1, hiddenCount)
+	assert.Equal(t, 2, hiddenCount)
 
 	// Re-select "go" so we have 2 selected again, then use clear-all.
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())

@@ -16,7 +16,7 @@ var clientJS string
 // updates.
 //
 // The listener itself (emitted by ClientScript) is safe to render repeatedly —
-// a module-init guard (window.__goshtosoComboboxV2Init) prevents double-binding.
+// a module-init guard (window.__goshtosoComboboxInit) prevents double-binding.
 // ClientScript is emitted automatically by Combobox when cfg.IsClientMode() is
 // true; consumers rarely need to call it directly.
 const ClientEvent = "combobox:change"

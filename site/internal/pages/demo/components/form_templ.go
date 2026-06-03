@@ -244,10 +244,7 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
 })
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "provider", Label: "Provider",
-    Combobox: &gocombobox.Config{
-        ID: "provider", Name: "provider",
-        Source: gocombobox.Source{Static: opts},
-    },
+    Combobox: &gocombobox.Config{ID: "provider", Name: "provider", Source: gocombobox.Source{Static: opts}},
 })
 
 // Custom component — use { children... } for anything not built-in

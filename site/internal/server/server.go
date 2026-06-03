@@ -99,7 +99,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/radio/echo", s.handleRadioEcho)
 	s.registerGettingStartedRoutes()
 
-	// HTMX SSR combobox (v2) — users demo runs server-mode lazy search.
+	// Combobox users demo runs server-mode lazy search.
 	usersHandler := combobox.Handler(components.UsersCfg, usersProvider)
 	s.mux.Handle("/api/components/combobox/users/options", usersHandler)
 	s.mux.Handle("/api/components/combobox/users/toggle", usersHandler)

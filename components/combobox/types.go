@@ -53,11 +53,6 @@ type Config struct {
 	Disabled        bool
 }
 
-// InitialState returns the first-paint state for static/client-mode comboboxes.
-func (c Config) InitialState() State {
-	return State{Options: c.Source.Static, Selected: c.Selected}
-}
-
 // State is the per-request render state.
 type State struct {
 	Options  []Option
@@ -108,6 +103,11 @@ func (c Config) Validate() error {
 		}
 	}
 	return nil
+}
+
+// InitialState returns the first render state for static/client-mode comboboxes.
+func (c Config) InitialState() State {
+	return State{Options: c.Source.Static, Selected: c.Selected}
 }
 
 // IsSelected reports whether value is in the selected set.
