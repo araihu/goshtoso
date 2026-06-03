@@ -35,14 +35,14 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data=\"{\n\t\ttheme: localStorage.getItem('theme') || 'goshtoso',\n\t\tsidebarOpen: false,\n\t\tshowThemeDropdown: false,\n\t\tsetTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }\n\t}\" x-init=\"\n\t\t$watch('theme', value => {\n\t\t\tlocalStorage.setItem('theme', value);\n\t\t\tdocument.documentElement.setAttribute('data-theme', value);\n\t\t});\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data=\"{\n\t\ttheme: (window.goshtosoStorageConsent && !window.goshtosoStorageConsent.allowed()) ? 'goshtoso' : (localStorage.getItem('theme') || 'goshtoso'),\n\t\tsidebarOpen: false,\n\t\tshowThemeDropdown: false,\n\t\tsetTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }\n\t}\" x-init=\"\n\t\t$watch('theme', value => {\n\t\t\tif (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) {\n\t\t\t\tlocalStorage.setItem('theme', value);\n\t\t\t} else {\n\t\t\t\tlocalStorage.removeItem('theme');\n\t\t\t}\n\t\t\tdocument.documentElement.setAttribute('data-theme', value);\n\t\t});\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 26, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 30, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -52,7 +52,11 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.Raw(`<script>(function(){try{var t=localStorage.getItem('theme')||'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('darkMode');var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = storageConsentScript().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!c||c.allowed();var t=canStore?(localStorage.getItem('theme')||'goshtoso'):'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,7 +67,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineFocusURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 38, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 43, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -76,7 +80,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineCollapseURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 39, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 44, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -89,7 +93,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineJSURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 40, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 45, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -102,7 +106,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 41, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 46, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -115,7 +119,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXExtWSURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 42, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 47, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -128,7 +132,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXExtSSEURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 43, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 48, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -146,7 +150,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 157, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 162, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 			if templ_7745c5c3_Err != nil {
@@ -159,7 +163,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 162, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 167, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -221,7 +225,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></main><!-- Right rail: \"On this page\" section nav, built from [data-toc-heading]. --><aside id=\"toc-rail\" data-boot-anim=\"main\" class=\"hidden xl:block w-60 shrink-0 overflow-y-auto border-l border-outline dark:border-outline-dark\"><div class=\"sticky top-0 px-6 py-8\"><p class=\"mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">On this page</p><nav id=\"toc-list\" aria-label=\"On this page\" class=\"flex flex-col border-l border-outline dark:border-outline-dark\"></nav></div></aside></div><!-- Cookie Consent — functional-cookie notice. Shows until the visitor\n\t\t\t     acknowledges the CURRENT version ('v1'); any prior/legacy stored value\n\t\t\t     re-shows the updated copy. Bump 'v1' here AND in landing.templ's\n\t\t\t     cookieConsent() in lock-step whenever the copy materially changes. --><div x-data=\"{ show: localStorage.getItem('cookieConsent') !== 'v1' }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-sm flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><span class=\"text-2xl\" aria-hidden=\"true\">🍪</span><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional cookies</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso stores a few <strong>functional</strong> values in your browser — your theme preference and the example apps' own state (e.g. the Todo demo). They are strictly necessary to make those features work; there is no tracking, no analytics, and no third&#8209;party cookies. Clearing your browser storage resets them. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex justify-end gap-2 px-4 pb-4\"><button @click=\"localStorage.setItem('cookieConsent', 'v1'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div><!-- Right-rail \"On this page\" TOC: built from #main-content [data-toc-heading].\n\t\t\t     Rebuilt on every main-content HTMX swap via window.buildTOC (see head script). --><script>\n\t\t\t\t(function () {\n\t\t\t\t\tvar spy = null;\n\t\t\t\t\tfunction clearActive(nav) {\n\t\t\t\t\t\tnav.querySelectorAll('[data-toc-link]').forEach(function (a) {\n\t\t\t\t\t\t\ta.classList.remove('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t\t\ta.classList.add('border-transparent');\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t\tfunction setActive(nav, id) {\n\t\t\t\t\t\tvar a = nav.querySelector('[data-toc-link=\"' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '\"]');\n\t\t\t\t\t\tif (!a) return;\n\t\t\t\t\t\tclearActive(nav);\n\t\t\t\t\t\ta.classList.remove('border-transparent');\n\t\t\t\t\t\ta.classList.add('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t}\n\t\t\t\t\twindow.buildTOC = function () {\n\t\t\t\t\t\tvar rail = document.getElementById('toc-rail');\n\t\t\t\t\t\tvar nav = document.getElementById('toc-list');\n\t\t\t\t\t\tvar main = document.getElementById('main-content');\n\t\t\t\t\t\tif (!rail || !nav || !main) return;\n\t\t\t\t\t\tif (spy) { spy.disconnect(); spy = null; }\n\t\t\t\t\t\tvar heads = Array.prototype.slice.call(main.querySelectorAll('[data-toc-heading]'));\n\t\t\t\t\t\tnav.innerHTML = '';\n\t\t\t\t\t\t// One heading (just the page title) isn't worth a rail — hide it.\n\t\t\t\t\t\tif (heads.length < 2) { rail.style.display = 'none'; return; }\n\t\t\t\t\t\trail.style.display = '';\n\t\t\t\t\t\theads.forEach(function (h) {\n\t\t\t\t\t\t\tif (!h.id) return;\n\t\t\t\t\t\t\tvar a = document.createElement('a');\n\t\t\t\t\t\t\ta.href = '#' + h.id;\n\t\t\t\t\t\t\ta.textContent = (h.textContent || '').trim();\n\t\t\t\t\t\t\ta.setAttribute('data-toc-link', h.id);\n\t\t\t\t\t\t\ta.className = 'block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong';\n\t\t\t\t\t\t\ta.addEventListener('click', function (ev) {\n\t\t\t\t\t\t\t\tev.preventDefault();\n\t\t\t\t\t\t\t\th.scrollIntoView({ behavior: 'smooth', block: 'start' });\n\t\t\t\t\t\t\t\thistory.replaceState(null, '', '#' + h.id);\n\t\t\t\t\t\t\t\tsetActive(nav, h.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\tnav.appendChild(a);\n\t\t\t\t\t\t});\n\t\t\t\t\t\t// Scroll-spy: main is the scroll container, so it's the observer root.\n\t\t\t\t\t\tspy = new IntersectionObserver(function (entries) {\n\t\t\t\t\t\t\tentries.forEach(function (en) {\n\t\t\t\t\t\t\t\tif (en.isIntersecting) setActive(nav, en.target.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}, { root: main, rootMargin: '0px 0px -75% 0px', threshold: 0 });\n\t\t\t\t\t\theads.forEach(function (h) { if (h.id) spy.observe(h); });\n\t\t\t\t\t\tsetActive(nav, heads[0].id);\n\t\t\t\t\t};\n\t\t\t\t\tif (document.readyState === 'loading') {\n\t\t\t\t\t\tdocument.addEventListener('DOMContentLoaded', window.buildTOC);\n\t\t\t\t\t} else {\n\t\t\t\t\t\twindow.buildTOC();\n\t\t\t\t\t}\n\t\t\t\t})();\n\t\t\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></main><!-- Right rail: \"On this page\" section nav, built from [data-toc-heading]. --><aside id=\"toc-rail\" data-boot-anim=\"main\" class=\"hidden xl:block w-60 shrink-0 overflow-y-auto border-l border-outline dark:border-outline-dark\"><div class=\"sticky top-0 px-6 py-8\"><p class=\"mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">On this page</p><nav id=\"toc-list\" aria-label=\"On this page\" class=\"flex flex-col border-l border-outline dark:border-outline-dark\"></nav></div></aside></div><!-- Browser storage notice. Shows until the visitor chooses allowed or denied\n\t\t\t     storage via the gt_storage preference cookie. Keep in lock-step with\n\t\t\t     landing.templ's cookieConsent(). --><div x-data=\"{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div><!-- Right-rail \"On this page\" TOC: built from #main-content [data-toc-heading].\n\t\t\t     Rebuilt on every main-content HTMX swap via window.buildTOC (see head script). --><script>\n\t\t\t\t(function () {\n\t\t\t\t\tvar spy = null;\n\t\t\t\t\tfunction clearActive(nav) {\n\t\t\t\t\t\tnav.querySelectorAll('[data-toc-link]').forEach(function (a) {\n\t\t\t\t\t\t\ta.classList.remove('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t\t\ta.classList.add('border-transparent');\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t\tfunction setActive(nav, id) {\n\t\t\t\t\t\tvar a = nav.querySelector('[data-toc-link=\"' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '\"]');\n\t\t\t\t\t\tif (!a) return;\n\t\t\t\t\t\tclearActive(nav);\n\t\t\t\t\t\ta.classList.remove('border-transparent');\n\t\t\t\t\t\ta.classList.add('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');\n\t\t\t\t\t}\n\t\t\t\t\twindow.buildTOC = function () {\n\t\t\t\t\t\tvar rail = document.getElementById('toc-rail');\n\t\t\t\t\t\tvar nav = document.getElementById('toc-list');\n\t\t\t\t\t\tvar main = document.getElementById('main-content');\n\t\t\t\t\t\tif (!rail || !nav || !main) return;\n\t\t\t\t\t\tif (spy) { spy.disconnect(); spy = null; }\n\t\t\t\t\t\tvar heads = Array.prototype.slice.call(main.querySelectorAll('[data-toc-heading]'));\n\t\t\t\t\t\tnav.innerHTML = '';\n\t\t\t\t\t\t// One heading (just the page title) isn't worth a rail — hide it.\n\t\t\t\t\t\tif (heads.length < 2) { rail.style.display = 'none'; return; }\n\t\t\t\t\t\trail.style.display = '';\n\t\t\t\t\t\theads.forEach(function (h) {\n\t\t\t\t\t\t\tif (!h.id) return;\n\t\t\t\t\t\t\tvar a = document.createElement('a');\n\t\t\t\t\t\t\ta.href = '#' + h.id;\n\t\t\t\t\t\t\ta.textContent = (h.textContent || '').trim();\n\t\t\t\t\t\t\ta.setAttribute('data-toc-link', h.id);\n\t\t\t\t\t\t\ta.className = 'block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong';\n\t\t\t\t\t\t\ta.addEventListener('click', function (ev) {\n\t\t\t\t\t\t\t\tev.preventDefault();\n\t\t\t\t\t\t\t\th.scrollIntoView({ behavior: 'smooth', block: 'start' });\n\t\t\t\t\t\t\t\thistory.replaceState(null, '', '#' + h.id);\n\t\t\t\t\t\t\t\tsetActive(nav, h.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t\tnav.appendChild(a);\n\t\t\t\t\t\t});\n\t\t\t\t\t\t// Scroll-spy: main is the scroll container, so it's the observer root.\n\t\t\t\t\t\tspy = new IntersectionObserver(function (entries) {\n\t\t\t\t\t\t\tentries.forEach(function (en) {\n\t\t\t\t\t\t\t\tif (en.isIntersecting) setActive(nav, en.target.id);\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}, { root: main, rootMargin: '0px 0px -75% 0px', threshold: 0 });\n\t\t\t\t\t\theads.forEach(function (h) { if (h.id) spy.observe(h); });\n\t\t\t\t\t\tsetActive(nav, heads[0].id);\n\t\t\t\t\t};\n\t\t\t\t\tif (document.readyState === 'loading') {\n\t\t\t\t\t\tdocument.addEventListener('DOMContentLoaded', window.buildTOC);\n\t\t\t\t\t} else {\n\t\t\t\t\t\twindow.buildTOC();\n\t\t\t\t\t}\n\t\t\t\t})();\n\t\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -589,7 +593,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var19 templ.SafeURL
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 586, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 595, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -610,7 +614,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var20 string
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 593, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 602, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -635,7 +639,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var21 templ.SafeURL
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 601, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 610, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -656,7 +660,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 605, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 614, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -681,6 +685,35 @@ func componentNavFooter(activeComponent string) templ.Component {
 	})
 }
 
+func storageConsentScript() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var23 == nil {
+			templ_7745c5c3_Var23 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templ.Raw(`<script>(function(){if(window.goshtosoStorageConsent)return;var pref='gt_storage';var maxAge=15552000;var demoCookies=['gt_todo','gt_profile','gt_chat'];var localKeys=['theme','darkMode','themeOverrides','themeTitleFont','themeBodyFont','themeRadius','themeCssMode','themeCssFilter','cookieConsent'];function cookieValue(name){var parts=document.cookie?document.cookie.split('; '):[];for(var i=0;i<parts.length;i++){var p=parts[i];var eq=p.indexOf('=');var key=eq>=0?p.slice(0,eq):p;if(key===name)return eq>=0?decodeURIComponent(p.slice(eq+1)):'';}return '';}function setCookie(name,value,age){document.cookie=name+'='+encodeURIComponent(value)+'; Path=/; Max-Age='+age+'; SameSite=Lax';}function expireCookie(name){setCookie(name,'',0);}function clearLocalStorage(){try{localKeys.forEach(function(key){localStorage.removeItem(key);});}catch(e){}}function clearIndexedDB(){try{if(window.indexedDB&&indexedDB.deleteDatabase)indexedDB.deleteDatabase('gt_profile');}catch(e){}}window.goshtosoStorageConsent={shouldShow:function(){var v=cookieValue(pref);return v!=='allowed'&&v!=='denied';},allowed:function(){return cookieValue(pref)!=='denied';},allow:function(){setCookie(pref,'allowed',maxAge);try{localStorage.setItem('cookieConsent','v2');}catch(e){}},deny:function(){setCookie(pref,'denied',maxAge);demoCookies.forEach(expireCookie);clearLocalStorage();clearIndexedDB();}};if(cookieValue(pref)==='denied'){clearLocalStorage();clearIndexedDB();}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
 // siteFooter renders the global footer shown beneath every page's content
 // (inside #main-content, so it survives fragment-swap navigation). Mirrors
 // PenguinUI's footer: brand line, legal nav, and social links.
@@ -700,9 +733,9 @@ func siteFooter() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var23 == nil {
-			templ_7745c5c3_Var23 = templ.NopComponent
+		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var24 == nil {
+			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		privacyAttrs := navHxAttrs("/privacy", "")

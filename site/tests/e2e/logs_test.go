@@ -27,7 +27,7 @@ func gotoLogs(t *testing.T, page playwright.Page) {
 	t.Helper()
 	// Dismiss the first-run cookie banner so it can't intercept control clicks.
 	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{localStorage.setItem('cookieConsent','v1')}catch(e){}"),
+		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
 	}))
 	_, err := page.Goto(baseURL + "/examples/logs?interval=50ms")
 	require.NoError(t, err)
@@ -58,6 +58,7 @@ func TestLogFeed_StreamsRows(t *testing.T) {
 // page errors — the regression guard for Alpine.data registering on fragment-nav.
 func TestLogFeed_FragmentNavNoErrors(t *testing.T) {
 	page := newIsolatedPage(t)
+	dismissCookieBanner(t, page)
 
 	var jsErrors []string
 	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })

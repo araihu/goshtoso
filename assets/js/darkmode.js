@@ -1,10 +1,14 @@
 document.addEventListener('alpine:init', () => {
+    const storageAllowed = () => !window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed();
+
     Alpine.store('darkMode', {
         // Initialize from localStorage or browser preference
         on: (() => {
-            const saved = localStorage.getItem('darkMode');
-            if (saved !== null) {
-                return saved === 'true';
+            if (storageAllowed()) {
+                const saved = localStorage.getItem('darkMode');
+                if (saved !== null) {
+                    return saved === 'true';
+                }
             }
             // Default to browser preference
             return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -21,7 +25,11 @@ document.addEventListener('alpine:init', () => {
         
         toggle() {
             this.on = !this.on;
-            localStorage.setItem('darkMode', this.on);
+            if (storageAllowed()) {
+                localStorage.setItem('darkMode', this.on);
+            } else {
+                localStorage.removeItem('darkMode');
+            }
             
             if (this.on) {
                 document.documentElement.classList.add('dark');
