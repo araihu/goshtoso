@@ -1,4 +1,4 @@
-// Package assets provides embedded static files (CSS, JS, fonts) for Goshtoso components.
+// Package assets provides embedded static files (CSS, JS, images) for Goshtoso components.
 // Use Handler() to serve them at /assets/ in your HTTP server.
 //
 // Usage:
@@ -15,7 +15,6 @@
 //   - /assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js — Alpine focus plugin
 //   - vendored JS versions are pinned in js/runtime/versions.json (see AlpineVersion()/HTMXVersion())
 //   - /assets/js/darkmode.js — Alpine dark mode store
-//   - /assets/fonts/* — TOTVS brand font files
 //   - /assets/images/* — brand artwork (mascot, logos)
 package assets
 
@@ -26,11 +25,11 @@ import (
 	"strings"
 )
 
-//go:embed styles.css goshtoso-theme.css tailwind.version js fonts images
+//go:embed styles.css goshtoso-theme.css tailwind.version js images
 var files embed.FS
 
 // Handler returns an http.Handler that serves the embedded Goshtoso assets
-// (styles.css, js/, fonts/, images/) — the files head.Dependencies() links.
+// (styles.css, js/, images/) — the files head.Dependencies() links.
 //
 // Mount it at /assets/ WITHOUT wrapping it in your own StripPrefix — the
 // handler already strips the /assets/ prefix internally:

@@ -56,7 +56,7 @@
        precision. Replaces text-on-surface/40-70 opacity-as-hierarchy hack
        that produced sub-AA contrast in every theme (see design-audit).
        Mix ratio 85/15 — the earlier 70/30 failed AA on themes with
-       low-lightness on-surface (totvs/dark: 3.58:1, needs 4.5:1). 85/15
+       low-lightness on-surface. 85/15
        keeps perceptible hierarchy vs on-surface while clearing AA on all
        shipped themes. */
     --color-on-surface-muted: color-mix(in srgb, var(--color-on-surface) 85%, var(--color-surface) 15%);
@@ -541,52 +541,6 @@
         --radius-radius: var(--radius-none);
     }
 
-    [data-theme=totvs] {
-        /* TOTVS Brand Identity — https://marca.totvs.com/identidade-visual/
-           Brand palette (totvscolors.css) names TWO primaries: azulescuro #002233
-           and azul #00dbff. Light mode binds primary → azulescuro (dark navy) so
-           text-primary clears AA on surface (#002233/#f0f4f8 = 16.3:1). Dark mode
-           keeps primary → azul since cyan on navy background already passes AA.
-           Cyan accent role preserved in light mode via --color-info: #00dbff. */
-        --font-body: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
-        --font-title: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
-        /* Light Theme */
-        --color-surface: #f0f4f8;
-        --color-surface-alt: #e6e6e6;
-        --color-on-surface: #545454;
-        --color-on-surface-strong: #002b33;
-        --color-primary: #002233;
-        --color-on-primary: #ffffff;
-        --color-secondary: #a44dff;
-        /* on-secondary: brand-dark ink, not white — white/#a44dff = 4.13:1 fails AA; #002233/#a44dff = 7.8:1. */
-        --color-on-secondary: #002233;
-        --color-outline: #9c9c9c;
-        --color-outline-strong: #002b33;
-        /* Dark Theme */
-        --color-surface-dark: #002233;
-        --color-surface-dark-alt: #002b33;
-        --color-on-surface-dark: #9c9c9c;
-        --color-on-surface-dark-strong: #ececec;
-        --color-primary-dark: #00dbff;
-        --color-on-primary-dark: #002233;
-        --color-secondary-dark: #a44dff;
-        --color-on-secondary-dark: #002233;
-        --color-outline-dark: #545454;
-        --color-outline-dark-strong: #9c9c9c;
-        /* Status Colors */
-        --color-info: #00dbff;
-        --color-on-info: #002233;
-        --color-success: #00ffd4;
-        --color-on-success: #002233;
-        --color-warning: #ffb800;
-        --color-on-warning: #002233;
-        --color-danger: #ff009e;
-        /* on-danger: brand-dark ink — white/#ff009e = 3.65:1 fails AA; #002233/#ff009e = 6.9:1. */
-        --color-on-danger: #002233;
-        /* Border */
-        --radius-radius: var(--radius-lg);
-    }
-
     [data-theme=dracula] {
         /* Dracula Theme — https://draculatheme.com */
         --font-body: 'Fira Code', 'JetBrains Mono', monospace;
@@ -863,50 +817,6 @@
   color: color-mix(in srgb, var(--color-on-surface-dark) 70%, transparent);
 }
 
-
-/* TOTVS Brand Font */
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-ExtraLight.ttf') format('truetype');
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'TOTVS';
-  src: url('../assets/fonts/TOTVS-ExtraBold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
 
 /* Font families (not theme-dependent) */
 @theme {
