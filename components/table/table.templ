@@ -313,7 +313,7 @@ templ tableInner(cfg Config) {
 				id={ cfg.TbodyID() }
 				class={ cfg.TbodyClasses() }
 				hx-get={ cfg.HTMXEndpoint }
-				hx-trigger="load"
+				hx-trigger={ cfg.LazyLoadTrigger() }
 				hx-swap="innerHTML"
 			>
 				<tr>

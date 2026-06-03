@@ -1257,6 +1257,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `HTMXEndpoint` | `string` | --- HTMX Integration --- |
 | `HTMXTarget` | `string` | HTMXTarget overrides the default HTMX swap target (defaults to tbody ID) |
 | `LazyLoad` | `bool` | --- Lazy Loading --- |
+| `LazyTrigger` | `string` | LazyTrigger is the htmx trigger for LazyLoad. Defaults to "load". |
 | `Pagination` | `*PaginationConfig` | --- Pagination --- |
 | `InfiniteScroll` | `*InfiniteScrollConfig` | --- Infinite Scroll --- |
 | `Filters` | `*FilterConfig` | --- Filters --- |

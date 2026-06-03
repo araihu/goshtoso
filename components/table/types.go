@@ -378,8 +378,11 @@ type Config struct {
 	HTMXTarget string
 
 	// --- Lazy Loading ---
-	// LazyLoad loads the table body via HTMX on page load
+	// LazyLoad loads the table body via HTMX.
 	LazyLoad bool
+	// LazyTrigger is the htmx trigger for LazyLoad. Defaults to "load".
+	// Use values like "click from:#load-table" for explicit user-triggered loading.
+	LazyTrigger string
 
 	// --- Pagination ---
 	// Pagination enables traditional pagination below the table
@@ -410,6 +413,14 @@ func (cfg Config) GetID() string {
 // TbodyID returns the ID for the tbody element
 func (cfg Config) TbodyID() string {
 	return cfg.GetID() + "-tbody"
+}
+
+// LazyLoadTrigger returns the htmx trigger used by lazy-loaded tbody requests.
+func (cfg Config) LazyLoadTrigger() string {
+	if cfg.LazyTrigger != "" {
+		return cfg.LazyTrigger
+	}
+	return "load"
 }
 
 // TheadID returns the ID for the thead element

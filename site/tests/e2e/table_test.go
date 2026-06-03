@@ -358,12 +358,20 @@ func TestTable_LazyLoad(t *testing.T) {
 	t.Run("Lazy_Table_Has_HTMX_Trigger", func(t *testing.T) {
 		lazyTbody := page.Locator("#lazy-table-tbody")
 
-		// The tbody should have hx-get and hx-trigger="load" initially
-		// After load completes, HTMX replaces the inner HTML
-		// Wait for content to load
-		time.Sleep(50 * time.Millisecond)
+		trigger, err := lazyTbody.GetAttribute("hx-trigger")
+		require.NoError(t, err)
+		assert.Equal(t, "click from:#load-lazy-table", trigger)
 
-		// After loading, should have actual data rows
+		initialRows, err := lazyTbody.Locator("tr").Count()
+		require.NoError(t, err)
+		assert.Equal(t, 1, initialRows, "lazy table should show the loading placeholder before click")
+
+		loadButton := page.Locator("#load-lazy-table")
+		err = loadButton.Click()
+		require.NoError(t, err)
+
+		time.Sleep(1500 * time.Millisecond)
+
 		rows := lazyTbody.Locator("tr")
 		count, err := rows.Count()
 		require.NoError(t, err)
