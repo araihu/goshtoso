@@ -172,8 +172,13 @@ func logFeedScript() templ.Component {
 				connected: false,
 				minLevel: 'all',
 				init() {
+					this.handleAfterSwap = (e) => this.onSwap(e);
+					this.$root.addEventListener('htmx:afterSwap', this.handleAfterSwap);
 					this.$watch('minLevel', (v) => this.applyFilter(v));
 					this.applyFilter(this.minLevel);
+				},
+				destroy() {
+					if (this.handleAfterSwap) this.$root.removeEventListener('htmx:afterSwap', this.handleAfterSwap);
 				},
 				applyFilter(v) {
 					const wrap = this.$refs.feedWrap;
@@ -182,11 +187,15 @@ func logFeedScript() templ.Component {
 					wrap.classList.add('flt-' + v);
 				},
 				onSwap(e) {
-					if (!e.detail || !e.detail.target || e.detail.target.id !== 'log-feed') return;
+					const swapTarget = e.detail && e.detail.target;
+					const eventTarget = e.target instanceof Element ? e.target : null;
+					const affectedFeed = (swapTarget && swapTarget.id === 'log-feed') ||
+						(eventTarget && (eventTarget.id === 'log-feed' || eventTarget.closest('#log-feed')));
+					if (!affectedFeed) return;
 					const feed = document.getElementById('log-feed');
 					if (!feed) return;
 					while (feed.children.length > this.cap) feed.removeChild(feed.firstElementChild);
-					if (this.autoScroll) feed.scrollTop = feed.scrollHeight;
+					if (this.autoScroll) requestAnimationFrame(() => { feed.scrollTop = feed.scrollHeight; });
 				},
 				togglePause() {
 						this.paused = !this.paused;
@@ -352,7 +361,7 @@ func LogsApp() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div><!-- Persistent feed + filter wrapper --><div x-ref=\"feedWrap\" x-on:htmx:after-swap=\"onSwap($event)\" class=\"flt-all rounded-radius border border-outline dark:border-outline-dark\"><div id=\"log-feed\" class=\"h-80 overflow-y-auto\"></div></div><!-- SSE connector: removed on pause (closes EventSource), targets the persistent feed --><template x-if=\"!paused\"><div hx-ext=\"sse\" sse-connect=\"/api/examples/logs/stream\"><div sse-swap=\"message\" hx-target=\"#log-feed\" hx-swap=\"beforeend\" hidden></div></div></template></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div><!-- Persistent feed + filter wrapper --><div x-ref=\"feedWrap\" class=\"flt-all rounded-radius border border-outline dark:border-outline-dark\"><div id=\"log-feed\" class=\"h-80 overflow-y-auto\"></div></div><!-- SSE connector: removed on pause (closes EventSource), targets the persistent feed --><template x-if=\"!paused\"><div hx-ext=\"sse\" sse-connect=\"/api/examples/logs/stream\"><div sse-swap=\"message\" hx-target=\"#log-feed\" hx-swap=\"beforeend\" hidden></div></div></template></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

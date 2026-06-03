@@ -53,6 +53,32 @@ func TestLogFeed_StreamsRows(t *testing.T) {
 	require.Equal(t, true, hasBadge)
 }
 
+// TestLogFeed_AutoScrollFollowsStream verifies the checked Auto-scroll control
+// keeps the persistent feed pinned to the newest streamed rows.
+func TestLogFeed_AutoScrollFollowsStream(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoLogs(t, page)
+	_, err := page.Evaluate("() => { document.getElementById('log-feed').style.height = '64px'; }")
+	require.NoError(t, err)
+	waitForRows(t, page)
+
+	_, err = page.WaitForFunction(
+		`() => {
+			const feed = document.getElementById('log-feed');
+			return feed && feed.children.length >= 4 && feed.scrollHeight > feed.clientHeight;
+		}`,
+		nil)
+	require.NoError(t, err)
+
+	atBottom, err := page.Evaluate(
+		`() => {
+			const feed = document.getElementById('log-feed');
+			return (feed.scrollHeight - feed.clientHeight - feed.scrollTop) <= 2;
+		}`)
+	require.NoError(t, err)
+	require.Equal(t, true, atBottom, "auto-scroll should keep the log feed pinned to the newest rows")
+}
+
 // TestLogFeed_FragmentNavNoErrors lands elsewhere, navigates to the feed via the
 // sidebar (htmx fragment swap), and asserts the stream connects with no console/
 // page errors — the regression guard for Alpine.data registering on fragment-nav.

@@ -63,8 +63,13 @@ templ logFeedScript() {
 				connected: false,
 				minLevel: 'all',
 				init() {
+					this.handleAfterSwap = (e) => this.onSwap(e);
+					this.$root.addEventListener('htmx:afterSwap', this.handleAfterSwap);
 					this.$watch('minLevel', (v) => this.applyFilter(v));
 					this.applyFilter(this.minLevel);
+				},
+				destroy() {
+					if (this.handleAfterSwap) this.$root.removeEventListener('htmx:afterSwap', this.handleAfterSwap);
 				},
 				applyFilter(v) {
 					const wrap = this.$refs.feedWrap;
@@ -73,11 +78,15 @@ templ logFeedScript() {
 					wrap.classList.add('flt-' + v);
 				},
 				onSwap(e) {
-					if (!e.detail || !e.detail.target || e.detail.target.id !== 'log-feed') return;
+					const swapTarget = e.detail && e.detail.target;
+					const eventTarget = e.target instanceof Element ? e.target : null;
+					const affectedFeed = (swapTarget && swapTarget.id === 'log-feed') ||
+						(eventTarget && (eventTarget.id === 'log-feed' || eventTarget.closest('#log-feed')));
+					if (!affectedFeed) return;
 					const feed = document.getElementById('log-feed');
 					if (!feed) return;
 					while (feed.children.length > this.cap) feed.removeChild(feed.firstElementChild);
-					if (this.autoScroll) feed.scrollTop = feed.scrollHeight;
+					if (this.autoScroll) requestAnimationFrame(() => { feed.scrollTop = feed.scrollHeight; });
 				},
 				togglePause() {
 						this.paused = !this.paused;
@@ -175,7 +184,6 @@ templ LogsApp() {
 				<!-- Persistent feed + filter wrapper -->
 				<div
 					x-ref="feedWrap"
-					x-on:htmx:after-swap="onSwap($event)"
 					class="flt-all rounded-radius border border-outline dark:border-outline-dark"
 				>
 					<div id="log-feed" class="h-80 overflow-y-auto"></div>
