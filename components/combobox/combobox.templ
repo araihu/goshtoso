@@ -188,6 +188,7 @@ templ Combobox(cfg Config, state State) {
 		data-combobox-mode={ comboboxModeAttr(cfg) }
 		data-combobox-name={ cfg.Name }
 		data-combobox-multi={ comboboxMultiAttr(cfg) }
+		data-combobox-close-on-select={ comboboxCloseOnSelectAttr(cfg) }
 		data-combobox-placeholder={ cfg.Placeholder }
 		hx-disinherit="hx-replace-url"
 		id={ cfg.ID }
@@ -277,6 +278,13 @@ func comboboxModeAttr(cfg Config) string {
 
 func comboboxMultiAttr(cfg Config) string {
 	if cfg.Mode == ModeMultiple {
+		return "true"
+	}
+	return "false"
+}
+
+func comboboxCloseOnSelectAttr(cfg Config) string {
+	if cfg.Mode == ModeSingle {
 		return "true"
 	}
 	return "false"

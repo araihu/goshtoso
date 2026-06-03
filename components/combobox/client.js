@@ -12,6 +12,7 @@
       id: root.getAttribute('id'),
       name: root.getAttribute('data-combobox-name') || root.getAttribute('id'),
       multi: root.getAttribute('data-combobox-multi') === 'true',
+      closeOnSelect: root.getAttribute('data-combobox-close-on-select') === 'true',
       placeholder: root.getAttribute('data-combobox-placeholder') || ''
     };
   }
@@ -133,6 +134,15 @@
     }));
   }
 
+  function closeAfterSelect(root, cfg) {
+    if (!cfg.closeOnSelect || !window.Alpine || !window.Alpine.$data) return;
+    var data = window.Alpine.$data(root);
+    if (!data) return;
+    data.isOpen = false;
+    data.openedWithKeyboard = false;
+    data.focusIndex = -1;
+  }
+
   function toggleValue(root, value) {
     var cfg = readCfg(root);
     var selected = readSelected(root, cfg.name);
@@ -146,6 +156,7 @@
     setHiddenInputs(root, cfg.name, selected);
     saveSelected(cfg, selected);
     updateUI(root);
+    closeAfterSelect(root, cfg);
     dispatchChange(root, selected, cfg);
   }
 

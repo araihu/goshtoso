@@ -249,6 +249,30 @@ func TestCombobox_ClientMode_RootHasMarker(t *testing.T) {
 	assert.Contains(t, html, `data-combobox-multi="true"`)
 }
 
+func TestCombobox_RootDeclaresCloseOnSelectBehavior(t *testing.T) {
+	t.Run("single-select closes after selection", func(t *testing.T) {
+		cfg := Config{
+			ID: "industry", Name: "industry", Mode: ModeSingle,
+			Source: Source{Static: []Option{{Value: "tech", Label: "Technology"}}},
+		}
+		var buf bytes.Buffer
+		require.NoError(t, Combobox(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
+
+		assert.Contains(t, buf.String(), `data-combobox-close-on-select="true"`)
+	})
+
+	t.Run("multi-select stays open after selection", func(t *testing.T) {
+		cfg := Config{
+			ID: "skills", Name: "skills", Mode: ModeMultiple,
+			Source: Source{Static: []Option{{Value: "go", Label: "Go"}}},
+		}
+		var buf bytes.Buffer
+		require.NoError(t, Combobox(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
+
+		assert.Contains(t, buf.String(), `data-combobox-close-on-select="false"`)
+	})
+}
+
 func TestCombobox_ServerMode_HasHXPost(t *testing.T) {
 	cfg := Config{
 		ID: "team", Name: "team", Mode: ModeMultiple,
