@@ -51,21 +51,21 @@ jobs:
 
       - name: Tailwind CSS + theme drift check
         run: |
-          go run ./scripts/themegen
+          go run ./cmd/themegen
           tailwindcss -i css/main.css -o assets/styles.css
           git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css \
             || { echo "::error::css/theme drift — run 'just css' and commit assets/styles.css + assets/goshtoso-theme.css"; exit 1; }
 
       - name: using-goshtoso skill reference drift check
         run: |
-          go run ./scripts/skillgen
+          go run ./cmd/skillgen
           git diff --exit-code -- .claude/skills/using-goshtoso/components-reference.md \
-            || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./scripts/skillgen' and commit"; exit 1; }
+            || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./cmd/skillgen' and commit"; exit 1; }
 
       - name: vendor JS constants drift check
         run: |
-          go run ./scripts/vendorgen -check \
-            || { echo "::error::assets/vendor_gen.go is stale — run 'go run ./scripts/vendorgen' and commit"; exit 1; }
+          go run ./cmd/vendorgen -check \
+            || { echo "::error::assets/vendor_gen.go is stale — run 'go run ./cmd/vendorgen' and commit"; exit 1; }
 
       - name: go mod tidy drift check
         run: |

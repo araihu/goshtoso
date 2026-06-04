@@ -20,7 +20,7 @@ Alpine.js, HTMX, and the htmx SSE extension are bundled locally under
 `assets/js/runtime/<module>/<version>/`; pinned versions live in
 `assets/js/runtime/versions.json`. Runtime assets are served through
 `assets.Handler()`, so page loads should not depend on a CDN. Regenerate runtime
-URL constants with `go run ./scripts/vendorgen` and update pinned JS with
+URL constants with `go run ./cmd/vendorgen` and update pinned JS with
 `just vendor-js`.
 
 ## Commands
@@ -65,7 +65,7 @@ Never hand-edit generated files:
 - `*_templ.go` - regenerate with `templ generate`
 - `assets/styles.css` - regenerate with `just css`
 - `assets/goshtoso-theme.css` and vendored runtime constants - regenerate with
-  the matching scripts/just targets
+  the matching cmd/just targets
 
 When resolving merge conflicts, resolve source `.templ` files first, then run
 `templ generate`; do not hand-resolve generated templ output. If
@@ -90,7 +90,7 @@ When adding or changing a component:
 3. Register the route in `site/internal/server/server.go`.
 4. Add the sidebar entry in `site/internal/pages/demo/layout.templ`.
 5. Add focused E2E coverage under `site/tests/e2e/`.
-6. If `types.go` or entry points changed, run `go run ./scripts/skillgen`.
+6. If `types.go` or entry points changed, run `go run ./cmd/skillgen`.
 7. Run `templ generate`, `just css` when needed, and the relevant tests.
 
 Demo pages should use one preview and one code block per variant, followed by an
@@ -172,7 +172,7 @@ Before opening a PR, run the gates relevant to the change:
 ```bash
 templ generate
 just css
-go run ./scripts/skillgen # if a component API changed
+go run ./cmd/skillgen # if a component API changed
 golangci-lint run
 cd site && golangci-lint run
 go fix ./... && (cd site && go fix ./...)

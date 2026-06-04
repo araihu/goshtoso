@@ -1,4 +1,4 @@
-package main
+package vendorgen
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 
 // downloadAll fetches every dep in the manifest into its versioned dir,
 // verifies the bytes, and prunes stale version dirs. Run via `just vendor-js`.
-func downloadAll(deps map[string]dep) error {
+func downloadAll(deps map[string]dep, stdout io.Writer) error {
 	for module, d := range deps {
 		url := strings.ReplaceAll(d.URL, "{v}", d.Version)
 		body, err := fetch(url)
@@ -28,8 +28,10 @@ func downloadAll(deps map[string]dep) error {
 		if err := os.WriteFile(dst, body, 0o644); err != nil {
 			return err
 		}
-		fmt.Printf("vendorgen: fetched %s@%s -> %s\n", module, d.Version, dst)
-		if err := pruneStale(module, d.Version); err != nil {
+		if _, err := fmt.Fprintf(stdout, "vendorgen: fetched %s@%s -> %s\n", module, d.Version, dst); err != nil {
+			return err
+		}
+		if err := pruneStale(module, d.Version, stdout); err != nil {
 			return err
 		}
 	}
@@ -78,7 +80,7 @@ func verifyBytes(module string, d dep, body []byte) error {
 
 // pruneStale removes assets/js/runtime/<module>/<otherVersion> dirs that are not
 // the pinned version, so only the current version ships.
-func pruneStale(module, keep string) error {
+func pruneStale(module, keep string, stdout io.Writer) error {
 	dir := filepath.Join(vendorRoot, module)
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -89,7 +91,9 @@ func pruneStale(module, keep string) error {
 			if err := os.RemoveAll(filepath.Join(dir, e.Name())); err != nil {
 				return err
 			}
-			fmt.Printf("vendorgen: pruned stale %s/%s\n", module, e.Name())
+			if _, err := fmt.Fprintf(stdout, "vendorgen: pruned stale %s/%s\n", module, e.Name()); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

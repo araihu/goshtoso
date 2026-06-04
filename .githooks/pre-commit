@@ -13,7 +13,7 @@ set -euo pipefail
 # signatures in *_templ.go, so detect either. Regenerate and re-stage it.
 comp_staged=$(git diff --cached --name-only --diff-filter=d | grep '^components/.*\.go$' || true)
 if [ -n "$comp_staged" ]; then
-  go run ./scripts/skillgen >/dev/null 2>&1 || true
+  go run ./cmd/skillgen >/dev/null 2>&1 || true
   ref=".claude/skills/using-goshtoso/components-reference.md"
   if [ -f "$ref" ] && ! git diff --quiet -- "$ref"; then
     git add -- "$ref"

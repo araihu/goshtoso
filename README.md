@@ -165,13 +165,13 @@ See [docs/USAGE.md](docs/USAGE.md) for the full asset strategy.
 
 ```text
 goshtoso/
-├── cmd/goshtoso/            # CSS/theme extraction CLI
+├── cmd/                     # Thin command entry points
 ├── components/              # Publishable component library
 ├── assets/                  # Embedded CSS, JS, fonts, and images
 ├── css/                     # Tailwind source
 ├── docs/                    # Consumer and project documentation
 ├── examples/                # Standalone examples
-├── scripts/                 # Asset, theme, and reference generators
+├── internal/                # Generator internals used by cmd/* tools
 └── site/                    # Demo site, example app pages, server, E2E tests
 ```
 
