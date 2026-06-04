@@ -94,12 +94,12 @@ func TagsList(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-tagslist><div class=\"flex flex-wrap gap-2\" data-tagslist-chips><template x-for=\"(item, i) in items\" x-bind:key=\"i\"><span class=\"inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark\"><span x-text=\"item\"></span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" data-tagslist><div class=\"flex flex-wrap gap-2\" data-tagslist-chips><template x-for=\"(item, i) in items\" x-bind:key=\"i\"><span class=\"inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full border border-primary/20 bg-primary/15 text-primary dark:border-primary-dark/25 dark:bg-primary-dark/20 dark:text-primary-dark\"><span x-text=\"item\"></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if !cfg.Disabled {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<button type=\"button\" x-on:click=\"items.splice(i, 1)\" class=\"cursor-pointer hover:opacity-70\" aria-label=\"Remove tag\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3\" aria-hidden=\"true\"><path d=\"M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z\"></path></svg></button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<button type=\"button\" x-on:click=\"items.splice(i, 1)\" class=\"cursor-pointer rounded-full text-primary/80 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-primary-dark/80 dark:hover:text-primary-dark dark:focus-visible:outline-primary-dark\" aria-label=\"Remove tag\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3\" aria-hidden=\"true\"><path d=\"M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z\"></path></svg></button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -122,7 +122,7 @@ func TagsList(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" x-on:keydown.enter.prevent=\"addTag()\" class=\"flex-1 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark text-on-surface-strong dark:text-on-surface-dark-strong placeholder:text-on-surface-muted dark:placeholder:text-on-surface-dark-muted focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark\" data-tagslist-input> <button type=\"button\" x-on:click=\"addTag()\" class=\"cursor-pointer px-3 py-2 text-sm rounded-radius border border-dashed border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark hover:bg-outline/10 dark:hover:bg-outline-dark/20\" data-tagslist-add>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" x-on:keydown.enter.prevent=\"addTag()\" class=\"flex-1 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark text-on-surface-strong dark:text-on-surface-dark-strong placeholder:text-on-surface-muted dark:placeholder:text-on-surface-dark-muted focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark\" data-tagslist-input> <button type=\"button\" x-on:click=\"addTag()\" class=\"cursor-pointer px-3 py-2 text-sm font-medium rounded-radius border border-outline-strong bg-surface text-on-surface-strong transition hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark-strong dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark\" data-tagslist-add>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

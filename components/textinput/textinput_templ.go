@@ -1064,7 +1064,7 @@ func inputLabel(cfg Config) templ.Component {
 
 // searchInputClasses returns special classes for search input (with left padding for icon)
 func searchInputClasses(cfg Config) string {
-	base := "w-full rounded-radius border bg-surface-alt py-2 pl-10 pr-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+	base := "w-full rounded-radius border bg-surface py-2 pl-10 pr-2 text-sm text-on-surface-strong placeholder:text-on-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface-alt disabled:text-on-surface-muted disabled:placeholder:text-on-surface-muted disabled:opacity-50 dark:bg-surface-dark dark:text-on-surface-dark-strong dark:placeholder:text-on-surface-dark-muted dark:focus-visible:outline-primary-dark dark:disabled:bg-surface-dark-alt dark:disabled:text-on-surface-dark-muted dark:disabled:placeholder:text-on-surface-dark-muted"
 
 	switch cfg.State {
 	case StateError:

@@ -1730,6 +1730,12 @@
   .border-primary {
     border-color: var(--color-primary);
   }
+  .border-primary\/20 {
+    border-color: color-mix(in srgb, oklch(62.7% 0.265 303.9) 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-primary) 20%, transparent);
+    }
+  }
   .border-secondary {
     border-color: var(--color-secondary);
   }
@@ -2295,6 +2301,12 @@
     background-color: color-mix(in srgb, oklch(62.7% 0.265 303.9) 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-primary) 10%, transparent);
+    }
+  }
+  .bg-primary\/15 {
+    background-color: color-mix(in srgb, oklch(62.7% 0.265 303.9) 15%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-primary) 15%, transparent);
     }
   }
   .bg-purple-50 {
@@ -3258,6 +3270,12 @@
   }
   .text-primary {
     color: var(--color-primary);
+  }
+  .text-primary\/80 {
+    color: color-mix(in srgb, oklch(62.7% 0.265 303.9) 80%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-primary) 80%, transparent);
+    }
   }
   .text-red-700 {
     color: var(--color-red-700);
@@ -4774,14 +4792,19 @@
       cursor: not-allowed;
     }
   }
+  .disabled\:bg-surface-alt {
+    &:disabled {
+      background-color: var(--color-surface-alt);
+    }
+  }
+  .disabled\:text-on-surface-muted {
+    &:disabled {
+      color: var(--color-on-surface-muted);
+    }
+  }
   .disabled\:opacity-50 {
     &:disabled {
       opacity: 50%;
-    }
-  }
-  .disabled\:opacity-60 {
-    &:disabled {
-      opacity: 60%;
     }
   }
   .disabled\:opacity-75 {
@@ -4789,11 +4812,18 @@
       opacity: 75%;
     }
   }
-  .disabled\:hover\:opacity-60 {
+  .disabled\:placeholder\:text-on-surface-muted {
+    &:disabled {
+      &::placeholder {
+        color: var(--color-on-surface-muted);
+      }
+    }
+  }
+  .disabled\:hover\:opacity-50 {
     &:disabled {
       &:hover {
         @media (hover: hover) {
-          opacity: 60%;
+          opacity: 50%;
         }
       }
     }
@@ -5418,6 +5448,14 @@
       border-color: var(--color-primary-dark);
     }
   }
+  .dark\:border-primary-dark\/25 {
+    &:where(.dark, .dark *) {
+      border-color: color-mix(in srgb, oklch(71.4% 0.203 305.504) 25%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        border-color: color-mix(in oklab, var(--color-primary-dark) 25%, transparent);
+      }
+    }
+  }
   .dark\:border-secondary-dark {
     &:where(.dark, .dark *) {
       border-color: var(--color-secondary-dark);
@@ -5553,6 +5591,14 @@
       background-color: color-mix(in srgb, oklch(71.4% 0.203 305.504) 10%, transparent);
       @supports (color: color-mix(in lab, red, red)) {
         background-color: color-mix(in oklab, var(--color-primary-dark) 10%, transparent);
+      }
+    }
+  }
+  .dark\:bg-primary-dark\/20 {
+    &:where(.dark, .dark *) {
+      background-color: color-mix(in srgb, oklch(71.4% 0.203 305.504) 20%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-primary-dark) 20%, transparent);
       }
     }
   }
@@ -5850,6 +5896,14 @@
   .dark\:text-primary-dark {
     &:where(.dark, .dark *) {
       color: var(--color-primary-dark);
+    }
+  }
+  .dark\:text-primary-dark\/80 {
+    &:where(.dark, .dark *) {
+      color: color-mix(in srgb, oklch(71.4% 0.203 305.504) 80%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, var(--color-primary-dark) 80%, transparent);
+      }
     }
   }
   .dark\:text-red-300 {
@@ -6656,6 +6710,29 @@
         background-color: color-mix(in srgb, oklch(97% 0 0) 5%, transparent);
         @supports (color: color-mix(in lab, red, red)) {
           background-color: color-mix(in oklab, var(--color-surface) 5%, transparent);
+        }
+      }
+    }
+  }
+  .dark\:disabled\:bg-surface-dark-alt {
+    &:where(.dark, .dark *) {
+      &:disabled {
+        background-color: var(--color-surface-dark-alt);
+      }
+    }
+  }
+  .dark\:disabled\:text-on-surface-dark-muted {
+    &:where(.dark, .dark *) {
+      &:disabled {
+        color: var(--color-on-surface-dark-muted);
+      }
+    }
+  }
+  .dark\:disabled\:placeholder\:text-on-surface-dark-muted {
+    &:where(.dark, .dark *) {
+      &:disabled {
+        &::placeholder {
+          color: var(--color-on-surface-dark-muted);
         }
       }
     }

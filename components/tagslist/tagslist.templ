@@ -22,13 +22,13 @@ templ TagsList(cfg Config) {
 	>
 		<div class="flex flex-wrap gap-2" data-tagslist-chips>
 			<template x-for="(item, i) in items" x-bind:key="i">
-				<span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark">
+				<span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full border border-primary/20 bg-primary/15 text-primary dark:border-primary-dark/25 dark:bg-primary-dark/20 dark:text-primary-dark">
 					<span x-text="item"></span>
 					if !cfg.Disabled {
 						<button
 							type="button"
 							x-on:click="items.splice(i, 1)"
-							class="cursor-pointer hover:opacity-70"
+							class="cursor-pointer rounded-full text-primary/80 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-primary-dark/80 dark:hover:text-primary-dark dark:focus-visible:outline-primary-dark"
 							aria-label="Remove tag"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3" aria-hidden="true">
@@ -53,7 +53,7 @@ templ TagsList(cfg Config) {
 				<button
 					type="button"
 					x-on:click="addTag()"
-					class="cursor-pointer px-3 py-2 text-sm rounded-radius border border-dashed border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark hover:bg-outline/10 dark:hover:bg-outline-dark/20"
+					class="cursor-pointer px-3 py-2 text-sm font-medium rounded-radius border border-outline-strong bg-surface text-on-surface-strong transition hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark-strong dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
 					data-tagslist-add
 				>
 					{ cfg.GetAddLabel() }
