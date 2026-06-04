@@ -7,7 +7,7 @@ import (
 
 func TestGenerateTheme(t *testing.T) {
 	mainCSS := `@custom-variant dark (&:where(.dark, .dark *));
-@import "tailwindcss";
+@import "tailwindcss" source(none);
 @source "../components/**/*.templ";
 @source inline("md:w-64");
 @import "../all-themes.css";
