@@ -80,3 +80,22 @@ og-site/
 .tools/
 
 .superpowers/
+
+# Local AI harness artifacts. Keep public repository guidance in AGENTS.md and
+# the curated core-stack references under .agents/skills/.
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/alpinejs/
+!.agents/skills/alpinejs/**
+!.agents/skills/htmx/
+!.agents/skills/htmx/**
+!.agents/skills/tailwindcss/
+!.agents/skills/tailwindcss/**
+!.agents/skills/templ/
+!.agents/skills/templ/**
+.claude/
+.codex/
+.github/skills/
+docs/superpowers/
+scripts/skillgen/

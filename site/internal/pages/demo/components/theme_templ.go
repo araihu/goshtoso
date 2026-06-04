@@ -771,7 +771,7 @@ func sortedThemeKeys() []string {
 
 // themePageScript builds the single Alpine component backing the entire page.
 // Lives in a <script> tag rather than inline x-data to escape templ's
-// attribute encoder (see CLAUDE.md "Templ escaping — the #1 source of bugs").
+// attribute encoder (see AGENTS.md "Frontend Rules").
 func themePageScript() string {
 	blocks := getThemeCSSBlocks()
 	infos := getThemeInfos()
