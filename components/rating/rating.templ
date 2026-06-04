@@ -1,0 +1,92 @@
+package rating
+
+import "fmt"
+
+// Rating renders a star or emoji rating control.
+templ Rating(cfg Config) {
+	if cfg.ReadOnly {
+		@ratingReadOnly(cfg)
+	} else {
+		@ratingInteractive(cfg)
+	}
+}
+
+templ ratingInteractive(cfg Config) {
+	<div
+		id={ cfg.ResolvedID() }
+		class={ cfg.RootClasses() }
+		x-data={ cfg.XData() }
+		{ cfg.Attrs... }
+	>
+		if cfg.ShowLabel {
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.ResolvedLabel() }</span>
+		}
+		<div class={ cfg.ControlClasses() } role="radiogroup" aria-label={ cfg.ResolvedLabel() }>
+			for i := 1; i <= cfg.ResolvedMax(); i++ {
+				@ratingOption(cfg, i)
+			}
+		</div>
+	</div>
+}
+
+templ ratingReadOnly(cfg Config) {
+	<div
+		id={ cfg.ResolvedID() }
+		class={ cfg.RootClasses() }
+		role="img"
+		aria-label={ cfg.ValueLabel(cfg.ResolvedValue()) }
+		{ cfg.Attrs... }
+	>
+		if cfg.ShowLabel {
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.ResolvedLabel() }</span>
+		}
+		<div class={ cfg.ControlClasses() }>
+			for i := 1; i <= cfg.ResolvedMax(); i++ {
+				<span class={ cfg.IconClasses() + " " + readOnlyIconState(cfg, i) } aria-hidden="true">
+					if cfg.Style == StyleEmoji {
+						{ cfg.EmojiIcon(i) }
+					} else {
+						@starIcon()
+					}
+				</span>
+			}
+		</div>
+	</div>
+}
+
+templ ratingOption(cfg Config, value int) {
+	<label for={ cfg.InputID(value) } class="group/rating-option cursor-pointer has-disabled:cursor-not-allowed">
+		<span class="sr-only">{ cfg.ValueLabel(value) }</span>
+		<input
+			id={ cfg.InputID(value) }
+			type="radio"
+			name={ cfg.ResolvedName() }
+			value={ fmt.Sprintf("%d", value) }
+			class="sr-only"
+			x-model.number="currentVal"
+			if cfg.ResolvedValue() == value {
+				checked
+			}
+			if cfg.Disabled {
+				disabled
+			}
+		/>
+		<span
+			class={ cfg.IconClasses() + " group-hover/rating-option:scale-110" }
+			x-bind:class={ cfg.BindClass(value) }
+			aria-hidden="true"
+		>
+			if cfg.Style == StyleEmoji {
+				{ cfg.EmojiIcon(value) }
+			} else {
+				@starIcon()
+			}
+		</span>
+	</label>
+}
+
+templ starIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-full">
+		<path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"></path>
+	</svg>
+}

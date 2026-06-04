@@ -1,0 +1,158 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/rating"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// RatingDemoPage renders the Rating component demo as a full document.
+templ RatingDemoPage() {
+	@demo.Layout("Rating", "rating", ratingDemoContent())
+}
+
+templ ratingDemoContent() {
+	<div id="rating-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Rating",
+				Description: "Collect product scores, satisfaction signals, and read-only rating summaries with accessible radio semantics.",
+			},
+			ratingDefaultPreview(),
+			`@rating.Rating(rating.Config{
+    ID: "rating-default",
+    Name: "rating",
+    Value: 3,
+    Label: "Product rating",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Emoji Rating",
+				Description: "Switch to sentiment icons for feedback flows that should feel more conversational.",
+			},
+			ratingEmojiPreview(),
+			`@rating.Rating(rating.Config{
+    ID: "rating-emoji",
+    Name: "sentiment",
+    Value: 4,
+    Style: rating.StyleEmoji,
+    Label: "Satisfaction",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Sizes",
+				Description: "Use SizeSM, SizeMD, SizeLG, or SizeXL to fit dense forms or larger feedback moments.",
+			},
+			ratingSizesPreview(),
+			`@rating.Rating(rating.Config{ID: "rating-sm", Name: "small-rating", Value: 3, Size: rating.SizeSM})
+@rating.Rating(rating.Config{ID: "rating-xl", Name: "large-rating", Value: 4, Size: rating.SizeXL})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled ratings keep their selected value visible while blocking interaction.",
+			},
+			ratingDisabledPreview(),
+			`@rating.Rating(rating.Config{
+    ID: "rating-disabled",
+    Name: "disabled-rating",
+    Value: 2,
+    Disabled: true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Read Only",
+				Description: "ReadOnly renders the same visual language as a non-interactive summary.",
+			},
+			ratingReadOnlyPreview(),
+			`@rating.Rating(rating.Config{
+    ID: "rating-readonly",
+    Value: 4,
+    ReadOnly: true,
+    Label: "Average rating",
+    ShowLabel: true,
+})`,
+		)
+	</div>
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "ID", Type: "string", Default: `""`, Description: `Prefix for generated input IDs. Falls back to Name, then "rating".`},
+		{Name: "Name", Type: "string", Default: `""`, Description: "Radio group field name. Falls back to ID."},
+		{Name: "Value", Type: "int", Default: "0", Description: "Initially selected rating, clamped to 0..Max."},
+		{Name: "Max", Type: "int", Default: "5", Description: "Number of rating options."},
+		{Name: "Label", Type: "string", Default: `"Rating"`, Description: "Accessible radiogroup label; visible when ShowLabel is true."},
+		{Name: "ShowLabel", Type: "bool", Default: "false", Description: "Renders the label above the control."},
+		{Name: "Style", Type: "Style", Default: "StyleStars", Description: `Visual style: "stars" or "emoji".`},
+		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Icon size: "sm", "md", "lg", "xl".`},
+		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables all radio inputs."},
+		{Name: "ReadOnly", Type: "bool", Default: "false", Description: "Renders a non-interactive rating summary."},
+		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the root element."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the root element."},
+	})
+}
+
+templ ratingDefaultPreview() {
+	<div id="rating-default" class="w-full max-w-md mx-auto">
+		@rating.Rating(rating.Config{
+			ID:        "rating-stars",
+			Name:      "rating-stars",
+			Value:     3,
+			Label:     "Product rating",
+			ShowLabel: true,
+		})
+	</div>
+}
+
+templ ratingEmojiPreview() {
+	<div id="rating-emoji" class="w-full max-w-md mx-auto">
+		@rating.Rating(rating.Config{
+			ID:        "rating-sentiment",
+			Name:      "rating-sentiment",
+			Value:     4,
+			Label:     "Satisfaction",
+			ShowLabel: true,
+			Style:     rating.StyleEmoji,
+		})
+	</div>
+}
+
+templ ratingSizesPreview() {
+	<div id="rating-sizes" class="w-full max-w-md mx-auto">
+		<div class="flex flex-col gap-4">
+			@rating.Rating(rating.Config{ID: "rating-size-sm", Name: "rating-size-sm", Value: 3, Size: rating.SizeSM, Label: "Small", ShowLabel: true})
+			@rating.Rating(rating.Config{ID: "rating-size-md", Name: "rating-size-md", Value: 3, Size: rating.SizeMD, Label: "Medium", ShowLabel: true})
+			@rating.Rating(rating.Config{ID: "rating-size-lg", Name: "rating-size-lg", Value: 4, Size: rating.SizeLG, Label: "Large", ShowLabel: true})
+			@rating.Rating(rating.Config{ID: "rating-size-xl", Name: "rating-size-xl", Value: 4, Size: rating.SizeXL, Label: "XL", ShowLabel: true})
+		</div>
+	</div>
+}
+
+templ ratingDisabledPreview() {
+	<div id="rating-disabled" class="w-full max-w-md mx-auto">
+		@rating.Rating(rating.Config{
+			ID:        "rating-disabled-control",
+			Name:      "rating-disabled-control",
+			Value:     2,
+			Label:     "Locked rating",
+			ShowLabel: true,
+			Disabled:  true,
+		})
+	</div>
+}
+
+templ ratingReadOnlyPreview() {
+	<div id="rating-readonly" class="w-full max-w-md mx-auto">
+		@rating.Rating(rating.Config{
+			ID:        "rating-readonly-summary",
+			Value:     4,
+			Label:     "Average rating",
+			ShowLabel: true,
+			ReadOnly:  true,
+		})
+	</div>
+}
