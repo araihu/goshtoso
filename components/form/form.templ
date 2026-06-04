@@ -92,7 +92,7 @@ templ CollapsibleSection(cfg CollapsibleSectionConfig) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 overflow-hidden " + cfg.Class }
+		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 " + cfg.Class }
 		if cfg.OOB {
 			hx-swap-oob="true"
 		}
@@ -142,7 +142,6 @@ templ CollapsibleSection(cfg CollapsibleSectionConfig) {
 		<div
 			x-cloak
 			x-show="isExpanded"
-			x-collapse
 			if cfg.ID != "" {
 				id={ cfg.ID + "-content" }
 			}

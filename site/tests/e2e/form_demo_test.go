@@ -52,3 +52,31 @@ func TestFormDemoExternalSubmitUsesModalConfirmation(t *testing.T) {
 	require.Contains(t, text, "v1.31.5")
 	require.Equal(t, initialURL, page.URL(), "HTMX submit should not reload or navigate the page")
 }
+
+func TestFormDemoCollapsibleComboboxEscapesAccordionClip(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/form", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("#advanced").ScrollIntoViewIfNeeded())
+	require.NoError(t, page.Locator("#advanced > button").Click())
+	require.NoError(t, page.Locator("#advanced-content").WaitFor())
+	require.NoError(t, page.Locator("#log-level-trigger").Click())
+	require.NoError(t, page.Locator(`#log-level [data-combobox-option][data-value="debug"]`).WaitFor())
+
+	hitDebugOption, err := page.Evaluate(`() => {
+		const option = document.querySelector('#log-level [data-combobox-option][data-value="debug"]');
+		if (!option) return false;
+		const rect = option.getBoundingClientRect();
+		const target = document.elementFromPoint(rect.left + 12, rect.top + rect.height / 2);
+		return Boolean(target && target.closest('#log-level [data-combobox-option][data-value="debug"]'));
+	}`)
+	require.NoError(t, err)
+	require.Equal(t, true, hitDebugOption, "expanded accordion content must not clip the open combobox dropdown")
+}
