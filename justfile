@@ -75,5 +75,9 @@ coverage:
     go tool cover -func=.coverage/coverage.out > .coverage/coverage-func.txt
     go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
 
-    grep '^total:' .coverage/coverage-func.txt
-    echo "coverage artifacts: .coverage/coverage.out .coverage/coverage-func.txt .coverage/coverage-percent.txt .coverage/coverage.html"
+    total_line="$(grep '^total:' .coverage/coverage-func.txt)"
+    total_percent="$(printf '%s\n' "$total_line" | sed -E 's/.*\t([0-9.]+)%.*/\1/')"
+    scripts/coveragebadge "$total_percent"
+
+    echo "$total_line"
+    echo "coverage artifacts: .coverage/coverage.out .coverage/coverage-func.txt .coverage/coverage-percent.txt .coverage/coverage.html badges/coverage.svg"
