@@ -489,6 +489,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			Title: "Navigation",
 			Items: []sidebar.Item{
 				sItem("breadcrumbs", "Breadcrumbs", "/components/breadcrumbs", activeComponent),
+				sItem("link", "Link", "/components/link", activeComponent),
 				sItem("navbar", "Navbar", "/components/navbar", activeComponent),
 				sItem("sidebar", "Sidebar", "/components/sidebar", activeComponent),
 			},
@@ -550,6 +551,7 @@ var orderedComponents = []componentNavLink{
 	{"Toast", "/components/toast"},
 	{"Tooltip", "/components/tooltip"},
 	{"Breadcrumbs", "/components/breadcrumbs"},
+	{"Link", "/components/link"},
 	{"Navbar", "/components/navbar"},
 	{"Sidebar", "/components/sidebar"},
 }
@@ -606,7 +608,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var18 templ.SafeURL
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 581, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 583, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -627,7 +629,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 588, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 590, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -652,7 +654,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var20 templ.SafeURL
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 596, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 598, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -673,7 +675,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 600, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 602, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {

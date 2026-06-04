@@ -51,6 +51,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		{"/components/form", "Form"},
 		{"/components/kbd", "KBD"},
 		{"/components/structured-input", "Structured Input"},
+		{"/components/link", "Link"},
 		{"/components/modal", "Modal"},
 		{"/components/navbar", "Navbar"},
 		{"/components/pagination", "Pagination"},
