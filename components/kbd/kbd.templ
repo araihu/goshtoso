@@ -1,0 +1,29 @@
+package kbd
+
+// Kbd renders a keyboard input hint.
+//
+// Usage:
+//
+//	@kbd.Kbd(kbd.Config{Text: "Ctrl"})
+//	@kbd.Kbd(kbd.Config{Text: "K", Size: kbd.SizeSM})
+//	@kbd.Kbd(kbd.Config{Icon: commandIcon(), Label: "Command"})
+templ Kbd(cfg Config) {
+	<kbd
+		class={ cfg.RootClasses() }
+		if cfg.Label != "" {
+			aria-label={ cfg.Label }
+		}
+		{ cfg.Attrs... }
+	>
+		if cfg.Icon != nil {
+			<span class={ "shrink-0 " + cfg.IconClasses() } aria-hidden="true">
+				@cfg.Icon
+			</span>
+		}
+		if cfg.Text != "" {
+			{ cfg.Text }
+		} else if cfg.AccessibleLabel() != "" {
+			<span class="sr-only">{ cfg.AccessibleLabel() }</span>
+		}
+	</kbd>
+}

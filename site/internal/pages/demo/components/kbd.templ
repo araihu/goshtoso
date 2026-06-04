@@ -1,0 +1,233 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/kbd"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// KbdDemoPage renders the KBD component demo.
+templ KbdDemoPage() {
+	@demo.Layout("KBD", "kbd", kbdDemoContent())
+}
+
+templ kbdDemoContent() {
+	<div id="kbd-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "KBD",
+				Description: "Display keyboard shortcuts and user input hints with semantic <kbd> markup.",
+			},
+			kbdFrequentlyUsedPreview(),
+			`@kbd.Kbd(kbd.Config{Text: "Tab"})
+@kbd.Kbd(kbd.Config{Text: "Shift"})
+@kbd.Kbd(kbd.Config{Text: "Space"})
+@kbd.Kbd(kbd.Config{Text: "Ctrl"})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Keys With Icons",
+				Description: "Render an icon-only key by passing Icon and Label.",
+			},
+			kbdIconsPreview(),
+			`@kbd.Kbd(kbd.Config{Icon: commandKeyIcon(), Label: "Command"})
+@kbd.Kbd(kbd.Config{Icon: shiftKeyIcon(), Label: "Shift"})
+@kbd.Kbd(kbd.Config{Icon: upKeyIcon(), Label: "Up"})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Within Text",
+				Description: "Use KBD inline when prose references a key or shortcut.",
+			},
+			kbdInlinePreview(),
+			`<p>
+    To @kbd.Kbd(kbd.Config{Text: "Tab", Size: kbd.SizeSM}) or to @kbd.Kbd(kbd.Config{Text: "Space", Size: kbd.SizeSM}), that's the question.
+</p>`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Alphabet Keys",
+				Description: "Letter keys wrap cleanly for shortcut maps and keyboard legends.",
+			},
+			kbdAlphabetPreview(),
+			`for _, key := range []string{"A", "B", "C"} {
+    @kbd.Kbd(kbd.Config{Text: key})
+}`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Number Keys",
+				Description: "Number keys use the same fixed minimum dimensions as text keys.",
+			},
+			kbdNumberPreview(),
+			`for _, key := range []string{"1", "2", "3"} {
+    @kbd.Kbd(kbd.Config{Text: key})
+}`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Function Keys",
+				Description: "Function keys are compact while leaving room for two- and three-character labels.",
+			},
+			kbdFunctionPreview(),
+			`@kbd.Kbd(kbd.Config{Text: "F1"})
+@kbd.Kbd(kbd.Config{Text: "F12"})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Sizes",
+				Description: "Four sizes are available: kbd.SizeXS, kbd.SizeSM, kbd.SizeMD, and kbd.SizeLG.",
+			},
+			kbdSizesPreview(),
+			`@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeXS})
+@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeSM})
+@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})
+@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeLG})`,
+		)
+	</div>
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Text", Type: "string", Default: `""`, Description: "Visible key text."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Accessible label, especially useful for icon-only keys."},
+		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "xs", "sm", "md", "lg".`},
+		{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading or icon-only key glyph."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the kbd element."},
+		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Additional attributes on the kbd element."},
+	})
+}
+
+templ kbdFrequentlyUsedPreview() {
+	<div id="kbd-frequently-used" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center gap-2">
+			for _, key := range []string{"Tab", "Shift", "Space", "Ctrl", "Command", "Alt", "Option", "Enter", "Backspace", "Esc", "Delete", "Up", "Down", "Left", "Right", "Caps Lock"} {
+				@kbd.Kbd(kbd.Config{Text: key})
+			}
+		</div>
+	</div>
+}
+
+templ kbdIconsPreview() {
+	<div id="kbd-icons" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center gap-2">
+			@kbd.Kbd(kbd.Config{Icon: commandKeyIcon(), Label: "Command"})
+			@kbd.Kbd(kbd.Config{Icon: shiftKeyIcon(), Label: "Shift"})
+			@kbd.Kbd(kbd.Config{Icon: optionKeyIcon(), Label: "Option"})
+			@kbd.Kbd(kbd.Config{Icon: controlKeyIcon(), Label: "Control"})
+			@kbd.Kbd(kbd.Config{Icon: tabKeyIcon(), Label: "Tab"})
+			@kbd.Kbd(kbd.Config{Icon: upKeyIcon(), Label: "Up"})
+			@kbd.Kbd(kbd.Config{Icon: downKeyIcon(), Label: "Down"})
+			@kbd.Kbd(kbd.Config{Icon: leftKeyIcon(), Label: "Left"})
+			@kbd.Kbd(kbd.Config{Icon: rightKeyIcon(), Label: "Right"})
+		</div>
+	</div>
+}
+
+templ kbdInlinePreview() {
+	<div id="kbd-inline" class="w-full max-w-2xl mx-auto">
+		<p class="text-base text-on-surface dark:text-on-surface-dark">
+			<span>To </span>
+			@kbd.Kbd(kbd.Config{Text: "Tab", Size: kbd.SizeSM})
+			<span> or to </span>
+			@kbd.Kbd(kbd.Config{Text: "Space", Size: kbd.SizeSM})
+			<span>, that is the question.</span>
+		</p>
+	</div>
+}
+
+templ kbdAlphabetPreview() {
+	<div id="kbd-alphabet" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center gap-2">
+			for _, key := range []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"} {
+				@kbd.Kbd(kbd.Config{Text: key})
+			}
+		</div>
+	</div>
+}
+
+templ kbdNumberPreview() {
+	<div id="kbd-numbers" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center gap-2">
+			for _, key := range []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"} {
+				@kbd.Kbd(kbd.Config{Text: key})
+			}
+		</div>
+	</div>
+}
+
+templ kbdFunctionPreview() {
+	<div id="kbd-functions" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center gap-2">
+			for _, key := range []string{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F10", "F11", "F12"} {
+				@kbd.Kbd(kbd.Config{Text: key})
+			}
+		</div>
+	</div>
+}
+
+templ kbdSizesPreview() {
+	<div id="kbd-sizes" class="w-full max-w-2xl mx-auto">
+		<div class="flex flex-wrap items-center gap-2">
+			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeXS})
+			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeSM})
+			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})
+			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeLG})
+		</div>
+	</div>
+}
+
+templ commandKeyIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-full">
+		<path d="M5 6h6v4H5z" opacity=".25"></path>
+		<path fill-rule="evenodd" d="M5 2a2 2 0 0 1 2 2v1h2V4a2 2 0 1 1 2 2h-1v4h1a2 2 0 1 1-2 2v-1H7v1a2 2 0 1 1-2-2h1V6H5a2 2 0 1 1 0-4m0 1a1 1 0 1 0 0 2h1V4a1 1 0 0 0-1-1m2 3v4h2V6zm4-3a1 1 0 0 0-1 1v1h1a1 1 0 1 0 0-2m-6 8a1 1 0 1 0 1 1v-1zm5 0v1a1 1 0 1 0 1-1z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ shiftKeyIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-full">
+		<path fill-rule="evenodd" d="M8 2.5 14 9h-3v4H5V9H2zM8 4 4.3 8H6v4h4V8h1.7z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ optionKeyIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-full">
+		<path d="M1.5 3h3.2c.4 0 .7.2.9.6L11 13h3.5v1h-4.1L5 4H1.5zm9 0h4v1h-4z"></path>
+	</svg>
+}
+
+templ controlKeyIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-full">
+		<path fill-rule="evenodd" d="M8 5.2 2.8 10.4l-.8-.8 6-6 6 6-.8.8z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ tabKeyIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-full">
+		<path fill-rule="evenodd" d="M3 8a.5.5 0 0 1 .5-.5h6.3L8 5.7l.7-.7L12 8l-3.3 3-.7-.7 1.8-1.8H3.5A.5.5 0 0 1 3 8M13 4h1v8h-1z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ upKeyIcon() {
+	@arrowKeyIcon("M8 4 3 11h10z")
+}
+
+templ downKeyIcon() {
+	@arrowKeyIcon("M8 12 3 5h10z")
+}
+
+templ leftKeyIcon() {
+	@arrowKeyIcon("M4 8 11 3v10z")
+}
+
+templ rightKeyIcon() {
+	@arrowKeyIcon("M12 8 5 3v10z")
+}
+
+templ arrowKeyIcon(path string) {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-full">
+		<path d={ path }></path>
+	</svg>
+}

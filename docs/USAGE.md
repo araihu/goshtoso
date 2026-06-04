@@ -172,6 +172,7 @@ All components are imported from `github.com/araihu/goshtoso/components/<name>`.
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
 | `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |
 | `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
+| `kbd` | `components/kbd` | Semantic keyboard shortcut and user input hints |
 | `modal` | `components/modal` | Dialogs with info/danger/warning variants, custom actions |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
