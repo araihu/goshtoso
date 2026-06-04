@@ -1537,4 +1537,3 @@ import "github.com/araihu/goshtoso/components/tooltip"  // package tooltip
 | `Trigger` | `Trigger` | Trigger determines how the tooltip is activated |
 | `TriggerText` | `string` | TriggerText is the text shown on the trigger button |
 | `TriggerContent` | `templ.Component` | TriggerContent is an optional custom trigger element (overrides TriggerText) |
-

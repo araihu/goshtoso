@@ -284,7 +284,7 @@ func render(pkgs []pkgAPI) string {
 	for _, p := range pkgs {
 		renderPkg(&b, p)
 	}
-	return b.String()
+	return strings.TrimRight(b.String(), "\n") + "\n"
 }
 
 func renderPkg(b *strings.Builder, p pkgAPI) {

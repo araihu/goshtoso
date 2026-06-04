@@ -28,7 +28,7 @@ agree to uphold it.
 git clone https://github.com/araihu/goshtoso
 cd goshtoso
 
-# enable the pre-commit hook (runs go fix + regenerates skill reference)
+# enable the pre-commit hook (runs go fix)
 git config core.hooksPath .githooks
 
 # run the dev server (port 8090)
@@ -52,15 +52,10 @@ go build -o bin/server ./site/cmd/server
 
 ### Adding a component
 
-See `CLAUDE.md` (the full agent/contributor guide) and the `component-docs`
-convention. Every component lives in `components/<name>/` (`types.go` +
-`<name>.templ`) and ships a demo page that follows the docs-page pattern
-(one preview + code box per variant, an API reference table, the right-rail
-TOC). After changing a component, regenerate the usage reference:
-
-```bash
-go run ./scripts/skillgen
-```
+See `AGENTS.md` for the repo conventions. Every component lives in
+`components/<name>/` (`types.go` + `<name>.templ`) and ships a demo page that
+follows the docs-page pattern (one preview + code box per variant, an API
+reference table, the right-rail TOC).
 
 ### Frontend interactivity hierarchy
 
@@ -71,7 +66,7 @@ must survive HTMX swaps and fragment navigation.
 
 > ⚠️ **Templ + Alpine escaping is the #1 source of bugs.** Never use
 > `json.Marshal` for data that lands inside an HTML attribute — templ escapes
-> the quotes and Alpine silently fails. See `CLAUDE.md` for the safe patterns.
+> the quotes and Alpine silently fails. See `AGENTS.md` for the safe patterns.
 
 ## Before you open a PR
 
@@ -94,7 +89,7 @@ Test components in **both light and dark mode** across themes (especially
 1. Fork and branch from `main` (`fix/...`, `feat/...`).
 2. Keep PRs focused; one logical change per PR.
 3. Fill out the PR template checklist.
-4. A Codex review and CI (`lint-build` + E2E) must pass before merge.
+4. CI (`lint-build` + E2E) must pass before merge.
 
 ## Reporting bugs / requesting features
 
