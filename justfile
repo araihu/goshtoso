@@ -36,3 +36,44 @@ css:
 # versioned dirs and regenerate the URL constants. Mirrors `just css`.
 vendor-js:
     go run ./cmd/vendorgen -download
+
+# Run root unit tests, site unit tests, and E2E tests, then merge all Go
+# coverage data into .coverage/coverage.out and .coverage/coverage.html.
+coverage:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    root="$PWD"
+    root_coverpkg="github.com/araihu/goshtoso/..."
+    all_coverpkg="${root_coverpkg},github.com/araihu/goshtoso/site/..."
+
+    if [ ! -f go.work ]; then
+      go work init . ./site
+    fi
+
+    rm -rf .coverage
+    mkdir -p .coverage/unit-root .coverage/unit-site .coverage/e2e .coverage/merged
+
+    go test -cover -coverpkg="$root_coverpkg" ./... -count=1 \
+      -args -test.gocoverdir="$root/.coverage/unit-root"
+
+    (
+      cd site
+      site_pkgs="$(go list ./... | grep -v '/tests/e2e')"
+      go test -cover -coverpkg="$all_coverpkg" $site_pkgs -count=1 \
+        -args -test.gocoverdir="$root/.coverage/unit-site"
+
+      GOSHTOSO_E2E_COVERDIR="$root/.coverage/e2e" \
+      GOSHTOSO_E2E_COVERPKG="$all_coverpkg" \
+        go test ./tests/e2e/... -count=1 -timeout 15m
+    )
+
+    go tool covdata merge \
+      -i=.coverage/unit-root,.coverage/unit-site,.coverage/e2e \
+      -o=.coverage/merged
+    go tool covdata percent -i=.coverage/merged > .coverage/coverage-percent.txt
+    go tool covdata textfmt -i=.coverage/merged -o=.coverage/coverage.out
+    go tool cover -func=.coverage/coverage.out > .coverage/coverage-func.txt
+    go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
+
+    grep '^total:' .coverage/coverage-func.txt
+    echo "coverage artifacts: .coverage/coverage.out .coverage/coverage-func.txt .coverage/coverage-percent.txt .coverage/coverage.html"
