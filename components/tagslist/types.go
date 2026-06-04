@@ -14,8 +14,8 @@ type Config struct {
 	Values []string
 	// Placeholder is shown in the add-tag input
 	Placeholder string
-	// AddLabel is the add button text (default: "Add")
-	AddLabel string
+	// AddActionLabel is the add button text (default: "Add")
+	AddActionLabel string
 	// Disabled renders chips only (no remove buttons, no input row)
 	Disabled bool
 	// Class allows additional CSS classes on the outer container
@@ -24,8 +24,8 @@ type Config struct {
 
 // GetAddLabel returns the add button label with default
 func (c Config) GetAddLabel() string {
-	if c.AddLabel != "" {
-		return c.AddLabel
+	if c.AddActionLabel != "" {
+		return c.AddActionLabel
 	}
 	return "Add"
 }

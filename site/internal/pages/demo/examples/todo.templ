@@ -119,7 +119,7 @@ templ TodoRow(t todo.Todo) {
 		if t.Due != "" {
 			<span class="shrink-0 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ t.Due }</span>
 		}
-		@badge.Badge(badge.Config{Variant: priorityVariant(t.Priority), Text: t.Priority})
+		@badge.Badge(badge.Config{Variant: priorityVariant(t.Priority), Label: t.Priority})
 		<button
 			type="button"
 			aria-label="Move up"

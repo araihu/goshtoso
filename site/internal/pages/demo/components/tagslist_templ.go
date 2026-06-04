@@ -94,7 +94,7 @@ func tagsListDemoContent() templ.Component {
     ID:          "labels",
     Name:        "labels",
     Placeholder: "Add a label...",
-    AddLabel:    "Add",
+    AddActionLabel:    "Add",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

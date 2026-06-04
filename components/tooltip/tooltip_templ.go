@@ -14,24 +14,24 @@ import templruntime "github.com/a-h/templ/runtime"
 //	// Simple hover tooltip (top)
 //	@tooltip.Tooltip(tooltip.Config{
 //	    ID:          "myTooltip",
-//	    Text:        "Tooltip top",
-//	    TriggerText: "Hover Me",
+//	    Label:        "Tooltip top",
+//	    TriggerLabel: "Hover Me",
 //	})
 //
 //	// Rich tooltip with description
 //	@tooltip.Tooltip(tooltip.Config{
 //	    ID:          "richTooltip",
-//	    Text:        "Tooltip top",
+//	    Label:        "Tooltip top",
 //	    Description: "A rich tooltip that contains longer text.",
-//	    TriggerText: "Hover Me",
+//	    TriggerLabel: "Hover Me",
 //	})
 //
 //	// Click tooltip
 //	@tooltip.Tooltip(tooltip.Config{
 //	    ID:          "clickTooltip",
-//	    Text:        "Tooltip top",
-//	    Trigger:     tooltip.Click,
-//	    TriggerText: "Hover Me",
+//	    Label:        "Tooltip top",
+//	    TriggerMode: tooltip.Click,
+//	    TriggerLabel: "Hover Me",
 //	})
 func Tooltip(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -54,7 +54,7 @@ func Tooltip(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.Trigger == Click {
+		if cfg.TriggerMode == Click {
 			templ_7745c5c3_Err = clickTooltip(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -100,7 +100,7 @@ func defaultTooltip(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.TriggerContent != nil {
+		if cfg.Trigger != nil {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span class=\"peer\" aria-describedby=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -118,7 +118,7 @@ func defaultTooltip(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = cfg.TriggerContent.Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = cfg.Trigger.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -194,9 +194,9 @@ func defaultTooltip(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 48, Col: 324}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 48, Col: 325}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -236,7 +236,7 @@ func richTooltip(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.TriggerContent != nil {
+		if cfg.Trigger != nil {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"peer\" aria-describedby=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -254,7 +254,7 @@ func richTooltip(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = cfg.TriggerContent.Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = cfg.Trigger.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -330,9 +330,9 @@ func richTooltip(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 63, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 63, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -385,7 +385,7 @@ func clickTooltip(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.TriggerContent != nil {
+		if cfg.Trigger != nil {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<span x-on:click=\"showTooltip = !showTooltip\" aria-describedby=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -403,7 +403,7 @@ func clickTooltip(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = cfg.TriggerContent.Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = cfg.Trigger.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -479,9 +479,9 @@ func clickTooltip(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var26 string
-		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 79, Col: 544}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 79, Col: 545}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {

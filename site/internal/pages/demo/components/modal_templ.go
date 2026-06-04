@@ -81,9 +81,9 @@ func modalDemoContent() templ.Component {
     ID:            "offer",
     Title:         "Special Offer",
     Body:          "Upgrade your account now to unlock premium features.",
-    TriggerText:   "Open Modal",
-    PrimaryText:   "Upgrade Now",
-    SecondaryText: "Remind me later",
+    TriggerLabel:   "Open Modal",
+    PrimaryLabel:   "Upgrade Now",
+    SecondaryLabel: "Remind me later",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -99,8 +99,8 @@ func modalDemoContent() templ.Component {
     ID:          "txComplete",
     Title:       "Transaction Complete",
     Body:        "Your funds transfer was successful.",
-    TriggerText: "Success Modal",
-    PrimaryText: "Go to My Balance",
+    TriggerLabel: "Success Modal",
+    PrimaryLabel: "Go to My Balance",
     Variant:     modal.Success,
     AlertMode:   true,
 })`,
@@ -118,9 +118,9 @@ func modalDemoContent() templ.Component {
     ID:            "htmxDemo",
     Title:         "Confirm Action",
     Body:          "This will send a request to the server.",
-    TriggerText:   "HTMX Modal",
-    PrimaryText:   "Confirm",
-    SecondaryText: "Cancel",
+    TriggerLabel:   "HTMX Modal",
+    PrimaryLabel:   "Confirm",
+    SecondaryLabel: "Cancel",
     PrimaryAction: &modal.ButtonAction{
         HxPost:   "/api/hello",
         HxTarget: "#modal-htmx-result",
@@ -141,9 +141,9 @@ func modalDemoContent() templ.Component {
     ID:            "jsDemo",
     Title:         "Confirm Delete",
     Body:          "Are you sure? This cannot be undone.",
-    TriggerText:   "JS Action Modal",
-    PrimaryText:   "Delete",
-    SecondaryText: "Cancel",
+    TriggerLabel:   "JS Action Modal",
+    PrimaryLabel:   "Delete",
+    SecondaryLabel: "Cancel",
     PrimaryAction: &modal.ButtonAction{OnClick: "alert('Deleted!')"},
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -201,12 +201,12 @@ func modalDefaultPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:            "defaultDemo",
-			Title:         "Special Offer",
-			Body:          "As a token of appreciation, we have an exclusive offer just for you. Upgrade your account now to unlock premium features and enjoy a seamless experience.",
-			TriggerText:   "Open Modal",
-			PrimaryText:   "Upgrade Now",
-			SecondaryText: "Remind me later",
+			ID:             "defaultDemo",
+			Title:          "Special Offer",
+			Body:           "As a token of appreciation, we have an exclusive offer just for you. Upgrade your account now to unlock premium features and enjoy a seamless experience.",
+			TriggerLabel:   "Open Modal",
+			PrimaryLabel:   "Upgrade Now",
+			SecondaryLabel: "Remind me later",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -246,49 +246,49 @@ func modalAlertPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:          "successDemo",
-			Title:       "Transaction Complete",
-			Body:        "Your funds transfer was successful. Check your balance for confirmation.",
-			TriggerText: "Success Modal",
-			PrimaryText: "Go to My Balance",
-			Variant:     modal.Success,
-			AlertMode:   true,
+			ID:           "successDemo",
+			Title:        "Transaction Complete",
+			Body:         "Your funds transfer was successful. Check your balance for confirmation.",
+			TriggerLabel: "Success Modal",
+			PrimaryLabel: "Go to My Balance",
+			Variant:      modal.Success,
+			AlertMode:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:          "infoDemo",
-			Title:       "New Update Available",
-			Body:        "A new version of the application is ready for download. Enhance your experience with the latest features and improvements.",
-			TriggerText: "Info Modal",
-			PrimaryText: "Install Updates Now",
-			Variant:     modal.Info,
-			AlertMode:   true,
+			ID:           "infoDemo",
+			Title:        "New Update Available",
+			Body:         "A new version of the application is ready for download. Enhance your experience with the latest features and improvements.",
+			TriggerLabel: "Info Modal",
+			PrimaryLabel: "Install Updates Now",
+			Variant:      modal.Info,
+			AlertMode:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:          "warningDemo",
-			Title:       "Forgot your password?",
-			Body:        "Your account will be locked after three unsuccessful login attempts.",
-			TriggerText: "Warning Modal",
-			PrimaryText: "Recover My Password",
-			Variant:     modal.Warning,
-			AlertMode:   true,
+			ID:           "warningDemo",
+			Title:        "Forgot your password?",
+			Body:         "Your account will be locked after three unsuccessful login attempts.",
+			TriggerLabel: "Warning Modal",
+			PrimaryLabel: "Recover My Password",
+			Variant:      modal.Warning,
+			AlertMode:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:          "dangerDemo",
-			Title:       "Update Required",
-			Body:        "You are missing critical security updates, putting your system at risk of potential vulnerabilities.",
-			TriggerText: "Danger Modal",
-			PrimaryText: "Install Updates Now",
-			Variant:     modal.Danger,
-			AlertMode:   true,
+			ID:           "dangerDemo",
+			Title:        "Update Required",
+			Body:         "You are missing critical security updates, putting your system at risk of potential vulnerabilities.",
+			TriggerLabel: "Danger Modal",
+			PrimaryLabel: "Install Updates Now",
+			Variant:      modal.Danger,
+			AlertMode:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -328,12 +328,12 @@ func modalHTMXPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:            "htmxDemo",
-			Title:         "Confirm Action",
-			Body:          "Clicking confirm will send a POST request to the server via HTMX.",
-			TriggerText:   "Open HTMX Modal",
-			PrimaryText:   "Confirm",
-			SecondaryText: "Cancel",
+			ID:             "htmxDemo",
+			Title:          "Confirm Action",
+			Body:           "Clicking confirm will send a POST request to the server via HTMX.",
+			TriggerLabel:   "Open HTMX Modal",
+			PrimaryLabel:   "Confirm",
+			SecondaryLabel: "Cancel",
 			PrimaryAction: &modal.ButtonAction{
 				HxPost:   "/api/hello",
 				HxTarget: "#modal-htmx-result",
@@ -378,12 +378,12 @@ func modalJSPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:            "jsDemo",
-			Title:         "Confirm Delete",
-			Body:          "Are you sure you want to delete this item? This action cannot be undone.",
-			TriggerText:   "Open JS Modal",
-			PrimaryText:   "Delete",
-			SecondaryText: "Cancel",
+			ID:             "jsDemo",
+			Title:          "Confirm Delete",
+			Body:           "Are you sure you want to delete this item? This action cannot be undone.",
+			TriggerLabel:   "Open JS Modal",
+			PrimaryLabel:   "Delete",
+			SecondaryLabel: "Cancel",
 			PrimaryAction: &modal.ButtonAction{
 				OnClick: "alert('Item deleted successfully!')",
 			},

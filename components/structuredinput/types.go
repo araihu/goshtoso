@@ -35,13 +35,13 @@ type Entry map[string]string
 
 // Config configures the StructuredInput component.
 type Config struct {
-	ID        string
-	Name      string
-	Columns   []Column
-	Entries   []Entry
-	AddLabel  string
-	Disabled  bool
-	RootClass string
+	ID             string
+	Name           string
+	Columns        []Column
+	Entries        []Entry
+	AddActionLabel string
+	Disabled       bool
+	RootClass      string
 }
 
 // NormalizedColumns returns usable columns with stable defaults.
@@ -82,8 +82,8 @@ func (o Option) OptionLabel() string {
 
 // GetAddLabel returns the add button label with default.
 func (c Config) GetAddLabel() string {
-	if c.AddLabel != "" {
-		return c.AddLabel
+	if c.AddActionLabel != "" {
+		return c.AddActionLabel
 	}
 	return "Add row"
 }

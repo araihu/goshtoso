@@ -774,12 +774,12 @@ func arrayInput(f Field, name string) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = tagslist.TagsList(tagslist.Config{
-			ID:          name,
-			Name:        name,
-			Values:      f.ArrayDefault,
-			Placeholder: "item",
-			AddLabel:    "+ Add item",
-			Disabled:    f.Managed,
+			ID:             name,
+			Name:           name,
+			Values:         f.ArrayDefault,
+			Placeholder:    "item",
+			AddActionLabel: "+ Add item",
+			Disabled:       f.Managed,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

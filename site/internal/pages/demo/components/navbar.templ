@@ -57,7 +57,7 @@ templ navbarDemoContent() {
 			navbarWithRightSlotPreview(),
 			`@navbar.Navbar(navbar.Config{
     Brand:     brand(),
-    RightSlot: darkModeToggle(),
+    Actions: []navbar.ActionItem{{Content: darkModeToggle(), Position: navbar.ActionRight}},
     User:      &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
     UserMenu:  menu,
 })`,
@@ -120,7 +120,7 @@ templ navbarWithRightSlotPreview() {
 	<div id="navbar-right-slot" class="w-full" style="min-height: 200px;">
 		@navbar.Navbar(navbar.Config{
 			Brand:     demoBrandText(),
-			RightSlot: demoRightSlot(),
+			Actions: []navbar.ActionItem{{Content: demoRightSlot(), Position: navbar.ActionRight}},
 			User: &navbar.UserProfile{
 				Name:  "Alice Brown",
 				Email: "alice.brown@example.com",

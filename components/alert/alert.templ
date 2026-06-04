@@ -67,7 +67,7 @@ templ linkAlert(cfg Config) {
 					<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
 				</div>
 				<a href={ templ.SafeURL(cfg.Link.Href) } class={ cfg.LinkClasses() }>
-					{ cfg.Link.Text }
+					{ cfg.Link.Label }
 				</a>
 			</div>
 		</div>
@@ -106,7 +106,7 @@ templ actionAlert(cfg Config) {
 							hx-swap={ cfg.Action.PrimaryHxSwap }
 						}
 					>
-						{ cfg.Action.PrimaryText }
+						{ cfg.Action.PrimaryLabel }
 					</button>
 					<button
 						type="button"

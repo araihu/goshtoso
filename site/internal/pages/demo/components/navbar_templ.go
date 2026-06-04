@@ -117,7 +117,7 @@ func navbarDemoContent() templ.Component {
 			navbarWithRightSlotPreview(),
 			`@navbar.Navbar(navbar.Config{
     Brand:     brand(),
-    RightSlot: darkModeToggle(),
+    Actions: []navbar.ActionItem{{Content: darkModeToggle(), Position: navbar.ActionRight}},
     User:      &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
     UserMenu:  menu,
 })`,
@@ -274,8 +274,8 @@ func navbarWithRightSlotPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = navbar.Navbar(navbar.Config{
-			Brand:     demoBrandText(),
-			RightSlot: demoRightSlot(),
+			Brand:   demoBrandText(),
+			Actions: []navbar.ActionItem{{Content: demoRightSlot(), Position: navbar.ActionRight}},
 			User: &navbar.UserProfile{
 				Name:  "Alice Brown",
 				Email: "alice.brown@example.com",

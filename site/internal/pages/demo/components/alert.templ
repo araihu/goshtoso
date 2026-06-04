@@ -52,7 +52,7 @@ templ alertDemoContent() {
     Title:       "Update Available",
     Description: "A new version is available.",
     Variant:     alert.Info,
-    Link: &alert.LinkConfig{Text: "Details", Href: "#"},
+    Link: &alert.LinkConfig{Label: "Details", Href: "#"},
 })`,
 		)
 
@@ -85,7 +85,7 @@ templ alertDemoContent() {
     Description: "A new version is available.",
     Variant:     alert.Info,
     Action: &alert.ActionConfig{
-        PrimaryText:    "Update Now",
+        PrimaryLabel:    "Update Now",
         PrimaryOnClick: "alert('Updating...')",
         DismissText:    "Dismiss",
     },
@@ -174,7 +174,7 @@ templ alertLinkPreview() {
 					Description: "A new version is available. Please update to the latest version.",
 					Variant:     alert.Info,
 					Link: &alert.LinkConfig{
-						Text: "Details",
+						Label: "Details",
 						Href: "#",
 					},
 				})
@@ -183,7 +183,7 @@ templ alertLinkPreview() {
 					Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
 					Variant:     alert.Success,
 					Link: &alert.LinkConfig{
-						Text: "Details",
+						Label: "Details",
 						Href: "#",
 					},
 				})
@@ -192,7 +192,7 @@ templ alertLinkPreview() {
 					Description: "Your credit card expires soon. Please update your payment information.",
 					Variant:     alert.Warning,
 					Link: &alert.LinkConfig{
-						Text: "Details",
+						Label: "Details",
 						Href: "#",
 					},
 				})
@@ -201,7 +201,7 @@ templ alertLinkPreview() {
 					Description: "The email address you entered is invalid. Please try again.",
 					Variant:     alert.Danger,
 					Link: &alert.LinkConfig{
-						Text: "Details",
+						Label: "Details",
 						Href: "#",
 					},
 				})
@@ -246,7 +246,7 @@ templ alertActionPreview() {
 					Description: "A new version is available. Please update to the latest version.",
 					Variant:     alert.Info,
 					Action: &alert.ActionConfig{
-						PrimaryText: "Update Now",
+						PrimaryLabel: "Update Now",
 						DismissText: "Dismiss",
 					},
 				})
@@ -255,7 +255,7 @@ templ alertActionPreview() {
 					Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
 					Variant:     alert.Success,
 					Action: &alert.ActionConfig{
-						PrimaryText: "Dashboard",
+						PrimaryLabel: "Dashboard",
 						DismissText: "Dismiss",
 					},
 				})
@@ -264,7 +264,7 @@ templ alertActionPreview() {
 					Description: "Your credit card expires soon. Please update your payment information.",
 					Variant:     alert.Warning,
 					Action: &alert.ActionConfig{
-						PrimaryText: "Update Now",
+						PrimaryLabel: "Update Now",
 						DismissText: "Dismiss",
 					},
 				})
@@ -273,7 +273,7 @@ templ alertActionPreview() {
 					Description: "The email address you entered is invalid. Please try again.",
 					Variant:     alert.Danger,
 					Action: &alert.ActionConfig{
-						PrimaryText: "Try Again",
+						PrimaryLabel: "Try Again",
 						DismissText: "Dismiss",
 					},
 				})

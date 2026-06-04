@@ -73,9 +73,6 @@ type Config struct {
 	User *UserProfile
 	// UserMenu contains dropdown items under the avatar
 	UserMenu []UserMenuItem
-	// RightSlot is custom content rendered on the right side (e.g., dark mode toggle).
-	// Deprecated: use Actions with ActionRight position instead.
-	RightSlot templ.Component
 	// Class allows additional CSS classes on the outer <nav>
 	NavClass string
 	// NavAttrs are extra HTML attributes on the <nav> element

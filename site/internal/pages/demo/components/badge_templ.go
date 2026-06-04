@@ -77,10 +77,10 @@ func badgeDemoContent() templ.Component {
 				Description: "A small label for status, counts, or categorization. Solid and soft styles, semantic colors, icons, indicators, notification counts, and animating dots.",
 			},
 			badgeSolidPreview(),
-			`@badge.Badge(badge.Config{Text: "Default", Variant: badge.Default})
-@badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary})
-@badge.Badge(badge.Config{Text: "Success", Variant: badge.Success})
-@badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger})`,
+			`@badge.Badge(badge.Config{Label: "Default", Variant: badge.Default})
+@badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary})
+@badge.Badge(badge.Config{Label: "Success", Variant: badge.Success})
+@badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -91,7 +91,7 @@ func badgeDemoContent() templ.Component {
 				Description: "Style: badge.StyleSoft swaps the solid fill for a subtle tinted background with a border.",
 			},
 			badgeSoftPreview(),
-			`@badge.Badge(badge.Config{Text: "Active", Variant: badge.Success, Style: badge.StyleSoft})`,
+			`@badge.Badge(badge.Config{Label: "Active", Variant: badge.Success, Style: badge.StyleSoft})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -102,7 +102,7 @@ func badgeDemoContent() templ.Component {
 				Description: "Pass any templ.Component as Icon to render it before the text.",
 			},
 			badgeIconsPreview(),
-			`@badge.Badge(badge.Config{Text: "Verified", Variant: badge.Info, Icon: checkIcon()})`,
+			`@badge.Badge(badge.Config{Label: "Verified", Variant: badge.Info, Icon: checkIcon()})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -113,7 +113,7 @@ func badgeDemoContent() templ.Component {
 				Description: "Indicator: true prepends a small status dot tinted to the variant.",
 			},
 			badgeIndicatorPreview(),
-			`@badge.Badge(badge.Config{Text: "Live", Variant: badge.Danger, Indicator: true})`,
+			`@badge.Badge(badge.Config{Label: "Live", Variant: badge.Danger, Indicator: true})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -153,8 +153,8 @@ func badgeDemoContent() templ.Component {
 				Description: "Three sizes via Size: badge.SizeSM, badge.SizeMD (default), badge.SizeLG.",
 			},
 			badgeSizesPreview(),
-			`@badge.Badge(badge.Config{Text: "Small", Variant: badge.Primary, Size: badge.SizeSM})
-@badge.Badge(badge.Config{Text: "Large", Variant: badge.Primary, Size: badge.SizeLG})`,
+			`@badge.Badge(badge.Config{Label: "Small", Variant: badge.Primary, Size: badge.SizeSM})
+@badge.Badge(badge.Config{Label: "Large", Variant: badge.Primary, Size: badge.SizeLG})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -206,31 +206,31 @@ func badgeSolidPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Default", Variant: badge.Default}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Default", Variant: badge.Default}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Secondary", Variant: badge.Secondary}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Secondary", Variant: badge.Secondary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Info", Variant: badge.Info}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Info", Variant: badge.Info}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Success", Variant: badge.Success}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Success", Variant: badge.Success}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -268,31 +268,31 @@ func badgeSoftPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Default", Variant: badge.Default, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Default", Variant: badge.Default, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Secondary", Variant: badge.Secondary, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Secondary", Variant: badge.Secondary, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Info", Variant: badge.Info, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Info", Variant: badge.Info, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Success", Variant: badge.Success, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Success", Variant: badge.Success, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -330,27 +330,27 @@ func badgeIconsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Penguin", Variant: badge.Primary, Icon: penguinIcon()}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Penguin", Variant: badge.Primary, Icon: penguinIcon()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Filter", Variant: badge.Secondary, Icon: closeIcon()}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Filter", Variant: badge.Secondary, Icon: closeIcon()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Verified", Variant: badge.Info, Icon: checkIcon()}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Verified", Variant: badge.Info, Icon: checkIcon()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Active", Variant: badge.Success, Icon: checkCircleIcon()}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Active", Variant: badge.Success, Icon: checkCircleIcon()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Icon: shieldIcon()}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning, Icon: shieldIcon()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Error", Variant: badge.Danger, Icon: alertIcon()}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Error", Variant: badge.Danger, Icon: alertIcon()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -388,27 +388,27 @@ func badgeIndicatorPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Default", Variant: badge.Default, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Default", Variant: badge.Default, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Primary", Variant: badge.Primary, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Info", Variant: badge.Info, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Info", Variant: badge.Info, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Success", Variant: badge.Success, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Success", Variant: badge.Success, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Warning", Variant: badge.Warning, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Danger", Variant: badge.Danger, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger, Indicator: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -558,15 +558,15 @@ func badgeSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Small", Variant: badge.Primary, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Small", Variant: badge.Primary, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Medium", Variant: badge.Primary, Size: badge.SizeMD}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Medium", Variant: badge.Primary, Size: badge.SizeMD}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Large", Variant: badge.Primary, Size: badge.SizeLG}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Large", Variant: badge.Primary, Size: badge.SizeLG}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -73,7 +73,7 @@ func OnlineBadge(count int, oob bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = badge.Badge(badge.Config{
-			Text:    fmt.Sprintf("%d online", count),
+			Label:   fmt.Sprintf("%d online", count),
 			Variant: badge.Success,
 			Style:   badge.StyleSoft,
 		}).Render(ctx, templ_7745c5c3_Buffer)

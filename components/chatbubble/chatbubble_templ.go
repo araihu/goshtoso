@@ -354,7 +354,7 @@ func bubbleHeader(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.IsBot {
-			templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "BOT", Variant: badge.Info, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "BOT", Variant: badge.Info, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

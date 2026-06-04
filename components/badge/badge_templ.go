@@ -15,13 +15,13 @@ import "fmt"
 //
 //	// Simple badge
 //	@badge.Badge(badge.Config{
-//	    Text: "New",
+//	    Label: "New",
 //	    Variant: badge.Primary,
 //	})
 //
 //	// Soft style badge with icon
 //	@badge.Badge(badge.Config{
-//	    Text: "Active",
+//	    Label: "Active",
 //	    Variant: badge.Success,
 //	    Style: badge.StyleSoft,
 //	    Icon: checkIcon,
@@ -29,7 +29,7 @@ import "fmt"
 //
 //	// Badge with indicator dot
 //	@badge.Badge(badge.Config{
-//	    Text: "Live",
+//	    Label: "Live",
 //	    Variant: badge.Danger,
 //	    Indicator: true,
 //	})
@@ -115,9 +115,9 @@ func simpleBadge(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/badge/badge.templ`, Line: 41, Col: 12}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/badge/badge.templ`, Line: 41, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -243,9 +243,9 @@ func badgeWithInner(cfg Config) templ.Component {
 			}
 		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/badge/badge.templ`, Line: 61, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/badge/badge.templ`, Line: 61, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {

@@ -38,14 +38,14 @@ type Config struct {
 	Title string
 	// Body is the modal body text
 	Body string
-	// TriggerText is the trigger button label
-	TriggerText string
-	// PrimaryText is the primary action button label
-	PrimaryText string
+	// TriggerLabel is the trigger button label
+	TriggerLabel string
+	// PrimaryLabel is the primary action button label
+	PrimaryLabel string
 	// PrimaryAction holds optional HTMX/JS actions for the primary button
 	PrimaryAction *ButtonAction
-	// SecondaryText is the secondary/dismiss button label (default mode only)
-	SecondaryText string
+	// SecondaryLabel is the secondary/dismiss button label (default mode only)
+	SecondaryLabel string
 	// SecondaryAction holds optional HTMX/JS actions for the secondary button
 	SecondaryAction *ButtonAction
 	// Variant determines the color scheme (used for alert mode and trigger button)

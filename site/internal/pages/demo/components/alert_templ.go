@@ -112,7 +112,7 @@ func alertDemoContent() templ.Component {
     Title:       "Update Available",
     Description: "A new version is available.",
     Variant:     alert.Info,
-    Link: &alert.LinkConfig{Text: "Details", Href: "#"},
+    Link: &alert.LinkConfig{Label: "Details", Href: "#"},
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -149,7 +149,7 @@ func alertDemoContent() templ.Component {
     Description: "A new version is available.",
     Variant:     alert.Info,
     Action: &alert.ActionConfig{
-        PrimaryText:    "Update Now",
+        PrimaryLabel:    "Update Now",
         PrimaryOnClick: "alert('Updating...')",
         DismissText:    "Dismiss",
     },
@@ -346,8 +346,8 @@ func alertLinkPreview() templ.Component {
 			Description: "A new version is available. Please update to the latest version.",
 			Variant:     alert.Info,
 			Link: &alert.LinkConfig{
-				Text: "Details",
-				Href: "#",
+				Label: "Details",
+				Href:  "#",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -358,8 +358,8 @@ func alertLinkPreview() templ.Component {
 			Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
 			Variant:     alert.Success,
 			Link: &alert.LinkConfig{
-				Text: "Details",
-				Href: "#",
+				Label: "Details",
+				Href:  "#",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -370,8 +370,8 @@ func alertLinkPreview() templ.Component {
 			Description: "Your credit card expires soon. Please update your payment information.",
 			Variant:     alert.Warning,
 			Link: &alert.LinkConfig{
-				Text: "Details",
-				Href: "#",
+				Label: "Details",
+				Href:  "#",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -382,8 +382,8 @@ func alertLinkPreview() templ.Component {
 			Description: "The email address you entered is invalid. Please try again.",
 			Variant:     alert.Danger,
 			Link: &alert.LinkConfig{
-				Text: "Details",
-				Href: "#",
+				Label: "Details",
+				Href:  "#",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -488,8 +488,8 @@ func alertActionPreview() templ.Component {
 			Description: "A new version is available. Please update to the latest version.",
 			Variant:     alert.Info,
 			Action: &alert.ActionConfig{
-				PrimaryText: "Update Now",
-				DismissText: "Dismiss",
+				PrimaryLabel: "Update Now",
+				DismissText:  "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -500,8 +500,8 @@ func alertActionPreview() templ.Component {
 			Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
 			Variant:     alert.Success,
 			Action: &alert.ActionConfig{
-				PrimaryText: "Dashboard",
-				DismissText: "Dismiss",
+				PrimaryLabel: "Dashboard",
+				DismissText:  "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -512,8 +512,8 @@ func alertActionPreview() templ.Component {
 			Description: "Your credit card expires soon. Please update your payment information.",
 			Variant:     alert.Warning,
 			Action: &alert.ActionConfig{
-				PrimaryText: "Update Now",
-				DismissText: "Dismiss",
+				PrimaryLabel: "Update Now",
+				DismissText:  "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -524,8 +524,8 @@ func alertActionPreview() templ.Component {
 			Description: "The email address you entered is invalid. Please try again.",
 			Variant:     alert.Danger,
 			Action: &alert.ActionConfig{
-				PrimaryText: "Try Again",
-				DismissText: "Dismiss",
+				PrimaryLabel: "Try Again",
+				DismissText:  "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -37,7 +37,7 @@ templ OnlineBadge(count int, oob bool) {
 		}
 	>
 		@badge.Badge(badge.Config{
-			Text:    fmt.Sprintf("%d online", count),
+			Label:    fmt.Sprintf("%d online", count),
 			Variant: badge.Success,
 			Style:   badge.StyleSoft,
 		})

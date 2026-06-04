@@ -35,8 +35,8 @@ const (
 
 // Config holds configuration for the badge
 type Config struct {
-	// Text is the badge content
-	Text string
+	// Label is the badge content
+	Label string
 	// Variant determines the color scheme
 	Variant Variant
 	// Style determines solid or soft appearance

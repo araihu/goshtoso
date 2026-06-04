@@ -7,13 +7,13 @@ import "fmt"
 //
 //	// Simple badge
 //	@badge.Badge(badge.Config{
-//	    Text: "New",
+//	    Label: "New",
 //	    Variant: badge.Primary,
 //	})
 //
 //	// Soft style badge with icon
 //	@badge.Badge(badge.Config{
-//	    Text: "Active",
+//	    Label: "Active",
 //	    Variant: badge.Success,
 //	    Style: badge.StyleSoft,
 //	    Icon: checkIcon,
@@ -21,7 +21,7 @@ import "fmt"
 //
 //	// Badge with indicator dot
 //	@badge.Badge(badge.Config{
-//	    Text: "Live",
+//	    Label: "Live",
 //	    Variant: badge.Danger,
 //	    Indicator: true,
 //	})
@@ -38,7 +38,7 @@ templ simpleBadge(cfg Config) {
 	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.RootClass }}
 	
 	<span class={ classes }>
-		{ cfg.Text }
+		{ cfg.Label }
 	</span>
 }
 
@@ -58,7 +58,7 @@ templ badgeWithInner(cfg Config) {
 					@cfg.Icon
 				</span>
 			}
-			{ cfg.Text }
+			{ cfg.Label }
 		</span>
 	</span>
 }

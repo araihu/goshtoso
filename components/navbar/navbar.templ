@@ -1,7 +1,7 @@
 package navbar
 
 // Navbar renders a responsive navigation bar based on PenguinUI.
-// Supports brand, nav links, user avatar dropdown, custom right slot, and mobile menu.
+// Supports brand, nav links, user avatar dropdown, custom actions, and mobile menu.
 //
 // Usage:
 //
@@ -58,17 +58,13 @@ templ Navbar(cfg Config) {
 			for _, action := range cfg.RightActions() {
 				@action.Content
 			}
-			<!-- Right Slot (deprecated, use Actions) -->
-			if cfg.RightSlot != nil {
-				@cfg.RightSlot
-			}
 			<!-- User Avatar Dropdown -->
 			if cfg.User != nil {
 				@avatarDropdown(cfg)
 			}
 		</div>
 		<!-- Mobile Menu Button -->
-		if len(cfg.Links) > 0 || cfg.User != nil || cfg.RightSlot != nil || len(cfg.RightActions()) > 0 {
+		if len(cfg.Links) > 0 || cfg.User != nil || len(cfg.RightActions()) > 0 {
 			<button
 				x-on:click="mobileMenuIsOpen = !mobileMenuIsOpen"
 				x-bind:aria-expanded="mobileMenuIsOpen"
@@ -215,12 +211,6 @@ templ mobileMenu(cfg Config) {
 		for _, action := range cfg.RightActions() {
 			<li class="p-2 list-none">
 				@action.Content
-			</li>
-		}
-		<!-- Right Slot in Mobile (deprecated) -->
-		if cfg.RightSlot != nil {
-			<li class="p-2 list-none">
-				@cfg.RightSlot
 			</li>
 		}
 		<!-- Divider before user menu items -->
