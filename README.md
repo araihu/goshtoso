@@ -12,201 +12,239 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
 </p>
 
-⚠️ Work-In-Progress
+**Goshtoso** is a Go UI component library for server-rendered web apps. It
+combines [templ](https://templ.guide/), Tailwind CSS, HTMX, and Alpine.js into a
+set of importable components with bundled CSS and JavaScript assets.
 
-There is still lots of rough edeges to iron out, most related to preserving Alpine.js state when a wired component is swapped in by HTMX.
+The project began as a hard fork of [PenguinUI](https://www.penguinui.com) and
+has grown into a Go-first component system for applications that prefer rendered
+HTML, small client-side sprinkles, and deterministic local assets over CDN-bound
+copy-paste snippets.
 
-**Goshtoso**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
+> Goshtoso is actively evolving. The components are usable, but the API surface
+> is still being refined as the library moves toward a stable public release.
 
-## About This Fork
+## Highlights
 
-This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvand ([source here](https://github.com/SalarHoushvand/penguinui-components)), transformed from static HTML/Alpine.js components into a complete Go web component library.
+- **37 templ components** for common app UI: forms, navigation, overlays, data
+  display, feedback, layout, and richer inputs.
+- **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
+  instant local interaction makes sense.
+- **Bundled assets** for Tailwind CSS, Alpine.js, HTMX, htmx extensions, fonts,
+  and images. No runtime CDN dependency is required.
+- **Theme system included** with light/dark support and 13 built-in themes.
+- **Two-module repository**: a slim publishable library at the repo root and a
+  demo/test site under `site/`.
+- **Go-native examples and tests** using templ generation and Playwright-backed
+  E2E coverage.
 
+## Quick Start
 
-### What's Changed?
-
-| Original | Goshtoso Fork |
-|----------|-------------|
-| Static HTML | Go + Templ templates |
-| CDN assets | Configurable (CDN/Embedded/Custom) |
-| Copy-paste | `go get` importable |
-| Alpine.js only | HTMX + Alpine.js + Go backend |
-
-## Credits
-
-- **Original**: [Penguin UI](https://www.penguinui.com) by [Salar Houshvand](https://x.com/salar_houshvand)
-- **License**: MIT (preserved from original)
-
-## CSS Integration
-
-Goshtoso ships a CLI tool that extracts the pre-built Tailwind CSS from the embedded assets. Client applications use this instead of manually copying CSS files.
-
-```bash
-# Via go tool (recommended — version-pinned in go.mod)
-go tool goshtoso -out=css/goshtoso-base.css
-
-# Or via go run (for one-off use)
-go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=goshtoso-base.css
-```
-
-Then import it in your Tailwind entry point:
-
-```css
-@import "tailwindcss";
-@import "./goshtoso-base.css";
-```
-
-See [docs/USAGE.md](docs/USAGE.md) for full setup instructions.
-
-## Project Structure
-
-Two Go modules in one repo (a workspace): the library at the root and the demo
-site under `site/`.
-
-```
-goshtoso/                    # ROOT MODULE — library (github.com/araihu/goshtoso)
-├── cmd/goshtoso/            # CSS extraction CLI tool
-├── components/              # Goshtoso component library (32 components)
-│   └── badge/
-│       ├── types.go         # Configuration types
-│       └── badge.templ      # Templ component
-├── assets/
-│   ├── embed.go             # Embedded assets + StylesCSS() accessor
-│   ├── styles.css           # Compiled Tailwind CSS
-│   ├── js/                  # Alpine.js, HTMX, plugins
-├── docs/                    # Integration guides
-└── site/                    # SITE MODULE — demo + examples (…/goshtoso/site)
-    ├── cmd/server/          # Demo server
-    ├── internal/pages/demo/ # Demo pages
-    └── tests/e2e/           # Playwright E2E tests
-```
-
-## Running the Demo
-
-### Quick Start (Recommended: Air with Live Reload)
+Install the library:
 
 ```bash
-# Install dependencies (including Air)
-make install
-make install-air
-
-# Run with live reload (auto-rebuilds on file changes)
-make dev-air
-
-# Server will start on http://localhost:8090
-# Accordion Demo: http://localhost:8090/components/accordion
+go get github.com/araihu/goshtoso@latest
 ```
 
-### Standard Development
+Mount the embedded assets in your server:
 
-```bash
-# Install dependencies
-make install
+```go
+package main
 
-# Run the demo server (run `go work init . ./site` once per clone for local dev)
-make dev
-# or
-go run ./site/cmd/server
+import (
+    "net/http"
 
-# Server will start on http://localhost:8090
-# - Original PenguinUI: http://localhost:8090/original/
-# - Goshtoso Components: http://localhost:8090/gottha/
+    "github.com/araihu/goshtoso/assets"
+)
+
+func main() {
+    http.Handle("/assets/", assets.Handler())
+
+    http.ListenAndServe(":8080", nil)
+}
 ```
 
-## Running E2E Tests
+Include Goshtoso's CSS and JavaScript in your page shell:
 
-E2E tests use [playwright-go](https://github.com/playwright-community/playwright-go) (following the tks-console pattern) for Go-based browser automation.
+```go
+import "github.com/araihu/goshtoso/components/head"
 
-```bash
-# Using just (from repo root)
-just gp-test-e2e                    # Run all E2E tests
-just gp-test-e2e-one TestButton     # Run specific test
-
-# Or directly
-go test ./site/tests/e2e/... -v
-
-# First time setup - install Playwright browsers
-just gp-install-playwright
-# or
-go install github.com/playwright-community/playwright-go/cmd/playwright@v0.5700.1
-playwright install chromium
+templ Layout() {
+    <html>
+        <head>
+            @head.Dependencies()
+        </head>
+        <body>
+            { children... }
+        </body>
+    </html>
+}
 ```
 
-### Test Results
-
-Tests automatically:
-- Start the demo server
-- Run browser automation tests
-- Capture screenshots on failures to `test-results/screenshots/`
-- Verify both Original PenguinUI and Goshtoso component rendering
-
-### Current Test Coverage
-
-- **Button Component**: Verifies all 8 variants render correctly, HTMX attributes, Alpine.js integration
-- **Screenshots**: Auto-captured for visual debugging
-
-## Component Usage
-
-### Button Component
+Render components from their packages:
 
 ```go
 import "github.com/araihu/goshtoso/components/button"
 
-// Basic button
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Type:    "button",
-}) {
-    Click Me
+templ Example() {
+    @button.Button(button.Config{
+        Variant: button.Primary,
+        Type:    "button",
+    }) {
+        Save changes
+    }
 }
+```
 
-// With HTMX
-@button.Button(button.Config{
-    Variant: button.Primary,
-    HTMX: &button.HTMXConfig{
-        Post:   "/api/action",
-        Target: "#result",
-        Swap:   "innerHTML",
-    },
-}) {
-    Submit
-}
+Goshtoso components ship pre-generated, so consumers do not run
+`templ generate` on the library itself. You still run `templ generate` for your
+own `.templ` files.
 
-// With Alpine.js
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Alpine: &button.AlpineConfig{
-        OnClick: "modalIsOpen = true",
-    },
-}) {
-    Open Modal
-}
+For a complete integration guide, including custom Tailwind builds and manual
+asset wiring, see [docs/USAGE.md](docs/USAGE.md).
+
+## Component Catalog
+
+All components are imported from:
+
+```text
+github.com/araihu/goshtoso/components/<name>
+```
+
+Current components:
+
+```text
+accordion        alert       avatar       badge        banner       breadcrumbs
+button           card        carousel     chatbubble   checkbox     codeblock
+combobox         drawer      dropdown     fileinput    form         head
+modal            navbar      pagination   palette      radio        schemafield
+select           sidebar     spinner      steps        structuredinput
+table            tabs        tagslist     textarea     textinput    toast
+toggle           tooltip
+```
+
+Run the demo site to explore variants, API tables, HTMX behavior, Alpine.js
+states, themes, and example apps:
+
+```bash
+go run ./site/cmd/server
+```
+
+Then open:
+
+- <http://localhost:8090/getting-started>
+- <http://localhost:8090/components/accordion>
+- <http://localhost:8090/examples/todo>
+- <http://localhost:8090/examples/logs>
+
+The public demo is available at [goshtoso.araihu.com](https://goshtoso.araihu.com).
+
+## Using Assets
+
+The recommended path is to serve Goshtoso's embedded assets:
+
+```go
+http.Handle("/assets/", assets.Handler())
+```
+
+and let `@head.Dependencies()` emit the matching stylesheet and script tags.
+This serves the compiled component CSS, theme tokens, Alpine.js, HTMX, and
+first-party component scripts from versioned local paths.
+
+If you maintain a custom Tailwind build, Goshtoso also ships a CLI that extracts
+the compiled CSS or theme source:
+
+```bash
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=css/goshtoso-base.css
+```
+
+See [docs/USAGE.md](docs/USAGE.md) for the full asset strategy.
+
+## Repository Layout
+
+```text
+goshtoso/
+├── cmd/goshtoso/            # CSS/theme extraction CLI
+├── components/              # Publishable component library
+├── assets/                  # Embedded CSS, JS, fonts, and images
+├── css/                     # Tailwind source
+├── docs/                    # Consumer and project documentation
+├── examples/                # Standalone examples
+├── scripts/                 # Asset, theme, and reference generators
+└── site/                    # Demo site, example app pages, server, E2E tests
+```
+
+The root module is `github.com/araihu/goshtoso`. The `site/` directory is a
+separate module for the demo website and test harness.
+
+For local development, create a Go workspace once per clone so the site imports
+your working-tree copy of the library:
+
+```bash
+go work init . ./site
 ```
 
 ## Development
 
-### Building
+Useful commands from the repo root:
 
 ```bash
-make build
+# Generate *_templ.go files after editing .templ sources
+templ generate
+# or
+just gp-generate
+
+# Rebuild the embedded Tailwind CSS after editing CSS/theme sources
+just css
+
+# Run the demo server on :8090
+go run ./site/cmd/server
+# or
+just gp-dev
+
+# Build the demo server
+go build -o bin/server ./site/cmd/server
 ```
 
-### Generating Templ Files
+Run tests:
 
 ```bash
-make generate
+# Library tests
+go test ./...
+
+# Site tests
+cd site && go test ./...
+
+# Full Playwright E2E suite
+go test ./site/tests/e2e/... -count=1 -timeout 15m
 ```
 
-### Testing
+Run lint checks per module:
 
 ```bash
-# Go tests
-make test
-
-# E2E tests
-make test-e2e
+golangci-lint run
+cd site && golangci-lint run
 ```
+
+Generated files are part of the repo, but should not be edited by hand:
+
+- `*_templ.go` is generated by `templ generate`
+- `assets/styles.css` is generated by `just css`
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations.
+
+When adding or changing components, keep the component source, demo page, E2E
+coverage, generated templ output, CSS output, and usage reference in sync.
+
+## Credits
+
+Goshtoso began as a hard fork of [PenguinUI](https://www.penguinui.com) by
+[Salar Houshvand](https://x.com/salar_houshvand), transformed from static
+HTML/Alpine.js examples into an importable Go component library.
 
 ## License
 
-MIT License - See original [Penguin UI](https://www.penguinui.com/docs/license) for details.
+MIT. See [LICENSE](LICENSE).
