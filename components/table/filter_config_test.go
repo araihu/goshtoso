@@ -48,8 +48,8 @@ func TestFilterConfig_ResolvedHxTarget(t *testing.T) {
 // referenced tbody.
 func TestFilterScriptData_EmitsHxTarget(t *testing.T) {
 	cfg := Config{
-		ID:           "addon-picker",
-		HTMXEndpoint: "/console/clusters/cid/addons/install",
+		ID:   "addon-picker",
+		HTMX: &HTMXConfig{Endpoint: "/console/clusters/cid/addons/install"},
 		Filters: &FilterConfig{
 			HxTarget: "#install-modal-body",
 			Filters: []Filter{
@@ -108,8 +108,8 @@ func TestFilterConfig_ResolvedHxSwap(t *testing.T) {
 // hxSwap could silently swap and produce target='innerHTML' / swap='#x'.
 func TestFilterScriptData_EmitsHxSwap(t *testing.T) {
 	cfg := Config{
-		ID:           "addons-catalog-table",
-		HTMXEndpoint: "/console/addons",
+		ID:   "addons-catalog-table",
+		HTMX: &HTMXConfig{Endpoint: "/console/addons"},
 		Filters: &FilterConfig{
 			HxTarget: "#addons-catalog",
 			HxSwap:   "outerHTML",
@@ -129,9 +129,9 @@ func TestFilterScriptData_EmitsHxSwap(t *testing.T) {
 // regress callers that omit HxSwap.
 func TestFilterScriptData_DefaultSwap(t *testing.T) {
 	cfg := Config{
-		ID:           "clusters",
-		HTMXEndpoint: "/console/clusters",
-		Filters:      &FilterConfig{Filters: []Filter{{Key: "q", Type: FilterSearch}}},
+		ID:      "clusters",
+		HTMX:    &HTMXConfig{Endpoint: "/console/clusters"},
+		Filters: &FilterConfig{Filters: []Filter{{Key: "q", Type: FilterSearch}}},
 	}
 	out := filterScriptData(cfg)
 	if !strings.Contains(out, "swap: 'innerHTML'") {
@@ -148,7 +148,7 @@ func TestFilterScriptData_DefaultSwap(t *testing.T) {
 func TestFilterScriptData_PreservesExtraQueryParams(t *testing.T) {
 	cfg := Config{
 		ID:               "cluster-picker-table",
-		HTMXEndpoint:     "/console/addons/install",
+		HTMX:             &HTMXConfig{Endpoint: "/console/addons/install"},
 		ExtraQueryParams: "&addon_name=argo-cd",
 		Filters:          &FilterConfig{Filters: []Filter{{Key: "q", Type: FilterSearch}}},
 	}
@@ -160,10 +160,10 @@ func TestFilterScriptData_PreservesExtraQueryParams(t *testing.T) {
 
 func TestFilterBar_NonCollapsibleBodyHasTopPadding(t *testing.T) {
 	cfg := Config{
-		ID:           "ticker-table",
-		HTMXEndpoint: "/api/examples/ticker/rows",
-		Columns:      []Column{{Key: "symbol", Label: "Symbol"}},
-		Rows:         []Row{{ID: "AAPL", Cells: map[string]Cell{"symbol": {Text: "AAPL"}}}},
+		ID:      "ticker-table",
+		HTMX:    &table.HTMXConfig{Endpoint: "/api/examples/ticker/rows"},
+		Columns: []Column{{Key: "symbol", Label: "Symbol"}},
+		Rows:    []Row{{ID: "AAPL", Cells: map[string]Cell{"symbol": {Text: "AAPL"}}}},
 		Filters: &FilterConfig{
 			Filters: []Filter{{Key: "search", Label: "Filter", Type: FilterSearch}},
 		},

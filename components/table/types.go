@@ -349,6 +349,14 @@ func (c *FilterConfig) ResolvedHxSwap() string {
 }
 
 // Config holds configuration for the table component
+type HTMXConfig struct {
+	// Endpoint is the base URL for HTMX requests (sorting, pagination, lazy load).
+	Endpoint string
+	// Target overrides the default HTMX swap target (defaults to tbody ID).
+	Target string
+}
+
+// Config holds configuration for the table component
 type Config struct {
 	// ID is the table element ID
 	ID string
@@ -372,10 +380,8 @@ type Config struct {
 	SortDir SortDir
 
 	// --- HTMX Integration ---
-	// HTMXEndpoint is the base URL for HTMX requests (sorting, pagination, lazy load)
-	HTMXEndpoint string
-	// HTMXTarget overrides the default HTMX swap target (defaults to tbody ID)
-	HTMXTarget string
+	// HTMX configures server-side table updates.
+	HTMX *HTMXConfig
 
 	// --- Lazy Loading ---
 	// LazyLoad loads the table body via HTMX.
@@ -400,6 +406,20 @@ type Config struct {
 	// ExtraQueryParams are appended to all auto-generated HTMX URLs (sort, pagination, infinite scroll).
 	// Use for filter state that must persist across requests. Format: "&key=value&key2=value2"
 	ExtraQueryParams string
+}
+
+func (cfg Config) HTMXEndpointValue() string {
+	if cfg.HTMX == nil {
+		return ""
+	}
+	return cfg.HTMX.Endpoint
+}
+
+func (cfg Config) HTMXTargetValue() string {
+	if cfg.HTMX == nil {
+		return ""
+	}
+	return cfg.HTMX.Target
 }
 
 // GetID returns the table ID, defaulting to "table"
@@ -443,7 +463,7 @@ func (cfg Config) PaginationBaseURL() string {
 		params["order_by"] = cfg.SortBy
 		params["order_dir"] = string(cfg.SortDir)
 	}
-	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
+	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 // HasSortableColumns returns true if any column is sortable
@@ -485,7 +505,7 @@ func (cfg Config) SortURL(key string) string {
 		params["order_by"] = key
 		params["order_dir"] = string(dir)
 	}
-	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
+	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 // PageURL builds the HTMX URL for a specific page
@@ -498,7 +518,7 @@ func (cfg Config) PageURL(page int) string {
 		params["order_by"] = cfg.SortBy
 		params["order_dir"] = string(cfg.SortDir)
 	}
-	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
+	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 // NextPageURL builds the HTMX URL for infinite scroll
@@ -516,7 +536,7 @@ func (cfg Config) NextPageURL() string {
 			params["order_by"] = cfg.SortBy
 			params["order_dir"] = string(cfg.SortDir)
 		}
-		return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
+		return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
 	}
 	// Legacy InfiniteScrollConfig support
 	if cfg.InfiniteScroll == nil {
@@ -527,7 +547,7 @@ func (cfg Config) NextPageURL() string {
 		params["order_by"] = cfg.SortBy
 		params["order_dir"] = string(cfg.SortDir)
 	}
-	return tableURL(cfg.HTMXEndpoint, params, cfg.ExtraQueryParams)
+	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 func tableURL(endpoint string, params map[string]string, extra string) string {
@@ -785,7 +805,7 @@ func filterScriptData(cfg Config) string {
 		expanded = "false"
 	}
 
-	endpoint := cfg.HTMXEndpoint
+	endpoint := cfg.HTMXEndpointValue()
 	perPage := ""
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		perPage = "&per_page=" + itoa(cfg.Pagination.PerPage)

@@ -140,7 +140,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 							@selectfield.Select(selectfield.Config{
 								ID:             "site-theme",
 								Name:           "theme",
-								AlpineModel:    "theme",
+								Alpine:         &selectfield.AlpineConfig{Model: "theme"},
 								TriggerLeading: themeSelectIcon(),
 								Options:        getThemeOptions(),
 							})

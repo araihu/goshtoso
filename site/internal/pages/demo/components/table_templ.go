@@ -168,12 +168,12 @@ func tableDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Sortable Table (HTMX)",
-				Description: "Mark columns Sortable: true and set HTMXEndpoint. Clicking a header cycles neutral → asc → desc and fetches sorted rows from the server.",
+				Description: "Mark columns Sortable: true and set HTMX.Endpoint. Clicking a header cycles neutral → asc → desc and fetches sorted rows from the server.",
 			},
 			tableSortablePreview(),
 			`@table.Table(table.Config{
     ID:           "sortable-table",
-    HTMXEndpoint: "/api/components/table/rows",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
     SortBy:       "id",
     SortDir:      table.SortAsc,
     Columns: []table.Column{
@@ -196,7 +196,7 @@ func tableDemoContent() templ.Component {
 			tableLazyPreview(),
 			`@table.Table(table.Config{
     ID:           "lazy-table",
-    HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
     LazyLoad:     true,
     LazyTrigger:  "click from:#load-lazy-table",
     Columns:      columns,
@@ -213,7 +213,7 @@ func tableDemoContent() templ.Component {
 			tablePaginatedPreview(),
 			`@table.Table(table.Config{
     ID:           "paginated-table",
-    HTMXEndpoint: "/api/components/table/rows",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
     Columns:      columns,
     Rows:         pageRows(1),
     Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
@@ -230,7 +230,7 @@ func tableDemoContent() templ.Component {
 			tableFilteredPreview(),
 			`@table.Table(table.Config{
     ID:           "filtered-table",
-    HTMXEndpoint: "/api/components/table/rows",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
     Columns:      sortableColumns(),
     Rows:         pageRows(1),
     Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
@@ -272,7 +272,7 @@ func tableDemoContent() templ.Component {
 			tableInfinitePreview(),
 			`@table.Table(table.Config{
     ID:           "infinite-table",
-    HTMXEndpoint: "/api/components/table/rows?variant=infinite",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=infinite"},
     Columns:      columns,
     Rows:         initialRows,
     Pagination: &table.PaginationConfig{
@@ -300,9 +300,8 @@ func tableDemoContent() templ.Component {
 			{Name: "Caption", Type: "string", Default: `""`, Description: "Optional accessible table caption."},
 			{Name: "SortBy", Type: "string", Default: `""`, Description: "Initial sort column key."},
 			{Name: "SortDir", Type: "SortDir", Default: "SortNone", Description: `Initial sort direction: "asc", "desc", or "" (none).`},
-			{Name: "HTMXEndpoint", Type: "string", Default: `""`, Description: "Server URL that returns row HTML for sort/page/filter/lazy/infinite."},
-			{Name: "HTMXTarget", Type: "string", Default: `""`, Description: "Override the default tbody swap target."},
-			{Name: "LazyLoad", Type: "bool", Default: "false", Description: "Render a loading tbody that fetches row HTML from HTMXEndpoint."},
+			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Server-side table updates (Endpoint, Target)."},
+			{Name: "LazyLoad", Type: "bool", Default: "false", Description: "Render a loading tbody that fetches row HTML from HTMX.Endpoint."},
 			{Name: "LazyTrigger", Type: "string", Default: `"load"`, Description: `HTMX trigger for lazy tbody loading, such as "load" or "click from:#load-lazy-table".`},
 			{Name: "Pagination", Type: "*PaginationConfig", Default: "nil", Description: "Pagination/infinite-scroll config (CurrentPage, TotalPages, PerPage, Mode, ...)."},
 			{Name: "Filters", Type: "*FilterConfig", Default: "nil", Description: "Filter bar config (Variant, Collapsible, Filters[]: search/select/toggle)."},
@@ -550,12 +549,12 @@ func tableSortablePreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "sortable-table",
-			HTMXEndpoint: "/api/components/table/rows",
-			SortBy:       "id",
-			SortDir:      table.SortAsc,
-			Columns:      sortableColumns(),
-			Rows:         stripedRows(),
+			ID:      "sortable-table",
+			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			SortBy:  "id",
+			SortDir: table.SortAsc,
+			Columns: sortableColumns(),
+			Rows:    stripedRows(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -625,11 +624,11 @@ func tableLazyPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "lazy-table",
-			HTMXEndpoint: "/api/components/table/rows?variant=lazy",
-			LazyLoad:     true,
-			LazyTrigger:  "click from:#load-lazy-table",
-			Columns:      defaultColumns(),
+			ID:          "lazy-table",
+			HTMX:        &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
+			LazyLoad:    true,
+			LazyTrigger: "click from:#load-lazy-table",
+			Columns:     defaultColumns(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -669,11 +668,11 @@ func tablePaginatedPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "paginated-table",
-			HTMXEndpoint: "/api/components/table/rows",
-			Columns:      defaultColumns(),
-			Rows:         paginatedRows(1),
-			Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
+			ID:         "paginated-table",
+			HTMX:       &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			Columns:    defaultColumns(),
+			Rows:       paginatedRows(1),
+			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -713,8 +712,8 @@ func tableFilteredPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "filtered-table",
-			HTMXEndpoint: "/api/components/table/rows",
+			ID:   "filtered-table",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID", Sortable: true},
 				{Key: "name", Label: "Name", Sortable: true},
@@ -784,8 +783,8 @@ func tableInlineFilteredPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "inline-filtered-table",
-			HTMXEndpoint: "/api/components/table/rows",
+			ID:   "inline-filtered-table",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID"},
 				{Key: "name", Label: "Name"},
@@ -852,10 +851,10 @@ func tableInfinitePreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "infinite-table",
-			HTMXEndpoint: "/api/components/table/rows?variant=infinite",
-			Columns:      defaultColumns(),
-			Rows:         infiniteScrollInitialRows(),
+			ID:      "infinite-table",
+			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=infinite"},
+			Columns: defaultColumns(),
+			Rows:    infiniteScrollInitialRows(),
 			Pagination: &table.PaginationConfig{
 				Mode:            table.PaginationInfiniteScroll,
 				CurrentPage:     1,

@@ -88,7 +88,7 @@ templ paginationDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Small Page Count",
-				Description: "With 7 or fewer pages, every page number is shown (no ellipsis). Add HTMXTarget + HTMXSwap to swap content in place instead of navigating.",
+				Description: "With 7 or fewer pages, every page number is shown (no ellipsis). Add HTMX.Target + HTMX.Swap to swap content in place instead of navigating.",
 			},
 			paginationSmallPreview(),
 			`@pagination.Pagination(pagination.Config{
@@ -96,8 +96,7 @@ templ paginationDemoContent() {
     CurrentPage: 5,
     TotalPages:  30,
     BaseURL:     "/api/items",
-    HTMXTarget:  "#items-tbody",
-    HTMXSwap:    "innerHTML",
+    HTMX: &pagination.HTMXConfig{Target: "#items-tbody", Swap: "innerHTML"},
 })`,
 		)
 	</div>
@@ -107,8 +106,7 @@ templ paginationDemoContent() {
 		{Name: "CurrentPage", Type: "int", Default: "1", Description: "The active page (1-indexed)."},
 		{Name: "TotalPages", Type: "int", Default: "1", Description: "Total number of pages."},
 		{Name: "BaseURL", Type: "string", Default: `""`, Description: "Base href for page links (page appended as a query/path)."},
-		{Name: "HTMXTarget", Type: "string", Default: `""`, Description: "CSS selector to swap on click (enables in-place HTMX navigation)."},
-		{Name: "HTMXSwap", Type: "string", Default: `""`, Description: "HTMX swap strategy used with HTMXTarget."},
+		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "In-place HTMX navigation (Target, Swap)."},
 		{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id on the nav."},
 		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 	})

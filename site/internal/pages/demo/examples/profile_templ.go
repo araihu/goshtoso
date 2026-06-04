@@ -491,11 +491,11 @@ func profileAppearancePanel() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
-			ID:          "profile-theme",
-			Name:        "theme",
-			Label:       "Theme",
-			AlpineModel: "theme",
-			Options:     themeOptions(""),
+			ID:      "profile-theme",
+			Name:    "theme",
+			Label:   "Theme",
+			Alpine:  &selectfield.AlpineConfig{Model: "theme"},
+			Options: themeOptions(""),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

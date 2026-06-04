@@ -67,14 +67,14 @@ func GettingStartedPreviewConfigFromQuery(q url.Values) table.Config {
 	end := min(start+perPage, len(dogs))
 
 	return table.Config{
-		ID:           "getting-started-dogs",
-		HTMXEndpoint: "/api/getting-started/breeds",
-		Columns:      gettingStartedColumns(),
-		Rows:         gettingStartedRows(dogs[start:end]),
-		SortBy:       orderBy,
-		SortDir:      table.SortDir(orderDir),
-		Pagination:   &table.PaginationConfig{CurrentPage: page, TotalPages: totalPages, PerPage: perPage},
-		Filters:      gettingStartedFilters(),
+		ID:         "getting-started-dogs",
+		HTMX:       &table.HTMXConfig{Endpoint: "/api/getting-started/breeds"},
+		Columns:    gettingStartedColumns(),
+		Rows:       gettingStartedRows(dogs[start:end]),
+		SortBy:     orderBy,
+		SortDir:    table.SortDir(orderDir),
+		Pagination: &table.PaginationConfig{CurrentPage: page, TotalPages: totalPages, PerPage: perPage},
+		Filters:    gettingStartedFilters(),
 	}
 }
 

@@ -52,8 +52,8 @@ func tickerRows(symbols []ticker.Symbol) []table.Row {
 // the rows handler can reuse the same Columns when rendering filtered rows.
 func TickerTableConfig(symbols []ticker.Symbol) table.Config {
 	return table.Config{
-		ID:           "ticker-table",
-		HTMXEndpoint: "/api/examples/ticker/rows",
+		ID:   "ticker-table",
+		HTMX: &table.HTMXConfig{Endpoint: "/api/examples/ticker/rows"},
 		Columns: []table.Column{
 			{Key: "symbol", Label: "Symbol"},
 			{Key: "price", Label: "Price", Align: "right"},

@@ -148,7 +148,7 @@ templ LogsApp() {
 						@selectfield.Select(selectfield.Config{
 							ID:          "log-filter",
 							Label:       "Minimum level",
-							AlpineModel: "minLevel",
+							Alpine: &selectfield.AlpineConfig{Model: "minLevel"},
 							Options: []selectfield.Option{
 								{Value: "all", Label: "All", Selected: true},
 								{Value: "warn", Label: "Warn+"},

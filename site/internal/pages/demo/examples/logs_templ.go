@@ -294,9 +294,9 @@ func LogsApp() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
-			ID:          "log-filter",
-			Label:       "Minimum level",
-			AlpineModel: "minLevel",
+			ID:     "log-filter",
+			Label:  "Minimum level",
+			Alpine: &selectfield.AlpineConfig{Model: "minLevel"},
 			Options: []selectfield.Option{
 				{Value: "all", Label: "All", Selected: true},
 				{Value: "warn", Label: "Warn+"},

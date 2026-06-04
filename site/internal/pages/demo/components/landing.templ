@@ -154,7 +154,7 @@ templ landingContent() {
 				</div>
 				@table.Table(table.Config{
 					ID:           "home-table",
-					HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+					HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
 					LazyLoad:     true,
 					Columns: []table.Column{
 						{Key: "id", Label: "CustomerID", Sortable: true},

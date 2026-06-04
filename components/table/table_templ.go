@@ -30,7 +30,7 @@ import (
 //	// Sortable table with HTMX
 //	@table.Table(table.Config{
 //	    ID:           "users",
-//	    HTMXEndpoint: "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    Columns:      []table.Column{{Key: "name", Label: "Name", Sortable: true}},
 //	    Rows:         rows,
 //	})
@@ -38,7 +38,7 @@ import (
 //	// Lazy-loaded table
 //	@table.Table(table.Config{
 //	    ID:           "lazy",
-//	    HTMXEndpoint: "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    LazyLoad:     true,
 //	    Columns:      []table.Column{{Key: "name", Label: "Name"}},
 //	})
@@ -46,7 +46,7 @@ import (
 //	// Paginated table
 //	@table.Table(table.Config{
 //	    ID:           "paged",
-//	    HTMXEndpoint: "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    Columns:      columns,
 //	    Rows:         rows,
 //	    Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 5, PerPage: 3},
@@ -55,7 +55,7 @@ import (
 //	// Infinite scroll table
 //	@table.Table(table.Config{
 //	    ID:             "scroll",
-//	    HTMXEndpoint:   "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    Columns:        columns,
 //	    Rows:           rows,
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
@@ -1042,7 +1042,7 @@ func tableHeadRow(cfg Config) templ.Component {
 			}
 		}
 		for _, col := range cfg.Columns {
-			if col.Sortable && cfg.HTMXEndpoint != "" {
+			if col.Sortable && cfg.HTMXEndpointValue() != "" {
 				templ_7745c5c3_Err = sortableHeader(cfg, col).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -1296,7 +1296,7 @@ func tableInner(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.LazyLoad && cfg.HTMXEndpoint != "" {
+		if cfg.LazyLoad && cfg.HTMXEndpointValue() != "" {
 			var templ_7745c5c3_Var64 = []any{cfg.TbodyClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var64...)
 			if templ_7745c5c3_Err != nil {
@@ -1333,9 +1333,9 @@ func tableInner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var67 string
-			templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HTMXEndpoint)
+			templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HTMXEndpointValue())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 315, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 315, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var67)
 			if templ_7745c5c3_Err != nil {
@@ -1515,7 +1515,7 @@ func TableRows(cfg Config) templ.Component {
 
 // hasMoreRows returns true if the table should render a scroll sentinel for infinite scroll
 func hasMoreRows(cfg Config) bool {
-	if cfg.HTMXEndpoint == "" {
+	if cfg.HTMXEndpointValue() == "" {
 		return false
 	}
 	// New pagination-based infinite scroll
@@ -2338,8 +2338,7 @@ func TablePagination(cfg Config) templ.Component {
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
 				BaseURL:     cfg.PaginationBaseURL(),
-				HTMXTarget:  "#" + cfg.TbodyID(),
-				HTMXSwap:    "innerHTML",
+				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -2381,8 +2380,7 @@ func TablePaginationNav(cfg Config) templ.Component {
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
 				BaseURL:     cfg.PaginationBaseURL(),
-				HTMXTarget:  "#" + cfg.TbodyID(),
-				HTMXSwap:    "innerHTML",
+				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -2449,7 +2447,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 		var templ_7745c5c3_Var114 string
 		templ_7745c5c3_Var114, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 687, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 685, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var114)
 		if templ_7745c5c3_Err != nil {
@@ -2472,7 +2470,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 			var templ_7745c5c3_Var116 string
 			templ_7745c5c3_Var116, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 690, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 688, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var116)
 			if templ_7745c5c3_Err != nil {
@@ -2508,7 +2506,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 			var templ_7745c5c3_Var119 string
 			templ_7745c5c3_Var119, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 692, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 690, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var119)
 			if templ_7745c5c3_Err != nil {
@@ -2587,7 +2585,7 @@ func ActionButton(label string) templ.Component {
 		var templ_7745c5c3_Var124 string
 		templ_7745c5c3_Var124, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 703, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 701, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var124))
 		if templ_7745c5c3_Err != nil {
@@ -2648,7 +2646,7 @@ func StatusBadge(label string, status string) templ.Component {
 		var templ_7745c5c3_Var128 string
 		templ_7745c5c3_Var128, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 708, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 706, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var128))
 		if templ_7745c5c3_Err != nil {
@@ -2722,7 +2720,7 @@ func ImageCell(imageURL string, label string, detail string) templ.Component {
 			var templ_7745c5c3_Var130 string
 			templ_7745c5c3_Var130, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 732, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 730, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var130))
 			if templ_7745c5c3_Err != nil {
@@ -2740,7 +2738,7 @@ func ImageCell(imageURL string, label string, detail string) templ.Component {
 		var templ_7745c5c3_Var131 string
 		templ_7745c5c3_Var131, templ_7745c5c3_Err = templ.JoinStringErrs(detail)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 734, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 732, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var131))
 		if templ_7745c5c3_Err != nil {

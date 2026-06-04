@@ -6,7 +6,7 @@
 // On every pick the palette dispatches a bubbling `select-close` event whose
 // detail is the chosen value ("blue-700" / "white" / "" / "#aabbcc"). A hosting
 // Select shell closes on that event; consumers wire side-effects with their own
-// `x-on:select-close` listener. If AlpineModel is set, the palette's own root
+// `x-on:select-close` listener. If Alpine.Model is set, the palette's own root
 // assigns it from $event.detail.
 package palette
 
@@ -24,14 +24,17 @@ var DefaultHues = []string{
 // DefaultShades lists the shade steps for each hue.
 var DefaultShades = []string{"50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"}
 
+// AlpineConfig wires client-side Alpine bindings.
+type AlpineConfig struct {
+	Model string
+}
+
 // Config configures a Palette.
 type Config struct {
 	// ID is the wrapper element id.
 	ID string
-	// AlpineModel, when set, is a JS lvalue assigned the picked value (from the
-	// dispatched event detail). Quote-free identifier/path expected, e.g.
-	// "picked" or "form.color".
-	AlpineModel string
+	// Alpine wires client-side state.
+	Alpine *AlpineConfig
 	// Hues / Shades override the default Tailwind sets.
 	Hues   []string
 	Shades []string
@@ -82,11 +85,11 @@ func swatchStyle(hue, shade string) templ.Attributes {
 }
 
 // modelAssignExpr is the (quote-free → templ-safe) Alpine expression the root
-// runs on select-close to set AlpineModel from the event detail. Empty when no
+// runs on select-close to set Alpine.Model from the event detail. Empty when no
 // model is configured.
 func (c Config) modelAssignExpr() string {
-	if c.AlpineModel == "" {
+	if c.Alpine == nil || c.Alpine.Model == "" {
 		return ""
 	}
-	return c.AlpineModel + " = $event.detail"
+	return c.Alpine.Model + " = $event.detail"
 }

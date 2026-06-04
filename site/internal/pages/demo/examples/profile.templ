@@ -297,7 +297,7 @@ templ profileAppearancePanel() {
 					ID:          "profile-theme",
 					Name:        "theme",
 					Label:       "Theme",
-					AlpineModel: "theme",
+					Alpine: &selectfield.AlpineConfig{Model: "theme"},
 					Options:     themeOptions(""),
 				})
 			</div>

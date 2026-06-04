@@ -23,6 +23,12 @@ type PageItem struct {
 }
 
 // Config holds configuration for the pagination component
+type HTMXConfig struct {
+	Target string
+	Swap   string
+}
+
+// Config holds configuration for the pagination component
 type Config struct {
 	// ID is the pagination element ID
 	ID string
@@ -37,11 +43,8 @@ type Config struct {
 	// Class allows additional CSS classes on the nav element
 	NavClass string
 
-	// --- HTMX Integration ---
-	// HTMXTarget is the HTMX swap target selector
-	HTMXTarget string
-	// HTMXSwap is the HTMX swap strategy (default: innerHTML)
-	HTMXSwap string
+	// HTMX configures in-place HTMX pagination.
+	HTMX *HTMXConfig
 }
 
 // HasPrevious returns true if there is a previous page
@@ -87,8 +90,8 @@ func (cfg Config) PageURL(page int) string {
 
 // SwapStrategy returns the HTMX swap strategy, defaulting to innerHTML
 func (cfg Config) SwapStrategy() string {
-	if cfg.HTMXSwap != "" {
-		return cfg.HTMXSwap
+	if cfg.HTMX != nil && cfg.HTMX.Swap != "" {
+		return cfg.HTMX.Swap
 	}
 	return "innerHTML"
 }

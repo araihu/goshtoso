@@ -257,9 +257,9 @@ func landingContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "home-table",
-			HTMXEndpoint: "/api/components/table/rows?variant=lazy",
-			LazyLoad:     true,
+			ID:       "home-table",
+			HTMX:     &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
+			LazyLoad: true,
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID", Sortable: true},
 				{Key: "name", Label: "Name", Sortable: true},

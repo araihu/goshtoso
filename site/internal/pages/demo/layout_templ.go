@@ -146,7 +146,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
 			ID:             "site-theme",
 			Name:           "theme",
-			AlpineModel:    "theme",
+			Alpine:         &selectfield.AlpineConfig{Model: "theme"},
 			TriggerLeading: themeSelectIcon(),
 			Options:        getThemeOptions(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
