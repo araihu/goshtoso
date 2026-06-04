@@ -195,7 +195,7 @@ func textInputDemoContent() templ.Component {
     ID: "cluster", Name: "cluster_id", Label: "Cluster ID",
     Placeholder: "tabc123",
     Pattern:     "t[a-z0-9]{6}",
-    Attrs: templ.Attributes{
+    InputAttrs: templ.Attributes{
         "x-on:input": "touched = true; valid = $event.target.checkValidity()",
         "x-on:blur":  "touched = true; valid = $event.target.checkValidity()",
         "x-bind:class": "touched ? (valid ? 'border-success' : 'border-danger') : ''",
@@ -601,7 +601,7 @@ func textInputPatternPreview() templ.Component {
 			Label:       "Cluster ID",
 			Placeholder: "tabc123",
 			Pattern:     "t[a-z0-9]{6}",
-			Attrs: templ.Attributes{
+			InputAttrs: templ.Attributes{
 				"x-on:input":          "touched = true; valid = $event.target.checkValidity()",
 				"x-on:blur":           "touched = true; valid = $event.target.checkValidity()",
 				"x-bind:class":        "touched ? (valid ? 'border-success' : 'border-danger') : ''",

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func renderPagination(t *testing.T, cfg Config) string {
+func renderPaginationHTMX(t *testing.T, cfg Config) string {
 	t.Helper()
 	var buf bytes.Buffer
 	require.NoError(t, Pagination(cfg).Render(context.Background(), &buf))
@@ -17,7 +17,7 @@ func renderPagination(t *testing.T, cfg Config) string {
 }
 
 func TestPagination_HTMXConfigRenders(t *testing.T) {
-	html := renderPagination(t, Config{
+	html := renderPaginationHTMX(t, Config{
 		CurrentPage: 1,
 		TotalPages:  2,
 		BaseURL:     "/items",

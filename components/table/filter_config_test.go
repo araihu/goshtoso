@@ -161,7 +161,7 @@ func TestFilterScriptData_PreservesExtraQueryParams(t *testing.T) {
 func TestFilterBar_NonCollapsibleBodyHasTopPadding(t *testing.T) {
 	cfg := Config{
 		ID:      "ticker-table",
-		HTMX:    &table.HTMXConfig{Endpoint: "/api/examples/ticker/rows"},
+		HTMX:    &HTMXConfig{Endpoint: "/api/examples/ticker/rows"},
 		Columns: []Column{{Key: "symbol", Label: "Symbol"}},
 		Rows:    []Row{{ID: "AAPL", Cells: map[string]Cell{"symbol": {Text: "AAPL"}}}},
 		Filters: &FilterConfig{

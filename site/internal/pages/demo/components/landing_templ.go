@@ -180,7 +180,7 @@ func landingContent() templ.Component {
 						BindChecked: "theme === $el.value",
 						OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme; if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) localStorage.theme = theme",
 					},
-					Attrs: templ.Attributes{"data-theme-key": c.Key},
+					InputAttrs: templ.Attributes{"data-theme-key": c.Key},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

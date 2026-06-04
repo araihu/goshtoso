@@ -116,7 +116,7 @@ func structuredInputDemoContent() templ.Component {
     Entries: []structuredinput.Entry{
         {"key": "node-role.kubernetes.io/control-plane", "value": "true", "effect": "NoSchedule"},
     },
-    AddLabel: "Add taint",
+    AddActionLabel: "Add taint",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -145,7 +145,7 @@ func structuredInputDemoContent() templ.Component {
             },
         },
     },
-    AddLabel: "Add rule",
+    AddActionLabel: "Add rule",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -265,7 +265,7 @@ func structuredInputTaintsPreview() templ.Component {
 			Entries: []structuredinput.Entry{
 				{"key": "node-role.kubernetes.io/control-plane", "value": "true", "effect": "NoSchedule"},
 			},
-			AddLabel: "Add taint",
+			AddActionLabel: "Add taint",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -320,7 +320,7 @@ func structuredInputEmptyPreview() templ.Component {
 					},
 				},
 			},
-			AddLabel: "Add rule",
+			AddActionLabel: "Add rule",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

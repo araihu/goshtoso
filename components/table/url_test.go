@@ -17,7 +17,7 @@ func queryValue(t *testing.T, rawURL, key string) string {
 func TestSortURLPreservesEndpointQueryAndEncodesValues(t *testing.T) {
 	cfg := Config{
 		ID:         "orders table",
-		HTMX:       &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=compact"},
+		HTMX:       &HTMXConfig{Endpoint: "/api/components/table/rows?variant=compact"},
 		SortBy:     "",
 		SortDir:    SortNone,
 		Pagination: &PaginationConfig{PerPage: 25},
@@ -42,7 +42,7 @@ func TestSortURLPreservesEndpointQueryAndEncodesValues(t *testing.T) {
 func TestSortURLResetOmitsSortParams(t *testing.T) {
 	cfg := Config{
 		ID:         "orders",
-		HTMX:       &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+		HTMX:       &HTMXConfig{Endpoint: "/api/components/table/rows"},
 		SortBy:     "name",
 		SortDir:    SortDesc,
 		Pagination: &PaginationConfig{PerPage: 10},
@@ -60,7 +60,7 @@ func TestSortURLResetOmitsSortParams(t *testing.T) {
 
 func TestPageURLMergesExtraQueryParams(t *testing.T) {
 	cfg := Config{
-		HTMX:             &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=static"},
+		HTMX:             &HTMXConfig{Endpoint: "/api/components/table/rows?variant=static"},
 		ExtraQueryParams: "&addon_name=argo cd&membership=admin",
 		Pagination:       &PaginationConfig{PerPage: 50},
 		SortBy:           "created at",
@@ -86,7 +86,7 @@ func TestPageURLMergesExtraQueryParams(t *testing.T) {
 
 func TestNextPageURLForPaginationInfiniteScroll(t *testing.T) {
 	cfg := Config{
-		HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+		HTMX: &HTMXConfig{Endpoint: "/api/components/table/rows"},
 		Pagination: &PaginationConfig{
 			Mode:        PaginationInfiniteScroll,
 			CurrentPage: 2,

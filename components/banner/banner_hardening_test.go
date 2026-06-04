@@ -18,8 +18,8 @@ func renderBanner(t *testing.T, cfg Config) string {
 
 func TestBannerCTA_SanitizesUnsafeHref(t *testing.T) {
 	rendered := renderBanner(t, Config{
-		Text: "Notice",
-		CTA:  &CTAConfig{Text: "Open", Href: "javascript:alert(1)"},
+		Description: "Notice",
+		CTA:         &CTAConfig{ActionLabel: "Open", Href: "javascript:alert(1)"},
 	})
 
 	assert.NotContains(t, rendered, `href="javascript:alert`)
@@ -28,8 +28,8 @@ func TestBannerCTA_SanitizesUnsafeHref(t *testing.T) {
 
 func TestBannerCTA_PreservesRelativeHref(t *testing.T) {
 	rendered := renderBanner(t, Config{
-		Text: "Notice",
-		CTA:  &CTAConfig{Text: "Open", Href: "/docs?tab=api"},
+		Description: "Notice",
+		CTA:         &CTAConfig{ActionLabel: "Open", Href: "/docs?tab=api"},
 	})
 
 	assert.Contains(t, rendered, `href="/docs?tab=api"`)
