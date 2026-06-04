@@ -2,6 +2,7 @@ package demo
 
 import (
 	"github.com/araihu/goshtoso/assets"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
 )
 
@@ -134,41 +135,15 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					
 					<!-- Right side controls -->
 					<div class="flex items-center gap-2">
-						<!-- Theme Selector Dropdown -->
-						<div class="relative" x-data="{ open: false }" @click.away="open = false">
-							<button 
-								@click="open = !open"
-								class="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-outline bg-surface-alt hover:bg-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:bg-surface-dark transition-colors"
-							>
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-								</svg>
-								<span x-text="theme === 'minimal' ? 'Minimal' : theme" class="hidden sm:inline capitalize"></span>
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-								</svg>
-							</button>
-							
-							<!-- Dropdown Menu -->
-							<div 
-								x-show="open" 
-								@click.away="open = false"
-								x-cloak
-								class="absolute right-0 mt-2 w-48 max-h-80 overflow-y-auto rounded-radius border border-outline bg-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark z-50"
-							>
-								<div class="py-1">
-									for _, t := range getThemeOptions() {
-										<button
-											data-theme-key={ t.Key }
-											@click="setTheme($el.dataset.themeKey); open = false"
-											class="w-full px-4 py-1.5 text-left text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt flex items-center justify-between"
-											:class="theme === $el.dataset.themeKey ? 'bg-primary/10 text-primary font-medium' : ''"
-										>
-											<span>{ t.Label }</span>
-										</button>
-									}
-								</div>
-							</div>
+						<!-- Theme Selector -->
+						<div class="w-36 sm:w-44">
+							@selectfield.Select(selectfield.Config{
+								ID:             "site-theme",
+								Name:           "theme",
+								AlpineModel:    "theme",
+								TriggerLeading: themeSelectIcon(),
+								Options:        getThemeOptions(),
+							})
 						</div>
 						
 						<!-- Dark Mode Toggle -->
@@ -659,27 +634,29 @@ templ siteFooter() {
 	</footer>
 }
 
-type themeOption struct {
-	Key   string
-	Label string
+func getThemeOptions() []selectfield.Option {
+	return []selectfield.Option{
+		{Value: "goshtoso", Label: "Goshtoso"},
+		{Value: "minimal", Label: "Minimal"},
+		{Value: "modern", Label: "Modern"},
+		{Value: "arctic", Label: "Arctic"},
+		{Value: "high-contrast", Label: "High Contrast"},
+		{Value: "neo-brutalism", Label: "Neo Brutalism"},
+		{Value: "news", Label: "News"},
+		{Value: "industrial", Label: "Industrial"},
+		{Value: "90s", Label: "90s"},
+		{Value: "pastel", Label: "Pastel"},
+		{Value: "christmas", Label: "Christmas"},
+		{Value: "halloween", Label: "Halloween"},
+		{Value: "zombie", Label: "Halloween II"},
+		{Value: "prototype", Label: "Prototype"},
+		{Value: "totvs", Label: "TOTVS"},
+		{Value: "dracula", Label: "Dracula"},
+	}
 }
 
-func getThemeOptions() []themeOption {
-	return []themeOption{
-		{Key: "goshtoso", Label: "Goshtoso"},
-		{Key: "minimal", Label: "Minimal"},
-		{Key: "modern", Label: "Modern"},
-		{Key: "arctic", Label: "Arctic"},
-		{Key: "high-contrast", Label: "High Contrast"},
-		{Key: "neo-brutalism", Label: "Neo Brutalism"},
-		{Key: "news", Label: "News"},
-		{Key: "industrial", Label: "Industrial"},
-		{Key: "90s", Label: "90s"},
-		{Key: "pastel", Label: "Pastel"},
-		{Key: "christmas", Label: "Christmas"},
-		{Key: "halloween", Label: "Halloween"},
-		{Key: "zombie", Label: "Halloween II"},
-		{Key: "prototype", Label: "Prototype"},
-		{Key: "dracula", Label: "Dracula"},
-	}
+templ themeSelectIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+		<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+	</svg>
 }

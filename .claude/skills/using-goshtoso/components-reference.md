@@ -1056,7 +1056,7 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 | `Readonly` | `bool` | Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits |
 | `Attrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator) |
 | `Shell` | `bool` | Shell enables "shell mode": the Select renders its trigger + dropdown |
-| `TriggerLeading` | `templ.Component` | TriggerLeading is optional content rendered at the start of the trigger |
+| `TriggerLeading` | `templ.Component` | TriggerLeading is optional content rendered at the start of the trigger. |
 | `ValueExpr` | `string` | ValueExpr is an Alpine expression (x-text) for the trigger's value text |
 | `TriggerLabel` | `string` | TriggerLabel is optional static text shown left-aligned in the trigger |
 
