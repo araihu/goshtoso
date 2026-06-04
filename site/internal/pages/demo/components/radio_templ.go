@@ -124,8 +124,8 @@ func radioDemoContent() templ.Component {
 			radioDescriptionPreview(),
 			`@radio.Radio(radio.Config{
     ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
-    Description:   "For macOS Big Sur and higher.",
-    DescriptionID: "r-desc-mac-desc",
+    HelperText:   "For macOS Big Sur and higher.",
+    HelperTextID: "r-desc-mac-desc",
     Checked:       true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -440,17 +440,17 @@ func radioDescriptionPreview() templ.Component {
 		}
 		templ_7745c5c3_Err = radio.Radio(radio.Config{
 			ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
-			Description:   "For macOS Big Sur and higher.",
-			DescriptionID: "r-desc-mac-desc",
-			Checked:       true,
+			HelperText:   "For macOS Big Sur and higher.",
+			HelperTextID: "r-desc-mac-desc",
+			Checked:      true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = radio.Radio(radio.Config{
 			ID: "r-desc-win", Name: "os-desc", Value: "windows", Label: "Windows",
-			Description:   "Windows 10 and Windows 11.",
-			DescriptionID: "r-desc-win-desc",
+			HelperText:   "Windows 10 and Windows 11.",
+			HelperTextID: "r-desc-win-desc",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

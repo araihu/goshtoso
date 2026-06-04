@@ -62,8 +62,8 @@ templ radioDemoContent() {
 			radioDescriptionPreview(),
 			`@radio.Radio(radio.Config{
     ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
-    Description:   "For macOS Big Sur and higher.",
-    DescriptionID: "r-desc-mac-desc",
+    HelperText:   "For macOS Big Sur and higher.",
+    HelperTextID: "r-desc-mac-desc",
     Checked:       true,
 })`,
 		)
@@ -206,14 +206,14 @@ templ radioDescriptionPreview() {
 		<div class="flex flex-col gap-3">
 			@radio.Radio(radio.Config{
 				ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
-				Description:   "For macOS Big Sur and higher.",
-				DescriptionID: "r-desc-mac-desc",
+				HelperText:   "For macOS Big Sur and higher.",
+				HelperTextID: "r-desc-mac-desc",
 				Checked:       true,
 			})
 			@radio.Radio(radio.Config{
 				ID: "r-desc-win", Name: "os-desc", Value: "windows", Label: "Windows",
-				Description:   "Windows 10 and Windows 11.",
-				DescriptionID: "r-desc-win-desc",
+				HelperText:   "Windows 10 and Windows 11.",
+				HelperTextID: "r-desc-win-desc",
 			})
 		</div>
 	</div>

@@ -128,8 +128,8 @@ func checkboxDemoContent() templ.Component {
 			`@checkbox.Checkbox(checkbox.Config{
     ID:            "email",
     Label:         "Email Updates",
-    Description:   "You only gonna get good news, promise.",
-    DescriptionID: "emailDesc",
+    HelperText:   "You only gonna get good news, promise.",
+    HelperTextID: "emailDesc",
     Checked:       true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -493,11 +493,11 @@ func checkboxDescriptionPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Config{
-			ID:            "descriptionCheckbox",
-			Label:         "Email Updates",
-			Description:   "You only gonna get good news, promise.",
-			DescriptionID: "checkboxDescription",
-			Checked:       true,
+			ID:           "descriptionCheckbox",
+			Label:        "Email Updates",
+			HelperText:   "You only gonna get good news, promise.",
+			HelperTextID: "checkboxDescription",
+			Checked:      true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

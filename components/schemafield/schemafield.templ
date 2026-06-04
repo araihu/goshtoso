@@ -45,7 +45,7 @@ func (c FieldsConfig) getNamePrefix() string {
 
 // field renders a single field based on its Kind. Objects are rendered as
 // sections (fieldset + legend) with no outer label wrapper — the legend is
-// the label. Everything else renders the label + optional description + the
+// the label. Everything else renders the label + optional helper text + the
 // kind-specific input.
 templ field(f Field, prefix string) {
 	{{ inputName := fmt.Sprintf("%s.%s", orDefault(prefix, "values"), f.Path) }}
@@ -62,8 +62,8 @@ templ field(f Field, prefix string) {
 					@managedBadge()
 				}
 			</label>
-			if f.Description != "" {
-				<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ f.Description }</p>
+			if f.HelperText != "" {
+				<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ f.HelperText }</p>
 			}
 			switch f.Kind {
 				case KindString:

@@ -15,7 +15,7 @@ package radio
 templ Radio(cfg Config) {
 	if cfg.Segmented {
 		@radioSegmented(cfg)
-	} else if cfg.Description != "" {
+	} else if cfg.HelperText != "" {
 		@radioWithDescription(cfg)
 	} else if cfg.Container {
 		@radioWithContainer(cfg)
@@ -128,7 +128,7 @@ templ standardRadio(cfg Config) {
 	</label>
 }
 
-// radioWithDescription renders a radio with description text below
+// radioWithDescription renders a radio with helper text below
 templ radioWithDescription(cfg Config) {
 	<div class={ "flex items-start gap-2 " + cfg.RootClass }>
 		@radioInput(cfg)
@@ -136,10 +136,10 @@ templ radioWithDescription(cfg Config) {
 			<label for={ cfg.ID } class="text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
 				{ cfg.Label }
 			</label>
-			if cfg.DescriptionID != "" {
-				<span id={ cfg.DescriptionID } class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.Description }</span>
+			if cfg.HelperTextID != "" {
+				<span id={ cfg.HelperTextID } class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.HelperText }</span>
 			} else {
-				<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.Description }</span>
+				<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.HelperText }</span>
 			}
 		</div>
 	</div>
@@ -175,8 +175,8 @@ templ radioInput(cfg Config) {
 		if cfg.Disabled {
 			disabled
 		}
-		if cfg.DescriptionID != "" {
-			aria-describedby={ cfg.DescriptionID }
+		if cfg.HelperTextID != "" {
+			aria-describedby={ cfg.HelperTextID }
 		}
 		if cfg.HasHTMX() {
 			if cfg.HTMX.Get != "" {
@@ -259,7 +259,7 @@ templ RadioGroup(cfg GroupConfig) {
 	<ul class="flex min-w-52 flex-col divide-y divide-outline overflow-clip rounded-radius border border-outline dark:divide-outline-dark dark:border-outline-dark">
 		for _, item := range cfg.Items {
 			<li>
-				if item.Description != "" {
+				if item.HelperText != "" {
 					@groupRadioItemWithDescription(item)
 				} else {
 					@groupRadioItem(item)
@@ -289,7 +289,7 @@ templ groupRadioItemWithDescription(cfg Config) {
 			} else {
 				<span>{ cfg.Label }</span>
 			}
-			<span class="truncate text-xs font-normal text-on-surface-muted dark:text-on-surface-dark-muted" title={ cfg.Description }>{ cfg.Description }</span>
+			<span class="truncate text-xs font-normal text-on-surface-muted dark:text-on-surface-dark-muted" title={ cfg.HelperText }>{ cfg.HelperText }</span>
 		</div>
 	</label>
 }

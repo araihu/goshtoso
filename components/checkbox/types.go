@@ -52,10 +52,10 @@ type Config struct {
 	Icon Icon
 	// Animation sets the animation style
 	Animation Animation
-	// Description adds helper text below the label
-	Description string
-	// DescriptionID is the ID for the description element (for aria-describedby)
-	DescriptionID string
+	// HelperText adds helper text below the label
+	HelperText string
+	// HelperTextID is the ID for the helper text element (for aria-describedby)
+	HelperTextID string
 	// Container wraps the checkbox in a bordered container with label on the left
 	Container bool
 }

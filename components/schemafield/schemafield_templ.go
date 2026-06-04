@@ -84,7 +84,7 @@ func (c FieldsConfig) getNamePrefix() string {
 
 // field renders a single field based on its Kind. Objects are rendered as
 // sections (fieldset + legend) with no outer label wrapper — the legend is
-// the label. Everything else renders the label + optional description + the
+// the label. Everything else renders the label + optional helper text + the
 // kind-specific input.
 func field(f Field, prefix string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -173,15 +173,15 @@ func field(f Field, prefix string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if f.Description != "" {
+			if f.HelperText != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(f.Description)
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(f.HelperText)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/schemafield/schemafield.templ`, Line: 66, Col: 92}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/schemafield/schemafield.templ`, Line: 66, Col: 91}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {

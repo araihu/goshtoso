@@ -95,10 +95,10 @@ type Config struct {
 	Variant Variant
 	// Size sets the input box size (default: SizeMD)
 	Size Size
-	// Description adds helper text below the label
-	Description string
-	// DescriptionID is the id for the description element (for aria-describedby)
-	DescriptionID string
+	// HelperText adds helper text below the label
+	HelperText string
+	// HelperTextID is the id for the helper text element (for aria-describedby)
+	HelperTextID string
 	// BadgeColor wraps the label in a semi-solid badge.
 	// Accepts: "success", "danger", "warning", "info", "neutral", "primary", "secondary"
 	BadgeColor string
