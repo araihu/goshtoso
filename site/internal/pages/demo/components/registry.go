@@ -39,6 +39,7 @@ var Demos = map[string]DemoEntry{
 	"components/fileinput":        {"File Input", "fileinput", fileInputDemoContent},
 	"components/form":             {"Form", "form", formDemoContent},
 	"components/kbd":              {"KBD", "kbd", kbdDemoContent},
+	"components/link":             {"Link", "link", linkDemoContent},
 	"components/modal":            {"Modal", "modal", modalDemoContent},
 	"components/navbar":           {"Navbar", "navbar", navbarDemoContent},
 	"components/pagination":       {"Pagination", "pagination", paginationDemoContent},

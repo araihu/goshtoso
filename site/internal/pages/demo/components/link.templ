@@ -1,0 +1,130 @@
+package components
+
+import (
+	linkcomponent "github.com/araihu/goshtoso/components/link"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// LinkDemoPage renders the Link component demo.
+templ LinkDemoPage() {
+	@demo.Layout("Link", "link", linkDemoContent())
+}
+
+templ linkDemoContent() {
+	<div id="link-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Link",
+				Description: "Direct users to another page, section, or resource with themed focus, hover, and optional button styling.",
+			},
+			linkDefaultPreview(),
+			`@link.Link(link.Config{Href: "#"}) {
+    Read if bored
+}`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Link Within Text",
+				Description: "Render an inline link inside body copy without breaking text flow.",
+			},
+			linkInlinePreview(),
+			`<p>
+    Follow us on @link.Link(link.Config{Href: "#"}) { social media }
+    and become our virtual BFF.
+</p>`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Link With Icon",
+				Description: "Pass an icon component to add a compact directional cue.",
+			},
+			linkIconPreview(),
+			`@link.Link(link.Config{
+    Href: "#",
+    Icon: linkArrowIcon(),
+}) {
+    about our company
+}`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Button Link",
+				Description: "Use StyleButton when navigation should visually match a primary action.",
+			},
+			linkButtonPreview(),
+			`@link.Link(link.Config{
+    Href:  "#",
+    Style: link.StyleButton,
+}) {
+    I'm a link
+}`,
+		)
+	</div>
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Href", Type: "string", Default: `"#"`, Description: "Link destination."},
+		{Name: "Target", Type: "string", Default: `""`, Description: "Native anchor target attribute."},
+		{Name: "Rel", Type: "string", Default: `""`, Description: `Native rel attribute. Defaults to "noopener noreferrer" for target "_blank".`},
+		{Name: "Role", Type: "string", Default: `""`, Description: `Native role attribute. StyleButton defaults to "button".`},
+		{Name: "Style", Type: "Style", Default: "StyleText", Description: `Visual treatment: "text" or "button".`},
+		{Name: "Size", Type: "Size", Default: "SizeMedium", Description: `Button-link size: "sm", "md", "lg", "xl".`},
+		{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional icon rendered inside the link."},
+		{Name: "IconPosition", Type: "IconPosition", Default: "IconTrailing", Description: `Icon placement: "leading" or "trailing".`},
+		{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id."},
+		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the anchor."},
+		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the anchor."},
+	})
+}
+
+templ linkDefaultPreview() {
+	<div id="link-default" class="flex w-full justify-center">
+		@linkcomponent.Link(linkcomponent.Config{Href: "#"}) {
+			Read if bored
+		}
+	</div>
+}
+
+templ linkInlinePreview() {
+	<div id="link-inline" class="mx-auto max-w-2xl text-center text-on-surface dark:text-on-surface-dark">
+		<p>
+			{ "Follow us on " }
+			@linkcomponent.Link(linkcomponent.Config{Href: "#"}) {
+				social media
+			}
+			{ " and become our virtual BFF. We promise to send only the useful updates." }
+		</p>
+	</div>
+}
+
+templ linkIconPreview() {
+	<div id="link-icon" class="flex w-full justify-center">
+		<p class="text-on-surface dark:text-on-surface-dark">
+			{ "Find out more " }
+			@linkcomponent.Link(linkcomponent.Config{
+				Href: "#",
+				Icon: linkArrowIcon(),
+			}) {
+				about our company
+			}
+		</p>
+	</div>
+}
+
+templ linkButtonPreview() {
+	<div id="link-button" class="flex w-full justify-center">
+		@linkcomponent.Link(linkcomponent.Config{
+			Href:  "#",
+			Style: linkcomponent.StyleButton,
+		}) {
+			I'm a link
+		}
+	</div>
+}
+
+templ linkArrowIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" aria-hidden="true" stroke="currentColor" class="size-4">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"></path>
+	</svg>
+}
