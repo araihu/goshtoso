@@ -10,15 +10,15 @@
 /* ============================================
    TAILWIND IMPORT
    ============================================ */
-@import "tailwindcss";
+@import "tailwindcss" source(none);
 
 /* ============================================
    SOURCE SCANNING - For JIT engine
    ============================================ */
 @source "../components/**/*.templ";
 @source "../components/**/*.go";
-@source "../internal/**/*.templ";
-@source "../internal/**/*.go";
+@source "../site/internal/**/*.templ";
+@source "../site/internal/**/*.go";
 
 /* Safelist the full Tailwind palette so the theme page palette popover
    can render every swatch via `var(--color-{hue}-{shade})`. Without this

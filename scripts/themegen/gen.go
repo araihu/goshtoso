@@ -17,7 +17,7 @@ func generateTheme(mainCSS string, imports map[string]string) string {
 	for line := range strings.SplitSeq(mainCSS, "\n") {
 		trimmed := strings.TrimSpace(line)
 		switch {
-		case trimmed == `@import "tailwindcss";`:
+		case strings.HasPrefix(trimmed, `@import "tailwindcss"`):
 			continue
 		case strings.HasPrefix(trimmed, `@source "`):
 			// path glob like @source "../components/**" — drop.
