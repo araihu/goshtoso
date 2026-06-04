@@ -347,7 +347,7 @@ func cookieBanner(cfg Config) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		cookieCfg := cfg.CookieConfig
 		if cookieCfg == nil {
-			cookieCfg = &CookieBannerConfig{Title: "Cookie Consent", AcceptText: "Accept", RejectText: "Decline"}
+			cookieCfg = &CookieBannerConfig{Title: "Cookie Consent", AcceptLabel: "Accept", RejectLabel: "Decline"}
 		}
 		var templ_7745c5c3_Var21 = []any{cfg.CookieContainerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var21...)
@@ -430,9 +430,9 @@ func cookieBanner(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var26 string
-		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(cookieCfg.RejectText)
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(cookieCfg.RejectLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 119, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 119, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -456,9 +456,9 @@ func cookieBanner(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var28 string
-		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(cookieCfg.AcceptText)
+		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(cookieCfg.AcceptLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 126, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 126, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {

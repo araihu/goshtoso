@@ -33,9 +33,9 @@ type Config struct {
 	State State
 	// HelperText is the helper or error text below the textarea
 	HelperText string
-	// Class allows additional CSS classes on the container
+	// RootClass allows additional CSS classes on the container.
 	RootClass string
-	// Attrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*).
+	// InputAttrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*).
 	InputAttrs templ.Attributes
 }
 

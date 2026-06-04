@@ -196,7 +196,7 @@ def.Bind() // wires up HTMX attributes and metadata
 @form.Form(form.Config{
     ID: "demo-validation",
     HTMX: &form.HTMXConfig{Post: "/api/components/form-validation", Target: "#form-result", Swap: "innerHTML"},
-    Footer: &form.FooterConfig{SubmitText: "Submit", CancelText: "Reset"},
+    Footer: &form.FooterConfig{SubmitLabel: "Submit", CancelLabel: "Reset"},
 }) {
     @form.Section(form.SectionConfig{Title: "Project Details"}) {
         @form.FieldGroup(*nameField)
@@ -695,9 +695,9 @@ func formCompletePreview() templ.Component {
 			ID:     "demo-form",
 			Action: "#",
 			Footer: &form.FooterConfig{
-				SubmitText: "Create Cluster",
-				CancelText: "Cancel",
-				CancelHref: "#",
+				SubmitLabel: "Create Cluster",
+				CancelLabel: "Cancel",
+				CancelHref:  "#",
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

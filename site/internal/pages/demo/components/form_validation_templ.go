@@ -175,9 +175,9 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 				Swap:   "innerHTML",
 			},
 			Footer: &form.FooterConfig{
-				SubmitText: "Submit",
-				CancelText: "Reset",
-				CancelHref: "/form",
+				SubmitLabel: "Submit",
+				CancelLabel: "Reset",
+				CancelHref:  "/form",
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

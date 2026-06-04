@@ -204,7 +204,7 @@ templ filterScript(cfg Config) {
 //
 // hx-preserve + stable id keep the input element (and its focus + caret
 // position) intact across HTMX swaps that include the filter bar in the
-// swap target — e.g. when consumers configure HxTarget at a wrapper that
+// swap target — e.g. when consumers configure HTMX.Target at a wrapper that
 // re-renders the filter row whole-cloth (catalog with empty-state branch).
 // On the common tbody-only swap path the attribute is a no-op since the
 // filter inputs aren't part of the target.
@@ -233,16 +233,16 @@ templ filterSelectInput(cfg Config, filter Filter) {
 		x-model={ "filters." + filter.Key }
 		@change="applyFilters()"
 		class="rounded-radius border border-outline bg-surface py-2 pl-3 pr-8 text-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
-		if filter.HTMXOptionsURL != "" {
-			hx-get={ filter.HTMXOptionsURL }
-			hx-trigger="load"
-			hx-swap="innerHTML"
-		}
-	>
-		if filter.HTMXOptionsURL == "" {
-			for _, opt := range filter.Options {
-				<option value={ opt.Value }>{ opt.Label }</option>
+			if filter.OptionsHTMX != nil && filter.OptionsHTMX.Get != "" {
+				hx-get={ filter.OptionsHTMX.Get }
+				hx-trigger="load"
+				hx-swap="innerHTML"
 			}
+		>
+			if filter.OptionsHTMX == nil || filter.OptionsHTMX.Get == "" {
+				for _, opt := range filter.Options {
+					<option value={ opt.Value }>{ opt.Label }</option>
+				}
 		} else {
 			<option value="">Loading...</option>
 		}
@@ -375,9 +375,9 @@ func hasMoreRows(cfg Config) bool {
 templ TableRow(cfg Config, row Row) {
 	<tr
 		class={ cfg.RowClasses() + interactiveRowClasses(row) }
-		if row.Expandable && row.Link == "" && row.OnClick == "" && row.HXGet == "" && row.HXPost == "" {
-			x-on:click={ fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID) }
-		}
+			if row.Expandable && row.Link == "" && row.OnClick == "" && !row.HasHTMXAction() {
+				x-on:click={ fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID) }
+			}
 		if row.Link != "" {
 			{ rowLinkAttrs(row)... }
 		}
@@ -514,7 +514,7 @@ func interactiveRowClasses(row Row) string {
 	return ""
 }
 
-// rowActionAttrs returns HTMX/JS attributes for row click actions (OnClick, HXGet, HXPost).
+// rowActionAttrs returns HTMX/JS attributes for row click actions (OnClick, HTMX.Get, HTMX.Post).
 // Link and Expandable are handled separately in the template.
 func rowActionAttrs(row Row) templ.Attributes {
 	if row.Link != "" {
@@ -526,32 +526,32 @@ func rowActionAttrs(row Row) templ.Attributes {
 			"onclick": row.OnClick,
 		}
 	}
-	if row.HXGet != "" {
+	if row.HTMX != nil && row.HTMX.Get != "" {
 		attrs := templ.Attributes{
-			"hx-get":    row.HXGet,
-			"hx-target": row.HXTarget,
+			"hx-get":    row.HTMX.Get,
+			"hx-target": row.HTMX.Target,
 		}
-		if row.HXSwap != "" {
-			attrs["hx-swap"] = row.HXSwap
+		if row.HTMX.Swap != "" {
+			attrs["hx-swap"] = row.HTMX.Swap
 		} else {
 			attrs["hx-swap"] = "innerHTML"
 		}
-		if row.HXPushURL {
+		if row.HTMX.PushURL {
 			attrs["hx-push-url"] = "true"
 		}
 		return attrs
 	}
-	if row.HXPost != "" {
+	if row.HTMX != nil && row.HTMX.Post != "" {
 		attrs := templ.Attributes{
-			"hx-post":   row.HXPost,
-			"hx-target": row.HXTarget,
+			"hx-post":   row.HTMX.Post,
+			"hx-target": row.HTMX.Target,
 		}
-		if row.HXSwap != "" {
-			attrs["hx-swap"] = row.HXSwap
+		if row.HTMX.Swap != "" {
+			attrs["hx-swap"] = row.HTMX.Swap
 		} else {
 			attrs["hx-swap"] = "innerHTML"
 		}
-		if row.HXPushURL {
+		if row.HTMX.PushURL {
 			attrs["hx-push-url"] = "true"
 		}
 		return attrs
@@ -562,7 +562,7 @@ func rowActionAttrs(row Row) templ.Attributes {
 // rowA11yAttrs gives keyboard and assistive-tech affordances to a row whose
 // whole area is clickable. Without these, a screen reader announces the row
 // as plain text and keyboard users can't Tab to it. Only emitted when the
-// row has a row-level target (Link / OnClick / HXGet / HXPost) — rows whose
+// row has a row-level target (Link / OnClick / HTMX.Get / HTMX.Post) — rows whose
 // interactions live inside nested controls (Actions column, Expandable with
 // its own toggle) keep native cell focus order.
 func rowA11yAttrs(row Row) templ.Attributes {

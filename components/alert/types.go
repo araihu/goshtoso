@@ -18,22 +18,28 @@ type LinkConfig struct {
 	Href string
 }
 
+// HTMXConfig holds HTMX attributes for an alert action button.
+type HTMXConfig struct {
+	// Get triggers an HTMX GET request.
+	Get string
+	// Post triggers an HTMX POST request.
+	Post string
+	// Target is the HTMX target selector.
+	Target string
+	// Swap is the HTMX swap strategy.
+	Swap string
+}
+
 // ActionConfig holds configuration for alert action buttons
 type ActionConfig struct {
 	// PrimaryLabel is the primary action button label
 	PrimaryLabel string
 	// PrimaryOnClick is the Alpine.js action for the primary button
 	PrimaryOnClick string
-	// PrimaryHxGet triggers an HTMX GET request on the primary button
-	PrimaryHxGet string
-	// PrimaryHxPost triggers an HTMX POST request on the primary button
-	PrimaryHxPost string
-	// PrimaryHxTarget is the HTMX target selector for the primary button
-	PrimaryHxTarget string
-	// PrimaryHxSwap is the HTMX swap strategy for the primary button
-	PrimaryHxSwap string
-	// DismissText is the secondary dismiss button label (defaults to "Dismiss")
-	DismissText string
+	// PrimaryHTMX configures HTMX behavior for the primary button.
+	PrimaryHTMX *HTMXConfig
+	// DismissLabel is the secondary dismiss button label (defaults to "Dismiss")
+	DismissLabel string
 }
 
 // Config holds configuration for the alert component
@@ -52,7 +58,7 @@ type Config struct {
 	Action *ActionConfig
 	// ListItems adds a bullet list below the description
 	ListItems []string
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the alert root.
 	RootClass string
 }
 

@@ -306,7 +306,7 @@ func tableDemoContent() templ.Component {
 			{Name: "Pagination", Type: "*PaginationConfig", Default: "nil", Description: "Pagination/infinite-scroll config (CurrentPage, TotalPages, PerPage, Mode, ...)."},
 			{Name: "Filters", Type: "*FilterConfig", Default: "nil", Description: "Filter bar config (Variant, Collapsible, Filters[]: search/select/toggle)."},
 			{Name: "ExtraQueryParams", Type: "string", Default: `""`, Description: "Extra query string appended to every HTMX request."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the table container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the table container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -40,7 +40,7 @@ type Config struct {
 	TotalPages int
 	// BaseURL is the base URL for page links (appends ?page=N)
 	BaseURL string
-	// Class allows additional CSS classes on the nav element
+	// NavClass allows additional CSS classes on the nav element.
 	NavClass string
 
 	// HTMX configures in-place HTMX pagination.

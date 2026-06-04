@@ -78,7 +78,7 @@ type Config struct {
 	Disabled bool
 	// ID is the HTML id attribute for the button element.
 	ID string
-	// Class is additional CSS classes appended to the button.
+	// RootClass is additional CSS classes appended to the button.
 	RootClass string
 	// HTMX is an optional HTMX config for server-side interaction.
 	HTMX *HTMXConfig

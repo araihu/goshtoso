@@ -8,7 +8,7 @@ import (
 )
 
 // TestFilterConfig_ResolvedHxTarget pins the override contract: explicit
-// HxTarget wins over the default "#{tbody-id}" resolution. The modal
+// HTMX.Target wins over the default "#{tbody-id}" resolution. The modal
 // migration in tks-console depends on this — filter input must swap the
 // full modal body, not the table tbody that lives inside it.
 func TestFilterConfig_ResolvedHxTarget(t *testing.T) {
@@ -25,8 +25,8 @@ func TestFilterConfig_ResolvedHxTarget(t *testing.T) {
 			want:   "#clusters-tbody",
 		},
 		{
-			name:   "explicit HxTarget wins",
-			filter: FilterConfig{HxTarget: "#install-modal-body"},
+			name:   "explicit HTMX.Target wins",
+			filter: FilterConfig{HTMX: &FilterHTMXConfig{Target: "#install-modal-body"}},
 			cfg:    Config{ID: "clusters"},
 			want:   "#install-modal-body",
 		},
@@ -44,14 +44,14 @@ func TestFilterConfig_ResolvedHxTarget(t *testing.T) {
 // TestFilterScriptData_EmitsHxTarget guards against regressions in the
 // Alpine.data template: the emitted `applyFilters()` body must use the
 // resolved target string, not the raw ID. Without this, adding the
-// HxTarget override silently had no effect because the Sprintf still
+// HTMX.Target override silently had no effect because the Sprintf still
 // referenced tbody.
 func TestFilterScriptData_EmitsHxTarget(t *testing.T) {
 	cfg := Config{
 		ID:   "addon-picker",
 		HTMX: &HTMXConfig{Endpoint: "/console/clusters/cid/addons/install"},
 		Filters: &FilterConfig{
-			HxTarget: "#install-modal-body",
+			HTMX: &FilterHTMXConfig{Target: "#install-modal-body"},
 			Filters: []Filter{
 				{Key: "q", Type: FilterSearch},
 			},
@@ -79,7 +79,7 @@ func TestFilterVariant_Constants(t *testing.T) {
 	}
 }
 
-// TestFilterConfig_ResolvedHxSwap mirrors the HxTarget override contract for
+// TestFilterConfig_ResolvedHxSwap mirrors the HTMX.Target override contract for
 // swap strategy. Default is "innerHTML"; consumers can opt into "outerHTML"
 // when the swap target is itself a wrapper that the server re-renders
 // whole-cloth (catalog grid with empty-state on the wrapper).
@@ -90,8 +90,8 @@ func TestFilterConfig_ResolvedHxSwap(t *testing.T) {
 		want   string
 	}{
 		{name: "default falls back to innerHTML", filter: FilterConfig{}, want: "innerHTML"},
-		{name: "explicit outerHTML wins", filter: FilterConfig{HxSwap: "outerHTML"}, want: "outerHTML"},
-		{name: "arbitrary swap mode passes through", filter: FilterConfig{HxSwap: "morphdom"}, want: "morphdom"},
+		{name: "explicit outerHTML wins", filter: FilterConfig{HTMX: &FilterHTMXConfig{Swap: "outerHTML"}}, want: "outerHTML"},
+		{name: "arbitrary swap mode passes through", filter: FilterConfig{HTMX: &FilterHTMXConfig{Swap: "morphdom"}}, want: "morphdom"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -111,9 +111,11 @@ func TestFilterScriptData_EmitsHxSwap(t *testing.T) {
 		ID:   "addons-catalog-table",
 		HTMX: &HTMXConfig{Endpoint: "/console/addons"},
 		Filters: &FilterConfig{
-			HxTarget: "#addons-catalog",
-			HxSwap:   "outerHTML",
-			Filters:  []Filter{{Key: "search", Type: FilterSearch}},
+			HTMX: &FilterHTMXConfig{
+				Target: "#addons-catalog",
+				Swap:   "outerHTML",
+			},
+			Filters: []Filter{{Key: "search", Type: FilterSearch}},
 		},
 	}
 	out := filterScriptData(cfg)
@@ -126,7 +128,7 @@ func TestFilterScriptData_EmitsHxSwap(t *testing.T) {
 }
 
 // TestFilterScriptData_DefaultSwap pins the default swap behavior so we don't
-// regress callers that omit HxSwap.
+// regress callers that omit HTMX.Swap.
 func TestFilterScriptData_DefaultSwap(t *testing.T) {
 	cfg := Config{
 		ID:      "clusters",

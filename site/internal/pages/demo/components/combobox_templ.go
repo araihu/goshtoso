@@ -220,7 +220,7 @@ var IndustryCfg = combobox.Config{
 			{Name: "OptionsEndpoint", Type: "string", Default: `""`, Description: "Server URL for fetching/searching options."},
 			{Name: "ClearEndpoint", Type: "string", Default: `""`, Description: "Server URL for clearing the selection."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

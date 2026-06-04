@@ -40,7 +40,7 @@ type Config struct {
 	Variant Variant
 	// Layout determines vertical or horizontal layout
 	Layout Layout
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the card root.
 	RootClass string
 }
 

@@ -21,7 +21,7 @@ type Config struct {
 	Action string
 	// Method is the HTTP method ("post" default, "get", "dialog")
 	Method string
-	// Class allows additional CSS classes on the form element
+	// RootClass allows additional CSS classes on the form element.
 	RootClass string
 	// HTMX enables HTMX-based submission (alternative to native Action)
 	HTMX *HTMXConfig
@@ -62,10 +62,10 @@ type HTMXConfig struct {
 
 // FooterConfig configures the form footer with action buttons
 type FooterConfig struct {
-	// SubmitText is the submit button label (e.g. "Create", "Save")
-	SubmitText string
-	// CancelText is the cancel button label (e.g. "Cancel")
-	CancelText string
+	// SubmitLabel is the submit button label (e.g. "Create", "Save")
+	SubmitLabel string
+	// CancelLabel is the cancel button label (e.g. "Cancel")
+	CancelLabel string
 	// CancelHref is the cancel link URL (plain navigation)
 	CancelHref string
 	// CancelHTMX enables HTMX-powered cancel (SPA navigation). Overrides CancelHref when set.
@@ -99,7 +99,7 @@ type SectionConfig struct {
 	ID string
 	// Title is the section heading
 	Title string
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the wrapper.
 	RootClass string
 	// OOB enables hx-swap-oob="true" for HTMX out-of-band updates
 	OOB bool
@@ -170,7 +170,7 @@ type SubSectionConfig struct {
 	ID string
 	// Title is the subsection heading
 	Title string
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the root.
 	RootClass string
 	// Columns controls the grid layout: "1" for single column, "2" (default)
 	Columns string
@@ -198,7 +198,7 @@ type FieldGroupConfig struct {
 	Errors []string
 	// Hints are helper text messages displayed below errors
 	Hints []string
-	// Class allows additional CSS classes on the wrapper
+	// RootClass allows additional CSS classes on the wrapper.
 	RootClass string
 	// Validation enables HTMX-based field validation
 	Validation *ValidationConfig

@@ -86,19 +86,9 @@ type Row struct {
 	// Use for opening modals, toggling state, etc.
 	// Ignored when Link is set (Link takes precedence).
 	OnClick string
-	// HXGet triggers an HTMX GET request when the row is clicked.
+	// HTMX configures row-level HTMX click behavior.
 	// Ignored when Link or OnClick is set.
-	HXGet string
-	// HXPost triggers an HTMX POST request when the row is clicked.
-	// Ignored when Link, OnClick, or HXGet is set.
-	HXPost string
-	// HXTarget is the CSS selector for the HTMX swap target (used with HXGet/HXPost).
-	HXTarget string
-	// HXSwap is the HTMX swap strategy (used with HXGet/HXPost). Defaults to "innerHTML".
-	HXSwap string
-	// HXPushURL pushes the request URL into browser history when HXGet/HXPost
-	// navigates. Off by default. Link-mode rows always push and ignore this.
-	HXPushURL bool
+	HTMX *RowHTMXConfig
 	// AlpineAttrs is a pass-through for per-row Alpine directives (e.g.
 	// `x-show`, `x-data`, `x-bind:class`). Keys become HTML attribute names
 	// verbatim; values go through templ's attribute escaping. Use for
@@ -112,10 +102,29 @@ type Row struct {
 	Actions templ.Component
 }
 
+// RowHTMXConfig holds HTMX attributes for row-level click behavior.
+type RowHTMXConfig struct {
+	// Get triggers an HTMX GET request when the row is clicked.
+	Get string
+	// Post triggers an HTMX POST request when the row is clicked.
+	Post string
+	// Target is the CSS selector for the HTMX swap target.
+	Target string
+	// Swap is the HTMX swap strategy. Defaults to "innerHTML".
+	Swap string
+	// PushURL pushes the request URL into browser history.
+	PushURL bool
+}
+
 // IsActionable returns true if the row has any interactive behavior
 // (link, click handler, HTMX action, expandable, or custom actions).
 func (r Row) IsActionable() bool {
-	return r.Link != "" || r.OnClick != "" || r.HXGet != "" || r.HXPost != "" || r.Expandable || r.Actions != nil
+	return r.Link != "" || r.OnClick != "" || r.HasHTMXAction() || r.Expandable || r.Actions != nil
+}
+
+// HasHTMXAction reports whether the row has a row-level HTMX verb.
+func (r Row) HasHTMXAction() bool {
+	return r.HTMX != nil && (r.HTMX.Get != "" || r.HTMX.Post != "")
 }
 
 // ClickableRole returns the ARIA role to advertise for a clickable row, or
@@ -127,7 +136,7 @@ func (r Row) ClickableRole() string {
 	if r.Link != "" {
 		return "link"
 	}
-	if r.OnClick != "" || r.HXGet != "" || r.HXPost != "" {
+	if r.OnClick != "" || r.HasHTMXAction() {
 		return "button"
 	}
 	return ""
@@ -286,10 +295,16 @@ type Filter struct {
 	Placeholder string
 	// Options for select-type filters (static)
 	Options []FilterOption
-	// HTMXOptionsURL loads select options dynamically via HTMX on load
-	HTMXOptionsURL string
+	// OptionsHTMX loads select options dynamically via HTMX on load
+	OptionsHTMX *FilterOptionsHTMXConfig
 	// DefaultValue is the initial value
 	DefaultValue string
+}
+
+// FilterOptionsHTMXConfig holds HTMX attributes for dynamic select options.
+type FilterOptionsHTMXConfig struct {
+	// Get is the URL to load select options from.
+	Get string
 }
 
 // FilterVariant switches the filter bar layout. FilterVariantBar (the
@@ -317,33 +332,39 @@ type FilterConfig struct {
 	InitiallyExpanded bool
 	// Variant selects the layout (bar vs inline). See FilterVariant.
 	Variant FilterVariant
-	// HxTarget overrides the CSS selector that filter changes swap into.
+	// HTMX configures filter request behavior.
+	HTMX *FilterHTMXConfig
+}
+
+// FilterHTMXConfig holds HTMX attributes for filter requests.
+type FilterHTMXConfig struct {
+	// Target overrides the CSS selector that filter changes swap into.
 	// Default (empty) resolves to "#{tbody-id}". Use when the table sits
 	// inside a larger fragment that should be re-rendered as a unit — for
 	// example, a modal body that includes both the table and surrounding
 	// header text, or a cluster-picker card that needs pager state reset.
-	HxTarget string
-	// HxSwap overrides the htmx swap strategy used when filters apply.
+	Target string
+	// Swap overrides the htmx swap strategy used when filters apply.
 	// Default (empty) resolves to "innerHTML". Use "outerHTML" when the
-	// HxTarget is itself the wrapper that the server re-renders (e.g. a
+	// Target is itself the wrapper that the server re-renders (e.g. a
 	// catalog grid whose empty-state lives on the wrapper element).
-	HxSwap string
+	Swap string
 }
 
 // ResolvedHxTarget returns the CSS selector that filter changes should swap
-// into. Caller-provided HxTarget wins; falls back to "#{tbody-id}".
+// into. Caller-provided Target wins; falls back to "#{tbody-id}".
 func (c *FilterConfig) ResolvedHxTarget(cfg Config) string {
-	if c != nil && c.HxTarget != "" {
-		return c.HxTarget
+	if c != nil && c.HTMX != nil && c.HTMX.Target != "" {
+		return c.HTMX.Target
 	}
 	return "#" + cfg.TbodyID()
 }
 
 // ResolvedHxSwap returns the htmx swap strategy filter requests should use.
-// Caller-provided HxSwap wins; falls back to "innerHTML".
+// Caller-provided Swap wins; falls back to "innerHTML".
 func (c *FilterConfig) ResolvedHxSwap() string {
-	if c != nil && c.HxSwap != "" {
-		return c.HxSwap
+	if c != nil && c.HTMX != nil && c.HTMX.Swap != "" {
+		return c.HTMX.Swap
 	}
 	return "innerHTML"
 }
@@ -370,7 +391,7 @@ type Config struct {
 	Variant Variant
 	// ShowCheckbox adds a select-all checkbox column
 	ShowCheckbox bool
-	// Class allows additional CSS classes on the container
+	// RootClass allows additional CSS classes on the container.
 	RootClass string
 
 	// --- Sorting ---

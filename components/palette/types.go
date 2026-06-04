@@ -44,7 +44,7 @@ type Config struct {
 	HideReset bool
 	// ShowHex adds a native color input + hex text field (off by default).
 	ShowHex bool
-	// Class appends classes to the wrapper.
+	// RootClass appends classes to the wrapper.
 	RootClass string
 	// LazyWhen is an Alpine expression; when non-empty, the swatch grid is
 	// wrapped in <template x-if=...> so it mounts only when the expression is

@@ -41,11 +41,11 @@ type Config struct {
 	// Value makes the checkbox submit this value when checked, turning the toggle into a real form control.
 	// Requires Name; when set, the always-off hidden input is omitted.
 	Value string
-	// Class allows additional CSS classes on the label
+	// RootClass allows additional CSS classes on the label.
 	RootClass string
-	// Attrs are extra attributes applied to the <input> element
+	// InputAttrs are extra attributes applied to the <input> element.
 	// (e.g. x-on:change, x-bind:checked for Alpine binding).
-	// Note: "checked" and "disabled" are already set from Config — use x-bind:checked / x-bind:disabled in Attrs for dynamic control rather than passing raw checked/disabled keys.
+	// Note: "checked" and "disabled" are already set from Config — use x-bind:checked / x-bind:disabled in InputAttrs for dynamic control rather than passing raw checked/disabled keys.
 	InputAttrs templ.Attributes
 }
 

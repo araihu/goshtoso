@@ -62,9 +62,9 @@ type Config struct {
 	MaxLength int
 	// Readonly makes the input non-editable but still submittable
 	Readonly bool
-	// Class allows additional CSS classes on the container
+	// RootClass allows additional CSS classes on the container.
 	RootClass string
-	// Attrs allows arbitrary HTML attributes on the <input> element (e.g., hx-post, hx-indicator)
+	// InputAttrs allows arbitrary HTML attributes on the <input> element (e.g., hx-post, hx-indicator).
 	InputAttrs templ.Attributes
 }
 

@@ -638,15 +638,15 @@ func serverVariantToast(cfg Config, durationStr string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if cfg.ActionHxGet != "" {
+			if cfg.ActionHTMX != nil && cfg.ActionHTMX.Get != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var32 string
-				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHxGet)
+				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHTMX.Get)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 273, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 273, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
 				if templ_7745c5c3_Err != nil {
@@ -657,15 +657,15 @@ func serverVariantToast(cfg Config, durationStr string) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if cfg.ActionHxPost != "" {
+			if cfg.ActionHTMX != nil && cfg.ActionHTMX.Post != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " hx-post=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var33 string
-				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHxPost)
+				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHTMX.Post)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 276, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 276, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
 				if templ_7745c5c3_Err != nil {
@@ -676,15 +676,15 @@ func serverVariantToast(cfg Config, durationStr string) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if cfg.ActionHxTarget != "" {
+			if cfg.ActionHTMX != nil && cfg.ActionHTMX.Target != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, " hx-target=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var34 string
-				templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHxTarget)
+				templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHTMX.Target)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 279, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 279, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 				if templ_7745c5c3_Err != nil {
@@ -695,15 +695,15 @@ func serverVariantToast(cfg Config, durationStr string) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if cfg.ActionHxSwap != "" {
+			if cfg.ActionHTMX != nil && cfg.ActionHTMX.Swap != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, " hx-swap=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var35 string
-				templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHxSwap)
+				templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ActionHTMX.Swap)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 282, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 282, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 				if templ_7745c5c3_Err != nil {
@@ -719,9 +719,9 @@ func serverVariantToast(cfg Config, durationStr string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var36 string
-			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ActionText)
+			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ActionLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 284, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 284, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {

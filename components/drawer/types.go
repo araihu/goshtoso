@@ -52,7 +52,7 @@ type Config struct {
 	// Persistent disables click-backdrop and Esc-to-close. Default: false.
 	Persistent bool
 
-	// Class allows extra CSS classes on the panel (not the overlay).
+	// PanelClass allows extra CSS classes on the panel (not the overlay).
 	PanelClass string
 }
 

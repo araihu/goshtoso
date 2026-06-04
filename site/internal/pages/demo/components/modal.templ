@@ -62,9 +62,7 @@ templ modalDemoContent() {
     PrimaryLabel:   "Confirm",
     SecondaryLabel: "Cancel",
     PrimaryAction: &modal.ButtonAction{
-        HxPost:   "/api/hello",
-        HxTarget: "#modal-htmx-result",
-        HxSwap:   "innerHTML",
+        HTMX: &modal.HTMXConfig{Post: "/api/hello", Target: "#modal-htmx-result", Swap: "innerHTML"},
     },
 })`,
 		)
@@ -172,9 +170,7 @@ templ modalHTMXPreview() {
 					PrimaryLabel:   "Confirm",
 					SecondaryLabel: "Cancel",
 					PrimaryAction: &modal.ButtonAction{
-						HxPost:   "/api/hello",
-						HxTarget: "#modal-htmx-result",
-						HxSwap:   "innerHTML",
+						HTMX: &modal.HTMXConfig{Post: "/api/hello", Target: "#modal-htmx-result", Swap: "innerHTML"},
 					},
 				})
 				<div id="modal-htmx-result" class="mt-2 text-sm min-h-[1.5rem]"></div>

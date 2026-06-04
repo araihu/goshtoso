@@ -710,7 +710,7 @@ func filterScript(cfg Config) templ.Component {
 //
 // hx-preserve + stable id keep the input element (and its focus + caret
 // position) intact across HTMX swaps that include the filter bar in the
-// swap target — e.g. when consumers configure HxTarget at a wrapper that
+// swap target — e.g. when consumers configure HTMX.Target at a wrapper that
 // re-renders the filter row whole-cloth (catalog with empty-state branch).
 // On the common tbody-only swap path the attribute is a no-op since the
 // filter inputs aren't part of the target.
@@ -834,15 +834,15 @@ func filterSelectInput(cfg Config, filter Filter) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if filter.HTMXOptionsURL != "" {
+		if filter.OptionsHTMX != nil && filter.OptionsHTMX.Get != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, " hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var39 string
-			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(filter.HTMXOptionsURL)
+			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(filter.OptionsHTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 237, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 237, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var39)
 			if templ_7745c5c3_Err != nil {
@@ -857,7 +857,7 @@ func filterSelectInput(cfg Config, filter Filter) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if filter.HTMXOptionsURL == "" {
+		if filter.OptionsHTMX == nil || filter.OptionsHTMX.Get == "" {
 			for _, opt := range filter.Options {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<option value=\"")
 				if templ_7745c5c3_Err != nil {
@@ -866,7 +866,7 @@ func filterSelectInput(cfg Config, filter Filter) templ.Component {
 				var templ_7745c5c3_Var40 string
 				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.ResolveAttributeValue(opt.Value)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 244, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 244, Col: 30}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var40)
 				if templ_7745c5c3_Err != nil {
@@ -879,7 +879,7 @@ func filterSelectInput(cfg Config, filter Filter) templ.Component {
 				var templ_7745c5c3_Var41 string
 				templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(opt.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 244, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 244, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 				if templ_7745c5c3_Err != nil {
@@ -1573,7 +1573,7 @@ func TableRow(cfg Config, row Row) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if row.Expandable && row.Link == "" && row.OnClick == "" && row.HXGet == "" && row.HXPost == "" {
+		if row.Expandable && row.Link == "" && row.OnClick == "" && !row.HasHTMXAction() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 100, " x-on:click=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1581,7 +1581,7 @@ func TableRow(cfg Config, row Row) templ.Component {
 			var templ_7745c5c3_Var78 string
 			templ_7745c5c3_Var78, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 379, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 379, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var78)
 			if templ_7745c5c3_Err != nil {
@@ -1973,7 +1973,7 @@ func interactiveRowClasses(row Row) string {
 	return ""
 }
 
-// rowActionAttrs returns HTMX/JS attributes for row click actions (OnClick, HXGet, HXPost).
+// rowActionAttrs returns HTMX/JS attributes for row click actions (OnClick, HTMX.Get, HTMX.Post).
 // Link and Expandable are handled separately in the template.
 func rowActionAttrs(row Row) templ.Attributes {
 	if row.Link != "" {
@@ -1985,32 +1985,32 @@ func rowActionAttrs(row Row) templ.Attributes {
 			"onclick": row.OnClick,
 		}
 	}
-	if row.HXGet != "" {
+	if row.HTMX != nil && row.HTMX.Get != "" {
 		attrs := templ.Attributes{
-			"hx-get":    row.HXGet,
-			"hx-target": row.HXTarget,
+			"hx-get":    row.HTMX.Get,
+			"hx-target": row.HTMX.Target,
 		}
-		if row.HXSwap != "" {
-			attrs["hx-swap"] = row.HXSwap
+		if row.HTMX.Swap != "" {
+			attrs["hx-swap"] = row.HTMX.Swap
 		} else {
 			attrs["hx-swap"] = "innerHTML"
 		}
-		if row.HXPushURL {
+		if row.HTMX.PushURL {
 			attrs["hx-push-url"] = "true"
 		}
 		return attrs
 	}
-	if row.HXPost != "" {
+	if row.HTMX != nil && row.HTMX.Post != "" {
 		attrs := templ.Attributes{
-			"hx-post":   row.HXPost,
-			"hx-target": row.HXTarget,
+			"hx-post":   row.HTMX.Post,
+			"hx-target": row.HTMX.Target,
 		}
-		if row.HXSwap != "" {
-			attrs["hx-swap"] = row.HXSwap
+		if row.HTMX.Swap != "" {
+			attrs["hx-swap"] = row.HTMX.Swap
 		} else {
 			attrs["hx-swap"] = "innerHTML"
 		}
-		if row.HXPushURL {
+		if row.HTMX.PushURL {
 			attrs["hx-push-url"] = "true"
 		}
 		return attrs
@@ -2021,7 +2021,7 @@ func rowActionAttrs(row Row) templ.Attributes {
 // rowA11yAttrs gives keyboard and assistive-tech affordances to a row whose
 // whole area is clickable. Without these, a screen reader announces the row
 // as plain text and keyboard users can't Tab to it. Only emitted when the
-// row has a row-level target (Link / OnClick / HXGet / HXPost) — rows whose
+// row has a row-level target (Link / OnClick / HTMX.Get / HTMX.Post) — rows whose
 // interactions live inside nested controls (Actions column, Expandable with
 // its own toggle) keep native cell focus order.
 func rowA11yAttrs(row Row) templ.Attributes {

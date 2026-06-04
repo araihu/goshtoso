@@ -76,7 +76,7 @@ templ linkAlert(cfg Config) {
 
 // actionAlert renders an alert with action buttons
 templ actionAlert(cfg Config) {
-	{{ dismissText := cfg.Action.DismissText }}
+	{{ dismissText := cfg.Action.DismissLabel }}
 	{{ if dismissText == "" { dismissText = "Dismiss" } }}
 	<div class={ cfg.ContainerClasses() } role="alert">
 		<div class={ cfg.InnerClasses() }>
@@ -93,17 +93,17 @@ templ actionAlert(cfg Config) {
 						if cfg.Action.PrimaryOnClick != "" {
 							@click={ cfg.Action.PrimaryOnClick }
 						}
-						if cfg.Action.PrimaryHxGet != "" {
-							hx-get={ cfg.Action.PrimaryHxGet }
+						if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Get != "" {
+							hx-get={ cfg.Action.PrimaryHTMX.Get }
 						}
-						if cfg.Action.PrimaryHxPost != "" {
-							hx-post={ cfg.Action.PrimaryHxPost }
+						if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Post != "" {
+							hx-post={ cfg.Action.PrimaryHTMX.Post }
 						}
-						if cfg.Action.PrimaryHxTarget != "" {
-							hx-target={ cfg.Action.PrimaryHxTarget }
+						if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Target != "" {
+							hx-target={ cfg.Action.PrimaryHTMX.Target }
 						}
-						if cfg.Action.PrimaryHxSwap != "" {
-							hx-swap={ cfg.Action.PrimaryHxSwap }
+						if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Swap != "" {
+							hx-swap={ cfg.Action.PrimaryHTMX.Swap }
 						}
 					>
 						{ cfg.Action.PrimaryLabel }

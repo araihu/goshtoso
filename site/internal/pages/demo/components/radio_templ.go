@@ -239,7 +239,7 @@ func radioDemoContent() templ.Component {
 			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Server interaction on change (Get/Post/Target/Swap/...)."},
 			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side state (Model/OnChange/BindChecked/...)."},
 			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the input; wins on conflict."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the label root."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the label root."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

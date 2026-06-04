@@ -161,9 +161,9 @@ func structuredInputDemoContent() templ.Component {
 			{Name: "Columns", Type: "[]Column", Default: "nil", Description: "Column schema for every repeatable row."},
 			{Name: "Column.Separator", Type: "string", Default: `""`, Description: "Optional short visual separator rendered after a column, such as = or :."},
 			{Name: "Entries", Type: "[]Entry", Default: "nil", Description: "Initial row values keyed by column key."},
-			{Name: "AddLabel", Type: "string", Default: `"Add row"`, Description: "Label of the add-row button."},
+			{Name: "AddActionLabel", Type: "string", Default: `"Add row"`, Description: "Label of the add-row button."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable controls and hide add/remove actions."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

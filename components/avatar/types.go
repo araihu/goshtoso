@@ -98,7 +98,7 @@ type Config struct {
 	Status Status
 	// Icon is an optional icon component (replaces initials in the base layer)
 	Icon templ.Component
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the avatar root.
 	RootClass string
 	// SrcExpr is an Alpine expression evaluated in the parent scope that yields
 	// the image src at runtime (e.g. "avatarSrc"). When set, the image layer is
@@ -134,7 +134,7 @@ type StackConfig struct {
 	Items []Config
 	// Label describes the group for assistive technology.
 	Label string
-	// Class allows additional CSS classes on the stack root.
+	// RootClass allows additional CSS classes on the stack root.
 	RootClass string
 	// Reactive defers each avatar's size classes to the parent Alpine scope.
 	Reactive bool

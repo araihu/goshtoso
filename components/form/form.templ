@@ -18,7 +18,7 @@ import (
 //	@form.Form(form.Config{
 //	    ID:     "my-form",
 //	    Action: "/api/submit",
-//	    Footer: &form.FooterConfig{SubmitText: "Save", CancelText: "Cancel", CancelHref: "/"},
+//	    Footer: &form.FooterConfig{SubmitLabel: "Save", CancelLabel: "Cancel", CancelHref: "/"},
 //	}) {
 //	    @form.Section(...) { ... }
 //	}
@@ -333,7 +333,7 @@ templ fieldHints(hints []string) {
 // formFooter renders the sticky footer with Cancel and Submit buttons
 templ formFooter(cfg FooterConfig) {
 	<div class={ cfg.footerClasses() }>
-		if cfg.CancelText != "" {
+		if cfg.CancelLabel != "" {
 			<a
 				if cfg.CancelHTMX != nil {
 					if cfg.CancelHTMX.Get != "" {
@@ -357,7 +357,7 @@ templ formFooter(cfg FooterConfig) {
 				}
 				class="inline-flex cursor-pointer items-center justify-center px-6 py-2.5 rounded-radius text-sm font-medium text-on-surface dark:text-on-surface-dark bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition"
 			>
-				{ cfg.CancelText }
+					{ cfg.CancelLabel }
 			</a>
 		}
 		<button
@@ -367,7 +367,7 @@ templ formFooter(cfg FooterConfig) {
 				x-bind:disabled={ cfg.SubmitDisabled }
 			}
 		>
-			{ cfg.SubmitText }
+				{ cfg.SubmitLabel }
 		</button>
 	</div>
 }

@@ -160,7 +160,7 @@ func TestProfileDarkToggle(t *testing.T) {
 }
 
 // TestProfileThemePicker opens the theme Select and picks "Dracula", asserting
-// the root data-theme attribute updates. Proves the Select's AlpineModel
+// the root data-theme attribute updates. Proves the Select's Alpine.Model
 // ("theme") two-way binds to the app's root theme engine.
 func TestProfileThemePicker(t *testing.T) {
 	page := newIsolatedPage(t)
