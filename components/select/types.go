@@ -97,7 +97,7 @@ func (cfg Config) ContainerClasses() string {
 
 // SelectClasses returns CSS classes for the select element (legacy, kept for compatibility)
 func (cfg Config) SelectClasses() string {
-	base := "w-full appearance-none rounded-radius border bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+	base := "w-full appearance-none rounded-radius border bg-surface px-4 py-2 text-sm text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface-alt disabled:text-on-surface-muted disabled:opacity-50 dark:bg-surface-dark dark:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark dark:disabled:bg-surface-dark-alt dark:disabled:text-on-surface-dark-muted"
 
 	switch cfg.State {
 	case StateError:
@@ -111,19 +111,19 @@ func (cfg Config) SelectClasses() string {
 
 // TriggerClasses returns CSS classes for the custom dropdown trigger button
 func (cfg Config) TriggerClasses() string {
-	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:opacity-60"
+	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
 
 	if cfg.IsEffectivelyDisabled() {
-		return base + " border-outline bg-surface-alt/50 text-on-surface/50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt/30 dark:text-on-surface-dark/50"
+		return base + " border-outline bg-surface-alt text-on-surface-muted opacity-50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted"
 	}
 
 	switch cfg.State {
 	case StateError:
-		return base + " border-danger bg-surface-alt text-on-surface dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
+		return base + " border-danger bg-surface text-on-surface-strong dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	case StateSuccess:
-		return base + " border-success bg-surface-alt text-on-surface dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
+		return base + " border-success bg-surface text-on-surface-strong dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	default:
-		return base + " border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
+		return base + " border-outline bg-surface text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	}
 }
 

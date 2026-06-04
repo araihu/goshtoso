@@ -273,6 +273,26 @@ func TestCombobox_RootDeclaresCloseOnSelectBehavior(t *testing.T) {
 	})
 }
 
+func TestCombobox_TriggerUsesActiveSurfaceVocabulary(t *testing.T) {
+	for _, tt := range []struct {
+		name  string
+		state State
+	}{
+		{name: "placeholder", state: State{}},
+		{name: "selected", state: State{Selected: []string{"maas"}}},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			classes := triggerBtnClass(tt.state)
+			for _, want := range []string{
+				"bg-surface",
+				"text-on-surface-strong",
+			} {
+				assert.Contains(t, classes, want)
+			}
+		})
+	}
+}
+
 func TestCombobox_ServerMode_HasHXPost(t *testing.T) {
 	cfg := Config{
 		ID: "team", Name: "team", Mode: ModeMultiple,
