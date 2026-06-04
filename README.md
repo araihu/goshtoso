@@ -137,7 +137,8 @@ Then open:
 - <http://localhost:8090/examples/todo>
 - <http://localhost:8090/examples/logs>
 
-The public demo is available at [goshtoso.araihu.com](https://goshtoso.araihu.com).
+The public documentation site is available at
+[https://goshtoso.araihu.com/](https://goshtoso.araihu.com/).
 
 ## Using Assets
 
