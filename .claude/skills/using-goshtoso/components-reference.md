@@ -1035,6 +1035,43 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 | `Vals` | `string` | hx-vals JSON string (caller-escaped) |
 | `Include` | `string` | hx-include selector |
 
+## range
+
+```go
+import "github.com/araihu/goshtoso/components/range"  // package rangeinput
+```
+
+**Entry points:** `Range(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID is the unique identifier for the range input. |
+| `Name` | `string` | Name is the form field name. |
+| `Label` | `string` | Label is the visible label shown above or beside the input. |
+| `Value` | `string` | Value is the current value (default: "0"). |
+| `Min` | `string` | Min is the minimum value (default: "0"). |
+| `Max` | `string` | Max is the maximum value (default: "100"). |
+| `Step` | `string` | Step is the increment between valid values (default: "1"). |
+| `Disabled` | `bool` | Disabled disables the range input. |
+| `Required` | `bool` | Required marks the input as required. |
+| `ShowTicks` | `bool` | ShowTicks renders a tick row below the input. |
+| `Ticks` | `[]Tick` | Ticks overrides the default tick labels used when ShowTicks is true. |
+| `ShowValue` | `bool` | ShowValue renders a live value badge bound with Alpine.js. |
+| `LeadingIcon` | `templ.Component` | LeadingIcon renders before the label/input row. |
+| `TrailingIcon` | `templ.Component` | TrailingIcon renders after the input row. |
+| `RootClass` | `string` | RootClass allows additional CSS classes on the outer container. |
+| `InputClass` | `string` | InputClass allows additional CSS classes on the input. |
+| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary attributes on the input, including hx-* or x-* hooks. |
+
+**Tick**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Label` | `string` | Label is the visible tick text. Use "\|" for an unlabeled mark. |
+| `HideOnMobile` | `bool` | HideOnMobile hides the tick below the sm breakpoint. |
+
 ## schemafield
 
 ```go

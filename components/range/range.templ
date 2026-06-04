@@ -1,0 +1,73 @@
+package rangeinput
+
+// Range renders a PenguinUI-inspired range slider.
+//
+// Usage:
+//
+//	@rangeinput.Range(rangeinput.Config{
+//	    ID:    "mood",
+//	    Name:  "mood",
+//	    Label: "Mood Meter",
+//	    Value: "20",
+//	    Min:   "0",
+//	    Max:   "100",
+//	    Step:  "1",
+//	})
+templ Range(cfg Config) {
+	if cfg.ShowValue {
+		<div x-data={ cfg.AlpineData() } class={ cfg.RootClasses() }>
+			@rangeInner(cfg, true)
+		</div>
+	} else {
+		<div class={ cfg.RootClasses() }>
+			@rangeInner(cfg, false)
+		</div>
+	}
+}
+
+templ rangeInner(cfg Config, alpine bool) {
+	if cfg.Label != "" && cfg.LeadingIcon == nil && cfg.TrailingIcon == nil && !cfg.ShowValue {
+		<label for={ cfg.ID } class={ cfg.LabelClasses() }>{ cfg.Label }</label>
+	}
+	<div class={ cfg.ControlClasses() }>
+		if cfg.LeadingIcon != nil {
+			<span class={ cfg.IconClasses() } aria-hidden="true">
+				@cfg.LeadingIcon
+			</span>
+		}
+		if cfg.Label != "" && (cfg.LeadingIcon != nil || cfg.TrailingIcon != nil || cfg.ShowValue) {
+			<label for={ cfg.ID } class={ cfg.LabelClasses() }>{ cfg.Label }</label>
+		}
+		<input
+			id={ cfg.ID }
+			type="range"
+			class={ cfg.InputClasses() }
+			name={ cfg.Name }
+			value={ cfg.ValueOrDefault() }
+			min={ cfg.MinOrDefault() }
+			max={ cfg.MaxOrDefault() }
+			step={ cfg.StepOrDefault() }
+			if alpine {
+				x-model="currentVal"
+			}
+			disabled?={ cfg.Disabled }
+			required?={ cfg.Required }
+			{ cfg.InputAttrs... }
+		/>
+		if cfg.ShowValue {
+			<span class={ cfg.ValueClasses() } x-text="currentVal">{ cfg.ValueOrDefault() }</span>
+		}
+		if cfg.TrailingIcon != nil {
+			<span class={ cfg.IconClasses() } aria-hidden="true">
+				@cfg.TrailingIcon
+			</span>
+		}
+	</div>
+	if cfg.ShowTicks {
+		<div class="flex w-full items-center justify-between px-0.5" aria-hidden="true">
+			for _, tick := range cfg.TickLabels() {
+				<span class={ cfg.TickClasses(tick) }>{ tick.Label }</span>
+			}
+		</div>
+	}
+}
