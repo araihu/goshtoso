@@ -441,7 +441,7 @@ func CollapsibleSection(cfg CollapsibleSectionConfig) templ.Component {
 			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var22 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 overflow-hidden " + cfg.Class}
+		var templ_7745c5c3_Var22 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 " + cfg.Class}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var22...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -564,7 +564,7 @@ func CollapsibleSection(cfg CollapsibleSectionConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-5 shrink-0 transition-transform text-on-surface dark:text-on-surface-dark\" aria-hidden=\"true\" x-bind:class=\"isExpanded ? 'rotate-180' : ''\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19.5 8.25l-7.5 7.5-7.5-7.5\"></path></svg></button><!-- Content --><div x-cloak x-show=\"isExpanded\" x-collapse")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-5 shrink-0 transition-transform text-on-surface dark:text-on-surface-dark\" aria-hidden=\"true\" x-bind:class=\"isExpanded ? 'rotate-180' : ''\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19.5 8.25l-7.5 7.5-7.5-7.5\"></path></svg></button><!-- Content --><div x-cloak x-show=\"isExpanded\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -576,7 +576,7 @@ func CollapsibleSection(cfg CollapsibleSectionConfig) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID + "-content")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 147, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 146, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 			if templ_7745c5c3_Err != nil {
@@ -666,7 +666,7 @@ func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Componen
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 166, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 165, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 			if templ_7745c5c3_Err != nil {
@@ -707,7 +707,7 @@ func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Componen
 		var templ_7745c5c3_Var36 string
 		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.alpineData())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 172, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 171, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
 		if templ_7745c5c3_Err != nil {
@@ -720,7 +720,7 @@ func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Componen
 		var templ_7745c5c3_Var37 string
 		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 177, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 176, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 		if templ_7745c5c3_Err != nil {
@@ -733,7 +733,7 @@ func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Componen
 		var templ_7745c5c3_Var38 string
 		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getEditLabel())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 190, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 189, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 		if templ_7745c5c3_Err != nil {
@@ -746,7 +746,7 @@ func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Componen
 		var templ_7745c5c3_Var39 string
 		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getDoneLabel())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 203, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 202, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 		if templ_7745c5c3_Err != nil {
@@ -837,7 +837,7 @@ func SubSection(cfg SubSectionConfig) templ.Component {
 			var templ_7745c5c3_Var44 string
 			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 223, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 222, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var44)
 			if templ_7745c5c3_Err != nil {
@@ -873,7 +873,7 @@ func SubSection(cfg SubSectionConfig) templ.Component {
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 229, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 228, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 			if templ_7745c5c3_Err != nil {
@@ -959,7 +959,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 			var templ_7745c5c3_Var51 string
 			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 244, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 243, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var51)
 			if templ_7745c5c3_Err != nil {
@@ -1001,7 +1001,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 			var templ_7745c5c3_Var53 string
 			templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Meta.FormID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 251, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 250, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var53)
 			if templ_7745c5c3_Err != nil {
@@ -1014,7 +1014,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 			var templ_7745c5c3_Var54 string
 			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Meta.FieldName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 252, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 251, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 			if templ_7745c5c3_Err != nil {
@@ -1032,7 +1032,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 				var templ_7745c5c3_Var55 string
 				templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Meta.DependsOn)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 254, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 253, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 				if templ_7745c5c3_Err != nil {
@@ -1053,7 +1053,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 				var templ_7745c5c3_Var56 string
 				templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Validation.Endpoint)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 259, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 258, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var56)
 				if templ_7745c5c3_Err != nil {
@@ -1066,7 +1066,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 				var templ_7745c5c3_Var57 string
 				templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Validation.getTrigger())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 260, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 259, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var57)
 				if templ_7745c5c3_Err != nil {
@@ -1084,7 +1084,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 					var templ_7745c5c3_Var58 string
 					templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Meta.FieldName)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 262, Col: 30}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 261, Col: 30}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var58)
 					if templ_7745c5c3_Err != nil {
@@ -1104,7 +1104,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 				var templ_7745c5c3_Var59 string
 				templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Validation.Target)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 266, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 265, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var59)
 				if templ_7745c5c3_Err != nil {
@@ -1142,7 +1142,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 				var templ_7745c5c3_Var60 string
 				templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 278, Col: 17}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 277, Col: 17}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var60)
 				if templ_7745c5c3_Err != nil {
@@ -1160,7 +1160,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 			var templ_7745c5c3_Var61 string
 			templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 282, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 281, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var61))
 			if templ_7745c5c3_Err != nil {
@@ -1272,7 +1272,7 @@ func fieldErrors(errors []string) templ.Component {
 			var templ_7745c5c3_Var63 string
 			templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.JoinStringErrs(err)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 318, Col: 8}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 317, Col: 8}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var63))
 			if templ_7745c5c3_Err != nil {
@@ -1316,7 +1316,7 @@ func fieldHints(hints []string) templ.Component {
 			var templ_7745c5c3_Var65 string
 			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.JoinStringErrs(hint)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 329, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 328, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var65))
 			if templ_7745c5c3_Err != nil {
@@ -1389,7 +1389,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 					var templ_7745c5c3_Var69 string
 					templ_7745c5c3_Var69, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.CancelHTMX.Get)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 341, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 340, Col: 33}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var69)
 					if templ_7745c5c3_Err != nil {
@@ -1408,7 +1408,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 					var templ_7745c5c3_Var70 string
 					templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.CancelHTMX.Target)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 344, Col: 39}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 343, Col: 39}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var70)
 					if templ_7745c5c3_Err != nil {
@@ -1427,7 +1427,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 					var templ_7745c5c3_Var71 string
 					templ_7745c5c3_Var71, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.CancelHTMX.Swap)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 347, Col: 35}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 346, Col: 35}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var71)
 					if templ_7745c5c3_Err != nil {
@@ -1453,7 +1453,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 				var templ_7745c5c3_Var72 templ.SafeURL
 				templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.JoinURLErrs(cfg.CancelHref)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 354, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 353, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var72))
 				if templ_7745c5c3_Err != nil {
@@ -1472,7 +1472,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 				var templ_7745c5c3_Var73 templ.SafeURL
 				templ_7745c5c3_Var73, templ_7745c5c3_Err = templ.JoinURLErrs(cfg.CancelHref)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 357, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 356, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var73))
 				if templ_7745c5c3_Err != nil {
@@ -1490,7 +1490,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 			var templ_7745c5c3_Var74 string
 			templ_7745c5c3_Var74, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CancelText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 361, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 360, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var74))
 			if templ_7745c5c3_Err != nil {
@@ -1513,7 +1513,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 			var templ_7745c5c3_Var75 string
 			templ_7745c5c3_Var75, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.SubmitDisabled)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 368, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 367, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var75)
 			if templ_7745c5c3_Err != nil {
@@ -1531,7 +1531,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 		var templ_7745c5c3_Var76 string
 		templ_7745c5c3_Var76, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.SubmitText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 371, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 370, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var76))
 		if templ_7745c5c3_Err != nil {
