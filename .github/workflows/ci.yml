@@ -197,10 +197,186 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+  coverage:
+    name: Combined coverage
+    runs-on: araihu
+    outputs:
+      coverage_percent: ${{ steps.coverage.outputs.coverage_percent }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
+          # self-hosted araihu runner. setup-go's own cache tars+uploads that
+          # same tree to the GHA cache backend on every go.sum change — a ~9min
+          # post-job step that buys nothing here. Disable it.
+          cache: false
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
+
+      - name: Install Tailwind CSS standalone
+        run: |
+          set -euo pipefail
+          ver="$(cat assets/tailwind.version)"
+          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
+          chmod +x /tmp/tailwindcss
+          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
+
+      - name: Install Playwright + Chromium
+        run: |
+          go install github.com/playwright-community/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
+          playwright install --with-deps chromium
+
+      - name: Generate templ + CSS
+        run: |
+          templ generate
+          tailwindcss -i css/main.css -o assets/styles.css
+
+      # The merged coverage profile uses Go's native 1.20+ coverage data format
+      # so package tests and the coverage-instrumented demo server can be
+      # combined into one statement-coverage number.
+      - name: Combined unit + E2E coverage
+        id: coverage
+        run: |
+          set -euo pipefail
+          root="$PWD"
+          root_coverpkg="github.com/araihu/goshtoso/..."
+          all_coverpkg="${root_coverpkg},github.com/araihu/goshtoso/site/..."
+
+          go work init . ./site
+
+          rm -rf .coverage
+          mkdir -p .coverage/unit-root .coverage/unit-site .coverage/e2e .coverage/merged
+
+          go test -cover -coverpkg="$root_coverpkg" ./... -count=1 \
+            -args -test.gocoverdir="$root/.coverage/unit-root"
+
+          (
+            cd site
+            site_pkgs="$(go list ./... | grep -v '/tests/e2e')"
+            go test -cover -coverpkg="$all_coverpkg" $site_pkgs -count=1 \
+              -args -test.gocoverdir="$root/.coverage/unit-site"
+
+            GOSHTOSO_E2E_COVERDIR="$root/.coverage/e2e" \
+            GOSHTOSO_E2E_COVERPKG="$all_coverpkg" \
+              go test ./tests/e2e/... -count=1 -timeout 15m
+          )
+
+          go tool covdata merge \
+            -i=.coverage/unit-root,.coverage/unit-site,.coverage/e2e \
+            -o=.coverage/merged
+          go tool covdata percent -i=.coverage/merged > .coverage/coverage-percent.txt
+          go tool covdata textfmt -i=.coverage/merged -o=.coverage/coverage.out
+          go tool cover -func=.coverage/coverage.out > .coverage/coverage-func.txt
+          go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
+
+          total_line="$(grep '^total:' .coverage/coverage-func.txt)"
+          total_percent="$(printf '%s\n' "$total_line" | sed -E 's/.*\t([0-9.]+)%.*/\1/')"
+          color="#e05d44"
+          awk "BEGIN { exit !($total_percent >= 80) }" && color="#4c1" || true
+          awk "BEGIN { exit !($total_percent >= 60 && $total_percent < 80) }" && color="#97ca00" || true
+          awk "BEGIN { exit !($total_percent >= 40 && $total_percent < 60) }" && color="#dfb317" || true
+
+          mkdir -p badges
+          cat > badges/coverage.svg <<EOF
+          <svg xmlns="http://www.w3.org/2000/svg" width="106" height="20" role="img" aria-label="coverage: ${total_percent}%">
+            <title>coverage: ${total_percent}%</title>
+            <linearGradient id="s" x2="0" y2="100%">
+              <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+              <stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
+              <stop offset=".9" stop-opacity=".3"/>
+              <stop offset="1" stop-opacity=".5"/>
+            </linearGradient>
+            <clipPath id="r">
+              <rect width="106" height="20" rx="3" fill="#fff"/>
+            </clipPath>
+            <g clip-path="url(#r)">
+              <rect width="59" height="20" fill="#555"/>
+              <rect x="59" width="47" height="20" fill="${color}"/>
+              <rect width="106" height="20" fill="url(#s)"/>
+            </g>
+            <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+              <text x="30" y="15" fill="#010101" fill-opacity=".3">coverage</text>
+              <text x="30" y="14">coverage</text>
+              <text x="81.5" y="15" fill="#010101" fill-opacity=".3">${total_percent}%</text>
+              <text x="81.5" y="14">${total_percent}%</text>
+            </g>
+          </svg>
+          EOF
+
+          echo "$total_line"
+          {
+            echo "### Combined Go coverage"
+            echo
+            echo '```text'
+            echo "$total_line"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "coverage_percent=$total_percent" >> "$GITHUB_OUTPUT"
+
+  coverage-badge:
+    name: Update coverage badge
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: coverage
+    runs-on: araihu
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Update badge SVG
+        run: |
+          set -euo pipefail
+          total_percent="${{ needs.coverage.outputs.coverage_percent }}"
+          color="#e05d44"
+          awk "BEGIN { exit !($total_percent >= 80) }" && color="#4c1" || true
+          awk "BEGIN { exit !($total_percent >= 60 && $total_percent < 80) }" && color="#97ca00" || true
+          awk "BEGIN { exit !($total_percent >= 40 && $total_percent < 60) }" && color="#dfb317" || true
+
+          mkdir -p badges
+          cat > badges/coverage.svg <<EOF
+          <svg xmlns="http://www.w3.org/2000/svg" width="106" height="20" role="img" aria-label="coverage: ${total_percent}%">
+            <title>coverage: ${total_percent}%</title>
+            <linearGradient id="s" x2="0" y2="100%">
+              <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+              <stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
+              <stop offset=".9" stop-opacity=".3"/>
+              <stop offset="1" stop-opacity=".5"/>
+            </linearGradient>
+            <clipPath id="r">
+              <rect width="106" height="20" rx="3" fill="#fff"/>
+            </clipPath>
+            <g clip-path="url(#r)">
+              <rect width="59" height="20" fill="#555"/>
+              <rect x="59" width="47" height="20" fill="${color}"/>
+              <rect width="106" height="20" fill="url(#s)"/>
+            </g>
+            <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+              <text x="30" y="15" fill="#010101" fill-opacity=".3">coverage</text>
+              <text x="30" y="14">coverage</text>
+              <text x="81.5" y="15" fill="#010101" fill-opacity=".3">${total_percent}%</text>
+              <text x="81.5" y="14">${total_percent}%</text>
+            </g>
+          </svg>
+          EOF
+
+          if git diff --quiet -- badges/coverage.svg; then
+            echo "Coverage badge already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add badges/coverage.svg
+          git commit -m "ci: update coverage badge [skip ci]"
+          git push
+
   deploy:
     name: Deploy to Fly.io
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [lint-build, unit-test, e2e]
+    needs: [lint-build, unit-test, e2e, coverage]
     runs-on: araihu
     concurrency: deploy-group
     steps:

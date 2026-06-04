@@ -41,7 +41,15 @@ func freePort() (int, error) {
 func TestMain(m *testing.M) {
 	// Build server
 	projectRoot, _ := filepath.Abs("../..")
-	buildCmd := exec.Command("go", "build", "-o", "bin/server", "./cmd/server")
+	buildArgs := []string{"build", "-o", "bin/server"}
+	if coverDir := os.Getenv("GOSHTOSO_E2E_COVERDIR"); coverDir != "" {
+		buildArgs = append(buildArgs, "-cover")
+		if coverPkg := os.Getenv("GOSHTOSO_E2E_COVERPKG"); coverPkg != "" {
+			buildArgs = append(buildArgs, "-coverpkg="+coverPkg)
+		}
+	}
+	buildArgs = append(buildArgs, "./cmd/server")
+	buildCmd := exec.Command("go", buildArgs...)
 	buildCmd.Dir = projectRoot
 	if output, err := buildCmd.CombinedOutput(); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to build server: %s\n%s\n", err, output)
@@ -60,6 +68,13 @@ func TestMain(m *testing.M) {
 	serverBin := filepath.Join(projectRoot, "bin", "server")
 	serverCmd = exec.Command(serverBin, "-port", fmt.Sprintf("%d", port))
 	serverCmd.Dir = projectRoot
+	if coverDir := os.Getenv("GOSHTOSO_E2E_COVERDIR"); coverDir != "" {
+		if err := os.MkdirAll(coverDir, 0755); err != nil {
+			fmt.Fprintf(os.Stderr, "failed to create coverage dir: %v\n", err)
+			os.Exit(1)
+		}
+		serverCmd.Env = append(os.Environ(), "GOCOVERDIR="+coverDir)
+	}
 	serverCmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := serverCmd.Start(); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to start server: %v\n", err)

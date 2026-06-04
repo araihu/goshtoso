@@ -1,13 +1,18 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"runtime"
+	"syscall"
+	"time"
 
 	"github.com/araihu/goshtoso/site/internal/server"
 )
@@ -25,7 +30,32 @@ func main() {
 	log.Printf("Starting server on http://localhost%s", addr)
 	log.Printf("Accordion Component Demo: http://localhost%s/components/accordion", addr)
 
-	if err := http.ListenAndServe(addr, srv); err != nil {
+	httpServer := &http.Server{
+		Addr:    addr,
+		Handler: srv,
+	}
+
+	errs := make(chan error, 1)
+	go func() {
+		errs <- httpServer.ListenAndServe()
+	}()
+
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+	defer signal.Stop(signals)
+
+	select {
+	case sig := <-signals:
+		log.Printf("Received %s, shutting down", sig)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := httpServer.Shutdown(ctx); err != nil {
+			log.Fatalf("Server shutdown error: %v", err)
+		}
+	case err := <-errs:
+		if errors.Is(err, http.ErrServerClosed) {
+			return
+		}
 		log.Fatalf("Server error: %v", err)
 	}
 }
