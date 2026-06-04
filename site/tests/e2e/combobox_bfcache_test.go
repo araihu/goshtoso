@@ -32,7 +32,7 @@ func TestCombobox_BFCache_RestoresSelection(t *testing.T) {
 	trigger := page.Locator("#industry-trigger").First()
 	require.NoError(t, trigger.Click())
 
-	firstOption := page.Locator("[role=option]").First()
+	firstOption := page.Locator("#combobox-industry [role=option]").First()
 	require.NoError(t, firstOption.Click())
 
 	labelBefore, err := trigger.InnerText()
@@ -55,7 +55,7 @@ func TestCombobox_BFCache_RestoresSelection(t *testing.T) {
 	assert.Equal(t, labelBefore, labelAfter, "trigger label must match before/after back navigation")
 
 	require.NoError(t, triggerAfter.Click())
-	optionCount, err := page.Locator("[role=option]").Count()
+	optionCount, err := page.Locator("#combobox-industry [role=option]").Count()
 	require.NoError(t, err)
 	assert.Greater(t, optionCount, 0, "dropdown must have options after bfcache restore")
 }

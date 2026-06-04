@@ -204,30 +204,41 @@ func TestTheme_Switching(t *testing.T) {
 	themes := []struct {
 		key   string
 		label string
+		index int
 	}{
-		{"arctic", "Arctic"},
-		{"neo-brutalism", "Neo Brutalism"},
-		{"90s", "90s"},
-		{"minimal", "Minimal"},
+		{"arctic", "Arctic", 3},
+		{"neo-brutalism", "Neo Brutalism", 5},
+		{"90s", "90s", 8},
+		{"minimal", "Minimal", 1},
 	}
 
 	for _, theme := range themes {
 		t.Run("SwitchTo_"+theme.label, func(t *testing.T) {
-			// Open the theme dropdown
-			dropdownBtn := page.Locator("button:has(span.capitalize)")
-			err := dropdownBtn.Click()
-			require.NoError(t, err)
+			// Open the theme Select dropdown.
+			trigger := page.Locator("#site-theme-trigger")
+			clickUntil(t, page, trigger, `() => document.getElementById('site-theme-trigger')?.getAttribute('aria-expanded') === 'true'`)
 
-			// Click the theme button by its data-theme-key
-			themeBtn := page.Locator(fmt.Sprintf("button[data-theme-key='%s']", theme.key))
-			err = themeBtn.WaitFor(playwright.LocatorWaitForOptions{
-				State:   playwright.WaitForSelectorStateVisible,
+			// Click the theme option rendered by the Select component.
+			themeOptionID := fmt.Sprintf("site-theme-option-%d", theme.index)
+			themeOption := page.Locator("#" + themeOptionID)
+			err := themeOption.WaitFor(playwright.LocatorWaitForOptions{
+				State:   playwright.WaitForSelectorStateAttached,
 				Timeout: playwright.Float(2000),
 			})
 			require.NoError(t, err)
 
-			err = themeBtn.Click()
+			clicked, err := page.Evaluate(
+				`(id) => {
+					const el = document.getElementById(id);
+					if (!el) return false;
+					el.scrollIntoView({ block: 'nearest' });
+					el.click();
+					return true;
+				}`,
+				themeOptionID,
+			)
 			require.NoError(t, err)
+			require.Equal(t, true, clicked)
 
 			// Verify data-theme attribute changed
 			_, err = page.WaitForFunction(

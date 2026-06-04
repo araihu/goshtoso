@@ -64,6 +64,9 @@ templ Select(cfg Config) {
 						<span class="truncate text-sm font-normal" x-text={ cfg.ValueExpr }></span>
 					}
 				} else {
+					if cfg.TriggerLeading != nil {
+						@cfg.TriggerLeading
+					}
 					<span class="truncate text-sm font-normal" x-text="selectedOption ? selectedOption.label : placeholder"></span>
 				}
 				<!-- Chevron -->

@@ -1009,9 +1009,6 @@
   .max-h-52 {
     max-height: calc(var(--spacing) * 52);
   }
-  .max-h-80 {
-    max-height: calc(var(--spacing) * 80);
-  }
   .max-h-svh {
     max-height: 100svh;
   }
@@ -4976,11 +4973,6 @@
   .sm\:hidden {
     @media (width >= 40rem) {
       display: none;
-    }
-  }
-  .sm\:inline {
-    @media (width >= 40rem) {
-      display: inline;
     }
   }
   .sm\:inline-flex {

@@ -73,8 +73,7 @@ type Config struct {
 	// chrome but hosts arbitrary templ children as the dropdown body instead
 	// of an option list. Used to wrap custom pickers (e.g. a color palette).
 	Shell bool
-	// TriggerLeading is optional content rendered at the start of the trigger
-	// in shell mode (e.g. a color swatch). Ignored when Shell is false.
+	// TriggerLeading is optional content rendered at the start of the trigger.
 	TriggerLeading templ.Component
 	// ValueExpr is an Alpine expression (x-text) for the trigger's value text
 	// in shell mode. Resolves against the host page's x-data scope.

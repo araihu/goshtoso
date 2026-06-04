@@ -50,3 +50,15 @@ func TestSelect_DataMode_Unchanged(t *testing.T) {
 	assert.Contains(t, html, "allOptions")
 	assert.Contains(t, html, `role="listbox"`)
 }
+
+func TestSelect_DataMode_RendersTriggerLeading(t *testing.T) {
+	html := renderSelect(t, Config{
+		ID:             "theme",
+		TriggerLeading: templ.Raw(`<span data-test-leading aria-hidden="true"></span>`),
+		Options:        []Option{{Value: "minimal", Label: "Minimal", Selected: true}},
+	}, nil)
+
+	assert.Contains(t, html, "data-test-leading")
+	assert.Contains(t, html, `x-text="selectedOption ? selectedOption.label : placeholder"`)
+	assert.Less(t, strings.Index(html, "data-test-leading"), strings.Index(html, `x-text="selectedOption ? selectedOption.label : placeholder"`))
+}
