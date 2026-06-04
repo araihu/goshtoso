@@ -1293,6 +1293,12 @@
     --tw-scale-z: 100%;
     scale: var(--tw-scale-x) var(--tw-scale-y);
   }
+  .scale-110 {
+    --tw-scale-x: 110%;
+    --tw-scale-y: 110%;
+    --tw-scale-z: 110%;
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
   .rotate-0 {
     rotate: 0deg;
   }
@@ -3254,6 +3260,9 @@
   .opacity-40 {
     opacity: 40%;
   }
+  .opacity-45 {
+    opacity: 45%;
+  }
   .opacity-50 {
     opacity: 50%;
   }
@@ -3325,6 +3334,14 @@
   }
   .outline-primary {
     outline-color: var(--color-primary);
+  }
+  .grayscale {
+    --tw-grayscale: grayscale(100%);
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+  }
+  .grayscale-0 {
+    --tw-grayscale: grayscale(0%);
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
@@ -3442,6 +3459,16 @@
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
         opacity: 100%;
+      }
+    }
+  }
+  .group-hover\/rating-option\:scale-110 {
+    &:is(:where(.group\/rating-option):hover *) {
+      @media (hover: hover) {
+        --tw-scale-x: 110%;
+        --tw-scale-y: 110%;
+        --tw-scale-z: 110%;
+        scale: var(--tw-scale-x) var(--tw-scale-y);
       }
     }
   }
@@ -4067,6 +4094,11 @@
   .focus-within\:outline-offset-2 {
     &:focus-within {
       outline-offset: 2px;
+    }
+  }
+  .focus-within\:outline-outline-strong {
+    &:focus-within {
+      outline-color: var(--color-outline-strong);
     }
   }
   .focus-within\:outline-primary {
@@ -6203,6 +6235,13 @@
           content: var(--tw-content);
           background-color: var(--color-warning);
         }
+      }
+    }
+  }
+  .dark\:focus-within\:outline-outline-dark-strong {
+    &:where(.dark, .dark *) {
+      &:focus-within {
+        outline-color: var(--color-outline-dark-strong);
       }
     }
   }
