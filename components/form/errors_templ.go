@@ -30,7 +30,7 @@ type FormErrorsConfig struct {
 	// Hint is an optional short explanation under the title
 	// (e.g. "Fix the fields marked in red and try again").
 	Hint string
-	// Class allows extra CSS classes on the wrapper.
+	// RootClass allows extra CSS classes on the wrapper.
 	RootClass string
 }
 

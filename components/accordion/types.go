@@ -27,7 +27,7 @@ type AccordionConfig struct {
 	Variant Variant
 	// ID is the container ID for accessibility
 	ID string
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the accordion root.
 	RootClass string
 }
 

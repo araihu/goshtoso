@@ -18,7 +18,7 @@ type Config struct {
 	AddActionLabel string
 	// Disabled renders chips only (no remove buttons, no input row)
 	Disabled bool
-	// Class allows additional CSS classes on the outer container
+	// RootClass allows additional CSS classes on the outer container.
 	RootClass string
 }
 

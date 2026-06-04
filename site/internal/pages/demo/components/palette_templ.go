@@ -126,7 +126,7 @@ func paletteDemoContent() templ.Component {
 			{Name: "HideNeutral", Type: "bool", Default: "false", Description: "Hide the neutral (gray) row."},
 			{Name: "HideReset", Type: "bool", Default: "false", Description: "Hide the reset/clear control."},
 			{Name: "ShowHex", Type: "bool", Default: "false", Description: "Show the hex value of the hovered/selected swatch."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the palette container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the palette container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

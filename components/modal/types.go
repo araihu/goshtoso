@@ -16,18 +16,24 @@ const (
 	Danger  Variant = "danger"
 )
 
+// HTMXConfig holds HTMX attributes for a modal action button.
+type HTMXConfig struct {
+	// Get triggers an HTMX GET request.
+	Get string
+	// Post triggers an HTMX POST request.
+	Post string
+	// Target is the HTMX target selector.
+	Target string
+	// Swap is the HTMX swap strategy.
+	Swap string
+}
+
 // ButtonAction holds optional HTMX and Alpine.js actions for a button
 type ButtonAction struct {
 	// OnClick is a custom Alpine.js expression (appended after modal close)
 	OnClick string
-	// HxGet triggers an HTMX GET request
-	HxGet string
-	// HxPost triggers an HTMX POST request
-	HxPost string
-	// HxTarget is the HTMX target selector
-	HxTarget string
-	// HxSwap is the HTMX swap strategy
-	HxSwap string
+	// HTMX configures server-side action behavior.
+	HTMX *HTMXConfig
 }
 
 // Config holds configuration for the modal component
@@ -52,7 +58,7 @@ type Config struct {
 	Variant Variant
 	// AlertMode renders the alert-style modal (icon header, centered body, single CTA)
 	AlertMode bool
-	// Class allows additional CSS classes on the dialog
+	// PanelClass allows additional CSS classes on the dialog.
 	PanelClass string
 }
 

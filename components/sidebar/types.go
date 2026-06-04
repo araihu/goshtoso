@@ -43,7 +43,7 @@ type Config struct {
 	ShowSearch bool
 	// SearchPlaceholder is the placeholder text for search
 	SearchPlaceholder string
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the sidebar root.
 	RootClass string
 	// SearchSlot replaces the default search input with a custom component.
 	// When set, ShowSearch is ignored.

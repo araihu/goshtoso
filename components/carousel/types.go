@@ -31,10 +31,10 @@ type Slide struct {
 	Title string
 	// Description is the slide body text (used by WithText, WithCTA)
 	Description string
-	// CTAUrl is the call-to-action link (used by WithCTA)
-	CTAUrl string
-	// CTAText is the call-to-action button label (used by WithCTA)
-	CTAText string
+	// CTAHref is the call-to-action link (used by WithCTA)
+	CTAHref string
+	// CTALabel is the call-to-action button label (used by WithCTA)
+	CTALabel string
 }
 
 // AutoplayConfig enables automatic slide rotation
@@ -71,7 +71,7 @@ type Config struct {
 	AspectRatio string
 	// Height overrides the slides container height (e.g. "h-48 lg:h-64" for card variant)
 	Height string
-	// Class allows additional CSS classes on the container
+	// RootClass allows additional CSS classes on the container.
 	RootClass string
 	// HTMX enables lazy loading of carousel content (nil = static mode)
 	HTMX *HTMXConfig
@@ -209,11 +209,11 @@ func slidesToJSON(slides []Slide) string {
 		if s.Description != "" {
 			fmt.Fprintf(&b, ",description:'%s'", jsEscape(s.Description))
 		}
-		if s.CTAUrl != "" {
-			fmt.Fprintf(&b, ",ctaUrl:'%s'", jsEscape(s.CTAUrl))
+		if s.CTAHref != "" {
+			fmt.Fprintf(&b, ",ctaUrl:'%s'", jsEscape(s.CTAHref))
 		}
-		if s.CTAText != "" {
-			fmt.Fprintf(&b, ",ctaText:'%s'", jsEscape(s.CTAText))
+		if s.CTALabel != "" {
+			fmt.Fprintf(&b, ",ctaText:'%s'", jsEscape(s.CTALabel))
 		}
 		b.WriteString("}")
 	}

@@ -73,7 +73,7 @@ type Config struct {
 	User *UserProfile
 	// UserMenu contains dropdown items under the avatar
 	UserMenu []UserMenuItem
-	// Class allows additional CSS classes on the outer <nav>
+	// NavClass allows additional CSS classes on the outer <nav>.
 	NavClass string
 	// NavAttrs are extra HTML attributes on the <nav> element
 	NavAttrs templ.Attributes

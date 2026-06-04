@@ -698,15 +698,15 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if action != nil && action.HxGet != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, " hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var46 string
-			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxGet)
+			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 131, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 131, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 			if templ_7745c5c3_Err != nil {
@@ -717,15 +717,15 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxPost != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Post != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, " hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var47 string
-			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxPost)
+			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Post)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 134, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 134, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
 			if templ_7745c5c3_Err != nil {
@@ -736,15 +736,15 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxTarget != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Target != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, " hx-target=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var48 string
-			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxTarget)
+			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Target)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 137, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 137, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var48)
 			if templ_7745c5c3_Err != nil {
@@ -755,15 +755,15 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxSwap != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Swap != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, " hx-swap=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var49 string
-			templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxSwap)
+			templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Swap)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 140, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 140, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var49)
 			if templ_7745c5c3_Err != nil {
@@ -834,15 +834,15 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if action != nil && action.HxGet != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, " hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var53 string
-			templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxGet)
+			templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 154, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 154, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var53)
 			if templ_7745c5c3_Err != nil {
@@ -853,15 +853,15 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxPost != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Post != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, " hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var54 string
-			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxPost)
+			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Post)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 157, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 157, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 			if templ_7745c5c3_Err != nil {
@@ -872,15 +872,15 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxTarget != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Target != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, " hx-target=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var55 string
-			templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxTarget)
+			templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Target)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 160, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 160, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 			if templ_7745c5c3_Err != nil {
@@ -891,15 +891,15 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxSwap != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Swap != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, " hx-swap=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var56 string
-			templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxSwap)
+			templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Swap)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 163, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 163, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var56)
 			if templ_7745c5c3_Err != nil {
@@ -988,15 +988,15 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if action != nil && action.HxGet != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, " hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var62 string
-			templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxGet)
+			templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 177, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 177, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var62)
 			if templ_7745c5c3_Err != nil {
@@ -1007,15 +1007,15 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxPost != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Post != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, " hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var63 string
-			templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxPost)
+			templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Post)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 180, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 180, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var63)
 			if templ_7745c5c3_Err != nil {
@@ -1026,15 +1026,15 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxTarget != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Target != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, " hx-target=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var64 string
-			templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxTarget)
+			templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Target)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 183, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 183, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var64)
 			if templ_7745c5c3_Err != nil {
@@ -1045,15 +1045,15 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 				return templ_7745c5c3_Err
 			}
 		}
-		if action != nil && action.HxSwap != "" {
+		if action != nil && action.HTMX != nil && action.HTMX.Swap != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, " hx-swap=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var65 string
-			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HxSwap)
+			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Swap)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 186, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 186, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var65)
 			if templ_7745c5c3_Err != nil {

@@ -179,7 +179,7 @@ func paginationDemoContent() templ.Component {
 			{Name: "BaseURL", Type: "string", Default: `""`, Description: "Base href for page links (page appended as a query/path)."},
 			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "In-place HTMX navigation (Target, Swap)."},
 			{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id on the nav."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+			{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

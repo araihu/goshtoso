@@ -49,7 +49,7 @@ type Config struct {
 	Indicator bool
 	// IndicatorColor overrides the default indicator color
 	IndicatorColor string
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the badge root.
 	RootClass string
 }
 

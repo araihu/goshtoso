@@ -139,8 +139,8 @@ func bannerDemoContent() templ.Component {
     Description:         "We use cookies to improve your experience.",
     CookieConfig: &banner.CookieBannerConfig{
         Title:        "Cookie Settings",
-        AcceptText:   "Accept All",
-        RejectText:   "Decline",
+        AcceptLabel:  "Accept All",
+        RejectLabel:  "Decline",
         AcceptAction: "acceptCookies()",
         RejectAction: "show = false",
     },
@@ -386,8 +386,8 @@ func bannerCookiePreview() templ.Component {
 			Description:  "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
 			CookieConfig: &banner.CookieBannerConfig{
 				Title:        "Cookie Time!",
-				AcceptText:   "Sounds Good!",
-				RejectText:   "No, thank you",
+				AcceptLabel:  "Sounds Good!",
+				RejectLabel:  "No, thank you",
 				AcceptAction: "show = false",
 				RejectAction: "show = false",
 			},

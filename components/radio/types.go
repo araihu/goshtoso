@@ -13,7 +13,7 @@
 //     cfg.Alpine (Model/OnChange/BindChecked/BindDisabled/Data).
 //   - Both → set both. HTMX hits the server while Alpine updates local
 //     state. Useful for optimistic UI / hybrid flows.
-//   - Attrs → generic templ.Attributes escape hatch for any
+//   - InputAttrs → generic templ.Attributes escape hatch for any
 //     hx-*/x-*/data-*/aria-* not modelled above. Rendered LAST so the
 //     caller can always override.
 package radio
@@ -111,14 +111,14 @@ type Config struct {
 	// (or any flex container with `divide-x` for connected segments).
 	// When set, Container is ignored.
 	Segmented bool
-	// Class is appended to the label root element
+	// RootClass is appended to the label root element.
 	RootClass string
 
 	// HTMX wires server interactions on change.
 	HTMX *HTMXConfig
 	// Alpine wires client-side state.
 	Alpine *AlpineConfig
-	// Attrs is an escape hatch applied LAST to the input — wins on conflict.
+	// InputAttrs is an escape hatch applied last to the input; wins on conflict.
 	InputAttrs templ.Attributes
 }
 

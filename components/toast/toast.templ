@@ -269,19 +269,19 @@ templ serverVariantToast(cfg Config, durationStr string) {
 					<button
 						type="button"
 						class="w-fit text-sm font-semibold underline underline-offset-2 hover:opacity-75"
-						if cfg.ActionHxGet != "" {
-							hx-get={ cfg.ActionHxGet }
+						if cfg.ActionHTMX != nil && cfg.ActionHTMX.Get != "" {
+							hx-get={ cfg.ActionHTMX.Get }
 						}
-						if cfg.ActionHxPost != "" {
-							hx-post={ cfg.ActionHxPost }
+						if cfg.ActionHTMX != nil && cfg.ActionHTMX.Post != "" {
+							hx-post={ cfg.ActionHTMX.Post }
 						}
-						if cfg.ActionHxTarget != "" {
-							hx-target={ cfg.ActionHxTarget }
+						if cfg.ActionHTMX != nil && cfg.ActionHTMX.Target != "" {
+							hx-target={ cfg.ActionHTMX.Target }
 						}
-						if cfg.ActionHxSwap != "" {
-							hx-swap={ cfg.ActionHxSwap }
+						if cfg.ActionHTMX != nil && cfg.ActionHTMX.Swap != "" {
+							hx-swap={ cfg.ActionHTMX.Swap }
 						}
-					>{ cfg.ActionText }</button>
+					>{ cfg.ActionLabel }</button>
 				}
 			</div>
 			<!-- Dismiss Button -->

@@ -127,17 +127,17 @@ templ primaryButton(stateVar string, text string, action *ButtonAction) {
 		x-on:click={ buttonClickExpr(stateVar, action) }
 		type="button"
 		class="whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
-		if action != nil && action.HxGet != "" {
-			hx-get={ action.HxGet }
+		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
+			hx-get={ action.HTMX.Get }
 		}
-		if action != nil && action.HxPost != "" {
-			hx-post={ action.HxPost }
+		if action != nil && action.HTMX != nil && action.HTMX.Post != "" {
+			hx-post={ action.HTMX.Post }
 		}
-		if action != nil && action.HxTarget != "" {
-			hx-target={ action.HxTarget }
+		if action != nil && action.HTMX != nil && action.HTMX.Target != "" {
+			hx-target={ action.HTMX.Target }
 		}
-		if action != nil && action.HxSwap != "" {
-			hx-swap={ action.HxSwap }
+		if action != nil && action.HTMX != nil && action.HTMX.Swap != "" {
+			hx-swap={ action.HTMX.Swap }
 		}
 	>
 		{ text }
@@ -150,17 +150,17 @@ templ secondaryButton(stateVar string, text string, action *ButtonAction) {
 		x-on:click={ buttonClickExpr(stateVar, action) }
 		type="button"
 		class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
-		if action != nil && action.HxGet != "" {
-			hx-get={ action.HxGet }
+		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
+			hx-get={ action.HTMX.Get }
 		}
-		if action != nil && action.HxPost != "" {
-			hx-post={ action.HxPost }
+		if action != nil && action.HTMX != nil && action.HTMX.Post != "" {
+			hx-post={ action.HTMX.Post }
 		}
-		if action != nil && action.HxTarget != "" {
-			hx-target={ action.HxTarget }
+		if action != nil && action.HTMX != nil && action.HTMX.Target != "" {
+			hx-target={ action.HTMX.Target }
 		}
-		if action != nil && action.HxSwap != "" {
-			hx-swap={ action.HxSwap }
+		if action != nil && action.HTMX != nil && action.HTMX.Swap != "" {
+			hx-swap={ action.HTMX.Swap }
 		}
 	>
 		{ text }
@@ -173,17 +173,17 @@ templ alertCTAButton(stateVar string, text string, classes string, action *Butto
 		x-on:click={ buttonClickExpr(stateVar, action) }
 		type="button"
 		class={ classes }
-		if action != nil && action.HxGet != "" {
-			hx-get={ action.HxGet }
+		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
+			hx-get={ action.HTMX.Get }
 		}
-		if action != nil && action.HxPost != "" {
-			hx-post={ action.HxPost }
+		if action != nil && action.HTMX != nil && action.HTMX.Post != "" {
+			hx-post={ action.HTMX.Post }
 		}
-		if action != nil && action.HxTarget != "" {
-			hx-target={ action.HxTarget }
+		if action != nil && action.HTMX != nil && action.HTMX.Target != "" {
+			hx-target={ action.HTMX.Target }
 		}
-		if action != nil && action.HxSwap != "" {
-			hx-swap={ action.HxSwap }
+		if action != nil && action.HTMX != nil && action.HTMX.Swap != "" {
+			hx-swap={ action.HTMX.Swap }
 		}
 	>
 		{ text }

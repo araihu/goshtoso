@@ -29,7 +29,7 @@ type Config struct {
 	Variant Variant
 	// Size of the spinner
 	Size Size
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the spinner root.
 	RootClass string
 }
 

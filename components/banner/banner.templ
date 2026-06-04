@@ -82,7 +82,7 @@ templ simpleBanner(cfg Config) {
 // cookieBanner renders a cookie consent banner
 templ cookieBanner(cfg Config) {
 	{{ cookieCfg := cfg.CookieConfig }}
-	{{ if cookieCfg == nil { cookieCfg = &CookieBannerConfig{Title: "Cookie Consent", AcceptText: "Accept", RejectText: "Decline"} } }}
+	{{ if cookieCfg == nil { cookieCfg = &CookieBannerConfig{Title: "Cookie Consent", AcceptLabel: "Accept", RejectLabel: "Decline"} } }}
 	
 	<div 
 		x-data="{ show: true }"
@@ -116,14 +116,14 @@ templ cookieBanner(cfg Config) {
 				class="cursor-pointer whitespace-nowrap p-2 text-center text-xs font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius"
 				@click={ cookieCfg.RejectAction }
 			>
-				{ cookieCfg.RejectText }
+				{ cookieCfg.RejectLabel }
 			</button>
 			<button 
 				type="button"
 				class="cursor-pointer whitespace-nowrap bg-primary px-4 py-2 border border-primary text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:border-primary-dark dark:focus-visible:outline-primary-dark rounded-radius"
 				@click={ cookieCfg.AcceptAction }
 			>
-				{ cookieCfg.AcceptText }
+				{ cookieCfg.AcceptLabel }
 			</button>
 		</div>
 	</div>

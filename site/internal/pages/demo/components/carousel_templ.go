@@ -106,13 +106,13 @@ func carouselDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With CTA Button",
-				Description: "Variant: carousel.WithCTA adds a call-to-action button using each slide's CTAUrl + CTAText.",
+				Description: "Variant: carousel.WithCTA adds a call-to-action button using each slide's CTAHref + CTALabel.",
 			},
 			carouselCTAPreview(),
 			`@carousel.Carousel(carousel.Config{
     Variant: carousel.WithCTA,
     Slides: []carousel.Slide{
-        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Build faster", Description: "Pre-built UI components.", CTAUrl: "#", CTAText: "Get Started"},
+        {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Build faster", Description: "Pre-built UI components.", CTAHref: "#", CTALabel: "Get Started"},
     },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -196,7 +196,7 @@ func carouselDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Slides", Type: "[]Slide", Default: "nil", Description: "Slide data (ImgSrc, ImgAlt, Title, Description, CTAUrl, CTAText)."},
+			{Name: "Slides", Type: "[]Slide", Default: "nil", Description: "Slide data (ImgSrc, ImgAlt, Title, Description, CTAHref, CTALabel)."},
 			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default", "with-text", "with-cta", "on-card".`},
 			{Name: "Autoplay", Type: "*AutoplayConfig", Default: "nil", Description: "Auto-advance config (Interval in ms)."},
 			{Name: "Touch", Type: "bool", Default: "false", Description: "Enable left/right swipe gestures."},
@@ -595,24 +595,24 @@ func ctaSlides() []carousel.Slide {
 			ImgAlt:      "Vibrant abstract painting with swirling blue and light pink hues on a canvas.",
 			Title:       "Build faster with components",
 			Description: "Pre-built, accessible UI components for your next project.",
-			CTAUrl:      "#",
-			CTAText:     "Get Started",
+			CTAHref:     "#",
+			CTALabel:    "Get Started",
 		},
 		{
 			ImgSrc:      "/assets/images/carousel/slide-2.webp",
 			ImgAlt:      "Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.",
 			Title:       "Dark mode included",
 			Description: "Every component supports light and dark themes out of the box.",
-			CTAUrl:      "#",
-			CTAText:     "View Themes",
+			CTAHref:     "#",
+			CTALabel:    "View Themes",
 		},
 		{
 			ImgSrc:      "/assets/images/carousel/slide-3.webp",
 			ImgAlt:      "Vibrant abstract painting with swirling blue and purple hues on a canvas.",
 			Title:       "Tailwind CSS powered",
 			Description: "Built with utility-first CSS for maximum flexibility.",
-			CTAUrl:      "#",
-			CTAText:     "Learn More",
+			CTAHref:     "#",
+			CTALabel:    "Learn More",
 		},
 	}
 }

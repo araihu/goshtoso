@@ -151,7 +151,7 @@ func alertDemoContent() templ.Component {
     Action: &alert.ActionConfig{
         PrimaryLabel:    "Update Now",
         PrimaryOnClick: "alert('Updating...')",
-        DismissText:    "Dismiss",
+        DismissLabel:   "Dismiss",
     },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -489,7 +489,7 @@ func alertActionPreview() templ.Component {
 			Variant:     alert.Info,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Update Now",
-				DismissText:  "Dismiss",
+				DismissLabel: "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -501,7 +501,7 @@ func alertActionPreview() templ.Component {
 			Variant:     alert.Success,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Dashboard",
-				DismissText:  "Dismiss",
+				DismissLabel: "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -513,7 +513,7 @@ func alertActionPreview() templ.Component {
 			Variant:     alert.Warning,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Update Now",
-				DismissText:  "Dismiss",
+				DismissLabel: "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -525,7 +525,7 @@ func alertActionPreview() templ.Component {
 			Variant:     alert.Danger,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Try Again",
-				DismissText:  "Dismiss",
+				DismissLabel: "Dismiss",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -531,7 +531,7 @@ func actionAlert(cfg Config) templ.Component {
 			templ_7745c5c3_Var33 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		dismissText := cfg.Action.DismissText
+		dismissText := cfg.Action.DismissLabel
 		if dismissText == "" {
 			dismissText = "Dismiss"
 		}
@@ -676,15 +676,15 @@ func actionAlert(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.Action.PrimaryHxGet != "" {
+		if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Get != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, " hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var45 string
-			templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHxGet)
+			templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 97, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 97, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 			if templ_7745c5c3_Err != nil {
@@ -695,15 +695,15 @@ func actionAlert(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.Action.PrimaryHxPost != "" {
+		if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Post != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, " hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var46 string
-			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHxPost)
+			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHTMX.Post)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 100, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 100, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 			if templ_7745c5c3_Err != nil {
@@ -714,15 +714,15 @@ func actionAlert(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.Action.PrimaryHxTarget != "" {
+		if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Target != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, " hx-target=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var47 string
-			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHxTarget)
+			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHTMX.Target)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 103, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 103, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
 			if templ_7745c5c3_Err != nil {
@@ -733,15 +733,15 @@ func actionAlert(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.Action.PrimaryHxSwap != "" {
+		if cfg.Action.PrimaryHTMX != nil && cfg.Action.PrimaryHTMX.Swap != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, " hx-swap=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var48 string
-			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHxSwap)
+			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Action.PrimaryHTMX.Swap)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 106, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 106, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var48)
 			if templ_7745c5c3_Err != nil {

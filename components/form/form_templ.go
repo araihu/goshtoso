@@ -26,7 +26,7 @@ import (
 //	@form.Form(form.Config{
 //	    ID:     "my-form",
 //	    Action: "/api/submit",
-//	    Footer: &form.FooterConfig{SubmitText: "Save", CancelText: "Cancel", CancelHref: "/"},
+//	    Footer: &form.FooterConfig{SubmitLabel: "Save", CancelLabel: "Cancel", CancelHref: "/"},
 //	}) {
 //	    @form.Section(...) { ... }
 //	}
@@ -1375,7 +1375,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.CancelText != "" {
+		if cfg.CancelLabel != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 119, "<a")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1488,9 +1488,9 @@ func formFooter(cfg FooterConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var74 string
-			templ_7745c5c3_Var74, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CancelText)
+			templ_7745c5c3_Var74, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CancelLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 360, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 360, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var74))
 			if templ_7745c5c3_Err != nil {
@@ -1529,9 +1529,9 @@ func formFooter(cfg FooterConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var76 string
-		templ_7745c5c3_Var76, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.SubmitText)
+		templ_7745c5c3_Var76, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.SubmitLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 370, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/form.templ`, Line: 370, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var76))
 		if templ_7745c5c3_Err != nil {

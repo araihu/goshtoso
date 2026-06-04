@@ -65,13 +65,13 @@ type Config struct {
 	Disabled bool
 	// Autocomplete sets the autocomplete attribute
 	Autocomplete string
-	// Class allows additional CSS classes on the wrapper
+	// RootClass allows additional CSS classes on the wrapper.
 	RootClass string
 	// Alpine wires client-side state.
 	Alpine *AlpineConfig
 	// Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits
 	Readonly bool
-	// Attrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator)
+	// InputAttrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator).
 	InputAttrs templ.Attributes
 	// Shell enables "shell mode": the Select renders its trigger + dropdown
 	// chrome but hosts arbitrary templ children as the dropdown body instead

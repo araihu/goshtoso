@@ -40,7 +40,7 @@ type Config struct {
 	CookieBanner bool
 	// CookieConfig holds cookie banner specific settings
 	CookieConfig *CookieBannerConfig
-	// Class allows additional CSS classes
+	// RootClass allows additional CSS classes on the banner root.
 	RootClass string
 }
 
@@ -60,10 +60,10 @@ type CookieBannerConfig struct {
 	Title string
 	// Icon is an optional icon (emoji or component)
 	Icon templ.Component
-	// AcceptText is the accept button text
-	AcceptText string
-	// RejectText is the reject button text
-	RejectText string
+	// AcceptLabel is the accept button label
+	AcceptLabel string
+	// RejectLabel is the reject button label
+	RejectLabel string
 	// AcceptAction is the Alpine.js action for accept
 	AcceptAction string
 	// RejectAction is the Alpine.js action for reject

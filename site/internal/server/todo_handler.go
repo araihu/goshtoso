@@ -228,10 +228,12 @@ func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
 		// The toast itself carries the Undo action (no separate undo bar); the
 		// toast's own close button handles dismissal.
 		cfg.Message = deleted.Title
-		cfg.ActionText = "Undo"
-		cfg.ActionHxPost = examples.RestoreURL(*deleted)
-		cfg.ActionHxTarget = "#todo-list"
-		cfg.ActionHxSwap = "outerHTML"
+		cfg.ActionLabel = "Undo"
+		cfg.ActionHTMX = &toast.HTMXConfig{
+			Post:   examples.RestoreURL(*deleted),
+			Target: "#todo-list",
+			Swap:   "outerHTML",
+		}
 	}
 	_ = toast.OOBToast(cfg).Render(r.Context(), w)
 }

@@ -30,9 +30,9 @@ type Config struct {
 	Required bool
 	// Disabled disables the input
 	Disabled bool
-	// Class allows additional CSS classes on the outer container
+	// RootClass allows additional CSS classes on the outer container.
 	RootClass string
-	// Attrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change)
+	// InputAttrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change).
 	InputAttrs templ.Attributes
 }
 

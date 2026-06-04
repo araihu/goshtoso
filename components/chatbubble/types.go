@@ -47,9 +47,9 @@ type Config struct {
 	Sender string
 	// IsBot renders a small BOT badge by the name.
 	IsBot bool
-	// Class allows additional CSS classes on the row.
+	// RootClass allows additional CSS classes on the row.
 	RootClass string
-	// Attrs allows arbitrary HTML attributes on the row element (e.g. hx-*).
+	// RootAttrs allows arbitrary HTML attributes on the row element (e.g. hx-*).
 	RootAttrs templ.Attributes
 }
 

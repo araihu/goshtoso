@@ -122,9 +122,7 @@ func modalDemoContent() templ.Component {
     PrimaryLabel:   "Confirm",
     SecondaryLabel: "Cancel",
     PrimaryAction: &modal.ButtonAction{
-        HxPost:   "/api/hello",
-        HxTarget: "#modal-htmx-result",
-        HxSwap:   "innerHTML",
+        HTMX: &modal.HTMXConfig{Post: "/api/hello", Target: "#modal-htmx-result", Swap: "innerHTML"},
     },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -335,9 +333,7 @@ func modalHTMXPreview() templ.Component {
 			PrimaryLabel:   "Confirm",
 			SecondaryLabel: "Cancel",
 			PrimaryAction: &modal.ButtonAction{
-				HxPost:   "/api/hello",
-				HxTarget: "#modal-htmx-result",
-				HxSwap:   "innerHTML",
+				HTMX: &modal.HTMXConfig{Post: "/api/hello", Target: "#modal-htmx-result", Swap: "innerHTML"},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

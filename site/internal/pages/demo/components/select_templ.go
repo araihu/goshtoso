@@ -210,8 +210,8 @@ func selectDemoContent() templ.Component {
 			{Name: "Readonly", Type: "bool", Default: "false", Description: "Non-editable but submittable."},
 			{Name: "Autocomplete", Type: "string", Default: `""`, Description: "HTML autocomplete attribute."},
 			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side Alpine bindings (Model, BindDisabled)."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the select."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the select."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

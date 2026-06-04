@@ -32,6 +32,18 @@ type Sender struct {
 	Avatar string
 }
 
+// HTMXConfig holds HTMX attributes for a toast action button.
+type HTMXConfig struct {
+	// Get is the HTMX GET request URL the action button fires.
+	Get string
+	// Post is the HTMX POST request URL the action button fires.
+	Post string
+	// Target configures the action button's HTMX swap target.
+	Target string
+	// Swap configures the action button's HTMX swap strategy.
+	Swap string
+}
+
 // Config holds configuration for a single toast notification.
 // Used for server-side rendered toasts (including HTMX OOB swaps).
 type Config struct {
@@ -45,20 +57,16 @@ type Config struct {
 	Sender *Sender
 	// DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually.
 	DisplayDuration int
-	// ActionText, when set, renders an inline action button in the toast (e.g.
+	// ActionLabel, when set, renders an inline action button in the toast (e.g.
 	// "Undo"). Clicking it fires the configured HTMX request and dismisses the
 	// toast. The close (dismiss) button is always present regardless.
-	ActionText string
-	// ActionHxGet / ActionHxPost is the HTMX request URL the action button fires.
-	ActionHxGet  string
-	ActionHxPost string
-	// ActionHxTarget / ActionHxSwap configure the action button's HTMX swap.
-	ActionHxTarget string
-	ActionHxSwap   string
+	ActionLabel string
+	// ActionHTMX configures the action button's HTMX request.
+	ActionHTMX *HTMXConfig
 }
 
 // HasAction reports whether the toast should render an inline action button.
-func (cfg Config) HasAction() bool { return cfg.ActionText != "" }
+func (cfg Config) HasAction() bool { return cfg.ActionLabel != "" }
 
 // ContainerConfig holds configuration for the toast container.
 // The container is the fixed-position wrapper that holds stacking notifications.
