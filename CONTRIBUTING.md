@@ -55,7 +55,12 @@ go build -o bin/server ./site/cmd/server
 See `AGENTS.md` for the repo conventions. Every component lives in
 `components/<name>/` (`types.go` + `<name>.templ`) and ships a demo page that
 follows the docs-page pattern (one preview + code box per variant, an API
-reference table, the right-rail TOC).
+reference table, the right-rail TOC). After changing a component API,
+regenerate the component reference:
+
+```bash
+go run ./cmd/skillgen
+```
 
 ### Frontend interactivity hierarchy
 

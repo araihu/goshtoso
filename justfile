@@ -14,7 +14,7 @@ gp-dev: css
 css:
     #!/usr/bin/env bash
     set -euo pipefail
-    go run ./scripts/themegen
+    go run ./cmd/themegen
     ver="$(cat assets/tailwind.version)"
     bin=".tools/tailwindcss-${ver}"
     if [ ! -x "$bin" ]; then
@@ -35,4 +35,4 @@ css:
 # Download the PINNED vendored JS (assets/js/runtime/versions.json) into
 # versioned dirs and regenerate the URL constants. Mirrors `just css`.
 vendor-js:
-    go run ./scripts/vendorgen -download
+    go run ./cmd/vendorgen -download

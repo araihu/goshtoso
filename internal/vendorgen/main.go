@@ -4,12 +4,12 @@
 //
 // Modes:
 //
-//	go run ./scripts/vendorgen            // generate vendor_gen.go + verify files exist
-//	go run ./scripts/vendorgen -check     // CI: fail if regeneration would change the file
-//	go run ./scripts/vendorgen -download  // fetch pinned versions from the manifest, then generate
+//	go run ./cmd/vendorgen            // generate vendor_gen.go + verify files exist
+//	go run ./cmd/vendorgen -check     // CI: fail if regeneration would change the file
+//	go run ./cmd/vendorgen -download  // fetch pinned versions from the manifest, then generate
 //
 // Run from the repo root. CI fails if the committed vendor_gen.go is stale.
-package main
+package vendorgen
 
 import (
 	"bytes"
@@ -17,6 +17,7 @@ import (
 	"flag"
 	"fmt"
 	"go/format"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -108,27 +109,29 @@ func verifyFilesExist(deps map[string]dep) error {
 	return nil
 }
 
-func main() {
-	check := flag.Bool("check", false, "fail if vendor_gen.go would change")
-	download := flag.Bool("download", false, "download pinned versions from the manifest")
-	flag.Parse()
+// Run regenerates assets/vendor_gen.go. It must be called from the repo root.
+func Run(args []string, stdout, stderr io.Writer) error {
+	fs := flag.NewFlagSet("vendorgen", flag.ContinueOnError)
+	fs.SetOutput(stderr)
+	check := fs.Bool("check", false, "fail if vendor_gen.go would change")
+	download := fs.Bool("download", false, "download pinned versions from the manifest")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
 
 	deps, err := loadManifest()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "vendorgen:", err)
-		os.Exit(1)
+		return err
 	}
 
 	if *download {
-		if err := downloadAll(deps); err != nil { // defined in download.go (Task 8)
-			fmt.Fprintln(os.Stderr, "vendorgen download:", err)
-			os.Exit(1)
+		if err := downloadAll(deps, stdout); err != nil {
+			return fmt.Errorf("download: %w", err)
 		}
 	}
 
 	if err := verifyFilesExist(deps); err != nil {
-		fmt.Fprintln(os.Stderr, "vendorgen:", err)
-		os.Exit(1)
+		return err
 	}
 
 	gen := render(deps)
@@ -136,15 +139,14 @@ func main() {
 	if *check {
 		existing, err := os.ReadFile(outPath)
 		if err != nil || string(existing) != gen {
-			fmt.Fprintf(os.Stderr, "::error::%s is stale — run `go run ./scripts/vendorgen` and commit\n", outPath)
-			os.Exit(1)
+			return fmt.Errorf("::error::%s is stale — run `go run ./cmd/vendorgen` and commit", outPath)
 		}
-		return
+		return nil
 	}
 
 	if err := os.WriteFile(outPath, []byte(gen), 0o644); err != nil {
-		fmt.Fprintln(os.Stderr, "vendorgen:", err)
-		os.Exit(1)
+		return err
 	}
-	fmt.Printf("vendorgen: wrote %s (%d deps)\n", outPath, len(deps))
+	_, err = fmt.Fprintf(stdout, "vendorgen: wrote %s (%d deps)\n", outPath, len(deps))
+	return err
 }

@@ -34,7 +34,7 @@ jobs:
       - name: Build assets (pinned, reproducible)
         run: |
           templ generate
-          go run ./scripts/themegen
+          go run ./cmd/themegen
           tailwindcss -i css/main.css -o assets/styles.css
 
       - name: Verify committed assets match a pinned rebuild
