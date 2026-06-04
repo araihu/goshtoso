@@ -91,7 +91,7 @@ templ formDemoContent() {
 		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX submit config (Post/Put/Target/Swap, inline validation)."},
 		{Name: "PreventEnterSubmit", Type: "*bool", Default: "nil", Description: "When true, Enter in a field does not submit the form."},
 		{Name: "Footer", Type: "*FooterConfig", Default: "nil", Description: "Submit/cancel footer; omit for the external-submit pattern."},
-		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the <form>."},
+		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the <form>."},
 		{Name: "FieldGroup", Type: "FieldGroupConfig", Default: "—", Description: "Per-field wrapper: Label, Required, Errors, Hints + one built-in (Input/Combobox/Textarea/Toggle/...) or children."},
 		{Name: "Section / SubSection", Type: "SectionConfig", Default: "—", Description: "Group fields under a titled section; SubSection nests within a Section."},
 		{Name: "CollapsibleSection", Type: "CollapsibleSectionConfig", Default: "—", Description: "A Section that collapses, with a Summary shown when collapsed."},

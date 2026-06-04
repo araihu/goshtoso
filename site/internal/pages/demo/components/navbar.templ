@@ -52,7 +52,7 @@ templ navbarDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Right Slot",
-				Description: "RightSlot takes any templ.Component (e.g. a dark-mode toggle) rendered beside the user avatar.",
+				Description: "Use Actions with ActionRight to render custom content beside the user avatar.",
 			},
 			navbarWithRightSlotPreview(),
 			`@navbar.Navbar(navbar.Config{
@@ -71,9 +71,9 @@ templ navbarDemoContent() {
 		{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Trailing action items (buttons/links)."},
 		{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile (Name, Email, Avatar) — renders the avatar dropdown trigger."},
 		{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown (Label, Href, Danger)."},
-		{Name: "RightSlot", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
+		{Name: "Actions", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
 		{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav>."},
-		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+		{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 	})
 }
 

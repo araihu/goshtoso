@@ -154,15 +154,15 @@ func bannerDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Text", Type: "string", Default: `""`, Description: "Banner message text."},
+			{Name: "Description", Type: "string", Default: `""`, Description: "Banner message text."},
 			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "info", "success", "warning", "danger".`},
 			{Name: "Position", Type: "Position", Default: "PositionRelative", Description: `Layout: "relative" (inline) or "fixed" (pinned to top).`},
 			{Name: "Persistent", Type: "bool", Default: "false", Description: "Remove the dismiss control."},
 			{Name: "DismissAction", Type: "string", Default: `""`, Description: "Extra Alpine expression run when dismissed."},
-			{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (Text + Href or OnClick)."},
+			{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (ActionLabel + Href or OnClick)."},
 			{Name: "CookieBanner", Type: "bool", Default: "false", Description: "Render as a corner cookie-consent card."},
 			{Name: "CookieConfig", Type: "*CookieBannerConfig", Default: "nil", Description: "Cookie card content + accept/reject actions."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

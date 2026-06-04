@@ -170,7 +170,7 @@ func alertDemoContent() templ.Component {
 			{Name: "Link", Type: "*LinkConfig", Default: "nil", Description: "Trailing action link (Text + Href)."},
 			{Name: "Action", Type: "*ActionConfig", Default: "nil", Description: "Primary + dismiss action buttons."},
 			{Name: "ListItems", Type: "[]string", Default: "nil", Description: "Bulleted list rendered under the description."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the alert."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the alert."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

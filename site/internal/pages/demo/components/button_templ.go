@@ -147,7 +147,7 @@ func buttonDemoContent() templ.Component {
 			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Alpine.js directives for client-side behavior."},
 			{Name: "LoadingText", Type: "string", Default: `""`, Description: "Text shown while an HTMX request is in flight."},
 			{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the button."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the button."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -166,7 +166,7 @@ func tabsDemoContent() templ.Component {
 			{Name: "Tabs", Type: "[]Tab", Default: "nil", Description: "Tab definitions (ID, Label, optional Icon, Badge, Content, HTMX)."},
 			{Name: "DefaultTab", Type: "string", Default: `""`, Description: "ID of the initially active tab (defaults to the first)."},
 			{Name: "SyncHash", Type: "bool", Default: "false", Description: "Mirror the active tab in the URL fragment."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the tab-set container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the tab-set container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

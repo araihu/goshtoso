@@ -204,7 +204,7 @@ func carouselDemoContent() templ.Component {
 			{Name: "Height", Type: "string", Default: `""`, Description: "Explicit height override (when AspectRatio is unset)."},
 			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Fetch slides from the server (Get URL)."},
 			{Name: "ID", Type: "string", Default: "auto", Description: "Container id used for Alpine state scoping; auto-generated when empty."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the carousel container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the carousel container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

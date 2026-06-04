@@ -122,7 +122,7 @@ func checkboxDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Description",
-				Description: "Add Description (and DescriptionID for aria-describedby) for helper text under the label.",
+				Description: "Add HelperText (and HelperTextID for aria-describedby) for helper text under the label.",
 			},
 			checkboxDescriptionPreview(),
 			`@checkbox.Checkbox(checkbox.Config{
@@ -196,8 +196,8 @@ func checkboxDemoContent() templ.Component {
 			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Icon", Type: "Icon", Default: "IconCheck", Description: `Check glyph: "check", "xmark", "minus", "plus".`},
 			{Name: "Animation", Type: "Animation", Default: "AnimationNone", Description: `Check transition: "", "slide-up", "scale-up", "slide-down".`},
-			{Name: "Description", Type: "string", Default: `""`, Description: "Helper text below the label."},
-			{Name: "DescriptionID", Type: "string", Default: `""`, Description: "ID of the description for aria-describedby."},
+			{Name: "HelperText", Type: "string", Default: `""`, Description: "Helper text below the label."},
+			{Name: "HelperTextID", Type: "string", Default: `""`, Description: "ID of the description for aria-describedby."},
 			{Name: "Container", Type: "bool", Default: "false", Description: "Wrap in a bordered container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

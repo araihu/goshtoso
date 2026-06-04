@@ -91,14 +91,14 @@ templ modalDemoContent() {
 		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the dialog and scopes Alpine state)."},
 		{Name: "Title", Type: "string", Default: `""`, Description: "Dialog heading."},
 		{Name: "Body", Type: "string", Default: `""`, Description: "Dialog body text."},
-		{Name: "TriggerText", Type: "string", Default: `""`, Description: "Label of the button that opens the modal."},
-		{Name: "PrimaryText", Type: "string", Default: `""`, Description: "Primary button label."},
+		{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Label of the button that opens the modal."},
+		{Name: "PrimaryLabel", Type: "string", Default: `""`, Description: "Primary button label."},
 		{Name: "PrimaryAction", Type: "*ButtonAction", Default: "nil", Description: "Primary button behavior (OnClick or hx-* fields)."},
-		{Name: "SecondaryText", Type: "string", Default: `""`, Description: "Secondary button label (omit to hide)."},
+		{Name: "SecondaryLabel", Type: "string", Default: `""`, Description: "Secondary button label (omit to hide)."},
 		{Name: "SecondaryAction", Type: "*ButtonAction", Default: "nil", Description: "Secondary button behavior."},
 		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Alert color: "default", "success", "info", "warning", "danger".`},
 		{Name: "AlertMode", Type: "bool", Default: "false", Description: "Render the compact icon-led alert dialog layout."},
-		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the dialog."},
+		{Name: "PanelClass", Type: "string", Default: `""`, Description: "Extra classes on the dialog."},
 	})
 }
 

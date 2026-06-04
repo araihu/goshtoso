@@ -119,7 +119,7 @@ func radioDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Description",
-				Description: "Add helper text under the label via Description (wire DescriptionID for aria-describedby).",
+				Description: "Add helper text under the label via HelperText (wire HelperTextID for aria-describedby).",
 			},
 			radioDescriptionPreview(),
 			`@radio.Radio(radio.Config{
@@ -231,14 +231,14 @@ func radioDemoContent() templ.Component {
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables interaction and dims the control."},
 			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color scheme: "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Box size: "sm", "md", "lg", "xl".`},
-			{Name: "Description", Type: "string", Default: `""`, Description: "Helper text rendered below the label."},
-			{Name: "DescriptionID", Type: "string", Default: `""`, Description: "ID of the description element for aria-describedby wiring."},
+			{Name: "HelperText", Type: "string", Default: `""`, Description: "Helper text rendered below the label."},
+			{Name: "HelperTextID", Type: "string", Default: `""`, Description: "ID of the description element for aria-describedby wiring."},
 			{Name: "Container", Type: "bool", Default: "false", Description: "Wraps the radio in a bordered container."},
 			{Name: "Segmented", Type: "bool", Default: "false", Description: "Renders a segmented-control pill (sr-only input); group inside RadioBar."},
 			{Name: "BadgeColor", Type: "string", Default: `""`, Description: "Wraps the label in a semi-solid badge of the given color."},
 			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Server interaction on change (Get/Post/Target/Swap/...)."},
 			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side state (Model/OnChange/BindChecked/...)."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the input; wins on conflict."},
+			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the input; wins on conflict."},
 			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the label root."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

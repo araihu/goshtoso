@@ -100,8 +100,8 @@ templ fileInputDemoContent() {
 		{Name: "HelperText", Type: "string", Default: `""`, Description: "Hint text shown inside/under the zone."},
 		{Name: "Required", Type: "bool", Default: "false", Description: "Mark the field as required."},
 		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable browsing and drops."},
-		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <input>."},
-		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+		{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <input>."},
+		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 	})
 }
 

@@ -166,7 +166,7 @@ func sidebarDemoContent() templ.Component {
 			{Name: "SearchPlaceholder", Type: "string", Default: `""`, Description: "Placeholder for the search input."},
 			{Name: "SearchSlot", Type: "templ.Component", Default: "nil", Description: "Custom search-area content."},
 			{Name: "FooterSlot", Type: "templ.Component", Default: "nil", Description: "Content pinned to the bottom of the sidebar."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

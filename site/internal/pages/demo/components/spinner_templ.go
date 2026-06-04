@@ -113,7 +113,7 @@ func spinnerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg", "xl".`},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

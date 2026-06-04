@@ -129,7 +129,7 @@ func breadcrumbsDemoContent() templ.Component {
 			{Name: "Current", Type: "string", Default: `""`, Description: "Label of the current (non-link) page, rendered last."},
 			{Name: "Separator", Type: "SeparatorStyle", Default: "Chevron", Description: `Separator between items: "chevron" or "slash".`},
 			{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav> element."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+			{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

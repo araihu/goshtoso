@@ -125,11 +125,11 @@ func tooltipDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the tooltip for accessibility)."},
-			{Name: "Text", Type: "string", Default: `""`, Description: "Tooltip text (heading line)."},
+			{Name: "Label", Type: "string", Default: `""`, Description: "Tooltip text (heading line)."},
 			{Name: "Description", Type: "string", Default: `""`, Description: "Optional secondary line for a rich tooltip."},
 			{Name: "Position", Type: "Position", Default: "Top", Description: `Placement: "top", "bottom", "left", "right".`},
 			{Name: "Trigger", Type: "Trigger", Default: "Hover", Description: `Activation: "hover" (hover/focus) or "click".`},
-			{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Text of the trigger element."},
+			{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Label of the trigger element."},
 			{Name: "Trigger", Type: "templ.Component", Default: "nil", Description: "Custom trigger content (overrides TriggerLabel)."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

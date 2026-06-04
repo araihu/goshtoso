@@ -22,7 +22,7 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 | `AllowMultiple` | `bool` | AllowMultiple allows multiple items to be open simultaneously |
 | `Variant` | `Variant` | Variant determines the visual style |
 | `ID` | `string` | ID is the container ID for accessibility |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 
 **AccordionItem**
 
@@ -49,7 +49,7 @@ import "github.com/araihu/goshtoso/components/alert"  // package alert
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `PrimaryText` | `string` | PrimaryText is the primary action button label |
+| `PrimaryLabel` | `string` | PrimaryLabel is the primary action button label |
 | `PrimaryOnClick` | `string` | PrimaryOnClick is the Alpine.js action for the primary button |
 | `PrimaryHxGet` | `string` | PrimaryHxGet triggers an HTMX GET request on the primary button |
 | `PrimaryHxPost` | `string` | PrimaryHxPost triggers an HTMX POST request on the primary button |
@@ -68,13 +68,13 @@ import "github.com/araihu/goshtoso/components/alert"  // package alert
 | `Link` | `*LinkConfig` | Link adds a link action to the alert |
 | `Action` | `*ActionConfig` | Action adds primary + dismiss action buttons |
 | `ListItems` | `[]string` | ListItems adds a bullet list below the description |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 
 **LinkConfig**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Text` | `string` | Text is the link label |
+| `Label` | `string` | Label is the link label |
 | `Href` | `string` | Href is the link URL |
 
 ## avatar
@@ -107,7 +107,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 | `BorderColor` | `string` | BorderColor is the border color (defaults to variant color if empty) |
 | `Status` | `Status` | Status adds a status indicator dot |
 | `Icon` | `templ.Component` | Icon is an optional icon component (replaces initials in the base layer) |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 | `SrcExpr` | `string` | SrcExpr is an Alpine expression evaluated in the parent scope that yields |
 | `Reactive` | `bool` | Reactive defers the size + status-indicator size classes to the parent |
 | `ReactiveRadius` | `bool` | ReactiveRadius defers square-avatar radius classes to the parent Alpine |
@@ -118,7 +118,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 |-------|------|-------------|
 | `Items` | `[]Config` | Items are rendered as overlapping avatars from left to right. |
 | `Label` | `string` | Label describes the group for assistive technology. |
-| `Class` | `string` | Class allows additional CSS classes on the stack root. |
+| `RootClass` | `string` | Class allows additional CSS classes on the stack root. |
 | `Reactive` | `bool` | Reactive defers each avatar's size classes to the parent Alpine scope. |
 
 ## badge
@@ -137,14 +137,14 @@ import "github.com/araihu/goshtoso/components/badge"  // package badge
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Text` | `string` | Text is the badge content |
+| `Label` | `string` | Label is the badge content |
 | `Variant` | `Variant` | Variant determines the color scheme |
 | `Style` | `Style` | Style determines solid or soft appearance |
 | `Size` | `Size` | Size of the badge |
 | `Icon` | `templ.Component` | Icon is an optional icon component |
 | `Indicator` | `bool` | Indicator adds a colored dot indicator |
 | `IndicatorColor` | `string` | IndicatorColor overrides the default indicator color |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 
 ## banner
 
@@ -161,7 +161,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Text` | `string` | Text is the button label |
+| `ActionLabel` | `string` | ActionLabel is the button label |
 | `Href` | `string` | Href is the link URL (if set, renders as anchor) |
 | `OnClick` | `string` | OnClick is the Alpine.js click action |
 
@@ -169,7 +169,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Text` | `string` | Text is the main banner content |
+| `Description` | `string` | Description is the main banner content |
 | `Variant` | `Variant` | Variant determines the color scheme |
 | `Position` | `Position` | Position determines if banner is fixed or relative |
 | `Persistent` | `bool` | Persistent disables the dismiss button (default: banners are dismissible) |
@@ -177,7 +177,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | `CTA` | `*CTAConfig` | CTA is the call-to-action button config (optional) |
 | `CookieBanner` | `bool` | CookieBanner enables cookie consent mode |
 | `CookieConfig` | `*CookieBannerConfig` | CookieConfig holds cookie banner specific settings |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 
 **CookieBannerConfig**
 
@@ -207,7 +207,7 @@ import "github.com/araihu/goshtoso/components/breadcrumbs"  // package breadcrum
 | `Items` | `[]Item` | Items are the intermediate breadcrumb links (not the current page) |
 | `Current` | `string` | Current is the label for the current page (rendered as bold text, no link) |
 | `Separator` | `SeparatorStyle` | Separator controls the separator style (default: Chevron) |
-| `Class` | `string` | Class allows additional CSS classes on the outer <nav> |
+| `NavClass` | `string` | Class allows additional CSS classes on the outer <nav> |
 | `NavAttrs` | `templ.Attributes` | NavAttrs are extra HTML attributes on the <nav> element |
 
 **Item**
@@ -250,7 +250,7 @@ import "github.com/araihu/goshtoso/components/button"  // package button
 | `Type` | `string` | Type is the HTML button type attribute (e.g. "button", "submit"). |
 | `Disabled` | `bool` | Disabled disables the button, preventing interaction. |
 | `ID` | `string` | ID is the HTML id attribute for the button element. |
-| `Class` | `string` | Class is additional CSS classes appended to the button. |
+| `RootClass` | `string` | Class is additional CSS classes appended to the button. |
 | `HTMX` | `*HTMXConfig` | HTMX is an optional HTMX config for server-side interaction. |
 | `Alpine` | `*AlpineConfig` | Alpine is an optional Alpine.js config for client-side behavior. |
 | `LoadingText` | `string` | LoadingText is the text shown during an HTMX request. |
@@ -297,7 +297,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `Rating` | `int` | Rating is the product rating 0-5 (for ecommerce/testimonial cards) |
 | `Variant` | `Variant` | Variant determines the card style |
 | `Layout` | `Layout` | Layout determines vertical or horizontal layout |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 
 ## carousel
 
@@ -326,7 +326,7 @@ import "github.com/araihu/goshtoso/components/carousel"  // package carousel
 | `Touch` | `bool` | Touch enables swipe gesture support |
 | `AspectRatio` | `string` | AspectRatio sets a fixed aspect ratio (e.g. "3/1"), empty = min-h-[50svh] |
 | `Height` | `string` | Height overrides the slides container height (e.g. "h-48 lg:h-64" for card variant) |
-| `Class` | `string` | Class allows additional CSS classes on the container |
+| `RootClass` | `string` | Class allows additional CSS classes on the container |
 | `HTMX` | `*HTMXConfig` | HTMX enables lazy loading of carousel content (nil = static mode) |
 
 **HTMXConfig**
@@ -376,8 +376,8 @@ import "github.com/araihu/goshtoso/components/chatbubble"  // package chatbubble
 | `Grouped` | `bool` | Grouped marks a consecutive message: tighten spacing, hide avatar + name. |
 | `Sender` | `string` | Sender, for Side=Auto, is emitted as data-sender for client mine-detection. |
 | `IsBot` | `bool` | IsBot renders a small BOT badge by the name. |
-| `Class` | `string` | Class allows additional CSS classes on the row. |
-| `Attrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the row element (e.g. hx-*). |
+| `RootClass` | `string` | Class allows additional CSS classes on the row. |
+| `RootAttrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the row element (e.g. hx-*). |
 
 ## checkbox
 
@@ -404,8 +404,8 @@ import "github.com/araihu/goshtoso/components/checkbox"  // package checkbox
 | `Variant` | `Variant` | Variant determines the color scheme (default: Primary) |
 | `Icon` | `Icon` | Icon determines the check icon (default: IconCheck) |
 | `Animation` | `Animation` | Animation sets the animation style |
-| `Description` | `string` | Description adds helper text below the label |
-| `DescriptionID` | `string` | DescriptionID is the ID for the description element (for aria-describedby) |
+| `HelperText` | `string` | HelperText adds helper text below the label |
+| `HelperTextID` | `string` | HelperTextID is the ID for the helper text element (for aria-describedby) |
 | `Container` | `bool` | Container wraps the checkbox in a bordered container with label on the left |
 
 **GroupConfig**
@@ -461,7 +461,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `ToggleEndpoint` | `string` |  |
 | `OptionsEndpoint` | `string` |  |
 | `ClearEndpoint` | `string` |  |
-| `Class` | `string` |  |
+| `RootClass` | `string` |  |
 | `Disabled` | `bool` |  |
 
 **Option**
@@ -514,7 +514,7 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 | `Width` | `Width` | Width preset. Default: WidthMD. |
 | `BodyID` | `string` | BodyID is the id attribute of the inner content container. Exposed so |
 | `Persistent` | `bool` | Persistent disables click-backdrop and Esc-to-close. Default: false. |
-| `Class` | `string` | Class allows extra CSS classes on the panel (not the overlay). |
+| `PanelClass` | `string` | Class allows extra CSS classes on the panel (not the overlay). |
 
 ## dropdown
 
@@ -582,8 +582,8 @@ import "github.com/araihu/goshtoso/components/fileinput"  // package fileinput
 | `HelperText` | `string` | HelperText shown below the drop zone (e.g. "PNG, JPG, WebP - Max 5MB") |
 | `Required` | `bool` | Required marks the input as required |
 | `Disabled` | `bool` | Disabled disables the input |
-| `Class` | `string` | Class allows additional CSS classes on the outer container |
-| `Attrs` | `templ.Attributes` | Attrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change) |
+| `RootClass` | `string` | Class allows additional CSS classes on the outer container |
+| `InputAttrs` | `templ.Attributes` | Attrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change) |
 
 ## form
 
@@ -616,7 +616,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `ID` | `string` | ID is the HTML form ID (required for external submit via form="..." attribute) |
 | `Action` | `string` | Action is the POST action URL for native form submission |
 | `Method` | `string` | Method is the HTTP method ("post" default, "get", "dialog") |
-| `Class` | `string` | Class allows additional CSS classes on the form element |
+| `RootClass` | `string` | Class allows additional CSS classes on the form element |
 | `HTMX` | `*HTMXConfig` | HTMX enables HTMX-based submission (alternative to native Action) |
 | `PreventEnterSubmit` | `*bool` | PreventEnterSubmit prevents Enter key from submitting the form. |
 | `Footer` | `*FooterConfig` | Footer renders Cancel + Submit buttons at the bottom. |
@@ -630,7 +630,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `Required` | `bool` | Required shows a red asterisk next to the label |
 | `Errors` | `[]string` | Errors are validation error messages displayed below the field |
 | `Hints` | `[]string` | Hints are helper text messages displayed below errors |
-| `Class` | `string` | Class allows additional CSS classes on the wrapper |
+| `RootClass` | `string` | Class allows additional CSS classes on the wrapper |
 | `Validation` | `*ValidationConfig` | Validation enables HTMX-based field validation |
 | `Input` | `*textinput.Config` | Built-in Goshtoso field types (mutually exclusive — first non-nil wins). |
 | `Combobox` | `*combobox.Config` |  |
@@ -685,7 +685,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `Title` | `string` | Title is the summary heading. Default: "Validation failed". |
 | `Items` | `[]FormErrorItem` | Items is the list of errors to render. |
 | `Hint` | `string` | Hint is an optional short explanation under the title |
-| `Class` | `string` | Class allows extra CSS classes on the wrapper. |
+| `RootClass` | `string` | Class allows extra CSS classes on the wrapper. |
 
 **HTMXConfig**
 
@@ -705,7 +705,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 |-------|------|-------------|
 | `ID` | `string` | ID is the section element ID (used for HTMX targeting) |
 | `Title` | `string` | Title is the section heading |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 | `OOB` | `bool` | OOB enables hx-swap-oob="true" for HTMX out-of-band updates |
 | `Columns` | `string` | Columns controls the grid layout: "1" for single column, "2" (default) for responsive 2-column |
 
@@ -715,7 +715,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 |-------|------|-------------|
 | `ID` | `string` | ID is the subsection element ID |
 | `Title` | `string` | Title is the subsection heading |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 | `Columns` | `string` | Columns controls the grid layout: "1" for single column, "2" (default) |
 
 **ValidationConfig**
@@ -803,14 +803,14 @@ import "github.com/araihu/goshtoso/components/modal"  // package modal
 | `ID` | `string` | ID is a unique identifier used for aria-labelledby (required) |
 | `Title` | `string` | Title is the modal heading |
 | `Body` | `string` | Body is the modal body text |
-| `TriggerText` | `string` | TriggerText is the trigger button label |
-| `PrimaryText` | `string` | PrimaryText is the primary action button label |
+| `TriggerLabel` | `string` | TriggerLabel is the trigger button label |
+| `PrimaryLabel` | `string` | PrimaryLabel is the primary action button label |
 | `PrimaryAction` | `*ButtonAction` | PrimaryAction holds optional HTMX/JS actions for the primary button |
-| `SecondaryText` | `string` | SecondaryText is the secondary/dismiss button label (default mode only) |
+| `SecondaryLabel` | `string` | SecondaryLabel is the secondary/dismiss button label (default mode only) |
 | `SecondaryAction` | `*ButtonAction` | SecondaryAction holds optional HTMX/JS actions for the secondary button |
 | `Variant` | `Variant` | Variant determines the color scheme (used for alert mode and trigger button) |
 | `AlertMode` | `bool` | AlertMode renders the alert-style modal (icon header, centered body, single CTA) |
-| `Class` | `string` | Class allows additional CSS classes on the dialog |
+| `PanelClass` | `string` | Class allows additional CSS classes on the dialog |
 
 ## navbar
 
@@ -839,8 +839,7 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Actions` | `[]ActionItem` | Actions are custom components (e.g., dark mode toggle, theme selector) |
 | `User` | `*UserProfile` | User holds user profile data for the avatar dropdown (nil = no avatar) |
 | `UserMenu` | `[]UserMenuItem` | UserMenu contains dropdown items under the avatar |
-| `RightSlot` | `templ.Component` | RightSlot is custom content rendered on the right side (e.g., dark mode toggle). |
-| `Class` | `string` | Class allows additional CSS classes on the outer <nav> |
+| `NavClass` | `string` | Class allows additional CSS classes on the outer <nav> |
 | `NavAttrs` | `templ.Attributes` | NavAttrs are extra HTML attributes on the <nav> element |
 
 **NavLink**
@@ -889,9 +888,15 @@ import "github.com/araihu/goshtoso/components/pagination"  // package pagination
 | `CurrentPage` | `int` | CurrentPage is the 1-indexed current page number |
 | `TotalPages` | `int` | TotalPages is the total number of pages |
 | `BaseURL` | `string` | BaseURL is the base URL for page links (appends ?page=N) |
-| `Class` | `string` | Class allows additional CSS classes on the nav element |
-| `HTMXTarget` | `string` | --- HTMX Integration --- |
-| `HTMXSwap` | `string` | HTMXSwap is the HTMX swap strategy (default: innerHTML) |
+| `NavClass` | `string` | Class allows additional CSS classes on the nav element |
+| `HTMX` | `*HTMXConfig` | HTMX configures in-place HTMX pagination. |
+
+**HTMXConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Target` | `string` |  |
+| `Swap` | `string` |  |
 
 **PageItem**
 
@@ -909,18 +914,24 @@ import "github.com/araihu/goshtoso/components/palette"  // package palette
 
 **Entry points:** `Palette(cfg Config)`
 
+**AlpineConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Model` | `string` |  |
+
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `ID` | `string` | ID is the wrapper element id. |
-| `AlpineModel` | `string` | AlpineModel, when set, is a JS lvalue assigned the picked value (from the |
+| `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
 | `Hues` | `[]string` | Hues / Shades override the default Tailwind sets. |
 | `Shades` | `[]string` |  |
 | `HideNeutral` | `bool` | HideNeutral hides the white/black quick swatches (shown by default). |
 | `HideReset` | `bool` | HideReset hides the Reset action (shown by default). |
 | `ShowHex` | `bool` | ShowHex adds a native color input + hex text field (off by default). |
-| `Class` | `string` | Class appends classes to the wrapper. |
+| `RootClass` | `string` | Class appends classes to the wrapper. |
 | `LazyWhen` | `string` | LazyWhen is an Alpine expression; when non-empty, the swatch grid is |
 
 ## radio
@@ -956,15 +967,15 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 | `Disabled` | `bool` | Disabled disables the radio |
 | `Variant` | `Variant` | Variant determines the color scheme (default: Primary) |
 | `Size` | `Size` | Size sets the input box size (default: SizeMD) |
-| `Description` | `string` | Description adds helper text below the label |
-| `DescriptionID` | `string` | DescriptionID is the id for the description element (for aria-describedby) |
+| `HelperText` | `string` | HelperText adds helper text below the label |
+| `HelperTextID` | `string` | HelperTextID is the id for the helper text element (for aria-describedby) |
 | `BadgeColor` | `string` | BadgeColor wraps the label in a semi-solid badge. |
 | `Container` | `bool` | Container wraps the radio in a bordered container, showing the radio |
 | `Segmented` | `bool` | Segmented renders a true segmented-control pill: the input is sr-only |
-| `Class` | `string` | Class is appended to the label root element |
+| `RootClass` | `string` | Class is appended to the label root element |
 | `HTMX` | `*HTMXConfig` | HTMX wires server interactions on change. |
 | `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
-| `Attrs` | `templ.Attributes` | Attrs is an escape hatch applied LAST to the input — wins on conflict. |
+| `InputAttrs` | `templ.Attributes` | Attrs is an escape hatch applied LAST to the input — wins on conflict. |
 
 **GroupConfig**
 
@@ -1009,7 +1020,7 @@ import "github.com/araihu/goshtoso/components/schemafield"  // package schemafie
 | `Path` | `string` | Path is a dotted JSONPath from the root of the values object (e.g. "auth.password"). |
 | `Name` | `string` | Name is the input name attribute; usually Path. |
 | `Label` | `string` | Label is the human-readable field label. For unwrapped 1-child objects |
-| `Description` | `string` | Description is an optional helper text. |
+| `HelperText` | `string` | HelperText is an optional helper text. |
 | `Kind` | `Kind` | Kind determines rendering. |
 | `Required` | `bool` | Required marks the field with an asterisk. |
 | `Managed` | `bool` | Managed means the allow_list marks this path as platform-controlled — |
@@ -1037,6 +1048,13 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 
 - **State** — StateDefault = "", StateError = "error", StateSuccess = "success"
 
+**AlpineConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Model` | `string` |  |
+| `BindDisabled` | `string` |  |
+
 **Config**
 
 | Field | Type | Description |
@@ -1050,11 +1068,10 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 | `HelperText` | `string` | HelperText is shown below the select (e.g., error or success message) |
 | `Disabled` | `bool` | Disabled disables the select |
 | `Autocomplete` | `string` | Autocomplete sets the autocomplete attribute |
-| `Class` | `string` | Class allows additional CSS classes on the wrapper |
-| `AlpineModel` | `string` | AlpineModel sets x-model on the select for Alpine.js binding |
-| `AlpineBindDisabled` | `string` | AlpineBindDisabled sets x-bind:disabled on the select |
+| `RootClass` | `string` | Class allows additional CSS classes on the wrapper |
+| `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
 | `Readonly` | `bool` | Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits |
-| `Attrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator) |
+| `InputAttrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator) |
 | `Shell` | `bool` | Shell enables "shell mode": the Select renders its trigger + dropdown |
 | `TriggerLeading` | `templ.Component` | TriggerLeading is optional content rendered at the start of the trigger. |
 | `ValueExpr` | `string` | ValueExpr is an Alpine expression (x-text) for the trigger's value text |
@@ -1088,7 +1105,7 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `LogoHref` | `string` | LogoHref is the link for the logo (default: "/") |
 | `ShowSearch` | `bool` | ShowSearch enables the search input |
 | `SearchPlaceholder` | `string` | SearchPlaceholder is the placeholder text for search |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 | `SearchSlot` | `templ.Component` | SearchSlot replaces the default search input with a custom component. |
 | `FooterSlot` | `templ.Component` | FooterSlot renders content at the bottom of the sidebar (e.g., profile menu). |
 
@@ -1131,7 +1148,7 @@ import "github.com/araihu/goshtoso/components/spinner"  // package spinner
 |-------|------|-------------|
 | `Variant` | `Variant` | Variant determines the color scheme |
 | `Size` | `Size` | Size of the spinner |
-| `Class` | `string` | Class allows additional CSS classes |
+| `RootClass` | `string` | Class allows additional CSS classes |
 
 ## steps
 
@@ -1154,8 +1171,8 @@ import "github.com/araihu/goshtoso/components/steps"  // package steps
 | `ShowLabels` | `bool` | ShowLabels toggles visible labels beside steps. |
 | `AriaLabel` | `string` | AriaLabel labels the ordered list. |
 | `LiveRegion` | `bool` | LiveRegion announces swapped state changes to assistive tech. |
-| `Class` | `string` | Class appends custom classes to root list element. |
-| `Attrs` | `templ.Attributes` | Attrs appends arbitrary attributes to root ordered list. |
+| `RootClass` | `string` | RootClass appends custom classes to root list element. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary attributes to root ordered list. |
 
 **Step**
 
@@ -1166,7 +1183,7 @@ import "github.com/araihu/goshtoso/components/steps"  // package steps
 | `AriaLabel` | `string` | AriaLabel overrides accessible label on the list item. |
 | `Number` | `int` | Number overrides displayed step number for non-completed states. |
 | `Status` | `Status` | Status controls visual styling. |
-| `Attrs` | `templ.Attributes` | Attrs appends arbitrary attributes to the list item. |
+| `StepAttrs` | `templ.Attributes` | StepAttrs appends arbitrary attributes to the list item. |
 
 ## structuredinput
 
@@ -1198,9 +1215,9 @@ import "github.com/araihu/goshtoso/components/structuredinput"  // package struc
 | `Name` | `string` |  |
 | `Columns` | `[]Column` |  |
 | `Entries` | `[]Entry` |  |
-| `AddLabel` | `string` |  |
+| `AddActionLabel` | `string` |  |
 | `Disabled` | `bool` |  |
-| `Class` | `string` |  |
+| `RootClass` | `string` |  |
 
 **Option**
 
@@ -1254,11 +1271,10 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `Rows` | `[]Row` | Rows holds the table data |
 | `Variant` | `Variant` | Variant determines the table style |
 | `ShowCheckbox` | `bool` | ShowCheckbox adds a select-all checkbox column |
-| `Class` | `string` | Class allows additional CSS classes on the container |
+| `RootClass` | `string` | Class allows additional CSS classes on the container |
 | `SortBy` | `string` | --- Sorting --- |
 | `SortDir` | `SortDir` | SortDir is the current sort direction ("asc" or "desc") |
-| `HTMXEndpoint` | `string` | --- HTMX Integration --- |
-| `HTMXTarget` | `string` | HTMXTarget overrides the default HTMX swap target (defaults to tbody ID) |
+| `HTMX` | `*HTMXConfig` | --- HTMX Integration --- |
 | `LazyLoad` | `bool` | --- Lazy Loading --- |
 | `LazyTrigger` | `string` | LazyTrigger is the htmx trigger for LazyLoad. Defaults to "load". |
 | `Pagination` | `*PaginationConfig` | --- Pagination --- |
@@ -1295,6 +1311,13 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `Value` | `string` |  |
 | `Label` | `string` |  |
+
+**HTMXConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Endpoint` | `string` | Endpoint is the base URL for HTMX requests (sorting, pagination, lazy load). |
+| `Target` | `string` | Target overrides the default HTMX swap target (defaults to tbody ID). |
 
 **InfiniteScrollConfig**
 
@@ -1348,7 +1371,7 @@ import "github.com/araihu/goshtoso/components/tabs"  // package tabs
 | `ID` | `string` | ID is a unique identifier for this tabs instance (used for ARIA attributes) |
 | `Tabs` | `[]Tab` | Tabs is the list of tabs to render |
 | `DefaultTab` | `string` | DefaultTab is the ID of the initially selected tab (defaults to first tab) |
-| `Class` | `string` | Class allows additional CSS classes on the container |
+| `RootClass` | `string` | Class allows additional CSS classes on the container |
 | `SyncHash` | `bool` | SyncHash syncs the active tab with the URL fragment (hash). |
 
 **Tab**
@@ -1386,9 +1409,9 @@ import "github.com/araihu/goshtoso/components/tagslist"  // package tagslist
 | `Name` | `string` | Name is the form field name prefix (submits as name[0], name[1], ...) |
 | `Values` | `[]string` | Values is the initial list of tag values |
 | `Placeholder` | `string` | Placeholder is shown in the add-tag input |
-| `AddLabel` | `string` | AddLabel is the add button text (default: "Add") |
+| `AddActionLabel` | `string` | AddActionLabel is the add button text (default: "Add") |
 | `Disabled` | `bool` | Disabled renders chips only (no remove buttons, no input row) |
-| `Class` | `string` | Class allows additional CSS classes on the outer container |
+| `RootClass` | `string` | Class allows additional CSS classes on the outer container |
 
 ## textarea
 
@@ -1414,8 +1437,8 @@ import "github.com/araihu/goshtoso/components/textarea"  // package textarea
 | `ReadOnly` | `bool` | ReadOnly makes the textarea read-only |
 | `State` | `State` | State is the validation state (default/error/success) |
 | `HelperText` | `string` | HelperText is the helper or error text below the textarea |
-| `Class` | `string` | Class allows additional CSS classes on the container |
-| `Attrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*). |
+| `RootClass` | `string` | Class allows additional CSS classes on the container |
+| `InputAttrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*). |
 
 ## textinput
 
@@ -1447,8 +1470,8 @@ import "github.com/araihu/goshtoso/components/textinput"  // package textinput
 | `Pattern` | `string` | Pattern is an HTML pattern attribute for regex validation (e.g. "[a-z0-9]{6}") |
 | `MaxLength` | `int` | MaxLength limits the number of characters (0 = no limit) |
 | `Readonly` | `bool` | Readonly makes the input non-editable but still submittable |
-| `Class` | `string` | Class allows additional CSS classes on the container |
-| `Attrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the <input> element (e.g., hx-post, hx-indicator) |
+| `RootClass` | `string` | Class allows additional CSS classes on the container |
+| `InputAttrs` | `templ.Attributes` | Attrs allows arbitrary HTML attributes on the <input> element (e.g., hx-post, hx-indicator) |
 
 ## toast
 
@@ -1512,8 +1535,8 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 | `Disabled` | `bool` | Disabled disables the toggle |
 | `Name` | `string` | Name is the form field name |
 | `Value` | `string` | Value makes the checkbox submit this value when checked, turning the toggle into a real form control. |
-| `Class` | `string` | Class allows additional CSS classes on the label |
-| `Attrs` | `templ.Attributes` | Attrs are extra attributes applied to the <input> element |
+| `RootClass` | `string` | Class allows additional CSS classes on the label |
+| `InputAttrs` | `templ.Attributes` | Attrs are extra attributes applied to the <input> element |
 
 ## tooltip
 
@@ -1531,9 +1554,9 @@ import "github.com/araihu/goshtoso/components/tooltip"  // package tooltip
 | Field | Type | Description |
 |-------|------|-------------|
 | `ID` | `string` | ID is the tooltip element ID (used for aria-describedby) |
-| `Text` | `string` | Text is the main tooltip text |
+| `Label` | `string` | Label is the main tooltip text |
 | `Description` | `string` | Description is optional secondary text (rich tooltip) |
 | `Position` | `Position` | Position determines where the tooltip appears |
-| `Trigger` | `Trigger` | Trigger determines how the tooltip is activated |
-| `TriggerText` | `string` | TriggerText is the text shown on the trigger button |
-| `TriggerContent` | `templ.Component` | TriggerContent is an optional custom trigger element (overrides TriggerText) |
+| `TriggerMode` | `Trigger` | TriggerMode determines how the tooltip is activated |
+| `TriggerLabel` | `string` | TriggerLabel is the text shown on the trigger button |
+| `Trigger` | `templ.Component` | Trigger is an optional custom trigger element (overrides TriggerLabel) |

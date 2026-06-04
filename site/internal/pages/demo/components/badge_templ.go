@@ -164,14 +164,14 @@ func badgeDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Text", Type: "string", Default: `""`, Description: "Badge label text."},
+			{Name: "Label", Type: "string", Default: `""`, Description: "Badge label text."},
 			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "inverse", "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Style", Type: "Style", Default: "StyleSolid", Description: `Fill style: "solid" or "soft".`},
 			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg".`},
 			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading icon component."},
 			{Name: "Indicator", Type: "bool", Default: "false", Description: "Prepend a small status dot."},
 			{Name: "IndicatorColor", Type: "string", Default: `""`, Description: "Override the indicator dot color."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the badge."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the badge."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
