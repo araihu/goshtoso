@@ -77,6 +77,12 @@ affected generated file and regenerate.
 Components live under `components/<name>/` with `types.go`, `<name>.templ`, and
 generated `<name>_templ.go`.
 
+Public component config fields should follow
+[`docs/COMPONENT_API_NAMING.md`](docs/COMPONENT_API_NAMING.md). Prefer
+target-specific names for shared hooks (`RootClass`, `InputAttrs`, `HTMX`,
+`Alpine`) and role-specific labels (`Label`, `ActionLabel`, `HelperText`)
+instead of reusing generic names with different effects.
+
 When adding or changing a component:
 
 1. Update the component source in `components/<name>/`.
