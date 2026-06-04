@@ -311,7 +311,7 @@ func avatarDemoContent() templ.Component {
 			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the avatar root."},
 			{Name: "StackConfig.Items", Type: "[]avatar.Config", Default: "nil", Description: "Avatar configs rendered as an overlapping group."},
 			{Name: "StackConfig.Label", Type: "string", Default: `"Avatar group"`, Description: "Accessible label for the stacked avatar group."},
-			{Name: "StackConfig.Class", Type: "string", Default: `""`, Description: "Extra classes on the stack root."},
+			{Name: "StackConfig.RootClass", Type: "string", Default: `""`, Description: "Extra classes on the stack root."},
 			{Name: "StackConfig.Reactive", Type: "bool", Default: "false", Description: "Apply the shared reactive size binding to every stack item."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

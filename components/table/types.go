@@ -363,7 +363,7 @@ type Config struct {
 	// ShowCheckbox adds a select-all checkbox column
 	ShowCheckbox bool
 	// Class allows additional CSS classes on the container
-	Class string
+	RootClass string
 
 	// --- Sorting ---
 	// SortBy is the currently sorted column key
@@ -580,8 +580,8 @@ func parseExtraQuery(extra string) map[string]string {
 // on infinite-scroll tables.
 func (cfg Config) ContainerClasses() string {
 	base := "overflow-x-auto overflow-y-clip w-full rounded-radius border border-outline dark:border-outline-dark"
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 	return base
 }

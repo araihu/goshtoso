@@ -44,7 +44,7 @@ type Config struct {
 	// SearchPlaceholder is the placeholder text for search
 	SearchPlaceholder string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 	// SearchSlot replaces the default search input with a custom component.
 	// When set, ShowSearch is ignored.
 	SearchSlot templ.Component

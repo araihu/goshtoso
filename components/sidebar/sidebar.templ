@@ -15,7 +15,7 @@ templ Sidebar(cfg Config) {
 	{{ if logoHref == "" { logoHref = "/" } }}
 	
 	<nav
-		class={ cfg.ContainerClasses() + " " + cfg.Class }
+		class={ cfg.ContainerClasses() + " " + cfg.RootClass }
 		aria-label="sidebar navigation"
 	>
 		<!-- Skip to main content link for accessibility -->

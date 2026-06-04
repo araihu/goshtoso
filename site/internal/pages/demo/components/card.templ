@@ -95,7 +95,7 @@ templ bookNowButton() {
     <h3 class="text-xl font-bold">Premium</h3>
     <span class="mt-8 text-3xl font-medium">$8.99</span>
     <ul class="mt-4 list-inside list-disc space-y-2 text-sm">...</ul>
-    @button.Button(button.Config{Variant: button.Primary, Class: "w-full"}) { Start your free trial }
+    @button.Button(button.Config{Variant: button.Primary, RootClass: "w-full"}) { Start your free trial }
 </article>`,
 		)
 
@@ -253,7 +253,7 @@ templ pricingCard() {
 			@button.Button(button.Config{
 				Variant: button.Primary,
 				Type:    "button",
-				Class:   "w-full",
+				RootClass:   "w-full",
 			}) {
 				Start your free trial
 			}

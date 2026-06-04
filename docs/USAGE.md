@@ -379,7 +379,7 @@ type AccordionConfig struct {
     AllowMultiple bool             // Multiple open at once
     Variant       Variant          // Visual style
     ID            string           // Container ID
-    Class         string           // Additional CSS classes
+    RootClass string           // Additional CSS classes
 }
 ```
 
@@ -392,7 +392,7 @@ type Config struct {
     Type        string        // HTML type attribute
     Disabled    bool          // Disabled state
     ID          string        // Element ID
-    Class       string        // Additional classes
+    RootClass string        // Additional classes
     HTMX        *HTMXConfig   // HTMX attributes
     Alpine      *AlpineConfig // Alpine.js directives
     LoadingText string        // Loading state text

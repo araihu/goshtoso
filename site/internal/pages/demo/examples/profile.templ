@@ -207,14 +207,14 @@ templ profileMainPanel(s profile.State) {
 		@fileinput.FileInput(fileinput.Config{
 			ID:     "profile-avatar-input",
 			Accept: "image/*",
-			Class:  "hidden",
-			Attrs:  templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
 		})
 		@fileinput.FileInput(fileinput.Config{
 			ID:     "profile-banner-input",
 			Accept: "image/*",
-			Class:  "hidden",
-			Attrs:  templ.Attributes{"x-on:change": "onFile('banner', $event)"},
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('banner', $event)"},
 		})
 		<div class="flex flex-wrap items-center justify-center gap-3 p-4">
 			@button.Button(button.Config{
@@ -304,7 +304,7 @@ templ profileAppearancePanel() {
 			@toggle.Toggle(toggle.Config{
 				ID:    "profile-dark",
 				Label: "Dark mode",
-				Attrs: templ.Attributes{
+				InputAttrs: templ.Attributes{
 					"x-bind:checked": "$store.darkMode.on",
 					"x-on:change":    "$store.darkMode.toggle()",
 				},

@@ -31,7 +31,7 @@ type FormErrorsConfig struct {
 	// (e.g. "Fix the fields marked in red and try again").
 	Hint string
 	// Class allows extra CSS classes on the wrapper.
-	Class string
+	RootClass string
 }
 
 // GetID returns the resolved id attribute.
@@ -85,7 +85,7 @@ func FormErrors(cfg FormErrorsConfig) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if len(cfg.Items) > 0 {
-			var templ_7745c5c3_Var2 = []any{"flex flex-col gap-2 rounded-radius border border-danger bg-danger/10 px-4 py-3 text-on-surface dark:border-danger dark:bg-danger/15 dark:text-on-surface-dark " + cfg.Class}
+			var templ_7745c5c3_Var2 = []any{"flex flex-col gap-2 rounded-radius border border-danger bg-danger/10 px-4 py-3 text-on-surface dark:border-danger dark:bg-danger/15 dark:text-on-surface-dark " + cfg.RootClass}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

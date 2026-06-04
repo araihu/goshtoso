@@ -42,7 +42,7 @@ type Config struct {
 	// ShowHex adds a native color input + hex text field (off by default).
 	ShowHex bool
 	// Class appends classes to the wrapper.
-	Class string
+	RootClass string
 	// LazyWhen is an Alpine expression; when non-empty, the swatch grid is
 	// wrapped in <template x-if=...> so it mounts only when the expression is
 	// truthy (e.g. inside a Select dropdown, pass the dropdown's open
@@ -67,8 +67,8 @@ func (c Config) shades() []string {
 // ContainerClasses returns wrapper classes.
 func (c Config) ContainerClasses() string {
 	base := "p-2 space-y-2"
-	if c.Class != "" {
-		base += " " + c.Class
+	if c.RootClass != "" {
+		base += " " + c.RootClass
 	}
 	return base
 }

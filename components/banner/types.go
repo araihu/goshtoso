@@ -41,7 +41,7 @@ type Config struct {
 	// CookieConfig holds cookie banner specific settings
 	CookieConfig *CookieBannerConfig
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // CTAConfig holds call-to-action button configuration
@@ -95,7 +95,7 @@ func (cfg Config) ContainerClasses() string {
 		base += " border-b border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt"
 	}
 
-	return base + " " + cfg.Class
+	return base + " " + cfg.RootClass
 }
 
 // TextClasses returns the text content classes
@@ -133,5 +133,5 @@ func (cfg Config) CookieContainerClasses() string {
 		position = "absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm"
 	}
 
-	return position + " flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.Class
+	return position + " flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.RootClass
 }

@@ -35,13 +35,13 @@ type Entry map[string]string
 
 // Config configures the StructuredInput component.
 type Config struct {
-	ID       string
-	Name     string
-	Columns  []Column
-	Entries  []Entry
-	AddLabel string
-	Disabled bool
-	Class    string
+	ID        string
+	Name      string
+	Columns   []Column
+	Entries   []Entry
+	AddLabel  string
+	Disabled  bool
+	RootClass string
 }
 
 // NormalizedColumns returns usable columns with stable defaults.
@@ -91,8 +91,8 @@ func (c Config) GetAddLabel() string {
 // ContainerClasses returns CSS classes for the outer container.
 func (c Config) ContainerClasses() string {
 	base := "flex flex-col gap-2"
-	if c.Class != "" {
-		return base + " " + c.Class
+	if c.RootClass != "" {
+		return base + " " + c.RootClass
 	}
 	return base
 }

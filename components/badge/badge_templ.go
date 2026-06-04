@@ -91,7 +91,7 @@ func simpleBadge(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.Class
+		classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.RootClass
 		var templ_7745c5c3_Var3 = []any{classes}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
@@ -159,7 +159,7 @@ func badgeWithInner(cfg Config) templ.Component {
 		} else {
 			containerClasses = containerClasses + cfg.VariantClasses()
 		}
-		containerClasses = containerClasses + " " + cfg.Class
+		containerClasses = containerClasses + " " + cfg.RootClass
 		var templ_7745c5c3_Var7 = []any{containerClasses}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {

@@ -44,7 +44,7 @@ type Config struct {
 	// DefaultTab is the ID of the initially selected tab (defaults to first tab)
 	DefaultTab string
 	// Class allows additional CSS classes on the container
-	Class string
+	RootClass string
 	// SyncHash syncs the active tab with the URL fragment (hash).
 	// When true: reads hash on init to select tab, updates hash on tab change.
 	// Invalid hash values fall back to DefaultTab.

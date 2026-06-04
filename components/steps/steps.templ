@@ -26,7 +26,7 @@ templ Steps(cfg Config) {
 			aria-live="polite"
 			aria-atomic="true"
 		}
-		{ cfg.Attrs... }
+		{ cfg.RootAttrs... }
 	>
 		for i, raw := range cfg.Steps {
 			{{ step := resolvedStep(raw, i) }}
@@ -49,7 +49,7 @@ templ horizontalStep(step Step, index int, showLabels bool) {
 		if resolvedItemLabel(step) != "" {
 			aria-label={ resolvedItemLabel(step) }
 		}
-		{ step.Attrs... }
+		{ step.StepAttrs... }
 	>
 		if index > 0 {
 			<span class={ connectorClasses(step.Status, OrientationHorizontal) } aria-hidden="true"></span>
@@ -73,7 +73,7 @@ templ verticalStep(step Step, index int, showLabels bool) {
 		if resolvedItemLabel(step) != "" {
 			aria-label={ resolvedItemLabel(step) }
 		}
-		{ step.Attrs... }
+		{ step.StepAttrs... }
 	>
 		<div class="flex items-center gap-2">
 			<div class="relative">

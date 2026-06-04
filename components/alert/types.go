@@ -53,7 +53,7 @@ type Config struct {
 	// ListItems adds a bullet list below the description
 	ListItems []string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // ContainerClasses returns the outer container CSS classes
@@ -73,8 +73,8 @@ func (cfg Config) ContainerClasses() string {
 		base += " border-info"
 	}
 
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 
 	return base

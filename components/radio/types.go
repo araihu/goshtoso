@@ -112,14 +112,14 @@ type Config struct {
 	// When set, Container is ignored.
 	Segmented bool
 	// Class is appended to the label root element
-	Class string
+	RootClass string
 
 	// HTMX wires server interactions on change.
 	HTMX *HTMXConfig
 	// Alpine wires client-side state.
 	Alpine *AlpineConfig
 	// Attrs is an escape hatch applied LAST to the input — wins on conflict.
-	Attrs templ.Attributes
+	InputAttrs templ.Attributes
 }
 
 // GroupConfig holds configuration for a group of radio buttons

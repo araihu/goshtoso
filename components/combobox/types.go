@@ -49,7 +49,7 @@ type Config struct {
 	ToggleEndpoint  string
 	OptionsEndpoint string
 	ClearEndpoint   string
-	Class           string
+	RootClass       string
 	Disabled        bool
 }
 

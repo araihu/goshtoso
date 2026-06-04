@@ -41,7 +41,7 @@ type Config struct {
 	// Layout determines vertical or horizontal layout
 	Layout Layout
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // ContainerClasses returns the container CSS classes
@@ -62,7 +62,7 @@ func (cfg Config) ContainerClasses() string {
 		base += " max-w-sm flex-col"
 	}
 
-	return base + " " + cfg.Class
+	return base + " " + cfg.RootClass
 }
 
 // ImageContainerClasses returns the image container classes

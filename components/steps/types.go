@@ -41,8 +41,8 @@ type Step struct {
 	Number int
 	// Status controls visual styling.
 	Status Status
-	// Attrs appends arbitrary attributes to the list item.
-	Attrs templ.Attributes
+	// StepAttrs appends arbitrary attributes to the list item.
+	StepAttrs templ.Attributes
 }
 
 // Config holds configuration for Steps component.
@@ -59,10 +59,10 @@ type Config struct {
 	AriaLabel string
 	// LiveRegion announces swapped state changes to assistive tech.
 	LiveRegion bool
-	// Class appends custom classes to root list element.
-	Class string
-	// Attrs appends arbitrary attributes to root ordered list.
-	Attrs templ.Attributes
+	// RootClass appends custom classes to root list element.
+	RootClass string
+	// RootAttrs appends arbitrary attributes to root ordered list.
+	RootAttrs templ.Attributes
 }
 
 // normalizedOrientation returns default orientation.
@@ -81,8 +81,8 @@ func (cfg Config) listClasses() string {
 	} else {
 		base += " flex w-full items-center gap-2"
 	}
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 	return base
 }

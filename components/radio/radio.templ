@@ -28,7 +28,7 @@ templ Radio(cfg Config) {
 // The input itself is sr-only — the label is the entire visual. Designed to
 // live inside a RadioBar (or any container with `divide-x` for connected pills).
 templ radioSegmented(cfg Config) {
-	<label for={ cfg.ID } class={ cfg.SegmentedLabelClasses() + " " + cfg.Class }>
+	<label for={ cfg.ID } class={ cfg.SegmentedLabelClasses() + " " + cfg.RootClass }>
 		@segmentedInput(cfg)
 		<span>{ cfg.Label }</span>
 	</label>
@@ -108,7 +108,7 @@ templ segmentedInput(cfg Config) {
 				x-bind:disabled={ cfg.Alpine.BindDisabled }
 			}
 		}
-		{ cfg.Attrs... }
+		{ cfg.InputAttrs... }
 	/>
 }
 
@@ -122,7 +122,7 @@ templ RadioBar() {
 
 // standardRadio renders a basic radio with label
 templ standardRadio(cfg Config) {
-	<label for={ cfg.ID } class={ "flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75 " + cfg.Class }>
+	<label for={ cfg.ID } class={ "flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75 " + cfg.RootClass }>
 		@radioInput(cfg)
 		<span>{ cfg.Label }</span>
 	</label>
@@ -130,7 +130,7 @@ templ standardRadio(cfg Config) {
 
 // radioWithDescription renders a radio with description text below
 templ radioWithDescription(cfg Config) {
-	<div class={ "flex items-start gap-2 " + cfg.Class }>
+	<div class={ "flex items-start gap-2 " + cfg.RootClass }>
 		@radioInput(cfg)
 		<div class="flex flex-col">
 			<label for={ cfg.ID } class="text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
@@ -147,7 +147,7 @@ templ radioWithDescription(cfg Config) {
 
 // radioWithContainer renders a radio inside a bordered container (segmented look)
 templ radioWithContainer(cfg Config) {
-	<label for={ cfg.ID } class={ "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed " + cfg.Class }>
+	<label for={ cfg.ID } class={ "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed " + cfg.RootClass }>
 		<span>{ cfg.Label }</span>
 		@radioInput(cfg)
 	</label>
@@ -161,7 +161,7 @@ templ radioWithContainer(cfg Config) {
 //  3. checked / disabled / aria-describedby
 //  4. HTMX attrs (hx-*) — server roundtrip on change
 //  5. Alpine attrs (x-*) — client-side state
-//  6. cfg.Attrs (escape hatch) — wins on conflict
+//  6. cfg.InputAttrs (escape hatch) — wins on conflict
 templ radioInput(cfg Config) {
 	<input
 		id={ cfg.ID }
@@ -238,7 +238,7 @@ templ radioInput(cfg Config) {
 				x-bind:disabled={ cfg.Alpine.BindDisabled }
 			}
 		}
-		{ cfg.Attrs... }
+		{ cfg.InputAttrs... }
 	/>
 }
 

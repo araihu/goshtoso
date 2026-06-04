@@ -293,7 +293,7 @@ func StepsHTMXFlow(current int) templ.Component {
 			ShowLabels: true,
 			AriaLabel:  "registration progress",
 			LiveRegion: true,
-			Attrs: templ.Attributes{
+			RootAttrs: templ.Attributes{
 				"data-current-step": fmt.Sprintf("%d", current),
 			},
 			Steps: buildHTMXDemoSteps(current),

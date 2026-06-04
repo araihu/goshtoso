@@ -39,7 +39,7 @@ templ Toggle(cfg Config) {
 			}
 			checked?={ cfg.Checked }
 			disabled?={ cfg.Disabled }
-			{ cfg.Attrs... }
+			{ cfg.InputAttrs... }
 		/>
 		if cfg.Name != "" && cfg.Value == "" {
 			<input type="hidden" name={ cfg.Name } value="off"/>

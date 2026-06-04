@@ -102,7 +102,7 @@ func AvatarStack(cfg StackConfig) templ.Component {
 		if label == "" {
 			label = "Avatar group"
 		}
-		rootClasses := "flex items-center " + cfg.Class
+		rootClasses := "flex items-center " + cfg.RootClass
 		var templ_7745c5c3_Var3 = []any{rootClasses}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
@@ -140,9 +140,9 @@ func AvatarStack(cfg StackConfig) templ.Component {
 		}
 		for i, item := range cfg.Items {
 			item.Reactive = item.Reactive || cfg.Reactive
-			item.Class = "ring-2 ring-surface dark:ring-surface-dark " + item.Class
+			item.RootClass = "ring-2 ring-surface dark:ring-surface-dark " + item.RootClass
 			if i > 0 {
-				item.Class = "-ml-3 " + item.Class
+				item.RootClass = "-ml-3 " + item.RootClass
 			}
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div role=\"listitem\">")
 			if templ_7745c5c3_Err != nil {
@@ -213,7 +213,7 @@ func avatarLayers(cfg Config) templ.Component {
 			rootSkinClasses = ""
 			layerSkinClasses = cfg.VariantFillClasses()
 		}
-		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.Class
+		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.RootClass
 		layerBoxClasses := "relative block size-full overflow-hidden " + radiusPart + " " + layerSkinClasses
 		if cfg.HasImage() {
 			var templ_7745c5c3_Var7 = []any{containerClasses}

@@ -33,7 +33,7 @@ templ ChatBubble(cfg Config) {
 		if cfg.Side == Auto && cfg.Sender != "" {
 			data-sender={ cfg.Sender }
 		}
-		{ cfg.Attrs... }
+		{ cfg.RootAttrs... }
 	>
 		if cfg.HasAvatar() {
 			@bubbleAvatar(cfg)

@@ -175,7 +175,7 @@ func landingContent() templ.Component {
 					Label:     c.Label,
 					Checked:   c.Key == "goshtoso",
 					Segmented: true,
-					Class:     "min-w-28 px-4",
+					RootClass: "min-w-28 px-4",
 					Alpine: &radio.AlpineConfig{
 						BindChecked: "theme === $el.value",
 						OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme; if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) localStorage.theme = theme",

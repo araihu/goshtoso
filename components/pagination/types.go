@@ -35,7 +35,7 @@ type Config struct {
 	// BaseURL is the base URL for page links (appends ?page=N)
 	BaseURL string
 	// Class allows additional CSS classes on the nav element
-	Class string
+	NavClass string
 
 	// --- HTMX Integration ---
 	// HTMXTarget is the HTMX swap target selector
@@ -96,8 +96,8 @@ func (cfg Config) SwapStrategy() string {
 // NavClasses returns CSS classes for the nav element
 func (cfg Config) NavClasses() string {
 	base := "flex items-center"
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.NavClass != "" {
+		base += " " + cfg.NavClass
 	}
 	return base
 }

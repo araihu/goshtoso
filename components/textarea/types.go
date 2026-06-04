@@ -34,17 +34,17 @@ type Config struct {
 	// HelperText is the helper or error text below the textarea
 	HelperText string
 	// Class allows additional CSS classes on the container
-	Class string
+	RootClass string
 	// Attrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*).
-	Attrs templ.Attributes
+	InputAttrs templ.Attributes
 }
 
 // ContainerClasses returns CSS classes for the outer container.
 // Width is determined by the parent layout — no max-width is imposed.
 func (cfg Config) ContainerClasses() string {
 	base := "flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
-	if cfg.Class != "" {
-		return base + " " + cfg.Class
+	if cfg.RootClass != "" {
+		return base + " " + cfg.RootClass
 	}
 	return base
 }

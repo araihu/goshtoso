@@ -23,7 +23,7 @@ type FormErrorsConfig struct {
 	// (e.g. "Fix the fields marked in red and try again").
 	Hint string
 	// Class allows extra CSS classes on the wrapper.
-	Class string
+	RootClass string
 }
 
 // GetID returns the resolved id attribute.
@@ -61,7 +61,7 @@ templ FormErrors(cfg FormErrorsConfig) {
 			id={ cfg.GetID() }
 			role="alert"
 			aria-live="polite"
-			class={ "flex flex-col gap-2 rounded-radius border border-danger bg-danger/10 px-4 py-3 text-on-surface dark:border-danger dark:bg-danger/15 dark:text-on-surface-dark " + cfg.Class }
+			class={ "flex flex-col gap-2 rounded-radius border border-danger bg-danger/10 px-4 py-3 text-on-surface dark:border-danger dark:bg-danger/15 dark:text-on-surface-dark " + cfg.RootClass }
 		>
 			<div class="flex items-start gap-2">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-danger mt-0.5" aria-hidden="true">

@@ -47,15 +47,15 @@ templ AvatarStack(cfg StackConfig) {
 		if label == "" {
 			label = "Avatar group"
 		}
-		rootClasses := "flex items-center " + cfg.Class
+		rootClasses := "flex items-center " + cfg.RootClass
 	}}
 	<div class={ rootClasses } role="list" aria-label={ label }>
 		for i, item := range cfg.Items {
 			{{
 				item.Reactive = item.Reactive || cfg.Reactive
-				item.Class = "ring-2 ring-surface dark:ring-surface-dark " + item.Class
+				item.RootClass = "ring-2 ring-surface dark:ring-surface-dark " + item.RootClass
 				if i > 0 {
-					item.Class = "-ml-3 " + item.Class
+					item.RootClass = "-ml-3 " + item.RootClass
 				}
 			}}
 			<div role="listitem">
@@ -94,7 +94,7 @@ templ avatarLayers(cfg Config) {
 			rootSkinClasses = ""
 			layerSkinClasses = cfg.VariantFillClasses()
 		}
-		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.Class
+		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.RootClass
 		layerBoxClasses := "relative block size-full overflow-hidden " + radiusPart + " " + layerSkinClasses
 	}}
 	if cfg.HasImage() {

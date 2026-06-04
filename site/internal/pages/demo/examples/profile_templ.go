@@ -308,19 +308,19 @@ func profileMainPanel(s profile.State) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = fileinput.FileInput(fileinput.Config{
-			ID:     "profile-avatar-input",
-			Accept: "image/*",
-			Class:  "hidden",
-			Attrs:  templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
+			ID:         "profile-avatar-input",
+			Accept:     "image/*",
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = fileinput.FileInput(fileinput.Config{
-			ID:     "profile-banner-input",
-			Accept: "image/*",
-			Class:  "hidden",
-			Attrs:  templ.Attributes{"x-on:change": "onFile('banner', $event)"},
+			ID:         "profile-banner-input",
+			Accept:     "image/*",
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('banner', $event)"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -507,7 +507,7 @@ func profileAppearancePanel() templ.Component {
 		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
 			ID:    "profile-dark",
 			Label: "Dark mode",
-			Attrs: templ.Attributes{
+			InputAttrs: templ.Attributes{
 				"x-bind:checked": "$store.darkMode.on",
 				"x-on:change":    "$store.darkMode.toggle()",
 			},

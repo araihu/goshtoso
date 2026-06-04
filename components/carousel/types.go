@@ -72,7 +72,7 @@ type Config struct {
 	// Height overrides the slides container height (e.g. "h-48 lg:h-64" for card variant)
 	Height string
 	// Class allows additional CSS classes on the container
-	Class string
+	RootClass string
 	// HTMX enables lazy loading of carousel content (nil = static mode)
 	HTMX *HTMXConfig
 }
@@ -111,8 +111,8 @@ func transitionAttrs(suffix string) templ.Attributes {
 // containerClasses returns the outer carousel container CSS classes
 func containerClasses(cfg Config) string {
 	base := "relative w-full overflow-hidden"
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 	return base
 }

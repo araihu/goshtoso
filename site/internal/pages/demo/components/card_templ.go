@@ -159,7 +159,7 @@ templ bookNowButton() {
     <h3 class="text-xl font-bold">Premium</h3>
     <span class="mt-8 text-3xl font-medium">$8.99</span>
     <ul class="mt-4 list-inside list-disc space-y-2 text-sm">...</ul>
-    @button.Button(button.Config{Variant: button.Primary, Class: "w-full"}) { Start your free trial }
+    @button.Button(button.Config{Variant: button.Primary, RootClass: "w-full"}) { Start your free trial }
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -628,9 +628,9 @@ func pricingCard() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-			Class:   "w-full",
+			Variant:   button.Primary,
+			Type:      "button",
+			RootClass: "w-full",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

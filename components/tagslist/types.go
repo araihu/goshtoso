@@ -19,7 +19,7 @@ type Config struct {
 	// Disabled renders chips only (no remove buttons, no input row)
 	Disabled bool
 	// Class allows additional CSS classes on the outer container
-	Class string
+	RootClass string
 }
 
 // GetAddLabel returns the add button label with default
@@ -60,8 +60,8 @@ func (c Config) AlpineData() string {
 // ContainerClasses returns CSS classes for the outer container
 func (c Config) ContainerClasses() string {
 	base := "flex flex-col gap-2"
-	if c.Class != "" {
-		return base + " " + c.Class
+	if c.RootClass != "" {
+		return base + " " + c.RootClass
 	}
 	return base
 }

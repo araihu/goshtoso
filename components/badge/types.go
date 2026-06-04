@@ -50,7 +50,7 @@ type Config struct {
 	// IndicatorColor overrides the default indicator color
 	IndicatorColor string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // SizeClasses returns the CSS classes for the size (text + padding)
