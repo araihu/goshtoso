@@ -8,7 +8,7 @@ package checkbox
 //	    Label: "Notifications",
 //	})
 templ Checkbox(cfg Config) {
-	if cfg.Description != "" {
+	if cfg.HelperText != "" {
 		@checkboxWithDescription(cfg)
 	} else if cfg.Container {
 		@checkboxWithContainer(cfg)
@@ -25,14 +25,14 @@ templ standardCheckbox(cfg Config) {
 	</label>
 }
 
-// checkboxWithDescription renders a checkbox with description text below
+// checkboxWithDescription renders a checkbox with helper text below
 templ checkboxWithDescription(cfg Config) {
 	<div class="flex flex-col items-start">
 		<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
 			@checkboxInput(cfg)
 			<span>{ cfg.Label }</span>
 		</label>
-		<span id={ cfg.DescriptionID } class="ml-6 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.Description }</span>
+		<span id={ cfg.HelperTextID } class="ml-6 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.HelperText }</span>
 	</div>
 }
 
@@ -47,13 +47,13 @@ templ checkboxWithContainer(cfg Config) {
 // checkboxInput renders the actual input + SVG icon
 templ checkboxInput(cfg Config) {
 	<span class="relative flex items-center">
-		if cfg.Description != "" {
+		if cfg.HelperText != "" {
 			if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.DescriptionID } checked/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.HelperTextID } checked/>
 			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.DescriptionID } disabled/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.HelperTextID } disabled/>
 			} else {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.DescriptionID }/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.HelperTextID }/>
 			}
 		} else if cfg.Value != "" {
 			if cfg.Checked {

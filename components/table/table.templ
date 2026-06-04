@@ -22,7 +22,7 @@ import (
 //	// Sortable table with HTMX
 //	@table.Table(table.Config{
 //	    ID:           "users",
-//	    HTMXEndpoint: "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    Columns:      []table.Column{{Key: "name", Label: "Name", Sortable: true}},
 //	    Rows:         rows,
 //	})
@@ -30,7 +30,7 @@ import (
 //	// Lazy-loaded table
 //	@table.Table(table.Config{
 //	    ID:           "lazy",
-//	    HTMXEndpoint: "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    LazyLoad:     true,
 //	    Columns:      []table.Column{{Key: "name", Label: "Name"}},
 //	})
@@ -38,7 +38,7 @@ import (
 //	// Paginated table
 //	@table.Table(table.Config{
 //	    ID:           "paged",
-//	    HTMXEndpoint: "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    Columns:      columns,
 //	    Rows:         rows,
 //	    Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 5, PerPage: 3},
@@ -47,7 +47,7 @@ import (
 //	// Infinite scroll table
 //	@table.Table(table.Config{
 //	    ID:             "scroll",
-//	    HTMXEndpoint:   "/api/components/table/rows",
+//	    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 //	    Columns:        columns,
 //	    Rows:           rows,
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
@@ -276,7 +276,7 @@ templ tableHeadRow(cfg Config) {
 			</th>
 		}
 		for _, col := range cfg.Columns {
-			if col.Sortable && cfg.HTMXEndpoint != "" {
+			if col.Sortable && cfg.HTMXEndpointValue() != "" {
 				@sortableHeader(cfg, col)
 			} else {
 				<th scope="col" class={ ColumnHeaderClasses(col) }>{ col.Label }</th>
@@ -308,11 +308,11 @@ templ tableInner(cfg Config) {
 		}
 		@TableHead(cfg)
 
-		if cfg.LazyLoad && cfg.HTMXEndpoint != "" {
+		if cfg.LazyLoad && cfg.HTMXEndpointValue() != "" {
 			<tbody
 				id={ cfg.TbodyID() }
 				class={ cfg.TbodyClasses() }
-				hx-get={ cfg.HTMXEndpoint }
+				hx-get={ cfg.HTMXEndpointValue() }
 				hx-trigger={ cfg.LazyLoadTrigger() }
 				hx-swap="innerHTML"
 			>
@@ -357,7 +357,7 @@ templ TableRows(cfg Config) {
 
 // hasMoreRows returns true if the table should render a scroll sentinel for infinite scroll
 func hasMoreRows(cfg Config) bool {
-	if cfg.HTMXEndpoint == "" {
+	if cfg.HTMXEndpointValue() == "" {
 		return false
 	}
 	// New pagination-based infinite scroll
@@ -652,8 +652,7 @@ templ TablePagination(cfg Config) {
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
 				BaseURL:     cfg.PaginationBaseURL(),
-				HTMXTarget:  "#" + cfg.TbodyID(),
-				HTMXSwap:    "innerHTML",
+				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
 			})
 		</div>
 	}
@@ -667,8 +666,7 @@ templ TablePaginationNav(cfg Config) {
 			CurrentPage: cfg.Pagination.CurrentPage,
 			TotalPages:  cfg.Pagination.TotalPages,
 			BaseURL:     cfg.PaginationBaseURL(),
-			HTMXTarget:  "#" + cfg.TbodyID(),
-			HTMXSwap:    "innerHTML",
+			HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
 		})
 	}
 }

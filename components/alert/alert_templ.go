@@ -493,9 +493,9 @@ func linkAlert(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var32 string
-		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Link.Text)
+		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Link.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 70, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 70, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 		if templ_7745c5c3_Err != nil {
@@ -757,9 +757,9 @@ func actionAlert(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var49 string
-		templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Action.PrimaryText)
+		templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Action.PrimaryLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 109, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 109, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 		if templ_7745c5c3_Err != nil {

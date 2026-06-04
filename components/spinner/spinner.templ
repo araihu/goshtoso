@@ -18,8 +18,8 @@ package spinner
 //	})
 templ Spinner(cfg Config) {
 	{{ classes := cfg.SizeClasses() + " " + cfg.FillClasses() + " motion-safe:animate-spin" }}
-	if cfg.Class != "" {
-		{{ classes = classes + " " + cfg.Class }}
+	if cfg.RootClass != "" {
+		{{ classes = classes + " " + cfg.RootClass }}
 	}
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class={ classes }>
 		<path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"></path>

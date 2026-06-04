@@ -27,8 +27,7 @@ package pagination
 //	    CurrentPage: 2,
 //	    TotalPages:  10,
 //	    BaseURL:     "/api/items",
-//	    HTMXTarget:  "#items-tbody",
-//	    HTMXSwap:    "innerHTML",
+//	    HTMX: &pagination.HTMXConfig{Target: "#items-tbody", Swap: "innerHTML"},
 //	})
 templ Pagination(cfg Config) {
 	<nav
@@ -42,13 +41,13 @@ templ Pagination(cfg Config) {
 			// Previous button
 			<li>
 				if cfg.HasPrevious() {
-					if cfg.HTMXTarget != "" {
+					if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
 							class={ cfg.PrevNextClasses(true) }
 							aria-label="previous page"
 							hx-get={ cfg.PageURL(cfg.PreviousPage()) }
-							hx-target={ cfg.HTMXTarget }
+							hx-target={ cfg.HTMX.Target }
 							hx-swap={ cfg.SwapStrategy() }
 						>
 							@prevIcon()
@@ -93,13 +92,13 @@ templ Pagination(cfg Config) {
 						</li>
 					} else {
 						<li>
-							if cfg.HTMXTarget != "" {
+							if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 								<a
 									href={ templ.URL(cfg.PageURL(item.Page)) }
 									class={ cfg.PageClasses(false) }
 									aria-label={ "page " + itoa(item.Page) }
 									hx-get={ cfg.PageURL(item.Page) }
-									hx-target={ cfg.HTMXTarget }
+									hx-target={ cfg.HTMX.Target }
 									hx-swap={ cfg.SwapStrategy() }
 								>
 									{ itoa(item.Page) }
@@ -120,13 +119,13 @@ templ Pagination(cfg Config) {
 			// Next button
 			<li>
 				if cfg.HasNext() {
-					if cfg.HTMXTarget != "" {
+					if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
 							class={ cfg.PrevNextClasses(true) }
 							aria-label="next page"
 							hx-get={ cfg.PageURL(cfg.NextPage()) }
-							hx-target={ cfg.HTMXTarget }
+							hx-target={ cfg.HTMX.Target }
 							hx-swap={ cfg.SwapStrategy() }
 						>
 							Next

@@ -35,8 +35,8 @@ const (
 
 // Config holds configuration for the badge
 type Config struct {
-	// Text is the badge content
-	Text string
+	// Label is the badge content
+	Label string
 	// Variant determines the color scheme
 	Variant Variant
 	// Style determines solid or soft appearance
@@ -50,7 +50,7 @@ type Config struct {
 	// IndicatorColor overrides the default indicator color
 	IndicatorColor string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // SizeClasses returns the CSS classes for the size (text + padding)

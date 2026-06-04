@@ -308,19 +308,19 @@ func profileMainPanel(s profile.State) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = fileinput.FileInput(fileinput.Config{
-			ID:     "profile-avatar-input",
-			Accept: "image/*",
-			Class:  "hidden",
-			Attrs:  templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
+			ID:         "profile-avatar-input",
+			Accept:     "image/*",
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = fileinput.FileInput(fileinput.Config{
-			ID:     "profile-banner-input",
-			Accept: "image/*",
-			Class:  "hidden",
-			Attrs:  templ.Attributes{"x-on:change": "onFile('banner', $event)"},
+			ID:         "profile-banner-input",
+			Accept:     "image/*",
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('banner', $event)"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -388,10 +388,10 @@ func profileMainPanel(s profile.State) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:          "profile-upload-hint",
-			Text:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
-			Position:    tooltip.Top,
-			TriggerText: "Upload requirements",
+			ID:           "profile-upload-hint",
+			Label:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+			Position:     tooltip.Top,
+			TriggerLabel: "Upload requirements",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -401,14 +401,14 @@ func profileMainPanel(s profile.State) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:            "profileRemoveModal",
-			Title:         "Remove photos?",
-			Body:          "This removes your avatar and cover image from this browser. It cannot be undone.",
-			TriggerText:   "Remove photos",
-			Variant:       modal.Danger,
-			PrimaryText:   "Remove",
-			PrimaryAction: &modal.ButtonAction{OnClick: "remove('avatar'); remove('banner')"},
-			SecondaryText: "Cancel",
+			ID:             "profileRemoveModal",
+			Title:          "Remove photos?",
+			Body:           "This removes your avatar and cover image from this browser. It cannot be undone.",
+			TriggerLabel:   "Remove photos",
+			Variant:        modal.Danger,
+			PrimaryLabel:   "Remove",
+			PrimaryAction:  &modal.ButtonAction{OnClick: "remove('avatar'); remove('banner')"},
+			SecondaryLabel: "Cancel",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -482,7 +482,7 @@ func profileAppearancePanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: badge.Secondary, Text: "live"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: badge.Secondary, Label: "live"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -491,11 +491,11 @@ func profileAppearancePanel() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
-			ID:          "profile-theme",
-			Name:        "theme",
-			Label:       "Theme",
-			AlpineModel: "theme",
-			Options:     themeOptions(""),
+			ID:      "profile-theme",
+			Name:    "theme",
+			Label:   "Theme",
+			Alpine:  &selectfield.AlpineConfig{Model: "theme"},
+			Options: themeOptions(""),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -507,7 +507,7 @@ func profileAppearancePanel() templ.Component {
 		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{
 			ID:    "profile-dark",
 			Label: "Dark mode",
-			Attrs: templ.Attributes{
+			InputAttrs: templ.Attributes{
 				"x-bind:checked": "$store.darkMode.on",
 				"x-on:change":    "$store.darkMode.toggle()",
 			},

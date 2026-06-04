@@ -134,9 +134,9 @@ func defaultModal(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.TriggerText)
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.TriggerLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 30, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 30, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -328,13 +328,13 @@ func defaultModal(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.SecondaryText != "" {
-			templ_7745c5c3_Err = secondaryButton(stateVar, cfg.SecondaryText, cfg.SecondaryAction).Render(ctx, templ_7745c5c3_Buffer)
+		if cfg.SecondaryLabel != "" {
+			templ_7745c5c3_Err = secondaryButton(stateVar, cfg.SecondaryLabel, cfg.SecondaryAction).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = primaryButton(stateVar, cfg.PrimaryText, cfg.PrimaryAction).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = primaryButton(stateVar, cfg.PrimaryLabel, cfg.PrimaryAction).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -423,9 +423,9 @@ func alertModal(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var27 string
-		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.TriggerText)
+		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.TriggerLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 80, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 80, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -647,7 +647,7 @@ func alertModal(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = alertCTAButton(stateVar, cfg.PrimaryText, cfg.AlertCTAClasses(), cfg.PrimaryAction).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = alertCTAButton(stateVar, cfg.PrimaryLabel, cfg.AlertCTAClasses(), cfg.PrimaryAction).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

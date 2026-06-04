@@ -13,22 +13,22 @@ import templruntime "github.com/a-h/templ/runtime"
 //
 //	// Simple dismissible banner
 //	@banner.Banner(banner.Config{
-//	    Text: "Limited Time Offer! Check out our deals",
+//	    Description: "Limited Time Offer! Check out our deals",
 //	    Dismissible: true,
 //	})
 //
 //	// Banner with CTA button
 //	@banner.Banner(banner.Config{
-//	    Text: "Get Fit Anywhere, Anytime",
+//	    Description: "Get Fit Anywhere, Anytime",
 //	    CTA: &banner.CTAConfig{
-//	        Text: "Start free trial",
+//	        ActionLabel: "Start free trial",
 //	        OnClick: "showModal = true",
 //	    },
 //	})
 //
 //	// Fixed position banner
 //	@banner.Banner(banner.Config{
-//	    Text: "Important announcement",
+//	    Description: "Important announcement",
 //	    Position: banner.PositionFixed,
 //	    Variant: banner.Warning,
 //	})
@@ -144,9 +144,9 @@ func simpleBanner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 49, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 49, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -193,9 +193,9 @@ func simpleBanner(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CTA.Text)
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CTA.ActionLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 52, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 52, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -242,9 +242,9 @@ func simpleBanner(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CTA.Text)
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CTA.ActionLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 60, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 60, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -283,9 +283,9 @@ func simpleBanner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 65, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 65, Col: 51}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -404,9 +404,9 @@ func cookieBanner(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var24 string
-		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Text)
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 109, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 109, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {

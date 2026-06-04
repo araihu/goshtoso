@@ -117,17 +117,17 @@ func buttonDemoContent() templ.Component {
 			},
 			buttonHTMXPreview(),
 			`@button.Button(button.Config{
-    Variant: button.Primary, Type: "button", Class: "w-full sm:w-44 justify-center",
+    Variant: button.Primary, Type: "button", RootClass: "w-full sm:w-44 justify-center",
     HTMX: &button.HTMXConfig{Post: "/api/hello", Target: "#htmx-result-post", Swap: "innerHTML"},
 }) { Send POST }
 
 @button.Button(button.Config{
-    Variant: button.Info, Type: "button", Class: "w-full sm:w-44 justify-center",
+    Variant: button.Info, Type: "button", RootClass: "w-full sm:w-44 justify-center",
     HTMX: &button.HTMXConfig{Get: "/api/hello", Target: "#htmx-result-get", Swap: "innerHTML"},
 }) { Send GET }
 
 @button.Button(button.Config{
-    Variant: button.Danger, Type: "button", Class: "w-full sm:w-44 justify-center",
+    Variant: button.Danger, Type: "button", RootClass: "w-full sm:w-44 justify-center",
     HTMX: &button.HTMXConfig{Delete: "/api/hello", Confirm: "Are you sure?", Target: "#htmx-result-delete", Swap: "innerHTML"},
 }) { Delete }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -147,7 +147,7 @@ func buttonDemoContent() templ.Component {
 			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Alpine.js directives for client-side behavior."},
 			{Name: "LoadingText", Type: "string", Default: `""`, Description: "Text shown while an HTMX request is in flight."},
 			{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the button."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the button."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -483,9 +483,9 @@ func buttonHTMXPreview() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-			Class:   "w-full sm:w-44 justify-center",
+			Variant:   button.Primary,
+			Type:      "button",
+			RootClass: "w-full sm:w-44 justify-center",
 			HTMX: &button.HTMXConfig{
 				Post:   "/api/hello",
 				Target: "#htmx-result-post",
@@ -522,9 +522,9 @@ func buttonHTMXPreview() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Info,
-			Type:    "button",
-			Class:   "w-full sm:w-44 justify-center",
+			Variant:   button.Info,
+			Type:      "button",
+			RootClass: "w-full sm:w-44 justify-center",
 			HTMX: &button.HTMXConfig{
 				Get:    "/api/hello",
 				Target: "#htmx-result-get",
@@ -561,9 +561,9 @@ func buttonHTMXPreview() templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Danger,
-			Type:    "button",
-			Class:   "w-full sm:w-44 justify-center",
+			Variant:   button.Danger,
+			Type:      "button",
+			RootClass: "w-full sm:w-44 justify-center",
 			HTMX: &button.HTMXConfig{
 				Delete:  "/api/hello",
 				Confirm: "Are you sure?",

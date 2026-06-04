@@ -81,8 +81,8 @@ func stepsDemoContent() templ.Component {
 					{Name: "ShowLabels", Type: "bool", Default: "false", Description: "Shows visible labels next to each step."},
 					{Name: "AriaLabel", Type: "string", Default: "\"progress\"", Description: "Accessible label for the ordered list."},
 					{Name: "LiveRegion", Type: "bool", Default: "false", Description: "Announces swapped state changes after HTMX updates."},
-					{Name: "Class", Type: "string", Default: "\"\"", Description: "Extra classes appended to root list."},
-					{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Pass-through attributes for root hx-* and data-* hooks."},
+					{Name: "RootClass", Type: "string", Default: "\"\"", Description: "Extra classes appended to root list."},
+					{Name: "RootAttrs", Type: "templ.Attributes", Default: "nil", Description: "Pass-through attributes for root hx-* and data-* hooks."},
 				},
 			},
 			stepsDefaultPreview(),
@@ -293,7 +293,7 @@ func StepsHTMXFlow(current int) templ.Component {
 			ShowLabels: true,
 			AriaLabel:  "registration progress",
 			LiveRegion: true,
-			Attrs: templ.Attributes{
+			RootAttrs: templ.Attributes{
 				"data-current-step": fmt.Sprintf("%d", current),
 			},
 			Steps: buildHTMXDemoSteps(current),

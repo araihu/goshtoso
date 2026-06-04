@@ -112,12 +112,12 @@ func navbarDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Right Slot",
-				Description: "RightSlot takes any templ.Component (e.g. a dark-mode toggle) rendered beside the user avatar.",
+				Description: "Use Actions with ActionRight to render custom content beside the user avatar.",
 			},
 			navbarWithRightSlotPreview(),
 			`@navbar.Navbar(navbar.Config{
     Brand:     brand(),
-    RightSlot: darkModeToggle(),
+    Actions: []navbar.ActionItem{{Content: darkModeToggle(), Position: navbar.ActionRight}},
     User:      &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
     UserMenu:  menu,
 })`,
@@ -136,9 +136,9 @@ func navbarDemoContent() templ.Component {
 			{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Trailing action items (buttons/links)."},
 			{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile (Name, Email, Avatar) — renders the avatar dropdown trigger."},
 			{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown (Label, Href, Danger)."},
-			{Name: "RightSlot", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
+			{Name: "Actions", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
 			{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav>."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+			{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -274,8 +274,8 @@ func navbarWithRightSlotPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = navbar.Navbar(navbar.Config{
-			Brand:     demoBrandText(),
-			RightSlot: demoRightSlot(),
+			Brand:   demoBrandText(),
+			Actions: []navbar.ActionItem{{Content: demoRightSlot(), Position: navbar.ActionRight}},
 			User: &navbar.UserProfile{
 				Name:  "Alice Brown",
 				Email: "alice.brown@example.com",

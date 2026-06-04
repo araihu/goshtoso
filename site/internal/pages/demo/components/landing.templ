@@ -126,12 +126,12 @@ templ landingContent() {
 								Label:     c.Label,
 								Checked:   c.Key == "goshtoso",
 								Segmented: true,
-								Class:     "min-w-28 px-4",
+								RootClass:     "min-w-28 px-4",
 								Alpine: &radio.AlpineConfig{
 									BindChecked: "theme === $el.value",
 									OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme; if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) localStorage.theme = theme",
 								},
-								Attrs: templ.Attributes{"data-theme-key": c.Key},
+								InputAttrs: templ.Attributes{"data-theme-key": c.Key},
 							})
 						}
 					}
@@ -148,13 +148,13 @@ templ landingContent() {
 					@button.Button(button.Config{Variant: button.Secondary, Type: "button"}) {
 						Secondary
 					}
-					@badge.Badge(badge.Config{Text: "Active", Variant: badge.Success})
-					@badge.Badge(badge.Config{Text: "Pending", Variant: badge.Warning})
+					@badge.Badge(badge.Config{Label: "Active", Variant: badge.Success})
+					@badge.Badge(badge.Config{Label: "Pending", Variant: badge.Warning})
 					@toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true})
 				</div>
 				@table.Table(table.Config{
 					ID:           "home-table",
-					HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+					HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
 					LazyLoad:     true,
 					Columns: []table.Column{
 						{Key: "id", Label: "CustomerID", Sortable: true},

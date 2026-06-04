@@ -53,7 +53,7 @@ type Config struct {
 	Persistent bool
 
 	// Class allows extra CSS classes on the panel (not the overlay).
-	Class string
+	PanelClass string
 }
 
 // stateVar returns the Alpine state-variable name for this drawer's open bit.
@@ -107,8 +107,8 @@ func (cfg Config) PanelClasses() string {
 		base += " w-full max-w-[420px]"
 	}
 
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.PanelClass != "" {
+		base += " " + cfg.PanelClass
 	}
 	return base
 }

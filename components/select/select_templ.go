@@ -215,15 +215,15 @@ func Select(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.AlpineBindDisabled != "" {
+		if cfg.Alpine != nil && cfg.Alpine.BindDisabled != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, " x-bind:disabled=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.AlpineBindDisabled)
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.Alpine.BindDisabled)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 52, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 52, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 			if templ_7745c5c3_Err != nil {
@@ -533,7 +533,7 @@ func selectData(cfg Config) string {
 	placeholder := cfg.GetPlaceholder()
 
 	alpineModelSync := ""
-	if cfg.AlpineModel != "" {
+	if cfg.Alpine != nil && cfg.Alpine.Model != "" {
 		alpineModelSync = fmt.Sprintf(`
 			init() {
 				this.$watch('selectedOption', (opt) => { if (opt) { %[1]s = opt.value; } });
@@ -549,7 +549,7 @@ func selectData(cfg Config) string {
 					const opt = this.allOptions.find(o => o.value === initial);
 					if (opt) this.selectedValues = [opt.value];
 				}
-			},`, cfg.AlpineModel)
+			},`, cfg.Alpine.Model)
 	}
 
 	return fmt.Sprintf(`{

@@ -181,7 +181,7 @@ func Textarea(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, cfg.Attrs)
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, cfg.InputAttrs)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -270,7 +270,7 @@ func TextareaWithActions(cfg Config) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var15 = []any{fmt.Sprintf("flex w-full max-w-md flex-col overflow-hidden rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark%s", condClass(cfg.Class))}
+		var templ_7745c5c3_Var15 = []any{fmt.Sprintf("flex w-full max-w-md flex-col overflow-hidden rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark%s", condClass(cfg.RootClass))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -372,7 +372,7 @@ func TextareaWithActions(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, cfg.Attrs)
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, cfg.InputAttrs)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

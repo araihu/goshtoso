@@ -47,7 +47,7 @@ func Tabs(cfg Config) templ.Component {
 		if containerID == "" {
 			containerID = "tabs"
 		}
-		var templ_7745c5c3_Var2 = []any{"w-full " + cfg.Class}
+		var templ_7745c5c3_Var2 = []any{"w-full " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -52,7 +52,7 @@ templ Form(cfg Config) {
 		if cfg.HTMX != nil && cfg.HTMX.Encoding != "" {
 			hx-encoding={ cfg.HTMX.Encoding }
 		}
-		class={ "relative " + cfg.Class }
+		class={ "relative " + cfg.RootClass }
 		if cfg.shouldPreventEnter() {
 			@keydown.enter="if ($event.target.type !== 'submit' && $event.target.tagName !== 'TEXTAREA') $event.preventDefault()"
 		}
@@ -70,7 +70,7 @@ templ Section(cfg SectionConfig) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.Class }
+		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.RootClass }
 		if cfg.OOB {
 			hx-swap-oob="true"
 		}
@@ -92,7 +92,7 @@ templ CollapsibleSection(cfg CollapsibleSectionConfig) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 " + cfg.Class }
+		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 " + cfg.RootClass }
 		if cfg.OOB {
 			hx-swap-oob="true"
 		}
@@ -164,7 +164,7 @@ templ FlipSection(cfg FlipSectionConfig, readView templ.Component) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.Class }
+		class={ "rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.RootClass }
 		if cfg.OOB {
 			hx-swap-oob="true"
 		}
@@ -221,7 +221,7 @@ templ SubSection(cfg SubSectionConfig) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		class={ "rounded-radius bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark p-5 " + cfg.Class }
+		class={ "rounded-radius bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark p-5 " + cfg.RootClass }
 	>
 		if cfg.Title != "" {
 			<div class="mb-4 pb-3 border-b border-outline dark:border-outline-dark">
@@ -242,7 +242,7 @@ templ FieldGroup(cfg FieldGroupConfig) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		class={ "flex flex-col gap-2 " + cfg.Class }
+		class={ "flex flex-col gap-2 " + cfg.RootClass }
 		if cfg.OOB {
 			hx-swap-oob="true"
 		}

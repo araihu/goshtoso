@@ -30,7 +30,7 @@ type Config struct {
 	// Size of the spinner
 	Size Size
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // SizeClasses returns the CSS size class for the spinner

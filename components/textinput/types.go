@@ -63,9 +63,9 @@ type Config struct {
 	// Readonly makes the input non-editable but still submittable
 	Readonly bool
 	// Class allows additional CSS classes on the container
-	Class string
+	RootClass string
 	// Attrs allows arbitrary HTML attributes on the <input> element (e.g., hx-post, hx-indicator)
-	Attrs templ.Attributes
+	InputAttrs templ.Attributes
 }
 
 // GetType returns the input type, defaulting to "text"
@@ -120,8 +120,8 @@ func (cfg Config) HelperTextClasses() string {
 // Width is determined by the parent layout — no max-width is imposed.
 func (cfg Config) ContainerClasses() string {
 	base := "flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
-	if cfg.Class != "" {
-		return base + " " + cfg.Class
+	if cfg.RootClass != "" {
+		return base + " " + cfg.RootClass
 	}
 	return base
 }

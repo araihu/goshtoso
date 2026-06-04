@@ -171,7 +171,7 @@ func textareaDemoContent() templ.Component {
 			{Name: "ReadOnly", Type: "bool", Default: "false", Description: "Non-editable but submittable."},
 			{Name: "State", Type: "State", Default: "StateDefault", Description: `Validation state: "" (default), "error", "success".`},
 			{Name: "HelperText", Type: "string", Default: `""`, Description: "Text below the field, recolored by State."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

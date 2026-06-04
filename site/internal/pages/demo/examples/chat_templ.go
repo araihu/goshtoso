@@ -73,7 +73,7 @@ func OnlineBadge(count int, oob bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = badge.Badge(badge.Config{
-			Text:    fmt.Sprintf("%d online", count),
+			Label:   fmt.Sprintf("%d online", count),
 			Variant: badge.Success,
 			Style:   badge.StyleSoft,
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -439,7 +439,7 @@ func ChatApp(me chat.Identity) templ.Component {
 			// the NATIVE submit). Shift+Enter falls through to insert a
 			// newline. Handler string carries no quotes or && so templ's
 			// attribute escaping cannot corrupt it.
-			Attrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
+			InputAttrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

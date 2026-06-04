@@ -1459,7 +1459,7 @@ func themeTypographySection() templ.Component {
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
 			ID:          "titleFont",
-			AlpineModel: "titleFont",
+			Alpine:      &selectfield.AlpineConfig{Model: "titleFont"},
 			Placeholder: "Default",
 			Options:     fontSelectOptions(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -1472,7 +1472,7 @@ func themeTypographySection() templ.Component {
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
 			ID:          "bodyFont",
-			AlpineModel: "bodyFont",
+			Alpine:      &selectfield.AlpineConfig{Model: "bodyFont"},
 			Placeholder: "Default",
 			Options:     fontSelectOptions(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -2653,10 +2653,9 @@ func themeCSSSection() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
-			ID:                 "cssFilter",
-			AlpineModel:        "cssFilter",
-			AlpineBindDisabled: "cssMode === 'multiple' && cssFilter === 'all'",
-			Options:            cssFilterOptions(),
+			ID:      "cssFilter",
+			Alpine:  &selectfield.AlpineConfig{Model: "cssFilter", BindDisabled: "cssMode === 'multiple' && cssFilter === 'all'"},
+			Options: cssFilterOptions(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -2673,7 +2672,7 @@ func themeCSSSection() templ.Component {
 			var templ_7745c5c3_Var59 string
 			templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("cssMode === 'single' && ((cssFilter === 'current' && (theme || 'goshtoso') === '%s') || cssFilter === '%s')", k, k))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1767, Col: 146}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1766, Col: 146}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var59)
 			if templ_7745c5c3_Err != nil {
@@ -2724,7 +2723,7 @@ func themeCSSSection() templ.Component {
 			var templ_7745c5c3_Var60 string
 			templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("cssMode === 'multiple' && ((cssFilter === 'current' && (theme || 'goshtoso') === '%s') || cssFilter === '%s')", k, k))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1788, Col: 148}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1787, Col: 148}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var60)
 			if templ_7745c5c3_Err != nil {

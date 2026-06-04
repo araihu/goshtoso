@@ -135,9 +135,9 @@ func formDemoContent() templ.Component {
 @modal.Modal(modal.Config{
     ID:            "externalSubmitConfirm",
     Title:         "Confirm upgrade",
-    TriggerText:   "Upgrade (External Button)",
-    PrimaryText:   "Confirm upgrade",
-    SecondaryText: "Cancel",
+    TriggerLabel:   "Upgrade (External Button)",
+    PrimaryLabel:   "Confirm upgrade",
+    SecondaryLabel: "Cancel",
     PrimaryAction: &modal.ButtonAction{
         OnClick: "document.getElementById('external-form').requestSubmit()",
     },
@@ -158,7 +158,7 @@ func formDemoContent() templ.Component {
 			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX submit config (Post/Put/Target/Swap, inline validation)."},
 			{Name: "PreventEnterSubmit", Type: "*bool", Default: "nil", Description: "When true, Enter in a field does not submit the form."},
 			{Name: "Footer", Type: "*FooterConfig", Default: "nil", Description: "Submit/cancel footer; omit for the external-submit pattern."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the <form>."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the <form>."},
 			{Name: "FieldGroup", Type: "FieldGroupConfig", Default: "—", Description: "Per-field wrapper: Label, Required, Errors, Hints + one built-in (Input/Combobox/Textarea/Toggle/...) or children."},
 			{Name: "Section / SubSection", Type: "SectionConfig", Default: "—", Description: "Group fields under a titled section; SubSection nests within a Section."},
 			{Name: "CollapsibleSection", Type: "CollapsibleSectionConfig", Default: "—", Description: "A Section that collapses, with a Summary shown when collapsed."},
@@ -273,9 +273,9 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
 @modal.Modal(modal.Config{
     ID:            "modalSubmitConfirm",
     Title:         "Confirm submit",
-    TriggerText:   "Submit",
-    PrimaryText:   "Confirm submit",
-    SecondaryText: "Cancel",
+    TriggerLabel:   "Submit",
+    PrimaryLabel:   "Confirm submit",
+    SecondaryLabel: "Cancel",
     PrimaryAction: &modal.ButtonAction{
         OnClick: "document.getElementById('modal-form').requestSubmit()",
     },
@@ -903,12 +903,12 @@ func formExternalPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = modal.Modal(modal.Config{
-			ID:            "externalSubmitConfirm",
-			Title:         "Confirm upgrade",
-			Body:          "Submit the upgrade request with the selected target version.",
-			TriggerText:   "Upgrade (External Button)",
-			PrimaryText:   "Confirm upgrade",
-			SecondaryText: "Cancel",
+			ID:             "externalSubmitConfirm",
+			Title:          "Confirm upgrade",
+			Body:           "Submit the upgrade request with the selected target version.",
+			TriggerLabel:   "Upgrade (External Button)",
+			PrimaryLabel:   "Confirm upgrade",
+			SecondaryLabel: "Cancel",
 			PrimaryAction: &modal.ButtonAction{
 				OnClick: "document.getElementById('external-form').requestSubmit()",
 			},

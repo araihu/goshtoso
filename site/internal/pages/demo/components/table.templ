@@ -102,12 +102,12 @@ templ tableDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Sortable Table (HTMX)",
-				Description: "Mark columns Sortable: true and set HTMXEndpoint. Clicking a header cycles neutral → asc → desc and fetches sorted rows from the server.",
+				Description: "Mark columns Sortable: true and set HTMX.Endpoint. Clicking a header cycles neutral → asc → desc and fetches sorted rows from the server.",
 			},
 			tableSortablePreview(),
 			`@table.Table(table.Config{
     ID:           "sortable-table",
-    HTMXEndpoint: "/api/components/table/rows",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
     SortBy:       "id",
     SortDir:      table.SortAsc,
     Columns: []table.Column{
@@ -128,7 +128,7 @@ templ tableDemoContent() {
 			tableLazyPreview(),
 			`@table.Table(table.Config{
     ID:           "lazy-table",
-    HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
     LazyLoad:     true,
     LazyTrigger:  "click from:#load-lazy-table",
     Columns:      columns,
@@ -143,7 +143,7 @@ templ tableDemoContent() {
 			tablePaginatedPreview(),
 			`@table.Table(table.Config{
     ID:           "paginated-table",
-    HTMXEndpoint: "/api/components/table/rows",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
     Columns:      columns,
     Rows:         pageRows(1),
     Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
@@ -158,7 +158,7 @@ templ tableDemoContent() {
 			tableFilteredPreview(),
 			`@table.Table(table.Config{
     ID:           "filtered-table",
-    HTMXEndpoint: "/api/components/table/rows",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
     Columns:      sortableColumns(),
     Rows:         pageRows(1),
     Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
@@ -196,7 +196,7 @@ templ tableDemoContent() {
 			tableInfinitePreview(),
 			`@table.Table(table.Config{
     ID:           "infinite-table",
-    HTMXEndpoint: "/api/components/table/rows?variant=infinite",
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=infinite"},
     Columns:      columns,
     Rows:         initialRows,
     Pagination: &table.PaginationConfig{
@@ -220,9 +220,8 @@ templ tableDemoContent() {
 		{Name: "Caption", Type: "string", Default: `""`, Description: "Optional accessible table caption."},
 		{Name: "SortBy", Type: "string", Default: `""`, Description: "Initial sort column key."},
 		{Name: "SortDir", Type: "SortDir", Default: "SortNone", Description: `Initial sort direction: "asc", "desc", or "" (none).`},
-		{Name: "HTMXEndpoint", Type: "string", Default: `""`, Description: "Server URL that returns row HTML for sort/page/filter/lazy/infinite."},
-		{Name: "HTMXTarget", Type: "string", Default: `""`, Description: "Override the default tbody swap target."},
-		{Name: "LazyLoad", Type: "bool", Default: "false", Description: "Render a loading tbody that fetches row HTML from HTMXEndpoint."},
+		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Server-side table updates (Endpoint, Target)."},
+		{Name: "LazyLoad", Type: "bool", Default: "false", Description: "Render a loading tbody that fetches row HTML from HTMX.Endpoint."},
 		{Name: "LazyTrigger", Type: "string", Default: `"load"`, Description: `HTMX trigger for lazy tbody loading, such as "load" or "click from:#load-lazy-table".`},
 		{Name: "Pagination", Type: "*PaginationConfig", Default: "nil", Description: "Pagination/infinite-scroll config (CurrentPage, TotalPages, PerPage, Mode, ...)."},
 		{Name: "Filters", Type: "*FilterConfig", Default: "nil", Description: "Filter bar config (Variant, Collapsible, Filters[]: search/select/toggle)."},
@@ -288,7 +287,7 @@ templ tableSortablePreview() {
 	<div id="table-sortable" class="w-full">
 		@table.Table(table.Config{
 			ID:           "sortable-table",
-			HTMXEndpoint: "/api/components/table/rows",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			SortBy:       "id",
 			SortDir:      table.SortAsc,
 			Columns:      sortableColumns(),
@@ -314,7 +313,7 @@ templ tableLazyPreview() {
 		</div>
 		@table.Table(table.Config{
 			ID:           "lazy-table",
-			HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
 			LazyLoad:     true,
 			LazyTrigger:  "click from:#load-lazy-table",
 			Columns:      defaultColumns(),
@@ -327,7 +326,7 @@ templ tablePaginatedPreview() {
 	<div id="table-paginated" class="w-full">
 		@table.Table(table.Config{
 			ID:           "paginated-table",
-			HTMXEndpoint: "/api/components/table/rows",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			Columns:      defaultColumns(),
 			Rows:         paginatedRows(1),
 			Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
@@ -340,7 +339,7 @@ templ tableFilteredPreview() {
 	<div id="table-filtered" class="w-full">
 		@table.Table(table.Config{
 			ID:           "filtered-table",
-			HTMXEndpoint: "/api/components/table/rows",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID", Sortable: true},
 				{Key: "name", Label: "Name", Sortable: true},
@@ -380,7 +379,7 @@ templ tableInlineFilteredPreview() {
 	<div id="table-inline-filtered" class="w-full">
 		@table.Table(table.Config{
 			ID:           "inline-filtered-table",
-			HTMXEndpoint: "/api/components/table/rows",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID"},
 				{Key: "name", Label: "Name"},
@@ -417,7 +416,7 @@ templ tableInfinitePreview() {
 	<div id="table-infinite" class="w-full">
 		@table.Table(table.Config{
 			ID:           "infinite-table",
-			HTMXEndpoint: "/api/components/table/rows?variant=infinite",
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=infinite"},
 			Columns:      defaultColumns(),
 			Rows:         infiniteScrollInitialRows(),
 			Pagination: &table.PaginationConfig{

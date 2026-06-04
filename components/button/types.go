@@ -79,7 +79,7 @@ type Config struct {
 	// ID is the HTML id attribute for the button element.
 	ID string
 	// Class is additional CSS classes appended to the button.
-	Class string
+	RootClass string
 	// HTMX is an optional HTMX config for server-side interaction.
 	HTMX *HTMXConfig
 	// Alpine is an optional Alpine.js config for client-side behavior.
@@ -148,5 +148,5 @@ func buttonClasses(cfg Config) string {
 	// Outline color based on variant
 	outline := "focus-visible:outline-" + string(cfg.Variant)
 
-	return base + " " + variant + " " + size + " " + outline + " " + cfg.Class
+	return base + " " + variant + " " + size + " " + outline + " " + cfg.RootClass
 }

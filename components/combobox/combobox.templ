@@ -192,7 +192,7 @@ templ Combobox(cfg Config, state State) {
 		data-combobox-placeholder={ cfg.Placeholder }
 		hx-disinherit="hx-replace-url"
 		id={ cfg.ID }
-		class={ "relative " + cfg.Class }
+		class={ "relative " + cfg.RootClass }
 		x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"
 		x-on:keydown.esc.window="isOpen=false; openedWithKeyboard=false; focusIndex=-1"
 		x-on:htmx:after-swap="focusIndex=-1"

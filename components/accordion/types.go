@@ -28,7 +28,7 @@ type AccordionConfig struct {
 	// ID is the container ID for accessibility
 	ID string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // AccordionItem represents a single accordion section

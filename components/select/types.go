@@ -39,6 +39,12 @@ func ToOptions[T any](items []T, valueFn func(T) string, labelFn func(T) string,
 	return opts
 }
 
+// AlpineConfig wires client-side Alpine bindings.
+type AlpineConfig struct {
+	Model        string
+	BindDisabled string
+}
+
 // Config holds configuration for the select component
 type Config struct {
 	// ID is a unique identifier for the select element
@@ -60,15 +66,13 @@ type Config struct {
 	// Autocomplete sets the autocomplete attribute
 	Autocomplete string
 	// Class allows additional CSS classes on the wrapper
-	Class string
-	// AlpineModel sets x-model on the select for Alpine.js binding
-	AlpineModel string
-	// AlpineBindDisabled sets x-bind:disabled on the select
-	AlpineBindDisabled string
+	RootClass string
+	// Alpine wires client-side state.
+	Alpine *AlpineConfig
 	// Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits
 	Readonly bool
 	// Attrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator)
-	Attrs templ.Attributes
+	InputAttrs templ.Attributes
 	// Shell enables "shell mode": the Select renders its trigger + dropdown
 	// chrome but hosts arbitrary templ children as the dropdown body instead
 	// of an option list. Used to wrap custom pickers (e.g. a color palette).
@@ -88,8 +92,8 @@ type Config struct {
 // Width is determined by the parent layout — no max-width is imposed.
 func (cfg Config) ContainerClasses() string {
 	base := "relative flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 	return base
 }

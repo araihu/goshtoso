@@ -19,7 +19,7 @@ func renderPositionBanner(t *testing.T, cfg Config) string {
 func TestCookieBannerPositionClasses(t *testing.T) {
 	fixedHTML := renderPositionBanner(t, Config{
 		CookieBanner: true,
-		Text:         "Cookies",
+		Description:  "Cookies",
 	})
 	if !strings.Contains(fixedHTML, "fixed bottom-4") {
 		t.Fatalf("default cookie banner should stay viewport fixed; got %q", fixedHTML)
@@ -28,7 +28,7 @@ func TestCookieBannerPositionClasses(t *testing.T) {
 	relativeHTML := renderPositionBanner(t, Config{
 		CookieBanner: true,
 		Position:     PositionRelative,
-		Text:         "Cookies",
+		Description:  "Cookies",
 	})
 	if strings.Contains(relativeHTML, "fixed bottom-4") {
 		t.Fatalf("relative cookie banner should not stay viewport fixed; got %q", relativeHTML)

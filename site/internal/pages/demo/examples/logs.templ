@@ -38,7 +38,7 @@ templ LogRow(line logs.LogLine) {
 				Variant: levelBadge(line.Level),
 				Style:   badge.StyleSoft,
 				Size:    badge.SizeSM,
-				Text:    line.Level.String(),
+				Label:    line.Level.String(),
 			})
 		</span>
 		<span class="w-20 shrink-0 truncate text-on-surface-muted dark:text-on-surface-dark-muted">{ line.Source }</span>
@@ -148,7 +148,7 @@ templ LogsApp() {
 						@selectfield.Select(selectfield.Config{
 							ID:          "log-filter",
 							Label:       "Minimum level",
-							AlpineModel: "minLevel",
+							Alpine: &selectfield.AlpineConfig{Model: "minLevel"},
 							Options: []selectfield.Option{
 								{Value: "all", Label: "All", Selected: true},
 								{Value: "warn", Label: "Warn+"},
@@ -168,8 +168,8 @@ templ LogsApp() {
 						</span>
 						@tooltip.Tooltip(tooltip.Config{
 							ID:             "log-pause-tip",
-							Text:           "Pause closes the stream; resume reconnects",
-							TriggerContent: pauseButton(),
+							Label:           "Pause closes the stream; resume reconnects",
+							Trigger: pauseButton(),
 						})
 						@button.Button(button.Config{
 							Variant: button.Secondary,

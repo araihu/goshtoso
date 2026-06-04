@@ -42,8 +42,8 @@ type Field struct {
 	// it includes the parent label (e.g. "Crds › Enabled") so the rendered
 	// context is preserved without a wrapping section.
 	Label string
-	// Description is an optional helper text.
-	Description string
+	// HelperText is an optional helper text.
+	HelperText string
 	// Kind determines rendering.
 	Kind Kind
 	// Required marks the field with an asterisk.
@@ -166,7 +166,7 @@ func buildSchemaField(path, name string, node map[string]any, defaults, values m
 		f.Label = t
 	}
 	if d, ok := getString(node, "description"); ok {
-		f.Description = d
+		f.HelperText = d
 	}
 
 	if enumRaw, ok := node["enum"].([]any); ok && len(enumRaw) > 0 {

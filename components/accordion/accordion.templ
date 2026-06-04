@@ -19,7 +19,7 @@ templ Accordion(cfg AccordionConfig) {
 	
 	<div
 		id={ containerID }
-		class={ cfg.ContainerClasses() + " " + cfg.Class }
+		class={ cfg.ContainerClasses() + " " + cfg.RootClass }
 		x-data={ alpineData }
 	>
 		for i, item := range cfg.Items {

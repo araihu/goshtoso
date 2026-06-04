@@ -138,7 +138,7 @@ func toggleDemoContent() templ.Component {
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
 			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Style", Type: "Style", Default: "StyleDefault", Description: `Layout: "default" (inline) or "container" (bordered).`},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the toggle root."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the toggle root."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

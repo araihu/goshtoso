@@ -23,6 +23,12 @@ type PageItem struct {
 }
 
 // Config holds configuration for the pagination component
+type HTMXConfig struct {
+	Target string
+	Swap   string
+}
+
+// Config holds configuration for the pagination component
 type Config struct {
 	// ID is the pagination element ID
 	ID string
@@ -35,13 +41,10 @@ type Config struct {
 	// BaseURL is the base URL for page links (appends ?page=N)
 	BaseURL string
 	// Class allows additional CSS classes on the nav element
-	Class string
+	NavClass string
 
-	// --- HTMX Integration ---
-	// HTMXTarget is the HTMX swap target selector
-	HTMXTarget string
-	// HTMXSwap is the HTMX swap strategy (default: innerHTML)
-	HTMXSwap string
+	// HTMX configures in-place HTMX pagination.
+	HTMX *HTMXConfig
 }
 
 // HasPrevious returns true if there is a previous page
@@ -87,8 +90,8 @@ func (cfg Config) PageURL(page int) string {
 
 // SwapStrategy returns the HTMX swap strategy, defaulting to innerHTML
 func (cfg Config) SwapStrategy() string {
-	if cfg.HTMXSwap != "" {
-		return cfg.HTMXSwap
+	if cfg.HTMX != nil && cfg.HTMX.Swap != "" {
+		return cfg.HTMX.Swap
 	}
 	return "innerHTML"
 }
@@ -96,8 +99,8 @@ func (cfg Config) SwapStrategy() string {
 // NavClasses returns CSS classes for the nav element
 func (cfg Config) NavClasses() string {
 	base := "flex items-center"
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.NavClass != "" {
+		base += " " + cfg.NavClass
 	}
 	return base
 }

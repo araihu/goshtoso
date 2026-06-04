@@ -42,11 +42,11 @@ type Config struct {
 	// Requires Name; when set, the always-off hidden input is omitted.
 	Value string
 	// Class allows additional CSS classes on the label
-	Class string
+	RootClass string
 	// Attrs are extra attributes applied to the <input> element
 	// (e.g. x-on:change, x-bind:checked for Alpine binding).
 	// Note: "checked" and "disabled" are already set from Config — use x-bind:checked / x-bind:disabled in Attrs for dynamic control rather than passing raw checked/disabled keys.
-	Attrs templ.Attributes
+	InputAttrs templ.Attributes
 }
 
 // ToggleClasses returns the CSS classes for the toggle track div
@@ -91,8 +91,8 @@ func (cfg Config) LabelClasses() string {
 		base = "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-1.5 dark:border-outline-dark dark:bg-surface-dark-alt"
 	}
 
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 
 	return base

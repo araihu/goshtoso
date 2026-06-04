@@ -181,7 +181,7 @@ templ lazyLoadingContent(targetID string) {
 			{Name: "AllowMultiple", Type: "bool", Default: "false", Description: "Allow multiple sections open at once. When false, opening one closes the others."},
 			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Visual style: "default", "no-background", or "split".`},
 			{Name: "ID", Type: "string", Default: `"accordion"`, Description: "Container element ID used for accessibility wiring."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

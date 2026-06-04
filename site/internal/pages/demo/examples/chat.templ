@@ -37,7 +37,7 @@ templ OnlineBadge(count int, oob bool) {
 		}
 	>
 		@badge.Badge(badge.Config{
-			Text:    fmt.Sprintf("%d online", count),
+			Label:    fmt.Sprintf("%d online", count),
 			Variant: badge.Success,
 			Style:   badge.StyleSoft,
 		})
@@ -190,7 +190,7 @@ templ ChatApp(me chat.Identity) {
 							// the NATIVE submit). Shift+Enter falls through to insert a
 							// newline. Handler string carries no quotes or && so templ's
 							// attribute escaping cannot corrupt it.
-							Attrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
+							InputAttrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
 						})
 					</div>
 					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {

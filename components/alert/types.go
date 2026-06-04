@@ -12,16 +12,16 @@ const (
 
 // LinkConfig holds configuration for an alert link
 type LinkConfig struct {
-	// Text is the link label
-	Text string
+	// Label is the link label
+	Label string
 	// Href is the link URL
 	Href string
 }
 
 // ActionConfig holds configuration for alert action buttons
 type ActionConfig struct {
-	// PrimaryText is the primary action button label
-	PrimaryText string
+	// PrimaryLabel is the primary action button label
+	PrimaryLabel string
 	// PrimaryOnClick is the Alpine.js action for the primary button
 	PrimaryOnClick string
 	// PrimaryHxGet triggers an HTMX GET request on the primary button
@@ -53,7 +53,7 @@ type Config struct {
 	// ListItems adds a bullet list below the description
 	ListItems []string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // ContainerClasses returns the outer container CSS classes
@@ -73,8 +73,8 @@ func (cfg Config) ContainerClasses() string {
 		base += " border-info"
 	}
 
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 
 	return base

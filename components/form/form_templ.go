@@ -51,7 +51,7 @@ func Form(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{"relative " + cfg.Class}
+		var templ_7745c5c3_Var2 = []any{"relative " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -311,7 +311,7 @@ func Section(cfg SectionConfig) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var15 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.Class}
+		var templ_7745c5c3_Var15 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -441,7 +441,7 @@ func CollapsibleSection(cfg CollapsibleSectionConfig) templ.Component {
 			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var22 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 " + cfg.Class}
+		var templ_7745c5c3_Var22 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt mb-6 " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var22...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -649,7 +649,7 @@ func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Componen
 			templ_7745c5c3_Var32 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var33 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.Class}
+		var templ_7745c5c3_Var33 = []any{"rounded-radius bg-surface-alt dark:bg-surface-dark-alt p-6 mb-6 " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var33...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -820,7 +820,7 @@ func SubSection(cfg SubSectionConfig) templ.Component {
 			templ_7745c5c3_Var42 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var43 = []any{"rounded-radius bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark p-5 " + cfg.Class}
+		var templ_7745c5c3_Var43 = []any{"rounded-radius bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark p-5 " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var43...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -942,7 +942,7 @@ func FieldGroup(cfg FieldGroupConfig) templ.Component {
 			templ_7745c5c3_Var49 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var50 = []any{"flex flex-col gap-2 " + cfg.Class}
+		var templ_7745c5c3_Var50 = []any{"flex flex-col gap-2 " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var50...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

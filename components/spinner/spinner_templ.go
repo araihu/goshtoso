@@ -46,8 +46,8 @@ func Spinner(cfg Config) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		classes := cfg.SizeClasses() + " " + cfg.FillClasses() + " motion-safe:animate-spin"
-		if cfg.Class != "" {
-			classes = classes + " " + cfg.Class
+		if cfg.RootClass != "" {
+			classes = classes + " " + cfg.RootClass
 		}
 		var templ_7745c5c3_Var2 = []any{classes}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)

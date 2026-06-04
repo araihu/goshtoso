@@ -35,7 +35,7 @@ type Config struct {
 	// Separator controls the separator style (default: Chevron)
 	Separator SeparatorStyle
 	// Class allows additional CSS classes on the outer <nav>
-	Class string
+	NavClass string
 	// NavAttrs are extra HTML attributes on the <nav> element
 	NavAttrs templ.Attributes
 }

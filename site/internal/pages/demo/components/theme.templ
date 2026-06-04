@@ -1211,7 +1211,7 @@ templ themeTypographySection() {
 				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Title Font Family</span>
 				@selectfield.Select(selectfield.Config{
 					ID:          "titleFont",
-					AlpineModel: "titleFont",
+					Alpine: &selectfield.AlpineConfig{Model: "titleFont"},
 					Placeholder: "Default",
 					Options:     fontSelectOptions(),
 				})
@@ -1220,7 +1220,7 @@ templ themeTypographySection() {
 				<span class="block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1.5">Body Font Family</span>
 				@selectfield.Select(selectfield.Config{
 					ID:          "bodyFont",
-					AlpineModel: "bodyFont",
+					Alpine: &selectfield.AlpineConfig{Model: "bodyFont"},
 					Placeholder: "Default",
 					Options:     fontSelectOptions(),
 				})
@@ -1743,8 +1743,7 @@ templ themeCSSSection() {
 			<div class="w-48">
 				@selectfield.Select(selectfield.Config{
 					ID:                 "cssFilter",
-					AlpineModel:        "cssFilter",
-					AlpineBindDisabled: "cssMode === 'multiple' && cssFilter === 'all'",
+					Alpine: &selectfield.AlpineConfig{Model: "cssFilter", BindDisabled: "cssMode === 'multiple' && cssFilter === 'all'"},
 					Options:            cssFilterOptions(),
 				})
 			</div>

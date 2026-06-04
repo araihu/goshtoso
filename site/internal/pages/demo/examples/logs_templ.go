@@ -96,7 +96,7 @@ func LogRow(line logs.LogLine) templ.Component {
 			Variant: levelBadge(line.Level),
 			Style:   badge.StyleSoft,
 			Size:    badge.SizeSM,
-			Text:    line.Level.String(),
+			Label:   line.Level.String(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -294,9 +294,9 @@ func LogsApp() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
-			ID:          "log-filter",
-			Label:       "Minimum level",
-			AlpineModel: "minLevel",
+			ID:     "log-filter",
+			Label:  "Minimum level",
+			Alpine: &selectfield.AlpineConfig{Model: "minLevel"},
 			Options: []selectfield.Option{
 				{Value: "all", Label: "All", Selected: true},
 				{Value: "warn", Label: "Warn+"},
@@ -327,9 +327,9 @@ func LogsApp() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:             "log-pause-tip",
-			Text:           "Pause closes the stream; resume reconnects",
-			TriggerContent: pauseButton(),
+			ID:      "log-pause-tip",
+			Label:   "Pause closes the stream; resume reconnects",
+			Trigger: pauseButton(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

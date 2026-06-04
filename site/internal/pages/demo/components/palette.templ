@@ -26,7 +26,7 @@ templ paletteDemoContent() {
 				`<div x-data="{ picked: '' }">
     @palette.Palette(palette.Config{
         ID:          "demo-palette",
-        AlpineModel: "picked",
+        Alpine: &palette.AlpineConfig{Model: "picked"},
         ShowHex:     true,
     })
     <p>Selected: <span x-text="picked || '—'"></span></p>
@@ -48,7 +48,7 @@ templ paletteDemoContent() {
     }) {
         @palette.Palette(palette.Config{
             ID:          "demo-shell-palette",
-            AlpineModel: "shellPicked",
+            Alpine: &palette.AlpineConfig{Model: "shellPicked"},
             ShowHex:     true,
         })
     }
@@ -57,7 +57,7 @@ templ paletteDemoContent() {
 		</div>
 		@demo.APIReference([]demo.PropDoc{
 			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the palette root (swatch buttons + Alpine scope)."},
-			{Name: "AlpineModel", Type: "string", Default: `""`, Description: "x-model expression that receives the picked color class (e.g. \"blue-700\")."},
+			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side Alpine bindings (Model)."},
 			{Name: "Hues", Type: "[]string", Default: "all", Description: "Restrict to specific Tailwind hues (default: the full set)."},
 			{Name: "Shades", Type: "[]string", Default: "all", Description: "Restrict to specific shades (e.g. \"500\", \"700\")."},
 			{Name: "HideNeutral", Type: "bool", Default: "false", Description: "Hide the neutral (gray) row."},
@@ -74,7 +74,7 @@ templ paletteStandalonePreview() {
 		<div class="rounded-radius border border-outline dark:border-outline-dark">
 			@palette.Palette(palette.Config{
 				ID:          "demo-palette",
-				AlpineModel: "picked",
+				Alpine: &palette.AlpineConfig{Model: "picked"},
 				ShowHex:     true,
 			})
 		</div>
@@ -93,7 +93,7 @@ templ paletteShellPreview() {
 		}) {
 			@palette.Palette(palette.Config{
 				ID:          "demo-shell-palette",
-				AlpineModel: "shellPicked",
+				Alpine: &palette.AlpineConfig{Model: "shellPicked"},
 				ShowHex:     true,
 			})
 		}

@@ -22,7 +22,7 @@ type Config struct {
 	// Method is the HTTP method ("post" default, "get", "dialog")
 	Method string
 	// Class allows additional CSS classes on the form element
-	Class string
+	RootClass string
 	// HTMX enables HTMX-based submission (alternative to native Action)
 	HTMX *HTMXConfig
 	// PreventEnterSubmit prevents Enter key from submitting the form.
@@ -100,7 +100,7 @@ type SectionConfig struct {
 	// Title is the section heading
 	Title string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 	// OOB enables hx-swap-oob="true" for HTMX out-of-band updates
 	OOB bool
 	// Columns controls the grid layout: "1" for single column, "2" (default) for responsive 2-column
@@ -171,7 +171,7 @@ type SubSectionConfig struct {
 	// Title is the subsection heading
 	Title string
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 	// Columns controls the grid layout: "1" for single column, "2" (default)
 	Columns string
 }
@@ -199,7 +199,7 @@ type FieldGroupConfig struct {
 	// Hints are helper text messages displayed below errors
 	Hints []string
 	// Class allows additional CSS classes on the wrapper
-	Class string
+	RootClass string
 	// Validation enables HTMX-based field validation
 	Validation *ValidationConfig
 

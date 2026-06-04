@@ -195,7 +195,7 @@ func textInputDemoContent() templ.Component {
     ID: "cluster", Name: "cluster_id", Label: "Cluster ID",
     Placeholder: "tabc123",
     Pattern:     "t[a-z0-9]{6}",
-    Attrs: templ.Attributes{
+    InputAttrs: templ.Attributes{
         "x-on:input": "touched = true; valid = $event.target.checkValidity()",
         "x-on:blur":  "touched = true; valid = $event.target.checkValidity()",
         "x-bind:class": "touched ? (valid ? 'border-success' : 'border-danger') : ''",
@@ -241,8 +241,8 @@ func textInputDemoContent() templ.Component {
 			{Name: "Mask", Type: "string", Default: `""`, Description: `Alpine.js x-mask pattern (e.g. "(999) 999-9999").`},
 			{Name: "Pattern", Type: "string", Default: `""`, Description: "HTML pattern attribute for regex validation."},
 			{Name: "MaxLength", Type: "int", Default: "0", Description: "Character limit (0 = no limit)."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <input> (e.g. hx-post, hx-indicator)."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <input> (e.g. hx-post, hx-indicator)."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -601,7 +601,7 @@ func textInputPatternPreview() templ.Component {
 			Label:       "Cluster ID",
 			Placeholder: "tabc123",
 			Pattern:     "t[a-z0-9]{6}",
-			Attrs: templ.Attributes{
+			InputAttrs: templ.Attributes{
 				"x-on:input":          "touched = true; valid = $event.target.checkValidity()",
 				"x-on:blur":           "touched = true; valid = $event.target.checkValidity()",
 				"x-bind:class":        "touched ? (valid ? 'border-success' : 'border-danger') : ''",

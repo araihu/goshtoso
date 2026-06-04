@@ -78,7 +78,7 @@ func bannerDemoContent() templ.Component {
 			},
 			bannerSimplePreview(),
 			`@banner.Banner(banner.Config{
-    Text: "Limited Time Offer! Explore exclusive deals & savings",
+    Description: "Limited Time Offer! Explore exclusive deals & savings",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -91,7 +91,7 @@ func bannerDemoContent() templ.Component {
 			},
 			bannerPersistentPreview(),
 			`@banner.Banner(banner.Config{
-    Text:       "This banner cannot be dismissed by users",
+    Description:       "This banner cannot be dismissed by users",
     Persistent: true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -105,9 +105,9 @@ func bannerDemoContent() templ.Component {
 			},
 			bannerCTAPreview(),
 			`@banner.Banner(banner.Config{
-    Text: "Get Fit Anywhere, Anytime 💪",
+    Description: "Get Fit Anywhere, Anytime 💪",
     CTA: &banner.CTAConfig{
-        Text: "Start free trial",
+        ActionLabel: "Start free trial",
         Href: "/signup",
     },
 })`,
@@ -121,8 +121,8 @@ func bannerDemoContent() templ.Component {
 				Description: "Set Variant for semantic coloring: Default, Primary, Info, Success, Warning, Danger.",
 			},
 			bannerVariantsPreview(),
-			`@banner.Banner(banner.Config{Text: "Success! Your changes have been saved", Variant: banner.Success})
-@banner.Banner(banner.Config{Text: "Warning: Please review your settings", Variant: banner.Warning})`,
+			`@banner.Banner(banner.Config{Description: "Success! Your changes have been saved", Variant: banner.Success})
+@banner.Banner(banner.Config{Description: "Warning: Please review your settings", Variant: banner.Warning})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -136,7 +136,7 @@ func bannerDemoContent() templ.Component {
 			`@banner.Banner(banner.Config{
     CookieBanner: true,
     Position:     banner.PositionRelative,
-    Text:         "We use cookies to improve your experience.",
+    Description:         "We use cookies to improve your experience.",
     CookieConfig: &banner.CookieBannerConfig{
         Title:        "Cookie Settings",
         AcceptText:   "Accept All",
@@ -154,15 +154,15 @@ func bannerDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Text", Type: "string", Default: `""`, Description: "Banner message text."},
+			{Name: "Description", Type: "string", Default: `""`, Description: "Banner message text."},
 			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "info", "success", "warning", "danger".`},
 			{Name: "Position", Type: "Position", Default: "PositionRelative", Description: `Layout: "relative" (inline) or "fixed" (pinned to top).`},
 			{Name: "Persistent", Type: "bool", Default: "false", Description: "Remove the dismiss control."},
 			{Name: "DismissAction", Type: "string", Default: `""`, Description: "Extra Alpine expression run when dismissed."},
-			{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (Text + Href or OnClick)."},
+			{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (ActionLabel + Href or OnClick)."},
 			{Name: "CookieBanner", Type: "bool", Default: "false", Description: "Render as a corner cookie-consent card."},
 			{Name: "CookieConfig", Type: "*CookieBannerConfig", Default: "nil", Description: "Cookie card content + accept/reject actions."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -198,7 +198,7 @@ func bannerSimplePreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text: "Limited Time Offer! Explore exclusive deals & savings",
+			Description: "Limited Time Offer! Explore exclusive deals & savings",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -238,8 +238,8 @@ func bannerPersistentPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:       "This banner cannot be dismissed by users",
-			Persistent: true,
+			Description: "This banner cannot be dismissed by users",
+			Persistent:  true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -279,10 +279,10 @@ func bannerCTAPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text: "Get Fit Anywhere, Anytime 💪",
+			Description: "Get Fit Anywhere, Anytime 💪",
 			CTA: &banner.CTAConfig{
-				Text:    "Start free trial",
-				OnClick: "alert('Starting free trial...')",
+				ActionLabel: "Start free trial",
+				OnClick:     "alert('Starting free trial...')",
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -322,27 +322,27 @@ func bannerVariantsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Default variant banner", Variant: banner.Default}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Default variant banner", Variant: banner.Default}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Primary variant for promotions", Variant: banner.Primary}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Primary variant for promotions", Variant: banner.Primary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Info variant for general information", Variant: banner.Info}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Info variant for general information", Variant: banner.Info}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Success! Operation completed successfully", Variant: banner.Success}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Success! Operation completed successfully", Variant: banner.Success}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Warning: Please review your settings", Variant: banner.Warning}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Warning: Please review your settings", Variant: banner.Warning}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Text: "Error: Something went wrong", Variant: banner.Danger}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Error: Something went wrong", Variant: banner.Danger}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -383,7 +383,7 @@ func bannerCookiePreview() templ.Component {
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
 			CookieBanner: true,
 			Position:     banner.PositionRelative,
-			Text:         "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
+			Description:  "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
 			CookieConfig: &banner.CookieBannerConfig{
 				Title:        "Cookie Time!",
 				AcceptText:   "Sounds Good!",

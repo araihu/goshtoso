@@ -37,10 +37,10 @@ func TestModalEmptyIDUsesDeterministicFallback(t *testing.T) {
 
 func TestModalRenderDoesNotEmitInvalidStateIdentifier(t *testing.T) {
 	html := renderModal(t, Config{
-		ID:          "billing-modal.1",
-		Title:       "Billing",
-		TriggerText: "Open",
-		PrimaryText: "Close",
+		ID:           "billing-modal.1",
+		Title:        "Billing",
+		TriggerLabel: "Open",
+		PrimaryLabel: "Close",
 	})
 
 	if strings.Contains(html, "billing-modal.1IsOpen") {

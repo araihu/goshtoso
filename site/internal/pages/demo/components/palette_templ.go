@@ -81,7 +81,7 @@ func paletteDemoContent() templ.Component {
 			`<div x-data="{ picked: '' }">
     @palette.Palette(palette.Config{
         ID:          "demo-palette",
-        AlpineModel: "picked",
+        Alpine: &palette.AlpineConfig{Model: "picked"},
         ShowHex:     true,
     })
     <p>Selected: <span x-text="picked || '—'"></span></p>
@@ -105,7 +105,7 @@ func paletteDemoContent() templ.Component {
     }) {
         @palette.Palette(palette.Config{
             ID:          "demo-shell-palette",
-            AlpineModel: "shellPicked",
+            Alpine: &palette.AlpineConfig{Model: "shellPicked"},
             ShowHex:     true,
         })
     }
@@ -120,7 +120,7 @@ func paletteDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the palette root (swatch buttons + Alpine scope)."},
-			{Name: "AlpineModel", Type: "string", Default: `""`, Description: "x-model expression that receives the picked color class (e.g. \"blue-700\")."},
+			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side Alpine bindings (Model)."},
 			{Name: "Hues", Type: "[]string", Default: "all", Description: "Restrict to specific Tailwind hues (default: the full set)."},
 			{Name: "Shades", Type: "[]string", Default: "all", Description: "Restrict to specific shades (e.g. \"500\", \"700\")."},
 			{Name: "HideNeutral", Type: "bool", Default: "false", Description: "Hide the neutral (gray) row."},
@@ -166,9 +166,9 @@ func paletteStandalonePreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = palette.Palette(palette.Config{
-			ID:          "demo-palette",
-			AlpineModel: "picked",
-			ShowHex:     true,
+			ID:      "demo-palette",
+			Alpine:  &palette.AlpineConfig{Model: "picked"},
+			ShowHex: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -220,9 +220,9 @@ func paletteShellPreview() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = palette.Palette(palette.Config{
-				ID:          "demo-shell-palette",
-				AlpineModel: "shellPicked",
-				ShowHex:     true,
+				ID:      "demo-shell-palette",
+				Alpine:  &palette.AlpineConfig{Model: "shellPicked"},
+				ShowHex: true,
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

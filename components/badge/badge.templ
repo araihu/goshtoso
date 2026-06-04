@@ -7,13 +7,13 @@ import "fmt"
 //
 //	// Simple badge
 //	@badge.Badge(badge.Config{
-//	    Text: "New",
+//	    Label: "New",
 //	    Variant: badge.Primary,
 //	})
 //
 //	// Soft style badge with icon
 //	@badge.Badge(badge.Config{
-//	    Text: "Active",
+//	    Label: "Active",
 //	    Variant: badge.Success,
 //	    Style: badge.StyleSoft,
 //	    Icon: checkIcon,
@@ -21,7 +21,7 @@ import "fmt"
 //
 //	// Badge with indicator dot
 //	@badge.Badge(badge.Config{
-//	    Text: "Live",
+//	    Label: "Live",
 //	    Variant: badge.Danger,
 //	    Indicator: true,
 //	})
@@ -35,10 +35,10 @@ templ Badge(cfg Config) {
 
 // simpleBadge renders a basic solid badge
 templ simpleBadge(cfg Config) {
-	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.Class }}
+	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.RootClass }}
 	
 	<span class={ classes }>
-		{ cfg.Text }
+		{ cfg.Label }
 	</span>
 }
 
@@ -46,7 +46,7 @@ templ simpleBadge(cfg Config) {
 templ badgeWithInner(cfg Config) {
 	{{ containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " " }}
 	{{ if cfg.IsSoft() { containerClasses = containerClasses + cfg.SoftVariantClasses() } else { containerClasses = containerClasses + cfg.VariantClasses() } }}
-	{{ containerClasses = containerClasses + " " + cfg.Class }}
+	{{ containerClasses = containerClasses + " " + cfg.RootClass }}
 
 	<span class={ containerClasses }>
 		<span class={ "flex items-center gap-1 " + cfg.SizeClasses() + " " + cfg.SoftInnerClasses() }>
@@ -58,7 +58,7 @@ templ badgeWithInner(cfg Config) {
 					@cfg.Icon
 				</span>
 			}
-			{ cfg.Text }
+			{ cfg.Label }
 		</span>
 	</span>
 }

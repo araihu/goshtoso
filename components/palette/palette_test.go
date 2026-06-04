@@ -31,8 +31,8 @@ func TestPalette_GridAndStaticDispatch(t *testing.T) {
 	assert.NotContains(t, html, `type="color"`)
 }
 
-func TestPalette_AlpineModelAndHex(t *testing.T) {
-	html := render(t, Config{ID: "p", AlpineModel: "myColor", ShowHex: true})
+func TestPalette_AlpineConfigAndHex(t *testing.T) {
+	html := render(t, Config{ID: "p", Alpine: &AlpineConfig{Model: "myColor"}, ShowHex: true})
 	assert.Contains(t, html, `x-on:select-close="myColor = $event.detail"`)
 	assert.Contains(t, html, `type="color"`)
 	assert.Contains(t, html, `data-selected-preview`)

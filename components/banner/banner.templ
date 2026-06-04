@@ -5,22 +5,22 @@ package banner
 //
 //	// Simple dismissible banner
 //	@banner.Banner(banner.Config{
-//	    Text: "Limited Time Offer! Check out our deals",
+//	    Description: "Limited Time Offer! Check out our deals",
 //	    Dismissible: true,
 //	})
 //
 //	// Banner with CTA button
 //	@banner.Banner(banner.Config{
-//	    Text: "Get Fit Anywhere, Anytime",
+//	    Description: "Get Fit Anywhere, Anytime",
 //	    CTA: &banner.CTAConfig{
-//	        Text: "Start free trial",
+//	        ActionLabel: "Start free trial",
 //	        OnClick: "showModal = true",
 //	    },
 //	})
 //
 //	// Fixed position banner
 //	@banner.Banner(banner.Config{
-//	    Text: "Important announcement",
+//	    Description: "Important announcement",
 //	    Position: banner.PositionFixed,
 //	    Variant: banner.Warning,
 //	})
@@ -46,10 +46,10 @@ templ simpleBanner(cfg Config) {
 	>
 		if cfg.CTA != nil {
 			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
-				<p class={ cfg.TextClasses() }>{ cfg.Text }</p>
+				<p class={ cfg.TextClasses() }>{ cfg.Description }</p>
 				if cfg.CTA.Href != "" {
 					<a href={ templ.URL(cfg.CTA.Href) } class={ cfg.CTAClasses() }>
-						{ cfg.CTA.Text }
+						{ cfg.CTA.ActionLabel }
 					</a>
 				} else {
 					<button 
@@ -57,12 +57,12 @@ templ simpleBanner(cfg Config) {
 						class={ cfg.CTAClasses() }
 						@click={ cfg.CTA.OnClick }
 					>
-						{ cfg.CTA.Text }
+						{ cfg.CTA.ActionLabel }
 					</button>
 				}
 			</div>
 		} else {
-			<p class={ cfg.TextClasses() }>{ cfg.Text }</p>
+			<p class={ cfg.TextClasses() }>{ cfg.Description }</p>
 		}
 		
 		if !cfg.Persistent {
@@ -106,7 +106,7 @@ templ cookieBanner(cfg Config) {
 		
 		<!-- Body -->
 		<div class="px-4 text-sm">
-			<p class="text-pretty">{ cfg.Text }</p>
+			<p class="text-pretty">{ cfg.Description }</p>
 		</div>
 		
 		<!-- Footer -->

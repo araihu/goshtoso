@@ -58,7 +58,7 @@ templ structuredInputDemoContent() {
     Entries: []structuredinput.Entry{
         {"key": "node-role.kubernetes.io/control-plane", "value": "true", "effect": "NoSchedule"},
     },
-    AddLabel: "Add taint",
+    AddActionLabel: "Add taint",
 })`,
 		)
 
@@ -85,7 +85,7 @@ templ structuredInputDemoContent() {
             },
         },
     },
-    AddLabel: "Add rule",
+    AddActionLabel: "Add rule",
 })`,
 		)
 	</div>
@@ -140,7 +140,7 @@ templ structuredInputTaintsPreview() {
 			Entries: []structuredinput.Entry{
 				{"key": "node-role.kubernetes.io/control-plane", "value": "true", "effect": "NoSchedule"},
 			},
-			AddLabel: "Add taint",
+			AddActionLabel: "Add taint",
 		})
 	</div>
 }
@@ -164,7 +164,7 @@ templ structuredInputEmptyPreview() {
 					},
 				},
 			},
-			AddLabel: "Add rule",
+			AddActionLabel: "Add rule",
 		})
 	</div>
 }

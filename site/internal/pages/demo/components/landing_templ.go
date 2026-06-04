@@ -175,12 +175,12 @@ func landingContent() templ.Component {
 					Label:     c.Label,
 					Checked:   c.Key == "goshtoso",
 					Segmented: true,
-					Class:     "min-w-28 px-4",
+					RootClass: "min-w-28 px-4",
 					Alpine: &radio.AlpineConfig{
 						BindChecked: "theme === $el.value",
 						OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme; if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) localStorage.theme = theme",
 					},
-					Attrs: templ.Attributes{"data-theme-key": c.Key},
+					InputAttrs: templ.Attributes{"data-theme-key": c.Key},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -240,11 +240,11 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Active", Variant: badge.Success}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Active", Variant: badge.Success}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Text: "Pending", Variant: badge.Warning}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Pending", Variant: badge.Warning}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -257,9 +257,9 @@ func landingContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "home-table",
-			HTMXEndpoint: "/api/components/table/rows?variant=lazy",
-			LazyLoad:     true,
+			ID:       "home-table",
+			HTMX:     &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
+			LazyLoad: true,
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID", Sortable: true},
 				{Key: "name", Label: "Name", Sortable: true},

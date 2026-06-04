@@ -221,8 +221,8 @@ func chatBubbleDemoContent() templ.Component {
 			{Name: "Grouped", Type: "bool", Default: "false", Description: "Mark a consecutive message: tighten spacing, hide avatar + name."},
 			{Name: "Sender", Type: "string", Default: `""`, Description: "For Side=Auto, emitted as data-sender for client mine-detection."},
 			{Name: "IsBot", Type: "bool", Default: "false", Description: "Render a small BOT badge beside the sender name."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the row element."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary HTML attributes on the row element (e.g. hx-*)."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the row element."},
+			{Name: "RootAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary HTML attributes on the row element (e.g. hx-*)."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

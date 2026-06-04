@@ -94,7 +94,7 @@ func tagsListDemoContent() templ.Component {
     ID:          "labels",
     Name:        "labels",
     Placeholder: "Add a label...",
-    AddLabel:    "Add",
+    AddActionLabel:    "Add",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -125,9 +125,9 @@ func tagsListDemoContent() templ.Component {
 			{Name: "Name", Type: "string", Default: `""`, Description: "Base form field name (submits as name[0], name[1], ...)."},
 			{Name: "Values", Type: "[]string", Default: "nil", Description: "Initial tag values."},
 			{Name: "Placeholder", Type: "string", Default: `""`, Description: "Input placeholder."},
-			{Name: "AddLabel", Type: "string", Default: `"Add"`, Description: "Label of the add button."},
+			{Name: "AddActionLabel", Type: "string", Default: `"Add"`, Description: "Label of the add button."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Render read-only chips (no input/remove)."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

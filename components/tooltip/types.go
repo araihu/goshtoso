@@ -24,18 +24,18 @@ const (
 type Config struct {
 	// ID is the tooltip element ID (used for aria-describedby)
 	ID string
-	// Text is the main tooltip text
-	Text string
+	// Label is the main tooltip text
+	Label string
 	// Description is optional secondary text (rich tooltip)
 	Description string
 	// Position determines where the tooltip appears
 	Position Position
-	// Trigger determines how the tooltip is activated
-	Trigger Trigger
-	// TriggerText is the text shown on the trigger button
-	TriggerText string
-	// TriggerContent is an optional custom trigger element (overrides TriggerText)
-	TriggerContent templ.Component
+	// TriggerMode determines how the tooltip is activated
+	TriggerMode Trigger
+	// TriggerLabel is the text shown on the trigger button
+	TriggerLabel string
+	// Trigger is an optional custom trigger element (overrides TriggerLabel)
+	Trigger templ.Component
 }
 
 // positionClasses returns CSS classes for tooltip positioning
@@ -67,8 +67,8 @@ func (cfg Config) tooltipID() string {
 
 // triggerLabel returns the trigger button text
 func (cfg Config) triggerLabel() string {
-	if cfg.TriggerText != "" {
-		return cfg.TriggerText
+	if cfg.TriggerLabel != "" {
+		return cfg.TriggerLabel
 	}
 	return "Hover Me"
 }

@@ -331,7 +331,7 @@ func TickerCellInner(sym ticker.Symbol) templ.Component {
 			Variant: tickerBadgeVariant(sym),
 			Style:   badge.StyleSoft,
 			Size:    badge.SizeSM,
-			Text:    tickerChange(sym),
+			Label:   tickerChange(sym),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

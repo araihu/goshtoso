@@ -149,12 +149,12 @@ func selectDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Dependent Selects (Alpine.js)",
-				Description: "Bind AlpineModel to share state; AlpineBindDisabled keeps the second select disabled until the first has a value.",
+				Description: "Bind Alpine.Model to share state; Alpine.BindDisabled keeps the second select disabled until the first has a value.",
 			},
 			selectDependentPreview(),
 			`<div x-data="{ firstValue: '', secondValue: '' }">
-    @selectfield.Select(selectfield.Config{ID: "modelName", AlpineModel: "firstValue", Options: models})
-    @selectfield.Select(selectfield.Config{ID: "year", AlpineModel: "secondValue", AlpineBindDisabled: "!firstValue", Options: years})
+    @selectfield.Select(selectfield.Config{ID: "modelName", Alpine: &selectfield.AlpineConfig{Model: "firstValue"}, Options: models})
+    @selectfield.Select(selectfield.Config{ID: "year", Alpine: &selectfield.AlpineConfig{Model: "secondValue", BindDisabled: "!firstValue"}, Options: years})
 </div>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -209,8 +209,7 @@ func selectDemoContent() templ.Component {
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable the select."},
 			{Name: "Readonly", Type: "bool", Default: "false", Description: "Non-editable but submittable."},
 			{Name: "Autocomplete", Type: "string", Default: `""`, Description: "HTML autocomplete attribute."},
-			{Name: "AlpineModel", Type: "string", Default: `""`, Description: "x-model expression bound to the select value."},
-			{Name: "AlpineBindDisabled", Type: "string", Default: `""`, Description: "x-bind:disabled expression."},
+			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side Alpine bindings (Model, BindDisabled)."},
 			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the select."},
 			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -440,7 +439,7 @@ func selectDependentPreview() templ.Component {
 			Name:        "modelName",
 			Label:       "Model",
 			Placeholder: "Select Model",
-			AlpineModel: "firstValue",
+			Alpine:      &selectfield.AlpineConfig{Model: "firstValue"},
 			Options: []selectfield.Option{
 				{Value: "camery", Label: "Camery"},
 				{Value: "4runner", Label: "4Runner"},
@@ -453,12 +452,11 @@ func selectDependentPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
-			ID:                 "year",
-			Name:               "year",
-			Label:              "Year",
-			Placeholder:        "Select Year",
-			AlpineModel:        "secondValue",
-			AlpineBindDisabled: "!firstValue",
+			ID:          "year",
+			Name:        "year",
+			Label:       "Year",
+			Placeholder: "Select Year",
+			Alpine:      &selectfield.AlpineConfig{Model: "secondValue", BindDisabled: "!firstValue"},
 			Options: []selectfield.Option{
 				{Value: "2024", Label: "2024"},
 				{Value: "2023", Label: "2023"},

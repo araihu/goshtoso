@@ -48,9 +48,9 @@ type Config struct {
 	// IsBot renders a small BOT badge by the name.
 	IsBot bool
 	// Class allows additional CSS classes on the row.
-	Class string
+	RootClass string
 	// Attrs allows arbitrary HTML attributes on the row element (e.g. hx-*).
-	Attrs templ.Attributes
+	RootAttrs templ.Attributes
 }
 
 // IsMine reports whether the bubble is statically "mine" (sent).
@@ -78,8 +78,8 @@ func (cfg Config) RowClasses() string {
 	} else {
 		base += " mt-4"
 	}
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 	return base
 }

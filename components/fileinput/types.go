@@ -31,16 +31,16 @@ type Config struct {
 	// Disabled disables the input
 	Disabled bool
 	// Class allows additional CSS classes on the outer container
-	Class string
+	RootClass string
 	// Attrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change)
-	Attrs templ.Attributes
+	InputAttrs templ.Attributes
 }
 
 // ContainerClasses returns CSS classes for the outermost wrapper div
 func (cfg Config) ContainerClasses() string {
 	base := "flex w-full max-w-xl flex-col gap-1 text-center"
-	if cfg.Class != "" {
-		return base + " " + cfg.Class
+	if cfg.RootClass != "" {
+		return base + " " + cfg.RootClass
 	}
 	return base
 }
@@ -48,8 +48,8 @@ func (cfg Config) ContainerClasses() string {
 // UploadContainerClasses returns classes for the compact upload wrapper.
 func (cfg Config) UploadContainerClasses() string {
 	base := "flex w-full max-w-xl flex-col gap-1 text-left text-on-surface dark:text-on-surface-dark"
-	if cfg.Class != "" {
-		return base + " " + cfg.Class
+	if cfg.RootClass != "" {
+		return base + " " + cfg.RootClass
 	}
 	return base
 }

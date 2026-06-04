@@ -163,7 +163,7 @@ func Toggle(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, cfg.Attrs)
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, cfg.InputAttrs)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

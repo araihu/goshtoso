@@ -38,14 +38,14 @@ type Config struct {
 	Title string
 	// Body is the modal body text
 	Body string
-	// TriggerText is the trigger button label
-	TriggerText string
-	// PrimaryText is the primary action button label
-	PrimaryText string
+	// TriggerLabel is the trigger button label
+	TriggerLabel string
+	// PrimaryLabel is the primary action button label
+	PrimaryLabel string
 	// PrimaryAction holds optional HTMX/JS actions for the primary button
 	PrimaryAction *ButtonAction
-	// SecondaryText is the secondary/dismiss button label (default mode only)
-	SecondaryText string
+	// SecondaryLabel is the secondary/dismiss button label (default mode only)
+	SecondaryLabel string
 	// SecondaryAction holds optional HTMX/JS actions for the secondary button
 	SecondaryAction *ButtonAction
 	// Variant determines the color scheme (used for alert mode and trigger button)
@@ -53,7 +53,7 @@ type Config struct {
 	// AlertMode renders the alert-style modal (icon header, centered body, single CTA)
 	AlertMode bool
 	// Class allows additional CSS classes on the dialog
-	Class string
+	PanelClass string
 }
 
 func (cfg Config) StateVar() string {
@@ -98,8 +98,8 @@ func (cfg Config) alertTriggerClasses() string {
 // DialogClasses returns the modal dialog container CSS classes
 func (cfg Config) DialogClasses() string {
 	base := "flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.PanelClass != "" {
+		base += " " + cfg.PanelClass
 	}
 	return base
 }

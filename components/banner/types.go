@@ -24,8 +24,8 @@ const (
 
 // Config holds configuration for the banner
 type Config struct {
-	// Text is the main banner content
-	Text string
+	// Description is the main banner content
+	Description string
 	// Variant determines the color scheme
 	Variant Variant
 	// Position determines if banner is fixed or relative
@@ -41,13 +41,13 @@ type Config struct {
 	// CookieConfig holds cookie banner specific settings
 	CookieConfig *CookieBannerConfig
 	// Class allows additional CSS classes
-	Class string
+	RootClass string
 }
 
 // CTAConfig holds call-to-action button configuration
 type CTAConfig struct {
-	// Text is the button label
-	Text string
+	// ActionLabel is the button label
+	ActionLabel string
 	// Href is the link URL (if set, renders as anchor)
 	Href string
 	// OnClick is the Alpine.js click action
@@ -95,7 +95,7 @@ func (cfg Config) ContainerClasses() string {
 		base += " border-b border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt"
 	}
 
-	return base + " " + cfg.Class
+	return base + " " + cfg.RootClass
 }
 
 // TextClasses returns the text content classes
@@ -133,5 +133,5 @@ func (cfg Config) CookieContainerClasses() string {
 		position = "absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm"
 	}
 
-	return position + " flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.Class
+	return position + " flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.RootClass
 }

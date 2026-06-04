@@ -43,7 +43,7 @@ func Sidebar(cfg Config) templ.Component {
 		if logoHref == "" {
 			logoHref = "/"
 		}
-		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses() + " " + cfg.Class}
+		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses() + " " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

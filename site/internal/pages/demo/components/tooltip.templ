@@ -23,9 +23,9 @@ templ tooltipDemoContent() {
 			tooltipDefaultPreview(),
 			`@tooltip.Tooltip(tooltip.Config{
     ID:          "myTooltip",
-    Text:        "Tooltip top",
+    Label:        "Tooltip top",
     Position:    tooltip.Top,
-    TriggerText: "Top",
+    TriggerLabel: "Top",
 })`,
 		)
 
@@ -37,35 +37,35 @@ templ tooltipDemoContent() {
 			tooltipRichPreview(),
 			`@tooltip.Tooltip(tooltip.Config{
     ID:          "richTooltip",
-    Text:        "Tooltip top",
+    Label:        "Tooltip top",
     Description: "A rich tooltip with longer text.",
-    TriggerText: "Hover Me",
+    TriggerLabel: "Hover Me",
 })`,
 		)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Click Trigger",
-				Description: "Set Trigger: tooltip.Click to toggle the tooltip on click instead of hover.",
+				Description: "Set TriggerMode: tooltip.Click to toggle the tooltip on click instead of hover.",
 			},
 			tooltipClickPreview(),
 			`@tooltip.Tooltip(tooltip.Config{
     ID:          "clickTooltip",
-    Text:        "Tooltip top",
-    Trigger:     tooltip.Click,
-    TriggerText: "Click Me",
+    Label:        "Tooltip top",
+    TriggerMode: tooltip.Click,
+    TriggerLabel: "Click Me",
 })`,
 		)
 	</div>
 	// API reference lives outside #tooltip-fragment.
 	@demo.APIReference([]demo.PropDoc{
 		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the tooltip for accessibility)."},
-		{Name: "Text", Type: "string", Default: `""`, Description: "Tooltip text (heading line)."},
+		{Name: "Label", Type: "string", Default: `""`, Description: "Tooltip text (heading line)."},
 		{Name: "Description", Type: "string", Default: `""`, Description: "Optional secondary line for a rich tooltip."},
 		{Name: "Position", Type: "Position", Default: "Top", Description: `Placement: "top", "bottom", "left", "right".`},
 		{Name: "Trigger", Type: "Trigger", Default: "Hover", Description: `Activation: "hover" (hover/focus) or "click".`},
-		{Name: "TriggerText", Type: "string", Default: `""`, Description: "Text of the trigger element."},
-		{Name: "TriggerContent", Type: "templ.Component", Default: "nil", Description: "Custom trigger content (overrides TriggerText)."},
+		{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Label of the trigger element."},
+		{Name: "Trigger", Type: "templ.Component", Default: "nil", Description: "Custom trigger content (overrides TriggerLabel)."},
 	})
 }
 
@@ -75,27 +75,27 @@ templ tooltipDefaultPreview() {
 		<div class="flex flex-wrap items-center gap-8 py-8 justify-center">
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "demoTop",
-					Text:        "Tooltip top",
+					Label:        "Tooltip top",
 					Position:    tooltip.Top,
-					TriggerText: "Top",
+					TriggerLabel: "Top",
 				})
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "demoBottom",
-					Text:        "Tooltip bottom",
+					Label:        "Tooltip bottom",
 					Position:    tooltip.Bottom,
-					TriggerText: "Bottom",
+					TriggerLabel: "Bottom",
 				})
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "demoLeft",
-					Text:        "Tooltip left",
+					Label:        "Tooltip left",
 					Position:    tooltip.Left,
-					TriggerText: "Left",
+					TriggerLabel: "Left",
 				})
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "demoRight",
-					Text:        "Tooltip right",
+					Label:        "Tooltip right",
 					Position:    tooltip.Right,
-					TriggerText: "Right",
+					TriggerLabel: "Right",
 				})
 			</div>
 		</div>
@@ -107,17 +107,17 @@ templ tooltipRichPreview() {
 		<div class="flex flex-wrap items-center gap-8 py-8 justify-center">
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "richTop",
-					Text:        "Tooltip top",
+					Label:        "Tooltip top",
 					Description: "A rich tooltip that contains longer text and is usually used to add a description.",
 					Position:    tooltip.Top,
-					TriggerText: "Hover Me",
+					TriggerLabel: "Hover Me",
 				})
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "richBottom",
-					Text:        "Tooltip bottom",
+					Label:        "Tooltip bottom",
 					Description: "A rich tooltip that contains longer text and is usually used to add a description.",
 					Position:    tooltip.Bottom,
-					TriggerText: "Hover Me",
+					TriggerLabel: "Hover Me",
 				})
 			</div>
 		</div>
@@ -129,17 +129,17 @@ templ tooltipClickPreview() {
 		<div class="flex flex-wrap items-center gap-8 py-8 justify-center">
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "clickTop",
-					Text:        "Tooltip top",
-					Trigger:     tooltip.Click,
+					Label:        "Tooltip top",
+					TriggerMode: tooltip.Click,
 					Position:    tooltip.Top,
-					TriggerText: "Click Me",
+					TriggerLabel: "Click Me",
 				})
 				@tooltip.Tooltip(tooltip.Config{
 					ID:          "clickBottom",
-					Text:        "Tooltip bottom",
-					Trigger:     tooltip.Click,
+					Label:        "Tooltip bottom",
+					TriggerMode: tooltip.Click,
 					Position:    tooltip.Bottom,
-					TriggerText: "Click Me",
+					TriggerLabel: "Click Me",
 				})
 			</div>
 		</div>

@@ -73,11 +73,8 @@ type Config struct {
 	User *UserProfile
 	// UserMenu contains dropdown items under the avatar
 	UserMenu []UserMenuItem
-	// RightSlot is custom content rendered on the right side (e.g., dark mode toggle).
-	// Deprecated: use Actions with ActionRight position instead.
-	RightSlot templ.Component
 	// Class allows additional CSS classes on the outer <nav>
-	Class string
+	NavClass string
 	// NavAttrs are extra HTML attributes on the <nav> element
 	NavAttrs templ.Attributes
 }
@@ -107,8 +104,8 @@ func (cfg Config) RightActions() []ActionItem {
 // NavClasses returns the CSS classes for the outer nav element
 func (cfg Config) NavClasses() string {
 	base := "flex items-center justify-between border-b border-outline px-6 py-4 dark:border-outline-dark"
-	if cfg.Class != "" {
-		return base + " " + cfg.Class
+	if cfg.NavClass != "" {
+		return base + " " + cfg.NavClass
 	}
 	return base
 }

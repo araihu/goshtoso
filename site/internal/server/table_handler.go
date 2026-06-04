@@ -181,7 +181,7 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	// For infinite scroll, render rows without tbody wrapper (appended to existing tbody)
 	if variant == "infinite" {
 		if hasMore {
-			cfg.HTMXEndpoint = "/api/components/table/rows?variant=infinite"
+			cfg.HTMX = &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=infinite"}
 			cfg.InfiniteScroll = &table.InfiniteScrollConfig{
 				NextPage: nextPage,
 				HasMore:  true,
@@ -191,7 +191,7 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cfg.HTMXEndpoint = "/api/components/table/rows"
+	cfg.HTMX = &table.HTMXConfig{Endpoint: "/api/components/table/rows"}
 
 	if tableID != "" {
 		cfg.ID = tableID
