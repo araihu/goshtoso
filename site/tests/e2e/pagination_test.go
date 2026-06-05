@@ -1,0 +1,96 @@
+package e2e
+
+import (
+	"strings"
+	"testing"
+
+	"github.com/playwright-community/playwright-go"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestPagination_FirstPageDisablesPreviousAndKeepsNextAvailable(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/pagination", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	previousDisabled := page.Locator("#pagination-first [aria-disabled='true']").Filter(playwright.LocatorFilterOptions{HasText: "Previous"})
+	require.NoError(t, previousDisabled.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+
+	nextHref, err := page.Locator("#pagination-first a[aria-label='next page']").GetAttribute("href")
+	require.NoError(t, err)
+	assert.True(t, strings.HasSuffix(nextHref, "?page=2"), "next link should target page 2 from the first page")
+}
+
+func TestPagination_EllipsisMiddleShowsCurrentAndCollapsedRanges(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/pagination", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	current := page.Locator("#pagination-ellipsis-mid a[aria-current='page']")
+	assert.Equal(t, "15", mustText(t, current))
+
+	ellipsisCount, err := page.Locator("#pagination-ellipsis-mid span[aria-label='more pages']").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 2, ellipsisCount, "middle pages should collapse both leading and trailing ranges")
+
+	for _, label := range []string{"page 1", "page 14", "page 15", "page 16", "page 30"} {
+		count, err := page.Locator("#pagination-ellipsis-mid a[aria-label='" + label + "']").Count()
+		require.NoError(t, err)
+		assert.Equal(t, 1, count, "expected pagination link %s", label)
+	}
+}
+
+func TestPagination_DocumentedHTMXVariantExposesHTMXAttributes(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/pagination", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	link := page.Locator("#pagination-small a[aria-label='page 4']")
+	hxGet, err := link.GetAttribute("hx-get")
+	require.NoError(t, err)
+	assert.NotEmpty(t, hxGet, "small-page demo docs describe HTMX.Target + HTMX.Swap, so the rendered preview should expose hx-get")
+
+	hxTarget, err := link.GetAttribute("hx-target")
+	require.NoError(t, err)
+	assert.Equal(t, "#items-tbody", hxTarget)
+}

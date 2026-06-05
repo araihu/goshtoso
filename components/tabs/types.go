@@ -61,7 +61,7 @@ func tabsData(cfg Config) string {
 	}
 
 	if !cfg.SyncHash {
-		return fmt.Sprintf(`{selectedTab:'%s'}`, jsEscapeSingle(defaultTab))
+		return fmt.Sprintf(`{selectedTab:'%s',moveFocus:function(e,d){var t=Array.from(e.currentTarget.querySelectorAll('[role=tab]'));var i=t.indexOf(document.activeElement);if(i<0)i=t.indexOf(e.target);if(i<0||!t.length)return;t[(i+d+t.length)%%t.length].focus();}}`, jsEscapeSingle(defaultTab))
 	}
 
 	// Build JS array of valid tab IDs for hash validation
@@ -83,7 +83,7 @@ func tabsData(cfg Config) string {
 			`var v=[%s];`+
 			`if(h&&v.includes(h))this.selectedTab=h;`+
 			`this.$watch('selectedTab',function(t){history.replaceState(null,'','#'+t)});`+
-			`}}`,
+			`},moveFocus:function(e,d){var t=Array.from(e.currentTarget.querySelectorAll('[role=tab]'));var i=t.indexOf(document.activeElement);if(i<0)i=t.indexOf(e.target);if(i<0||!t.length)return;t[(i+d+t.length)%%t.length].focus();}}`,
 		jsEscapeSingle(defaultTab), validArr.String())
 }
 

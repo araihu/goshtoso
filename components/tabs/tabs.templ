@@ -23,8 +23,8 @@ templ Tabs(cfg Config) {
 	>
 		<!-- Tab List -->
 		<div
-			x-on:keydown.right.prevent="$focus.wrap().next()"
-			x-on:keydown.left.prevent="$focus.wrap().previous()"
+			x-on:keydown.right.prevent="moveFocus($event, 1)"
+			x-on:keydown.left.prevent="moveFocus($event, -1)"
 			class="flex gap-2 overflow-x-auto border-b border-outline dark:border-outline-dark"
 			role="tablist"
 			aria-label="tab options"
@@ -104,9 +104,11 @@ templ staticTabPanel(panelID string, tab Tab) {
 templ htmxTabPanel(panelID string, tab Tab) {
 	{{ swap := tab.HTMX.Swap }}
 	{{ if swap == "" { swap = "innerHTML" } }}
+	{{ loadExpr := fmt.Sprintf("if (selectedTab === '%s' && !$el.dataset.loaded && window.htmx) { $el.dataset.loaded = 'true'; htmx.ajax('GET', '%s', {target: '#%s', swap: '%s'}); }", jsEscapeSingle(tab.ID), jsEscapeSingle(tab.HTMX.Get), jsEscapeSingle(panelID), jsEscapeSingle(swap)) }}
 	<div
 		x-cloak
 		x-show={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
+		x-effect={ loadExpr }
 		id={ panelID }
 		role="tabpanel"
 		aria-label={ tab.Label }

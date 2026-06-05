@@ -30,6 +30,9 @@ templ staticCarousel(cfg Config) {
 	{{ xInit := "" }}
 	{{ if cfg.Autoplay != nil { xInit = "autoplay" } }}
 	<div
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
 		x-data={ alpineData }
 		if xInit != "" {
 			x-init={ xInit }
@@ -85,6 +88,9 @@ templ cardCarousel(cfg Config) {
 	{{ alpineData := generateAlpineData(cardCfg) }}
 	{{ transitionAttr := transitionAttr(cardCfg) }}
 	<article
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
 		x-data={ alpineData }
 		class={ cardContainerClasses() }
 		style="-webkit-mask-image: -webkit-radial-gradient(white, black)"
