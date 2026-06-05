@@ -64,6 +64,36 @@ func TestEntriesJSONEscapesStrings(t *testing.T) {
 	}
 }
 
+func TestStructuredInputDataAttributesEscapeScriptPayloads(t *testing.T) {
+	payload := `<img src=x onerror=alert(1)>`
+	var buf strings.Builder
+	err := StructuredInput(Config{
+		ID:   "labelsDemo",
+		Name: payload,
+		Columns: []Column{
+			{Key: payload, Placeholder: payload},
+		},
+		Entries: []Entry{{payload: payload}},
+	}).Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
+
+	html := buf.String()
+	if strings.Contains(html, payload) {
+		t.Fatalf("rendered raw payload:\n%s", html)
+	}
+	for _, want := range []string{
+		`data-name="&lt;img src=x onerror=alert(1)&gt;"`,
+		`data-column-key="&lt;img src=x onerror=alert(1)&gt;"`,
+		`&lt;img src=x onerror=alert(1)&gt;`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("rendered HTML missing escaped payload %s:\n%s", want, html)
+		}
+	}
+}
+
 func TestNewRowJSONUsesColumnDefaults(t *testing.T) {
 	cfg := Config{
 		Columns: []Column{

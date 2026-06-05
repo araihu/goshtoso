@@ -60,6 +60,42 @@ func TestSearchRendersGlobalShortcutWhenEnabled(t *testing.T) {
 	}
 }
 
+func TestSearchEscapesResultPayloadsBeforeHighlighting(t *testing.T) {
+	payload := `<img src=x onerror=alert(1)>`
+	var buf bytes.Buffer
+	err := Search(Config{
+		ID: "docs-search",
+		Items: []Item{{
+			ID:          "result-xss",
+			Title:       payload,
+			Description: payload,
+			Href:        `javascript:alert(1)`,
+			Section:     payload,
+			Keywords:    []string{payload},
+		}},
+	}).Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	html := buf.String()
+	if strings.Contains(html, payload) {
+		t.Fatalf("rendered raw result payload:\n%s", html)
+	}
+	for _, want := range []string{
+		`data-search-title="&lt;img src=x onerror=alert(1)&gt;"`,
+		`data-search-description="&lt;img src=x onerror=alert(1)&gt;"`,
+		`&lt;img src=x onerror=alert(1)&gt;`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("Search render missing escaped payload %q in %s", want, html)
+		}
+	}
+	if strings.Contains(html, `data-search-href="javascript:alert(1)"`) {
+		t.Fatalf("Search exposes executable javascript: href through client navigation sink:\n%s", html)
+	}
+}
+
 func TestSearchDefaults(t *testing.T) {
 	cfg := Config{}
 	if cfg.GetID() != "search" {

@@ -68,6 +68,26 @@ func TestFilterScriptData_EmitsHxTarget(t *testing.T) {
 	}
 }
 
+func TestFilterScriptDataEscapesFilterKeys(t *testing.T) {
+	cfg := Config{
+		ID:   "addons",
+		HTMX: &HTMXConfig{Endpoint: "/console/addons"},
+		Filters: &FilterConfig{
+			Filters: []Filter{
+				{Key: "q: '', injected: alert(1), q2", Type: FilterSearch},
+			},
+		},
+	}
+
+	out := filterScriptData(cfg)
+	if strings.Contains(out, "filters: {q: '', injected: alert(1), q2: ''}") {
+		t.Fatalf("filter key escaped into executable Alpine data:\n%s", out)
+	}
+	if !strings.Contains(out, `filters: {'q: \'\', injected: alert(1), q2': ''}`) {
+		t.Fatalf("filter key was not quoted as inert Alpine data:\n%s", out)
+	}
+}
+
 // TestFilterVariant_Constants keeps the enum surface honest — consumers
 // import these, so renaming is a breaking change.
 func TestFilterVariant_Constants(t *testing.T) {

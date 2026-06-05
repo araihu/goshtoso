@@ -492,6 +492,12 @@ func jsEscapeSingle(s string) string {
 			result += `\'`
 		case '\\':
 			result += `\\`
+		case '\n':
+			result += `\n`
+		case '\r':
+			result += `\r`
+		case '\t':
+			result += `\t`
 		default:
 			result += string(c)
 		}
