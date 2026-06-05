@@ -88,6 +88,28 @@ func TestFilterScriptDataEscapesFilterKeys(t *testing.T) {
 	}
 }
 
+func TestFilterScriptDataEscapesFilterDefaultValues(t *testing.T) {
+	cfg := Config{
+		ID:   "addons",
+		HTMX: &HTMXConfig{Endpoint: "/console/addons"},
+		Filters: &FilterConfig{
+			Filters: []Filter{{
+				Key:          "q",
+				Type:         FilterSearch,
+				DefaultValue: "O'Reilly\\docs\nline two\r</script>",
+			}},
+		},
+	}
+
+	out := filterScriptData(cfg)
+	if strings.Contains(out, "O'Reilly\\docs\nline two\r</script>") {
+		t.Fatalf("filter default value escaped into executable Alpine data:\n%s", out)
+	}
+	if !strings.Contains(out, `filters: {'q': 'O\'Reilly\\docs\nline two\r</script>'}`) {
+		t.Fatalf("filter default value was not emitted as an escaped inert string:\n%s", out)
+	}
+}
+
 // TestFilterVariant_Constants keeps the enum surface honest — consumers
 // import these, so renaming is a breaking change.
 func TestFilterVariant_Constants(t *testing.T) {

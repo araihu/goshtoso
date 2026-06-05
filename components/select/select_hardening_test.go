@@ -52,3 +52,24 @@ func TestSelectOptionsEscapeNewlinesInAlpineStrings(t *testing.T) {
 	assert.Contains(t, browserHTML, `label:'first line\nalert(1)'`)
 	assert.NotContains(t, browserHTML, "label:'first line\nalert(1)'")
 }
+
+func TestSelectData_EscapesControlCharactersInAllAlpineStrings(t *testing.T) {
+	cfg := Config{
+		Placeholder: "pick\nregion\r\t\u2028\u2029",
+		Options: []Option{{
+			Value:    "value'\n\r\t\\\u2028\u2029</script>",
+			Label:    "label'\n\r\t\\\u2028\u2029</script>",
+			Selected: true,
+		}},
+	}
+
+	data := selectData(cfg)
+
+	assert.Contains(t, data, `placeholder: 'pick\nregion\r\t\u2028\u2029'`)
+	assert.Contains(t, data, `{value:'value\'\n\r\t\\\u2028\u2029</script>',label:'label\'\n\r\t\\\u2028\u2029</script>'}`)
+	assert.Contains(t, data, `selectedValues: ['value\'\n\r\t\\\u2028\u2029</script>']`)
+	assert.NotContains(t, data, "value'\n")
+	assert.NotContains(t, data, "\r")
+	assert.NotContains(t, data, "\u2028")
+	assert.NotContains(t, data, "\u2029")
+}

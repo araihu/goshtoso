@@ -19,18 +19,22 @@ func renderTabs(t *testing.T, cfg Config) string {
 
 func TestTabsData_EscapesDefaultAndSyncHashTabIDs(t *testing.T) {
 	cfg := Config{
-		DefaultTab: `billing'\x`,
+		DefaultTab: "billing'\\x\n\r\t\u2028\u2029",
 		SyncHash:   true,
 		Tabs: []Tab{
-			{ID: `billing'\x`, Label: "Billing"},
-			{ID: `usage'\x`, Label: "Usage"},
+			{ID: "billing'\\x\n\r\t\u2028\u2029", Label: "Billing"},
+			{ID: "usage'\\x\n\r\t\u2028\u2029", Label: "Usage"},
 		},
 	}
 
 	data := tabsData(cfg)
 
-	assert.Contains(t, data, `selectedTab:'billing\'\\x'`)
-	assert.Contains(t, data, `var v=['billing\'\\x','usage\'\\x'];`)
+	assert.Contains(t, data, `selectedTab:'billing\'\\x\n\r\t\u2028\u2029'`)
+	assert.Contains(t, data, `var v=['billing\'\\x\n\r\t\u2028\u2029','usage\'\\x\n\r\t\u2028\u2029'];`)
+	assert.NotContains(t, data, "billing'\\x\n")
+	assert.NotContains(t, data, "\r")
+	assert.NotContains(t, data, "\u2028")
+	assert.NotContains(t, data, "\u2029")
 }
 
 func TestTabs_RenderedAlpineExpressionsEscapeTabID(t *testing.T) {

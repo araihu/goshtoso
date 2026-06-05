@@ -83,6 +83,10 @@ func jsEscapeSingle(s string) string {
 			sb.WriteString(`\r`)
 		case '\t':
 			sb.WriteString(`\t`)
+		case '\u2028':
+			sb.WriteString(`\u2028`)
+		case '\u2029':
+			sb.WriteString(`\u2029`)
 		default:
 			sb.WriteRune(r)
 		}

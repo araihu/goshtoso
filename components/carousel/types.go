@@ -226,6 +226,10 @@ func jsEscape(s string) string {
 	s = strings.ReplaceAll(s, `\`, `\\`)
 	s = strings.ReplaceAll(s, `'`, `\'`)
 	s = strings.ReplaceAll(s, "\n", `\n`)
+	s = strings.ReplaceAll(s, "\r", `\r`)
+	s = strings.ReplaceAll(s, "\t", `\t`)
+	s = strings.ReplaceAll(s, "\u2028", `\u2028`)
+	s = strings.ReplaceAll(s, "\u2029", `\u2029`)
 	return s
 }
 

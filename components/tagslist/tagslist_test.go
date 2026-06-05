@@ -39,11 +39,11 @@ func TestTagsListUsesActiveControlVocabulary(t *testing.T) {
 }
 
 func TestTagsListInitialValuesStayInsideAlpineStrings(t *testing.T) {
-	payload := `'); alert(1); ('`
+	payload := "'); alert(1); ('\n\r\t\u2028\u2029"
 	var buf bytes.Buffer
 	err := TagsList(Config{
 		ID:     "tags",
-		Name:   `tags'); alert(2); ('`,
+		Name:   "tags'); alert(2); ('\n\r\t\u2028\u2029",
 		Values: []string{payload},
 	}).Render(context.Background(), &buf)
 	if err != nil {
@@ -54,9 +54,12 @@ func TestTagsListInitialValuesStayInsideAlpineStrings(t *testing.T) {
 	if strings.Contains(html, `'); alert(1); ('`) || strings.Contains(html, `'); alert(2); ('`) {
 		t.Fatalf("rendered unescaped Alpine string payload:\n%s", html)
 	}
-	for _, want := range []string{`items: [&#39;\&#39;); alert(1); (\&#39;&#39;]`, `name: &#39;tags\&#39;); alert(2); (\&#39;&#39;`} {
+	for _, want := range []string{`items: [&#39;\&#39;); alert(1); (\&#39;\n\r\t\u2028\u2029&#39;]`, `name: &#39;tags\&#39;); alert(2); (\&#39;\n\r\t\u2028\u2029&#39;`} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("TagsList render missing escaped Alpine payload %q in %s", want, html)
 		}
+	}
+	if strings.Contains(html, "\u2028") || strings.Contains(html, "\u2029") {
+		t.Fatalf("rendered raw JavaScript line separator in Alpine string:\n%s", html)
 	}
 }
