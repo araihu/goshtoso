@@ -66,7 +66,7 @@ templ linkAlert(cfg Config) {
 					<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
 					<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
 				</div>
-				<a href={ templ.SafeURL(cfg.Link.Href) } class={ cfg.LinkClasses() }>
+				<a href={ templ.URL(cfg.Link.Href) } class={ cfg.LinkClasses() }>
 					{ cfg.Link.Label }
 				</a>
 			</div>

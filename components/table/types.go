@@ -779,6 +779,10 @@ func filterControlID(cfg Config, filter Filter) string {
 	return cfg.FilterBarID() + "-" + filter.Key
 }
 
+func filterModelExpr(filter Filter) string {
+	return "filters['" + jsEscape(filter.Key) + "']"
+}
+
 // filterAlpineInit generates a name for the Alpine.data registration.
 // Converts hyphens to camelCase since Alpine evaluates x-data as JS expressions.
 func filterAlpineInit(cfg Config) string {
@@ -889,27 +893,32 @@ func filterScriptData(cfg Config) string {
 				evt.detail.parameters[k] = v;
 			}
 		}
-	});`, name, expanded, filters.String(), endpoint, perPage, extra, hxTarget, hxSwap, name)
+		});`, jsEscape(name), expanded, filters.String(), jsEscape(endpoint), jsEscape(perPage), jsEscape(extra), jsEscape(hxTarget), jsEscape(hxSwap), jsEscape(name))
 }
 
 // jsEscape escapes a string for safe embedding in single-quoted JS literals
 func jsEscape(s string) string {
-	result := make([]byte, 0, len(s))
-	for i := 0; i < len(s); i++ {
-		switch s[i] {
+	var result strings.Builder
+	result.Grow(len(s))
+	for _, r := range s {
+		switch r {
 		case '\'':
-			result = append(result, '\\', '\'')
+			result.WriteString(`\'`)
 		case '\\':
-			result = append(result, '\\', '\\')
+			result.WriteString(`\\`)
 		case '\n':
-			result = append(result, '\\', 'n')
+			result.WriteString(`\n`)
 		case '\r':
-			result = append(result, '\\', 'r')
+			result.WriteString(`\r`)
+		case '\u2028':
+			result.WriteString(`\u2028`)
+		case '\u2029':
+			result.WriteString(`\u2029`)
 		default:
-			result = append(result, s[i])
+			result.WriteRune(r)
 		}
 	}
-	return string(result)
+	return result.String()
 }
 
 // itoa converts an int to string without importing strconv

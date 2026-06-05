@@ -1,0 +1,234 @@
+package e2e
+
+import (
+	"bytes"
+	"context"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
+	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/assets"
+	"github.com/araihu/goshtoso/components/alert"
+	"github.com/araihu/goshtoso/components/head"
+	"github.com/araihu/goshtoso/components/link"
+	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/sidebar"
+	"github.com/araihu/goshtoso/components/table"
+	"github.com/playwright-community/playwright-go"
+	"github.com/stretchr/testify/require"
+)
+
+func securityFixtureServer(t *testing.T, body templ.Component) *httptest.Server {
+	t.Helper()
+
+	mux := http.NewServeMux()
+	mux.Handle("/assets/", assets.Handler())
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_, _ = fmt.Fprint(w, `<!doctype html><html><head><meta charset="utf-8">`)
+		require.NoError(t, head.Dependencies().Render(r.Context(), w))
+		_, _ = fmt.Fprint(w, `</head><body>`)
+		require.NoError(t, body.Render(r.Context(), w))
+		_, _ = fmt.Fprint(w, `</body></html>`)
+	})
+
+	srv := httptest.NewServer(mux)
+	t.Cleanup(srv.Close)
+	return srv
+}
+
+func renderSecurityComponent(t *testing.T, c templ.Component) string {
+	t.Helper()
+
+	var buf bytes.Buffer
+	require.NoError(t, c.Render(context.Background(), &buf))
+	return buf.String()
+}
+
+func renderSecurityComponentWithChildren(t *testing.T, c templ.Component, children templ.Component) string {
+	t.Helper()
+
+	var buf bytes.Buffer
+	ctx := templ.WithChildren(context.Background(), children)
+	require.NoError(t, c.Render(ctx, &buf))
+	return buf.String()
+}
+
+func TestSecurityAttackSurfaceUnsafeHrefSchemesDoNotExecute(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+	page.SetDefaultTimeout(5000)
+
+	jsHref := `javascript:void(window.__goshtosoHrefPwned='href')`
+	body := templ.Raw(strings.Join([]string{
+		renderSecurityComponentWithChildren(t, link.Link(link.Config{
+			Href:  jsHref,
+			Attrs: templ.Attributes{"data-attack-surface": "link"},
+		}), templ.Raw("Link")),
+		renderSecurityComponent(t, navbar.Navbar(navbar.Config{
+			Brand:     templ.Raw("Brand"),
+			BrandHref: jsHref,
+			Links: []navbar.NavLink{{
+				Label:     "Navbar link",
+				Href:      jsHref,
+				LinkAttrs: templ.Attributes{"data-attack-surface": "navbar-link"},
+			}},
+			User: &navbar.UserProfile{Name: "User"},
+			UserMenu: []navbar.UserMenuItem{{
+				Label:     "Navbar menu",
+				Href:      jsHref,
+				LinkAttrs: templ.Attributes{"data-attack-surface": "navbar-menu"},
+			}},
+		})),
+		renderSecurityComponent(t, sidebar.Sidebar(sidebar.Config{
+			LogoText: "Logo",
+			LogoHref: jsHref,
+			Items: []sidebar.Item{{
+				Label:     "Sidebar item",
+				Href:      jsHref,
+				LinkAttrs: templ.Attributes{"data-attack-surface": "sidebar-item"},
+			}},
+			Sections: []sidebar.Section{{
+				Title: "Section",
+				Items: []sidebar.Item{{
+					Label:     "Sidebar section",
+					Href:      jsHref,
+					LinkAttrs: templ.Attributes{"data-attack-surface": "sidebar-section"},
+				}},
+			}},
+		})),
+		`<div id="alert-fixture">` + renderSecurityComponent(t, alert.Alert(alert.Config{
+			Title:       "Alert",
+			Description: "Unsafe href fixture",
+			Link: &alert.LinkConfig{
+				Label: "Alert link",
+				Href:  jsHref,
+			},
+		})) + `</div>`,
+	}, "\n"))
+
+	srv := securityFixtureServer(t, body)
+	_, err := page.Goto(srv.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+
+	locators := []string{
+		`a[data-attack-surface="link"]`,
+		`a[data-attack-surface="navbar-link"]`,
+		`a[data-attack-surface="sidebar-item"]`,
+		`a[data-attack-surface="sidebar-section"]`,
+		`#alert-fixture a`,
+	}
+	for _, selector := range locators {
+		_, err = page.Evaluate(`selector => {
+			const anchor = document.querySelector(selector);
+			if (!anchor) throw new Error('missing anchor: ' + selector);
+			const href = anchor.getAttribute('href') || '';
+			if (href.trim().toLowerCase().startsWith('javascript:')) {
+				window.location.href = href;
+			}
+		}`, selector)
+		require.NoError(t, err)
+	}
+
+	got, err := page.Evaluate(`() => window.__goshtosoHrefPwned || ''`, nil)
+	require.NoError(t, err)
+	require.Empty(t, got, "unsafe href schemes must not execute script")
+}
+
+func TestSecurityAttackSurfaceTableFilterTargetDoesNotExecuteScript(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+	page.SetDefaultTimeout(5000)
+
+	attackTarget := `#rows', pwned: (window.__goshtosoTablePwned = 'target'), unused: '`
+	srv := securityFixtureServer(t, table.Table(table.Config{
+		ID:   "security-filtered-table",
+		HTMX: &table.HTMXConfig{Endpoint: "/rows"},
+		Columns: []table.Column{
+			{Key: "name", Label: "Name"},
+		},
+		Rows: []table.Row{{
+			ID:    "1",
+			Cells: map[string]table.Cell{"name": {Text: "Ada"}},
+		}},
+		Filters: &table.FilterConfig{
+			InitiallyExpanded: true,
+			HTMX:              &table.FilterHTMXConfig{Target: attackTarget},
+			Filters: []table.Filter{{
+				Key:         "search",
+				Label:       "Search",
+				Type:        table.FilterSearch,
+				Placeholder: "Search",
+			}},
+		},
+	}))
+
+	_, err := page.Goto(srv.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => typeof Alpine !== 'undefined'`, nil)
+	require.NoError(t, err)
+
+	input := page.Locator(`#security-filtered-table-filters input[type="search"]`)
+	require.NoError(t, input.Fill("a"))
+	_, err = input.Evaluate(`el => el.dispatchEvent(new Event('input', { bubbles: true }))`, nil)
+	require.NoError(t, err)
+	_, _ = page.WaitForFunction(`() => window.__goshtosoTablePwned === 'target'`, nil, playwright.PageWaitForFunctionOptions{
+		Timeout: playwright.Float(1000),
+	})
+
+	got, err := page.Evaluate(`() => window.__goshtosoTablePwned || ''`, nil)
+	require.NoError(t, err)
+	require.Empty(t, got, "table filter HTMX target must remain inert data")
+}
+
+func TestSecurityAttackSurfaceTableFilterKeyDoesNotExecuteScript(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+	page.SetDefaultTimeout(5000)
+
+	attackKey := `search; window.__goshtosoTablePwned = 'filter-key'; search`
+	srv := securityFixtureServer(t, table.Table(table.Config{
+		ID:   "security-filter-key-table",
+		HTMX: &table.HTMXConfig{Endpoint: "/rows"},
+		Columns: []table.Column{
+			{Key: "name", Label: "Name"},
+		},
+		Rows: []table.Row{{
+			ID:    "1",
+			Cells: map[string]table.Cell{"name": {Text: "Ada"}},
+		}},
+		Filters: &table.FilterConfig{
+			InitiallyExpanded: true,
+			Filters: []table.Filter{{
+				Key:         attackKey,
+				Label:       "Search",
+				Type:        table.FilterSearch,
+				Placeholder: "Search",
+			}},
+		},
+	}))
+
+	_, err := page.Goto(srv.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => typeof Alpine !== 'undefined'`, nil)
+	require.NoError(t, err)
+
+	got, err := page.Evaluate(`() => window.__goshtosoTablePwned || ''`, nil)
+	require.NoError(t, err)
+	require.Empty(t, got, "table filter keys must not become executable Alpine expressions")
+}

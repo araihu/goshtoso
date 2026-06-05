@@ -63,7 +63,7 @@ func (cfg Config) href() templ.SafeURL {
 	if cfg.Href == "" {
 		return "#"
 	}
-	return templ.SafeURL(cfg.Href)
+	return templ.URL(cfg.Href)
 }
 
 func (cfg Config) rel() string {
