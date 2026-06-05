@@ -7,6 +7,7 @@ import (
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/examples/profile"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
 )
 
@@ -29,11 +30,12 @@ func (s *Server) renderProfilePage(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := examples.ProfileApp(st)
+	meta := components.MetaForKey("examples/profile")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.Fragment("Profile", "profile", content).Render(r.Context(), w)
+		_ = demo.FragmentWithMeta(meta, "profile", content).Render(r.Context(), w)
 		return
 	}
-	_ = demo.Layout("Profile", "profile", content).Render(r.Context(), w)
+	_ = demo.LayoutWithMeta(meta, "profile", content).Render(r.Context(), w)
 }
 
 // handleProfileIdentity saves name + bio to the cookie and re-renders the

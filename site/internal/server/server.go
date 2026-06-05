@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/xml"
 	"fmt"
 	"net/http"
 	"os"
@@ -73,6 +74,8 @@ func (s *Server) setupRoutes() {
 	}
 
 	// Component comparison pages
+	s.mux.HandleFunc("/robots.txt", s.handleRobots)
+	s.mux.HandleFunc("/sitemap.xml", s.handleSitemap)
 	s.mux.HandleFunc("/form", s.handleFormPage)
 	s.mux.HandleFunc("/components/", s.handleComponent)
 
@@ -119,6 +122,58 @@ func (s *Server) setupRoutes() {
 			return
 		}
 		http.NotFound(w, r)
+	})
+}
+
+func (s *Server) handleRobots(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/robots.txt" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	_, _ = fmt.Fprintf(w, "User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n", demo.SiteBaseURL)
+}
+
+type sitemapURLSet struct {
+	XMLName xml.Name     `xml:"urlset"`
+	Xmlns   string       `xml:"xmlns,attr"`
+	URLs    []sitemapURL `xml:"url"`
+}
+
+type sitemapURL struct {
+	Loc        string `xml:"loc"`
+	LastMod    string `xml:"lastmod,omitempty"`
+	ChangeFreq string `xml:"changefreq,omitempty"`
+	Priority   string `xml:"priority,omitempty"`
+}
+
+func (s *Server) handleSitemap(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/sitemap.xml" {
+		http.NotFound(w, r)
+		return
+	}
+	pages := components.AllPublicMeta()
+	lastMod := time.Now().UTC().Format("2006-01-02")
+	urls := make([]sitemapURL, 0, len(pages))
+	for _, page := range pages {
+		priority := "0.7"
+		if page.Path == "/" {
+			priority = "1.0"
+		} else if strings.HasPrefix(page.Path, "/components/") {
+			priority = "0.8"
+		}
+		urls = append(urls, sitemapURL{
+			Loc:        page.CanonicalURL(),
+			LastMod:    lastMod,
+			ChangeFreq: "weekly",
+			Priority:   priority,
+		})
+	}
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	_, _ = w.Write([]byte(xml.Header))
+	_ = xml.NewEncoder(w).Encode(sitemapURLSet{
+		Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+		URLs:  urls,
 	})
 }
 
@@ -179,11 +234,12 @@ func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) 
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := entry.Content()
+	meta := components.DemoMeta(key, entry)
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.Fragment(entry.Title, entry.Active, content).Render(r.Context(), w)
+		_ = demo.FragmentWithMeta(meta, entry.Active, content).Render(r.Context(), w)
 		return
 	}
-	_ = demo.Layout(entry.Title, entry.Active, content).Render(r.Context(), w)
+	_ = demo.LayoutWithMeta(meta, entry.Active, content).Render(r.Context(), w)
 }
 
 // handleRadioEcho returns a small HTML fragment for the radio demo's HTMX showcase.

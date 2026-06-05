@@ -8,6 +8,7 @@ import (
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/examples/todo"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
 )
 
@@ -60,11 +61,12 @@ func (s *Server) renderTodoPage(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := examples.TodoApp(st)
+	meta := components.MetaForKey("examples/todo")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.Fragment("Todo List", "todo", content).Render(r.Context(), w)
+		_ = demo.FragmentWithMeta(meta, "todo", content).Render(r.Context(), w)
 		return
 	}
-	_ = demo.Layout("Todo List", "todo", content).Render(r.Context(), w)
+	_ = demo.LayoutWithMeta(meta, "todo", content).Render(r.Context(), w)
 }
 
 // onlyPost returns true and writes a 405 if the request is not a POST.
