@@ -210,7 +210,7 @@ func slidesToJSON(slides []Slide) string {
 			fmt.Fprintf(&b, ",description:'%s'", jsEscape(s.Description))
 		}
 		if s.CTAHref != "" {
-			fmt.Fprintf(&b, ",ctaUrl:'%s'", jsEscape(s.CTAHref))
+			fmt.Fprintf(&b, ",ctaUrl:'%s'", jsEscape(string(templ.URL(s.CTAHref))))
 		}
 		if s.CTALabel != "" {
 			fmt.Fprintf(&b, ",ctaText:'%s'", jsEscape(s.CTALabel))

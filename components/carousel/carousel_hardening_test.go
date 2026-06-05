@@ -26,3 +26,19 @@ func TestSlidesToJSONEscapesControlCharactersInAlpineStrings(t *testing.T) {
 		t.Fatalf("slidesToJSON emitted raw JS line terminator:\n%s", out)
 	}
 }
+
+func TestSlidesToJSONSanitizesExecutableCTAHref(t *testing.T) {
+	out := slidesToJSON([]Slide{{
+		ImgSrc:   "/safe.webp",
+		ImgAlt:   "Safe",
+		CTAHref:  "javascript:alert(1)",
+		CTALabel: "Open",
+	}})
+
+	if strings.Contains(out, "javascript:alert(1)") {
+		t.Fatalf("slidesToJSON emitted executable CTA href:\n%s", out)
+	}
+	if !strings.Contains(out, "ctaUrl:'about:invalid#TemplFailedSanitizationURL'") {
+		t.Fatalf("slidesToJSON missing inert CTA fallback:\n%s", out)
+	}
+}
