@@ -68,6 +68,24 @@ func (h *HTMXConfig) HasHxVerb() bool {
 	return h.Get != "" || h.Post != "" || h.Put != "" || h.Delete != "" || h.Patch != ""
 }
 
+// EffectiveTrigger returns the hx-trigger value to render: the explicit
+// Trigger when set, otherwise "change" when any verb is set, otherwise "".
+// Collapsing the decision into one method lets templates use a single
+// attribute conditional and avoid `else if` in attribute context, which templ
+// mis-parses into a stray `else` text node.
+func (h *HTMXConfig) EffectiveTrigger() string {
+	if h == nil {
+		return ""
+	}
+	if h.Trigger != "" {
+		return h.Trigger
+	}
+	if h.HasHxVerb() {
+		return "change"
+	}
+	return ""
+}
+
 // AlpineConfig holds common Alpine.js directives for client-side behavior.
 type AlpineConfig struct {
 	Data         string // x-data
