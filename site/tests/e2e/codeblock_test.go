@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -97,4 +98,68 @@ func TestCodeBlock_ChromaHighlighting(t *testing.T) {
 		require.Equal(t, text, copied,
 			"clipboard payload should equal the rendered code textContent")
 	})
+}
+
+func TestCodeBlock_DirectDemoPage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/codeblock", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	for _, label := range []string{"main.go", "html", "css", "Install", "long.go"} {
+		require.NoError(t, page.GetByText(label, playwright.PageGetByTextOptions{
+			Exact: playwright.Bool(true),
+		}).First().WaitFor())
+	}
+
+	for _, source := range []string{
+		`fmt.Println("hello, world")`,
+		`x-data="{ open: false }"`,
+		`color: var(--color-primary)`,
+		`go get github.com/a-h/templ`,
+		`http.ListenAndServe(":8080", nil)`,
+	} {
+		require.NoError(t, page.Locator(".codeblock").Filter(playwright.LocatorFilterOptions{
+			HasText: source,
+		}).First().WaitFor())
+	}
+
+	scrollable := page.Locator(".codeblock").Filter(playwright.LocatorFilterOptions{
+		HasText: `http.ListenAndServe(":8080", nil)`,
+	}).First()
+	maxHeight, err := scrollable.Evaluate("el => getComputedStyle(el).maxHeight", nil)
+	require.NoError(t, err)
+	assert.Equal(t, "180px", maxHeight)
+
+	_, err = page.Evaluate(`() => {
+		window.__copied = null;
+		Object.defineProperty(navigator, 'clipboard', {
+			configurable: true,
+			value: {
+				writeText: (t) => { window.__copied = t; return Promise.resolve(); }
+			}
+		});
+	}`, nil)
+	require.NoError(t, err)
+
+	firstBlock := page.Locator(".codeblock").First()
+	expected, err := firstBlock.TextContent()
+	require.NoError(t, err)
+	copyButton := firstBlock.Locator("xpath=..").Locator("button[aria-label='Copy main.go code']").First()
+	require.NoError(t, copyButton.WaitFor())
+
+	_, err = firstBlock.Evaluate(`el => Alpine.$data(el.parentElement).copyCode()`, nil)
+	require.NoError(t, err)
+
+	copied, err := page.Evaluate("() => window.__copied", nil)
+	require.NoError(t, err)
+	assert.Equal(t, expected, copied)
 }

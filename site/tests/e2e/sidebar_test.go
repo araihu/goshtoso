@@ -162,3 +162,67 @@ func TestSidebar_ExamplesTopItemNavigatesToOverview(t *testing.T) {
 	require.NoError(t, page.WaitForURL("**/examples"))
 	require.NoError(t, page.Locator("main h1", playwright.PageLocatorOptions{HasText: "Examples"}).WaitFor())
 }
+
+func TestSidebarComponentDemoVariants(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/sidebar", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	simple := page.Locator("#sidebar-simple")
+	require.NoError(t, simple.GetByText("MyApp", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+	require.NoError(t, simple.Locator("input[type='search'][placeholder='Search...']").WaitFor())
+	require.NoError(t, simple.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "Profile"}).WaitFor())
+	require.NoError(t, simple.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "Inbox"}).GetByText("3", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+
+	sections := page.Locator("#sidebar-sections")
+	for _, heading := range []string{"Getting Started", "Components", "Settings"} {
+		require.NoError(t, sections.Locator("h3").Filter(playwright.LocatorFilterOptions{HasText: heading}).WaitFor())
+	}
+	require.NoError(t, sections.Locator("[data-sidebar-section='Components']").GetByText("Table", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+
+	subItems := page.Locator("#sidebar-sub-items")
+	require.NoError(t, subItems.GetByText("API Docs", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+	for _, label := range []string{"Create User", "Get User", "Update User", "Delete User"} {
+		count, err := subItems.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: label}).Count()
+		require.NoError(t, err)
+		assert.Equal(t, 1, count)
+	}
+	for _, badge := range []string{"POST", "GET", "PUT", "DEL"} {
+		count, err := subItems.Locator("sup").Filter(playwright.LocatorFilterOptions{HasText: badge}).Count()
+		require.NoError(t, err)
+		assert.GreaterOrEqual(t, count, 1)
+	}
+
+	contentButton := page.Locator("#sidebar-collapsible button").Filter(playwright.LocatorFilterOptions{HasText: "Content"})
+	require.NoError(t, contentButton.Click())
+	require.NoError(t, page.Locator("#sidebar-collapsible").GetByText("Articles", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	overlay := page.Locator("#sidebar-overlay")
+	panel := overlay.GetByText("Overlay", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)})
+	visible, err := panel.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible)
+
+	require.NoError(t, overlay.Locator("button[aria-label='Open sidebar']").Click())
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+
+	require.NoError(t, overlay.Locator("button[aria-label='Close sidebar']").Click())
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateHidden,
+		Timeout: playwright.Float(3000),
+	}))
+}

@@ -181,4 +181,12 @@ templ sidebarSectionItem(item Item) {
 			}
 		</a>
 	}
+
+	if len(item.Items) > 0 {
+		<div class="ml-4 flex flex-col">
+			for _, child := range item.Items {
+				@sidebarSectionItem(child)
+			}
+		</div>
+	}
 }
