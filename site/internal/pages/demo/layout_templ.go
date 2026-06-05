@@ -569,21 +569,17 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("chatbubble", "Chat Bubble", "/components/chatbubble", activeComponent),
 				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
 				sItem("kbd", "KBD", "/components/kbd", activeComponent),
-				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
 				sItem("table", "Table", "/components/table", activeComponent),
-				sItem("tabs", "Tabs", "/components/tabs", activeComponent),
 			},
 		},
 		{
-			Title: "Form",
+			Title: "Input",
 			Items: []sidebar.Item{
 				sItem("button", "Button", "/components/button", activeComponent),
 				sItem("checkbox", "Checkbox", "/components/checkbox", activeComponent),
 				sItem("combobox", "Combobox", "/components/combobox", activeComponent),
-				sItem("dropdown", "Dropdown", "/components/dropdown", activeComponent),
 				sItem("fileinput", "File Input", "/components/fileinput", activeComponent),
 				sItem("form", "Form", "/components/form", activeComponent),
-				sItem("pagination", "Pagination", "/components/pagination", activeComponent),
 				sItem("radio", "Radio", "/components/radio", activeComponent),
 				sItem("range", "Range", "/components/range", activeComponent),
 				sItem("rating", "Rating", "/components/rating", activeComponent),
@@ -601,9 +597,10 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			Title: "Feedback",
 			Items: []sidebar.Item{
 				sItem("alert", "Alert", "/components/alert", activeComponent),
-				sItem("modal", "Modal", "/components/modal", activeComponent),
-				sItem("steps", "Steps", "/components/steps", activeComponent),
 				sItem("toast", "Toast", "/components/toast", activeComponent),
+				sItem("modal", "Modal", "/components/modal", activeComponent),
+				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
+				sItem("steps", "Steps", "/components/steps", activeComponent),
 				sItem("tooltip", "Tooltip", "/components/tooltip", activeComponent),
 			},
 		},
@@ -611,9 +608,12 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			Title: "Navigation",
 			Items: []sidebar.Item{
 				sItem("breadcrumbs", "Breadcrumbs", "/components/breadcrumbs", activeComponent),
+				sItem("dropdown", "Dropdown", "/components/dropdown", activeComponent),
 				sItem("link", "Link", "/components/link", activeComponent),
 				sItem("navbar", "Navbar", "/components/navbar", activeComponent),
+				sItem("pagination", "Pagination", "/components/pagination", activeComponent),
 				sItem("sidebar", "Sidebar", "/components/sidebar", activeComponent),
+				sItem("tabs", "Tabs", "/components/tabs", activeComponent),
 			},
 		},
 		{
@@ -647,20 +647,17 @@ var orderedComponents = []componentNavLink{
 	{"Chat Bubble", "/components/chatbubble"},
 	{"Code Block", "/components/codeblock"},
 	{"KBD", "/components/kbd"},
-	{"Spinner", "/components/spinner"},
 	{"Table", "/components/table"},
-	{"Tabs", "/components/tabs"},
 	{"Button", "/components/button"},
 	{"Checkbox", "/components/checkbox"},
 	{"Combobox", "/components/combobox"},
-	{"Dropdown", "/components/dropdown"},
 	{"File Input", "/components/fileinput"},
 	{"Form", "/components/form"},
-	{"Pagination", "/components/pagination"},
 	{"Radio", "/components/radio"},
 	{"Range", "/components/range"},
 	{"Rating", "/components/rating"},
 	{"Palette", "/components/palette"},
+	{"Search", "/components/search"},
 	{"Select", "/components/select"},
 	{"Structured Input", "/components/structured-input"},
 	{"Tags List", "/components/tags-list"},
@@ -668,14 +665,18 @@ var orderedComponents = []componentNavLink{
 	{"Textarea", "/components/textarea"},
 	{"Toggle", "/components/toggle"},
 	{"Alert", "/components/alert"},
-	{"Modal", "/components/modal"},
-	{"Steps", "/components/steps"},
 	{"Toast", "/components/toast"},
+	{"Modal", "/components/modal"},
+	{"Spinner", "/components/spinner"},
+	{"Steps", "/components/steps"},
 	{"Tooltip", "/components/tooltip"},
 	{"Breadcrumbs", "/components/breadcrumbs"},
+	{"Dropdown", "/components/dropdown"},
 	{"Link", "/components/link"},
 	{"Navbar", "/components/navbar"},
+	{"Pagination", "/components/pagination"},
 	{"Sidebar", "/components/sidebar"},
+	{"Tabs", "/components/tabs"},
 }
 
 func getComponentNav(activeComponent string) (prev, next *componentNavLink) {
@@ -730,7 +731,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var18 templ.SafeURL
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 665, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 666, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -751,7 +752,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 672, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 673, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -776,7 +777,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var20 templ.SafeURL
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 680, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 681, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -797,7 +798,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 684, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 685, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
