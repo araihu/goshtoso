@@ -1,0 +1,289 @@
+package search
+
+import (
+	"fmt"
+
+	"github.com/araihu/goshtoso/components/kbd"
+)
+
+// Search renders a command-palette style search dialog. Results are supplied by
+// the caller; the component only handles presentation and client-side filtering.
+templ Search(cfg Config) {
+	@searchScript()
+	<div class={ cfg.RootClasses() }>
+		@SearchField(cfg)
+		@SearchModal(cfg)
+	</div>
+}
+
+// SearchField renders the compact trigger. It can be placed anywhere and linked
+// to a SearchModal with the same Config.ID.
+templ SearchField(cfg Config) {
+	{{ id := cfg.GetID() }}
+	@searchScript()
+	<div
+		id={ id }
+		class="w-full"
+		x-data={ fmt.Sprintf("goshtosoSearchField('%s', %t)", JSString(id), cfg.GlobalShortcut) }
+		if cfg.GlobalShortcut {
+			x-on:keydown.window="handleWindowKey($event)"
+		}
+		x-on:goshtoso-search-open.window="if ($event.detail.id === searchId) open = true"
+		x-on:goshtoso-search-close.window="if ($event.detail.id === searchId) open = false"
+	>
+		<button
+			type="button"
+			class={ cfg.TriggerClasses() }
+			x-on:click="openSearch()"
+			aria-haspopup="dialog"
+			x-bind:aria-expanded="open"
+			aria-controls={ id + "-dialog" }
+		>
+			@searchIcon("size-5 shrink-0")
+			<span class="min-w-0 flex-1 truncate">{ cfg.GetLabel() }</span>
+			@kbd.Kbd(kbd.Config{Text: cfg.GetShortcutText(), Size: kbd.SizeSM, Class: "ml-auto text-on-surface-muted dark:text-on-surface-dark-muted"})
+		</button>
+	</div>
+}
+
+// SearchModal renders the global dialog surface. Pair it with SearchField using
+// the same Config.ID.
+templ SearchModal(cfg Config) {
+	{{ id := cfg.GetID() }}
+	@searchScript()
+	<div
+		x-cloak
+		x-data={ fmt.Sprintf("goshtosoSearchModal('%s', %d, %d)", JSString(id), cfg.GetMaxResults(), cfg.GetDescriptionMaxLength()) }
+		x-on:goshtoso-search-open.window="if ($event.detail.id === searchId) openSearch()"
+		x-show="open"
+		x-transition.opacity.duration.150ms
+		x-trap.inert.noscroll="open"
+		x-on:click.self="closeSearch()"
+		class="fixed inset-0 z-[80] flex justify-center bg-surface-dark/55 px-4 backdrop-blur-md dark:bg-black/60"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby={ id + "-label" }
+		id={ id + "-dialog" }
+	>
+		<div
+			class={ cfg.DialogClasses() }
+			x-show="open"
+			x-transition:enter="transition ease-out duration-150"
+			x-transition:enter-start="opacity-0 translate-y-1"
+			x-transition:enter-end="opacity-100 translate-y-0"
+		>
+			<div
+				class="relative flex items-center gap-3 border border-outline bg-surface px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt"
+				x-bind:class="query.trim().length > 0 ? 'rounded-t-radius border-b-0' : 'rounded-radius'"
+			>
+				@searchIcon("size-5 shrink-0 text-on-surface-muted dark:text-on-surface-dark-muted")
+				<label id={ id + "-label" } class="sr-only" for={ id + "-input" }>{ cfg.GetLabel() }</label>
+				<input
+					x-ref="input"
+					x-model="query"
+					x-on:input="activeIndex = 0"
+					x-on:keydown.down.prevent="move(1)"
+					x-on:keydown.up.prevent="move(-1)"
+					x-on:keydown.enter.prevent="choose()"
+					x-on:keydown.escape.prevent="closeSearch()"
+					id={ id + "-input" }
+					type="search"
+					class="min-w-0 flex-1 bg-transparent py-1 text-base text-on-surface-strong placeholder:text-on-surface-muted focus:outline-none dark:text-on-surface-dark-strong dark:placeholder:text-on-surface-dark-muted"
+					placeholder={ cfg.GetPlaceholder() }
+					autocomplete="off"
+					spellcheck="false"
+					{ cfg.InputAttrs... }
+				/>
+				@kbd.Kbd(kbd.Config{Text: cfg.GetEscapeText(), Size: kbd.SizeSM, Class: "text-on-surface-muted dark:text-on-surface-dark-muted"})
+			</div>
+			<div
+				x-show="query.trim().length > 0"
+				class="flex max-h-[min(28rem,calc(100vh-12rem))] flex-col divide-y divide-outline overflow-hidden overflow-y-auto rounded-b-radius border border-outline bg-surface text-sm font-light dark:divide-outline-dark dark:border-outline-dark dark:bg-surface-dark-alt"
+				role="listbox"
+				aria-label={ cfg.GetLabel() + " results" }
+			>
+				for i, item := range cfg.Items {
+					@resultItem(item, i)
+				}
+				<p
+					x-show="query.trim().length > 0 && visibleResults().length === 0"
+					class="px-4 py-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
+				>
+					{ cfg.GetEmptyText() }
+				</p>
+			</div>
+		</div>
+	</div>
+}
+
+templ resultItem(item Item, index int) {
+	<button
+		type="button"
+		if item.ID != "" {
+			id={ item.ID }
+		}
+		data-search-result
+		data-search-title={ item.Title }
+		data-search-description={ item.Description }
+		if item.Section != "" {
+			data-search-section={ item.Section }
+		}
+		if item.Href != "" {
+			data-search-href={ item.Href }
+		}
+		data-search-text={ item.SearchText() }
+		data-result-index={ fmt.Sprint(index) }
+		x-bind:hidden="!isResultVisible($el)"
+		x-bind:style="'order: ' + resultOrder($el)"
+		x-bind:class="isActive($el) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'"
+		x-on:mouseenter="setActive($el)"
+		x-on:click="selectResult($el)"
+		class="flex w-full flex-col gap-2 p-4 text-left transition focus:outline-none"
+		role="option"
+		{ item.Attrs... }
+	>
+		<div class="flex items-start justify-between gap-3">
+			<strong class="min-w-0 text-base font-semibold" x-html="highlight($el.closest('[data-search-result]').dataset.searchTitle)">{ item.Title }</strong>
+			if item.Section != "" {
+				<span class="shrink-0 rounded-radius border border-outline px-2 py-0.5 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">{ item.Section }</span>
+			}
+		</div>
+		if item.Description != "" {
+			<p class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted" x-html="highlight(truncate($el.closest('[data-search-result]').dataset.searchDescription))">{ item.Description }</p>
+		}
+	</button>
+}
+
+templ searchIcon(classes string) {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class={ classes } aria-hidden="true">
+		<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+	</svg>
+}
+
+templ searchScript() {
+	@templ.Raw(`<script>
+(function () {
+	if (window.goshtosoSearchField && window.goshtosoSearchModal) return;
+	window.goshtosoSearchField = function (searchId, globalShortcut) {
+		return {
+			searchId: searchId,
+			open: false,
+			openSearch: function () {
+				window.dispatchEvent(new CustomEvent('goshtoso-search-open', { detail: { id: this.searchId } }));
+			},
+			handleWindowKey: function (event) {
+				if (!globalShortcut) return;
+				if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+					event.preventDefault();
+					this.openSearch();
+				}
+			}
+		};
+	};
+	window.goshtosoSearchModal = function (searchId, maxResults, descriptionMaxLength) {
+		return {
+			searchId: searchId,
+			open: false,
+			query: '',
+			activeIndex: 0,
+			maxResults: maxResults || 4,
+			descriptionMaxLength: descriptionMaxLength || 120,
+			openSearch: function () {
+				this.open = true;
+				this.activeIndex = 0;
+				this.$nextTick(() => {
+					if (this.$refs.input) this.$refs.input.focus();
+				});
+			},
+			closeSearch: function () {
+				this.open = false;
+				this.query = '';
+				this.activeIndex = 0;
+				window.dispatchEvent(new CustomEvent('goshtoso-search-close', { detail: { id: this.searchId } }));
+			},
+			handleWindowKey: function (event) {
+				if (this.open && event.key === 'Escape') {
+					event.preventDefault();
+					this.closeSearch();
+				}
+			},
+			matches: function (el) {
+				var term = this.query.trim().toLowerCase();
+				if (!term) return false;
+				return (el.dataset.searchText || '').toLowerCase().indexOf(term) !== -1;
+			},
+			allResults: function () {
+				return Array.prototype.slice.call(this.$root.querySelectorAll('[data-search-result]'));
+			},
+			matchedResults: function () {
+				var term = this.query.trim().toLowerCase();
+				if (!term) return [];
+				var titleMatches = [];
+				var nonTitleMatches = [];
+				this.allResults().forEach(function (el) {
+					var title = (el.dataset.searchTitle || '').toLowerCase();
+					var text = (el.dataset.searchText || '').toLowerCase();
+					if (title.indexOf(term) !== -1) titleMatches.push(el);
+					else if (text.indexOf(term) !== -1) nonTitleMatches.push(el);
+				});
+				return titleMatches.concat(nonTitleMatches).slice(0, this.maxResults);
+			},
+			visibleResults: function () {
+				return this.matchedResults();
+			},
+			isResultVisible: function (el) {
+				return this.matchedResults().indexOf(el) !== -1;
+			},
+			resultOrder: function (el) {
+				var index = this.matchedResults().indexOf(el);
+				return index < 0 ? 999 : index;
+			},
+			move: function (delta) {
+				var results = this.visibleResults();
+				if (!results.length) return;
+				this.activeIndex = (this.activeIndex + delta + results.length) % results.length;
+				results[this.activeIndex].scrollIntoView({ block: 'nearest' });
+			},
+			setActive: function (el) {
+				var results = this.visibleResults();
+				var index = results.indexOf(el);
+				if (index >= 0) this.activeIndex = index;
+			},
+			isActive: function (el) {
+				return this.visibleResults().indexOf(el) === this.activeIndex;
+			},
+			choose: function () {
+				var results = this.visibleResults();
+				if (!results.length) return;
+				results[this.activeIndex].click();
+			},
+			selectResult: function (el) {
+				this.closeSearch();
+				if (!el.hasAttribute('hx-get') && !el.hasAttribute('hx-post') && el.dataset.searchHref) {
+					window.location.href = el.dataset.searchHref;
+				}
+			},
+			truncate: function (value) {
+				value = value || '';
+				if (value.length <= this.descriptionMaxLength) return value;
+				return value.substring(0, this.descriptionMaxLength) + '...';
+			},
+			escapeHTML: function (value) {
+				return (value || '').replace(/[&<>"']/g, function (char) {
+					return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+				});
+			},
+			highlight: function (value) {
+				var escaped = this.escapeHTML(value);
+				var term = this.query.trim();
+				if (!term) return escaped;
+				var pattern = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+				return escaped.replace(new RegExp(pattern, 'gi'), function (match) {
+					return '<span class="search-highlight">' + match + '</span>';
+				});
+			}
+		};
+	};
+})();
+</script>`)
+}

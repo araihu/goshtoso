@@ -1,0 +1,198 @@
+package e2e
+
+import (
+	"testing"
+
+	"github.com/playwright-community/playwright-go"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestSearch_PageLoadsAndFilters(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("#search-fragment").WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+
+	trigger := page.Locator("#component-search button[aria-haspopup='dialog']")
+	require.NoError(t, trigger.Click())
+
+	input := page.Locator("#component-search-input")
+	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	visible, err := page.Locator("#component-search-dialog [data-search-result]:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, visible, "search should open with an empty result list")
+
+	require.NoError(t, input.Fill("kbd"))
+	assert.NoError(t, page.Locator("#search-demo-kbd:visible").WaitFor())
+	assert.NoError(t, page.Locator("#search-demo-kbd .search-highlight").WaitFor())
+
+	visible, err = page.Locator("#component-search-dialog [data-search-result]:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 1, visible)
+
+	require.NoError(t, input.Fill("zzzz"))
+	assert.NoError(t, page.Locator("#component-search-dialog p", playwright.PageLocatorOptions{HasText: "No results found."}).WaitFor())
+}
+
+func TestSidebarSearch_UsesKbdAndNavigates(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	trigger := page.Locator("#docs-search button[aria-haspopup='dialog']")
+	require.NoError(t, trigger.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	kbdText, err := trigger.Locator("kbd").TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, kbdText, "K")
+	assert.NotContains(t, kbdText, "Esc")
+
+	require.NoError(t, page.Keyboard().Press("Meta+K"))
+	input := page.Locator("#docs-search-input")
+	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	parentTag, err := page.Locator("#docs-search-dialog").Evaluate("el => el.parentElement.tagName", nil)
+	require.NoError(t, err)
+	assert.Equal(t, "BODY", parentTag, "docs search dialog should be teleported out of the transformed sidebar")
+	dialogKbdText, err := page.Locator("#docs-search-dialog kbd").TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, dialogKbdText, "Esc")
+
+	visible, err := page.Locator("#docs-search-dialog [data-search-result]:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, visible, "docs sidebar search should open empty")
+
+	require.NoError(t, input.Fill("button"))
+	assert.NoError(t, page.Locator("#search-button:visible").WaitFor())
+	visible, err = page.Locator("#docs-search-dialog [data-search-result]:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 4, visible, "docs sidebar search should cap matches like PenguinUI")
+
+	firstTitle, err := page.Locator("#docs-search-dialog [data-search-result]:visible strong").First().TextContent()
+	require.NoError(t, err)
+	assert.Equal(t, "Button", firstTitle)
+	assert.NoError(t, page.Locator("#docs-search-dialog [data-search-result]:visible .search-highlight").First().WaitFor())
+	firstClass, err := page.Locator("#docs-search-dialog [data-search-result]:visible").First().GetAttribute("class")
+	require.NoError(t, err)
+	assert.NotContains(t, firstClass, "bg-primary", "search results should not use full primary row fill")
+	assert.NotContains(t, firstClass, "color-primary", "active row accent should not reuse the match-highlight color")
+
+	buttonDescription, err := page.Locator("#search-button p").TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, buttonDescription, "variants")
+	assert.NotContains(t, buttonDescription, "component documentation and examples")
+
+	require.NoError(t, input.Fill("search"))
+	require.NoError(t, input.Press("Enter"))
+
+	require.NoError(t, page.WaitForURL("**/components/search"))
+	require.NoError(t, page.Locator("#search-fragment").WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+}
+
+func TestSidebarSearch_DoesNotOpenDuringSidebarNavigation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("#docs-search button[aria-haspopup='dialog']").WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	visible, err := page.Locator("#docs-search-dialog:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, visible)
+
+	require.NoError(t, page.Locator("a[data-sidebar-item='Badge']").Click())
+	require.NoError(t, page.WaitForURL("**/components/badge"))
+	require.NoError(t, page.Locator("#main-content h1", playwright.PageLocatorOptions{HasText: "Badge"}).WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	visible, err = page.Locator("#docs-search-dialog:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, visible, "sidebar navigation should not open the docs search modal")
+}
+
+func TestSidebarSearch_GlobalShortcutOnlyOpensDocsSearch(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("Meta+K"))
+	require.NoError(t, page.Locator("#docs-search-input").WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	componentVisible, err := page.Locator("#component-search-dialog:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, componentVisible, "demo search should not open from the sidebar global shortcut")
+
+	customVisible, err := page.Locator("#custom-search-dialog:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, customVisible, "custom demo search should not open from the sidebar global shortcut")
+}

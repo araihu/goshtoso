@@ -2,6 +2,7 @@ package demo
 
 import (
 	"github.com/araihu/goshtoso/assets"
+	searchfield "github.com/araihu/goshtoso/components/search"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
 )
@@ -77,6 +78,9 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					// nav to the top on every SSE log append.
 					var tgt = e && e.detail && e.detail.target;
 					if (tgt && tgt.id === 'main-content') {
+						var sidebarContent = document.getElementById('sidebar-nav-content');
+						if (sidebarContent && window.Alpine && Alpine.initTree) Alpine.initTree(sidebarContent);
+						if (sidebarContent && window.htmx && htmx.process) htmx.process(sidebarContent);
 						var sb = document.querySelector('.sidebar-scroll');
 						if (sb) sb.scrollTop = __sidebarScrollTop;
 						var main = document.querySelector('main');
@@ -184,23 +188,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					class="fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 lg:h-full"
 					:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 				>
-						<div
-					class="h-full"
-					x-data="{ q: '' }"
-					x-effect="
-						void $store.nav?.path;
-						const items = $el.querySelectorAll('[data-sidebar-item]');
-						const sections = $el.querySelectorAll('[data-sidebar-section]');
-						const term = q.toLowerCase();
-						items.forEach(el => {
-							el.style.display = !term || el.dataset.sidebarItem.toLowerCase().includes(term) ? '' : 'none';
-						});
-						sections.forEach(el => {
-							const visible = [...el.querySelectorAll('[data-sidebar-item]')].some(i => i.style.display !== 'none');
-							el.style.display = visible ? '' : 'none';
-						});
-					"
-				>
+				<div class="h-full">
 					<div id="sidebar-nav-content" class="h-full">
 						@sidebar.Sidebar(sidebar.Config{
 							Items:             getSidebarTopItems(activeComponent),
@@ -237,6 +225,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					</div>
 				</aside>
 			</div>
+			@searchfield.SearchModal(docsSearchConfig())
 			<!-- Browser storage notice. Shows until the visitor chooses allowed or denied
 			     storage via the gt_storage preference cookie. Keep in lock-step with
 			     landing.templ's cookieConsent(). -->
@@ -378,20 +367,19 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 
 templ sidebarSearchSlot() {
 	<div class="shrink-0 px-4 py-3">
-		<div class="relative">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted" aria-hidden="true">
-				<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
-			</svg>
-			<input
-				type="search"
-				x-model="q"
-				class="w-full border border-outline rounded-radius bg-surface py-1.5 pl-9 pr-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark/50 dark:focus-visible:outline-primary-dark"
-				name="search"
-				aria-label="Search components"
-				placeholder="Search components..."
-			/>
-		</div>
+		@searchfield.SearchField(docsSearchConfig())
 	</div>
+}
+
+func docsSearchConfig() searchfield.Config {
+	return searchfield.Config{
+		ID:             "docs-search",
+		Label:          "Search docs...",
+		Placeholder:    "Search",
+		GlobalShortcut: true,
+		Items:          getSearchItems(),
+		EmptyText:      "No docs found.",
+	}
 }
 
 templ sidebarHomeIcon() {
@@ -434,6 +422,99 @@ func sItem(id, label, href, activeComponent string) sidebar.Item {
 	}
 }
 
+func getSearchItems() []searchfield.Item {
+	items := []searchfield.Item{
+		{ID: "search-getting-started", Title: "Getting Started", Description: "Install Goshtoso, wire assets, and render your first component.", Href: "/getting-started", Section: "Docs", Attrs: navHxAttrs("/getting-started", "")},
+		{ID: "search-examples", Title: "Examples", Description: "Full runnable app examples built with Goshtoso components.", Href: "/examples", Section: "Examples", Attrs: navHxAttrs("/examples", "")},
+		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},
+		{ID: "search-attributions", Title: "Attributions", Description: "Third-party notices and project credits.", Href: "/attributions", Section: "Docs", Attrs: navHxAttrs("/attributions", "")},
+		{ID: "search-license", Title: "License", Description: "License details for using Goshtoso.", Href: "/license", Section: "Docs", Attrs: navHxAttrs("/license", "")},
+	}
+	for _, section := range getSidebarSections("") {
+		for _, item := range section.Items {
+			items = append(items, searchfield.Item{
+				ID:          "search-" + item.ID,
+				Title:       item.Label,
+				Description: searchItemDescription(item.ID, item.Label, section.Title),
+				Href:        item.Href,
+				Section:     section.Title,
+				Keywords:    []string{item.ID},
+				Attrs:       navHxAttrs(item.Href, ""),
+			})
+		}
+	}
+	items = append(items, getSearchSectionItems()...)
+	return items
+}
+
+func searchItemDescription(id, label, section string) string {
+	descriptions := map[string]string{
+		"accordion":        "Expandable content groups for FAQs, dense settings, and progressive disclosure.",
+		"avatar":           "User images, initials, placeholders, status indicators, borders, and stacked groups.",
+		"badge":            "Compact labels for statuses, counts, semantic colors, icons, and notification dots.",
+		"banner":           "Inline announcements and alerts with tone, icon, action, and dismiss patterns.",
+		"card":             "Structured content containers with media, headings, actions, and layout variants.",
+		"carousel":         "Swipeable or controlled content rails for images, feature panels, and grouped cards.",
+		"chatbubble":       "Conversation message bubbles with alignment, avatars, metadata, and grouped threads.",
+		"codeblock":        "Syntax-highlighted snippets with copy actions, labels, scroll bounds, and themes.",
+		"kbd":              "Semantic keyboard shortcut hints for command palettes, forms, and toolbar controls.",
+		"spinner":          "Loading indicators with size, color, label, and accessible busy-state patterns.",
+		"table":            "Sortable, paginated, filterable data grids with HTMX loading and rich cell content.",
+		"tabs":             "Segmented content navigation with keyboard support, panels, and active states.",
+		"button":           "Clickable actions with variants, sizes, icons, loading states, and HTMX integration.",
+		"checkbox":         "Boolean and grouped selections with labels, helper text, disabled states, and validation.",
+		"combobox":         "Searchable select controls for single or multiple choices with keyboard navigation.",
+		"dropdown":         "Menu triggers with grouped actions, icons, alignment, and keyboard-friendly behavior.",
+		"fileinput":        "File upload controls with labels, helper text, selected-file display, and validation states.",
+		"form":             "Form layout patterns, field groups, validation messages, and submit behavior.",
+		"pagination":       "Page navigation controls for tables, lists, and HTMX-powered result sets.",
+		"radio":            "Exclusive choice groups with accessible labels, helper copy, and validation states.",
+		"palette":          "Color picking surfaces with swatches, hex entry, token labels, and theme integration.",
+		"search":           "Command-palette search with a sidebar trigger, global modal, filtering, and highlights.",
+		"select":           "Native-feeling select menus with trigger content, grouped options, and keyboard support.",
+		"structured-input": "Composed inputs for prefixes, suffixes, segmented values, and constrained data entry.",
+		"tags-list":        "Editable tag collections with add, remove, duplicate handling, and keyboard flows.",
+		"text-input":       "Text fields with icons, search affordances, masks, validation, and password controls.",
+		"textarea":         "Multi-line text entry with resize behavior, helper text, counters, and validation.",
+		"toggle":           "Binary switches for settings, feature flags, and compact on/off choices.",
+		"alert":            "Contextual messages for info, success, warning, and danger states.",
+		"modal":            "Overlay dialogs with focus management, actions, dismissal, and scroll handling.",
+		"steps":            "Progress indicators for wizards, onboarding, and multi-step workflows.",
+		"toast":            "Transient notifications with positions, timing, actions, and status variants.",
+		"tooltip":          "Small contextual hints for icons, controls, and abbreviated UI labels.",
+		"breadcrumbs":      "Hierarchical navigation trails for nested pages and documentation routes.",
+		"navbar":           "Top navigation bars with links, actions, responsive menus, and brand areas.",
+		"sidebar":          "Persistent or overlay side navigation with sections, search slots, and active states.",
+		"todo":             "Runnable task-list example with add, edit, complete, and filter flows.",
+		"chat":             "Runnable chat interface example with messages, composer, and conversation layout.",
+		"logs":             "Live log-feed example with streaming updates and operational scanning patterns.",
+		"profile":          "Profile editing example with forms, preferences, validation, and persisted state.",
+		"ticker":           "Live ticker example with real-time list updates and compact status rows.",
+	}
+	if description, ok := descriptions[id]; ok {
+		return description
+	}
+	return label + " patterns for " + section + " interfaces."
+}
+
+func searchSectionItem(id, title, description, href string) searchfield.Item {
+	return searchfield.Item{
+		ID:          "search-section-" + id,
+		Title:       title,
+		Description: description,
+		Href:        href,
+		Section:     "Section",
+	}
+}
+
+func getSearchSectionItems() []searchfield.Item {
+	return []searchfield.Item{
+		searchSectionItem("button-sizes", "Sizes", "Button size variants: small, medium, large, and extra large.", "/components/button#"+slugify("Sizes")),
+		searchSectionItem("button-disabled", "Disabled", "Disabled button states block interaction and dim the control.", "/components/button#"+slugify("Disabled")),
+		searchSectionItem("button-htmx-interactions", "HTMX Interactions", "Button examples wired to HTMX requests, confirmation, indicators, and loading text.", "/components/button#"+slugify("HTMX Interactions")),
+	}
+}
+
 // getSidebarSections returns the component categories with left-border style items
 func getSidebarSections(activeComponent string) []sidebar.Section {
 	return []sidebar.Section{
@@ -468,6 +549,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("range", "Range", "/components/range", activeComponent),
 				sItem("rating", "Rating", "/components/rating", activeComponent),
 				sItem("palette", "Palette", "/components/palette", activeComponent),
+				sItem("search", "Search", "/components/search", activeComponent),
 				sItem("select", "Select", "/components/select", activeComponent),
 				sItem("structured-input", "Structured Input", "/components/structured-input", activeComponent),
 				sItem("tags-list", "Tags List", "/components/tags-list", activeComponent),
