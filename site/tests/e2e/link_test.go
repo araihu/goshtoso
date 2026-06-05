@@ -13,14 +13,8 @@ func TestLinkComponentDemo(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	cleanupServer := setupServer(t)
-	defer cleanupServer()
-
-	_, browser, cleanupPW := setupPlaywright(t)
-	defer cleanupPW()
-
+	_, browser, _ := setupPlaywright(t)
 	page := newPage(t, browser)
-
 	_, err := page.Goto(baseURL+"/components/link", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
@@ -28,25 +22,46 @@ func TestLinkComponentDemo(t *testing.T) {
 
 	require.NoError(t, page.Locator("#link-fragment").WaitFor())
 
-	defaultLink := page.Locator("#link-default a").First()
-	href, err := defaultLink.GetAttribute("href")
-	require.NoError(t, err)
-	assert.Equal(t, "#", href)
+	t.Run("default and inline links expose hrefs and visible text", func(t *testing.T) {
+		defaultLink := page.Locator("#link-default a").First()
+		require.NoError(t, defaultLink.GetByText("Read if bored", playwright.LocatorGetByTextOptions{
+			Exact: playwright.Bool(true),
+		}).WaitFor())
+		assert.Equal(t, "#", mustAttribute(t, defaultLink, "href"))
 
-	className, err := defaultLink.GetAttribute("class")
-	require.NoError(t, err)
-	assert.Contains(t, className, "text-primary")
+		className := mustAttribute(t, defaultLink, "class")
+		assert.Contains(t, className, "text-primary")
 
-	iconCount, err := page.Locator("#link-icon a svg[aria-hidden='true']").Count()
-	require.NoError(t, err)
-	assert.Equal(t, 1, iconCount)
+		inline := page.Locator("#link-inline")
+		require.NoError(t, inline.GetByText("Follow us on", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(false)}).WaitFor())
+		require.NoError(t, inline.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "social media"}).WaitFor())
+		assert.Equal(t, "#", mustAttribute(t, inline.Locator("a").First(), "href"))
+	})
 
-	buttonLink := page.Locator("#link-button a").First()
-	role, err := buttonLink.GetAttribute("role")
-	require.NoError(t, err)
-	assert.Equal(t, "button", role)
+	t.Run("icon link keeps text and decorative icon together", func(t *testing.T) {
+		iconLink := page.Locator("#link-icon a").First()
+		require.NoError(t, iconLink.GetByText("about our company", playwright.LocatorGetByTextOptions{
+			Exact: playwright.Bool(true),
+		}).WaitFor())
 
-	buttonClass, err := buttonLink.GetAttribute("class")
-	require.NoError(t, err)
-	assert.Contains(t, buttonClass, "bg-primary")
+		iconCount, err := iconLink.Locator("svg[aria-hidden='true']").Count()
+		require.NoError(t, err)
+		assert.Equal(t, 1, iconCount)
+
+		className := mustAttribute(t, iconLink, "class")
+		assert.Contains(t, className, "inline-flex")
+		assert.Contains(t, className, "gap-1.5")
+	})
+
+	t.Run("button link exposes button role and primary action styling", func(t *testing.T) {
+		buttonLink := page.Locator("#link-button a").First()
+		require.NoError(t, buttonLink.GetByText("I'm a link", playwright.LocatorGetByTextOptions{
+			Exact: playwright.Bool(true),
+		}).WaitFor())
+		assert.Equal(t, "button", mustAttribute(t, buttonLink, "role"))
+
+		buttonClass := mustAttribute(t, buttonLink, "class")
+		assert.Contains(t, buttonClass, "bg-primary")
+		assert.Contains(t, buttonClass, "rounded-2xl")
+	})
 }

@@ -37,14 +37,13 @@ css:
 vendor-js:
     go run ./cmd/vendorgen -download
 
-# Run root unit tests, site unit tests, and E2E tests, then merge all Go
+# Run root unit tests, site unit tests, and E2E tests, then merge component
 # coverage data into .coverage/coverage.out and .coverage/coverage.html.
 coverage:
     #!/usr/bin/env bash
     set -euo pipefail
     root="$PWD"
-    root_coverpkg="github.com/araihu/goshtoso/..."
-    all_coverpkg="${root_coverpkg},github.com/araihu/goshtoso/site/..."
+    component_coverpkg="$(go list ./components/... | paste -sd, -)"
 
     if [ ! -f go.work ]; then
       go work init . ./site
@@ -53,17 +52,19 @@ coverage:
     rm -rf .coverage
     mkdir -p .coverage/unit-root .coverage/unit-site .coverage/e2e .coverage/merged
 
-    go test -cover -coverpkg="$root_coverpkg" ./... -count=1 \
+    root_pkgs="$(go list ./... | grep -v '^github.com/araihu/goshtoso/site/')"
+    go test -cover -coverpkg="$component_coverpkg" $root_pkgs -count=1 \
       -args -test.gocoverdir="$root/.coverage/unit-root"
 
     (
       cd site
       site_pkgs="$(go list ./... | grep -v '/tests/e2e')"
-      go test -cover -coverpkg="$all_coverpkg" $site_pkgs -count=1 \
+      site_component_coverpkg="$(go list -deps $site_pkgs | grep '^github.com/araihu/goshtoso/components/' | sort -u | paste -sd, -)"
+      go test -cover -coverpkg="$site_component_coverpkg" $site_pkgs -count=1 \
         -args -test.gocoverdir="$root/.coverage/unit-site"
 
       GOSHTOSO_E2E_COVERDIR="$root/.coverage/e2e" \
-      GOSHTOSO_E2E_COVERPKG="$all_coverpkg" \
+      GOSHTOSO_E2E_COVERPKG="$component_coverpkg" \
         go test ./tests/e2e/... -count=1 -timeout 15m
     )
 
