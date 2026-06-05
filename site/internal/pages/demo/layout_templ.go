@@ -771,6 +771,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("carousel", "Carousel", "/components/carousel", activeComponent),
 				sItem("chatbubble", "Chat Bubble", "/components/chatbubble", activeComponent),
 				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
+				sItem("dependencies", "Dependencies", "/components/dependencies", activeComponent),
 				sItem("kbd", "KBD", "/components/kbd", activeComponent),
 				sItem("table", "Table", "/components/table", activeComponent),
 			},
@@ -789,6 +790,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("palette", "Palette", "/components/palette", activeComponent),
 				sItem("search", "Search", "/components/search", activeComponent),
 				sItem("select", "Select", "/components/select", activeComponent),
+				sItem("schema-field", "Schema Field", "/components/schema-field", activeComponent),
 				sItem("structured-input", "Structured Input", "/components/structured-input", activeComponent),
 				sItem("tags-list", "Tags List", "/components/tags-list", activeComponent),
 				sItem("text-input", "Text Input", "/components/text-input", activeComponent),
@@ -802,6 +804,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 				sItem("alert", "Alert", "/components/alert", activeComponent),
 				sItem("toast", "Toast", "/components/toast", activeComponent),
 				sItem("modal", "Modal", "/components/modal", activeComponent),
+				sItem("drawer", "Drawer", "/components/drawer", activeComponent),
 				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
 				sItem("steps", "Steps", "/components/steps", activeComponent),
 				sItem("tooltip", "Tooltip", "/components/tooltip", activeComponent),
@@ -849,6 +852,7 @@ var orderedComponents = []componentNavLink{
 	{"Carousel", "/components/carousel"},
 	{"Chat Bubble", "/components/chatbubble"},
 	{"Code Block", "/components/codeblock"},
+	{"Dependencies", "/components/dependencies"},
 	{"KBD", "/components/kbd"},
 	{"Table", "/components/table"},
 	{"Button", "/components/button"},
@@ -862,6 +866,7 @@ var orderedComponents = []componentNavLink{
 	{"Palette", "/components/palette"},
 	{"Search", "/components/search"},
 	{"Select", "/components/select"},
+	{"Schema Field", "/components/schema-field"},
 	{"Structured Input", "/components/structured-input"},
 	{"Tags List", "/components/tags-list"},
 	{"Text Input", "/components/text-input"},
@@ -870,6 +875,7 @@ var orderedComponents = []componentNavLink{
 	{"Alert", "/components/alert"},
 	{"Toast", "/components/toast"},
 	{"Modal", "/components/modal"},
+	{"Drawer", "/components/drawer"},
 	{"Spinner", "/components/spinner"},
 	{"Steps", "/components/steps"},
 	{"Tooltip", "/components/tooltip"},
@@ -934,7 +940,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var30 templ.SafeURL
 				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 690, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 696, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
@@ -955,7 +961,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var31 string
 				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 697, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 703, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 				if templ_7745c5c3_Err != nil {
@@ -980,7 +986,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var32 templ.SafeURL
 				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 705, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 711, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 				if templ_7745c5c3_Err != nil {
@@ -1001,7 +1007,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var33 string
 				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 709, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 715, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 				if templ_7745c5c3_Err != nil {

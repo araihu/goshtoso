@@ -1,0 +1,134 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/schemafield"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// SchemaFieldDemoPage renders the Schema Field component demo.
+templ SchemaFieldDemoPage() {
+	@demo.Layout("Schema Field", "schema-field", schemaFieldDemoContent())
+}
+
+templ schemaFieldDemoContent() {
+	<div id="schema-field-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Schema Field",
+				Description: "Generate editable form controls from JSON Schema defaults, current values, and an allow list that can manage or hide individual paths.",
+			},
+			schemaFieldGeneratedPreview(),
+			`fields := schemafield.Walk(valuesSchema, defaults, values, allowList)
+
+@schemafield.Fields(schemafield.FieldsConfig{
+    Fields:     fields,
+    NamePrefix: "values",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Fallback From Defaults",
+				Description: "When no schema is available, infer a usable field list from default values while preserving managed and disabled allow-list rules.",
+			},
+			schemaFieldFallbackPreview(),
+			`fields := schemafield.FallbackFromDefaults(defaults, values, allowList)`,
+		)
+	</div>
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Fields", Type: "[]Field", Default: "nil", Description: "Renderable field list produced by Walk or FallbackFromDefaults."},
+		{Name: "NamePrefix", Type: "string", Default: `"values"`, Description: "Prefix applied to generated form input names."},
+		{Name: "Walk", Type: "func", Default: "-", Description: "Builds fields from a JSON Schema subset, defaults, current values, and allow-list modes."},
+		{Name: "FallbackFromDefaults", Type: "func", Default: "-", Description: "Infers fields from default values when no schema exists."},
+		{Name: "FlattenAllowList", Type: "func", Default: "-", Description: "Converts nested allow_list data into dotted paths with managed or disabled modes."},
+		{Name: "PruneDisabled", Type: "func", Default: "-", Description: "Removes disabled paths from values before serialization."},
+	})
+}
+
+templ schemaFieldGeneratedPreview() {
+	<div id="schema-field-generated" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+			@schemafield.Fields(schemafield.FieldsConfig{
+				Fields:     schemaFieldDemoFields(),
+				NamePrefix: "values",
+			})
+		</div>
+	</div>
+}
+
+templ schemaFieldFallbackPreview() {
+	<div id="schema-field-fallback" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+			@schemafield.Fields(schemafield.FieldsConfig{
+				Fields:     schemaFieldFallbackFields(),
+				NamePrefix: "values",
+			})
+		</div>
+	</div>
+}
+
+func schemaFieldDemoFields() []schemafield.Field {
+	schema := map[string]any{
+		"required": []any{"replicaCount", "imageTag", "serviceType"},
+		"properties": map[string]any{
+			"replicaCount": map[string]any{
+				"type":        "integer",
+				"title":       "Replica count",
+				"description": "Number of pods to run.",
+			},
+			"imageTag": map[string]any{
+				"type":        "string",
+				"title":       "Image tag",
+				"description": "Container image version.",
+			},
+			"tlsEnabled": map[string]any{
+				"type":        "boolean",
+				"title":       "TLS enabled",
+				"description": "Terminate HTTPS at the service edge.",
+			},
+			"serviceType": map[string]any{
+				"title":       "Service type",
+				"description": "Kubernetes Service exposure mode.",
+				"enum":        []any{"ClusterIP", "LoadBalancer", "NodePort"},
+			},
+			"teamOwner": map[string]any{
+				"type":        "string",
+				"title":       "Team owner",
+				"description": "Managed by the platform catalog.",
+			},
+			"internalToken": map[string]any{
+				"type":  "string",
+				"title": "Internal token",
+			},
+		},
+	}
+	defaults := map[string]any{
+		"replicaCount": 3,
+		"imageTag":     "v1.8.0",
+		"tlsEnabled":   true,
+		"serviceType":  "ClusterIP",
+		"teamOwner":    "platform",
+		"internalToken": "redacted",
+	}
+	values := map[string]any{"serviceType": "LoadBalancer"}
+	allowList := map[string]schemafield.AllowMode{
+		"teamOwner":     schemafield.AllowModeManaged,
+		"internalToken": schemafield.AllowModeDisabled,
+	}
+	return schemafield.Walk(schema, defaults, values, allowList)
+}
+
+func schemaFieldFallbackFields() []schemafield.Field {
+	defaults := map[string]any{
+		"resources": map[string]any{
+			"cpu":    "500m",
+			"memory": "512Mi",
+		},
+		"zones": []any{"us-east-1a", "us-east-1b"},
+		"debug": false,
+	}
+	allowList := map[string]schemafield.AllowMode{
+		"resources.cpu": schemafield.AllowModeManaged,
+	}
+	return schemafield.FallbackFromDefaults(defaults, nil, allowList)
+}
