@@ -48,6 +48,7 @@ var Demos = map[string]DemoEntry{
 	"components/range":            {"Range", "range", rangeDemoContent},
 	"components/rating":           {"Rating", "rating", ratingDemoContent},
 	"components/select":           {"Select", "select", selectDemoContent},
+	"components/search":           {"Search", "search", searchDemoContent},
 	"components/sidebar":          {"Sidebar", "sidebar", sidebarDemoContent},
 	"components/spinner":          {"Spinner", "spinner", spinnerDemoContent},
 	"components/steps":            {"Steps", "steps", stepsDemoContent},

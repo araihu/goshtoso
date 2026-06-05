@@ -58,6 +58,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		{"/components/palette", "Palette"},
 		{"/components/range", "Range"},
 		{"/components/rating", "Rating"},
+		{"/components/search", "Search"},
 		{"/components/select", "Select"},
 		{"/components/sidebar", "Sidebar"},
 		{"/components/spinner", "Spinner"},

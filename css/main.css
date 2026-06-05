@@ -80,6 +80,16 @@
     font-family: var(--font-title);
   }
 
+  .search-highlight {
+    font-weight: 700;
+    color: var(--color-primary);
+    background: transparent;
+  }
+
+  .dark .search-highlight {
+    color: var(--color-primary-dark);
+  }
+
   /* Background pattern - matching PenguinUI exactly */
   .bg-pattern {
     background:
