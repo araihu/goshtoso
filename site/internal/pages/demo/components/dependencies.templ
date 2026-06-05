@@ -1,0 +1,75 @@
+package components
+
+import "github.com/araihu/goshtoso/site/internal/pages/demo"
+
+// DependenciesDemoPage renders the head.Dependencies component demo.
+templ DependenciesDemoPage() {
+	@demo.Layout("Dependencies", "dependencies", dependenciesDemoContent())
+}
+
+templ dependenciesDemoContent() {
+	<div id="dependencies-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Dependencies",
+				Description: "Render the local CSS and JavaScript tags Goshtoso components need: compiled theme CSS, Alpine.js, HTMX, and component runtime helpers.",
+			},
+			dependenciesFullPreview(),
+			`<head>
+    @head.Dependencies()
+</head>`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Minimal Runtime",
+				Description: "Use DependenciesMinimal when the page does not need the Alpine collapse or focus plugins.",
+			},
+			dependenciesMinimalPreview(),
+			`<head>
+    @head.DependenciesMinimal()
+</head>`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Asset Mount Contract",
+				Description: "Both helpers assume the embedded asset handler is mounted at /assets/ so pages load without a CDN.",
+			},
+			dependenciesAssetContractPreview(),
+			`import "github.com/araihu/goshtoso/assets"
+
+http.Handle("/assets/", assets.Handler())`,
+		)
+	</div>
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Dependencies", Type: "templ.Component", Default: "-", Description: "Renders styles.css, Alpine collapse/focus/core, HTMX, and combobox.js from /assets/."},
+		{Name: "DependenciesMinimal", Type: "templ.Component", Default: "-", Description: "Renders styles.css, Alpine core, HTMX, and combobox.js without the collapse/focus plugins."},
+		{Name: "assets.Handler", Type: "http.Handler", Default: "-", Description: "Serves the embedded runtime bundle expected by the generated tags."},
+	})
+}
+
+templ dependenciesFullPreview() {
+	<div id="dependencies-full" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
+			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Full runtime helper</p>
+			<pre class="mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"><code>{ "@head.Dependencies()\n\n/assets/styles.css\n/assets/js/runtime/alpinejs\n/assets/js/runtime/htmx\n/assets/js/combobox.js" }</code></pre>
+		</div>
+	</div>
+}
+
+templ dependenciesMinimalPreview() {
+	<div id="dependencies-minimal" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
+			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">DependenciesMinimal</p>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">CSS, Alpine core, HTMX, and combobox keyboard navigation only.</p>
+		</div>
+	</div>
+}
+
+templ dependenciesAssetContractPreview() {
+	<div id="dependencies-asset-contract" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
+			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Serve bundled assets</p>
+			<pre class="mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"><code>http.Handle("/assets/", assets.Handler())</code></pre>
+		</div>
+	</div>
+}

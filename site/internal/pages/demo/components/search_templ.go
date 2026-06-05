@@ -165,6 +165,7 @@ func searchDefaultPreview() templ.Component {
 			Placeholder: "Search docs...",
 			Items: []search.Item{
 				{ID: "search-demo-sidebar", Title: "Sidebar", Description: "Navigation with grouped sections and optional search slot.", Href: "/components/sidebar", Section: "Navigation", Keywords: []string{"menu docs"}},
+				{ID: "search-demo-dependencies", Title: "Dependencies", Description: "Local CSS and JavaScript runtime tags.", Href: "/components/dependencies", Section: "Display", Keywords: []string{"head assets runtime"}},
 				{ID: "search-demo-kbd", Title: "KBD", Description: "Semantic keyboard shortcut hints.", Href: "/components/kbd", Section: "Display", Keywords: []string{"shortcut key"}},
 				{ID: "search-demo-text-input", Title: "Text Input", Description: "Inputs with search, password, masks, and validation states.", Href: "/components/text-input", Section: "Form", Keywords: []string{"field"}},
 			},
@@ -212,7 +213,8 @@ func searchCustomPreview() templ.Component {
 			ShortcutText: "Ctrl K",
 			Items: []search.Item{
 				{ID: "search-pattern-form", Title: "Form controls", Description: "Inputs, selects, comboboxes, and validation patterns.", Href: "/components/form", Section: "Guide", Keywords: []string{"input select checkbox"}},
-				{ID: "search-pattern-overlay", Title: "Overlay flows", Description: "Modal-like surfaces, focus traps, and keyboard dismissal.", Href: "/components/modal", Section: "Guide", Keywords: []string{"modal drawer command palette"}},
+				{ID: "search-pattern-schema-field", Title: "Schema Field", Description: "Generate inputs from JSON Schema and allow-list rules.", Href: "/components/schema-field", Section: "Guide", Keywords: []string{"schema form values"}},
+				{ID: "search-pattern-overlay", Title: "Overlay flows", Description: "Modal-like surfaces, focus traps, and keyboard dismissal.", Href: "/components/drawer", Section: "Guide", Keywords: []string{"modal drawer command palette"}},
 				{ID: "search-pattern-navigation", Title: "Navigation surfaces", Description: "Sidebar, navbar, breadcrumbs, and page-to-page movement.", Href: "/components/sidebar", Section: "Guide", Keywords: []string{"nav menu docs"}},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
