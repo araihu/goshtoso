@@ -3,6 +3,7 @@ package avatar
 import (
 	"bytes"
 	"context"
+	"strings"
 	"testing"
 )
 
@@ -110,6 +111,27 @@ func TestAvatarStackRendersOverlappingItems(t *testing.T) {
 	for _, want := range []string{"aria-label=\"Project members\"", "-ml-3", "ring-2", "Ada Lovelace", "Grace Hopper", "KT"} {
 		if !bytes.Contains([]byte(html), []byte(want)) {
 			t.Fatalf("avatar stack missing %q in rendered HTML:\n%s", want, html)
+		}
+	}
+}
+
+func TestAvatarEscapesSrcInAlpineErrorHandler(t *testing.T) {
+	var buf bytes.Buffer
+	err := Avatar(Config{
+		Src: "data:image/svg+xml,<svg viewBox='0 0 1 1'>\n\r\t\u2028\u2029",
+		Alt: "Injected avatar",
+	}).Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatalf("render avatar: %v", err)
+	}
+
+	html := buf.String()
+	if strings.Contains(html, `console.warn(&#39;[avatar] failed to load image:&#39;, &#39;data:image/svg+xml,&lt;svg viewBox=&#39;0 0 1 1&#39;&gt;`) {
+		t.Fatalf("avatar rendered raw Src inside Alpine error handler:\n%s", html)
+	}
+	for _, want := range []string{`viewBox=\&#39;0 0 1 1\&#39;`, `\n\r\t\u2028\u2029`} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("avatar missing escaped Src fragment %q in rendered HTML:\n%s", want, html)
 		}
 	}
 }

@@ -96,6 +96,51 @@ func TestSearchEscapesResultPayloadsBeforeHighlighting(t *testing.T) {
 	}
 }
 
+func TestSearchSafeHrefFiltersExecutableNavigationTargets(t *testing.T) {
+	cases := []struct {
+		name string
+		href string
+		want string
+	}{
+		{name: "relative path", href: "/components/kbd", want: `/components/kbd`},
+		{name: "relative path trims whitespace", href: " /components/kbd ", want: `/components/kbd`},
+		{name: "https", href: "https://example.test/docs", want: `https://example.test/docs`},
+		{name: "mixed case javascript", href: "JaVaScRiPt:alert(1)", want: ``},
+		{name: "javascript with whitespace", href: " javascript:alert(1) ", want: ``},
+		{name: "data scheme", href: "data:text/html,<script>alert(1)</script>", want: ``},
+		{name: "invalid url", href: ":not-a-url", want: ``},
+		{name: "protocol relative is treated as relative", href: "//example.test/docs", want: `//example.test/docs`},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := Search(Config{
+				ID: "docs-search",
+				Items: []Item{{
+					ID:    "result",
+					Title: "Result",
+					Href:  tc.href,
+				}},
+			}).Render(context.Background(), &buf)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			html := buf.String()
+			if tc.want == "" {
+				if strings.Contains(html, "data-search-href") {
+					t.Fatalf("unsafe href %q should not be emitted:\n%s", tc.href, html)
+				}
+				return
+			}
+			wantAttr := `data-search-href="` + tc.want + `"`
+			if !strings.Contains(html, wantAttr) {
+				t.Fatalf("safe href %q did not render as %q:\n%s", tc.href, wantAttr, html)
+			}
+		})
+	}
+}
+
 func TestSearchDefaults(t *testing.T) {
 	cfg := Config{}
 	if cfg.GetID() != "search" {

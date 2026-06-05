@@ -374,6 +374,16 @@ func jsEscapeSingle(s string) string {
 			result.WriteString(`\'`)
 		case '\\':
 			result.WriteString(`\\`)
+		case '\n':
+			result.WriteString(`\n`)
+		case '\r':
+			result.WriteString(`\r`)
+		case '\t':
+			result.WriteString(`\t`)
+		case '\u2028':
+			result.WriteString(`\u2028`)
+		case '\u2029':
+			result.WriteString(`\u2029`)
 		default:
 			result.WriteString(string(c))
 		}
