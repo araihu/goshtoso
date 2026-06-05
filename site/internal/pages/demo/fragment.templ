@@ -9,7 +9,11 @@ import "github.com/araihu/goshtoso/components/sidebar"
 // navigation footer (which lives inside the swapped region so it tracks the
 // active page).
 templ Fragment(title string, activeComponent string, content templ.Component) {
-	<title hx-swap-oob="true">{ title } - Goshtoso</title>
+	@FragmentWithMeta(DefaultMeta(title), activeComponent, content)
+}
+
+templ FragmentWithMeta(meta PageMeta, activeComponent string, content templ.Component) {
+	<title hx-swap-oob="true">{ meta.TitleText() }</title>
 	<div id="sidebar-nav-content" hx-swap-oob="true" class="h-full">
 		@sidebar.Sidebar(sidebar.Config{
 			Items:         getSidebarTopItems(activeComponent),

@@ -7,8 +7,32 @@ import (
 	"github.com/araihu/goshtoso/components/sidebar"
 )
 
-// Layout renders the main layout with sidebar navigation and global theme selector
+// HeadMeta renders crawler metadata and social-preview tags shared by full pages.
+templ HeadMeta(meta PageMeta) {
+	<title>{ meta.TitleText() }</title>
+	<meta name="description" content={ meta.Description }/>
+	<link rel="canonical" href={ meta.CanonicalURL() }/>
+	<meta property="og:site_name" content={ SiteName }/>
+	<meta property="og:type" content="website"/>
+	<meta property="og:title" content={ meta.TitleText() }/>
+	<meta property="og:description" content={ meta.Description }/>
+	<meta property="og:url" content={ meta.CanonicalURL() }/>
+	<meta property="og:image" content={ meta.OGImageURL() }/>
+	<meta name="twitter:card" content="summary_large_image"/>
+	<meta name="twitter:title" content={ meta.TitleText() }/>
+	<meta name="twitter:description" content={ meta.Description }/>
+	<meta name="twitter:image" content={ meta.OGImageURL() }/>
+	@templ.Raw(`<script type="application/ld+json">` + SafeJSONLD(meta) + `</script>`)
+}
+
+// Layout preserves the simple direct-render helper used by component templates.
 templ Layout(title string, activeComponent string, content templ.Component) {
+	@LayoutWithMeta(DefaultMeta(title), activeComponent, content)
+}
+
+// LayoutWithMeta renders the main layout with sidebar navigation, global theme
+// selector, and page-specific SEO metadata.
+templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en" x-data="{
 		theme: (window.goshtosoStorageConsent && !window.goshtosoStorageConsent.allowed()) ? 'goshtoso' : (localStorage.getItem('theme') || 'goshtoso'),
@@ -29,7 +53,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>{ title } - Goshtoso</title>
+			@HeadMeta(meta)
 			<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
 			<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
 			<link rel="shortcut icon" href="/favicon.ico"/>

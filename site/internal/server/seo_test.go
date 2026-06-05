@@ -1,0 +1,67 @@
+package server
+
+import (
+	"context"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
+	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
+	"github.com/stretchr/testify/require"
+)
+
+func TestComponentPageRendersSEOMetadata(t *testing.T) {
+	s := &Server{}
+	req := httptest.NewRequest(http.MethodGet, "/components/accordion", nil)
+	rec := httptest.NewRecorder()
+
+	s.renderDemo(rec, req, "components/accordion")
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	body := rec.Body.String()
+	require.Contains(t, body, "<title>Accordion Component - Goshtoso UI Library for Go</title>")
+	require.Contains(t, body, `<meta name="description" content="Build accessible accordion interfaces in Go`)
+	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/components/accordion">`)
+	require.Contains(t, body, `<meta property="og:title" content="Accordion Component - Goshtoso UI Library for Go">`)
+	require.Contains(t, body, `<meta name="twitter:card" content="summary_large_image">`)
+	require.Contains(t, body, `"@type":"TechArticle"`)
+}
+
+func TestLandingPageRendersSEOMetadata(t *testing.T) {
+	rec := httptest.NewRecorder()
+
+	err := components.LandingPage().Render(context.Background(), rec)
+
+	require.NoError(t, err)
+	body := rec.Body.String()
+	require.Contains(t, body, "<title>Goshtoso - Go HTMX Component Library</title>")
+	require.Contains(t, body, `<meta name="description" content="Build interactive, server-rendered Go UIs`)
+	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/">`)
+	require.Contains(t, body, `"@type":"SoftwareApplication"`)
+}
+
+func TestRobotsAndSitemapExposePublicPages(t *testing.T) {
+	s := &Server{}
+
+	robotsReq := httptest.NewRequest(http.MethodGet, "/robots.txt", nil)
+	robotsRec := httptest.NewRecorder()
+	s.handleRobots(robotsRec, robotsReq)
+
+	require.Equal(t, http.StatusOK, robotsRec.Code)
+	require.Equal(t, "text/plain; charset=utf-8", robotsRec.Header().Get("Content-Type"))
+	require.Equal(t, "User-agent: *\nAllow: /\nSitemap: https://goshtoso.araihu.com/sitemap.xml\n", robotsRec.Body.String())
+
+	sitemapReq := httptest.NewRequest(http.MethodGet, "/sitemap.xml", nil)
+	sitemapRec := httptest.NewRecorder()
+	s.handleSitemap(sitemapRec, sitemapReq)
+
+	require.Equal(t, http.StatusOK, sitemapRec.Code)
+	require.Equal(t, "application/xml; charset=utf-8", sitemapRec.Header().Get("Content-Type"))
+	body := sitemapRec.Body.String()
+	require.True(t, strings.HasPrefix(body, `<?xml version="1.0" encoding="UTF-8"?>`))
+	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/</loc>`)
+	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/components/accordion</loc>`)
+	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/examples/chat</loc>`)
+	require.NotContains(t, body, `/api/`)
+}

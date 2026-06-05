@@ -7,6 +7,7 @@ import (
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
 type exampleApp struct {
@@ -49,7 +50,7 @@ templ LandingPage() {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>Goshtoso — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title>
+			@demo.HeadMeta(demo.HomeMeta())
 			<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
 			<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
 			<link rel="shortcut icon" href="/favicon.ico"/>
@@ -218,7 +219,7 @@ templ landingContent() {
 		<!-- Footer -->
 		<div class="text-center pb-8">
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				23 components · 16 themes · 386 E2E tests ·
+				23 components · 16 themes ·
 				<a href="/getting-started" class="text-primary dark:text-primary-dark underline underline-offset-2">Get started</a>
 			</p>
 		</div>
