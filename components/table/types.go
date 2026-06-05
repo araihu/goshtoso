@@ -817,7 +817,7 @@ func filterScriptData(cfg Config) string {
 		if i > 0 {
 			filters.WriteString(", ")
 		}
-		filters.WriteString(f.Key + ": '" + jsEscape(f.DefaultValue) + "'")
+		filters.WriteString("'" + jsEscape(f.Key) + "': '" + jsEscape(f.DefaultValue) + "'")
 	}
 	filters.WriteString("}")
 

@@ -38,3 +38,17 @@ func TestSelect_RenderedOptionIDExpressionEscapesConfigID(t *testing.T) {
 
 	assert.Contains(t, browserHTML, `x-bind:id="'choice\'\\x-option-' + index"`)
 }
+
+func TestSelectOptionsEscapeNewlinesInAlpineStrings(t *testing.T) {
+	rendered := renderSelect(t, Config{
+		ID: "choice",
+		Options: []Option{{
+			Value: "safe",
+			Label: "first line\nalert(1)",
+		}},
+	}, nil)
+	browserHTML := html.UnescapeString(rendered)
+
+	assert.Contains(t, browserHTML, `label:'first line\nalert(1)'`)
+	assert.NotContains(t, browserHTML, "label:'first line\nalert(1)'")
+}

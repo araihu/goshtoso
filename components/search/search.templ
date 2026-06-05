@@ -128,8 +128,8 @@ templ resultItem(item Item, index int) {
 		if item.Section != "" {
 			data-search-section={ item.Section }
 		}
-		if item.Href != "" {
-			data-search-href={ item.Href }
+		if item.SafeHref() != "" {
+			data-search-href={ item.SafeHref() }
 		}
 		data-search-text={ item.SearchText() }
 		data-result-index={ fmt.Sprint(index) }

@@ -1,6 +1,7 @@
 package search
 
 import (
+	"net/url"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -159,4 +160,23 @@ func (item Item) SearchText() string {
 	parts := []string{item.Title, item.Description, item.Section}
 	parts = append(parts, item.Keywords...)
 	return strings.TrimSpace(strings.Join(parts, " "))
+}
+
+// SafeHref returns a navigation target only for schemes that cannot execute
+// script when assigned to window.location.href.
+func (item Item) SafeHref() string {
+	href := strings.TrimSpace(item.Href)
+	if href == "" {
+		return ""
+	}
+	u, err := url.Parse(href)
+	if err != nil {
+		return ""
+	}
+	switch strings.ToLower(u.Scheme) {
+	case "", "http", "https", "mailto", "tel":
+		return href
+	default:
+		return ""
+	}
 }
