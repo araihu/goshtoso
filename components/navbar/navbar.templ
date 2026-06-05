@@ -31,7 +31,7 @@ templ Navbar(cfg Config) {
 		<div class="flex items-center gap-4">
 			<!-- Brand -->
 			if cfg.Brand != nil {
-				<a href={ templ.SafeURL(brandHref) } class="text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
+				<a href={ templ.URL(brandHref) } class="text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
 					@cfg.Brand
 				</a>
 			}
@@ -44,7 +44,7 @@ templ Navbar(cfg Config) {
 		<div class="hidden items-center gap-4 sm:flex">
 			for _, link := range cfg.Links {
 				<a
-					href={ templ.SafeURL(link.Href) }
+					href={ templ.URL(link.Href) }
 					{ link.LinkAttrs... }
 					class={ LinkClasses(link.Active) }
 					if link.Active {
@@ -137,7 +137,7 @@ templ avatarDropdown(cfg Config) {
 			for _, item := range cfg.UserMenu {
 				<li>
 					<a
-						href={ templ.SafeURL(item.Href) }
+						href={ templ.URL(item.Href) }
 						{ item.LinkAttrs... }
 						class={ MenuItemClasses(item.Danger) }
 						role="menuitem"
@@ -194,7 +194,7 @@ templ mobileMenu(cfg Config) {
 		for _, link := range cfg.Links {
 			<li class="p-2 list-none">
 				<a
-					href={ templ.SafeURL(link.Href) }
+					href={ templ.URL(link.Href) }
 					{ link.LinkAttrs... }
 					if link.Active {
 						class="w-full text-lg font-bold text-primary focus:underline dark:text-primary-dark"
@@ -219,7 +219,7 @@ templ mobileMenu(cfg Config) {
 			for _, item := range cfg.UserMenu {
 				<li class="p-2 list-none">
 					<a
-						href={ templ.SafeURL(item.Href) }
+						href={ templ.URL(item.Href) }
 						{ item.LinkAttrs... }
 						if item.Danger {
 							class="w-full text-danger focus:underline"

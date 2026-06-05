@@ -753,7 +753,7 @@ func filterSearchInput(cfg Config, filter Filter) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var34 string
-		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue("filters." + filter.Key)
+		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(filterModelExpr(filter))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 220, Col: 36}
 		}
@@ -822,7 +822,7 @@ func filterSelectInput(cfg Config, filter Filter) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var38 string
-		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.ResolveAttributeValue("filters." + filter.Key)
+		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.ResolveAttributeValue(filterModelExpr(filter))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 233, Col: 35}
 		}
@@ -944,7 +944,7 @@ func filterToggleInput(cfg Config, filter Filter) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var44 string
-		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue("filters." + filter.Key)
+		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(filterModelExpr(filter))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 259, Col: 36}
 		}

@@ -71,9 +71,9 @@ func Sidebar(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 templ.SafeURL
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(logoHref))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(logoHref))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 26, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 26, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -321,9 +321,9 @@ func sidebarItem(item Item) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 templ.SafeURL
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(item.Href))
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(item.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 105, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 105, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -378,9 +378,9 @@ func sidebarItem(item Item) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 templ.SafeURL
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(item.Href))
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(item.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 115, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 115, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -599,9 +599,9 @@ func sidebarSectionItem(item Item) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var22 templ.SafeURL
-			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(item.Href))
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(item.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 162, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 162, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -661,9 +661,9 @@ func sidebarSectionItem(item Item) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var25 templ.SafeURL
-			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(item.Href))
+			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(item.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 174, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 174, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
