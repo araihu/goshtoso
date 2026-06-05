@@ -150,6 +150,12 @@ templ paginationEllipsisEndPreview() {
 // paginationSmallPreview renders a small page count (no ellipsis).
 templ paginationSmallPreview() {
 	<div id="pagination-small" class="w-full max-w-2xl mx-auto">
-		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 3, TotalPages: 5, BaseURL: "#"})
+		@pagination.Pagination(pagination.Config{
+			Variant:     pagination.WithEllipsis,
+			CurrentPage: 3,
+			TotalPages:  5,
+			BaseURL:     "/api/items",
+			HTMX:        &pagination.HTMXConfig{Target: "#items-tbody", Swap: "innerHTML"},
+		})
 	</div>
 }

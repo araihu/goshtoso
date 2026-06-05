@@ -404,7 +404,13 @@ func paginationSmallPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 3, TotalPages: 5, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
+			Variant:     pagination.WithEllipsis,
+			CurrentPage: 3,
+			TotalPages:  5,
+			BaseURL:     "/api/items",
+			HTMX:        &pagination.HTMXConfig{Target: "#items-tbody", Swap: "innerHTML"},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
