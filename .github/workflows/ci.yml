@@ -6,8 +6,10 @@ on:
   push:
     branches: [main]
 
+# PRs cancel superseded runs per head ref; main pushes each get a unique group
+# (run_id) so rapid merges don't cancel the coverage/deploy jobs mid-flight.
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
@@ -274,7 +276,15 @@ jobs:
 
           total_line="$(grep '^total:' .coverage/coverage-func.txt)"
           total_percent="$(printf '%s\n' "$total_line" | sed -E 's/.*\t([0-9.]+)%.*/\1/')"
-          scripts/coveragebadge "$total_percent"
+
+          # shields.io badge color, mirroring scripts/coveragebadge thresholds.
+          color="red"
+          awk "BEGIN { exit !($total_percent >= 80) }" && color="brightgreen" || true
+          awk "BEGIN { exit !($total_percent >= 60 && $total_percent < 80) }" && color="green" || true
+          awk "BEGIN { exit !($total_percent >= 40 && $total_percent < 60) }" && color="yellow" || true
+
+          echo "percent=$total_percent" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
 
           echo "$total_line"
           {
@@ -284,8 +294,20 @@ jobs:
             echo "$total_line"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          git diff --exit-code -- badges/coverage.svg \
-            || { echo "::error::coverage badge is stale — run 'just coverage' and commit badges/coverage.svg"; exit 1; }
+
+      # Push the freshly computed percentage to the shields.io endpoint gist so
+      # the README badge tracks main automatically. Main-push only: PRs compute
+      # and surface coverage above but must not mutate the published badge.
+      - name: Update coverage badge gist
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: fb3843c3a13793eb6cc0af638bc00ad4
+          filename: coverage.json
+          label: coverage
+          message: ${{ steps.coverage.outputs.percent }}%
+          color: ${{ steps.coverage.outputs.color }}
 
   deploy:
     name: Deploy to Fly.io
