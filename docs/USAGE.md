@@ -177,6 +177,7 @@ All components are imported from `github.com/araihu/goshtoso/components/<name>`.
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
 | `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
+| `schemaform` | `components/schemaform` | Schema Form: generate form controls from JSON Schema, defaults, current values, and allow-list rules |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
 | `spinner` | `components/spinner` | Loading spinner with size and color variants |
 | `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |

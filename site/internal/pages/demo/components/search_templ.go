@@ -213,7 +213,7 @@ func searchCustomPreview() templ.Component {
 			ShortcutText: "Ctrl K",
 			Items: []search.Item{
 				{ID: "search-pattern-form", Title: "Form controls", Description: "Inputs, selects, comboboxes, and validation patterns.", Href: "/components/form", Section: "Guide", Keywords: []string{"input select checkbox"}},
-				{ID: "search-pattern-schema-field", Title: "Schema Field", Description: "Generate inputs from JSON Schema and allow-list rules.", Href: "/components/schema-field", Section: "Guide", Keywords: []string{"schema form values"}},
+				{ID: "search-pattern-schema-form", Title: "Schema Form", Description: "Generate complete forms from JSON Schema defaults, submitted values, and allow-list rules.", Href: "/components/schema-form", Section: "Guide", Keywords: []string{"schema form values"}},
 				{ID: "search-pattern-overlay", Title: "Overlay flows", Description: "Modal-like surfaces, focus traps, and keyboard dismissal.", Href: "/components/drawer", Section: "Guide", Keywords: []string{"modal drawer command palette"}},
 				{ID: "search-pattern-navigation", Title: "Navigation surfaces", Description: "Sidebar, navbar, breadcrumbs, and page-to-page movement.", Href: "/components/sidebar", Section: "Guide", Keywords: []string{"nav menu docs"}},
 			},

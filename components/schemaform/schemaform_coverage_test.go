@@ -1,4 +1,4 @@
-package schemafield
+package schemaform
 
 import (
 	"bytes"
@@ -22,7 +22,7 @@ func render(t *testing.T, c templ.Component) string {
 func TestCoverageRenderDefaultSchemafield(t *testing.T) {
 	var buf bytes.Buffer
 	if err := Fields(FieldsConfig{}).Render(context.Background(), &buf); err != nil {
-		t.Fatalf("render default schemafield: %v", err)
+		t.Fatalf("render default schemaform: %v", err)
 	}
 	// Empty config renders the wrapper but no fields.
 	if !strings.Contains(buf.String(), "flex flex-col gap-5") {

@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestSchemafieldCoverageDemo exercises render paths the existing page test does
+// TestSchemaFormCoverageDemo exercises render paths the existing page test does
 // not: the fallback section (object groups, array tagslist, managed nested
 // input) and live enum selection / boolean defaults in the generated section.
 // Deterministic — uses locator waits, no sleeps.
-func TestSchemafieldCoverageDemo(t *testing.T) {
+func TestSchemaFormCoverageDemo(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -33,7 +33,7 @@ func TestSchemafieldCoverageDemo(t *testing.T) {
 		}
 	})
 
-	_, err := page.Goto(baseURL+"/components/schema-field", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/schema-form", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
@@ -41,10 +41,10 @@ func TestSchemafieldCoverageDemo(t *testing.T) {
 
 	title, err := page.Locator("main h1").TextContent()
 	require.NoError(t, err)
-	assert.Contains(t, title, "Schema Field")
+	assert.Contains(t, title, "Schema Form")
 
 	// --- Generated section: enum prefill + update, boolean default. ---
-	generated := page.Locator("#schema-field-generated")
+	generated := page.Locator("#schema-form-generated")
 	require.NoError(t, generated.WaitFor())
 
 	serviceType := generated.Locator("select[name='values.serviceType']")
@@ -70,7 +70,7 @@ func TestSchemafieldCoverageDemo(t *testing.T) {
 	assert.True(t, checked, "boolean default true should render checked")
 
 	// --- Fallback section: object group, managed nested input, array tagslist. ---
-	fallback := page.Locator("#schema-field-fallback")
+	fallback := page.Locator("#schema-form-fallback")
 	require.NoError(t, fallback.WaitFor())
 
 	// resources is a 2-child object → fieldset/legend section.
@@ -96,5 +96,5 @@ func TestSchemafieldCoverageDemo(t *testing.T) {
 	assert.True(t, strings.Contains(fallbackText, "us-east-1a"), "tagslist should seed array defaults")
 	assert.True(t, strings.Contains(fallbackText, "us-east-1b"), "tagslist should seed array defaults")
 
-	require.Empty(t, consoleErrors, "no console errors on schema-field demo: %v", consoleErrors)
+	require.Empty(t, consoleErrors, "no console errors on schema-form demo: %v", consoleErrors)
 }

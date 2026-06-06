@@ -1136,10 +1136,10 @@ import "github.com/araihu/goshtoso/components/rating"  // package rating
 | `Label` | `string` |  |
 | `Icon` | `string` |  |
 
-## schemafield
+## schemaform
 
 ```go
-import "github.com/araihu/goshtoso/components/schemafield"  // package schemafield
+import "github.com/araihu/goshtoso/components/schemaform"  // package schemaform
 ```
 
 **Entry points:** `Fields(cfg FieldsConfig)`
@@ -1169,7 +1169,7 @@ import "github.com/araihu/goshtoso/components/schemafield"  // package schemafie
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Fields` | `[]Field` | Fields is the list produced by Walk / FallbackFromDefaults. |
+| `Fields` | `[]Field` | Fields is the ordered form control list produced by Walk / FallbackFromDefaults. |
 | `NamePrefix` | `string` | NamePrefix prefixes every input name (so the server sees `values.<path>`). |
 
 ## search

@@ -1,4 +1,4 @@
-package schemafield
+package schemaform
 
 import (
 	"fmt"
@@ -6,16 +6,16 @@ import (
 	"github.com/araihu/goshtoso/components/tagslist"
 )
 
-// Fields renders a list of schema-derived fields produced by Walk / FallbackFromDefaults.
+// Fields renders a schema-derived form produced by Walk / FallbackFromDefaults.
 //
 // Usage:
 //
-//	schemaFields := schemafield.Walk(valuesSchema, defaultValues, currentValues, allowList)
-//	if schemaFields == nil {
-//	    schemaFields = schemafield.FallbackFromDefaults(defaultValues, currentValues, allowList)
+//	fields := schemaform.Walk(valuesSchema, defaultValues, currentValues, allowList)
+//	if fields == nil {
+//	    fields = schemaform.FallbackFromDefaults(defaultValues, currentValues, allowList)
 //	}
-//	@schemafield.Fields(schemafield.FieldsConfig{
-//	    Fields:    schemaFields,
+//	@schemaform.Fields(schemaform.FieldsConfig{
+//	    Fields:    fields,
 //	    NamePrefix: "values",
 //	})
 templ Fields(cfg FieldsConfig) {
@@ -26,9 +26,9 @@ templ Fields(cfg FieldsConfig) {
 	</div>
 }
 
-// FieldsConfig configures a group of schema-derived fields.
+// FieldsConfig configures a generated schema form.
 type FieldsConfig struct {
-	// Fields is the list produced by Walk / FallbackFromDefaults.
+	// Fields is the ordered form control list produced by Walk / FallbackFromDefaults.
 	Fields []Field
 	// NamePrefix prefixes every input name (so the server sees `values.<path>`).
 	// Default: "values".
