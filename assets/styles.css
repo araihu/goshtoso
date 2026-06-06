@@ -3520,10 +3520,10 @@
       }
     }
   }
-  .group-hover\:text-primary {
+  .group-hover\:gap-2 {
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
-        color: var(--color-primary);
+        gap: calc(var(--spacing) * 2);
       }
     }
   }
@@ -4708,6 +4708,28 @@
       opacity: 80%;
     }
   }
+  .focus-visible\:ring-2 {
+    &:focus-visible {
+      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
+  .focus-visible\:ring-primary {
+    &:focus-visible {
+      --tw-ring-color: var(--color-primary);
+    }
+  }
+  .focus-visible\:ring-offset-2 {
+    &:focus-visible {
+      --tw-ring-offset-width: 2px;
+      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    }
+  }
+  .focus-visible\:ring-offset-surface {
+    &:focus-visible {
+      --tw-ring-offset-color: var(--color-surface);
+    }
+  }
   .focus-visible\:outline-hidden {
     &:focus-visible {
       --tw-outline-style: none;
@@ -5090,6 +5112,11 @@
       max-width: var(--container-sm);
     }
   }
+  .sm\:shrink-0 {
+    @media (width >= 40rem) {
+      flex-shrink: 0;
+    }
+  }
   .sm\:grid-cols-2 {
     @media (width >= 40rem) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5128,6 +5155,11 @@
   .sm\:p-8 {
     @media (width >= 40rem) {
       padding: calc(var(--spacing) * 8);
+    }
+  }
+  .sm\:px-6 {
+    @media (width >= 40rem) {
+      padding-inline: calc(var(--spacing) * 6);
     }
   }
   .sm\:text-base {
@@ -6014,15 +6046,6 @@
       outline-color: var(--color-primary-dark);
     }
   }
-  .dark\:group-hover\:text-primary-dark {
-    &:where(.dark, .dark *) {
-      &:is(:where(.group):hover *) {
-        @media (hover: hover) {
-          color: var(--color-primary-dark);
-        }
-      }
-    }
-  }
   .group-data-\[mine\=true\]\:dark\:bg-primary-dark {
     &:is(:where(.group)[data-mine="true"] *) {
       &:where(.dark, .dark *) {
@@ -6786,6 +6809,20 @@
       }
     }
   }
+  .dark\:focus-visible\:ring-primary-dark {
+    &:where(.dark, .dark *) {
+      &:focus-visible {
+        --tw-ring-color: var(--color-primary-dark);
+      }
+    }
+  }
+  .dark\:focus-visible\:ring-offset-surface-dark {
+    &:where(.dark, .dark *) {
+      &:focus-visible {
+        --tw-ring-offset-color: var(--color-surface-dark);
+      }
+    }
+  }
   .dark\:focus-visible\:outline-outline-dark-strong {
     &:where(.dark, .dark *) {
       &:focus-visible {
@@ -7043,6 +7080,25 @@
         &::-webkit-slider-thumb {
           outline-color: var(--color-primary-dark);
         }
+      }
+    }
+  }
+  .\[\&\>div\:first-child\]\:h-40 {
+    &>div:first-child {
+      height: calc(var(--spacing) * 40);
+    }
+  }
+  .md\:\[\&\>div\:first-child\]\:h-44 {
+    @media (width >= 48rem) {
+      &>div:first-child {
+        height: calc(var(--spacing) * 44);
+      }
+    }
+  }
+  .md\:\[\&\>div\:first-child\]\:h-auto {
+    @media (width >= 48rem) {
+      &>div:first-child {
+        height: auto;
       }
     }
   }
