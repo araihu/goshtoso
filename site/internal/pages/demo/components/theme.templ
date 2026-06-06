@@ -936,6 +936,10 @@ func themePageScript() string {
       return cls.charAt(0).toUpperCase() + cls.slice(1, idx) + cls.slice(idx);
     },
     clearColor(token) {
+      // applyColors() only sets vars for tokens still present in overrides; it
+      // never clears a removed one, so drop the inline var here (mirrors
+      // resetAll) or the stale override sticks and the swatch won't reset.
+      document.documentElement.style.removeProperty('--color-' + token);
       const next = Object.assign({}, this.overrides);
       delete next[token];
       this.overrides = next;
