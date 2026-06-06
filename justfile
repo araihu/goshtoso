@@ -71,8 +71,8 @@ coverage:
     go tool covdata merge \
       -i=.coverage/unit-root,.coverage/unit-site,.coverage/e2e \
       -o=.coverage/merged
-    go tool covdata percent -i=.coverage/merged > .coverage/coverage-percent.txt
-    go tool covdata textfmt -i=.coverage/merged -o=.coverage/coverage.out
+    go tool covdata percent -i=.coverage/merged -pkg="$component_coverpkg" > .coverage/coverage-percent.txt
+    go tool covdata textfmt -i=.coverage/merged -pkg="$component_coverpkg" -o=.coverage/coverage.out
     go tool cover -func=.coverage/coverage.out > .coverage/coverage-func.txt
     go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
 

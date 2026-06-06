@@ -34,6 +34,15 @@ func main() {
 		Addr:    addr,
 		Handler: srv,
 	}
+	httpServer.Handler = e2eShutdownWrapper(httpServer.Handler, os.Getenv("GOSHTOSO_E2E_SHUTDOWN_TOKEN"), func() {
+		go func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := httpServer.Shutdown(ctx); err != nil {
+				log.Printf("Server shutdown error: %v", err)
+			}
+		}()
+	})
 
 	errs := make(chan error, 1)
 	go func() {
@@ -58,6 +67,28 @@ func main() {
 		}
 		log.Fatalf("Server error: %v", err)
 	}
+}
+
+func e2eShutdownWrapper(next http.Handler, token string, shutdown func()) http.Handler {
+	if token == "" {
+		return next
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/__e2e/shutdown" {
+			next.ServeHTTP(w, r)
+			return
+		}
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		if r.URL.Query().Get("token") != token {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+		shutdown()
+	})
 }
 
 func resolveProjectRoot() string {
