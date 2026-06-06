@@ -829,6 +829,9 @@
   .table {
     display: table;
   }
+  .aspect-3\/1 {
+    aspect-ratio: 3/1;
+  }
   .size-1\.5 {
     width: calc(var(--spacing) * 1.5);
     height: calc(var(--spacing) * 1.5);
@@ -937,6 +940,9 @@
   .h-16 {
     height: calc(var(--spacing) * 16);
   }
+  .h-32 {
+    height: calc(var(--spacing) * 32);
+  }
   .h-40 {
     height: calc(var(--spacing) * 40);
   }
@@ -948,6 +954,9 @@
   }
   .h-52 {
     height: calc(var(--spacing) * 52);
+  }
+  .h-64 {
+    height: calc(var(--spacing) * 64);
   }
   .h-80 {
     height: calc(var(--spacing) * 80);
