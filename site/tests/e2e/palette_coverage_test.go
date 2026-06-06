@@ -22,7 +22,7 @@ func gotoPalette(t *testing.T, page playwright.Page) {
 
 // TestPalette_ResetClearsModel picks a swatch, then clicks Reset and asserts the
 // bound model returns to the empty placeholder ("—"). Covers the Reset
-// pick('', null) branch.
+// pick(empty, null) branch.
 func TestPalette_ResetClearsModel(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
