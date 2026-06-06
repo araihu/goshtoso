@@ -127,7 +127,7 @@ func TestIconLeadingPlacement(t *testing.T) {
 	// Leading icon should appear before the closing tag content marker; assert
 	// it precedes any trailing position by checking it renders right after <a>.
 	openIdx := strings.Index(html, ">")
-	if !(openIdx < iconIdx && iconIdx < textIdx) {
+	if openIdx >= iconIdx || iconIdx >= textIdx {
 		t.Fatalf("expected leading icon between open tag and close: %s", html)
 	}
 }
