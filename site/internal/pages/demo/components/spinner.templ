@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/spinner"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -14,7 +15,7 @@ templ SpinnerDemoPage() {
 // preview frame followed by its own code block (mirrors
 // penguinui.com/components/spinner). Wrapped in #spinner-fragment.
 templ spinnerDemoContent() {
-	<div id="spinner-fragment">
+	<div id="spinner-fragment" x-data="{ selected: 'md' }">
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Spinner",
@@ -23,7 +24,6 @@ templ spinnerDemoContent() {
 			spinnerDefaultPreview(),
 			`@spinner.Spinner(spinner.Config{})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variants",
@@ -33,11 +33,11 @@ templ spinnerDemoContent() {
 			`@spinner.Spinner(spinner.Config{Variant: spinner.Primary})
 @spinner.Spinner(spinner.Config{Variant: spinner.Danger})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Sizes",
-				Description: "Four sizes via Size: SizeSM, SizeMD (default), SizeLG, SizeXL.",
+				Title:        "Sizes",
+				Description:  "Four sizes via Size: SizeSM, SizeMD (default), SizeLG, SizeXL.",
+				AbovePreview: spinnerSizeSelector(),
 			},
 			spinnerSizesPreview(),
 			`@spinner.Spinner(spinner.Config{Size: spinner.SizeSM})
@@ -49,6 +49,39 @@ templ spinnerDemoContent() {
 		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
 		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg", "xl".`},
 		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
+	})
+}
+
+// spinnerSizeSelector renders the segmented size control above the sizes
+// preview frame.
+templ spinnerSizeSelector() {
+	<div class="mb-3 flex items-center gap-4">
+		<label class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Size</label>
+		<div data-testid="spinner-size-selector">
+			@radio.RadioBar() {
+				@spinnerSizeOption("sm", "sm")
+				@spinnerSizeOption("md", "md")
+				@spinnerSizeOption("lg", "lg")
+				@spinnerSizeOption("xl", "xl")
+			}
+		</div>
+		<span class="sr-only" data-testid="spinner-size-selected" x-text="selected"></span>
+	</div>
+}
+
+// spinnerSizeOption renders a single segmented pill for the spinner size
+// selector.
+templ spinnerSizeOption(value, label string) {
+	@radio.Radio(radio.Config{
+		ID:        "spinner-size-" + value,
+		Name:      "spinner-size",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Alpine: &radio.AlpineConfig{
+			BindChecked: "selected === '" + value + "'",
+			OnChange:    "selected = '" + value + "'",
+		},
 	})
 }
 
@@ -78,11 +111,19 @@ templ spinnerVariantsPreview() {
 // spinnerSizesPreview renders the four sizes.
 templ spinnerSizesPreview() {
 	<div id="spinner-sizes" class="w-full max-w-md mx-auto">
-		<div class="flex items-center justify-center gap-4">
-			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeSM})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeMD})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeLG})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeXL})
+		<div class="flex items-center justify-center">
+			<div data-testid="spinner-size-preview-sm" x-show="selected === 'sm'" x-cloak>
+				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeSM})
+			</div>
+			<div data-testid="spinner-size-preview-md" x-show="selected === 'md'">
+				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeMD})
+			</div>
+			<div data-testid="spinner-size-preview-lg" x-show="selected === 'lg'" x-cloak>
+				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeLG})
+			</div>
+			<div data-testid="spinner-size-preview-xl" x-show="selected === 'xl'" x-cloak>
+				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeXL})
+			</div>
 		</div>
 	</div>
 }

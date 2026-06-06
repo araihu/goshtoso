@@ -82,11 +82,27 @@ func TestButtonCoverageDemo(t *testing.T) {
 	})
 
 	t.Run("SizeButtonsRender", func(t *testing.T) {
-		for _, label := range []string{"Small", "Medium", "Large", "Extra Large"} {
-			loc := page.Locator("#button-sizes button", playwright.PageLocatorOptions{HasText: label})
+		cases := []struct {
+			size  string
+			label string
+		}{
+			{"sm", "Small"},
+			{"md", "Medium"},
+			{"lg", "Large"},
+			{"xl", "Extra Large"},
+		}
+		for _, tc := range cases {
+			require.NoError(t, page.Locator("label[for='button-size-"+tc.size+"']").Click())
+			require.NoError(t, page.Locator("[data-testid='button-size-selected']").Filter(playwright.LocatorFilterOptions{
+				HasText: tc.size,
+			}).WaitFor())
+			require.NoError(t, page.Locator("[data-testid='button-size-preview-"+tc.size+"']").WaitFor(playwright.LocatorWaitForOptions{
+				State: playwright.WaitForSelectorStateVisible,
+			}))
+			loc := page.Locator("[data-testid='button-size-preview-"+tc.size+"'] button", playwright.PageLocatorOptions{HasText: tc.label})
 			visible, err := loc.First().IsVisible()
 			require.NoError(t, err)
-			require.True(t, visible, "size button %q should render", label)
+			require.True(t, visible, "size button %q should render", tc.label)
 		}
 	})
 

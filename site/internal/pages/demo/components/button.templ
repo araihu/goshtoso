@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -16,7 +17,7 @@ templ ButtonDemoPage() {
 // it doesn't collide with ButtonFragment's #button-fragment variants grid (which
 // the e2e suite and the HTMX fragment endpoint target).
 templ buttonDemoContent() {
-	<div id="button-docs-fragment">
+	<div id="button-docs-fragment" x-data="{ selected: 'md' }">
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Buttons",
@@ -28,17 +29,19 @@ templ buttonDemoContent() {
 @button.Button(button.Config{Variant: button.Danger, Type: "button"}) { Danger }
 @button.Button(button.Config{Variant: button.Success, Type: "button"}) { Success }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Sizes",
-				Description: "Four sizes via Size: SizeSmall, SizeMedium, SizeLarge, SizeXLarge.",
+				Title:        "Sizes",
+				Description:  "Four sizes via Size: SizeSmall, SizeMedium, SizeLarge, SizeXLarge.",
+				AbovePreview: buttonSizeSelector(),
 			},
 			buttonSizesPreview(),
-			`@button.Button(button.Config{Variant: button.Primary, Size: button.SizeSmall, Type: "button"}) { Small }
-@button.Button(button.Config{Variant: button.Primary, Size: button.SizeXLarge, Type: "button"}) { Extra Large }`,
+			`@button.Button(button.Config{
+    Variant: button.Primary,
+    Size:    button.SizeMedium,
+    Type:    "button",
+}) { Medium }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Disabled",
@@ -47,7 +50,6 @@ templ buttonDemoContent() {
 			buttonDisabledPreview(),
 			`@button.Button(button.Config{Variant: button.Primary, Type: "button", Disabled: true}) { Primary }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "HTMX Interactions",
@@ -91,22 +93,61 @@ templ buttonVariantsPreview() {
 	</div>
 }
 
-// buttonSizesPreview renders the four button sizes.
+// buttonSizeSelector renders the segmented size selector above the size preview.
+templ buttonSizeSelector() {
+	<div class="mb-3 flex items-center gap-4">
+		<label class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Size</label>
+		<div data-testid="button-size-selector">
+			@radio.RadioBar() {
+				@buttonSizeOption("sm", "sm")
+				@buttonSizeOption("md", "md")
+				@buttonSizeOption("lg", "lg")
+				@buttonSizeOption("xl", "xl")
+			}
+		</div>
+		<span class="sr-only" data-testid="button-size-selected" x-text="selected"></span>
+	</div>
+}
+
+// buttonSizeOption renders one segmented radio option for the button size selector.
+templ buttonSizeOption(value, label string) {
+	@radio.Radio(radio.Config{
+		ID:        "button-size-" + value,
+		Name:      "button-size",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Alpine: &radio.AlpineConfig{
+			BindChecked: "selected === '" + value + "'",
+			OnChange:    "selected = '" + value + "'",
+		},
+	})
+}
+
+// buttonSizesPreview renders a single selected button size.
 templ buttonSizesPreview() {
 	<div id="button-sizes" class="w-full">
 		<div class="flex flex-wrap items-center justify-center gap-4">
-			@button.Button(button.Config{Variant: button.Primary, Size: button.SizeSmall, Type: "button"}) {
-				Small
-			}
-			@button.Button(button.Config{Variant: button.Primary, Size: button.SizeMedium, Type: "button"}) {
-				Medium
-			}
-			@button.Button(button.Config{Variant: button.Primary, Size: button.SizeLarge, Type: "button"}) {
-				Large
-			}
-			@button.Button(button.Config{Variant: button.Primary, Size: button.SizeXLarge, Type: "button"}) {
-				Extra Large
-			}
+			<div data-testid="button-size-preview-sm" x-show="selected === 'sm'" x-cloak>
+				@button.Button(button.Config{Variant: button.Primary, Size: button.SizeSmall, Type: "button"}) {
+					Small
+				}
+			</div>
+			<div data-testid="button-size-preview-md" x-show="selected === 'md'">
+				@button.Button(button.Config{Variant: button.Primary, Size: button.SizeMedium, Type: "button"}) {
+					Medium
+				}
+			</div>
+			<div data-testid="button-size-preview-lg" x-show="selected === 'lg'" x-cloak>
+				@button.Button(button.Config{Variant: button.Primary, Size: button.SizeLarge, Type: "button"}) {
+					Large
+				}
+			</div>
+			<div data-testid="button-size-preview-xl" x-show="selected === 'xl'" x-cloak>
+				@button.Button(button.Config{Variant: button.Primary, Size: button.SizeXLarge, Type: "button"}) {
+					Extra Large
+				}
+			</div>
 		</div>
 	</div>
 }
@@ -137,9 +178,9 @@ templ buttonHTMXPreview() {
 		<div class="mx-auto flex w-full max-w-3xl flex-col gap-3">
 			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 				@button.Button(button.Config{
-					Variant: button.Primary,
-					Type:    "button",
-					RootClass:   "w-full sm:w-44 justify-center",
+					Variant:   button.Primary,
+					Type:      "button",
+					RootClass: "w-full sm:w-44 justify-center",
 					HTMX: &button.HTMXConfig{
 						Post:   "/api/hello",
 						Target: "#htmx-result-post",
@@ -152,9 +193,9 @@ templ buttonHTMXPreview() {
 			</div>
 			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 				@button.Button(button.Config{
-					Variant: button.Info,
-					Type:    "button",
-					RootClass:   "w-full sm:w-44 justify-center",
+					Variant:   button.Info,
+					Type:      "button",
+					RootClass: "w-full sm:w-44 justify-center",
 					HTMX: &button.HTMXConfig{
 						Get:    "/api/hello",
 						Target: "#htmx-result-get",
@@ -167,9 +208,9 @@ templ buttonHTMXPreview() {
 			</div>
 			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 				@button.Button(button.Config{
-					Variant: button.Danger,
-					Type:    "button",
-					RootClass:   "w-full sm:w-44 justify-center",
+					Variant:   button.Danger,
+					Type:      "button",
+					RootClass: "w-full sm:w-44 justify-center",
 					HTMX: &button.HTMXConfig{
 						Delete:  "/api/hello",
 						Confirm: "Are you sure?",
@@ -273,7 +314,6 @@ templ HTMXButtonDemos() {
 				<em>Click button to load content...</em>
 			</div>
 		</div>
-
 		// HTMX with Loading Indicator
 		<div class="flex items-center gap-4">
 			@button.Button(button.Config{
@@ -297,7 +337,6 @@ templ HTMXButtonDemos() {
 				<em>Content will appear here...</em>
 			</div>
 		</div>
-
 		// HTMX with Confirm
 		<div class="flex items-center gap-4">
 			@button.Button(button.Config{

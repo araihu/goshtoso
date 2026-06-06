@@ -15,7 +15,7 @@ templ RadioDemoPage() {
 // frame followed by its own code block (mirrors penguinui.com/components/radio).
 // The variant set stays wrapped in #radio-fragment so the e2e selectors keep working.
 templ radioDemoContent() {
-	<div id="radio-fragment">
+	<div id="radio-fragment" x-data="{ selectedSize: 'md' }">
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Radio",
@@ -29,7 +29,6 @@ templ radioDemoContent() {
     ID: "r-win", Name: "os", Value: "windows", Label: "Windows",
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Container",
@@ -41,7 +40,6 @@ templ radioDemoContent() {
     Container: true, Checked: true,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Segmented",
@@ -53,7 +51,6 @@ templ radioDemoContent() {
     @radio.Radio(radio.Config{ID: "r-seg-b", Name: "g", Value: "b", Label: "B", Segmented: true})
 }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Description",
@@ -67,7 +64,6 @@ templ radioDemoContent() {
     Checked:       true,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variants",
@@ -77,17 +73,18 @@ templ radioDemoContent() {
 			`@radio.Radio(radio.Config{ID: "r-success", Name: "v", Value: "su", Label: "Success", Variant: radio.Success, Checked: true})
 @radio.Radio(radio.Config{ID: "r-danger", Name: "v2", Value: "d", Label: "Danger", Variant: radio.Danger, Checked: true})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Sizes",
-				Description: "Four box sizes via Size: SizeSM, SizeMD (default), SizeLG, SizeXL.",
+				Title:        "Sizes",
+				Description:  "Four box sizes via Size: SizeSM, SizeMD (default), SizeLG, SizeXL.",
+				AbovePreview: radioSizeSelector(),
 			},
 			radioSizesPreview(),
-			`@radio.Radio(radio.Config{ID: "r-sm", Name: "sz", Value: "sm", Label: "Small", Size: radio.SizeSM, Checked: true})
-@radio.Radio(radio.Config{ID: "r-xl", Name: "sz2", Value: "xl", Label: "XL", Size: radio.SizeXL, Checked: true})`,
+			`@radio.Radio(radio.Config{
+    ID: "r-size-md", Name: "radio-size-preview", Value: "md",
+    Label: "Medium", Size: radio.SizeMD, Checked: true,
+})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Disabled",
@@ -97,7 +94,6 @@ templ radioDemoContent() {
 			`@radio.Radio(radio.Config{ID: "r-d1", Name: "dis", Value: "a", Label: "Disabled unchecked", Disabled: true})
 @radio.Radio(radio.Config{ID: "r-d2", Name: "dis", Value: "b", Label: "Disabled checked", Disabled: true, Checked: true})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Alpine — client state",
@@ -112,7 +108,6 @@ templ radioDemoContent() {
     },
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "HTMX — server roundtrip",
@@ -128,7 +123,6 @@ templ radioDemoContent() {
     },
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Hybrid — Alpine state + HTMX persistence",
@@ -208,7 +202,7 @@ templ radioDescriptionPreview() {
 				ID: "r-desc-mac", Name: "os-desc", Value: "mac", Label: "Mac",
 				HelperText:   "For macOS Big Sur and higher.",
 				HelperTextID: "r-desc-mac-desc",
-				Checked:       true,
+				Checked:      true,
 			})
 			@radio.Radio(radio.Config{
 				ID: "r-desc-win", Name: "os-desc", Value: "windows", Label: "Windows",
@@ -233,14 +227,53 @@ templ radioColorPreview() {
 	</div>
 }
 
-// radioSizesPreview renders the four input sizes.
+// radioSizeSelector renders the segmented size selector for the sizes preview.
+templ radioSizeSelector() {
+	<div class="mb-3 flex items-center gap-4">
+		<label class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Size</label>
+		<div data-testid="radio-size-selector">
+			@radio.RadioBar() {
+				@radioSizeOption("sm", "sm")
+				@radioSizeOption("md", "md")
+				@radioSizeOption("lg", "lg")
+				@radioSizeOption("xl", "xl")
+			}
+		</div>
+		<span class="sr-only" data-testid="radio-size-selected" x-text="selectedSize"></span>
+	</div>
+}
+
+// radioSizeOption renders one segmented pill for the radio size selector.
+templ radioSizeOption(value, label string) {
+	@radio.Radio(radio.Config{
+		ID:        "radio-size-selector-" + value,
+		Name:      "radio-size-selector",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Alpine: &radio.AlpineConfig{
+			BindChecked: "selectedSize === '" + value + "'",
+			OnChange:    "selectedSize = '" + value + "'",
+		},
+	})
+}
+
+// radioSizesPreview renders a single radio at the selected input size.
 templ radioSizesPreview() {
 	<div id="radio-sizes" class="w-full max-w-md mx-auto">
-		<div class="flex items-center gap-4" data-testid="radio-sizes">
-			@radio.Radio(radio.Config{ID: "r-size-sm", Name: "sz-sm", Value: "sm", Label: "Small", Size: radio.SizeSM, Checked: true})
-			@radio.Radio(radio.Config{ID: "r-size-md", Name: "sz-md", Value: "md", Label: "Medium", Size: radio.SizeMD, Checked: true})
-			@radio.Radio(radio.Config{ID: "r-size-lg", Name: "sz-lg", Value: "lg", Label: "Large", Size: radio.SizeLG, Checked: true})
-			@radio.Radio(radio.Config{ID: "r-size-xl", Name: "sz-xl", Value: "xl", Label: "XL", Size: radio.SizeXL, Checked: true})
+		<div class="flex min-h-10 items-center justify-center" data-testid="radio-sizes">
+			<div data-testid="radio-size-preview-sm" x-show="selectedSize === 'sm'" x-cloak>
+				@radio.Radio(radio.Config{ID: "r-size-sm", Name: "radio-size-preview-sm", Value: "sm", Label: "Small", Size: radio.SizeSM, Checked: true})
+			</div>
+			<div data-testid="radio-size-preview-md" x-show="selectedSize === 'md'">
+				@radio.Radio(radio.Config{ID: "r-size-md", Name: "radio-size-preview-md", Value: "md", Label: "Medium", Size: radio.SizeMD, Checked: true})
+			</div>
+			<div data-testid="radio-size-preview-lg" x-show="selectedSize === 'lg'" x-cloak>
+				@radio.Radio(radio.Config{ID: "r-size-lg", Name: "radio-size-preview-lg", Value: "lg", Label: "Large", Size: radio.SizeLG, Checked: true})
+			</div>
+			<div data-testid="radio-size-preview-xl" x-show="selectedSize === 'xl'" x-cloak>
+				@radio.Radio(radio.Config{ID: "r-size-xl", Name: "radio-size-preview-xl", Value: "xl", Label: "XL", Size: radio.SizeXL, Checked: true})
+			</div>
 		</div>
 	</div>
 }

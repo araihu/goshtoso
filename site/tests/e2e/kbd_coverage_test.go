@@ -66,9 +66,16 @@ func TestKbdCoverageDemo(t *testing.T) {
 		"lg": "min-h-9",
 	}
 	for label, className := range sizeClasses {
-		count, err := page.Locator("#kbd-sizes kbd." + className).Count()
+		require.NoError(t, page.Locator("label[for='kbd-size-"+label+"']").Click())
+		require.NoError(t, page.Locator("[data-testid='kbd-size-selected']").Filter(playwright.LocatorFilterOptions{
+			HasText: label,
+		}).WaitFor())
+		require.NoError(t, page.Locator("[data-testid='kbd-size-preview-"+label+"']").WaitFor(playwright.LocatorWaitForOptions{
+			State: playwright.WaitForSelectorStateVisible,
+		}))
+		count, err := page.Locator("[data-testid='kbd-size-preview-" + label + "'] kbd." + className).Count()
 		require.NoError(t, err)
-		assert.Equal(t, 1, count, "expected one %s size key", label)
+		assert.Equal(t, 1, count, "expected one visible %s size key", label)
 	}
 
 	functionCount, err := page.Locator("#kbd-functions kbd").Count()

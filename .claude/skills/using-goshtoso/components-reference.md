@@ -1032,7 +1032,7 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 | `HelperTextID` | `string` | HelperTextID is the id for the helper text element (for aria-describedby) |
 | `BadgeColor` | `string` | BadgeColor wraps the label in a semi-solid badge. |
 | `Container` | `bool` | Container wraps the radio in a bordered container, showing the radio |
-| `Segmented` | `bool` | Segmented renders a true segmented-control pill: the input is sr-only |
+| `Segmented` | `bool` | Segmented renders a true segmented-control pill: the input is a transparent |
 | `RootClass` | `string` | RootClass is appended to the label root element. |
 | `HTMX` | `*HTMXConfig` | HTMX wires server interactions on change. |
 | `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |

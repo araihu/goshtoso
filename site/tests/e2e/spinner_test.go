@@ -54,12 +54,27 @@ func TestSpinnerComponentDemoVariants(t *testing.T) {
 	})
 
 	t.Run("size variants render each documented size", func(t *testing.T) {
-		sizes := []string{"size-4", "size-5", "size-8", "size-12"}
+		sizes := []struct {
+			label string
+			class string
+		}{
+			{"sm", "size-4"},
+			{"md", "size-5"},
+			{"lg", "size-8"},
+			{"xl", "size-12"},
+		}
 		for _, size := range sizes {
-			locator := page.Locator("#spinner-sizes svg." + size + ".motion-safe\\:animate-spin")
+			require.NoError(t, page.Locator("label[for='spinner-size-"+size.label+"']").Click())
+			require.NoError(t, page.Locator("[data-testid='spinner-size-selected']").Filter(playwright.LocatorFilterOptions{
+				HasText: size.label,
+			}).WaitFor())
+			require.NoError(t, page.Locator("[data-testid='spinner-size-preview-"+size.label+"']").WaitFor(playwright.LocatorWaitForOptions{
+				State: playwright.WaitForSelectorStateVisible,
+			}))
+			locator := page.Locator("[data-testid='spinner-size-preview-" + size.label + "'] svg." + size.class + ".motion-safe\\:animate-spin")
 			count, err := locator.Count()
 			require.NoError(t, err)
-			assert.Equal(t, 1, count, "expected one spinner with %s", size)
+			assert.Equal(t, 1, count, "expected one visible spinner with %s", size.class)
 		}
 	})
 }

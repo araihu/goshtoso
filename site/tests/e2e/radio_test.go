@@ -114,6 +114,36 @@ func TestRadio_ColorVariants(t *testing.T) {
 	}
 }
 
+// TestRadio_SizeSelector verifies the documented size radio selector controls
+// the visible size preview without colliding with the demo radio groups.
+func TestRadio_SizeSelector(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	navigateToRadioDemo(t, page)
+
+	cases := []struct {
+		size      string
+		inputID   string
+		wantClass string
+	}{
+		{"sm", "r-size-sm", "size-3"},
+		{"md", "r-size-md", "size-4"},
+		{"lg", "r-size-lg", "size-5"},
+		{"xl", "r-size-xl", "size-6"},
+	}
+	for _, tc := range cases {
+		require.NoError(t, page.Locator("label[for='radio-size-selector-"+tc.size+"']").Click())
+		require.NoError(t, page.Locator("[data-testid='radio-size-selected']").Filter(playwright.LocatorFilterOptions{
+			HasText: tc.size,
+		}).WaitFor())
+		require.NoError(t, page.Locator("[data-testid='radio-size-preview-"+tc.size+"']").WaitFor(playwright.LocatorWaitForOptions{
+			State: playwright.WaitForSelectorStateVisible,
+		}))
+		cls, err := page.Locator("#" + tc.inputID).GetAttribute("class")
+		require.NoError(t, err)
+		assert.Contains(t, cls, tc.wantClass, "%s radio missing %s", tc.inputID, tc.wantClass)
+	}
+}
+
 // TestRadio_AlpinePrimitive verifies the Alpine-only showcase: clicking a radio
 // updates the visible `selected` text without any server roundtrip.
 func TestRadio_AlpinePrimitive(t *testing.T) {

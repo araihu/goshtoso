@@ -123,8 +123,8 @@ type Config struct {
 	// Container wraps the radio in a bordered container, showing the radio
 	// bullet next to a label (still a discrete option visually).
 	Container bool
-	// Segmented renders a true segmented-control pill: the input is sr-only
-	// and the label takes the full visual, switching background/text via
+	// Segmented renders a true segmented-control pill: the input is a transparent
+	// full-segment overlay and the label carries visual state via
 	// `has-checked:`. Designed to be grouped inside a `RadioBar` wrapper
 	// (or any flex container with `divide-x` for connected segments).
 	// When set, Container is ignored.
@@ -255,12 +255,12 @@ func (cfg Config) InputClasses() string {
 }
 
 // SegmentedLabelClasses returns the label classes for the Segmented variant.
-// The label fully replaces the visual; the input is sr-only and acts as the
-// state holder. Active styling rides on Tailwind v4's `has-checked:` selector
-// (label has a checked input child → primary fill).
+// The label fully replaces the visual; the transparent input covers the segment
+// and acts as the state holder. Active styling rides on Tailwind v4's
+// `has-checked:` selector (label has a checked input child → primary fill).
 func (cfg Config) SegmentedLabelClasses() string {
 	checkedVariant := segmentedCheckedClasses(cfg.Variant)
-	return "cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors " +
+	return "relative cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors " +
 		"text-on-surface hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark " +
 		"has-disabled:cursor-not-allowed has-disabled:opacity-75 " + checkedVariant
 }
