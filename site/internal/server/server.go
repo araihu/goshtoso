@@ -88,6 +88,7 @@ func (s *Server) setupRoutes() {
 	s.registerLogsRoutes()
 	s.registerProfileRoutes()
 	s.registerTickerRoutes()
+	s.registerWizardRoutes()
 
 	// API endpoints for HTMX demos
 	s.mux.HandleFunc("/api/hello", s.handleAPIHello)
@@ -220,6 +221,8 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 		s.renderProfilePage(w, r)
 	case "ticker":
 		s.renderDemo(w, r, "examples/ticker")
+	case "wizard":
+		s.renderWizardPage(w, r)
 	default:
 		http.NotFound(w, r)
 	}

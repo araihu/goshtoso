@@ -81,6 +81,7 @@ var Demos = map[string]DemoEntry{
 	"examples/logs":               {"Live Log Feed", "logs", examples.LogsContent},
 	"examples/profile":            {"Profile", "profile", examples.ProfileContent},
 	"examples/ticker":             {"Live Ticker", "ticker", examples.TickerContent},
+	"examples/wizard":             {"Onboarding Wizard", "wizard", examples.WizardContent},
 }
 
 // LookupDemo returns the entry for a given canonical key (no leading slash).
@@ -195,6 +196,7 @@ func demoDescription(key string, entry DemoEntry) string {
 		"examples/profile":            "Edit a profile settings screen composed from Goshtoso form, avatar, modal, toggle, and validation components.",
 		"examples/ticker":             "Watch a live ticker table update with Go server-sent events, HTMX row swaps, and Goshtoso table components.",
 		"examples/chat":               "Try a real-time Go chat interface with WebSockets, server-rendered message bubbles, and Goshtoso components.",
+		"examples/wizard":             "Step through a cookie-backed onboarding wizard with per-step server-side validation, HTMX fragment swaps, and Goshtoso steps, form, and toast components.",
 	}
 	if description, ok := descriptions[key]; ok {
 		return description

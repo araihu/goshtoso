@@ -58,6 +58,37 @@ go test ./site/tests/e2e/... -count=1 -timeout 5m -run TestDropdown
 fresh clones; CI creates a temporary workspace so it builds against the in-repo
 library at the current commit.
 
+## Worktree Isolation (required)
+
+Every unit of work — a feature, an example app, a bugfix, a coverage pass — MUST
+happen in its own dedicated git worktree branched from `origin/main`. Never edit,
+build, or commit feature work in the shared primary checkout, and never reuse one
+worktree for two unrelated tasks. Concurrent agents sharing a single working tree
+produce entangled diffs (one task's changes leak into another's commit, generated
+files collide, and a clean per-feature PR becomes impossible to assemble).
+
+Start every task with:
+
+```bash
+git fetch origin
+git worktree add -b <type>/<short-slug> /tmp/gs-<short-slug> origin/main
+cd /tmp/gs-<short-slug>
+go work init . ./site   # go.work is gitignored; recreate it per worktree
+```
+
+Rules:
+
+- Branch from `origin/main` only — never from the current branch or another
+  feature branch. Run `git fetch origin` first so the base is up to date.
+- One worktree per task. If two agents work in parallel, they get two worktrees.
+- Do all edits, `templ generate`, `just css`, builds, tests, and the commit
+  inside that worktree. The primary checkout stays clean.
+- Remove the worktree after the branch merges: `git worktree remove <path>`.
+
+When you (or the harness) hand a task to a sub-agent, the worktree boundary is
+how that work stays mergeable. Skipping it is what creates an unrecoverable
+tangle of mixed, half-finished changes across shared files.
+
 ## Generated Files
 
 Never hand-edit generated files:
