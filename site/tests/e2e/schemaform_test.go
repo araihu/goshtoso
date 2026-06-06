@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSchemaFieldDemoPage(t *testing.T) {
+func TestSchemaFormDemoPage(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -21,7 +21,7 @@ func TestSchemaFieldDemoPage(t *testing.T) {
 
 	page := newPage(t, browser)
 
-	_, err := page.Goto(baseURL+"/components/schema-field", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/components/schema-form", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
@@ -29,9 +29,9 @@ func TestSchemaFieldDemoPage(t *testing.T) {
 
 	title, err := page.Locator("main h1").TextContent()
 	require.NoError(t, err)
-	assert.Contains(t, title, "Schema Field")
+	assert.Contains(t, title, "Schema Form")
 
-	form := page.Locator("#schema-field-generated")
+	form := page.Locator("#schema-form-generated")
 	require.NoError(t, form.GetByLabel("Replica count").WaitFor())
 	require.NoError(t, form.GetByLabel("Image tag").WaitFor())
 	require.NoError(t, form.GetByLabel("TLS enabled").WaitFor())

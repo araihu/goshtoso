@@ -1,0 +1,134 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/schemaform"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// SchemaFormDemoPage renders the Schema Form component demo.
+templ SchemaFormDemoPage() {
+	@demo.Layout("Schema Form", "schema-form", schemaFormDemoContent())
+}
+
+templ schemaFormDemoContent() {
+	<div id="schema-form-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Schema Form",
+				Description: "Render a server-side form from JSON Schema metadata, default values, submitted values, and allow-list rules. Use it when the set of editable fields comes from configuration instead of hand-authored markup.",
+			},
+			schemaFormGeneratedPreview(),
+			`fields := schemaform.Walk(valuesSchema, defaults, values, allowList)
+
+@schemaform.Fields(schemaform.FieldsConfig{
+    Fields:     fields,
+    NamePrefix: "values",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Fallback Form From Defaults",
+				Description: "When no schema is available, infer a usable form from default values while preserving managed and disabled allow-list rules.",
+			},
+			schemaFormFallbackPreview(),
+			`fields := schemaform.FallbackFromDefaults(defaults, values, allowList)`,
+		)
+	</div>
+	@demo.APIReference([]demo.PropDoc{
+		{Name: "Fields", Type: "[]Field", Default: "nil", Description: "Ordered form controls produced by Walk or FallbackFromDefaults."},
+		{Name: "NamePrefix", Type: "string", Default: `"values"`, Description: "Prefix applied to generated input names, such as values.replicaCount."},
+		{Name: "Walk", Type: "func", Default: "-", Description: "Builds form fields from a JSON Schema object, defaults, current submitted values, and allow-list modes."},
+		{Name: "FallbackFromDefaults", Type: "func", Default: "-", Description: "Infers a form from default values when no JSON Schema is available."},
+		{Name: "FlattenAllowList", Type: "func", Default: "-", Description: "Converts nested allow_list data into dotted paths with managed or disabled modes."},
+		{Name: "PruneDisabled", Type: "func", Default: "-", Description: "Removes disabled paths from values before serializing or submitting configuration."},
+	})
+}
+
+templ schemaFormGeneratedPreview() {
+	<div id="schema-form-generated" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+			@schemaform.Fields(schemaform.FieldsConfig{
+				Fields:     schemaFormDemoFields(),
+				NamePrefix: "values",
+			})
+		</div>
+	</div>
+}
+
+templ schemaFormFallbackPreview() {
+	<div id="schema-form-fallback" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+			@schemaform.Fields(schemaform.FieldsConfig{
+				Fields:     schemaFormFallbackFields(),
+				NamePrefix: "values",
+			})
+		</div>
+	</div>
+}
+
+func schemaFormDemoFields() []schemaform.Field {
+	schema := map[string]any{
+		"required": []any{"replicaCount", "imageTag", "serviceType"},
+		"properties": map[string]any{
+			"replicaCount": map[string]any{
+				"type":        "integer",
+				"title":       "Replica count",
+				"description": "Number of pods to run.",
+			},
+			"imageTag": map[string]any{
+				"type":        "string",
+				"title":       "Image tag",
+				"description": "Container image version.",
+			},
+			"tlsEnabled": map[string]any{
+				"type":        "boolean",
+				"title":       "TLS enabled",
+				"description": "Terminate HTTPS at the service edge.",
+			},
+			"serviceType": map[string]any{
+				"title":       "Service type",
+				"description": "Kubernetes Service exposure mode.",
+				"enum":        []any{"ClusterIP", "LoadBalancer", "NodePort"},
+			},
+			"teamOwner": map[string]any{
+				"type":        "string",
+				"title":       "Team owner",
+				"description": "Managed by the platform catalog.",
+			},
+			"internalToken": map[string]any{
+				"type":  "string",
+				"title": "Internal token",
+			},
+		},
+	}
+	defaults := map[string]any{
+		"replicaCount": 3,
+		"imageTag":     "v1.8.0",
+		"tlsEnabled":   true,
+		"serviceType":  "ClusterIP",
+		"teamOwner":    "platform",
+		"internalToken": "redacted",
+	}
+	values := map[string]any{"serviceType": "LoadBalancer"}
+	allowList := map[string]schemaform.AllowMode{
+		"teamOwner":     schemaform.AllowModeManaged,
+		"internalToken": schemaform.AllowModeDisabled,
+	}
+	return schemaform.Walk(schema, defaults, values, allowList)
+}
+
+func schemaFormFallbackFields() []schemaform.Field {
+	defaults := map[string]any{
+		"resources": map[string]any{
+			"cpu":    "500m",
+			"memory": "512Mi",
+		},
+		"zones": []any{"us-east-1a", "us-east-1b"},
+		"debug": false,
+	}
+	allowList := map[string]schemaform.AllowMode{
+		"resources.cpu": schemaform.AllowModeManaged,
+	}
+	return schemaform.FallbackFromDefaults(defaults, nil, allowList)
+}

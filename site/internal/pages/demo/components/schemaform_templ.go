@@ -9,12 +9,12 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/araihu/goshtoso/components/schemafield"
+	"github.com/araihu/goshtoso/components/schemaform"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
-// SchemaFieldDemoPage renders the Schema Field component demo.
-func SchemaFieldDemoPage() templ.Component {
+// SchemaFormDemoPage renders the Schema Form component demo.
+func SchemaFormDemoPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,7 +35,7 @@ func SchemaFieldDemoPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = demo.Layout("Schema Field", "schema-field", schemaFieldDemoContent()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.Layout("Schema Form", "schema-form", schemaFormDemoContent()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,7 +43,7 @@ func SchemaFieldDemoPage() templ.Component {
 	})
 }
 
-func schemaFieldDemoContent() templ.Component {
+func schemaFormDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -64,19 +64,19 @@ func schemaFieldDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"schema-field-fragment\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"schema-form-fragment\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:       "Schema Field",
-				Description: "Generate editable form controls from JSON Schema defaults, current values, and an allow list that can manage or hide individual paths.",
+				Title:       "Schema Form",
+				Description: "Render a server-side form from JSON Schema metadata, default values, submitted values, and allow-list rules. Use it when the set of editable fields comes from configuration instead of hand-authored markup.",
 			},
-			schemaFieldGeneratedPreview(),
-			`fields := schemafield.Walk(valuesSchema, defaults, values, allowList)
+			schemaFormGeneratedPreview(),
+			`fields := schemaform.Walk(valuesSchema, defaults, values, allowList)
 
-@schemafield.Fields(schemafield.FieldsConfig{
+@schemaform.Fields(schemaform.FieldsConfig{
     Fields:     fields,
     NamePrefix: "values",
 })`,
@@ -86,11 +86,11 @@ func schemaFieldDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Fallback From Defaults",
-				Description: "When no schema is available, infer a usable field list from default values while preserving managed and disabled allow-list rules.",
+				Title:       "Fallback Form From Defaults",
+				Description: "When no schema is available, infer a usable form from default values while preserving managed and disabled allow-list rules.",
 			},
-			schemaFieldFallbackPreview(),
-			`fields := schemafield.FallbackFromDefaults(defaults, values, allowList)`,
+			schemaFormFallbackPreview(),
+			`fields := schemaform.FallbackFromDefaults(defaults, values, allowList)`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -100,12 +100,12 @@ func schemaFieldDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Fields", Type: "[]Field", Default: "nil", Description: "Renderable field list produced by Walk or FallbackFromDefaults."},
-			{Name: "NamePrefix", Type: "string", Default: `"values"`, Description: "Prefix applied to generated form input names."},
-			{Name: "Walk", Type: "func", Default: "-", Description: "Builds fields from a JSON Schema subset, defaults, current values, and allow-list modes."},
-			{Name: "FallbackFromDefaults", Type: "func", Default: "-", Description: "Infers fields from default values when no schema exists."},
+			{Name: "Fields", Type: "[]Field", Default: "nil", Description: "Ordered form controls produced by Walk or FallbackFromDefaults."},
+			{Name: "NamePrefix", Type: "string", Default: `"values"`, Description: "Prefix applied to generated input names, such as values.replicaCount."},
+			{Name: "Walk", Type: "func", Default: "-", Description: "Builds form fields from a JSON Schema object, defaults, current submitted values, and allow-list modes."},
+			{Name: "FallbackFromDefaults", Type: "func", Default: "-", Description: "Infers a form from default values when no JSON Schema is available."},
 			{Name: "FlattenAllowList", Type: "func", Default: "-", Description: "Converts nested allow_list data into dotted paths with managed or disabled modes."},
-			{Name: "PruneDisabled", Type: "func", Default: "-", Description: "Removes disabled paths from values before serialization."},
+			{Name: "PruneDisabled", Type: "func", Default: "-", Description: "Removes disabled paths from values before serializing or submitting configuration."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -114,7 +114,7 @@ func schemaFieldDemoContent() templ.Component {
 	})
 }
 
-func schemaFieldGeneratedPreview() templ.Component {
+func schemaFormGeneratedPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -135,12 +135,12 @@ func schemaFieldGeneratedPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"schema-field-generated\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"schema-form-generated\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = schemafield.Fields(schemafield.FieldsConfig{
-			Fields:     schemaFieldDemoFields(),
+		templ_7745c5c3_Err = schemaform.Fields(schemaform.FieldsConfig{
+			Fields:     schemaFormDemoFields(),
 			NamePrefix: "values",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -154,7 +154,7 @@ func schemaFieldGeneratedPreview() templ.Component {
 	})
 }
 
-func schemaFieldFallbackPreview() templ.Component {
+func schemaFormFallbackPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -175,12 +175,12 @@ func schemaFieldFallbackPreview() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"schema-field-fallback\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"schema-form-fallback\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = schemafield.Fields(schemafield.FieldsConfig{
-			Fields:     schemaFieldFallbackFields(),
+		templ_7745c5c3_Err = schemaform.Fields(schemaform.FieldsConfig{
+			Fields:     schemaFormFallbackFields(),
 			NamePrefix: "values",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -194,7 +194,7 @@ func schemaFieldFallbackPreview() templ.Component {
 	})
 }
 
-func schemaFieldDemoFields() []schemafield.Field {
+func schemaFormDemoFields() []schemaform.Field {
 	schema := map[string]any{
 		"required": []any{"replicaCount", "imageTag", "serviceType"},
 		"properties": map[string]any{
@@ -238,14 +238,14 @@ func schemaFieldDemoFields() []schemafield.Field {
 		"internalToken": "redacted",
 	}
 	values := map[string]any{"serviceType": "LoadBalancer"}
-	allowList := map[string]schemafield.AllowMode{
-		"teamOwner":     schemafield.AllowModeManaged,
-		"internalToken": schemafield.AllowModeDisabled,
+	allowList := map[string]schemaform.AllowMode{
+		"teamOwner":     schemaform.AllowModeManaged,
+		"internalToken": schemaform.AllowModeDisabled,
 	}
-	return schemafield.Walk(schema, defaults, values, allowList)
+	return schemaform.Walk(schema, defaults, values, allowList)
 }
 
-func schemaFieldFallbackFields() []schemafield.Field {
+func schemaFormFallbackFields() []schemaform.Field {
 	defaults := map[string]any{
 		"resources": map[string]any{
 			"cpu":    "500m",
@@ -254,10 +254,10 @@ func schemaFieldFallbackFields() []schemafield.Field {
 		"zones": []any{"us-east-1a", "us-east-1b"},
 		"debug": false,
 	}
-	allowList := map[string]schemafield.AllowMode{
-		"resources.cpu": schemafield.AllowModeManaged,
+	allowList := map[string]schemaform.AllowMode{
+		"resources.cpu": schemaform.AllowModeManaged,
 	}
-	return schemafield.FallbackFromDefaults(defaults, nil, allowList)
+	return schemaform.FallbackFromDefaults(defaults, nil, allowList)
 }
 
 var _ = templruntime.GeneratedTemplate
