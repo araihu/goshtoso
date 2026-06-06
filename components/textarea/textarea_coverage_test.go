@@ -149,10 +149,8 @@ func TestCoverageRenderWithActions(t *testing.T) {
 
 func TestCoverageWithActionsNoRootClass(t *testing.T) {
 	html := render(t, TextareaWithActions(Config{ID: "a"}))
-	// condClass("") returns "" → container class ends at base without trailing space class.
-	if strings.Contains(html, "dark:text-on-surface-dark ") {
-		// acceptable; just ensure no stray duplicate; primary assertion is render succeeded
-	}
+	// condClass("") returns "" → container class ends at base without a trailing
+	// space class; the primary assertion is simply that the render succeeded.
 	if !strings.Contains(html, "<textarea") {
 		t.Fatalf("expected textarea: %s", html)
 	}
