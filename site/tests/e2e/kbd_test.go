@@ -36,6 +36,9 @@ func TestKbdComponentDemoVariants(t *testing.T) {
 		inline := page.Locator("#kbd-inline")
 		require.NoError(t, inline.Locator("kbd").Filter(playwright.LocatorFilterOptions{HasText: "Tab"}).WaitFor())
 		require.NoError(t, inline.Locator("kbd").Filter(playwright.LocatorFilterOptions{HasText: "Space"}).WaitFor())
+		inlineText, err := inline.Locator("p").TextContent()
+		require.NoError(t, err)
+		assert.Equal(t, "To Tab or to Space, that is the question.", inlineText)
 	})
 
 	t.Run("icon keys expose accessible labels and hide glyphs", func(t *testing.T) {
