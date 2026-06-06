@@ -70,10 +70,8 @@ templ segmentedInput(cfg Config) {
 			if cfg.HTMX.Swap != "" {
 				hx-swap={ cfg.HTMX.Swap }
 			}
-			if cfg.HTMX.Trigger != "" {
-				hx-trigger={ cfg.HTMX.Trigger }
-			} else if cfg.HTMX.HasHxVerb() {
-				hx-trigger="change"
+			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+				hx-trigger={ trigger }
 			}
 			if cfg.HTMX.Indicator != "" {
 				hx-indicator={ cfg.HTMX.Indicator }
@@ -200,10 +198,8 @@ templ radioInput(cfg Config) {
 			if cfg.HTMX.Swap != "" {
 				hx-swap={ cfg.HTMX.Swap }
 			}
-			if cfg.HTMX.Trigger != "" {
-				hx-trigger={ cfg.HTMX.Trigger }
-			} else if cfg.HTMX.HasHxVerb() {
-				hx-trigger="change"
+			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+				hx-trigger={ trigger }
 			}
 			if cfg.HTMX.Indicator != "" {
 				hx-indicator={ cfg.HTMX.Indicator }
