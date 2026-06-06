@@ -1,0 +1,301 @@
+package examples
+
+import (
+	"fmt"
+	"net/url"
+
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/modal"
+	"github.com/araihu/goshtoso/components/pagination"
+	"github.com/araihu/goshtoso/components/radio"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toast"
+	"github.com/araihu/goshtoso/site/internal/examples/expense"
+)
+
+// categoryVariant maps a spend category to a badge variant so each category
+// reads as a distinct color chip.
+func categoryVariant(c string) badge.Variant {
+	switch c {
+	case "Food":
+		return badge.Success
+	case "Transport":
+		return badge.Info
+	case "Housing":
+		return badge.Primary
+	case "Health":
+		return badge.Danger
+	case "Entertainment":
+		return badge.Warning
+	default:
+		return badge.Secondary
+	}
+}
+
+// addCategoryCombobox is the client-side combobox used to pick a category in the
+// add form. Its hidden input (name="category") submits with the surrounding form,
+// so no server round-trip is needed just to choose a category.
+func addCategoryCombobox() combobox.Config {
+	opts := make([]combobox.Option, len(expense.Categories))
+	for i, c := range expense.Categories {
+		opts[i] = combobox.Option{Value: c, Label: c}
+	}
+	return combobox.Config{
+		ID:          "expense-add-category",
+		Name:        "category",
+		Label:       "Category",
+		Placeholder: "Pick one",
+		Mode:        combobox.ModeSingle,
+		// EnableSearch stays off: with six fixed categories there is nothing to
+		// search, and the client-mode search input renders hx-get="" which would
+		// GET the current URL (the whole page) into the options list on keystroke.
+		Source:   combobox.Source{Static: opts},
+		Selected: []string{expense.Categories[0]},
+	}
+}
+
+// catRadioID is the DOM id for one category filter radio. The "All" segment
+// (empty value) uses the literal "all" so the id is always a valid selector.
+func catRadioID(value string) string {
+	if value == "" {
+		return "expense-cat-all"
+	}
+	return "expense-cat-" + value
+}
+
+// filterCategoryRadio renders one segment of the category filter as a native
+// segmented radio. The radios live inside the filter form (no per-radio HTMX);
+// selecting one fires a native "change" that bubbles to the form's hx-trigger,
+// so search text and the chosen category post together.
+templ filterCategoryRadio(label, value, current string) {
+	@radio.Radio(radio.Config{
+		ID:        catRadioID(value),
+		Name:      "cat",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Checked:   value == current,
+	})
+}
+
+// SummaryBadge is the live running total for the current filter. Pass oob=true
+// when re-rendering it from a handler; oob=false on first paint inside ExpenseApp
+// (a first-paint hx-swap-oob would target a not-yet-existing node on fragment nav).
+templ SummaryBadge(s expense.State, oob bool) {
+	<div
+		id="expense-total"
+		if oob {
+			hx-swap-oob="true"
+		}
+		class="flex items-center gap-2"
+	>
+		<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+			{ fmt.Sprintf("%d shown", len(s.Filtered())) }
+		</span>
+		@badge.Badge(badge.Config{Variant: badge.Primary, Label: "Total " + expense.FormatCents(s.TotalCents())})
+	</div>
+}
+
+// RestoreExpenseURL builds the /restore endpoint URL carrying a deleted expense's
+// fields as query params, so the server can reconstruct it with no server memory.
+// Used as the "Undo" action on the delete toast.
+func RestoreExpenseURL(e expense.Expense) string {
+	return fmt.Sprintf(
+		"/api/examples/expense/restore?id=%d&desc=%s&amount=%d&category=%s&date=%s&order=%d",
+		e.ID,
+		url.QueryEscape(e.Desc),
+		e.AmountCents,
+		url.QueryEscape(e.Category),
+		url.QueryEscape(e.Date),
+		e.Order,
+	)
+}
+
+// ExpenseRow renders one expense as a list item: description, category chip,
+// optional date, amount, and a delete button. The delete button targets
+// #expense-list with an outerHTML swap so pagination and the empty state stay
+// correct under any active filter.
+templ ExpenseRow(e expense.Expense) {
+	<li
+		id={ fmt.Sprintf("expense-row-%d", e.ID) }
+		data-expense-id={ fmt.Sprintf("%d", e.ID) }
+		class="flex items-center gap-3 rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark"
+	>
+		<span class="min-w-0 flex-1 truncate text-sm text-on-surface dark:text-on-surface-dark">{ e.Desc }</span>
+		@badge.Badge(badge.Config{Variant: categoryVariant(e.Category), Label: e.Category})
+		if e.Date != "" {
+			<span class="hidden shrink-0 text-xs text-on-surface-muted sm:inline dark:text-on-surface-dark-muted">{ e.Date }</span>
+		}
+		<span class="shrink-0 tabular-nums text-sm font-semibold text-on-surface dark:text-on-surface-dark">{ expense.FormatCents(e.AmountCents) }</span>
+		<button
+			type="button"
+			aria-label="Delete expense"
+			class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-radius text-danger hover:bg-danger/10 sm:h-8 sm:w-8 dark:text-danger"
+			hx-post={ fmt.Sprintf("/api/examples/expense/delete?id=%d", e.ID) }
+			hx-target="#expense-list"
+			hx-swap="outerHTML"
+		>✕</button>
+	</li>
+}
+
+// ExpenseList renders the rows for the current page plus the pagination nav.
+// Mutations that target it directly (delete, filter, page) pass oob=false; the
+// add path targets the form instead and updates the list out-of-band (oob=true).
+templ ExpenseList(s expense.State, oob bool) {
+	<div
+		id="expense-list"
+		if oob {
+			hx-swap-oob="true"
+		}
+		class="flex flex-col gap-3"
+	>
+		<ul class="flex flex-col gap-2">
+			if len(s.Visible()) == 0 {
+				<li class="rounded-radius border border-dashed border-outline px-3 py-8 text-center text-sm text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">
+					No expenses match. Add one above or clear the filter.
+				</li>
+			} else {
+				for _, e := range s.Visible() {
+					@ExpenseRow(e)
+				}
+			}
+		</ul>
+		if s.PageCount() > 1 {
+			<div class="flex justify-center pt-1">
+				@pagination.Pagination(pagination.Config{
+					ID:          "expense-pagination",
+					Variant:     pagination.WithEllipsis,
+					CurrentPage: s.CurrentPage(),
+					TotalPages:  s.PageCount(),
+					BaseURL:     "/api/examples/expense/page",
+					HTMX:        &pagination.HTMXConfig{Target: "#expense-list", Swap: "outerHTML"},
+				})
+			</div>
+		}
+	</div>
+}
+
+// ExpenseAddForm is the "add an expense" form. It posts to /add and swaps the
+// inner HTML of its ancestor #expense-add-region. Preservation is htmx-native via
+// hx-preserve: on a rejected add the handler re-renders this form WITH preserve
+// (so htmx keeps the existing form element — values, caret, and focus intact);
+// on success it re-renders WITHOUT preserve, so the live form is replaced by this
+// blank one. The list/total update out-of-band on the add path.
+templ ExpenseAddForm(preserve bool) {
+	<form
+		id="expense-add-form"
+		if preserve {
+			hx-preserve="true"
+		}
+		class="flex flex-col gap-3"
+		hx-post="/api/examples/expense/add"
+		hx-target="#expense-add-region"
+		hx-swap="innerHTML"
+	>
+		@textinput.TextInput(textinput.Config{Name: "desc", Label: "Description", Placeholder: "What did you spend on?"})
+		<div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+			<div class="sm:w-36">
+				@textinput.TextInput(textinput.Config{
+					Name:        "amount",
+					Label:       "Amount",
+					Placeholder: "$0.00",
+					// Live currency mask via the Alpine mask plugin: formats to
+					// "$1,234.56" as the user types. $money has no quotes, so it is
+					// safe inside a templ-rendered attribute. The server strips the
+					// "$" and "," in ParseAmountCents.
+					InputAttrs: templ.Attributes{"x-mask:dynamic": "$money($input)"},
+				})
+			</div>
+			<div class="sm:w-48">
+				@combobox.Combobox(addCategoryCombobox(), addCategoryCombobox().InitialState())
+			</div>
+			<div class="sm:w-44">
+				@textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "date", Label: "Date"})
+			</div>
+			<div class="sm:ml-auto">
+				@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+					Add expense
+				}
+			</div>
+		</div>
+	</form>
+}
+
+// ExpenseApp is the interactive card (add form, filter bar, list, total). It is
+// the content rendered both on first load and as the registry fragment.
+templ ExpenseApp(s expense.State) {
+	<div id="expense-fragment" class="mx-auto max-w-3xl">
+		<header class="mb-6">
+			<h1 class="text-2xl font-bold text-on-surface dark:text-on-surface-dark">Expense Tracker</h1>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">
+				A small spend log built entirely from Goshtoso components. State lives in a cookie
+				(the server keeps nothing in memory), and every change is an HTMX round-trip that
+				returns rendered HTML, not JSON.
+			</p>
+			<ul class="mt-3 list-disc pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+				<li>Server-side state in a cookie, zero in-memory persistence</li>
+				<li>HTMX fragment swaps with an out-of-band live total and toast undo</li>
+				<li>Combobox, Modal, Pagination, Toast, Badge, TextInput, Radio, and Button in a real screen</li>
+				<li>Search and category filter, paginated results, and a confirm-to-clear dialog</li>
+				<li>Money handled as integer cents end to end (no floating point)</li>
+			</ul>
+		</header>
+		<div class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+			<div class="flex flex-col gap-4 p-4">
+				<div class="flex items-center justify-between">
+					<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Your expenses</h2>
+					@SummaryBadge(s, false)
+				</div>
+				<div id="expense-add-region">
+					@ExpenseAddForm(false)
+				</div>
+				<form
+					class="flex flex-col gap-3 border-t border-outline pt-3 dark:border-outline-dark"
+					hx-post="/api/examples/expense/filter"
+					hx-target="#expense-list"
+					hx-swap="outerHTML"
+					hx-trigger="input changed delay:300ms, change"
+				>
+					@textinput.TextInput(textinput.Config{Name: "search", Label: "Search", Placeholder: "Filter by description…", Value: s.Search})
+					<div class="flex flex-wrap gap-2">
+						@radio.RadioBar() {
+							@filterCategoryRadio("All", "", s.Category)
+							for _, c := range expense.Categories {
+								@filterCategoryRadio(c, c, s.Category)
+							}
+						}
+					</div>
+				</form>
+				<div class="flex items-center justify-end">
+					@modal.Modal(modal.Config{
+						ID:           "expense-clear",
+						Variant:      modal.Danger,
+						AlertMode:    true,
+						TriggerLabel: "Clear all",
+						Title:        "Clear all expenses?",
+						Body:         "This removes every expense from your list. This cannot be undone.",
+						PrimaryLabel: "Clear all",
+						PrimaryAction: &modal.ButtonAction{
+							HTMX: &modal.HTMXConfig{
+								Post:   "/api/examples/expense/clear",
+								Target: "#expense-list",
+								Swap:   "outerHTML",
+							},
+						},
+					})
+				</div>
+				@ExpenseList(s, false)
+			</div>
+		</div>
+		@toast.Container(toast.ContainerConfig{})
+	</div>
+}
+
+// ExpenseContent is the registry entry point: renders an empty-state app.
+// Server first-load uses ExpenseApp(state); the registry uses this zero-state
+// version for direct nav when no cookie exists.
+templ ExpenseContent() {
+	@ExpenseApp(expense.State{Page: 1})
+}

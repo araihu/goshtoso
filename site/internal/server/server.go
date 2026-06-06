@@ -83,6 +83,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/examples", s.handleExample)
 	s.mux.HandleFunc("/examples/", s.handleExample)
 	s.registerTodoRoutes()
+	s.registerExpenseRoutes()
 	s.registerChatRoutes()
 	s.registerLogsRoutes()
 	s.registerProfileRoutes()
@@ -210,6 +211,8 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 		s.renderDemo(w, r, "examples")
 	case "todo":
 		s.renderTodoPage(w, r)
+	case "expense":
+		s.renderExpensePage(w, r)
 	case "chat":
 		s.renderChatPage(w, r)
 	case "logs":

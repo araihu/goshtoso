@@ -2,6 +2,7 @@
   "alpinejs":          { "version": "3.14.9", "file": "alpine.min.js",          "url": "https://unpkg.com/alpinejs@{v}/dist/cdn.min.js" },
   "alpinejs-collapse": { "version": "3.14.9", "file": "alpine-collapse.min.js", "url": "https://unpkg.com/@alpinejs/collapse@{v}/dist/cdn.min.js" },
   "alpinejs-focus":    { "version": "3.14.9", "file": "alpine-focus.min.js",    "url": "https://unpkg.com/@alpinejs/focus@{v}/dist/cdn.min.js" },
+  "alpinejs-mask":     { "version": "3.14.9", "file": "alpine-mask.min.js",     "url": "https://unpkg.com/@alpinejs/mask@{v}/dist/cdn.min.js" },
   "htmx.org":          { "version": "2.0.8",  "file": "htmx.min.js",            "url": "https://unpkg.com/htmx.org@{v}/dist/htmx.min.js" },
   "htmx-ext-sse":      { "version": "2.2.3",  "file": "htmx-ext-sse.min.js",    "url": "https://unpkg.com/htmx-ext-sse@{v}/dist/sse.min.js" },
   "htmx-ext-ws":       { "version": "2.0.3",  "file": "htmx-ext-ws.js",         "url": "https://unpkg.com/htmx-ext-ws@{v}/ws.js" }
