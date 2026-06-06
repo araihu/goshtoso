@@ -39,6 +39,12 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.True(t, visible, "Browse components CTA should be visible")
 	})
 
+	t.Run("HeroUsesOptimizedArtwork", func(t *testing.T) {
+		src, err := page.Locator("#hero img").GetAttribute("src")
+		require.NoError(t, err)
+		require.Contains(t, src, "goshtoso-art-home.webp", "homepage should use the optimized hero artwork")
+	})
+
 	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {
 		got, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
@@ -77,13 +83,65 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 	t.Run("ExampleGalleryLinks", func(t *testing.T) {
 		for _, route := range []string{
 			"/examples/todo", "/examples/chat", "/examples/logs",
-			"/examples/profile", "/examples/ticker",
+			"/examples/profile", "/examples/ticker", "/examples/expense", "/examples/wizard",
 		} {
 			loc := page.Locator("#examples a[href='" + route + "']")
 			cnt, err := loc.Count()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, cnt, 1, "gallery should link to "+route)
 		}
+	})
+
+	t.Run("ExampleGalleryCardsUseImages", func(t *testing.T) {
+		cards := page.Locator("#examples a[data-example-card]")
+		count, err := cards.Count()
+		require.NoError(t, err)
+		require.Equal(t, 7, count, "gallery should render one Goshtoso card per example app")
+
+		images := page.Locator("#examples a[data-example-card] img")
+		imageCount, err := images.Count()
+		require.NoError(t, err)
+		require.Equal(t, count, imageCount, "each example card should include a generated image")
+
+		for i := 0; i < imageCount; i++ {
+			img := images.Nth(i)
+			src, err := img.GetAttribute("src")
+			require.NoError(t, err)
+			require.Contains(t, src, "/assets/images/homepage/examples/", "example card image should be served from embedded assets")
+			alt, err := img.GetAttribute("alt")
+			require.NoError(t, err)
+			require.NotEmpty(t, alt, "example card image should have alt text")
+		}
+	})
+
+	t.Run("ExampleGalleryFeaturesWizard", func(t *testing.T) {
+		featured := page.Locator("#examples a[data-featured-example-card][href='/examples/wizard']")
+		visible, err := featured.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "wizard should be the featured example card")
+
+		supporting := page.Locator("#examples a[data-supporting-example-card]")
+		count, err := supporting.Count()
+		require.NoError(t, err)
+		require.Equal(t, 6, count, "remaining examples should render as supporting cards")
+
+		actions := page.Locator("#examples a[data-example-card] >> text=View app")
+		actionCount, err := actions.Count()
+		require.NoError(t, err)
+		require.Equal(t, 7, actionCount, "each example card should expose an explicit View app affordance")
+	})
+
+	t.Run("FeaturedExampleIsCompactLeadStrip", func(t *testing.T) {
+		featured := page.Locator("#examples a[data-featured-example-card]")
+		supporting := page.Locator("#examples a[data-supporting-example-card]").First()
+
+		featuredBox, err := featured.BoundingBox()
+		require.NoError(t, err)
+		supportingBox, err := supporting.BoundingBox()
+		require.NoError(t, err)
+
+		require.Greater(t, featuredBox.Width, supportingBox.Width*2, "featured example should read as a compact lead strip above the grid")
+		require.Less(t, featuredBox.Height, supportingBox.Height*0.9, "featured example should not become a massive billboard card")
 	})
 
 	t.Run("StackStripCondensed", func(t *testing.T) {
