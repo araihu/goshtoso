@@ -68,6 +68,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			<script src="/assets/js/darkmode.js"></script>
 			<script defer src={ assets.AlpineFocusURL }></script>
 			<script defer src={ assets.AlpineCollapseURL }></script>
+			<script defer src={ assets.AlpineMaskURL }></script>
 			<script defer src={ assets.AlpineJSURL }></script>
 			<script src={ assets.HTMXURL }></script>
 			<script src={ assets.HTMXExtWSURL }></script>
@@ -609,6 +610,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			Collapsible: true,
 			Items: []sidebar.Item{
 				sItem("todo", "Todo List", "/examples/todo", activeComponent),
+				sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
 				sItem("chat", "Chat", "/examples/chat", activeComponent),
 				sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
 				sItem("profile", "Profile", "/examples/profile", activeComponent),

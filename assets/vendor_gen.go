@@ -7,6 +7,7 @@ const (
 	AlpineCollapseURL = "/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js"
 	AlpineFocusURL    = "/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js"
 	AlpineJSURL       = "/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"
+	AlpineMaskURL     = "/assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js"
 	HTMXExtSSEURL     = "/assets/js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js"
 	HTMXExtWSURL      = "/assets/js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js"
 	HTMXURL           = "/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"

@@ -120,6 +120,10 @@ func IndexContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = exampleCard("/examples/expense", "Expense Tracker", "Cookie-backed spend log with search, category filters, pagination, a confirm-to-clear dialog, and a live running total.").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = exampleCard("/examples/chat", "Chat", "Realtime full-duplex chat over htmx websockets with an ELIZA bot, presence, and live rename.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

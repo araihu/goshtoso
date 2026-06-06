@@ -42,6 +42,7 @@ var constName = map[string]string{
 	"alpinejs":          "AlpineJSURL",
 	"alpinejs-collapse": "AlpineCollapseURL",
 	"alpinejs-focus":    "AlpineFocusURL",
+	"alpinejs-mask":     "AlpineMaskURL",
 	"htmx.org":          "HTMXURL",
 	"htmx-ext-sse":      "HTMXExtSSEURL",
 	"htmx-ext-ws":       "HTMXExtWSURL",

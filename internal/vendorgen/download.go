@@ -58,6 +58,7 @@ var markers = map[string][]string{
 	"alpinejs":          {`version:"{v}"`},
 	"alpinejs-collapse": {`directive("collapse"`},
 	"alpinejs-focus":    {`magic("focus"`},
+	"alpinejs-mask":     {`directive("mask"`},
 	"htmx.org":          {`version:"{v}"`},
 	"htmx-ext-sse":      {"defineExtension", "EventSource"},
 	"htmx-ext-ws":       {"defineExtension", "WebSocket"},
