@@ -35,12 +35,12 @@ func TestParseAmountCents(t *testing.T) {
 
 func TestFormatCents(t *testing.T) {
 	cases := map[int]string{
-		0:       "$0.00",
-		5:       "$0.05",
-		1234:    "$12.34",
-		120000:  "$1,200.00",
+		0:         "$0.00",
+		5:         "$0.05",
+		1234:      "$12.34",
+		120000:    "$1,200.00",
 		123456789: "$1,234,567.89",
-		-450:    "-$4.50",
+		-450:      "-$4.50",
 	}
 	for in, want := range cases {
 		if got := FormatCents(in); got != want {
@@ -64,8 +64,8 @@ func TestAddPrependsAndAssignsID(t *testing.T) {
 
 func TestAddRejectsBadInput(t *testing.T) {
 	var s State
-	s.Add("", "10.00", "Food", "")      // blank desc
-	s.Add("Valid", "nope", "Food", "")  // bad amount
+	s.Add("", "10.00", "Food", "")     // blank desc
+	s.Add("Valid", "nope", "Food", "") // bad amount
 	if s.Seq != 0 || len(s.Items) != 0 {
 		t.Errorf("bad adds should be no-ops, got Seq=%d len=%d", s.Seq, len(s.Items))
 	}
