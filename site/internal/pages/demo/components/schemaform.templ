@@ -15,33 +15,64 @@ templ schemaFormDemoContent() {
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Schema Form",
-				Description: "Render a server-side form from JSON Schema metadata, default values, submitted values, and allow-list rules. Use it when the set of editable fields comes from configuration instead of hand-authored markup.",
+				Description: "Render a complete generated form surface for config-driven UIs. Walk a JSON Schema object-keyword subset, merge defaults with current submitted values, apply allow-list rules, then host the generated fields inside your own form.",
 			},
 			schemaFormGeneratedPreview(),
-			`fields := schemaform.Walk(valuesSchema, defaults, values, allowList)
+			schemaFormWalkCode,
+		)
 
-@schemaform.Fields(schemaform.FieldsConfig{
-    Fields:     fields,
-    NamePrefix: "values",
-})`,
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Schema Subset And Version",
+				Description: "Schema Form is a renderer, not a JSON Schema validator. Walk accepts map[string]any decoded from JSON Schema and ignores $schema, so no draft version is required. The supported keywords are the stable object/form subset shared by Draft 7, 2019-09, and 2020-12: properties, nested properties, required, type, title, description, enum, and scalar-array items.",
+			},
+			schemaFormSchemaVersionPreview(),
+			schemaFormSchemaVersionCode,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Allow-List Rules",
+				Description: "Missing allow-list paths stay editable. Managed paths remain visible but disabled and marked as managed. Disabled paths are omitted entirely.",
+			},
+			schemaFormAllowListPreview(),
+			schemaFormAllowListCode,
 		)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Fallback Form From Defaults",
-				Description: "When no schema is available, infer a usable form from default values while preserving managed and disabled allow-list rules.",
+				Description: "Use FallbackFromDefaults when a system publishes defaults but no JSON Schema. It preserves the same allow-list behavior while inferring controls from the default value shape.",
 			},
 			schemaFormFallbackPreview(),
-			`fields := schemaform.FallbackFromDefaults(defaults, values, allowList)`,
+			schemaFormFallbackCode,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Submit And Prune",
+				Description: "Submitted values win when you re-render after validation errors. Before serializing accepted config, prune disabled paths so hidden policy-owned values cannot be posted back.",
+			},
+			schemaFormSubmitPreview(),
+			schemaFormSubmitCode,
 		)
 	</div>
 	@demo.APIReference([]demo.PropDoc{
 		{Name: "Fields", Type: "[]Field", Default: "nil", Description: "Ordered form controls produced by Walk or FallbackFromDefaults."},
 		{Name: "NamePrefix", Type: "string", Default: `"values"`, Description: "Prefix applied to generated input names, such as values.replicaCount."},
-		{Name: "Walk", Type: "func", Default: "-", Description: "Builds form fields from a JSON Schema object, defaults, current submitted values, and allow-list modes."},
+		{Name: "Walk", Type: "func", Default: "-", Description: "Builds fields from a draft-agnostic JSON Schema object subset, defaults, current values, and allow-list modes."},
 		{Name: "FallbackFromDefaults", Type: "func", Default: "-", Description: "Infers a form from default values when no JSON Schema is available."},
 		{Name: "FlattenAllowList", Type: "func", Default: "-", Description: "Converts nested allow_list data into dotted paths with managed or disabled modes."},
 		{Name: "PruneDisabled", Type: "func", Default: "-", Description: "Removes disabled paths from values before serializing or submitting configuration."},
+		{Name: "Field.Path", Type: "string", Default: `""`, Description: "Dotted config path used for generated names and allow-list matching."},
+		{Name: "Field.Label", Type: "string", Default: `""`, Description: "Display label, usually sourced from schema title or the path segment."},
+		{Name: "Field.HelperText", Type: "string", Default: `""`, Description: "Supporting copy, usually sourced from schema description."},
+		{Name: "Field.Kind", Type: "Kind", Default: "-", Description: "Generated control kind: string, number, integer, boolean, enum, array, object, or unknown fallback."},
+		{Name: "Field.Managed", Type: "bool", Default: "false", Description: "Marks visible read-only fields produced by AllowModeManaged."},
+		{Name: "Field.Default / Field.Value", Type: "string", Default: `""`, Description: "Serialized default and current values; current submitted values override defaults on re-render."},
+		{Name: "Field.Children", Type: "[]Field", Default: "nil", Description: "Nested object fields; single-child objects unwrap into the child control."},
+		{Name: "AllowModeManaged", Type: "AllowMode", Default: "-", Description: "Visible but disabled/read-only with a managed badge."},
+		{Name: "AllowModeDisabled", Type: "AllowMode", Default: "-", Description: "Hidden entirely; prune the same path before saving posted values."},
 	})
 }
 
@@ -66,6 +97,162 @@ templ schemaFormFallbackPreview() {
 		</div>
 	</div>
 }
+
+templ schemaFormSchemaVersionPreview() {
+	<div id="schema-form-schema-version" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+			<div class="space-y-3 text-sm text-on-surface dark:text-on-surface-dark">
+				<div>
+					<p class="font-medium">Input schema</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">JSON Schema object subset decoded into map[string]any.</p>
+				</div>
+				<div>
+					<p class="font-medium">Version handling</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">$schema is optional and ignored; supported keywords are draft-stable.</p>
+				</div>
+				<div>
+					<p class="font-medium">Rendered keywords</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">properties, required, type, title, description, enum, and scalar-array items.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ schemaFormAllowListPreview() {
+	<div id="schema-form-allow-list" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+			<div class="grid gap-3 text-sm sm:grid-cols-3">
+				<div class="rounded-radius border border-outline bg-surface-alt p-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+					<p class="font-medium text-on-surface dark:text-on-surface-dark">Editable</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">replicaCount is not listed, so users can change it.</p>
+				</div>
+				<div class="rounded-radius border border-outline bg-surface-alt p-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+					<p class="font-medium text-on-surface dark:text-on-surface-dark">Managed</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">teamOwner stays visible, disabled, and marked managed.</p>
+				</div>
+				<div class="rounded-radius border border-outline bg-surface-alt p-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+					<p class="font-medium text-on-surface dark:text-on-surface-dark">Disabled</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">internalToken is hidden and must be pruned before save.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ schemaFormSubmitPreview() {
+	<div id="schema-form-submit-prune" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+			<div class="space-y-3 text-sm">
+				<div class="flex flex-col gap-1 border-b border-outline pb-3 dark:border-outline-dark sm:flex-row sm:items-center sm:justify-between">
+					<span class="font-medium text-on-surface dark:text-on-surface-dark">values.serviceType</span>
+					<span class="text-on-surface-muted dark:text-on-surface-dark-muted">submitted value overrides default</span>
+				</div>
+				<div class="flex flex-col gap-1 border-b border-outline pb-3 dark:border-outline-dark sm:flex-row sm:items-center sm:justify-between">
+					<span class="font-medium text-on-surface dark:text-on-surface-dark">values.resources.cpu</span>
+					<span class="text-on-surface-muted dark:text-on-surface-dark-muted">managed value renders read-only</span>
+				</div>
+				<div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+					<span class="font-medium text-on-surface dark:text-on-surface-dark">values.internalToken</span>
+					<span class="text-on-surface-muted dark:text-on-surface-dark-muted">disabled value is removed before save</span>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+var schemaFormWalkCode = `schema := map[string]any{
+    "$schema": "https://json-schema.org/draft/2020-12/schema", // optional; ignored by Walk
+    "properties": map[string]any{
+        "replicaCount": map[string]any{"type": "integer", "title": "Replica count"},
+        "imageTag":     map[string]any{"type": "string", "title": "Image tag"},
+        "tlsEnabled":   map[string]any{"type": "boolean", "title": "TLS enabled"},
+        "serviceType":  map[string]any{"enum": []any{"ClusterIP", "LoadBalancer", "NodePort"}},
+        "teamOwner":    map[string]any{"type": "string", "title": "Team owner"},
+        "internalToken": map[string]any{"type": "string", "title": "Internal token"},
+    },
+}
+defaults := map[string]any{
+    "replicaCount": 3,
+    "serviceType":  "ClusterIP",
+    "teamOwner":    "platform",
+}
+values := map[string]any{
+    // Current submitted values override defaults when the form re-renders.
+    "serviceType": "LoadBalancer",
+}
+allowList := map[string]schemaform.AllowMode{
+    "teamOwner":     schemaform.AllowModeManaged,
+    "internalToken": schemaform.AllowModeDisabled,
+}
+
+fields := schemaform.Walk(schema, defaults, values, allowList)
+
+@form.Form(form.Config{ID: "config-form", Method: "post"}) {
+    @schemaform.Fields(schemaform.FieldsConfig{
+        Fields:     fields,
+        NamePrefix: "values",
+    })
+}`
+
+var schemaFormSchemaVersionCode = `// Walk consumes a JSON Schema object-keyword subset. It does not validate
+// against a draft and does not require or inspect "$schema".
+schema := map[string]any{
+    "$schema": "https://json-schema.org/draft/2020-12/schema", // optional metadata
+    "required": []any{"replicaCount"},
+    "properties": map[string]any{
+        "replicaCount": map[string]any{
+            "type":        "integer",
+            "title":       "Replica count",
+            "description": "Number of pods to run.",
+        },
+        "serviceType": map[string]any{
+            "enum": []any{"ClusterIP", "LoadBalancer", "NodePort"},
+        },
+        "zones": map[string]any{
+            "type":  "array",
+            "items": map[string]any{"type": "string"},
+        },
+    },
+}
+
+fields := schemaform.Walk(schema, defaults, values, allowList)`
+
+var schemaFormAllowListCode = `allowList := map[string]schemaform.AllowMode{
+    // Missing paths are unmanaged and editable.
+    "teamOwner":     schemaform.AllowModeManaged,  // visible, disabled, managed badge
+    "internalToken": schemaform.AllowModeDisabled, // hidden entirely
+}
+
+fields := schemaform.Walk(schema, defaults, values, allowList)`
+
+var schemaFormFallbackCode = `defaults := map[string]any{
+    "resources": map[string]any{
+        "cpu":    "500m",
+        "memory": "512Mi",
+    },
+    "zones": []any{"us-east-1a", "us-east-1b"},
+    "debug": false,
+}
+allowList := map[string]schemaform.AllowMode{
+    "resources.cpu": schemaform.AllowModeManaged,
+}
+
+fields := schemaform.FallbackFromDefaults(defaults, values, allowList)`
+
+var schemaFormSubmitCode = `// Names post as values.replicaCount and values.resources.cpu.
+posted := map[string]any{
+    "replicaCount": 5,
+    "resources": map[string]any{"cpu": "900m", "memory": "1Gi"},
+    "internalToken": "should-not-be-saved",
+}
+
+// Re-render with posted values after validation errors.
+fields := schemaform.Walk(schema, defaults, posted, allowList)
+
+// Before save, remove hidden policy-owned values.
+schemaform.PruneDisabled(posted, allowList)
+saveConfig(posted)`
 
 func schemaFormDemoFields() []schemaform.Field {
 	schema := map[string]any{
