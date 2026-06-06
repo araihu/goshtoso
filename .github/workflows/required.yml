@@ -1,0 +1,21 @@
+name: Required CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: required-ci-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  required:
+    name: Required CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check routing
+        run: |
+          echo "Required CI check is present."
+          echo "Code CI runs separately for non-Markdown changes."
