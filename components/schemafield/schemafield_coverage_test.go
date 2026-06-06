@@ -96,7 +96,7 @@ func TestWalkRendersAllKinds(t *testing.T) {
 		"title override":   "Full Name",
 		"helper text":      "your name",
 		"required marker":  `aria-label="required"`,
-		"current value":    `value="Bob"`,    // values wins over default
+		"current value":    `value="Bob"`, // values wins over default
 		"default fallback": `placeholder="Alice"`,
 		"number input":     `type="number"`,
 		"integer step":     `step="1"`,
@@ -438,14 +438,14 @@ func TestSortedKeys(t *testing.T) {
 
 func TestHumanize(t *testing.T) {
 	cases := map[string]string{
-		"name":        "Name",
-		"my_field":    "My field",
-		"my-field":    "My field",
-		"camelCase":   "Camel Case",
-		"a.b.cValue":  "C Value",
-		"":            "",
-		"HTTPServer":  "HTTPServer", // consecutive uppers not split
-		"hostName":    "Host Name",
+		"name":       "Name",
+		"my_field":   "My field",
+		"my-field":   "My field",
+		"camelCase":  "Camel Case",
+		"a.b.cValue": "C Value",
+		"":           "",
+		"HTTPServer": "HTTPServer", // consecutive uppers not split
+		"hostName":   "Host Name",
 	}
 	for in, want := range cases {
 		if got := humanize(in); got != want {
