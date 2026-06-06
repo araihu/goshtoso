@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-06T00:00:00-03:00",
+  "title": "Design System: Goshtoso",
+  "extensions": {
+    "colorMeta": {
+      "surface": {
+        "role": "neutral",
+        "displayName": "Component Surface",
+        "canonical": "var(--color-surface)",
+        "tonalRamp": [
+          "var(--color-neutral-950)",
+          "var(--color-neutral-900)",
+          "var(--color-neutral-800)",
+          "var(--color-neutral-600)",
+          "var(--color-neutral-400)",
+          "var(--color-neutral-200)",
+          "var(--color-neutral-100)",
+          "var(--color-white)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Goshtoso Signal",
+        "canonical": "var(--color-primary)",
+        "tonalRamp": [
+          "var(--color-purple-950)",
+          "var(--color-purple-900)",
+          "var(--color-purple-800)",
+          "var(--color-purple-700)",
+          "var(--color-purple-600)",
+          "var(--color-purple-500)",
+          "var(--color-purple-300)",
+          "var(--color-purple-100)"
+        ]
+      },
+      "secondary": {
+        "role": "secondary",
+        "displayName": "Server Sky",
+        "canonical": "var(--color-secondary)",
+        "tonalRamp": [
+          "var(--color-sky-950)",
+          "var(--color-sky-900)",
+          "var(--color-sky-800)",
+          "var(--color-sky-700)",
+          "var(--color-sky-600)",
+          "var(--color-sky-500)",
+          "var(--color-sky-300)",
+          "var(--color-sky-100)"
+        ]
+      },
+      "success": {
+        "role": "state",
+        "displayName": "Success Teal",
+        "canonical": "var(--color-success)",
+        "tonalRamp": [
+          "var(--color-teal-950)",
+          "var(--color-teal-900)",
+          "var(--color-teal-800)",
+          "var(--color-teal-700)",
+          "var(--color-teal-600)",
+          "var(--color-teal-400)",
+          "var(--color-teal-200)",
+          "var(--color-teal-100)"
+        ]
+      },
+      "danger": {
+        "role": "state",
+        "displayName": "Danger Pink",
+        "canonical": "var(--color-danger)",
+        "tonalRamp": [
+          "var(--color-pink-950)",
+          "var(--color-pink-900)",
+          "var(--color-pink-800)",
+          "var(--color-pink-700)",
+          "var(--color-pink-600)",
+          "var(--color-pink-500)",
+          "var(--color-pink-300)",
+          "var(--color-pink-100)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Homepage and major docs entry headings only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page sections and component demo regions."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Readable documentation, examples, and explanatory copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, fields, badges, and compact UI labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "state-inset",
+        "value": "inset 2px 0 0 var(--color-outline-strong)",
+        "purpose": "Active search and navigation rows."
+      },
+      {
+        "name": "tiny-surface-shadow",
+        "value": "var(--shadow-sm)",
+        "purpose": "Small swatches and floating details only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "theme-transition",
+        "value": "background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease",
+        "purpose": "Smooth theme changes without layout motion."
+      },
+      {
+        "name": "boot-fade",
+        "value": "260ms to 320ms ease-out",
+        "purpose": "First-paint header, sidebar, and main content entrance with reduced-motion fallback."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The default high-intent action, backed by theme primary tokens.",
+      "html": "<button class=\"ds-btn-primary\">Browse components</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; border: 1px solid var(--color-primary); border-radius: 1rem; background: var(--color-primary); color: var(--color-on-primary); padding: 0.5rem 1rem; font-family: var(--font-body); font-size: 0.875rem; line-height: 1.25; font-weight: 500; letter-spacing: 0.025em; transition: opacity 0.2s ease, outline-offset 0.2s ease; } .ds-btn-primary:hover { opacity: 0.75; } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; } .ds-btn-primary:active { opacity: 1; outline-offset: 0; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A supporting action with the secondary theme role.",
+      "html": "<button class=\"ds-btn-secondary\">View docs</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; border: 1px solid var(--color-secondary); border-radius: 1rem; background: var(--color-secondary); color: var(--color-on-secondary); padding: 0.5rem 1rem; font-family: var(--font-body); font-size: 0.875rem; line-height: 1.25; font-weight: 500; letter-spacing: 0.025em; transition: opacity 0.2s ease, outline-offset 0.2s ease; } .ds-btn-secondary:hover { opacity: 0.75; } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-secondary); outline-offset: 2px; } .ds-btn-secondary:active { opacity: 1; outline-offset: 0; }"
+    },
+    {
+      "name": "Surface Card",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "description": "A flat themeable container for examples, docs previews, and app cards.",
+      "html": "<article class=\"ds-card\"><span class=\"ds-card-tag\">Example</span><h3>Live Log Feed</h3><p>Server-push log stream over SSE with client-side filtering.</p></article>",
+      "css": ".ds-card { border: 1px solid var(--color-outline); border-radius: var(--radius-radius); background: var(--color-surface); color: var(--color-on-surface); padding: 1.5rem; font-family: var(--font-body); transition: border-color 0.2s ease, background-color 0.2s ease; } .ds-card:hover { border-color: var(--color-primary); } .ds-card h3 { margin: 0.5rem 0; color: var(--color-on-surface-strong); font-family: var(--font-title); font-size: 1.125rem; line-height: 1.35; font-weight: 700; } .ds-card p { margin: 0; color: var(--color-on-surface); font-size: 0.875rem; line-height: 1.625; } .ds-card-tag { display: inline-flex; width: fit-content; border-radius: var(--radius-radius); background: var(--color-surface-alt); color: var(--color-on-surface-strong); padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 500; } .ds-card:focus-within { outline: 2px solid var(--color-primary); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "A compact field with visible label, outline border, and theme-aware focus.",
+      "html": "<label class=\"ds-field\"><span>Email</span><input class=\"ds-input\" placeholder=\"name@example.com\" /></label>",
+      "css": ".ds-field { display: grid; gap: 0.375rem; color: var(--color-on-surface-strong); font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; } .ds-input { width: 100%; border: 1px solid var(--color-outline); border-radius: var(--radius-radius); background: var(--color-surface); color: var(--color-on-surface); padding: 0.5rem 0.75rem; font: inherit; font-weight: 400; line-height: 1.5; transition: border-color 0.2s ease, outline-offset 0.2s ease; } .ds-input::placeholder { color: var(--color-on-surface-muted); opacity: 1; } .ds-input:hover { border-color: var(--color-outline-strong); } .ds-input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; border-color: var(--color-primary); }"
+    },
+    {
+      "name": "Primary Badge",
+      "kind": "chip",
+      "refersTo": "badge-primary",
+      "description": "A compact status label for theme-aware metadata and state.",
+      "html": "<span class=\"ds-badge\">Active</span>",
+      "css": ".ds-badge { display: inline-flex; width: fit-content; align-items: center; gap: 0.25rem; border-radius: var(--radius-radius); background: var(--color-primary); color: var(--color-on-primary); padding: 0.25rem 0.5rem; font-family: var(--font-body); font-size: 0.75rem; line-height: 1; font-weight: 500; } .ds-badge:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Result Row",
+      "kind": "custom",
+      "refersTo": "search-result-row",
+      "description": "A dense command row with neutral active state and primary match highlight.",
+      "html": "<button class=\"ds-search-row\"><span class=\"ds-search-title\">Accordion</span><span class=\"ds-search-desc\"><mark>Acc</mark>essible disclosure component</span></button>",
+      "css": ".ds-search-row { display: flex; width: 100%; flex-direction: column; gap: 0.5rem; border: 0; background: transparent; color: var(--color-on-surface); padding: 1rem; text-align: left; font-family: var(--font-body); transition: background-color 0.2s ease, color 0.2s ease; } .ds-search-row:hover, .ds-search-row:focus-visible { background: var(--color-surface-alt); color: var(--color-on-surface-strong); outline: none; } .ds-search-row[aria-selected=\"true\"] { background: var(--color-surface-alt); box-shadow: inset 2px 0 0 var(--color-outline-strong); color: var(--color-on-surface-strong); } .ds-search-title { font-family: var(--font-title); font-size: 0.875rem; font-weight: 700; } .ds-search-desc { font-size: 0.875rem; line-height: 1.4; } .ds-search-row mark { background: transparent; color: var(--color-primary); font-weight: 700; }"
+    },
+    {
+      "name": "Sidebar Nav Item",
+      "kind": "nav",
+      "refersTo": "sidebar-nav-item",
+      "description": "A predictable docs navigation row with tonal hover and structural active state.",
+      "html": "<a class=\"ds-nav-item\" href=\"#\" aria-current=\"page\">Button</a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; border-radius: var(--radius-radius); color: var(--color-on-surface); padding: 0.5rem 0.75rem; font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background-color 0.2s ease, color 0.2s ease; } .ds-nav-item:hover, .ds-nav-item:focus-visible { background: var(--color-surface-alt); color: var(--color-on-surface-strong); outline: none; } .ds-nav-item[aria-current=\"page\"] { background: var(--color-surface-alt); color: var(--color-on-surface-strong); box-shadow: inset 2px 0 0 var(--color-outline-strong); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Go Workbench at the Beach",
+    "overview": "Goshtoso should feel like a real workbench for Go developers: sturdy, typed, inspectable, and ready for application UI. The beach signal comes from the Copacabana mascot and the warmer theme personality, but it should appear as confidence and memorability, not as decoration pasted over technical docs.\n\nThe system is theme-first. Surfaces, accents, text, borders, feedback states, and radius all flow through CSS custom properties so demos, examples, and consumer apps can change clothes without changing component contracts. The default stance is practical density: predictable navigation, visible examples, compact API tables, and clear component states.\n\nThis design explicitly rejects generic SaaS landing pages, CDN-snippet galleries, interchangeable icon-card catalogs, glossy framework marketing, and AI-looking patterns unrelated to the Go-first product.",
+    "keyCharacteristics": [
+      "Token-driven themes with light and dark parity.",
+      "Server-rendered examples that use the real component library.",
+      "Rounded, friendly controls balanced by dense documentation layouts.",
+      "Primary accent as an interaction signal, not a decorative wash.",
+      "Accessibility visible through focus states, contrast checks, and reduced-motion fallbacks."
+    ],
+    "rules": [
+      {
+        "name": "The Token First Rule",
+        "body": "Use semantic color roles in components. Do not hardcode one theme's palette into reusable UI.",
+        "section": "colors"
+      },
+      {
+        "name": "The Accent Scarcity Rule",
+        "body": "Primary is for action, active state, and orientation. If every heading is primary, no element is primary.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contrast Is Product Rule",
+        "body": "State and muted text must clear AA contrast across themes; opacity-as-hierarchy is forbidden for body copy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Literal Label Rule",
+        "body": "Buttons and links say what happens: \"Save changes\", \"Browse components\", \"View docs\". Avoid clever CTA language.",
+        "section": "typography"
+      },
+      {
+        "name": "The Code Is Evidence Rule",
+        "body": "Use mono for code identifiers and snippets, not as lazy technical atmosphere.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat By Default Rule",
+        "body": "Cards, docs panels, and component demos rest on borders and tonal contrast. If a shadow is visible at rest, it must explain a layering relationship.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do compose public pages from real Goshtoso components whenever possible.",
+      "Do keep every component themeable through semantic `var(--color-*)` and `var(--radius-radius)` roles.",
+      "Do verify light mode, dark mode, the Goshtoso theme, and the Minimal theme before shipping a visual change.",
+      "Do use examples, fragments, and live component states to explain the server-rendered model.",
+      "Do preserve WCAG AA contrast, visible focus, keyboard paths, and reduced-motion fallbacks."
+    ],
+    "donts": [
+      "Don't make Goshtoso look like a generic SaaS landing page.",
+      "Don't make it feel like a CDN-snippet gallery or a component catalog made from interchangeable icon cards.",
+      "Don't use glossy framework marketing, vague productivity claims, or decorative AI-looking patterns unrelated to the Go-first product.",
+      "Don't let the Copacabana gopher personality become a gimmick that overwhelms technical trust.",
+      "Don't hand-code one theme's values into reusable components; token drift is a product bug."
+    ]
+  }
+}
