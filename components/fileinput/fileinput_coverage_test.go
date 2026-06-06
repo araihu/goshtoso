@@ -54,8 +54,8 @@ func TestCoverageDropZoneAllBranches(t *testing.T) {
 
 	for _, want := range []string{
 		"<span", "Cover Picture", // Label branch
-		`accept="image/*"`,       // Accept branch
-		"required",               // Required branch
+		`accept="image/*"`,                // Accept branch
+		"required",                        // Required branch
 		`aria-describedby="cover-helper"`, // HelperText -> describedby branch
 		`id="cover-helper"`,               // helper small branch
 		"PNG, JPG - Max 5MB",
