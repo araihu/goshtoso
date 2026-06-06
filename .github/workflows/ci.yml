@@ -108,99 +108,12 @@ jobs:
       - name: Build server
         run: go build -o bin/server ./site/cmd/server
 
-  unit-test:
-    name: Unit tests
-    runs-on: araihu
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
-          # self-hosted araihu runner. setup-go's own cache tars+uploads that
-          # same tree to the GHA cache backend on every go.sum change — a ~9min
-          # post-job step that buys nothing here. Disable it.
-          cache: false
-
-      - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
-
-      - name: Install Tailwind CSS standalone
-        run: |
-          set -euo pipefail
-          ver="$(cat assets/tailwind.version)"
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
-          chmod +x /tmp/tailwindcss
-          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
-
-      - name: Generate templ + CSS
-        run: |
-          templ generate
-          tailwindcss -i css/main.css -o assets/styles.css
-
-      - name: Unit tests — library (root module)
-        run: go test ./... -count=1
-
-      - name: Create dev workspace (root library + site)
-        run: go work init . ./site
-
-      - name: Unit tests — site (exclude e2e)
-        run: cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1
-
-  e2e:
-    name: E2E (Playwright)
-    runs-on: araihu
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
-          # self-hosted araihu runner. setup-go's own cache tars+uploads that
-          # same tree to the GHA cache backend on every go.sum change — a ~9min
-          # post-job step that buys nothing here. Disable it.
-          cache: false
-
-      - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
-
-      - name: Install Tailwind CSS standalone
-        run: |
-          set -euo pipefail
-          ver="$(cat assets/tailwind.version)"
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
-          chmod +x /tmp/tailwindcss
-          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
-
-      - name: Install Playwright + Chromium
-        run: |
-          go install github.com/playwright-community/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
-          playwright install --with-deps chromium
-
-      - name: Generate templ + CSS
-        run: |
-          templ generate
-          tailwindcss -i css/main.css -o assets/styles.css
-
-      - name: Create dev workspace (root library + site)
-        run: go work init . ./site
-
-      - name: E2E tests
-        run: go test ./site/tests/e2e/... -count=1 -timeout 15m
-
-      - name: Upload E2E artifacts on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-results
-          path: site/tests/e2e/test-results/
-          retention-days: 7
-          if-no-files-found: ignore
-
-  coverage:
-    name: Component coverage
+  # Single test runner: executes the same root-unit + site-unit + E2E sets the
+  # old unit-test and e2e jobs ran, but coverage-instrumented — so tests run
+  # once, not twice. Test failures fail this job; it also emits the merged
+  # coverage profile and updates the badge gist on main.
+  test:
+    name: Tests + coverage
     runs-on: araihu
     steps:
       - uses: actions/checkout@v6
@@ -309,10 +222,19 @@ jobs:
           message: ${{ steps.coverage.outputs.percent }}%
           color: ${{ steps.coverage.outputs.color }}
 
+      - name: Upload E2E artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: site/tests/e2e/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
   deploy:
     name: Deploy to Fly.io
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [lint-build, unit-test, e2e, coverage]
+    needs: [lint-build, test]
     runs-on: araihu
     concurrency: deploy-group
     steps:
