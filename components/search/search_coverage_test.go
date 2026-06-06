@@ -1,0 +1,268 @@
+package search
+
+import (
+	"bytes"
+	"context"
+	"strings"
+	"testing"
+
+	"github.com/a-h/templ"
+)
+
+// renderSearch renders the given component and returns its HTML, failing the
+// test on a render error.
+func renderHTML(t *testing.T, c templ.Component) string {
+	t.Helper()
+	var buf bytes.Buffer
+	if err := c.Render(context.Background(), &buf); err != nil {
+		t.Fatalf("render: %v", err)
+	}
+	return buf.String()
+}
+
+// TestConfigCustomValueBranches exercises the non-default branch of every
+// Get* accessor and the custom-class branch of every class helper. The default
+// branches are covered by TestSearchDefaults in search_test.go.
+func TestConfigCustomValueBranches(t *testing.T) {
+	cfg := Config{
+		ID:                   "custom-id",
+		Label:                "Find anything",
+		Placeholder:          "Type to search...",
+		ShortcutText:         "Ctrl K",
+		EscapeText:           "ESC",
+		EmptyText:            "Nothing here.",
+		MaxResults:           9,
+		DescriptionMaxLength: 42,
+		RootClass:            "root-extra",
+		TriggerClass:         "trigger-extra",
+		DialogClass:          "dialog-extra",
+	}
+
+	checks := []struct {
+		name string
+		got  string
+		want string
+	}{
+		{"ID", cfg.GetID(), "custom-id"},
+		{"Label", cfg.GetLabel(), "Find anything"},
+		{"Placeholder", cfg.GetPlaceholder(), "Type to search..."},
+		{"ShortcutText", cfg.GetShortcutText(), "Ctrl K"},
+		{"EscapeText", cfg.GetEscapeText(), "ESC"},
+		{"EmptyText", cfg.GetEmptyText(), "Nothing here."},
+	}
+	for _, c := range checks {
+		if c.got != c.want {
+			t.Errorf("%s = %q, want %q", c.name, c.got, c.want)
+		}
+	}
+
+	if cfg.GetMaxResults() != 9 {
+		t.Errorf("GetMaxResults = %d, want 9", cfg.GetMaxResults())
+	}
+	if cfg.GetDescriptionMaxLength() != 42 {
+		t.Errorf("GetDescriptionMaxLength = %d, want 42", cfg.GetDescriptionMaxLength())
+	}
+
+	classChecks := []struct {
+		name string
+		got  string
+		want string
+	}{
+		{"RootClasses", cfg.RootClasses(), "root-extra"},
+		{"TriggerClasses", cfg.TriggerClasses(), "trigger-extra"},
+		{"DialogClasses", cfg.DialogClasses(), "dialog-extra"},
+	}
+	for _, c := range classChecks {
+		if !strings.Contains(c.got, c.want) {
+			t.Errorf("%s = %q, want it to contain %q", c.name, c.got, c.want)
+		}
+	}
+}
+
+// TestRootClassesDefaultOmitsExtra confirms the default branch leaves the base
+// classes untouched.
+func TestRootClassesDefaultOmitsExtra(t *testing.T) {
+	got := Config{}.RootClasses()
+	if got != "w-full" {
+		t.Fatalf("RootClasses default = %q, want %q", got, "w-full")
+	}
+}
+
+// TestSearchModalCustomValues renders SearchModal directly so its custom
+// max-results, description length, label, placeholder, empty text, escape hint,
+// dialog class, and spread InputAttrs branches all execute.
+func TestSearchModalCustomValues(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{
+		ID:                   "modal-search",
+		Label:                "Docs lookup",
+		Placeholder:          "Search the docs",
+		EscapeText:           "Close",
+		EmptyText:            "No docs match.",
+		MaxResults:           7,
+		DescriptionMaxLength: 80,
+		DialogClass:          "ring-2",
+		InputAttrs:           templ.Attributes{"data-testid": "modal-input", "maxlength": "64"},
+		Items: []Item{
+			{ID: "doc-1", Title: "Alpha", Description: "First", Section: "Guides", Href: "/alpha"},
+		},
+	}))
+
+	for _, want := range []string{
+		`goshtosoSearchModal(&#39;modal-search&#39;, 7, 80)`,
+		`id="modal-search-dialog"`,
+		`aria-labelledby="modal-search-label"`,
+		`aria-label="Docs lookup results"`,
+		`placeholder="Search the docs"`,
+		`data-testid="modal-input"`,
+		`maxlength="64"`,
+		`Close`,
+		`No docs match.`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal missing %q in\n%s", want, html)
+		}
+	}
+}
+
+// TestResultItemMinimalBranches renders an item with no ID, section,
+// description, or href so the false side of each conditional attribute in
+// resultItem executes.
+func TestResultItemMinimalBranches(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{
+		ID: "minimal-search",
+		Items: []Item{
+			{Title: "Bare result"},
+		},
+	}))
+
+	if !strings.Contains(html, `data-search-title="Bare result"`) {
+		t.Fatalf("missing bare result title in\n%s", html)
+	}
+	// No section, description, href, or explicit id should be emitted.
+	for _, unwanted := range []string{
+		`data-search-section=`,
+		`data-search-href=`,
+		`id="minimal-search-result"`,
+	} {
+		if strings.Contains(html, unwanted) {
+			t.Fatalf("unexpected %q rendered for minimal item in\n%s", unwanted, html)
+		}
+	}
+	// A description paragraph should not render when Description is empty.
+	if strings.Contains(html, `truncate($el.closest`) {
+		t.Fatalf("description paragraph rendered for item without description in\n%s", html)
+	}
+}
+
+// TestResultItemFullBranches renders an item with every optional field set,
+// including spread Attrs, so the true side of each conditional executes.
+func TestResultItemFullBranches(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{
+		ID: "full-search",
+		Items: []Item{
+			{
+				ID:          "full-result",
+				Title:       "Complete",
+				Description: "Has every field",
+				Section:     "Reference",
+				Href:        "/complete",
+				Keywords:    []string{"kw1", "kw2"},
+				Attrs:       templ.Attributes{"data-extra": "yes"},
+			},
+		},
+	}))
+
+	for _, want := range []string{
+		`id="full-result"`,
+		`data-search-section="Reference"`,
+		`data-search-href="/complete"`,
+		`data-search-text="Complete Has every field Reference kw1 kw2"`,
+		`data-extra="yes"`,
+		`Has every field`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("full result missing %q in\n%s", want, html)
+		}
+	}
+}
+
+// TestSearchFieldCustomLabelAndShortcut renders SearchField with custom label
+// and shortcut text and without a global shortcut so both the trigger label
+// branch and the absent-keydown branch execute.
+func TestSearchFieldCustomLabelAndShortcut(t *testing.T) {
+	html := renderHTML(t, SearchField(Config{
+		ID:           "field-search",
+		Label:        "Quick find",
+		ShortcutText: "F3",
+	}))
+
+	for _, want := range []string{
+		`goshtosoSearchField(&#39;field-search&#39;, false)`,
+		`aria-controls="field-search-dialog"`,
+		`Quick find`,
+		`F3`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchField missing %q in\n%s", want, html)
+		}
+	}
+	if strings.Contains(html, `x-on:keydown.window`) {
+		t.Fatalf("SearchField bound a window shortcut without GlobalShortcut:\n%s", html)
+	}
+}
+
+// TestSearchComposesFieldAndModal confirms the top-level Search wires both the
+// trigger and the modal under one root and emits the empty-state copy.
+func TestSearchComposesFieldAndModal(t *testing.T) {
+	html := renderHTML(t, Search(Config{
+		ID:        "combo-search",
+		EmptyText: "Try another term.",
+		Items: []Item{
+			{ID: "r1", Title: "Result one", Section: "S", Description: "D", Href: "/r1"},
+		},
+	}))
+
+	for _, want := range []string{
+		`goshtosoSearchField(&#39;combo-search&#39;, false)`,
+		`goshtosoSearchModal(&#39;combo-search&#39;, 4, 120)`,
+		`id="combo-search-dialog"`,
+		`Try another term.`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("Search missing %q in\n%s", want, html)
+		}
+	}
+}
+
+// TestJSStringEscaping covers backslash and single-quote escaping used to make
+// the Alpine x-data expression safe.
+func TestJSStringEscaping(t *testing.T) {
+	cases := []struct {
+		in   string
+		want string
+	}{
+		{`plain`, `plain`},
+		{`it's`, `it\'s`},
+		{`a\b`, `a\\b`},
+		{`both'\`, `both\'\\`},
+	}
+	for _, tc := range cases {
+		if got := JSString(tc.in); got != tc.want {
+			t.Errorf("JSString(%q) = %q, want %q", tc.in, got, tc.want)
+		}
+	}
+}
+
+// TestItemSearchTextTrimsAndJoins covers SearchText with and without keywords
+// and confirms surrounding whitespace is trimmed.
+func TestItemSearchTextTrimsAndJoins(t *testing.T) {
+	withKeywords := Item{Title: "T", Description: "D", Section: "S", Keywords: []string{"a", "b"}}
+	if got := withKeywords.SearchText(); got != "T D S a b" {
+		t.Errorf("SearchText with keywords = %q", got)
+	}
+
+	titleOnly := Item{Title: "Only"}
+	if got := titleOnly.SearchText(); got != "Only" {
+		t.Errorf("SearchText title only = %q, want %q", got, "Only")
+	}
+}
