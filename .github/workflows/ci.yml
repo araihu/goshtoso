@@ -1,10 +1,14 @@
-name: CI
+name: Code CI
 
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
   push:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
 
 # PRs cancel superseded runs per head ref; main pushes each get a unique group
 # (run_id) so rapid merges don't cancel the coverage/deploy jobs mid-flight.
