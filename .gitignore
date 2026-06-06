@@ -100,3 +100,6 @@ og-site/
 .github/skills/
 docs/superpowers/
 scripts/skillgen/
+
+# Local coverage badge — published badge now lives in a shields.io endpoint gist (CI-updated).
+badges/coverage.svg
