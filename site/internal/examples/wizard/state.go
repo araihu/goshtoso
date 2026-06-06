@@ -38,7 +38,7 @@ type Address struct {
 // WizardState is the whole per-user onboarding flow: current step, the data
 // entered so far, the chosen plan, and whether the flow was confirmed.
 type WizardState struct {
-	Step    int     `json:"s"`  // current step 1..4
+	Step    int     `json:"s"` // current step 1..4
 	Account Account `json:"a"`
 	Address Address `json:"ad"`
 	Plan    string  `json:"p"` // "free" | "pro" | "team"
