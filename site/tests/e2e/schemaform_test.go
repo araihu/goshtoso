@@ -46,4 +46,31 @@ func TestSchemaFormDemoPage(t *testing.T) {
 	hiddenCount, err := form.Locator("[name='values.internalToken']").Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, hiddenCount, "disabled allow-list fields should be hidden")
+
+	schemaVersion := page.Locator("#schema-form-schema-version")
+	require.NoError(t, schemaVersion.WaitFor())
+	schemaVersionText, err := schemaVersion.TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, schemaVersionText, "JSON Schema object subset")
+	assert.Contains(t, schemaVersionText, "$schema is optional and ignored")
+
+	allowList := page.Locator("#schema-form-allow-list")
+	require.NoError(t, allowList.WaitFor())
+	allowListText, err := allowList.TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, allowListText, "Editable")
+	assert.Contains(t, allowListText, "Managed")
+	assert.Contains(t, allowListText, "Disabled")
+
+	submitPrune := page.Locator("#schema-form-submit-prune")
+	require.NoError(t, submitPrune.WaitFor())
+	submitPruneText, err := submitPrune.TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, submitPruneText, "values.serviceType")
+	assert.Contains(t, submitPruneText, "values.internalToken")
+
+	apiText, err := page.Locator("#api-reference").Locator("xpath=ancestor::div[1]").TextContent()
+	require.NoError(t, err)
+	assert.Contains(t, apiText, "Field.Path")
+	assert.Contains(t, apiText, "AllowModeDisabled")
 }
