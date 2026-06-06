@@ -1,6 +1,8 @@
 package e2e
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"net"
 	"net/http"
@@ -25,6 +27,7 @@ var (
 	sharedPW      *playwright.Playwright
 	sharedBrowser playwright.Browser
 	serverCmd     *exec.Cmd
+	shutdownToken string
 )
 
 // freePort finds an available TCP port
@@ -45,7 +48,7 @@ func TestMain(m *testing.M) {
 	if coverDir := os.Getenv("GOSHTOSO_E2E_COVERDIR"); coverDir != "" {
 		buildArgs = append(buildArgs, "-cover")
 		if coverPkg := os.Getenv("GOSHTOSO_E2E_COVERPKG"); coverPkg != "" {
-			buildArgs = append(buildArgs, "-coverpkg="+coverPkg)
+			buildArgs = append(buildArgs, "-coverpkg="+e2eCoverPkg(coverPkg))
 		}
 	}
 	buildArgs = append(buildArgs, "./cmd/server")
@@ -73,7 +76,11 @@ func TestMain(m *testing.M) {
 			fmt.Fprintf(os.Stderr, "failed to create coverage dir: %v\n", err)
 			os.Exit(1)
 		}
-		serverCmd.Env = append(os.Environ(), "GOCOVERDIR="+coverDir)
+		shutdownToken = randomToken()
+		serverCmd.Env = append(os.Environ(),
+			"GOCOVERDIR="+coverDir,
+			"GOSHTOSO_E2E_SHUTDOWN_TOKEN="+shutdownToken,
+		)
 	}
 	serverCmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := serverCmd.Start(); err != nil {
@@ -114,12 +121,59 @@ func TestMain(m *testing.M) {
 	// Cleanup
 	_ = browser.Close()
 	_ = pw.Stop()
-	if serverCmd != nil && serverCmd.Process != nil {
-		_ = syscall.Kill(-serverCmd.Process.Pid, syscall.SIGTERM)
-		_ = serverCmd.Wait()
+	if err := stopServer(serverCmd, baseURL, shutdownToken); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to stop server: %v\n", err)
 	}
 
 	os.Exit(code)
+}
+
+func stopServer(cmd *exec.Cmd, url, token string) error {
+	if cmd == nil || cmd.Process == nil {
+		if token == "" {
+			return nil
+		}
+		return postShutdown(url, token)
+	}
+	if token != "" {
+		if err := postShutdown(url, token); err == nil {
+			return cmd.Wait()
+		}
+	}
+	if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM); err != nil {
+		return err
+	}
+	return cmd.Wait()
+}
+
+func postShutdown(url, token string) error {
+	req, err := http.NewRequest(http.MethodPost, url+"/__e2e/shutdown?token="+token, nil)
+	if err != nil {
+		return err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	if resp.StatusCode != http.StatusNoContent {
+		return fmt.Errorf("shutdown returned %s", resp.Status)
+	}
+	return nil
+}
+
+func randomToken() string {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		return fmt.Sprintf("%d", time.Now().UnixNano())
+	}
+	return hex.EncodeToString(b[:])
+}
+
+func e2eCoverPkg(coverPkg string) string {
+	return "github.com/araihu/goshtoso/site/cmd/server," + coverPkg
 }
 
 // setupServer is now a no-op since TestMain handles it.

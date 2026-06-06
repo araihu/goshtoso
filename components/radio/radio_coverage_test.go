@@ -182,6 +182,56 @@ func TestCoverageSegmentedHTMXAndAlpine(t *testing.T) {
 	assert.NotContains(t, html, " else")
 }
 
+// TestCoverageSegmentedAllInteractionAttributes drives the full segmentedInput
+// attribute surface, which is separate from the standard radioInput template.
+func TestCoverageSegmentedAllInteractionAttributes(t *testing.T) {
+	html := render(t, Radio(Config{
+		ID:        "segfull",
+		Name:      "mode",
+		Value:     "full",
+		Label:     "Full",
+		Segmented: true,
+		Checked:   true,
+		Disabled:  true,
+		HTMX: &HTMXConfig{
+			Get:       "/get",
+			Post:      "/post",
+			Put:       "/put",
+			Delete:    "/delete",
+			Patch:     "/patch",
+			Target:    "#target",
+			Swap:      "outerHTML",
+			Trigger:   "click",
+			Indicator: "#busy",
+			PushURL:   true,
+			Confirm:   "Continue?",
+			Vals:      `{"mode":"full"}`,
+			Include:   "#form",
+		},
+		Alpine: &AlpineConfig{
+			Data:         "{selected:'full'}",
+			Model:        "selected",
+			OnChange:     "track()",
+			BindChecked:  "selected === 'full'",
+			BindDisabled: "locked",
+		},
+		InputAttrs: templ.Attributes{"data-test": "segmented-full"},
+	}))
+
+	for _, want := range []string{
+		`id="segfull"`, `name="mode"`, `value="full"`, `class="sr-only"`,
+		"checked", "disabled", `hx-get="/get"`, `hx-post="/post"`,
+		`hx-put="/put"`, `hx-delete="/delete"`, `hx-patch="/patch"`,
+		`hx-target="#target"`, `hx-swap="outerHTML"`, `hx-trigger="click"`,
+		`hx-indicator="#busy"`, `hx-push-url="true"`, `hx-confirm="Continue?"`,
+		`hx-include="#form"`, "hx-vals=", "x-data=", "x-model=", "x-on:change=",
+		"x-bind:checked=", "x-bind:disabled=", `data-test="segmented-full"`,
+	} {
+		assert.Contains(t, html, want, "missing %s", want)
+	}
+	assert.NotContains(t, html, `hx-trigger="change"`)
+}
+
 // TestCoverageInputAttrsEscapeHatch covers the trailing cfg.InputAttrs spread.
 func TestCoverageInputAttrsEscapeHatch(t *testing.T) {
 	html := render(t, Radio(Config{
@@ -320,4 +370,31 @@ func TestCoveragePredicates(t *testing.T) {
 	assert.Equal(t, "click", (&HTMXConfig{Post: "/p", Trigger: "click"}).EffectiveTrigger())
 	assert.Equal(t, "change", (&HTMXConfig{Post: "/p"}).EffectiveTrigger())
 	assert.Equal(t, "", (&HTMXConfig{}).EffectiveTrigger())
+}
+
+// TestCoverageCanceledContextPropagates covers the generated template
+// cancellation guards without needing to force writer failures.
+func TestCoverageCanceledContextPropagates(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	cases := map[string]templ.Component{
+		"Radio":                         Radio(Config{}),
+		"radioSegmented":                radioSegmented(Config{}),
+		"segmentedInput":                segmentedInput(Config{}),
+		"RadioBar":                      RadioBar(),
+		"standardRadio":                 standardRadio(Config{}),
+		"radioWithDescription":          radioWithDescription(Config{}),
+		"radioWithContainer":            radioWithContainer(Config{}),
+		"radioInput":                    radioInput(Config{}),
+		"RadioGroup":                    RadioGroup(GroupConfig{}),
+		"groupRadioItem":                groupRadioItem(Config{}),
+		"groupRadioItemWithDescription": groupRadioItemWithDescription(Config{}),
+	}
+	for name, component := range cases {
+		t.Run(name, func(t *testing.T) {
+			var buf bytes.Buffer
+			assert.ErrorIs(t, component.Render(ctx, &buf), context.Canceled)
+		})
+	}
 }

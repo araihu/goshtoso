@@ -1,12 +1,24 @@
 package textinput
 
 import (
+	"context"
+	"errors"
+	"io"
 	"strings"
 	"testing"
 
 	"github.com/a-h/templ"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+var errCoverageWriter = errors.New("coverage writer failure")
+
+type failingCoverageWriter struct{}
+
+func (failingCoverageWriter) Write([]byte) (int, error) {
+	return 0, errCoverageWriter
+}
 
 // TestCoverageRenderDefault exercises the default input branch with the full
 // set of optional attributes so each conditional in defaultInput is rendered.
@@ -204,4 +216,89 @@ func TestCoverageDefaultNoLabelNoHelper(t *testing.T) {
 	assert.NotContains(t, html, "<label")
 	assert.NotContains(t, html, "<small")
 	assert.True(t, strings.Contains(html, "<input"))
+}
+
+// TestCoverageDirectTemplatesUseNonBufferWriters covers generated rendering
+// branches that are skipped when tests render only through bytes.Buffer.
+func TestCoverageDirectTemplatesUseNonBufferWriters(t *testing.T) {
+	ctx := templ.WithChildren(context.Background(), templ.Raw("ignored"))
+
+	cases := []struct {
+		name      string
+		component templ.Component
+	}{
+		{"textInputDefault", TextInput(Config{Name: "default"})},
+		{"textInputPassword", TextInput(Config{Type: TypePassword, Name: "password"})},
+		{"textInputSearch", TextInput(Config{Type: TypeSearch, Name: "search"})},
+		{"defaultInputBare", defaultInput(Config{Name: "bare"})},
+		{"defaultInputMaskedFull", defaultInput(Config{
+			ID:           "masked",
+			Name:         "masked",
+			Type:         TypeTel,
+			Mask:         "999-999",
+			Disabled:     true,
+			Required:     true,
+			Readonly:     true,
+			Autocomplete: "tel",
+			Pattern:      "[0-9-]+",
+			MaxLength:    7,
+			InputAttrs:   templ.Attributes{"data-mask": "phone"},
+		})},
+		{"passwordInputBare", passwordInput(Config{Name: "password"})},
+		{"searchInputBare", searchInput(Config{Name: "search"})},
+		{"inputLabelDefault", inputLabel(Config{ID: "field", Label: "Field"})},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			require.NoError(t, tc.component.Render(ctx, io.Discard))
+		})
+	}
+}
+
+// TestCoverageTemplatesPropagateCanceledContext covers each generated
+// component's early context error return.
+func TestCoverageTemplatesPropagateCanceledContext(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	cases := []struct {
+		name      string
+		component templ.Component
+	}{
+		{"textInput", TextInput(Config{})},
+		{"defaultInput", defaultInput(Config{})},
+		{"passwordInput", passwordInput(Config{})},
+		{"searchInput", searchInput(Config{})},
+		{"inputLabel", inputLabel(Config{})},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.component.Render(ctx, io.Discard)
+			require.ErrorIs(t, err, context.Canceled)
+		})
+	}
+}
+
+// TestCoverageTemplatesPropagateWriterErrors covers the generated buffer
+// release path when rendering to a non-buffer writer fails.
+func TestCoverageTemplatesPropagateWriterErrors(t *testing.T) {
+	cases := []struct {
+		name      string
+		component templ.Component
+	}{
+		{"textInput", TextInput(Config{Name: "default"})},
+		{"defaultInput", defaultInput(Config{Name: "default"})},
+		{"passwordInput", passwordInput(Config{Name: "password"})},
+		{"searchInput", searchInput(Config{Name: "search"})},
+		{"inputLabel", inputLabel(Config{ID: "field", Label: "Field"})},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.component.Render(context.Background(), failingCoverageWriter{})
+			require.ErrorIs(t, err, errCoverageWriter)
+		})
+	}
 }

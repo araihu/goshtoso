@@ -3,6 +3,7 @@ package tooltip
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"strings"
 	"testing"
@@ -168,6 +169,52 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 				if !strings.Contains(html, want) {
 					t.Fatalf("Tooltip render missing %q in %s", want, html)
 				}
+			}
+		})
+	}
+}
+
+func TestTooltipCoverageCustomTriggerRenderErrors(t *testing.T) {
+	errTrigger := errors.New("trigger render failed")
+	failingTrigger := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
+		return errTrigger
+	})
+
+	tests := []struct {
+		name string
+		cfg  Config
+	}{
+		{
+			name: "default",
+			cfg: Config{
+				Label:   "Default tooltip",
+				Trigger: failingTrigger,
+			},
+		},
+		{
+			name: "rich",
+			cfg: Config{
+				Label:       "Rich tooltip",
+				Description: "Trigger should fail before details render",
+				Trigger:     failingTrigger,
+			},
+		},
+		{
+			name: "click",
+			cfg: Config{
+				Label:       "Click tooltip",
+				TriggerMode: Click,
+				Trigger:     failingTrigger,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err := Tooltip(tt.cfg).Render(context.Background(), &buf)
+			if !errors.Is(err, errTrigger) {
+				t.Fatalf("Tooltip render error = %v, want %v", err, errTrigger)
 			}
 		})
 	}
