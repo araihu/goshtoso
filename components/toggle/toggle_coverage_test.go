@@ -18,6 +18,22 @@ func renderToggle(t *testing.T, cfg Config) string {
 	return buf.String()
 }
 
+// inputTag returns just the opening <input> tag (the checkbox) so attribute
+// assertions are not confused by peer-checked / peer-disabled utility classes
+// that appear elsewhere in the rendered markup.
+func inputTag(t *testing.T, html string) string {
+	t.Helper()
+	start := strings.Index(html, "<input")
+	if start < 0 {
+		t.Fatalf("no <input> in render: %s", html)
+	}
+	end := strings.Index(html[start:], ">")
+	if end < 0 {
+		t.Fatalf("unterminated <input> in render: %s", html)
+	}
+	return html[start : start+end+1]
+}
+
 func TestCoverageRenderDefaultToggle(t *testing.T) {
 	html := renderToggle(t, Config{ID: "t1", Label: "Enable"})
 
@@ -45,13 +61,25 @@ func TestCoverageRenderDefaultToggle(t *testing.T) {
 }
 
 func TestCoverageCheckedAndDisabled(t *testing.T) {
-	html := renderToggle(t, Config{ID: "t2", Label: "On", Checked: true, Disabled: true})
-
-	if !strings.Contains(html, "checked") {
-		t.Fatalf("expected checked attribute: %s", html)
+	// Assert on the <input> tag only: the track div carries peer-checked /
+	// peer-disabled utility classes, so a whole-document substring search would
+	// pass even when the boolean attributes are absent.
+	on := inputTag(t, renderToggle(t, Config{ID: "t2", Label: "On", Checked: true, Disabled: true}))
+	if !strings.Contains(on, "checked") {
+		t.Fatalf("expected checked attribute on input: %s", on)
 	}
-	if !strings.Contains(html, "disabled") {
-		t.Fatalf("expected disabled attribute: %s", html)
+	if !strings.Contains(on, "disabled") {
+		t.Fatalf("expected disabled attribute on input: %s", on)
+	}
+
+	// Guard against a false positive: an unconfigured toggle must NOT render the
+	// boolean attributes on its input.
+	off := inputTag(t, renderToggle(t, Config{ID: "t2", Label: "Off"}))
+	if strings.Contains(off, "checked") {
+		t.Fatalf("unexpected checked attribute on default input: %s", off)
+	}
+	if strings.Contains(off, "disabled") {
+		t.Fatalf("unexpected disabled attribute on default input: %s", off)
 	}
 }
 
