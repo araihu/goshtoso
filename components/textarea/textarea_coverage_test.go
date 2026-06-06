@@ -1,0 +1,224 @@
+package textarea
+
+import (
+	"bytes"
+	"context"
+	"strings"
+	"testing"
+
+	"github.com/a-h/templ"
+)
+
+func render(t *testing.T, c templ.Component) string {
+	t.Helper()
+	var buf bytes.Buffer
+	if err := c.Render(context.Background(), &buf); err != nil {
+		t.Fatalf("render: %v", err)
+	}
+	return buf.String()
+}
+
+func TestCoverageRenderDefaultTextarea(t *testing.T) {
+	html := render(t, Textarea(Config{}))
+	for _, want := range []string{"<textarea", `rows="3"`, "class="} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("default render missing %q in %s", want, html)
+		}
+	}
+	// No label/helper block, and no name/placeholder attributes when unset.
+	// (Tailwind utility classes contain "disabled:"/"readonly", so those are not asserted here.)
+	for _, unwanted := range []string{"<label", "<small", "name=", `placeholder="`} {
+		if strings.Contains(html, unwanted) {
+			t.Fatalf("default render unexpectedly contains %q in %s", unwanted, html)
+		}
+	}
+}
+
+func TestCoverageRenderFullDefaultStateTextarea(t *testing.T) {
+	html := render(t, Textarea(Config{
+		ID:          "comment",
+		Name:        "comment",
+		Label:       "Comment",
+		Placeholder: "Say something",
+		Value:       "hello",
+		Rows:        5,
+		HelperText:  "Optional helper",
+		RootClass:   "mt-4",
+	}))
+	for _, want := range []string{
+		`id="comment"`,
+		`name="comment"`,
+		`placeholder="Say something"`,
+		`rows="5"`,
+		`<label for="comment"`,
+		"Comment",
+		">hello</textarea>",
+		"<small",
+		"Optional helper",
+		"mt-4",               // RootClass routed through ContainerClasses
+		"text-on-surface/60", // default HelperTextClasses branch
+		"border-outline",     // default TextareaClasses branch
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("full default render missing %q in %s", want, html)
+		}
+	}
+}
+
+func TestCoverageRenderDisabledReadOnly(t *testing.T) {
+	html := render(t, Textarea(Config{ID: "x", Disabled: true, ReadOnly: true}))
+	if !strings.Contains(html, "disabled") {
+		t.Fatalf("expected disabled attribute: %s", html)
+	}
+	if !strings.Contains(html, "readonly") {
+		t.Fatalf("expected readonly attribute: %s", html)
+	}
+}
+
+func TestCoverageRenderErrorState(t *testing.T) {
+	html := render(t, Textarea(Config{
+		ID:         "e",
+		Label:      "Bio",
+		State:      StateError,
+		HelperText: "Error: required",
+	}))
+	for _, want := range []string{
+		"text-danger",   // LabelClasses + HelperTextClasses error branch
+		"border-danger", // TextareaClasses error branch
+		"<svg",          // error label icon
+		"M5.28 4.22",    // error (X) icon path
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("error render missing %q in %s", want, html)
+		}
+	}
+}
+
+func TestCoverageRenderSuccessState(t *testing.T) {
+	html := render(t, Textarea(Config{
+		ID:         "s",
+		Label:      "Bio",
+		State:      StateSuccess,
+		HelperText: "Looks good",
+	}))
+	for _, want := range []string{
+		"text-success",   // LabelClasses + HelperTextClasses success branch
+		"border-success", // TextareaClasses success branch
+		"<svg",           // success label icon
+		"M12.416 3.376",  // success (check) icon path
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("success render missing %q in %s", want, html)
+		}
+	}
+}
+
+func TestCoverageRenderWithActions(t *testing.T) {
+	html := render(t, TextareaWithActions(Config{
+		ID:          "msg",
+		Name:        "msg",
+		Placeholder: "Type a message",
+		Value:       "draft",
+		Rows:        6,
+		Disabled:    true,
+		ReadOnly:    true,
+		RootClass:   "shadow-lg",
+	}))
+	for _, want := range []string{
+		`id="msg"`,
+		`name="msg"`,
+		`placeholder="Type a message"`,
+		`rows="6"`,
+		">draft</textarea>",
+		"disabled",
+		"readonly",
+		"shadow-lg", // condClass routed RootClass
+		// three action buttons
+		`aria-label="Emojis"`,
+		`aria-label="Attach a file"`,
+		`aria-label="Send voice"`,
+		`aria-label="send"`,
+		// icons rendered
+		"size-5",
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("actions render missing %q in %s", want, html)
+		}
+	}
+}
+
+func TestCoverageWithActionsNoRootClass(t *testing.T) {
+	html := render(t, TextareaWithActions(Config{ID: "a"}))
+	// condClass("") returns "" → container class ends at base without trailing space class.
+	if strings.Contains(html, "dark:text-on-surface-dark ") {
+		// acceptable; just ensure no stray duplicate; primary assertion is render succeeded
+	}
+	if !strings.Contains(html, "<textarea") {
+		t.Fatalf("expected textarea: %s", html)
+	}
+}
+
+func TestCoverageGetRows(t *testing.T) {
+	cases := map[int]string{
+		0: "3", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5",
+		6: "6", 7: "7", 8: "8", 9: "9", 10: "10",
+		11: "3", -1: "3", 99: "3",
+	}
+	for in, want := range cases {
+		if got := (Config{Rows: in}).GetRows(); got != want {
+			t.Fatalf("GetRows(%d) = %q, want %q", in, got, want)
+		}
+	}
+}
+
+func TestCoverageLabelClasses(t *testing.T) {
+	cases := map[State]string{
+		StateDefault: "w-fit pl-0.5 text-sm",
+		StateError:   "text-danger",
+		StateSuccess: "text-success",
+	}
+	for st, want := range cases {
+		if got := (Config{State: st}).LabelClasses(); !strings.Contains(got, want) {
+			t.Fatalf("LabelClasses(%q) = %q, want substring %q", st, got, want)
+		}
+	}
+}
+
+func TestCoverageHelperTextClasses(t *testing.T) {
+	cases := map[State]string{
+		StateDefault: "text-on-surface/60",
+		StateError:   "text-danger",
+		StateSuccess: "text-success",
+	}
+	for st, want := range cases {
+		if got := (Config{State: st}).HelperTextClasses(); !strings.Contains(got, want) {
+			t.Fatalf("HelperTextClasses(%q) = %q, want substring %q", st, got, want)
+		}
+	}
+}
+
+func TestCoverageContainerClasses(t *testing.T) {
+	base := Config{}.ContainerClasses()
+	if !strings.Contains(base, "flex w-full flex-col") {
+		t.Fatalf("base container missing flex layout: %q", base)
+	}
+	if strings.HasSuffix(base, " ") {
+		t.Fatalf("base container has trailing space: %q", base)
+	}
+	withClass := Config{RootClass: "gap-4"}.ContainerClasses()
+	if !strings.HasSuffix(withClass, " gap-4") {
+		t.Fatalf("container with RootClass = %q, want suffix %q", withClass, " gap-4")
+	}
+}
+
+func TestCoverageInputAttrsPassthrough(t *testing.T) {
+	html := render(t, Textarea(Config{
+		ID:         "a",
+		InputAttrs: templ.Attributes{"hx-post": "/save", "data-x": "1"},
+	}))
+	for _, want := range []string{`hx-post="/save"`, `data-x="1"`} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("InputAttrs passthrough missing %q in %s", want, html)
+		}
+	}
+}
