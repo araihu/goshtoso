@@ -72,7 +72,7 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 				@props.AbovePreview
 			}
 			<!-- Preview -->
-			<div class="border border-outline dark:border-outline-dark rounded-radius">
+			<div class="relative border border-transparent rounded-radius after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark">
 				<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">
 					<div class="flex gap-1.5">
 						<div class="rounded-full w-3 h-3 bg-red-500"></div>
@@ -146,7 +146,7 @@ templ DemoSection(props DemoSectionProps, preview templ.Component, code string) 
 		@props.AbovePreview
 	}
 	<!-- Preview -->
-		<div class="border border-outline dark:border-outline-dark rounded-radius mb-4">
+		<div class="relative border border-transparent rounded-radius mb-4 after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark">
 			<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">
 				<div class="flex gap-1.5">
 					<div class="rounded-full w-3 h-3 bg-red-500"></div>
