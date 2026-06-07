@@ -18,8 +18,14 @@ type Item struct {
 	Disabled bool
 	// Badge is an optional badge text (e.g., "New", "Soon")
 	Badge string
+	// BadgeClass overrides the default badge styling.
+	BadgeClass string
 	// Items contains child items for nested navigation
 	Items []Item
+	// Collapsible renders child items behind a disclosure control.
+	Collapsible bool
+	// Open controls the initial disclosure state for collapsible child items.
+	Open bool
 	// LinkAttrs are extra HTML attributes spread onto the <a> element.
 	// Use for HTMX, Alpine.js, or other consumer-specific attributes.
 	LinkAttrs templ.Attributes
@@ -70,4 +76,31 @@ func (cfg Config) ContainerClasses() string {
 // NavClasses returns the navigation container classes
 func (cfg Config) NavClasses() string {
 	return "flex-1 overflow-y-auto sidebar-scroll scrollbar-custom p-4"
+}
+
+func sidebarBadgeClasses(item Item, section bool) string {
+	base := "ml-auto shrink-0 inline-flex items-center justify-center rounded-radius px-1.5 py-0.5 text-[10px] font-bold leading-none"
+	if section {
+		base += " h-4"
+	} else {
+		base += " min-h-5"
+	}
+	if item.BadgeClass != "" {
+		return base + " " + item.BadgeClass
+	}
+	return base + " bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark"
+}
+
+func sidebarDisclosureData(open bool) string {
+	if open {
+		return "{ open: true }"
+	}
+	return "{ open: false }"
+}
+
+func sidebarChildrenID(item Item) string {
+	if item.ID != "" {
+		return item.ID + "-children"
+	}
+	return "sidebar-children"
 }

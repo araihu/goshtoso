@@ -120,7 +120,7 @@ templ sidebarItem(item Item) {
 			}
 			<span>{ item.Label }</span>
 			if item.Badge != "" {
-				<span class="ml-auto text-xs rounded-full bg-on-surface/10 px-2 py-0.5 dark:bg-on-surface-dark/10">{ item.Badge }</span>
+				<span class={ sidebarBadgeClasses(item, false) }>{ item.Badge }</span>
 			}
 		</a>
 	}
@@ -153,19 +153,32 @@ templ sidebarSection(section Section, index int) {
 
 // sidebarSectionItem renders an item with left border line (PenguinUI sidebar style)
 templ sidebarSectionItem(item Item) {
-	if item.Disabled {
+	if item.Collapsible && len(item.Items) > 0 {
+		@sidebarCollapsibleSectionItem(item)
+	} else if item.Disabled {
 		<span class="flex items-center border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface-muted cursor-not-allowed dark:border-outline-dark dark:text-on-surface-dark-muted">
-			<span>{ item.Label }</span>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 		</span>
+	} else if len(item.Items) > 0 {
+		<a
+			href={ templ.URL(item.Href) }
+			{ item.LinkAttrs... }
+			class="flex items-center gap-2 py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong"
+		>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
+			if item.Badge != "" {
+				<sup class={ sidebarBadgeClasses(item, true) }>{ item.Badge }</sup>
+			}
+		</a>
 	} else if item.Active {
 		<a
 			href={ templ.URL(item.Href) }
 			{ item.LinkAttrs... }
-			class="pointer-events-none flex items-center border-l-2 border-primary py-2.5 pl-4 text-sm font-bold text-primary dark:border-primary-dark dark:text-primary-dark"
+			class="pointer-events-none flex items-center gap-2 border-l-2 border-primary py-2.5 pl-4 text-sm font-bold text-primary dark:border-primary-dark dark:text-primary-dark"
 		>
-			<span>{ item.Label }</span>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 			if item.Badge != "" {
-				<sup class="ml-1 inline-flex h-3 items-center gap-1 bg-primary px-1.5 py-0.5 text-[10px] text-on-primary rounded-radius dark:bg-primary-dark dark:text-on-primary-dark">{ item.Badge }</sup>
+				<sup class={ sidebarBadgeClasses(item, true) }>{ item.Badge }</sup>
 			}
 			<span class="sr-only">active</span>
 		</a>
@@ -173,20 +186,46 @@ templ sidebarSectionItem(item Item) {
 		<a
 			href={ templ.URL(item.Href) }
 			{ item.LinkAttrs... }
-			class="flex items-center border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:border-l-2 hover:border-outline-strong hover:text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong"
+			class="flex items-center gap-2 border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:border-l-2 hover:border-outline-strong hover:text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong"
 		>
-			<span>{ item.Label }</span>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 			if item.Badge != "" {
-				<sup class="ml-1 inline-flex h-3 items-center gap-1 bg-primary px-1.5 py-0.5 text-[10px] text-on-primary rounded-radius dark:bg-primary-dark dark:text-on-primary-dark">{ item.Badge }</sup>
+				<sup class={ sidebarBadgeClasses(item, true) }>{ item.Badge }</sup>
 			}
 		</a>
 	}
 
-	if len(item.Items) > 0 {
+	if len(item.Items) > 0 && !item.Collapsible {
 		<div class="ml-4 flex flex-col">
 			for _, child := range item.Items {
 				@sidebarSectionItem(child)
 			}
 		</div>
 	}
+}
+
+templ sidebarCollapsibleSectionItem(item Item) {
+	<div x-data={ sidebarDisclosureData(item.Open) }>
+		<a
+			href={ templ.URL(item.Href) }
+			{ item.LinkAttrs... }
+			x-on:click.prevent="open = !open"
+			x-bind:aria-expanded="open.toString()"
+			aria-controls={ sidebarChildrenID(item) }
+			class="flex items-center gap-2 border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:border-l-2 hover:border-outline-strong hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark"
+		>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
+			if item.Badge != "" {
+				<sup class={ sidebarBadgeClasses(item, true) }>{ item.Badge }</sup>
+			}
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-on-surface-muted transition-transform duration-150 dark:text-on-surface-dark-muted" x-bind:class="open ? 'rotate-180' : ''" aria-hidden="true">
+				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+			</svg>
+		</a>
+		<div id={ sidebarChildrenID(item) } x-show="open" class="ml-4 flex flex-col">
+			for _, child := range item.Items {
+				@sidebarSectionItem(child)
+			}
+		</div>
+	</div>
 }

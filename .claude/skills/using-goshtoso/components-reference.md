@@ -1293,7 +1293,10 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `Active` | `bool` | Active indicates if this item is currently active |
 | `Disabled` | `bool` | Disabled prevents interaction |
 | `Badge` | `string` | Badge is an optional badge text (e.g., "New", "Soon") |
+| `BadgeClass` | `string` | BadgeClass overrides the default badge styling. |
 | `Items` | `[]Item` | Items contains child items for nested navigation |
+| `Collapsible` | `bool` | Collapsible renders child items behind a disclosure control. |
+| `Open` | `bool` | Open controls the initial disclosure state for collapsible child items. |
 | `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes spread onto the <a> element. |
 
 **Section**
