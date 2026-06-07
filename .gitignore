@@ -95,6 +95,8 @@ og-site/
 !.agents/skills/tailwindcss/**
 !.agents/skills/templ/
 !.agents/skills/templ/**
+!.agents/skills/using-goshtoso/
+!.agents/skills/using-goshtoso/**
 .claude/
 .codex/
 .github/skills/

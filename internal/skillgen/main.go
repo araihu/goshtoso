@@ -1,10 +1,9 @@
 // Command skillgen derives the Goshtoso component API reference from source.
 //
-// It parses every package under components/ via go/ast and emits
-// .claude/skills/using-goshtoso/components-reference.md — the per-component
-// reference consumed by the using-goshtoso skill. Because the output is
-// derived from types.go (and the generated *_templ.go entry points), it can
-// never drift from or misrepresent the real API.
+// It parses every package under components/ via go/ast and emits the
+// per-component reference consumed by the using-goshtoso skill. Because the
+// output is derived from types.go (and the generated *_templ.go entry points),
+// it can never drift from or misrepresent the real API.
 //
 // Run from the repo root:
 //
@@ -28,9 +27,10 @@ import (
 )
 
 const (
-	componentsDir = "components"
-	outPath       = ".claude/skills/using-goshtoso/components-reference.md"
-	modulePath    = "github.com/araihu/goshtoso"
+	componentsDir        = "components"
+	legacyOutPath        = ".claude/skills/using-goshtoso/components-reference.md"
+	externalSkillOutPath = ".agents/skills/using-goshtoso/references/components-reference.md"
+	modulePath           = "github.com/araihu/goshtoso"
 )
 
 // pkgAPI is the extracted public surface of one component package.
@@ -75,7 +75,23 @@ func Run() error {
 		}
 	}
 	sort.Slice(pkgs, func(i, j int) bool { return pkgs[i].dir < pkgs[j].dir })
-	return os.WriteFile(outPath, []byte(render(pkgs)), 0o644)
+	output := []byte(render(pkgs))
+	for _, path := range []string{legacyOutPath, externalSkillOutPath} {
+		if err := writeFile(path, output); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func writeFile(path string, contents []byte) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return fmt.Errorf("create output directory for %s: %w", path, err)
+	}
+	if err := os.WriteFile(path, contents, 0o644); err != nil {
+		return fmt.Errorf("write %s: %w", path, err)
+	}
+	return nil
 }
 
 // componentDirs returns every directory under components/ (recursively, so
