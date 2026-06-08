@@ -1578,6 +1578,7 @@ import "github.com/araihu/goshtoso/components/tabs"  // package tabs
 |-------|------|-------------|
 | `ID` | `string` | ID is the unique identifier for the tab (used in Alpine.js state) |
 | `Label` | `string` | Label is the display text for the tab button |
+| `LabelSlot` | `templ.Component` | LabelSlot optionally replaces the visible label while Label remains accessible text. |
 | `Icon` | `templ.Component` | Icon is an optional icon component rendered before the label |
 | `Badge` | `string` | Badge is an optional badge text (e.g., count) shown after the label |
 | `Content` | `templ.Component` | Content is the tab panel content (used for static/inline content) |

@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/tabs"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -62,6 +63,21 @@ templ tabsDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Custom Labels",
+				Description: "Use LabelSlot for rich tab labels while Label remains the accessible name.",
+			},
+			tabsCustomLabelPreview(),
+			`@tabs.Tabs(tabs.Config{
+    ID: "status-demo",
+    Tabs: []tabs.Tab{
+        {ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
+        {ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "HTMX Lazy Loading",
 				Description: "Give a Tab an HTMX config instead of Content; its panel is fetched from the server the first time it's opened.",
 			},
@@ -94,7 +110,7 @@ templ tabsDemoContent() {
 	// API reference lives outside #tabs-fragment.
 	@demo.APIReference([]demo.PropDoc{
 		{Name: "ID", Type: "string", Default: `""`, Description: "Unique tab-set id (scopes Alpine state and panel ids)."},
-		{Name: "Tabs", Type: "[]Tab", Default: "nil", Description: "Tab definitions (ID, Label, optional Icon, Badge, Content, HTMX)."},
+		{Name: "Tabs", Type: "[]Tab", Default: "nil", Description: "Tab definitions (ID, Label, optional LabelSlot, Icon, Badge, Content, HTMX)."},
 		{Name: "DefaultTab", Type: "string", Default: `""`, Description: "ID of the initially active tab (defaults to the first)."},
 		{Name: "SyncHash", Type: "bool", Default: "false", Description: "Mirror the active tab in the URL fragment."},
 		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the tab-set container."},
@@ -146,6 +162,20 @@ templ tabsBadgePreview() {
 	</div>
 }
 
+// tabsCustomLabelPreview renders tabs with custom visual labels.
+templ tabsCustomLabelPreview() {
+	<div id="tabs-custom-labels" class="w-full max-w-2xl mx-auto">
+		@tabs.Tabs(tabs.Config{
+			ID: "status",
+			Tabs: []tabs.Tab{
+				{ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
+				{ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
+				{ID: "queued", Label: "202", LabelSlot: statusBadge("202", badge.Info), Content: responseContent("202")},
+			},
+		})
+	</div>
+}
+
 // tabsHTMXPreview renders HTMX lazy-loaded tabs.
 templ tabsHTMXPreview() {
 	<div id="tabs-htmx" class="w-full max-w-2xl mx-auto">
@@ -179,6 +209,14 @@ templ tabsHashPreview() {
 // tabContent renders simple tab panel content matching PenguinUI's demo
 templ tabContent(name string) {
 	<b><a href="#" class="underline">{ name }</a></b> tab is selected
+}
+
+templ responseContent(status string) {
+	<b>{ status }</b> response is selected
+}
+
+templ statusBadge(status string, variant badge.Variant) {
+	@badge.Badge(badge.Config{Label: status, Variant: variant, Indicator: true, Size: badge.SizeSM})
 }
 
 // Icons matching PenguinUI's tab demos
