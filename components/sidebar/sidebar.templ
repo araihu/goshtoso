@@ -102,23 +102,23 @@ templ sidebarItem(item Item) {
 			<span>{ item.Label }</span>
 		</span>
 	} else if item.Active {
-		<a href={ templ.URL(item.Href) } { item.LinkAttrs... } class="flex items-center gap-2 py-2 text-base font-medium text-primary dark:text-primary-dark">
+		<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } class="flex items-center gap-2 py-2 text-base font-medium text-primary dark:text-primary-dark">
 			if item.Icon != nil {
 				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark">
 					@item.Icon
 				</span>
 			}
-			<span>{ item.Label }</span>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 			<span class="sr-only">active</span>
 		</a>
 	} else {
-		<a href={ templ.URL(item.Href) } { item.LinkAttrs... } class="flex items-center gap-2 py-2 text-base text-on-surface transition-colors hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong">
+		<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } class="flex items-center gap-2 py-2 text-base text-on-surface transition-colors hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong">
 			if item.Icon != nil {
 				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
 					@item.Icon
 				</span>
 			}
-			<span>{ item.Label }</span>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 			if item.Badge != "" {
 				<span class="ml-auto text-xs rounded-full bg-on-surface/10 px-2 py-0.5 dark:bg-on-surface-dark/10">{ item.Badge }</span>
 			}
@@ -160,10 +160,10 @@ templ sidebarSectionItem(item Item) {
 	} else if item.Active {
 		<a
 			href={ templ.URL(item.Href) }
-			{ item.LinkAttrs... }
+			{ sidebarLinkAttrs(item)... }
 			class="pointer-events-none flex items-center border-l-2 border-primary py-2.5 pl-4 text-sm font-bold text-primary dark:border-primary-dark dark:text-primary-dark"
 		>
-			<span>{ item.Label }</span>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 			if item.Badge != "" {
 				<sup class="ml-1 inline-flex h-3 items-center gap-1 bg-primary px-1.5 py-0.5 text-[10px] text-on-primary rounded-radius dark:bg-primary-dark dark:text-on-primary-dark">{ item.Badge }</sup>
 			}
@@ -172,10 +172,10 @@ templ sidebarSectionItem(item Item) {
 	} else {
 		<a
 			href={ templ.URL(item.Href) }
-			{ item.LinkAttrs... }
+			{ sidebarLinkAttrs(item)... }
 			class="flex items-center border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:border-l-2 hover:border-outline-strong hover:text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong"
 		>
-			<span>{ item.Label }</span>
+			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 			if item.Badge != "" {
 				<sup class="ml-1 inline-flex h-3 items-center gap-1 bg-primary px-1.5 py-0.5 text-[10px] text-on-primary rounded-radius dark:bg-primary-dark dark:text-on-primary-dark">{ item.Badge }</sup>
 			}

@@ -1294,6 +1294,9 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `Disabled` | `bool` | Disabled prevents interaction |
 | `Badge` | `string` | Badge is an optional badge text (e.g., "New", "Soon") |
 | `Items` | `[]Item` | Items contains child items for nested navigation |
+| `Title` | `string` | Title overrides the generated browser tooltip text for sidebar links. |
+| `DisableAutoTitle` | `bool` | DisableAutoTitle prevents the sidebar from adding a title attribute from Label. |
+| `AriaLabel` | `string` | AriaLabel optionally overrides the accessible name on sidebar links. |
 | `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes spread onto the <a> element. |
 
 **Section**
