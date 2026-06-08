@@ -145,15 +145,15 @@ templ sidebarSection(section Section, index int) {
 		}
 		<div class="flex flex-col">
 			for _, item := range section.Items {
-				@sidebarSectionItem(item)
+				@sidebarSectionItem(item, section.Collapsible)
 			}
 		</div>
 	</div>
 }
 
 // sidebarSectionItem renders an item with left border line (PenguinUI sidebar style)
-templ sidebarSectionItem(item Item) {
-	if item.Collapsible && len(item.Items) > 0 {
+templ sidebarSectionItem(item Item, collapseChildGroups bool) {
+	if (item.Collapsible || collapseChildGroups) && len(item.Items) > 0 {
 		@sidebarCollapsibleSectionItem(item)
 	} else if item.Disabled {
 		<span class="flex items-center border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface-muted cursor-not-allowed dark:border-outline-dark dark:text-on-surface-dark-muted">
@@ -195,10 +195,10 @@ templ sidebarSectionItem(item Item) {
 		</a>
 	}
 
-	if len(item.Items) > 0 && !item.Collapsible {
+	if len(item.Items) > 0 && !item.Collapsible && !collapseChildGroups {
 		<div class="ml-4 flex flex-col">
 			for _, child := range item.Items {
-				@sidebarSectionItem(child)
+				@sidebarSectionItem(child, false)
 			}
 		</div>
 	}
@@ -222,9 +222,9 @@ templ sidebarCollapsibleSectionItem(item Item) {
 				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
 			</svg>
 		</a>
-		<div id={ sidebarChildrenID(item) } x-show="open" class="ml-4 flex flex-col">
+		<div id={ sidebarChildrenID(item) } x-show="open" { sidebarChildrenAttrs(item.Open)... } class="ml-4 flex flex-col">
 			for _, child := range item.Items {
-				@sidebarSectionItem(child)
+				@sidebarSectionItem(child, false)
 			}
 		</div>
 	</div>

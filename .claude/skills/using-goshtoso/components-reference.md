@@ -1309,7 +1309,7 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 |-------|------|-------------|
 | `Title` | `string` | Title is the section header |
 | `Items` | `[]Item` | Items are the navigation items in this section |
-| `Collapsible` | `bool` | Collapsible enables collapse/expand with Alpine.js |
+| `Collapsible` | `bool` | Collapsible renders direct child groups behind independent disclosure controls. |
 
 ## spinner
 

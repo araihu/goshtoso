@@ -558,7 +558,7 @@ func sidebarSection(section Section, index int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range section.Items {
-			templ_7745c5c3_Err = sidebarSectionItem(item).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = sidebarSectionItem(item, section.Collapsible).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -572,7 +572,7 @@ func sidebarSection(section Section, index int) templ.Component {
 }
 
 // sidebarSectionItem renders an item with left border line (PenguinUI sidebar style)
-func sidebarSectionItem(item Item) templ.Component {
+func sidebarSectionItem(item Item, collapseChildGroups bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -593,7 +593,7 @@ func sidebarSectionItem(item Item) templ.Component {
 			templ_7745c5c3_Var22 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if item.Collapsible && len(item.Items) > 0 {
+		if (item.Collapsible || collapseChildGroups) && len(item.Items) > 0 {
 			templ_7745c5c3_Err = sidebarCollapsibleSectionItem(item).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -857,13 +857,13 @@ func sidebarSectionItem(item Item) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if len(item.Items) > 0 && !item.Collapsible {
+		if len(item.Items) > 0 && !item.Collapsible && !collapseChildGroups {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 85, "<div class=\"ml-4 flex flex-col\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, child := range item.Items {
-				templ_7745c5c3_Err = sidebarSectionItem(child).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = sidebarSectionItem(child, false).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1012,17 +1012,25 @@ func sidebarCollapsibleSectionItem(item Item) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 97, "\" x-show=\"open\" class=\"ml-4 flex flex-col\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 97, "\" x-show=\"open\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, sidebarChildrenAttrs(item.Open))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 98, " class=\"ml-4 flex flex-col\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, child := range item.Items {
-			templ_7745c5c3_Err = sidebarSectionItem(child).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = sidebarSectionItem(child, false).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 98, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 99, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
