@@ -34,98 +34,103 @@ func Palette(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{\n\t\t\thovered: '',\n\t\t\tselectedHex: '#000000',\n\t\t\thexInput: '',\n\t\t\thexInvalid: false,\n\t\t\tpick(value, el) {\n\t\t\t\tthis.syncHex(value, el)\n\t\t\t\tthis.$dispatch('select-close', value)\n\t\t\t},\n\t\t\tcommitHex(value) {\n\t\t\t\tconst hex = this.normalizeHex(value)\n\t\t\t\tif (!hex) {\n\t\t\t\t\tthis.hexInvalid = true\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tthis.hexInvalid = false\n\t\t\t\tthis.selectedHex = hex\n\t\t\t\tthis.hexInput = hex\n\t\t\t\tthis.$dispatch('select-close', hex)\n\t\t\t},\n\t\t\tpreviewHex(value) {\n\t\t\t\tthis.hexInput = value\n\t\t\t\tconst hex = this.normalizeHex(value)\n\t\t\t\tthis.hexInvalid = this.hexInput !== '' && !hex\n\t\t\t\tif (hex) {\n\t\t\t\t\tthis.selectedHex = hex\n\t\t\t\t\tthis.hexInput = hex\n\t\t\t\t\tthis.$dispatch('select-close', hex)\n\t\t\t\t}\n\t\t\t},\n\t\t\tsyncHex(value, el) {\n\t\t\t\tthis.hexInvalid = false\n\t\t\t\tif (!value) {\n\t\t\t\t\tthis.selectedHex = '#000000'\n\t\t\t\t\tthis.hexInput = ''\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (value[0] === '#') {\n\t\t\t\t\tconst hex = this.normalizeHex(value)\n\t\t\t\t\tif (hex) {\n\t\t\t\t\t\tthis.selectedHex = hex\n\t\t\t\t\t\tthis.hexInput = hex\n\t\t\t\t\t}\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (value === 'white') {\n\t\t\t\t\tthis.selectedHex = '#ffffff'\n\t\t\t\t\tthis.hexInput = '#ffffff'\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (value === 'black') {\n\t\t\t\t\tthis.selectedHex = '#000000'\n\t\t\t\t\tthis.hexInput = '#000000'\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif (el) {\n\t\t\t\t\tconst hex = this.colorToHex(getComputedStyle(el).backgroundColor)\n\t\t\t\t\tthis.selectedHex = hex\n\t\t\t\t\tthis.hexInput = hex\n\t\t\t\t}\n\t\t\t},\n\t\t\tnormalizeHex(value) {\n\t\t\t\tconst raw = (value || '').trim()\n\t\t\t\tconst short = raw.match(/^#([0-9a-fA-F]{3})$/)\n\t\t\t\tif (short) {\n\t\t\t\t\treturn '#' + short[1].split('').map(ch => ch + ch).join('').toLowerCase()\n\t\t\t\t}\n\t\t\t\tconst full = raw.match(/^#([0-9a-fA-F]{6})$/)\n\t\t\t\treturn full ? '#' + full[1].toLowerCase() : ''\n\t\t\t},\n\t\t\tcolorToHex(color) {\n\t\t\t\tif (!this._ctx) {\n\t\t\t\t\tconst canvas = document.createElement('canvas')\n\t\t\t\t\tcanvas.width = 1\n\t\t\t\t\tcanvas.height = 1\n\t\t\t\t\tthis._ctx = canvas.getContext('2d', { willReadFrequently: true })\n\t\t\t\t}\n\t\t\t\tconst ctx = this._ctx\n\t\t\t\tctx.clearRect(0, 0, 1, 1)\n\t\t\t\tctx.fillStyle = '#000000'\n\t\t\t\tctx.fillStyle = color\n\t\t\t\tctx.fillRect(0, 0, 1, 1)\n\t\t\t\tconst [r, g, b] = ctx.getImageData(0, 0, 1, 1).data\n\t\t\t\treturn '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')\n\t\t\t},\n\t\t}\" data-palette id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.alpineData())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 92, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 5, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-palette id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var2).String())
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 7, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var2).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if cfg.modelAssignExpr() != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " x-on:select-close=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.modelAssignExpr())
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 95, Col: 44}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, ">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if !cfg.HideReset {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex items-center gap-2\"><span class=\"text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" x-text=\"hovered || 'Pick a color'\"></span> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if !cfg.HideReset {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<button type=\"button\" @click=\"pick('', null)\" class=\"ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark\">Reset</button>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if cfg.LazyWhen != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<template x-if=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " x-on:select-close=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.LazyWhen)
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.modelAssignExpr())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 111, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 10, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = swatchGrid(cfg).Render(ctx, templ_7745c5c3_Buffer)
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, ">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !cfg.HideReset {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"flex items-center gap-2\"><span class=\"text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" x-text=\"hovered || 'Pick a color'\"></span> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</template>")
+			if !cfg.HideReset {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<button type=\"button\" @click=\"pick('', null)\" class=\"ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark\">Reset</button>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if cfg.LazyWhen != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<template x-if=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.LazyWhen)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 26, Col: 32}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\" x-html=\"swatchGridHTML()\" @click=\"handleSwatchEvent($event, 'pick')\" @mouseover=\"handleSwatchEvent($event, 'hover')\" @focusin=\"handleSwatchEvent($event, 'hover')\" @mouseleave=\"hovered = ''\" @focusout=\"if (!$event.currentTarget.contains($event.relatedTarget)) hovered = ''\"></div></template>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -165,9 +170,9 @@ func swatchGrid(cfg Config) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\">")
@@ -186,12 +191,12 @@ func swatchGrid(cfg Config) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 181, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 105, Col: 33}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -207,12 +212,12 @@ func swatchGrid(cfg Config) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 189, Col: 30}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 113, Col: 30}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

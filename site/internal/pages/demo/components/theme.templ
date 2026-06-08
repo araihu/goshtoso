@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/araihu/goshtoso/components/codeblock"
 	palettecomp "github.com/araihu/goshtoso/components/palette"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
@@ -834,6 +833,15 @@ func themePageScript() string {
 	}
 	sb.WriteString("],\n")
 
+	sb.WriteString("    themeLabels: {")
+	for i, info := range infos {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(fmt.Sprintf("'%s':'%s'", info.Key, info.Label))
+	}
+	sb.WriteString("},\n")
+
 	// themeClassMap: nested object themeKey -> token -> tailwind class.
 	// Used by the palette UI to show the "default" class for the active
 	// theme when the user has not overridden a token.
@@ -1026,6 +1034,11 @@ func themePageScript() string {
       const keys = (filterKey === 'all') ? order : [filterKey];
       const inner = keys.map(k => '    ' + (this.blocks[k] || '').split('\n').join('\n    ')).join('\n\n');
       return '@layer base {\n' + inner + '\n}\n';
+    },
+    cssExportLabel() {
+      const filterKey = this.cssFilter === 'current' ? (this.theme || 'goshtoso') : this.cssFilter;
+      const label = filterKey === 'all' ? 'All themes' : (this.themeLabels[filterKey] || filterKey);
+      return label + (this.cssMode === 'single' ? ' — single' : ' — @layer base');
     },
     copyCSS() {
       navigator.clipboard.writeText(this.cssCode()).then(() => {
@@ -1735,7 +1748,6 @@ templ themeContrastSection() {
 }
 
 templ themeCSSSection() {
-	{{ blocks := getThemeCSSBlocks() }}
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Get CSS Code</h2>
 		<p class="text-sm text-on-surface dark:text-on-surface-dark mb-4">
@@ -1764,48 +1776,26 @@ templ themeCSSSection() {
 				>Multiple Themes</button>
 			</div>
 		</div>
-		<div class="space-y-3">
-			<!-- Single mode, per-theme blocks (and "all" concatenated). -->
-			for _, k := range themeCSSOrder {
-				<div x-show={ fmt.Sprintf("cssMode === 'single' && ((cssFilter === 'current' && (theme || 'goshtoso') === '%s') || cssFilter === '%s')", k, k) }>
-					@codeblock.CodeBlock(codeblock.Config{
-						Language:  "css",
-						Label:     themeLabel(k) + " — single",
-						Code:      blocks[k],
-						MaxHeight: "24rem",
-						ID:        "theme-css-single-" + k,
-					})
-				</div>
-			}
-			<div x-show="cssMode === 'single' && cssFilter === 'all'">
-				@codeblock.CodeBlock(codeblock.Config{
-					Language:  "css",
-					Label:     "All themes — single",
-					Code:      concatThemes(),
-					MaxHeight: "24rem",
-					ID:        "theme-css-single-all",
-				})
+		<div class="rounded-radius border border-outline dark:border-outline-dark overflow-hidden">
+			<div class="flex items-center justify-between gap-3 px-4 py-2 bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark">
+				<span class="truncate text-xs font-medium text-on-surface dark:text-on-surface-dark" x-text="cssExportLabel()">Theme CSS</span>
+				<button
+					type="button"
+					@click="copyCSS()"
+					aria-label="Copy theme CSS code"
+					class="flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors dark:text-on-surface-dark-muted dark:hover:text-primary-dark"
+				>
+					<svg x-show="!copied" xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+					</svg>
+					<svg x-show="copied" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+					</svg>
+					<span x-text="copied ? 'Copied!' : 'Copy'">Copy</span>
+				</button>
 			</div>
-			<!-- Multi mode, per-theme wrapped in @layer base. -->
-			for _, k := range themeCSSOrder {
-				<div x-show={ fmt.Sprintf("cssMode === 'multiple' && ((cssFilter === 'current' && (theme || 'goshtoso') === '%s') || cssFilter === '%s')", k, k) }>
-					@codeblock.CodeBlock(codeblock.Config{
-						Language:  "css",
-						Label:     themeLabel(k) + " — @layer base",
-						Code:      wrapSingleTheme(k),
-						MaxHeight: "24rem",
-						ID:        "theme-css-multi-" + k,
-					})
-				</div>
-			}
-			<div x-show="cssMode === 'multiple' && cssFilter === 'all'">
-				@codeblock.CodeBlock(codeblock.Config{
-					Language:  "css",
-					Label:     "All themes — @layer base",
-					Code:      allThemesWrappedCSS(),
-					MaxHeight: "24rem",
-					ID:        "theme-css-multi-all",
-				})
+			<div id="theme-css-output" class="codeblock overflow-x-auto" style="max-height: 24rem; overflow-y: auto;">
+				<pre class="ch-chroma"><code x-text="cssCode()"></code></pre>
 			</div>
 		</div>
 	</div>
