@@ -39,10 +39,10 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.True(t, visible, "Browse components CTA should be visible")
 	})
 
-	t.Run("HeroUsesOptimizedArtwork", func(t *testing.T) {
+	t.Run("HeroUsesRioWaveLogo", func(t *testing.T) {
 		src, err := page.Locator("#hero img").GetAttribute("src")
 		require.NoError(t, err)
-		require.Contains(t, src, "goshtoso-art-home.webp", "homepage should use the optimized hero artwork")
+		require.Contains(t, src, "goshtoso-logo.svg", "homepage should use the Rio wave logo asset")
 	})
 
 	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {

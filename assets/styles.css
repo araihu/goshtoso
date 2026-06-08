@@ -774,6 +774,9 @@
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
+  .mb-7 {
+    margin-bottom: calc(var(--spacing) * 7);
+  }
   .mb-8 {
     margin-bottom: calc(var(--spacing) * 8);
   }
@@ -1106,6 +1109,9 @@
   }
   .w-\[22\%\] {
     width: 22%;
+  }
+  .w-\[22rem\] {
+    width: 22rem;
   }
   .w-\[33\%\] {
     width: 33%;
@@ -5278,6 +5284,11 @@
   .md\:w-64 {
     @media (width >= 48rem) {
       width: calc(var(--spacing) * 64);
+    }
+  }
+  .md\:w-\[34rem\] {
+    @media (width >= 48rem) {
+      width: 34rem;
     }
   }
   .md\:max-w-\[90vw\] {
