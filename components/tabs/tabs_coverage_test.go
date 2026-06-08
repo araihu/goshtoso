@@ -74,6 +74,29 @@ func TestCoverageIconAndBadgeBranches(t *testing.T) {
 	assert.Contains(t, browser, BadgeInactiveClasses())
 }
 
+// TestCoverageLabelSlotOverridesVisibleLabel keeps Label available for ARIA
+// while allowing callers to render richer visual labels such as status badges.
+func TestCoverageLabelSlotOverridesVisibleLabel(t *testing.T) {
+	out := render(t, Config{
+		ID: "status",
+		Tabs: []Tab{
+			{
+				ID:        "ok",
+				Label:     "200",
+				LabelSlot: templ.Raw(`<span data-testid="status-badge">200 OK</span>`),
+				Content:   templ.Raw("ok-body"),
+			},
+		},
+	})
+	browser := html.UnescapeString(out)
+
+	assert.Contains(t, browser, `data-testid="status-badge"`)
+	assert.Contains(t, browser, `>200 OK<`)
+	assert.Contains(t, browser, `aria-label="200"`)
+	assert.Contains(t, browser, "flex h-min items-center gap-2 px-4 py-2 text-sm")
+	assert.NotContains(t, browser, `<button>200</button>`)
+}
+
 // TestCoveragePlainButtonLayout verifies the non-icon/non-badge base class.
 func TestCoveragePlainButtonLayout(t *testing.T) {
 	out := render(t, Config{
