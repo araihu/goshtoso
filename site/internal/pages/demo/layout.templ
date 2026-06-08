@@ -108,8 +108,8 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 						if (sidebarContent && window.htmx && htmx.process) htmx.process(sidebarContent);
 						var sb = document.querySelector('.sidebar-scroll');
 						if (sb) sb.scrollTop = __sidebarScrollTop;
-						var main = document.querySelector('main');
-						if (main) main.scrollTo({ top: 0 });
+						var pageScroll = document.getElementById('page-scroll');
+						if (pageScroll) pageScroll.scrollTo({ top: 0 });
 						if (window.buildTOC) window.buildTOC();
 					}
 				});
@@ -234,21 +234,22 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				></div>
 
 				<!-- Main Content -->
-				<main data-boot-anim="main" class="flex-1 overflow-y-auto p-6 lg:p-8">
-					<div id="main-content" class={ "mx-auto " + mainContentMaxWidth(activeComponent) }>
-						@content
-						@componentNavFooter(activeComponent)
-						@siteFooter()
+				<main id="page-scroll" data-boot-anim="main" class="flex-1 overflow-y-auto">
+					<div class={ "mx-auto flex min-h-full w-full " + pageFrameMaxWidth(activeComponent) }>
+						<div id="main-content" class="min-w-0 flex-1 p-6 lg:p-8">
+							@content
+							@componentNavFooter(activeComponent)
+							@siteFooter()
+						</div>
+						<!-- Right rail: "On this page" section nav, built from [data-toc-heading]. -->
+						<div id="toc-rail" data-boot-anim="main" class="hidden w-60 shrink-0 xl:block">
+							<aside class={ "fixed bottom-0 top-16 w-60 overflow-y-auto border-l border-outline px-6 py-8 dark:border-outline-dark " + tocRailRight(activeComponent) }>
+								<p class="mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">On this page</p>
+								<nav id="toc-list" aria-label="On this page" class="flex flex-col border-l border-outline dark:border-outline-dark"></nav>
+							</aside>
+						</div>
 					</div>
 				</main>
-
-				<!-- Right rail: "On this page" section nav, built from [data-toc-heading]. -->
-				<aside id="toc-rail" data-boot-anim="main" class="hidden xl:block w-60 shrink-0 overflow-y-auto border-l border-outline dark:border-outline-dark">
-					<div class="sticky top-0 px-6 py-8">
-						<p class="mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">On this page</p>
-						<nav id="toc-list" aria-label="On this page" class="flex flex-col border-l border-outline dark:border-outline-dark"></nav>
-					</div>
-				</aside>
 			</div>
 			@searchfield.SearchModal(docsSearchConfig())
 			<!-- Browser storage notice. Shows until the visitor chooses allowed or denied
@@ -310,10 +311,11 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 					window.buildTOC = function () {
 						var rail = document.getElementById('toc-rail');
 						var nav = document.getElementById('toc-list');
-						var main = document.getElementById('main-content');
-						if (!rail || !nav || !main) return;
+						var pageScroll = document.getElementById('page-scroll');
+						var content = document.getElementById('main-content');
+						if (!rail || !nav || !pageScroll || !content) return;
 						if (spy) { spy.disconnect(); spy = null; }
-						var heads = Array.prototype.slice.call(main.querySelectorAll('[data-toc-heading]'));
+						var heads = Array.prototype.slice.call(content.querySelectorAll('[data-toc-heading]'));
 						nav.innerHTML = '';
 						// One heading (just the page title) isn't worth a rail — hide it.
 						if (heads.length < 2) { rail.style.display = 'none'; return; }
@@ -338,9 +340,11 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 							entries.forEach(function (en) {
 								if (en.isIntersecting) setActive(nav, en.target.id);
 							});
-						}, { root: main, rootMargin: '0px 0px -75% 0px', threshold: 0 });
+						}, { root: pageScroll, rootMargin: '0px 0px -75% 0px', threshold: 0 });
 						heads.forEach(function (h) { if (h.id) spy.observe(h); });
-						setActive(nav, heads[0].id);
+						var hashId = decodeURIComponent((window.location.hash || '').replace(/^#/, ''));
+						var active = heads.find(function (h) { return h.id === hashId; }) || heads[0];
+						setActive(nav, active.id);
 					};
 					if (document.readyState === 'loading') {
 						document.addEventListener('DOMContentLoaded', window.buildTOC);
@@ -369,14 +373,23 @@ func navHxAttrs(href, label string) templ.Attributes {
 	return attrs
 }
 
-// mainContentMaxWidth picks the page-content container width per route. The
-// theme page needs the extra width to host the side-by-side controls + theme
-// showcase layout; everything else stays at the narrower docs default.
-func mainContentMaxWidth(activeComponent string) string {
+// pageFrameMaxWidth picks a docs frame width that includes content, its padding,
+// and the desktop TOC rail. The theme page needs the extra width to host the
+// side-by-side controls + theme showcase layout.
+func pageFrameMaxWidth(activeComponent string) string {
 	if activeComponent == "theme" {
-		return "max-w-7xl"
+		return "max-w-[99rem]"
 	}
-	return "max-w-5xl"
+	return "max-w-[83rem]"
+}
+
+// tocRailRight aligns the fixed desktop TOC rail with the reserved rail column
+// inside the centered docs frame. The 18rem term is the desktop sidebar width.
+func tocRailRight(activeComponent string) string {
+	if activeComponent == "theme" {
+		return "xl:right-[max(0rem,calc((100vw-18rem-99rem)/2))]"
+	}
+	return "xl:right-[max(0rem,calc((100vw-18rem-83rem)/2))]"
 }
 
 // getSidebarTopItems returns the top-level icon navigation items above the component sections
