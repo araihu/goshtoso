@@ -102,7 +102,7 @@ func TestSidebarCoverageDemo(t *testing.T) {
 		}))
 		require.NoError(t, overlay.Locator("input[type='search'][placeholder='Search...']").WaitFor())
 
-		require.NoError(t, overlay.Locator("button[aria-label='Close sidebar']").Click())
+		require.NoError(t, overlay.Locator("div[aria-hidden='true']").Click())
 		require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
 			State:   playwright.WaitForSelectorStateHidden,
 			Timeout: playwright.Float(3000),
