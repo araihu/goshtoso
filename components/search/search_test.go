@@ -60,6 +60,46 @@ func TestSearchRendersGlobalShortcutWhenEnabled(t *testing.T) {
 	}
 }
 
+func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{
+		ID:       "remote-search",
+		ItemsURL: "/search.json",
+		Items: []Item{{
+			ID:    "static-result",
+			Title: "Static result that should not render",
+		}},
+	}))
+
+	for _, want := range []string{
+		`data-search-source-url="/search.json"`,
+		`<template x-for="(item, index) in visibleResults()"`,
+		`x-bind:id="item.id || null"`,
+		`x-on:click="selectResult(item)"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal with ItemsURL missing %q in\n%s", want, html)
+		}
+	}
+	if strings.Contains(html, "Static result that should not render") || strings.Contains(html, `id="static-result"`) {
+		t.Fatalf("ItemsURL mode should not pre-render result records:\n%s", html)
+	}
+}
+
+func TestSearchScriptCachesDOMResultMatches(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{ID: "docs-search"}))
+
+	for _, want := range []string{
+		`cachedDOMTerm: null`,
+		`cachedDOMResults: []`,
+		`if (term === this.cachedDOMTerm) return this.cachedDOMResults;`,
+		`cachedAllResults`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal script missing DOM match cache %q in\n%s", want, html)
+		}
+	}
+}
+
 func TestSearchEscapesResultPayloadsBeforeHighlighting(t *testing.T) {
 	payload := `<img src=x onerror=alert(1)>`
 	var buf bytes.Buffer

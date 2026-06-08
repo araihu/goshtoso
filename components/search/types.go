@@ -48,6 +48,10 @@ type Config struct {
 	EscapeText string
 	// Items are the caller-provided result records.
 	Items []Item
+	// ItemsURL is an optional JSON endpoint for client-side result records.
+	// When set, results are fetched and rendered in the browser instead of
+	// pre-rendering every Item as a hidden DOM node.
+	ItemsURL string
 	// MaxResults limits the visible matches. Defaults to 4.
 	MaxResults int
 	// DescriptionMaxLength truncates result descriptions. Defaults to 120.

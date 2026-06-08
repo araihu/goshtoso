@@ -1191,6 +1191,7 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `GlobalShortcut` | `bool` | GlobalShortcut enables Cmd/Ctrl+K window handling for this instance. |
 | `EscapeText` | `string` | EscapeText is rendered in the dialog close KBD hint. Defaults to "Esc". |
 | `Items` | `[]Item` | Items are the caller-provided result records. |
+| `ItemsURL` | `string` | ItemsURL is an optional JSON endpoint for client-side result records. |
 | `MaxResults` | `int` | MaxResults limits the visible matches. Defaults to 4. |
 | `DescriptionMaxLength` | `int` | DescriptionMaxLength truncates result descriptions. Defaults to 120. |
 | `EmptyText` | `string` | EmptyText appears when no result matches the query. |

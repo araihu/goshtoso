@@ -102,6 +102,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
 	s.mux.HandleFunc("/api/components/steps/demo", s.handleStepsDemo)
 	s.mux.HandleFunc("/api/components/radio/echo", s.handleRadioEcho)
+	s.mux.HandleFunc("/api/components/search/items", s.handleSearchItems)
 	s.registerGettingStartedRoutes()
 
 	// Combobox users demo runs server-mode lazy search.
