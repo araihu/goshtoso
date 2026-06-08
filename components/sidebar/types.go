@@ -2,6 +2,7 @@ package sidebar
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/a-h/templ"
 )
@@ -72,6 +73,36 @@ type Config struct {
 	FooterSlot templ.Component
 }
 
+// OverlayConfig wraps a Sidebar in an Alpine-controlled off-canvas panel.
+type OverlayConfig struct {
+	// ID identifies the overlay panel and derives the Alpine open state.
+	ID string
+	// Sidebar is the sidebar configuration rendered inside the overlay panel.
+	Sidebar Config
+	// Trigger replaces the default menu icon inside the trigger button.
+	Trigger templ.Component
+	// TriggerLabel is the accessible label for the trigger button.
+	// Default: "Open sidebar".
+	TriggerLabel string
+	// RootClass allows additional CSS classes on the overlay root.
+	RootClass string
+	// TriggerClass allows additional CSS classes on the trigger button.
+	TriggerClass string
+	// BackdropPositionClass controls backdrop positioning.
+	// Default: "fixed inset-0".
+	BackdropPositionClass string
+	// BackdropClass allows additional CSS classes on the backdrop.
+	BackdropClass string
+	// PanelPositionClass controls panel positioning.
+	// Default: "fixed inset-y-0 left-0".
+	PanelPositionClass string
+	// PanelWidthClass controls the panel width.
+	// Default: "w-72".
+	PanelWidthClass string
+	// PanelClass allows additional CSS classes on the off-canvas panel wrapper.
+	PanelClass string
+}
+
 // Section represents a group of navigation items
 type Section struct {
 	// Title is the section header
@@ -91,6 +122,71 @@ func (cfg Config) ContainerClasses() string {
 // NavClasses returns the navigation container classes
 func (cfg Config) NavClasses() string {
 	return "flex-1 overflow-y-auto sidebar-scroll scrollbar-custom p-4"
+}
+
+// StateVar returns the Alpine state variable that controls the overlay.
+func (cfg OverlayConfig) StateVar() string {
+	return safeJSIdentifier(cfg.ID, "sidebarOverlay") + "Open"
+}
+
+// PanelID returns the id for the overlay panel.
+func (cfg OverlayConfig) PanelID() string {
+	if id := strings.TrimSpace(cfg.ID); id != "" {
+		return id + "-panel"
+	}
+	return "sidebar-overlay-panel"
+}
+
+// TriggerLabelText returns the trigger button accessible label.
+func (cfg OverlayConfig) TriggerLabelText() string {
+	if label := strings.TrimSpace(cfg.TriggerLabel); label != "" {
+		return label
+	}
+	return "Open sidebar"
+}
+
+// RootClasses returns classes for the overlay root.
+func (cfg OverlayConfig) RootClasses() string {
+	return strings.TrimSpace(cfg.RootClass)
+}
+
+// TriggerClasses returns classes for the overlay trigger button.
+func (cfg OverlayConfig) TriggerClasses() string {
+	base := "inline-flex items-center justify-center rounded-radius p-2 text-on-surface transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
+	if cfg.TriggerClass != "" {
+		base += " " + cfg.TriggerClass
+	}
+	return base
+}
+
+// BackdropClasses returns classes for the overlay backdrop.
+func (cfg OverlayConfig) BackdropClasses() string {
+	position := strings.TrimSpace(cfg.BackdropPositionClass)
+	if position == "" {
+		position = "fixed inset-0"
+	}
+	base := position + " z-30 bg-black/50"
+	if cfg.BackdropClass != "" {
+		base += " " + cfg.BackdropClass
+	}
+	return base
+}
+
+// PanelClasses returns classes for the off-canvas panel wrapper.
+func (cfg OverlayConfig) PanelClasses() string {
+	position := strings.TrimSpace(cfg.PanelPositionClass)
+	if position == "" {
+		position = "fixed inset-y-0 left-0"
+	}
+	width := strings.TrimSpace(cfg.PanelWidthClass)
+	if width == "" {
+		width = "w-72"
+	}
+	base := position + " z-40 " + width
+	if cfg.PanelClass != "" {
+		base += " " + cfg.PanelClass
+	}
+	return base
 }
 
 func sidebarLinkAttrs(item Item) templ.Attributes {
@@ -153,4 +249,34 @@ func sidebarChildrenID(item Item) string {
 		return item.ID + "-children"
 	}
 	return "sidebar-children"
+}
+
+func safeJSIdentifier(raw, fallback string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		raw = fallback
+	}
+	var b strings.Builder
+	upperNext := false
+	for _, r := range raw {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
+			if b.Len() == 0 && unicode.IsDigit(r) {
+				b.WriteString(fallback)
+			}
+			if upperNext {
+				b.WriteRune(unicode.ToUpper(r))
+				upperNext = false
+			} else {
+				b.WriteRune(r)
+			}
+			continue
+		}
+		if b.Len() > 0 {
+			upperNext = true
+		}
+	}
+	if b.Len() == 0 {
+		return fallback
+	}
+	return b.String()
 }

@@ -1265,7 +1265,7 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 ```
 
-**Entry points:** `Sidebar(cfg Config)`
+**Entry points:** `Overlay(cfg OverlayConfig)` · `Sidebar(cfg Config)`
 
 **Config**
 
@@ -1302,6 +1302,22 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `DisableAutoTitle` | `bool` | DisableAutoTitle prevents the sidebar from adding a title attribute from Label. |
 | `AriaLabel` | `string` | AriaLabel optionally overrides the accessible name on sidebar links. |
 | `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes spread onto the <a> element. |
+
+**OverlayConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID identifies the overlay panel and derives the Alpine open state. |
+| `Sidebar` | `Config` | Sidebar is the sidebar configuration rendered inside the overlay panel. |
+| `Trigger` | `templ.Component` | Trigger replaces the default menu icon inside the trigger button. |
+| `TriggerLabel` | `string` | TriggerLabel is the accessible label for the trigger button. |
+| `RootClass` | `string` | RootClass allows additional CSS classes on the overlay root. |
+| `TriggerClass` | `string` | TriggerClass allows additional CSS classes on the trigger button. |
+| `BackdropPositionClass` | `string` | BackdropPositionClass controls backdrop positioning. |
+| `BackdropClass` | `string` | BackdropClass allows additional CSS classes on the backdrop. |
+| `PanelPositionClass` | `string` | PanelPositionClass controls panel positioning. |
+| `PanelWidthClass` | `string` | PanelWidthClass controls the panel width. |
+| `PanelClass` | `string` | PanelClass allows additional CSS classes on the off-canvas panel wrapper. |
 
 **Section**
 
