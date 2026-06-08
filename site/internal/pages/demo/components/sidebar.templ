@@ -183,7 +183,8 @@ templ sidebarSubItemsPreview() {
 							},
 						},
 						{
-							Title: "Endpoints",
+							Title:       "Endpoints",
+							Collapsible: true,
 							Items: []sidebar.Item{
 								{ID: "ep-users", Label: "Users", Href: "#", Icon: usersIcon(), Items: []sidebar.Item{
 									{ID: "ep-create-user", Label: "Create User", Href: "#", Badge: "POST"},

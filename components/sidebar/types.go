@@ -78,7 +78,8 @@ type Section struct {
 	Title string
 	// Items are the navigation items in this section
 	Items []Item
-	// Collapsible enables collapse/expand with Alpine.js
+	// Collapsible renders direct child groups behind independent disclosure controls.
+	// Each group starts closed unless the parent Item sets Open.
 	Collapsible bool
 }
 
@@ -138,6 +139,13 @@ func sidebarDisclosureData(open bool) string {
 		return "{ open: true }"
 	}
 	return "{ open: false }"
+}
+
+func sidebarChildrenAttrs(open bool) templ.Attributes {
+	if open {
+		return nil
+	}
+	return templ.Attributes{"style": "display: none;"}
 }
 
 func sidebarChildrenID(item Item) string {

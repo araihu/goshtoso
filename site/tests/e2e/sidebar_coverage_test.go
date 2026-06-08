@@ -52,9 +52,18 @@ func TestSidebarCoverageDemo(t *testing.T) {
 		subItems := page.Locator("#sidebar-sub-items")
 		require.NoError(t, subItems.ScrollIntoViewIfNeeded())
 
-		for _, label := range []string{"Create User", "Get User", "Update User", "Delete User", "List Products", "Create Product"} {
-			require.NoError(t, subItems.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: label}).WaitFor())
-		}
+		require.False(t, sidebarLinkVisibleContaining(t, page, "#sidebar-sub-items", "Create User"))
+		require.False(t, sidebarLinkVisibleContaining(t, page, "#sidebar-sub-items", "List Products"))
+
+		users := subItems.Locator("a[aria-controls='ep-users-children']")
+		products := subItems.Locator("a[aria-controls='ep-products-children']")
+		require.NoError(t, users.Click())
+		waitForSidebarLinkVisibleContaining(t, page, "#sidebar-sub-items", "Create User")
+
+		require.NoError(t, products.Click())
+		waitForSidebarLinkVisibleContaining(t, page, "#sidebar-sub-items", "Create User")
+		waitForSidebarLinkVisibleContaining(t, page, "#sidebar-sub-items", "List Products")
+
 		for _, badge := range []string{"POST", "GET", "PUT", "DEL"} {
 			require.NoError(t, subItems.Locator("sup").Filter(playwright.LocatorFilterOptions{HasText: badge}).First().WaitFor())
 		}
@@ -110,4 +119,24 @@ func sidebarVisible(t *testing.T, page playwright.Page, scope string, text strin
 	require.NoError(t, err)
 
 	return result.(bool)
+}
+
+func sidebarLinkVisibleContaining(t *testing.T, page playwright.Page, scope string, text string) bool {
+	t.Helper()
+
+	result, err := page.Evaluate(`([scope, text]) => Array.from(document.querySelectorAll(scope + " a")).some((el) => el.textContent.includes(text) && el.offsetParent !== null)`, []string{scope, text})
+	require.NoError(t, err)
+
+	return result.(bool)
+}
+
+func waitForSidebarLinkVisibleContaining(t *testing.T, page playwright.Page, scope string, text string) {
+	t.Helper()
+
+	_, err := page.WaitForFunction(
+		`([scope, text]) => Array.from(document.querySelectorAll(scope + " a")).some((el) => el.textContent.includes(text) && el.offsetParent !== null)`,
+		[]string{scope, text},
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+	)
+	require.NoError(t, err)
 }

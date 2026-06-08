@@ -311,8 +311,59 @@ func TestSectionItemsWithChildrenCanCollapse(t *testing.T) {
 		`id="tag-pets-children"`,
 		`<span class="min-w-0 flex-1 truncate">Pets</span>`,
 	)
+	if strings.Contains(html, `id="tag-pets-children" x-show="open" style="display: none;"`) {
+		t.Fatalf("open collapsible child groups should render visible before Alpine initializes: %s", html)
+	}
 	if count := strings.Count(html, `href="#operation-get-pets"`); count != 1 {
 		t.Fatalf("collapsible children rendered %d links, want 1: %s", count, html)
+	}
+}
+
+func TestCollapsibleSectionCollapsesChildGroupsByDefault(t *testing.T) {
+	html := renderSidebar(t, Config{
+		Sections: []Section{
+			{
+				Title:       "Operations",
+				Collapsible: true,
+				Items: []Item{
+					{
+						ID:    "tag-pets",
+						Label: "Pets",
+						Href:  "#tag-pets",
+						Items: []Item{
+							{ID: "get-pets", Label: "GET /pets", Href: "#operation-get-pets"},
+						},
+					},
+					{
+						ID:    "tag-stores",
+						Label: "Stores",
+						Href:  "#tag-stores",
+						Items: []Item{
+							{ID: "get-stores", Label: "GET /stores", Href: "#operation-get-stores"},
+						},
+					},
+				},
+			},
+		},
+	})
+
+	assertContainsAll(t, html,
+		`aria-controls="tag-pets-children"`,
+		`aria-controls="tag-stores-children"`,
+		`id="tag-pets-children"`,
+		`id="tag-stores-children"`,
+		`x-on:click.prevent="open = !open"`,
+		`x-show="open"`,
+		`style="display: none;"`,
+		`href="#operation-get-pets"`,
+		`href="#operation-get-stores"`,
+	)
+
+	if count := strings.Count(html, `x-data="{ open: false }"`); count != 2 {
+		t.Fatalf("collapsible section should render each child group closed with independent state, got %d scopes: %s", count, html)
+	}
+	if strings.Contains(html, `x-data="{ open: true }"`) {
+		t.Fatalf("collapsible section child groups should default closed: %s", html)
 	}
 }
 

@@ -343,7 +343,8 @@ func sidebarSubItemsPreview() templ.Component {
 					},
 				},
 				{
-					Title: "Endpoints",
+					Title:       "Endpoints",
+					Collapsible: true,
 					Items: []sidebar.Item{
 						{ID: "ep-users", Label: "Users", Href: "#", Icon: usersIcon(), Items: []sidebar.Item{
 							{ID: "ep-create-user", Label: "Create User", Href: "#", Badge: "POST"},
@@ -493,7 +494,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 309, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 310, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -511,7 +512,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 313, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 314, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
