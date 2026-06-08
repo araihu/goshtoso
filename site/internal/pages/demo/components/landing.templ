@@ -95,11 +95,22 @@ templ landingContent() {
 	<div class="mx-auto max-w-5xl px-6 space-y-16 py-16">
 		<!-- Hero -->
 		<div id="hero" class="flex flex-col items-center text-center">
-			<img
-				src="/assets/images/goshtoso-art-home.webp"
-				alt="Goshtoso mascot, a blue Go gopher in sunglasses and a Hawaiian shirt at Copacabana"
-				class="w-32 h-auto rounded-radius mb-6"
-			/>
+			<div class="mb-8 inline-flex max-w-full items-center justify-center gap-4 sm:gap-5" aria-label="Goshtoso" data-brand-lockup>
+				<img
+					src="/assets/images/goshtoso-icon.svg"
+					alt=""
+					aria-hidden="true"
+					class="size-16 shrink-0 rounded-[1.25rem] sm:size-20 md:size-24"
+				/>
+				<div class="min-w-0 text-left">
+					<p class="font-title text-4xl font-bold leading-none text-on-surface-strong dark:text-on-surface-dark-strong sm:text-5xl">
+						Goshtoso
+					</p>
+					<p class="mt-1 text-sm font-bold leading-tight text-on-surface dark:text-on-surface-dark sm:text-base">
+						Go UI components for server-rendered apps
+					</p>
+				</div>
+			</div>
 			<h1 class="text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">
 				Build interactive UIs in Go.
 			</h1>
