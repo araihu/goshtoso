@@ -201,6 +201,121 @@ func TestSidebarLinkAriaLabelIsExplicitOnly(t *testing.T) {
 	}
 }
 
+func TestSectionItemBadgesCanBeColoredAndRightAligned(t *testing.T) {
+	html := renderSidebar(t, Config{
+		Sections: []Section{
+			{
+				Title: "Operations",
+				Items: []Item{
+					{
+						ID:         "get-pets",
+						Label:      "/pets",
+						Href:       "#operation-get-pets",
+						Badge:      "GET",
+						BadgeClass: "border-info bg-info text-on-info",
+					},
+				},
+			},
+		},
+	})
+
+	assertContainsAll(t, html,
+		`title="/pets"`,
+		`<span class="min-w-0 flex-1 truncate">/pets</span>`,
+		`ml-auto shrink-0`,
+		`border-info bg-info text-on-info`,
+		`>GET</sup>`,
+	)
+}
+
+func TestSectionItemBadgesNeutralizeSuperscriptOffset(t *testing.T) {
+	html := renderSidebar(t, Config{
+		Sections: []Section{
+			{
+				Title: "Operations",
+				Items: []Item{
+					{
+						ID:    "get-pets",
+						Label: "List pets",
+						Href:  "#operation-get-pets",
+						Badge: "GET",
+					},
+				},
+			},
+		},
+	})
+
+	assertContainsAll(t, html,
+		`<span class="min-w-0 flex-1 truncate">List pets</span>`,
+		`ml-auto shrink-0 static inline-flex items-center justify-center`,
+		`>GET</sup>`,
+	)
+}
+
+func TestSectionItemsWithPersistentChildrenRenderParentWithoutRail(t *testing.T) {
+	html := renderSidebar(t, Config{
+		Sections: []Section{
+			{
+				Title: "Operations",
+				Items: []Item{
+					{
+						ID:    "tag-pets",
+						Label: "Pets",
+						Href:  "#operations-heading",
+						Items: []Item{
+							{ID: "get-pets", Label: "/pets", Href: "#operation-get-pets", Badge: "GET"},
+						},
+					},
+				},
+			},
+		},
+	})
+
+	assertContainsAll(t, html,
+		`<a href="#operations-heading" title="Pets" class="flex items-center gap-2 py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong">`,
+		`<div class="ml-4 flex flex-col">`,
+		`<a href="#operation-get-pets" title="/pets" class="flex items-center gap-2 border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:border-l-2 hover:border-outline-strong hover:text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong">`,
+	)
+	if strings.Contains(html, `<a href="#operations-heading" title="Pets" class="flex items-center gap-2 border-l`) {
+		t.Fatalf("parent item with persistent children should not render a leading rail: %s", html)
+	}
+}
+
+func TestSectionItemsWithChildrenCanCollapse(t *testing.T) {
+	html := renderSidebar(t, Config{
+		Sections: []Section{
+			{
+				Title: "Operations",
+				Items: []Item{
+					{
+						ID:          "tag-pets",
+						Label:       "Pets",
+						Href:        "#operations-heading",
+						Collapsible: true,
+						Open:        true,
+						Items: []Item{
+							{ID: "get-pets", Label: "/pets", Href: "#operation-get-pets", Badge: "GET"},
+						},
+					},
+				},
+			},
+		},
+	})
+
+	assertContainsAll(t, html,
+		`x-data="{ open: true }"`,
+		`x-on:click.prevent="open = !open"`,
+		`x-bind:aria-expanded="open.toString()"`,
+		`aria-controls="tag-pets-children"`,
+		`x-show="open"`,
+		`id="tag-pets-children"`,
+		`<span class="min-w-0 flex-1 truncate">Pets</span>`,
+	)
+	if count := strings.Count(html, `href="#operation-get-pets"`); count != 1 {
+		t.Fatalf("collapsible children rendered %d links, want 1: %s", count, html)
+	}
+}
+
 func TestCoverageSearchSlotOverridesDefaultSearch(t *testing.T) {
 	html := renderSidebar(t, Config{
 		Logo:              testComponent(`<span data-testid="logo-slot">Logo slot</span>`),
