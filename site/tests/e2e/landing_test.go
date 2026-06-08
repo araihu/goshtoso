@@ -39,10 +39,20 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.True(t, visible, "Browse components CTA should be visible")
 	})
 
-	t.Run("HeroUsesRioWaveLogo", func(t *testing.T) {
-		src, err := page.Locator("#hero img").GetAttribute("src")
+	t.Run("HeroUsesRioWaveLockup", func(t *testing.T) {
+		lockup := page.Locator("#hero [data-brand-lockup]")
+		visible, err := lockup.IsVisible()
 		require.NoError(t, err)
-		require.Contains(t, src, "goshtoso-logo.svg", "homepage should use the Rio wave logo asset")
+		require.True(t, visible, "homepage should render the Rio wave brand lockup")
+
+		src, err := lockup.Locator("img").GetAttribute("src")
+		require.NoError(t, err)
+		require.Contains(t, src, "goshtoso-icon.svg", "homepage should use the Rio wave icon asset")
+
+		txt, err := lockup.InnerText()
+		require.NoError(t, err)
+		require.Contains(t, txt, "Goshtoso")
+		require.Contains(t, txt, "Go UI components for server-rendered apps")
 	})
 
 	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {
