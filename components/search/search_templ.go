@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
+	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/kbd"
 )
 
@@ -114,7 +115,7 @@ func SearchField(cfg Config) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 25, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 26, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -127,7 +128,7 @@ func SearchField(cfg Config) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("goshtosoSearchField('%s', %t)", JSString(id), cfg.GlobalShortcut))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 27, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 28, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -172,7 +173,7 @@ func SearchField(cfg Config) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-dialog")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 40, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 41, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -193,7 +194,7 @@ func SearchField(cfg Config) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetLabel())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 43, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 44, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -250,7 +251,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("goshtosoSearchModal('%s', %d, %d)", JSString(id), cfg.GetMaxResults(), cfg.GetDescriptionMaxLength()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 56, Col: 125}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 57, Col: 125}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -263,7 +264,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-label")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 65, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 66, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -276,7 +277,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-dialog")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 66, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 67, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -294,7 +295,7 @@ func SearchModal(cfg Config) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ItemsURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 68, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 69, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 			if templ_7745c5c3_Err != nil {
@@ -342,7 +343,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-label")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 83, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 84, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 		if templ_7745c5c3_Err != nil {
@@ -355,7 +356,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-input")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 83, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 84, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 		if templ_7745c5c3_Err != nil {
@@ -368,7 +369,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetLabel())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 83, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 84, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -381,7 +382,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-input")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 92, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 93, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 		if templ_7745c5c3_Err != nil {
@@ -394,7 +395,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetPlaceholder())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 95, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 96, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {
@@ -423,7 +424,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetLabel() + " results")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 106, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 107, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
 		if templ_7745c5c3_Err != nil {
@@ -453,7 +454,7 @@ func SearchModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetEmptyText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 119, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 120, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -500,7 +501,7 @@ func resultItem(item Item, index int) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 130, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 131, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 			if templ_7745c5c3_Err != nil {
@@ -518,7 +519,7 @@ func resultItem(item Item, index int) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 133, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 134, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
 		if templ_7745c5c3_Err != nil {
@@ -531,7 +532,7 @@ func resultItem(item Item, index int) templ.Component {
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 134, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 135, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
 		if templ_7745c5c3_Err != nil {
@@ -541,15 +542,15 @@ func resultItem(item Item, index int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if item.Section != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, " data-search-section=\"")
+		if item.Kind != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, " data-search-kind=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var29 string
-			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Section)
+			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Kind)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 136, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 137, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 			if templ_7745c5c3_Err != nil {
@@ -560,15 +561,15 @@ func resultItem(item Item, index int) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if item.SafeHref() != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, " data-search-href=\"")
+		if item.NormalizedMethod() != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, " data-search-method=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.SafeHref())
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.NormalizedMethod())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 139, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 140, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 			if templ_7745c5c3_Err != nil {
@@ -579,33 +580,90 @@ func resultItem(item Item, index int) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " data-search-text=\"")
+		if item.Path != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " data-search-path=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var31 string
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Path)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 143, Col: 31}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if item.Section != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " data-search-section=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var32 string
+			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Section)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 146, Col: 37}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if item.SafeHref() != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, " data-search-href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var33 string
+			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.SafeHref())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 149, Col: 37}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, " data-search-text=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var31 string
-		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.SearchText())
+		var templ_7745c5c3_Var34 string
+		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.SearchText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 141, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 151, Col: 38}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "\" data-result-index=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var32 string
-		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprint(index))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 142, Col: 39}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\" data-result-index=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\" x-bind:hidden=\"!isResultVisible($el)\" x-bind:style=\"'order: ' + resultOrder($el)\" x-bind:class=\"isActive($el) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'\" x-on:mouseenter=\"setActive($el)\" x-on:click=\"selectResult($el)\" class=\"flex w-full flex-col gap-2 p-4 text-left transition focus:outline-none\" role=\"option\"")
+		var templ_7745c5c3_Var35 string
+		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprint(index))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 152, Col: 39}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\" x-bind:hidden=\"!isResultVisible($el)\" x-bind:style=\"'order: ' + resultOrder($el)\" x-bind:class=\"isActive($el) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'\" x-on:mouseenter=\"setActive($el)\" x-on:click=\"selectResult($el)\" class=\"flex w-full flex-col gap-2 p-4 text-left transition focus:outline-none\" role=\"option\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -613,66 +671,134 @@ func resultItem(item Item, index int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "><div class=\"flex items-start justify-between gap-3\"><strong class=\"min-w-0 text-base font-semibold\" x-html=\"highlight($el.closest('[data-search-result]').dataset.searchTitle)\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "><div class=\"flex items-start justify-between gap-3\"><div class=\"min-w-0 space-y-1\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var33 string
-		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(item.Title)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 153, Col: 139}
+		if item.NormalizedMethod() != "" {
+			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: item.NormalizedMethod(), Variant: methodBadgeVariant(item.Method), Size: badge.SizeSM, RootClass: "shrink-0 font-mono font-bold uppercase"}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<strong class=\"min-w-0 text-base font-semibold\" x-html=\"highlight($el.closest('[data-search-result]').dataset.searchTitle)\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</strong> ")
+		var templ_7745c5c3_Var36 string
+		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(item.Title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 168, Col: 141}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</strong></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if item.Kind != "" || item.Path != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<div class=\"flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if item.Kind != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var37 string
+				templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(item.Kind)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 173, Col: 24}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</span> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			if item.Kind != "" && item.Path != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<span aria-hidden=\"true\">·</span> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			if item.Path != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<code class=\"min-w-0 font-mono text-[11px] text-on-surface dark:text-on-surface-dark\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var38 string
+				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(item.Path)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 179, Col: 104}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</code>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if item.Section != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<span class=\"shrink-0 rounded-radius border border-outline px-2 py-0.5 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<span class=\"shrink-0 rounded-radius border border-outline px-2 py-0.5 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var34 string
-			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(item.Section)
+			var templ_7745c5c3_Var39 string
+			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(item.Section)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 155, Col: 189}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 185, Col: 189}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if item.Description != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\" x-html=\"highlight(truncate($el.closest('[data-search-result]').dataset.searchDescription))\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\" x-html=\"highlight(truncate($el.closest('[data-search-result]').dataset.searchDescription))\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var35 string
-			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(item.Description)
+			var templ_7745c5c3_Var40 string
+			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(item.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 159, Col: 196}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 189, Col: 196}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -696,12 +822,12 @@ func clientResultItems() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var36 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var36 == nil {
-			templ_7745c5c3_Var36 = templ.NopComponent
+		templ_7745c5c3_Var41 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var41 == nil {
+			templ_7745c5c3_Var41 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<template x-for=\"(item, index) in visibleResults()\" x-bind:key=\"item.key\"><button type=\"button\" data-search-result x-bind:id=\"item.id || null\" x-bind:data-search-title=\"item.title\" x-bind:data-search-description=\"item.description\" x-bind:data-search-section=\"item.section || null\" x-bind:data-search-href=\"item.href || null\" x-bind:data-search-text=\"item.searchText\" x-bind:data-result-index=\"item.index\" x-bind:class=\"isActiveIndex(index) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'\" x-on:mouseenter=\"setActiveIndex(index)\" x-on:click=\"selectResult(item)\" class=\"flex w-full flex-col gap-2 p-4 text-left transition focus:outline-none\" role=\"option\"><div class=\"flex items-start justify-between gap-3\"><strong class=\"min-w-0 text-base font-semibold\" x-html=\"highlight(item.title)\"></strong><template x-if=\"item.section\"><span class=\"shrink-0 rounded-radius border border-outline px-2 py-0.5 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\" x-text=\"item.section\"></span></template></div><template x-if=\"item.description\"><p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\" x-html=\"highlight(truncate(item.description))\"></p></template></button></template>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<template x-for=\"(item, index) in visibleResults()\" x-bind:key=\"item.key\"><button type=\"button\" data-search-result x-bind:id=\"item.id || null\" x-bind:data-search-title=\"item.title\" x-bind:data-search-description=\"item.description\" x-bind:data-search-kind=\"item.kind || null\" x-bind:data-search-method=\"item.method || null\" x-bind:data-search-path=\"item.path || null\" x-bind:data-search-section=\"item.section || null\" x-bind:data-search-href=\"item.href || null\" x-bind:data-search-text=\"item.searchText\" x-bind:data-result-index=\"item.index\" x-bind:class=\"isActiveIndex(index) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'\" x-on:mouseenter=\"setActiveIndex(index)\" x-on:click=\"selectResult(item)\" class=\"flex w-full flex-col gap-2 p-4 text-left transition focus:outline-none\" role=\"option\"><div class=\"flex items-start justify-between gap-3\"><div class=\"min-w-0 space-y-1\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><template x-if=\"item.method\"><span class=\"shrink-0 rounded-radius w-fit font-medium text-[10px] px-1.5 py-0.5 font-mono font-bold uppercase\" x-bind:class=\"methodBadgeClasses(item.method)\" x-text=\"item.method\"></span></template><strong class=\"min-w-0 text-base font-semibold\" x-html=\"highlight(item.title)\"></strong></div><template x-if=\"item.kind || item.path\"><div class=\"flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\"><template x-if=\"item.kind\"><span x-text=\"item.kind\"></span></template><template x-if=\"item.kind && item.path\"><span aria-hidden=\"true\">·</span></template><template x-if=\"item.path\"><code class=\"min-w-0 font-mono text-[11px] text-on-surface dark:text-on-surface-dark\" x-text=\"item.path\"></code></template></div></template></div><template x-if=\"item.section\"><span class=\"shrink-0 rounded-radius border border-outline px-2 py-0.5 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\" x-text=\"item.section\"></span></template></div><template x-if=\"item.description\"><p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\" x-html=\"highlight(truncate(item.description))\"></p></template></button></template>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -725,30 +851,30 @@ func searchIcon(classes string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var37 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var37 == nil {
-			templ_7745c5c3_Var37 = templ.NopComponent
+		templ_7745c5c3_Var42 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var42 == nil {
+			templ_7745c5c3_Var42 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var38 = []any{classes}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var38...)
+		var templ_7745c5c3_Var43 = []any{classes}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var43...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var39 string
-		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var38).String())
+		var templ_7745c5c3_Var44 string
+		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var43).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var39)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var44)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -772,9 +898,9 @@ func searchScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var40 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var40 == nil {
-			templ_7745c5c3_Var40 = templ.NopComponent
+		templ_7745c5c3_Var45 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var45 == nil {
+			templ_7745c5c3_Var45 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templ.Raw(`<script>
@@ -858,7 +984,22 @@ func searchScript() templ.Component {
 				return String(value);
 			},
 			searchTextForItem: function (item) {
-				return [item.title, item.description, item.section].concat(item.keywords || []).filter(Boolean).join(' ');
+				return [item.title, item.description, item.kind, item.method, item.path, item.section].concat(item.keywords || []).filter(Boolean).join(' ');
+			},
+			methodBadgeClasses: function (method) {
+				switch (this.stringValue(method).trim().toUpperCase()) {
+					case 'GET':
+						return 'border border-primary bg-primary text-on-primary dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark';
+					case 'POST':
+						return 'border border-success bg-success text-on-success';
+					case 'PUT':
+					case 'PATCH':
+						return 'border border-warning bg-warning text-on-warning';
+					case 'DELETE':
+						return 'border border-danger bg-danger text-on-danger';
+					default:
+						return 'border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark';
+				}
 			},
 			safeHref: function (value) {
 				var href = this.stringValue(value).trim();
@@ -884,6 +1025,9 @@ func searchScript() templ.Component {
 						title: self.stringValue(raw.title !== undefined ? raw.title : raw.Title),
 						description: self.stringValue(raw.description !== undefined ? raw.description : raw.Description),
 						href: self.safeHref(raw.href !== undefined ? raw.href : raw.Href),
+						kind: self.stringValue(raw.kind !== undefined ? raw.kind : raw.Kind),
+						method: self.stringValue(raw.method !== undefined ? raw.method : raw.Method).trim().toUpperCase(),
+						path: self.stringValue(raw.path !== undefined ? raw.path : raw.Path),
 						section: self.stringValue(raw.section !== undefined ? raw.section : raw.Section),
 						keywords: keywords.map(function (keyword) { return self.stringValue(keyword); }),
 						index: index

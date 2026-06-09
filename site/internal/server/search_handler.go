@@ -10,6 +10,9 @@ type searchItemResponse struct {
 	Title       string   `json:"title"`
 	Description string   `json:"description,omitempty"`
 	Href        string   `json:"href,omitempty"`
+	Kind        string   `json:"kind,omitempty"`
+	Method      string   `json:"method,omitempty"`
+	Path        string   `json:"path,omitempty"`
 	Section     string   `json:"section,omitempty"`
 	Keywords    []string `json:"keywords,omitempty"`
 }
@@ -28,6 +31,17 @@ func (s *Server) handleSearchItems(w http.ResponseWriter, r *http.Request) {
 			Href:        "/components/table",
 			Section:     "Remote",
 			Keywords:    []string{"fetched remote json"},
+		},
+		{
+			ID:          "search-remote-list-teams",
+			Title:       "List teams",
+			Description: "Operation result with method and route metadata.",
+			Href:        "/api/teams",
+			Kind:        "Operation",
+			Method:      "GET",
+			Path:        "/teams",
+			Section:     "Remote API",
+			Keywords:    []string{"teams operation"},
 		},
 		{
 			ID:          "search-remote-combobox",

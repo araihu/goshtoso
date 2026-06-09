@@ -80,6 +80,7 @@ func searchDemoContent() templ.Component {
     Placeholder: "Search docs...",
     Items: []search.Item{
         {Title: "Sidebar", Description: "Navigation with grouped sections.", Href: "/components/sidebar", Section: "Navigation"},
+        {Title: "List teams", Description: "Operation result with method and route metadata.", Href: "/api/teams", Kind: "Operation", Method: "GET", Path: "/teams", Section: "API"},
         {Title: "KBD", Description: "Semantic keyboard shortcuts.", Href: "/components/kbd", Section: "Display"},
     },
 })`,
@@ -182,6 +183,7 @@ func searchDefaultPreview() templ.Component {
 			Placeholder: "Search docs...",
 			Items: []search.Item{
 				{ID: "search-demo-sidebar", Title: "Sidebar", Description: "Navigation with grouped sections and optional search slot.", Href: "/components/sidebar", Section: "Navigation", Keywords: []string{"menu docs"}},
+				{ID: "search-demo-list-teams", Title: "List teams", Description: "Operation result with method and route metadata.", Href: "/api/teams", Kind: "Operation", Method: "GET", Path: "/teams", Section: "API", Keywords: []string{"teams operation"}},
 				{ID: "search-demo-dependencies", Title: "Dependencies", Description: "Local CSS and JavaScript runtime tags.", Href: "/components/dependencies", Section: "Display", Keywords: []string{"head assets runtime"}},
 				{ID: "search-demo-kbd", Title: "KBD", Description: "Semantic keyboard shortcut hints.", Href: "/components/kbd", Section: "Display", Keywords: []string{"shortcut key"}},
 				{ID: "search-demo-text-input", Title: "Text Input", Description: "Inputs with search, password, masks, and validation states.", Href: "/components/text-input", Section: "Form", Keywords: []string{"field"}},

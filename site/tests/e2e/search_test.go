@@ -87,6 +87,18 @@ func TestSearch_ItemsURLFetchesAndFilters(t *testing.T) {
 	visible, err := page.Locator("#remote-search-dialog [data-search-result]:visible").Count()
 	require.NoError(t, err)
 	assert.Equal(t, 1, visible)
+
+	require.NoError(t, input.Fill("teams"))
+	result := page.Locator("#search-remote-list-teams:visible")
+	require.NoError(t, result.WaitFor())
+	assert.NoError(t, result.Locator("text=GET").WaitFor())
+	assert.NoError(t, result.Locator("text=/teams").WaitFor())
+	method, err := result.GetAttribute("data-search-method")
+	require.NoError(t, err)
+	assert.Equal(t, "GET", method)
+	path, err := result.GetAttribute("data-search-path")
+	require.NoError(t, err)
+	assert.Equal(t, "/teams", path)
 }
 
 func TestSidebarSearch_UsesKbdAndNavigates(t *testing.T) {
