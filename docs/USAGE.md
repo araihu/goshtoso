@@ -1,6 +1,7 @@
 # Goshtoso Components - Usage Guide
 
-This guide explains how to use Goshtoso (Go + Alpine.js + Tailwind CSS + HTMX + Templ) components from the tks-console and other projects.
+This guide explains how to use Goshtoso components in Go web applications built
+with templ, Tailwind CSS, HTMX, and Alpine.js.
 
 ## Installation
 
