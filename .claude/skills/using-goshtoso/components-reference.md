@@ -1208,6 +1208,9 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `Title` | `string` | Title is the primary result text. |
 | `Description` | `string` | Description is optional supporting text. |
 | `Href` | `string` | Href turns the result into a link. |
+| `Kind` | `string` | Kind is optional type metadata for the result. |
+| `Method` | `string` | Method is optional method metadata, commonly an HTTP verb. |
+| `Path` | `string` | Path is optional route or resource path metadata. |
 | `Section` | `string` | Section is optional grouping or eyebrow text. |
 | `Keywords` | `[]string` | Keywords are extra terms included in client-side filtering. |
 | `Attrs` | `templ.Attributes` | Attrs are extra attributes spread onto the result button. |

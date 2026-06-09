@@ -3,6 +3,7 @@ package search
 import (
 	"fmt"
 
+	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/kbd"
 )
 
@@ -132,6 +133,15 @@ templ resultItem(item Item, index int) {
 		data-search-result
 		data-search-title={ item.Title }
 		data-search-description={ item.Description }
+		if item.Kind != "" {
+			data-search-kind={ item.Kind }
+		}
+		if item.NormalizedMethod() != "" {
+			data-search-method={ item.NormalizedMethod() }
+		}
+		if item.Path != "" {
+			data-search-path={ item.Path }
+		}
 		if item.Section != "" {
 			data-search-section={ item.Section }
 		}
@@ -150,7 +160,27 @@ templ resultItem(item Item, index int) {
 		{ item.Attrs... }
 	>
 		<div class="flex items-start justify-between gap-3">
-			<strong class="min-w-0 text-base font-semibold" x-html="highlight($el.closest('[data-search-result]').dataset.searchTitle)">{ item.Title }</strong>
+			<div class="min-w-0 space-y-1">
+				<div class="flex min-w-0 flex-wrap items-center gap-2">
+					if item.NormalizedMethod() != "" {
+						@badge.Badge(badge.Config{Label: item.NormalizedMethod(), Variant: methodBadgeVariant(item.Method), Size: badge.SizeSM, RootClass: "shrink-0 font-mono font-bold uppercase"})
+					}
+					<strong class="min-w-0 text-base font-semibold" x-html="highlight($el.closest('[data-search-result]').dataset.searchTitle)">{ item.Title }</strong>
+				</div>
+				if item.Kind != "" || item.Path != "" {
+					<div class="flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
+						if item.Kind != "" {
+							<span>{ item.Kind }</span>
+						}
+						if item.Kind != "" && item.Path != "" {
+							<span aria-hidden="true">·</span>
+						}
+						if item.Path != "" {
+							<code class="min-w-0 font-mono text-[11px] text-on-surface dark:text-on-surface-dark">{ item.Path }</code>
+						}
+					</div>
+				}
+			</div>
 			if item.Section != "" {
 				<span class="shrink-0 rounded-radius border border-outline px-2 py-0.5 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">{ item.Section }</span>
 			}
@@ -169,6 +199,9 @@ templ clientResultItems() {
 			x-bind:id="item.id || null"
 			x-bind:data-search-title="item.title"
 			x-bind:data-search-description="item.description"
+			x-bind:data-search-kind="item.kind || null"
+			x-bind:data-search-method="item.method || null"
+			x-bind:data-search-path="item.path || null"
 			x-bind:data-search-section="item.section || null"
 			x-bind:data-search-href="item.href || null"
 			x-bind:data-search-text="item.searchText"
@@ -180,7 +213,27 @@ templ clientResultItems() {
 			role="option"
 		>
 			<div class="flex items-start justify-between gap-3">
-				<strong class="min-w-0 text-base font-semibold" x-html="highlight(item.title)"></strong>
+				<div class="min-w-0 space-y-1">
+					<div class="flex min-w-0 flex-wrap items-center gap-2">
+						<template x-if="item.method">
+							<span class="shrink-0 rounded-radius w-fit font-medium text-[10px] px-1.5 py-0.5 font-mono font-bold uppercase" x-bind:class="methodBadgeClasses(item.method)" x-text="item.method"></span>
+						</template>
+						<strong class="min-w-0 text-base font-semibold" x-html="highlight(item.title)"></strong>
+					</div>
+					<template x-if="item.kind || item.path">
+						<div class="flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
+							<template x-if="item.kind">
+								<span x-text="item.kind"></span>
+							</template>
+							<template x-if="item.kind && item.path">
+								<span aria-hidden="true">·</span>
+							</template>
+							<template x-if="item.path">
+								<code class="min-w-0 font-mono text-[11px] text-on-surface dark:text-on-surface-dark" x-text="item.path"></code>
+							</template>
+						</div>
+					</template>
+				</div>
 				<template x-if="item.section">
 					<span class="shrink-0 rounded-radius border border-outline px-2 py-0.5 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted" x-text="item.section"></span>
 				</template>
@@ -280,7 +333,22 @@ templ searchScript() {
 				return String(value);
 			},
 			searchTextForItem: function (item) {
-				return [item.title, item.description, item.section].concat(item.keywords || []).filter(Boolean).join(' ');
+				return [item.title, item.description, item.kind, item.method, item.path, item.section].concat(item.keywords || []).filter(Boolean).join(' ');
+			},
+			methodBadgeClasses: function (method) {
+				switch (this.stringValue(method).trim().toUpperCase()) {
+					case 'GET':
+						return 'border border-primary bg-primary text-on-primary dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark';
+					case 'POST':
+						return 'border border-success bg-success text-on-success';
+					case 'PUT':
+					case 'PATCH':
+						return 'border border-warning bg-warning text-on-warning';
+					case 'DELETE':
+						return 'border border-danger bg-danger text-on-danger';
+					default:
+						return 'border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark';
+				}
 			},
 			safeHref: function (value) {
 				var href = this.stringValue(value).trim();
@@ -306,6 +374,9 @@ templ searchScript() {
 						title: self.stringValue(raw.title !== undefined ? raw.title : raw.Title),
 						description: self.stringValue(raw.description !== undefined ? raw.description : raw.Description),
 						href: self.safeHref(raw.href !== undefined ? raw.href : raw.Href),
+						kind: self.stringValue(raw.kind !== undefined ? raw.kind : raw.Kind),
+						method: self.stringValue(raw.method !== undefined ? raw.method : raw.Method).trim().toUpperCase(),
+						path: self.stringValue(raw.path !== undefined ? raw.path : raw.Path),
 						section: self.stringValue(raw.section !== undefined ? raw.section : raw.Section),
 						keywords: keywords.map(function (keyword) { return self.stringValue(keyword); }),
 						index: index

@@ -14,7 +14,7 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 		Label:       "Search components",
 		Placeholder: "Search docs...",
 		Items: []Item{
-			{ID: "result-kbd", Title: "KBD", Description: "Keyboard hints", Href: "/components/kbd", Section: "Display", Keywords: []string{"shortcut"}},
+			{ID: "result-kbd", Title: "KBD", Description: "Keyboard hints", Href: "/components/kbd", Kind: "Component", Method: "GET", Path: "/components/kbd", Section: "Display", Keywords: []string{"shortcut"}},
 		},
 	}).Render(context.Background(), &buf)
 	if err != nil {
@@ -32,7 +32,14 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 		`data-search-title="KBD"`,
 		`data-search-description="Keyboard hints"`,
 		`data-search-href="/components/kbd"`,
-		`data-search-text="KBD Keyboard hints Display shortcut"`,
+		`data-search-kind="Component"`,
+		`data-search-method="GET"`,
+		`data-search-path="/components/kbd"`,
+		`data-search-text="KBD Keyboard hints Component GET /components/kbd Display shortcut"`,
+		`rounded-radius w-fit font-medium text-[10px] px-1.5 py-0.5 border border-primary bg-primary text-on-primary`,
+		`shrink-0 font-mono font-bold uppercase`,
+		`>GET</span>`,
+		`Component`,
 		`Search docs...`,
 	} {
 		if !strings.Contains(html, want) {
@@ -74,10 +81,27 @@ func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 		`data-search-source-url="/search.json"`,
 		`<template x-for="(item, index) in visibleResults()"`,
 		`x-bind:id="item.id || null"`,
+		`x-bind:data-search-kind="item.kind || null"`,
+		`x-bind:data-search-method="item.method || null"`,
+		`x-bind:data-search-path="item.path || null"`,
+		`<template x-if="item.method">`,
+		`x-text="item.method"`,
+		`<template x-if="item.kind || item.path">`,
 		`x-on:click="selectResult(item)"`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("SearchModal with ItemsURL missing %q in\n%s", want, html)
+		}
+	}
+	for _, want := range []string{
+		`kind: self.stringValue(raw.kind !== undefined ? raw.kind : raw.Kind)`,
+		`method: self.stringValue(raw.method !== undefined ? raw.method : raw.Method).trim().toUpperCase()`,
+		`path: self.stringValue(raw.path !== undefined ? raw.path : raw.Path)`,
+		`item.method`,
+		`item.path`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal client normalizer missing %q in\n%s", want, html)
 		}
 	}
 	if strings.Contains(html, "Static result that should not render") || strings.Contains(html, `id="static-result"`) {
