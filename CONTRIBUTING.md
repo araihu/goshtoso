@@ -100,9 +100,9 @@ Test components in **both light and dark mode** across themes (especially
 
 ## Reporting bugs / requesting features
 
-Use the [issue templates](.github/ISSUE_TEMPLATE). For questions, open a
-[Discussion](https://github.com/araihu/goshtoso/discussions). For security
-issues, see [SECURITY.md](SECURITY.md) — do **not** file a public issue.
+Use the [issue templates](.github/ISSUE_TEMPLATE). For questions, open an issue
+with the closest matching template and include enough context to route it. For
+security issues, see [SECURITY.md](SECURITY.md) — do **not** file a public issue.
 
 ## License
 

@@ -1,0 +1,48 @@
+# Release Checklist
+
+Use this checklist before pushing a `v*` tag. The release workflow validates
+many of these steps, but the checklist keeps the public release story coherent.
+
+## Before Tagging
+
+- Confirm `main` is green in GitHub Actions.
+- Run the local gates relevant to the release:
+  - `templ generate`
+  - `just css`
+  - `go run ./cmd/skillgen`
+  - `go run ./cmd/vendorgen -check`
+  - `go test ./... -count=1`
+  - `cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1`
+  - `go test ./site/tests/e2e/... -count=1 -timeout 15m`
+- Check that generated files have no drift:
+  - `*_templ.go`
+  - `assets/styles.css`
+  - `assets/goshtoso-theme.css`
+  - `assets/vendor_gen.go`
+  - `.claude/skills/using-goshtoso/components-reference.md`
+- Update `VERSIONS.md` when the release uses a new Goshtoso tag or Tailwind
+  version.
+- Review `README.md`, `docs/USAGE.md`, and `ROADMAP.md` for stale version,
+  component, or stability language.
+- Prepare release notes that call out:
+  - breaking API changes,
+  - new components or variants,
+  - asset/runtime version changes,
+  - migration steps for consumers.
+
+## After the Tag Workflow
+
+- Confirm the GitHub release exists and includes `assets/styles.css` and
+  `assets/goshtoso-theme.css`.
+- Confirm the release badge endpoint has the new tag.
+- Confirm the coverage badge endpoint still renders.
+- Confirm the release workflow bumped `site/go.mod` to the new tag, or open a
+  follow-up PR if the public module proxy lagged.
+- Confirm `VERSIONS.md` has a row for the released tag.
+- Confirm the documentation site deploy completed or was intentionally skipped.
+
+## Support Notes
+
+During alpha, only the latest `v0.0.x` tag receives fixes. Older tags remain
+available for reproducibility but are not maintained.
+

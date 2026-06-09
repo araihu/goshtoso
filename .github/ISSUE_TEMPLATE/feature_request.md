@@ -18,7 +18,7 @@ What you'd like to see. For a new component or variant, describe the API
 ## PenguinUI parity reference
 
 If this replicates a PenguinUI component, link it:
-https://penguinui.com/components/...
+https://www.penguinui.com/components/...
 
 ## Alternatives
 

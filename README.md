@@ -24,10 +24,11 @@ copy-paste snippets.
 
 > Goshtoso is actively evolving. The components are usable, but the API surface
 > is still being refined as the library moves toward a stable public release.
+> See [ROADMAP.md](ROADMAP.md) for the alpha stability policy and release path.
 
 ## Highlights
 
-- **37 templ components** for common app UI: forms, navigation, overlays, data
+- **42 templ components** for common app UI: forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
   instant local interaction makes sense.
@@ -118,8 +119,9 @@ Current components:
 accordion        alert       avatar       badge        banner       breadcrumbs
 button           card        carousel     chatbubble   checkbox     codeblock
 combobox         drawer      dropdown     fileinput    form         head
-modal            navbar      pagination   palette      radio        schemafield
-select           sidebar     spinner      steps        structuredinput
+kbd              link        modal        navbar       pagination   palette
+radio            range       rating       schemaform   search       select
+sidebar          spinner     steps        structuredinput
 table            tabs        tagslist     textarea     textinput    toast
 toggle           tooltip
 ```
@@ -161,6 +163,8 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=css/goshtoso-base.css
 ```
 
 See [docs/USAGE.md](docs/USAGE.md) for the full asset strategy.
+Release maintainers should also use
+[docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) before tagging.
 
 ## Repository Layout
 
