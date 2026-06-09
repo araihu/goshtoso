@@ -2897,6 +2897,9 @@
   .py-4 {
     padding-block: calc(var(--spacing) * 4);
   }
+  .py-5 {
+    padding-block: calc(var(--spacing) * 5);
+  }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
   }
@@ -5137,6 +5140,11 @@
       max-width: var(--container-md);
     }
   }
+  .sm\:max-w-none {
+    @media (width >= 40rem) {
+      max-width: none;
+    }
+  }
   .sm\:max-w-sm {
     @media (width >= 40rem) {
       max-width: var(--container-sm);
@@ -5364,6 +5372,11 @@
       gap: calc(var(--spacing) * 3);
     }
   }
+  .md\:gap-6 {
+    @media (width >= 48rem) {
+      gap: calc(var(--spacing) * 6);
+    }
+  }
   .md\:gap-12 {
     @media (width >= 48rem) {
       gap: calc(var(--spacing) * 12);
@@ -5384,12 +5397,6 @@
     @media (width >= 48rem) {
       font-size: var(--text-4xl);
       line-height: var(--tw-leading, var(--text-4xl--line-height));
-    }
-  }
-  .md\:text-5xl {
-    @media (width >= 48rem) {
-      font-size: var(--text-5xl);
-      line-height: var(--tw-leading, var(--text-5xl--line-height));
     }
   }
   .md\:text-xl {
@@ -7148,9 +7155,23 @@
       }
     }
   }
-  .\[\&\>div\:first-child\]\:h-40 {
+  .\[\&\>div\:first-child\]\:hidden {
     &>div:first-child {
-      height: calc(var(--spacing) * 40);
+      display: none;
+    }
+  }
+  .sm\:\[\&\>div\:first-child\]\:block {
+    @media (width >= 40rem) {
+      &>div:first-child {
+        display: block;
+      }
+    }
+  }
+  .sm\:\[\&\>div\:first-child\]\:h-40 {
+    @media (width >= 40rem) {
+      &>div:first-child {
+        height: calc(var(--spacing) * 40);
+      }
     }
   }
   .md\:\[\&\>div\:first-child\]\:h-44 {
@@ -7164,6 +7185,30 @@
     @media (width >= 48rem) {
       &>div:first-child {
         height: auto;
+      }
+    }
+  }
+  .\[\&\>div\:last-child\]\:gap-2 {
+    &>div:last-child {
+      gap: calc(var(--spacing) * 2);
+    }
+  }
+  .\[\&\>div\:last-child\]\:p-4 {
+    &>div:last-child {
+      padding: calc(var(--spacing) * 4);
+    }
+  }
+  .sm\:\[\&\>div\:last-child\]\:gap-4 {
+    @media (width >= 40rem) {
+      &>div:last-child {
+        gap: calc(var(--spacing) * 4);
+      }
+    }
+  }
+  .sm\:\[\&\>div\:last-child\]\:p-6 {
+    @media (width >= 40rem) {
+      &>div:last-child {
+        padding: calc(var(--spacing) * 6);
       }
     }
   }

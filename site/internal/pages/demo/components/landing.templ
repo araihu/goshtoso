@@ -103,17 +103,14 @@ templ landingContent() {
 					class="size-16 shrink-0 rounded-[1.25rem] sm:size-20 md:size-24"
 				/>
 				<div class="min-w-0 text-left">
-					<p class="font-title text-4xl font-bold leading-none text-on-surface-strong dark:text-on-surface-dark-strong sm:text-5xl">
+					<h1 class="font-title text-4xl font-bold leading-none text-on-surface-strong dark:text-on-surface-dark-strong sm:text-5xl">
 						Goshtoso
-					</p>
+					</h1>
 					<p class="mt-1 text-sm font-bold leading-tight text-on-surface dark:text-on-surface-dark sm:text-base">
 						Go UI components for server-rendered apps
 					</p>
 				</div>
 			</div>
-			<h1 class="text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">
-				Build interactive UIs in Go.
-			</h1>
 			<p class="mt-3 text-lg md:text-xl text-on-surface dark:text-on-surface-dark">
 				Ship without a JavaScript build step.
 			</p>
@@ -121,22 +118,33 @@ templ landingContent() {
 				Goshtoso is a server-rendered UI component library for Go. Templates render HTML,
 				HTMX swaps fragments, and Alpine.js adds local interactivity, all shipped as a single binary.
 			</p>
+			<div class="mt-6 flex flex-wrap gap-3 justify-center">
+				<span class="rounded-radius border border-outline px-3 py-1 text-sm font-medium text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
+					23 components
+				</span>
+				<span class="rounded-radius border border-outline px-3 py-1 text-sm font-medium text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
+					16 themes
+				</span>
+				<span class="rounded-radius border border-outline px-3 py-1 text-sm font-medium text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
+					Local assets
+				</span>
+			</div>
 			<div class="mt-8 flex flex-wrap gap-4 justify-center">
 				<a href="/components/accordion" class="px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity">
 					Browse components
 				</a>
-				<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" class="px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors">
-					GitHub
-				</a>
 				<a href="/getting-started" class="px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors">
 					Get started
+				</a>
+				<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" class="px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors">
+					GitHub
 				</a>
 			</div>
 		</div>
 		<!-- Live playground -->
 		<div id="playground">
 			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 text-center">See it live</h2>
-			<p class="text-center text-on-surface dark:text-on-surface-dark mb-6">
+			<p class="mx-auto max-w-3xl text-center text-on-surface dark:text-on-surface-dark mb-6">
 				Pick a theme and every component below recolors instantly. These are real Goshtoso components, not screenshots.
 			</p>
 			<div class="mb-8 flex flex-col items-center gap-3" x-data="{ theme: document.documentElement.dataset.theme }">
@@ -176,6 +184,12 @@ templ landingContent() {
 					@badge.Badge(badge.Config{Label: "Pending", Variant: badge.Warning})
 					@toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true})
 				</div>
+				<div id="playground-server-proof" class="flex flex-col gap-2 rounded-radius border border-outline bg-surface-alt px-4 py-3 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark sm:flex-row sm:items-center sm:justify-between">
+					<span>
+						Table rows are lazy-loaded from Go through HTMX.
+					</span>
+					<code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">/api/components/table/rows</code>
+				</div>
 				@table.Table(table.Config{
 					ID:       "home-table",
 					HTMX:     &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
@@ -189,6 +203,24 @@ templ landingContent() {
 				})
 			</div>
 		</div>
+		<!-- How it works -->
+		<div id="how-it-works" class="mx-auto max-w-4xl">
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center">How it works</h2>
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
+				<div class="rounded-radius border border-outline bg-surface px-4 py-5 text-center dark:border-outline-dark dark:bg-surface-dark">
+					<div class="text-2xl font-bold text-primary dark:text-primary-dark mb-2">1</div>
+					<p class="text-sm text-on-surface dark:text-on-surface-dark">Write a typed <code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">.templ</code> component that compiles HTML to Go.</p>
+				</div>
+				<div class="rounded-radius border border-outline bg-surface px-4 py-5 text-center dark:border-outline-dark dark:bg-surface-dark">
+					<div class="text-2xl font-bold text-primary dark:text-primary-dark mb-2">2</div>
+					<p class="text-sm text-on-surface dark:text-on-surface-dark">Return rendered fragments from handlers and let HTMX swap plain HTML.</p>
+				</div>
+				<div class="rounded-radius border border-outline bg-surface px-4 py-5 text-center dark:border-outline-dark dark:bg-surface-dark">
+					<div class="text-2xl font-bold text-primary dark:text-primary-dark mb-2">3</div>
+					<p class="text-sm text-on-surface dark:text-on-surface-dark">Build one binary with bundled assets, no <code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">node_modules</code>, and no client routing.</p>
+				</div>
+			</div>
+		</div>
 		<!-- Example apps gallery -->
 		<div id="examples">
 			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 text-center">Built with Goshtoso</h2>
@@ -197,7 +229,7 @@ templ landingContent() {
 			</p>
 			{{ featured := getFeaturedExampleApp() }}
 			<div class="space-y-6">
-				<a href={ templ.SafeURL(featured.URL) } data-example-card data-featured-example-card class="group block rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark">
+				<a href={ templ.SafeURL(featured.URL) } data-example-card data-featured-example-card class="group block max-w-sm rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark sm:max-w-none">
 					@card.Card(card.Config{
 						Image:       featured.Image,
 						ImageAlt:    featured.ImageAlt,
@@ -206,7 +238,7 @@ templ landingContent() {
 						Description: featured.Desc,
 						Footer:      exampleCardAction(),
 						Layout:      card.LayoutHorizontal,
-						RootClass:   "max-w-none bg-surface transition-colors hover:border-primary dark:bg-surface-dark dark:hover:border-primary-dark [&>div:first-child]:h-40 md:[&>div:first-child]:h-auto",
+						RootClass:   "max-w-none bg-surface transition-colors hover:border-primary dark:bg-surface-dark dark:hover:border-primary-dark [&>div:first-child]:hidden sm:[&>div:first-child]:block sm:[&>div:first-child]:h-40 md:[&>div:first-child]:h-auto [&>div:last-child]:gap-2 [&>div:last-child]:p-4 sm:[&>div:last-child]:gap-4 sm:[&>div:last-child]:p-6",
 					})
 				</a>
 				<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -219,28 +251,10 @@ templ landingContent() {
 								Title:       a.Title,
 								Description: a.Desc,
 								Footer:      exampleCardAction(),
-								RootClass:   "h-full max-w-none bg-surface transition-colors hover:border-primary dark:bg-surface-dark dark:hover:border-primary-dark [&>div:first-child]:h-40 md:[&>div:first-child]:h-44",
+								RootClass:   "h-full max-w-none bg-surface transition-colors hover:border-primary dark:bg-surface-dark dark:hover:border-primary-dark [&>div:first-child]:hidden sm:[&>div:first-child]:block sm:[&>div:first-child]:h-40 md:[&>div:first-child]:h-44 [&>div:last-child]:gap-2 [&>div:last-child]:p-4 sm:[&>div:last-child]:gap-4 sm:[&>div:last-child]:p-6",
 							})
 						</a>
 					}
-				</div>
-			</div>
-		</div>
-		<!-- How it works -->
-		<div class="max-w-3xl mx-auto">
-			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center">How it works</h2>
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-				<div class="text-center">
-					<div class="text-2xl font-bold text-primary dark:text-primary-dark mb-2">1</div>
-					<p class="text-sm text-on-surface dark:text-on-surface-dark">Write a typed <code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">.templ</code> component that compiles HTML to Go.</p>
-				</div>
-				<div class="text-center">
-					<div class="text-2xl font-bold text-primary dark:text-primary-dark mb-2">2</div>
-					<p class="text-sm text-on-surface dark:text-on-surface-dark">Add an <code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">hx-get</code> and the server swaps a rendered fragment as plain HTML.</p>
-				</div>
-				<div class="text-center">
-					<div class="text-2xl font-bold text-primary dark:text-primary-dark mb-2">3</div>
-					<p class="text-sm text-on-surface dark:text-on-surface-dark">Build one binary with no bundler, no <code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">node_modules</code>, and no client routing.</p>
 				</div>
 			</div>
 		</div>
