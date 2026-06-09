@@ -1,11 +1,11 @@
-# Goshtoso Components - Usage Guide
+# Goshtoso Consumer Integration Guide
 
 This guide explains how to use Goshtoso components in Go web applications built
 with templ, Tailwind CSS, HTMX, and Alpine.js.
 
 ## Installation
 
-### 1. Add Dependency
+### 1. Add the dependency
 
 ```bash
 go get github.com/araihu/goshtoso@latest
@@ -155,7 +155,10 @@ so mount it regardless of which path you choose.
 
 ## Component Catalog
 
-All components are imported from `github.com/araihu/goshtoso/components/<name>`. Run the demo server (`go run ./site/cmd/server`) to see interactive examples.
+All components are imported from `github.com/araihu/goshtoso/components/<name>`.
+Run the demo server (`go run ./site/cmd/server`) or visit
+[goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
+variant previews, and API tables.
 
 | Component | Import | Description |
 |-----------|--------|-------------|
@@ -168,19 +171,29 @@ All components are imported from `github.com/araihu/goshtoso/components/<name>`.
 | `button` | `components/button` | Buttons with 8 variants, 4 sizes, HTMX and Alpine.js integration |
 | `card` | `components/card` | Content cards with image, rating, price, and multiple layouts |
 | `carousel` | `components/carousel` | Image carousel with autoplay, navigation, and HTMX lazy loading |
+| `chatbubble` | `components/chatbubble` | Chat/message bubbles with sender alignment and avatar support |
 | `checkbox` | `components/checkbox` | Checkboxes with 6 color variants, group layout, indeterminate state |
 | `codeblock` | `components/codeblock` | Code display block with copy button and max-height scrolling |
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
+| `drawer` | `components/drawer` | Slide-over drawers for navigation and contextual panels |
 | `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |
+| `fileinput` | `components/fileinput` | File input controls with labels, helper text, and validation states |
 | `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
 | `kbd` | `components/kbd` | Semantic keyboard shortcut and user input hints |
+| `link` | `components/link` | Styled link primitives with external-link and navigation affordances |
 | `modal` | `components/modal` | Dialogs with info/danger/warning variants, custom actions |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
-| `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
+| `palette` | `components/palette` | Color palette and swatch utilities for theme demos and pickers |
+| `radio` | `components/radio` | Radio inputs and groups with validation and variant styling |
+| `range` | `components/range` | Range sliders with labels, helper text, and icon slots |
+| `rating` | `components/rating` | Rating controls and display states |
 | `schemaform` | `components/schemaform` | Schema Form: generate form controls from JSON Schema, defaults, current values, and allow-list rules |
+| `search` | `components/search` | Search input and command-palette style result lists |
+| `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
 | `spinner` | `components/spinner` | Loading spinner with size and color variants |
+| `steps` | `components/steps` | Stepper/progress navigation for multi-step flows |
 | `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |
 | `table` | `components/table` | Data table with sorting, pagination, infinite scroll, filters, row links |
 | `tabs` | `components/tabs` | Tab navigation with badges, HTMX lazy content loading |
@@ -191,228 +204,41 @@ All components are imported from `github.com/araihu/goshtoso/components/<name>`.
 | `toggle` | `components/toggle` | Toggle switch with 6 color variants |
 | `tooltip` | `components/tooltip` | Hover tooltips with position options, rich content support |
 
-## Detailed Examples
+## Basic Component Pattern
 
-### Accordion
+Import the component package you need, pass its `Config`, and provide child
+content when the component accepts children:
 
-A collapsible accordion component with multiple variants.
-
-**Import:**
-```go
-import "github.com/araihu/goshtoso/components/accordion"
-```
-
-**Basic Usage:**
-```go
-@accordion.Accordion(accordion.AccordionConfig{
-    Items: []accordion.AccordionItem{
-        {
-            ID:      "section1",
-            Title:   "Section 1",
-            Content: templ.Raw("<p>This is the content for section 1.</p>"),
-        },
-        {
-            ID:      "section2", 
-            Title:   "Section 2",
-            Content: templ.Raw("<p>This is the content for section 2.</p>"),
-        },
-    },
-})
-```
-
-**Allow Multiple Open:**
-```go
-@accordion.Accordion(accordion.AccordionConfig{
-    AllowMultiple: true,
-    Items: []accordion.AccordionItem{
-        {ID: "item1", Title: "Item 1", Content: content1},
-        {ID: "item2", Title: "Item 2", Content: content2},
-    },
-})
-```
-
-**No Background Variant:**
-```go
-@accordion.Accordion(accordion.AccordionConfig{
-    Variant: accordion.NoBackground,
-    Items:   items,
-})
-```
-
-**With Icons:**
-```go
-@accordion.Accordion(accordion.AccordionConfig{
-    Items: []accordion.AccordionItem{
-        {
-            ID:      "settings",
-            Title:   "Settings",
-            Icon:    icons.SettingsIcon(), // Your icon component
-            Content: SettingsContent(),
-        },
-    },
-})
-```
-
-**Initially Expanded:**
-```go
-@accordion.Accordion(accordion.AccordionConfig{
-    Items: []accordion.AccordionItem{
-        {
-            ID:                "details",
-            Title:             "Details",
-            Content:           DetailsContent(),
-            InitiallyExpanded: true,
-        },
-    },
-})
-```
-
-**Disabled Item:**
-```go
-@accordion.Accordion(accordion.AccordionConfig{
-    Items: []accordion.AccordionItem{
-        {
-            ID:       "restricted",
-            Title:    "Restricted Section",
-            Content:  Content(),
-            Disabled: true,
-        },
-    },
-})
-```
-
-### Button
-
-A versatile button component with multiple variants.
-
-**Import:**
 ```go
 import "github.com/araihu/goshtoso/components/button"
-```
 
-**Basic Usage:**
-```go
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Type:    "button",
-}) {
-    Click Me
+templ Actions() {
+    @button.Button(button.Config{
+        Variant: button.Primary,
+        Type:    "submit",
+    }) {
+        Save changes
+    }
 }
 ```
 
-**With HTMX:**
-```go
-@button.Button(button.Config{
-    Variant: button.Primary,
-    HTMX: &button.HTMXConfig{
-        Post:   "/api/action",
-        Target: "#result",
-        Swap:   "innerHTML",
-    },
-}) {
-    Submit
-}
-```
+For component-specific fields, prefer the generated Go documentation and the
+demo site's API tables:
 
-**With Alpine.js:**
-```go
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Alpine: &button.AlpineConfig{
-        OnClick: "modalIsOpen = true",
-    },
-}) {
-    Open Modal
-}
-```
+- [Go package reference](https://pkg.go.dev/github.com/araihu/goshtoso)
+- [Live component docs](https://goshtoso.araihu.com/components/button)
 
-**All Variants:**
-- `button.Primary` - Black background, white text
-- `button.Secondary` - Dark gray, white text
-- `button.Alternate` - Light gray, dark text
-- `button.Inverse` - Inverted colors
-- `button.Info` - Sky blue, white text
-- `button.Danger` - Red, white text
-- `button.Warning` - Yellow/amber, dark text
-- `button.Success` - Green, dark text
-
-**Sizes:**
-```go
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Size:    button.SizeSmall,  // xs text
-})
-
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Size:    button.SizeMedium, // sm text (default)
-})
-
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Size:    button.SizeLarge,  // base text
-})
-
-@button.Button(button.Config{
-    Variant: button.Primary,
-    Size:    button.SizeXLarge, // lg text
-})
-```
-
-## Configuration Types
-
-### AccordionItem
-
-```go
-type AccordionItem struct {
-    ID                string          // Unique identifier
-    Title             string          // Header text
-    Content           templ.Component // Body content
-    Icon              templ.Component // Optional icon
-    Disabled          bool            // Disable interaction
-    InitiallyExpanded bool            // Start expanded
-}
-```
-
-### AccordionConfig
-
-```go
-type AccordionConfig struct {
-    Items         []AccordionItem  // Accordion sections
-    AllowMultiple bool             // Multiple open at once
-    Variant       Variant          // Visual style
-    ID            string           // Container ID
-    RootClass string           // Additional CSS classes
-}
-```
-
-### Button Config
-
-```go
-type Config struct {
-    Variant     Variant       // Button style
-    Size        Size          // Button size
-    Type        string        // HTML type attribute
-    Disabled    bool          // Disabled state
-    ID          string        // Element ID
-    RootClass string        // Additional classes
-    HTMX        *HTMXConfig   // HTMX attributes
-    Alpine      *AlpineConfig // Alpine.js directives
-    LoadingText string        // Loading state text
-}
-```
+Public config fields follow
+[`docs/COMPONENT_API_NAMING.md`](COMPONENT_API_NAMING.md). Shared extension
+points generally use target-specific names such as `RootClass`, `InputAttrs`,
+`HTMX`, and `Alpine`.
 
 ## Theming
 
 ### Available Themes
 
-Goshtoso supports all 13 PenguinUI themes:
-
-1. **Minimal** (default) - Black/white, no border radius
-2. **Arctic** - Cool blue tones
-3. **Modern** - Clean professional look
-4. **High-Contrast** - Maximum accessibility
-5. **And more...**
+Goshtoso ships 13 built-in themes. The default theme is `goshtoso`; the Minimal
+theme is useful for checking no-radius edge cases.
 
 ### Switching Themes
 
@@ -438,7 +264,7 @@ document.documentElement.classList.toggle('dark');
 
 ## Best Practices
 
-### 1. Content Components
+### 1. Prefer templ components for rich content
 
 Create separate templ components for accordion content to keep code clean:
 
@@ -464,17 +290,11 @@ templ SettingsContent() {
 })
 ```
 
-### 2. Icons
+### 2. Pass icons and custom slots as templ components
 
-Pass icons as templ.Components:
-
-```go
-func InfoIcon() templ.Component {
-    return templ.Raw(`<svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-    </svg>`)
-}
-```
+Many components accept icons, actions, details, or custom bodies as
+`templ.Component`. Keep those as normal templ functions when possible. Use
+`templ.Raw` only for trusted, static HTML or scripts you fully control.
 
 ### 3. HTMX Integration
 
@@ -509,15 +329,10 @@ func HandleNodePoolsUpdate(w http.ResponseWriter, r *http.Request) {
 
 ### 4. Testing
 
-Always test your component implementations:
-
-```go
-// In your project tests
-func TestAccordion_Integration(t *testing.T) {
-    // Use Goshtoso's visual testing utilities
-    // See Goshtoso tests for examples
-}
-```
+For application tests, render your own templ pages and assert on the generated
+HTML, then cover important browser behavior with Playwright or your preferred
+E2E tool. The Goshtoso repository's `components/*/*_test.go` and
+`site/tests/e2e/*_test.go` files are useful examples.
 
 ## Known Pitfalls
 
@@ -527,13 +342,13 @@ When using HTMX SPA navigation (`hx-get` + `hx-target="#main-content-area"` + `h
 
 **Recommended approaches (pick one per use case):**
 
-1. **`LinkMode: LinkBoost`** on table rows — swaps the full `<body>` via `hx-select="body"` + `hx-target="body"`. Back-button re-fetches from server, so Alpine re-initializes cleanly. No stale cache.
+1. **`LinkMode: LinkBoost`** on table rows - swaps the full `<body>` via `hx-select="body"` + `hx-target="body"`. Back-button re-fetches from server, so Alpine re-initializes cleanly. No stale cache.
 
-2. **`LinkMode: LinkFull`** on table rows — plain `window.location.href` navigation. Simplest, safest. Use when the target page has complex Alpine state.
+2. **`LinkMode: LinkFull`** on table rows - plain `window.location.href` navigation. Simplest, safest. Use when the target page has complex Alpine state.
 
-3. **`hx-history="false"`** on a container — tells HTMX not to cache this page. Back-button will fetch from server. Useful when you can't control the navigation source.
+3. **`hx-history="false"`** on a container - tells HTMX not to cache this page. Back-button will fetch from server. Useful when you can't control the navigation source.
 
-4. **Alpine re-init on history restore** — listen for `htmx:historyRestore` and call `Alpine.initTree(document.body)`. Works in theory but is fragile: HTMX strips `<script>` tags from cached HTML, so Alpine data registrations may be missing.
+4. **Alpine re-init on history restore** - listen for `htmx:historyRestore` and call `Alpine.initTree(document.body)`. Works in theory but is fragile: HTMX strips `<script>` tags from cached HTML, so Alpine data registrations may be missing.
 
 ```go
 // Example: table rows with boost mode (recommended for lists → detail navigation)
@@ -584,25 +399,34 @@ If you're building custom infinite scroll outside the table component, use this 
 
 ### Component not styled correctly?
 
-1. Check that Tailwind CSS is processing the component files
-2. Verify `all-themes.css` is imported
-3. Ensure the `data-theme` attribute is set on `<html>`
+1. Confirm `/assets/styles.css` is being served by `assets.Handler()`.
+2. Confirm `@head.Dependencies()` or an equivalent `<link>` tag is present.
+3. If you run a custom Tailwind build, match the version in `VERSIONS.md` and
+   include Goshtoso's theme source and component `@source` path.
+4. Ensure the `data-theme` attribute is set on `<html>`.
 
 ### Alpine.js not working?
 
-1. Verify Alpine.js is loaded before components render
-2. Check browser console for Alpine.js errors
-3. For collapse animations, ensure `@alpinejs/collapse` is loaded
+1. Prefer `@head.Dependencies()` so Alpine core and plugins are loaded in the
+   supported order.
+2. Check browser console for Alpine errors.
+3. Avoid embedding marshaled JSON directly in Alpine attributes; templ escapes
+   quotes and Alpine can fail silently. Register complex behavior with
+   `Alpine.data()` instead.
+4. For collapse animations, ensure the collapse plugin is loaded before Alpine
+   core.
 
 ### Dark mode not working?
 
-1. Add `dark` class to `<html>` element
-2. Verify CSS custom properties are defined in `all-themes.css`
-3. Check that `dark:` prefixes are in component classes
+1. Add the `dark` class to `<html>`.
+2. Verify Goshtoso's CSS is loaded before app-specific overrides.
+3. Check that theme state is applied before first paint if your app persists
+   theme preferences.
 
-## Examples
+## Examples and References
 
-See the `/components` directory in the Goshtoso repository for complete examples of each component with visual parity tests.
+See the `/components` directory for component implementations and the demo site
+for complete examples of each component.
 
 Run the demo server:
 
@@ -613,17 +437,18 @@ go run ./site/cmd/server -port 8090
 
 Then visit:
 - http://localhost:8090/components/accordion
+- http://localhost:8090/components/table
+- http://localhost:8090/examples/todo
+
+The public documentation site is available at
+[https://goshtoso.araihu.com/](https://goshtoso.araihu.com/).
 
 ## Contributing
 
-To add new components:
-
-1. Create component in `components/<name>/`
-2. Copy original HTML to `fixtures/`
-3. Create demo page in `site/internal/pages/demo/components/`
-4. Write E2E tests with visual parity checks
-5. Document in this guide
+For contribution workflow, generated-file rules, and local quality gates, see
+[`CONTRIBUTING.md`](../CONTRIBUTING.md). For release expectations, see
+[`docs/RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
 
 ## License
 
-MIT License (same as PenguinUI)
+MIT. See [`LICENSE`](../LICENSE).

@@ -1,0 +1,10 @@
+max_retries = 2
+timeout = 20
+
+accept = [200, 204, 206, 429]
+
+exclude = [
+  '^http://localhost(:[0-9]+)?/',
+  '^https://localhost(:[0-9]+)?/',
+  '^http://127\\.0\\.0\\.1(:[0-9]+)?/',
+]
