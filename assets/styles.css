@@ -5069,6 +5069,11 @@
       left: auto;
     }
   }
+  .sm\:mx-0 {
+    @media (width >= 40rem) {
+      margin-inline: calc(var(--spacing) * 0);
+    }
+  }
   .sm\:ml-auto {
     @media (width >= 40rem) {
       margin-left: auto;

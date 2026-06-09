@@ -202,6 +202,29 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.Less(t, widthRatio, 1.05, "featured example should not stay wider than supporting cards on mobile")
 	})
 
+	t.Run("SmallScreensCenterExampleCards", func(t *testing.T) {
+		small := newPage(t, browser, playwright.BrowserNewPageOptions{
+			Viewport: &playwright.Size{Width: 576, Height: 779},
+		})
+		_, err := small.Goto(baseURL+"/", playwright.PageGotoOptions{
+			WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+		})
+		require.NoError(t, err)
+
+		examplesBox, err := small.Locator("#examples").BoundingBox()
+		require.NoError(t, err)
+		featuredBox, err := small.Locator("#examples a[data-featured-example-card] article").BoundingBox()
+		require.NoError(t, err)
+		supportingBox, err := small.Locator("#examples a[data-supporting-example-card] article").First().BoundingBox()
+		require.NoError(t, err)
+
+		examplesCenter := examplesBox.X + examplesBox.Width/2
+		featuredCenter := featuredBox.X + featuredBox.Width/2
+		supportingCenter := supportingBox.X + supportingBox.Width/2
+		require.InDelta(t, examplesCenter, featuredCenter, 2.0, "featured example should be horizontally centered on small screens")
+		require.InDelta(t, examplesCenter, supportingCenter, 2.0, "supporting examples should be horizontally centered on small screens")
+	})
+
 	t.Run("StackStripCondensed", func(t *testing.T) {
 		strip := page.Locator("#stack-strip")
 		visible, err := strip.IsVisible()
