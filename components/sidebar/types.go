@@ -112,6 +112,8 @@ type Section struct {
 	// Collapsible renders direct child groups behind independent disclosure controls.
 	// Each group starts closed unless the parent Item sets Open.
 	Collapsible bool
+	// IndentItems offsets the section item group from the title.
+	IndentItems bool
 }
 
 // ContainerClasses returns the container CSS classes
@@ -249,6 +251,13 @@ func sidebarChildrenID(item Item) string {
 		return item.ID + "-children"
 	}
 	return "sidebar-children"
+}
+
+func sidebarSectionItemsClasses(section Section) string {
+	if section.IndentItems {
+		return "ml-4 flex flex-col"
+	}
+	return "flex flex-col"
 }
 
 func safeJSIdentifier(raw, fallback string) string {

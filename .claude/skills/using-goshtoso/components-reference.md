@@ -1326,6 +1326,7 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `Title` | `string` | Title is the section header |
 | `Items` | `[]Item` | Items are the navigation items in this section |
 | `Collapsible` | `bool` | Collapsible renders direct child groups behind independent disclosure controls. |
+| `IndentItems` | `bool` | IndentItems offsets the section item group from the title. |
 
 ## spinner
 

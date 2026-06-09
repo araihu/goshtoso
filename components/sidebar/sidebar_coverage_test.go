@@ -281,6 +281,26 @@ func TestSectionItemsWithPersistentChildrenRenderParentWithoutRail(t *testing.T)
 	}
 }
 
+func TestSectionItemsCanBeIndentedFromSectionTitle(t *testing.T) {
+	html := renderSidebar(t, Config{
+		Sections: []Section{
+			{
+				Title:       "Schemas",
+				IndentItems: true,
+				Items: []Item{
+					{ID: "schema-pet", Label: "Pet", Href: "#schema-pet"},
+				},
+			},
+		},
+	})
+
+	assertContainsAll(t, html,
+		`<div data-sidebar-section="Schemas">`,
+		`<div class="ml-4 flex flex-col">`,
+		`<a href="#schema-pet" title="Pet" class="flex items-center gap-2 border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface transition duration-200 hover:border-l-2 hover:border-outline-strong hover:text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong">`,
+	)
+}
+
 func TestSectionItemsWithChildrenCanCollapse(t *testing.T) {
 	html := renderSidebar(t, Config{
 		Sections: []Section{
