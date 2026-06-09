@@ -45,7 +45,8 @@ Generated artifacts are checked in but **must never be hand-edited**
 templ generate
 
 # after editing CSS / introducing a new Tailwind utility class
-tailwindcss -i css/main.css -o assets/styles.css
+# fetches the pinned Tailwind binary and regenerates theme + component CSS
+just css
 
 go build -o bin/server ./site/cmd/server
 ```
@@ -79,6 +80,7 @@ Run the full gate locally — CI enforces all of it:
 
 ```bash
 templ generate
+just css                                             # if CSS/theme output changed
 golangci-lint run                                   # cyclomatic ceiling: 20
 go fix ./...                                         # also runs via pre-commit hook
 go build -o bin/server ./site/cmd/server
