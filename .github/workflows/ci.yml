@@ -236,16 +236,25 @@ jobs:
           if-no-files-found: ignore
 
   deploy:
-    name: Deploy to Fly.io
+    name: Trigger Fly deploy
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [lint-build, test]
     runs-on: araihu
     concurrency: deploy-group
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Dispatch central deployment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.FLY_DEPLOY_DISPATCH_TOKEN }}
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner: 'araihu',
+              repo: 'fly-deploy',
+              event_type: 'goshtoso-main',
+              client_payload: {
+                goshtoso_ref: context.sha,
+                goshtoso_sha: context.sha,
+                goshtoso_run_id: String(context.runId),
+                source_repository: `${context.repo.owner}/${context.repo.repo}`,
+              },
+            })

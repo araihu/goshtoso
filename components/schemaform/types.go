@@ -1,4 +1,4 @@
-package schemafield
+package schemaform
 
 import (
 	"fmt"
@@ -32,7 +32,7 @@ const (
 	AllowModeDisabled AllowMode = "disabled"
 )
 
-// Field describes one renderable input derived from a JSON Schema node + defaults.
+// Field describes one renderable form control derived from a JSON Schema node + defaults.
 type Field struct {
 	// Path is a dotted JSONPath from the root of the values object (e.g. "auth.password").
 	Path string
@@ -299,7 +299,7 @@ func normalizeField(f Field) Field {
 // AllowModeDisabled stripped out. Empty parent maps that remain after pruning
 // are removed as well so the serialized YAML doesn't carry orphan keys.
 // Used to seed the "raw YAML" tab of the drawer install flow with the same
-// subset the schema-field tab actually exposes.
+// subset the schema form actually exposes.
 func PruneDisabled(values map[string]any, allowList map[string]AllowMode) map[string]any {
 	if len(values) == 0 {
 		return map[string]any{}

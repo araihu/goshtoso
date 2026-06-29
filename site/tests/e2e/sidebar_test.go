@@ -62,7 +62,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		{"/components/rating", "Rating"},
 		{"/components/search", "Search"},
 		{"/components/select", "Select"},
-		{"/components/schema-field", "Schema Field"},
+		{"/components/schema-form", "Schema Form"},
 		{"/components/sidebar", "Sidebar"},
 		{"/components/spinner", "Spinner"},
 		{"/components/steps", "Steps"},
@@ -223,7 +223,7 @@ func TestSidebarComponentDemoVariants(t *testing.T) {
 		Timeout: playwright.Float(3000),
 	}))
 
-	require.NoError(t, overlay.Locator("button[aria-label='Close sidebar']").Click())
+	require.NoError(t, overlay.Locator("div[aria-hidden='true']").Click())
 	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
 		State:   playwright.WaitForSelectorStateHidden,
 		Timeout: playwright.Float(3000),

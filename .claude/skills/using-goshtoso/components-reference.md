@@ -1136,10 +1136,10 @@ import "github.com/araihu/goshtoso/components/rating"  // package rating
 | `Label` | `string` |  |
 | `Icon` | `string` |  |
 
-## schemafield
+## schemaform
 
 ```go
-import "github.com/araihu/goshtoso/components/schemafield"  // package schemafield
+import "github.com/araihu/goshtoso/components/schemaform"  // package schemaform
 ```
 
 **Entry points:** `Fields(cfg FieldsConfig)`
@@ -1169,7 +1169,7 @@ import "github.com/araihu/goshtoso/components/schemafield"  // package schemafie
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Fields` | `[]Field` | Fields is the list produced by Walk / FallbackFromDefaults. |
+| `Fields` | `[]Field` | Fields is the ordered form control list produced by Walk / FallbackFromDefaults. |
 | `NamePrefix` | `string` | NamePrefix prefixes every input name (so the server sees `values.<path>`). |
 
 ## search
@@ -1191,6 +1191,7 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `GlobalShortcut` | `bool` | GlobalShortcut enables Cmd/Ctrl+K window handling for this instance. |
 | `EscapeText` | `string` | EscapeText is rendered in the dialog close KBD hint. Defaults to "Esc". |
 | `Items` | `[]Item` | Items are the caller-provided result records. |
+| `ItemsURL` | `string` | ItemsURL is an optional JSON endpoint for client-side result records. |
 | `MaxResults` | `int` | MaxResults limits the visible matches. Defaults to 4. |
 | `DescriptionMaxLength` | `int` | DescriptionMaxLength truncates result descriptions. Defaults to 120. |
 | `EmptyText` | `string` | EmptyText appears when no result matches the query. |
@@ -1207,6 +1208,9 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `Title` | `string` | Title is the primary result text. |
 | `Description` | `string` | Description is optional supporting text. |
 | `Href` | `string` | Href turns the result into a link. |
+| `Kind` | `string` | Kind is optional type metadata for the result. |
+| `Method` | `string` | Method is optional method metadata, commonly an HTTP verb. |
+| `Path` | `string` | Path is optional route or resource path metadata. |
 | `Section` | `string` | Section is optional grouping or eyebrow text. |
 | `Keywords` | `[]string` | Keywords are extra terms included in client-side filtering. |
 | `Attrs` | `templ.Attributes` | Attrs are extra attributes spread onto the result button. |
@@ -1264,7 +1268,7 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 ```
 
-**Entry points:** `Sidebar(cfg Config)`
+**Entry points:** `Overlay(cfg OverlayConfig)` · `Sidebar(cfg Config)`
 
 **Config**
 
@@ -1293,8 +1297,30 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `Active` | `bool` | Active indicates if this item is currently active |
 | `Disabled` | `bool` | Disabled prevents interaction |
 | `Badge` | `string` | Badge is an optional badge text (e.g., "New", "Soon") |
+| `BadgeClass` | `string` | BadgeClass overrides the default badge styling. |
 | `Items` | `[]Item` | Items contains child items for nested navigation |
+| `Collapsible` | `bool` | Collapsible renders child items behind a disclosure control. |
+| `Open` | `bool` | Open controls the initial disclosure state for collapsible child items. |
+| `Title` | `string` | Title overrides the generated browser tooltip text for sidebar links. |
+| `DisableAutoTitle` | `bool` | DisableAutoTitle prevents the sidebar from adding a title attribute from Label. |
+| `AriaLabel` | `string` | AriaLabel optionally overrides the accessible name on sidebar links. |
 | `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes spread onto the <a> element. |
+
+**OverlayConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID identifies the overlay panel and derives the Alpine open state. |
+| `Sidebar` | `Config` | Sidebar is the sidebar configuration rendered inside the overlay panel. |
+| `Trigger` | `templ.Component` | Trigger replaces the default menu icon inside the trigger button. |
+| `TriggerLabel` | `string` | TriggerLabel is the accessible label for the trigger button. |
+| `RootClass` | `string` | RootClass allows additional CSS classes on the overlay root. |
+| `TriggerClass` | `string` | TriggerClass allows additional CSS classes on the trigger button. |
+| `BackdropPositionClass` | `string` | BackdropPositionClass controls backdrop positioning. |
+| `BackdropClass` | `string` | BackdropClass allows additional CSS classes on the backdrop. |
+| `PanelPositionClass` | `string` | PanelPositionClass controls panel positioning. |
+| `PanelWidthClass` | `string` | PanelWidthClass controls the panel width. |
+| `PanelClass` | `string` | PanelClass allows additional CSS classes on the off-canvas panel wrapper. |
 
 **Section**
 
@@ -1302,7 +1328,8 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 |-------|------|-------------|
 | `Title` | `string` | Title is the section header |
 | `Items` | `[]Item` | Items are the navigation items in this section |
-| `Collapsible` | `bool` | Collapsible enables collapse/expand with Alpine.js |
+| `Collapsible` | `bool` | Collapsible renders direct child groups behind independent disclosure controls. |
+| `IndentItems` | `bool` | IndentItems offsets the section item group from the title. |
 
 ## spinner
 
@@ -1571,6 +1598,7 @@ import "github.com/araihu/goshtoso/components/tabs"  // package tabs
 |-------|------|-------------|
 | `ID` | `string` | ID is the unique identifier for the tab (used in Alpine.js state) |
 | `Label` | `string` | Label is the display text for the tab button |
+| `LabelSlot` | `templ.Component` | LabelSlot optionally replaces the visible label while Label remains accessible text. |
 | `Icon` | `templ.Component` | Icon is an optional icon component rendered before the label |
 | `Badge` | `string` | Badge is an optional badge text (e.g., count) shown after the label |
 | `Content` | `templ.Component` | Content is the tab panel content (used for static/inline content) |

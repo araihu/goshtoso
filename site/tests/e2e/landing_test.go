@@ -8,7 +8,7 @@ import (
 )
 
 // TestLanding_HeroAndStructure loads the homepage ("/") and asserts the
-// redesigned hero — headline + primary CTA — is present. The page is a
+// redesigned hero — brand heading + primary CTA — is present. The page is a
 // standalone document (not the demo shell).
 func TestLanding_HeroAndStructure(t *testing.T) {
 	if testing.Short() {
@@ -29,7 +29,10 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		h1 := page.Locator("#hero h1")
 		txt, err := h1.InnerText()
 		require.NoError(t, err)
-		require.Contains(t, txt, "Build interactive UIs in Go")
+		require.Equal(t, "Goshtoso", txt)
+		body, err := page.Locator("body").InnerText()
+		require.NoError(t, err)
+		require.NotContains(t, body, "Build interactive UIs in Go")
 	})
 
 	t.Run("BrowseComponentsCTA", func(t *testing.T) {
@@ -39,10 +42,20 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.True(t, visible, "Browse components CTA should be visible")
 	})
 
-	t.Run("HeroUsesOptimizedArtwork", func(t *testing.T) {
-		src, err := page.Locator("#hero img").GetAttribute("src")
+	t.Run("HeroUsesRioWaveLockup", func(t *testing.T) {
+		lockup := page.Locator("#hero [data-brand-lockup]")
+		visible, err := lockup.IsVisible()
 		require.NoError(t, err)
-		require.Contains(t, src, "goshtoso-art-home.webp", "homepage should use the optimized hero artwork")
+		require.True(t, visible, "homepage should render the Rio wave brand lockup")
+
+		src, err := lockup.Locator("img").GetAttribute("src")
+		require.NoError(t, err)
+		require.Contains(t, src, "goshtoso-icon.svg", "homepage should use the Rio wave icon asset")
+
+		txt, err := lockup.InnerText()
+		require.NoError(t, err)
+		require.Contains(t, txt, "Goshtoso")
+		require.Contains(t, txt, "Go UI components for server-rendered apps")
 	})
 
 	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {
@@ -78,6 +91,18 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)},
 		)
 		require.NoError(t, err, "live HTMX table should populate rows")
+	})
+
+	t.Run("PlaygroundExplainsServerRenderedLoop", func(t *testing.T) {
+		proof := page.Locator("#playground-server-proof")
+		visible, err := proof.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "live playground should explain the HTMX endpoint behind the table")
+
+		text, err := proof.InnerText()
+		require.NoError(t, err)
+		require.Contains(t, text, "/api/components/table/rows")
+		require.Contains(t, text, "lazy-loaded from Go")
 	})
 
 	t.Run("ExampleGalleryLinks", func(t *testing.T) {
@@ -142,6 +167,62 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 
 		require.Greater(t, featuredBox.Width, supportingBox.Width*2, "featured example should read as a compact lead strip above the grid")
 		require.Less(t, featuredBox.Height, supportingBox.Height*0.9, "featured example should not become a massive billboard card")
+	})
+
+	t.Run("MobileKeepsHowItWorksBeforeSupportingGallery", func(t *testing.T) {
+		mobile := newPage(t, browser, playwright.BrowserNewPageOptions{
+			Viewport: &playwright.Size{Width: 390, Height: 844},
+		})
+		_, err := mobile.Goto(baseURL+"/", playwright.PageGotoOptions{
+			WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+		})
+		require.NoError(t, err)
+
+		how := mobile.Locator("#how-it-works")
+		count, err := how.Count()
+		require.NoError(t, err)
+		require.Equal(t, 1, count, "homepage should expose a targetable How it works section")
+
+		howBox, err := how.BoundingBox()
+		require.NoError(t, err)
+		supporting := mobile.Locator("#examples a[data-supporting-example-card]").First()
+		supportingBox, err := supporting.BoundingBox()
+		require.NoError(t, err)
+		require.Less(t, howBox.Y, supportingBox.Y, "mobile should teach the mental model before the long supporting gallery")
+
+		featuredArticleBox, err := mobile.Locator("#examples a[data-featured-example-card] article").BoundingBox()
+		require.NoError(t, err)
+		supportingArticleBox, err := supporting.Locator("article").BoundingBox()
+		require.NoError(t, err)
+		heightRatio := featuredArticleBox.Height / supportingArticleBox.Height
+		require.Greater(t, heightRatio, 0.8, "featured example should use regular card height on mobile")
+		require.Less(t, heightRatio, 1.25, "featured example should not become a billboard card on mobile")
+		widthRatio := featuredArticleBox.Width / supportingArticleBox.Width
+		require.Greater(t, widthRatio, 0.95, "featured example should use regular card width on mobile")
+		require.Less(t, widthRatio, 1.05, "featured example should not stay wider than supporting cards on mobile")
+	})
+
+	t.Run("SmallScreensCenterExampleCards", func(t *testing.T) {
+		small := newPage(t, browser, playwright.BrowserNewPageOptions{
+			Viewport: &playwright.Size{Width: 576, Height: 779},
+		})
+		_, err := small.Goto(baseURL+"/", playwright.PageGotoOptions{
+			WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+		})
+		require.NoError(t, err)
+
+		examplesBox, err := small.Locator("#examples").BoundingBox()
+		require.NoError(t, err)
+		featuredBox, err := small.Locator("#examples a[data-featured-example-card] article").BoundingBox()
+		require.NoError(t, err)
+		supportingBox, err := small.Locator("#examples a[data-supporting-example-card] article").First().BoundingBox()
+		require.NoError(t, err)
+
+		examplesCenter := examplesBox.X + examplesBox.Width/2
+		featuredCenter := featuredBox.X + featuredBox.Width/2
+		supportingCenter := supportingBox.X + supportingBox.Width/2
+		require.InDelta(t, examplesCenter, featuredCenter, 2.0, "featured example should be horizontally centered on small screens")
+		require.InDelta(t, examplesCenter, supportingCenter, 2.0, "supporting examples should be horizontally centered on small screens")
 	})
 
 	t.Run("StackStripCondensed", func(t *testing.T) {

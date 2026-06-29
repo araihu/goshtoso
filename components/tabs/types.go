@@ -13,6 +13,8 @@ type Tab struct {
 	ID string
 	// Label is the display text for the tab button
 	Label string
+	// LabelSlot optionally replaces the visible label while Label remains accessible text.
+	LabelSlot templ.Component
 	// Icon is an optional icon component rendered before the label
 	Icon templ.Component
 	// Badge is an optional badge text (e.g., count) shown after the label

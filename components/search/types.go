@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
+
+	"github.com/araihu/goshtoso/components/badge"
 )
 
 // Item describes one search result rendered by Search.
@@ -17,6 +19,12 @@ type Item struct {
 	Description string
 	// Href turns the result into a link.
 	Href string
+	// Kind is optional type metadata for the result.
+	Kind string
+	// Method is optional method metadata, commonly an HTTP verb.
+	Method string
+	// Path is optional route or resource path metadata.
+	Path string
 	// Section is optional grouping or eyebrow text.
 	Section string
 	// Keywords are extra terms included in client-side filtering.
@@ -48,6 +56,10 @@ type Config struct {
 	EscapeText string
 	// Items are the caller-provided result records.
 	Items []Item
+	// ItemsURL is an optional JSON endpoint for client-side result records.
+	// When set, results are fetched and rendered in the browser instead of
+	// pre-rendering every Item as a hidden DOM node.
+	ItemsURL string
 	// MaxResults limits the visible matches. Defaults to 4.
 	MaxResults int
 	// DescriptionMaxLength truncates result descriptions. Defaults to 120.
@@ -157,9 +169,25 @@ func (cfg Config) DialogClasses() string {
 
 // SearchText returns the normalized client-side search corpus for an item.
 func (item Item) SearchText() string {
-	parts := []string{item.Title, item.Description, item.Section}
+	parts := []string{item.Title, item.Description, item.Kind, item.NormalizedMethod(), item.Path, item.Section}
 	parts = append(parts, item.Keywords...)
-	return strings.TrimSpace(strings.Join(parts, " "))
+	return strings.Join(nonEmptySearchTextParts(parts), " ")
+}
+
+// NormalizedMethod returns a display-ready method label.
+func (item Item) NormalizedMethod() string {
+	return strings.ToUpper(strings.TrimSpace(item.Method))
+}
+
+func nonEmptySearchTextParts(parts []string) []string {
+	values := make([]string, 0, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part != "" {
+			values = append(values, part)
+		}
+	}
+	return values
 }
 
 // SafeHref returns a navigation target only for schemes that cannot execute
@@ -178,5 +206,20 @@ func (item Item) SafeHref() string {
 		return href
 	default:
 		return ""
+	}
+}
+
+func methodBadgeVariant(method string) badge.Variant {
+	switch strings.ToUpper(strings.TrimSpace(method)) {
+	case "GET":
+		return badge.Primary
+	case "POST":
+		return badge.Success
+	case "PUT", "PATCH":
+		return badge.Warning
+	case "DELETE":
+		return badge.Danger
+	default:
+		return badge.Default
 	}
 }

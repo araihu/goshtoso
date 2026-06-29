@@ -55,6 +55,52 @@ func TestSearch_PageLoadsAndFilters(t *testing.T) {
 	assert.NoError(t, page.Locator("#component-search-dialog p", playwright.PageLocatorOptions{HasText: "No results found."}).WaitFor())
 }
 
+func TestSearch_ItemsURLFetchesAndFilters(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	trigger := page.Locator("#remote-search button[aria-haspopup='dialog']")
+	require.NoError(t, trigger.Click())
+
+	input := page.Locator("#remote-search-input")
+	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	require.NoError(t, input.Fill("fetched"))
+	require.NoError(t, page.Locator("#search-remote-table:visible").WaitFor())
+
+	visible, err := page.Locator("#remote-search-dialog [data-search-result]:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 1, visible)
+
+	require.NoError(t, input.Fill("teams"))
+	result := page.Locator("#search-remote-list-teams:visible")
+	require.NoError(t, result.WaitFor())
+	assert.NoError(t, result.Locator("text=GET").WaitFor())
+	assert.NoError(t, result.Locator("text=/teams").WaitFor())
+	method, err := result.GetAttribute("data-search-method")
+	require.NoError(t, err)
+	assert.Equal(t, "GET", method)
+	path, err := result.GetAttribute("data-search-path")
+	require.NoError(t, err)
+	assert.Equal(t, "/teams", path)
+}
+
 func TestSidebarSearch_UsesKbdAndNavigates(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")

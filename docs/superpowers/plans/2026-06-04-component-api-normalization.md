@@ -60,7 +60,7 @@ Apply these known renames. Do not add deprecated aliases.
 
 - `checkbox.Config.Description` -> `HelperText`.
 - `radio.Config.Description` -> `HelperText`.
-- `schemafield.Field.Description` -> `HelperText` only if the field is rendered as form helper copy.
+- `schemaform.Field.Description` -> `HelperText` only if the field is rendered as form helper copy.
 - `textinput.Config.Attrs` -> `InputAttrs`.
 - `textarea.Config.Attrs` -> `InputAttrs`.
 - `select.Config.Attrs` -> `InputAttrs`.
@@ -483,7 +483,7 @@ Expected: commit succeeds.
 **Files:**
 - Modify: `components/checkbox/types.go`
 - Modify: `components/radio/types.go`
-- Modify: `components/schemafield/types.go`
+- Modify: `components/schemaform/types.go`
 - Modify: `components/textinput/types.go`
 - Modify: `components/textarea/types.go`
 - Modify: `components/select/types.go`
@@ -546,9 +546,9 @@ HelperTextID string
 
 Update templates to render `cfg.HelperText` and use `cfg.HelperTextID` for `aria-describedby`.
 
-- [ ] **Step 4: Evaluate schemafield helper copy**
+- [ ] **Step 4: Evaluate schemaform helper copy**
 
-In `components/schemafield/types.go`, inspect where `Field.Description` renders. If it is helper copy under a form field, rename it to:
+In `components/schemaform/types.go`, inspect where `Field.Description` renders. If it is helper copy under a form field, rename it to:
 
 ```go
 HelperText string
@@ -570,7 +570,7 @@ If `WithDescription` exists, remove it as part of the breaking change and update
 Run:
 
 ```bash
-go test ./components/checkbox ./components/radio ./components/schemafield -count=1
+go test ./components/checkbox ./components/radio ./components/schemaform -count=1
 ```
 
 Expected: PASS.

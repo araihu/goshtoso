@@ -18,7 +18,7 @@
 ## Checklist
 
 - [ ] Ran `templ generate` after editing `.templ` files
-- [ ] Rebuilt Tailwind (`tailwindcss -i css/main.css -o assets/styles.css`) if CSS changed
+- [ ] Rebuilt theme/component CSS with `just css` if CSS or Tailwind utilities changed
 - [ ] `golangci-lint run` is clean (cyclomatic-complexity ceiling 20)
 - [ ] `go fix ./...` applied (pre-commit hook enabled via `git config core.hooksPath .githooks`)
 - [ ] Unit + E2E tests pass (`go test ./... -count=1` and `go test ./site/tests/e2e/... -count=1 -timeout 15m`)

@@ -379,14 +379,17 @@ func TestThemePage_CSSExport_FilterAndMode(t *testing.T) {
 	page := newPage(t, browser)
 	gotoThemePage(t, page)
 
-	// Default state: single mode + active theme = minimal single block visible.
-	require.NoError(t, page.Locator("#theme-css-single-minimal").WaitFor(playwright.LocatorWaitForOptions{
+	output := page.Locator("#theme-css-output code")
+
+	// Default state: single mode + active theme = minimal single block rendered.
+	require.NoError(t, output.WaitFor(playwright.LocatorWaitForOptions{
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(1500),
 	}))
-	hidden, err := page.Locator("#theme-css-multi-all").IsHidden()
+	text, err := output.TextContent()
 	require.NoError(t, err)
-	assert.True(t, hidden)
+	assert.Contains(t, text, "[data-theme=minimal]")
+	assert.NotContains(t, text, "@layer base")
 
 	// Switch to All Themes + Multiple. cssFilter is the Goshtoso Select
 	// component (custom dropdown), so open the trigger and click the option.
@@ -396,13 +399,11 @@ func TestThemePage_CSSExport_FilterAndMode(t *testing.T) {
 	}).Click())
 	require.NoError(t, page.Locator("button:has-text('Multiple Themes')").First().Click())
 
-	require.NoError(t, page.Locator("#theme-css-multi-all").WaitFor(playwright.LocatorWaitForOptions{
-		State:   playwright.WaitForSelectorStateVisible,
-		Timeout: playwright.Float(1500),
-	}))
-	hidden, err = page.Locator("#theme-css-single-minimal").IsHidden()
+	_, err = page.WaitForFunction(`() => {
+		const code = document.querySelector('#theme-css-output code');
+		return code && code.textContent.includes('@layer base') && code.textContent.includes('[data-theme=dracula]');
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
 	require.NoError(t, err)
-	assert.True(t, hidden, "single-minimal block should be hidden after switching to multi/all")
 
 	// Switch back to a specific theme in single mode.
 	require.NoError(t, page.Locator("button:has-text('Single Theme')").First().Click())
@@ -410,10 +411,11 @@ func TestThemePage_CSSExport_FilterAndMode(t *testing.T) {
 	require.NoError(t, page.GetByRole("option", playwright.PageGetByRoleOptions{
 		Name: "Arctic", Exact: new(true),
 	}).Click())
-	require.NoError(t, page.Locator("#theme-css-single-arctic").WaitFor(playwright.LocatorWaitForOptions{
-		State:   playwright.WaitForSelectorStateVisible,
-		Timeout: playwright.Float(1500),
-	}))
+	_, err = page.WaitForFunction(`() => {
+		const code = document.querySelector('#theme-css-output code');
+		return code && code.textContent.includes('[data-theme=arctic]') && !code.textContent.includes('@layer base');
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
+	require.NoError(t, err)
 }
 
 func TestThemePage_Showcase_UpdateBanner_Dismiss(t *testing.T) {

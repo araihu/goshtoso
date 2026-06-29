@@ -9,7 +9,7 @@
   <a href="https://github.com/araihu/goshtoso/actions/workflows/ci.yml"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/guilycst/fb3843c3a13793eb6cc0af638bc00ad4/raw/coverage.json" alt="Coverage" /></a>
   <a href="https://pkg.go.dev/github.com/araihu/goshtoso"><img src="https://pkg.go.dev/badge/github.com/araihu/goshtoso.svg" alt="Go Reference" /></a>
   <a href="https://goreportcard.com/report/github.com/araihu/goshtoso"><img src="https://goreportcard.com/badge/github.com/araihu/goshtoso" alt="Go Report Card" /></a>
-  <a href="https://github.com/araihu/goshtoso/releases/tag/v0.0.4"><img src="https://img.shields.io/badge/release-v0.0.4-blue.svg" alt="Release: v0.0.4" /></a>
+  <a href="https://github.com/araihu/goshtoso/releases/latest"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/guilycst/fb3843c3a13793eb6cc0af638bc00ad4/raw/release.json" alt="Latest release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
 </p>
 
@@ -24,10 +24,11 @@ copy-paste snippets.
 
 > Goshtoso is actively evolving. The components are usable, but the API surface
 > is still being refined as the library moves toward a stable public release.
+> See [ROADMAP.md](ROADMAP.md) for the alpha stability policy and release path.
 
 ## Highlights
 
-- **37 templ components** for common app UI: forms, navigation, overlays, data
+- **42 templ components** for common app UI: forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
   instant local interaction makes sense.
@@ -118,8 +119,9 @@ Current components:
 accordion        alert       avatar       badge        banner       breadcrumbs
 button           card        carousel     chatbubble   checkbox     codeblock
 combobox         drawer      dropdown     fileinput    form         head
-modal            navbar      pagination   palette      radio        schemafield
-select           sidebar     spinner      steps        structuredinput
+kbd              link        modal        navbar       pagination   palette
+radio            range       rating       schemaform   search       select
+sidebar          spinner     steps        structuredinput
 table            tabs        tagslist     textarea     textinput    toast
 toggle           tooltip
 ```
@@ -161,6 +163,8 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=css/goshtoso-base.css
 ```
 
 See [docs/USAGE.md](docs/USAGE.md) for the full asset strategy.
+Release maintainers should also use
+[docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) before tagging.
 
 ## Repository Layout
 

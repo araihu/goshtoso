@@ -1,0 +1,4 @@
+interface:
+  display_name: "Using Goshtoso"
+  short_description: "Use Goshtoso components in Go apps"
+  default_prompt: "Use $using-goshtoso to integrate Goshtoso components into my templ Go app."

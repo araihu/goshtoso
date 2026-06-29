@@ -2,92 +2,7 @@ package palette
 
 templ Palette(cfg Config) {
 	<div
-		x-data="{
-			hovered: '',
-			selectedHex: '#000000',
-			hexInput: '',
-			hexInvalid: false,
-			pick(value, el) {
-				this.syncHex(value, el)
-				this.$dispatch('select-close', value)
-			},
-			commitHex(value) {
-				const hex = this.normalizeHex(value)
-				if (!hex) {
-					this.hexInvalid = true
-					return
-				}
-				this.hexInvalid = false
-				this.selectedHex = hex
-				this.hexInput = hex
-				this.$dispatch('select-close', hex)
-			},
-			previewHex(value) {
-				this.hexInput = value
-				const hex = this.normalizeHex(value)
-				this.hexInvalid = this.hexInput !== '' && !hex
-				if (hex) {
-					this.selectedHex = hex
-					this.hexInput = hex
-					this.$dispatch('select-close', hex)
-				}
-			},
-			syncHex(value, el) {
-				this.hexInvalid = false
-				if (!value) {
-					this.selectedHex = '#000000'
-					this.hexInput = ''
-					return
-				}
-				if (value[0] === '#') {
-					const hex = this.normalizeHex(value)
-					if (hex) {
-						this.selectedHex = hex
-						this.hexInput = hex
-					}
-					return
-				}
-				if (value === 'white') {
-					this.selectedHex = '#ffffff'
-					this.hexInput = '#ffffff'
-					return
-				}
-				if (value === 'black') {
-					this.selectedHex = '#000000'
-					this.hexInput = '#000000'
-					return
-				}
-				if (el) {
-					const hex = this.colorToHex(getComputedStyle(el).backgroundColor)
-					this.selectedHex = hex
-					this.hexInput = hex
-				}
-			},
-			normalizeHex(value) {
-				const raw = (value || '').trim()
-				const short = raw.match(/^#([0-9a-fA-F]{3})$/)
-				if (short) {
-					return '#' + short[1].split('').map(ch => ch + ch).join('').toLowerCase()
-				}
-				const full = raw.match(/^#([0-9a-fA-F]{6})$/)
-				return full ? '#' + full[1].toLowerCase() : ''
-			},
-			colorToHex(color) {
-				if (!this._ctx) {
-					const canvas = document.createElement('canvas')
-					canvas.width = 1
-					canvas.height = 1
-					this._ctx = canvas.getContext('2d', { willReadFrequently: true })
-				}
-				const ctx = this._ctx
-				ctx.clearRect(0, 0, 1, 1)
-				ctx.fillStyle = '#000000'
-				ctx.fillStyle = color
-				ctx.fillRect(0, 0, 1, 1)
-				const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
-				return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')
-			},
-		}"
+		x-data={ cfg.alpineData() }
 		data-palette
 		id={ cfg.ID }
 		class={ cfg.ContainerClasses() }
@@ -109,7 +24,16 @@ templ Palette(cfg Config) {
 		}
 		if cfg.LazyWhen != "" {
 			<template x-if={ cfg.LazyWhen }>
-				@swatchGrid(cfg)
+				<div
+					class="grid w-full gap-1 max-h-44 overflow-y-auto pr-1"
+					style="grid-template-columns: repeat(11, minmax(0, 1fr));"
+					x-html="swatchGridHTML()"
+					@click="handleSwatchEvent($event, 'pick')"
+					@mouseover="handleSwatchEvent($event, 'hover')"
+					@focusin="handleSwatchEvent($event, 'hover')"
+					@mouseleave="hovered = ''"
+					@focusout="if (!$event.currentTarget.contains($event.relatedTarget)) hovered = ''"
+				></div>
 			</template>
 		} else {
 			@swatchGrid(cfg)

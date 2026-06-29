@@ -138,15 +138,20 @@ func sidebarDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Overlay Sidebar",
-				Description: "Render the sidebar in an off-canvas panel with a backdrop, toggled by a hamburger button via Alpine (x-data=\"{ showSidebar: false }\").",
+				Description: "Render the sidebar in an off-canvas panel with a backdrop and a hamburger trigger.",
 			},
 			sidebarOverlayPreview(),
-			`<div x-data="{ showSidebar: false }">
-    <button x-on:click="showSidebar = true" aria-label="Open sidebar">☰</button>
-    <div x-show="showSidebar" class="absolute inset-y-0 left-0 z-40 w-60" x-cloak>
-        @sidebar.Sidebar(cfg)
-    </div>
-</div>`,
+			`@sidebar.Overlay(sidebar.OverlayConfig{
+    ID:                     "docs-nav",
+    TriggerLabel:           "Open sidebar",
+    PanelPositionClass:     "fixed top-16 bottom-0 left-0",
+    BackdropPositionClass:  "fixed top-16 bottom-0 inset-x-0",
+    Sidebar: sidebar.Config{
+        LogoText:   "Docs",
+        ShowSearch: true,
+        Items:      navItems,
+    },
+})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -167,6 +172,17 @@ func sidebarDemoContent() templ.Component {
 			{Name: "SearchSlot", Type: "templ.Component", Default: "nil", Description: "Custom search-area content."},
 			{Name: "FooterSlot", Type: "templ.Component", Default: "nil", Description: "Content pinned to the bottom of the sidebar."},
 			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
+			{Name: "OverlayConfig.Sidebar", Type: "Config", Default: "Config{}", Description: "Sidebar configuration rendered inside the off-canvas panel."},
+			{Name: "OverlayConfig.ID", Type: "string", Default: `""`, Description: "Panel id prefix and Alpine state source."},
+			{Name: "OverlayConfig.Trigger", Type: "templ.Component", Default: "nil", Description: "Custom trigger contents."},
+			{Name: "OverlayConfig.TriggerLabel", Type: "string", Default: `"Open sidebar"`, Description: "Accessible trigger label."},
+			{Name: "OverlayConfig.RootClass", Type: "string", Default: `""`, Description: "Extra classes on the overlay root."},
+			{Name: "OverlayConfig.TriggerClass", Type: "string", Default: `""`, Description: "Extra classes on the trigger button."},
+			{Name: "OverlayConfig.BackdropPositionClass", Type: "string", Default: `"fixed inset-0"`, Description: "Backdrop positioning classes."},
+			{Name: "OverlayConfig.BackdropClass", Type: "string", Default: `""`, Description: "Extra classes on the backdrop."},
+			{Name: "OverlayConfig.PanelPositionClass", Type: "string", Default: `"fixed inset-y-0 left-0"`, Description: "Panel positioning classes."},
+			{Name: "OverlayConfig.PanelWidthClass", Type: "string", Default: `"w-72"`, Description: "Panel width classes."},
+			{Name: "OverlayConfig.PanelClass", Type: "string", Default: `""`, Description: "Extra classes on the panel wrapper."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -343,7 +359,8 @@ func sidebarSubItemsPreview() templ.Component {
 					},
 				},
 				{
-					Title: "Endpoints",
+					Title:       "Endpoints",
+					Collapsible: true,
 					Items: []sidebar.Item{
 						{ID: "ep-users", Label: "Users", Href: "#", Icon: usersIcon(), Items: []sidebar.Item{
 							{ID: "ep-create-user", Label: "Create User", Href: "#", Badge: "POST"},
@@ -493,7 +510,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 309, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 326, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -511,7 +528,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 313, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 330, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -548,7 +565,33 @@ func sidebarOverlayPreview() templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div id=\"sidebar-overlay\" class=\"w-full\"><div class=\"relative h-[400px] bg-surface dark:bg-surface-dark overflow-hidden border border-outline dark:border-outline-dark rounded-radius\" x-data=\"{ showSidebar: false }\"><!-- Top bar with hamburger --><div class=\"flex items-center gap-3 border-b border-outline dark:border-outline-dark px-4 py-3\"><button x-on:click=\"showSidebar = true\" class=\"rounded-radius p-1.5 text-on-surface hover:bg-primary/5 dark:text-on-surface-dark dark:hover:bg-primary-dark/5\" aria-label=\"Open sidebar\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5\"><path fill-rule=\"evenodd\" d=\"M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z\" clip-rule=\"evenodd\"></path></svg></button> <span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Click the hamburger to open</span></div><!-- Content area --><div class=\"p-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div id=\"sidebar-overlay\" class=\"w-full\"><div class=\"relative h-[400px] bg-surface dark:bg-surface-dark overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><!-- Top bar with hamburger --><div class=\"flex items-center gap-3 border-b border-outline dark:border-outline-dark px-4 py-3\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = sidebar.Overlay(sidebar.OverlayConfig{
+			ID:                    "sidebar-overlay-demo",
+			TriggerLabel:          "Open sidebar",
+			RootClass:             "shrink-0",
+			PanelPositionClass:    "absolute inset-y-0 left-0",
+			PanelWidthClass:       "w-60",
+			BackdropPositionClass: "absolute inset-0",
+			Sidebar: sidebar.Config{
+				LogoText:          "Overlay",
+				ShowSearch:        true,
+				SearchPlaceholder: "Search...",
+				Items: []sidebar.Item{
+					{ID: "home", Label: "Home", Href: "#", Icon: dashboardIcon(), Active: true},
+					{ID: "profile", Label: "Profile", Href: "#", Icon: profileIcon()},
+					{ID: "inbox", Label: "Inbox", Href: "#", Icon: inboxIcon(), Badge: "5"},
+					{ID: "settings", Label: "Settings", Href: "#", Icon: settingsIcon()},
+				},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Click the hamburger to open</span></div><!-- Content area --><div class=\"p-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -556,25 +599,7 @@ func sidebarOverlayPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div><!-- Overlay backdrop --><div x-show=\"showSidebar\" x-transition:enter=\"transition-opacity duration-200\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition-opacity duration-200\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\" x-on:click=\"showSidebar = false\" class=\"absolute inset-0 z-30 bg-black/50\" x-cloak></div><!-- Sidebar panel --><div x-show=\"showSidebar\" x-transition:enter=\"transition-transform duration-200\" x-transition:enter-start=\"-translate-x-full\" x-transition:enter-end=\"translate-x-0\" x-transition:leave=\"transition-transform duration-200\" x-transition:leave-start=\"translate-x-0\" x-transition:leave-end=\"-translate-x-full\" class=\"absolute inset-y-0 left-0 z-40 w-60\" x-cloak><div class=\"h-full relative\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = sidebar.Sidebar(sidebar.Config{
-			LogoText:          "Overlay",
-			ShowSearch:        true,
-			SearchPlaceholder: "Search...",
-			Items: []sidebar.Item{
-				{ID: "home", Label: "Home", Href: "#", Icon: dashboardIcon(), Active: true},
-				{ID: "profile", Label: "Profile", Href: "#", Icon: profileIcon()},
-				{ID: "inbox", Label: "Inbox", Href: "#", Icon: inboxIcon(), Badge: "5"},
-				{ID: "settings", Label: "Settings", Href: "#", Icon: settingsIcon()},
-			},
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<!-- Close button inside sidebar --><button x-on:click=\"showSidebar = false\" class=\"absolute top-4 right-2 rounded-radius p-1 text-on-surface-muted hover:text-on-surface dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark\" aria-label=\"Close sidebar\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4\"><path d=\"M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z\"></path></svg></button></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
