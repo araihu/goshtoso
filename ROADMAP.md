@@ -42,4 +42,3 @@ Before `v0.1.0`, the project should have:
   isolated component previews.
 - Reduce contributor friction around generated assets, release hygiene, and
   documentation drift.
-

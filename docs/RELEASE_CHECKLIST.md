@@ -45,4 +45,3 @@ many of these steps, but the checklist keeps the public release story coherent.
 
 During alpha, only the latest `v0.0.x` tag receives fixes. Older tags remain
 available for reproducibility but are not maintained.
-
