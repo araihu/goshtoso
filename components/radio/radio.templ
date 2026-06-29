@@ -25,8 +25,8 @@ templ Radio(cfg Config) {
 }
 
 // radioSegmented renders a pill-shaped label that toggles via has-checked.
-// The input itself is sr-only — the label is the entire visual. Designed to
-// live inside a RadioBar (or any container with `divide-x` for connected pills).
+// The transparent input covers the visible segment so focusing it cannot scroll
+// the outer document to an offscreen sr-only box.
 templ radioSegmented(cfg Config) {
 	<label for={ cfg.ID } class={ cfg.SegmentedLabelClasses() + " " + cfg.RootClass }>
 		@segmentedInput(cfg)
@@ -34,14 +34,15 @@ templ radioSegmented(cfg Config) {
 	</label>
 }
 
-// segmentedInput renders the actual <input> sr-only with all primitives wired in.
+// segmentedInput renders the actual <input> over the segment with all
+// primitives wired in.
 templ segmentedInput(cfg Config) {
 	<input
 		id={ cfg.ID }
 		type="radio"
 		name={ cfg.Name }
 		value={ cfg.Value }
-		class="sr-only"
+		class="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
 		if cfg.Checked {
 			checked
 		}

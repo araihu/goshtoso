@@ -68,11 +68,11 @@ func TestCoverageHelperTextNoID(t *testing.T) {
 	assert.NotContains(t, html, "aria-describedby")
 }
 
-// TestCoverageSegmented hits radioSegmented + segmentedInput (sr-only input).
+// TestCoverageSegmented hits radioSegmented + segmentedInput.
 func TestCoverageSegmented(t *testing.T) {
 	html := render(t, Radio(Config{ID: "seg", Label: "Seg", Value: "seg", Segmented: true}))
 
-	assert.Contains(t, html, "sr-only")
+	assert.Contains(t, html, "absolute inset-0 h-full w-full")
 	assert.Contains(t, html, "Seg")
 	// Segmented label styling rides has-checked:.
 	assert.Contains(t, html, "has-checked:bg-primary")
@@ -219,7 +219,7 @@ func TestCoverageSegmentedAllInteractionAttributes(t *testing.T) {
 	}))
 
 	for _, want := range []string{
-		`id="segfull"`, `name="mode"`, `value="full"`, `class="sr-only"`,
+		`id="segfull"`, `name="mode"`, `value="full"`, `absolute inset-0 h-full w-full`,
 		"checked", "disabled", `hx-get="/get"`, `hx-post="/post"`,
 		`hx-put="/put"`, `hx-delete="/delete"`, `hx-patch="/patch"`,
 		`hx-target="#target"`, `hx-swap="outerHTML"`, `hx-trigger="click"`,
@@ -347,6 +347,7 @@ func TestCoverageSegmentedLabelClasses(t *testing.T) {
 	for _, tc := range cases {
 		cls := Config{Variant: tc.variant}.SegmentedLabelClasses()
 		assert.Contains(t, cls, tc.want, "variant %q", tc.variant)
+		assert.Contains(t, cls, "relative")
 		assert.Contains(t, cls, "has-disabled:cursor-not-allowed")
 	}
 }

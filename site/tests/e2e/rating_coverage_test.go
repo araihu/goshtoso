@@ -55,14 +55,25 @@ func TestRating_SizesRenderDistinctIconScales(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	navigateToRatingDemo(t, page)
 
-	cases := map[string]string{
-		"rating-size-sm-1": "size-5",
-		"rating-size-lg-1": "size-8",
-		"rating-size-xl-1": "size-10",
+	cases := []struct {
+		size      string
+		inputID   string
+		wantClass string
+	}{
+		{"sm", "rating-size-preview-sm-1", "size-5"},
+		{"lg", "rating-size-preview-lg-1", "size-8"},
+		{"xl", "rating-size-preview-xl-1", "size-10"},
 	}
-	for inputID, wantClass := range cases {
-		assert.Contains(t, iconClassForLabel(t, page, inputID), wantClass,
-			"icon for %s should carry %s", inputID, wantClass)
+	for _, tc := range cases {
+		require.NoError(t, page.Locator("label[for='rating-size-"+tc.size+"']").Click())
+		require.NoError(t, page.Locator("[data-testid='rating-size-selected']").Filter(playwright.LocatorFilterOptions{
+			HasText: tc.size,
+		}).WaitFor())
+		require.NoError(t, page.Locator("[data-testid='rating-size-preview-"+tc.size+"']").WaitFor(playwright.LocatorWaitForOptions{
+			State: playwright.WaitForSelectorStateVisible,
+		}))
+		assert.Contains(t, iconClassForLabel(t, page, tc.inputID), tc.wantClass,
+			"icon for %s should carry %s", tc.inputID, tc.wantClass)
 	}
 }
 

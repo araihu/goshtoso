@@ -29,6 +29,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Isolate Go caches
+        run: |
+          set -euo pipefail
+          {
+            echo "GOMODCACHE=${RUNNER_TEMP}/go-mod-cache/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-lint-build"
+            echo "GOCACHE=${RUNNER_TEMP}/go-build-cache/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-lint-build"
+          } >> "$GITHUB_ENV"
+
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -121,6 +129,14 @@ jobs:
     runs-on: araihu
     steps:
       - uses: actions/checkout@v6
+
+      - name: Isolate Go caches
+        run: |
+          set -euo pipefail
+          {
+            echo "GOMODCACHE=${RUNNER_TEMP}/go-mod-cache/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-test"
+            echo "GOCACHE=${RUNNER_TEMP}/go-build-cache/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-test"
+          } >> "$GITHUB_ENV"
 
       - uses: actions/setup-go@v5
         with:
