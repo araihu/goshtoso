@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Goshtoso icon</title>
+  <desc id="desc">A rounded square mark with Rio de Janeiro sidewalk waves in Goshtoso theme colors.</desc>
+  <defs>
+    <clipPath id="goshtoso-icon-tile">
+      <rect width="128" height="128" rx="30"/>
+    </clipPath>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="#081d2b"/>
+  <g clip-path="url(#goshtoso-icon-tile)">
+    <path d="M-10 42c16-18 32-18 48 0s32 18 48 0 32-18 48 0" fill="none" stroke="#3bcef7" stroke-width="22" stroke-linecap="round"/>
+    <path d="M-10 86c16-18 32-18 48 0s32 18 48 0 32-18 48 0" fill="none" stroke="#d3d75b" stroke-width="22" stroke-linecap="round"/>
+    <path d="M-10 64c16-18 32-18 48 0s32 18 48 0 32-18 48 0" fill="none" stroke="#f7fbff" stroke-width="11" stroke-linecap="round"/>
+  </g>
+</svg>

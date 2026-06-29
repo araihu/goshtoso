@@ -31,6 +31,17 @@ func TestBadgeComponentDemo(t *testing.T) {
 		}
 	})
 
+	t.Run("preview frame paints non-clipping border overlay", func(t *testing.T) {
+		shell := page.Locator("#badge-solid").Locator("xpath=ancestor::div[contains(@class, 'border-outline') and contains(@class, 'rounded-radius')][1]")
+		className, err := shell.GetAttribute("class")
+		require.NoError(t, err)
+		assert.Contains(t, className, "after:border-outline")
+
+		overflow, err := shell.Evaluate("el => getComputedStyle(el).overflow", nil)
+		require.NoError(t, err)
+		assert.Equal(t, "visible", overflow)
+	})
+
 	t.Run("icon and indicator badges keep labels visible", func(t *testing.T) {
 		for _, label := range []string{"Penguin", "Filter", "Verified", "Active", "Warning", "Error"} {
 			badge := page.Locator("#badge-icons span").Filter(playwright.LocatorFilterOptions{HasText: label}).First()
@@ -59,15 +70,32 @@ func TestBadgeComponentDemo(t *testing.T) {
 		assert.GreaterOrEqual(t, dotCount, 1)
 	})
 
-	t.Run("animating dots and sizes render stable class hooks", func(t *testing.T) {
+	t.Run("animating dots and size selector render stable class hooks", func(t *testing.T) {
 		animating, err := page.Locator("#badge-animating span[aria-label='notification']").Count()
 		require.NoError(t, err)
 		assert.Equal(t, 6, animating)
 
-		for _, label := range []string{"Small", "Medium", "Large"} {
-			require.NoError(t, page.Locator("#badge-sizes").GetByText(label, playwright.LocatorGetByTextOptions{
-				Exact: playwright.Bool(true),
+		cases := []struct {
+			size  string
+			label string
+		}{
+			{"sm", "Small"},
+			{"md", "Medium"},
+			{"lg", "Large"},
+		}
+		for _, tc := range cases {
+			require.NoError(t, page.Locator("label[for='badge-size-"+tc.size+"']").Click())
+			require.NoError(t, page.Locator("[data-testid='badge-size-selected']").Filter(playwright.LocatorFilterOptions{
+				HasText: tc.size,
 			}).WaitFor())
+			require.NoError(t, page.Locator("[data-testid='badge-size-preview-"+tc.size+"']").WaitFor(playwright.LocatorWaitForOptions{
+				State: playwright.WaitForSelectorStateVisible,
+			}))
+			visible, err := page.Locator("[data-testid='badge-size-preview-"+tc.size+"']").GetByText(tc.label, playwright.LocatorGetByTextOptions{
+				Exact: playwright.Bool(true),
+			}).IsVisible()
+			require.NoError(t, err)
+			assert.True(t, visible, "expected %s badge to be visible", tc.label)
 		}
 	})
 }

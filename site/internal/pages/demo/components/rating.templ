@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -11,7 +12,7 @@ templ RatingDemoPage() {
 }
 
 templ ratingDemoContent() {
-	<div id="rating-fragment">
+	<div id="rating-fragment" x-data="{ selected: 'md' }">
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Rating",
@@ -25,7 +26,6 @@ templ ratingDemoContent() {
     Label: "Product rating",
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Emoji Rating",
@@ -40,17 +40,22 @@ templ ratingDemoContent() {
     Label: "Satisfaction",
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Sizes",
-				Description: "Use SizeSM, SizeMD, SizeLG, or SizeXL to fit dense forms or larger feedback moments.",
+				Title:        "Sizes",
+				Description:  "Use SizeSM, SizeMD, SizeLG, or SizeXL to fit dense forms or larger feedback moments.",
+				AbovePreview: ratingSizeSelector(),
 			},
 			ratingSizesPreview(),
-			`@rating.Rating(rating.Config{ID: "rating-sm", Name: "small-rating", Value: 3, Size: rating.SizeSM})
-@rating.Rating(rating.Config{ID: "rating-xl", Name: "large-rating", Value: 4, Size: rating.SizeXL})`,
+			`@rating.Rating(rating.Config{
+    ID: "rating-size-md",
+    Name: "rating-size-md",
+    Value: 3,
+    Size: rating.SizeMD,
+    Label: "Medium",
+    ShowLabel: true,
+})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Disabled",
@@ -64,7 +69,6 @@ templ ratingDemoContent() {
     Disabled: true,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Read Only",
@@ -96,6 +100,37 @@ templ ratingDemoContent() {
 	})
 }
 
+// ratingSizeSelector renders the segmented size selector for the size preview.
+templ ratingSizeSelector() {
+	<div class="mb-3 flex items-center gap-4">
+		<label class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Size</label>
+		<div data-testid="rating-size-selector">
+			@radio.RadioBar() {
+				@ratingSizeOption("sm", "sm")
+				@ratingSizeOption("md", "md")
+				@ratingSizeOption("lg", "lg")
+				@ratingSizeOption("xl", "xl")
+			}
+		</div>
+		<span class="sr-only" data-testid="rating-size-selected" x-text="selected"></span>
+	</div>
+}
+
+// ratingSizeOption renders one segmented radio item for the rating size selector.
+templ ratingSizeOption(value, label string) {
+	@radio.Radio(radio.Config{
+		ID:        "rating-size-" + value,
+		Name:      "rating-size",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Alpine: &radio.AlpineConfig{
+			BindChecked: "selected === '" + value + "'",
+			OnChange:    "selected = '" + value + "'",
+		},
+	})
+}
+
 templ ratingDefaultPreview() {
 	<div id="rating-default" class="w-full max-w-md mx-auto">
 		@rating.Rating(rating.Config{
@@ -123,11 +158,17 @@ templ ratingEmojiPreview() {
 
 templ ratingSizesPreview() {
 	<div id="rating-sizes" class="w-full max-w-md mx-auto">
-		<div class="flex flex-col gap-4">
-			@rating.Rating(rating.Config{ID: "rating-size-sm", Name: "rating-size-sm", Value: 3, Size: rating.SizeSM, Label: "Small", ShowLabel: true})
-			@rating.Rating(rating.Config{ID: "rating-size-md", Name: "rating-size-md", Value: 3, Size: rating.SizeMD, Label: "Medium", ShowLabel: true})
-			@rating.Rating(rating.Config{ID: "rating-size-lg", Name: "rating-size-lg", Value: 4, Size: rating.SizeLG, Label: "Large", ShowLabel: true})
-			@rating.Rating(rating.Config{ID: "rating-size-xl", Name: "rating-size-xl", Value: 4, Size: rating.SizeXL, Label: "XL", ShowLabel: true})
+		<div data-testid="rating-size-preview-sm" x-show="selected === 'sm'" x-cloak>
+			@rating.Rating(rating.Config{ID: "rating-size-preview-sm", Name: "rating-size-preview-sm", Value: 3, Size: rating.SizeSM, Label: "Small", ShowLabel: true})
+		</div>
+		<div data-testid="rating-size-preview-md" x-show="selected === 'md'">
+			@rating.Rating(rating.Config{ID: "rating-size-preview-md", Name: "rating-size-preview-md", Value: 3, Size: rating.SizeMD, Label: "Medium", ShowLabel: true})
+		</div>
+		<div data-testid="rating-size-preview-lg" x-show="selected === 'lg'" x-cloak>
+			@rating.Rating(rating.Config{ID: "rating-size-preview-lg", Name: "rating-size-preview-lg", Value: 4, Size: rating.SizeLG, Label: "Large", ShowLabel: true})
+		</div>
+		<div data-testid="rating-size-preview-xl" x-show="selected === 'xl'" x-cloak>
+			@rating.Rating(rating.Config{ID: "rating-size-preview-xl", Name: "rating-size-preview-xl", Value: 4, Size: rating.SizeXL, Label: "XL", ShowLabel: true})
 		</div>
 	</div>
 }

@@ -80,6 +80,7 @@ func searchDemoContent() templ.Component {
     Placeholder: "Search docs...",
     Items: []search.Item{
         {Title: "Sidebar", Description: "Navigation with grouped sections.", Href: "/components/sidebar", Section: "Navigation"},
+        {Title: "List teams", Description: "Operation result with method and route metadata.", Href: "/api/teams", Kind: "Operation", Method: "GET", Path: "/teams", Section: "API"},
         {Title: "KBD", Description: "Semantic keyboard shortcuts.", Href: "/components/kbd", Section: "Display"},
     },
 })`,
@@ -107,6 +108,22 @@ func searchDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Remote Results",
+				Description: "Load result records from a JSON endpoint, then filter and navigate in the browser.",
+			},
+			searchRemotePreview(),
+			`@search.Search(search.Config{
+    ID:          "remote-search",
+    Label:       "Remote search",
+    Placeholder: "Search fetched results",
+    ItemsURL:    "/api/components/search/items",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -119,6 +136,7 @@ func searchDemoContent() templ.Component {
 			{Name: "GlobalShortcut", Type: "bool", Default: "false", Description: "When true, Cmd/Ctrl+K opens this search instance."},
 			{Name: "EscapeText", Type: "string", Default: `"Esc"`, Description: "Keyboard hint rendered beside the dialog input."},
 			{Name: "Items", Type: "[]Item", Default: "nil", Description: "Caller-provided result records. The component only filters and displays them."},
+			{Name: "ItemsURL", Type: "string", Default: `""`, Description: "JSON endpoint for client-loaded result records. When set, records are fetched and only visible matches are rendered."},
 			{Name: "MaxResults", Type: "int", Default: "4", Description: "Maximum number of visible matches."},
 			{Name: "DescriptionMaxLength", Type: "int", Default: "120", Description: "Maximum visible description length before truncation."},
 			{Name: "EmptyText", Type: "string", Default: `"No results found."`, Description: "Message shown when the current query has no matches."},
@@ -165,6 +183,7 @@ func searchDefaultPreview() templ.Component {
 			Placeholder: "Search docs...",
 			Items: []search.Item{
 				{ID: "search-demo-sidebar", Title: "Sidebar", Description: "Navigation with grouped sections and optional search slot.", Href: "/components/sidebar", Section: "Navigation", Keywords: []string{"menu docs"}},
+				{ID: "search-demo-list-teams", Title: "List teams", Description: "Operation result with method and route metadata.", Href: "/api/teams", Kind: "Operation", Method: "GET", Path: "/teams", Section: "API", Keywords: []string{"teams operation"}},
 				{ID: "search-demo-dependencies", Title: "Dependencies", Description: "Local CSS and JavaScript runtime tags.", Href: "/components/dependencies", Section: "Display", Keywords: []string{"head assets runtime"}},
 				{ID: "search-demo-kbd", Title: "KBD", Description: "Semantic keyboard shortcut hints.", Href: "/components/kbd", Section: "Display", Keywords: []string{"shortcut key"}},
 				{ID: "search-demo-text-input", Title: "Text Input", Description: "Inputs with search, password, masks, and validation states.", Href: "/components/text-input", Section: "Form", Keywords: []string{"field"}},
@@ -174,6 +193,48 @@ func searchDefaultPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func searchRemotePreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"search-remote\" class=\"mx-auto w-full max-w-sm\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = search.Search(search.Config{
+			ID:          "remote-search",
+			Label:       "Remote search",
+			Placeholder: "Search fetched results",
+			ItemsURL:    "/api/components/search/items",
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -197,12 +258,12 @@ func searchCustomPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"search-custom\" class=\"mx-auto w-full max-w-sm\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"search-custom\" class=\"mx-auto w-full max-w-sm\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -221,7 +282,7 @@ func searchCustomPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

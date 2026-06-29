@@ -61,6 +61,19 @@ jobs:
             assets/styles.css
             assets/goshtoso-theme.css
 
+      # Keep the README release badge on the same shields.io endpoint gist
+      # pattern used by the coverage badge, so new tags update the badge without
+      # committing badge churn back to main.
+      - name: Update release badge gist
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: fb3843c3a13793eb6cc0af638bc00ad4
+          filename: release.json
+          label: release
+          message: ${{ github.ref_name }}
+          color: blue
+
       # The site module tracks released library tags (not every main SHA).
       # Bump its require to this tag and commit the pin back to main.
       - name: Bump site module to released library tag

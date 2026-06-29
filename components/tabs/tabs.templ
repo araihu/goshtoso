@@ -47,8 +47,9 @@ templ tabButton(containerID string, tab Tab) {
 	{{ panelID := fmt.Sprintf("tabpanel%s%s", containerID, tab.ID) }}
 	{{ hasIcon := tab.Icon != nil }}
 	{{ hasBadge := tab.Badge != "" }}
+	{{ hasLabelSlot := tab.LabelSlot != nil }}
 	{{ baseClass := "h-min px-4 py-2 text-sm" }}
-	{{ if hasIcon || hasBadge { baseClass = "flex h-min items-center gap-2 px-4 py-2 text-sm" } }}
+	{{ if hasIcon || hasBadge || hasLabelSlot { baseClass = "flex h-min items-center gap-2 px-4 py-2 text-sm" } }}
 	<button
 		x-on:click={ fmt.Sprintf("selectedTab = '%s'", jsEscapeSingle(tab.ID)) }
 		x-bind:aria-selected={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
@@ -58,11 +59,18 @@ templ tabButton(containerID string, tab Tab) {
 		type="button"
 		role="tab"
 		aria-controls={ panelID }
+		if hasLabelSlot {
+			aria-label={ tab.Label }
+		}
 	>
 		if tab.Icon != nil {
 			@tab.Icon
 		}
-		{ tab.Label }
+		if tab.LabelSlot != nil {
+			@tab.LabelSlot
+		} else {
+			{ tab.Label }
+		}
 		if tab.Badge != "" {
 			<span
 				x-bind:class={ fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), BadgeActiveClasses(), BadgeInactiveClasses()) }

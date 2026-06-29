@@ -16,7 +16,7 @@ func TestPalette_CustomHuesShades(t *testing.T) {
 		Shades: []string{"100", "500"},
 	})
 	// 2 hues × 2 shades = 4 grid swatches, plus white/black neutrals.
-	assert.Equal(t, 4, strings.Count(html, "background-color: var(--color-"))
+	assert.Equal(t, 4, strings.Count(html, `style="background-color: var(--color-`))
 	assert.Contains(t, html, `data-cls="red-100"`)
 	assert.Contains(t, html, `data-cls="red-500"`)
 	assert.Contains(t, html, `data-cls="blue-100"`)
@@ -50,13 +50,15 @@ func TestPalette_RootClassRendered(t *testing.T) {
 	assert.Contains(t, html, `class="p-2 space-y-2 w-64 shadow"`)
 }
 
-// TestPalette_LazyWhen wraps the swatch grid in <template x-if> so the grid
-// mounts lazily; covers the LazyWhen branch in Palette.
+// TestPalette_LazyWhen keeps the full swatch grid out of the initial HTML so
+// pages with many palettes do not ship thousands of inert template buttons.
 func TestPalette_LazyWhen(t *testing.T) {
 	html := render(t, Config{ID: "p", LazyWhen: "open"})
 	assert.Contains(t, html, `<template x-if="open">`)
-	// Grid still rendered inside the template.
-	assert.Contains(t, html, `data-cls="blue-700"`)
+	assert.Contains(t, html, `x-html="swatchGridHTML()"`)
+	assert.Contains(t, html, `@click="handleSwatchEvent($event, 'pick')"`)
+	assert.NotContains(t, html, `data-cls="blue-700"`)
+	assert.NotContains(t, html, `background-color: var(--color-blue-700)`)
 
 	// Without LazyWhen, no x-if template wraps the grid.
 	plain := render(t, Config{ID: "p"})

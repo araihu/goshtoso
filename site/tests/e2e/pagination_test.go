@@ -94,3 +94,60 @@ func TestPagination_DocumentedHTMXVariantExposesHTMXAttributes(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "#items-tbody", hxTarget)
 }
+
+func TestPagination_DeepLinkKeepsTOCRailAttachedToContent(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser, playwright.BrowserNewPageOptions{
+		Viewport: &playwright.Size{Width: 2048, Height: 1280},
+	})
+
+	_, err := page.Goto(baseURL+"/components/pagination#api-reference", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("#api-reference").WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, page.Locator(`#toc-list [data-toc-link="api-reference"]`).WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	gap, err := page.Evaluate(`() => {
+		const content = document.getElementById('main-content');
+		const rail = document.getElementById('toc-rail');
+		if (!content || !rail) return Number.POSITIVE_INFINITY;
+		const railStyle = getComputedStyle(rail);
+		if (railStyle.display === 'none') return Number.POSITIVE_INFINITY;
+		return rail.getBoundingClientRect().left - content.getBoundingClientRect().right;
+	}`)
+	require.NoError(t, err)
+	assert.LessOrEqual(t, jsFloat(gap), 1.0, "desktop TOC rail should sit flush with the content frame")
+
+	apiTop, err := page.Locator("#api-reference").Evaluate("el => el.getBoundingClientRect().top", nil)
+	require.NoError(t, err)
+	assert.GreaterOrEqual(t, jsFloat(apiTop), 64.0, "deep-linked heading should clear the sticky header")
+	assert.Less(t, jsFloat(apiTop), 180.0, "deep-linked heading should land near the top of the scroll frame")
+}
+
+func jsFloat(v any) float64 {
+	switch n := v.(type) {
+	case float64:
+		return n
+	case int:
+		return float64(n)
+	case int64:
+		return float64(n)
+	default:
+		return 0
+	}
+}

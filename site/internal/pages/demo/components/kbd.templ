@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/araihu/goshtoso/components/kbd"
+	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -11,7 +12,7 @@ templ KbdDemoPage() {
 }
 
 templ kbdDemoContent() {
-	<div id="kbd-fragment">
+	<div id="kbd-fragment" x-data="{ selected: 'md' }">
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "KBD",
@@ -23,7 +24,6 @@ templ kbdDemoContent() {
 @kbd.Kbd(kbd.Config{Text: "Space"})
 @kbd.Kbd(kbd.Config{Text: "Ctrl"})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Keys With Icons",
@@ -34,7 +34,6 @@ templ kbdDemoContent() {
 @kbd.Kbd(kbd.Config{Icon: shiftKeyIcon(), Label: "Shift"})
 @kbd.Kbd(kbd.Config{Icon: upKeyIcon(), Label: "Up"})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Within Text",
@@ -45,7 +44,6 @@ templ kbdDemoContent() {
     To @kbd.Kbd(kbd.Config{Text: "Tab", Size: kbd.SizeSM}) or to @kbd.Kbd(kbd.Config{Text: "Space", Size: kbd.SizeSM}), that's the question.
 </p>`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Alphabet Keys",
@@ -56,7 +54,6 @@ templ kbdDemoContent() {
     @kbd.Kbd(kbd.Config{Text: key})
 }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Number Keys",
@@ -67,7 +64,6 @@ templ kbdDemoContent() {
     @kbd.Kbd(kbd.Config{Text: key})
 }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Function Keys",
@@ -77,17 +73,14 @@ templ kbdDemoContent() {
 			`@kbd.Kbd(kbd.Config{Text: "F1"})
 @kbd.Kbd(kbd.Config{Text: "F12"})`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Sizes",
-				Description: "Four sizes are available: kbd.SizeXS, kbd.SizeSM, kbd.SizeMD, and kbd.SizeLG.",
+				Title:        "Sizes",
+				Description:  "Four sizes are available: kbd.SizeXS, kbd.SizeSM, kbd.SizeMD, and kbd.SizeLG.",
+				AbovePreview: kbdSizeSelector(),
 			},
 			kbdSizesPreview(),
-			`@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeXS})
-@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeSM})
-@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})
-@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeLG})`,
+			`@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})`,
 		)
 	</div>
 	@demo.APIReference([]demo.PropDoc{
@@ -97,6 +90,35 @@ templ kbdDemoContent() {
 		{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading or icon-only key glyph."},
 		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the kbd element."},
 		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Additional attributes on the kbd element."},
+	})
+}
+
+templ kbdSizeSelector() {
+	<div class="mb-3 flex items-center gap-4">
+		<label class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Size</label>
+		<div data-testid="kbd-size-selector">
+			@radio.RadioBar() {
+				@kbdSizeOption("xs", "xs")
+				@kbdSizeOption("sm", "sm")
+				@kbdSizeOption("md", "md")
+				@kbdSizeOption("lg", "lg")
+			}
+		</div>
+		<span class="sr-only" data-testid="kbd-size-selected" x-text="selected"></span>
+	</div>
+}
+
+templ kbdSizeOption(value, label string) {
+	@radio.Radio(radio.Config{
+		ID:        "kbd-size-" + value,
+		Name:      "kbd-size",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Alpine: &radio.AlpineConfig{
+			BindChecked: "selected === '" + value + "'",
+			OnChange:    "selected = '" + value + "'",
+		},
 	})
 }
 
@@ -171,10 +193,18 @@ templ kbdFunctionPreview() {
 templ kbdSizesPreview() {
 	<div id="kbd-sizes" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center gap-2">
-			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeXS})
-			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeSM})
-			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})
-			@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeLG})
+			<div data-testid="kbd-size-preview-xs" x-show="selected === 'xs'" x-cloak>
+				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeXS})
+			</div>
+			<div data-testid="kbd-size-preview-sm" x-show="selected === 'sm'" x-cloak>
+				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeSM})
+			</div>
+			<div data-testid="kbd-size-preview-md" x-show="selected === 'md'">
+				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})
+			</div>
+			<div data-testid="kbd-size-preview-lg" x-show="selected === 'lg'" x-cloak>
+				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeLG})
+			</div>
 		</div>
 	</div>
 }

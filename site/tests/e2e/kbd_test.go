@@ -72,11 +72,26 @@ func TestKbdComponentDemoVariants(t *testing.T) {
 	})
 
 	t.Run("size variants keep distinct sizing hooks", func(t *testing.T) {
-		sizes := []string{"min-h-5", "min-h-6", "min-h-7", "min-h-9"}
+		sizes := []struct {
+			label string
+			class string
+		}{
+			{"xs", "min-h-5"},
+			{"sm", "min-h-6"},
+			{"md", "min-h-7"},
+			{"lg", "min-h-9"},
+		}
 		for _, size := range sizes {
-			count, err := page.Locator("#kbd-sizes kbd." + size).Count()
+			require.NoError(t, page.Locator("label[for='kbd-size-"+size.label+"']").Click())
+			require.NoError(t, page.Locator("[data-testid='kbd-size-selected']").Filter(playwright.LocatorFilterOptions{
+				HasText: size.label,
+			}).WaitFor())
+			require.NoError(t, page.Locator("[data-testid='kbd-size-preview-"+size.label+"']").WaitFor(playwright.LocatorWaitForOptions{
+				State: playwright.WaitForSelectorStateVisible,
+			}))
+			count, err := page.Locator("[data-testid='kbd-size-preview-" + size.label + "'] kbd." + size.class).Count()
 			require.NoError(t, err)
-			assert.Equal(t, 1, count, "expected one %s key", size)
+			assert.Equal(t, 1, count, "expected one visible %s key", size.label)
 		}
 	})
 }

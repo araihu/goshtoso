@@ -1,0 +1,34 @@
+name: Docs
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - '.github/workflows/docs.yml'
+      - '.lychee.toml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - '.github/workflows/docs.yml'
+      - '.lychee.toml'
+
+concurrency:
+  group: docs-${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: Markdown links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2.8.0
+        with:
+          args: --config .lychee.toml './**/*.md'
+          fail: true
