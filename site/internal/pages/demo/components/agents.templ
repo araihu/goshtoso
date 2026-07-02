@@ -1,0 +1,104 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+templ AgentsPage() {
+	@demo.Layout("AI Agents", "agents", agentsContent())
+}
+
+templ agentsContent() {
+	<div id="agents-fragment" class="mx-auto max-w-4xl space-y-10">
+		<header class="space-y-3">
+			<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">AI agents</p>
+			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Using Goshtoso With AI Agents</h1>
+			<p class="max-w-3xl text-on-surface dark:text-on-surface-dark">
+				Goshtoso ships an installable agent skill for AI coding tools. The first version is focused on consumer apps: installing the library, serving bundled assets, wiring templ layouts, importing components, and avoiding common integration mistakes.
+			</p>
+		</header>
+
+			<section id="install-skill" class="space-y-3">
+				<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Install the Skill</h2>
+				<p class="text-on-surface dark:text-on-surface-dark">
+					Use the open <code class="font-mono">npx skills</code> CLI to install only the Goshtoso consumer-integration skill from the public repository.
+				</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: agentsInstallCode()})
+		</section>
+
+			<section id="use-without-installing" class="space-y-3">
+				<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Use Without Installing</h2>
+				<p class="text-on-surface dark:text-on-surface-dark">
+					For one-off prompts, stream the skill instructions directly into a supported agent instead of copying files into the project.
+				</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: agentsUseCode()})
+		</section>
+
+		<section id="what-it-teaches" class="space-y-4">
+				<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">What the Skill Teaches</h2>
+				<div class="grid gap-3 sm:grid-cols-2">
+					for _, item := range agentSkillTopics() {
+						<div class="rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt">
+							<h3 class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ item.Title }</h3>
+							<p class="mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ item.Body }</p>
+						</div>
+				}
+			</div>
+		</section>
+
+			<section id="scope" class="space-y-3">
+				<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Scope</h2>
+				<div class="rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark">
+					<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">This skill is for consumer agents.</p>
+					<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">
+					It does not teach agents how to maintain Goshtoso itself, edit component internals, run the release process, or operate an MCP server. Those workflows are intentionally separate so consumer agents get a compact, trustworthy integration guide.
+				</p>
+			</div>
+		</section>
+
+			<section id="verify-distribution" class="space-y-3">
+				<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Verify Distribution</h2>
+				<p class="text-on-surface dark:text-on-surface-dark">
+					Release maintainers can verify that the public skill remains discoverable and that supporting reference files are downloaded with it.
+				</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: agentsVerifyCode()})
+		</section>
+	</div>
+}
+
+type agentSkillTopic struct {
+	Title string
+	Body  string
+}
+
+func agentSkillTopics() []agentSkillTopic {
+	return []agentSkillTopic{
+		{Title: "Install Goshtoso", Body: "Add the Go module and templ toolchain without generating code inside the Goshtoso dependency."},
+		{Title: "Serve assets", Body: "Mount assets.Handler() directly at /assets/ and avoid the double StripPrefix 404 trap."},
+		{Title: "Wire the page head", Body: "Use head.Dependencies() so CSS, Alpine.js, HTMX, and component scripts stay in sync."},
+		{Title: "Render components", Body: "Import component packages, use typed Config values, and consult the generated component reference."},
+		{Title: "Choose CSS strategy", Body: "Prefer the embedded stylesheet, or extract theme/source paths only for custom Tailwind builds."},
+		{Title: "Debug common misses", Body: "Check missing styles, combobox keyboard behavior, Alpine plugin order, and HTML-fragment HTMX handlers."},
+	}
+}
+
+func agentsInstallCode() string {
+	return `# Install into the current project/agent
+npx skills add araihu/goshtoso --skill using-goshtoso
+
+# Codex-specific install
+npx skills add araihu/goshtoso --skill using-goshtoso --agent codex
+
+# Global Codex install
+npx skills add araihu/goshtoso --skill using-goshtoso --agent codex -g`
+}
+
+func agentsUseCode() string {
+	return `npx skills use araihu/goshtoso --skill using-goshtoso`
+}
+
+func agentsVerifyCode() string {
+	return `npx --yes skills add araihu/goshtoso --list
+npx --yes skills use araihu/goshtoso --skill using-goshtoso`
+}

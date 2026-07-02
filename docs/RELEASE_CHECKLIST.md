@@ -11,6 +11,8 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `just css`
   - `go run ./cmd/skillgen`
   - `go run ./cmd/vendorgen -check`
+  - `npx --yes skills add . --list`
+  - `npx --yes skills use . --skill using-goshtoso`
   - `go test ./... -count=1`
   - `cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1`
   - `go test ./site/tests/e2e/... -count=1 -timeout 15m`
@@ -20,10 +22,13 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `assets/goshtoso-theme.css`
   - `assets/vendor_gen.go`
   - `.claude/skills/using-goshtoso/components-reference.md`
+  - `.agents/skills/using-goshtoso/references/components-reference.md`
 - Update `VERSIONS.md` when the release uses a new Goshtoso tag or Tailwind
   version.
 - Review `README.md`, `docs/USAGE.md`, and `ROADMAP.md` for stale version,
   component, or stability language.
+- Review `/docs/agents` and `.agents/skills/using-goshtoso/SKILL.md` for stale
+  consumer-agent installation guidance.
 - Prepare release notes that call out:
   - breaking API changes,
   - new components or variants,
@@ -40,6 +45,8 @@ many of these steps, but the checklist keeps the public release story coherent.
   follow-up PR if the public module proxy lagged.
 - Confirm `VERSIONS.md` has a row for the released tag.
 - Confirm the documentation site deploy completed or was intentionally skipped.
+- Confirm `npx skills add araihu/goshtoso --list` discovers the released
+  consumer-agent skill.
 
 ## Support Notes
 

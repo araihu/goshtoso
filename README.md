@@ -105,6 +105,36 @@ own `.templ` files.
 For a complete integration guide, including custom Tailwind builds and manual
 asset wiring, see [docs/USAGE.md](docs/USAGE.md).
 
+## AI Agent Skill
+
+Goshtoso ships an installable skill for AI coding agents that need to use the
+library inside consumer applications. It teaches agents how to install the Go
+module, serve bundled assets, wire `head.Dependencies()`, import components, and
+avoid common integration mistakes.
+
+Install the skill into a project or agent workspace:
+
+```bash
+npx skills add araihu/goshtoso --skill using-goshtoso
+```
+
+For Codex:
+
+```bash
+npx skills add araihu/goshtoso --skill using-goshtoso --agent codex
+```
+
+Use it without installing files:
+
+```bash
+npx skills use araihu/goshtoso --skill using-goshtoso
+```
+
+The skill is intentionally consumer-focused. It does not cover maintaining
+Goshtoso itself, editing component internals, or running releases. The public
+docs site includes an AI Agents page at `/docs/agents` with install, usage, and
+distribution checks.
+
 ## Component Catalog
 
 All components are imported from:

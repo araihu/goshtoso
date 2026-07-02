@@ -69,6 +69,7 @@ var Demos = map[string]DemoEntry{
 	"components/toggle":           {"Toggle", "toggle", toggleDemoContent},
 	"components/structured-input": {"Structured Input", "structured-input", structuredInputDemoContent},
 	"components/tooltip":          {"Tooltip", "tooltip", tooltipDemoContent},
+	"docs/agents":                 {"AI Agents", "agents", agentsContent},
 	"docs/theme":                  {"Theme", "theme", themeDemoContent},
 	"getting-started":             {"Getting Started", "", gettingStartedContent},
 	"attributions":                {"Attributions", "attributions", attributionsContent},
@@ -108,6 +109,8 @@ func DemoMeta(key string, entry DemoEntry) demo.PageMeta {
 		title = "Example Apps - Goshtoso Go UI Components"
 	case key == "getting-started":
 		title = "Getting Started with Goshtoso Go UI Components"
+	case key == "docs/agents":
+		title = "Using Goshtoso With AI Agents"
 	case key == "docs/theme":
 		title = "Themes - Goshtoso UI Library for Go"
 	}
@@ -184,6 +187,7 @@ func demoDescription(key string, entry DemoEntry) string {
 		"components/toast":            "Create transient notifications with positions, timing, actions, and status variants, including HTMX OOB toasts.",
 		"components/toggle":           "Render binary switches for settings, feature flags, and compact on-off choices in Go applications.",
 		"components/tooltip":          "Add contextual hints for icons, controls, and abbreviated UI labels with hover, focus, or click triggers.",
+		"docs/agents":                 "Install the Goshtoso consumer agent skill for AI coding tools and verify npx skills distribution.",
 		"docs/theme":                  "Customize Goshtoso themes with Tailwind CSS tokens, dark mode, live previews, and server-rendered component examples.",
 		"getting-started":             "Start a Go HTMX app with Goshtoso, templ, Tailwind CSS, local runtime assets, and copy-pasteable setup code.",
 		"attributions":                "Review third-party licenses and asset attributions for the Goshtoso documentation site and component library.",
