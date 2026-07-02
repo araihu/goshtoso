@@ -10,6 +10,8 @@ description: Use when integrating or updating Goshtoso in an external Go/templ a
 Goshtoso is a Go UI component library for server-rendered templ apps. Treat it
 as a library dependency: consumers import pre-generated components, serve the
 embedded assets, and run `templ generate` only for their own `.templ` files.
+This skill is for integrating Goshtoso into external applications, not for
+modifying the Goshtoso component library or demo site itself.
 
 ## Default Integration
 

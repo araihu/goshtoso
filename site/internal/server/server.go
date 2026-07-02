@@ -112,6 +112,7 @@ func (s *Server) setupRoutes() {
 	s.mux.Handle("/api/components/combobox/users/clear", usersHandler)
 
 	// Docs pages
+	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
 	s.mux.HandleFunc("/attributions", s.handleAttributions)
@@ -403,6 +404,10 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 	default:
 		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown tab content: %s</div>`, tabID)
 	}
+}
+
+func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "docs/agents")
 }
 
 func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {

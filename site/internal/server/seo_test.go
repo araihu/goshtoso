@@ -41,6 +41,22 @@ func TestLandingPageRendersSEOMetadata(t *testing.T) {
 	require.Contains(t, body, `"@type":"SoftwareApplication"`)
 }
 
+func TestAgentsPageRendersSkillInstallGuidance(t *testing.T) {
+	s := &Server{}
+	req := httptest.NewRequest(http.MethodGet, "/docs/agents", nil)
+	rec := httptest.NewRecorder()
+
+	s.renderDemo(rec, req, "docs/agents")
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	body := rec.Body.String()
+	require.Contains(t, body, "<title>Using Goshtoso With AI Agents</title>")
+	require.Contains(t, body, `npx skills add araihu/goshtoso --skill using-goshtoso`)
+	require.Contains(t, body, `npx skills use araihu/goshtoso --skill using-goshtoso`)
+	require.Contains(t, body, "This skill is for consumer agents.")
+	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/docs/agents">`)
+}
+
 func TestRobotsAndSitemapExposePublicPages(t *testing.T) {
 	s := &Server{}
 
@@ -62,6 +78,7 @@ func TestRobotsAndSitemapExposePublicPages(t *testing.T) {
 	require.True(t, strings.HasPrefix(body, `<?xml version="1.0" encoding="UTF-8"?>`))
 	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/</loc>`)
 	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/components/accordion</loc>`)
+	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/docs/agents</loc>`)
 	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/examples/chat</loc>`)
 	require.NotContains(t, body, `/api/`)
 }
