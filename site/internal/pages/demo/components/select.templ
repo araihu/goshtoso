@@ -32,7 +32,6 @@ templ selectDemoContent() {
     },
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Error State",
@@ -48,7 +47,6 @@ templ selectDemoContent() {
     Options:    options,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Success State",
@@ -66,7 +64,6 @@ templ selectDemoContent() {
     },
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Large List",
@@ -81,7 +78,6 @@ templ selectDemoContent() {
     Options:      countryOptions(),
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Dependent Selects (Alpine.js)",
@@ -93,7 +89,6 @@ templ selectDemoContent() {
     @selectfield.Select(selectfield.Config{ID: "year", Alpine: &selectfield.AlpineConfig{Model: "secondValue", BindDisabled: "!firstValue"}, Options: years})
 </div>`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Disabled",
@@ -108,7 +103,6 @@ templ selectDemoContent() {
     Options:  options,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Readonly",
@@ -122,6 +116,25 @@ templ selectDemoContent() {
     Readonly: true,
     Options:  options,
 })`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Shell Mode",
+				Description: "Set Shell: true when Select should provide trigger and dropdown chrome while custom templ children own the value. Use ValueExpr for the trigger text and dispatch select-close after a pick.",
+			},
+			selectShellPreview(),
+			`<div x-data="{ access: 'Viewer' }">
+    @selectfield.Select(selectfield.Config{
+        ID:           "access-shell",
+        Label:        "Access level",
+        Shell:        true,
+        TriggerLabel: "Role",
+        ValueExpr:    "access",
+    }) {
+        <button type="button" x-on:click="access = 'Admin'; $dispatch('select-close')">Admin</button>
+        <button type="button" x-on:click="access = 'Viewer'; $dispatch('select-close')">Viewer</button>
+    }
+</div>`,
 		)
 	</div>
 	// API reference lives outside #select-fragment.
@@ -139,6 +152,10 @@ templ selectDemoContent() {
 		{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side Alpine bindings (Model, BindDisabled)."},
 		{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the select."},
 		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+		{Name: "Shell", Type: "bool", Default: "false", Description: "Render only the trigger/dropdown shell and use child content as the dropdown body."},
+		{Name: "TriggerLeading", Type: "templ.Component", Default: "nil", Description: "Optional component rendered before the trigger text, such as a swatch or icon."},
+		{Name: "ValueExpr", Type: "string", Default: `""`, Description: "Alpine expression used for shell-mode trigger text and aria-label."},
+		{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Static label shown on the left side of a shell trigger, with ValueExpr rendered muted on the right."},
 	})
 }
 
@@ -156,7 +173,6 @@ templ selectDefaultPreview() {
 			},
 		})
 	</div>
-
 }
 
 // selectErrorPreview renders the error-state select.
@@ -164,18 +180,17 @@ templ selectErrorPreview() {
 	<div id="select-error" class="w-full max-w-xs mx-auto">
 		@selectfield.Select(selectfield.Config{
 			ID:         "os-error",
-				Name:       "os-error",
-				Label:      "Operating System",
-				State:      selectfield.StateError,
-				HelperText: "Error: Please select an operating system",
-				Options: []selectfield.Option{
-					{Value: "mac", Label: "Mac"},
-					{Value: "windows", Label: "Windows"},
-					{Value: "linux", Label: "Linux"},
-				},
-			})
-		</div>
-
+			Name:       "os-error",
+			Label:      "Operating System",
+			State:      selectfield.StateError,
+			HelperText: "Error: Please select an operating system",
+			Options: []selectfield.Option{
+				{Value: "mac", Label: "Mac"},
+				{Value: "windows", Label: "Windows"},
+				{Value: "linux", Label: "Linux"},
+			},
+		})
+	</div>
 }
 
 // selectSuccessPreview renders the success-state select.
@@ -183,17 +198,16 @@ templ selectSuccessPreview() {
 	<div id="select-success" class="w-full max-w-xs mx-auto">
 		@selectfield.Select(selectfield.Config{
 			ID:    "os-success",
-				Name:  "os-success",
-				Label: "Operating System",
-				State: selectfield.StateSuccess,
-				Options: []selectfield.Option{
-					{Value: "mac", Label: "Mac", Selected: true},
-					{Value: "windows", Label: "Windows"},
-					{Value: "linux", Label: "Linux"},
-				},
-			})
-		</div>
-
+			Name:  "os-success",
+			Label: "Operating System",
+			State: selectfield.StateSuccess,
+			Options: []selectfield.Option{
+				{Value: "mac", Label: "Mac", Selected: true},
+				{Value: "windows", Label: "Windows"},
+				{Value: "linux", Label: "Linux"},
+			},
+		})
+	</div>
 }
 
 // selectCountryPreview renders a select with a large option list.
@@ -201,50 +215,48 @@ templ selectCountryPreview() {
 	<div id="select-country" class="w-full max-w-xs mx-auto">
 		@selectfield.Select(selectfield.Config{
 			ID:           "country",
-				Name:         "country",
-				Label:        "Country",
-				Autocomplete: "country",
-				Options:      countryOptions(),
-			})
-		</div>
-
+			Name:         "country",
+			Label:        "Country",
+			Autocomplete: "country",
+			Options:      countryOptions(),
+		})
+	</div>
 }
 
 // selectDependentPreview renders the Alpine-bound dependent selects.
 templ selectDependentPreview() {
 	<div id="select-dependent" class="w-full max-w-xs mx-auto">
 		<div x-data="{ firstValue: '', secondValue: '' }" class="flex w-full flex-col gap-4">
-				@selectfield.Select(selectfield.Config{
-					ID:          "modelName",
-					Name:        "modelName",
-					Label:       "Model",
-					Placeholder: "Select Model",
-					Alpine: &selectfield.AlpineConfig{Model: "firstValue"},
-					Options: []selectfield.Option{
-						{Value: "camery", Label: "Camery"},
-						{Value: "4runner", Label: "4Runner"},
-						{Value: "tacoma", Label: "Tacoma"},
-						{Value: "rav4", Label: "Rav4"},
-						{Value: "corolla", Label: "Corolla"},
-					},
-				})
-				@selectfield.Select(selectfield.Config{
-					ID:                 "year",
-					Name:               "year",
-					Label:              "Year",
-					Placeholder:        "Select Year",
-					Alpine: &selectfield.AlpineConfig{Model: "secondValue", BindDisabled: "!firstValue"},
-					Options: []selectfield.Option{
-						{Value: "2024", Label: "2024"},
-						{Value: "2023", Label: "2023"},
-						{Value: "2022", Label: "2022"},
-						{Value: "2021", Label: "2021"},
-						{Value: "2020", Label: "2020"},
-					},
-				})
-			</div>
+			@selectfield.Select(selectfield.Config{
+				ID:          "modelName",
+				Name:        "modelName",
+				Label:       "Model",
+				Placeholder: "Select Model",
+				Alpine:      &selectfield.AlpineConfig{Model: "firstValue"},
+				Options: []selectfield.Option{
+					{Value: "camery", Label: "Camery"},
+					{Value: "4runner", Label: "4Runner"},
+					{Value: "tacoma", Label: "Tacoma"},
+					{Value: "rav4", Label: "Rav4"},
+					{Value: "corolla", Label: "Corolla"},
+				},
+			})
+			@selectfield.Select(selectfield.Config{
+				ID:          "year",
+				Name:        "year",
+				Label:       "Year",
+				Placeholder: "Select Year",
+				Alpine:      &selectfield.AlpineConfig{Model: "secondValue", BindDisabled: "!firstValue"},
+				Options: []selectfield.Option{
+					{Value: "2024", Label: "2024"},
+					{Value: "2023", Label: "2023"},
+					{Value: "2022", Label: "2022"},
+					{Value: "2021", Label: "2021"},
+					{Value: "2020", Label: "2020"},
+				},
+			})
 		</div>
-
+	</div>
 }
 
 // selectDisabledPreview renders the disabled select.
@@ -252,36 +264,77 @@ templ selectDisabledPreview() {
 	<div id="select-disabled" class="w-full max-w-xs mx-auto">
 		@selectfield.Select(selectfield.Config{
 			ID:       "os-disabled",
-				Name:     "os-disabled",
-				Label:    "Operating System",
-				Disabled: true,
-				Options: []selectfield.Option{
-					{Value: "mac", Label: "Mac"},
-					{Value: "windows", Label: "Windows"},
-					{Value: "linux", Label: "Linux"},
-				},
-			})
-		</div>
-
+			Name:     "os-disabled",
+			Label:    "Operating System",
+			Disabled: true,
+			Options: []selectfield.Option{
+				{Value: "mac", Label: "Mac"},
+				{Value: "windows", Label: "Windows"},
+				{Value: "linux", Label: "Linux"},
+			},
+		})
+	</div>
 }
 
 // selectReadonlyPreview renders the readonly select inside a form.
 templ selectReadonlyPreview() {
 	<div id="select-readonly" class="w-full max-w-xs mx-auto">
 		<form id="readonlySelectForm" method="get" action="javascript:void(0)">
-				@selectfield.Select(selectfield.Config{
-					ID:       "os-readonly",
-					Name:     "os-readonly",
-					Label:    "Operating System",
-					Readonly: true,
-					Options: []selectfield.Option{
-						{Value: "mac", Label: "Mac"},
-						{Value: "windows", Label: "Windows", Selected: true},
-						{Value: "linux", Label: "Linux"},
-					},
-				})
-			</form>
+			@selectfield.Select(selectfield.Config{
+				ID:       "os-readonly",
+				Name:     "os-readonly",
+				Label:    "Operating System",
+				Readonly: true,
+				Options: []selectfield.Option{
+					{Value: "mac", Label: "Mac"},
+					{Value: "windows", Label: "Windows", Selected: true},
+					{Value: "linux", Label: "Linux"},
+				},
+			})
+		</form>
+	</div>
+}
+
+// selectShellPreview renders Select as trigger/dropdown chrome around custom content.
+templ selectShellPreview() {
+	<div id="select-shell" class="w-full max-w-xs mx-auto">
+		<div x-data="{ access: 'Viewer' }">
+			@selectfield.Select(selectfield.Config{
+				ID:           "access-shell",
+				Label:        "Access level",
+				Shell:        true,
+				TriggerLabel: "Role",
+				ValueExpr:    "access",
+			}) {
+				<div class="w-64 p-2">
+					<button
+						type="button"
+						x-on:click="access = 'Admin'; $dispatch('select-close')"
+						class="flex w-full flex-col rounded-radius px-3 py-2 text-left text-sm hover:bg-surface dark:hover:bg-surface-dark"
+					>
+						<span class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Admin</span>
+						<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Can update settings and manage members.</span>
+					</button>
+					<button
+						type="button"
+						x-on:click="access = 'Editor'; $dispatch('select-close')"
+						class="flex w-full flex-col rounded-radius px-3 py-2 text-left text-sm hover:bg-surface dark:hover:bg-surface-dark"
+					>
+						<span class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Editor</span>
+						<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Can edit content without changing access.</span>
+					</button>
+					<button
+						type="button"
+						x-on:click="access = 'Viewer'; $dispatch('select-close')"
+						class="flex w-full flex-col rounded-radius px-3 py-2 text-left text-sm hover:bg-surface dark:hover:bg-surface-dark"
+					>
+						<span class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Viewer</span>
+						<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Can read project data only.</span>
+					</button>
+				</div>
+			}
 		</div>
+	</div>
 }
 
 func countryOptions() []selectfield.Option {

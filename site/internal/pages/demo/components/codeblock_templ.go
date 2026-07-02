@@ -64,17 +64,14 @@ func codeBlockDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"codeblock-fragment\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Code Block",
-				Description: "Syntax-highlighted code block rendered server-side via Chroma. Reacts to the active theme and dark mode. Includes a copy-to-clipboard button.",
-				Props: []demo.PropDoc{
-					{Name: "Language", Type: "string", Default: `""`, Description: `Chroma lexer key (e.g. "go", "css", "html", "bash"). "templ" aliases to Go. Unknown values fall back to plain text.`},
-					{Name: "Code", Type: "string", Default: `""`, Description: "Source code to render. Passed verbatim to the highlighter."},
-					{Name: "Label", Type: "string", Default: "Language", Description: "Header label. Defaults to the Language value when empty."},
-					{Name: "MaxHeight", Type: "string", Default: `""`, Description: "Optional CSS max-height (e.g. \"300px\") that enables vertical scroll inside the block."},
-					{Name: "ID", Type: "string", Default: "auto", Description: "Override the auto-generated element ID. Used by the copy handler to read textContent."},
-				},
+				Description: "Syntax-highlighted code rendered server-side with Chroma. It follows the active theme, includes an accessible copy button, and falls back to plain text when a lexer is unknown.",
 			},
 			codeBlockDemoPreview(),
 			`@codeblock.CodeBlock(codeblock.Config{
@@ -93,7 +90,7 @@ func main() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "HTML",
-				Description: "Tag names render pink; attribute names render purple; quoted values render blue.",
+				Description: "Use Language: \"html\" for templates, fragments, and Alpine/HTMX snippets.",
 			},
 			codeBlockHTMLPreview(),
 			`@codeblock.CodeBlock(codeblock.Config{
@@ -107,7 +104,7 @@ func main() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "CSS",
-				Description: "Selectors, properties, and values all share the palette.",
+				Description: "CSS snippets use the same highlighted shell, so theme token examples stay readable in light and dark mode.",
 			},
 			codeBlockCSSPreview(),
 			`@codeblock.CodeBlock(codeblock.Config{
@@ -121,7 +118,7 @@ func main() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Bash",
-				Description: "Built-in commands and flags use the keyword palette; quoted strings use the literal palette.",
+				Description: "Command snippets can set a short Label when the language name is not specific enough.",
 			},
 			codeBlockBashPreview(),
 			`@codeblock.CodeBlock(codeblock.Config{
@@ -135,8 +132,8 @@ func main() {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Scrollable (MaxHeight)",
-				Description: "Long snippets stay contained when MaxHeight is set.",
+				Title:       "Scrollable",
+				Description: "Set MaxHeight for long snippets that should scroll inside the code panel instead of pushing the page apart.",
 			},
 			codeBlockScrollPreview(),
 			`@codeblock.CodeBlock(codeblock.Config{
@@ -145,6 +142,20 @@ func main() {
     Code:      longGoSnippet,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "Language", Type: "string", Default: `""`, Description: `Chroma lexer key such as "go", "css", "html", or "bash"; "templ" aliases to Go and unknown values render as plain text.`},
+			{Name: "Code", Type: "string", Default: `""`, Description: "Source code to display and copy."},
+			{Name: "Label", Type: "string", Default: "Language", Description: "Header label; defaults to the resolved language when empty."},
+			{Name: "MaxHeight", Type: "string", Default: `""`, Description: `Optional CSS max-height such as "300px"; enables vertical scrolling inside the code body.`},
+			{Name: "ID", Type: "string", Default: "auto", Description: "Optional code element id; otherwise generated from the label, language, and code content for copy-button targeting."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -173,7 +184,7 @@ func codeBlockDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-3xl mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-3xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -191,7 +202,7 @@ func main() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -220,7 +231,7 @@ func codeBlockHTMLPreview() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"w-full max-w-3xl mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"w-full max-w-3xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -231,7 +242,7 @@ func codeBlockHTMLPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -260,7 +271,7 @@ func codeBlockCSSPreview() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"w-full max-w-3xl mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"w-full max-w-3xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -275,7 +286,7 @@ func codeBlockCSSPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -304,7 +315,7 @@ func codeBlockBashPreview() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"w-full max-w-3xl mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"w-full max-w-3xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -316,7 +327,7 @@ func codeBlockBashPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -345,7 +356,7 @@ func codeBlockScrollPreview() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"w-full max-w-3xl mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"w-full max-w-3xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -379,7 +390,7 @@ func main() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
