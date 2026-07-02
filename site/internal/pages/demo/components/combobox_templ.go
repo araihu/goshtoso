@@ -46,6 +46,22 @@ var SkillsCfg = combobox.Config{
 	}},
 }
 
+// RegionsCfg: client-mode single-select with an initial selected value and a disabled option.
+var RegionsCfg = combobox.Config{
+	ID:          "region",
+	Name:        "region",
+	Label:       "Region",
+	Placeholder: "Select a region",
+	Mode:        combobox.ModeSingle,
+	Selected:    []string{"us-east-1"},
+	Source: combobox.Source{Static: []combobox.Option{
+		{Value: "us-east-1", Label: "US East"},
+		{Value: "eu-west-1", Label: "EU West"},
+		{Value: "ap-south-1", Label: "AP South"},
+		{Value: "legacy", Label: "Legacy region", Disabled: true},
+	}},
+}
+
 // UsersCfg: server-mode multi-select with lazy search.
 var UsersCfg = combobox.Config{
 	ID:              "users",
@@ -59,6 +75,21 @@ var UsersCfg = combobox.Config{
 	OptionsEndpoint: "/api/components/combobox/users/options",
 	ClearEndpoint:   "/api/components/combobox/users/clear",
 	Source:          combobox.Source{LazyEndpoint: "/api/components/combobox/users/options"},
+}
+
+// ClusterCfg: server-mode combobox that includes another field in HTMX requests.
+var ClusterCfg = combobox.Config{
+	ID:              "cluster",
+	Name:            "cluster",
+	Label:           "Cluster",
+	Placeholder:     "Search clusters",
+	Mode:            combobox.ModeSingle,
+	EnableSearch:    true,
+	DependsOn:       []string{"provider"},
+	ToggleEndpoint:  "/api/components/combobox/clusters/toggle",
+	OptionsEndpoint: "/api/components/combobox/clusters/options",
+	ClearEndpoint:   "/api/components/combobox/clusters/clear",
+	Source:          combobox.Source{LazyEndpoint: "/api/components/combobox/clusters/options"},
 }
 
 // ComboboxPage renders the HTMX SSR combobox demo.
@@ -183,6 +214,25 @@ var IndustryCfg = combobox.Config{
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Selected and Disabled Options",
+				Description: "Set Config.Selected for first-paint values. Disabled options stay visible but cannot be selected.",
+			},
+			comboboxRegionsPreview(),
+			`var RegionsCfg = combobox.Config{
+    ID: "region", Name: "region", Label: "Region",
+    Selected: []string{"us-east-1"},
+    Source: combobox.Source{Static: []combobox.Option{
+        {Value: "us-east-1", Label: "US East"},
+        {Value: "legacy", Label: "Legacy region", Disabled: true},
+    }},
+}
+@combobox.Combobox(RegionsCfg, RegionsCfg.InitialState())`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "Server Mode (lazy search)",
 				Description: "Set the Toggle/Options/Clear endpoints and a LazyEndpoint Source; the component fetches and searches options over HTMX.",
 			},
@@ -200,6 +250,42 @@ var IndustryCfg = combobox.Config{
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Cascading Server Filters",
+				Description: "DependsOn adds other fields to combobox HTMX requests. Add an hx-get on the parent field when changing it should immediately refresh the dependent options.",
+			},
+			comboboxClusterPreview(),
+			`selectedProvider := "aws"
+var ClusterCfg = combobox.Config{
+    ID: "cluster", Name: "cluster", Mode: combobox.ModeSingle,
+    EnableSearch: true,
+    DependsOn: []string{"provider"},
+    ToggleEndpoint:  "/api/.../clusters/toggle",
+    OptionsEndpoint: "/api/.../clusters/options",
+    ClearEndpoint:   "/api/.../clusters/clear",
+    Source: combobox.Source{LazyEndpoint: "/api/.../clusters/options"},
+}
+
+// OptionsProvider receives search and deps["provider"] on the server.
+clustersProvider := func(ctx context.Context, search string, deps map[string]string) ([]combobox.Option, error) {
+    return clustersForProvider(deps["provider"], search)
+}
+
+<select
+    name="provider"
+    hx-get={ ClusterCfg.OptionsEndpoint }
+    hx-trigger="change"
+    hx-target="#cluster-options"
+    hx-swap="outerHTML"
+    hx-include="#cluster [data-combobox-search], #cluster input[type=hidden]">
+    <option value={ selectedProvider }>AWS</option>
+</select>
+@combobox.Combobox(ClusterCfg, combobox.State{})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -210,12 +296,18 @@ var IndustryCfg = combobox.Config{
 			{Name: "Label", Type: "string", Default: `""`, Description: "Label above the combobox."},
 			{Name: "Placeholder", Type: "string", Default: `""`, Description: "Trigger placeholder."},
 			{Name: "Mode", Type: "Mode", Default: "ModeSingle", Description: "combobox.ModeSingle or combobox.ModeMultiple."},
-			{Name: "Source", Type: "Source", Default: "{}", Description: "Options source: Static []Option (client mode) or LazyEndpoint (server mode)."},
+			{Name: "Source.Static", Type: "[]Option", Default: "nil", Description: "Client-mode options rendered into the first page. Use InitialState() to pass them into State."},
+			{Name: "Source.LazyEndpoint", Type: "string", Default: `""`, Description: "Server-mode endpoint used for first load/search. Cannot be combined with Source.Static."},
+			{Name: "Option", Type: "struct", Default: "-", Description: "Option row fields: Value, Label, Disabled. Meta, Img, Initials, Badge, and BadgeColor are data-model fields not rendered by the current list template."},
 			{Name: "Selected", Type: "[]string", Default: "nil", Description: "Initial selected values for first-paint/static renders."},
+			{Name: "State.Options", Type: "[]Option", Default: "nil", Description: "Options available for this render. Client mode usually uses cfg.InitialState()."},
+			{Name: "State.Selected", Type: "[]string", Default: "nil", Description: "Selected values for this render; server handlers return updated Body/OptionsList state."},
+			{Name: "State.Search", Type: "string", Default: `""`, Description: "Current server-side search term used when rendering filtered results."},
+			{Name: "OptionsProvider", Type: "func", Default: "nil", Description: "Server helper shape: func(ctx, search, deps) ([]combobox.Option, error)."},
 			{Name: "EnableSearch", Type: "bool", Default: "false", Description: "Show a search box (server mode queries the endpoint)."},
 			{Name: "EnableClearAll", Type: "bool", Default: "false", Description: "Show a clear-all action."},
 			{Name: "Required", Type: "bool", Default: "false", Description: "Mark the field required."},
-			{Name: "DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this combobox."},
+			{Name: "DependsOn", Type: "[]string", Default: "nil", Description: "Other field names included in server HTMX requests via hx-include."},
 			{Name: "ToggleEndpoint", Type: "string", Default: `""`, Description: "Server URL for toggling a selection (server mode)."},
 			{Name: "OptionsEndpoint", Type: "string", Default: `""`, Description: "Server URL for fetching/searching options."},
 			{Name: "ClearEndpoint", Type: "string", Default: `""`, Description: "Server URL for clearing the selection."},
@@ -305,8 +397,8 @@ func comboboxSkillsPreview() templ.Component {
 	})
 }
 
-// comboboxUsersPreview renders the server-mode lazy-search multi-select.
-func comboboxUsersPreview() templ.Component {
+// comboboxRegionsPreview renders a preselected client-mode combobox with a disabled option.
+func comboboxRegionsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -327,7 +419,45 @@ func comboboxUsersPreview() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"combobox-users\" class=\"w-full max-w-xs mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"combobox-regions\" class=\"w-full max-w-xs mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = combobox.Combobox(RegionsCfg, RegionsCfg.InitialState()).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// comboboxUsersPreview renders the server-mode lazy-search multi-select.
+func comboboxUsersPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"combobox-users\" class=\"w-full max-w-xs mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -335,7 +465,58 @@ func comboboxUsersPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// comboboxClusterPreview renders a server-mode combobox with a dependent field.
+func comboboxClusterPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"combobox-cluster\" class=\"w-full max-w-sm mx-auto space-y-3\"><label class=\"block text-sm text-on-surface dark:text-on-surface-dark\"><span class=\"mb-1 block\">Provider</span> <select name=\"provider\" class=\"w-full rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(ClusterCfg.OptionsEndpoint)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/combobox.templ`, Line: 261, Col: 39}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" hx-trigger=\"change\" hx-target=\"#cluster-options\" hx-swap=\"outerHTML\" hx-include=\"#cluster [data-combobox-search], #cluster input[type=hidden]\"><option value=\"aws\" selected>AWS</option> <option value=\"gcp\">GCP</option> <option value=\"azure\">Azure</option></select></label>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = combobox.Combobox(ClusterCfg, combobox.State{}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

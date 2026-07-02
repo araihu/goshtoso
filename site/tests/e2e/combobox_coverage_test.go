@@ -116,6 +116,49 @@ func TestComboboxCoverage_ServerLazySearchAndToggle(t *testing.T) {
 	assert.Empty(t, consoleErrors, "no console errors during server-mode flow (got: %v)", consoleErrors)
 }
 
+func TestComboboxCoverage_CascadingProviderReloadsClusterOptions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	trigger := page.Locator("#cluster-trigger").First()
+	require.NoError(t, trigger.Click())
+	search := page.Locator("#cluster [data-combobox-search]").First()
+	require.NoError(t, search.Fill("prod"))
+
+	awsCluster := page.Locator(`#cluster [data-combobox-option][data-value="prod-use1"]`).First()
+	require.NoError(t, awsCluster.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	provider := page.Locator(`#combobox-cluster select[name="provider"]`).First()
+	_, err = provider.SelectOption(playwright.SelectOptionValues{
+		Values: &[]string{"gcp"},
+	})
+	require.NoError(t, err)
+
+	gcpCluster := page.Locator(`#cluster [data-combobox-option][data-value="prod-us-central1"]`).First()
+	require.NoError(t, gcpCluster.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+
+	awsClusterCount, err := page.Locator(`#cluster [data-combobox-option][data-value="prod-use1"]`).Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, awsClusterCount, "provider dependency should filter out AWS clusters after selecting GCP")
+}
+
 // TestComboboxCoverage_KeyboardAndChevron covers the keyboard-open path
 // (openedWithKeyboard) and the chevron rotate binding, then Escape-to-close.
 func TestComboboxCoverage_KeyboardAndChevron(t *testing.T) {

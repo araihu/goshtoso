@@ -1,6 +1,7 @@
 package components
 
 import (
+	templpkg "github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -62,16 +63,49 @@ templ navbarDemoContent() {
     UserMenu:  menu,
 })`,
 		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Actions, Avatar, and Link Attributes",
+				Description: "ActionItem.Position controls whether custom controls render after the brand or before the avatar. NavLink.LinkAttrs and UserMenuItem.LinkAttrs carry analytics, HTMX, or test attributes through to the rendered anchors.",
+			},
+			navbarActionsAvatarPreview(),
+			`@navbar.Navbar(navbar.Config{
+    BrandHref: "/docs",
+    Brand:     brand(),
+    Links: []navbar.NavLink{
+        {Label: "Docs", Href: "/docs", Active: true, LinkAttrs: templ.Attributes{"data-track": "nav-docs"}},
+        {Label: "API", Href: "/api"},
+    },
+    Actions: []navbar.ActionItem{
+        {Content: environmentBadge(), Position: navbar.ActionLeft},
+        {Content: commandButton(), Position: navbar.ActionRight},
+    },
+    User: &navbar.UserProfile{
+        Name:   "Maya Chen",
+        Email:  "maya@example.com",
+        Avatar: initialsAvatar("MC"),
+    },
+    UserMenu: []navbar.UserMenuItem{
+        {Label: "Profile", Href: "/profile", Icon: userIcon()},
+        {Label: "Sign Out", Href: "/logout", Danger: true, LinkAttrs: templ.Attributes{"data-method": "post"}},
+    },
+})`,
+		)
 	</div>
 	// API reference lives outside #navbar-fragment.
 	@demo.APIReference([]demo.PropDoc{
 		{Name: "Brand", Type: "templ.Component", Default: "nil", Description: "Brand/logo content shown at the start of the bar."},
-		{Name: "BrandHref", Type: "string", Default: `""`, Description: "Link target for the brand."},
-		{Name: "Links", Type: "[]NavLink", Default: "nil", Description: "Primary nav links (Label, Href, Active)."},
-		{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Trailing action items (buttons/links)."},
-		{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile (Name, Email, Avatar) — renders the avatar dropdown trigger."},
-		{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown (Label, Href, Danger)."},
-		{Name: "Actions", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
+		{Name: "BrandHref", Type: "string", Default: `"/"`, Description: "Link target for the brand. Empty values fall back to /."},
+		{Name: "Links", Type: "[]NavLink", Default: "nil", Description: "Primary desktop and mobile nav links."},
+		{Name: "NavLink", Type: "struct", Default: "-", Description: "Link row: Label, Href, Active, and LinkAttrs. Active adds aria-current=\"page\"."},
+		{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Custom controls rendered after the brand or before the avatar."},
+		{Name: "ActionItem.Content", Type: "templ.Component", Default: "nil", Description: "Button, badge, theme selector, or other control to render in the navbar."},
+		{Name: "ActionItem.Position", Type: "ActionPosition", Default: "ActionLeft", Description: "ActionLeft renders after the brand; ActionRight renders before the avatar and inside the mobile menu."},
+		{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile; when present, renders the avatar dropdown trigger."},
+		{Name: "UserProfile", Type: "struct", Default: "-", Description: "Name and Email render in the dropdown header. Avatar overrides the default user icon."},
+		{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown and mobile menu."},
+		{Name: "UserMenuItem", Type: "struct", Default: "-", Description: "Menu row: Label, Href, optional Icon, LinkAttrs, and Danger styling."},
 		{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav>."},
 		{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 	})
@@ -133,6 +167,34 @@ templ navbarWithRightSlotPreview() {
 	</div>
 }
 
+// navbarActionsAvatarPreview renders a mixed action placement and custom avatar example.
+templ navbarActionsAvatarPreview() {
+	<div id="navbar-actions-avatar" class="w-full" style="min-height: 220px;">
+		@navbar.Navbar(navbar.Config{
+			BrandHref: "/docs",
+			Brand:     demoBrandText(),
+			Links: []navbar.NavLink{
+				{Label: "Docs", Href: "/docs", Active: true, LinkAttrs: templpkg.Attributes{"data-track": "nav-docs"}},
+				{Label: "API", Href: "/api", LinkAttrs: templpkg.Attributes{"data-track": "nav-api"}},
+				{Label: "Changelog", Href: "/changelog"},
+			},
+			Actions: []navbar.ActionItem{
+				{Content: demoEnvironmentBadge(), Position: navbar.ActionLeft},
+				{Content: demoCommandButton(), Position: navbar.ActionRight},
+			},
+			User: &navbar.UserProfile{
+				Name:   "Maya Chen",
+				Email:  "maya@example.com",
+				Avatar: demoInitialsAvatar("MC"),
+			},
+			UserMenu: []navbar.UserMenuItem{
+				{Label: "Profile", Href: "/profile", Icon: demoUserMenuIcon()},
+				{Label: "Sign Out", Href: "/logout", Danger: true, LinkAttrs: templpkg.Attributes{"data-method": "post"}},
+			},
+		})
+	</div>
+}
+
 // --- Demo Helpers ---
 
 templ demoBrandText() {
@@ -145,4 +207,24 @@ templ demoRightSlot() {
 			<path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>
 		</svg>
 	</button>
+}
+
+templ demoEnvironmentBadge() {
+	<span class="rounded-full border border-outline px-2.5 py-1 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">Prod</span>
+}
+
+templ demoCommandButton() {
+	<button class="rounded-radius border border-outline px-2.5 py-1.5 text-xs font-medium text-on-surface transition hover:bg-surface-dark/5 dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface/5">
+		Ctrl K
+	</button>
+}
+
+templ demoInitialsAvatar(initials string) {
+	<span class="inline-flex size-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-on-primary dark:bg-primary-dark dark:text-on-primary-dark">{ initials }</span>
+}
+
+templ demoUserMenuIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4" aria-hidden="true">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a8.25 8.25 0 0 1 15 0"></path>
+	</svg>
 }

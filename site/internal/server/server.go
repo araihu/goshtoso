@@ -110,6 +110,10 @@ func (s *Server) setupRoutes() {
 	s.mux.Handle("/api/components/combobox/users/options", usersHandler)
 	s.mux.Handle("/api/components/combobox/users/toggle", usersHandler)
 	s.mux.Handle("/api/components/combobox/users/clear", usersHandler)
+	clustersHandler := combobox.Handler(components.ClusterCfg, clustersProvider)
+	s.mux.Handle("/api/components/combobox/clusters/options", clustersHandler)
+	s.mux.Handle("/api/components/combobox/clusters/toggle", clustersHandler)
+	s.mux.Handle("/api/components/combobox/clusters/clear", clustersHandler)
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
@@ -481,6 +485,41 @@ func usersProvider(_ context.Context, search string, _ map[string]string) ([]com
 	q := strings.ToLower(search)
 	out := make([]combobox.Option, 0, len(seed))
 	for _, o := range seed {
+		if strings.Contains(strings.ToLower(o.Label), q) {
+			out = append(out, o)
+		}
+	}
+	return out, nil
+}
+
+// clustersProvider is an OptionsProvider for the combobox cascading-dependency demo.
+func clustersProvider(_ context.Context, search string, deps map[string]string) ([]combobox.Option, error) {
+	seed := map[string][]combobox.Option{
+		"aws": {
+			{Value: "prod-use1", Label: "prod-use1"},
+			{Value: "staging-use1", Label: "staging-use1"},
+			{Value: "archive-usw2", Label: "archive-usw2", Disabled: true},
+		},
+		"gcp": {
+			{Value: "prod-us-central1", Label: "prod-us-central1"},
+			{Value: "analytics-eu", Label: "analytics-eu"},
+		},
+		"azure": {
+			{Value: "prod-eastus", Label: "prod-eastus"},
+			{Value: "ml-westeurope", Label: "ml-westeurope"},
+		},
+	}
+	provider := deps["provider"]
+	if provider == "" {
+		provider = "aws"
+	}
+	options := seed[provider]
+	if search == "" {
+		return options, nil
+	}
+	q := strings.ToLower(search)
+	out := make([]combobox.Option, 0, len(options))
+	for _, o := range options {
 		if strings.Contains(strings.ToLower(o.Label), q) {
 			out = append(out, o)
 		}

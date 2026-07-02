@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	templpkg "github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -125,18 +126,53 @@ func navbarDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Actions, Avatar, and Link Attributes",
+				Description: "ActionItem.Position controls whether custom controls render after the brand or before the avatar. NavLink.LinkAttrs and UserMenuItem.LinkAttrs carry analytics, HTMX, or test attributes through to the rendered anchors.",
+			},
+			navbarActionsAvatarPreview(),
+			`@navbar.Navbar(navbar.Config{
+    BrandHref: "/docs",
+    Brand:     brand(),
+    Links: []navbar.NavLink{
+        {Label: "Docs", Href: "/docs", Active: true, LinkAttrs: templ.Attributes{"data-track": "nav-docs"}},
+        {Label: "API", Href: "/api"},
+    },
+    Actions: []navbar.ActionItem{
+        {Content: environmentBadge(), Position: navbar.ActionLeft},
+        {Content: commandButton(), Position: navbar.ActionRight},
+    },
+    User: &navbar.UserProfile{
+        Name:   "Maya Chen",
+        Email:  "maya@example.com",
+        Avatar: initialsAvatar("MC"),
+    },
+    UserMenu: []navbar.UserMenuItem{
+        {Label: "Profile", Href: "/profile", Icon: userIcon()},
+        {Label: "Sign Out", Href: "/logout", Danger: true, LinkAttrs: templ.Attributes{"data-method": "post"}},
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "Brand", Type: "templ.Component", Default: "nil", Description: "Brand/logo content shown at the start of the bar."},
-			{Name: "BrandHref", Type: "string", Default: `""`, Description: "Link target for the brand."},
-			{Name: "Links", Type: "[]NavLink", Default: "nil", Description: "Primary nav links (Label, Href, Active)."},
-			{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Trailing action items (buttons/links)."},
-			{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile (Name, Email, Avatar) — renders the avatar dropdown trigger."},
-			{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown (Label, Href, Danger)."},
-			{Name: "Actions", Type: "templ.Component", Default: "nil", Description: "Custom content rendered before the user avatar."},
+			{Name: "BrandHref", Type: "string", Default: `"/"`, Description: "Link target for the brand. Empty values fall back to /."},
+			{Name: "Links", Type: "[]NavLink", Default: "nil", Description: "Primary desktop and mobile nav links."},
+			{Name: "NavLink", Type: "struct", Default: "-", Description: "Link row: Label, Href, Active, and LinkAttrs. Active adds aria-current=\"page\"."},
+			{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Custom controls rendered after the brand or before the avatar."},
+			{Name: "ActionItem.Content", Type: "templ.Component", Default: "nil", Description: "Button, badge, theme selector, or other control to render in the navbar."},
+			{Name: "ActionItem.Position", Type: "ActionPosition", Default: "ActionLeft", Description: "ActionLeft renders after the brand; ActionRight renders before the avatar and inside the mobile menu."},
+			{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile; when present, renders the avatar dropdown trigger."},
+			{Name: "UserProfile", Type: "struct", Default: "-", Description: "Name and Email render in the dropdown header. Avatar overrides the default user icon."},
+			{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown and mobile menu."},
+			{Name: "UserMenuItem", Type: "struct", Default: "-", Description: "Menu row: Label, Href, optional Icon, LinkAttrs, and Danger styling."},
 			{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav>."},
 			{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -296,8 +332,8 @@ func navbarWithRightSlotPreview() templ.Component {
 	})
 }
 
-// --- Demo Helpers ---
-func demoBrandText() templ.Component {
+// navbarActionsAvatarPreview renders a mixed action placement and custom avatar example.
+func navbarActionsAvatarPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -318,7 +354,66 @@ func demoBrandText() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span>Peng<span class=\"text-primary dark:text-primary-dark\">ui</span>n</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"navbar-actions-avatar\" class=\"w-full\" style=\"min-height: 220px;\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = navbar.Navbar(navbar.Config{
+			BrandHref: "/docs",
+			Brand:     demoBrandText(),
+			Links: []navbar.NavLink{
+				{Label: "Docs", Href: "/docs", Active: true, LinkAttrs: templpkg.Attributes{"data-track": "nav-docs"}},
+				{Label: "API", Href: "/api", LinkAttrs: templpkg.Attributes{"data-track": "nav-api"}},
+				{Label: "Changelog", Href: "/changelog"},
+			},
+			Actions: []navbar.ActionItem{
+				{Content: demoEnvironmentBadge(), Position: navbar.ActionLeft},
+				{Content: demoCommandButton(), Position: navbar.ActionRight},
+			},
+			User: &navbar.UserProfile{
+				Name:   "Maya Chen",
+				Email:  "maya@example.com",
+				Avatar: demoInitialsAvatar("MC"),
+			},
+			UserMenu: []navbar.UserMenuItem{
+				{Label: "Profile", Href: "/profile", Icon: demoUserMenuIcon()},
+				{Label: "Sign Out", Href: "/logout", Danger: true, LinkAttrs: templpkg.Attributes{"data-method": "post"}},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// --- Demo Helpers ---
+func demoBrandText() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span>Peng<span class=\"text-primary dark:text-primary-dark\">ui</span>n</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -342,12 +437,141 @@ func demoRightSlot() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<button class=\"p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors rounded-radius\" aria-label=\"Toggle dark mode\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-5 w-5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z\"></path></svg></button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<button class=\"p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors rounded-radius\" aria-label=\"Toggle dark mode\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-5 w-5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z\"></path></svg></button>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func demoEnvironmentBadge() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"rounded-full border border-outline px-2.5 py-1 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">Prod</span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func demoCommandButton() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<button class=\"rounded-radius border border-outline px-2.5 py-1.5 text-xs font-medium text-on-surface transition hover:bg-surface-dark/5 dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface/5\">Ctrl K</button>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func demoInitialsAvatar(initials string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<span class=\"inline-flex size-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-on-primary dark:bg-primary-dark dark:text-on-primary-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(initials)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/navbar.templ`, Line: 223, Col: 182}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func demoUserMenuIcon() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.8\" stroke=\"currentColor\" class=\"size-4\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a8.25 8.25 0 0 1 15 0\"></path></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
