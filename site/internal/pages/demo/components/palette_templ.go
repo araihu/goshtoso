@@ -93,7 +93,7 @@ func paletteDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Inside a Select Shell",
-				Description: "Host the palette inside a Select with Shell: true; the trigger label reflects the picked value via ValueExpr.",
+				Description: "Host the palette inside a Select with Shell: true; the trigger label reflects the picked value via ValueExpr. Add LazyWhen when the full swatch grid should render only after the shell opens.",
 			},
 			paletteShellPreview(),
 			`<div x-data="{ shellPicked: '' }">
@@ -106,10 +106,43 @@ func paletteDemoContent() templ.Component {
         @palette.Palette(palette.Config{
             ID:          "demo-shell-palette",
             Alpine: &palette.AlpineConfig{Model: "shellPicked"},
+            LazyWhen:    "isOpen",
             ShowHex:     true,
         })
     }
 </div>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Restricted Hues",
+				Description: "Pass Hues and Shades when a workflow should offer only approved brand choices instead of the full Tailwind palette.",
+			},
+			paletteRestrictedPreview(),
+			`@palette.Palette(palette.Config{
+    ID:     "brand-palette",
+    Hues:   []string{"purple", "sky", "teal"},
+    Shades: []string{"300", "500", "700"},
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Compact Picker",
+				Description: "HideNeutral and HideReset trim the control for required color fields where white, black, and clearing the value are not valid choices.",
+			},
+			paletteCompactPreview(),
+			`@palette.Palette(palette.Config{
+    ID:          "compact-palette",
+    Hues:        []string{"red", "amber", "green", "blue"},
+    Shades:      []string{"400", "600"},
+    HideNeutral: true,
+    HideReset:   true,
+})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -127,6 +160,7 @@ func paletteDemoContent() templ.Component {
 			{Name: "HideReset", Type: "bool", Default: "false", Description: "Hide the reset/clear control."},
 			{Name: "ShowHex", Type: "bool", Default: "false", Description: "Show the hex value of the hovered/selected swatch."},
 			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the palette container."},
+			{Name: "LazyWhen", Type: "string", Default: `""`, Description: "Alpine expression that delays swatch-grid rendering until truthy; useful inside Select shells with an open state."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -220,9 +254,10 @@ func paletteShellPreview() templ.Component {
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = palette.Palette(palette.Config{
-				ID:      "demo-shell-palette",
-				Alpine:  &palette.AlpineConfig{Model: "shellPicked"},
-				ShowHex: true,
+				ID:       "demo-shell-palette",
+				Alpine:   &palette.AlpineConfig{Model: "shellPicked"},
+				LazyWhen: "isOpen",
+				ShowHex:  true,
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -246,7 +281,8 @@ func paletteShellPreview() templ.Component {
 	})
 }
 
-func paletteShellTriggerSwatch() templ.Component {
+// paletteRestrictedPreview renders a curated brand-color subset.
+func paletteRestrictedPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -267,7 +303,92 @@ func paletteShellTriggerSwatch() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span data-shell-selected-preview aria-hidden=\"true\" class=\"size-4 shrink-0 rounded-sm border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark\" x-bind:style=\"{ backgroundColor: shellPicked ? (shellPicked[0] === '#' ? shellPicked : (shellPicked === 'white' || shellPicked === 'black' ? shellPicked : 'var(--color-' + shellPicked + ')')) : 'transparent' }\"></span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div id=\"palette-restricted\" class=\"w-full max-w-sm mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = palette.Palette(palette.Config{
+			ID:     "brand-palette",
+			Hues:   []string{"purple", "sky", "teal"},
+			Shades: []string{"300", "500", "700"},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// paletteCompactPreview renders a required-field palette without neutral/reset choices.
+func paletteCompactPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div id=\"palette-compact\" class=\"w-full max-w-xs mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = palette.Palette(palette.Config{
+			ID:          "compact-palette",
+			Hues:        []string{"red", "amber", "green", "blue"},
+			Shades:      []string{"400", "600"},
+			HideNeutral: true,
+			HideReset:   true,
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func paletteShellTriggerSwatch() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span data-shell-selected-preview aria-hidden=\"true\" class=\"size-4 shrink-0 rounded-sm border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark\" x-bind:style=\"{ backgroundColor: shellPicked ? (shellPicked[0] === '#' ? shellPicked : (shellPicked === 'white' || shellPicked === 'black' ? shellPicked : 'var(--color-' + shellPicked + ')')) : 'transparent' }\"></span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

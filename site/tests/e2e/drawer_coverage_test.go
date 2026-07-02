@@ -37,7 +37,8 @@ func TestDrawerCoverageDemo(t *testing.T) {
 	require.NoError(t, page.Locator("#drawer-default").WaitFor())
 	require.NoError(t, page.Locator("#drawer-left").WaitFor())
 	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-		Name: "Drawer",
+		Name:  "Drawer",
+		Level: playwright.Int(1),
 	}).WaitFor())
 
 	projectDialog := page.GetByRole("dialog", playwright.PageGetByRoleOptions{

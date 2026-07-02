@@ -191,7 +191,7 @@ templ tableDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Infinite Scroll Table",
-				Description: "Use Pagination.Mode: table.PaginationInfiniteScroll. A sentinel row drives htmx.ajax from an IntersectionObserver to append the next page.",
+				Description: "Use Pagination.Mode: table.PaginationInfiniteScroll. By default the sentinel watches the page scroller; set Pagination.ContainerHeight only when the table needs its own capped scroll area.",
 			},
 			tableInfinitePreview(),
 			`@table.Table(table.Config{
@@ -224,7 +224,17 @@ templ tableDemoContent() {
 		{Name: "LazyLoad", Type: "bool", Default: "false", Description: "Render a loading tbody that fetches row HTML from HTMX.Endpoint."},
 		{Name: "LazyTrigger", Type: "string", Default: `"load"`, Description: `HTMX trigger for lazy tbody loading, such as "load" or "click from:#load-lazy-table".`},
 		{Name: "Pagination", Type: "*PaginationConfig", Default: "nil", Description: "Pagination/infinite-scroll config (CurrentPage, TotalPages, PerPage, Mode, ...)."},
+		{Name: "Pagination.Mode", Type: "PaginationMode", Default: "PaginationTraditional", Description: `Use PaginationInfiniteScroll to append rows from the sentinel instead of rendering page links.`},
+		{Name: "Pagination.CurrentPage", Type: "int", Default: "0", Description: "Current 1-indexed page for page links and next-page calculations."},
+		{Name: "Pagination.TotalPages", Type: "int", Default: "0", Description: "Total page count for traditional pagination."},
+		{Name: "Pagination.PerPage", Type: "int", Default: "0", Description: "Rows requested per page."},
+		{Name: "Pagination.HasMore", Type: "bool", Default: "false", Description: "Infinite-scroll sentinel flag; false stops requesting more rows."},
+		{Name: "Pagination.ContainerHeight", Type: "string", Default: `""`, Description: `Optional table-local scroll height, such as "400px"; empty uses the nearest page scroller.`},
+		{Name: "InfiniteScroll", Type: "*InfiniteScrollConfig", Default: "nil", Description: "Deprecated compatibility field; prefer Pagination.Mode: PaginationInfiniteScroll."},
 		{Name: "Filters", Type: "*FilterConfig", Default: "nil", Description: "Filter bar config (Variant, Collapsible, Filters[]: search/select/toggle)."},
+		{Name: "Filters.Variant", Type: "FilterVariant", Default: "FilterVariantBar", Description: "Switches between the bordered/collapsible filter bar and inline filter controls."},
+		{Name: "Filters.HTMX", Type: "*FilterHTMXConfig", Default: "nil", Description: "Optional Target and Swap overrides for filter requests; defaults to the table tbody and innerHTML."},
+		{Name: "Filter.OptionsHTMX", Type: "*FilterOptionsHTMXConfig", Default: "nil", Description: "Loads select-filter options from a GET endpoint when static Options are not enough."},
 		{Name: "ExtraQueryParams", Type: "string", Default: `""`, Description: "Extra query string appended to every HTMX request."},
 		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the table container."},
 	})

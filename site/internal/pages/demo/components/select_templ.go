@@ -194,6 +194,28 @@ func selectDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Shell Mode",
+				Description: "Set Shell: true when Select should provide trigger and dropdown chrome while custom templ children own the value. Use ValueExpr for the trigger text and dispatch select-close after a pick.",
+			},
+			selectShellPreview(),
+			`<div x-data="{ access: 'Viewer' }">
+    @selectfield.Select(selectfield.Config{
+        ID:           "access-shell",
+        Label:        "Access level",
+        Shell:        true,
+        TriggerLabel: "Role",
+        ValueExpr:    "access",
+    }) {
+        <button type="button" x-on:click="access = 'Admin'; $dispatch('select-close')">Admin</button>
+        <button type="button" x-on:click="access = 'Viewer'; $dispatch('select-close')">Viewer</button>
+    }
+</div>`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -212,6 +234,10 @@ func selectDemoContent() templ.Component {
 			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side Alpine bindings (Model, BindDisabled)."},
 			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the select."},
 			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
+			{Name: "Shell", Type: "bool", Default: "false", Description: "Render only the trigger/dropdown shell and use child content as the dropdown body."},
+			{Name: "TriggerLeading", Type: "templ.Component", Default: "nil", Description: "Optional component rendered before the trigger text, such as a swatch or icon."},
+			{Name: "ValueExpr", Type: "string", Default: `""`, Description: "Alpine expression used for shell-mode trigger text and aria-label."},
+			{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Static label shown on the left side of a shell trigger, with ValueExpr rendered muted on the right."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -565,6 +591,68 @@ func selectReadonlyPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</form></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// selectShellPreview renders Select as trigger/dropdown chrome around custom content.
+func selectShellPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"select-shell\" class=\"w-full max-w-xs mx-auto\"><div x-data=\"{ access: 'Viewer' }\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"w-64 p-2\"><button type=\"button\" x-on:click=\"access = 'Admin'; $dispatch('select-close')\" class=\"flex w-full flex-col rounded-radius px-3 py-2 text-left text-sm hover:bg-surface dark:hover:bg-surface-dark\"><span class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Admin</span> <span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Can update settings and manage members.</span></button> <button type=\"button\" x-on:click=\"access = 'Editor'; $dispatch('select-close')\" class=\"flex w-full flex-col rounded-radius px-3 py-2 text-left text-sm hover:bg-surface dark:hover:bg-surface-dark\"><span class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Editor</span> <span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Can edit content without changing access.</span></button> <button type=\"button\" x-on:click=\"access = 'Viewer'; $dispatch('select-close')\" class=\"flex w-full flex-col rounded-radius px-3 py-2 text-left text-sm hover:bg-surface dark:hover:bg-surface-dark\"><span class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Viewer</span> <span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Can read project data only.</span></button></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = selectfield.Select(selectfield.Config{
+			ID:           "access-shell",
+			Label:        "Access level",
+			Shell:        true,
+			TriggerLabel: "Role",
+			ValueExpr:    "access",
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

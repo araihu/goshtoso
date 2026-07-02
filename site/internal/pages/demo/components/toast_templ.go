@@ -139,6 +139,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Action Toast",
+				Description: "Server-rendered toasts can include one inline action button. Set ActionLabel and ActionHTMX for undo, retry, or view-detail flows.",
+			},
+			toastActionPreview(),
+			`@toast.Toast(toast.Config{
+    Variant:         toast.Success,
+    Title:           "Project archived",
+    Message:         "The project moved to archived items.",
+    DisplayDuration: -1,
+    ActionLabel:     "Undo archive",
+    ActionHTMX: &toast.HTMXConfig{
+        Post: "/api/components/toast",
+        Swap: "none",
+    },
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -149,6 +170,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			{Name: "Message", Type: "string", Default: `""`, Description: "Toast body text."},
 			{Name: "Sender", Type: "*Sender", Default: "nil", Description: "Message-variant sender (Name + Avatar); adds avatar and reply button."},
 			{Name: "DisplayDuration", Type: "int", Default: "0", Description: "Auto-dismiss delay in ms (0 uses the container default; negative keeps a server-rendered toast visible until dismissed)."},
+			{Name: "ActionLabel", Type: "string", Default: `""`, Description: "Optional inline action button label for server-rendered toasts."},
+			{Name: "ActionHTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX request for the action button (Get/Post, Target, Swap)."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -292,6 +315,54 @@ func toastStaticPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// toastActionPreview renders a persistent server-side toast with an HTMX action.
+func toastActionPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"toast-action\" class=\"w-full max-w-2xl mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = toast.Toast(toast.Config{
+			Variant:         toast.Success,
+			Title:           "Project archived",
+			Message:         "The project moved to archived items.",
+			DisplayDuration: -1,
+			ActionLabel:     "Undo archive",
+			ActionHTMX: &toast.HTMXConfig{
+				Post: "/api/components/toast",
+				Swap: "none",
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

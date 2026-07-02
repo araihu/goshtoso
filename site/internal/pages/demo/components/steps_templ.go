@@ -73,17 +73,7 @@ func stepsDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Steps",
-				Description: "Steps show progress through multi-stage flows. Supports horizontal and vertical layouts, with optional labels, using Goshtoso theme tokens only.",
-				Props: []demo.PropDoc{
-					{Name: "Steps", Type: "[]steps.Step", Default: "nil", Description: "Ordered progress items to render."},
-					{Name: "ID", Type: "string", Default: "\"\"", Description: "Stable root id for HTMX targets and swaps."},
-					{Name: "Orientation", Type: "steps.Orientation", Default: "steps.OrientationHorizontal", Description: "Horizontal or vertical layout."},
-					{Name: "ShowLabels", Type: "bool", Default: "false", Description: "Shows visible labels next to each step."},
-					{Name: "AriaLabel", Type: "string", Default: "\"progress\"", Description: "Accessible label for the ordered list."},
-					{Name: "LiveRegion", Type: "bool", Default: "false", Description: "Announces swapped state changes after HTMX updates."},
-					{Name: "RootClass", Type: "string", Default: "\"\"", Description: "Extra classes appended to root list."},
-					{Name: "RootAttrs", Type: "templ.Attributes", Default: "nil", Description: "Pass-through attributes for root hx-* and data-* hooks."},
-				},
+				Description: "Progress indicators for multi-stage flows. Use visible labels for task-heavy screens, compact numbered steps for tight layouts, and HTMX swaps when the server owns the current step.",
 			},
 			stepsDefaultPreview(),
 			`@steps.Steps(steps.Config{
@@ -157,6 +147,19 @@ func stepsDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
+			{Name: "ID", Type: "string", Default: `""`, Description: "Stable root id for HTMX targets, swaps, and tests."},
+			{Name: "Steps", Type: "[]Step", Default: "nil", Description: "Ordered progress items. Each Step supports ID, Label, AriaLabel, Number, Status, and StepAttrs."},
+			{Name: "Orientation", Type: "Orientation", Default: "OrientationHorizontal", Description: `Layout direction: "horizontal" or "vertical".`},
+			{Name: "ShowLabels", Type: "bool", Default: "false", Description: "Shows visible labels beside the step indicators."},
+			{Name: "AriaLabel", Type: "string", Default: `"progress"`, Description: "Accessible label for the ordered list."},
+			{Name: "LiveRegion", Type: "bool", Default: "false", Description: "Announces swapped state changes after HTMX updates."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the root ordered list."},
+			{Name: "RootAttrs", Type: "templ.Attributes", Default: "nil", Description: "Pass-through attributes for root hx-* hooks, data attributes, and test selectors."},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
