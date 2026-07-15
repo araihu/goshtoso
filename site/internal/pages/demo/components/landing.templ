@@ -184,12 +184,6 @@ templ landingContent() {
 					@badge.Badge(badge.Config{Label: "Pending", Variant: badge.Warning})
 					@toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true})
 				</div>
-				<div id="playground-server-proof" class="flex flex-col gap-2 rounded-radius border border-outline bg-surface-alt px-4 py-3 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark sm:flex-row sm:items-center sm:justify-between">
-					<span>
-						Table rows are lazy-loaded from Go through HTMX.
-					</span>
-					<code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">/api/components/table/rows</code>
-				</div>
 				@table.Table(table.Config{
 					ID:       "home-table",
 					HTMX:     &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
