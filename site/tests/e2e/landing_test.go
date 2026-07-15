@@ -93,16 +93,15 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.NoError(t, err, "live HTMX table should populate rows")
 	})
 
-	t.Run("PlaygroundExplainsServerRenderedLoop", func(t *testing.T) {
-		proof := page.Locator("#playground-server-proof")
-		visible, err := proof.IsVisible()
+	t.Run("PlaygroundOmitsServerEndpointCopy", func(t *testing.T) {
+		proofCount, err := page.Locator("#playground-server-proof").Count()
 		require.NoError(t, err)
-		require.True(t, visible, "live playground should explain the HTMX endpoint behind the table")
+		require.Zero(t, proofCount)
 
-		text, err := proof.InnerText()
+		text, err := page.Locator("body").InnerText()
 		require.NoError(t, err)
-		require.Contains(t, text, "/api/components/table/rows")
-		require.Contains(t, text, "lazy-loaded from Go")
+		require.NotContains(t, text, "Table rows are lazy-loaded from Go through HTMX.")
+		require.NotContains(t, text, "/api/components/table/rows")
 	})
 
 	t.Run("ExampleGalleryLinks", func(t *testing.T) {
