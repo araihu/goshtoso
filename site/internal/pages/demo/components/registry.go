@@ -91,6 +91,18 @@ func LookupDemo(key string) (DemoEntry, bool) {
 	return e, ok
 }
 
+// componentCount uses registered component pages so the homepage reflects the
+// public catalog rather than package directories that may not be user-facing.
+func componentCount() int {
+	var count int
+	for key := range Demos {
+		if strings.HasPrefix(key, "components/") {
+			count++
+		}
+	}
+	return count
+}
+
 func DemoMeta(key string, entry DemoEntry) demo.PageMeta {
 	path := "/" + strings.TrimPrefix(key, "/")
 	if key == "" {
