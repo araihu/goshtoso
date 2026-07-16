@@ -1,6 +1,6 @@
 module github.com/araihu/goshtoso/examples/getting-started
 
-go 1.26.1
+go 1.26.5
 
 require (
 	github.com/a-h/templ v0.3.1020
