@@ -172,14 +172,14 @@ func appMux() *http.ServeMux {
 		pageRows := dogsToRows(dogs[:min(perPage, len(dogs))])
 
 		Page(table.Config{
-			ID:           "breeds",
-			HTMXEndpoint: "/api/breeds",
-			Columns:      columns(),
-			Rows:         pageRows,
-			SortBy:       "breed",
-			SortDir:      table.SortAsc,
-			Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: totalPages, PerPage: perPage},
-			Filters:      filters(),
+			ID:         "breeds",
+			HTMX:       &table.HTMXConfig{Endpoint: "/api/breeds"},
+			Columns:    columns(),
+			Rows:       pageRows,
+			SortBy:     "breed",
+			SortDir:    table.SortAsc,
+			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: totalPages, PerPage: perPage},
+			Filters:    filters(),
 		}).Render(r.Context(), w)
 	})
 
@@ -223,13 +223,13 @@ func appMux() *http.ServeMux {
 		}
 
 		cfg := table.Config{
-			ID:           "breeds",
-			Columns:      columns(),
-			Rows:         dogsToRows(dogs[start:end]),
-			HTMXEndpoint: "/api/breeds",
-			SortBy:       orderBy,
-			SortDir:      table.SortDir(orderDir),
-			Pagination:   &table.PaginationConfig{CurrentPage: page, TotalPages: totalPages, PerPage: pp},
+			ID:         "breeds",
+			Columns:    columns(),
+			Rows:       dogsToRows(dogs[start:end]),
+			HTMX:       &table.HTMXConfig{Endpoint: "/api/breeds"},
+			SortBy:     orderBy,
+			SortDir:    table.SortDir(orderDir),
+			Pagination: &table.PaginationConfig{CurrentPage: page, TotalPages: totalPages, PerPage: pp},
 		}
 
 		// Render table rows

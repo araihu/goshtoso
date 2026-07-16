@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  GO_VERSION: '1.26.1'
+  GO_VERSION: '1.26.5'
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.5700.1'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
