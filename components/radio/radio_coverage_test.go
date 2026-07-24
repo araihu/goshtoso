@@ -29,7 +29,7 @@ func TestCoverageStandardRadio(t *testing.T) {
 	assert.Contains(t, html, `name="grp"`)
 	assert.Contains(t, html, `value="v"`)
 	assert.Contains(t, html, "Standard")
-	// Default variant -> primary classes wired through InputClasses.
+	// ToneDefault variant -> primary classes wired through InputClasses.
 	assert.Contains(t, html, "checked:border-primary")
 	assert.Contains(t, html, "size-4") // default SizeMD
 }
@@ -274,23 +274,23 @@ func TestCoverageRadioGroupNoTitle(t *testing.T) {
 	assert.Contains(t, html, "Only")
 }
 
-// TestCoverageVariantClasses asserts each Variant flows through the three
+// TestCoverageToneClasses asserts each Tone flows through the three
 // checked-color helpers via InputClasses.
-func TestCoverageVariantClasses(t *testing.T) {
+func TestCoverageToneClasses(t *testing.T) {
 	cases := []struct {
-		variant Variant
+		variant Tone
 		border  string
 	}{
-		{Primary, "checked:border-primary"},
-		{Secondary, "checked:border-secondary"},
-		{Info, "checked:border-info"},
-		{Success, "checked:border-success"},
-		{Warning, "checked:border-warning"},
-		{Danger, "checked:border-danger"},
-		{Variant("bogus"), "checked:border-primary"}, // default fallthrough
+		{TonePrimary, "checked:border-primary"},
+		{ToneSecondary, "checked:border-secondary"},
+		{ToneInfo, "checked:border-info"},
+		{ToneSuccess, "checked:border-success"},
+		{ToneWarning, "checked:border-warning"},
+		{ToneDanger, "checked:border-danger"},
+		{Tone("bogus"), "checked:border-primary"}, // default fallthrough
 	}
 	for _, tc := range cases {
-		cls := Config{Variant: tc.variant}.InputClasses()
+		cls := Config{Tone: tc.variant}.InputClasses()
 		assert.Contains(t, cls, tc.border, "variant %q border", tc.variant)
 	}
 }
@@ -333,19 +333,19 @@ func TestCoverageBadgeClasses(t *testing.T) {
 // variant.
 func TestCoverageSegmentedLabelClasses(t *testing.T) {
 	cases := []struct {
-		variant Variant
+		variant Tone
 		want    string
 	}{
-		{Primary, "has-checked:bg-primary"},
-		{Secondary, "has-checked:bg-secondary"},
-		{Info, "has-checked:bg-info"},
-		{Success, "has-checked:bg-success"},
-		{Warning, "has-checked:bg-warning"},
-		{Danger, "has-checked:bg-danger"},
-		{Variant("bogus"), "has-checked:bg-primary"},
+		{TonePrimary, "has-checked:bg-primary"},
+		{ToneSecondary, "has-checked:bg-secondary"},
+		{ToneInfo, "has-checked:bg-info"},
+		{ToneSuccess, "has-checked:bg-success"},
+		{ToneWarning, "has-checked:bg-warning"},
+		{ToneDanger, "has-checked:bg-danger"},
+		{Tone("bogus"), "has-checked:bg-primary"},
 	}
 	for _, tc := range cases {
-		cls := Config{Variant: tc.variant}.SegmentedLabelClasses()
+		cls := Config{Tone: tc.variant}.SegmentedLabelClasses()
 		assert.Contains(t, cls, tc.want, "variant %q", tc.variant)
 		assert.Contains(t, cls, "relative")
 		assert.Contains(t, cls, "has-disabled:cursor-not-allowed")

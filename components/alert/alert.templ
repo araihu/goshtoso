@@ -132,14 +132,14 @@ templ listContent(cfg Config) {
 // iconBadge renders the variant-specific icon
 templ iconBadge(cfg Config) {
 	<div class={ cfg.IconBadgeClasses() } aria-hidden="true">
-		switch cfg.Variant {
-			case Info:
+		switch cfg.Tone {
+			case ToneInfo:
 				@infoIcon()
-			case Success:
+			case ToneSuccess:
 				@successIcon()
-			case Warning:
+			case ToneWarning:
 				@warningIcon()
-			case Danger:
+			case ToneDanger:
 				@dangerIcon()
 			default:
 				@infoIcon()

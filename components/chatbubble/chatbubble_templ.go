@@ -32,7 +32,7 @@ import (
 //	    Timestamp:      "11:32 AM",
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-//	    AvatarVariant:  "info",
+//	    AvatarTone:     avatar.ToneInfo,
 //	})
 func ChatBubble(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -207,7 +207,7 @@ func ChatBubble(cfg Config) templ.Component {
 //	@chatbubble.TypingIndicator(chatbubble.Config{
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-//	    AvatarVariant:  "info",
+//	    AvatarTone:     avatar.ToneInfo,
 //	})
 func TypingIndicator(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -297,7 +297,7 @@ func bubbleAvatar(cfg Config) templ.Component {
 			Src:      cfg.AvatarSrc,
 			Name:     cfg.SenderName,
 			Initials: cfg.AvatarInitials,
-			Variant:  avatar.Variant(cfg.AvatarVariant),
+			Tone:     cfg.AvatarTone,
 			Size:     avatar.SizeSM,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -354,7 +354,7 @@ func bubbleHeader(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.IsBot {
-			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "BOT", Variant: badge.Info, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "BOT", Tone: badge.ToneInfo, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

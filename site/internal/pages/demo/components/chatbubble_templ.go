@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/chatbubble"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -116,7 +117,7 @@ func chatBubbleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Avatar",
-				Description: "Set ShowAvatar: true to render the avatar column. Provide AvatarInitials + AvatarVariant for a colored fallback, or AvatarSrc for an image. The avatar flips to the correct side automatically for sent messages.",
+				Description: "Set ShowAvatar: true to render the avatar column. Provide AvatarInitials + AvatarTone for a colored fallback, or AvatarSrc for an image. The avatar flips to the correct side automatically for sent messages.",
 			},
 			chatBubbleAvatarPreview(),
 			`@chatbubble.ChatBubble(chatbubble.Config{
@@ -124,7 +125,7 @@ func chatBubbleDemoContent() templ.Component {
     Message:        "Welcome to the team channel!",
     ShowAvatar:     true,
     AvatarInitials: "AL",
-    AvatarVariant:  "info",
+    AvatarTone:     avatar.ToneInfo,
 })
 @chatbubble.ChatBubble(chatbubble.Config{
     Side:       chatbubble.Sent,
@@ -172,7 +173,7 @@ func chatBubbleDemoContent() templ.Component {
     SenderName:     "Ada",
     ShowAvatar:     true,
     AvatarInitials: "AL",
-    AvatarVariant:  "info",
+    AvatarTone:     avatar.ToneInfo,
     Message:        "I split the work into three slices.",
 })
 @chatbubble.ChatBubble(chatbubble.Config{
@@ -198,7 +199,7 @@ func chatBubbleDemoContent() templ.Component {
 			`@chatbubble.TypingIndicator(chatbubble.Config{
     ShowAvatar:     true,
     AvatarInitials: "AL",
-    AvatarVariant:  "info",
+    AvatarTone:     avatar.ToneInfo,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -216,7 +217,7 @@ func chatBubbleDemoContent() templ.Component {
 			{Name: "Status", Type: "Status", Default: "StatusNone", Description: "Delivery state under a sent bubble: StatusSending, StatusDelivered, or StatusSeen."},
 			{Name: "AvatarSrc", Type: "string", Default: `""`, Description: "Optional avatar image URL; takes precedence over initials."},
 			{Name: "AvatarInitials", Type: "string", Default: `""`, Description: "Initials fallback shown when no AvatarSrc is set."},
-			{Name: "AvatarVariant", Type: "string", Default: `""`, Description: `avatar.Variant token for the initials fallback color, e.g. "info".`},
+			{Name: "AvatarTone", Type: "avatar.Tone", Default: "ToneDefault", Description: "Initials fallback color."},
 			{Name: "ShowAvatar", Type: "bool", Default: "false", Description: "Render the avatar column (suppressed when Grouped)."},
 			{Name: "Grouped", Type: "bool", Default: "false", Description: "Mark a consecutive message: tighten spacing, hide avatar + name."},
 			{Name: "Sender", Type: "string", Default: `""`, Description: "For Side=Auto, emitted as data-sender for client mine-detection."},
@@ -371,7 +372,7 @@ func chatBubbleAvatarPreview() templ.Component {
 			Message:        "Welcome to the team channel!",
 			ShowAvatar:     true,
 			AvatarInitials: "AL",
-			AvatarVariant:  "info",
+			AvatarTone:     avatar.ToneInfo,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -381,7 +382,7 @@ func chatBubbleAvatarPreview() templ.Component {
 			Message:        "Thanks, glad to be here.",
 			ShowAvatar:     true,
 			AvatarInitials: "ME",
-			AvatarVariant:  "success",
+			AvatarTone:     avatar.ToneSuccess,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -483,7 +484,7 @@ func chatBubbleGroupedPreview() templ.Component {
 			SenderName:     "Ada",
 			ShowAvatar:     true,
 			AvatarInitials: "AL",
-			AvatarVariant:  "info",
+			AvatarTone:     avatar.ToneInfo,
 			Message:        "I split the work into three slices.",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -542,7 +543,7 @@ func chatBubbleTypingPreview() templ.Component {
 		templ_7745c5c3_Err = chatbubble.TypingIndicator(chatbubble.Config{
 			ShowAvatar:     true,
 			AvatarInitials: "AL",
-			AvatarVariant:  "info",
+			AvatarTone:     avatar.ToneInfo,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

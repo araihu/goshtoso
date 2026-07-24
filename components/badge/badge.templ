@@ -8,13 +8,13 @@ import "fmt"
 //	// Simple badge
 //	@badge.Badge(badge.Config{
 //	    Label: "New",
-//	    Variant: badge.Primary,
+//	    Tone: badge.TonePrimary,
 //	})
 //
 //	// Soft style badge with icon
 //	@badge.Badge(badge.Config{
 //	    Label: "Active",
-//	    Variant: badge.Success,
+//	    Tone: badge.ToneSuccess,
 //	    Style: badge.StyleSoft,
 //	    Icon: checkIcon,
 //	})
@@ -22,7 +22,7 @@ import "fmt"
 //	// Badge with indicator dot
 //	@badge.Badge(badge.Config{
 //	    Label: "Live",
-//	    Variant: badge.Danger,
+//	    Tone: badge.ToneDanger,
 //	    Indicator: true,
 //	})
 templ Badge(cfg Config) {
@@ -35,7 +35,7 @@ templ Badge(cfg Config) {
 
 // simpleBadge renders a basic solid badge
 templ simpleBadge(cfg Config) {
-	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.RootClass }}
+	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass }}
 	
 	<span class={ classes }>
 		{ cfg.Label }
@@ -45,7 +45,7 @@ templ simpleBadge(cfg Config) {
 // badgeWithInner renders a badge with inner span (for soft style, icons, or indicators)
 templ badgeWithInner(cfg Config) {
 	{{ containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " " }}
-	{{ if cfg.IsSoft() { containerClasses = containerClasses + cfg.SoftVariantClasses() } else { containerClasses = containerClasses + cfg.VariantClasses() } }}
+	{{ if cfg.IsSoft() { containerClasses = containerClasses + cfg.softToneClasses() } else { containerClasses = containerClasses + cfg.toneClasses() } }}
 	{{ containerClasses = containerClasses + " " + cfg.RootClass }}
 
 	<span class={ containerClasses }>
@@ -87,19 +87,19 @@ templ NotificationDot() {
 // AnimatingDot renders a pulsing notification dot
 // Usage:
 //
-//	@badge.AnimatingDot(badge.Primary)
-templ AnimatingDot(variant Variant) {
+//	@badge.AnimatingDot(badge.TonePrimary)
+templ AnimatingDot(variant Tone) {
 	{{ colorClass := "bg-primary dark:bg-primary-dark" }}
 	switch variant {
-		case Secondary:
+		case ToneSecondary:
 			{{ colorClass = "bg-secondary dark:bg-secondary-dark" }}
-		case Info:
+		case ToneInfo:
 			{{ colorClass = "bg-info" }}
-		case Success:
+		case ToneSuccess:
 			{{ colorClass = "bg-success" }}
-		case Warning:
+		case ToneWarning:
 			{{ colorClass = "bg-warning" }}
-		case Danger:
+		case ToneDanger:
 			{{ colorClass = "bg-danger" }}
 	}
 	

@@ -121,8 +121,8 @@ func bannerDemoContent() templ.Component {
 				Description: "Set Variant for semantic coloring: Default, Primary, Info, Success, Warning, Danger.",
 			},
 			bannerVariantsPreview(),
-			`@banner.Banner(banner.Config{Description: "Success! Your changes have been saved", Variant: banner.Success})
-@banner.Banner(banner.Config{Description: "Warning: Please review your settings", Variant: banner.Warning})`,
+			`@banner.Banner(banner.Config{Description: "Success! Your changes have been saved", Tone: banner.ToneSuccess})
+@banner.Banner(banner.Config{Description: "Warning: Please review your settings", Tone: banner.ToneWarning})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -155,7 +155,7 @@ func bannerDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "Description", Type: "string", Default: `""`, Description: "Banner message text."},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "info", "success", "warning", "danger".`},
+			{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color: "default", "primary", "info", "success", "warning", "danger".`},
 			{Name: "Position", Type: "Position", Default: "PositionRelative", Description: `Layout: "relative" (inline) or "fixed" (pinned to top).`},
 			{Name: "Persistent", Type: "bool", Default: "false", Description: "Remove the dismiss control."},
 			{Name: "DismissAction", Type: "string", Default: `""`, Description: "Extra Alpine expression run when dismissed."},
@@ -322,27 +322,27 @@ func bannerVariantsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Default variant banner", Variant: banner.Default}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Default variant banner", Tone: banner.ToneDefault}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Primary variant for promotions", Variant: banner.Primary}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Primary variant for promotions", Tone: banner.TonePrimary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Info variant for general information", Variant: banner.Info}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Info variant for general information", Tone: banner.ToneInfo}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Success! Operation completed successfully", Variant: banner.Success}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Success! Operation completed successfully", Tone: banner.ToneSuccess}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Warning: Please review your settings", Variant: banner.Warning}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Warning: Please review your settings", Tone: banner.ToneWarning}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Error: Something went wrong", Variant: banner.Danger}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Error: Something went wrong", Tone: banner.ToneDanger}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -17,14 +17,14 @@ import (
 func rowID(id int) string { return fmt.Sprintf("todo-row-%d", id) }
 
 // priorityVariant maps a priority string to a badge variant.
-func priorityVariant(p string) badge.Variant {
+func priorityVariant(p string) badge.Tone {
 	switch p {
 	case "high":
-		return badge.Danger
+		return badge.ToneDanger
 	case "low":
-		return badge.Secondary
+		return badge.ToneSecondary
 	default:
-		return badge.Warning
+		return badge.ToneWarning
 	}
 }
 
@@ -119,7 +119,7 @@ templ TodoRow(t todo.Todo) {
 		if t.Due != "" {
 			<span class="shrink-0 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ t.Due }</span>
 		}
-		@badge.Badge(badge.Config{Variant: priorityVariant(t.Priority), Label: t.Priority})
+		@badge.Badge(badge.Config{Tone: priorityVariant(t.Priority), Label: t.Priority})
 		<button
 			type="button"
 			aria-label="Move up"
@@ -261,4 +261,3 @@ templ TodoApp(s todo.State) {
 templ TodoContent() {
 	@TodoApp(todo.State{Filter: "all"})
 }
-

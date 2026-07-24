@@ -203,33 +203,33 @@ func TestStatusClasses(t *testing.T) {
 	}
 }
 
-func TestVariantClasses(t *testing.T) {
-	for _, v := range []Variant{Default, Inverse, Primary, Secondary, Info, Success, Warning, Danger, Variant("")} {
-		if got := (Config{Variant: v}).VariantClasses(); got == "" {
-			t.Errorf("VariantClasses(%q) returned empty", v)
+func TestToneClasses(t *testing.T) {
+	for _, v := range []Tone{ToneDefault, ToneInverse, TonePrimary, ToneSecondary, ToneInfo, ToneSuccess, ToneWarning, ToneDanger, Tone("")} {
+		if got := (Config{Tone: v}).toneClasses(); got == "" {
+			t.Errorf("toneClasses(%q) returned empty", v)
 		}
 	}
-	// Default and unknown variant produce the same outline classes.
-	if (Config{Variant: Default}).VariantClasses() != (Config{Variant: Variant("nope")}).VariantClasses() {
-		t.Error("unknown variant should match Default")
+	// ToneDefault and unknown variant produce the same outline classes.
+	if (Config{Tone: ToneDefault}).toneClasses() != (Config{Tone: Tone("nope")}).toneClasses() {
+		t.Error("unknown variant should match ToneDefault")
 	}
 }
 
 func TestVariantFillClasses(t *testing.T) {
-	cases := map[Variant]string{
-		Inverse:   "bg-surface-dark-alt",
-		Primary:   "bg-primary",
-		Secondary: "bg-secondary",
-		Info:      "bg-info",
-		Success:   "bg-success",
-		Warning:   "bg-warning",
-		Danger:    "bg-danger",
-		Default:   "bg-surface-alt",
+	cases := map[Tone]string{
+		ToneInverse:   "bg-surface-dark-alt",
+		TonePrimary:   "bg-primary",
+		ToneSecondary: "bg-secondary",
+		ToneInfo:      "bg-info",
+		ToneSuccess:   "bg-success",
+		ToneWarning:   "bg-warning",
+		ToneDanger:    "bg-danger",
+		ToneDefault:   "bg-surface-alt",
 	}
 	for v, want := range cases {
-		got := (Config{Variant: v}).VariantFillClasses()
+		got := (Config{Tone: v}).toneFillClasses()
 		if !strings.Contains(got, want) {
-			t.Errorf("VariantFillClasses(%q) = %q, want substring %q", v, got, want)
+			t.Errorf("toneFillClasses(%q) = %q, want substring %q", v, got, want)
 		}
 	}
 }
@@ -271,17 +271,17 @@ func TestBorderClasses(t *testing.T) {
 	if got := (Config{Border: true, BorderColor: "border-pink"}).BorderClasses(); !strings.Contains(got, "border-pink") {
 		t.Errorf("BorderClasses should use explicit color, got %q", got)
 	}
-	// Variant-derived default colors.
-	cases := map[Variant]string{
-		Info:    "border-info",
-		Success: "border-success",
-		Warning: "border-warning",
-		Danger:  "border-danger",
-		Default: "border-primary", // default branch
-		Primary: "border-primary",
+	// Tone-derived default colors.
+	cases := map[Tone]string{
+		ToneInfo:    "border-info",
+		ToneSuccess: "border-success",
+		ToneWarning: "border-warning",
+		ToneDanger:  "border-danger",
+		ToneDefault: "border-primary", // default branch
+		TonePrimary: "border-primary",
 	}
 	for v, want := range cases {
-		got := (Config{Border: true, Variant: v}).BorderClasses()
+		got := (Config{Border: true, Tone: v}).BorderClasses()
 		if !strings.Contains(got, want) {
 			t.Errorf("BorderClasses(variant=%q) = %q, want substring %q", v, got, want)
 		}
@@ -331,8 +331,8 @@ func TestRenderReactiveStatusIndicator(t *testing.T) {
 // TestRenderWithIcon covers the Icon branch of layerInitials and UserIcon.
 func TestRenderWithIcon(t *testing.T) {
 	html := renderAvatar(t, Config{
-		Icon:    UserIcon(),
-		Variant: Primary,
+		Icon: UserIcon(),
+		Tone: TonePrimary,
 	})
 	for _, want := range []string{
 		"<svg",           // icon SVG rendered
@@ -416,11 +416,11 @@ func TestRenderReactiveRadiusOnly(t *testing.T) {
 }
 
 // TestRenderBorderUsesFillLayer covers the Border branch in avatarLayers where
-// the root skin is cleared and VariantFillClasses lands on the inner layer.
+// the root skin is cleared and toneFillClasses lands on the inner layer.
 func TestRenderBorderUsesFillLayer(t *testing.T) {
 	html := renderAvatar(t, Config{
 		Initials: "JS",
-		Variant:  Primary,
+		Tone:     TonePrimary,
 		Border:   true,
 	})
 	if !strings.Contains(html, "bg-primary") {

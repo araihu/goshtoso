@@ -16,18 +16,18 @@ const (
 	Size2XL Size = "2xl" // 2x extra large (matches PenguinUI)
 )
 
-// Variant represents avatar style variants
-type Variant string
+// Tone represents avatar style variants
+type Tone string
 
 const (
-	Default   Variant = "default"
-	Inverse   Variant = "inverse"
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Info      Variant = "info"
-	Success   Variant = "success"
-	Warning   Variant = "warning"
-	Danger    Variant = "danger"
+	ToneDefault   Tone = "default"
+	ToneInverse   Tone = "inverse"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneInfo      Tone = "info"
+	ToneSuccess   Tone = "success"
+	ToneWarning   Tone = "warning"
+	ToneDanger    Tone = "danger"
 )
 
 // Shape represents avatar shape
@@ -84,8 +84,8 @@ type Config struct {
 	Initials string
 	// Size of the avatar
 	Size Size
-	// Variant determines the color scheme (for initials/icon placeholders)
-	Variant Variant
+	// Tone determines the color scheme (for initials/icon placeholders)
+	Tone Tone
 	// Shape of the avatar (circle or square)
 	Shape Shape
 	// Radius controls the corner radius for square avatars.
@@ -197,44 +197,44 @@ func (cfg Config) RadiusClasses() string {
 	}
 }
 
-// VariantClasses returns the CSS classes for the variant (for initials/icon)
-func (cfg Config) VariantClasses() string {
-	switch cfg.Variant {
-	case Inverse:
+// toneClasses returns the CSS classes for the variant (for initials/icon)
+func (cfg Config) toneClasses() string {
+	switch cfg.Tone {
+	case ToneInverse:
 		return "border border-outline-dark bg-surface-dark-alt text-on-surface-dark/80 dark:border-outline dark:bg-surface-alt dark:text-on-surface/80"
-	case Primary:
+	case TonePrimary:
 		return "border border-primary bg-primary text-on-primary/80 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark/80"
-	case Secondary:
+	case ToneSecondary:
 		return "border border-secondary bg-secondary text-on-secondary/80 dark:border-secondary-dark dark:bg-secondary-dark dark:text-on-secondary-dark/80"
-	case Info:
+	case ToneInfo:
 		return "border border-info bg-info text-on-info/80"
-	case Success:
+	case ToneSuccess:
 		return "border border-success bg-success text-on-success/80"
-	case Warning:
+	case ToneWarning:
 		return "border border-warning bg-warning text-on-warning/80"
-	case Danger:
+	case ToneDanger:
 		return "border border-danger bg-danger text-on-danger/80"
 	default:
 		return "border border-outline bg-surface-alt text-on-surface/80 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark/80"
 	}
 }
 
-// VariantFillClasses returns variant classes without border color.
-func (cfg Config) VariantFillClasses() string {
-	switch cfg.Variant {
-	case Inverse:
+// toneFillClasses returns variant classes without border color.
+func (cfg Config) toneFillClasses() string {
+	switch cfg.Tone {
+	case ToneInverse:
 		return "bg-surface-dark-alt text-on-surface-dark/80 dark:bg-surface-alt dark:text-on-surface/80"
-	case Primary:
+	case TonePrimary:
 		return "bg-primary text-on-primary/80 dark:bg-primary-dark dark:text-on-primary-dark/80"
-	case Secondary:
+	case ToneSecondary:
 		return "bg-secondary text-on-secondary/80 dark:bg-secondary-dark dark:text-on-secondary-dark/80"
-	case Info:
+	case ToneInfo:
 		return "bg-info text-on-info/80"
-	case Success:
+	case ToneSuccess:
 		return "bg-success text-on-success/80"
-	case Warning:
+	case ToneWarning:
 		return "bg-warning text-on-warning/80"
-	case Danger:
+	case ToneDanger:
 		return "bg-danger text-on-danger/80"
 	default:
 		return "bg-surface-alt text-on-surface/80 dark:bg-surface-dark-alt dark:text-on-surface-dark/80"
@@ -249,14 +249,14 @@ func (cfg Config) BorderClasses() string {
 
 	color := cfg.BorderColor
 	if color == "" {
-		switch cfg.Variant {
-		case Info:
+		switch cfg.Tone {
+		case ToneInfo:
 			color = "border-info"
-		case Success:
+		case ToneSuccess:
 			color = "border-success"
-		case Warning:
+		case ToneWarning:
 			color = "border-warning"
-		case Danger:
+		case ToneDanger:
 			color = "border-danger"
 		default:
 			color = "border-primary"

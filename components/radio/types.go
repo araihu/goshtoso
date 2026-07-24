@@ -20,16 +20,16 @@ package radio
 
 import "github.com/a-h/templ"
 
-// Variant represents radio button color variants.
-type Variant string
+// Tone represents radio button color variants.
+type Tone string
 
 const (
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Info      Variant = "info"
-	Success   Variant = "success"
-	Warning   Variant = "warning"
-	Danger    Variant = "danger"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneInfo      Tone = "info"
+	ToneSuccess   Tone = "success"
+	ToneWarning   Tone = "warning"
+	ToneDanger    Tone = "danger"
 )
 
 // Size represents radio input sizes.
@@ -109,8 +109,8 @@ type Config struct {
 	Checked bool
 	// Disabled disables the radio
 	Disabled bool
-	// Variant determines the color scheme (default: Primary)
-	Variant Variant
+	// Tone determines the color scheme (default: TonePrimary)
+	Tone Tone
 	// Size sets the input box size (default: SizeMD)
 	Size Size
 	// HelperText adds helper text below the label
@@ -150,16 +150,16 @@ type GroupConfig struct {
 
 // checkedBorderClass returns the checked border color class
 func (cfg Config) checkedBorderClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:border-secondary dark:checked:border-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:border-info dark:checked:border-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:border-success dark:checked:border-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:border-warning dark:checked:border-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:border-danger dark:checked:border-danger"
 	default:
 		return "checked:border-primary dark:checked:border-primary-dark"
@@ -168,16 +168,16 @@ func (cfg Config) checkedBorderClass() string {
 
 // checkedBgClass returns the checked background color class on the before pseudo
 func (cfg Config) checkedBgClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:before:bg-secondary dark:checked:before:bg-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:before:bg-info dark:checked:before:bg-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:before:bg-success dark:checked:before:bg-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:before:bg-warning dark:checked:before:bg-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:before:bg-danger dark:checked:before:bg-danger"
 	default:
 		return "checked:before:bg-primary dark:checked:before:bg-primary-dark"
@@ -186,16 +186,16 @@ func (cfg Config) checkedBgClass() string {
 
 // focusCheckedClass returns the focus outline color when checked
 func (cfg Config) focusCheckedClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:focus:outline-secondary dark:checked:focus:outline-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:focus:outline-info dark:checked:focus:outline-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:focus:outline-success dark:checked:focus:outline-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:focus:outline-warning dark:checked:focus:outline-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:focus:outline-danger dark:checked:focus:outline-danger"
 	default:
 		return "checked:focus:outline-primary dark:checked:focus:outline-primary-dark"
@@ -259,23 +259,23 @@ func (cfg Config) InputClasses() string {
 // and acts as the state holder. Active styling rides on Tailwind v4's
 // `has-checked:` selector (label has a checked input child → primary fill).
 func (cfg Config) SegmentedLabelClasses() string {
-	checkedVariant := segmentedCheckedClasses(cfg.Variant)
+	checkedVariant := segmentedCheckedClasses(cfg.Tone)
 	return "relative cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors " +
 		"text-on-surface hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark " +
 		"has-disabled:cursor-not-allowed has-disabled:opacity-75 " + checkedVariant
 }
 
-func segmentedCheckedClasses(v Variant) string {
+func segmentedCheckedClasses(v Tone) string {
 	switch v {
-	case Secondary:
+	case ToneSecondary:
 		return "has-checked:bg-secondary has-checked:text-on-secondary dark:has-checked:bg-secondary-dark dark:has-checked:text-on-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "has-checked:bg-info has-checked:text-on-info"
-	case Success:
+	case ToneSuccess:
 		return "has-checked:bg-success has-checked:text-on-success"
-	case Warning:
+	case ToneWarning:
 		return "has-checked:bg-warning has-checked:text-on-warning"
-	case Danger:
+	case ToneDanger:
 		return "has-checked:bg-danger has-checked:text-on-danger"
 	default:
 		return "has-checked:bg-primary has-checked:text-on-primary dark:has-checked:bg-primary-dark dark:has-checked:text-on-primary-dark"

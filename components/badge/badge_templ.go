@@ -16,13 +16,13 @@ import "fmt"
 //	// Simple badge
 //	@badge.Badge(badge.Config{
 //	    Label: "New",
-//	    Variant: badge.Primary,
+//	    Tone: badge.TonePrimary,
 //	})
 //
 //	// Soft style badge with icon
 //	@badge.Badge(badge.Config{
 //	    Label: "Active",
-//	    Variant: badge.Success,
+//	    Tone: badge.ToneSuccess,
 //	    Style: badge.StyleSoft,
 //	    Icon: checkIcon,
 //	})
@@ -30,7 +30,7 @@ import "fmt"
 //	// Badge with indicator dot
 //	@badge.Badge(badge.Config{
 //	    Label: "Live",
-//	    Variant: badge.Danger,
+//	    Tone: badge.ToneDanger,
 //	    Indicator: true,
 //	})
 func Badge(cfg Config) templ.Component {
@@ -91,7 +91,7 @@ func simpleBadge(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.RootClass
+		classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass
 		var templ_7745c5c3_Var3 = []any{classes}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
@@ -155,9 +155,9 @@ func badgeWithInner(cfg Config) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " "
 		if cfg.IsSoft() {
-			containerClasses = containerClasses + cfg.SoftVariantClasses()
+			containerClasses = containerClasses + cfg.softToneClasses()
 		} else {
-			containerClasses = containerClasses + cfg.VariantClasses()
+			containerClasses = containerClasses + cfg.toneClasses()
 		}
 		containerClasses = containerClasses + " " + cfg.RootClass
 		var templ_7745c5c3_Var7 = []any{containerClasses}
@@ -347,8 +347,8 @@ func NotificationDot() templ.Component {
 // AnimatingDot renders a pulsing notification dot
 // Usage:
 //
-//	@badge.AnimatingDot(badge.Primary)
-func AnimatingDot(variant Variant) templ.Component {
+//	@badge.AnimatingDot(badge.TonePrimary)
+func AnimatingDot(variant Tone) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -371,15 +371,15 @@ func AnimatingDot(variant Variant) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		colorClass := "bg-primary dark:bg-primary-dark"
 		switch variant {
-		case Secondary:
+		case ToneSecondary:
 			colorClass = "bg-secondary dark:bg-secondary-dark"
-		case Info:
+		case ToneInfo:
 			colorClass = "bg-info"
-		case Success:
+		case ToneSuccess:
 			colorClass = "bg-success"
-		case Warning:
+		case ToneWarning:
 			colorClass = "bg-warning"
-		case Danger:
+		case ToneDanger:
 			colorClass = "bg-danger"
 		}
 		var templ_7745c5c3_Var18 = []any{"flex size-3 items-center justify-center rounded-full " + colorClass}

@@ -11,17 +11,17 @@ import templruntime "github.com/a-h/templ/runtime"
 // Spinner renders an animated loading spinner based on PenguinUI
 // Usage:
 //
-//	// Default spinner
+//	// ToneDefault spinner
 //	@spinner.Spinner(spinner.Config{})
 //
-//	// Primary colored spinner
+//	// TonePrimary colored spinner
 //	@spinner.Spinner(spinner.Config{
-//	    Variant: spinner.Primary,
+//	    Tone: spinner.TonePrimary,
 //	})
 //
 //	// Large danger spinner
 //	@spinner.Spinner(spinner.Config{
-//	    Variant: spinner.Danger,
+//	    Tone: spinner.ToneDanger,
 //	    Size:    spinner.SizeLG,
 //	})
 func Spinner(cfg Config) templ.Component {

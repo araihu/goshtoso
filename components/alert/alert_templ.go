@@ -901,23 +901,23 @@ func iconBadge(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		switch cfg.Variant {
-		case Info:
+		switch cfg.Tone {
+		case ToneInfo:
 			templ_7745c5c3_Err = infoIcon().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case Success:
+		case ToneSuccess:
 			templ_7745c5c3_Err = successIcon().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case Warning:
+		case ToneWarning:
 			templ_7745c5c3_Err = warningIcon().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		case Danger:
+		case ToneDanger:
 			templ_7745c5c3_Err = dangerIcon().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

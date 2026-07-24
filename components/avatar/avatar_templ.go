@@ -33,7 +33,7 @@ import "fmt"
 //	// Initials only
 //	@avatar.Avatar(avatar.Config{
 //	    Name:    "dev-ops",
-//	    Variant: avatar.Primary,
+//	    Tone: avatar.TonePrimary,
 //	})
 //
 //	// Explicit initials
@@ -207,11 +207,11 @@ func avatarLayers(cfg Config) templ.Component {
 		} else if cfg.ReactiveRadius {
 			bindClass = "avatarRadiusClass"
 		}
-		rootSkinClasses := cfg.VariantClasses()
+		rootSkinClasses := cfg.toneClasses()
 		layerSkinClasses := ""
 		if cfg.Border {
 			rootSkinClasses = ""
-			layerSkinClasses = cfg.VariantFillClasses()
+			layerSkinClasses = cfg.toneFillClasses()
 		}
 		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.RootClass
 		layerBoxClasses := "relative block size-full overflow-hidden " + radiusPart + " " + layerSkinClasses

@@ -43,7 +43,7 @@ import "github.com/araihu/goshtoso/components/alert"  // package alert
 
 **Entry points:** `Alert(cfg Config)`
 
-- **Variant** — Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **ActionConfig**
 
@@ -60,7 +60,7 @@ import "github.com/araihu/goshtoso/components/alert"  // package alert
 |-------|------|-------------|
 | `Title` | `string` | Title is the alert heading |
 | `Description` | `string` | Description is the alert body text |
-| `Variant` | `Variant` | Variant determines the color scheme (info, success, warning, danger) |
+| `Tone` | `Tone` | Tone determines the color scheme (info, success, warning, danger) |
 | `Dismissible` | `bool` | Dismissible enables the dismiss button with Alpine.js transition |
 | `Link` | `*LinkConfig` | Link adds a link action to the alert |
 | `Action` | `*ActionConfig` | Action adds primary + dismiss action buttons |
@@ -95,7 +95,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 - **Shape** — ShapeCircle = "circle", ShapeSquare = "square"
 - **Size** — SizeXS = "xs", SizeSM = "sm", SizeMD = "md", SizeLG = "lg", SizeXL = "xl", Size2XL = "2xl"
 - **Status** — StatusOffline = "offline", StatusInfo = "info", StatusSuccess = "success", StatusWarning = "warning", StatusDanger = "danger"
-- **Variant** — Default = "default", Inverse = "inverse", Primary = "primary", Secondary = "secondary", Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — ToneDefault = "default", ToneInverse = "inverse", TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
 
@@ -106,7 +106,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 | `Name` | `string` | Name is used to auto-derive initials via GetInitials(Name, ""). |
 | `Initials` | `string` | Initials are displayed as the base fallback (e.g., "JS"). |
 | `Size` | `Size` | Size of the avatar |
-| `Variant` | `Variant` | Variant determines the color scheme (for initials/icon placeholders) |
+| `Tone` | `Tone` | Tone determines the color scheme (for initials/icon placeholders) |
 | `Shape` | `Shape` | Shape of the avatar (circle or square) |
 | `Radius` | `Radius` | Radius controls the corner radius for square avatars. |
 | `Border` | `bool` | Border adds a colored border (for image avatars) |
@@ -133,18 +133,18 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 import "github.com/araihu/goshtoso/components/badge"  // package badge
 ```
 
-**Entry points:** `AnimatingDot(variant Variant)` · `Badge(cfg Config)` · `NotificationBadge(count int)` · `NotificationDot()`
+**Entry points:** `AnimatingDot(variant Tone)` · `Badge(cfg Config)` · `NotificationBadge(count int)` · `NotificationDot()`
 
 - **Size** — SizeSM = "sm", SizeMD = "md", SizeLG = "lg"
 - **Style** — StyleSolid = "solid", StyleSoft = "soft"
-- **Variant** — Default = "default", Inverse = "inverse", Primary = "primary", Secondary = "secondary", Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — ToneDefault = "default", ToneInverse = "inverse", TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `Label` | `string` | Label is the badge content |
-| `Variant` | `Variant` | Variant determines the color scheme |
+| `Tone` | `Tone` | Tone determines the color scheme |
 | `Style` | `Style` | Style determines solid or soft appearance |
 | `Size` | `Size` | Size of the badge |
 | `Icon` | `templ.Component` | Icon is an optional icon component |
@@ -161,7 +161,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 **Entry points:** `Banner(cfg Config)`
 
 - **Position** — PositionRelative = "relative", PositionFixed = "fixed"
-- **Variant** — Default = "default", Primary = "primary", Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — ToneDefault = "default", TonePrimary = "primary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **CTAConfig**
 
@@ -176,7 +176,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | Field | Type | Description |
 |-------|------|-------------|
 | `Description` | `string` | Description is the main banner content |
-| `Variant` | `Variant` | Variant determines the color scheme |
+| `Tone` | `Tone` | Tone determines the color scheme |
 | `Position` | `Position` | Position determines if banner is fixed or relative |
 | `Persistent` | `bool` | Persistent disables the dismiss button (default: banners are dismissible) |
 | `DismissAction` | `string` | DismissAction is the Alpine.js action when dismissed |
@@ -377,7 +377,7 @@ import "github.com/araihu/goshtoso/components/chatbubble"  // package chatbubble
 | `Status` | `Status` | Status is shown under sent/own bubbles, e.g. "Delivered". |
 | `AvatarSrc` | `string` | AvatarSrc is an optional avatar image URL. |
 | `AvatarInitials` | `string` | AvatarInitials is the initials fallback when no image is set. |
-| `AvatarVariant` | `string` | AvatarVariant is an avatar.Variant token (e.g. "info"); used when no Src. |
+| `AvatarTone` | `avatar.Tone` | AvatarTone controls the initials fallback when no Src is set. |
 | `ShowAvatar` | `bool` | ShowAvatar renders the avatar column. |
 | `Grouped` | `bool` | Grouped marks a consecutive message: tighten spacing, hide avatar + name. |
 | `Sender` | `string` | Sender, for Side=Auto, is emitted as data-sender for client mine-detection. |
@@ -395,7 +395,7 @@ import "github.com/araihu/goshtoso/components/checkbox"  // package checkbox
 
 - **Animation** — AnimationNone = "", AnimationSlideUp = "slide-up", AnimationScaleUp = "scale-up", AnimationSlideDown = "slide-down"
 - **Icon** — IconCheck = "check", IconXmark = "xmark", IconMinus = "minus", IconPlus = "plus"
-- **Variant** — Primary = "primary", Secondary = "secondary", Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
 
@@ -407,7 +407,7 @@ import "github.com/araihu/goshtoso/components/checkbox"  // package checkbox
 | `Label` | `string` | Label is the text displayed next to the checkbox |
 | `Checked` | `bool` | Checked sets the initial checked state |
 | `Disabled` | `bool` | Disabled disables the checkbox |
-| `Variant` | `Variant` | Variant determines the color scheme (default: Primary) |
+| `Tone` | `Tone` | Tone determines the color scheme (default: TonePrimary) |
 | `Icon` | `Icon` | Icon determines the check icon (default: IconCheck) |
 | `Animation` | `Animation` | Animation sets the animation style |
 | `HelperText` | `string` | HelperText adds helper text below the label |
@@ -1004,7 +1004,7 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 **Entry points:** `Radio(cfg Config)` · `RadioBar()` · `RadioGroup(cfg GroupConfig)`
 
 - **Size** — SizeSM = "sm", SizeMD = "md", SizeLG = "lg", SizeXL = "xl"
-- **Variant** — Primary = "primary", Secondary = "secondary", Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **AlpineConfig**
 
@@ -1026,7 +1026,7 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 | `Label` | `string` | Label is the text displayed next to the radio |
 | `Checked` | `bool` | Checked sets the initial checked state |
 | `Disabled` | `bool` | Disabled disables the radio |
-| `Variant` | `Variant` | Variant determines the color scheme (default: Primary) |
+| `Tone` | `Tone` | Tone determines the color scheme (default: TonePrimary) |
 | `Size` | `Size` | Size sets the input box size (default: SizeMD) |
 | `HelperText` | `string` | HelperText adds helper text below the label |
 | `HelperTextID` | `string` | HelperTextID is the id for the helper text element (for aria-describedby) |
@@ -1340,13 +1340,13 @@ import "github.com/araihu/goshtoso/components/spinner"  // package spinner
 **Entry points:** `Spinner(cfg Config)`
 
 - **Size** — SizeSM = "sm", SizeMD = "md", SizeLG = "lg", SizeXL = "xl"
-- **Variant** — Default = "default", Primary = "primary", Secondary = "secondary", Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — ToneDefault = "default", TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Variant` | `Variant` | Variant determines the color scheme |
+| `Tone` | `Tone` | Tone determines the color scheme |
 | `Size` | `Size` | Size of the spinner |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the spinner root. |
 
@@ -1746,7 +1746,7 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 **Entry points:** `Toggle(cfg Config)`
 
 - **Style** — StyleDefault = "default", StyleContainer = "container"
-- **Variant** — Primary = "primary", Secondary = "secondary", Info = "info", Success = "success", Warning = "warning", Danger = "danger"
+- **Tone** — TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
 
@@ -1754,7 +1754,7 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 |-------|------|-------------|
 | `ID` | `string` | ID is the unique identifier for the toggle input |
 | `Label` | `string` | Label is the text label displayed next to the toggle |
-| `Variant` | `Variant` | Variant determines the checked color scheme (default: Primary) |
+| `Tone` | `Tone` | Tone determines the checked color scheme (default: TonePrimary) |
 | `Style` | `Style` | Style determines the layout style (default or container) |
 | `Checked` | `bool` | Checked sets the initial checked state |
 | `Disabled` | `bool` | Disabled disables the toggle |

@@ -70,8 +70,8 @@ templ tabsDemoContent() {
 			`@tabs.Tabs(tabs.Config{
     ID: "status-demo",
     Tabs: []tabs.Tab{
-        {ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
-        {ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
+        {ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.ToneSuccess), Content: responseContent("200")},
+        {ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.ToneDanger), Content: responseContent("404")},
     },
 })`,
 		)
@@ -168,9 +168,9 @@ templ tabsCustomLabelPreview() {
 		@tabs.Tabs(tabs.Config{
 			ID: "status",
 			Tabs: []tabs.Tab{
-				{ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
-				{ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
-				{ID: "queued", Label: "202", LabelSlot: statusBadge("202", badge.Info), Content: responseContent("202")},
+				{ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.ToneSuccess), Content: responseContent("200")},
+				{ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.ToneDanger), Content: responseContent("404")},
+				{ID: "queued", Label: "202", LabelSlot: statusBadge("202", badge.ToneInfo), Content: responseContent("202")},
 			},
 		})
 	</div>
@@ -215,8 +215,8 @@ templ responseContent(status string) {
 	<b>{ status }</b> response is selected
 }
 
-templ statusBadge(status string, variant badge.Variant) {
-	@badge.Badge(badge.Config{Label: status, Variant: variant, Indicator: true, Size: badge.SizeSM})
+templ statusBadge(status string, variant badge.Tone) {
+	@badge.Badge(badge.Config{Label: status, Tone: variant, Indicator: true, Size: badge.SizeSM})
 }
 
 // Icons matching PenguinUI's tab demos

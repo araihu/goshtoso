@@ -138,8 +138,8 @@ func radioDemoContent() templ.Component {
 				Description: "Six semantic colors via Variant: Primary, Secondary, Info, Success, Warning, Danger.",
 			},
 			radioColorPreview(),
-			`@radio.Radio(radio.Config{ID: "r-success", Name: "v", Value: "su", Label: "Success", Variant: radio.Success, Checked: true})
-@radio.Radio(radio.Config{ID: "r-danger", Name: "v2", Value: "d", Label: "Danger", Variant: radio.Danger, Checked: true})`,
+			`@radio.Radio(radio.Config{ID: "r-success", Name: "v", Value: "su", Label: "Success", Tone: radio.ToneSuccess, Checked: true})
+@radio.Radio(radio.Config{ID: "r-danger", Name: "v2", Value: "d", Label: "Danger", Tone: radio.ToneDanger, Checked: true})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -232,7 +232,7 @@ func radioDemoContent() templ.Component {
 			{Name: "Label", Type: "string", Default: `""`, Description: "Text displayed next to the radio."},
 			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial checked state."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables interaction and dims the control."},
-			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color scheme: "primary", "secondary", "info", "success", "warning", "danger".`},
+			{Name: "Tone", Type: "Tone", Default: "TonePrimary", Description: `Color scheme: "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Box size: "sm", "md", "lg", "xl".`},
 			{Name: "HelperText", Type: "string", Default: `""`, Description: "Helper text rendered below the label."},
 			{Name: "HelperTextID", Type: "string", Default: `""`, Description: "ID of the description element for aria-describedby wiring."},
@@ -492,27 +492,27 @@ func radioColorPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-primary", Name: "v-primary", Value: "p", Label: "Primary", Variant: radio.Primary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-primary", Name: "v-primary", Value: "p", Label: "Primary", Tone: radio.TonePrimary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-secondary", Name: "v-secondary", Value: "s", Label: "Secondary", Variant: radio.Secondary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-secondary", Name: "v-secondary", Value: "s", Label: "Secondary", Tone: radio.ToneSecondary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-info", Name: "v-info", Value: "i", Label: "Info", Variant: radio.Info, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-info", Name: "v-info", Value: "i", Label: "Info", Tone: radio.ToneInfo, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-success", Name: "v-success", Value: "su", Label: "Success", Variant: radio.Success, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-success", Name: "v-success", Value: "su", Label: "Success", Tone: radio.ToneSuccess, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-warning", Name: "v-warning", Value: "w", Label: "Warning", Variant: radio.Warning, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-warning", Name: "v-warning", Value: "w", Label: "Warning", Tone: radio.ToneWarning, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-danger", Name: "v-danger", Value: "d", Label: "Danger", Variant: radio.Danger, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = radio.Radio(radio.Config{ID: "r-v-danger", Name: "v-danger", Value: "d", Label: "Danger", Tone: radio.ToneDanger, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

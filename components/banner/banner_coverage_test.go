@@ -26,7 +26,7 @@ func TestCoverageContainerClassesCoverPositionVariantsAndRootClass(t *testing.T)
 			name: "fixed primary with root class",
 			cfg: Config{
 				Position:  PositionFixed,
-				Variant:   Primary,
+				Tone:      TonePrimary,
 				RootClass: "shadow-lg",
 			},
 			wantParts: []string{
@@ -37,22 +37,22 @@ func TestCoverageContainerClassesCoverPositionVariantsAndRootClass(t *testing.T)
 		},
 		{
 			name:      "info",
-			cfg:       Config{Variant: Info},
+			cfg:       Config{Tone: ToneInfo},
 			wantParts: []string{"border-b border-info bg-info/10"},
 		},
 		{
 			name:      "success",
-			cfg:       Config{Variant: Success},
+			cfg:       Config{Tone: ToneSuccess},
 			wantParts: []string{"border-b border-success bg-success/10"},
 		},
 		{
 			name:      "warning",
-			cfg:       Config{Variant: Warning},
+			cfg:       Config{Tone: ToneWarning},
 			wantParts: []string{"border-b border-warning bg-warning/10"},
 		},
 		{
 			name:      "danger",
-			cfg:       Config{Variant: Danger},
+			cfg:       Config{Tone: ToneDanger},
 			wantParts: []string{"border-b border-danger bg-danger/10"},
 		},
 	}
@@ -74,11 +74,11 @@ func TestCoverageLinkClassesCoverEveryVariant(t *testing.T) {
 		want string
 	}{
 		{name: "default", cfg: Config{}, want: "text-primary"},
-		{name: "primary", cfg: Config{Variant: Primary}, want: "text-primary"},
-		{name: "info", cfg: Config{Variant: Info}, want: "text-info"},
-		{name: "success", cfg: Config{Variant: Success}, want: "text-success"},
-		{name: "warning", cfg: Config{Variant: Warning}, want: "text-warning"},
-		{name: "danger", cfg: Config{Variant: Danger}, want: "text-danger"},
+		{name: "primary", cfg: Config{Tone: TonePrimary}, want: "text-primary"},
+		{name: "info", cfg: Config{Tone: ToneInfo}, want: "text-info"},
+		{name: "success", cfg: Config{Tone: ToneSuccess}, want: "text-success"},
+		{name: "warning", cfg: Config{Tone: ToneWarning}, want: "text-warning"},
+		{name: "danger", cfg: Config{Tone: ToneDanger}, want: "text-danger"},
 	}
 
 	for _, tt := range tests {

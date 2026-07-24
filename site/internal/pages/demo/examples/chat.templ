@@ -38,7 +38,7 @@ templ OnlineBadge(count int, oob bool) {
 	>
 		@badge.Badge(badge.Config{
 			Label:    fmt.Sprintf("%d online", count),
-			Variant: badge.Success,
+			Tone: badge.ToneSuccess,
 			Style:   badge.StyleSoft,
 		})
 	</span>
@@ -50,13 +50,13 @@ templ OnlineBadge(count int, oob bool) {
 // bot always renders Received with the "info" avatar variant.
 templ MessageBubble(m Message) {
 	{{
-		variant := m.Color
+		variant := avatar.Tone(m.Color)
 		side := chatbubble.Received
 		if m.Mine {
 			side = chatbubble.Sent
 		}
 		if m.IsBot {
-			variant = "info"
+			variant = avatar.ToneInfo
 		}
 	}}
 	@chatbubble.ChatBubble(chatbubble.Config{
@@ -66,7 +66,7 @@ templ MessageBubble(m Message) {
 		Timestamp:     m.Time,
 		ShowAvatar:    true,
 		IsBot:         m.IsBot,
-		AvatarVariant: variant,
+		AvatarTone: variant,
 	})
 }
 
@@ -134,7 +134,7 @@ templ ChatApp(me chat.Identity) {
 		<!-- header: identity + presence -->
 		<header class="flex items-center justify-between gap-3 border-b border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
 			<div class="flex min-w-0 items-center gap-3">
-				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color), Status: avatar.StatusSuccess})
+				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Tone: avatar.Tone(me.Color), Status: avatar.StatusSuccess})
 				<div class="min-w-0 leading-tight">
 					<div id="chat-me" class="truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ me.Nick }</div>
 					<div class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Chatting as you</div>

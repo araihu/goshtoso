@@ -100,7 +100,7 @@ func TestAvatarStackRendersOverlappingItems(t *testing.T) {
 		Items: []Config{
 			{Src: "/a.webp", Alt: "Ada Lovelace"},
 			{Src: "/g.webp", Alt: "Grace Hopper"},
-			{Initials: "KT", Variant: Primary},
+			{Initials: "KT", Tone: TonePrimary},
 		},
 	}).Render(context.Background(), &buf)
 	if err != nil {

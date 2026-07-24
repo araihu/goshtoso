@@ -92,7 +92,7 @@ func checkboxDemoContent() templ.Component {
 				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
 			},
 			checkboxColorsPreview(),
-			`@checkbox.Checkbox(checkbox.Config{ID: "success", Label: "Success", Variant: checkbox.Success, Checked: true})`,
+			`@checkbox.Checkbox(checkbox.Config{ID: "success", Label: "Success", Tone: checkbox.ToneSuccess, Checked: true})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -193,7 +193,7 @@ func checkboxDemoContent() templ.Component {
 			{Name: "Label", Type: "string", Default: `""`, Description: "Label text beside the box."},
 			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial checked state."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
-			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
+			{Name: "Tone", Type: "Tone", Default: "TonePrimary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Icon", Type: "Icon", Default: "IconCheck", Description: `Check glyph: "check", "xmark", "minus", "plus".`},
 			{Name: "Animation", Type: "Animation", Default: "AnimationNone", Description: `Check transition: "", "slide-up", "scale-up", "slide-down".`},
 			{Name: "HelperText", Type: "string", Default: `""`, Description: "Helper text below the label."},
@@ -285,7 +285,7 @@ func checkboxColorsPreview() templ.Component {
 		templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Config{
 			ID:      "variantPrimary",
 			Label:   "Primary",
-			Variant: checkbox.Primary,
+			Tone:    checkbox.TonePrimary,
 			Checked: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -294,7 +294,7 @@ func checkboxColorsPreview() templ.Component {
 		templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Config{
 			ID:      "variantSecondary",
 			Label:   "Secondary",
-			Variant: checkbox.Secondary,
+			Tone:    checkbox.ToneSecondary,
 			Checked: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -303,7 +303,7 @@ func checkboxColorsPreview() templ.Component {
 		templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Config{
 			ID:      "variantInfo",
 			Label:   "Info",
-			Variant: checkbox.Info,
+			Tone:    checkbox.ToneInfo,
 			Checked: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -312,7 +312,7 @@ func checkboxColorsPreview() templ.Component {
 		templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Config{
 			ID:      "variantSuccess",
 			Label:   "Success",
-			Variant: checkbox.Success,
+			Tone:    checkbox.ToneSuccess,
 			Checked: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func checkboxColorsPreview() templ.Component {
 		templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Config{
 			ID:      "variantWarning",
 			Label:   "Warning",
-			Variant: checkbox.Warning,
+			Tone:    checkbox.ToneWarning,
 			Checked: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -330,7 +330,7 @@ func checkboxColorsPreview() templ.Component {
 		templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Config{
 			ID:      "variantDanger",
 			Label:   "Danger",
-			Variant: checkbox.Danger,
+			Tone:    checkbox.ToneDanger,
 			Checked: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

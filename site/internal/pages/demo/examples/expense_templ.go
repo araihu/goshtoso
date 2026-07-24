@@ -25,20 +25,20 @@ import (
 
 // categoryVariant maps a spend category to a badge variant so each category
 // reads as a distinct color chip.
-func categoryVariant(c string) badge.Variant {
+func categoryVariant(c string) badge.Tone {
 	switch c {
 	case "Food":
-		return badge.Success
+		return badge.ToneSuccess
 	case "Transport":
-		return badge.Info
+		return badge.ToneInfo
 	case "Housing":
-		return badge.Primary
+		return badge.TonePrimary
 	case "Health":
-		return badge.Danger
+		return badge.ToneDanger
 	case "Entertainment":
-		return badge.Warning
+		return badge.ToneWarning
 	default:
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
 }
 
@@ -164,7 +164,7 @@ func SummaryBadge(s expense.State, oob bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: badge.Primary, Label: "Total " + expense.FormatCents(s.TotalCents())}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: badge.TonePrimary, Label: "Total " + expense.FormatCents(s.TotalCents())}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -259,7 +259,7 @@ func ExpenseRow(e expense.Expense) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: categoryVariant(e.Category), Label: e.Category}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: categoryVariant(e.Category), Label: e.Category}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

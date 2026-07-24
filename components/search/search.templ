@@ -163,7 +163,7 @@ templ resultItem(item Item, index int) {
 			<div class="min-w-0 space-y-1">
 				<div class="flex min-w-0 flex-wrap items-center gap-2">
 					if item.NormalizedMethod() != "" {
-						@badge.Badge(badge.Config{Label: item.NormalizedMethod(), Variant: methodBadgeVariant(item.Method), Size: badge.SizeSM, RootClass: "shrink-0 font-mono font-bold uppercase"})
+						@badge.Badge(badge.Config{Label: item.NormalizedMethod(), Tone: methodBadgeTone(item.Method), Size: badge.SizeSM, RootClass: "shrink-0 font-mono font-bold uppercase"})
 					}
 					<strong class="min-w-0 text-base font-semibold" x-html="highlight($el.closest('[data-search-result]').dataset.searchTitle)">{ item.Title }</strong>
 				</div>

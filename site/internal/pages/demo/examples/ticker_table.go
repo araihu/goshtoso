@@ -19,14 +19,14 @@ func tickerChange(s ticker.Symbol) string {
 }
 
 // tickerBadgeVariant maps price direction to a badge color.
-func tickerBadgeVariant(s ticker.Symbol) badge.Variant {
+func tickerBadgeVariant(s ticker.Symbol) badge.Tone {
 	switch s.Direction() {
 	case "up":
-		return badge.Success
+		return badge.ToneSuccess
 	case "down":
-		return badge.Danger
+		return badge.ToneDanger
 	default:
-		return badge.Default
+		return badge.ToneDefault
 	}
 }
 

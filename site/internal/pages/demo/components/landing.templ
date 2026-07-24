@@ -180,8 +180,8 @@ templ landingContent() {
 					@button.Button(button.Config{Variant: button.Secondary, Type: "button"}) {
 						Secondary
 					}
-					@badge.Badge(badge.Config{Label: "Active", Variant: badge.Success})
-					@badge.Badge(badge.Config{Label: "Pending", Variant: badge.Warning})
+					@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess})
+					@badge.Badge(badge.Config{Label: "Pending", Tone: badge.ToneWarning})
 					@toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true})
 				</div>
 				@table.Table(table.Config{

@@ -30,7 +30,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //	@banner.Banner(banner.Config{
 //	    Description: "Important announcement",
 //	    Position: banner.PositionFixed,
-//	    Variant: banner.Warning,
+//	    Tone: banner.ToneWarning,
 //	})
 func Banner(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

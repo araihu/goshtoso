@@ -30,8 +30,8 @@ templ spinnerDemoContent() {
 				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
 			},
 			spinnerVariantsPreview(),
-			`@spinner.Spinner(spinner.Config{Variant: spinner.Primary})
-@spinner.Spinner(spinner.Config{Variant: spinner.Danger})`,
+			`@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary})
+@spinner.Spinner(spinner.Config{Tone: spinner.ToneDanger})`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -46,7 +46,7 @@ templ spinnerDemoContent() {
 	</div>
 	// API reference lives outside #spinner-fragment.
 	@demo.APIReference([]demo.PropDoc{
-		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
+		{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
 		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg", "xl".`},
 		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
 	})
@@ -98,12 +98,12 @@ templ spinnerDefaultPreview() {
 templ spinnerVariantsPreview() {
 	<div id="spinner-variants" class="w-full max-w-md mx-auto">
 		<div class="flex items-center justify-center gap-4">
-			@spinner.Spinner(spinner.Config{Variant: spinner.Primary})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Secondary})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Info})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Success})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Warning})
-			@spinner.Spinner(spinner.Config{Variant: spinner.Danger})
+			@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary})
+			@spinner.Spinner(spinner.Config{Tone: spinner.ToneSecondary})
+			@spinner.Spinner(spinner.Config{Tone: spinner.ToneInfo})
+			@spinner.Spinner(spinner.Config{Tone: spinner.ToneSuccess})
+			@spinner.Spinner(spinner.Config{Tone: spinner.ToneWarning})
+			@spinner.Spinner(spinner.Config{Tone: spinner.ToneDanger})
 		</div>
 	</div>
 }
@@ -113,16 +113,16 @@ templ spinnerSizesPreview() {
 	<div id="spinner-sizes" class="w-full max-w-md mx-auto">
 		<div class="flex items-center justify-center">
 			<div data-testid="spinner-size-preview-sm" x-show="selected === 'sm'" x-cloak>
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeSM})
+				@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeSM})
 			</div>
 			<div data-testid="spinner-size-preview-md" x-show="selected === 'md'">
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeMD})
+				@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeMD})
 			</div>
 			<div data-testid="spinner-size-preview-lg" x-show="selected === 'lg'" x-cloak>
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeLG})
+				@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeLG})
 			</div>
 			<div data-testid="spinner-size-preview-xl" x-show="selected === 'xl'" x-cloak>
-				@spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeXL})
+				@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeXL})
 			</div>
 		</div>
 	</div>

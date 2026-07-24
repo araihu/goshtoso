@@ -25,14 +25,14 @@ import (
 func rowID(id int) string { return fmt.Sprintf("todo-row-%d", id) }
 
 // priorityVariant maps a priority string to a badge variant.
-func priorityVariant(p string) badge.Variant {
+func priorityVariant(p string) badge.Tone {
 	switch p {
 	case "high":
-		return badge.Danger
+		return badge.ToneDanger
 	case "low":
-		return badge.Secondary
+		return badge.ToneSecondary
 	default:
-		return badge.Warning
+		return badge.ToneWarning
 	}
 }
 
@@ -322,7 +322,7 @@ func TodoRow(t todo.Todo) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: priorityVariant(t.Priority), Label: t.Priority}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: priorityVariant(t.Priority), Label: t.Priority}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

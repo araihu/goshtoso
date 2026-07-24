@@ -132,8 +132,8 @@ func tabsDemoContent() templ.Component {
 			`@tabs.Tabs(tabs.Config{
     ID: "status-demo",
     Tabs: []tabs.Tab{
-        {ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
-        {ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
+        {ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.ToneSuccess), Content: responseContent("200")},
+        {ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.ToneDanger), Content: responseContent("404")},
     },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -360,9 +360,9 @@ func tabsCustomLabelPreview() templ.Component {
 		templ_7745c5c3_Err = tabs.Tabs(tabs.Config{
 			ID: "status",
 			Tabs: []tabs.Tab{
-				{ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
-				{ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
-				{ID: "queued", Label: "202", LabelSlot: statusBadge("202", badge.Info), Content: responseContent("202")},
+				{ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.ToneSuccess), Content: responseContent("200")},
+				{ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.ToneDanger), Content: responseContent("404")},
+				{ID: "queued", Label: "202", LabelSlot: statusBadge("202", badge.ToneInfo), Content: responseContent("202")},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -553,7 +553,7 @@ func responseContent(status string) templ.Component {
 	})
 }
 
-func statusBadge(status string, variant badge.Variant) templ.Component {
+func statusBadge(status string, variant badge.Tone) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -574,7 +574,7 @@ func statusBadge(status string, variant badge.Variant) templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: status, Variant: variant, Indicator: true, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: status, Tone: variant, Indicator: true, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

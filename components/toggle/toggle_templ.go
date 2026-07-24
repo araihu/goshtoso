@@ -21,7 +21,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //	@toggle.Toggle(toggle.Config{
 //	    ID:      "darkMode",
 //	    Label:   "Dark mode",
-//	    Variant: toggle.Secondary,
+//	    Tone: toggle.ToneSecondary,
 //	    Checked: true,
 //	})
 //

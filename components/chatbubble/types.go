@@ -1,6 +1,9 @@
 package chatbubble
 
-import "github.com/a-h/templ"
+import (
+	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components/avatar"
+)
 
 // Side determines bubble alignment and color.
 type Side string
@@ -37,8 +40,8 @@ type Config struct {
 	AvatarSrc string
 	// AvatarInitials is the initials fallback when no image is set.
 	AvatarInitials string
-	// AvatarVariant is an avatar.Variant token (e.g. "info"); used when no Src.
-	AvatarVariant string
+	// AvatarTone controls the initials fallback when no Src is set.
+	AvatarTone avatar.Tone
 	// ShowAvatar renders the avatar column.
 	ShowAvatar bool
 	// Grouped marks a consecutive message: tighten spacing, hide avatar + name.

@@ -2,16 +2,16 @@ package banner
 
 import "github.com/a-h/templ"
 
-// Variant represents banner style variants
-type Variant string
+// Tone represents banner style variants
+type Tone string
 
 const (
-	Default Variant = "default"
-	Primary Variant = "primary"
-	Info    Variant = "info"
-	Success Variant = "success"
-	Warning Variant = "warning"
-	Danger  Variant = "danger"
+	ToneDefault Tone = "default"
+	TonePrimary Tone = "primary"
+	ToneInfo    Tone = "info"
+	ToneSuccess Tone = "success"
+	ToneWarning Tone = "warning"
+	ToneDanger  Tone = "danger"
 )
 
 // Position represents banner position
@@ -26,8 +26,8 @@ const (
 type Config struct {
 	// Description is the main banner content
 	Description string
-	// Variant determines the color scheme
-	Variant Variant
+	// Tone determines the color scheme
+	Tone Tone
 	// Position determines if banner is fixed or relative
 	Position Position
 	// Persistent disables the dismiss button (default: banners are dismissible)
@@ -79,17 +79,17 @@ func (cfg Config) ContainerClasses() string {
 		base = "fixed inset-x-0 top-0 z-50 " + base
 	}
 
-	// Variant styles
-	switch cfg.Variant {
-	case Primary:
+	// Tone styles
+	switch cfg.Tone {
+	case TonePrimary:
 		base += " border-b border-primary bg-primary/10 dark:border-primary-dark dark:bg-primary-dark/10"
-	case Info:
+	case ToneInfo:
 		base += " border-b border-info bg-info/10 dark:border-info dark:bg-info/10"
-	case Success:
+	case ToneSuccess:
 		base += " border-b border-success bg-success/10 dark:border-success dark:bg-success/10"
-	case Warning:
+	case ToneWarning:
 		base += " border-b border-warning bg-warning/10 dark:border-warning dark:bg-warning/10"
-	case Danger:
+	case ToneDanger:
 		base += " border-b border-danger bg-danger/10 dark:border-danger dark:bg-danger/10"
 	default:
 		base += " border-b border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt"
@@ -105,16 +105,16 @@ func (cfg Config) TextClasses() string {
 
 // LinkClasses returns the link classes within the banner
 func (cfg Config) LinkClasses() string {
-	switch cfg.Variant {
-	case Primary:
+	switch cfg.Tone {
+	case TonePrimary:
 		return "font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark"
-	case Info:
+	case ToneInfo:
 		return "font-medium text-info underline-offset-2 hover:underline focus:underline focus:outline-hidden"
-	case Success:
+	case ToneSuccess:
 		return "font-medium text-success underline-offset-2 hover:underline focus:underline focus:outline-hidden"
-	case Warning:
+	case ToneWarning:
 		return "font-medium text-warning underline-offset-2 hover:underline focus:underline focus:outline-hidden"
-	case Danger:
+	case ToneDanger:
 		return "font-medium text-danger underline-offset-2 hover:underline focus:underline focus:outline-hidden"
 	default:
 		return "font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark"

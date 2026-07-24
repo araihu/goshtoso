@@ -209,17 +209,17 @@ func (item Item) SafeHref() string {
 	}
 }
 
-func methodBadgeVariant(method string) badge.Variant {
+func methodBadgeTone(method string) badge.Tone {
 	switch strings.ToUpper(strings.TrimSpace(method)) {
 	case "GET":
-		return badge.Primary
+		return badge.TonePrimary
 	case "POST":
-		return badge.Success
+		return badge.ToneSuccess
 	case "PUT", "PATCH":
-		return badge.Warning
+		return badge.ToneWarning
 	case "DELETE":
-		return badge.Danger
+		return badge.ToneDanger
 	default:
-		return badge.Default
+		return badge.ToneDefault
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +46,7 @@ func TestCoverageChatBubbleRendersAutoSenderRootAttrsAndEscapedMessage(t *testin
 		Message:        `<script>alert("x")</script>`,
 		Timestamp:      "11:32",
 		AvatarInitials: "AL",
-		AvatarVariant:  "info",
+		AvatarTone:     avatar.ToneInfo,
 		ShowAvatar:     true,
 		IsBot:          true,
 		RootClass:      "audit-row",
@@ -97,7 +98,7 @@ func TestCoverageTypingIndicator(t *testing.T) {
 	html := render(t, TypingIndicator(Config{
 		ShowAvatar:     true,
 		AvatarInitials: "AL",
-		AvatarVariant:  "info",
+		AvatarTone:     avatar.ToneInfo,
 		RootClass:      "typing-row",
 	}))
 

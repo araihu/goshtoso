@@ -209,7 +209,7 @@ templ planCard(p wizard.Plan, selected bool) {
 		<span class="flex flex-1 flex-col gap-1">
 			<span class="flex items-center justify-between gap-2">
 				<span class="font-semibold text-on-surface dark:text-on-surface-dark">{ p.Name }</span>
-				@badge.Badge(badge.Config{Variant: planBadgeVariant(p), Label: planPrice(p)})
+				@badge.Badge(badge.Config{Tone: planBadgeVariant(p), Label: planPrice(p)})
 			</span>
 			<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ p.Blurb }</span>
 		</span>
@@ -217,11 +217,11 @@ templ planCard(p wizard.Plan, selected bool) {
 }
 
 // planBadgeVariant tints the price badge: paid tiers stand out, free is muted.
-func planBadgeVariant(p wizard.Plan) badge.Variant {
+func planBadgeVariant(p wizard.Plan) badge.Tone {
 	if p.PriceCents == 0 {
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
-	return badge.Success
+	return badge.ToneSuccess
 }
 
 // planStep is step 3: choose a plan.
@@ -289,7 +289,7 @@ func planSummary(key string) string {
 // WizardSuccess is the confirmed state shown after step 4.
 templ WizardSuccess(s wizard.WizardState) {
 	<div class="flex flex-col items-center gap-4 rounded-radius border border-outline bg-surface px-6 py-12 text-center dark:border-outline-dark dark:bg-surface-dark">
-		@badge.Badge(badge.Config{Variant: badge.Success, Label: "All set"})
+		@badge.Badge(badge.Config{Tone: badge.ToneSuccess, Label: "All set"})
 		<h2 class="text-xl font-semibold text-on-surface dark:text-on-surface-dark">You're onboarded, { firstName(s.Account.Name) }!</h2>
 		<p class="max-w-md text-on-surface-muted dark:text-on-surface-dark-muted">
 			Your { planSummary(s.Plan) } account is ready. Every step was validated on the

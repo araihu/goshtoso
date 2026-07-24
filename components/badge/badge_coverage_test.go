@@ -19,10 +19,10 @@ func renderComponent(t *testing.T, c templ.Component) string {
 	return buf.String()
 }
 
-// allVariants is every Variant the component understands, used to exercise the
+// allVariants is every Tone the component understands, used to exercise the
 // switch arms of the class helpers and templ entry points.
-var allVariants = []Variant{
-	Default, Inverse, Primary, Secondary, Info, Success, Warning, Danger,
+var allVariants = []Tone{
+	ToneDefault, ToneInverse, TonePrimary, ToneSecondary, ToneInfo, ToneSuccess, ToneWarning, ToneDanger,
 }
 
 func TestSizeClasses(t *testing.T) {
@@ -51,92 +51,92 @@ func TestSizeTextClass(t *testing.T) {
 	}
 }
 
-func TestVariantClasses_AllArms(t *testing.T) {
+func TestToneClasses_AllArms(t *testing.T) {
 	// Each variant maps to a distinct background token; assert the token is present
 	// so every switch arm is both executed and verified.
-	wantBG := map[Variant]string{
-		Default:   "bg-surface-alt",
-		Inverse:   "bg-surface-dark-alt",
-		Primary:   "bg-primary",
-		Secondary: "bg-secondary",
-		Info:      "bg-info",
-		Success:   "bg-success",
-		Warning:   "bg-warning",
-		Danger:    "bg-danger",
+	wantBG := map[Tone]string{
+		ToneDefault:   "bg-surface-alt",
+		ToneInverse:   "bg-surface-dark-alt",
+		TonePrimary:   "bg-primary",
+		ToneSecondary: "bg-secondary",
+		ToneInfo:      "bg-info",
+		ToneSuccess:   "bg-success",
+		ToneWarning:   "bg-warning",
+		ToneDanger:    "bg-danger",
 	}
 	for _, v := range allVariants {
-		got := Config{Variant: v}.VariantClasses()
-		assert.Containsf(t, got, "border", "VariantClasses %q should set a border", v)
-		assert.Containsf(t, got, wantBG[v], "VariantClasses %q background", v)
+		got := Config{Tone: v}.toneClasses()
+		assert.Containsf(t, got, "border", "toneClasses %q should set a border", v)
+		assert.Containsf(t, got, wantBG[v], "toneClasses %q background", v)
 	}
 	// Unknown variant falls back to the default arm.
 	assert.Equal(t,
-		Config{Variant: Default}.VariantClasses(),
-		Config{Variant: Variant("nope")}.VariantClasses(),
+		Config{Tone: ToneDefault}.toneClasses(),
+		Config{Tone: Tone("nope")}.toneClasses(),
 	)
 }
 
-func TestSoftVariantClasses_AllArms(t *testing.T) {
-	wantText := map[Variant]string{
-		Default:   "text-on-surface",
-		Inverse:   "text-on-surface",
-		Primary:   "text-primary",
-		Secondary: "text-secondary",
-		Info:      "text-info",
-		Success:   "text-success",
-		Warning:   "text-warning",
-		Danger:    "text-danger",
+func TestSoftToneClasses_AllArms(t *testing.T) {
+	wantText := map[Tone]string{
+		ToneDefault:   "text-on-surface",
+		ToneInverse:   "text-on-surface",
+		TonePrimary:   "text-primary",
+		ToneSecondary: "text-secondary",
+		ToneInfo:      "text-info",
+		ToneSuccess:   "text-success",
+		ToneWarning:   "text-warning",
+		ToneDanger:    "text-danger",
 	}
 	for _, v := range allVariants {
-		got := Config{Variant: v}.SoftVariantClasses()
-		assert.Containsf(t, got, "bg-surface", "SoftVariantClasses %q uses surface bg", v)
-		assert.Containsf(t, got, wantText[v], "SoftVariantClasses %q text", v)
+		got := Config{Tone: v}.softToneClasses()
+		assert.Containsf(t, got, "bg-surface", "softToneClasses %q uses surface bg", v)
+		assert.Containsf(t, got, wantText[v], "softToneClasses %q text", v)
 	}
 	assert.Equal(t,
-		Config{Variant: Default}.SoftVariantClasses(),
-		Config{Variant: Variant("nope")}.SoftVariantClasses(),
+		Config{Tone: ToneDefault}.softToneClasses(),
+		Config{Tone: Tone("nope")}.softToneClasses(),
 	)
 }
 
 func TestSoftInnerClasses_AllArms(t *testing.T) {
-	wantBG := map[Variant]string{
-		Default:   "bg-surface-alt/10",
-		Inverse:   "bg-surface-dark-alt/10",
-		Primary:   "bg-primary/10",
-		Secondary: "bg-secondary/10",
-		Info:      "bg-info/10",
-		Success:   "bg-success/10",
-		Warning:   "bg-warning/10",
-		Danger:    "bg-danger/10",
+	wantBG := map[Tone]string{
+		ToneDefault:   "bg-surface-alt/10",
+		ToneInverse:   "bg-surface-dark-alt/10",
+		TonePrimary:   "bg-primary/10",
+		ToneSecondary: "bg-secondary/10",
+		ToneInfo:      "bg-info/10",
+		ToneSuccess:   "bg-success/10",
+		ToneWarning:   "bg-warning/10",
+		ToneDanger:    "bg-danger/10",
 	}
 	for _, v := range allVariants {
-		got := Config{Variant: v}.SoftInnerClasses()
+		got := Config{Tone: v}.SoftInnerClasses()
 		assert.Containsf(t, got, wantBG[v], "SoftInnerClasses %q", v)
 	}
 	assert.Equal(t,
-		Config{Variant: Default}.SoftInnerClasses(),
-		Config{Variant: Variant("nope")}.SoftInnerClasses(),
+		Config{Tone: ToneDefault}.SoftInnerClasses(),
+		Config{Tone: Tone("nope")}.SoftInnerClasses(),
 	)
 }
 
 func TestIndicatorClasses_AllArms(t *testing.T) {
-	wantBG := map[Variant]string{
-		Default:   "bg-on-surface",
-		Inverse:   "bg-on-surface",
-		Primary:   "bg-primary",
-		Secondary: "bg-secondary",
-		Info:      "bg-info",
-		Success:   "bg-success",
-		Warning:   "bg-warning",
-		Danger:    "bg-danger",
+	wantBG := map[Tone]string{
+		ToneDefault:   "bg-on-surface",
+		ToneInverse:   "bg-on-surface",
+		TonePrimary:   "bg-primary",
+		ToneSecondary: "bg-secondary",
+		ToneInfo:      "bg-info",
+		ToneSuccess:   "bg-success",
+		ToneWarning:   "bg-warning",
+		ToneDanger:    "bg-danger",
 	}
 	for _, v := range allVariants {
-		got := Config{Variant: v}.IndicatorClasses()
+		got := Config{Tone: v}.IndicatorClasses()
 		assert.Containsf(t, got, "size-1.5 rounded-full", "IndicatorClasses %q base", v)
 		assert.Containsf(t, got, wantBG[v], "IndicatorClasses %q bg", v)
 	}
 	// IndicatorColor override short-circuits the variant switch.
-	got := Config{Variant: Danger, IndicatorColor: "bg-pink-500"}.IndicatorClasses()
+	got := Config{Tone: ToneDanger, IndicatorColor: "bg-pink-500"}.IndicatorClasses()
 	assert.Equal(t, "size-1.5 rounded-full bg-pink-500", got)
 	assert.NotContains(t, got, "bg-danger")
 }
@@ -149,7 +149,7 @@ func TestIsSoft(t *testing.T) {
 
 func TestBadge_SimplePath(t *testing.T) {
 	// No soft/icon/indicator => simpleBadge path.
-	html := renderComponent(t, Badge(Config{Label: "New", Variant: Primary, RootClass: "ml-2"}))
+	html := renderComponent(t, Badge(Config{Label: "New", Tone: TonePrimary, RootClass: "ml-2"}))
 	assert.Contains(t, html, "New")
 	assert.Contains(t, html, "bg-primary")
 	assert.Contains(t, html, "ml-2")           // RootClass threaded through
@@ -158,7 +158,7 @@ func TestBadge_SimplePath(t *testing.T) {
 }
 
 func TestBadge_SoftPath(t *testing.T) {
-	html := renderComponent(t, Badge(Config{Label: "Active", Variant: Success, Style: StyleSoft, RootClass: "mr-1"}))
+	html := renderComponent(t, Badge(Config{Label: "Active", Tone: ToneSuccess, Style: StyleSoft, RootClass: "mr-1"}))
 	assert.Contains(t, html, "Active")
 	assert.Contains(t, html, "inline-flex")   // badgeWithInner container
 	assert.Contains(t, html, "text-success")  // soft variant text color
@@ -167,7 +167,7 @@ func TestBadge_SoftPath(t *testing.T) {
 }
 
 func TestBadge_IndicatorPath(t *testing.T) {
-	html := renderComponent(t, Badge(Config{Label: "Live", Variant: Danger, Indicator: true}))
+	html := renderComponent(t, Badge(Config{Label: "Live", Tone: ToneDanger, Indicator: true}))
 	assert.Contains(t, html, "inline-flex")
 	assert.Contains(t, html, `aria-hidden="true"`)
 	assert.Contains(t, html, "size-1.5 rounded-full")
@@ -176,7 +176,7 @@ func TestBadge_IndicatorPath(t *testing.T) {
 
 func TestBadge_IconPath(t *testing.T) {
 	icon := templ.Raw(`<svg data-testid="star"></svg>`)
-	html := renderComponent(t, Badge(Config{Label: "Starred", Variant: Warning, Icon: icon}))
+	html := renderComponent(t, Badge(Config{Label: "Starred", Tone: ToneWarning, Icon: icon}))
 	assert.Contains(t, html, "inline-flex")
 	assert.Contains(t, html, `data-testid="star"`)
 	assert.Contains(t, html, "shrink-0") // icon wrapper
@@ -186,7 +186,7 @@ func TestBadge_IconPath(t *testing.T) {
 func TestBadge_AllVariantsRender(t *testing.T) {
 	for _, v := range allVariants {
 		for _, style := range []Style{StyleSolid, StyleSoft} {
-			html := renderComponent(t, Badge(Config{Label: "x", Variant: v, Style: style}))
+			html := renderComponent(t, Badge(Config{Label: "x", Tone: v, Style: style}))
 			assert.NotEmptyf(t, html, "variant %q style %q rendered empty", v, style)
 			assert.Containsf(t, html, "class=", "variant %q style %q missing class", v, style)
 		}
@@ -224,15 +224,15 @@ func TestNotificationDot(t *testing.T) {
 }
 
 func TestAnimatingDot_AllVariants(t *testing.T) {
-	wantColor := map[Variant]string{
-		Default:   "bg-primary", // unmatched arms fall through to the primary default
-		Inverse:   "bg-primary", // no case for Inverse => default color
-		Primary:   "bg-primary",
-		Secondary: "bg-secondary",
-		Info:      "bg-info",
-		Success:   "bg-success",
-		Warning:   "bg-warning",
-		Danger:    "bg-danger",
+	wantColor := map[Tone]string{
+		ToneDefault:   "bg-primary", // unmatched arms fall through to the primary default
+		ToneInverse:   "bg-primary", // no case for ToneInverse => default color
+		TonePrimary:   "bg-primary",
+		ToneSecondary: "bg-secondary",
+		ToneInfo:      "bg-info",
+		ToneSuccess:   "bg-success",
+		ToneWarning:   "bg-warning",
+		ToneDanger:    "bg-danger",
 	}
 	for _, v := range allVariants {
 		html := renderComponent(t, AnimatingDot(v))

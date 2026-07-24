@@ -676,7 +676,7 @@ func resultItem(item Item, index int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if item.NormalizedMethod() != "" {
-			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: item.NormalizedMethod(), Variant: methodBadgeVariant(item.Method), Size: badge.SizeSM, RootClass: "shrink-0 font-mono font-bold uppercase"}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: item.NormalizedMethod(), Tone: methodBadgeTone(item.Method), Size: badge.SizeSM, RootClass: "shrink-0 font-mono font-bold uppercase"}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

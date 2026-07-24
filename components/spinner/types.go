@@ -1,16 +1,16 @@
 package spinner
 
-// Variant represents spinner color variants
-type Variant string
+// Tone represents spinner color variants
+type Tone string
 
 const (
-	Default   Variant = "default"
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Info      Variant = "info"
-	Success   Variant = "success"
-	Warning   Variant = "warning"
-	Danger    Variant = "danger"
+	ToneDefault   Tone = "default"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneInfo      Tone = "info"
+	ToneSuccess   Tone = "success"
+	ToneWarning   Tone = "warning"
+	ToneDanger    Tone = "danger"
 )
 
 // Size represents spinner size
@@ -25,8 +25,8 @@ const (
 
 // Config holds configuration for the spinner component
 type Config struct {
-	// Variant determines the color scheme
-	Variant Variant
+	// Tone determines the color scheme
+	Tone Tone
 	// Size of the spinner
 	Size Size
 	// RootClass allows additional CSS classes on the spinner root.
@@ -49,18 +49,18 @@ func (cfg Config) SizeClasses() string {
 
 // FillClasses returns the CSS fill classes for the spinner variant
 func (cfg Config) FillClasses() string {
-	switch cfg.Variant {
-	case Primary:
+	switch cfg.Tone {
+	case TonePrimary:
 		return "fill-primary dark:fill-primary-dark"
-	case Secondary:
+	case ToneSecondary:
 		return "fill-secondary dark:fill-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "fill-info dark:fill-info"
-	case Success:
+	case ToneSuccess:
 		return "fill-success dark:fill-success"
-	case Warning:
+	case ToneWarning:
 		return "fill-warning dark:fill-warning"
-	case Danger:
+	case ToneDanger:
 		return "fill-danger dark:fill-danger"
 	default:
 		return "fill-on-surface dark:fill-on-surface-dark"

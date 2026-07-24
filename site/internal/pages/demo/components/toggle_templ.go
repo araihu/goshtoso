@@ -108,8 +108,8 @@ func toggleDemoContent() templ.Component {
 				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
 			},
 			toggleColorsPreview(),
-			`@toggle.Toggle(toggle.Config{ID: "successToggle", Label: "success", Variant: toggle.Success, Checked: true})
-@toggle.Toggle(toggle.Config{ID: "dangerToggle", Label: "danger", Variant: toggle.Danger, Checked: true})`,
+			`@toggle.Toggle(toggle.Config{ID: "successToggle", Label: "success", Tone: toggle.ToneSuccess, Checked: true})
+@toggle.Toggle(toggle.Config{ID: "dangerToggle", Label: "danger", Tone: toggle.ToneDanger, Checked: true})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -136,7 +136,7 @@ func toggleDemoContent() templ.Component {
 			{Name: "Label", Type: "string", Default: `""`, Description: "Label text beside the switch."},
 			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial on state."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
-			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
+			{Name: "Tone", Type: "Tone", Default: "TonePrimary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
 			{Name: "Style", Type: "Style", Default: "StyleDefault", Description: `Layout: "default" (inline) or "container" (bordered).`},
 			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the toggle root."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -249,27 +249,27 @@ func toggleColorsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoPrimary", Label: "primary", Variant: toggle.Primary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoPrimary", Label: "primary", Tone: toggle.TonePrimary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSecondary", Label: "secondary", Variant: toggle.Secondary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSecondary", Label: "secondary", Tone: toggle.ToneSecondary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSuccess", Label: "success", Variant: toggle.Success, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSuccess", Label: "success", Tone: toggle.ToneSuccess, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoWarning", Label: "warning", Variant: toggle.Warning, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoWarning", Label: "warning", Tone: toggle.ToneWarning, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDanger", Label: "danger", Variant: toggle.Danger, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDanger", Label: "danger", Tone: toggle.ToneDanger, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoInfo", Label: "info", Variant: toggle.Info, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoInfo", Label: "info", Tone: toggle.ToneInfo, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

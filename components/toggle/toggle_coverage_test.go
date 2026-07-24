@@ -127,20 +127,20 @@ func TestCoverageInputAttrsPassthrough(t *testing.T) {
 
 func TestCoverageCheckedClassesAllVariants(t *testing.T) {
 	cases := []struct {
-		variant Variant
+		variant Tone
 		want    string
 	}{
-		{Primary, "peer-checked:bg-primary"},
-		{Secondary, "peer-checked:bg-secondary"},
-		{Info, "peer-checked:bg-info"},
-		{Success, "peer-checked:bg-success"},
-		{Warning, "peer-checked:bg-warning"},
-		{Danger, "peer-checked:bg-danger"},
-		{Variant("unknown"), "peer-checked:bg-primary"}, // falls back to Primary
+		{TonePrimary, "peer-checked:bg-primary"},
+		{ToneSecondary, "peer-checked:bg-secondary"},
+		{ToneInfo, "peer-checked:bg-info"},
+		{ToneSuccess, "peer-checked:bg-success"},
+		{ToneWarning, "peer-checked:bg-warning"},
+		{ToneDanger, "peer-checked:bg-danger"},
+		{Tone("unknown"), "peer-checked:bg-primary"}, // falls back to TonePrimary
 	}
 
 	for _, c := range cases {
-		got := Config{Variant: c.variant}.checkedClasses()
+		got := Config{Tone: c.variant}.checkedClasses()
 		if !strings.Contains(got, c.want) {
 			t.Errorf("variant %q checkedClasses missing %q: %s", c.variant, c.want, got)
 		}
@@ -189,8 +189,8 @@ func TestCoverageLabelClassesBranches(t *testing.T) {
 	}
 }
 
-func TestCoverageVariantClassesRendered(t *testing.T) {
-	html := renderToggle(t, Config{ID: "t6", Label: "Warn", Variant: Warning, Style: StyleContainer})
+func TestCoverageToneClassesRendered(t *testing.T) {
+	html := renderToggle(t, Config{ID: "t6", Label: "Warn", Tone: ToneWarning, Style: StyleContainer})
 
 	if !strings.Contains(html, "peer-checked:bg-warning") {
 		t.Fatalf("expected warning variant class in track: %s", html)

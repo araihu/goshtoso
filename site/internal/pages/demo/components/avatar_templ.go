@@ -197,14 +197,14 @@ func avatarDemoContent() templ.Component {
 				Description: "An avatar in various colors with an icon placeholder.",
 			},
 			avatarIconPreview(),
-			`@avatar.Avatar(avatar.Config{Variant: avatar.Default, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Inverse, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Secondary, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Info, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Success, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Warning, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Danger, Reactive: true})`,
+			`@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneInverse, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.TonePrimary, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneSecondary, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneInfo, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneSuccess, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneWarning, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneDanger, Reactive: true})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -215,14 +215,14 @@ func avatarDemoContent() templ.Component {
 				Description: "An avatar in various colors with an initials placeholder.",
 			},
 			avatarInitialsPreview(),
-			`@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Default, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Inverse, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Primary, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Secondary, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Info, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Success, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Warning, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Danger, Reactive: true})`,
+			`@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDefault, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInverse, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.TonePrimary, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSecondary, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInfo, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSuccess, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneWarning, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDanger, Reactive: true})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -284,7 +284,7 @@ func avatarDemoContent() templ.Component {
 			avatarFixturesPreview(),
 			`@avatar.Avatar(avatar.Config{Src: imgURL, Name: "Load Test", Size: avatar.SizeMD})
 @avatar.Avatar(avatar.Config{Src: "/missing.png", Name: "Error Fallback", Size: avatar.SizeMD})
-@avatar.Avatar(avatar.Config{Name: "Initials Only", Size: avatar.SizeMD, Variant: avatar.Primary})`,
+@avatar.Avatar(avatar.Config{Name: "Initials Only", Size: avatar.SizeMD, Tone: avatar.TonePrimary})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -299,7 +299,7 @@ func avatarDemoContent() templ.Component {
 			{Name: "Name", Type: "string", Default: `""`, Description: "Full name used to derive initials when Src is missing/broken."},
 			{Name: "Initials", Type: "string", Default: `""`, Description: "Explicit initials (overrides Name-derived)."},
 			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Fixed size: "xs", "sm", "md", "lg", "xl", "2xl" (ignored when Reactive).`},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color for initials/icon: default, primary, secondary, info, success, warning, danger.`},
+			{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color for initials/icon: default, primary, secondary, info, success, warning, danger.`},
 			{Name: "Shape", Type: "Shape", Default: "ShapeCircle", Description: `Shape: "circle" or "square".`},
 			{Name: "Radius", Type: "Radius", Default: "RadiusDefault", Description: `Square-avatar radius: "none", "xs", "sm", "md", "lg".`},
 			{Name: "Border", Type: "bool", Default: "false", Description: "Add a ring border."},
@@ -658,35 +658,35 @@ func avatarInitialsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Default, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDefault, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Inverse, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInverse, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Primary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.TonePrimary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Secondary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSecondary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Info, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInfo, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Success, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSuccess, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Warning, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneWarning, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Danger, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDanger, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -724,35 +724,35 @@ func avatarIconPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Default, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Inverse, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneInverse, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.TonePrimary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Secondary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneSecondary, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Info, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneInfo, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Success, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneSuccess, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Warning, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneWarning, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Variant: avatar.Danger, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneDanger, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -988,11 +988,11 @@ func avatarFixturesPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230089d6'/%3E%3Ccircle cx='32' cy='32' r='18' fill='white'/%3E%3C/svg%3E",
-			Alt:     "Loaded",
-			Name:    "Load Test",
-			Size:    avatar.SizeMD,
-			Variant: avatar.Default,
+			Src:  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230089d6'/%3E%3Ccircle cx='32' cy='32' r='18' fill='white'/%3E%3C/svg%3E",
+			Alt:  "Loaded",
+			Name: "Load Test",
+			Size: avatar.SizeMD,
+			Tone: avatar.ToneDefault,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1002,11 +1002,11 @@ func avatarFixturesPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Src:     "/assets/images/does-not-exist-404.png",
-			Alt:     "Error",
-			Name:    "Error Fallback",
-			Size:    avatar.SizeMD,
-			Variant: avatar.Default,
+			Src:  "/assets/images/does-not-exist-404.png",
+			Alt:  "Error",
+			Name: "Error Fallback",
+			Size: avatar.SizeMD,
+			Tone: avatar.ToneDefault,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1016,9 +1016,9 @@ func avatarFixturesPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{
-			Name:    "Initials Only",
-			Size:    avatar.SizeMD,
-			Variant: avatar.Primary,
+			Name: "Initials Only",
+			Size: avatar.SizeMD,
+			Tone: avatar.TonePrimary,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

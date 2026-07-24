@@ -493,7 +493,7 @@ func planCard(p wizard.Plan, selected bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: planBadgeVariant(p), Label: planPrice(p)}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: planBadgeVariant(p), Label: planPrice(p)}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -519,11 +519,11 @@ func planCard(p wizard.Plan, selected bool) templ.Component {
 }
 
 // planBadgeVariant tints the price badge: paid tiers stand out, free is muted.
-func planBadgeVariant(p wizard.Plan) badge.Variant {
+func planBadgeVariant(p wizard.Plan) badge.Tone {
 	if p.PriceCents == 0 {
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
-	return badge.Success
+	return badge.ToneSuccess
 }
 
 // planStep is step 3: choose a plan.
@@ -784,7 +784,7 @@ func WizardSuccess(s wizard.WizardState) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: badge.Success, Label: "All set"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: badge.ToneSuccess, Label: "All set"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
