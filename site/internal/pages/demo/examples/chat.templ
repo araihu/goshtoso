@@ -158,7 +158,7 @@ templ ChatApp(me chat.Identity) {
 					Value:       me.Nick,
 				})
 			</div>
-			@button.Button(button.Config{Type: "submit", Variant: button.Secondary, Size: button.SizeSmall}) {
+			@button.Button(button.WithType("submit"), button.WithTone(button.ToneSecondary), button.WithSize(button.SizeSmall)) {
 				Rename
 			}
 		</form>
@@ -193,7 +193,7 @@ templ ChatApp(me chat.Identity) {
 							InputAttrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
 						})
 					</div>
-					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+					@button.Button(button.WithType("submit")) {
 						Send
 					}
 				</div>

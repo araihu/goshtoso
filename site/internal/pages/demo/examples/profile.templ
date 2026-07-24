@@ -217,29 +217,26 @@ templ profileMainPanel(s profile.State) {
 			InputAttrs: templ.Attributes{"x-on:change": "onFile('banner', $event)"},
 		})
 		<div class="flex flex-wrap items-center justify-center gap-3 p-4">
-			@button.Button(button.Config{
-				Variant: button.Secondary,
-				Size:    button.SizeSmall,
-				Type:    "button",
-				Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
-			}) {
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithSize(button.SizeSmall),
+				button.WithAlpine(&button.AlpineConfig{OnClick: "pick('avatar')"}),
+			) {
 				Upload avatar
 			}
-			@button.Button(button.Config{
-				Variant: button.Secondary,
-				Size:    button.SizeSmall,
-				Type:    "button",
-				Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
-			}) {
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithSize(button.SizeSmall),
+				button.WithAlpine(&button.AlpineConfig{OnClick: "pick('banner')"}),
+			) {
 				Upload cover
 			}
 			<!-- Tooltip: upload requirements hint (hover/focus) -->
-			@tooltip.Tooltip(tooltip.Config{
-				ID:          "profile-upload-hint",
-				Label:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
-				Position:    tooltip.Top,
-				TriggerLabel: "Upload requirements",
-			})
+			@tooltip.Tooltip(
+				"profile-upload-hint",
+				"PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+				tooltip.WithTriggerLabel("Upload requirements"),
+			)
 			<!-- Modal-confirmed photo removal; only meaningful when an image exists -->
 			<span x-show="avatarSrc || bannerSrc">
 				@modal.Modal(modal.Config{
@@ -269,7 +266,7 @@ templ profileMainPanel(s profile.State) {
 			>
 				@IdentityFields(s)
 				<div class="flex justify-end">
-					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+					@button.Button(button.WithType("submit")) {
 						Save
 					}
 				</div>

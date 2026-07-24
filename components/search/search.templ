@@ -42,7 +42,7 @@ templ SearchField(cfg Config) {
 		>
 			@searchIcon("size-5 shrink-0")
 			<span class="min-w-0 flex-1 truncate">{ cfg.GetLabel() }</span>
-			@kbd.Kbd(kbd.Config{Text: cfg.GetShortcutText(), Size: kbd.SizeSM, Class: "ml-auto text-on-surface-muted dark:text-on-surface-dark-muted"})
+			@kbd.Kbd(cfg.GetShortcutText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("ml-auto text-on-surface-muted dark:text-on-surface-dark-muted"))
 		</button>
 	</div>
 }
@@ -98,7 +98,7 @@ templ SearchModal(cfg Config) {
 					spellcheck="false"
 					{ cfg.InputAttrs... }
 				/>
-				@kbd.Kbd(kbd.Config{Text: cfg.GetEscapeText(), Size: kbd.SizeSM, Class: "text-on-surface-muted dark:text-on-surface-dark-muted"})
+				@kbd.Kbd(cfg.GetEscapeText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("text-on-surface-muted dark:text-on-surface-dark-muted"))
 			</div>
 			<div
 				x-show="query.trim().length > 0"

@@ -313,11 +313,7 @@ templ tableLazyPreview() {
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 				The table renders its headers first. Rows are fetched only after you request them.
 			</p>
-			@button.Button(button.Config{
-				ID:      "load-lazy-table",
-				Type:    "button",
-				Variant: button.Primary,
-			}) {
+			@button.Button(button.WithID("load-lazy-table")) {
 				Load table
 			}
 		</div>

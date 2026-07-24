@@ -1,81 +1,82 @@
 package button
 
-// Button renders a PenguinUI-styled button with Tailwind utility classes
-templ Button(cfg Config) {
+// Button renders a PenguinUI-styled button with Tailwind utility classes.
+templ Button(options ...Option) {
+	{{ cfg := newConfig(options) }}
 	{{ classes := buttonClasses(cfg) }}
-	{{ hasHTMX := cfg.HTMX != nil }}
-	{{ hasAlpine := cfg.Alpine != nil }}
+	{{ hasHTMX := cfg.htmx != nil }}
+	{{ hasAlpine := cfg.alpine != nil }}
 	
 	<button
-		if cfg.ID != "" {
-			id={ cfg.ID }
+		if cfg.id != "" {
+			id={ cfg.id }
 		}
-		type={ cfg.Type }
+		type={ cfg.buttonType }
 		class={ classes }
-		if cfg.Disabled {
+		if cfg.disabled {
 			disabled
 		}
 		
 		if hasAlpine {
-			if cfg.Alpine.OnClick != "" {
-				x-on:click={ cfg.Alpine.OnClick }
+			if cfg.alpine.OnClick != "" {
+				x-on:click={ cfg.alpine.OnClick }
 			}
-			if cfg.Alpine.Show != "" {
-				x-show={ cfg.Alpine.Show }
+			if cfg.alpine.Show != "" {
+				x-show={ cfg.alpine.Show }
 			}
-			if cfg.Alpine.BindDisabled != "" {
-				:disabled={ cfg.Alpine.BindDisabled }
+			if cfg.alpine.BindDisabled != "" {
+				:disabled={ cfg.alpine.BindDisabled }
 			}
-			if cfg.Alpine.Transition {
+			if cfg.alpine.Transition {
 				x-transition
 			}
-			if cfg.Alpine.Data != "" {
-				x-data={ cfg.Alpine.Data }
+			if cfg.alpine.Data != "" {
+				x-data={ cfg.alpine.Data }
 			}
 		}
 		
 		if hasHTMX {
-			if cfg.HTMX.Get != "" {
-				hx-get={ cfg.HTMX.Get }
+			if cfg.htmx.Get != "" {
+				hx-get={ cfg.htmx.Get }
 			}
-			if cfg.HTMX.Post != "" {
-				hx-post={ cfg.HTMX.Post }
+			if cfg.htmx.Post != "" {
+				hx-post={ cfg.htmx.Post }
 			}
-			if cfg.HTMX.Put != "" {
-				hx-put={ cfg.HTMX.Put }
+			if cfg.htmx.Put != "" {
+				hx-put={ cfg.htmx.Put }
 			}
-			if cfg.HTMX.Delete != "" {
-				hx-delete={ cfg.HTMX.Delete }
+			if cfg.htmx.Delete != "" {
+				hx-delete={ cfg.htmx.Delete }
 			}
-			if cfg.HTMX.Patch != "" {
-				hx-patch={ cfg.HTMX.Patch }
+			if cfg.htmx.Patch != "" {
+				hx-patch={ cfg.htmx.Patch }
 			}
-			if cfg.HTMX.Target != "" {
-				hx-target={ cfg.HTMX.Target }
+			if cfg.htmx.Target != "" {
+				hx-target={ cfg.htmx.Target }
 			}
-			if cfg.HTMX.Swap != "" {
-				hx-swap={ cfg.HTMX.Swap }
+			if cfg.htmx.Swap != "" {
+				hx-swap={ cfg.htmx.Swap }
 			}
-			if cfg.HTMX.Trigger != "" {
-				hx-trigger={ cfg.HTMX.Trigger }
+			if cfg.htmx.Trigger != "" {
+				hx-trigger={ cfg.htmx.Trigger }
 			}
-			if cfg.HTMX.Indicator != "" {
-				hx-indicator={ cfg.HTMX.Indicator }
+			if cfg.htmx.Indicator != "" {
+				hx-indicator={ cfg.htmx.Indicator }
 			}
-			if cfg.HTMX.PushURL {
+			if cfg.htmx.PushURL {
 				hx-push-url="true"
 			}
-			if cfg.HTMX.Confirm != "" {
-				hx-confirm={ cfg.HTMX.Confirm }
+			if cfg.htmx.Confirm != "" {
+				hx-confirm={ cfg.htmx.Confirm }
 			}
-			if cfg.HTMX.Vals != "" {
-				hx-vals={ cfg.HTMX.Vals }
+			if cfg.htmx.Vals != "" {
+				hx-vals={ cfg.htmx.Vals }
 			}
 		}
 		>
-			if cfg.LoadingText != "" && hasHTMX {
+			if cfg.loadingText != "" && hasHTMX {
 				<span class="htmx-indicator-content">{ children... }</span>
-				<span class="htmx-indicator hidden">{ cfg.LoadingText }</span>
+				<span class="htmx-indicator hidden">{ cfg.loadingText }</span>
 			} else {
 				{ children... }
 			}

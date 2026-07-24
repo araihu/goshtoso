@@ -12,7 +12,7 @@ import (
 
 func TestKbdZeroValueRendersSemanticElement(t *testing.T) {
 	var buf bytes.Buffer
-	if err := Kbd(Config{}).Render(context.Background(), &buf); err != nil {
+	if err := Kbd("").Render(context.Background(), &buf); err != nil {
 		t.Fatal(err)
 	}
 
@@ -34,7 +34,7 @@ func TestKbdZeroValueRendersSemanticElement(t *testing.T) {
 
 func TestKbdSizeClassOverridesDefault(t *testing.T) {
 	var buf bytes.Buffer
-	if err := Kbd(Config{Text: "Esc", Size: SizeXS}).Render(context.Background(), &buf); err != nil {
+	if err := Kbd("Esc", WithSize(SizeXS)).Render(context.Background(), &buf); err != nil {
 		t.Fatal(err)
 	}
 
@@ -54,12 +54,12 @@ func TestKbdAttrsClassAndIconLabel(t *testing.T) {
 		return err
 	})
 
-	if err := Kbd(Config{
-		Label: "Command",
-		Icon:  icon,
-		Class: "custom-key",
-		Attrs: templ.Attributes{"data-shortcut": "command"},
-	}).Render(context.Background(), &buf); err != nil {
+	if err := Kbd("",
+		WithLabel("Command"),
+		WithIcon(icon),
+		WithRootClass("custom-key"),
+		WithAttrs(templ.Attributes{"data-shortcut": "command"}),
+	).Render(context.Background(), &buf); err != nil {
 		t.Fatal(err)
 	}
 
@@ -75,5 +75,20 @@ func TestKbdAttrsClassAndIconLabel(t *testing.T) {
 		if !strings.Contains(html, want) {
 			t.Fatalf("Kbd icon render missing %q in %s", want, html)
 		}
+	}
+}
+
+func TestKbdRequiresText(t *testing.T) {
+	var buf bytes.Buffer
+	if err := Kbd("⌘K", WithSize(SizeSM)).Render(context.Background(), &buf); err != nil {
+		t.Fatal(err)
+	}
+
+	html := buf.String()
+	if !strings.Contains(html, "⌘K") {
+		t.Fatalf("Kbd required text missing in %s", html)
+	}
+	if !strings.Contains(html, "min-h-6") {
+		t.Fatalf("Kbd size option missing in %s", html)
 	}
 }

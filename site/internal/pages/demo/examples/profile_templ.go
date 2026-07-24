@@ -347,12 +347,11 @@ func profileMainPanel(s profile.State) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Size:    button.SizeSmall,
-			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithAlpine(&button.AlpineConfig{OnClick: "pick('avatar')"}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -374,12 +373,11 @@ func profileMainPanel(s profile.State) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Size:    button.SizeSmall,
-			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithAlpine(&button.AlpineConfig{OnClick: "pick('banner')"}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -387,12 +385,11 @@ func profileMainPanel(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "profile-upload-hint",
-			Label:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
-			Position:     tooltip.Top,
-			TriggerLabel: "Upload requirements",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip(
+			"profile-upload-hint",
+			"PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+			tooltip.WithTriggerLabel("Upload requirements"),
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -442,7 +439,7 @@ func profileMainPanel(s profile.State) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Type: "submit", Variant: button.Primary}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithType("submit")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

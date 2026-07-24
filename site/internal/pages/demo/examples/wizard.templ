@@ -93,21 +93,20 @@ func wizardStepItems(s wizard.WizardState) []steps.Step {
 templ stepFooter(showBack bool, nextLabel, nextPost string) {
 	<div class="mt-6 flex items-center justify-between gap-3 border-t border-outline pt-4 dark:border-outline-dark">
 		if showBack {
-			@button.Button(button.Config{
-				Variant: button.Secondary,
-				Type:    "button",
-				HTMX: &button.HTMXConfig{
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithHTMX(&button.HTMXConfig{
 					Post:   "/api/examples/wizard/back",
 					Target: "#" + wizardSwapTarget,
 					Swap:   "outerHTML",
-				},
-			}) {
+				}),
+			) {
 				Back
 			}
 		} else {
 			<span></span>
 		}
-		@button.Button(button.Config{Variant: button.Primary, Type: "submit"}) {
+		@button.Button(button.WithType("submit")) {
 			{ nextLabel }
 		}
 	</div>
@@ -295,15 +294,13 @@ templ WizardSuccess(s wizard.WizardState) {
 			Your { planSummary(s.Plan) } account is ready. Every step was validated on the
 			server, and the whole flow lived in a single cookie — no session storage.
 		</p>
-		@button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-			HTMX: &button.HTMXConfig{
+		@button.Button(
+			button.WithHTMX(&button.HTMXConfig{
 				Post:   "/api/examples/wizard/reset",
 				Target: "#" + wizardSwapTarget,
 				Swap:   "outerHTML",
-			},
-		}) {
+			}),
+		) {
 			Start over
 		}
 	</div>

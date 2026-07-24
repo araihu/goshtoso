@@ -166,17 +166,16 @@ templ LogsApp() {
 							</span>
 							<span x-text="statusText"></span>
 						</span>
-						@tooltip.Tooltip(tooltip.Config{
-							ID:             "log-pause-tip",
-							Label:           "Pause closes the stream; resume reconnects",
-							Trigger: pauseButton(),
-						})
-						@button.Button(button.Config{
-							Variant: button.Secondary,
-							Size:    button.SizeSmall,
-							Type:    "button",
-							Alpine:  &button.AlpineConfig{OnClick: "clearFeed()"},
-						}) {
+						@tooltip.Tooltip(
+							"log-pause-tip",
+							"Pause closes the stream; resume reconnects",
+							tooltip.WithTrigger(pauseButton()),
+						)
+						@button.Button(
+							button.WithTone(button.ToneSecondary),
+							button.WithSize(button.SizeSmall),
+							button.WithAlpine(&button.AlpineConfig{OnClick: "clearFeed()"}),
+						) {
 							Clear
 						}
 					</div>
@@ -202,12 +201,11 @@ templ LogsApp() {
 // pauseButton is the Pause/Resume button used as the tooltip trigger; its label
 // flips with the Alpine `paused` flag.
 templ pauseButton() {
-	@button.Button(button.Config{
-		Variant: button.Secondary,
-		Size:    button.SizeSmall,
-		Type:    "button",
-		Alpine:  &button.AlpineConfig{OnClick: "togglePause()"},
-	}) {
+	@button.Button(
+		button.WithTone(button.ToneSecondary),
+		button.WithSize(button.SizeSmall),
+		button.WithAlpine(&button.AlpineConfig{OnClick: "togglePause()"}),
+	) {
 		<span x-text="paused ? 'Resume' : 'Pause'">Pause</span>
 	}
 }

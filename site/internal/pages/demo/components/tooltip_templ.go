@@ -77,12 +77,7 @@ func tooltipDemoContent() templ.Component {
 				Description: "Informative text shown on hover, focus, or click. Four positions (top, bottom, left, right), optional rich description, and hover or click triggers.",
 			},
 			tooltipDefaultPreview(),
-			`@tooltip.Tooltip(tooltip.Config{
-    ID:          "myTooltip",
-    Label:        "Tooltip top",
-    Position:    tooltip.Top,
-    TriggerLabel: "Top",
-})`,
+			`@tooltip.Tooltip("myTooltip", "Tooltip top", tooltip.WithTriggerLabel("Top"))`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -93,12 +88,11 @@ func tooltipDemoContent() templ.Component {
 				Description: "Add a Description for a richer two-line tooltip.",
 			},
 			tooltipRichPreview(),
-			`@tooltip.Tooltip(tooltip.Config{
-    ID:          "richTooltip",
-    Label:        "Tooltip top",
-    Description: "A rich tooltip with longer text.",
-    TriggerLabel: "Hover Me",
-})`,
+			`@tooltip.Tooltip(
+    "richTooltip",
+    "Tooltip top",
+    tooltip.WithDescription("A rich tooltip with longer text."),
+)`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -106,15 +100,15 @@ func tooltipDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Click Trigger",
-				Description: "Set TriggerMode: tooltip.Click to toggle the tooltip on click instead of hover.",
+				Description: "Use ActivationClick to toggle the tooltip on click instead of hover.",
 			},
 			tooltipClickPreview(),
-			`@tooltip.Tooltip(tooltip.Config{
-    ID:          "clickTooltip",
-    Label:        "Tooltip top",
-    TriggerMode: tooltip.Click,
-    TriggerLabel: "Click Me",
-})`,
+			`@tooltip.Tooltip(
+    "clickTooltip",
+    "Tooltip top",
+    tooltip.WithActivation(tooltip.ActivationClick),
+    tooltip.WithTriggerLabel("Click Me"),
+)`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -124,13 +118,13 @@ func tooltipDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the tooltip for accessibility)."},
-			{Name: "Label", Type: "string", Default: `""`, Description: "Tooltip text (heading line)."},
-			{Name: "Description", Type: "string", Default: `""`, Description: "Optional secondary line for a rich tooltip."},
-			{Name: "Position", Type: "Position", Default: "Top", Description: `Placement: "top", "bottom", "left", "right".`},
-			{Name: "TriggerMode", Type: "Trigger", Default: "Hover", Description: `Activation: "hover" (hover/focus) or "click".`},
-			{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Label of the trigger element."},
-			{Name: "Trigger", Type: "templ.Component", Default: "nil", Description: "Custom trigger content (overrides TriggerLabel)."},
+			{Name: "id", Type: "string", Default: "required", Description: "Unique id (wires the trigger to the tooltip for accessibility)."},
+			{Name: "label", Type: "string", Default: "required", Description: "Tooltip text (heading line)."},
+			{Name: "WithDescription", Type: "string", Default: `""`, Description: "Optional secondary line for a rich tooltip."},
+			{Name: "WithPosition", Type: "Position", Default: "PositionTop", Description: `Placement: "top", "bottom", "left", "right".`},
+			{Name: "WithActivation", Type: "Activation", Default: "ActivationHover", Description: `Activation: "hover" (hover/focus) or "click".`},
+			{Name: "WithTriggerLabel", Type: "string", Default: `"Hover Me"`, Description: "Label of the trigger element."},
+			{Name: "WithTrigger", Type: "templ.Component", Default: "nil", Description: "Custom trigger content (overrides TriggerLabel)."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -165,39 +159,19 @@ func tooltipDefaultPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "demoTop",
-			Label:        "Tooltip top",
-			Position:     tooltip.Top,
-			TriggerLabel: "Top",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("demoTop", "Tooltip top", tooltip.WithTriggerLabel("Top")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "demoBottom",
-			Label:        "Tooltip bottom",
-			Position:     tooltip.Bottom,
-			TriggerLabel: "Bottom",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("demoBottom", "Tooltip bottom", tooltip.WithPosition(tooltip.PositionBottom), tooltip.WithTriggerLabel("Bottom")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "demoLeft",
-			Label:        "Tooltip left",
-			Position:     tooltip.Left,
-			TriggerLabel: "Left",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("demoLeft", "Tooltip left", tooltip.WithPosition(tooltip.PositionLeft), tooltip.WithTriggerLabel("Left")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "demoRight",
-			Label:        "Tooltip right",
-			Position:     tooltip.Right,
-			TriggerLabel: "Right",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("demoRight", "Tooltip right", tooltip.WithPosition(tooltip.PositionRight), tooltip.WithTriggerLabel("Right")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -235,23 +209,11 @@ func tooltipRichPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "richTop",
-			Label:        "Tooltip top",
-			Description:  "A rich tooltip that contains longer text and is usually used to add a description.",
-			Position:     tooltip.Top,
-			TriggerLabel: "Hover Me",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("richTop", "Tooltip top", tooltip.WithDescription("A rich tooltip that contains longer text and is usually used to add a description.")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "richBottom",
-			Label:        "Tooltip bottom",
-			Description:  "A rich tooltip that contains longer text and is usually used to add a description.",
-			Position:     tooltip.Bottom,
-			TriggerLabel: "Hover Me",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("richBottom", "Tooltip bottom", tooltip.WithDescription("A rich tooltip that contains longer text and is usually used to add a description."), tooltip.WithPosition(tooltip.PositionBottom)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -289,23 +251,11 @@ func tooltipClickPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "clickTop",
-			Label:        "Tooltip top",
-			TriggerMode:  tooltip.Click,
-			Position:     tooltip.Top,
-			TriggerLabel: "Click Me",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("clickTop", "Tooltip top", tooltip.WithActivation(tooltip.ActivationClick), tooltip.WithTriggerLabel("Click Me")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "clickBottom",
-			Label:        "Tooltip bottom",
-			TriggerMode:  tooltip.Click,
-			Position:     tooltip.Bottom,
-			TriggerLabel: "Click Me",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip("clickBottom", "Tooltip bottom", tooltip.WithActivation(tooltip.ActivationClick), tooltip.WithPosition(tooltip.PositionBottom), tooltip.WithTriggerLabel("Click Me")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

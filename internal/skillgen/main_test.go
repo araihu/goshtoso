@@ -38,6 +38,42 @@ func Alert(config Config) templ.Component { return nil }
 	}
 }
 
+func TestRunDocumentsFunctionalOptions(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "button", "types.go"), `package button
+
+type Tone string
+
+const TonePrimary Tone = "primary"
+
+type config struct {
+	tone Tone
+}
+
+type Option interface {
+	apply(*config)
+}
+
+func WithTone(tone Tone) Option { return nil }
+`)
+	mustWrite(t, filepath.Join("components", "button", "button_templ.go"), `package button
+
+import "github.com/a-h/templ"
+
+func Button(options ...Option) templ.Component { return nil }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	if !strings.Contains(reference, "**Options:** `WithTone(tone Tone)`") {
+		t.Fatalf("generated reference missing functional option signature:\n%s", reference)
+	}
+}
+
 func mustWrite(t *testing.T, path, contents string) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {

@@ -204,7 +204,7 @@ func SearchField(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: cfg.GetShortcutText(), Size: kbd.SizeSM, Class: "ml-auto text-on-surface-muted dark:text-on-surface-dark-muted"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd(cfg.GetShortcutText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("ml-auto text-on-surface-muted dark:text-on-surface-dark-muted")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -413,7 +413,7 @@ func SearchModal(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: cfg.GetEscapeText(), Size: kbd.SizeSM, Class: "text-on-surface-muted dark:text-on-surface-dark-muted"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd(cfg.GetEscapeText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("text-on-surface-muted dark:text-on-surface-dark-muted")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

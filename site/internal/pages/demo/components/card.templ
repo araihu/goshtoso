@@ -45,7 +45,7 @@ templ cardDemoContent() {
 
 templ bookNowButton() {
     <div class="mt-2">
-        @button.Button(button.Config{Variant: button.Primary, Type: "button"}) { Book Now }
+        @button.Button() { Book Now }
     </div>
 }`,
 		)
@@ -79,7 +79,7 @@ templ bookNowButton() {
         <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
         @card.StarRating(3)
         <span class="text-xl font-medium">$99.99</span>
-        @button.Button(button.Config{Variant: button.Primary}) { Add to Cart }
+        @button.Button() { Add to Cart }
     </div>
 </article>`,
 		)
@@ -95,7 +95,7 @@ templ bookNowButton() {
     <h3 class="text-xl font-bold">Premium</h3>
     <span class="mt-8 text-3xl font-medium">$8.99</span>
     <ul class="mt-4 list-inside list-disc space-y-2 text-sm">...</ul>
-    @button.Button(button.Config{Variant: button.Primary, RootClass: "w-full"}) { Start your free trial }
+    @button.Button(button.WithRootClass("w-full")) { Start your free trial }
 </article>`,
 		)
 
@@ -196,10 +196,7 @@ templ cardTestimonialPreview() {
 // bookNowButton creates a book now button for cards
 templ bookNowButton() {
 	<div class="mt-2">
-		@button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-		}) {
+		@button.Button() {
 			Book Now
 		}
 	</div>
@@ -220,10 +217,7 @@ templ ecommerceProductCard() {
 				<span class="text-xl font-medium">$99.99</span>
 			</div>
 			<p class="mb-2 text-pretty text-sm">The Casio G-Shock GA2100 is simply designed for easy timekeeping, featuring a sleek profile and clear display.</p>
-			@button.Button(button.Config{
-				Variant: button.Primary,
-				Type:    "button",
-			}) {
+			@button.Button() {
 				Add to Cart
 			}
 		</div>
@@ -248,11 +242,7 @@ templ pricingCard() {
 			<li>Cancel anytime</li>
 		</ul>
 		<div class="mt-12">
-			@button.Button(button.Config{
-				Variant: button.Primary,
-				Type:    "button",
-				RootClass:   "w-full",
-			}) {
+			@button.Button(button.WithRootClass("w-full")) {
 				Start your free trial
 			}
 		</div>

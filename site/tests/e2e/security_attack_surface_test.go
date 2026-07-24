@@ -68,10 +68,10 @@ func TestSecurityAttackSurfaceUnsafeHrefSchemesDoNotExecute(t *testing.T) {
 
 	jsHref := `javascript:void(window.__goshtosoHrefPwned='href')`
 	body := templ.Raw(strings.Join([]string{
-		renderSecurityComponentWithChildren(t, link.Link(link.Config{
-			Href:  jsHref,
-			Attrs: templ.Attributes{"data-attack-surface": "link"},
-		}), templ.Raw("Link")),
+		renderSecurityComponentWithChildren(t, link.Link(
+			jsHref,
+			link.WithAttrs(templ.Attributes{"data-attack-surface": "link"}),
+		), templ.Raw("Link")),
 		renderSecurityComponent(t, navbar.Navbar(navbar.Config{
 			Brand:     templ.Raw("Brand"),
 			BrandHref: jsHref,

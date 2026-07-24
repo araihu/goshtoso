@@ -38,6 +38,7 @@ type pkgAPI struct {
 	dir     string // directory name under components/ (= import path tail)
 	name    string // Go package name (may differ, e.g. select → selectfield)
 	entries []string
+	options []string
 	enums   []enum
 	structs []strukt
 }
@@ -145,6 +146,7 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 	}
 	sort.Slice(api.enums, func(i, j int) bool { return api.enums[i].typ < api.enums[j].typ })
 	sort.Strings(api.entries)
+	sort.Strings(api.options)
 	sort.Slice(api.structs, func(i, j int) bool { return api.structs[i].name < api.structs[j].name })
 	return api, true, nil
 }
@@ -156,6 +158,9 @@ func collectFile(fset *token.FileSet, af *ast.File, api *pkgAPI, enums map[strin
 		case *ast.FuncDecl:
 			if isEntry(fset, d) {
 				api.entries = append(api.entries, entrySig(fset, d))
+			}
+			if isOption(fset, d) {
+				api.options = append(api.options, entrySig(fset, d))
 			}
 		case *ast.GenDecl:
 			if d.Tok == token.CONST {
@@ -180,6 +185,18 @@ func isEntry(fset *token.FileSet, fn *ast.FuncDecl) bool {
 		}
 	}
 	return false
+}
+
+// isOption reports whether fn is an exported functional option constructor:
+// a top-level function whose single result is the package-local Option type.
+func isOption(fset *token.FileSet, fn *ast.FuncDecl) bool {
+	if fn.Recv != nil || !fn.Name.IsExported() || fn.Type.Results == nil {
+		return false
+	}
+	results := fn.Type.Results.List
+	return len(results) == 1 &&
+		len(results[0].Names) <= 1 &&
+		exprString(fset, results[0].Type) == "Option"
 }
 
 func entrySig(fset *token.FileSet, fn *ast.FuncDecl) string {
@@ -307,6 +324,16 @@ func renderPkg(b *strings.Builder, p pkgAPI) {
 				b.WriteString(" · ")
 			}
 			fmt.Fprintf(b, "`%s`", e)
+		}
+		b.WriteString("\n\n")
+	}
+	if len(p.options) > 0 {
+		b.WriteString("**Options:** ")
+		for i, option := range p.options {
+			if i > 0 {
+				b.WriteString(" · ")
+			}
+			fmt.Fprintf(b, "`%s`", option)
 		}
 		b.WriteString("\n\n")
 	}

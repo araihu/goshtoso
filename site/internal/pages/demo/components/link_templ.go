@@ -74,7 +74,7 @@ func linkDemoContent() templ.Component {
 				Description: "Direct users to another page, section, or resource with themed focus, hover, and optional button styling.",
 			},
 			linkDefaultPreview(),
-			`@link.Link(link.Config{Href: "#"}) {
+			`@link.Link("#") {
     Read if bored
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -88,7 +88,7 @@ func linkDemoContent() templ.Component {
 			},
 			linkInlinePreview(),
 			`<p>
-    Follow us on @link.Link(link.Config{Href: "#"}) { social media }
+    Follow us on @link.Link("#") { social media }
     and become our virtual BFF.
 </p>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -101,10 +101,7 @@ func linkDemoContent() templ.Component {
 				Description: "Pass an icon component to add a compact directional cue.",
 			},
 			linkIconPreview(),
-			`@link.Link(link.Config{
-    Href: "#",
-    Icon: linkArrowIcon(),
-}) {
+			`@link.Link("#", link.WithIcon(linkArrowIcon())) {
     about our company
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -114,13 +111,10 @@ func linkDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Button Link",
-				Description: "Use StyleButton when navigation should visually match a primary action.",
+				Description: "Use AppearanceButton when navigation should visually match a primary action.",
 			},
 			linkButtonPreview(),
-			`@link.Link(link.Config{
-    Href:  "#",
-    Style: link.StyleButton,
-}) {
+			`@link.Link("#", link.WithAppearance(link.AppearanceButton)) {
     I'm a link
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -132,17 +126,17 @@ func linkDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Href", Type: "string", Default: `"#"`, Description: "Link destination."},
-			{Name: "Target", Type: "string", Default: `""`, Description: "Native anchor target attribute."},
-			{Name: "Rel", Type: "string", Default: `""`, Description: `Native rel attribute. Defaults to "noopener noreferrer" for target "_blank".`},
-			{Name: "Role", Type: "string", Default: `""`, Description: `Native role attribute. StyleButton defaults to "button".`},
-			{Name: "Style", Type: "Style", Default: "StyleText", Description: `Visual treatment: "text" or "button".`},
-			{Name: "Size", Type: "Size", Default: "SizeMedium", Description: `Button-link size: "sm", "md", "lg", "xl".`},
-			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional icon rendered inside the link."},
-			{Name: "IconPosition", Type: "IconPosition", Default: "IconTrailing", Description: `Icon placement: "leading" or "trailing".`},
-			{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the anchor."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the anchor."},
+			{Name: "href", Type: "string", Default: "required", Description: "Link destination."},
+			{Name: "WithTarget", Type: "string", Default: `""`, Description: "Native anchor target attribute."},
+			{Name: "WithRel", Type: "string", Default: `""`, Description: `Native rel attribute. Defaults to "noopener noreferrer" for target "_blank".`},
+			{Name: "WithRole", Type: "string", Default: `""`, Description: `Native role attribute. AppearanceButton defaults to "button".`},
+			{Name: "WithAppearance", Type: "Appearance", Default: "AppearanceText", Description: `Visual treatment: "text" or "button".`},
+			{Name: "WithSize", Type: "Size", Default: "SizeMedium", Description: `Button-link size: "sm", "md", "lg", "xl".`},
+			{Name: "WithIcon", Type: "templ.Component", Default: "nil", Description: "Optional icon rendered inside the link."},
+			{Name: "WithIconPosition", Type: "IconPosition", Default: "IconTrailing", Description: `Icon placement: "leading" or "trailing".`},
+			{Name: "WithID", Type: "string", Default: `""`, Description: "Optional element id."},
+			{Name: "WithRootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the anchor."},
+			{Name: "WithAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the anchor."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -194,7 +188,7 @@ func linkDefaultPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = linkcomponent.Link(linkcomponent.Config{Href: "#"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = linkcomponent.Link("#").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -234,7 +228,7 @@ func linkInlinePreview() templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("Follow us on ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 92, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 86, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -258,14 +252,14 @@ func linkInlinePreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = linkcomponent.Link(linkcomponent.Config{Href: "#"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = linkcomponent.Link("#").Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(" and become our virtual BFF. We promise to send only the useful updates.")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 96, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 90, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -307,7 +301,7 @@ func linkIconPreview() templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("Find out more ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 104, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 98, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -331,10 +325,7 @@ func linkIconPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = linkcomponent.Link(linkcomponent.Config{
-			Href: "#",
-			Icon: linkArrowIcon(),
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = linkcomponent.Link("#", linkcomponent.WithIcon(linkArrowIcon())).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -389,10 +380,7 @@ func linkButtonPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = linkcomponent.Link(linkcomponent.Config{
-			Href:  "#",
-			Style: linkcomponent.StyleButton,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = linkcomponent.Link("#", linkcomponent.WithAppearance(linkcomponent.AppearanceButton)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

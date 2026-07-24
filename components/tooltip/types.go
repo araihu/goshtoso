@@ -2,73 +2,109 @@ package tooltip
 
 import "github.com/a-h/templ"
 
-// Position represents tooltip placement relative to the trigger
+// Position represents tooltip placement relative to the trigger.
 type Position string
 
 const (
-	Top    Position = "top"
-	Bottom Position = "bottom"
-	Left   Position = "left"
-	Right  Position = "right"
+	PositionTop    Position = "top"
+	PositionBottom Position = "bottom"
+	PositionLeft   Position = "left"
+	PositionRight  Position = "right"
 )
 
-// Trigger represents how the tooltip is activated
-type Trigger string
+// Activation represents how the tooltip is activated.
+type Activation string
 
 const (
-	Hover Trigger = "hover" // Default: peer-hover/peer-focus
-	Click Trigger = "click" // Alpine.js click toggle
+	ActivationHover Activation = "hover"
+	ActivationClick Activation = "click"
 )
 
-// Config holds configuration for the tooltip component
-type Config struct {
-	// ID is the tooltip element ID (used for aria-describedby)
-	ID string
-	// Label is the main tooltip text
-	Label string
-	// Description is optional secondary text (rich tooltip)
-	Description string
-	// Position determines where the tooltip appears
-	Position Position
-	// TriggerMode determines how the tooltip is activated
-	TriggerMode Trigger
-	// TriggerLabel is the text shown on the trigger button
-	TriggerLabel string
-	// Trigger is an optional custom trigger element (overrides TriggerLabel)
-	Trigger templ.Component
+type config struct {
+	id           string
+	label        string
+	description  string
+	position     Position
+	activation   Activation
+	triggerLabel string
+	trigger      templ.Component
 }
 
-// positionClasses returns CSS classes for tooltip positioning
-func (cfg Config) positionClasses() string {
-	switch cfg.Position {
-	case Bottom:
+// Option configures a Tooltip.
+type Option interface {
+	apply(*config)
+}
+
+type optionFunc func(*config)
+
+func (fn optionFunc) apply(cfg *config) {
+	fn(cfg)
+}
+
+// WithDescription adds secondary text to create a rich tooltip.
+func WithDescription(description string) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.description = description
+	})
+}
+
+// WithPosition sets tooltip placement relative to the trigger.
+func WithPosition(position Position) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.position = position
+	})
+}
+
+// WithActivation sets how the tooltip is activated.
+func WithActivation(activation Activation) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.activation = activation
+	})
+}
+
+// WithTriggerLabel sets the text shown on the default trigger button.
+func WithTriggerLabel(label string) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.triggerLabel = label
+	})
+}
+
+// WithTrigger replaces the default trigger button with a custom component.
+func WithTrigger(trigger templ.Component) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.trigger = trigger
+	})
+}
+
+func newConfig(id, label string, options []Option) config {
+	cfg := config{
+		id:           id,
+		label:        label,
+		position:     PositionTop,
+		activation:   ActivationHover,
+		triggerLabel: "Hover Me",
+	}
+	for _, option := range options {
+		if option != nil {
+			option.apply(&cfg)
+		}
+	}
+	return cfg
+}
+
+func (cfg config) positionClasses() string {
+	switch cfg.position {
+	case PositionBottom:
 		return "absolute top-full mt-2 left-1/2 -translate-x-1/2"
-	case Left:
+	case PositionLeft:
 		return "absolute right-full mr-2 top-1/2 -translate-y-1/2"
-	case Right:
+	case PositionRight:
 		return "absolute left-full ml-2 top-1/2 -translate-y-1/2"
-	default: // Top
+	default:
 		return "absolute bottom-full mb-2 left-1/2 -translate-x-1/2"
 	}
 }
 
-// isRich returns true if tooltip has a description (rich tooltip)
-func (cfg Config) isRich() bool {
-	return cfg.Description != ""
-}
-
-// tooltipID returns the ID to use, defaulting to "tooltipExample"
-func (cfg Config) tooltipID() string {
-	if cfg.ID != "" {
-		return cfg.ID
-	}
-	return "tooltipExample"
-}
-
-// triggerLabel returns the trigger button text
-func (cfg Config) triggerLabel() string {
-	if cfg.TriggerLabel != "" {
-		return cfg.TriggerLabel
-	}
-	return "Hover Me"
+func (cfg config) isRich() bool {
+	return cfg.description != ""
 }

@@ -232,10 +232,12 @@ import "github.com/araihu/goshtoso/components/breadcrumbs"  // package breadcrum
 import "github.com/araihu/goshtoso/components/button"  // package button
 ```
 
-**Entry points:** `Button(cfg Config)`
+**Entry points:** `Button(options ...Option)`
+
+**Options:** `Disabled()` · `WithAlpine(alpine *AlpineConfig)` · `WithHTMX(htmx *HTMXConfig)` · `WithID(id string)` · `WithLoadingText(text string)` · `WithRootClass(class string)` · `WithSize(size Size)` · `WithTone(tone Tone)` · `WithType(buttonType string)`
 
 - **Size** — SizeSmall = "sm", SizeMedium = "md", SizeLarge = "lg", SizeXLarge = "xl"
-- **Variant** — Primary = "primary", Secondary = "secondary", Alternate = "alternate", Inverse = "inverse", Info = "info", Danger = "danger", Warning = "warning", Success = "success"
+- **Tone** — TonePrimary = "primary", ToneSecondary = "secondary", ToneAlternate = "alternate", ToneInverse = "inverse", ToneInfo = "info", ToneDanger = "danger", ToneWarning = "warning", ToneSuccess = "success"
 
 **AlpineConfig**
 
@@ -246,20 +248,6 @@ import "github.com/araihu/goshtoso/components/button"  // package button
 | `Show` | `string` | Show is the x-show expression controlling visibility. |
 | `Transition` | `bool` | Transition enables x-transition on the element. |
 | `Data` | `string` | Data is the x-data expression for component state. |
-
-**Config**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `Variant` | `Variant` | Variant is the visual style variant of the button. |
-| `Size` | `Size` | Size is the button size, defaults to SizeMedium. |
-| `Type` | `string` | Type is the HTML button type attribute (e.g. "button", "submit"). |
-| `Disabled` | `bool` | Disabled disables the button, preventing interaction. |
-| `ID` | `string` | ID is the HTML id attribute for the button element. |
-| `RootClass` | `string` | RootClass is additional CSS classes appended to the button. |
-| `HTMX` | `*HTMXConfig` | HTMX is an optional HTMX config for server-side interaction. |
-| `Alpine` | `*AlpineConfig` | Alpine is an optional Alpine.js config for client-side behavior. |
-| `LoadingText` | `string` | LoadingText is the text shown during an HTMX request. |
 
 **HTMXConfig**
 
@@ -793,20 +781,11 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 import "github.com/araihu/goshtoso/components/kbd"  // package kbd
 ```
 
-**Entry points:** `Kbd(cfg Config)`
+**Entry points:** `Kbd(text string, options ...Option)`
+
+**Options:** `WithAttrs(attrs templ.Attributes)` · `WithIcon(icon templ.Component)` · `WithLabel(label string)` · `WithRootClass(class string)` · `WithSize(size Size)`
 
 - **Size** — SizeXS = "xs", SizeSM = "sm", SizeMD = "md", SizeLG = "lg"
-
-**Config**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `Text` | `string` | Text is the visible keyboard key text. |
-| `Label` | `string` | Label is optional accessible text, useful for icon-only keys. |
-| `Size` | `Size` | Size controls text, padding, and icon dimensions. |
-| `Icon` | `templ.Component` | Icon is an optional icon component rendered before Text. |
-| `Class` | `string` | Class allows additional CSS classes on the kbd element. |
-| `Attrs` | `templ.Attributes` | Attrs allows caller-supplied attributes on the kbd element. |
 
 ## link
 
@@ -814,27 +793,13 @@ import "github.com/araihu/goshtoso/components/kbd"  // package kbd
 import "github.com/araihu/goshtoso/components/link"  // package link
 ```
 
-**Entry points:** `Link(cfg Config)`
+**Entry points:** `Link(href string, options ...Option)`
 
+**Options:** `WithAppearance(appearance Appearance)` · `WithAttrs(attrs templ.Attributes)` · `WithID(id string)` · `WithIcon(icon templ.Component)` · `WithIconPosition(position IconPosition)` · `WithRel(rel string)` · `WithRole(role string)` · `WithRootClass(class string)` · `WithSize(size Size)` · `WithTarget(target string)`
+
+- **Appearance** — AppearanceText = "text", AppearanceButton = "button"
 - **IconPosition** — IconLeading = "leading", IconTrailing = "trailing"
 - **Size** — SizeSmall = "sm", SizeMedium = "md", SizeLarge = "lg", SizeXLarge = "xl"
-- **Style** — StyleText = "text", StyleButton = "button"
-
-**Config**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `Href` | `string` | Href is the link destination. Defaults to "#". |
-| `Target` | `string` | Target is the native anchor target attribute. |
-| `Rel` | `string` | Rel is the native anchor rel attribute. Defaults to "noopener noreferrer" |
-| `Role` | `string` | Role overrides the native role. StyleButton defaults to role="button". |
-| `ID` | `string` | ID is the HTML id attribute for the anchor. |
-| `Style` | `Style` | Style controls the link treatment. Defaults to StyleText. |
-| `Size` | `Size` | Size controls button-styled link dimensions. Defaults to SizeMedium. |
-| `Icon` | `templ.Component` | Icon is an optional icon rendered inside the link. |
-| `IconPosition` | `IconPosition` | IconPosition controls Icon placement. Defaults to IconTrailing. |
-| `Class` | `string` | Class is additional CSS classes appended to the anchor. |
-| `Attrs` | `templ.Attributes` | Attrs are arbitrary attributes on the anchor element. |
 
 ## modal
 
@@ -1800,19 +1765,9 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 import "github.com/araihu/goshtoso/components/tooltip"  // package tooltip
 ```
 
-**Entry points:** `Tooltip(cfg Config)`
+**Entry points:** `Tooltip(id string, label string, options ...Option)`
 
-- **Position** — Top = "top", Bottom = "bottom", Left = "left", Right = "right"
-- **Trigger** — Hover = "hover", Click = "click"
+**Options:** `WithActivation(activation Activation)` · `WithDescription(description string)` · `WithPosition(position Position)` · `WithTrigger(trigger templ.Component)` · `WithTriggerLabel(label string)`
 
-**Config**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `ID` | `string` | ID is the tooltip element ID (used for aria-describedby) |
-| `Label` | `string` | Label is the main tooltip text |
-| `Description` | `string` | Description is optional secondary text (rich tooltip) |
-| `Position` | `Position` | Position determines where the tooltip appears |
-| `TriggerMode` | `Trigger` | TriggerMode determines how the tooltip is activated |
-| `TriggerLabel` | `string` | TriggerLabel is the text shown on the trigger button |
-| `Trigger` | `templ.Component` | Trigger is an optional custom trigger element (overrides TriggerLabel) |
+- **Activation** — ActivationHover = "hover", ActivationClick = "click"
+- **Position** — PositionTop = "top", PositionBottom = "bottom", PositionLeft = "left", PositionRight = "right"

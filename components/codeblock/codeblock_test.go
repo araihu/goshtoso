@@ -70,7 +70,7 @@ func TestCodeBlockCopyButtonHasDistinctAccessibleName(t *testing.T) {
 		ID:       "component-example",
 		Language: "go",
 		Label:    "Button usage",
-		Code:     `@button.Button(button.Config{})`,
+		Code:     `@button.Button()`,
 	})
 
 	if !strings.Contains(html, `aria-label="Copy Button usage code"`) {

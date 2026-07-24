@@ -55,17 +55,19 @@ templ ClearButton(doneCount int, oob bool) {
 			hx-swap-oob="true"
 		}
 	>
-		@button.Button(button.Config{
-			Variant:  button.Secondary,
-			Size:     button.SizeSmall,
-			Type:     "button",
-			Disabled: doneCount == 0,
-			HTMX: &button.HTMXConfig{
+		{{ options := []button.Option{
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithHTMX(&button.HTMXConfig{
 				Post:   "/api/examples/todo/clear-completed",
 				Target: "#todo-list",
 				Swap:   "outerHTML",
-			},
-		}) {
+			}),
+		} }}
+		if doneCount == 0 {
+			{{ options = append(options, button.Disabled()) }}
+		}
+		@button.Button(options...) {
 			Clear completed
 		}
 	</div>
@@ -233,7 +235,7 @@ templ TodoApp(s todo.State) {
 							@textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "due", Label: "Due"})
 						</div>
 						<div class="sm:ml-auto">
-							@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+							@button.Button(button.WithType("submit")) {
 								Add task
 							}
 						</div>

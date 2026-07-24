@@ -103,7 +103,7 @@ func cardDemoContent() templ.Component {
 
 templ bookNowButton() {
     <div class="mt-2">
-        @button.Button(button.Config{Variant: button.Primary, Type: "button"}) { Book Now }
+        @button.Button() { Book Now }
     </div>
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -141,7 +141,7 @@ templ bookNowButton() {
         <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
         @card.StarRating(3)
         <span class="text-xl font-medium">$99.99</span>
-        @button.Button(button.Config{Variant: button.Primary}) { Add to Cart }
+        @button.Button() { Add to Cart }
     </div>
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -159,7 +159,7 @@ templ bookNowButton() {
     <h3 class="text-xl font-bold">Premium</h3>
     <span class="mt-8 text-3xl font-medium">$8.99</span>
     <ul class="mt-4 list-inside list-disc space-y-2 text-sm">...</ul>
-    @button.Button(button.Config{Variant: button.Primary, RootClass: "w-full"}) { Start your free trial }
+    @button.Button(button.WithRootClass("w-full")) { Start your free trial }
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -499,10 +499,7 @@ func bookNowButton() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -566,10 +563,7 @@ func ecommerceProductCard() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -625,11 +619,7 @@ func pricingCard() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:   button.Primary,
-			Type:      "button",
-			RootClass: "w-full",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithRootClass("w-full")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

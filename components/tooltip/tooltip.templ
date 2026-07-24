@@ -4,29 +4,24 @@ package tooltip
 // Usage:
 //
 //	// Simple hover tooltip (top)
-//	@tooltip.Tooltip(tooltip.Config{
-//	    ID:          "myTooltip",
-//	    Label:        "Tooltip top",
-//	    TriggerLabel: "Hover Me",
-//	})
+//	@tooltip.Tooltip("myTooltip", "Tooltip top")
 //
 //	// Rich tooltip with description
-//	@tooltip.Tooltip(tooltip.Config{
-//	    ID:          "richTooltip",
-//	    Label:        "Tooltip top",
-//	    Description: "A rich tooltip that contains longer text.",
-//	    TriggerLabel: "Hover Me",
-//	})
+//	@tooltip.Tooltip(
+//	    "richTooltip",
+//	    "Tooltip top",
+//	    tooltip.WithDescription("A rich tooltip that contains longer text."),
+//	)
 //
 //	// Click tooltip
-//	@tooltip.Tooltip(tooltip.Config{
-//	    ID:          "clickTooltip",
-//	    Label:        "Tooltip top",
-//	    TriggerMode: tooltip.Click,
-//	    TriggerLabel: "Hover Me",
-//	})
-templ Tooltip(cfg Config) {
-	if cfg.TriggerMode == Click {
+//	@tooltip.Tooltip(
+//	    "clickTooltip",
+//	    "Tooltip top",
+//	    tooltip.WithActivation(tooltip.ActivationClick),
+//	)
+templ Tooltip(id, label string, options ...Option) {
+	{{ cfg := newConfig(id, label, options) }}
+	if cfg.activation == ActivationClick {
 		@clickTooltip(cfg)
 	} else if cfg.isRich() {
 		@richTooltip(cfg)
@@ -36,46 +31,46 @@ templ Tooltip(cfg Config) {
 }
 
 // defaultTooltip renders a simple hover tooltip
-templ defaultTooltip(cfg Config) {
+templ defaultTooltip(cfg config) {
 	<div class="relative w-fit">
-		if cfg.Trigger != nil {
-			<span class="peer" aria-describedby={ cfg.tooltipID() }>
-				@cfg.Trigger
+		if cfg.trigger != nil {
+			<span class="peer" aria-describedby={ cfg.id }>
+				@cfg.trigger
 			</span>
 		} else {
-			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.tooltipID() }>{ cfg.triggerLabel() }</button>
+			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
 		}
-		<div id={ cfg.tooltipID() } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:bg-surface dark:text-on-surface-strong" } role="tooltip">{ cfg.Label }</div>
+		<div id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:bg-surface dark:text-on-surface-strong" } role="tooltip">{ cfg.label }</div>
 	</div>
 }
 
 // richTooltip renders a tooltip with title and description
-templ richTooltip(cfg Config) {
+templ richTooltip(cfg config) {
 	<div class="relative w-fit">
-		if cfg.Trigger != nil {
-			<span class="peer" aria-describedby={ cfg.tooltipID() }>
-				@cfg.Trigger
+		if cfg.trigger != nil {
+			<span class="peer" aria-describedby={ cfg.id }>
+				@cfg.trigger
 			</span>
 		} else {
-			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.tooltipID() }>{ cfg.triggerLabel() }</button>
+			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
 		}
-		<div id={ cfg.tooltipID() } class={ cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-sm bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:bg-surface dark:text-on-surface" } role="tooltip">
-			<span class="text-sm font-medium text-on-surface-dark-strong dark:text-on-surface-strong">{ cfg.Label }</span>
-			<p class="text-balance">{ cfg.Description }</p>
+		<div id={ cfg.id } class={ cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-sm bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:bg-surface dark:text-on-surface" } role="tooltip">
+			<span class="text-sm font-medium text-on-surface-dark-strong dark:text-on-surface-strong">{ cfg.label }</span>
+			<p class="text-balance">{ cfg.description }</p>
 		</div>
 	</div>
 }
 
 // clickTooltip renders a click-triggered tooltip using Alpine.js
-templ clickTooltip(cfg Config) {
+templ clickTooltip(cfg config) {
 	<div x-data="{ showTooltip: false }" class="relative w-fit">
-		if cfg.Trigger != nil {
-			<span x-on:click="showTooltip = !showTooltip" aria-describedby={ cfg.tooltipID() }>
-				@cfg.Trigger
+		if cfg.trigger != nil {
+			<span x-on:click="showTooltip = !showTooltip" aria-describedby={ cfg.id }>
+				@cfg.trigger
 			</span>
 		} else {
-			<button x-on:click="showTooltip = !showTooltip" type="button" class="rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.tooltipID() }>{ cfg.triggerLabel() }</button>
+			<button x-on:click="showTooltip = !showTooltip" type="button" class="rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
 		}
-		<div x-cloak x-show="showTooltip" x-on:click.outside="showTooltip = false" id={ cfg.tooltipID() } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-out" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">{ cfg.Label }</div>
+		<div x-cloak x-show="showTooltip" x-on:click.outside="showTooltip = false" id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-out" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">{ cfg.label }</div>
 	</div>
 }

@@ -77,13 +77,13 @@ func buttonDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Buttons",
-				Description: "Trigger actions — submit a form, open a modal, navigate. Eight color variants, four sizes, disabled state, and first-class HTMX wiring (GET/POST/DELETE, confirm, loading indicator).",
+				Description: "Trigger actions — submit a form, open a modal, navigate. Eight semantic tones, four sizes, disabled state, and first-class HTMX wiring (GET/POST/DELETE, confirm, loading indicator).",
 			},
 			buttonVariantsPreview(),
-			`@button.Button(button.Config{Variant: button.Primary, Type: "button"}) { Primary }
-@button.Button(button.Config{Variant: button.Secondary, Type: "button"}) { Secondary }
-@button.Button(button.Config{Variant: button.Danger, Type: "button"}) { Danger }
-@button.Button(button.Config{Variant: button.Success, Type: "button"}) { Success }`,
+			`@button.Button() { Primary }
+@button.Button(button.WithTone(button.ToneSecondary)) { Secondary }
+@button.Button(button.WithTone(button.ToneDanger)) { Danger }
+@button.Button(button.WithTone(button.ToneSuccess)) { Success }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -95,11 +95,7 @@ func buttonDemoContent() templ.Component {
 				AbovePreview: buttonSizeSelector(),
 			},
 			buttonSizesPreview(),
-			`@button.Button(button.Config{
-    Variant: button.Primary,
-    Size:    button.SizeMedium,
-    Type:    "button",
-}) { Medium }`,
+			`@button.Button(button.WithSize(button.SizeLarge)) { Large }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -110,7 +106,7 @@ func buttonDemoContent() templ.Component {
 				Description: "Disabled: true blocks interaction and dims the button.",
 			},
 			buttonDisabledPreview(),
-			`@button.Button(button.Config{Variant: button.Primary, Type: "button", Disabled: true}) { Primary }`,
+			`@button.Button(button.Disabled()) { Primary }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -121,20 +117,22 @@ func buttonDemoContent() templ.Component {
 				Description: "Attach an HTMX config to fire a request on click. Supports Get/Post/Delete, a Confirm prompt, a loading Indicator, and LoadingText.",
 			},
 			buttonHTMXPreview(),
-			`@button.Button(button.Config{
-    Variant: button.Primary, Type: "button", RootClass: "w-full sm:w-44 justify-center",
-    HTMX: &button.HTMXConfig{Post: "/api/hello", Target: "#htmx-result-post", Swap: "innerHTML"},
-}) { Send POST }
+			`@button.Button(
+    button.WithRootClass("w-full sm:w-44 justify-center"),
+    button.WithHTMX(&button.HTMXConfig{Post: "/api/hello", Target: "#htmx-result-post", Swap: "innerHTML"}),
+) { Send POST }
 
-@button.Button(button.Config{
-    Variant: button.Info, Type: "button", RootClass: "w-full sm:w-44 justify-center",
-    HTMX: &button.HTMXConfig{Get: "/api/hello", Target: "#htmx-result-get", Swap: "innerHTML"},
-}) { Send GET }
+@button.Button(
+    button.WithTone(button.ToneInfo),
+    button.WithRootClass("w-full sm:w-44 justify-center"),
+    button.WithHTMX(&button.HTMXConfig{Get: "/api/hello", Target: "#htmx-result-get", Swap: "innerHTML"}),
+) { Send GET }
 
-@button.Button(button.Config{
-    Variant: button.Danger, Type: "button", RootClass: "w-full sm:w-44 justify-center",
-    HTMX: &button.HTMXConfig{Delete: "/api/hello", Confirm: "Are you sure?", Target: "#htmx-result-delete", Swap: "innerHTML"},
-}) { Delete }`,
+@button.Button(
+    button.WithTone(button.ToneDanger),
+    button.WithRootClass("w-full sm:w-44 justify-center"),
+    button.WithHTMX(&button.HTMXConfig{Delete: "/api/hello", Confirm: "Are you sure?", Target: "#htmx-result-delete", Swap: "innerHTML"}),
+) { Delete }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -144,15 +142,15 @@ func buttonDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "alternate", "inverse", "info", "danger", "warning", "success".`},
-			{Name: "Size", Type: "Size", Default: "SizeMedium", Description: `Size: "sm", "md", "lg", "xl".`},
-			{Name: "Type", Type: "string", Default: `"button"`, Description: `Native button type: "button", "submit", "reset".`},
-			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
-			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX wiring (Get/Post/Put/Delete, Target, Swap, Trigger, Confirm, Indicator)."},
-			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Alpine.js directives for client-side behavior."},
-			{Name: "LoadingText", Type: "string", Default: `""`, Description: "Text shown while an HTMX request is in flight."},
-			{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the button."},
+			{Name: "WithTone", Type: "Tone", Default: "TonePrimary", Description: `Semantic color: "primary", "secondary", "alternate", "inverse", "info", "danger", "warning", "success".`},
+			{Name: "WithSize", Type: "Size", Default: "SizeMedium", Description: `Size: "sm", "md", "lg", "xl".`},
+			{Name: "WithType", Type: "string", Default: `"button"`, Description: `Native button type: "button", "submit", "reset".`},
+			{Name: "Disabled", Type: "Option", Default: "enabled", Description: "Disable interaction."},
+			{Name: "WithHTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX wiring (Get/Post/Put/Delete, Target, Swap, Trigger, Confirm, Indicator)."},
+			{Name: "WithAlpine", Type: "*AlpineConfig", Default: "nil", Description: "Alpine.js directives for client-side behavior."},
+			{Name: "WithLoadingText", Type: "string", Default: `""`, Description: "Text shown while an HTMX request is in flight."},
+			{Name: "WithID", Type: "string", Default: `""`, Description: "Optional element id."},
+			{Name: "WithRootClass", Type: "string", Default: `""`, Description: "Extra classes on the button."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -363,7 +361,7 @@ func buttonSizesPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Primary, Size: button.SizeSmall, Type: "button"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -389,7 +387,7 @@ func buttonSizesPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Primary, Size: button.SizeMedium, Type: "button"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -415,7 +413,7 @@ func buttonSizesPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Primary, Size: button.SizeLarge, Type: "button"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeLarge)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -441,7 +439,7 @@ func buttonSizesPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Primary, Size: button.SizeXLarge, Type: "button"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeXLarge)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -497,7 +495,7 @@ func buttonDisabledPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Primary, Type: "button", Disabled: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.Disabled()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -519,7 +517,7 @@ func buttonDisabledPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Secondary, Type: "button", Disabled: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneSecondary), button.Disabled()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -541,7 +539,7 @@ func buttonDisabledPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Danger, Type: "button", Disabled: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneDanger), button.Disabled()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -563,7 +561,7 @@ func buttonDisabledPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Success, Type: "button", Disabled: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneSuccess), button.Disabled()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -619,16 +617,14 @@ func buttonHTMXPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:   button.Primary,
-			Type:      "button",
-			RootClass: "w-full sm:w-44 justify-center",
-			HTMX: &button.HTMXConfig{
+		templ_7745c5c3_Err = button.Button(
+			button.WithRootClass("w-full sm:w-44 justify-center"),
+			button.WithHTMX(&button.HTMXConfig{
 				Post:   "/api/hello",
 				Target: "#htmx-result-post",
 				Swap:   "innerHTML",
-			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
+			}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -658,16 +654,15 @@ func buttonHTMXPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:   button.Info,
-			Type:      "button",
-			RootClass: "w-full sm:w-44 justify-center",
-			HTMX: &button.HTMXConfig{
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneInfo),
+			button.WithRootClass("w-full sm:w-44 justify-center"),
+			button.WithHTMX(&button.HTMXConfig{
 				Get:    "/api/hello",
 				Target: "#htmx-result-get",
 				Swap:   "innerHTML",
-			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
+			}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -697,17 +692,16 @@ func buttonHTMXPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:   button.Danger,
-			Type:      "button",
-			RootClass: "w-full sm:w-44 justify-center",
-			HTMX: &button.HTMXConfig{
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneDanger),
+			button.WithRootClass("w-full sm:w-44 justify-center"),
+			button.WithHTMX(&button.HTMXConfig{
 				Delete:  "/api/hello",
 				Confirm: "Are you sure?",
 				Target:  "#htmx-result-delete",
 				Swap:    "innerHTML",
-			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
+			}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -751,7 +745,7 @@ func buttonHTMXResult(id string) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/button.templ`, Line: 230, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/button.templ`, Line: 224, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {
@@ -791,6 +785,24 @@ func ButtonFragment(disabled bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		primaryOptions := []button.Option{}
+		secondaryOptions := []button.Option{button.WithTone(button.ToneSecondary)}
+		alternateOptions := []button.Option{button.WithTone(button.ToneAlternate)}
+		inverseOptions := []button.Option{button.WithTone(button.ToneInverse)}
+		infoOptions := []button.Option{button.WithTone(button.ToneInfo)}
+		dangerOptions := []button.Option{button.WithTone(button.ToneDanger)}
+		warningOptions := []button.Option{button.WithTone(button.ToneWarning)}
+		successOptions := []button.Option{button.WithTone(button.ToneSuccess)}
+		if disabled {
+			primaryOptions = append(primaryOptions, button.Disabled())
+			secondaryOptions = append(secondaryOptions, button.Disabled())
+			alternateOptions = append(alternateOptions, button.Disabled())
+			inverseOptions = append(inverseOptions, button.Disabled())
+			infoOptions = append(infoOptions, button.Disabled())
+			dangerOptions = append(dangerOptions, button.Disabled())
+			warningOptions = append(warningOptions, button.Disabled())
+			successOptions = append(successOptions, button.Disabled())
+		}
 		templ_7745c5c3_Var24 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -809,11 +821,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Primary,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(primaryOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var24), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -835,11 +843,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Secondary,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(secondaryOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var25), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -861,11 +865,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Alternate,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(alternateOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -887,11 +887,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Inverse,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var27), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(inverseOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var27), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -913,11 +909,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Info,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(infoOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var28), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -939,11 +931,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Danger,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(dangerOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var29), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -965,11 +953,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Warning,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var30), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(warningOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var30), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -991,11 +975,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:  button.Success,
-			Type:     "button",
-			Disabled: disabled,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(successOptions...).Render(templ.WithChildren(ctx, templ_7745c5c3_Var31), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1051,15 +1031,13 @@ func HTMXButtonDemos() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-			HTMX: &button.HTMXConfig{
+		templ_7745c5c3_Err = button.Button(
+			button.WithHTMX(&button.HTMXConfig{
 				Post:   "/api/hello",
 				Target: "#htmx-result-1",
 				Swap:   "innerHTML",
-			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var33), templ_7745c5c3_Buffer)
+			}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var33), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1085,15 +1063,14 @@ func HTMXButtonDemos() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Type:    "button",
-			HTMX: &button.HTMXConfig{
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneSecondary),
+			button.WithHTMX(&button.HTMXConfig{
 				Get:       "/api/hello",
 				Target:    "#htmx-result-2",
 				Indicator: "#loading-spinner",
-			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var34), templ_7745c5c3_Buffer)
+			}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var34), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1119,15 +1096,14 @@ func HTMXButtonDemos() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Danger,
-			Type:    "button",
-			HTMX: &button.HTMXConfig{
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneDanger),
+			button.WithHTMX(&button.HTMXConfig{
 				Delete:  "/api/hello",
 				Confirm: "Are you sure you want to proceed?",
 				Target:  "#htmx-result-3",
-			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var35), templ_7745c5c3_Buffer)
+			}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var35), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

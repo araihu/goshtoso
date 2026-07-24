@@ -215,7 +215,7 @@ templ ExpenseAddForm(preserve bool) {
 				@textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "date", Label: "Date"})
 			</div>
 			<div class="sm:ml-auto">
-				@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+				@button.Button(button.WithType("submit")) {
 					Add expense
 				}
 			</div>

@@ -174,10 +174,10 @@ templ landingContent() {
 			</div>
 			<div class="border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark space-y-6">
 				<div class="flex flex-wrap items-center gap-4">
-					@button.Button(button.Config{Variant: button.Primary, Type: "button"}) {
+					@button.Button() {
 						Primary
 					}
-					@button.Button(button.Config{Variant: button.Secondary, Type: "button"}) {
+					@button.Button(button.WithTone(button.ToneSecondary)) {
 						Secondary
 					}
 					@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess})

@@ -19,10 +19,10 @@ templ kbdDemoContent() {
 				Description: "Display keyboard shortcuts and user input hints with semantic <kbd> markup.",
 			},
 			kbdFrequentlyUsedPreview(),
-			`@kbd.Kbd(kbd.Config{Text: "Tab"})
-@kbd.Kbd(kbd.Config{Text: "Shift"})
-@kbd.Kbd(kbd.Config{Text: "Space"})
-@kbd.Kbd(kbd.Config{Text: "Ctrl"})`,
+			`@kbd.Kbd("Tab")
+@kbd.Kbd("Shift")
+@kbd.Kbd("Space")
+@kbd.Kbd("Ctrl")`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -30,9 +30,9 @@ templ kbdDemoContent() {
 				Description: "Render an icon-only key by passing Icon and Label.",
 			},
 			kbdIconsPreview(),
-			`@kbd.Kbd(kbd.Config{Icon: commandKeyIcon(), Label: "Command"})
-@kbd.Kbd(kbd.Config{Icon: shiftKeyIcon(), Label: "Shift"})
-@kbd.Kbd(kbd.Config{Icon: upKeyIcon(), Label: "Up"})`,
+			`@kbd.Kbd("", kbd.WithIcon(commandKeyIcon()), kbd.WithLabel("Command"))
+@kbd.Kbd("", kbd.WithIcon(shiftKeyIcon()), kbd.WithLabel("Shift"))
+@kbd.Kbd("", kbd.WithIcon(upKeyIcon()), kbd.WithLabel("Up"))`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -41,7 +41,7 @@ templ kbdDemoContent() {
 			},
 			kbdInlinePreview(),
 			`<p>
-    To @kbd.Kbd(kbd.Config{Text: "Tab", Size: kbd.SizeSM}) or to @kbd.Kbd(kbd.Config{Text: "Space", Size: kbd.SizeSM}), that's the question.
+    To @kbd.Kbd("Tab", kbd.WithSize(kbd.SizeSM)) or to @kbd.Kbd("Space", kbd.WithSize(kbd.SizeSM)), that's the question.
 </p>`,
 		)
 		@demo.DemoSection(
@@ -51,7 +51,7 @@ templ kbdDemoContent() {
 			},
 			kbdAlphabetPreview(),
 			`for _, key := range []string{"A", "B", "C"} {
-    @kbd.Kbd(kbd.Config{Text: key})
+    @kbd.Kbd(key)
 }`,
 		)
 		@demo.DemoSection(
@@ -61,7 +61,7 @@ templ kbdDemoContent() {
 			},
 			kbdNumberPreview(),
 			`for _, key := range []string{"1", "2", "3"} {
-    @kbd.Kbd(kbd.Config{Text: key})
+    @kbd.Kbd(key)
 }`,
 		)
 		@demo.DemoSection(
@@ -70,8 +70,8 @@ templ kbdDemoContent() {
 				Description: "Function keys are compact while leaving room for two- and three-character labels.",
 			},
 			kbdFunctionPreview(),
-			`@kbd.Kbd(kbd.Config{Text: "F1"})
-@kbd.Kbd(kbd.Config{Text: "F12"})`,
+			`@kbd.Kbd("F1")
+@kbd.Kbd("F12")`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -80,16 +80,16 @@ templ kbdDemoContent() {
 				AbovePreview: kbdSizeSelector(),
 			},
 			kbdSizesPreview(),
-			`@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})`,
+			`@kbd.Kbd("Esc")`,
 		)
 	</div>
 	@demo.APIReference([]demo.PropDoc{
-		{Name: "Text", Type: "string", Default: `""`, Description: "Visible key text."},
-		{Name: "Label", Type: "string", Default: `""`, Description: "Accessible label, especially useful for icon-only keys."},
-		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "xs", "sm", "md", "lg".`},
-		{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading or icon-only key glyph."},
-		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the kbd element."},
-		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Additional attributes on the kbd element."},
+		{Name: "text", Type: "string", Default: "required", Description: "Visible key text; pass an empty string for icon-only keys."},
+		{Name: "WithLabel", Type: "string", Default: `""`, Description: "Accessible label, especially useful for icon-only keys."},
+		{Name: "WithSize", Type: "Size", Default: "SizeMD", Description: `Size: "xs", "sm", "md", "lg".`},
+		{Name: "WithIcon", Type: "templ.Component", Default: "nil", Description: "Optional leading or icon-only key glyph."},
+		{Name: "WithRootClass", Type: "string", Default: `""`, Description: "Extra classes on the kbd element."},
+		{Name: "WithAttrs", Type: "templ.Attributes", Default: "nil", Description: "Additional attributes on the kbd element."},
 	})
 }
 
@@ -126,7 +126,7 @@ templ kbdFrequentlyUsedPreview() {
 	<div id="kbd-frequently-used" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center gap-2">
 			for _, key := range []string{"Tab", "Shift", "Space", "Ctrl", "Command", "Alt", "Option", "Enter", "Backspace", "Esc", "Delete", "Up", "Down", "Left", "Right", "Caps Lock"} {
-				@kbd.Kbd(kbd.Config{Text: key})
+				@kbd.Kbd(key)
 			}
 		</div>
 	</div>
@@ -135,15 +135,15 @@ templ kbdFrequentlyUsedPreview() {
 templ kbdIconsPreview() {
 	<div id="kbd-icons" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center gap-2">
-			@kbd.Kbd(kbd.Config{Icon: commandKeyIcon(), Label: "Command"})
-			@kbd.Kbd(kbd.Config{Icon: shiftKeyIcon(), Label: "Shift"})
-			@kbd.Kbd(kbd.Config{Icon: optionKeyIcon(), Label: "Option"})
-			@kbd.Kbd(kbd.Config{Icon: controlKeyIcon(), Label: "Control"})
-			@kbd.Kbd(kbd.Config{Icon: tabKeyIcon(), Label: "Tab"})
-			@kbd.Kbd(kbd.Config{Icon: upKeyIcon(), Label: "Up"})
-			@kbd.Kbd(kbd.Config{Icon: downKeyIcon(), Label: "Down"})
-			@kbd.Kbd(kbd.Config{Icon: leftKeyIcon(), Label: "Left"})
-			@kbd.Kbd(kbd.Config{Icon: rightKeyIcon(), Label: "Right"})
+			@kbd.Kbd("", kbd.WithIcon(commandKeyIcon()), kbd.WithLabel("Command"))
+			@kbd.Kbd("", kbd.WithIcon(shiftKeyIcon()), kbd.WithLabel("Shift"))
+			@kbd.Kbd("", kbd.WithIcon(optionKeyIcon()), kbd.WithLabel("Option"))
+			@kbd.Kbd("", kbd.WithIcon(controlKeyIcon()), kbd.WithLabel("Control"))
+			@kbd.Kbd("", kbd.WithIcon(tabKeyIcon()), kbd.WithLabel("Tab"))
+			@kbd.Kbd("", kbd.WithIcon(upKeyIcon()), kbd.WithLabel("Up"))
+			@kbd.Kbd("", kbd.WithIcon(downKeyIcon()), kbd.WithLabel("Down"))
+			@kbd.Kbd("", kbd.WithIcon(leftKeyIcon()), kbd.WithLabel("Left"))
+			@kbd.Kbd("", kbd.WithIcon(rightKeyIcon()), kbd.WithLabel("Right"))
 		</div>
 	</div>
 }
@@ -152,9 +152,9 @@ templ kbdInlinePreview() {
 	<div id="kbd-inline" class="w-full max-w-2xl mx-auto">
 		<p class="text-base text-on-surface dark:text-on-surface-dark">
 			<span>To </span>
-			@kbd.Kbd(kbd.Config{Text: "Tab", Size: kbd.SizeSM})
+			@kbd.Kbd("Tab", kbd.WithSize(kbd.SizeSM))
 			{ " or to " }
-			@kbd.Kbd(kbd.Config{Text: "Space", Size: kbd.SizeSM})
+			@kbd.Kbd("Space", kbd.WithSize(kbd.SizeSM))
 			<span>, that is the question.</span>
 		</p>
 	</div>
@@ -164,7 +164,7 @@ templ kbdAlphabetPreview() {
 	<div id="kbd-alphabet" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center gap-2">
 			for _, key := range []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"} {
-				@kbd.Kbd(kbd.Config{Text: key})
+				@kbd.Kbd(key)
 			}
 		</div>
 	</div>
@@ -174,7 +174,7 @@ templ kbdNumberPreview() {
 	<div id="kbd-numbers" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center gap-2">
 			for _, key := range []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"} {
-				@kbd.Kbd(kbd.Config{Text: key})
+				@kbd.Kbd(key)
 			}
 		</div>
 	</div>
@@ -184,7 +184,7 @@ templ kbdFunctionPreview() {
 	<div id="kbd-functions" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center gap-2">
 			for _, key := range []string{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F10", "F11", "F12"} {
-				@kbd.Kbd(kbd.Config{Text: key})
+				@kbd.Kbd(key)
 			}
 		</div>
 	</div>
@@ -194,16 +194,16 @@ templ kbdSizesPreview() {
 	<div id="kbd-sizes" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center gap-2">
 			<div data-testid="kbd-size-preview-xs" x-show="selected === 'xs'" x-cloak>
-				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeXS})
+				@kbd.Kbd("Esc", kbd.WithSize(kbd.SizeXS))
 			</div>
 			<div data-testid="kbd-size-preview-sm" x-show="selected === 'sm'" x-cloak>
-				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeSM})
+				@kbd.Kbd("Esc", kbd.WithSize(kbd.SizeSM))
 			</div>
 			<div data-testid="kbd-size-preview-md" x-show="selected === 'md'">
-				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})
+				@kbd.Kbd("Esc")
 			</div>
 			<div data-testid="kbd-size-preview-lg" x-show="selected === 'lg'" x-cloak>
-				@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeLG})
+				@kbd.Kbd("Esc", kbd.WithSize(kbd.SizeLG))
 			</div>
 		</div>
 	</div>
