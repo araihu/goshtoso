@@ -25,7 +25,7 @@ import "fmt"
 //
 //	// Close from outside:
 //	$dispatch('drawer:close', { id: 'addonDetail' })
-templ Drawer(cfg Config) {
+templ drawerTemplate(cfg Config) {
 	{{ state := cfg.StateVar() }}
 	{{ titleID := cfg.TitleID() }}
 	{{ bodyID := cfg.GetBodyID() }}

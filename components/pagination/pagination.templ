@@ -29,7 +29,7 @@ package pagination
 //	    BaseURL:     "/api/items",
 //	    HTMX: &pagination.HTMXConfig{Target: "#items-tbody", Swap: "innerHTML"},
 //	})
-templ Pagination(cfg Config) {
+templ paginationTemplate(cfg Config) {
 	<nav
 		if cfg.ID != "" {
 			id={ cfg.ID }

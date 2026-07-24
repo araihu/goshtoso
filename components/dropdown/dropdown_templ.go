@@ -28,7 +28,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //	    TriggerMode: dropdown.TriggerHover,
 //	    Sections: []dropdown.Section{...},
 //	})
-func Dropdown(cfg Config) templ.Component {
+func dropdownTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

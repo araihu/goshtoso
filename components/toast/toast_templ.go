@@ -21,7 +21,7 @@ import "fmt"
 // Then trigger toasts from anywhere:
 //
 //	<button x-on:click="$dispatch('notify', { kind: 'toast', tone: 'success', title: 'Saved!', message: 'Your changes have been saved.' })">Save</button>
-func ToastContainer(cfg ContainerConfig) templ.Component {
+func toastContainerTemplate(cfg ContainerConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -328,7 +328,7 @@ func clientMessageNotification() templ.Component {
 //	        Message: "Your changes have been saved.",
 //	    })
 //	</div>
-func Toast(cfg Config) templ.Component {
+func toastTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -358,7 +358,7 @@ func Toast(cfg Config) templ.Component {
 }
 
 // MessageToast renders a sender-oriented server-side toast notification.
-func MessageToast(cfg MessageConfig) templ.Component {
+func messageToastTemplate(cfg MessageConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -398,7 +398,7 @@ func MessageToast(cfg MessageConfig) templ.Component {
 //	    Title:   "Created!",
 //	    Message: "Item was created.",
 //	}).Render(r.Context(), w)
-func OOBToast(cfg Config) templ.Component {
+func oobToastTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -423,7 +423,7 @@ func OOBToast(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Toast(cfg).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toastTemplate(cfg).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -436,7 +436,7 @@ func OOBToast(cfg Config) templ.Component {
 }
 
 // OOBMessageToast renders a message toast wrapped in an OOB swap container.
-func OOBMessageToast(cfg MessageConfig) templ.Component {
+func oobMessageToastTemplate(cfg MessageConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -461,7 +461,7 @@ func OOBMessageToast(cfg MessageConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = MessageToast(cfg).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = messageToastTemplate(cfg).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

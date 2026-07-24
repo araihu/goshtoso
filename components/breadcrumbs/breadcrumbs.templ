@@ -10,7 +10,7 @@ package breadcrumbs
 //	    },
 //	    Current: "Breadcrumb",
 //	})
-templ Breadcrumbs(cfg Config) {
+templ breadcrumbsTemplate(cfg Config) {
 	<nav
 		class={ "text-sm font-medium text-on-surface dark:text-on-surface-dark" + extraClass(cfg.NavClass) }
 		aria-label="breadcrumb"

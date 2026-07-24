@@ -12,7 +12,7 @@ import "fmt"
 
 // Modal renders a modal dialog component matching PenguinUI's modal design.
 // It includes a trigger button and the modal overlay with transitions.
-func Modal(cfg Config) templ.Component {
+func modalTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -42,7 +42,7 @@ func Modal(cfg Config) templ.Component {
 }
 
 // AlertDialog renders an alert dialog with a single action and dismiss control.
-func AlertDialog(cfg AlertDialogConfig) templ.Component {
+func alertDialogTemplate(cfg AlertDialogConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

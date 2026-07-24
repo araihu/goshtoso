@@ -19,7 +19,7 @@ package tooltip
 //	    "Tooltip top",
 //	    tooltip.WithActivation(tooltip.ActivationClick),
 //	)
-templ Tooltip(id, label string, options ...Option) {
+templ tooltipTemplate(id, label string, options ...Option) {
 	{{ cfg := newConfig(id, label, options) }}
 	if cfg.trigger != nil {
 		@triggerScript()

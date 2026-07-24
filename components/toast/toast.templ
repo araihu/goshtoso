@@ -13,7 +13,7 @@ import "fmt"
 // Then trigger toasts from anywhere:
 //
 //	<button x-on:click="$dispatch('notify', { kind: 'toast', tone: 'success', title: 'Saved!', message: 'Your changes have been saved.' })">Save</button>
-templ ToastContainer(cfg ContainerConfig) {
+templ toastContainerTemplate(cfg ContainerConfig) {
 	<div
 		id={ cfg.effectiveID() }
 		x-data={ containerAlpineData(cfg) }
@@ -188,12 +188,12 @@ templ clientMessageNotification() {
 //	        Message: "Your changes have been saved.",
 //	    })
 //	</div>
-templ Toast(cfg Config) {
+templ toastTemplate(cfg Config) {
 	@serverToast(cfg)
 }
 
 // MessageToast renders a sender-oriented server-side toast notification.
-templ MessageToast(cfg MessageConfig) {
+templ messageToastTemplate(cfg MessageConfig) {
 	@serverMessageToast(cfg)
 }
 
@@ -208,16 +208,16 @@ templ MessageToast(cfg MessageConfig) {
 //	    Title:   "Created!",
 //	    Message: "Item was created.",
 //	}).Render(r.Context(), w)
-templ OOBToast(cfg Config) {
+templ oobToastTemplate(cfg Config) {
 	<div id="toast-container-oob" hx-swap-oob="beforeend">
-		@Toast(cfg)
+		@toastTemplate(cfg)
 	</div>
 }
 
 // OOBMessageToast renders a message toast wrapped in an OOB swap container.
-templ OOBMessageToast(cfg MessageConfig) {
+templ oobMessageToastTemplate(cfg MessageConfig) {
 	<div id="toast-container-oob" hx-swap-oob="beforeend">
-		@MessageToast(cfg)
+		@messageToastTemplate(cfg)
 	</div>
 }
 

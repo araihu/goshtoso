@@ -4,12 +4,12 @@ import "fmt"
 
 // Modal renders a modal dialog component matching PenguinUI's modal design.
 // It includes a trigger button and the modal overlay with transitions.
-templ Modal(cfg Config) {
+templ modalTemplate(cfg Config) {
 	@defaultModal(cfg)
 }
 
 // AlertDialog renders an alert dialog with a single action and dismiss control.
-templ AlertDialog(cfg AlertDialogConfig) {
+templ alertDialogTemplate(cfg AlertDialogConfig) {
 	@alertDialog(cfg)
 }
 

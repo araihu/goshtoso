@@ -12,7 +12,7 @@ import "fmt"
 //	        {ID: "profile", Label: "Profile", Href: "/profile", Icon: profileIcon},
 //	    },
 //	})
-templ Sidebar(cfg Config) {
+templ sidebarTemplate(cfg Config) {
 	{{ logoHref := cfg.LogoHref }}
 	{{ if logoHref == "" { logoHref = "/" } }}
 	
@@ -95,7 +95,7 @@ templ Sidebar(cfg Config) {
 // Overlay renders a responsive off-canvas sidebar with a trigger and backdrop.
 // The inner panel renders a normal Sidebar so consumers keep the same item,
 // section, slot, and HTMX APIs.
-templ Overlay(cfg OverlayConfig) {
+templ overlayTemplate(cfg OverlayConfig) {
 	{{ state := cfg.StateVar() }}
 	{{ panelID := cfg.PanelID() }}
 	<div
@@ -140,7 +140,7 @@ templ Overlay(cfg OverlayConfig) {
 				class="h-full"
 				x-on:click={ fmt.Sprintf("if ($event.target.closest('a[href]:not([aria-controls])')) %s = false", state) }
 			>
-				@Sidebar(cfg.Sidebar)
+				@sidebarTemplate(cfg.Sidebar)
 			</div>
 		</div>
 	</div>

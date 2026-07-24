@@ -20,7 +20,7 @@ package dropdown
 //	    TriggerMode: dropdown.TriggerHover,
 //	    Sections: []dropdown.Section{...},
 //	})
-templ Dropdown(cfg Config) {
+templ dropdownTemplate(cfg Config) {
 	switch cfg.GetTriggerMode() {
 		case TriggerHover:
 			@hoverDropdown(cfg)

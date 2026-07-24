@@ -1,7 +1,7 @@
 package link
 
 // Link renders a styled anchor element.
-templ Link(href string, options ...Option) {
+templ linkTemplate(href string, options ...Option) {
 	{{ cfg := newConfig(href, options) }}
 	<a
 		if cfg.id != "" {

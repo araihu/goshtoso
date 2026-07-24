@@ -14,7 +14,7 @@ import "fmt"
 //	        {ID: "two", Label: "Tab Two", Content: otherContent()},
 //	    },
 //	})
-templ Tabs(cfg Config) {
+templ tabsTemplate(cfg Config) {
 	{{ containerID := cfg.ID }}
 	{{ if containerID == "" { containerID = "tabs" } }}
 	<div

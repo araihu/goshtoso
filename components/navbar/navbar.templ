@@ -17,7 +17,7 @@ package navbar
 //	        {Label: "Sign Out", Href: "/logout", Danger: true},
 //	    },
 //	})
-templ Navbar(cfg Config) {
+templ navbarTemplate(cfg Config) {
 	{{ brandHref := cfg.BrandHref }}
 	{{ if brandHref == "" { brandHref = "/" } }}
 	<nav

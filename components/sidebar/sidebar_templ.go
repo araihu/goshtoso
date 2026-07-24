@@ -20,7 +20,7 @@ import "fmt"
 //	        {ID: "profile", Label: "Profile", Href: "/profile", Icon: profileIcon},
 //	    },
 //	})
-func Sidebar(cfg Config) templ.Component {
+func sidebarTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -262,7 +262,7 @@ func Sidebar(cfg Config) templ.Component {
 // Overlay renders a responsive off-canvas sidebar with a trigger and backdrop.
 // The inner panel renders a normal Sidebar so consumers keep the same item,
 // section, slot, and HTMX APIs.
-func Overlay(cfg OverlayConfig) templ.Component {
+func overlayTemplate(cfg OverlayConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -518,7 +518,7 @@ func Overlay(cfg OverlayConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Sidebar(cfg.Sidebar).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = sidebarTemplate(cfg.Sidebar).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
