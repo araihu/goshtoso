@@ -158,7 +158,7 @@ import "github.com/araihu/goshtoso/components/badge"  // package badge
 import "github.com/araihu/goshtoso/components/banner"  // package banner
 ```
 
-**Entry points:** `Banner(cfg Config)`
+**Entry points:** `Banner(cfg Config)` · `CookieBanner(cfg CookieBannerConfig)`
 
 - **Position** — PositionRelative = "relative", PositionFixed = "fixed"
 - **Tone** — ToneDefault = "default", TonePrimary = "primary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
@@ -181,8 +181,6 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | `Persistent` | `bool` | Persistent disables the dismiss button (default: banners are dismissible) |
 | `DismissAction` | `string` | DismissAction is the Alpine.js action when dismissed |
 | `CTA` | `*CTAConfig` | CTA is the call-to-action button config (optional) |
-| `CookieBanner` | `bool` | CookieBanner enables cookie consent mode |
-| `CookieConfig` | `*CookieBannerConfig` | CookieConfig holds cookie banner specific settings |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the banner root. |
 
 **CookieBannerConfig**
@@ -190,11 +188,13 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | Field | Type | Description |
 |-------|------|-------------|
 | `Title` | `string` | Title of the cookie banner |
+| `Description` | `string` | Description is the cookie banner body. |
 | `Icon` | `templ.Component` | Icon is an optional icon (emoji or component) |
 | `AcceptLabel` | `string` | AcceptLabel is the accept button label |
 | `RejectLabel` | `string` | RejectLabel is the reject button label |
 | `AcceptAction` | `string` | AcceptAction is the Alpine.js action for accept |
 | `RejectAction` | `string` | RejectAction is the Alpine.js action for reject |
+| `RootClass` | `string` | RootClass allows additional CSS classes on the dialog root. |
 
 ## breadcrumbs
 
@@ -309,9 +309,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 import "github.com/araihu/goshtoso/components/carousel"  // package carousel
 ```
 
-**Entry points:** `Carousel(cfg Config)`
-
-- **Variant** — Default = "default", WithText = "with-text", WithCTA = "with-cta", OnCard = "on-card"
+**Entry points:** `CardCarousel(cfg CardConfig)` · `Carousel(cfg Config)`
 
 **AutoplayConfig**
 
@@ -319,17 +317,26 @@ import "github.com/araihu/goshtoso/components/carousel"  // package carousel
 |-------|------|-------------|
 | `Interval` | `int` | Interval in milliseconds between slides (default 4000) |
 
+**CardConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID is a unique identifier for the carousel instance. |
+| `Slides` | `[]Slide` | Slides are the static slide data. |
+| `Touch` | `bool` | Touch enables swipe gesture support. |
+| `Height` | `string` | Height overrides the slides container height. |
+| `RootClass` | `string` | RootClass allows additional CSS classes on the article container. |
+
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `ID` | `string` | ID is a unique identifier for the carousel instance |
 | `Slides` | `[]Slide` | Slides are the static slide data (ignored if HTMX is set) |
-| `Variant` | `Variant` | Variant determines the visual style |
 | `Autoplay` | `*AutoplayConfig` | Autoplay enables automatic slide rotation (nil = disabled) |
 | `Touch` | `bool` | Touch enables swipe gesture support |
 | `AspectRatio` | `string` | AspectRatio sets a fixed aspect ratio (e.g. "3/1"), empty = min-h-[50svh] |
-| `Height` | `string` | Height overrides the slides container height (e.g. "h-48 lg:h-64" for card variant) |
+| `Height` | `string` | Height overrides the slides container height (for example, "h-48 lg:h-64"). |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
 | `HTMX` | `*HTMXConfig` | HTMX enables lazy loading of carousel content (nil = static mode) |
 
@@ -348,10 +355,10 @@ import "github.com/araihu/goshtoso/components/carousel"  // package carousel
 |-------|------|-------------|
 | `ImgSrc` | `string` | ImgSrc is the image URL |
 | `ImgAlt` | `string` | ImgAlt is the image alt text |
-| `Title` | `string` | Title is the slide heading (used by WithText, WithCTA) |
-| `Description` | `string` | Description is the slide body text (used by WithText, WithCTA) |
-| `CTAHref` | `string` | CTAHref is the call-to-action link (used by WithCTA) |
-| `CTALabel` | `string` | CTALabel is the call-to-action button label (used by WithCTA) |
+| `Title` | `string` | Title is the optional slide heading. |
+| `Description` | `string` | Description is the optional slide body text. |
+| `CTAHref` | `string` | CTAHref is the call-to-action link. |
+| `CTALabel` | `string` | CTALabel is the call-to-action button label. |
 
 ## chatbubble
 
@@ -835,9 +842,22 @@ import "github.com/araihu/goshtoso/components/link"  // package link
 import "github.com/araihu/goshtoso/components/modal"  // package modal
 ```
 
-**Entry points:** `Modal(cfg Config)`
+**Entry points:** `AlertDialog(cfg AlertDialogConfig)` · `Modal(cfg Config)`
 
-- **Variant** — Default = "default", Success = "success", Info = "info", Warning = "warning", Danger = "danger"
+- **Tone** — ToneDefault = "default", ToneSuccess = "success", ToneInfo = "info", ToneWarning = "warning", ToneDanger = "danger"
+
+**AlertDialogConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID is a unique identifier used for aria-labelledby. |
+| `Title` | `string` | Title is the alert-dialog heading. |
+| `Body` | `string` | Body is the alert-dialog body text. |
+| `TriggerLabel` | `string` | TriggerLabel is the trigger button label. |
+| `ActionLabel` | `string` | ActionLabel is the single action button label. |
+| `Action` | `*ButtonAction` | Action holds optional HTMX/JS actions for the action button. |
+| `Tone` | `Tone` | Tone determines the semantic color treatment. |
+| `PanelClass` | `string` | PanelClass allows additional CSS classes on the dialog. |
 
 **ButtonAction**
 
@@ -856,10 +876,8 @@ import "github.com/araihu/goshtoso/components/modal"  // package modal
 | `TriggerLabel` | `string` | TriggerLabel is the trigger button label |
 | `PrimaryLabel` | `string` | PrimaryLabel is the primary action button label |
 | `PrimaryAction` | `*ButtonAction` | PrimaryAction holds optional HTMX/JS actions for the primary button |
-| `SecondaryLabel` | `string` | SecondaryLabel is the secondary/dismiss button label (default mode only) |
+| `SecondaryLabel` | `string` | SecondaryLabel is the secondary/dismiss button label. |
 | `SecondaryAction` | `*ButtonAction` | SecondaryAction holds optional HTMX/JS actions for the secondary button |
-| `Variant` | `Variant` | Variant determines the color scheme (used for alert mode and trigger button) |
-| `AlertMode` | `bool` | AlertMode renders the alert-style modal (icon header, centered body, single CTA) |
 | `PanelClass` | `string` | PanelClass allows additional CSS classes on the dialog. |
 
 **HTMXConfig**
@@ -1104,10 +1122,10 @@ import "github.com/araihu/goshtoso/components/range"  // package rangeinput
 import "github.com/araihu/goshtoso/components/rating"  // package rating
 ```
 
-**Entry points:** `Rating(cfg Config)`
+**Entry points:** `Rating(cfg Config)` · `RatingDisplay(cfg DisplayConfig)`
 
+- **Appearance** — AppearanceStars = "stars", AppearanceEmoji = "emoji"
 - **Size** — SizeSM = "sm", SizeMD = "md", SizeLG = "lg", SizeXL = "xl"
-- **Style** — StyleStars = "stars", StyleEmoji = "emoji"
 
 **Config**
 
@@ -1119,20 +1137,25 @@ import "github.com/araihu/goshtoso/components/rating"  // package rating
 | `Max` | `int` | Max is the number of rating options. Defaults to 5. |
 | `Label` | `string` | Label gives the group an accessible label and visible label when ShowLabel is true. |
 | `ShowLabel` | `bool` | ShowLabel renders Label visibly above the control. |
-| `Style` | `Style` | Style switches between star and emoji visuals. Defaults to StyleStars. |
+| `Appearance` | `Appearance` | Appearance switches between star and emoji visuals. Defaults to AppearanceStars. |
 | `Size` | `Size` | Size sets icon size. Defaults to SizeMD. |
 | `Disabled` | `bool` | Disabled disables all radio inputs. |
-| `ReadOnly` | `bool` | ReadOnly renders a non-interactive meter instead of radios. |
-| `Class` | `string` | Class is appended to the root element. |
-| `Attrs` | `templ.Attributes` | Attrs is an escape hatch applied last to the root element. |
+| `RootClass` | `string` | RootClass is appended to the root element. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs is an escape hatch applied last to the root element. |
 
-**EmojiOption**
+**DisplayConfig**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Value` | `int` |  |
-| `Label` | `string` |  |
-| `Icon` | `string` |  |
+| `ID` | `string` | ID identifies the root element. Defaults to "rating". |
+| `Value` | `int` | Value is the displayed rating. Values outside 0..Max are clamped. |
+| `Max` | `int` | Max is the number of displayed rating options. Defaults to 5. |
+| `Label` | `string` | Label is the accessible label and visible label when ShowLabel is true. |
+| `ShowLabel` | `bool` | ShowLabel renders Label visibly above the display. |
+| `Appearance` | `Appearance` | Appearance switches between star and emoji visuals. Defaults to AppearanceStars. |
+| `Size` | `Size` | Size sets icon size. Defaults to SizeMD. |
+| `RootClass` | `string` | RootClass is appended to the root element. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs is an escape hatch applied last to the root element. |
 
 ## schemaform
 
@@ -1696,18 +1719,17 @@ import "github.com/araihu/goshtoso/components/textinput"  // package textinput
 import "github.com/araihu/goshtoso/components/toast"  // package toast
 ```
 
-**Entry points:** `Container(cfg ContainerConfig)` · `OOBToast(cfg Config)` · `Toast(cfg Config)`
+**Entry points:** `MessageToast(cfg MessageConfig)` · `OOBMessageToast(cfg MessageConfig)` · `OOBToast(cfg Config)` · `Toast(cfg Config)` · `ToastContainer(cfg ContainerConfig)`
 
-- **Variant** — Info = "info", Success = "success", Warning = "warning", Danger = "danger", Message = "message"
+- **Tone** — ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Variant` | `Variant` | Variant determines the color scheme and icon |
-| `Title` | `string` | Title is the notification heading (not used for Message variant) |
+| `Tone` | `Tone` | Tone determines the color scheme and icon. |
+| `Title` | `string` | Title is the notification heading. |
 | `Message` | `string` | Message is the notification body text |
-| `Sender` | `*Sender` | Sender is used only for the Message variant |
 | `DisplayDuration` | `int` | DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually. |
 | `ActionLabel` | `string` | ActionLabel, when set, renders an inline action button in the toast (e.g. |
 | `ActionHTMX` | `*HTMXConfig` | ActionHTMX configures the action button's HTMX request. |
@@ -1727,6 +1749,17 @@ import "github.com/araihu/goshtoso/components/toast"  // package toast
 | `Post` | `string` | Post is the HTMX POST request URL the action button fires. |
 | `Target` | `string` | Target configures the action button's HTMX swap target. |
 | `Swap` | `string` | Swap configures the action button's HTMX swap strategy. |
+
+**MessageConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Sender` | `Sender` | Sender is the person or system that sent the message. |
+| `Message` | `string` | Message is the notification body text. |
+| `DisplayDuration` | `int` | DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually. |
+| `ActionLabel` | `string` | ActionLabel, when set, renders an inline action button. |
+| `ActionHTMX` | `*HTMXConfig` | ActionHTMX configures the action button's HTMX request. |
+| `DismissLabel` | `string` | DismissLabel labels the text dismiss control. Defaults to "Dismiss". |
 
 **Sender**
 

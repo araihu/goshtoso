@@ -297,7 +297,7 @@ func (s *Server) handleFormExternalSubmit(w http.ResponseWriter, r *http.Request
 		version = "v" + version
 	}
 	_ = toast.OOBToast(toast.Config{
-		Variant: toast.Success,
+		Tone:    toast.ToneSuccess,
 		Title:   "Upgrade request submitted",
 		Message: fmt.Sprintf("Target version: %s", version),
 	}).Render(r.Context(), w)
@@ -442,7 +442,6 @@ func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
 
 	// Return a rendered static carousel with sample slides
 	cfg := carousel.Config{
-		Variant: carousel.WithText,
 		Slides: []carousel.Slide{
 			{
 				ImgSrc:      "/assets/images/carousel/slide-1.webp",

@@ -10,7 +10,7 @@ templ BannerDemoPage() {
 	@demo.Layout("Banner", "banner", bannerDemoContent())
 }
 
-// bannerDemoContent renders the demo. Each banner variant lives in its own
+// bannerDemoContent renders the demo. Each banner example lives in its own
 // preview frame followed by its own code block (mirrors
 // penguinui.com/components/banner). Wrapped in #banner-fragment.
 templ bannerDemoContent() {
@@ -18,7 +18,7 @@ templ bannerDemoContent() {
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Banner",
-				Description: "A prominent page/section message for announcements, promotions, alerts, and cookie consent. Dismissible by default; supports CTAs, semantic colors, and a cookie-consent mode.",
+				Description: "A prominent page or section message for announcements, promotions, and alerts. Dismissible by default, with optional CTAs and semantic tones.",
 			},
 			bannerSimplePreview(),
 			`@banner.Banner(banner.Config{
@@ -55,8 +55,8 @@ templ bannerDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Color Variants",
-				Description: "Set Variant for semantic coloring: Default, Primary, Info, Success, Warning, Danger.",
+				Title:       "Semantic Tones",
+				Description: "Set Tone for semantic coloring: Default, Primary, Info, Success, Warning, or Danger.",
 			},
 			bannerVariantsPreview(),
 			`@banner.Banner(banner.Config{Description: "Success! Your changes have been saved", Tone: banner.ToneSuccess})
@@ -66,20 +66,16 @@ templ bannerDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Cookie Consent",
-				Description: "CookieBanner: true plus a CookieConfig renders a corner-anchored consent card with accept/reject actions.",
+				Description: "CookieBanner is a separate corner-anchored dialog with consent-specific content and accept/reject actions.",
 			},
 			bannerCookiePreview(),
-`@banner.Banner(banner.Config{
-    CookieBanner: true,
-    Position:     banner.PositionRelative,
-    Description:         "We use cookies to improve your experience.",
-    CookieConfig: &banner.CookieBannerConfig{
-        Title:        "Cookie Settings",
-        AcceptLabel:  "Accept All",
-        RejectLabel:  "Decline",
-        AcceptAction: "acceptCookies()",
-        RejectAction: "show = false",
-    },
+`@banner.CookieBanner(banner.CookieBannerConfig{
+    Title:        "Cookie Settings",
+    Description:  "We use cookies to improve your experience.",
+    AcceptLabel:  "Accept All",
+    RejectLabel:  "Decline",
+    AcceptAction: "acceptCookies()",
+    RejectAction: "show = false",
 })`,
 		)
 	</div>
@@ -91,8 +87,6 @@ templ bannerDemoContent() {
 		{Name: "Persistent", Type: "bool", Default: "false", Description: "Remove the dismiss control."},
 		{Name: "DismissAction", Type: "string", Default: `""`, Description: "Extra Alpine expression run when dismissed."},
 		{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (ActionLabel + Href or OnClick)."},
-		{Name: "CookieBanner", Type: "bool", Default: "false", Description: "Render as a corner cookie-consent card."},
-		{Name: "CookieConfig", Type: "*CookieBannerConfig", Default: "nil", Description: "Cookie card content + accept/reject actions."},
 		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
 	})
 }
@@ -129,13 +123,13 @@ templ bannerCTAPreview() {
 	</div>
 }
 
-// bannerVariantsPreview renders the semantic color variants.
+// bannerVariantsPreview renders the semantic color tones.
 templ bannerVariantsPreview() {
 	<div id="banner-variants" class="w-full max-w-2xl mx-auto">
 		<div class="space-y-2">
-			@banner.Banner(banner.Config{Description: "Default variant banner", Tone: banner.ToneDefault})
-			@banner.Banner(banner.Config{Description: "Primary variant for promotions", Tone: banner.TonePrimary})
-			@banner.Banner(banner.Config{Description: "Info variant for general information", Tone: banner.ToneInfo})
+			@banner.Banner(banner.Config{Description: "Default tone banner", Tone: banner.ToneDefault})
+			@banner.Banner(banner.Config{Description: "Primary tone for promotions", Tone: banner.TonePrimary})
+			@banner.Banner(banner.Config{Description: "Info tone for general information", Tone: banner.ToneInfo})
 			@banner.Banner(banner.Config{Description: "Success! Operation completed successfully", Tone: banner.ToneSuccess})
 			@banner.Banner(banner.Config{Description: "Warning: Please review your settings", Tone: banner.ToneWarning})
 			@banner.Banner(banner.Config{Description: "Error: Something went wrong", Tone: banner.ToneDanger})
@@ -143,24 +137,16 @@ templ bannerVariantsPreview() {
 	</div>
 }
 
-// bannerCookiePreview renders the cookie-consent banner inside a framed stage.
+// bannerCookiePreview renders the fixed cookie-consent dialog.
 templ bannerCookiePreview() {
 	<div id="banner-cookie" class="w-full max-w-2xl mx-auto">
-		<div class="relative h-80 overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
-			<div class="absolute inset-0 bg-surface dark:bg-surface-dark">
-				@banner.Banner(banner.Config{
-					CookieBanner: true,
-					Position:     banner.PositionRelative,
-					Description:         "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
-					CookieConfig: &banner.CookieBannerConfig{
-						Title:        "Cookie Time!",
-						AcceptLabel:  "Sounds Good!",
-						RejectLabel:  "No, thank you",
-						AcceptAction: "show = false",
-						RejectAction: "show = false",
-					},
-				})
-			</div>
-		</div>
+		@banner.CookieBanner(banner.CookieBannerConfig{
+			Title:        "Cookie Time!",
+			Description:  "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
+			AcceptLabel:  "Sounds Good!",
+			RejectLabel:  "No, thank you",
+			AcceptAction: "show = false",
+			RejectAction: "show = false",
+		})
 	</div>
 }

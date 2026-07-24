@@ -13,15 +13,14 @@ func uniqueID() int64 {
 	return idCounter.Add(1)
 }
 
-// Variant represents toast notification style variants
-type Variant string
+// Tone represents a toast notification's semantic color treatment.
+type Tone string
 
 const (
-	Info    Variant = "info"
-	Success Variant = "success"
-	Warning Variant = "warning"
-	Danger  Variant = "danger"
-	Message Variant = "message"
+	ToneInfo    Tone = "info"
+	ToneSuccess Tone = "success"
+	ToneWarning Tone = "warning"
+	ToneDanger  Tone = "danger"
 )
 
 // Sender represents the avatar and name shown in notification-style toasts.
@@ -47,14 +46,12 @@ type HTMXConfig struct {
 // Config holds configuration for a single toast notification.
 // Used for server-side rendered toasts (including HTMX OOB swaps).
 type Config struct {
-	// Variant determines the color scheme and icon
-	Variant Variant
-	// Title is the notification heading (not used for Message variant)
+	// Tone determines the color scheme and icon.
+	Tone Tone
+	// Title is the notification heading.
 	Title string
 	// Message is the notification body text
 	Message string
-	// Sender is used only for the Message variant
-	Sender *Sender
 	// DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually.
 	DisplayDuration int
 	// ActionLabel, when set, renders an inline action button in the toast (e.g.
@@ -65,8 +62,26 @@ type Config struct {
 	ActionHTMX *HTMXConfig
 }
 
+// MessageConfig holds configuration for a sender-oriented message toast.
+type MessageConfig struct {
+	// Sender is the person or system that sent the message.
+	Sender Sender
+	// Message is the notification body text.
+	Message string
+	// DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually.
+	DisplayDuration int
+	// ActionLabel, when set, renders an inline action button.
+	ActionLabel string
+	// ActionHTMX configures the action button's HTMX request.
+	ActionHTMX *HTMXConfig
+	// DismissLabel labels the text dismiss control. Defaults to "Dismiss".
+	DismissLabel string
+}
+
 // HasAction reports whether the toast should render an inline action button.
 func (cfg Config) HasAction() bool { return cfg.ActionLabel != "" }
+
+func (cfg MessageConfig) hasAction() bool { return cfg.ActionLabel != "" }
 
 // ContainerConfig holds configuration for the toast container.
 // The container is the fixed-position wrapper that holds stacking notifications.
@@ -85,6 +100,20 @@ func (cfg Config) effectiveDuration() int {
 	return 8000
 }
 
+func (cfg MessageConfig) effectiveDuration() int {
+	if cfg.DisplayDuration > 0 {
+		return cfg.DisplayDuration
+	}
+	return 8000
+}
+
+func (cfg MessageConfig) effectiveDismissLabel() string {
+	if cfg.DismissLabel != "" {
+		return cfg.DismissLabel
+	}
+	return "Dismiss"
+}
+
 // effectiveID returns the container ID, defaulting to "toast-container"
 func (cfg ContainerConfig) effectiveID() string {
 	if cfg.ID != "" {
@@ -101,37 +130,33 @@ func (cfg ContainerConfig) effectiveDuration() int {
 	return 8000
 }
 
-// BorderClass returns the border color class for the variant
+// BorderClass returns the border color class for the tone.
 func (cfg Config) BorderClass() string {
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		return "border-info"
-	case Success:
+	case ToneSuccess:
 		return "border-success"
-	case Warning:
+	case ToneWarning:
 		return "border-warning"
-	case Danger:
+	case ToneDanger:
 		return "border-danger"
-	case Message:
-		return "border-outline dark:border-outline-dark"
 	default:
 		return "border-info"
 	}
 }
 
-// BgClass returns the inner background class for the variant
+// BgClass returns the inner background class for the tone.
 func (cfg Config) BgClass() string {
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		return "bg-info/10"
-	case Success:
+	case ToneSuccess:
 		return "bg-success/10"
-	case Warning:
+	case ToneWarning:
 		return "bg-warning/10"
-	case Danger:
+	case ToneDanger:
 		return "bg-danger/10"
-	case Message:
-		return "bg-surface-alt dark:bg-surface-dark-alt"
 	default:
 		return "bg-info/10"
 	}
@@ -139,14 +164,14 @@ func (cfg Config) BgClass() string {
 
 // IconBgClass returns the icon badge background class
 func (cfg Config) IconBgClass() string {
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		return "bg-info/15 text-info"
-	case Success:
+	case ToneSuccess:
 		return "bg-success/15 text-success"
-	case Warning:
+	case ToneWarning:
 		return "bg-warning/15 text-warning"
-	case Danger:
+	case ToneDanger:
 		return "bg-danger/15 text-danger"
 	default:
 		return "bg-info/15 text-info"
@@ -155,14 +180,14 @@ func (cfg Config) IconBgClass() string {
 
 // TitleClass returns the title text color class
 func (cfg Config) TitleClass() string {
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		return "text-info"
-	case Success:
+	case ToneSuccess:
 		return "text-success"
-	case Warning:
+	case ToneWarning:
 		return "text-warning"
-	case Danger:
+	case ToneDanger:
 		return "text-danger"
 	default:
 		return "text-info"
@@ -177,7 +202,8 @@ func containerAlpineData(cfg ContainerConfig) string {
 
         addNotification(data) {
             var id = Date.now();
-            var notification = { id: id, variant: data.variant || 'info', sender: data.sender || null, title: data.title || null, message: data.message || null };
+            var kind = data.kind === 'message-toast' ? 'message-toast' : 'toast';
+            var notification = { id: id, kind: kind, tone: data.tone || 'info', sender: data.sender || null, title: data.title || null, message: data.message || null };
 
             if (this.notifications.length >= 20) {
                 this.notifications.splice(0, this.notifications.length - 19);

@@ -72,7 +72,7 @@ func ratingDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Rating",
-				Description: "Collect product scores, satisfaction signals, and read-only rating summaries with accessible radio semantics.",
+				Description: "Collect product scores and satisfaction signals with accessible radio semantics, or present a non-interactive RatingDisplay.",
 			},
 			ratingDefaultPreview(),
 			`@rating.Rating(rating.Config{
@@ -95,7 +95,7 @@ func ratingDemoContent() templ.Component {
     ID: "rating-emoji",
     Name: "sentiment",
     Value: 4,
-    Style: rating.StyleEmoji,
+    Appearance: rating.AppearanceEmoji,
     Label: "Satisfaction",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -139,14 +139,13 @@ func ratingDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Read Only",
-				Description: "ReadOnly renders the same visual language as a non-interactive summary.",
+				Title:       "Rating Display",
+				Description: "RatingDisplay owns the same visual language as a non-interactive summary.",
 			},
-			ratingReadOnlyPreview(),
-			`@rating.Rating(rating.Config{
-    ID: "rating-readonly",
+			ratingDisplayPreview(),
+			`@rating.RatingDisplay(rating.DisplayConfig{
+    ID: "rating-display",
     Value: 4,
-    ReadOnly: true,
     Label: "Average rating",
     ShowLabel: true,
 })`,
@@ -165,12 +164,11 @@ func ratingDemoContent() templ.Component {
 			{Name: "Max", Type: "int", Default: "5", Description: "Number of rating options."},
 			{Name: "Label", Type: "string", Default: `"Rating"`, Description: "Accessible radiogroup label; visible when ShowLabel is true."},
 			{Name: "ShowLabel", Type: "bool", Default: "false", Description: "Renders the label above the control."},
-			{Name: "Style", Type: "Style", Default: "StyleStars", Description: `Visual style: "stars" or "emoji".`},
+			{Name: "Appearance", Type: "Appearance", Default: "AppearanceStars", Description: `Visual treatment: "stars" or "emoji".`},
 			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Icon size: "sm", "md", "lg", "xl".`},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables all radio inputs."},
-			{Name: "ReadOnly", Type: "bool", Default: "false", Description: "Renders a non-interactive rating summary."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the root element."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the root element."},
+			{Name: "RootAttrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the root element."},
+			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the root element."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -368,12 +366,12 @@ func ratingEmojiPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = rating.Rating(rating.Config{
-			ID:        "rating-sentiment",
-			Name:      "rating-sentiment",
-			Value:     4,
-			Label:     "Satisfaction",
-			ShowLabel: true,
-			Style:     rating.StyleEmoji,
+			ID:         "rating-sentiment",
+			Name:       "rating-sentiment",
+			Value:      4,
+			Label:      "Satisfaction",
+			ShowLabel:  true,
+			Appearance: rating.AppearanceEmoji,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -491,7 +489,7 @@ func ratingDisabledPreview() templ.Component {
 	})
 }
 
-func ratingReadOnlyPreview() templ.Component {
+func ratingDisplayPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -516,12 +514,11 @@ func ratingReadOnlyPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = rating.Rating(rating.Config{
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{
 			ID:        "rating-readonly-summary",
 			Value:     4,
 			Label:     "Average rating",
 			ShowLabel: true,
-			ReadOnly:  true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

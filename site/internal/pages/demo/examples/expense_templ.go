@@ -595,15 +595,14 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = modal.Modal(modal.Config{
+		templ_7745c5c3_Err = modal.AlertDialog(modal.AlertDialogConfig{
 			ID:           "expense-clear",
-			Variant:      modal.Danger,
-			AlertMode:    true,
+			Tone:         modal.ToneDanger,
 			TriggerLabel: "Clear all",
 			Title:        "Clear all expenses?",
 			Body:         "This removes every expense from your list. This cannot be undone.",
-			PrimaryLabel: "Clear all",
-			PrimaryAction: &modal.ButtonAction{
+			ActionLabel:  "Clear all",
+			Action: &modal.ButtonAction{
 				HTMX: &modal.HTMXConfig{
 					Post:   "/api/examples/expense/clear",
 					Target: "#expense-list",
@@ -626,7 +625,7 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toast.ToastContainer(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

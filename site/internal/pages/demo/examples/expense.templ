@@ -269,15 +269,14 @@ templ ExpenseApp(s expense.State) {
 					</div>
 				</form>
 				<div class="flex items-center justify-end">
-					@modal.Modal(modal.Config{
+					@modal.AlertDialog(modal.AlertDialogConfig{
 						ID:           "expense-clear",
-						Variant:      modal.Danger,
-						AlertMode:    true,
+						Tone:         modal.ToneDanger,
 						TriggerLabel: "Clear all",
 						Title:        "Clear all expenses?",
 						Body:         "This removes every expense from your list. This cannot be undone.",
-						PrimaryLabel: "Clear all",
-						PrimaryAction: &modal.ButtonAction{
+						ActionLabel:  "Clear all",
+						Action: &modal.ButtonAction{
 							HTMX: &modal.HTMXConfig{
 								Post:   "/api/examples/expense/clear",
 								Target: "#expense-list",
@@ -289,7 +288,7 @@ templ ExpenseApp(s expense.State) {
 				@ExpenseList(s, false)
 			</div>
 		</div>
-		@toast.Container(toast.ContainerConfig{})
+		@toast.ToastContainer(toast.ContainerConfig{})
 	</div>
 }
 

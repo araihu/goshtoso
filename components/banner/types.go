@@ -2,7 +2,7 @@ package banner
 
 import "github.com/a-h/templ"
 
-// Tone represents banner style variants
+// Tone represents a banner's semantic color treatment.
 type Tone string
 
 const (
@@ -36,10 +36,6 @@ type Config struct {
 	DismissAction string
 	// CTA is the call-to-action button config (optional)
 	CTA *CTAConfig
-	// CookieBanner enables cookie consent mode
-	CookieBanner bool
-	// CookieConfig holds cookie banner specific settings
-	CookieConfig *CookieBannerConfig
 	// RootClass allows additional CSS classes on the banner root.
 	RootClass string
 }
@@ -58,6 +54,8 @@ type CTAConfig struct {
 type CookieBannerConfig struct {
 	// Title of the cookie banner
 	Title string
+	// Description is the cookie banner body.
+	Description string
 	// Icon is an optional icon (emoji or component)
 	Icon templ.Component
 	// AcceptLabel is the accept button label
@@ -68,6 +66,8 @@ type CookieBannerConfig struct {
 	AcceptAction string
 	// RejectAction is the Alpine.js action for reject
 	RejectAction string
+	// RootClass allows additional CSS classes on the dialog root.
+	RootClass string
 }
 
 // ContainerClasses returns the container CSS classes
@@ -126,12 +126,27 @@ func (cfg Config) CTAClasses() string {
 	return "whitespace-nowrap bg-primary px-4 py-1 text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark rounded-radius"
 }
 
-// CookieContainerClasses returns the container CSS classes for cookie banners.
-func (cfg Config) CookieContainerClasses() string {
-	position := "fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50"
-	if cfg.Position == PositionRelative {
-		position = "absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm"
-	}
+func (cfg CookieBannerConfig) containerClasses() string {
+	return "fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.RootClass
+}
 
-	return position + " flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.RootClass
+func (cfg CookieBannerConfig) effectiveTitle() string {
+	if cfg.Title != "" {
+		return cfg.Title
+	}
+	return "Cookie Consent"
+}
+
+func (cfg CookieBannerConfig) effectiveAcceptLabel() string {
+	if cfg.AcceptLabel != "" {
+		return cfg.AcceptLabel
+	}
+	return "Accept"
+}
+
+func (cfg CookieBannerConfig) effectiveRejectLabel() string {
+	if cfg.RejectLabel != "" {
+		return cfg.RejectLabel
+	}
+	return "Decline"
 }

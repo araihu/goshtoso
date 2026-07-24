@@ -47,7 +47,7 @@ func TestCarouselCoverageDemoVariants(t *testing.T) {
 	} {
 		require.NoErrorf(t, page.Locator(selector).WaitFor(playwright.LocatorWaitForOptions{
 			State: playwright.WaitForSelectorStateAttached,
-		}), "carousel variant %s should be attached", selector)
+		}), "carousel example %s should be attached", selector)
 	}
 
 	require.NoError(t, page.Locator("#carousel-text-c").GetByText("Front end developers", playwright.LocatorGetByTextOptions{

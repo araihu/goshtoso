@@ -16,7 +16,7 @@ templ ratingDemoContent() {
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Rating",
-				Description: "Collect product scores, satisfaction signals, and read-only rating summaries with accessible radio semantics.",
+				Description: "Collect product scores and satisfaction signals with accessible radio semantics, or present a non-interactive RatingDisplay.",
 			},
 			ratingDefaultPreview(),
 			`@rating.Rating(rating.Config{
@@ -36,7 +36,7 @@ templ ratingDemoContent() {
     ID: "rating-emoji",
     Name: "sentiment",
     Value: 4,
-    Style: rating.StyleEmoji,
+    Appearance: rating.AppearanceEmoji,
     Label: "Satisfaction",
 })`,
 		)
@@ -71,14 +71,13 @@ templ ratingDemoContent() {
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Read Only",
-				Description: "ReadOnly renders the same visual language as a non-interactive summary.",
+				Title:       "Rating Display",
+				Description: "RatingDisplay owns the same visual language as a non-interactive summary.",
 			},
-			ratingReadOnlyPreview(),
-			`@rating.Rating(rating.Config{
-    ID: "rating-readonly",
+			ratingDisplayPreview(),
+			`@rating.RatingDisplay(rating.DisplayConfig{
+    ID: "rating-display",
     Value: 4,
-    ReadOnly: true,
     Label: "Average rating",
     ShowLabel: true,
 })`,
@@ -91,12 +90,11 @@ templ ratingDemoContent() {
 		{Name: "Max", Type: "int", Default: "5", Description: "Number of rating options."},
 		{Name: "Label", Type: "string", Default: `"Rating"`, Description: "Accessible radiogroup label; visible when ShowLabel is true."},
 		{Name: "ShowLabel", Type: "bool", Default: "false", Description: "Renders the label above the control."},
-		{Name: "Style", Type: "Style", Default: "StyleStars", Description: `Visual style: "stars" or "emoji".`},
+		{Name: "Appearance", Type: "Appearance", Default: "AppearanceStars", Description: `Visual treatment: "stars" or "emoji".`},
 		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Icon size: "sm", "md", "lg", "xl".`},
 		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables all radio inputs."},
-		{Name: "ReadOnly", Type: "bool", Default: "false", Description: "Renders a non-interactive rating summary."},
-		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the root element."},
-		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the root element."},
+		{Name: "RootAttrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the root element."},
+		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the root element."},
 	})
 }
 
@@ -151,7 +149,7 @@ templ ratingEmojiPreview() {
 			Value:     4,
 			Label:     "Satisfaction",
 			ShowLabel: true,
-			Style:     rating.StyleEmoji,
+			Appearance: rating.AppearanceEmoji,
 		})
 	</div>
 }
@@ -186,14 +184,13 @@ templ ratingDisabledPreview() {
 	</div>
 }
 
-templ ratingReadOnlyPreview() {
+templ ratingDisplayPreview() {
 	<div id="rating-readonly" class="w-full max-w-md mx-auto">
-		@rating.Rating(rating.Config{
+		@rating.RatingDisplay(rating.DisplayConfig{
 			ID:        "rating-readonly-summary",
 			Value:     4,
 			Label:     "Average rating",
 			ShowLabel: true,
-			ReadOnly:  true,
 		})
 	</div>
 }

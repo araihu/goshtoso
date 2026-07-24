@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -16,6 +15,7 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 
 	_, browser, _ := setupPlaywright(t)
 	page := newPage(t, browser)
+	dismissCookieBanner(t, page)
 	_, err := page.Goto(baseURL+"/components/banner", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
@@ -56,12 +56,12 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 		require.NoError(t, cta.Locator("button").Filter(playwright.LocatorFilterOptions{HasText: "Start free trial"}).WaitFor())
 	})
 
-	t.Run("semantic variants render user-facing copy", func(t *testing.T) {
+	t.Run("semantic tones render user-facing copy", func(t *testing.T) {
 		variants := page.Locator("#banner-variants")
 		for _, text := range []string{
-			"Default variant banner",
-			"Primary variant for promotions",
-			"Info variant for general information",
+			"Default tone banner",
+			"Primary tone for promotions",
+			"Info tone for general information",
 			"Success! Operation completed successfully",
 			"Warning: Please review your settings",
 			"Error: Something went wrong",
@@ -72,28 +72,15 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 		}
 	})
 
-	t.Run("cookie banner actions remain scoped to the preview", func(t *testing.T) {
-		stage := page.Locator("#banner-cookie > div").First()
+	t.Run("cookie banner owns a fixed consent dialog", func(t *testing.T) {
 		dialog := page.Locator("#banner-cookie [role='dialog']").First()
-		require.NoError(t, stage.WaitFor())
 		require.NoError(t, dialog.WaitFor())
 		require.NoError(t, dialog.Locator("h3").Filter(playwright.LocatorFilterOptions{HasText: "Cookie Time!"}).WaitFor())
 		require.NoError(t, dialog.GetByText("We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
 
 		classAttr, err := dialog.GetAttribute("class")
 		require.NoError(t, err)
-		require.Contains(t, classAttr, "absolute bottom-4")
-		require.False(t, strings.Contains(classAttr, "fixed bottom-4"), "demo cookie banner should not be viewport fixed")
-
-		stageBox, err := stage.BoundingBox()
-		require.NoError(t, err)
-		dialogBox, err := dialog.BoundingBox()
-		require.NoError(t, err)
-
-		require.GreaterOrEqual(t, dialogBox.X, stageBox.X)
-		require.GreaterOrEqual(t, dialogBox.Y, stageBox.Y)
-		require.LessOrEqual(t, dialogBox.X+dialogBox.Width, stageBox.X+stageBox.Width)
-		require.LessOrEqual(t, dialogBox.Y+dialogBox.Height, stageBox.Y+stageBox.Height)
+		require.Contains(t, classAttr, "fixed bottom-4")
 
 		require.NoError(t, dialog.Locator("button").Filter(playwright.LocatorFilterOptions{HasText: "No, thank you"}).Click())
 		require.NoError(t, dialog.WaitFor(playwright.LocatorWaitForOptions{

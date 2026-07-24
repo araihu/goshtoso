@@ -80,7 +80,7 @@ templ formDemoContent() {
         OnClick: "document.getElementById('external-form').requestSubmit()",
     },
 })
-@toast.Container(toast.ContainerConfig{})`,
+@toast.ToastContainer(toast.ContainerConfig{})`,
 		)
 	</div>
 	// API reference lives outside #form-fragment.
@@ -208,7 +208,7 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
         OnClick: "document.getElementById('modal-form').requestSubmit()",
     },
 })
-@toast.Container(toast.ContainerConfig{})`
+@toast.ToastContainer(toast.ContainerConfig{})`
 
 // formCompletePreview renders the full composable form.
 templ formCompletePreview() {
@@ -482,7 +482,7 @@ templ formExternalPreview() {
 						},
 					})
 				</div>
-				@toast.Container(toast.ContainerConfig{})
+				@toast.ToastContainer(toast.ContainerConfig{})
 			</div>
 		</div>
 }

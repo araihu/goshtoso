@@ -17,6 +17,7 @@ func TestBannerCoverageDemo(t *testing.T) {
 
 	_, browser, _ := setupPlaywright(t)
 	page := newPage(t, browser)
+	dismissCookieBanner(t, page)
 
 	var (
 		mu            sync.Mutex
@@ -58,6 +59,17 @@ func TestBannerCoverageDemo(t *testing.T) {
 		}))
 	}
 
+	cookieDialog := page.Locator("#banner-cookie [role='dialog']").First()
+	require.NoError(t, cookieDialog.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, cookieDialog.Locator("button").Filter(playwright.LocatorFilterOptions{
+		HasText: "Sounds Good!",
+	}).Click())
+	require.NoError(t, cookieDialog.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateHidden,
+	}))
+
 	ctaButton := page.Locator("#banner-cta button", playwright.PageLocatorOptions{
 		HasText: "Start free trial",
 	})
@@ -69,18 +81,6 @@ func TestBannerCoverageDemo(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("expected CTA button to open its alert dialog")
 	}
-
-	cookieDialog := page.Locator("#banner-cookie [role='dialog']").First()
-	require.NoError(t, cookieDialog.ScrollIntoViewIfNeeded())
-	require.NoError(t, cookieDialog.WaitFor(playwright.LocatorWaitForOptions{
-		State: playwright.WaitForSelectorStateVisible,
-	}))
-	require.NoError(t, cookieDialog.Locator("button").Filter(playwright.LocatorFilterOptions{
-		HasText: "Sounds Good!",
-	}).Click())
-	require.NoError(t, cookieDialog.WaitFor(playwright.LocatorWaitForOptions{
-		State: playwright.WaitForSelectorStateHidden,
-	}))
 
 	_, err = page.Evaluate(`() => {
 		document.documentElement.setAttribute('data-theme', 'minimal')

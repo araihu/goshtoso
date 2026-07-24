@@ -10,7 +10,7 @@ templ CarouselDemoPage() {
 	@demo.Layout("Carousel", "carousel", carouselDemoContent())
 }
 
-// carouselDemoContent renders the demo. Each carousel variant lives in its own
+// carouselDemoContent renders the demo. Each carousel example lives in its own
 // preview frame followed by its own code block (mirrors
 // penguinui.com/components/carousel). Wrapped in #carousel-fragment.
 templ carouselDemoContent() {
@@ -32,11 +32,10 @@ templ carouselDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Text Overlay",
-				Description: "Variant: carousel.WithText adds a gradient title + description overlay per slide.",
+				Description: "Adding a title or description to a slide automatically renders a gradient overlay.",
 			},
 			carouselTextPreview(),
 			`@carousel.Carousel(carousel.Config{
-    Variant: carousel.WithText,
     Slides: []carousel.Slide{
         {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Front end developers", Description: "The architects of the digital world."},
     },
@@ -46,11 +45,10 @@ templ carouselDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With CTA Button",
-				Description: "Variant: carousel.WithCTA adds a call-to-action button using each slide's CTAHref + CTALabel.",
+				Description: "A slide renders its call to action when both CTAHref and CTALabel are set.",
 			},
 			carouselCTAPreview(),
 			`@carousel.Carousel(carousel.Config{
-    Variant: carousel.WithCTA,
     Slides: []carousel.Slide{
         {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Build faster", Description: "Pre-built UI components.", CTAHref: "#", CTALabel: "Get Started"},
     },
@@ -64,7 +62,6 @@ templ carouselDemoContent() {
 			},
 			carouselAutoplayPreview(),
 			`@carousel.Carousel(carousel.Config{
-    Variant:  carousel.WithText,
     Autoplay: &carousel.AutoplayConfig{Interval: 4000},
     Slides:   slides,
 })`,
@@ -97,11 +94,10 @@ templ carouselDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "On Card",
-				Description: "Variant: carousel.OnCard frames the carousel in an article card with product info below.",
+				Description: "CardCarousel frames slides in an article card with the active title and description below.",
 			},
 			carouselCardPreview(),
-			`@carousel.Carousel(carousel.Config{
-    Variant: carousel.OnCard,
+			`@carousel.CardCarousel(carousel.CardConfig{
     Slides: []carousel.Slide{
         {ImgSrc: "slide-1.webp", ImgAlt: "...", Title: "Abstract Blue Series", Description: "Limited edition print. $49.99"},
     },
@@ -122,7 +118,6 @@ templ carouselDemoContent() {
 	// API reference lives outside #carousel-fragment.
 	@demo.APIReference([]demo.PropDoc{
 		{Name: "Slides", Type: "[]Slide", Default: "nil", Description: "Slide data (ImgSrc, ImgAlt, Title, Description, CTAHref, CTALabel)."},
-		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default", "with-text", "with-cta", "on-card".`},
 		{Name: "Autoplay", Type: "*AutoplayConfig", Default: "nil", Description: "Auto-advance config (Interval in ms)."},
 		{Name: "Touch", Type: "bool", Default: "false", Description: "Enable left/right swipe gestures."},
 		{Name: "AspectRatio", Type: "string", Default: `""`, Description: `Lock the frame ratio (e.g. "3/1", "16/9").`},
@@ -143,41 +138,38 @@ templ carouselDefaultPreview() {
 	</div>
 }
 
-// carouselTextPreview renders the text-overlay variant.
+// carouselTextPreview renders text overlays inferred from slide content.
 templ carouselTextPreview() {
 	<div id="carousel-text" class="w-full max-w-2xl mx-auto">
 		@carousel.Carousel(carousel.Config{
-			ID:      "carousel-text-c",
-			Variant: carousel.WithText,
-			Slides:  textSlides(),
+			ID:     "carousel-text-c",
+			Slides: textSlides(),
 		})
 	</div>
 }
 
-// carouselCTAPreview renders the CTA-button variant.
+// carouselCTAPreview renders slide CTA buttons.
 templ carouselCTAPreview() {
 	<div id="carousel-cta" class="w-full max-w-2xl mx-auto">
 		@carousel.Carousel(carousel.Config{
-			ID:      "carousel-cta-c",
-			Variant: carousel.WithCTA,
-			Slides:  ctaSlides(),
+			ID:     "carousel-cta-c",
+			Slides: ctaSlides(),
 		})
 	</div>
 }
 
-// carouselAutoplayPreview renders the autoplay variant.
+// carouselAutoplayPreview renders autoplay behavior.
 templ carouselAutoplayPreview() {
 	<div id="carousel-autoplay" class="w-full max-w-2xl mx-auto">
 		@carousel.Carousel(carousel.Config{
 			ID:       "carousel-autoplay-c",
-			Variant:  carousel.WithText,
 			Autoplay: &carousel.AutoplayConfig{Interval: 4000},
 			Slides:   textSlides(),
 		})
 	</div>
 }
 
-// carouselAspectPreview renders the fixed-aspect-ratio variant.
+// carouselAspectPreview renders a fixed aspect ratio.
 templ carouselAspectPreview() {
 	<div id="carousel-aspect" class="w-full max-w-2xl mx-auto">
 		@carousel.Carousel(carousel.Config{
@@ -188,7 +180,7 @@ templ carouselAspectPreview() {
 	</div>
 }
 
-// carouselTouchPreview renders the touch/swipe variant.
+// carouselTouchPreview renders touch/swipe behavior.
 templ carouselTouchPreview() {
 	<div id="carousel-touch" class="w-full max-w-2xl mx-auto">
 		@carousel.Carousel(carousel.Config{
@@ -199,18 +191,17 @@ templ carouselTouchPreview() {
 	</div>
 }
 
-// carouselCardPreview renders the on-card variant.
+// carouselCardPreview renders the card carousel primitive.
 templ carouselCardPreview() {
 	<div id="carousel-card" class="w-full max-w-2xl mx-auto">
-		@carousel.Carousel(carousel.Config{
-			ID:      "carousel-card-c",
-			Variant: carousel.OnCard,
-			Slides:  cardSlides(),
+		@carousel.CardCarousel(carousel.CardConfig{
+			ID:     "carousel-card-c",
+			Slides: cardSlides(),
 		})
 	</div>
 }
 
-// carouselHTMXPreview renders the HTMX dynamic-loading variant.
+// carouselHTMXPreview renders the HTMX dynamic-loading example.
 templ carouselHTMXPreview() {
 	<div id="carousel-htmx" class="w-full max-w-2xl mx-auto">
 		@carousel.Carousel(carousel.Config{

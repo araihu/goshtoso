@@ -365,7 +365,7 @@ templ WizardApp(s wizard.WizardState, errs map[string]string) {
 			</ul>
 		</header>
 		@WizardBody(s, errs)
-		@toast.Container(toast.ContainerConfig{})
+		@toast.ToastContainer(toast.ContainerConfig{})
 	</div>
 }
 

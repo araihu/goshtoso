@@ -1,8 +1,8 @@
 package rating
 
-func readOnlyIconState(cfg Config, value int) string {
-	if cfg.IsActive(value) {
-		return cfg.ActiveIconClasses()
+func displayIconState(cfg DisplayConfig, value int) string {
+	if cfg.isActive(value) {
+		return cfg.activeIconClasses()
 	}
-	return cfg.InactiveIconClasses()
+	return cfg.inactiveIconClasses()
 }

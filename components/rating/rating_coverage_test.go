@@ -91,7 +91,7 @@ func TestRootClasses(t *testing.T) {
 	if strings.Contains(base, "custom") {
 		t.Fatalf("RootClasses should not contain custom when Class empty: %q", base)
 	}
-	withClass := (Config{Class: "custom-class"}).RootClasses()
+	withClass := (Config{RootClass: "custom-class"}).RootClasses()
 	if !strings.Contains(withClass, "custom-class") {
 		t.Fatalf("RootClasses missing appended Class: %q", withClass)
 	}
@@ -102,9 +102,9 @@ func TestControlClasses(t *testing.T) {
 	if !strings.Contains(interactive, "focus-within:outline-2") {
 		t.Fatalf("interactive ControlClasses should add focus outline: %q", interactive)
 	}
-	readOnly := (Config{ReadOnly: true}).ControlClasses()
-	if strings.Contains(readOnly, "focus-within:outline-2") {
-		t.Fatalf("read-only ControlClasses should not add focus outline: %q", readOnly)
+	display := (DisplayConfig{}).controlClasses()
+	if strings.Contains(display, "focus-within:outline-2") {
+		t.Fatalf("display controlClasses should not add focus outline: %q", display)
 	}
 }
 
@@ -137,14 +137,14 @@ func TestIconClassesSizes(t *testing.T) {
 }
 
 func TestActiveInactiveIconClasses(t *testing.T) {
-	star := Config{Style: StyleStars}
+	star := Config{Appearance: AppearanceStars}
 	if got := star.ActiveIconClasses(); got != "text-warning" {
 		t.Fatalf("star ActiveIconClasses = %q", got)
 	}
 	if !strings.Contains(star.InactiveIconClasses(), "text-on-surface-muted") {
 		t.Fatalf("star InactiveIconClasses = %q", star.InactiveIconClasses())
 	}
-	emoji := Config{Style: StyleEmoji}
+	emoji := Config{Appearance: AppearanceEmoji}
 	if !strings.Contains(emoji.ActiveIconClasses(), "scale-110") {
 		t.Fatalf("emoji ActiveIconClasses = %q", emoji.ActiveIconClasses())
 	}
@@ -163,14 +163,14 @@ func TestXDataAndInputID(t *testing.T) {
 }
 
 func TestValueLabel(t *testing.T) {
-	star := Config{Style: StyleStars}
+	star := Config{Appearance: AppearanceStars}
 	if got := star.ValueLabel(1); got != "one star" {
 		t.Fatalf("ValueLabel(1) = %q, want 'one star'", got)
 	}
 	if got := star.ValueLabel(3); got != "3 stars" {
 		t.Fatalf("ValueLabel(3) = %q, want '3 stars'", got)
 	}
-	emoji := Config{Style: StyleEmoji}
+	emoji := Config{Appearance: AppearanceEmoji}
 	if got := emoji.ValueLabel(3); got != "neutral" {
 		t.Fatalf("emoji ValueLabel(3) = %q, want 'neutral'", got)
 	}
@@ -184,7 +184,7 @@ func TestValueLabel(t *testing.T) {
 }
 
 func TestEmojiIcon(t *testing.T) {
-	cfg := Config{Style: StyleEmoji}
+	cfg := Config{Appearance: AppearanceEmoji}
 	if got := cfg.EmojiIcon(5); got != "😍" {
 		t.Fatalf("EmojiIcon(5) = %q, want 😍", got)
 	}
@@ -194,23 +194,23 @@ func TestEmojiIcon(t *testing.T) {
 }
 
 func TestBindClass(t *testing.T) {
-	emoji := (Config{Style: StyleEmoji}).BindClass(2)
+	emoji := (Config{Appearance: AppearanceEmoji}).BindClass(2)
 	if !strings.Contains(emoji, "currentVal === 2") {
 		t.Fatalf("emoji BindClass = %q", emoji)
 	}
-	star := (Config{Style: StyleStars}).BindClass(2)
+	star := (Config{Appearance: AppearanceStars}).BindClass(2)
 	if !strings.Contains(star, "currentVal >= 2") {
 		t.Fatalf("star BindClass = %q", star)
 	}
 }
 
-func TestReadOnlyIconState(t *testing.T) {
-	cfg := Config{Style: StyleStars, Value: 3}
-	if got := readOnlyIconState(cfg, 2); got != cfg.ActiveIconClasses() {
-		t.Fatalf("readOnlyIconState active = %q", got)
+func TestDisplayIconState(t *testing.T) {
+	cfg := DisplayConfig{Appearance: AppearanceStars, Value: 3}
+	if got := displayIconState(cfg, 2); got != cfg.activeIconClasses() {
+		t.Fatalf("displayIconState active = %q", got)
 	}
-	if got := readOnlyIconState(cfg, 4); got != cfg.InactiveIconClasses() {
-		t.Fatalf("readOnlyIconState inactive = %q", got)
+	if got := displayIconState(cfg, 4); got != cfg.inactiveIconClasses() {
+		t.Fatalf("displayIconState inactive = %q", got)
 	}
 }
 
@@ -235,13 +235,13 @@ func TestRenderDisabledInputs(t *testing.T) {
 	}
 }
 
-func TestRenderReadOnlyEmoji(t *testing.T) {
-	html := renderRating(t, Config{Style: StyleEmoji, ReadOnly: true, Value: 3})
+func TestRenderEmojiDisplay(t *testing.T) {
+	html := renderStructuralRating(t, RatingDisplay(DisplayConfig{Appearance: AppearanceEmoji, Value: 3}))
 	if strings.Contains(html, `type="radio"`) {
-		t.Fatalf("read-only emoji must not render radios:\n%s", html)
+		t.Fatalf("emoji display must not render radios:\n%s", html)
 	}
 	if !strings.Contains(html, `role="img"`) {
-		t.Fatalf("read-only rating should render role=img:\n%s", html)
+		t.Fatalf("rating display should render role=img:\n%s", html)
 	}
 	if !strings.Contains(html, `aria-label="neutral"`) {
 		t.Fatalf("read-only emoji aria-label should use sentiment:\n%s", html)
@@ -253,9 +253,9 @@ func TestRenderReadOnlyEmoji(t *testing.T) {
 
 func TestRenderSizesAndAttrs(t *testing.T) {
 	html := renderRating(t, Config{
-		Size:  SizeLG,
-		Value: 1,
-		Attrs: templ.Attributes{"data-test": "rating-root"},
+		Size:      SizeLG,
+		Value:     1,
+		RootAttrs: templ.Attributes{"data-test": "rating-root"},
 	})
 	if !strings.Contains(html, "size-8") {
 		t.Fatalf("large rating should use size-8 icons:\n%s", html)

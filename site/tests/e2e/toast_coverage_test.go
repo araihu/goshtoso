@@ -46,7 +46,6 @@ func TestToastCoverageDemo(t *testing.T) {
 		`() => Array.from(document.querySelectorAll('#toast-container [role="alert"]')).some(el =>
 			el.textContent.includes('Jack Ellis') &&
 			el.textContent.includes('Hey, can you review the PR I just submitted?') &&
-			el.textContent.includes('Reply') &&
 			el.textContent.includes('Dismiss'))`,
 		nil,
 	)
@@ -64,7 +63,7 @@ func TestToastCoverageDemo(t *testing.T) {
 	staticAlerts := page.Locator("#toast-static [role='alert']")
 	count, err := staticAlerts.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 5, count, "static preview should render every documented toast variant")
+	assert.Equal(t, 5, count, "static preview should render every documented toast primitive")
 	require.NoError(t, page.Locator("#toast-static").GetByText("Jack Ellis", playwright.LocatorGetByTextOptions{
 		Exact: playwright.Bool(true),
 	}).WaitFor())

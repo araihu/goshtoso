@@ -8,12 +8,12 @@ import (
 	"github.com/a-h/templ"
 )
 
-// Style represents the rating visual style.
-type Style string
+// Appearance represents the rating visual treatment.
+type Appearance string
 
 const (
-	StyleStars Style = "stars"
-	StyleEmoji Style = "emoji"
+	AppearanceStars Appearance = "stars"
+	AppearanceEmoji Appearance = "emoji"
 )
 
 // Size represents icon sizes.
@@ -26,8 +26,7 @@ const (
 	SizeXL Size = "xl"
 )
 
-// EmojiOption describes one emoji rating step.
-type EmojiOption struct {
+type emojiOption struct {
 	Value int
 	Label string
 	Icon  string
@@ -47,22 +46,41 @@ type Config struct {
 	Label string
 	// ShowLabel renders Label visibly above the control.
 	ShowLabel bool
-	// Style switches between star and emoji visuals. Defaults to StyleStars.
-	Style Style
+	// Appearance switches between star and emoji visuals. Defaults to AppearanceStars.
+	Appearance Appearance
 	// Size sets icon size. Defaults to SizeMD.
 	Size Size
 	// Disabled disables all radio inputs.
 	Disabled bool
-	// ReadOnly renders a non-interactive meter instead of radios.
-	ReadOnly bool
-	// Class is appended to the root element.
-	Class string
-	// Attrs is an escape hatch applied last to the root element.
-	Attrs templ.Attributes
+	// RootClass is appended to the root element.
+	RootClass string
+	// RootAttrs is an escape hatch applied last to the root element.
+	RootAttrs templ.Attributes
 }
 
-// DefaultEmojiOptions are the five standard sentiment choices.
-var DefaultEmojiOptions = []EmojiOption{
+// DisplayConfig holds configuration for a non-interactive rating display.
+type DisplayConfig struct {
+	// ID identifies the root element. Defaults to "rating".
+	ID string
+	// Value is the displayed rating. Values outside 0..Max are clamped.
+	Value int
+	// Max is the number of displayed rating options. Defaults to 5.
+	Max int
+	// Label is the accessible label and visible label when ShowLabel is true.
+	Label string
+	// ShowLabel renders Label visibly above the display.
+	ShowLabel bool
+	// Appearance switches between star and emoji visuals. Defaults to AppearanceStars.
+	Appearance Appearance
+	// Size sets icon size. Defaults to SizeMD.
+	Size Size
+	// RootClass is appended to the root element.
+	RootClass string
+	// RootAttrs is an escape hatch applied last to the root element.
+	RootAttrs templ.Attributes
+}
+
+var defaultEmojiOptions = []emojiOption{
 	{Value: 1, Label: "very dissatisfied", Icon: "😠"},
 	{Value: 2, Label: "dissatisfied", Icon: "🙁"},
 	{Value: 3, Label: "neutral", Icon: "😐"},
@@ -113,19 +131,15 @@ func (cfg Config) ResolvedLabel() string {
 // RootClasses returns the root classes.
 func (cfg Config) RootClasses() string {
 	base := "inline-flex flex-col gap-2"
-	if cfg.Class != "" {
-		base += " " + cfg.Class
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
 	}
 	return base
 }
 
 // ControlClasses returns classes for the option row.
 func (cfg Config) ControlClasses() string {
-	base := "inline-flex w-fit items-center gap-1 rounded-radius"
-	if !cfg.ReadOnly {
-		base += " focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-outline-strong dark:focus-within:outline-outline-dark-strong"
-	}
-	return base
+	return "inline-flex w-fit items-center gap-1 rounded-radius focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-outline-strong dark:focus-within:outline-outline-dark-strong"
 }
 
 // IconClasses returns base classes for each visual option.
@@ -149,7 +163,7 @@ func (cfg Config) IconClasses() string {
 
 // ActiveIconClasses returns classes for selected values.
 func (cfg Config) ActiveIconClasses() string {
-	if cfg.Style == StyleEmoji {
+	if cfg.Appearance == AppearanceEmoji {
 		return "scale-110 opacity-100 grayscale-0"
 	}
 	return "text-warning"
@@ -157,7 +171,7 @@ func (cfg Config) ActiveIconClasses() string {
 
 // InactiveIconClasses returns classes for unselected values.
 func (cfg Config) InactiveIconClasses() string {
-	if cfg.Style == StyleEmoji {
+	if cfg.Appearance == AppearanceEmoji {
 		return "opacity-45 grayscale"
 	}
 	return "text-on-surface-muted dark:text-on-surface-dark-muted"
@@ -165,7 +179,7 @@ func (cfg Config) InactiveIconClasses() string {
 
 // BindClass returns an Alpine class binding for the given value.
 func (cfg Config) BindClass(value int) string {
-	if cfg.Style == StyleEmoji {
+	if cfg.Appearance == AppearanceEmoji {
 		return fmt.Sprintf("currentVal === %d ? '%s' : '%s'", value, cfg.ActiveIconClasses(), cfg.InactiveIconClasses())
 	}
 	return fmt.Sprintf("currentVal >= %d ? '%s' : '%s'", value, cfg.ActiveIconClasses(), cfg.InactiveIconClasses())
@@ -173,7 +187,7 @@ func (cfg Config) BindClass(value int) string {
 
 // IsActive reports whether a value should render active on first paint.
 func (cfg Config) IsActive(value int) bool {
-	if cfg.Style == StyleEmoji {
+	if cfg.Appearance == AppearanceEmoji {
 		return cfg.ResolvedValue() == value
 	}
 	return value <= cfg.ResolvedValue()
@@ -191,8 +205,8 @@ func (cfg Config) InputID(value int) string {
 
 // ValueLabel returns the accessible label for a numeric rating.
 func (cfg Config) ValueLabel(value int) string {
-	if cfg.Style == StyleEmoji {
-		for _, opt := range DefaultEmojiOptions {
+	if cfg.Appearance == AppearanceEmoji {
+		for _, opt := range defaultEmojiOptions {
 			if opt.Value == value {
 				return opt.Label
 			}
@@ -206,7 +220,103 @@ func (cfg Config) ValueLabel(value int) string {
 
 // EmojiIcon returns the configured emoji icon for a value.
 func (cfg Config) EmojiIcon(value int) string {
-	for _, opt := range DefaultEmojiOptions {
+	for _, opt := range defaultEmojiOptions {
+		if opt.Value == value {
+			return opt.Icon
+		}
+	}
+	return "🙂"
+}
+
+func (cfg DisplayConfig) resolvedID() string {
+	if cfg.ID != "" {
+		return cfg.ID
+	}
+	return "rating"
+}
+
+func (cfg DisplayConfig) resolvedMax() int {
+	if cfg.Max > 0 {
+		return cfg.Max
+	}
+	return 5
+}
+
+func (cfg DisplayConfig) resolvedValue() int {
+	return min(max(cfg.Value, 0), cfg.resolvedMax())
+}
+
+func (cfg DisplayConfig) resolvedLabel() string {
+	if cfg.Label != "" {
+		return cfg.Label
+	}
+	return "Rating"
+}
+
+func (cfg DisplayConfig) rootClasses() string {
+	base := "inline-flex flex-col gap-2"
+	if cfg.RootClass != "" {
+		base += " " + cfg.RootClass
+	}
+	return base
+}
+
+func (cfg DisplayConfig) controlClasses() string {
+	return "inline-flex w-fit items-center gap-1 rounded-radius"
+}
+
+func (cfg DisplayConfig) iconClasses() string {
+	base := "block transition"
+	switch cfg.Size {
+	case SizeSM:
+		base += " size-5 text-lg"
+	case SizeLG:
+		base += " size-8 text-3xl"
+	case SizeXL:
+		base += " size-10 text-4xl"
+	default:
+		base += " size-6 text-2xl"
+	}
+	return base
+}
+
+func (cfg DisplayConfig) activeIconClasses() string {
+	if cfg.Appearance == AppearanceEmoji {
+		return "scale-110 opacity-100 grayscale-0"
+	}
+	return "text-warning"
+}
+
+func (cfg DisplayConfig) inactiveIconClasses() string {
+	if cfg.Appearance == AppearanceEmoji {
+		return "opacity-45 grayscale"
+	}
+	return "text-on-surface-muted dark:text-on-surface-dark-muted"
+}
+
+func (cfg DisplayConfig) isActive(value int) bool {
+	if cfg.Appearance == AppearanceEmoji {
+		return cfg.resolvedValue() == value
+	}
+	return value <= cfg.resolvedValue()
+}
+
+func (cfg DisplayConfig) valueLabel(value int) string {
+	if cfg.Appearance == AppearanceEmoji {
+		for _, opt := range defaultEmojiOptions {
+			if opt.Value == value {
+				return opt.Label
+			}
+		}
+	}
+	if value == 1 {
+		return "one star"
+	}
+	return fmt.Sprintf("%d stars", value)
+}
+
+func (cfg DisplayConfig) emojiIcon(value int) string {
+	for _, opt := range defaultEmojiOptions {
 		if opt.Value == value {
 			return opt.Icon
 		}

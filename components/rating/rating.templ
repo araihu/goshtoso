@@ -4,11 +4,12 @@ import "fmt"
 
 // Rating renders a star or emoji rating control.
 templ Rating(cfg Config) {
-	if cfg.ReadOnly {
-		@ratingReadOnly(cfg)
-	} else {
-		@ratingInteractive(cfg)
-	}
+	@ratingInteractive(cfg)
+}
+
+// RatingDisplay renders a non-interactive star or emoji rating.
+templ RatingDisplay(cfg DisplayConfig) {
+	@ratingDisplay(cfg)
 }
 
 templ ratingInteractive(cfg Config) {
@@ -16,7 +17,7 @@ templ ratingInteractive(cfg Config) {
 		id={ cfg.ResolvedID() }
 		class={ cfg.RootClasses() }
 		x-data={ cfg.XData() }
-		{ cfg.Attrs... }
+		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
 			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.ResolvedLabel() }</span>
@@ -29,22 +30,22 @@ templ ratingInteractive(cfg Config) {
 	</div>
 }
 
-templ ratingReadOnly(cfg Config) {
+templ ratingDisplay(cfg DisplayConfig) {
 	<div
-		id={ cfg.ResolvedID() }
-		class={ cfg.RootClasses() }
+		id={ cfg.resolvedID() }
+		class={ cfg.rootClasses() }
 		role="img"
-		aria-label={ cfg.ValueLabel(cfg.ResolvedValue()) }
-		{ cfg.Attrs... }
+		aria-label={ cfg.valueLabel(cfg.resolvedValue()) }
+		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.ResolvedLabel() }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.resolvedLabel() }</span>
 		}
-		<div class={ cfg.ControlClasses() }>
-			for i := 1; i <= cfg.ResolvedMax(); i++ {
-				<span class={ cfg.IconClasses() + " " + readOnlyIconState(cfg, i) } aria-hidden="true">
-					if cfg.Style == StyleEmoji {
-						{ cfg.EmojiIcon(i) }
+		<div class={ cfg.controlClasses() }>
+			for i := 1; i <= cfg.resolvedMax(); i++ {
+				<span class={ cfg.iconClasses() + " " + displayIconState(cfg, i) } aria-hidden="true">
+					if cfg.Appearance == AppearanceEmoji {
+						{ cfg.emojiIcon(i) }
 					} else {
 						@starIcon()
 					}
@@ -76,7 +77,7 @@ templ ratingOption(cfg Config, value int) {
 			x-bind:class={ cfg.BindClass(value) }
 			aria-hidden="true"
 		>
-			if cfg.Style == StyleEmoji {
+			if cfg.Appearance == AppearanceEmoji {
 				{ cfg.EmojiIcon(value) }
 			} else {
 				@starIcon()

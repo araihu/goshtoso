@@ -98,7 +98,7 @@ func TestToastStaticExamplesStayVisible(t *testing.T) {
 	staticAlerts := page.Locator("#toast-static [role='alert']")
 	count, err := staticAlerts.Count()
 	require.NoError(t, err)
-	require.Equal(t, 5, count, "static docs preview should render all toast examples")
+	require.Equal(t, 5, count, "static docs preview should render all toast primitives")
 
 	time.Sleep(8500 * time.Millisecond)
 

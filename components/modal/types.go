@@ -5,15 +5,15 @@ import (
 	"unicode"
 )
 
-// Variant represents modal color variants (used in alert mode)
-type Variant string
+// Tone represents alert-dialog semantic color treatments.
+type Tone string
 
 const (
-	Default Variant = "default"
-	Success Variant = "success"
-	Info    Variant = "info"
-	Warning Variant = "warning"
-	Danger  Variant = "danger"
+	ToneDefault Tone = "default"
+	ToneSuccess Tone = "success"
+	ToneInfo    Tone = "info"
+	ToneWarning Tone = "warning"
+	ToneDanger  Tone = "danger"
 )
 
 // HTMXConfig holds HTMX attributes for a modal action button.
@@ -50,14 +50,30 @@ type Config struct {
 	PrimaryLabel string
 	// PrimaryAction holds optional HTMX/JS actions for the primary button
 	PrimaryAction *ButtonAction
-	// SecondaryLabel is the secondary/dismiss button label (default mode only)
+	// SecondaryLabel is the secondary/dismiss button label.
 	SecondaryLabel string
 	// SecondaryAction holds optional HTMX/JS actions for the secondary button
 	SecondaryAction *ButtonAction
-	// Variant determines the color scheme (used for alert mode and trigger button)
-	Variant Variant
-	// AlertMode renders the alert-style modal (icon header, centered body, single CTA)
-	AlertMode bool
+	// PanelClass allows additional CSS classes on the dialog.
+	PanelClass string
+}
+
+// AlertDialogConfig holds configuration for an alert dialog.
+type AlertDialogConfig struct {
+	// ID is a unique identifier used for aria-labelledby.
+	ID string
+	// Title is the alert-dialog heading.
+	Title string
+	// Body is the alert-dialog body text.
+	Body string
+	// TriggerLabel is the trigger button label.
+	TriggerLabel string
+	// ActionLabel is the single action button label.
+	ActionLabel string
+	// Action holds optional HTMX/JS actions for the action button.
+	Action *ButtonAction
+	// Tone determines the semantic color treatment.
+	Tone Tone
 	// PanelClass allows additional CSS classes on the dialog.
 	PanelClass string
 }
@@ -74,25 +90,34 @@ func (cfg Config) TitleID() string {
 	return base + "Title"
 }
 
+func (cfg AlertDialogConfig) stateVar() string {
+	return safeJSIdentifier(cfg.ID, "alertDialog") + "IsOpen"
+}
+
+func (cfg AlertDialogConfig) titleID() string {
+	base := cfg.ID
+	if base == "" {
+		base = "alertDialog"
+	}
+	return base + "Title"
+}
+
 // TriggerClasses returns the trigger button CSS classes
 func (cfg Config) TriggerClasses() string {
-	if cfg.AlertMode {
-		return cfg.alertTriggerClasses()
-	}
 	return "whitespace-nowrap rounded-radius border border-primary dark:border-primary-dark bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
 }
 
-func (cfg Config) alertTriggerClasses() string {
+func (cfg AlertDialogConfig) triggerClasses() string {
 	base := "w-36 whitespace-nowrap rounded-radius border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0"
 
-	switch cfg.Variant {
-	case Success:
+	switch cfg.Tone {
+	case ToneSuccess:
 		base += " border-success bg-success text-on-success focus-visible:outline-success"
-	case Info:
+	case ToneInfo:
 		base += " border-info bg-info text-on-info focus-visible:outline-info"
-	case Warning:
+	case ToneWarning:
 		base += " border-warning bg-warning text-on-warning focus-visible:outline-warning"
-	case Danger:
+	case ToneDanger:
 		base += " border-danger bg-danger text-on-danger focus-visible:outline-danger"
 	default:
 		base += " border-primary bg-primary text-on-primary focus-visible:outline-primary dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
@@ -103,9 +128,17 @@ func (cfg Config) alertTriggerClasses() string {
 
 // DialogClasses returns the modal dialog container CSS classes
 func (cfg Config) DialogClasses() string {
+	return dialogClasses(cfg.PanelClass)
+}
+
+func (cfg AlertDialogConfig) dialogClasses() string {
+	return dialogClasses(cfg.PanelClass)
+}
+
+func dialogClasses(panelClass string) string {
 	base := "flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
-	if cfg.PanelClass != "" {
-		base += " " + cfg.PanelClass
+	if panelClass != "" {
+		base += " " + panelClass
 	}
 	return base
 }
@@ -142,39 +175,38 @@ func safeJSIdentifier(raw, fallback string) string {
 
 // HeaderClasses returns the dialog header CSS classes
 func (cfg Config) HeaderClasses() string {
-	if cfg.AlertMode {
-		return "flex items-center justify-between border-b border-outline bg-surface-alt/60 px-4 py-2 dark:border-outline-dark dark:bg-surface-dark/20"
-	}
 	return "flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20"
 }
 
-// IconBadgeClasses returns the alert icon badge CSS classes
-func (cfg Config) IconBadgeClasses() string {
+func (cfg AlertDialogConfig) headerClasses() string {
+	return "flex items-center justify-between border-b border-outline bg-surface-alt/60 px-4 py-2 dark:border-outline-dark dark:bg-surface-dark/20"
+}
+
+func (cfg AlertDialogConfig) iconBadgeClasses() string {
 	base := "flex items-center justify-center rounded-full p-1"
-	switch cfg.Variant {
-	case Success:
+	switch cfg.Tone {
+	case ToneSuccess:
 		base += " bg-success/20 text-success"
-	case Info:
+	case ToneInfo:
 		base += " bg-info/20 text-info"
-	case Warning:
+	case ToneWarning:
 		base += " bg-warning/20 text-warning"
-	case Danger:
+	case ToneDanger:
 		base += " bg-danger/20 text-danger"
 	}
 	return base
 }
 
-// AlertCTAClasses returns the full-width CTA button classes for alert modals
-func (cfg Config) AlertCTAClasses() string {
+func (cfg AlertDialogConfig) actionClasses() string {
 	base := "w-full whitespace-nowrap rounded-radius border px-4 py-2 text-center text-sm font-semibold tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0"
-	switch cfg.Variant {
-	case Success:
+	switch cfg.Tone {
+	case ToneSuccess:
 		base += " border-success bg-success text-on-success focus-visible:outline-success"
-	case Info:
+	case ToneInfo:
 		base += " border-info bg-info text-on-info focus-visible:outline-info"
-	case Warning:
+	case ToneWarning:
 		base += " border-warning bg-warning text-on-warning focus-visible:outline-warning"
-	case Danger:
+	case ToneDanger:
 		base += " border-danger bg-danger text-on-danger focus-visible:outline-danger"
 	default:
 		base += " border-primary bg-primary text-on-primary focus-visible:outline-primary dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"

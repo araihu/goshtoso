@@ -140,10 +140,9 @@ func TestCoverageRenderSimpleBannerBranches(t *testing.T) {
 }
 
 func TestCoverageRenderCookieBannerDefaultsAndCustomActions(t *testing.T) {
-	defaultHTML := renderBanner(t, Config{
-		CookieBanner: true,
-		Description:  "We use cookies",
-	})
+	defaultHTML := renderStructuralBanner(t, CookieBanner(CookieBannerConfig{
+		Description: "We use cookies",
+	}))
 	for _, want := range []string{
 		`role="dialog"`,
 		`aria-label="Cookie consent"`,
@@ -155,18 +154,15 @@ func TestCoverageRenderCookieBannerDefaultsAndCustomActions(t *testing.T) {
 		require.Contains(t, defaultHTML, want)
 	}
 
-	customHTML := renderBanner(t, Config{
-		CookieBanner: true,
+	customHTML := renderStructuralBanner(t, CookieBanner(CookieBannerConfig{
+		Title:        "Privacy choices",
 		Description:  "Choose your preferences",
-		CookieConfig: &CookieBannerConfig{
-			Title:        "Privacy choices",
-			AcceptLabel:  "Allow",
-			RejectLabel:  "Reject",
-			AcceptAction: "allowCookies()",
-			RejectAction: "show = false",
-		},
-		RootClass: "cookie-shadow",
-	})
+		AcceptLabel:  "Allow",
+		RejectLabel:  "Reject",
+		AcceptAction: "allowCookies()",
+		RejectAction: "show = false",
+		RootClass:    "cookie-shadow",
+	}))
 
 	for _, want := range []string{
 		"Privacy choices",

@@ -142,7 +142,7 @@ func formDemoContent() templ.Component {
         OnClick: "document.getElementById('external-form').requestSubmit()",
     },
 })
-@toast.Container(toast.ContainerConfig{})`,
+@toast.ToastContainer(toast.ContainerConfig{})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -280,7 +280,7 @@ var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, T
         OnClick: "document.getElementById('modal-form').requestSubmit()",
     },
 })
-@toast.Container(toast.ContainerConfig{})`
+@toast.ToastContainer(toast.ContainerConfig{})`
 
 // formCompletePreview renders the full composable form.
 func formCompletePreview() templ.Component {
@@ -920,7 +920,7 @@ func formExternalPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toast.ToastContainer(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

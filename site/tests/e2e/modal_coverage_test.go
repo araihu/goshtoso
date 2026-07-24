@@ -10,7 +10,7 @@ import (
 )
 
 // TestModalCoverageDemo exercises the /components/modal demo: default open/close
-// (button, ESC), the four alert variants, the HTMX confirm action, and the
+// (button, ESC), the four alert-dialog tones, the HTMX confirm action, and the
 // JavaScript OnClick action. It mirrors the low-coverage branches in
 // components/modal so the browser path is exercised end to end.
 func TestModalCoverageDemo(t *testing.T) {
@@ -89,14 +89,14 @@ func TestModalCoverageDemo(t *testing.T) {
 		}))
 	})
 
-	t.Run("Alert_Variants_Open", func(t *testing.T) {
+	t.Run("Alert_Dialog_Tones_Open", func(t *testing.T) {
 		container := page.Locator("#modal-alert")
 		for _, label := range []string{"Success Modal", "Info Modal", "Warning Modal", "Danger Modal"} {
 			// Each alert trigger lives in its own x-data root; open then close it.
 			root := container.Locator("div[x-data]").Filter(playwright.LocatorFilterOptions{
 				HasText: label,
 			}).First()
-			dialog := root.Locator("[role='dialog']")
+			dialog := root.Locator("[role='alertdialog']")
 
 			require.NoError(t, root.GetByText(label).Click())
 			require.NoError(t, dialog.WaitFor(playwright.LocatorWaitForOptions{

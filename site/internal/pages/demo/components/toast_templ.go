@@ -45,7 +45,7 @@ func ToastDemoPage() templ.Component {
 
 // toastDemoContent renders the demo. Each trigger style lives in its own preview
 // frame followed by its own code block (mirrors penguinui.com/components/toast).
-// The toast.Container (global listener) is placed once at the top of the fragment.
+// The toast.ToastContainer (global listener) is placed once at the top of the fragment.
 func toastDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -71,29 +71,30 @@ func toastDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toast.ToastContainer(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Toast Notification",
-				Description: "Stacking notifications with auto-dismiss, hover pause, and five variants. Trigger client-side via Alpine.js $dispatch('notify', ...) or server-side via HTMX out-of-band swaps. Place @toast.Container once in your layout.",
+				Description: "Stacking toast and message-toast notifications with auto-dismiss and hover pause. Trigger client-side via Alpine.js $dispatch('notify', ...) or server-side via HTMX out-of-band swaps. Place @toast.ToastContainer once in your layout.",
 			},
 			toastAlpinePreview(),
 			`// 1. Place the container once in your layout
-@toast.Container(toast.ContainerConfig{})
+@toast.ToastContainer(toast.ContainerConfig{})
 
 // 2. Trigger toasts from Alpine.js
 <button x-on:click="$dispatch('notify', {
-    variant: 'success',
+    kind: 'toast',
+    tone: 'success',
     title: 'Saved!',
     message: 'Your changes have been saved.',
 })">Save</button>
 
-// Message variant carries a sender avatar + reply button:
+// Message toasts carry a sender and message:
 <button x-on:click="$dispatch('notify', {
-    variant: 'message',
+    kind: 'message-toast',
     sender: { name: 'Jane', avatar: '/avatar.jpg' },
     message: 'Hey, check this out!',
 })">Send</button>`,
@@ -109,14 +110,14 @@ func toastDemoContent() templ.Component {
 			toastHTMXPreview(),
 			`// Trigger button
 <button hx-post="/api/components/toast" hx-swap="none"
-    hx-vals='{"variant":"success","title":"Server Says Hello!","message":"..."}'>
+    hx-vals='{"tone":"success","title":"Server Says Hello!","message":"..."}'>
     Server Success Toast
 </button>
 
 // Handler
 func handler(w http.ResponseWriter, r *http.Request) {
     toast.OOBToast(toast.Config{
-        Variant: toast.Success, Title: "Created!", Message: "The item was created.",
+        Tone: toast.ToneSuccess, Title: "Created!", Message: "The item was created.",
     }).Render(r.Context(), w)
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -126,14 +127,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Static Examples (Server-Rendered)",
-				Description: "Each variant rendered statically with @toast.Toast — Info, Success, Warning, Danger, and Message (with sender).",
+				Description: "Semantic toasts use @toast.Toast; sender-oriented messages use @toast.MessageToast.",
 			},
 			toastStaticPreview(),
-			`@toast.Toast(toast.Config{Variant: toast.Success, Title: "Success!", Message: "Your changes have been saved."})
-@toast.Toast(toast.Config{
-    Variant: toast.Message,
+			`@toast.Toast(toast.Config{Tone: toast.ToneSuccess, Title: "Success!", Message: "Your changes have been saved."})
+@toast.MessageToast(toast.MessageConfig{
     Message: "Hey, can you review the PR I just submitted?",
-    Sender:  &toast.Sender{Name: "Jack Ellis", Avatar: "/avatar.webp"},
+    Sender:  toast.Sender{Name: "Jack Ellis", Avatar: "/avatar.webp"},
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -146,7 +146,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			},
 			toastActionPreview(),
 			`@toast.Toast(toast.Config{
-    Variant:         toast.Success,
+    Tone:            toast.ToneSuccess,
     Title:           "Project archived",
     Message:         "The project moved to archived items.",
     DisplayDuration: -1,
@@ -165,10 +165,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Variant", Type: "Variant", Default: "Info", Description: `Color/style: "info", "success", "warning", "danger", "message".`},
-			{Name: "Title", Type: "string", Default: `""`, Description: "Toast heading (omitted by the message variant)."},
+			{Name: "Tone", Type: "Tone", Default: "ToneInfo", Description: `Semantic color: "info", "success", "warning", or "danger".`},
+			{Name: "Title", Type: "string", Default: `""`, Description: "Toast heading."},
 			{Name: "Message", Type: "string", Default: `""`, Description: "Toast body text."},
-			{Name: "Sender", Type: "*Sender", Default: "nil", Description: "Message-variant sender (Name + Avatar); adds avatar and reply button."},
 			{Name: "DisplayDuration", Type: "int", Default: "0", Description: "Auto-dismiss delay in ms (0 uses the container default; negative keeps a server-rendered toast visible until dismissed)."},
 			{Name: "ActionLabel", Type: "string", Default: `""`, Description: "Optional inline action button label for server-rendered toasts."},
 			{Name: "ActionHTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX request for the action button (Get/Post, Target, Swap)."},
@@ -202,7 +201,7 @@ func toastAlpinePreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"toast-alpine\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-3\"><!-- Message Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'message', sender: { name: 'Jack Ellis', avatar: '/assets/images/avatars/avatar-2.webp' }, message: 'Hey, can you review the PR I just submitted? Let me know if you spot any issues!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\">Message</button><!-- Info Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'info', title: 'Update Available', message: 'A new version of the app is ready for you. Update now to enjoy the latest features!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0\">Info</button><!-- Success Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'success', title: 'Success!', message: 'Your changes have been saved. Keep up the great work!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0\">Success</button><!-- Danger Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'danger', title: 'Oops!', message: 'Something went wrong. Please try again. If the problem persists, we are here to help!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0\">Danger</button><!-- Warning Trigger --><button x-on:click=\"$dispatch('notify', { variant: 'warning', title: 'Action Needed', message: 'Your storage is getting low. Consider upgrading your plan.' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-warning px-4 py-2 text-center text-sm font-medium tracking-wide text-on-warning transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning active:opacity-100 active:outline-offset-0\">Warning</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"toast-alpine\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-3\"><!-- Message Trigger --><button x-on:click=\"$dispatch('notify', { kind: 'message-toast', sender: { name: 'Jack Ellis', avatar: '/assets/images/avatars/avatar-2.webp' }, message: 'Hey, can you review the PR I just submitted? Let me know if you spot any issues!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\">Message</button><!-- Info Trigger --><button x-on:click=\"$dispatch('notify', { kind: 'toast', tone: 'info', title: 'Update Available', message: 'A new version of the app is ready for you. Update now to enjoy the latest features!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0\">Info</button><!-- Success Trigger --><button x-on:click=\"$dispatch('notify', { kind: 'toast', tone: 'success', title: 'Success!', message: 'Your changes have been saved. Keep up the great work!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0\">Success</button><!-- Danger Trigger --><button x-on:click=\"$dispatch('notify', { kind: 'toast', tone: 'danger', title: 'Oops!', message: 'Something went wrong. Please try again. If the problem persists, we are here to help!' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0\">Danger</button><!-- Warning Trigger --><button x-on:click=\"$dispatch('notify', { kind: 'toast', tone: 'warning', title: 'Action Needed', message: 'Your storage is getting low. Consider upgrading your plan.' })\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-warning px-4 py-2 text-center text-sm font-medium tracking-wide text-on-warning transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning active:opacity-100 active:outline-offset-0\">Warning</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -232,7 +231,7 @@ func toastHTMXPreview() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"toast-htmx\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-3\"><button type=\"button\" hx-post=\"/api/components/toast\" hx-vals='{\"variant\": \"success\", \"title\": \"Server Says Hello!\", \"message\": \"This toast was rendered on the server and swapped in via HTMX OOB.\"}' hx-swap=\"none\" class=\"whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0\">Server Success Toast</button> <button type=\"button\" hx-post=\"/api/components/toast\" hx-vals='{\"variant\": \"danger\", \"title\": \"Server Error\", \"message\": \"The server encountered an error processing your request.\"}' hx-swap=\"none\" class=\"whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0\">Server Danger Toast</button> <button type=\"button\" hx-post=\"/api/components/toast\" hx-vals='{\"variant\": \"info\", \"title\": \"Server Info\", \"message\": \"This is an informational toast from the server.\"}' hx-swap=\"none\" class=\"whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0\">Server Info Toast</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"toast-htmx\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap gap-3\"><button type=\"button\" hx-post=\"/api/components/toast\" hx-vals='{\"tone\": \"success\", \"title\": \"Server Says Hello!\", \"message\": \"This toast was rendered on the server and swapped in via HTMX OOB.\"}' hx-swap=\"none\" class=\"whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0\">Server Success Toast</button> <button type=\"button\" hx-post=\"/api/components/toast\" hx-vals='{\"tone\": \"danger\", \"title\": \"Server Error\", \"message\": \"The server encountered an error processing your request.\"}' hx-swap=\"none\" class=\"whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0\">Server Danger Toast</button> <button type=\"button\" hx-post=\"/api/components/toast\" hx-vals='{\"tone\": \"info\", \"title\": \"Server Info\", \"message\": \"This is an informational toast from the server.\"}' hx-swap=\"none\" class=\"whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0\">Server Info Toast</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -240,7 +239,7 @@ func toastHTMXPreview() templ.Component {
 	})
 }
 
-// toastStaticPreview renders the static server-rendered toast variants.
+// toastStaticPreview renders the static server-rendered toast primitives.
 func toastStaticPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -267,7 +266,7 @@ func toastStaticPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant:         toast.Info,
+			Tone:            toast.ToneInfo,
 			Title:           "Update Available",
 			Message:         "A new version of the app is ready.",
 			DisplayDuration: -1,
@@ -276,7 +275,7 @@ func toastStaticPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant:         toast.Success,
+			Tone:            toast.ToneSuccess,
 			Title:           "Success!",
 			Message:         "Your changes have been saved.",
 			DisplayDuration: -1,
@@ -285,7 +284,7 @@ func toastStaticPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant:         toast.Warning,
+			Tone:            toast.ToneWarning,
 			Title:           "Action Needed",
 			Message:         "Your storage is getting low.",
 			DisplayDuration: -1,
@@ -294,7 +293,7 @@ func toastStaticPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant:         toast.Danger,
+			Tone:            toast.ToneDanger,
 			Title:           "Oops!",
 			Message:         "Something went wrong.",
 			DisplayDuration: -1,
@@ -302,11 +301,10 @@ func toastStaticPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant:         toast.Message,
+		templ_7745c5c3_Err = toast.MessageToast(toast.MessageConfig{
 			Message:         "Hey, can you review the PR I just submitted?",
 			DisplayDuration: -1,
-			Sender: &toast.Sender{
+			Sender: toast.Sender{
 				Name:   "Jack Ellis",
 				Avatar: "/assets/images/avatars/avatar-2.webp",
 			},
@@ -349,7 +347,7 @@ func toastActionPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = toast.Toast(toast.Config{
-			Variant:         toast.Success,
+			Tone:            toast.ToneSuccess,
 			Title:           "Project archived",
 			Message:         "The project moved to archived items.",
 			DisplayDuration: -1,
