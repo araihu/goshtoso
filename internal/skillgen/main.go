@@ -23,6 +23,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -31,6 +32,8 @@ const (
 	legacyOutPath        = ".claude/skills/using-goshtoso/components-reference.md"
 	externalSkillOutPath = ".agents/skills/using-goshtoso/references/components-reference.md"
 	modulePath           = "github.com/araihu/goshtoso"
+	templImportPath      = "github.com/a-h/templ"
+	componentsImportPath = modulePath + "/components"
 )
 
 // pkgAPI is the extracted public surface of one component package.
@@ -139,9 +142,10 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 		api.name = af.Name.Name
 		parsedFiles = append(parsedFiles, af)
 	}
-	concreteTypes := collectComponentTypes(fset, parsedFiles)
+	errorShadowed := packageDeclares(parsedFiles, "error")
+	concreteTypes := collectComponentTypes(parsedFiles, errorShadowed)
 	for _, af := range parsedFiles {
-		collectFile(fset, af, &api, enums, concreteTypes)
+		collectFile(fset, af, &api, enums, concreteTypes, importBindings(af))
 	}
 	if api.name == "" {
 		return pkgAPI{}, false, nil
@@ -171,17 +175,18 @@ type componentTypes struct {
 
 // collectComponentTypes returns package-local types whose value or pointer
 // method sets expose the syntactic components.Component contract.
-func collectComponentTypes(fset *token.FileSet, files []*ast.File) componentTypes {
+func collectComponentTypes(files []*ast.File, errorShadowed bool) componentTypes {
 	valueMethods := map[string]componentMethod{}
 	pointerMethods := map[string]componentMethod{}
 	for _, af := range files {
+		imports := importBindings(af)
 		for _, decl := range af.Decls {
 			fn, ok := decl.(*ast.FuncDecl)
 			if !ok || fn.Recv == nil || len(fn.Recv.List) != 1 {
 				continue
 			}
 			name, pointer := receiverType(fn.Recv.List[0].Type)
-			method := componentMethodOf(fset, fn)
+			method := componentMethodOf(fn, imports, errorShadowed)
 			if name == "" || method == 0 {
 				continue
 			}
@@ -211,47 +216,150 @@ func collectComponentTypes(fset *token.FileSet, files []*ast.File) componentType
 	return types
 }
 
-func componentMethodOf(fset *token.FileSet, fn *ast.FuncDecl) componentMethod {
+func componentMethodOf(
+	fn *ast.FuncDecl,
+	imports map[string]string,
+	errorShadowed bool,
+) componentMethod {
 	switch fn.Name.Name {
 	case "Kind":
-		if len(parameterTypes(fset, fn.Type.Params)) == 0 &&
-			hasSingleResult(fset, fn.Type.Results, "components.Kind") {
+		result, single := singleResult(fn.Type.Results)
+		if len(parameterTypes(fn.Type.Params)) == 0 &&
+			single &&
+			isImportedSelector(result, imports, componentsImportPath, "Kind") {
 			return componentKindMethod
 		}
 	case "Render":
-		params := parameterTypes(fset, fn.Type.Params)
+		params := parameterTypes(fn.Type.Params)
+		result, single := singleResult(fn.Type.Results)
 		if len(params) == 2 &&
-			params[0] == "context.Context" &&
-			params[1] == "io.Writer" &&
-			hasSingleResult(fset, fn.Type.Results, "error") {
+			isImportedSelector(params[0], imports, "context", "Context") &&
+			isImportedSelector(params[1], imports, "io", "Writer") &&
+			single &&
+			isPredeclaredError(result, imports, errorShadowed) {
 			return componentRenderMethod
 		}
 	}
 	return 0
 }
 
-func parameterTypes(fset *token.FileSet, fields *ast.FieldList) []string {
+func parameterTypes(fields *ast.FieldList) []ast.Expr {
 	if fields == nil {
 		return nil
 	}
-	var types []string
+	var types []ast.Expr
 	for _, field := range fields.List {
 		count := len(field.Names)
 		if count == 0 {
 			count = 1
 		}
 		for range count {
-			types = append(types, exprString(fset, field.Type))
+			types = append(types, field.Type)
 		}
 	}
 	return types
 }
 
-func hasSingleResult(fset *token.FileSet, results *ast.FieldList, want string) bool {
-	if results == nil || len(results.List) != 1 || len(results.List[0].Names) > 1 {
+func singleResult(results *ast.FieldList) (ast.Expr, bool) {
+	if results == nil {
+		return nil, false
+	}
+	var result ast.Expr
+	count := 0
+	for _, field := range results.List {
+		fieldCount := len(field.Names)
+		if fieldCount == 0 {
+			fieldCount = 1
+		}
+		count += fieldCount
+		if count > 1 {
+			return nil, false
+		}
+		result = field.Type
+	}
+	return result, count == 1
+}
+
+func isImportedSelector(
+	expr ast.Expr,
+	imports map[string]string,
+	importPath string,
+	name string,
+) bool {
+	selector, ok := expr.(*ast.SelectorExpr)
+	if !ok || selector.Sel.Name != name {
 		return false
 	}
-	return exprString(fset, results.List[0].Type) == want
+	pkg, ok := selector.X.(*ast.Ident)
+	return ok && imports[pkg.Name] == importPath
+}
+
+func isPredeclaredError(
+	expr ast.Expr,
+	imports map[string]string,
+	packageShadowed bool,
+) bool {
+	ident, ok := expr.(*ast.Ident)
+	if !ok || ident.Name != "error" || packageShadowed {
+		return false
+	}
+	_, fileShadowed := imports["error"]
+	return !fileShadowed
+}
+
+func importBindings(af *ast.File) map[string]string {
+	imports := make(map[string]string, len(af.Imports))
+	for _, spec := range af.Imports {
+		importPath, err := strconv.Unquote(spec.Path.Value)
+		if err != nil {
+			continue
+		}
+		name := defaultImportName(importPath)
+		if spec.Name != nil {
+			name = spec.Name.Name
+		}
+		if name == "." || name == "_" {
+			continue
+		}
+		imports[name] = importPath
+	}
+	return imports
+}
+
+func defaultImportName(importPath string) string {
+	if slash := strings.LastIndexByte(importPath, '/'); slash >= 0 {
+		return importPath[slash+1:]
+	}
+	return importPath
+}
+
+func packageDeclares(files []*ast.File, name string) bool {
+	for _, af := range files {
+		for _, decl := range af.Decls {
+			switch d := decl.(type) {
+			case *ast.FuncDecl:
+				if d.Recv == nil && d.Name.Name == name {
+					return true
+				}
+			case *ast.GenDecl:
+				for _, spec := range d.Specs {
+					switch s := spec.(type) {
+					case *ast.TypeSpec:
+						if s.Name.Name == name {
+							return true
+						}
+					case *ast.ValueSpec:
+						for _, ident := range s.Names {
+							if ident.Name == name {
+								return true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return false
 }
 
 func receiverType(expr ast.Expr) (name string, pointer bool) {
@@ -274,11 +382,12 @@ func collectFile(
 	api *pkgAPI,
 	enums map[string][]string,
 	concreteTypes componentTypes,
+	imports map[string]string,
 ) {
 	for _, decl := range af.Decls {
 		switch d := decl.(type) {
 		case *ast.FuncDecl:
-			if isEntry(fset, d, concreteTypes) {
+			if isEntry(d, concreteTypes, imports) {
 				api.entries = append(api.entries, entrySig(fset, d))
 			}
 			if isOption(fset, d) {
@@ -299,23 +408,21 @@ func collectFile(
 // function with no receiver returning templ.Component or a package-local type
 // that exposes both Kind and Render methods.
 func isEntry(
-	fset *token.FileSet,
 	fn *ast.FuncDecl,
 	concreteTypes componentTypes,
+	imports map[string]string,
 ) bool {
 	if fn.Recv != nil || !fn.Name.IsExported() || fn.Type.Results == nil {
 		return false
 	}
-	for _, r := range fn.Type.Results.List {
-		if exprString(fset, r.Type) == "templ.Component" {
-			return true
-		}
-	}
-	results := fn.Type.Results.List
-	if len(results) != 1 || len(results[0].Names) > 1 {
+	result, single := singleResult(fn.Type.Results)
+	if !single {
 		return false
 	}
-	name, pointer := receiverType(results[0].Type)
+	if isImportedSelector(result, imports, templImportPath, "Component") {
+		return true
+	}
+	name, pointer := receiverType(result)
 	if name == "" {
 		return false
 	}

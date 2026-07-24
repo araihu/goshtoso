@@ -174,6 +174,179 @@ func ValueAlert() Instance { return Instance{} }
 	}
 }
 
+func TestRunResolvesComponentContractImportsByPath(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "alert", "types.go"), `package alert
+
+type Instance struct{}
+`)
+	mustWrite(t, filepath.Join("components", "alert", "kind.go"), `package alert
+
+import ui "github.com/araihu/goshtoso/components"
+
+func (Instance) Kind() ui.Kind { return ui.KindAlert }
+`)
+	mustWrite(t, filepath.Join("components", "alert", "render.go"), `package alert
+
+import (
+	ctx "context"
+	sink "io"
+)
+
+func (Instance) Render(ctx.Context, sink.Writer) error { return nil }
+`)
+	mustWrite(t, filepath.Join("components", "alert", "constructors.go"), `package alert
+
+import view "github.com/a-h/templ"
+
+func ConcreteAlert() Instance { return Instance{} }
+
+func LegacyAlert() view.Component { return nil }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	for _, entry := range []string{"`ConcreteAlert()`", "`LegacyAlert()`"} {
+		if !strings.Contains(reference, entry) {
+			t.Fatalf("generated reference missing aliased-import entry %s:\n%s", entry, reference)
+		}
+	}
+}
+
+func TestRunRejectsUnrelatedContractImportAliases(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "report", "component.go"), `package report
+
+import (
+	context "example.com/context"
+	io "example.com/io"
+	components "example.com/components"
+	templ "example.com/templ"
+)
+
+type Instance struct{}
+
+func (Instance) Kind() components.Kind { return "" }
+
+func (Instance) Render(context.Context, io.Writer) error { return nil }
+
+func ConcreteReport() Instance { return Instance{} }
+
+func LegacyReport() templ.Component { return nil }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	for _, entry := range []string{"`ConcreteReport()`", "`LegacyReport()`"} {
+		if strings.Contains(reference, entry) {
+			t.Fatalf("generated reference includes entry using unrelated import aliases %s:\n%s", entry, reference)
+		}
+	}
+}
+
+func TestRunRejectsShadowedPredeclaredError(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "alert", "shadow.go"), `package alert
+
+type error string
+`)
+	mustWrite(t, filepath.Join("components", "alert", "component.go"), `package alert
+
+import (
+	"context"
+	"io"
+
+	"github.com/araihu/goshtoso/components"
+)
+
+type Instance struct{}
+
+func (Instance) Kind() components.Kind { return components.KindAlert }
+
+func (Instance) Render(context.Context, io.Writer) error { return "" }
+
+func Alert() Instance { return Instance{} }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	if strings.Contains(reference, "`Alert()`") {
+		t.Fatalf("generated reference includes constructor with shadowed error result:\n%s", reference)
+	}
+}
+
+func TestRunRequiresSingleLogicalConstructorResult(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "alert", "component.go"), `package alert
+
+import (
+	"context"
+	"io"
+
+	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components"
+)
+
+type Instance struct{}
+
+func (Instance) Kind() components.Kind { return components.KindAlert }
+
+func (Instance) Render(context.Context, io.Writer) error { return nil }
+
+func NamedLegacy() (component templ.Component) { return nil }
+
+func NamedConcrete() (component Instance) { return Instance{} }
+
+func LegacyWithError() (templ.Component, error) { return nil, nil }
+
+func LegacyGrouped() (first, second templ.Component) { return nil, nil }
+
+func ConcreteWithError() (Instance, error) { return Instance{}, nil }
+
+func ConcreteGrouped() (first, second Instance) { return Instance{}, Instance{} }
+
+func DoublePointer() **Instance { return nil }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	for _, entry := range []string{"`NamedLegacy()`", "`NamedConcrete()`"} {
+		if !strings.Contains(reference, entry) {
+			t.Errorf("generated reference missing valid named single result %s", entry)
+		}
+	}
+	for _, entry := range []string{
+		"`LegacyWithError()`",
+		"`LegacyGrouped()`",
+		"`ConcreteWithError()`",
+		"`ConcreteGrouped()`",
+		"`DoublePointer()`",
+	} {
+		if strings.Contains(reference, entry) {
+			t.Errorf("generated reference includes invalid constructor result %s", entry)
+		}
+	}
+	if t.Failed() {
+		t.Logf("generated reference:\n%s", reference)
+	}
+}
+
 func mustWrite(t *testing.T, path, contents string) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
