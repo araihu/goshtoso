@@ -105,9 +105,29 @@ templ triggerScript() {
 	if (window.goshtosoInitTooltipTrigger) return;
 	window.goshtosoInitTooltipTrigger = function (root) {
 		var id = root.dataset.tooltipContentId;
+		var previousId = root.__goshtosoTooltipContentID;
+		var previousTarget = root.__goshtosoTooltipTarget;
+		if (previousTarget && previousId) {
+			var previousIDs = (previousTarget.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+			previousIDs = previousIDs.filter(function (candidate) { return candidate !== previousId; });
+			if (previousIDs.length) {
+				previousTarget.setAttribute('aria-describedby', previousIDs.join(' '));
+			} else {
+				previousTarget.removeAttribute('aria-describedby');
+			}
+		}
+		root.__goshtosoTooltipTarget = null;
+		if (root.__goshtosoTooltipFallbackKeydown) {
+			root.removeEventListener('keydown', root.__goshtosoTooltipFallbackKeydown);
+			root.__goshtosoTooltipFallbackKeydown = null;
+		}
+		root.removeAttribute('tabindex');
+		root.removeAttribute('role');
+		root.removeAttribute('aria-describedby');
+		root.__goshtosoTooltipContentID = id || '';
 		if (!id) return;
-		var selector = 'button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[contenteditable="true"],[tabindex]:not([tabindex="-1"])';
-		var candidates = root.querySelectorAll(selector);
+		var focusableSelector = 'button:not([disabled]),a[href],area[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),audio[controls],video[controls],summary,[contenteditable]:not([contenteditable="false"]),[tabindex]:not([tabindex="-1"])';
+		var candidates = root.querySelectorAll(focusableSelector);
 		var target = Array.prototype.find.call(candidates, function (candidate) {
 			return candidate.tabIndex >= 0 && !candidate.closest('[hidden],[inert]');
 		});
@@ -115,17 +135,22 @@ templ triggerScript() {
 			var ids = (target.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
 			if (ids.indexOf(id) === -1) ids.push(id);
 			target.setAttribute('aria-describedby', ids.join(' '));
+			root.__goshtosoTooltipTarget = target;
 			return;
 		}
+		var interactiveSelector = 'button,a[href],area[href],input,select,textarea,audio[controls],video[controls],summary,[contenteditable],[tabindex]';
+		if (root.querySelector(interactiveSelector)) return;
 		root.setAttribute('tabindex', '0');
 		root.setAttribute('role', 'button');
 		root.setAttribute('aria-describedby', id);
 		if (root.dataset.tooltipActivation === 'click') {
-			root.addEventListener('keydown', function (event) {
+			var fallbackKeydown = function (event) {
 				if (event.target !== root || (event.key !== 'Enter' && event.key !== ' ')) return;
 				event.preventDefault();
 				root.click();
-			});
+			};
+			root.__goshtosoTooltipFallbackKeydown = fallbackKeydown;
+			root.addEventListener('keydown', fallbackKeydown);
 		}
 	};
 })();

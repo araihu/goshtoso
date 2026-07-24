@@ -168,3 +168,89 @@ func TestTooltipCustomButtonTriggerFocusWiring(t *testing.T) {
 	require.Equal(t, "button", tooltipAttribute(t, fallback, "role"))
 	require.Equal(t, "fallback-tooltip-content", tooltipAttribute(t, fallback, "aria-describedby"))
 }
+
+func TestTooltipCustomTriggerInitializerLifecycle(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/examples/logs", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForTooltipAlpine(page))
+
+	t.Run("repeated fallback initialization keeps one key listener", func(t *testing.T) {
+		clicks, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'repeated-fallback-content'
+			root.dataset.tooltipActivation = 'click'
+			root.dataset.clicks = '0'
+			root.addEventListener('click', () => {
+				root.dataset.clicks = String(Number(root.dataset.clicks) + 1)
+			})
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			window.goshtosoInitTooltipTrigger(root)
+			root.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+			const afterEnter = root.dataset.clicks
+			root.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }))
+			return afterEnter + '|' + root.dataset.clicks
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t, "1|2", clicks,
+			"reinitialization must not stack fallback keyboard listeners")
+	})
+
+	t.Run("focusable descendant replaces and cleans fallback", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'transition-content'
+			root.dataset.tooltipActivation = 'click'
+			root.dataset.clicks = '0'
+			root.addEventListener('click', () => {
+				root.dataset.clicks = String(Number(root.dataset.clicks) + 1)
+			})
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			const button = document.createElement('button')
+			button.id = 'transition-button'
+			button.setAttribute('aria-describedby', 'existing-help')
+			root.appendChild(button)
+			window.goshtosoInitTooltipTrigger(root)
+			root.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+			return [
+				String(root.tabIndex),
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+				button.getAttribute('aria-describedby') || '',
+				root.dataset.clicks,
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t, "-1|||existing-help transition-content|0", state,
+			"transition must remove fallback semantics/listener and preserve descendant descriptions")
+	})
+
+	t.Run("disabled native child does not create wrapper button", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'disabled-native-content'
+			const button = document.createElement('button')
+			button.disabled = true
+			root.appendChild(button)
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			return [
+				String(root.tabIndex),
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+				button.getAttribute('aria-describedby') || '',
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t, "-1|||", state,
+			"disabled native controls must remain non-activatable without wrapper button semantics")
+	})
+}
