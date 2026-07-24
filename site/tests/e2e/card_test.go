@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -38,7 +37,12 @@ func TestCardComponentDemo(t *testing.T) {
 	product := page.Locator("#card-product")
 	require.NoError(t, product.GetByText("CASIO G-SHOCK GA2100", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
 	require.NoError(t, product.GetByText("$99.99", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-	assert.Equal(t, "Rated 3 stars", strings.TrimSpace(mustText(t, product.Locator(".sr-only").First())))
+	productRating := product.GetByRole("img", playwright.LocatorGetByRoleOptions{
+		Name:  "Rated 3 stars",
+		Exact: playwright.Bool(true),
+	})
+	require.NoError(t, productRating.WaitFor())
+	assert.Equal(t, "Rated 3 stars", mustAttribute(t, productRating, "aria-label"))
 	require.NoError(t, product.Locator("button").Filter(playwright.LocatorFilterOptions{HasText: "Add to Cart"}).WaitFor())
 
 	pricing := page.Locator("#card-pricing")
@@ -49,7 +53,12 @@ func TestCardComponentDemo(t *testing.T) {
 	testimonial := page.Locator("#card-testimonial")
 	require.NoError(t, testimonial.GetByText("Bob Johnson", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
 	require.NoError(t, testimonial.GetByText("CEO - TechNova", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-	assert.Equal(t, "Rated 4 stars", strings.TrimSpace(mustText(t, testimonial.Locator(".sr-only").First())))
+	testimonialRating := testimonial.GetByRole("img", playwright.LocatorGetByRoleOptions{
+		Name:  "Rated 4 stars",
+		Exact: playwright.Bool(true),
+	})
+	require.NoError(t, testimonialRating.WaitFor())
+	assert.Equal(t, "Rated 4 stars", mustAttribute(t, testimonialRating, "aria-label"))
 }
 
 func mustAttribute(t *testing.T, loc playwright.Locator, name string) string {

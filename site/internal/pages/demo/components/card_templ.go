@@ -140,7 +140,7 @@ templ bookNowButton() {
     </div>
     <div class="flex flex-col gap-4 p-6">
         <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
-        @rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM})
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"})
         <span class="text-xl font-medium">$99.99</span>
         @button.Button() { Add to Cart }
     </div>
@@ -180,7 +180,7 @@ templ bookNowButton() {
             <img src="/assets/images/avatars/avatar-1.webp" class="size-10 rounded-full" alt="Bob Johnson" />
             <div><h3 class="font-bold">Bob Johnson</h3><span class="text-xs">CEO - TechNova</span></div>
         </div>
-        @rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM})
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"})
     </div>
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -538,7 +538,7 @@ func ecommerceProductCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -658,7 +658,7 @@ func testimonialCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

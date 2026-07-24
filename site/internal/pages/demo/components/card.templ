@@ -78,7 +78,7 @@ templ bookNowButton() {
     </div>
     <div class="flex flex-col gap-4 p-6">
         <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
-        @rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM})
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"})
         <span class="text-xl font-medium">$99.99</span>
         @button.Button() { Add to Cart }
     </div>
@@ -114,7 +114,7 @@ templ bookNowButton() {
             <img src="/assets/images/avatars/avatar-1.webp" class="size-10 rounded-full" alt="Bob Johnson" />
             <div><h3 class="font-bold">Bob Johnson</h3><span class="text-xs">CEO - TechNova</span></div>
         </div>
-        @rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM})
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"})
     </div>
 </article>`,
 		)
@@ -213,7 +213,7 @@ templ ecommerceProductCard() {
 			<div class="flex flex-col md:flex-row gap-4 md:gap-12 justify-between">
 				<div class="flex flex-col">
 					<h3 class="text-lg lg:text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">CASIO G-SHOCK GA2100</h3>
-					@rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM})
+					@rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"})
 				</div>
 				<span class="text-xl font-medium">$99.99</span>
 			</div>
@@ -267,7 +267,7 @@ templ testimonialCard() {
 					<span class="text-xs">CEO - TechNova</span>
 				</div>
 			</div>
-			@rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM})
+			@rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"})
 		</div>
 	</article>
 }

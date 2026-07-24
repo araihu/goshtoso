@@ -89,7 +89,7 @@ import "github.com/araihu/goshtoso/components/alert"  // package alert
 import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 ```
 
-**Entry points:** `Avatar(cfg Config)` · `AvatarStack(cfg StackConfig)` · `UserIcon()`
+**Entry points:** `Avatar(cfg Config)` · `AvatarStack(cfg StackConfig)`
 
 - **Radius** — RadiusDefault = "", RadiusNone = "none", RadiusXS = "xs", RadiusSM = "sm", RadiusMD = "md", RadiusLG = "lg"
 - **Shape** — ShapeCircle = "circle", ShapeSquare = "square"

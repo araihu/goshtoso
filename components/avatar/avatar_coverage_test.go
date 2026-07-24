@@ -328,15 +328,15 @@ func TestRenderReactiveStatusIndicator(t *testing.T) {
 	}
 }
 
-// TestRenderWithIcon covers the Icon branch of layerInitials and UserIcon.
+// TestRenderWithIcon covers the Icon branch of layerInitials and userIcon.
 func TestRenderWithIcon(t *testing.T) {
 	html := renderAvatar(t, Config{
-		Icon: UserIcon(),
+		Icon: userIcon(),
 		Tone: TonePrimary,
 	})
 	for _, want := range []string{
 		"<svg",           // icon SVG rendered
-		"M7.5 6a4.5 4.5", // UserIcon path fragment
+		"M7.5 6a4.5 4.5", // userIcon path fragment
 		"bg-primary",     // variant applied
 	} {
 		if !strings.Contains(html, want) {

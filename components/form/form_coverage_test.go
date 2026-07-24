@@ -415,20 +415,20 @@ func TestCoverageFormErrorsListWithPathHintCustom(t *testing.T) {
 	)
 }
 
-func TestCoverageFormErrorsGetIDAndTitleDefaults(t *testing.T) {
+func TestCoverageFormErrorsIDAndTitleDefaults(t *testing.T) {
 	cfg := FormErrorsConfig{}
-	if got := cfg.GetID(); got != "form-errors" {
-		t.Fatalf("GetID default = %q, want form-errors", got)
+	if got := cfg.getID(); got != "form-errors" {
+		t.Fatalf("getID default = %q, want form-errors", got)
 	}
-	if got := cfg.GetTitle(); got != "Validation failed" {
-		t.Fatalf("GetTitle default = %q, want Validation failed", got)
+	if got := cfg.getTitle(); got != "Validation failed" {
+		t.Fatalf("getTitle default = %q, want Validation failed", got)
 	}
 	custom := FormErrorsConfig{ID: "x", Title: "y"}
-	if got := custom.GetID(); got != "x" {
-		t.Fatalf("GetID = %q, want x", got)
+	if got := custom.getID(); got != "x" {
+		t.Fatalf("getID = %q, want x", got)
 	}
-	if got := custom.GetTitle(); got != "y" {
-		t.Fatalf("GetTitle = %q, want y", got)
+	if got := custom.getTitle(); got != "y" {
+		t.Fatalf("getTitle = %q, want y", got)
 	}
 }
 

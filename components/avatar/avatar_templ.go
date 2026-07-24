@@ -802,8 +802,8 @@ func avatarWithStatus(cfg Config) templ.Component {
 	})
 }
 
-// UserIcon returns the default user icon component
-func UserIcon() templ.Component {
+// userIcon returns the default user icon component.
+func userIcon() templ.Component {
 	return userIconTempl()
 }
 

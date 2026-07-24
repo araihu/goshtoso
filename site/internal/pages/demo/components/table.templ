@@ -539,7 +539,10 @@ func stripedRows() []table.Row {
 }
 
 templ tableEditButton() {
-	@button.Button(button.WithSize(button.SizeSmall)) {
+	@button.Button(
+		button.WithSize(button.SizeSmall),
+		button.WithRootClass("!rounded-radius !border-transparent !bg-transparent !p-0.5 !text-primary dark:!text-primary-dark cursor-pointer"),
+	) {
 		Edit
 	}
 }
