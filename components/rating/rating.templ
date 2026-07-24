@@ -31,11 +31,13 @@ templ ratingInteractive(cfg Config) {
 }
 
 templ ratingDisplay(cfg DisplayConfig) {
+	{{ accessibleLabel := cfg.Label }}
+	{{ if accessibleLabel == "" { accessibleLabel = cfg.valueLabel(cfg.resolvedValue()) } }}
 	<div
 		id={ cfg.resolvedID() }
 		class={ cfg.rootClasses() }
 		role="img"
-		aria-label={ cfg.valueLabel(cfg.resolvedValue()) }
+		aria-label={ accessibleLabel }
 		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {

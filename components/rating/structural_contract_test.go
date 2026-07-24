@@ -16,7 +16,16 @@ func TestRatingDisplayHasNoFormInputs(t *testing.T) {
 	}))
 
 	require.Contains(t, html, `role="img"`)
+	require.Contains(t, html, `aria-label="Four out of five"`)
 	require.NotContains(t, html, `type="radio"`)
+}
+
+func TestRatingDisplayFallsBackToValueLabel(t *testing.T) {
+	html := renderStructuralRating(t, RatingDisplay(DisplayConfig{
+		Value: 4,
+	}))
+
+	require.Contains(t, html, `aria-label="4 stars"`)
 }
 
 func renderStructuralRating(t *testing.T, component templ.Component) string {

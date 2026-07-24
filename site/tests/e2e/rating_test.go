@@ -82,5 +82,5 @@ func TestRating_DisabledAndDisplay(t *testing.T) {
 
 	label, err := page.Locator("#rating-readonly-summary").GetAttribute("aria-label")
 	require.NoError(t, err)
-	assert.Equal(t, "4 stars", label)
+	assert.Equal(t, "Average rating", label)
 }
