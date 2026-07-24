@@ -1,7 +1,6 @@
 # Component API, Documentation, and Smoke-Test Design
 
-**Status:** Design approved in conversation on 2026-07-24; written
-specification pending review  
+**Status:** Approved for implementation planning on 2026-07-24
 **Scope:** Goshtoso component library, documentation site, consumer agent
 reference, and component smoke tests
 
@@ -164,6 +163,8 @@ primitive:
 - `Modal` and `AlertDialog`;
 - `Toast` and `MessageToast`;
 - `Carousel` and `CardCarousel`.
+- `Banner` and `CookieBanner`;
+- `Rating` and `RatingDisplay`.
 
 The plain carousel may infer an overlay and CTA from optional slide content;
 that remains the same slide and navigation contract. A card carousel owns an
@@ -206,7 +207,7 @@ type Instance struct {
     // private rendering inputs
 }
 
-func Button(cfg Config) Instance
+func Card(cfg Config) Instance
 
 func (Instance) Kind() components.Kind
 func (Instance) Render(context.Context, io.Writer) error
@@ -252,12 +253,11 @@ Functional options are used selectively when:
 - the current config has many independent optional fields;
 - a caller commonly changes only one or two properties.
 
-Options are not introduced merely to make APIs look uniform. Initial
-candidates are small atomic primitives such as buttons and spinners; the
-implementation inventory decides each case against the criteria above.
-Options use typed `With...` functions and are applied to an unexported default
-configuration. Data-heavy components do not receive dozens of options that
-mirror every struct field.
+Options are not introduced merely to make APIs look uniform. This pass applies
+them to Button, Link, Kbd, and Tooltip, whose required core is small and whose
+remaining settings are independent overrides. Options use typed `With...`
+functions and are applied to an unexported default configuration. Data-heavy
+components do not receive dozens of options that mirror every struct field.
 
 ### Exported helper curation
 
@@ -289,7 +289,7 @@ The implementation uses this classification:
 | Badge | `Tone` plus `Appearance` for solid/soft |
 | Banner | `Tone` |
 | Button | `Tone`; introduce `Appearance` only when a distinct treatment exists |
-| Card | `Emphasis`; keep `Layout` |
+| Card | `Appearance`; keep `Layout` |
 | Carousel | remove `Variant`; content determines overlay, `CardCarousel` is separate |
 | Checkbox | `Tone` |
 | FileInput | `Appearance` |
@@ -300,6 +300,11 @@ The implementation uses this classification:
 | Table | `Appearance`; checkbox selection remains explicit behavior |
 | Toast | `Tone`; split `MessageToast` |
 | Toggle | `Tone` |
+
+Cookie consent is split from `Banner` because it owns dialog semantics,
+consent actions, and a distinct content contract. Read-only rating output is
+split from the interactive `Rating` control because it renders a different
+accessibility role and has no form-input lifecycle.
 
 The implementation plan must inspect rendered behavior before fixing final
 constant names. A more precise word than the table requires an explicit reason
