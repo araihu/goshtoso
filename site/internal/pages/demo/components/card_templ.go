@@ -130,7 +130,7 @@ templ bookNowButton() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Product Card",
-				Description: "An e-commerce recipe: compose a bordered article with card.StarRating, a price, and an Add to Cart button. (Config.Price/Rating are exposed but rendered by the caller, not the base template.)",
+				Description: "An e-commerce recipe: compose a bordered article with card.StarRating, a price, and an Add to Cart button. Price and rating are application content, not Card config fields.",
 			},
 			cardProductPreview(),
 			`<article class="group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt ...">
@@ -199,8 +199,6 @@ templ bookNowButton() {
 			{Name: "Footer", Type: "templ.Component", Default: "nil", Description: "Optional footer content (buttons, links, ratings) rendered below the body."},
 			{Name: "Appearance", Type: "Appearance", Default: "AppearanceDefault", Description: `Visual treatment: default or primary (adds a 2px primary border accent).`},
 			{Name: "Layout", Type: "Layout", Default: "LayoutVertical", Description: `Layout: "vertical" (image top) or "horizontal" (image beside content).`},
-			{Name: "Price", Type: "string", Default: `""`, Description: "Exposed for ecommerce recipes; render via a custom Footer (base template does not emit it)."},
-			{Name: "Rating", Type: "int", Default: "0", Description: "Exposed for ecommerce recipes; render with card.StarRating in a Footer."},
 			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the article container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

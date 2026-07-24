@@ -144,12 +144,18 @@ func TestFileInputVariants(t *testing.T) {
 		require.Equal(t, "image/*,.pdf", accept)
 	})
 
-	t.Run("APIReferenceDocumentsVariant", func(t *testing.T) {
-		variantRow := page.Locator("table").Filter(playwright.LocatorFilterOptions{HasText: "VariantDropZone"}).
-			Locator("tr").Filter(playwright.LocatorFilterOptions{HasText: "Variant"})
-		count, err := variantRow.Count()
+	t.Run("APIReferenceDocumentsAppearance", func(t *testing.T) {
+		appearanceRow := page.Locator("table").Filter(playwright.LocatorFilterOptions{HasText: "AppearanceDropZone"}).
+			Locator("tr").Filter(playwright.LocatorFilterOptions{HasText: "Appearance"})
+		count, err := appearanceRow.Count()
 		require.NoError(t, err)
 		require.Equal(t, 1, count)
+
+		text, err := appearanceRow.TextContent()
+		require.NoError(t, err)
+		require.Contains(t, text, "fileinput.Appearance")
+		require.Contains(t, text, "AppearanceDropZone (default) or AppearanceUpload")
+		require.NotContains(t, text, "Variant")
 	})
 }
 

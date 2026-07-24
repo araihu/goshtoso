@@ -97,7 +97,7 @@ func TestTable_DefaultTable(t *testing.T) {
 	})
 }
 
-// TestTable_StripedVariant tests the striped table variant
+// TestTableStripedAppearance tests the striped table appearance.
 func TestTableStripedAppearance(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -116,7 +116,7 @@ func TestTableStripedAppearance(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	t.Run("Striped_Rows_Have_Even_Classes", func(t *testing.T) {
+	t.Run("StripedRowsHaveAppearanceClasses", func(t *testing.T) {
 		// Scope to the per-variant preview wrapper (#table-striped) so the
 		// codeblock's syntax-highlight spans never leak into the table query.
 		stripedSection := page.Locator("#table-striped")
@@ -129,7 +129,7 @@ func TestTableStripedAppearance(t *testing.T) {
 		firstRow := rows.First()
 		classAttr, err := firstRow.GetAttribute("class")
 		require.NoError(t, err)
-		assert.Contains(t, classAttr, "even:bg-primary/5", "striped rows should have even background")
+		assert.Contains(t, classAttr, "odd:bg-surface-alt", "striped rows should have the striped appearance class")
 
 		t.Log("✓ Striped table rows have correct classes")
 	})

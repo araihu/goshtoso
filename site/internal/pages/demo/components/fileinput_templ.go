@@ -43,7 +43,7 @@ func FileInputDemoPage() templ.Component {
 	})
 }
 
-// fileInputDemoContent renders the demo. Each file-input variant lives in its
+// fileInputDemoContent renders the demo. Each file-input appearance lives in its
 // own preview frame followed by its own code block (mirrors
 // penguinui.com/components/file-input). Wrapped in #fileinput-fragment.
 func fileInputDemoContent() templ.Component {
@@ -91,7 +91,7 @@ func fileInputDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Upload",
-				Description: "VariantUpload uses a compact text-input-style control for dense forms.",
+				Description: "AppearanceUpload uses a compact text-input-style control for dense forms.",
 			},
 			fileInputUploadPreview(),
 			`@fileinput.FileInput(fileinput.Config{
@@ -161,7 +161,7 @@ func fileInputDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Appearance", Type: "fileinput.Appearance", Default: "fileinput.AppearanceDropZone", Description: "Visual treatment: AppearanceDropZone or AppearanceUpload."},
+			{Name: "Appearance", Type: "fileinput.Appearance", Default: "fileinput.AppearanceDropZone", Description: "Visual treatment: AppearanceDropZone (default) or AppearanceUpload."},
 			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
 			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
 			{Name: "Label", Type: "string", Default: `""`, Description: "Label above the drop zone (omit for none)."},
