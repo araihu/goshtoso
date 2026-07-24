@@ -139,9 +139,9 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 		api.name = af.Name.Name
 		parsedFiles = append(parsedFiles, af)
 	}
-	componentTypes := collectComponentTypes(parsedFiles)
+	concreteTypes := collectComponentTypes(fset, parsedFiles)
 	for _, af := range parsedFiles {
-		collectFile(fset, af, &api, enums, componentTypes)
+		collectFile(fset, af, &api, enums, concreteTypes)
 	}
 	if api.name == "" {
 		return pkgAPI{}, false, nil
@@ -156,48 +156,115 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 	return api, true, nil
 }
 
-// collectComponentTypes returns package-local receiver types that expose the
-// methods required by components.Component. Signatures are intentionally not
-// type-checked: skillgen remains an AST-only source documentation generator.
-func collectComponentTypes(files []*ast.File) map[string]struct{} {
-	methods := map[string]map[string]struct{}{}
+type componentMethod uint8
+
+const (
+	componentKindMethod componentMethod = 1 << iota
+	componentRenderMethod
+	componentMethods = componentKindMethod | componentRenderMethod
+)
+
+type componentTypes struct {
+	value   map[string]struct{}
+	pointer map[string]struct{}
+}
+
+// collectComponentTypes returns package-local types whose value or pointer
+// method sets expose the syntactic components.Component contract.
+func collectComponentTypes(fset *token.FileSet, files []*ast.File) componentTypes {
+	valueMethods := map[string]componentMethod{}
+	pointerMethods := map[string]componentMethod{}
 	for _, af := range files {
 		for _, decl := range af.Decls {
 			fn, ok := decl.(*ast.FuncDecl)
 			if !ok || fn.Recv == nil || len(fn.Recv.List) != 1 {
 				continue
 			}
-			name := receiverTypeName(fn.Recv.List[0].Type)
-			if name == "" || (fn.Name.Name != "Kind" && fn.Name.Name != "Render") {
+			name, pointer := receiverType(fn.Recv.List[0].Type)
+			method := componentMethodOf(fset, fn)
+			if name == "" || method == 0 {
 				continue
 			}
-			if methods[name] == nil {
-				methods[name] = map[string]struct{}{}
+			if pointer {
+				pointerMethods[name] |= method
+				continue
 			}
-			methods[name][fn.Name.Name] = struct{}{}
+			valueMethods[name] |= method
+			pointerMethods[name] |= method
 		}
 	}
 
-	componentTypes := map[string]struct{}{}
-	for name, names := range methods {
-		_, hasKind := names["Kind"]
-		_, hasRender := names["Render"]
-		if hasKind && hasRender {
-			componentTypes[name] = struct{}{}
+	types := componentTypes{
+		value:   map[string]struct{}{},
+		pointer: map[string]struct{}{},
+	}
+	for name, methods := range valueMethods {
+		if methods == componentMethods {
+			types.value[name] = struct{}{}
 		}
 	}
-	return componentTypes
+	for name, methods := range pointerMethods {
+		if methods == componentMethods {
+			types.pointer[name] = struct{}{}
+		}
+	}
+	return types
 }
 
-func receiverTypeName(expr ast.Expr) string {
-	if pointer, ok := expr.(*ast.StarExpr); ok {
-		expr = pointer.X
+func componentMethodOf(fset *token.FileSet, fn *ast.FuncDecl) componentMethod {
+	switch fn.Name.Name {
+	case "Kind":
+		if len(parameterTypes(fset, fn.Type.Params)) == 0 &&
+			hasSingleResult(fset, fn.Type.Results, "components.Kind") {
+			return componentKindMethod
+		}
+	case "Render":
+		params := parameterTypes(fset, fn.Type.Params)
+		if len(params) == 2 &&
+			params[0] == "context.Context" &&
+			params[1] == "io.Writer" &&
+			hasSingleResult(fset, fn.Type.Results, "error") {
+			return componentRenderMethod
+		}
 	}
-	ident, ok := expr.(*ast.Ident)
-	if !ok {
-		return ""
+	return 0
+}
+
+func parameterTypes(fset *token.FileSet, fields *ast.FieldList) []string {
+	if fields == nil {
+		return nil
 	}
-	return ident.Name
+	var types []string
+	for _, field := range fields.List {
+		count := len(field.Names)
+		if count == 0 {
+			count = 1
+		}
+		for range count {
+			types = append(types, exprString(fset, field.Type))
+		}
+	}
+	return types
+}
+
+func hasSingleResult(fset *token.FileSet, results *ast.FieldList, want string) bool {
+	if results == nil || len(results.List) != 1 || len(results.List[0].Names) > 1 {
+		return false
+	}
+	return exprString(fset, results.List[0].Type) == want
+}
+
+func receiverType(expr ast.Expr) (name string, pointer bool) {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name, false
+	case *ast.StarExpr:
+		ident, ok := t.X.(*ast.Ident)
+		if ok {
+			return ident.Name, true
+		}
+	}
+	return "", false
 }
 
 // collectFile walks one file's top-level decls into the package API.
@@ -206,12 +273,12 @@ func collectFile(
 	af *ast.File,
 	api *pkgAPI,
 	enums map[string][]string,
-	componentTypes map[string]struct{},
+	concreteTypes componentTypes,
 ) {
 	for _, decl := range af.Decls {
 		switch d := decl.(type) {
 		case *ast.FuncDecl:
-			if isEntry(fset, d, componentTypes) {
+			if isEntry(fset, d, concreteTypes) {
 				api.entries = append(api.entries, entrySig(fset, d))
 			}
 			if isOption(fset, d) {
@@ -234,7 +301,7 @@ func collectFile(
 func isEntry(
 	fset *token.FileSet,
 	fn *ast.FuncDecl,
-	componentTypes map[string]struct{},
+	concreteTypes componentTypes,
 ) bool {
 	if fn.Recv != nil || !fn.Name.IsExported() || fn.Type.Results == nil {
 		return false
@@ -248,11 +315,15 @@ func isEntry(
 	if len(results) != 1 || len(results[0].Names) > 1 {
 		return false
 	}
-	result, ok := results[0].Type.(*ast.Ident)
-	if !ok {
+	name, pointer := receiverType(results[0].Type)
+	if name == "" {
 		return false
 	}
-	_, ok = componentTypes[result.Name]
+	types := concreteTypes.value
+	if pointer {
+		types = concreteTypes.pointer
+	}
+	_, ok := types[name]
 	return ok
 }
 

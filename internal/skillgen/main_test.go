@@ -36,6 +36,9 @@ func Alert(config Config) templ.Component { return nil }
 	if !strings.Contains(external, `import "github.com/araihu/goshtoso/components/alert"`) {
 		t.Fatalf("external reference missing component import:\n%s", external)
 	}
+	if !strings.Contains(external, "`Alert(config Config)`") {
+		t.Fatalf("external reference missing legacy templ.Component constructor:\n%s", external)
+	}
 }
 
 func TestRunDocumentsFunctionalOptions(t *testing.T) {
@@ -104,6 +107,70 @@ func Alert(config Config) Instance { return Instance{} }
 	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
 	if !strings.Contains(reference, "`Alert(config Config)`") {
 		t.Fatalf("generated reference missing concrete component constructor:\n%s", reference)
+	}
+}
+
+func TestRunRejectsConcreteTypesWithWrongMethodSignatures(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "report", "component.go"), `package report
+
+type Report struct{}
+
+func (Report) Kind() string { return "report" }
+
+func (Report) Render() string { return "" }
+
+func BuildReport() Report { return Report{} }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	if strings.Contains(reference, "`BuildReport()`") {
+		t.Fatalf("generated reference includes constructor with wrong component method signatures:\n%s", reference)
+	}
+}
+
+func TestRunRespectsConcreteTypeMethodSets(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "alert", "component.go"), `package alert
+
+import (
+	"context"
+	"io"
+
+	"github.com/araihu/goshtoso/components"
+)
+
+type Instance struct{}
+
+func (Instance) Kind() components.Kind { return components.KindAlert }
+
+func (*Instance) Render(context.Context, io.Writer) error { return nil }
+
+func PointerAlert() *Instance { return &Instance{} }
+
+func ValueAlert() Instance { return Instance{} }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	hasPointer := strings.Contains(reference, "`PointerAlert()`")
+	hasValue := strings.Contains(reference, "`ValueAlert()`")
+	if !hasPointer || hasValue {
+		t.Fatalf(
+			"generated reference method-set entries: PointerAlert=%t ValueAlert=%t\n%s",
+			hasPointer,
+			hasValue,
+			reference,
+		)
 	}
 }
 
