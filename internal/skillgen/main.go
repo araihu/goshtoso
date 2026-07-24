@@ -135,6 +135,9 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 	enums := map[string][]string{}
 	parsedFiles := make([]*ast.File, 0, len(files))
 	for _, f := range files {
+		if strings.HasSuffix(f, "_test.go") {
+			continue
+		}
 		af, err := parser.ParseFile(fset, f, nil, parser.ParseComments)
 		if err != nil {
 			return pkgAPI{}, false, err

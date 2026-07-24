@@ -347,6 +347,83 @@ func DoublePointer() **Instance { return nil }
 	}
 }
 
+func TestRunIgnoresTestOnlyComponentDeclarations(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "alert", "component.go"), `package alert
+
+import (
+	"context"
+	"io"
+
+	"github.com/araihu/goshtoso/components"
+)
+
+type Instance struct{}
+
+func (Instance) Kind() components.Kind { return components.KindAlert }
+
+func (Instance) Render(context.Context, io.Writer) error { return nil }
+
+func Alert() Instance { return Instance{} }
+`)
+	mustWrite(t, filepath.Join("components", "alert", "external_test.go"), `package alert_test
+
+import (
+	"context"
+	"io"
+
+	"github.com/araihu/goshtoso/components"
+)
+
+type error string
+
+type ExternalInstance struct{}
+
+func (ExternalInstance) Kind() components.Kind { return components.KindAlert }
+
+func (ExternalInstance) Render(context.Context, io.Writer) error { return "" }
+
+func ExternalTestOnly() ExternalInstance { return ExternalInstance{} }
+`)
+	mustWrite(t, filepath.Join("components", "alert", "internal_test.go"), `package alert
+
+import (
+	"context"
+	"io"
+
+	"github.com/araihu/goshtoso/components"
+)
+
+type error string
+
+type InternalInstance struct{}
+
+func (InternalInstance) Kind() components.Kind { return components.KindAlert }
+
+func (InternalInstance) Render(context.Context, io.Writer) error { return "" }
+
+func InternalTestOnly() InternalInstance { return InternalInstance{} }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	if !strings.Contains(reference, "`Alert()`") {
+		t.Errorf("generated reference missing production constructor")
+	}
+	for _, entry := range []string{"`ExternalTestOnly()`", "`InternalTestOnly()`"} {
+		if strings.Contains(reference, entry) {
+			t.Errorf("generated reference includes test-only constructor %s", entry)
+		}
+	}
+	if t.Failed() {
+		t.Logf("generated reference:\n%s", reference)
+	}
+}
+
 func mustWrite(t *testing.T, path, contents string) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
