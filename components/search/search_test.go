@@ -207,19 +207,19 @@ func TestSearchSafeHrefFiltersExecutableNavigationTargets(t *testing.T) {
 
 func TestSearchDefaults(t *testing.T) {
 	cfg := Config{}
-	if cfg.GetID() != "search" {
-		t.Fatalf("default ID = %q", cfg.GetID())
+	if cfg.getID() != "search" {
+		t.Fatalf("default ID = %q", cfg.getID())
 	}
-	if cfg.GetLabel() != "Search" {
-		t.Fatalf("default label = %q", cfg.GetLabel())
+	if cfg.getLabel() != "Search" {
+		t.Fatalf("default label = %q", cfg.getLabel())
 	}
-	if cfg.GetShortcutText() == "" || cfg.GetEscapeText() == "" || cfg.GetEmptyText() == "" {
+	if cfg.getShortcutText() == "" || cfg.getEscapeText() == "" || cfg.getEmptyText() == "" {
 		t.Fatalf("default shortcut, escape, and empty text should be populated")
 	}
-	if cfg.GetMaxResults() != 4 {
-		t.Fatalf("default max results = %d", cfg.GetMaxResults())
+	if cfg.getMaxResults() != 4 {
+		t.Fatalf("default max results = %d", cfg.getMaxResults())
 	}
-	if cfg.GetDescriptionMaxLength() != 120 {
-		t.Fatalf("default description max length = %d", cfg.GetDescriptionMaxLength())
+	if cfg.getDescriptionMaxLength() != 120 {
+		t.Fatalf("default description max length = %d", cfg.getDescriptionMaxLength())
 	}
 }

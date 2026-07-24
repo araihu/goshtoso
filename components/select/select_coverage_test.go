@@ -24,7 +24,7 @@ func TestToOptions_MapsAndMarksSelected(t *testing.T) {
 		{Code: "eu-west-1", Name: "EU West"},
 	}
 
-	opts := ToOptions(regions,
+	opts := toOptions(regions,
 		func(r region) string { return r.Code },
 		func(r region) string { return r.Name },
 		"eu-west-1",
@@ -36,7 +36,7 @@ func TestToOptions_MapsAndMarksSelected(t *testing.T) {
 }
 
 func TestToOptions_EmptyInput(t *testing.T) {
-	opts := ToOptions(nil,
+	opts := toOptions(nil,
 		func(s string) string { return s },
 		func(s string) string { return s },
 		"",
@@ -45,13 +45,13 @@ func TestToOptions_EmptyInput(t *testing.T) {
 }
 
 func TestSelectClasses_AllStates(t *testing.T) {
-	errClasses := Config{State: StateError}.SelectClasses()
+	errClasses := Config{State: StateError}.selectClasses()
 	assert.Contains(t, errClasses, "border-danger")
 
-	okClasses := Config{State: StateSuccess}.SelectClasses()
+	okClasses := Config{State: StateSuccess}.selectClasses()
 	assert.Contains(t, okClasses, "border-success")
 
-	defClasses := Config{}.SelectClasses()
+	defClasses := Config{}.selectClasses()
 	assert.Contains(t, defClasses, "border-outline dark:border-outline-dark")
 	// shared base survives across states
 	assert.Contains(t, defClasses, "appearance-none")
@@ -63,54 +63,54 @@ func TestSelectedValue_ReturnsFirstSelected(t *testing.T) {
 		{Value: "b", Label: "B", Selected: true},
 		{Value: "c", Label: "C", Selected: true},
 	}}
-	assert.Equal(t, "b", cfg.SelectedValue())
+	assert.Equal(t, "b", cfg.selectedValue())
 }
 
 func TestSelectedValue_NoneSelected(t *testing.T) {
 	cfg := Config{Options: []Option{{Value: "a", Label: "A"}}}
-	assert.Equal(t, "", cfg.SelectedValue())
-	assert.Equal(t, "", Config{}.SelectedValue())
+	assert.Equal(t, "", cfg.selectedValue())
+	assert.Equal(t, "", Config{}.selectedValue())
 }
 
 func TestLabelClasses_AllStates(t *testing.T) {
-	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-danger", Config{State: StateError}.LabelClasses())
-	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-success", Config{State: StateSuccess}.LabelClasses())
-	assert.Equal(t, "w-fit pl-0.5 text-sm", Config{}.LabelClasses())
+	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-danger", Config{State: StateError}.labelClasses())
+	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-success", Config{State: StateSuccess}.labelClasses())
+	assert.Equal(t, "w-fit pl-0.5 text-sm", Config{}.labelClasses())
 }
 
 func TestTriggerClasses_StateBranches(t *testing.T) {
-	errClasses := Config{State: StateError}.TriggerClasses()
+	errClasses := Config{State: StateError}.triggerClasses()
 	assert.Contains(t, errClasses, "border-danger")
 	assert.Contains(t, errClasses, "bg-surface")
 
-	okClasses := Config{State: StateSuccess}.TriggerClasses()
+	okClasses := Config{State: StateSuccess}.triggerClasses()
 	assert.Contains(t, okClasses, "border-success")
 
 	// Readonly is also "effectively disabled" → disabled vocabulary
-	roClasses := Config{Readonly: true, State: StateError}.TriggerClasses()
+	roClasses := Config{Readonly: true, State: StateError}.triggerClasses()
 	assert.Contains(t, roClasses, "cursor-not-allowed")
 	assert.Contains(t, roClasses, "bg-surface-alt")
 }
 
 func TestContainerClasses_RootClass(t *testing.T) {
-	base := Config{}.ContainerClasses()
+	base := Config{}.containerClasses()
 	assert.Contains(t, base, "relative flex w-full flex-col")
 	assert.NotContains(t, base, "custom-root")
 
-	withRoot := Config{RootClass: "custom-root"}.ContainerClasses()
+	withRoot := Config{RootClass: "custom-root"}.containerClasses()
 	assert.Contains(t, withRoot, "custom-root")
 	assert.True(t, strings.HasSuffix(withRoot, " custom-root"))
 }
 
 func TestGetPlaceholder_DefaultAndCustom(t *testing.T) {
-	assert.Equal(t, "Please Select", Config{}.GetPlaceholder())
-	assert.Equal(t, "Pick one", Config{Placeholder: "Pick one"}.GetPlaceholder())
+	assert.Equal(t, "Please Select", Config{}.getPlaceholder())
+	assert.Equal(t, "Pick one", Config{Placeholder: "Pick one"}.getPlaceholder())
 }
 
 func TestIsEffectivelyDisabled(t *testing.T) {
-	assert.False(t, Config{}.IsEffectivelyDisabled())
-	assert.True(t, Config{Disabled: true}.IsEffectivelyDisabled())
-	assert.True(t, Config{Readonly: true}.IsEffectivelyDisabled())
+	assert.False(t, Config{}.isEffectivelyDisabled())
+	assert.True(t, Config{Disabled: true}.isEffectivelyDisabled())
+	assert.True(t, Config{Readonly: true}.isEffectivelyDisabled())
 }
 
 func TestOptionsToJS_EmptyAndPopulated(t *testing.T) {

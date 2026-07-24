@@ -51,15 +51,15 @@ func TestContainerClasses(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := tc.cfg.ContainerClasses()
+			got := tc.cfg.containerClasses()
 			for _, want := range tc.contains {
 				if !strings.Contains(got, want) {
-					t.Errorf("ContainerClasses() = %q, want substring %q", got, want)
+					t.Errorf("containerClasses() = %q, want substring %q", got, want)
 				}
 			}
 			for _, no := range tc.absent {
 				if strings.Contains(got, no) {
-					t.Errorf("ContainerClasses() = %q, should not contain %q", got, no)
+					t.Errorf("containerClasses() = %q, should not contain %q", got, no)
 				}
 			}
 		})
@@ -70,47 +70,47 @@ func TestLayoutDependentClasses(t *testing.T) {
 	vertical := Config{Layout: LayoutVertical}
 	horizontal := Config{Layout: LayoutHorizontal}
 
-	if got := vertical.ImageContainerClasses(); !strings.Contains(got, "h-44") {
-		t.Errorf("vertical ImageContainerClasses() = %q, want h-44", got)
+	if got := vertical.imageContainerClasses(); !strings.Contains(got, "h-44") {
+		t.Errorf("vertical imageContainerClasses() = %q, want h-44", got)
 	}
-	if got := horizontal.ImageContainerClasses(); !strings.Contains(got, "col-span-3") {
-		t.Errorf("horizontal ImageContainerClasses() = %q, want col-span-3", got)
-	}
-
-	if got := vertical.ImageClasses(); strings.Contains(got, "h-52") {
-		t.Errorf("vertical ImageClasses() = %q, should not contain h-52", got)
-	}
-	if got := horizontal.ImageClasses(); !strings.Contains(got, "h-52") {
-		t.Errorf("horizontal ImageClasses() = %q, want h-52", got)
+	if got := horizontal.imageContainerClasses(); !strings.Contains(got, "col-span-3") {
+		t.Errorf("horizontal imageContainerClasses() = %q, want col-span-3", got)
 	}
 
-	if got := vertical.ContentClasses(); !strings.Contains(got, "gap-4") {
-		t.Errorf("vertical ContentClasses() = %q, want gap-4", got)
+	if got := vertical.imageClasses(); strings.Contains(got, "h-52") {
+		t.Errorf("vertical imageClasses() = %q, should not contain h-52", got)
 	}
-	if got := horizontal.ContentClasses(); !strings.Contains(got, "col-span-5") {
-		t.Errorf("horizontal ContentClasses() = %q, want col-span-5", got)
+	if got := horizontal.imageClasses(); !strings.Contains(got, "h-52") {
+		t.Errorf("horizontal imageClasses() = %q, want h-52", got)
+	}
+
+	if got := vertical.contentClasses(); !strings.Contains(got, "gap-4") {
+		t.Errorf("vertical contentClasses() = %q, want gap-4", got)
+	}
+	if got := horizontal.contentClasses(); !strings.Contains(got, "col-span-5") {
+		t.Errorf("horizontal contentClasses() = %q, want col-span-5", got)
 	}
 }
 
 func TestStaticClasses(t *testing.T) {
 	var cfg Config
-	if got := cfg.TagClasses(); !strings.Contains(got, "font-medium") {
-		t.Errorf("TagClasses() = %q", got)
+	if got := cfg.tagClasses(); !strings.Contains(got, "font-medium") {
+		t.Errorf("tagClasses() = %q", got)
 	}
-	if got := cfg.TitleClasses(); !strings.Contains(got, "font-bold") {
-		t.Errorf("TitleClasses() = %q", got)
+	if got := cfg.titleClasses(); !strings.Contains(got, "font-bold") {
+		t.Errorf("titleClasses() = %q", got)
 	}
-	if got := cfg.DescriptionClasses(); !strings.Contains(got, "text-pretty") {
-		t.Errorf("DescriptionClasses() = %q", got)
+	if got := cfg.descriptionClasses(); !strings.Contains(got, "text-pretty") {
+		t.Errorf("descriptionClasses() = %q", got)
 	}
 }
 
 func TestPredicates(t *testing.T) {
-	if (Config{}).HasImage() {
-		t.Error("empty Image should be HasImage()=false")
+	if (Config{}).hasImage() {
+		t.Error("empty Image should be hasImage()=false")
 	}
-	if !(Config{Image: "x.png"}).HasImage() {
-		t.Error("set Image should be HasImage()=true")
+	if !(Config{Image: "x.png"}).hasImage() {
+		t.Error("set Image should be hasImage()=true")
 	}
 }
 
@@ -175,31 +175,5 @@ func TestCardRenderEscaping(t *testing.T) {
 	html := render(t, Card(Config{Title: "<script>", Description: `"quote"`}))
 	if strings.Contains(html, "<script>") {
 		t.Errorf("title not escaped: %s", html)
-	}
-}
-
-func TestStarRating(t *testing.T) {
-	tests := []struct {
-		rating     int
-		wantFilled int
-	}{
-		{0, 0},
-		{3, 3},
-		{5, 5},
-		{7, 5}, // clamps visually at 5 stars rendered
-	}
-	for _, tc := range tests {
-		html := render(t, StarRating(tc.rating))
-		filled := strings.Count(html, "text-amber-500")
-		if filled != tc.wantFilled {
-			t.Errorf("StarRating(%d) filled=%d, want %d", tc.rating, filled, tc.wantFilled)
-		}
-		total := strings.Count(html, "<svg")
-		if total != 5 {
-			t.Errorf("StarRating(%d) rendered %d stars, want 5", tc.rating, total)
-		}
-		if !strings.Contains(html, "Rated") {
-			t.Errorf("StarRating(%d) missing sr-only label: %s", tc.rating, html)
-		}
 	}
 }

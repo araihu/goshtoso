@@ -43,7 +43,7 @@ func rangeTemplate(cfg Config) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if cfg.ShowValue {
-			var templ_7745c5c3_Var2 = []any{cfg.RootClasses()}
+			var templ_7745c5c3_Var2 = []any{cfg.rootClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -53,7 +53,7 @@ func rangeTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.AlpineData())
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.alpineData())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/range/range.templ`, Line: 18, Col: 32}
 			}
@@ -87,7 +87,7 @@ func rangeTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var5 = []any{cfg.RootClasses()}
+			var templ_7745c5c3_Var5 = []any{cfg.rootClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -144,7 +144,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if cfg.Label != "" && cfg.LeadingIcon == nil && cfg.TrailingIcon == nil && !cfg.ShowValue {
-			var templ_7745c5c3_Var8 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var8 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -193,7 +193,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var12 = []any{cfg.ControlClasses()}
+		var templ_7745c5c3_Var12 = []any{cfg.controlClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -216,7 +216,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.LeadingIcon != nil {
-			var templ_7745c5c3_Var14 = []any{cfg.IconClasses()}
+			var templ_7745c5c3_Var14 = []any{cfg.iconClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -248,7 +248,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			}
 		}
 		if cfg.Label != "" && (cfg.LeadingIcon != nil || cfg.TrailingIcon != nil || cfg.ShowValue) {
-			var templ_7745c5c3_Var16 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var16 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -297,7 +297,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var20 = []any{cfg.InputClasses()}
+		var templ_7745c5c3_Var20 = []any{cfg.inputClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var20...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -346,7 +346,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var24 string
-		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ValueOrDefault())
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.valueOrDefault())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/range/range.templ`, Line: 46, Col: 31}
 		}
@@ -359,7 +359,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var25 string
-		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.MinOrDefault())
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.minOrDefault())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/range/range.templ`, Line: 47, Col: 27}
 		}
@@ -372,7 +372,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var26 string
-		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.MaxOrDefault())
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.maxOrDefault())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/range/range.templ`, Line: 48, Col: 27}
 		}
@@ -385,7 +385,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var27 string
-		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.StepOrDefault())
+		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.stepOrDefault())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/range/range.templ`, Line: 49, Col: 29}
 		}
@@ -424,7 +424,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.ShowValue {
-			var templ_7745c5c3_Var28 = []any{cfg.ValueClasses()}
+			var templ_7745c5c3_Var28 = []any{cfg.valueClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var28...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -447,7 +447,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ValueOrDefault())
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.valueOrDefault())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/range/range.templ`, Line: 58, Col: 80}
 			}
@@ -461,7 +461,7 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			}
 		}
 		if cfg.TrailingIcon != nil {
-			var templ_7745c5c3_Var31 = []any{cfg.IconClasses()}
+			var templ_7745c5c3_Var31 = []any{cfg.iconClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var31...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -501,8 +501,8 @@ func rangeInner(cfg Config, alpine bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, tick := range cfg.TickLabels() {
-				var templ_7745c5c3_Var33 = []any{cfg.TickClasses(tick)}
+			for _, tick := range cfg.tickLabels() {
+				var templ_7745c5c3_Var33 = []any{cfg.tickClasses(tick)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var33...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

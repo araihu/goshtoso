@@ -59,12 +59,12 @@ func textInputTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.IsPassword() {
+		if cfg.isPassword() {
 			templ_7745c5c3_Err = passwordInput(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		} else if cfg.IsSearch() {
+		} else if cfg.isSearch() {
 			templ_7745c5c3_Err = searchInput(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -101,7 +101,7 @@ func defaultInput(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var3 = []any{cfg.ContainerClasses()}
+		var templ_7745c5c3_Var3 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -129,8 +129,8 @@ func defaultInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasMask() {
-			var templ_7745c5c3_Var5 = []any{cfg.InputClasses()}
+		if cfg.hasMask() {
+			var templ_7745c5c3_Var5 = []any{cfg.inputClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -153,7 +153,7 @@ func defaultInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.GetType()))
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.getType()))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 53, Col: 32}
 			}
@@ -267,7 +267,7 @@ func defaultInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if cfg.HasPattern() {
+			if cfg.hasPattern() {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " pattern=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -286,13 +286,13 @@ func defaultInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if cfg.HasMaxLength() {
+			if cfg.hasMaxLength() {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " maxlength=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.MaxLengthStr())
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.maxLengthStr())
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 75, Col: 35}
 				}
@@ -314,7 +314,7 @@ func defaultInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var16 = []any{cfg.InputClasses()}
+			var templ_7745c5c3_Var16 = []any{cfg.inputClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -337,7 +337,7 @@ func defaultInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.GetType()))
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.getType()))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 82, Col: 32}
 			}
@@ -438,7 +438,7 @@ func defaultInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if cfg.HasPattern() {
+			if cfg.hasPattern() {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " pattern=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -457,13 +457,13 @@ func defaultInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if cfg.HasMaxLength() {
+			if cfg.hasMaxLength() {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, " maxlength=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var25 string
-				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.MaxLengthStr())
+				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.maxLengthStr())
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 103, Col: 35}
 				}
@@ -486,7 +486,7 @@ func defaultInput(cfg Config) templ.Component {
 			}
 		}
 		if cfg.HelperText != "" {
-			var templ_7745c5c3_Var26 = []any{cfg.HelperTextClasses()}
+			var templ_7745c5c3_Var26 = []any{cfg.helperTextClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -552,7 +552,7 @@ func passwordInput(cfg Config) templ.Component {
 			templ_7745c5c3_Var29 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var30 = []any{cfg.ContainerClasses()}
+		var templ_7745c5c3_Var30 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var30...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -584,7 +584,7 @@ func passwordInput(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var32 = []any{cfg.InputClasses()}
+		var templ_7745c5c3_Var32 = []any{cfg.inputClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var32...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -695,7 +695,7 @@ func passwordInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasPattern() {
+		if cfg.hasPattern() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, " pattern=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -714,13 +714,13 @@ func passwordInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasMaxLength() {
+		if cfg.hasMaxLength() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, " maxlength=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var40 string
-			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.MaxLengthStr())
+			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.maxLengthStr())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 144, Col: 35}
 			}
@@ -742,7 +742,7 @@ func passwordInput(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.HelperText != "" {
-			var templ_7745c5c3_Var41 = []any{cfg.HelperTextClasses()}
+			var templ_7745c5c3_Var41 = []any{cfg.helperTextClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var41...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -808,7 +808,7 @@ func searchInput(cfg Config) templ.Component {
 			templ_7745c5c3_Var44 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var45 = []any{"relative " + cfg.ContainerClasses()}
+		var templ_7745c5c3_Var45 = []any{"relative " + cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var45...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -922,7 +922,7 @@ func searchInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasPattern() {
+		if cfg.hasPattern() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, " pattern=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -941,13 +941,13 @@ func searchInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasMaxLength() {
+		if cfg.hasMaxLength() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, " maxlength=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var54 string
-			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.MaxLengthStr())
+			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.maxLengthStr())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 194, Col: 34}
 			}
@@ -998,7 +998,7 @@ func inputLabel(cfg Config) templ.Component {
 			templ_7745c5c3_Var55 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var56 = []any{cfg.LabelClasses()}
+		var templ_7745c5c3_Var56 = []any{cfg.labelClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var56...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

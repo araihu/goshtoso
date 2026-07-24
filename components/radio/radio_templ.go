@@ -90,7 +90,7 @@ func radioSegmented(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var3 = []any{cfg.SegmentedLabelClasses() + " " + cfg.RootClass}
+		var templ_7745c5c3_Var3 = []any{cfg.segmentedLabelClasses() + " " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -228,7 +228,7 @@ func segmentedInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasHTMX() {
+		if cfg.hasHTMX() {
 			if cfg.HTMX.Get != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " hx-get=\"")
 				if templ_7745c5c3_Err != nil {
@@ -362,7 +362,7 @@ func segmentedInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+			if trigger := cfg.HTMX.effectiveTrigger(); trigger != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " hx-trigger=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -464,7 +464,7 @@ func segmentedInput(cfg Config) templ.Component {
 				}
 			}
 		}
-		if cfg.HasAlpine() {
+		if cfg.hasAlpine() {
 			if cfg.Alpine.Data != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, " x-data=\"")
 				if templ_7745c5c3_Err != nil {
@@ -942,7 +942,7 @@ func radioInput(cfg Config) templ.Component {
 			templ_7745c5c3_Var47 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var48 = []any{cfg.InputClasses()}
+		var templ_7745c5c3_Var48 = []any{cfg.inputClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var48...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1034,7 +1034,7 @@ func radioInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasHTMX() {
+		if cfg.hasHTMX() {
 			if cfg.HTMX.Get != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, " hx-get=\"")
 				if templ_7745c5c3_Err != nil {
@@ -1168,7 +1168,7 @@ func radioInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+			if trigger := cfg.HTMX.effectiveTrigger(); trigger != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 94, " hx-trigger=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -1270,7 +1270,7 @@ func radioInput(cfg Config) templ.Component {
 				}
 			}
 		}
-		if cfg.HasAlpine() {
+		if cfg.hasAlpine() {
 			if cfg.Alpine.Data != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 105, " x-data=\"")
 				if templ_7745c5c3_Err != nil {
@@ -1574,7 +1574,7 @@ func groupRadioItemWithDescription(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.BadgeColor != "" {
-			var templ_7745c5c3_Var78 = []any{BadgeClasses(cfg.BadgeColor)}
+			var templ_7745c5c3_Var78 = []any{badgeClasses(cfg.BadgeColor)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var78...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

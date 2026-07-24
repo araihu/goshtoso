@@ -205,7 +205,7 @@ func TestCoverageAlertCTAButtonHTMX(t *testing.T) {
 	)
 }
 
-// TestCoveragePanelClassAppended covers the PanelClass branch of DialogClasses.
+// TestCoveragePanelClassAppended covers the PanelClass branch of dialogClasses.
 func TestCoveragePanelClassAppended(t *testing.T) {
 	html := render(t, Config{
 		ID:           "wide",
@@ -220,8 +220,8 @@ func TestCoveragePanelClassAppended(t *testing.T) {
 // TestCoverageTriggerClassesByPrimitive exercises modal and alert-dialog triggers.
 func TestCoverageTriggerClassesByPrimitive(t *testing.T) {
 	def := Config{}
-	if got := def.TriggerClasses(); !strings.Contains(got, "bg-primary") {
-		t.Fatalf("default TriggerClasses missing bg-primary: %q", got)
+	if got := def.triggerClasses(); !strings.Contains(got, "bg-primary") {
+		t.Fatalf("default triggerClasses missing bg-primary: %q", got)
 	}
 
 	tones := map[Tone]string{
@@ -242,7 +242,7 @@ func TestCoverageTriggerClassesByPrimitive(t *testing.T) {
 // TestCoverageHeaderClassesByPrimitive exercises modal and alert-dialog headers.
 func TestCoverageHeaderClassesByPrimitive(t *testing.T) {
 	alert := (AlertDialogConfig{}).headerClasses()
-	def := Config{}.HeaderClasses()
+	def := Config{}.headerClasses()
 	if alert == def {
 		t.Fatalf("alert and default header classes should differ")
 	}

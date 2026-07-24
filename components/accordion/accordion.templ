@@ -19,7 +19,7 @@ templ accordionTemplate(cfg AccordionConfig) {
 	
 	<div
 		id={ containerID }
-		class={ cfg.ContainerClasses() + " " + cfg.RootClass }
+		class={ cfg.containerClasses() + " " + cfg.RootClass }
 		x-data={ alpineData }
 	>
 		for i, item := range cfg.Items {
@@ -64,20 +64,20 @@ templ accordionItem(data AccordionItemData) {
 	{{ contentID := "content-" + itemID }}
 	{{ idx := fmt.Sprintf("%d", index) }}
 	{{ clickHandler := "toggle(" + idx + ")" }}
-	{{ classBinding := "isOpen(" + idx + ") ? '" + data.ExpandedClasses() + "' : '" + data.CollapsedClasses() + "'" }}
+	{{ classBinding := "isOpen(" + idx + ") ? '" + data.expandedClasses() + "' : '" + data.collapsedClasses() + "'" }}
 	{{ ariaBinding := "isOpen(" + idx + ") ? 'true' : 'false'" }}
 	{{ showBinding := "isOpen(" + idx + ")" }}
 	{{ chevronBinding := "isOpen(" + idx + ") ? 'rotate-180' : ''" }}
 	
 	<div
 		if data.Appearance == AppearanceSplit {
-			class={ data.ItemContainerClasses() }
+			class={ data.itemContainerClasses() }
 		}
 	>
 		<button
 			id={ controlID }
 			type="button"
-			class={ data.ItemButtonClasses() }
+			class={ data.itemButtonClasses() }
 			aria-controls={ contentID }
 			@click={ clickHandler }
 			:class={ classBinding }
@@ -113,7 +113,7 @@ templ accordionItem(data AccordionItemData) {
 			aria-labelledby={ controlID }
 			x-collapse
 		>
-			<div class={ data.ContentClasses() }>
+			<div class={ data.contentClasses() }>
 				@item.Content
 			</div>
 		</div>

@@ -23,11 +23,11 @@ type Config struct {
 }
 
 // GetID returns a stable ID for the code element.
-func (cfg Config) GetID() string {
+func (cfg Config) getID() string {
 	if cfg.ID != "" {
 		return cfg.ID
 	}
-	base := slugPart(cfg.GetLabel())
+	base := slugPart(cfg.getLabel())
 	if base == "" {
 		base = slugPart(cfg.Language)
 	}
@@ -40,7 +40,7 @@ func (cfg Config) GetID() string {
 }
 
 // GetLabel returns the header label, defaulting to the language name.
-func (cfg Config) GetLabel() string {
+func (cfg Config) getLabel() string {
 	if cfg.Label != "" {
 		return cfg.Label
 	}
@@ -48,9 +48,9 @@ func (cfg Config) GetLabel() string {
 }
 
 func (cfg Config) copyLabel() string {
-	label := cfg.GetLabel()
+	label := cfg.getLabel()
 	if label == "" {
-		label = cfg.GetID()
+		label = cfg.getID()
 	}
 	return "Copy " + label + " code"
 }

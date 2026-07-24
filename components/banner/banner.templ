@@ -42,20 +42,20 @@ templ simpleBanner(cfg Config) {
 		x-data="{ show: true }"
 		x-show="show"
 		x-cloak
-		class={ cfg.ContainerClasses() }
+		class={ cfg.containerClasses() }
 		role="banner"
 	>
 		if cfg.CTA != nil {
 			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
-				<p class={ cfg.TextClasses() }>{ cfg.Description }</p>
+				<p class={ cfg.textClasses() }>{ cfg.Description }</p>
 				if cfg.CTA.Href != "" {
-					<a href={ templ.URL(cfg.CTA.Href) } class={ cfg.CTAClasses() }>
+					<a href={ templ.URL(cfg.CTA.Href) } class={ cfg.ctaClasses() }>
 						{ cfg.CTA.ActionLabel }
 					</a>
 				} else {
 					<button 
 						type="button"
-						class={ cfg.CTAClasses() }
+						class={ cfg.ctaClasses() }
 						@click={ cfg.CTA.OnClick }
 					>
 						{ cfg.CTA.ActionLabel }
@@ -63,7 +63,7 @@ templ simpleBanner(cfg Config) {
 				}
 			</div>
 		} else {
-			<p class={ cfg.TextClasses() }>{ cfg.Description }</p>
+			<p class={ cfg.textClasses() }>{ cfg.Description }</p>
 		}
 		
 		if !cfg.Persistent {

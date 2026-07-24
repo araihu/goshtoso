@@ -190,7 +190,7 @@ func TestContainerClassesVariants(t *testing.T) {
 		ToneDanger:  "border-danger",
 	}
 	for variant, border := range want {
-		cls := Config{Tone: variant}.ContainerClasses()
+		cls := Config{Tone: variant}.containerClasses()
 		if !strings.Contains(cls, border) {
 			t.Fatalf("variant %q: want %q in %q", variant, border, cls)
 		}
@@ -201,11 +201,11 @@ func TestContainerClassesVariants(t *testing.T) {
 }
 
 func TestContainerClassesRootClass(t *testing.T) {
-	cls := Config{Tone: ToneInfo, RootClass: "extra"}.ContainerClasses()
+	cls := Config{Tone: ToneInfo, RootClass: "extra"}.containerClasses()
 	if !strings.HasSuffix(cls, " extra") {
 		t.Fatalf("RootClass not appended: %q", cls)
 	}
-	clsNone := Config{Tone: ToneInfo}.ContainerClasses()
+	clsNone := Config{Tone: ToneInfo}.containerClasses()
 	if strings.Contains(clsNone, "extra") {
 		t.Fatalf("unexpected RootClass: %q", clsNone)
 	}
@@ -220,7 +220,7 @@ func TestInnerClassesVariants(t *testing.T) {
 		ToneDanger:  "bg-danger/10",
 	}
 	for variant, bg := range want {
-		cls := Config{Tone: variant}.InnerClasses()
+		cls := Config{Tone: variant}.innerClasses()
 		if !strings.Contains(cls, bg) {
 			t.Fatalf("variant %q: want %q in %q", variant, bg, cls)
 		}
@@ -236,7 +236,7 @@ func TestIconBadgeClassesVariants(t *testing.T) {
 		ToneDanger:  "text-danger",
 	}
 	for variant, text := range want {
-		cls := Config{Tone: variant}.IconBadgeClasses()
+		cls := Config{Tone: variant}.iconBadgeClasses()
 		if !strings.Contains(cls, text) || !strings.Contains(cls, "rounded-full") {
 			t.Fatalf("variant %q: want %q in %q", variant, text, cls)
 		}
@@ -252,7 +252,7 @@ func TestTitleClassesVariants(t *testing.T) {
 		ToneDanger:  "text-danger",
 	}
 	for variant, text := range want {
-		cls := Config{Tone: variant}.TitleClasses()
+		cls := Config{Tone: variant}.titleClasses()
 		if !strings.Contains(cls, text) || !strings.Contains(cls, "font-semibold") {
 			t.Fatalf("variant %q: want %q in %q", variant, text, cls)
 		}
@@ -268,7 +268,7 @@ func TestLinkClassesVariants(t *testing.T) {
 		ToneDanger:  "text-danger",
 	}
 	for variant, text := range want {
-		cls := Config{Tone: variant}.LinkClasses()
+		cls := Config{Tone: variant}.linkClasses()
 		if !strings.Contains(cls, text) || !strings.Contains(cls, "whitespace-nowrap") {
 			t.Fatalf("variant %q: want %q in %q", variant, text, cls)
 		}
@@ -284,7 +284,7 @@ func TestPrimaryActionClassesVariants(t *testing.T) {
 		ToneDanger:  "text-danger",
 	}
 	for variant, text := range want {
-		cls := Config{Tone: variant}.PrimaryActionClasses()
+		cls := Config{Tone: variant}.primaryActionClasses()
 		if !strings.Contains(cls, text) || !strings.Contains(cls, "font-semibold") {
 			t.Fatalf("variant %q: want %q in %q", variant, text, cls)
 		}
@@ -293,7 +293,7 @@ func TestPrimaryActionClassesVariants(t *testing.T) {
 
 func TestListClassesDangerOnly(t *testing.T) {
 	for _, variant := range allVariants {
-		cls := Config{Tone: variant}.ListClasses()
+		cls := Config{Tone: variant}.listClasses()
 		if !strings.Contains(cls, "list-disc") {
 			t.Fatalf("variant %q: missing base list classes in %q", variant, cls)
 		}

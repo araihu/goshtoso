@@ -24,7 +24,7 @@ package toggle
 //	    Appearance: toggle.AppearanceContainer,
 //	})
 templ toggleTemplate(cfg Config) {
-	<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+	<label for={ cfg.ID } class={ cfg.labelClasses() }>
 		<input
 			id={ cfg.ID }
 			type="checkbox"
@@ -47,6 +47,6 @@ templ toggleTemplate(cfg Config) {
 		<span class="trancking-wide text-sm font-medium text-on-surface peer-checked:text-on-surface-strong peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-on-surface-dark dark:peer-checked:text-on-surface-dark-strong">
 			{ cfg.Label }
 		</span>
-		<div class={ cfg.ToggleClasses() } aria-hidden="true"></div>
+		<div class={ cfg.toggleClasses() } aria-hidden="true"></div>
 	</label>
 }

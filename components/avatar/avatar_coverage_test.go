@@ -112,27 +112,27 @@ func TestResolvedInitials(t *testing.T) {
 		{Config{Initials: "X", Name: "Ada"}, "X"}, // explicit beats name
 	}
 	for _, c := range cases {
-		if got := c.cfg.ResolvedInitials(); got != c.want {
-			t.Errorf("ResolvedInitials(%+v) = %q, want %q", c.cfg, got, c.want)
+		if got := c.cfg.resolvedInitials(); got != c.want {
+			t.Errorf("resolvedInitials(%+v) = %q, want %q", c.cfg, got, c.want)
 		}
 	}
 }
 
 func TestHasInitialsAndHasImage(t *testing.T) {
-	if !(Config{Initials: "JS"}).HasInitials() {
-		t.Error("HasInitials should be true when Initials set")
+	if !(Config{Initials: "JS"}).hasInitials() {
+		t.Error("hasInitials should be true when Initials set")
 	}
-	if (Config{Name: "John"}).HasInitials() {
-		t.Error("HasInitials should be false when only Name set (Initials empty)")
+	if (Config{Name: "John"}).hasInitials() {
+		t.Error("hasInitials should be false when only Name set (Initials empty)")
 	}
-	if !(Config{Src: "/a.png"}).HasImage() {
-		t.Error("HasImage should be true when Src set")
+	if !(Config{Src: "/a.png"}).hasImage() {
+		t.Error("hasImage should be true when Src set")
 	}
-	if !(Config{SrcExpr: "avatarSrc"}).HasImage() {
-		t.Error("HasImage should be true when SrcExpr set")
+	if !(Config{SrcExpr: "avatarSrc"}).hasImage() {
+		t.Error("hasImage should be true when SrcExpr set")
 	}
-	if (Config{}).HasImage() {
-		t.Error("HasImage should be false with no Src/SrcExpr")
+	if (Config{}).hasImage() {
+		t.Error("hasImage should be false with no Src/SrcExpr")
 	}
 }
 
@@ -147,8 +147,8 @@ func TestSizeClasses(t *testing.T) {
 		Size(""): "size-14 text-2xl", // default
 	}
 	for size, want := range cases {
-		if got := (Config{Size: size}).SizeClasses(); got != want {
-			t.Errorf("SizeClasses(%q) = %q, want %q", size, got, want)
+		if got := (Config{Size: size}).sizeClasses(); got != want {
+			t.Errorf("sizeClasses(%q) = %q, want %q", size, got, want)
 		}
 	}
 }
@@ -164,8 +164,8 @@ func TestStatusSizeClasses(t *testing.T) {
 		Size(""): "size-4",
 	}
 	for size, want := range cases {
-		if got := (Config{Size: size}).StatusSizeClasses(); got != want {
-			t.Errorf("StatusSizeClasses(%q) = %q, want %q", size, got, want)
+		if got := (Config{Size: size}).statusSizeClasses(); got != want {
+			t.Errorf("statusSizeClasses(%q) = %q, want %q", size, got, want)
 		}
 	}
 }
@@ -181,8 +181,8 @@ func TestSpinnerSizeClasses(t *testing.T) {
 		Size(""): "size-6",
 	}
 	for size, want := range cases {
-		if got := (Config{Size: size}).SpinnerSizeClasses(); got != want {
-			t.Errorf("SpinnerSizeClasses(%q) = %q, want %q", size, got, want)
+		if got := (Config{Size: size}).spinnerSizeClasses(); got != want {
+			t.Errorf("spinnerSizeClasses(%q) = %q, want %q", size, got, want)
 		}
 	}
 }
@@ -197,8 +197,8 @@ func TestStatusClasses(t *testing.T) {
 		Status(""):    "", // default branch
 	}
 	for status, want := range cases {
-		if got := (Config{Status: status}).StatusClasses(); got != want {
-			t.Errorf("StatusClasses(%q) = %q, want %q", status, got, want)
+		if got := (Config{Status: status}).statusClasses(); got != want {
+			t.Errorf("statusClasses(%q) = %q, want %q", status, got, want)
 		}
 	}
 }
@@ -244,32 +244,32 @@ func TestRadiusClasses(t *testing.T) {
 		RadiusDefault: "rounded-md", // empty hits default
 	}
 	for r, want := range cases {
-		if got := (Config{Radius: r}).RadiusClasses(); got != want {
-			t.Errorf("RadiusClasses(%q) = %q, want %q", r, got, want)
+		if got := (Config{Radius: r}).radiusClasses(); got != want {
+			t.Errorf("radiusClasses(%q) = %q, want %q", r, got, want)
 		}
 	}
 }
 
 func TestShapeClasses(t *testing.T) {
-	if got := (Config{Shape: ShapeCircle}).ShapeClasses(); got != "rounded-full" {
-		t.Errorf("circle ShapeClasses = %q, want rounded-full", got)
+	if got := (Config{Shape: ShapeCircle}).shapeClasses(); got != "rounded-full" {
+		t.Errorf("circle shapeClasses = %q, want rounded-full", got)
 	}
-	if got := (Config{Shape: ShapeSquare, Radius: RadiusSM}).ShapeClasses(); got != "rounded-sm" {
-		t.Errorf("square ShapeClasses = %q, want rounded-sm", got)
+	if got := (Config{Shape: ShapeSquare, Radius: RadiusSM}).shapeClasses(); got != "rounded-sm" {
+		t.Errorf("square shapeClasses = %q, want rounded-sm", got)
 	}
 	// Default shape (empty) falls through to circle.
-	if got := (Config{}).ShapeClasses(); got != "rounded-full" {
-		t.Errorf("default ShapeClasses = %q, want rounded-full", got)
+	if got := (Config{}).shapeClasses(); got != "rounded-full" {
+		t.Errorf("default shapeClasses = %q, want rounded-full", got)
 	}
 }
 
 func TestBorderClasses(t *testing.T) {
-	if got := (Config{Border: false}).BorderClasses(); got != "" {
-		t.Errorf("BorderClasses with Border=false = %q, want empty", got)
+	if got := (Config{Border: false}).borderClasses(); got != "" {
+		t.Errorf("borderClasses with Border=false = %q, want empty", got)
 	}
 	// Explicit color is used verbatim.
-	if got := (Config{Border: true, BorderColor: "border-pink"}).BorderClasses(); !strings.Contains(got, "border-pink") {
-		t.Errorf("BorderClasses should use explicit color, got %q", got)
+	if got := (Config{Border: true, BorderColor: "border-pink"}).borderClasses(); !strings.Contains(got, "border-pink") {
+		t.Errorf("borderClasses should use explicit color, got %q", got)
 	}
 	// Tone-derived default colors.
 	cases := map[Tone]string{
@@ -281,12 +281,12 @@ func TestBorderClasses(t *testing.T) {
 		TonePrimary: "border-primary",
 	}
 	for v, want := range cases {
-		got := (Config{Border: true, Tone: v}).BorderClasses()
+		got := (Config{Border: true, Tone: v}).borderClasses()
 		if !strings.Contains(got, want) {
-			t.Errorf("BorderClasses(variant=%q) = %q, want substring %q", v, got, want)
+			t.Errorf("borderClasses(variant=%q) = %q, want substring %q", v, got, want)
 		}
 		if !strings.Contains(got, "border-2") || !strings.Contains(got, "p-0.5") {
-			t.Errorf("BorderClasses(variant=%q) missing border-2/p-0.5: %q", v, got)
+			t.Errorf("borderClasses(variant=%q) missing border-2/p-0.5: %q", v, got)
 		}
 	}
 }
@@ -300,8 +300,8 @@ func TestRenderStatusIndicator(t *testing.T) {
 		Size:     SizeLG,
 	})
 	for _, want := range []string{
-		"bg-success",         // StatusClasses
-		"size-5",             // StatusSizeClasses for LG
+		"bg-success",         // statusClasses
+		"size-5",             // statusSizeClasses for LG
 		"bottom-0.5 end-0",   // position class
 		`aria-hidden="true"`, // status dot is decorative
 		"absolute rounded-full border-2",

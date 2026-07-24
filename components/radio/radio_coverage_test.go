@@ -29,7 +29,7 @@ func TestCoverageStandardRadio(t *testing.T) {
 	assert.Contains(t, html, `name="grp"`)
 	assert.Contains(t, html, `value="v"`)
 	assert.Contains(t, html, "Standard")
-	// ToneDefault variant -> primary classes wired through InputClasses.
+	// ToneDefault variant -> primary classes wired through inputClasses.
 	assert.Contains(t, html, "checked:border-primary")
 	assert.Contains(t, html, "size-4") // default SizeMD
 }
@@ -260,7 +260,7 @@ func TestCoverageRadioGroup(t *testing.T) {
 	assert.Contains(t, html, "Described")
 	assert.Contains(t, html, "more")
 	assert.Contains(t, html, "Badged")
-	// BadgeColor success -> BadgeClasses success palette.
+	// BadgeColor success -> badgeClasses success palette.
 	assert.Contains(t, html, "bg-success/10 text-success")
 }
 
@@ -275,7 +275,7 @@ func TestCoverageRadioGroupNoTitle(t *testing.T) {
 }
 
 // TestCoverageToneClasses asserts each Tone flows through the three
-// checked-color helpers via InputClasses.
+// checked-color helpers via inputClasses.
 func TestCoverageToneClasses(t *testing.T) {
 	cases := []struct {
 		variant Tone
@@ -290,7 +290,7 @@ func TestCoverageToneClasses(t *testing.T) {
 		{Tone("bogus"), "checked:border-primary"}, // default fallthrough
 	}
 	for _, tc := range cases {
-		cls := Config{Tone: tc.variant}.InputClasses()
+		cls := Config{Tone: tc.variant}.inputClasses()
 		assert.Contains(t, cls, tc.border, "variant %q border", tc.variant)
 	}
 }
@@ -305,7 +305,7 @@ func TestCoverageSizeClasses(t *testing.T) {
 		Size("bogus"): "size-4", // default
 	}
 	for size, want := range cases {
-		assert.Contains(t, Config{Size: size}.InputClasses(), want, "size %q", size)
+		assert.Contains(t, Config{Size: size}.inputClasses(), want, "size %q", size)
 	}
 }
 
@@ -322,11 +322,11 @@ func TestCoverageBadgeClasses(t *testing.T) {
 		"neutral":   "bg-on-surface/10",
 	}
 	for color, want := range cases {
-		got := BadgeClasses(color)
+		got := badgeClasses(color)
 		assert.Contains(t, got, want, "color %q", color)
 		assert.True(t, strings.HasPrefix(got, "w-fit rounded-radius"), "color %q base prefix", color)
 	}
-	assert.Equal(t, "", BadgeClasses("unknown"), "unknown color yields empty string")
+	assert.Equal(t, "", badgeClasses("unknown"), "unknown color yields empty string")
 }
 
 // TestCoverageSegmentedLabelClasses covers segmentedCheckedClasses for every
@@ -345,32 +345,32 @@ func TestCoverageSegmentedLabelClasses(t *testing.T) {
 		{Tone("bogus"), "has-checked:bg-primary"},
 	}
 	for _, tc := range cases {
-		cls := Config{Tone: tc.variant}.SegmentedLabelClasses()
+		cls := Config{Tone: tc.variant}.segmentedLabelClasses()
 		assert.Contains(t, cls, tc.want, "variant %q", tc.variant)
 		assert.Contains(t, cls, "relative")
 		assert.Contains(t, cls, "has-disabled:cursor-not-allowed")
 	}
 }
 
-// TestCoveragePredicates covers HasAlpine / HasHTMX / HasHxVerb and
-// EffectiveTrigger including the nil receiver paths.
+// TestCoveragePredicates covers hasAlpine / hasHTMX / hasHXVerb and
+// effectiveTrigger including the nil receiver paths.
 func TestCoveragePredicates(t *testing.T) {
-	assert.False(t, Config{}.HasAlpine())
-	assert.False(t, Config{}.HasHTMX())
-	assert.True(t, Config{Alpine: &AlpineConfig{}}.HasAlpine())
-	assert.True(t, Config{HTMX: &HTMXConfig{}}.HasHTMX())
+	assert.False(t, Config{}.hasAlpine())
+	assert.False(t, Config{}.hasHTMX())
+	assert.True(t, Config{Alpine: &AlpineConfig{}}.hasAlpine())
+	assert.True(t, Config{HTMX: &HTMXConfig{}}.hasHTMX())
 
 	var nilHTMX *HTMXConfig
-	assert.False(t, nilHTMX.HasHxVerb(), "nil HTMXConfig has no verb")
-	assert.Equal(t, "", nilHTMX.EffectiveTrigger(), "nil HTMXConfig has no trigger")
-	assert.False(t, (&HTMXConfig{}).HasHxVerb())
-	assert.True(t, (&HTMXConfig{Get: "/x"}).HasHxVerb())
-	assert.True(t, (&HTMXConfig{Patch: "/x"}).HasHxVerb())
+	assert.False(t, nilHTMX.hasHXVerb(), "nil HTMXConfig has no verb")
+	assert.Equal(t, "", nilHTMX.effectiveTrigger(), "nil HTMXConfig has no trigger")
+	assert.False(t, (&HTMXConfig{}).hasHXVerb())
+	assert.True(t, (&HTMXConfig{Get: "/x"}).hasHXVerb())
+	assert.True(t, (&HTMXConfig{Patch: "/x"}).hasHXVerb())
 
-	// EffectiveTrigger precedence: explicit > defaulted > empty.
-	assert.Equal(t, "click", (&HTMXConfig{Post: "/p", Trigger: "click"}).EffectiveTrigger())
-	assert.Equal(t, "change", (&HTMXConfig{Post: "/p"}).EffectiveTrigger())
-	assert.Equal(t, "", (&HTMXConfig{}).EffectiveTrigger())
+	// effectiveTrigger precedence: explicit > defaulted > empty.
+	assert.Equal(t, "click", (&HTMXConfig{Post: "/p", Trigger: "click"}).effectiveTrigger())
+	assert.Equal(t, "change", (&HTMXConfig{Post: "/p"}).effectiveTrigger())
+	assert.Equal(t, "", (&HTMXConfig{}).effectiveTrigger())
 }
 
 // TestCoverageCanceledContextPropagates covers the generated template

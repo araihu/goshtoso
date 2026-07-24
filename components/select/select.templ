@@ -6,9 +6,9 @@ import "fmt"
 // the combobox component styling. Supports validation states,
 // disabled/readonly, Alpine.js binding, and hidden input for form submission.
 templ selectTemplate(cfg Config) {
-	<div class={ cfg.ContainerClasses() }>
+	<div class={ cfg.containerClasses() }>
 		if cfg.Label != "" {
-			<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+			<label for={ cfg.ID } class={ cfg.labelClasses() }>
 				if cfg.State == StateError {
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor" class="pointer-events-none w-4 h-4">
 						<path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path>
@@ -47,11 +47,11 @@ templ selectTemplate(cfg Config) {
 				} else {
 					x-bind:aria-label="selectedOption ? selectedOption.label : placeholder"
 				}
-				disabled?={ cfg.IsEffectivelyDisabled() }
+				disabled?={ cfg.isEffectivelyDisabled() }
 				if cfg.Alpine != nil && cfg.Alpine.BindDisabled != "" {
 					x-bind:disabled={ cfg.Alpine.BindDisabled }
 				}
-				class={ cfg.TriggerClasses() }
+				class={ cfg.triggerClasses() }
 			>
 				if cfg.Shell {
 					if cfg.TriggerLeading != nil {
@@ -224,7 +224,7 @@ func selectedValueJS(options []Option) string {
 func selectData(cfg Config) string {
 	optsJS := optionsToJS(cfg.Options)
 	selectedJS := selectedValueJS(cfg.Options)
-	placeholder := cfg.GetPlaceholder()
+	placeholder := cfg.getPlaceholder()
 
 	alpineModelSync := ""
 	if cfg.Alpine != nil && cfg.Alpine.Model != "" {

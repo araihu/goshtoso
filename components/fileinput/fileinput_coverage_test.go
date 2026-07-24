@@ -145,31 +145,31 @@ func TestCoverageNoLabelNoHelper(t *testing.T) {
 }
 
 func TestCoverageIsUpload(t *testing.T) {
-	if (Config{}).IsUpload() {
+	if (Config{}).isUpload() {
 		t.Fatal("default config should not be upload")
 	}
-	if !(Config{Appearance: AppearanceUpload}).IsUpload() {
-		t.Fatal("upload variant should report IsUpload")
+	if !(Config{Appearance: AppearanceUpload}).isUpload() {
+		t.Fatal("upload variant should report isUpload")
 	}
 }
 
 func TestCoverageContainerClasses(t *testing.T) {
-	base := Config{}.ContainerClasses()
+	base := Config{}.containerClasses()
 	if !strings.Contains(base, "flex w-full") {
 		t.Fatalf("unexpected container base: %q", base)
 	}
-	withRoot := Config{RootClass: "mt-4"}.ContainerClasses()
+	withRoot := Config{RootClass: "mt-4"}.containerClasses()
 	if !strings.HasSuffix(withRoot, " mt-4") {
 		t.Fatalf("RootClass not appended to container: %q", withRoot)
 	}
 }
 
 func TestCoverageUploadContainerClasses(t *testing.T) {
-	base := Config{}.UploadContainerClasses()
+	base := Config{}.uploadContainerClasses()
 	if !strings.Contains(base, "text-left") {
 		t.Fatalf("unexpected upload container base: %q", base)
 	}
-	withRoot := Config{RootClass: "gap-3"}.UploadContainerClasses()
+	withRoot := Config{RootClass: "gap-3"}.uploadContainerClasses()
 	if !strings.HasSuffix(withRoot, " gap-3") {
 		t.Fatalf("RootClass not appended to upload container: %q", withRoot)
 	}
@@ -178,10 +178,10 @@ func TestCoverageUploadContainerClasses(t *testing.T) {
 func TestCoverageClassHelpers(t *testing.T) {
 	cfg := Config{}
 	checks := map[string]string{
-		"LabelClasses":          cfg.LabelClasses(),
-		"BrowseLabelClasses":    cfg.BrowseLabelClasses(),
-		"UploadFileNameClasses": cfg.UploadFileNameClasses(),
-		"HelperTextClasses":     cfg.HelperTextClasses(),
+		"labelClasses":          cfg.labelClasses(),
+		"browseLabelClasses":    cfg.browseLabelClasses(),
+		"uploadFileNameClasses": cfg.uploadFileNameClasses(),
+		"helperTextClasses":     cfg.helperTextClasses(),
 	}
 	for name, got := range checks {
 		if strings.TrimSpace(got) == "" {
@@ -189,24 +189,24 @@ func TestCoverageClassHelpers(t *testing.T) {
 		}
 	}
 
-	if !strings.Contains(cfg.DropZoneClasses(), "border-dashed") {
-		t.Fatal("enabled DropZoneClasses missing border-dashed")
+	if !strings.Contains(cfg.dropZoneClasses(), "border-dashed") {
+		t.Fatal("enabled dropZoneClasses missing border-dashed")
 	}
-	if !strings.Contains((Config{Disabled: true}).DropZoneClasses(), "opacity-50") {
-		t.Fatal("disabled DropZoneClasses missing opacity-50")
-	}
-
-	if !strings.Contains(cfg.UploadControlClasses(), "cursor-pointer") {
-		t.Fatal("enabled UploadControlClasses missing cursor-pointer")
-	}
-	if !strings.Contains((Config{Disabled: true}).UploadControlClasses(), "cursor-not-allowed") {
-		t.Fatal("disabled UploadControlClasses missing cursor-not-allowed")
+	if !strings.Contains((Config{Disabled: true}).dropZoneClasses(), "opacity-50") {
+		t.Fatal("disabled dropZoneClasses missing opacity-50")
 	}
 
-	if strings.Contains(cfg.UploadButtonClasses(), "cursor-not-allowed") {
-		t.Fatal("enabled UploadButtonClasses should not be cursor-not-allowed")
+	if !strings.Contains(cfg.uploadControlClasses(), "cursor-pointer") {
+		t.Fatal("enabled uploadControlClasses missing cursor-pointer")
 	}
-	if !strings.Contains((Config{Disabled: true}).UploadButtonClasses(), "cursor-not-allowed") {
-		t.Fatal("disabled UploadButtonClasses missing cursor-not-allowed")
+	if !strings.Contains((Config{Disabled: true}).uploadControlClasses(), "cursor-not-allowed") {
+		t.Fatal("disabled uploadControlClasses missing cursor-not-allowed")
+	}
+
+	if strings.Contains(cfg.uploadButtonClasses(), "cursor-not-allowed") {
+		t.Fatal("enabled uploadButtonClasses should not be cursor-not-allowed")
+	}
+	if !strings.Contains((Config{Disabled: true}).uploadButtonClasses(), "cursor-not-allowed") {
+		t.Fatal("disabled uploadButtonClasses missing cursor-not-allowed")
 	}
 }

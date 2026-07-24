@@ -21,21 +21,21 @@ func render(t *testing.T, c templ.Component) string {
 
 func TestCoverageConfigHelpers(t *testing.T) {
 	sent := Config{Side: Sent, RootClass: "extra-row"}
-	assert.True(t, sent.IsMine())
-	assert.Equal(t, "true", sent.DataMine())
-	assert.Contains(t, sent.RowClasses(), "mt-4")
-	assert.Contains(t, sent.RowClasses(), "extra-row")
-	assert.Contains(t, sent.BubbleClasses(), "group-data-[mine=true]:bg-primary")
+	assert.True(t, sent.isMine())
+	assert.Equal(t, "true", sent.dataMine())
+	assert.Contains(t, sent.rowClasses(), "mt-4")
+	assert.Contains(t, sent.rowClasses(), "extra-row")
+	assert.Contains(t, sent.bubbleClasses(), "group-data-[mine=true]:bg-primary")
 
 	received := Config{Side: Received, Grouped: true}
-	assert.False(t, received.IsMine())
-	assert.Equal(t, "false", received.DataMine())
-	assert.Contains(t, received.RowClasses(), "mt-0.5")
+	assert.False(t, received.isMine())
+	assert.Equal(t, "false", received.dataMine())
+	assert.Contains(t, received.rowClasses(), "mt-0.5")
 
-	assert.True(t, Config{ShowAvatar: true}.HasAvatar())
-	assert.False(t, Config{ShowAvatar: true, Grouped: true}.HasAvatar())
-	assert.True(t, Config{SenderName: "Ada"}.HasHeader())
-	assert.False(t, Config{SenderName: "Ada", Grouped: true}.HasHeader())
+	assert.True(t, Config{ShowAvatar: true}.hasAvatar())
+	assert.False(t, Config{ShowAvatar: true, Grouped: true}.hasAvatar())
+	assert.True(t, Config{SenderName: "Ada"}.hasHeader())
+	assert.False(t, Config{SenderName: "Ada", Grouped: true}.hasHeader())
 }
 
 func TestCoverageChatBubbleRendersAutoSenderRootAttrsAndEscapedMessage(t *testing.T) {

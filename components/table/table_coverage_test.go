@@ -52,67 +52,45 @@ func TestBadgeCellClasses_AllColors(t *testing.T) {
 		"":          "border border-outline",
 	}
 	for color, want := range cases {
-		got := BadgeCellClasses(color)
+		got := badgeCellClasses(color)
 		if !strings.Contains(got, "inline-flex") {
-			t.Fatalf("BadgeCellClasses(%q) missing base; got %q", color, got)
+			t.Fatalf("badgeCellClasses(%q) missing base; got %q", color, got)
 		}
 		if !strings.Contains(got, want) {
-			t.Fatalf("BadgeCellClasses(%q) = %q; want substring %q", color, got, want)
-		}
-	}
-}
-
-func TestStatusBadgeClasses_Branches(t *testing.T) {
-	cases := map[string]string{
-		"active":   "bg-success text-on-success",
-		"success":  "bg-success text-on-success",
-		"canceled": "bg-danger text-on-danger",
-		"danger":   "bg-danger text-on-danger",
-		"pending":  "", // default: base only, no color
-	}
-	for status, want := range cases {
-		got := StatusBadgeClasses(status)
-		if !strings.Contains(got, "inline-flex") {
-			t.Fatalf("StatusBadgeClasses(%q) missing base; got %q", status, got)
-		}
-		if want != "" && !strings.Contains(got, want) {
-			t.Fatalf("StatusBadgeClasses(%q) = %q; want %q", status, got, want)
-		}
-		if want == "" && (strings.Contains(got, "bg-success") || strings.Contains(got, "bg-danger")) {
-			t.Fatalf("StatusBadgeClasses(%q) leaked a color class: %q", status, got)
+			t.Fatalf("badgeCellClasses(%q) = %q; want substring %q", color, got, want)
 		}
 	}
 }
 
 func TestContainerClasses_RootClassAppended(t *testing.T) {
-	base := Config{}.ContainerClasses()
+	base := Config{}.containerClasses()
 	mustContainAll(t, base, "overflow-x-auto", "overflow-y-clip", "border-outline")
-	withRoot := Config{RootClass: "shadow-lg"}.ContainerClasses()
+	withRoot := Config{RootClass: "shadow-lg"}.containerClasses()
 	mustContainAll(t, withRoot, "overflow-x-auto", "shadow-lg")
 }
 
 func TestColCount_Combinations(t *testing.T) {
 	cols := []Column{{Key: "a"}, {Key: "b"}}
-	if n := (Config{Columns: cols}).ColCount(); n != 2 {
-		t.Fatalf("plain ColCount = %d; want 2", n)
+	if n := (Config{Columns: cols}).colCount(); n != 2 {
+		t.Fatalf("plain colCount = %d; want 2", n)
 	}
-	if n := (Config{Columns: cols, ShowCheckbox: true}).ColCount(); n != 3 {
-		t.Fatalf("checkbox ColCount = %d; want 3", n)
+	if n := (Config{Columns: cols, ShowCheckbox: true}).colCount(); n != 3 {
+		t.Fatalf("checkbox colCount = %d; want 3", n)
 	}
 	withActions := Config{
 		Columns: cols,
 		Rows:    []Row{{ID: "1", Actions: templ.Raw("x")}},
 	}
-	if n := withActions.ColCount(); n != 3 {
-		t.Fatalf("actions ColCount = %d; want 3", n)
+	if n := withActions.colCount(); n != 3 {
+		t.Fatalf("actions colCount = %d; want 3", n)
 	}
 	withExpand := Config{
 		Columns:      cols,
 		ShowCheckbox: true,
 		Rows:         []Row{{ID: "1", Expandable: true}},
 	}
-	if n := withExpand.ColCount(); n != 4 {
-		t.Fatalf("checkbox+expand ColCount = %d; want 4", n)
+	if n := withExpand.colCount(); n != 4 {
+		t.Fatalf("checkbox+expand colCount = %d; want 4", n)
 	}
 }
 
@@ -137,73 +115,73 @@ func TestNextSortDir_Cycle(t *testing.T) {
 
 func TestPaginationPages(t *testing.T) {
 	var nilP *PaginationConfig
-	if got := nilP.PaginationPages(); got != nil {
+	if got := nilP.paginationPages(); got != nil {
 		t.Fatalf("nil pagination pages = %v; want nil", got)
 	}
-	if got := (&PaginationConfig{TotalPages: 0}).PaginationPages(); got != nil {
+	if got := (&PaginationConfig{TotalPages: 0}).paginationPages(); got != nil {
 		t.Fatalf("zero total pages = %v; want nil", got)
 	}
-	got := (&PaginationConfig{TotalPages: 3}).PaginationPages()
+	got := (&PaginationConfig{TotalPages: 3}).paginationPages()
 	if len(got) != 3 || got[0] != 1 || got[2] != 3 {
-		t.Fatalf("PaginationPages(3) = %v; want [1 2 3]", got)
+		t.Fatalf("paginationPages(3) = %v; want [1 2 3]", got)
 	}
 }
 
 func TestPaginationConfigPointerHelpers(t *testing.T) {
 	var nilP *PaginationConfig
-	if nilP.NextPage() != 2 {
-		t.Fatalf("nil NextPage = %d; want 2", nilP.NextPage())
+	if nilP.nextPage() != 2 {
+		t.Fatalf("nil nextPage = %d; want 2", nilP.nextPage())
 	}
-	if nilP.GetContainerHeight() != "400px" {
-		t.Fatalf("nil GetContainerHeight = %q; want 400px", nilP.GetContainerHeight())
+	if nilP.getContainerHeight() != "400px" {
+		t.Fatalf("nil getContainerHeight = %q; want 400px", nilP.getContainerHeight())
 	}
-	if nilP.IsInfiniteScroll() || nilP.IsContained() {
+	if nilP.isInfiniteScroll() || nilP.isContained() {
 		t.Fatal("nil pagination should not be infinite/contained")
 	}
 	p := &PaginationConfig{Mode: PaginationInfiniteScroll, CurrentPage: 4, ContainerHeight: "60vh"}
-	if p.NextPage() != 5 {
-		t.Fatalf("NextPage = %d; want 5", p.NextPage())
+	if p.nextPage() != 5 {
+		t.Fatalf("nextPage = %d; want 5", p.nextPage())
 	}
-	if p.GetContainerHeight() != "60vh" {
-		t.Fatalf("GetContainerHeight = %q; want 60vh", p.GetContainerHeight())
+	if p.getContainerHeight() != "60vh" {
+		t.Fatalf("getContainerHeight = %q; want 60vh", p.getContainerHeight())
 	}
-	if !p.IsInfiniteScroll() || !p.IsContained() {
+	if !p.isInfiniteScroll() || !p.isContained() {
 		t.Fatal("expected infinite + contained")
 	}
 	// Infinite but no container height -> not contained (Pattern B).
 	pb := &PaginationConfig{Mode: PaginationInfiniteScroll}
-	if pb.IsContained() {
+	if pb.isContained() {
 		t.Fatal("infinite without height should not be contained")
 	}
 }
 
 func TestRowClickableRoleAndActionable(t *testing.T) {
-	if r := (Row{Link: "/x"}); r.ClickableRole() != "link" || !r.IsActionable() {
+	if r := (Row{Link: "/x"}); r.clickableRole() != "link" || !r.isActionable() {
 		t.Fatal("link row should be link/actionable")
 	}
-	if r := (Row{OnClick: "go()"}); r.ClickableRole() != "button" || !r.IsActionable() {
+	if r := (Row{OnClick: "go()"}); r.clickableRole() != "button" || !r.isActionable() {
 		t.Fatal("onclick row should be button/actionable")
 	}
 	htmxRow := Row{HTMX: &RowHTMXConfig{Get: "/x"}}
-	if htmxRow.ClickableRole() != "button" || !htmxRow.HasHTMXAction() {
+	if htmxRow.clickableRole() != "button" || !htmxRow.hasHTMXAction() {
 		t.Fatal("htmx-get row should be button with htmx action")
 	}
 	postRow := Row{HTMX: &RowHTMXConfig{Post: "/x"}}
-	if !postRow.HasHTMXAction() {
+	if !postRow.hasHTMXAction() {
 		t.Fatal("htmx-post row should have htmx action")
 	}
-	// Actions-only / expandable-only keep default role (nested controls own focus).
-	if r := (Row{Actions: templ.Raw("a")}); r.ClickableRole() != "" || !r.IsActionable() {
+	// actions-only / expandable-only keep default role (nested controls own focus).
+	if r := (Row{Actions: templ.Raw("a")}); r.clickableRole() != "" || !r.isActionable() {
 		t.Fatal("actions-only row: empty role but actionable")
 	}
-	if r := (Row{Expandable: true}); r.ClickableRole() != "" || !r.IsActionable() {
+	if r := (Row{Expandable: true}); r.clickableRole() != "" || !r.isActionable() {
 		t.Fatal("expandable-only row: empty role but actionable")
 	}
-	if r := (Row{}); r.ClickableRole() != "" || r.IsActionable() {
+	if r := (Row{}); r.clickableRole() != "" || r.isActionable() {
 		t.Fatal("plain row: empty role, not actionable")
 	}
 	emptyHTMX := Row{HTMX: &RowHTMXConfig{}}
-	if emptyHTMX.HasHTMXAction() {
+	if emptyHTMX.hasHTMXAction() {
 		t.Fatal("empty HTMX config should not count as action")
 	}
 }
@@ -217,95 +195,94 @@ func TestConfigPredicates(t *testing.T) {
 			{ID: "3", Actions: templ.Raw("x")},
 		},
 	}
-	if !cfg.HasLinkedRows() {
-		t.Fatal("want HasLinkedRows")
+	if !cfg.hasLinkedRows() {
+		t.Fatal("want hasLinkedRows")
 	}
-	if !cfg.HasActionableRows() {
-		t.Fatal("want HasActionableRows")
+	if !cfg.hasActionableRows() {
+		t.Fatal("want hasActionableRows")
 	}
-	if !cfg.HasExpandableRows() {
-		t.Fatal("want HasExpandableRows")
+	if !cfg.hasExpandableRows() {
+		t.Fatal("want hasExpandableRows")
 	}
-	if !cfg.HasActions() {
-		t.Fatal("want HasActions")
+	if !cfg.hasActions() {
+		t.Fatal("want hasActions")
 	}
-	if !cfg.HasSortableColumns() {
-		t.Fatal("want HasSortableColumns")
+	if !cfg.hasSortableColumns() {
+		t.Fatal("want hasSortableColumns")
 	}
-	if cfg.HasFilters() {
+	if cfg.hasFilters() {
 		t.Fatal("no filters configured")
 	}
 	if !cfg.IsSortedBy("") && cfg.IsSortedBy("a") {
 		t.Fatal("IsSortedBy false for unsorted column a")
 	}
 	empty := Config{}
-	if empty.HasLinkedRows() || empty.HasActionableRows() || empty.HasExpandableRows() ||
-		empty.HasActions() || empty.HasSortableColumns() {
+	if empty.hasLinkedRows() || empty.hasActionableRows() || empty.hasExpandableRows() ||
+		empty.hasActions() || empty.hasSortableColumns() {
 		t.Fatal("empty config should report no features")
 	}
 }
 
 func TestIDHelpersAndDefaults(t *testing.T) {
 	cfg := Config{}
-	if cfg.GetID() != "table" {
-		t.Fatalf("default id = %q", cfg.GetID())
+	if cfg.getID() != "table" {
+		t.Fatalf("default id = %q", cfg.getID())
 	}
-	if cfg.TbodyID() != "table-tbody" || cfg.TheadID() != "table-thead" ||
-		cfg.PaginationID() != "table-pagination" || cfg.FilterBarID() != "table-filters" {
+	if cfg.tbodyID() != "table-tbody" || cfg.theadID() != "table-thead" ||
+		cfg.paginationID() != "table-pagination" || cfg.filterBarID() != "table-filters" {
 		t.Fatal("derived ids wrong for default")
 	}
 	named := Config{ID: "users"}
-	if named.TbodyID() != "users-tbody" {
-		t.Fatalf("named tbody = %q", named.TbodyID())
+	if named.tbodyID() != "users-tbody" {
+		t.Fatalf("named tbody = %q", named.tbodyID())
 	}
-	if cfg.LazyLoadTrigger() != "load" {
-		t.Fatalf("default lazy trigger = %q", cfg.LazyLoadTrigger())
+	if cfg.lazyLoadTrigger() != "load" {
+		t.Fatalf("default lazy trigger = %q", cfg.lazyLoadTrigger())
 	}
-	if (Config{LazyTrigger: "click from:#go"}).LazyLoadTrigger() != "click from:#go" {
+	if (Config{LazyTrigger: "click from:#go"}).lazyLoadTrigger() != "click from:#go" {
 		t.Fatal("custom lazy trigger lost")
 	}
 }
 
 func TestHTMXValueAccessors(t *testing.T) {
-	if (Config{}).HTMXEndpointValue() != "" || (Config{}).HTMXTargetValue() != "" {
+	if (Config{}).htmxEndpointValue() != "" || (Config{}).htmxTargetValue() != "" {
 		t.Fatal("nil HTMX should yield empty endpoint/target")
 	}
 	cfg := Config{HTMX: &HTMXConfig{Endpoint: "/api", Target: "#t"}}
-	if cfg.HTMXEndpointValue() != "/api" || cfg.HTMXTargetValue() != "#t" {
+	if cfg.htmxEndpointValue() != "/api" || cfg.htmxTargetValue() != "#t" {
 		t.Fatal("HTMX accessors wrong")
 	}
 }
 
 func TestColumnAlignmentClasses(t *testing.T) {
-	left := ColumnCellClasses(Column{Width: "w-32"})
+	left := columnCellClasses(Column{Width: "w-32"})
 	mustContainAll(t, left, "p-4", "w-32")
 	mustNotContain(t, left, "text-center", "text-right")
-	center := ColumnCellClasses(Column{Align: "center"})
+	center := columnCellClasses(Column{Align: "center"})
 	mustContainAll(t, center, "text-center")
-	right := ColumnHeaderClasses(Column{Align: "right", Width: "w-10"})
+	right := columnHeaderClasses(Column{Align: "right", Width: "w-10"})
 	mustContainAll(t, right, "text-right", "w-10")
 }
 
 func TestRowAndSortableHeaderClasses(t *testing.T) {
-	if (Config{}).RowClasses() != "" {
+	if (Config{}).rowClasses() != "" {
 		t.Fatal("default variant rows should have no extra class")
 	}
-	striped := Config{Appearance: AppearanceStriped}.RowClasses()
+	striped := Config{Appearance: AppearanceStriped}.rowClasses()
 	mustContainAll(t, striped, "odd:bg-surface-alt")
 
 	cfg := Config{SortBy: "name", SortDir: SortAsc}
-	sorted := cfg.SortableHeaderClasses("name")
+	sorted := cfg.sortableHeaderClasses("name")
 	mustContainAll(t, sorted, "cursor-pointer", "text-primary")
-	unsorted := cfg.SortableHeaderClasses("other")
+	unsorted := cfg.sortableHeaderClasses("other")
 	mustNotContain(t, unsorted, "text-primary dark:text-primary-dark")
 
-	mustContainAll(t, (Config{}).CheckboxClasses(), "appearance-none")
-	mustContainAll(t, (Config{}).TableClasses(), "w-full")
-	mustContainAll(t, (Config{}).TheadClasses(), "border-b")
-	mustContainAll(t, (Config{}).TbodyClasses(), "divide-y")
-	mustContainAll(t, (Config{}).CellClasses(), "p-4")
-	mustContainAll(t, (Config{}).HeaderCellClasses(), "p-4")
-	mustContainAll(t, ActionButtonClasses(), "text-primary")
+	mustContainAll(t, (Config{}).checkboxClasses(), "appearance-none")
+	mustContainAll(t, (Config{}).tableClasses(), "w-full")
+	mustContainAll(t, (Config{}).theadClasses(), "border-b")
+	mustContainAll(t, (Config{}).tbodyClasses(), "divide-y")
+	mustContainAll(t, (Config{}).cellClasses(), "p-4")
+	mustContainAll(t, (Config{}).headerCellClasses(), "p-4")
 }
 
 func TestHyphenToCamel(t *testing.T) {
@@ -395,21 +372,21 @@ func TestRenderSortableHeaderIcons(t *testing.T) {
 		Rows:    []Row{{ID: "1", Cells: map[string]Cell{"name": {Text: "A"}}}},
 	}
 	// Unsorted -> dual arrow (opacity-40), sortable header has hx-get.
-	unsorted := renderT(t, TableHead(base))
+	unsorted := renderT(t, tableHead(base))
 	mustContainAll(t, unsorted, "hx-get=", "opacity-40", "hx-target=\"#table-tbody\"")
 
 	asc := base
 	asc.SortBy, asc.SortDir = "name", SortAsc
-	mustContainAll(t, renderT(t, TableHead(asc)), "text-primary")
+	mustContainAll(t, renderT(t, tableHead(asc)), "text-primary")
 
 	desc := base
 	desc.SortBy, desc.SortDir = "name", SortDesc
-	descHTML := renderT(t, TableHead(desc))
+	descHTML := renderT(t, tableHead(desc))
 	mustContainAll(t, descHTML, "M10 3a.75.75 0 01.75.75") // desc arrow path
 
 	// Sortable column WITHOUT an endpoint falls back to a plain header.
 	noEndpoint := Config{Columns: []Column{{Key: "name", Label: "Name", Sortable: true}}}
-	plain := renderT(t, TableHead(noEndpoint))
+	plain := renderT(t, tableHead(noEndpoint))
 	mustNotContain(t, plain, "hx-get=")
 }
 
@@ -522,7 +499,7 @@ func TestRenderInfiniteScrollSentinel(t *testing.T) {
 			HasMore:     true,
 		},
 	}
-	body := renderT(t, TableBody(cfg))
+	body := renderT(t, tableBody(cfg))
 	mustContainAll(t, body,
 		`id="table-sentinel"`,
 		"data-hx-get=",
@@ -542,7 +519,7 @@ func TestRenderLegacyInfiniteScrollSentinel(t *testing.T) {
 		Rows:           []Row{{ID: "1", Cells: map[string]Cell{"name": {Text: "A"}}}},
 		InfiniteScroll: &InfiniteScrollConfig{NextPage: 2, HasMore: true},
 	}
-	body := renderT(t, TableBody(cfg))
+	body := renderT(t, tableBody(cfg))
 	mustContainAll(t, body, `id="table-sentinel"`, "page=2")
 }
 
@@ -566,7 +543,7 @@ func TestRenderPaginationControls(t *testing.T) {
 		Rows:       []Row{{ID: "1", Cells: map[string]Cell{"name": {Text: "A"}}}},
 		Pagination: &PaginationConfig{CurrentPage: 1, TotalPages: 1, PerPage: 3},
 	}
-	mustNotContain(t, renderT(t, TablePagination(single)), "table-pagination")
+	mustNotContain(t, renderT(t, tablePagination(single)), "table-pagination")
 }
 
 func TestRenderContainedInfiniteScrollVariants(t *testing.T) {
@@ -669,12 +646,6 @@ func TestRenderInlineFilterVariant(t *testing.T) {
 	mustContainAll(t, html, `id="inline-filters"`, "flex flex-wrap items-end gap-3", `type="search"`)
 	// Inline variant drops the collapsible toggle.
 	mustNotContain(t, html, `@click="filtersExpanded`)
-}
-
-func TestRenderStandaloneActionButtonAndStatusBadge(t *testing.T) {
-	mustContainAll(t, renderT(t, ActionButton("Edit")), "<button", "Edit", "text-primary")
-	mustContainAll(t, renderT(t, StatusBadge("Active", "active")), "Active", "bg-success")
-	mustContainAll(t, renderT(t, StatusBadge("Pending", "pending")), "Pending", "inline-flex")
 }
 
 func TestRenderImageCell(t *testing.T) {

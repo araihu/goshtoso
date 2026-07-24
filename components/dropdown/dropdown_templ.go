@@ -49,7 +49,7 @@ func dropdownTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		switch cfg.GetTriggerMode() {
+		switch cfg.getTriggerMode() {
 		case TriggerHover:
 			templ_7745c5c3_Err = hoverDropdown(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -287,7 +287,7 @@ func triggerButton(cfg Config) templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var9 = []any{cfg.ButtonClasses()}
+		var templ_7745c5c3_Var9 = []any{cfg.buttonClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -309,7 +309,7 @@ func triggerButton(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.UseIconOnlyTrigger() {
+		if cfg.useIconOnlyTrigger() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " aria-label=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -332,7 +332,7 @@ func triggerButton(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.UseIconOnlyTrigger() {
+		if cfg.useIconOnlyTrigger() {
 			templ_7745c5c3_Err = cfg.TriggerIcon.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -382,7 +382,7 @@ func hoverTriggerButton(cfg Config) templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var14 = []any{cfg.ButtonClasses()}
+		var templ_7745c5c3_Var14 = []any{cfg.buttonClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -404,7 +404,7 @@ func hoverTriggerButton(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.UseIconOnlyTrigger() {
+		if cfg.useIconOnlyTrigger() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " aria-label=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -427,7 +427,7 @@ func hoverTriggerButton(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.UseIconOnlyTrigger() {
+		if cfg.useIconOnlyTrigger() {
 			templ_7745c5c3_Err = cfg.TriggerIcon.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -477,7 +477,7 @@ func contextTriggerButton(cfg Config) templ.Component {
 			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var19 = []any{cfg.ButtonClasses()}
+		var templ_7745c5c3_Var19 = []any{cfg.buttonClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var19...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -562,7 +562,7 @@ func dropdownMenu(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.HasDividers() {
+		if cfg.hasDividers() {
 			for _, section := range cfg.Sections {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div class=\"flex flex-col py-1.5\">")
 				if templ_7745c5c3_Err != nil {
@@ -688,7 +688,7 @@ func menuItem(cfg Config, item Item) templ.Component {
 			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if item.IsButton() {
+		if item.isButton() {
 			templ_7745c5c3_Err = menuItemButton(cfg, item).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -984,7 +984,7 @@ func contextMenuItem(cfg Config, item Item) templ.Component {
 			templ_7745c5c3_Var42 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if item.IsButton() {
+		if item.isButton() {
 			templ_7745c5c3_Err = contextMenuItemButton(cfg, item).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1314,8 +1314,8 @@ func contextMenuItemButton(cfg Config, item Item) templ.Component {
 
 // menuClasses returns the appropriate menu classes based on config
 func menuClasses(cfg Config) string {
-	base := cfg.MenuClasses()
-	if cfg.HasDividers() {
+	base := cfg.menuClasses()
+	if cfg.hasDividers() {
 		return base + " divide-y divide-outline dark:divide-outline-dark"
 	}
 	return base
@@ -1324,13 +1324,13 @@ func menuClasses(cfg Config) string {
 // itemClassList composes the class string for a menu item, layering the
 // base item classes with danger and disabled variants when applicable.
 func itemClassList(cfg Config, item Item) string {
-	hasIcon := item.Icon != nil || cfg.HasIcons()
-	out := cfg.ItemClasses(hasIcon)
+	hasIcon := item.Icon != nil || cfg.hasIcons()
+	out := cfg.itemClasses(hasIcon)
 	if item.Danger {
-		out += " " + cfg.DangerClasses()
+		out += " " + cfg.dangerClasses()
 	}
 	if item.Disabled {
-		out += " " + cfg.DisabledClasses()
+		out += " " + cfg.disabledClasses()
 	}
 	return out
 }

@@ -16,7 +16,7 @@ func TestNormalizedColumnsDropsEmptyAndDuplicateKeys(t *testing.T) {
 		},
 	}
 
-	cols := cfg.NormalizedColumns()
+	cols := cfg.normalizedColumns()
 
 	if len(cols) != 2 {
 		t.Fatalf("len(cols) = %d, want 2", len(cols))
@@ -24,7 +24,7 @@ func TestNormalizedColumnsDropsEmptyAndDuplicateKeys(t *testing.T) {
 	if cols[0].Key != "key" || cols[0].Type != ColumnText {
 		t.Fatalf("first column = %#v, want key text column", cols[0])
 	}
-	if cols[1].Key != "effect" || cols[1].DefaultValue() != "NoSchedule" {
+	if cols[1].Key != "effect" || cols[1].defaultValue() != "NoSchedule" {
 		t.Fatalf("second column = %#v, want effect select defaulting to first option", cols[1])
 	}
 }
@@ -32,13 +32,13 @@ func TestNormalizedColumnsDropsEmptyAndDuplicateKeys(t *testing.T) {
 func TestInitialEntriesNeverSerializesNull(t *testing.T) {
 	cfg := Config{Name: "labels", Entries: nil}
 
-	data := cfg.EntriesJSON()
+	data := cfg.entriesJSON()
 
 	if strings.Contains(data, "entries: null") {
-		t.Fatalf("EntriesJSON() = %s, must use [] for nil entries", data)
+		t.Fatalf("entriesJSON() = %s, must use [] for nil entries", data)
 	}
 	if data != "[]" {
-		t.Fatalf("EntriesJSON() = %s, want []", data)
+		t.Fatalf("entriesJSON() = %s, want []", data)
 	}
 }
 
@@ -54,13 +54,13 @@ func TestEntriesJSONEscapesStrings(t *testing.T) {
 		},
 	}
 
-	data := cfg.EntriesJSON()
+	data := cfg.entriesJSON()
 
 	if !strings.Contains(data, `"team's app"`) {
-		t.Fatalf("EntriesJSON() = %s, want JSON entry value", data)
+		t.Fatalf("entriesJSON() = %s, want JSON entry value", data)
 	}
 	if !strings.Contains(data, `web\\api`) {
-		t.Fatalf("EntriesJSON() = %s, want escaped backslash", data)
+		t.Fatalf("entriesJSON() = %s, want escaped backslash", data)
 	}
 }
 
@@ -103,11 +103,11 @@ func TestNewRowJSONUsesColumnDefaults(t *testing.T) {
 		},
 	}
 
-	row := cfg.NewRowJSON()
+	row := cfg.newRowJSON()
 
 	for _, want := range []string{`""`, `"NoSchedule"`, `"high"`} {
 		if !strings.Contains(row, want) {
-			t.Fatalf("NewRowJSON() = %s, missing %s", row, want)
+			t.Fatalf("newRowJSON() = %s, missing %s", row, want)
 		}
 	}
 }
@@ -115,11 +115,11 @@ func TestNewRowJSONUsesColumnDefaults(t *testing.T) {
 func TestColumnAccessorsUseBracketNotation(t *testing.T) {
 	col := Column{Key: "app.kubernetes.io/name"}
 
-	if got := col.EntryAccessor(2); got != "entry[2]" {
-		t.Fatalf("EntryAccessor() = %s, want array index notation", got)
+	if got := col.entryAccessor(2); got != "entry[2]" {
+		t.Fatalf("entryAccessor() = %s, want array index notation", got)
 	}
-	if got := col.NameBinding(); got != "inputName(index, $el.dataset.columnKey)" {
-		t.Fatalf("NameBinding() = %s, want data-key based name binding", got)
+	if got := col.nameBinding(); got != "inputName(index, $el.dataset.columnKey)" {
+		t.Fatalf("nameBinding() = %s, want data-key based name binding", got)
 	}
 }
 

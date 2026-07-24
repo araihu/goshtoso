@@ -58,7 +58,7 @@ func paginationTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{cfg.NavClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.navClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -103,7 +103,7 @@ func paginationTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 = []any{cfg.ListClasses()}
+		var templ_7745c5c3_Var5 = []any{cfg.listClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -127,7 +127,7 @@ func paginationTemplate(cfg Config) templ.Component {
 		}
 		if cfg.HasPrevious() {
 			if cfg.HTMX != nil && cfg.HTMX.Target != "" {
-				var templ_7745c5c3_Var7 = []any{cfg.PrevNextClasses(true)}
+				var templ_7745c5c3_Var7 = []any{cfg.prevNextClasses(true)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -189,7 +189,7 @@ func paginationTemplate(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.SwapStrategy())
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.swapStrategy())
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pagination/pagination.templ`, Line: 51, Col: 35}
 				}
@@ -210,7 +210,7 @@ func paginationTemplate(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var13 = []any{cfg.PrevNextClasses(true)}
+				var templ_7745c5c3_Var13 = []any{cfg.prevNextClasses(true)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -255,7 +255,7 @@ func paginationTemplate(cfg Config) templ.Component {
 				}
 			}
 		} else {
-			var templ_7745c5c3_Var16 = []any{cfg.PrevNextClasses(false)}
+			var templ_7745c5c3_Var16 = []any{cfg.prevNextClasses(false)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -297,7 +297,7 @@ func paginationTemplate(cfg Config) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var18 = []any{cfg.EllipsisClasses()}
+					var templ_7745c5c3_Var18 = []any{cfg.ellipsisClasses()}
 					templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var18...)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -332,7 +332,7 @@ func paginationTemplate(cfg Config) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var20 = []any{cfg.PageClasses(true)}
+					var templ_7745c5c3_Var20 = []any{cfg.pageClasses(true)}
 					templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var20...)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -399,7 +399,7 @@ func paginationTemplate(cfg Config) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					if cfg.HTMX != nil && cfg.HTMX.Target != "" {
-						var templ_7745c5c3_Var25 = []any{cfg.PageClasses(false)}
+						var templ_7745c5c3_Var25 = []any{cfg.pageClasses(false)}
 						templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var25...)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -474,7 +474,7 @@ func paginationTemplate(cfg Config) templ.Component {
 							return templ_7745c5c3_Err
 						}
 						var templ_7745c5c3_Var31 string
-						templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.SwapStrategy())
+						templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.swapStrategy())
 						if templ_7745c5c3_Err != nil {
 							return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pagination/pagination.templ`, Line: 102, Col: 37}
 						}
@@ -500,7 +500,7 @@ func paginationTemplate(cfg Config) templ.Component {
 							return templ_7745c5c3_Err
 						}
 					} else {
-						var templ_7745c5c3_Var33 = []any{cfg.PageClasses(false)}
+						var templ_7745c5c3_Var33 = []any{cfg.pageClasses(false)}
 						templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var33...)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -575,7 +575,7 @@ func paginationTemplate(cfg Config) templ.Component {
 		}
 		if cfg.HasNext() {
 			if cfg.HTMX != nil && cfg.HTMX.Target != "" {
-				var templ_7745c5c3_Var38 = []any{cfg.PrevNextClasses(true)}
+				var templ_7745c5c3_Var38 = []any{cfg.prevNextClasses(true)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var38...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -637,7 +637,7 @@ func paginationTemplate(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var43 string
-				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.SwapStrategy())
+				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.swapStrategy())
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pagination/pagination.templ`, Line: 129, Col: 35}
 				}
@@ -658,7 +658,7 @@ func paginationTemplate(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var44 = []any{cfg.PrevNextClasses(true)}
+				var templ_7745c5c3_Var44 = []any{cfg.prevNextClasses(true)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var44...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -703,7 +703,7 @@ func paginationTemplate(cfg Config) templ.Component {
 				}
 			}
 		} else {
-			var templ_7745c5c3_Var47 = []any{cfg.PrevNextClasses(false)}
+			var templ_7745c5c3_Var47 = []any{cfg.prevNextClasses(false)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var47...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

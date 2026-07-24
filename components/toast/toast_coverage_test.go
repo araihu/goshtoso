@@ -32,10 +32,10 @@ func TestCoverageToastToneClasses(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cfg := Config{Tone: tt.tone}
-			assert.Equal(t, tt.border, cfg.BorderClass())
-			assert.Equal(t, tt.bg, cfg.BgClass())
-			assert.Equal(t, tt.iconBg, cfg.IconBgClass())
-			assert.Equal(t, tt.title, cfg.TitleClass())
+			assert.Equal(t, tt.border, cfg.borderClass())
+			assert.Equal(t, tt.bg, cfg.bgClass())
+			assert.Equal(t, tt.iconBg, cfg.iconBgClass())
+			assert.Equal(t, tt.title, cfg.titleClass())
 			assert.Equal(t, tt.fallback, cfg.Tone != ToneInfo && cfg.Tone != ToneSuccess && cfg.Tone != ToneWarning && cfg.Tone != ToneDanger)
 		})
 	}
@@ -45,8 +45,8 @@ func TestCoverageToastEffectiveDefaultsAndActions(t *testing.T) {
 	assert.Equal(t, 8000, Config{}.effectiveDuration())
 	assert.Equal(t, 2500, Config{DisplayDuration: 2500}.effectiveDuration())
 	assert.Equal(t, 8000, Config{DisplayDuration: -1}.effectiveDuration())
-	assert.False(t, Config{}.HasAction())
-	assert.True(t, Config{ActionLabel: "Undo"}.HasAction())
+	assert.False(t, Config{}.hasAction())
+	assert.True(t, Config{ActionLabel: "Undo"}.hasAction())
 	assert.Equal(t, 8000, (MessageConfig{}).effectiveDuration())
 	assert.Equal(t, 2500, (MessageConfig{DisplayDuration: 2500}).effectiveDuration())
 	assert.Equal(t, "Dismiss", (MessageConfig{}).effectiveDismissLabel())

@@ -42,7 +42,7 @@ func searchTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 = []any{cfg.RootClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.rootClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -103,7 +103,7 @@ func searchFieldTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		id := cfg.GetID()
+		id := cfg.getID()
 		templ_7745c5c3_Err = searchScript().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -126,7 +126,7 @@ func searchFieldTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("goshtosoSearchField('%s', %t)", JSString(id), cfg.GlobalShortcut))
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("goshtosoSearchField('%s', %t)", jsString(id), cfg.GlobalShortcut))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 28, Col: 89}
 		}
@@ -148,7 +148,7 @@ func searchFieldTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 = []any{cfg.TriggerClasses()}
+		var templ_7745c5c3_Var7 = []any{cfg.triggerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -192,7 +192,7 @@ func searchFieldTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetLabel())
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getLabel())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 44, Col: 57}
 		}
@@ -204,7 +204,7 @@ func searchFieldTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(cfg.GetShortcutText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("ml-auto text-on-surface-muted dark:text-on-surface-dark-muted")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd(cfg.getShortcutText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("ml-auto text-on-surface-muted dark:text-on-surface-dark-muted")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -239,7 +239,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		id := cfg.GetID()
+		id := cfg.getID()
 		templ_7745c5c3_Err = searchScript().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -249,7 +249,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("goshtosoSearchModal('%s', %d, %d)", JSString(id), cfg.GetMaxResults(), cfg.GetDescriptionMaxLength()))
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("goshtosoSearchModal('%s', %d, %d)", jsString(id), cfg.getMaxResults(), cfg.getDescriptionMaxLength()))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 57, Col: 125}
 		}
@@ -310,7 +310,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 = []any{cfg.DialogClasses()}
+		var templ_7745c5c3_Var16 = []any{cfg.dialogClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -367,7 +367,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetLabel())
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getLabel())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 84, Col: 86}
 		}
@@ -393,7 +393,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var22 string
-		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetPlaceholder())
+		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.getPlaceholder())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 96, Col: 39}
 		}
@@ -413,7 +413,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(cfg.GetEscapeText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("text-on-surface-muted dark:text-on-surface-dark-muted")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd(cfg.getEscapeText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("text-on-surface-muted dark:text-on-surface-dark-muted")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -422,7 +422,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var23 string
-		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetLabel() + " results")
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.getLabel() + " results")
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 107, Col: 44}
 		}
@@ -452,7 +452,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var24 string
-		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetEmptyText())
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getEmptyText())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/search/search.templ`, Line: 120, Col: 25}
 		}

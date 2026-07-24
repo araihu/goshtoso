@@ -57,7 +57,7 @@ type Config struct {
 }
 
 // stateVar returns the Alpine state-variable name for this drawer's open bit.
-func (cfg Config) StateVar() string {
+func (cfg Config) stateVar() string {
 	return safeJSIdentifier(cfg.ID, "drawer") + "IsOpen"
 }
 
@@ -66,7 +66,7 @@ func (cfg Config) eventIDLiteral() string {
 }
 
 // GetBodyID returns the resolved body slot id.
-func (cfg Config) GetBodyID() string {
+func (cfg Config) getBodyID() string {
 	if cfg.BodyID != "" {
 		return cfg.BodyID
 	}
@@ -74,17 +74,17 @@ func (cfg Config) GetBodyID() string {
 }
 
 // TitleID returns the id used on the drawer's <h2> for aria-labelledby.
-func (cfg Config) TitleID() string {
+func (cfg Config) titleID() string {
 	return cfg.ID + "Title"
 }
 
 // OverlayClasses returns classes for the backdrop overlay.
-func (cfg Config) OverlayClasses() string {
+func (cfg Config) overlayClasses() string {
 	return "fixed inset-0 z-40 bg-black/40 dark:bg-black/60"
 }
 
 // PanelClasses returns classes for the sliding panel.
-func (cfg Config) PanelClasses() string {
+func (cfg Config) panelClasses() string {
 	base := "fixed z-50 top-0 bottom-0 flex flex-col bg-surface dark:bg-surface-dark border-outline dark:border-outline-dark shadow-xl"
 
 	switch cfg.Side {
@@ -114,7 +114,7 @@ func (cfg Config) PanelClasses() string {
 }
 
 // EnterStart returns the Alpine transition enter-start classes.
-func (cfg Config) EnterStart() string {
+func (cfg Config) enterStart() string {
 	if cfg.Side == SideLeft {
 		return "-translate-x-full"
 	}
@@ -122,7 +122,7 @@ func (cfg Config) EnterStart() string {
 }
 
 // EnterEnd returns the Alpine transition enter-end classes.
-func (cfg Config) EnterEnd() string {
+func (cfg Config) enterEnd() string {
 	return "translate-x-0"
 }
 

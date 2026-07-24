@@ -49,30 +49,30 @@ templ checkboxInput(cfg Config) {
 	<span class="relative flex items-center">
 		if cfg.HelperText != "" {
 			if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.HelperTextID } checked/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } aria-describedby={ cfg.HelperTextID } checked/>
 			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.HelperTextID } disabled/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } aria-describedby={ cfg.HelperTextID } disabled/>
 			} else {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.HelperTextID }/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } aria-describedby={ cfg.HelperTextID }/>
 			}
 		} else if cfg.Value != "" {
 			if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } name={ cfg.Name } value={ cfg.Value } checked/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } name={ cfg.Name } value={ cfg.Value } checked/>
 			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } name={ cfg.Name } value={ cfg.Value } disabled/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } name={ cfg.Name } value={ cfg.Value } disabled/>
 			} else {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } name={ cfg.Name } value={ cfg.Value }/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } name={ cfg.Name } value={ cfg.Value }/>
 			}
 		} else {
 			if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } checked/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } checked/>
 			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } disabled/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } disabled/>
 			} else {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() }/>
+				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() }/>
 			}
 		}
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class={ cfg.SvgClasses() }>
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class={ cfg.svgClasses() }>
 			<path stroke-linecap="round" stroke-linejoin="round" d={ cfg.iconPath() }/>
 		</svg>
 	</span>

@@ -22,8 +22,8 @@ func renderDrawer(t *testing.T, cfg Config) string {
 func TestDrawerStateVarIsSafeIdentifier(t *testing.T) {
 	cfg := Config{ID: "addon-detail.1"}
 
-	if got := cfg.StateVar(); got != "addonDetail1IsOpen" {
-		t.Fatalf("StateVar = %q; want addonDetail1IsOpen", got)
+	if got := cfg.stateVar(); got != "addonDetail1IsOpen" {
+		t.Fatalf("stateVar = %q; want addonDetail1IsOpen", got)
 	}
 }
 

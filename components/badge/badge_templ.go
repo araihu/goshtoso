@@ -54,7 +54,7 @@ func badgeTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.IsSoft() || cfg.Icon != nil || cfg.Indicator {
+		if cfg.isSoft() || cfg.Icon != nil || cfg.Indicator {
 			templ_7745c5c3_Err = badgeWithInner(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -91,7 +91,7 @@ func simpleBadge(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass
+		classes := "rounded-radius w-fit font-medium " + cfg.sizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass
 		var templ_7745c5c3_Var3 = []any{classes}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
@@ -153,8 +153,8 @@ func badgeWithInner(cfg Config) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " "
-		if cfg.IsSoft() {
+		containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.sizeTextClass() + " "
+		if cfg.isSoft() {
 			containerClasses = containerClasses + cfg.softToneClasses()
 		} else {
 			containerClasses = containerClasses + cfg.toneClasses()
@@ -182,7 +182,7 @@ func badgeWithInner(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{"flex items-center gap-1 " + cfg.SizeClasses() + " " + cfg.SoftInnerClasses()}
+		var templ_7745c5c3_Var9 = []any{"flex items-center gap-1 " + cfg.sizeClasses() + " " + cfg.softInnerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -205,7 +205,7 @@ func badgeWithInner(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Indicator {
-			var templ_7745c5c3_Var11 = []any{cfg.IndicatorClasses()}
+			var templ_7745c5c3_Var11 = []any{cfg.indicatorClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

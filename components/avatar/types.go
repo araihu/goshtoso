@@ -141,7 +141,7 @@ type StackConfig struct {
 }
 
 // ResolvedInitials returns the initials to display: explicit Initials, or derived from Name.
-func (cfg Config) ResolvedInitials() string {
+func (cfg Config) resolvedInitials() string {
 	if cfg.Initials != "" {
 		return cfg.Initials
 	}
@@ -152,7 +152,7 @@ func (cfg Config) ResolvedInitials() string {
 }
 
 // SizeClasses returns the CSS classes for the size
-func (cfg Config) SizeClasses() string {
+func (cfg Config) sizeClasses() string {
 	switch cfg.Size {
 	case SizeXS:
 		return "size-8 text-xs"
@@ -172,17 +172,17 @@ func (cfg Config) SizeClasses() string {
 }
 
 // ShapeClasses returns the CSS classes for the shape
-func (cfg Config) ShapeClasses() string {
+func (cfg Config) shapeClasses() string {
 	switch cfg.Shape {
 	case ShapeSquare:
-		return cfg.RadiusClasses()
+		return cfg.radiusClasses()
 	default:
 		return "rounded-full"
 	}
 }
 
 // RadiusClasses returns the CSS classes for square avatar radius.
-func (cfg Config) RadiusClasses() string {
+func (cfg Config) radiusClasses() string {
 	switch cfg.Radius {
 	case RadiusNone:
 		return "rounded-none"
@@ -242,7 +242,7 @@ func (cfg Config) toneFillClasses() string {
 }
 
 // BorderClasses returns border classes if border is enabled
-func (cfg Config) BorderClasses() string {
+func (cfg Config) borderClasses() string {
 	if !cfg.Border {
 		return ""
 	}
@@ -267,7 +267,7 @@ func (cfg Config) BorderClasses() string {
 }
 
 // StatusClasses returns status dot classes
-func (cfg Config) StatusClasses() string {
+func (cfg Config) statusClasses() string {
 	switch cfg.Status {
 	case StatusOffline:
 		return "bg-outline dark:bg-outline-dark"
@@ -285,7 +285,7 @@ func (cfg Config) StatusClasses() string {
 }
 
 // StatusSizeClasses returns status dot size based on avatar size
-func (cfg Config) StatusSizeClasses() string {
+func (cfg Config) statusSizeClasses() string {
 	switch cfg.Size {
 	case SizeXS:
 		return "size-2"
@@ -303,7 +303,7 @@ func (cfg Config) StatusSizeClasses() string {
 }
 
 // SpinnerSizeClasses returns spinner size classes based on avatar size
-func (cfg Config) SpinnerSizeClasses() string {
+func (cfg Config) spinnerSizeClasses() string {
 	switch cfg.Size {
 	case SizeXS:
 		return "size-4"
@@ -321,12 +321,12 @@ func (cfg Config) SpinnerSizeClasses() string {
 }
 
 // HasImage returns true if avatar uses an image
-func (cfg Config) HasImage() bool {
+func (cfg Config) hasImage() bool {
 	return cfg.Src != "" || cfg.SrcExpr != ""
 }
 
 // HasInitials returns true if avatar uses initials
-func (cfg Config) HasInitials() bool {
+func (cfg Config) hasInitials() bool {
 	return cfg.Initials != ""
 }
 

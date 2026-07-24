@@ -71,7 +71,7 @@ type CookieBannerConfig struct {
 }
 
 // ContainerClasses returns the container CSS classes
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "flex w-full p-4 text-on-surface dark:text-on-surface-dark"
 
 	// Position
@@ -99,12 +99,12 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // TextClasses returns the text content classes
-func (cfg Config) TextClasses() string {
+func (cfg Config) textClasses() string {
 	return "px-6 text-xs sm:text-sm text-pretty mx-auto"
 }
 
 // LinkClasses returns the link classes within the banner
-func (cfg Config) LinkClasses() string {
+func (cfg Config) linkClasses() string {
 	switch cfg.Tone {
 	case TonePrimary:
 		return "font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark"
@@ -122,7 +122,7 @@ func (cfg Config) LinkClasses() string {
 }
 
 // CTAClasses returns the CTA button classes
-func (cfg Config) CTAClasses() string {
+func (cfg Config) ctaClasses() string {
 	return "whitespace-nowrap bg-primary px-4 py-1 text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark rounded-radius"
 }
 

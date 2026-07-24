@@ -55,9 +55,9 @@ func TestCoverageRenderFullDefaultStateTextarea(t *testing.T) {
 		">hello</textarea>",
 		"<small",
 		"Optional helper",
-		"mt-4",               // RootClass routed through ContainerClasses
-		"text-on-surface/60", // default HelperTextClasses branch
-		"border-outline",     // default TextareaClasses branch
+		"mt-4",               // RootClass routed through containerClasses
+		"text-on-surface/60", // default helperTextClasses branch
+		"border-outline",     // default textareaClasses branch
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("full default render missing %q in %s", want, html)
@@ -83,8 +83,8 @@ func TestCoverageRenderErrorState(t *testing.T) {
 		HelperText: "Error: required",
 	}))
 	for _, want := range []string{
-		"text-danger",   // LabelClasses + HelperTextClasses error branch
-		"border-danger", // TextareaClasses error branch
+		"text-danger",   // labelClasses + helperTextClasses error branch
+		"border-danger", // textareaClasses error branch
 		"<svg",          // error label icon
 		"M5.28 4.22",    // error (X) icon path
 	} {
@@ -102,8 +102,8 @@ func TestCoverageRenderSuccessState(t *testing.T) {
 		HelperText: "Looks good",
 	}))
 	for _, want := range []string{
-		"text-success",   // LabelClasses + HelperTextClasses success branch
-		"border-success", // TextareaClasses success branch
+		"text-success",   // labelClasses + helperTextClasses success branch
+		"border-success", // textareaClasses success branch
 		"<svg",           // success label icon
 		"M12.416 3.376",  // success (check) icon path
 	} {
@@ -163,8 +163,8 @@ func TestCoverageGetRows(t *testing.T) {
 		11: "3", -1: "3", 99: "3",
 	}
 	for in, want := range cases {
-		if got := (Config{Rows: in}).GetRows(); got != want {
-			t.Fatalf("GetRows(%d) = %q, want %q", in, got, want)
+		if got := (Config{Rows: in}).getRows(); got != want {
+			t.Fatalf("getRows(%d) = %q, want %q", in, got, want)
 		}
 	}
 }
@@ -176,8 +176,8 @@ func TestCoverageLabelClasses(t *testing.T) {
 		StateSuccess: "text-success",
 	}
 	for st, want := range cases {
-		if got := (Config{State: st}).LabelClasses(); !strings.Contains(got, want) {
-			t.Fatalf("LabelClasses(%q) = %q, want substring %q", st, got, want)
+		if got := (Config{State: st}).labelClasses(); !strings.Contains(got, want) {
+			t.Fatalf("labelClasses(%q) = %q, want substring %q", st, got, want)
 		}
 	}
 }
@@ -189,21 +189,21 @@ func TestCoverageHelperTextClasses(t *testing.T) {
 		StateSuccess: "text-success",
 	}
 	for st, want := range cases {
-		if got := (Config{State: st}).HelperTextClasses(); !strings.Contains(got, want) {
-			t.Fatalf("HelperTextClasses(%q) = %q, want substring %q", st, got, want)
+		if got := (Config{State: st}).helperTextClasses(); !strings.Contains(got, want) {
+			t.Fatalf("helperTextClasses(%q) = %q, want substring %q", st, got, want)
 		}
 	}
 }
 
 func TestCoverageContainerClasses(t *testing.T) {
-	base := Config{}.ContainerClasses()
+	base := Config{}.containerClasses()
 	if !strings.Contains(base, "flex w-full flex-col") {
 		t.Fatalf("base container missing flex layout: %q", base)
 	}
 	if strings.HasSuffix(base, " ") {
 		t.Fatalf("base container has trailing space: %q", base)
 	}
-	withClass := Config{RootClass: "gap-4"}.ContainerClasses()
+	withClass := Config{RootClass: "gap-4"}.containerClasses()
 	if !strings.HasSuffix(withClass, " gap-4") {
 		t.Fatalf("container with RootClass = %q, want suffix %q", withClass, " gap-4")
 	}

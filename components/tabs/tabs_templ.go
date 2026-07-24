@@ -185,7 +185,7 @@ func tabButton(containerID string, tab Tab) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), ActiveClasses(), InactiveClasses()))
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), activeClasses(), inactiveClasses()))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tabs/tabs.templ`, Line: 57, Col: 126}
 		}
@@ -278,7 +278,7 @@ func tabButton(containerID string, tab Tab) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), BadgeActiveClasses(), BadgeInactiveClasses()))
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), badgeActiveClasses(), badgeInactiveClasses()))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tabs/tabs.templ`, Line: 76, Col: 138}
 			}

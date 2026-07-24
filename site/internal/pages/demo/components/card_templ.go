@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
+	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -130,7 +131,7 @@ templ bookNowButton() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Product Card",
-				Description: "An e-commerce recipe: compose a bordered article with card.StarRating, a price, and an Add to Cart button. Price and rating are application content, not Card config fields.",
+				Description: "An e-commerce recipe: compose a bordered article with rating.RatingDisplay, a price, and an Add to Cart button. Price and rating are application content, not Card config fields.",
 			},
 			cardProductPreview(),
 			`<article class="group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt ...">
@@ -139,7 +140,7 @@ templ bookNowButton() {
     </div>
     <div class="flex flex-col gap-4 p-6">
         <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
-        @card.StarRating(3)
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM})
         <span class="text-xl font-medium">$99.99</span>
         @button.Button() { Add to Cart }
     </div>
@@ -168,7 +169,7 @@ templ bookNowButton() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Testimonial Card",
-				Description: "A quote recipe pairing a person, role, and card.StarRating in the footer row.",
+				Description: "A quote recipe pairing a person, role, and rating.RatingDisplay in the footer row.",
 			},
 			cardTestimonialPreview(),
 			`<article class="group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 ...">
@@ -179,7 +180,7 @@ templ bookNowButton() {
             <img src="/assets/images/avatars/avatar-1.webp" class="size-10 rounded-full" alt="Bob Johnson" />
             <div><h3 class="font-bold">Bob Johnson</h3><span class="text-xs">CEO - TechNova</span></div>
         </div>
-        @card.StarRating(4)
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM})
     </div>
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -537,7 +538,7 @@ func ecommerceProductCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = card.StarRating(3).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -657,7 +658,7 @@ func testimonialCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = card.StarRating(4).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

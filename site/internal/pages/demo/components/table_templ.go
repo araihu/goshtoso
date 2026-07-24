@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
@@ -110,7 +111,7 @@ func tableDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Table with Action",
-				Description: "Render an interactive control in a cell via Cell.Component (e.g. table.ActionButton).",
+				Description: "Render an interactive control in a cell via Cell.Component (e.g. button.Button).",
 			},
 			tableActionPreview(),
 			`@table.Table(table.Config{
@@ -120,7 +121,7 @@ func tableDemoContent() templ.Component {
             "id":     {Text: "2335"},
             "name":   {Text: "Alice Brown"},
             "email":  {Text: "alice.brown@gmail.com"},
-            "action": {Component: table.ActionButton("Edit")},
+            "action": {Component: tableEditButton()},
         }},
     },
 })`,
@@ -146,7 +147,7 @@ func tableDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Users Table",
-				Description: "Compose rich cells: table.ImageCell (image + label + detail), table.StatusBadge, and table.ActionButton.",
+				Description: "Compose rich cells with table.ImageCell, badge.Badge, and button.Button.",
 			},
 			tableUsersPreview(),
 			`@table.Table(table.Config{
@@ -156,8 +157,8 @@ func tableDemoContent() templ.Component {
             "user":   {Component: table.ImageCell("/.../avatar-8.webp", "Alice Brown", "alice.brown@gmail.com")},
             "id":     {Text: "2335"},
             "since":  {Text: "Nov 14, 2021"},
-            "status": {Component: table.StatusBadge("Active", "success")},
-            "action": {Component: table.ActionButton("Edit")},
+            "status": {Component: badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Size: badge.SizeSM})},
+            "action": {Component: tableEditButton()},
         }},
     },
 })`,
@@ -981,25 +982,72 @@ func stripedRows() []table.Row {
 	}
 }
 
+func tableEditButton() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Var16 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "Edit")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
 func actionRows() []table.Row {
 	return []table.Row{
 		{ID: "2335", Cells: map[string]table.Cell{
 			"id":     {Text: "2335"},
 			"name":   {Text: "Alice Brown"},
 			"email":  {Text: "alice.brown@gmail.com"},
-			"action": {Component: table.ActionButton("Edit")},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2338", Cells: map[string]table.Cell{
 			"id":     {Text: "2338"},
 			"name":   {Text: "Bob Johnson"},
 			"email":  {Text: "johnson.bob@outlook.com"},
-			"action": {Component: table.ActionButton("Edit")},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2342", Cells: map[string]table.Cell{
 			"id":     {Text: "2342"},
 			"name":   {Text: "Sarah Adams"},
 			"email":  {Text: "s.adams@gmail.com"},
-			"action": {Component: table.ActionButton("Edit")},
+			"action": {Component: tableEditButton()},
 		}},
 	}
 }
@@ -1010,19 +1058,19 @@ func checkboxRows() []table.Row {
 			"id":     {Text: "2335"},
 			"name":   {Text: "Alice Brown"},
 			"email":  {Text: "alice.brown@gmail.com"},
-			"action": {Component: table.ActionButton("Edit")},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2338", Cells: map[string]table.Cell{
 			"id":     {Text: "2338"},
 			"name":   {Text: "Bob Johnson"},
 			"email":  {Text: "johnson.bob@outlook.com"},
-			"action": {Component: table.ActionButton("Edit")},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2342", Cells: map[string]table.Cell{
 			"id":     {Text: "2342"},
 			"name":   {Text: "Sarah Adams"},
 			"email":  {Text: "s.adams@gmail.com"},
-			"action": {Component: table.ActionButton("Edit")},
+			"action": {Component: tableEditButton()},
 		}},
 	}
 }
@@ -1033,36 +1081,36 @@ func usersRows() []table.Row {
 			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-8.webp", "Alice Brown", "alice.brown@gmail.com")},
 			"id":     {Text: "2335"},
 			"since":  {Text: "Nov 14, 2021"},
-			"status": {Component: table.StatusBadge("Active", "success")},
-			"action": {Component: table.ActionButton("Edit")},
+			"status": {Component: badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Size: badge.SizeSM})},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2338", Cells: map[string]table.Cell{
 			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-1.webp", "Bob Johnson", "johnson.bob@penguinui.com")},
 			"id":     {Text: "2338"},
 			"since":  {Text: "Aug 20, 2020"},
-			"status": {Component: table.StatusBadge("Active", "success")},
-			"action": {Component: table.ActionButton("Edit")},
+			"status": {Component: badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Size: badge.SizeSM})},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2346", Cells: map[string]table.Cell{
 			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-2.webp", "Ryan Thompson", "ryan.thompson@penguinui.com")},
 			"id":     {Text: "2346"},
 			"since":  {Text: "Feb 5, 2022"},
-			"status": {Component: table.StatusBadge("Canceled", "danger")},
-			"action": {Component: table.ActionButton("Edit")},
+			"status": {Component: badge.Badge(badge.Config{Label: "Canceled", Tone: badge.ToneDanger, Size: badge.SizeSM})},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2349", Cells: map[string]table.Cell{
 			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-4.webp", "Emily Rodriguez", "emily.rodriguez@penguinui.com")},
 			"id":     {Text: "2349"},
 			"since":  {Text: "Jun 14, 2022"},
-			"status": {Component: table.StatusBadge("Active", "success")},
-			"action": {Component: table.ActionButton("Edit")},
+			"status": {Component: badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Size: badge.SizeSM})},
+			"action": {Component: tableEditButton()},
 		}},
 		{ID: "2345", Cells: map[string]table.Cell{
 			"user":   {Component: table.ImageCell("/assets/images/avatars/avatar-7.webp", "Alex Martinez", "alex.martinez@penguinui.com")},
 			"id":     {Text: "2345"},
 			"since":  {Text: "Sep 17, 2018"},
-			"status": {Component: table.StatusBadge("Active", "success")},
-			"action": {Component: table.ActionButton("Edit")},
+			"status": {Component: badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Size: badge.SizeSM})},
+			"action": {Component: tableEditButton()},
 		}},
 	}
 }

@@ -33,8 +33,8 @@ func TestSizeClasses(t *testing.T) {
 		Size("xx"): "text-xs px-2 py-1", // unknown size falls back to default
 	}
 	for size, want := range cases {
-		got := Config{Size: size}.SizeClasses()
-		assert.Equalf(t, want, got, "SizeClasses for %q", size)
+		got := Config{Size: size}.sizeClasses()
+		assert.Equalf(t, want, got, "sizeClasses for %q", size)
 	}
 }
 
@@ -46,8 +46,8 @@ func TestSizeTextClass(t *testing.T) {
 		Size("xx"): "text-xs", // unknown size falls back to default
 	}
 	for size, want := range cases {
-		got := Config{Size: size}.SizeTextClass()
-		assert.Equalf(t, want, got, "SizeTextClass for %q", size)
+		got := Config{Size: size}.sizeTextClass()
+		assert.Equalf(t, want, got, "sizeTextClass for %q", size)
 	}
 }
 
@@ -110,12 +110,12 @@ func TestSoftInnerClasses_AllArms(t *testing.T) {
 		ToneDanger:    "bg-danger/10",
 	}
 	for _, v := range allVariants {
-		got := Config{Tone: v}.SoftInnerClasses()
-		assert.Containsf(t, got, wantBG[v], "SoftInnerClasses %q", v)
+		got := Config{Tone: v}.softInnerClasses()
+		assert.Containsf(t, got, wantBG[v], "softInnerClasses %q", v)
 	}
 	assert.Equal(t,
-		Config{Tone: ToneDefault}.SoftInnerClasses(),
-		Config{Tone: Tone("nope")}.SoftInnerClasses(),
+		Config{Tone: ToneDefault}.softInnerClasses(),
+		Config{Tone: Tone("nope")}.softInnerClasses(),
 	)
 }
 
@@ -131,20 +131,20 @@ func TestIndicatorClasses_AllArms(t *testing.T) {
 		ToneDanger:    "bg-danger",
 	}
 	for _, v := range allVariants {
-		got := Config{Tone: v}.IndicatorClasses()
-		assert.Containsf(t, got, "size-1.5 rounded-full", "IndicatorClasses %q base", v)
-		assert.Containsf(t, got, wantBG[v], "IndicatorClasses %q bg", v)
+		got := Config{Tone: v}.indicatorClasses()
+		assert.Containsf(t, got, "size-1.5 rounded-full", "indicatorClasses %q base", v)
+		assert.Containsf(t, got, wantBG[v], "indicatorClasses %q bg", v)
 	}
 	// IndicatorColor override short-circuits the variant switch.
-	got := Config{Tone: ToneDanger, IndicatorColor: "bg-pink-500"}.IndicatorClasses()
+	got := Config{Tone: ToneDanger, IndicatorColor: "bg-pink-500"}.indicatorClasses()
 	assert.Equal(t, "size-1.5 rounded-full bg-pink-500", got)
 	assert.NotContains(t, got, "bg-danger")
 }
 
 func TestIsSoft(t *testing.T) {
-	assert.True(t, Config{Appearance: AppearanceSoft}.IsSoft())
-	assert.False(t, Config{Appearance: AppearanceSolid}.IsSoft())
-	assert.False(t, Config{}.IsSoft())
+	assert.True(t, Config{Appearance: AppearanceSoft}.isSoft())
+	assert.False(t, Config{Appearance: AppearanceSolid}.isSoft())
+	assert.False(t, Config{}.isSoft())
 }
 
 func TestBadge_SimplePath(t *testing.T) {

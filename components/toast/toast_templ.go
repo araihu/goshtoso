@@ -496,7 +496,7 @@ func serverToast(cfg Config) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		toastID := fmt.Sprintf("server-toast-%d", uniqueID())
-		var templ_7745c5c3_Var20 = []any{"pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.BorderClass()}
+		var templ_7745c5c3_Var20 = []any{"pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.borderClass()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var20...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -570,7 +570,7 @@ func serverToast(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var26 = []any{"flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.BgClass()}
+		var templ_7745c5c3_Var26 = []any{"flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.bgClass()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -592,7 +592,7 @@ func serverToast(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var28 = []any{"rounded-full p-0.5", cfg.IconBgClass()}
+		var templ_7745c5c3_Var28 = []any{"rounded-full p-0.5", cfg.iconBgClass()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var28...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -636,7 +636,7 @@ func serverToast(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Title != "" {
-			var templ_7745c5c3_Var30 = []any{"text-sm font-semibold", cfg.TitleClass()}
+			var templ_7745c5c3_Var30 = []any{"text-sm font-semibold", cfg.titleClass()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var30...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -691,7 +691,7 @@ func serverToast(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasAction() {
+		if cfg.hasAction() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "   <button type=\"button\" class=\"w-fit text-sm font-semibold underline underline-offset-2 hover:opacity-75\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

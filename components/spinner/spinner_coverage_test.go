@@ -49,8 +49,8 @@ func TestCoverageSizeClasses(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(string(tc.size), func(t *testing.T) {
-			if got := (Config{Size: tc.size}).SizeClasses(); got != tc.want {
-				t.Fatalf("SizeClasses(%q) = %q, want %q", tc.size, got, tc.want)
+			if got := (Config{Size: tc.size}).sizeClasses(); got != tc.want {
+				t.Fatalf("sizeClasses(%q) = %q, want %q", tc.size, got, tc.want)
 			}
 			if html := renderSpinner(t, Config{Size: tc.size}); !strings.Contains(html, tc.want) {
 				t.Fatalf("render size %q missing class %q in %s", tc.size, tc.want, html)
@@ -77,8 +77,8 @@ func TestCoverageFillClasses(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(string(tc.variant), func(t *testing.T) {
-			if got := (Config{Tone: tc.variant}).FillClasses(); got != tc.want {
-				t.Fatalf("FillClasses(%q) = %q, want %q", tc.variant, got, tc.want)
+			if got := (Config{Tone: tc.variant}).fillClasses(); got != tc.want {
+				t.Fatalf("fillClasses(%q) = %q, want %q", tc.variant, got, tc.want)
 			}
 			if html := renderSpinner(t, Config{Tone: tc.variant}); !strings.Contains(html, tc.want) {
 				t.Fatalf("render variant %q missing fill %q in %s", tc.variant, tc.want, html)

@@ -5,7 +5,7 @@ templ paletteTemplate(cfg Config) {
 		x-data={ cfg.alpineData() }
 		data-palette
 		id={ cfg.ID }
-		class={ cfg.ContainerClasses() }
+		class={ cfg.containerClasses() }
 		if cfg.modelAssignExpr() != "" {
 			x-on:select-close={ cfg.modelAssignExpr() }
 		}

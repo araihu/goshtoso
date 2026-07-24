@@ -8,7 +8,7 @@ import (
 )
 
 func TestTextareaClassesUseActiveSurfaceVocabulary(t *testing.T) {
-	classes := Config{}.TextareaClasses()
+	classes := Config{}.textareaClasses()
 
 	for _, want := range []string{
 		"bg-surface",
@@ -19,7 +19,7 @@ func TestTextareaClassesUseActiveSurfaceVocabulary(t *testing.T) {
 		"disabled:text-on-surface-muted",
 	} {
 		if !strings.Contains(classes, want) {
-			t.Fatalf("TextareaClasses() missing %q in %q", want, classes)
+			t.Fatalf("textareaClasses() missing %q in %q", want, classes)
 		}
 	}
 }

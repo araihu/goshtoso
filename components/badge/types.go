@@ -54,7 +54,7 @@ type Config struct {
 }
 
 // SizeClasses returns the CSS classes for the size (text + padding)
-func (cfg Config) SizeClasses() string {
+func (cfg Config) sizeClasses() string {
 	switch cfg.Size {
 	case SizeSM:
 		return "text-[10px] px-1.5 py-0.5"
@@ -67,7 +67,7 @@ func (cfg Config) SizeClasses() string {
 
 // SizeTextClass returns only the text size class (no padding),
 // used on the outer container of badgeWithInner so the inner span controls padding.
-func (cfg Config) SizeTextClass() string {
+func (cfg Config) sizeTextClass() string {
 	switch cfg.Size {
 	case SizeSM:
 		return "text-[10px]"
@@ -123,7 +123,7 @@ func (cfg Config) softToneClasses() string {
 }
 
 // SoftInnerClasses returns the inner span classes for soft variant
-func (cfg Config) SoftInnerClasses() string {
+func (cfg Config) softInnerClasses() string {
 	switch cfg.Tone {
 	case ToneInverse:
 		return "bg-surface-dark-alt/10 dark:bg-surface-alt/10"
@@ -145,7 +145,7 @@ func (cfg Config) SoftInnerClasses() string {
 }
 
 // IndicatorClasses returns the indicator dot classes
-func (cfg Config) IndicatorClasses() string {
+func (cfg Config) indicatorClasses() string {
 	if cfg.IndicatorColor != "" {
 		return "size-1.5 rounded-full " + cfg.IndicatorColor
 	}
@@ -171,6 +171,6 @@ func (cfg Config) IndicatorClasses() string {
 }
 
 // IsSoft returns true if badge uses soft style
-func (cfg Config) IsSoft() bool {
+func (cfg Config) isSoft() bool {
 	return cfg.Appearance == AppearanceSoft
 }

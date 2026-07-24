@@ -26,7 +26,7 @@ import "fmt"
 //	    Indicator: true,
 //	})
 templ badgeTemplate(cfg Config) {
-	if cfg.IsSoft() || cfg.Icon != nil || cfg.Indicator {
+	if cfg.isSoft() || cfg.Icon != nil || cfg.Indicator {
 		@badgeWithInner(cfg)
 	} else {
 		@simpleBadge(cfg)
@@ -35,7 +35,7 @@ templ badgeTemplate(cfg Config) {
 
 // simpleBadge renders a basic solid badge
 templ simpleBadge(cfg Config) {
-	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass }}
+	{{ classes := "rounded-radius w-fit font-medium " + cfg.sizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass }}
 	
 	<span class={ classes }>
 		{ cfg.Label }
@@ -44,14 +44,14 @@ templ simpleBadge(cfg Config) {
 
 // badgeWithInner renders a badge with inner span (for soft style, icons, or indicators)
 templ badgeWithInner(cfg Config) {
-	{{ containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " " }}
-	{{ if cfg.IsSoft() { containerClasses = containerClasses + cfg.softToneClasses() } else { containerClasses = containerClasses + cfg.toneClasses() } }}
+	{{ containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.sizeTextClass() + " " }}
+	{{ if cfg.isSoft() { containerClasses = containerClasses + cfg.softToneClasses() } else { containerClasses = containerClasses + cfg.toneClasses() } }}
 	{{ containerClasses = containerClasses + " " + cfg.RootClass }}
 
 	<span class={ containerClasses }>
-		<span class={ "flex items-center gap-1 " + cfg.SizeClasses() + " " + cfg.SoftInnerClasses() }>
+		<span class={ "flex items-center gap-1 " + cfg.sizeClasses() + " " + cfg.softInnerClasses() }>
 			if cfg.Indicator {
-				<span class={ cfg.IndicatorClasses() } aria-hidden="true"></span>
+				<span class={ cfg.indicatorClasses() } aria-hidden="true"></span>
 			}
 			if cfg.Icon != nil {
 				<span class="shrink-0">

@@ -32,12 +32,12 @@ func structuredInputTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		columns := cfg.NormalizedColumns()
+		columns := cfg.normalizedColumns()
 		templ_7745c5c3_Err = structuredInputScript().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -96,7 +96,7 @@ func structuredInputTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.EntriesJSON())
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.entriesJSON())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 16, Col: 34}
 		}
@@ -109,7 +109,7 @@ func structuredInputTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.NewRowJSON())
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.newRowJSON())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 17, Col: 33}
 		}
@@ -161,7 +161,7 @@ func structuredInputTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.NameBinding())
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.nameBinding())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 33, Col: 37}
 			}
@@ -174,7 +174,7 @@ func structuredInputTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.EntryAccessor(columnIndex))
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.entryAccessor(columnIndex))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 34, Col: 51}
 			}
@@ -203,7 +203,7 @@ func structuredInputTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetAddLabel())
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getAddLabel())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 56, Col: 23}
 			}
@@ -250,7 +250,7 @@ func textColumn(col Column, columnIndex int, disabled bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.EntryAccessor(columnIndex))
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.entryAccessor(columnIndex))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 65, Col: 42}
 		}
@@ -370,7 +370,7 @@ func selectColumn(col Column, columnIndex int, disabled bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.EntryAccessor(columnIndex))
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(col.entryAccessor(columnIndex))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 86, Col: 43}
 		}
@@ -424,7 +424,7 @@ func selectColumn(col Column, columnIndex int, disabled bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var22 string
-			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(opt.OptionLabel())
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(opt.optionLabel())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 94, Col: 51}
 			}

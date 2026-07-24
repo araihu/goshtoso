@@ -146,7 +146,7 @@ func bodyInner(cfg Config, state State) templ.Component {
 			}
 		}
 		if cfg.EnableClearAll {
-			if cfg.IsClientMode() {
+			if cfg.isClientMode() {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<button type=\"button\" data-combobox-clear-all data-combobox-clear")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -180,7 +180,7 @@ func bodyInner(cfg Config, state State) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HXIncludeSelector())
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.hxIncludeSelector())
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 66, Col: 40}
 				}
@@ -239,7 +239,7 @@ func bodyInner(cfg Config, state State) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HXIncludeSelector())
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.hxIncludeSelector())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 85, Col: 40}
 			}
@@ -312,7 +312,7 @@ func optionsList(cfg Config, state State) templ.Component {
 			}
 		}
 		for _, opt := range state.Options {
-			if cfg.IsClientMode() {
+			if cfg.isClientMode() {
 				templ_7745c5c3_Err = clientOptionLI(cfg, state, opt).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -353,12 +353,12 @@ func clientOptionLI(cfg Config, state State, opt Option) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var15 = []any{"flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.IsSelected(opt.Value))}
+		var templ_7745c5c3_Var15 = []any{"flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.IsSelected(opt.Value))}
+		var templ_7745c5c3_Var16 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -381,7 +381,7 @@ func clientOptionLI(cfg Config, state State, opt Option) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.FormatBool(state.IsSelected(opt.Value)))
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.FormatBool(state.isSelected(opt.Value)))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 120, Col: 65}
 		}
@@ -435,12 +435,12 @@ func clientOptionLI(cfg Config, state State, opt Option) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Mode == ModeMultiple {
-			templ_7745c5c3_Err = optionCheckbox(state.IsSelected(opt.Value)).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = optionCheckbox(state.isSelected(opt.Value)).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var21 = []any{"truncate " + optLabelClass(state.IsSelected(opt.Value))}
+		var templ_7745c5c3_Var21 = []any{"truncate " + optLabelClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var21...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -500,12 +500,12 @@ func serverOptionLI(cfg Config, state State, opt Option) templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var25 = []any{"flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.IsSelected(opt.Value))}
+		var templ_7745c5c3_Var25 = []any{"flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var25...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var26 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.IsSelected(opt.Value))}
+		var templ_7745c5c3_Var26 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -528,7 +528,7 @@ func serverOptionLI(cfg Config, state State, opt Option) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var28 string
-		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.FormatBool(state.IsSelected(opt.Value)))
+		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.FormatBool(state.isSelected(opt.Value)))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 141, Col: 65}
 		}
@@ -603,7 +603,7 @@ func serverOptionLI(cfg Config, state State, opt Option) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var33 string
-			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HXIncludeSelector())
+			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.hxIncludeSelector())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 152, Col: 39}
 			}
@@ -621,12 +621,12 @@ func serverOptionLI(cfg Config, state State, opt Option) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Mode == ModeMultiple {
-			templ_7745c5c3_Err = optionCheckbox(state.IsSelected(opt.Value)).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = optionCheckbox(state.isSelected(opt.Value)).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var34 = []any{"truncate " + optLabelClass(state.IsSelected(opt.Value))}
+		var templ_7745c5c3_Var34 = []any{"truncate " + optLabelClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var34...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1014,7 +1014,7 @@ func comboboxTemplate(cfg Config, state State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.IsClientMode() {
+		if cfg.isClientMode() {
 			templ_7745c5c3_Err = clientScript().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1066,7 +1066,7 @@ func optLabelClass(selected bool) string {
 }
 
 func comboboxModeAttr(cfg Config) string {
-	if cfg.IsClientMode() {
+	if cfg.isClientMode() {
 		return "client"
 	}
 	return "server"

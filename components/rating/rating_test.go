@@ -65,13 +65,13 @@ func TestEmojiRatingRendersSentimentLabels(t *testing.T) {
 func TestEmojiRatingUsesExactSelectionExpression(t *testing.T) {
 	cfg := Config{Appearance: AppearanceEmoji, Value: 4}
 
-	if got := cfg.BindClass(3); !strings.Contains(got, "currentVal === 3") {
+	if got := cfg.bindClass(3); !strings.Contains(got, "currentVal === 3") {
 		t.Fatalf("emoji ratings should bind exact selection, got %q", got)
 	}
-	if cfg.IsActive(3) {
+	if cfg.isActive(3) {
 		t.Fatal("emoji rating should not render lower values active")
 	}
-	if !cfg.IsActive(4) {
+	if !cfg.isActive(4) {
 		t.Fatal("emoji rating should render only the selected value active")
 	}
 }
@@ -79,10 +79,10 @@ func TestEmojiRatingUsesExactSelectionExpression(t *testing.T) {
 func TestStarRatingUsesCumulativeSelectionExpression(t *testing.T) {
 	cfg := Config{Appearance: AppearanceStars, Value: 4}
 
-	if got := cfg.BindClass(3); !strings.Contains(got, "currentVal >= 3") {
+	if got := cfg.bindClass(3); !strings.Contains(got, "currentVal >= 3") {
 		t.Fatalf("star ratings should bind cumulative selection, got %q", got)
 	}
-	if !cfg.IsActive(3) {
+	if !cfg.isActive(3) {
 		t.Fatal("star rating should render lower values active")
 	}
 }

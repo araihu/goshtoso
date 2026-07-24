@@ -60,7 +60,7 @@ type AccordionItemData struct {
 }
 
 // ContainerClasses returns the container CSS classes based on variant
-func (cfg AccordionConfig) ContainerClasses() string {
+func (cfg AccordionConfig) containerClasses() string {
 	// Split renders each item as its own gapped card, so the container drops
 	// the shared divider/border/background and just lays the cards out vertically.
 	if cfg.Appearance == AppearanceSplit {
@@ -80,7 +80,7 @@ func (cfg AccordionConfig) ContainerClasses() string {
 // ItemContainerClasses returns per-item wrapper classes. Only the Split variant
 // uses these: each item becomes a self-contained bordered card. Other variants
 // return "" since the shared container already provides borders and dividers.
-func (data AccordionItemData) ItemContainerClasses() string {
+func (data AccordionItemData) itemContainerClasses() string {
 	if data.Appearance == AppearanceSplit {
 		return "overflow-hidden rounded-radius border border-outline bg-surface-alt/40 dark:border-outline-dark dark:bg-surface-dark-alt/50"
 	}
@@ -88,7 +88,7 @@ func (data AccordionItemData) ItemContainerClasses() string {
 }
 
 // ItemButtonClasses returns button classes based on variant and state
-func (data AccordionItemData) ItemButtonClasses() string {
+func (data AccordionItemData) itemButtonClasses() string {
 	base := "flex w-full items-center justify-between gap-4 p-4 text-left underline-offset-2 focus-visible:underline focus-visible:outline-hidden"
 
 	switch data.Appearance {
@@ -100,16 +100,16 @@ func (data AccordionItemData) ItemButtonClasses() string {
 }
 
 // ExpandedClasses returns classes when item is expanded
-func (data AccordionItemData) ExpandedClasses() string {
+func (data AccordionItemData) expandedClasses() string {
 	return "text-on-surface-strong dark:text-on-surface-dark-strong font-bold"
 }
 
 // CollapsedClasses returns classes when item is collapsed
-func (data AccordionItemData) CollapsedClasses() string {
+func (data AccordionItemData) collapsedClasses() string {
 	return "text-on-surface dark:text-on-surface-dark font-medium"
 }
 
 // ContentClasses returns content container classes
-func (data AccordionItemData) ContentClasses() string {
+func (data AccordionItemData) contentClasses() string {
 	return "p-4 text-sm sm:text-base text-pretty"
 }

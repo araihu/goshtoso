@@ -15,35 +15,35 @@ func TestCoverageActionPartitioning(t *testing.T) {
 
 	cfg := Config{Actions: []ActionItem{leftDefault, leftExplicit, right}}
 
-	leftActions := cfg.LeftActions()
+	leftActions := cfg.leftActions()
 	assert.Len(t, leftActions, 2)
 	assert.Equal(t, ActionPosition(""), leftActions[0].Position)
 	assert.Equal(t, ActionLeft, leftActions[1].Position)
 
-	rightActions := cfg.RightActions()
+	rightActions := cfg.rightActions()
 	assert.Len(t, rightActions, 1)
 	assert.Equal(t, ActionRight, rightActions[0].Position)
 }
 
 func TestCoverageNavbarClassHelpers(t *testing.T) {
 	cfg := Config{NavClass: "sticky top-0"}
-	assert.Contains(t, cfg.NavClasses(), "border-b border-outline")
-	assert.Contains(t, cfg.NavClasses(), "sticky top-0")
+	assert.Contains(t, cfg.navClasses(), "border-b border-outline")
+	assert.Contains(t, cfg.navClasses(), "sticky top-0")
 
-	activeLink := LinkClasses(true)
+	activeLink := linkClasses(true)
 	assert.Contains(t, activeLink, "font-bold")
 	assert.NotContains(t, activeLink, "text-on-surface underline-offset")
 
-	inactiveLink := LinkClasses(false)
+	inactiveLink := linkClasses(false)
 	assert.Contains(t, inactiveLink, "font-medium")
 	assert.Contains(t, inactiveLink, "text-on-surface")
 	assert.NotContains(t, inactiveLink, "font-bold")
 
-	dangerItem := MenuItemClasses(true)
+	dangerItem := menuItemClasses(true)
 	assert.Contains(t, dangerItem, "text-danger")
 	assert.Contains(t, dangerItem, "hover:bg-danger/5")
 
-	standardItem := MenuItemClasses(false)
+	standardItem := menuItemClasses(false)
 	assert.Contains(t, standardItem, "text-on-surface")
 	assert.Contains(t, standardItem, "hover:text-on-surface-strong")
 	assert.NotContains(t, standardItem, "text-danger")

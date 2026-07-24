@@ -23,7 +23,7 @@ type Config struct {
 }
 
 // GetAddLabel returns the add button label with default
-func (c Config) GetAddLabel() string {
+func (c Config) getAddLabel() string {
 	if c.AddActionLabel != "" {
 		return c.AddActionLabel
 	}
@@ -31,7 +31,7 @@ func (c Config) GetAddLabel() string {
 }
 
 // GetPlaceholder returns the input placeholder with default
-func (c Config) GetPlaceholder() string {
+func (c Config) getPlaceholder() string {
 	if c.Placeholder != "" {
 		return c.Placeholder
 	}
@@ -40,7 +40,7 @@ func (c Config) GetPlaceholder() string {
 
 // AlpineData returns the x-data expression for Alpine.js initialization.
 // Uses unquoted JS keys + single-quoted strings to survive templ HTML escaping.
-func (c Config) AlpineData() string {
+func (c Config) alpineData() string {
 	var sb strings.Builder
 	sb.WriteString("{ items: [")
 	for i, v := range c.Values {
@@ -58,7 +58,7 @@ func (c Config) AlpineData() string {
 }
 
 // ContainerClasses returns CSS classes for the outer container
-func (c Config) ContainerClasses() string {
+func (c Config) containerClasses() string {
 	base := "flex flex-col gap-2"
 	if c.RootClass != "" {
 		return base + " " + c.RootClass

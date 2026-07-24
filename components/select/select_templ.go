@@ -34,7 +34,7 @@ func selectTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -57,7 +57,7 @@ func selectTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Label != "" {
-			var templ_7745c5c3_Var4 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var4 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -163,7 +163,7 @@ func selectTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 = []any{cfg.TriggerClasses()}
+		var templ_7745c5c3_Var10 = []any{cfg.triggerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -209,7 +209,7 @@ func selectTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.IsEffectivelyDisabled() {
+		if cfg.isEffectivelyDisabled() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " disabled")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -540,7 +540,7 @@ func selectedValueJS(options []Option) string {
 func selectData(cfg Config) string {
 	optsJS := optionsToJS(cfg.Options)
 	selectedJS := selectedValueJS(cfg.Options)
-	placeholder := cfg.GetPlaceholder()
+	placeholder := cfg.getPlaceholder()
 
 	alpineModelSync := ""
 	if cfg.Alpine != nil && cfg.Alpine.Model != "" {

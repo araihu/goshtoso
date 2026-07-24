@@ -117,12 +117,12 @@ type RowHTMXConfig struct {
 
 // IsActionable returns true if the row has any interactive behavior
 // (link, click handler, HTMX action, expandable, or custom actions).
-func (r Row) IsActionable() bool {
-	return r.Link != "" || r.OnClick != "" || r.HasHTMXAction() || r.Expandable || r.Actions != nil
+func (r Row) isActionable() bool {
+	return r.Link != "" || r.OnClick != "" || r.hasHTMXAction() || r.Expandable || r.Actions != nil
 }
 
 // HasHTMXAction reports whether the row has a row-level HTMX verb.
-func (r Row) HasHTMXAction() bool {
+func (r Row) hasHTMXAction() bool {
 	return r.HTMX != nil && (r.HTMX.Get != "" || r.HTMX.Post != "")
 }
 
@@ -131,18 +131,18 @@ func (r Row) HasHTMXAction() bool {
 // only interactive surfaces are nested (Actions or Expandable-only without a
 // row-level target) keep the default role and let the inner controls own
 // focus. See table.templ for the tabindex/onkeydown pairing.
-func (r Row) ClickableRole() string {
+func (r Row) clickableRole() string {
 	if r.Link != "" {
 		return "link"
 	}
-	if r.OnClick != "" || r.HasHTMXAction() {
+	if r.OnClick != "" || r.hasHTMXAction() {
 		return "button"
 	}
 	return ""
 }
 
 // HasLinkedRows returns true if any row has a Link
-func (cfg Config) HasLinkedRows() bool {
+func (cfg Config) hasLinkedRows() bool {
 	for _, r := range cfg.Rows {
 		if r.Link != "" {
 			return true
@@ -152,9 +152,9 @@ func (cfg Config) HasLinkedRows() bool {
 }
 
 // HasActionableRows returns true if any row is actionable (link, click, HTMX, expandable, or has actions).
-func (cfg Config) HasActionableRows() bool {
+func (cfg Config) hasActionableRows() bool {
 	for _, r := range cfg.Rows {
-		if r.IsActionable() {
+		if r.isActionable() {
 			return true
 		}
 	}
@@ -162,7 +162,7 @@ func (cfg Config) HasActionableRows() bool {
 }
 
 // HasExpandableRows returns true if any row is expandable
-func (cfg Config) HasExpandableRows() bool {
+func (cfg Config) hasExpandableRows() bool {
 	for _, r := range cfg.Rows {
 		if r.Expandable {
 			return true
@@ -172,7 +172,7 @@ func (cfg Config) HasExpandableRows() bool {
 }
 
 // HasActions returns true if any row has an Actions component
-func (cfg Config) HasActions() bool {
+func (cfg Config) hasActions() bool {
 	for _, r := range cfg.Rows {
 		if r.Actions != nil {
 			return true
@@ -182,12 +182,12 @@ func (cfg Config) HasActions() bool {
 }
 
 // ColCount returns the total number of visible columns (columns + optional checkbox + optional actions/expand)
-func (cfg Config) ColCount() int {
+func (cfg Config) colCount() int {
 	n := len(cfg.Columns)
 	if cfg.ShowCheckbox {
 		n++
 	}
-	if cfg.HasActions() || cfg.HasExpandableRows() {
+	if cfg.hasActions() || cfg.hasExpandableRows() {
 		n++
 	}
 	return n
@@ -231,7 +231,7 @@ type PaginationConfig struct {
 }
 
 // IsInfiniteScroll returns true if this pagination uses infinite scroll mode
-func (p *PaginationConfig) IsInfiniteScroll() bool {
+func (p *PaginationConfig) isInfiniteScroll() bool {
 	return p != nil && p.Mode == PaginationInfiniteScroll
 }
 
@@ -239,12 +239,12 @@ func (p *PaginationConfig) IsInfiniteScroll() bool {
 // own capped scroll container (Pattern A). False means the sentinel reveals
 // against the nearest ancestor scroller (Pattern B — the default). Used by
 // the template to decide whether to emit `max-height + overflow-y: auto`.
-func (p *PaginationConfig) IsContained() bool {
+func (p *PaginationConfig) isContained() bool {
 	return p != nil && p.Mode == PaginationInfiniteScroll && p.ContainerHeight != ""
 }
 
 // NextPage returns CurrentPage + 1
-func (p *PaginationConfig) NextPage() int {
+func (p *PaginationConfig) nextPage() int {
 	if p == nil {
 		return 2
 	}
@@ -252,7 +252,7 @@ func (p *PaginationConfig) NextPage() int {
 }
 
 // GetContainerHeight returns the container height, defaulting to "400px"
-func (p *PaginationConfig) GetContainerHeight() string {
+func (p *PaginationConfig) getContainerHeight() string {
 	if p == nil || p.ContainerHeight == "" {
 		return "400px"
 	}
@@ -352,16 +352,16 @@ type FilterHTMXConfig struct {
 
 // ResolvedHxTarget returns the CSS selector that filter changes should swap
 // into. Caller-provided Target wins; falls back to "#{tbody-id}".
-func (c *FilterConfig) ResolvedHxTarget(cfg Config) string {
+func (c *FilterConfig) resolvedHXTarget(cfg Config) string {
 	if c != nil && c.HTMX != nil && c.HTMX.Target != "" {
 		return c.HTMX.Target
 	}
-	return "#" + cfg.TbodyID()
+	return "#" + cfg.tbodyID()
 }
 
 // ResolvedHxSwap returns the htmx swap strategy filter requests should use.
 // Caller-provided Swap wins; falls back to "innerHTML".
-func (c *FilterConfig) ResolvedHxSwap() string {
+func (c *FilterConfig) resolvedHXSwap() string {
 	if c != nil && c.HTMX != nil && c.HTMX.Swap != "" {
 		return c.HTMX.Swap
 	}
@@ -428,14 +428,14 @@ type Config struct {
 	ExtraQueryParams string
 }
 
-func (cfg Config) HTMXEndpointValue() string {
+func (cfg Config) htmxEndpointValue() string {
 	if cfg.HTMX == nil {
 		return ""
 	}
 	return cfg.HTMX.Endpoint
 }
 
-func (cfg Config) HTMXTargetValue() string {
+func (cfg Config) htmxTargetValue() string {
 	if cfg.HTMX == nil {
 		return ""
 	}
@@ -443,7 +443,7 @@ func (cfg Config) HTMXTargetValue() string {
 }
 
 // GetID returns the table ID, defaulting to "table"
-func (cfg Config) GetID() string {
+func (cfg Config) getID() string {
 	if cfg.ID != "" {
 		return cfg.ID
 	}
@@ -451,12 +451,12 @@ func (cfg Config) GetID() string {
 }
 
 // TbodyID returns the ID for the tbody element
-func (cfg Config) TbodyID() string {
-	return cfg.GetID() + "-tbody"
+func (cfg Config) tbodyID() string {
+	return cfg.getID() + "-tbody"
 }
 
 // LazyLoadTrigger returns the htmx trigger used by lazy-loaded tbody requests.
-func (cfg Config) LazyLoadTrigger() string {
+func (cfg Config) lazyLoadTrigger() string {
 	if cfg.LazyTrigger != "" {
 		return cfg.LazyTrigger
 	}
@@ -464,17 +464,17 @@ func (cfg Config) LazyLoadTrigger() string {
 }
 
 // TheadID returns the ID for the thead element
-func (cfg Config) TheadID() string {
-	return cfg.GetID() + "-thead"
+func (cfg Config) theadID() string {
+	return cfg.getID() + "-thead"
 }
 
 // PaginationID returns the ID for the pagination container
-func (cfg Config) PaginationID() string {
-	return cfg.GetID() + "-pagination"
+func (cfg Config) paginationID() string {
+	return cfg.getID() + "-pagination"
 }
 
 // PaginationBaseURL returns the base URL for pagination links with per_page and sort params
-func (cfg Config) PaginationBaseURL() string {
+func (cfg Config) paginationBaseURL() string {
 	params := map[string]string{}
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
@@ -483,11 +483,11 @@ func (cfg Config) PaginationBaseURL() string {
 		params["order_by"] = cfg.SortBy
 		params["order_dir"] = string(cfg.SortDir)
 	}
-	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
+	return tableURL(cfg.htmxEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 // HasSortableColumns returns true if any column is sortable
-func (cfg Config) HasSortableColumns() bool {
+func (cfg Config) hasSortableColumns() bool {
 	for _, col := range cfg.Columns {
 		if col.Sortable {
 			return true
@@ -517,7 +517,7 @@ func (cfg Config) NextSortDir(key string) SortDir {
 // When direction cycles back to SortNone, omits sort params to reset to natural order.
 func (cfg Config) SortURL(key string) string {
 	dir := cfg.NextSortDir(key)
-	params := map[string]string{"table_id": cfg.GetID()}
+	params := map[string]string{"table_id": cfg.getID()}
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 	}
@@ -525,7 +525,7 @@ func (cfg Config) SortURL(key string) string {
 		params["order_by"] = key
 		params["order_dir"] = string(dir)
 	}
-	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
+	return tableURL(cfg.htmxEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 // PageURL builds the HTMX URL for a specific page
@@ -538,15 +538,15 @@ func (cfg Config) PageURL(page int) string {
 		params["order_by"] = cfg.SortBy
 		params["order_dir"] = string(cfg.SortDir)
 	}
-	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
+	return tableURL(cfg.htmxEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 // NextPageURL builds the HTMX URL for infinite scroll
 func (cfg Config) NextPageURL() string {
 	// Support new PaginationConfig infinite scroll mode
-	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() {
+	if cfg.Pagination != nil && cfg.Pagination.isInfiniteScroll() {
 		params := map[string]string{
-			"page":    strconv.Itoa(cfg.Pagination.NextPage()),
+			"page":    strconv.Itoa(cfg.Pagination.nextPage()),
 			"variant": "infinite",
 		}
 		if cfg.Pagination.PerPage > 0 {
@@ -556,7 +556,7 @@ func (cfg Config) NextPageURL() string {
 			params["order_by"] = cfg.SortBy
 			params["order_dir"] = string(cfg.SortDir)
 		}
-		return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
+		return tableURL(cfg.htmxEndpointValue(), params, cfg.ExtraQueryParams)
 	}
 	// Legacy InfiniteScrollConfig support
 	if cfg.InfiniteScroll == nil {
@@ -567,7 +567,7 @@ func (cfg Config) NextPageURL() string {
 		params["order_by"] = cfg.SortBy
 		params["order_dir"] = string(cfg.SortDir)
 	}
-	return tableURL(cfg.HTMXEndpointValue(), params, cfg.ExtraQueryParams)
+	return tableURL(cfg.htmxEndpointValue(), params, cfg.ExtraQueryParams)
 }
 
 func tableURL(endpoint string, params map[string]string, extra string) string {
@@ -618,7 +618,7 @@ func parseExtraQuery(extra string) map[string]string {
 // scrollHeight > clientHeight for ~100ms, painting a transient vertical
 // scrollbar that vanishes on settle — the layout-shift flicker reported
 // on infinite-scroll tables.
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "overflow-x-auto overflow-y-clip w-full rounded-radius border border-outline dark:border-outline-dark"
 	if cfg.RootClass != "" {
 		base += " " + cfg.RootClass
@@ -627,22 +627,22 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // TableClasses returns the <table> element CSS classes
-func (cfg Config) TableClasses() string {
+func (cfg Config) tableClasses() string {
 	return "w-full text-left text-sm text-on-surface dark:text-on-surface-dark"
 }
 
 // TheadClasses returns the <thead> CSS classes
-func (cfg Config) TheadClasses() string {
+func (cfg Config) theadClasses() string {
 	return "border-b border-outline bg-surface-alt text-sm text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong"
 }
 
 // TbodyClasses returns the <tbody> CSS classes
-func (cfg Config) TbodyClasses() string {
+func (cfg Config) tbodyClasses() string {
 	return "divide-y divide-outline dark:divide-outline-dark"
 }
 
 // RowClasses returns CSS classes for a table row
-func (cfg Config) RowClasses() string {
+func (cfg Config) rowClasses() string {
 	if cfg.Appearance == AppearanceStriped {
 		return "odd:bg-surface-alt dark:odd:bg-surface-dark-alt"
 	}
@@ -650,17 +650,17 @@ func (cfg Config) RowClasses() string {
 }
 
 // CellClasses returns CSS classes for a table cell
-func (cfg Config) CellClasses() string {
+func (cfg Config) cellClasses() string {
 	return "p-4"
 }
 
 // HeaderCellClasses returns CSS classes for a non-sortable header cell
-func (cfg Config) HeaderCellClasses() string {
+func (cfg Config) headerCellClasses() string {
 	return "p-4"
 }
 
 // ColumnCellClasses returns CSS classes for a cell in a specific column (applies width + alignment)
-func ColumnCellClasses(col Column) string {
+func columnCellClasses(col Column) string {
 	cls := "p-4"
 	if col.Width != "" {
 		cls += " " + col.Width
@@ -675,7 +675,7 @@ func ColumnCellClasses(col Column) string {
 }
 
 // ColumnHeaderClasses returns CSS classes for a header cell in a specific column
-func ColumnHeaderClasses(col Column) string {
+func columnHeaderClasses(col Column) string {
 	cls := "p-4"
 	if col.Width != "" {
 		cls += " " + col.Width
@@ -694,7 +694,7 @@ func ColumnHeaderClasses(col Column) string {
 // theme. The previous "border-X bg-X/10 text-X" recipe collapsed to ratios
 // as low as 1.12:1 because the /10 background mixes with the surface to
 // produce a near-X color, killing text-X contrast.
-func BadgeCellClasses(color string) string {
+func badgeCellClasses(color string) string {
 	base := "inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium"
 	switch color {
 	case "success":
@@ -717,7 +717,7 @@ func BadgeCellClasses(color string) string {
 }
 
 // SortableHeaderClasses returns CSS classes for a sortable header cell
-func (cfg Config) SortableHeaderClasses(key string) string {
+func (cfg Config) sortableHeaderClasses(key string) string {
 	base := "p-4 cursor-pointer select-none hover:bg-surface dark:hover:bg-surface-dark transition-colors"
 	if cfg.IsSortedBy(key) {
 		base += " text-primary dark:text-primary-dark"
@@ -726,12 +726,12 @@ func (cfg Config) SortableHeaderClasses(key string) string {
 }
 
 // CheckboxClasses returns CSS classes for checkboxes
-func (cfg Config) CheckboxClasses() string {
+func (cfg Config) checkboxClasses() string {
 	return "before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark"
 }
 
 // PaginationPages returns the page numbers to display
-func (p *PaginationConfig) PaginationPages() []int {
+func (p *PaginationConfig) paginationPages() []int {
 	if p == nil || p.TotalPages <= 0 {
 		return nil
 	}
@@ -742,40 +742,21 @@ func (p *PaginationConfig) PaginationPages() []int {
 	return pages
 }
 
-// ActionButtonClasses returns CSS classes for action buttons in table cells
-func ActionButtonClasses() string {
-	return "cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-}
-
-// StatusBadgeClasses returns CSS classes for status badges. Solid bg-X / text-on-X
-// for guaranteed AA contrast across themes (see BadgeCellClasses for rationale).
-func StatusBadgeClasses(status string) string {
-	base := "inline-flex overflow-hidden rounded-radius px-1 py-0.5 text-xs font-medium"
-	switch status {
-	case "active", "success":
-		return base + " bg-success text-on-success"
-	case "canceled", "danger":
-		return base + " bg-danger text-on-danger"
-	default:
-		return base
-	}
-}
-
 // HasFilters returns true if filter config has at least one filter
-func (cfg Config) HasFilters() bool {
+func (cfg Config) hasFilters() bool {
 	return cfg.Filters != nil && len(cfg.Filters.Filters) > 0
 }
 
 // FilterBarID returns the ID for the filter bar container
-func (cfg Config) FilterBarID() string {
-	return cfg.GetID() + "-filters"
+func (cfg Config) filterBarID() string {
+	return cfg.getID() + "-filters"
 }
 
 // filterControlID returns a stable id for a single filter input. Stability
 // matters: hx-preserve relies on a matching id between the existing DOM and
 // the swap response to know which element to keep across renders.
 func filterControlID(cfg Config, filter Filter) string {
-	return cfg.FilterBarID() + "-" + filter.Key
+	return cfg.filterBarID() + "-" + filter.Key
 }
 
 func filterModelExpr(filter Filter) string {
@@ -785,7 +766,7 @@ func filterModelExpr(filter Filter) string {
 // filterAlpineInit generates a name for the Alpine.data registration.
 // Converts hyphens to camelCase since Alpine evaluates x-data as JS expressions.
 func filterAlpineInit(cfg Config) string {
-	return hyphenToCamel(cfg.GetID()) + "Filters"
+	return hyphenToCamel(cfg.getID()) + "Filters"
 }
 
 // hyphenToCamel converts a hyphenated string to camelCase (e.g. "filtered-table" → "filteredTable").
@@ -829,7 +810,7 @@ func filterScriptData(cfg Config) string {
 		expanded = "false"
 	}
 
-	endpoint := cfg.HTMXEndpointValue()
+	endpoint := cfg.htmxEndpointValue()
 	perPage := ""
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		perPage = "&per_page=" + itoa(cfg.Pagination.PerPage)
@@ -838,8 +819,8 @@ func filterScriptData(cfg Config) string {
 	// after the auto `?_filter=1` marker so static query state (modal context
 	// like ?addon_name=X) survives every filter request.
 	extra := cfg.ExtraQueryParams
-	hxTarget := cfg.Filters.ResolvedHxTarget(cfg)
-	hxSwap := cfg.Filters.ResolvedHxSwap()
+	hxTarget := cfg.Filters.resolvedHXTarget(cfg)
+	hxSwap := cfg.Filters.resolvedHXSwap()
 	name := filterAlpineInit(cfg)
 
 	// Register eagerly when Alpine is already up (modal-swapped table); fall

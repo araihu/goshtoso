@@ -50,7 +50,7 @@ type Config struct {
 }
 
 // ToggleClasses returns the CSS classes for the toggle track div
-func (cfg Config) ToggleClasses() string {
+func (cfg Config) toggleClasses() string {
 	base := "relative h-6 w-11 after:h-5 after:w-5 peer-checked:after:translate-x-5 rounded-full border border-outline after:absolute after:bottom-0 after:left-[0.0625rem] after:top-0 after:my-auto after:rounded-full after:bg-on-surface after:transition-all after:content-[''] peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-outline-strong peer-active:outline-offset-0 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:border-outline-dark dark:after:bg-on-surface-dark dark:peer-focus:outline-outline-dark-strong"
 
 	switch cfg.Appearance {
@@ -84,7 +84,7 @@ func (cfg Config) checkedClasses() string {
 }
 
 // LabelClasses returns the CSS classes for the label container
-func (cfg Config) LabelClasses() string {
+func (cfg Config) labelClasses() string {
 	base := "inline-flex items-center gap-3"
 
 	if cfg.Appearance == AppearanceContainer {

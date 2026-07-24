@@ -23,7 +23,7 @@ templ navbarTemplate(cfg Config) {
 	<nav
 		x-data="{ mobileMenuIsOpen: false }"
 		x-on:click.away="mobileMenuIsOpen = false"
-		class={ cfg.NavClasses() }
+		class={ cfg.navClasses() }
 		aria-label="main navigation"
 		{ cfg.NavAttrs... }
 	>
@@ -36,7 +36,7 @@ templ navbarTemplate(cfg Config) {
 				</a>
 			}
 			<!-- Left Actions -->
-			for _, action := range cfg.LeftActions() {
+			for _, action := range cfg.leftActions() {
 				@action.Content
 			}
 		</div>
@@ -46,7 +46,7 @@ templ navbarTemplate(cfg Config) {
 				<a
 					href={ templ.URL(link.Href) }
 					{ link.LinkAttrs... }
-					class={ LinkClasses(link.Active) }
+					class={ linkClasses(link.Active) }
 					if link.Active {
 						aria-current="page"
 					}
@@ -55,7 +55,7 @@ templ navbarTemplate(cfg Config) {
 				</a>
 			}
 			<!-- Right Actions -->
-			for _, action := range cfg.RightActions() {
+			for _, action := range cfg.rightActions() {
 				@action.Content
 			}
 			<!-- User Avatar Dropdown -->
@@ -64,7 +64,7 @@ templ navbarTemplate(cfg Config) {
 			}
 		</div>
 		<!-- Mobile Menu Button -->
-		if len(cfg.Links) > 0 || cfg.User != nil || len(cfg.RightActions()) > 0 {
+		if len(cfg.Links) > 0 || cfg.User != nil || len(cfg.rightActions()) > 0 {
 			<button
 				x-on:click="mobileMenuIsOpen = !mobileMenuIsOpen"
 				x-bind:aria-expanded="mobileMenuIsOpen"
@@ -139,7 +139,7 @@ templ avatarDropdown(cfg Config) {
 					<a
 						href={ templ.URL(item.Href) }
 						{ item.LinkAttrs... }
-						class={ MenuItemClasses(item.Danger) }
+						class={ menuItemClasses(item.Danger) }
 						role="menuitem"
 					>
 						if item.Icon != nil {
@@ -208,7 +208,7 @@ templ mobileMenu(cfg Config) {
 			</li>
 		}
 		<!-- Right Actions in Mobile -->
-		for _, action := range cfg.RightActions() {
+		for _, action := range cfg.rightActions() {
 			<li class="p-2 list-none">
 				@action.Content
 			</li>

@@ -39,7 +39,7 @@ func fileInputTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.IsUpload() {
+		if cfg.isUpload() {
 			templ_7745c5c3_Err = uploadInput(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -76,7 +76,7 @@ func dropZoneInput(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var3 = []any{cfg.ContainerClasses()}
+		var templ_7745c5c3_Var3 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -99,7 +99,7 @@ func dropZoneInput(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Label != "" {
-			var templ_7745c5c3_Var5 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var5 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -135,7 +135,7 @@ func dropZoneInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var8 = []any{cfg.DropZoneClasses()}
+		var templ_7745c5c3_Var8 = []any{cfg.dropZoneClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -157,7 +157,7 @@ func dropZoneInput(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 = []any{cfg.BrowseLabelClasses()}
+		var templ_7745c5c3_Var10 = []any{cfg.browseLabelClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -277,7 +277,7 @@ func dropZoneInput(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.HelperText != "" {
-			var templ_7745c5c3_Var17 = []any{cfg.HelperTextClasses()}
+			var templ_7745c5c3_Var17 = []any{cfg.helperTextClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var17...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -356,7 +356,7 @@ func uploadInput(cfg Config) templ.Component {
 			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var22 = []any{cfg.UploadContainerClasses()}
+		var templ_7745c5c3_Var22 = []any{cfg.uploadContainerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var22...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -379,7 +379,7 @@ func uploadInput(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Label != "" {
-			var templ_7745c5c3_Var24 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var24 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var24...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -428,7 +428,7 @@ func uploadInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var28 = []any{cfg.UploadControlClasses()}
+		var templ_7745c5c3_Var28 = []any{cfg.uploadControlClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var28...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -547,7 +547,7 @@ func uploadInput(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var35 = []any{cfg.UploadFileNameClasses()}
+		var templ_7745c5c3_Var35 = []any{cfg.uploadFileNameClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var35...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -569,7 +569,7 @@ func uploadInput(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var37 = []any{cfg.UploadButtonClasses()}
+		var templ_7745c5c3_Var37 = []any{cfg.uploadButtonClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var37...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -592,7 +592,7 @@ func uploadInput(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.HelperText != "" {
-			var templ_7745c5c3_Var39 = []any{cfg.HelperTextClasses()}
+			var templ_7745c5c3_Var39 = []any{cfg.helperTextClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var39...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

@@ -109,37 +109,37 @@ func TestCoverageAccordionClassHelpers(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.cfg.ContainerClasses(); !strings.Contains(got, tt.want) {
-				t.Fatalf("ContainerClasses() = %q, want it to contain %q", got, tt.want)
+			if got := tt.cfg.containerClasses(); !strings.Contains(got, tt.want) {
+				t.Fatalf("containerClasses() = %q, want it to contain %q", got, tt.want)
 			}
 		})
 	}
 
 	defaultData := AccordionItemData{}
-	if got := defaultData.ItemContainerClasses(); got != "" {
-		t.Fatalf("default ItemContainerClasses() = %q, want empty", got)
+	if got := defaultData.itemContainerClasses(); got != "" {
+		t.Fatalf("default itemContainerClasses() = %q, want empty", got)
 	}
-	if got := defaultData.ItemButtonClasses(); !strings.Contains(got, "bg-surface-alt hover:bg-surface-alt/75") {
-		t.Fatalf("default ItemButtonClasses() = %q, want default background classes", got)
+	if got := defaultData.itemButtonClasses(); !strings.Contains(got, "bg-surface-alt hover:bg-surface-alt/75") {
+		t.Fatalf("default itemButtonClasses() = %q, want default background classes", got)
 	}
 
 	plainData := AccordionItemData{Appearance: AppearancePlain}
-	if got := plainData.ItemButtonClasses(); !strings.Contains(got, "bg-surface hover:bg-surface-alt") {
-		t.Fatalf("plain ItemButtonClasses() = %q, want plain surface classes", got)
+	if got := plainData.itemButtonClasses(); !strings.Contains(got, "bg-surface hover:bg-surface-alt") {
+		t.Fatalf("plain itemButtonClasses() = %q, want plain surface classes", got)
 	}
 
 	splitData := AccordionItemData{Appearance: AppearanceSplit}
-	if got := splitData.ItemContainerClasses(); !strings.Contains(got, "rounded-radius border border-outline") {
-		t.Fatalf("split ItemContainerClasses() = %q, want split card classes", got)
+	if got := splitData.itemContainerClasses(); !strings.Contains(got, "rounded-radius border border-outline") {
+		t.Fatalf("split itemContainerClasses() = %q, want split card classes", got)
 	}
-	if got := splitData.ExpandedClasses(); !strings.Contains(got, "font-bold") {
-		t.Fatalf("ExpandedClasses() = %q, want bold text", got)
+	if got := splitData.expandedClasses(); !strings.Contains(got, "font-bold") {
+		t.Fatalf("expandedClasses() = %q, want bold text", got)
 	}
-	if got := splitData.CollapsedClasses(); !strings.Contains(got, "font-medium") {
-		t.Fatalf("CollapsedClasses() = %q, want medium text", got)
+	if got := splitData.collapsedClasses(); !strings.Contains(got, "font-medium") {
+		t.Fatalf("collapsedClasses() = %q, want medium text", got)
 	}
-	if got := splitData.ContentClasses(); !strings.Contains(got, "text-pretty") {
-		t.Fatalf("ContentClasses() = %q, want content typography", got)
+	if got := splitData.contentClasses(); !strings.Contains(got, "text-pretty") {
+		t.Fatalf("contentClasses() = %q, want content typography", got)
 	}
 }
 

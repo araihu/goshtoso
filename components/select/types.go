@@ -26,7 +26,7 @@ type Option struct {
 //	type Region struct { Code, Name string }
 //	regions := []Region{{Code: "us-east-1", Name: "US East"}, {Code: "eu-west-1", Name: "EU West"}}
 //	opts := selectfield.ToOptions(regions, func(r Region) string { return r.Code }, func(r Region) string { return r.Name }, "eu-west-1")
-func ToOptions[T any](items []T, valueFn func(T) string, labelFn func(T) string, selected string) []Option {
+func toOptions[T any](items []T, valueFn func(T) string, labelFn func(T) string, selected string) []Option {
 	opts := make([]Option, len(items))
 	for i, item := range items {
 		v := valueFn(item)
@@ -90,7 +90,7 @@ type Config struct {
 
 // ContainerClasses returns CSS classes for the outer wrapper.
 // Width is determined by the parent layout — no max-width is imposed.
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "relative flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
 	if cfg.RootClass != "" {
 		base += " " + cfg.RootClass
@@ -99,7 +99,7 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // SelectClasses returns CSS classes for the select element (legacy, kept for compatibility)
-func (cfg Config) SelectClasses() string {
+func (cfg Config) selectClasses() string {
 	base := "w-full appearance-none rounded-radius border bg-surface px-4 py-2 text-sm text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface-alt disabled:text-on-surface-muted disabled:opacity-50 dark:bg-surface-dark dark:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark dark:disabled:bg-surface-dark-alt dark:disabled:text-on-surface-dark-muted"
 
 	switch cfg.State {
@@ -113,10 +113,10 @@ func (cfg Config) SelectClasses() string {
 }
 
 // TriggerClasses returns CSS classes for the custom dropdown trigger button
-func (cfg Config) TriggerClasses() string {
+func (cfg Config) triggerClasses() string {
 	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
 
-	if cfg.IsEffectivelyDisabled() {
+	if cfg.isEffectivelyDisabled() {
 		return base + " border-outline bg-surface-alt text-on-surface-muted opacity-50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted"
 	}
 
@@ -131,7 +131,7 @@ func (cfg Config) TriggerClasses() string {
 }
 
 // LabelClasses returns CSS classes for the label
-func (cfg Config) LabelClasses() string {
+func (cfg Config) labelClasses() string {
 	base := "w-fit pl-0.5 text-sm"
 
 	switch cfg.State {
@@ -145,7 +145,7 @@ func (cfg Config) LabelClasses() string {
 }
 
 // GetPlaceholder returns the placeholder text
-func (cfg Config) GetPlaceholder() string {
+func (cfg Config) getPlaceholder() string {
 	if cfg.Placeholder != "" {
 		return cfg.Placeholder
 	}
@@ -153,7 +153,7 @@ func (cfg Config) GetPlaceholder() string {
 }
 
 // SelectedValue returns the value of the first selected option, or empty string
-func (cfg Config) SelectedValue() string {
+func (cfg Config) selectedValue() string {
 	for _, opt := range cfg.Options {
 		if opt.Selected {
 			return opt.Value
@@ -163,7 +163,7 @@ func (cfg Config) SelectedValue() string {
 }
 
 // IsEffectivelyDisabled returns true if the select should render as disabled (Disabled or Readonly)
-func (cfg Config) IsEffectivelyDisabled() bool {
+func (cfg Config) isEffectivelyDisabled() bool {
 	return cfg.Disabled || cfg.Readonly
 }
 

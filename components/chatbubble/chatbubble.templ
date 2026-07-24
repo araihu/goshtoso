@@ -28,19 +28,19 @@ import (
 //	})
 templ chatBubbleTemplate(cfg Config) {
 	<div
-		class={ cfg.RowClasses() }
-		data-mine={ cfg.DataMine() }
+		class={ cfg.rowClasses() }
+		data-mine={ cfg.dataMine() }
 		if cfg.Side == Auto && cfg.Sender != "" {
 			data-sender={ cfg.Sender }
 		}
 		{ cfg.RootAttrs... }
 	>
-		if cfg.HasAvatar() {
+		if cfg.hasAvatar() {
 			@bubbleAvatar(cfg)
 		}
 		<div class="flex min-w-0 flex-1 flex-col gap-1 group-data-[mine=true]:items-end">
-			<div class={ cfg.BubbleClasses() }>
-				if cfg.HasHeader() {
+			<div class={ cfg.bubbleClasses() }>
+				if cfg.hasHeader() {
 					@bubbleHeader(cfg)
 				}
 				<p class="whitespace-pre-wrap break-words">{ cfg.Message }</p>
@@ -65,8 +65,8 @@ templ chatBubbleTemplate(cfg Config) {
 	//	    AvatarTone:     avatar.ToneInfo,
 //	})
 templ typingIndicatorTemplate(cfg Config) {
-	<div class={ cfg.RowClasses() } data-mine="false" aria-label="typing" aria-live="polite">
-		if cfg.HasAvatar() {
+	<div class={ cfg.rowClasses() } data-mine="false" aria-label="typing" aria-live="polite">
+		if cfg.hasAvatar() {
 			@bubbleAvatar(cfg)
 		}
 		<div

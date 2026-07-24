@@ -94,23 +94,23 @@ func TestCoverageCheckboxToneClassesAndIcons(t *testing.T) {
 }
 
 func TestCoverageCheckboxAnimationClasses(t *testing.T) {
-	scaleInput := Config{Animation: AnimationScaleUp}.InputClasses()
+	scaleInput := Config{Animation: AnimationScaleUp}.inputClasses()
 	assert.Contains(t, scaleInput, "before:scale-0")
 	assert.Contains(t, scaleInput, "checked:before:scale-125")
 
-	slideDownInput := Config{Animation: AnimationSlideDown}.InputClasses()
+	slideDownInput := Config{Animation: AnimationSlideDown}.inputClasses()
 	assert.Contains(t, slideDownInput, "before:-translate-y-4")
 	assert.Contains(t, slideDownInput, "checked:before:translate-y-0")
 
-	slideUpSVG := Config{Animation: AnimationSlideUp}.SvgClasses()
+	slideUpSVG := Config{Animation: AnimationSlideUp}.svgClasses()
 	assert.Contains(t, slideUpSVG, "-translate-y-1/4")
 	assert.Contains(t, slideUpSVG, "peer-checked:-translate-y-1/2")
 
-	scaleSVG := Config{Animation: AnimationScaleUp}.SvgClasses()
+	scaleSVG := Config{Animation: AnimationScaleUp}.svgClasses()
 	assert.Contains(t, scaleSVG, "scale-0")
 	assert.Contains(t, scaleSVG, "peer-checked:scale-100")
 
-	slideDownSVG := Config{Animation: AnimationSlideDown}.SvgClasses()
+	slideDownSVG := Config{Animation: AnimationSlideDown}.svgClasses()
 	assert.Contains(t, slideDownSVG, "opacity-0")
 	assert.Contains(t, slideDownSVG, "peer-checked:opacity-100")
 }

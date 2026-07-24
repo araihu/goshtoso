@@ -53,19 +53,19 @@ import (
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
 //	})
 templ tableTemplate(cfg Config) {
-	if cfg.HasFilters() {
+	if cfg.hasFilters() {
 		@filterScript(cfg)
 		<div x-data={ filterAlpineInit(cfg) }>
 			@filterBar(cfg)
 			@tableContainer(cfg)
 			if showTraditionalPagination(cfg) {
-				@TablePagination(cfg)
+				@tablePagination(cfg)
 			}
 		</div>
 	} else {
 		@tableContainer(cfg)
 		if showTraditionalPagination(cfg) {
-			@TablePagination(cfg)
+			@tablePagination(cfg)
 		}
 	}
 }
@@ -79,45 +79,45 @@ templ tableTemplate(cfg Config) {
 //     capped, internally-scrollable container. Use only when a page hosts
 //     multiple independently-scrollable widgets (dashboards, split panes).
 templ tableContainer(cfg Config) {
-	if cfg.Pagination.IsContained() {
-		if cfg.ShowCheckbox && cfg.HasExpandableRows() {
-			<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+	if cfg.Pagination.isContained() {
+		if cfg.ShowCheckbox && cfg.hasExpandableRows() {
+			<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
 				@tableInner(cfg)
 			</div>
 		} else if cfg.ShowCheckbox {
-			<div x-data="{ checkAll: false }" class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+			<div x-data="{ checkAll: false }" class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
 				@tableInner(cfg)
 			</div>
-		} else if cfg.HasExpandableRows() {
-			<div x-data="{ openRows: {} }" class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+		} else if cfg.hasExpandableRows() {
+			<div x-data="{ openRows: {} }" class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
 				@tableInner(cfg)
 			</div>
 		} else {
-			<div class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+			<div class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
 				@tableInner(cfg)
 			</div>
 		}
-	} else if cfg.ShowCheckbox && cfg.HasExpandableRows() {
-		<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.ContainerClasses() }>
+	} else if cfg.ShowCheckbox && cfg.hasExpandableRows() {
+		<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.containerClasses() }>
 			@tableInner(cfg)
 		</div>
 	} else if cfg.ShowCheckbox {
-		<div x-data="{ checkAll: false }" class={ cfg.ContainerClasses() }>
+		<div x-data="{ checkAll: false }" class={ cfg.containerClasses() }>
 			@tableInner(cfg)
 		</div>
-	} else if cfg.HasExpandableRows() {
-		<div x-data="{ openRows: {} }" class={ cfg.ContainerClasses() }>
+	} else if cfg.hasExpandableRows() {
+		<div x-data="{ openRows: {} }" class={ cfg.containerClasses() }>
 			@tableInner(cfg)
 		</div>
 	} else {
-		<div class={ cfg.ContainerClasses() }>
+		<div class={ cfg.containerClasses() }>
 			@tableInner(cfg)
 		</div>
 	}
 }
 
 func showTraditionalPagination(cfg Config) bool {
-	return cfg.Pagination != nil && !cfg.Pagination.IsInfiniteScroll()
+	return cfg.Pagination != nil && !cfg.Pagination.isInfiniteScroll()
 }
 
 func filterBarBodyClasses(cfg Config) string {
@@ -136,13 +136,13 @@ func filterBarBodyClasses(cfg Config) string {
 //     Ignores Collapsible / InitiallyExpanded.
 templ filterBar(cfg Config) {
 	if cfg.Filters.Appearance == FilterAppearanceInline {
-		<div id={ cfg.FilterBarID() } class="mb-3 flex flex-wrap items-end gap-3">
+		<div id={ cfg.filterBarID() } class="mb-3 flex flex-wrap items-end gap-3">
 			for _, filter := range cfg.Filters.Filters {
 				@filterControl(cfg, filter)
 			}
 		</div>
 	} else {
-		<div id={ cfg.FilterBarID() } class="border border-outline rounded-radius mb-3 bg-surface dark:border-outline-dark dark:bg-surface-dark">
+		<div id={ cfg.filterBarID() } class="border border-outline rounded-radius mb-3 bg-surface dark:border-outline-dark dark:bg-surface-dark">
 			if cfg.Filters.Collapsible {
 				<button
 					type="button"
@@ -267,30 +267,30 @@ templ filterToggleInput(cfg Config, filter Filter) {
 	</label>
 }
 
-// tableHeadRow renders the header row contents (used by both TableHead and TableHeadOOB).
+// tableHeadRow renders the header row contents.
 templ tableHeadRow(cfg Config) {
 	<tr>
 		if cfg.ShowCheckbox {
-			<th scope="col" class={ cfg.HeaderCellClasses() }>
+			<th scope="col" class={ cfg.headerCellClasses() }>
 				@checkboxLabel(cfg, "checkAll", true)
 			</th>
 		}
 		for _, col := range cfg.Columns {
-			if col.Sortable && cfg.HTMXEndpointValue() != "" {
+			if col.Sortable && cfg.htmxEndpointValue() != "" {
 				@sortableHeader(cfg, col)
 			} else {
-				<th scope="col" class={ ColumnHeaderClasses(col) }>{ col.Label }</th>
+				<th scope="col" class={ columnHeaderClasses(col) }>{ col.Label }</th>
 			}
 		}
-		if cfg.HasActions() || cfg.HasExpandableRows() {
-			<th scope="col" class={ cfg.HeaderCellClasses() }><span class="sr-only">Actions</span></th>
+		if cfg.hasActions() || cfg.hasExpandableRows() {
+			<th scope="col" class={ cfg.headerCellClasses() }><span class="sr-only">Actions</span></th>
 		}
 	</tr>
 }
 
-// TableHead renders the thead element for initial page render.
-templ TableHead(cfg Config) {
-	<thead id={ cfg.TheadID() } class={ cfg.TheadClasses() }>
+// tableHead renders the thead element for initial page render.
+templ tableHead(cfg Config) {
+	<thead id={ cfg.theadID() } class={ cfg.theadClasses() }>
 		@tableHeadRow(cfg)
 	</thead>
 }
@@ -302,18 +302,18 @@ templ tableHeadContentTemplate(cfg Config) {
 }
 
 templ tableInner(cfg Config) {
-	<table class={ cfg.TableClasses() } id={ cfg.GetID() }>
+	<table class={ cfg.tableClasses() } id={ cfg.getID() }>
 		if cfg.Caption != "" {
 			<caption class="sr-only">{ cfg.Caption }</caption>
 		}
-		@TableHead(cfg)
+		@tableHead(cfg)
 
-		if cfg.LazyLoad && cfg.HTMXEndpointValue() != "" {
+		if cfg.LazyLoad && cfg.htmxEndpointValue() != "" {
 			<tbody
-				id={ cfg.TbodyID() }
-				class={ cfg.TbodyClasses() }
-				hx-get={ cfg.HTMXEndpointValue() }
-				hx-trigger={ cfg.LazyLoadTrigger() }
+				id={ cfg.tbodyID() }
+				class={ cfg.tbodyClasses() }
+				hx-get={ cfg.htmxEndpointValue() }
+				hx-trigger={ cfg.lazyLoadTrigger() }
 				hx-swap="innerHTML"
 			>
 				<tr>
@@ -323,18 +323,18 @@ templ tableInner(cfg Config) {
 				</tr>
 			</tbody>
 		} else {
-			@TableBody(cfg)
+			@tableBody(cfg)
 		}
 	</table>
 }
 
-// TableBody renders just the tbody element. Use this for HTMX fragment responses.
+// tableBody renders the tbody element for the initial table render.
 //
 // When infinite-scroll is enabled, tbody receives `data-transition="append"`
 // so consumer CSS can fade in rows appended by the scroll sentinel. Consumers
 // opt into the animation by defining a rule on `[data-transition="append"] > .htmx-added`.
-templ TableBody(cfg Config) {
-	<tbody id={ cfg.TbodyID() } class={ cfg.TbodyClasses() } data-transition="append">
+templ tableBody(cfg Config) {
+	<tbody id={ cfg.tbodyID() } class={ cfg.tbodyClasses() } data-transition="append">
 		for _, row := range cfg.Rows {
 			@TableRow(cfg, row)
 		}
@@ -357,11 +357,11 @@ templ tableRowsTemplate(cfg Config) {
 
 // hasMoreRows returns true if the table should render a scroll sentinel for infinite scroll
 func hasMoreRows(cfg Config) bool {
-	if cfg.HTMXEndpointValue() == "" {
+	if cfg.htmxEndpointValue() == "" {
 		return false
 	}
 	// New pagination-based infinite scroll
-	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() && cfg.Pagination.HasMore {
+	if cfg.Pagination != nil && cfg.Pagination.isInfiniteScroll() && cfg.Pagination.HasMore {
 		return true
 	}
 	// Legacy InfiniteScrollConfig
@@ -374,8 +374,8 @@ func hasMoreRows(cfg Config) bool {
 // TableRow renders a single table row, optionally with expandable detail panel or row link
 templ tableRowTemplate(cfg Config, row Row) {
 	<tr
-		class={ cfg.RowClasses() + interactiveRowClasses(row) }
-			if row.Expandable && row.Link == "" && row.OnClick == "" && !row.HasHTMXAction() {
+		class={ cfg.rowClasses() + interactiveRowClasses(row) }
+			if row.Expandable && row.Link == "" && row.OnClick == "" && !row.hasHTMXAction() {
 				x-on:click={ fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID) }
 			}
 		if row.Link != "" {
@@ -388,19 +388,19 @@ templ tableRowTemplate(cfg Config, row Row) {
 		{ rowAlpineAttrs(row)... }
 	>
 		if cfg.ShowCheckbox {
-			<td class={ cfg.CellClasses() }>
+			<td class={ cfg.cellClasses() }>
 				@checkboxLabel(cfg, fmt.Sprintf("user%s", row.ID), false)
 			</td>
 		}
 		for _, col := range cfg.Columns {
-			<td class={ ColumnCellClasses(col) }>
+			<td class={ columnCellClasses(col) }>
 				if cell, ok := row.Cells[col.Key]; ok {
 					@cellContent(cell)
 				}
 			</td>
 		}
-		if cfg.HasActions() || cfg.HasExpandableRows() {
-			<td class={ cfg.CellClasses() + " text-right whitespace-nowrap" }>
+		if cfg.hasActions() || cfg.hasExpandableRows() {
+			<td class={ cfg.cellClasses() + " text-right whitespace-nowrap" }>
 				<div class="flex items-center justify-end gap-1">
 					if row.Actions != nil {
 						@row.Actions
@@ -426,7 +426,7 @@ templ tableRowTemplate(cfg Config, row Row) {
 			x-collapse
 			class="bg-surface-alt/50 dark:bg-surface-dark-alt/50"
 		>
-			<td colspan={ fmt.Sprintf("%d", cfg.ColCount()) }>
+			<td colspan={ fmt.Sprintf("%d", cfg.colCount()) }>
 				@row.Detail
 			</td>
 		</tr>
@@ -438,7 +438,7 @@ templ cellContent(cell Cell) {
 	if cell.Component != nil {
 		@cell.Component
 	} else if cell.BadgeColor != "" {
-		<span class={ BadgeCellClasses(cell.BadgeColor) }>{ cell.Text }</span>
+		<span class={ badgeCellClasses(cell.BadgeColor) }>{ cell.Text }</span>
 	} else if cell.Code {
 		<code class="font-mono text-xs bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-on-surface-strong dark:text-on-surface-dark-strong">{ cell.Text }</code>
 	} else if cell.Description != "" {
@@ -508,7 +508,7 @@ func jsStringSingle(s string) string {
 }
 
 func interactiveRowClasses(row Row) string {
-	if row.IsActionable() {
+	if row.isActionable() {
 		return " cursor-pointer hover:bg-surface-alt/30 dark:hover:bg-surface-dark-alt/30"
 	}
 	return ""
@@ -566,7 +566,7 @@ func rowActionAttrs(row Row) templ.Attributes {
 // interactions live inside nested controls (Actions column, Expandable with
 // its own toggle) keep native cell focus order.
 func rowA11yAttrs(row Row) templ.Attributes {
-	role := row.ClickableRole()
+	role := row.clickableRole()
 	if role == "" {
 		return nil
 	}
@@ -596,9 +596,9 @@ func rowAlpineAttrs(row Row) templ.Attributes {
 templ sortableHeader(cfg Config, col Column) {
 	<th
 		scope="col"
-		class={ cfg.SortableHeaderClasses(col.Key) }
+		class={ cfg.sortableHeaderClasses(col.Key) }
 		hx-get={ cfg.SortURL(col.Key) }
-		hx-target={ "#" + cfg.TbodyID() }
+		hx-target={ "#" + cfg.tbodyID() }
 		hx-swap="innerHTML"
 	>
 		<div class="flex items-center gap-1">
@@ -629,21 +629,21 @@ templ sortIcon(cfg Config, key string) {
 
 templ scrollSentinel(cfg Config) {
 	<tr
-		id={ cfg.GetID() + "-sentinel" }
+		id={ cfg.getID() + "-sentinel" }
 		data-hx-get={ cfg.NextPageURL() }
 		aria-hidden="true"
 	>
-		<td colspan={ fmt.Sprintf("%d", cfg.ColCount()) } class="p-4 text-center">
+		<td colspan={ fmt.Sprintf("%d", cfg.colCount()) } class="p-4 text-center">
 			@loadingIndicator()
-			@templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var url=el.getAttribute('data-hx-get');if(!url)return;var fire=function(){htmx.ajax('GET',url,{source:el,target:el,swap:'outerHTML settle:200ms'})};if(typeof IntersectionObserver==='undefined'){fire();return}var root=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]')||null;var fired=false;var io=new IntersectionObserver(function(entries){if(fired)return;for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting){fired=true;io.disconnect();fire();return}}},{root:root,rootMargin:'400px 0px'});io.observe(el)})()</script>`, cfg.GetID()))
+			@templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var url=el.getAttribute('data-hx-get');if(!url)return;var fire=function(){htmx.ajax('GET',url,{source:el,target:el,swap:'outerHTML settle:200ms'})};if(typeof IntersectionObserver==='undefined'){fire();return}var root=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]')||null;var fired=false;var io=new IntersectionObserver(function(entries){if(fired)return;for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting){fired=true;io.disconnect();fire();return}}},{root:root,rootMargin:'400px 0px'});io.observe(el)})()</script>`, cfg.getID()))
 		</td>
 	</tr>
 }
 
-// TablePagination renders page navigation controls below the table using the pagination component
-templ TablePagination(cfg Config) {
+// tablePagination renders page navigation controls below the table using the pagination component.
+templ tablePagination(cfg Config) {
 	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
-		<div id={ cfg.PaginationID() } class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">
+		<div id={ cfg.paginationID() } class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">
 			<div class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 				Page { itoa(cfg.Pagination.CurrentPage) } of { itoa(cfg.Pagination.TotalPages) }
 			</div>
@@ -651,8 +651,8 @@ templ TablePagination(cfg Config) {
 				Mode:        pagination.ModeEllipsis,
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
-				BaseURL:     cfg.PaginationBaseURL(),
-				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
+				BaseURL:     cfg.paginationBaseURL(),
+				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.tbodyID(), Swap: "innerHTML"},
 			})
 		</div>
 	}
@@ -665,8 +665,8 @@ templ tablePaginationNavTemplate(cfg Config) {
 			Mode:        pagination.ModeEllipsis,
 			CurrentPage: cfg.Pagination.CurrentPage,
 			TotalPages:  cfg.Pagination.TotalPages,
-			BaseURL:     cfg.PaginationBaseURL(),
-			HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
+			BaseURL:     cfg.paginationBaseURL(),
+			HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.tbodyID(), Swap: "innerHTML"},
 		})
 	}
 }
@@ -685,25 +685,15 @@ templ checkboxLabel(cfg Config, id string, isHeader bool) {
 	<label for={ id } class="flex items-center text-on-surface dark:text-on-surface-dark">
 		<div class="relative flex items-center">
 			if isHeader {
-				<input type="checkbox" x-model="checkAll" id={ id } class={ cfg.CheckboxClasses() }/>
+				<input type="checkbox" x-model="checkAll" id={ id } class={ cfg.checkboxClasses() }/>
 			} else {
-				<input type="checkbox" id={ id } class={ cfg.CheckboxClasses() } x-bind:checked="checkAll"/>
+				<input type="checkbox" id={ id } class={ cfg.checkboxClasses() } x-bind:checked="checkAll"/>
 			}
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
 			</svg>
 		</div>
 	</label>
-}
-
-// ActionButton renders an action button for table rows
-templ ActionButton(label string) {
-	<button type="button" class={ ActionButtonClasses() }>{ label }</button>
-}
-
-// StatusBadge renders a status badge for table cells
-templ StatusBadge(label string, status string) {
-	<span class={ StatusBadgeClasses(status) }>{ label }</span>
 }
 
 // ImageCell renders a compact image, primary label, and optional secondary label.

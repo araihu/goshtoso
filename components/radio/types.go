@@ -61,7 +61,7 @@ type HTMXConfig struct {
 
 // HasHxVerb reports whether any HTMX verb field is set, used to default
 // hx-trigger to "change" when the caller omits it.
-func (h *HTMXConfig) HasHxVerb() bool {
+func (h *HTMXConfig) hasHXVerb() bool {
 	if h == nil {
 		return false
 	}
@@ -73,14 +73,14 @@ func (h *HTMXConfig) HasHxVerb() bool {
 // Collapsing the decision into one method lets templates use a single
 // attribute conditional and avoid `else if` in attribute context, which templ
 // mis-parses into a stray `else` text node.
-func (h *HTMXConfig) EffectiveTrigger() string {
+func (h *HTMXConfig) effectiveTrigger() string {
 	if h == nil {
 		return ""
 	}
 	if h.Trigger != "" {
 		return h.Trigger
 	}
-	if h.HasHxVerb() {
+	if h.hasHXVerb() {
 		return "change"
 	}
 	return ""
@@ -217,7 +217,7 @@ func (cfg Config) sizeBoxClass() string {
 }
 
 // BadgeClasses returns CSS classes for a badge-styled label
-func BadgeClasses(color string) string {
+func badgeClasses(color string) string {
 	base := "w-fit rounded-radius px-2 py-0.5 text-xs font-medium"
 	switch color {
 	case "success":
@@ -240,7 +240,7 @@ func BadgeClasses(color string) string {
 }
 
 // InputClasses returns the full CSS class string for the radio input
-func (cfg Config) InputClasses() string {
+func (cfg Config) inputClasses() string {
 	bg := "bg-surface-alt dark:bg-surface-dark-alt"
 	if cfg.Container {
 		bg = "bg-surface dark:bg-surface-dark"
@@ -258,7 +258,7 @@ func (cfg Config) InputClasses() string {
 // The label fully replaces the visual; the transparent input covers the segment
 // and acts as the state holder. Active styling rides on Tailwind v4's
 // `has-checked:` selector (label has a checked input child → primary fill).
-func (cfg Config) SegmentedLabelClasses() string {
+func (cfg Config) segmentedLabelClasses() string {
 	checkedVariant := segmentedCheckedClasses(cfg.Tone)
 	return "relative cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors " +
 		"text-on-surface hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark " +
@@ -283,11 +283,11 @@ func segmentedCheckedClasses(v Tone) string {
 }
 
 // HasAlpine reports whether any Alpine field is set.
-func (cfg Config) HasAlpine() bool {
+func (cfg Config) hasAlpine() bool {
 	return cfg.Alpine != nil
 }
 
 // HasHTMX reports whether the HTMX block is non-nil.
-func (cfg Config) HasHTMX() bool {
+func (cfg Config) hasHTMX() bool {
 	return cfg.HTMX != nil
 }

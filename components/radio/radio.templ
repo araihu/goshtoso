@@ -28,7 +28,7 @@ templ radioTemplate(cfg Config) {
 // The transparent input covers the visible segment so focusing it cannot scroll
 // the outer document to an offscreen sr-only box.
 templ radioSegmented(cfg Config) {
-	<label for={ cfg.ID } class={ cfg.SegmentedLabelClasses() + " " + cfg.RootClass }>
+	<label for={ cfg.ID } class={ cfg.segmentedLabelClasses() + " " + cfg.RootClass }>
 		@segmentedInput(cfg)
 		<span>{ cfg.Label }</span>
 	</label>
@@ -49,7 +49,7 @@ templ segmentedInput(cfg Config) {
 		if cfg.Disabled {
 			disabled
 		}
-		if cfg.HasHTMX() {
+		if cfg.hasHTMX() {
 			if cfg.HTMX.Get != "" {
 				hx-get={ cfg.HTMX.Get }
 			}
@@ -71,7 +71,7 @@ templ segmentedInput(cfg Config) {
 			if cfg.HTMX.Swap != "" {
 				hx-swap={ cfg.HTMX.Swap }
 			}
-			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+			if trigger := cfg.HTMX.effectiveTrigger(); trigger != "" {
 				hx-trigger={ trigger }
 			}
 			if cfg.HTMX.Indicator != "" {
@@ -90,7 +90,7 @@ templ segmentedInput(cfg Config) {
 				hx-include={ cfg.HTMX.Include }
 			}
 		}
-		if cfg.HasAlpine() {
+		if cfg.hasAlpine() {
 			if cfg.Alpine.Data != "" {
 				x-data={ cfg.Alpine.Data }
 			}
@@ -167,7 +167,7 @@ templ radioInput(cfg Config) {
 		type="radio"
 		name={ cfg.Name }
 		value={ cfg.Value }
-		class={ cfg.InputClasses() }
+		class={ cfg.inputClasses() }
 		if cfg.Checked {
 			checked
 		}
@@ -177,7 +177,7 @@ templ radioInput(cfg Config) {
 		if cfg.HelperTextID != "" {
 			aria-describedby={ cfg.HelperTextID }
 		}
-		if cfg.HasHTMX() {
+		if cfg.hasHTMX() {
 			if cfg.HTMX.Get != "" {
 				hx-get={ cfg.HTMX.Get }
 			}
@@ -199,7 +199,7 @@ templ radioInput(cfg Config) {
 			if cfg.HTMX.Swap != "" {
 				hx-swap={ cfg.HTMX.Swap }
 			}
-			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+			if trigger := cfg.HTMX.effectiveTrigger(); trigger != "" {
 				hx-trigger={ trigger }
 			}
 			if cfg.HTMX.Indicator != "" {
@@ -218,7 +218,7 @@ templ radioInput(cfg Config) {
 				hx-include={ cfg.HTMX.Include }
 			}
 		}
-		if cfg.HasAlpine() {
+		if cfg.hasAlpine() {
 			if cfg.Alpine.Data != "" {
 				x-data={ cfg.Alpine.Data }
 			}
@@ -282,7 +282,7 @@ templ groupRadioItemWithDescription(cfg Config) {
 		</span>
 		<div class="flex min-w-0 flex-col gap-0.5">
 			if cfg.BadgeColor != "" {
-				<span class={ BadgeClasses(cfg.BadgeColor) }>{ cfg.Label }</span>
+				<span class={ badgeClasses(cfg.BadgeColor) }>{ cfg.Label }</span>
 			} else {
 				<span>{ cfg.Label }</span>
 			}

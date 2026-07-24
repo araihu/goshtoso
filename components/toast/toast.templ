@@ -231,7 +231,7 @@ templ serverToast(cfg Config) {
 		x-cloak
 		x-show="isVisible"
 		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
-		class={ "pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.BorderClass() }
+		class={ "pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.borderClass() }
 		role="alert"
 		x-transition:enter="transition duration-300 ease-out"
 		x-transition:enter-end="translate-y-0"
@@ -240,9 +240,9 @@ templ serverToast(cfg Config) {
 		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
-		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.BgClass() }>
+		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.bgClass() }>
 			<!-- Icon -->
-			<div class={ "rounded-full p-0.5", cfg.IconBgClass() } aria-hidden="true">
+			<div class={ "rounded-full p-0.5", cfg.iconBgClass() } aria-hidden="true">
 				switch cfg.Tone {
 					case ToneSuccess:
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
@@ -261,12 +261,12 @@ templ serverToast(cfg Config) {
 			<!-- Title & Message -->
 			<div class="flex flex-col gap-2">
 				if cfg.Title != "" {
-					<h3 class={ "text-sm font-semibold", cfg.TitleClass() }>{ cfg.Title }</h3>
+					<h3 class={ "text-sm font-semibold", cfg.titleClass() }>{ cfg.Title }</h3>
 				}
 				if cfg.Message != "" {
 					<p class="text-pretty text-sm">{ cfg.Message }</p>
 				}
-				if cfg.HasAction() {
+				if cfg.hasAction() {
 					// No Alpine dismiss here: removing the element on click would
 					// race the HTMX request and cancel it. The toast auto-dismisses
 					// on its timer; the action fires its HTMX request cleanly.

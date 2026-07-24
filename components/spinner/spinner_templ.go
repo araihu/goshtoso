@@ -45,7 +45,7 @@ func spinnerTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		classes := cfg.SizeClasses() + " " + cfg.FillClasses() + " motion-safe:animate-spin"
+		classes := cfg.sizeClasses() + " " + cfg.fillClasses() + " motion-safe:animate-spin"
 		if cfg.RootClass != "" {
 			classes = classes + " " + cfg.RootClass
 		}

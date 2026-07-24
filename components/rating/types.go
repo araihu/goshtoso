@@ -89,7 +89,7 @@ var defaultEmojiOptions = []emojiOption{
 }
 
 // ResolvedID returns the root ID prefix.
-func (cfg Config) ResolvedID() string {
+func (cfg Config) resolvedID() string {
 	if cfg.ID != "" {
 		return cfg.ID
 	}
@@ -100,15 +100,15 @@ func (cfg Config) ResolvedID() string {
 }
 
 // ResolvedName returns the radio group name.
-func (cfg Config) ResolvedName() string {
+func (cfg Config) resolvedName() string {
 	if cfg.Name != "" {
 		return cfg.Name
 	}
-	return cfg.ResolvedID()
+	return cfg.resolvedID()
 }
 
 // ResolvedMax returns the number of rating options.
-func (cfg Config) ResolvedMax() int {
+func (cfg Config) resolvedMax() int {
 	if cfg.Max > 0 {
 		return cfg.Max
 	}
@@ -116,12 +116,12 @@ func (cfg Config) ResolvedMax() int {
 }
 
 // ResolvedValue returns Value clamped to 0..Max.
-func (cfg Config) ResolvedValue() int {
-	return min(max(cfg.Value, 0), cfg.ResolvedMax())
+func (cfg Config) resolvedValue() int {
+	return min(max(cfg.Value, 0), cfg.resolvedMax())
 }
 
 // ResolvedLabel returns the accessible group label.
-func (cfg Config) ResolvedLabel() string {
+func (cfg Config) resolvedLabel() string {
 	if cfg.Label != "" {
 		return cfg.Label
 	}
@@ -129,7 +129,7 @@ func (cfg Config) ResolvedLabel() string {
 }
 
 // RootClasses returns the root classes.
-func (cfg Config) RootClasses() string {
+func (cfg Config) rootClasses() string {
 	base := "inline-flex flex-col gap-2"
 	if cfg.RootClass != "" {
 		base += " " + cfg.RootClass
@@ -138,12 +138,12 @@ func (cfg Config) RootClasses() string {
 }
 
 // ControlClasses returns classes for the option row.
-func (cfg Config) ControlClasses() string {
+func (cfg Config) controlClasses() string {
 	return "inline-flex w-fit items-center gap-1 rounded-radius focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-outline-strong dark:focus-within:outline-outline-dark-strong"
 }
 
 // IconClasses returns base classes for each visual option.
-func (cfg Config) IconClasses() string {
+func (cfg Config) iconClasses() string {
 	base := "block transition"
 	switch cfg.Size {
 	case SizeSM:
@@ -162,7 +162,7 @@ func (cfg Config) IconClasses() string {
 }
 
 // ActiveIconClasses returns classes for selected values.
-func (cfg Config) ActiveIconClasses() string {
+func (cfg Config) activeIconClasses() string {
 	if cfg.Appearance == AppearanceEmoji {
 		return "scale-110 opacity-100 grayscale-0"
 	}
@@ -170,7 +170,7 @@ func (cfg Config) ActiveIconClasses() string {
 }
 
 // InactiveIconClasses returns classes for unselected values.
-func (cfg Config) InactiveIconClasses() string {
+func (cfg Config) inactiveIconClasses() string {
 	if cfg.Appearance == AppearanceEmoji {
 		return "opacity-45 grayscale"
 	}
@@ -178,33 +178,33 @@ func (cfg Config) InactiveIconClasses() string {
 }
 
 // BindClass returns an Alpine class binding for the given value.
-func (cfg Config) BindClass(value int) string {
+func (cfg Config) bindClass(value int) string {
 	if cfg.Appearance == AppearanceEmoji {
-		return fmt.Sprintf("currentVal === %d ? '%s' : '%s'", value, cfg.ActiveIconClasses(), cfg.InactiveIconClasses())
+		return fmt.Sprintf("currentVal === %d ? '%s' : '%s'", value, cfg.activeIconClasses(), cfg.inactiveIconClasses())
 	}
-	return fmt.Sprintf("currentVal >= %d ? '%s' : '%s'", value, cfg.ActiveIconClasses(), cfg.InactiveIconClasses())
+	return fmt.Sprintf("currentVal >= %d ? '%s' : '%s'", value, cfg.activeIconClasses(), cfg.inactiveIconClasses())
 }
 
 // IsActive reports whether a value should render active on first paint.
-func (cfg Config) IsActive(value int) bool {
+func (cfg Config) isActive(value int) bool {
 	if cfg.Appearance == AppearanceEmoji {
-		return cfg.ResolvedValue() == value
+		return cfg.resolvedValue() == value
 	}
-	return value <= cfg.ResolvedValue()
+	return value <= cfg.resolvedValue()
 }
 
 // XData returns the simple Alpine state object.
-func (cfg Config) XData() string {
-	return fmt.Sprintf("{ currentVal: %d }", cfg.ResolvedValue())
+func (cfg Config) xData() string {
+	return fmt.Sprintf("{ currentVal: %d }", cfg.resolvedValue())
 }
 
 // InputID returns the generated input ID for a value.
-func (cfg Config) InputID(value int) string {
-	return cfg.ResolvedID() + "-" + strconv.Itoa(value)
+func (cfg Config) inputID(value int) string {
+	return cfg.resolvedID() + "-" + strconv.Itoa(value)
 }
 
 // ValueLabel returns the accessible label for a numeric rating.
-func (cfg Config) ValueLabel(value int) string {
+func (cfg Config) valueLabel(value int) string {
 	if cfg.Appearance == AppearanceEmoji {
 		for _, opt := range defaultEmojiOptions {
 			if opt.Value == value {
@@ -219,7 +219,7 @@ func (cfg Config) ValueLabel(value int) string {
 }
 
 // EmojiIcon returns the configured emoji icon for a value.
-func (cfg Config) EmojiIcon(value int) string {
+func (cfg Config) emojiIcon(value int) string {
 	for _, opt := range defaultEmojiOptions {
 		if opt.Value == value {
 			return opt.Icon

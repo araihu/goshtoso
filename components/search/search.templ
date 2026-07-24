@@ -11,7 +11,7 @@ import (
 // the caller; the component only handles presentation and client-side filtering.
 templ searchTemplate(cfg Config) {
 	@searchScript()
-	<div class={ cfg.RootClasses() }>
+	<div class={ cfg.rootClasses() }>
 		@SearchField(cfg)
 		@SearchModal(cfg)
 	</div>
@@ -20,12 +20,12 @@ templ searchTemplate(cfg Config) {
 // SearchField renders the compact trigger. It can be placed anywhere and linked
 // to a SearchModal with the same Config.ID.
 templ searchFieldTemplate(cfg Config) {
-	{{ id := cfg.GetID() }}
+	{{ id := cfg.getID() }}
 	@searchScript()
 	<div
 		id={ id }
 		class="w-full"
-		x-data={ fmt.Sprintf("goshtosoSearchField('%s', %t)", JSString(id), cfg.GlobalShortcut) }
+		x-data={ fmt.Sprintf("goshtosoSearchField('%s', %t)", jsString(id), cfg.GlobalShortcut) }
 		if cfg.GlobalShortcut {
 			x-on:keydown.window="handleWindowKey($event)"
 		}
@@ -34,15 +34,15 @@ templ searchFieldTemplate(cfg Config) {
 	>
 		<button
 			type="button"
-			class={ cfg.TriggerClasses() }
+			class={ cfg.triggerClasses() }
 			x-on:click="openSearch()"
 			aria-haspopup="dialog"
 			x-bind:aria-expanded="open"
 			aria-controls={ id + "-dialog" }
 		>
 			@searchIcon("size-5 shrink-0")
-			<span class="min-w-0 flex-1 truncate">{ cfg.GetLabel() }</span>
-			@kbd.Kbd(cfg.GetShortcutText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("ml-auto text-on-surface-muted dark:text-on-surface-dark-muted"))
+			<span class="min-w-0 flex-1 truncate">{ cfg.getLabel() }</span>
+			@kbd.Kbd(cfg.getShortcutText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("ml-auto text-on-surface-muted dark:text-on-surface-dark-muted"))
 		</button>
 	</div>
 }
@@ -50,11 +50,11 @@ templ searchFieldTemplate(cfg Config) {
 // SearchModal renders the global dialog surface. Pair it with SearchField using
 // the same Config.ID.
 templ searchModalTemplate(cfg Config) {
-	{{ id := cfg.GetID() }}
+	{{ id := cfg.getID() }}
 	@searchScript()
 	<div
 		x-cloak
-		x-data={ fmt.Sprintf("goshtosoSearchModal('%s', %d, %d)", JSString(id), cfg.GetMaxResults(), cfg.GetDescriptionMaxLength()) }
+		x-data={ fmt.Sprintf("goshtosoSearchModal('%s', %d, %d)", jsString(id), cfg.getMaxResults(), cfg.getDescriptionMaxLength()) }
 		x-on:goshtoso-search-open.window="if ($event.detail.id === searchId) openSearch()"
 		x-show="open"
 		x-transition.opacity.duration.150ms
@@ -70,7 +70,7 @@ templ searchModalTemplate(cfg Config) {
 		}
 	>
 		<div
-			class={ cfg.DialogClasses() }
+			class={ cfg.dialogClasses() }
 			x-show="open"
 			x-transition:enter="transition ease-out duration-150"
 			x-transition:enter-start="opacity-0 translate-y-1"
@@ -81,7 +81,7 @@ templ searchModalTemplate(cfg Config) {
 				x-bind:class="query.trim().length > 0 ? 'rounded-t-radius border-b-0' : 'rounded-radius'"
 			>
 				@searchIcon("size-5 shrink-0 text-on-surface-muted dark:text-on-surface-dark-muted")
-				<label id={ id + "-label" } class="sr-only" for={ id + "-input" }>{ cfg.GetLabel() }</label>
+				<label id={ id + "-label" } class="sr-only" for={ id + "-input" }>{ cfg.getLabel() }</label>
 				<input
 					x-ref="input"
 					x-model="query"
@@ -93,18 +93,18 @@ templ searchModalTemplate(cfg Config) {
 					id={ id + "-input" }
 					type="search"
 					class="min-w-0 flex-1 bg-transparent py-1 text-base text-on-surface-strong placeholder:text-on-surface-muted focus:outline-none dark:text-on-surface-dark-strong dark:placeholder:text-on-surface-dark-muted"
-					placeholder={ cfg.GetPlaceholder() }
+					placeholder={ cfg.getPlaceholder() }
 					autocomplete="off"
 					spellcheck="false"
 					{ cfg.InputAttrs... }
 				/>
-				@kbd.Kbd(cfg.GetEscapeText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("text-on-surface-muted dark:text-on-surface-dark-muted"))
+				@kbd.Kbd(cfg.getEscapeText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("text-on-surface-muted dark:text-on-surface-dark-muted"))
 			</div>
 			<div
 				x-show="query.trim().length > 0"
 				class="flex max-h-[min(28rem,calc(100vh-12rem))] flex-col divide-y divide-outline overflow-hidden overflow-y-auto rounded-b-radius border border-outline bg-surface text-sm font-light dark:divide-outline-dark dark:border-outline-dark dark:bg-surface-dark-alt"
 				role="listbox"
-				aria-label={ cfg.GetLabel() + " results" }
+				aria-label={ cfg.getLabel() + " results" }
 			>
 				if cfg.ItemsURL != "" {
 					@clientResultItems()
@@ -117,7 +117,7 @@ templ searchModalTemplate(cfg Config) {
 					x-show="query.trim().length > 0 && visibleResults().length === 0"
 					class="px-4 py-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
 				>
-					{ cfg.GetEmptyText() }
+					{ cfg.getEmptyText() }
 				</p>
 			</div>
 		</div>

@@ -58,13 +58,13 @@ type Config struct {
 
 // IsMine reports whether the bubble is statically "mine" (sent).
 // Auto is resolved client-side, so it is not statically mine.
-func (cfg Config) IsMine() bool {
+func (cfg Config) isMine() bool {
 	return cfg.Side == Sent
 }
 
 // DataMine returns the static data-mine value for the row.
-func (cfg Config) DataMine() string {
-	if cfg.IsMine() {
+func (cfg Config) dataMine() string {
+	if cfg.isMine() {
 		return "true"
 	}
 	return "false"
@@ -73,7 +73,7 @@ func (cfg Config) DataMine() string {
 // RowClasses returns the classes for the flex row that carries data-mine.
 // A `group` so the bubble can react via group-data-[mine=true]: variants.
 // flex-row-reverse on mine flips both the avatar column and bubble alignment.
-func (cfg Config) RowClasses() string {
+func (cfg Config) rowClasses() string {
 	base := "group flex w-full items-end gap-2 justify-start" +
 		" data-[mine=true]:flex-row-reverse data-[mine=true]:justify-end"
 	if cfg.Grouped {
@@ -91,7 +91,7 @@ func (cfg Config) RowClasses() string {
 // Received look is the default; the group-data-[mine=true]: variants supply
 // the sent look. Tails flip with data-mine: received tail bottom-left
 // (rounded-es-sm), sent tail bottom-right (rounded-ee-sm).
-func (cfg Config) BubbleClasses() string {
+func (cfg Config) bubbleClasses() string {
 	return "w-fit max-w-[80%] px-4 py-2.5 text-sm leading-relaxed break-words" +
 		" bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark" +
 		" rounded-radius rounded-es-none" +
@@ -101,11 +101,11 @@ func (cfg Config) BubbleClasses() string {
 }
 
 // HasAvatar reports whether the avatar column should render.
-func (cfg Config) HasAvatar() bool {
+func (cfg Config) hasAvatar() bool {
 	return cfg.ShowAvatar && !cfg.Grouped
 }
 
 // HasHeader reports whether the sender header line should render.
-func (cfg Config) HasHeader() bool {
+func (cfg Config) hasHeader() bool {
 	return cfg.SenderName != "" && !cfg.Grouped
 }

@@ -17,7 +17,7 @@ package spinner
 //	    Size:    spinner.SizeLG,
 //	})
 templ spinnerTemplate(cfg Config) {
-	{{ classes := cfg.SizeClasses() + " " + cfg.FillClasses() + " motion-safe:animate-spin" }}
+	{{ classes := cfg.sizeClasses() + " " + cfg.fillClasses() + " motion-safe:animate-spin" }}
 	if cfg.RootClass != "" {
 		{{ classes = classes + " " + cfg.RootClass }}
 	}

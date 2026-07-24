@@ -46,7 +46,7 @@ func accordionTemplate(cfg AccordionConfig) templ.Component {
 			containerID = "accordion"
 		}
 		alpineData := generateAlpineData(cfg)
-		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses() + " " + cfg.RootClass}
+		var templ_7745c5c3_Var2 = []any{cfg.containerClasses() + " " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -166,11 +166,11 @@ func accordionItem(data AccordionItemData) templ.Component {
 		contentID := "content-" + itemID
 		idx := fmt.Sprintf("%d", index)
 		clickHandler := "toggle(" + idx + ")"
-		classBinding := "isOpen(" + idx + ") ? '" + data.ExpandedClasses() + "' : '" + data.CollapsedClasses() + "'"
+		classBinding := "isOpen(" + idx + ") ? '" + data.expandedClasses() + "' : '" + data.collapsedClasses() + "'"
 		ariaBinding := "isOpen(" + idx + ") ? 'true' : 'false'"
 		showBinding := "isOpen(" + idx + ")"
 		chevronBinding := "isOpen(" + idx + ") ? 'rotate-180' : ''"
-		var templ_7745c5c3_Var7 = []any{data.ItemContainerClasses()}
+		var templ_7745c5c3_Var7 = []any{data.itemContainerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -202,7 +202,7 @@ func accordionItem(data AccordionItemData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{data.ItemButtonClasses()}
+		var templ_7745c5c3_Var9 = []any{data.itemButtonClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -378,7 +378,7 @@ func accordionItem(data AccordionItemData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var21 = []any{data.ContentClasses()}
+		var templ_7745c5c3_Var21 = []any{data.contentClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var21...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

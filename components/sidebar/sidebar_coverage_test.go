@@ -456,14 +456,14 @@ func TestCoverageSearchSlotOverridesDefaultSearch(t *testing.T) {
 func TestCoverageSidebarClassHelpers(t *testing.T) {
 	cfg := Config{}
 
-	assertContainsAll(t, cfg.ContainerClasses(),
+	assertContainsAll(t, cfg.containerClasses(),
 		`h-full`,
 		`border-r`,
 		`bg-surface`,
 		`dark:bg-surface-dark`,
 		`flex flex-col`,
 	)
-	assertContainsAll(t, cfg.NavClasses(),
+	assertContainsAll(t, cfg.navClasses(),
 		`flex-1`,
 		`overflow-y-auto`,
 		`sidebar-scroll`,

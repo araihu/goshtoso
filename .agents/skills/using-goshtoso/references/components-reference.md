@@ -272,7 +272,7 @@ import "github.com/araihu/goshtoso/components/button"  // package button
 import "github.com/araihu/goshtoso/components/card"  // package card
 ```
 
-**Entry points:** `Card(cfg Config)` · `StarRating(rating int)`
+**Entry points:** `Card(cfg Config)`
 
 - **Appearance** — AppearanceDefault = "", AppearancePrimary = "primary"
 - **Layout** — LayoutVertical = "vertical", LayoutHorizontal = "horizontal"
@@ -469,11 +469,6 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 |-------|------|-------------|
 | `Value` | `string` |  |
 | `Label` | `string` |  |
-| `Meta` | `string` |  |
-| `Img` | `string` |  |
-| `Initials` | `string` |  |
-| `Badge` | `string` |  |
-| `BadgeColor` | `string` | one of: primary, secondary, info, success, warning, danger, neutral |
 | `Disabled` | `bool` |  |
 
 **Source**
@@ -1418,7 +1413,7 @@ import "github.com/araihu/goshtoso/components/structuredinput"  // package struc
 import "github.com/araihu/goshtoso/components/table"  // package table
 ```
 
-**Entry points:** `ActionButton(label string)` · `ImageCell(imageURL string, label string, detail string)` · `StatusBadge(label string, status string)` · `Table(cfg Config)` · `TableBody(cfg Config)` · `TableHead(cfg Config)` · `TableHeadContent(cfg Config)` · `TablePagination(cfg Config)` · `TablePaginationNav(cfg Config)` · `TableRow(cfg Config, row Row)` · `TableRows(cfg Config)`
+**Entry points:** `ImageCell(imageURL string, label string, detail string)` · `Table(cfg Config)` · `TableHeadContent(cfg Config)` · `TablePaginationNav(cfg Config)` · `TableRow(cfg Config, row Row)` · `TableRows(cfg Config)`
 
 - **Appearance** — AppearanceDefault = "", AppearanceStriped = "striped"
 - **FilterAppearance** — FilterAppearanceBar = "", FilterAppearanceInline = "inline"

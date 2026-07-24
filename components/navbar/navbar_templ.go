@@ -50,7 +50,7 @@ func navbarTemplate(cfg Config) templ.Component {
 		if brandHref == "" {
 			brandHref = "/"
 		}
-		var templ_7745c5c3_Var2 = []any{cfg.NavClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.navClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -111,7 +111,7 @@ func navbarTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, action := range cfg.LeftActions() {
+		for _, action := range cfg.leftActions() {
 			templ_7745c5c3_Err = action.Content.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -122,7 +122,7 @@ func navbarTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, link := range cfg.Links {
-			var templ_7745c5c3_Var5 = []any{LinkClasses(link.Active)}
+			var templ_7745c5c3_Var5 = []any{linkClasses(link.Active)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -193,7 +193,7 @@ func navbarTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, action := range cfg.RightActions() {
+		for _, action := range cfg.rightActions() {
 			templ_7745c5c3_Err = action.Content.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -213,7 +213,7 @@ func navbarTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(cfg.Links) > 0 || cfg.User != nil || len(cfg.RightActions()) > 0 {
+		if len(cfg.Links) > 0 || cfg.User != nil || len(cfg.rightActions()) > 0 {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<button x-on:click=\"mobileMenuIsOpen = !mobileMenuIsOpen\" x-bind:aria-expanded=\"mobileMenuIsOpen\" x-bind:class=\"mobileMenuIsOpen ? 'fixed top-6 right-6 z-20' : null\" type=\"button\" class=\"flex text-on-surface dark:text-on-surface-dark sm:hidden\" aria-label=\"mobile menu\"><svg x-cloak x-show=\"!mobileMenuIsOpen\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" aria-hidden=\"true\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5\"></path></svg> <svg x-cloak x-show=\"mobileMenuIsOpen\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" aria-hidden=\"true\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18 18 6M6 6l12 12\"></path></svg></button><!-- Mobile Menu --> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -329,7 +329,7 @@ func avatarDropdown(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 = []any{MenuItemClasses(item.Danger)}
+			var templ_7745c5c3_Var12 = []any{menuItemClasses(item.Danger)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -569,7 +569,7 @@ func mobileMenu(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, action := range cfg.RightActions() {
+		for _, action := range cfg.rightActions() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li class=\"p-2 list-none\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

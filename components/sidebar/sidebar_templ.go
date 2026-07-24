@@ -45,7 +45,7 @@ func sidebarTemplate(cfg Config) templ.Component {
 		if logoHref == "" {
 			logoHref = "/"
 		}
-		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses() + " " + cfg.RootClass}
+		var templ_7745c5c3_Var2 = []any{cfg.containerClasses() + " " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -146,7 +146,7 @@ func sidebarTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 = []any{cfg.NavClasses()}
+		var templ_7745c5c3_Var7 = []any{cfg.navClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -283,9 +283,9 @@ func overlayTemplate(cfg OverlayConfig) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		state := cfg.StateVar()
-		panelID := cfg.PanelID()
-		var templ_7745c5c3_Var11 = []any{cfg.RootClasses()}
+		state := cfg.stateVar()
+		panelID := cfg.panelID()
+		var templ_7745c5c3_Var11 = []any{cfg.rootClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -320,7 +320,7 @@ func overlayTemplate(cfg OverlayConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 = []any{cfg.TriggerClasses()}
+		var templ_7745c5c3_Var14 = []any{cfg.triggerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -369,7 +369,7 @@ func overlayTemplate(cfg OverlayConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.TriggerLabelText())
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.triggerLabelText())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 110, Col: 38}
 		}
@@ -409,7 +409,7 @@ func overlayTemplate(cfg OverlayConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var20 = []any{cfg.BackdropClasses()}
+		var templ_7745c5c3_Var20 = []any{cfg.backdropClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var20...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -457,7 +457,7 @@ func overlayTemplate(cfg OverlayConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var24 = []any{cfg.PanelClasses()}
+		var templ_7745c5c3_Var24 = []any{cfg.panelClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var24...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

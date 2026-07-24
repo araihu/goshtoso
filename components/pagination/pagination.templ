@@ -35,20 +35,20 @@ templ paginationTemplate(cfg Config) {
 			id={ cfg.ID }
 		}
 		aria-label="pagination"
-		class={ cfg.NavClasses() }
+		class={ cfg.navClasses() }
 	>
-		<ul class={ cfg.ListClasses() }>
+		<ul class={ cfg.listClasses() }>
 			// Previous button
 			<li>
 				if cfg.HasPrevious() {
 					if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="previous page"
 							hx-get={ cfg.PageURL(cfg.PreviousPage()) }
 							hx-target={ cfg.HTMX.Target }
-							hx-swap={ cfg.SwapStrategy() }
+							hx-swap={ cfg.swapStrategy() }
 						>
 							@prevIcon()
 							Previous
@@ -56,7 +56,7 @@ templ paginationTemplate(cfg Config) {
 					} else {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="previous page"
 						>
 							@prevIcon()
@@ -64,7 +64,7 @@ templ paginationTemplate(cfg Config) {
 						</a>
 					}
 				} else {
-					<span class={ cfg.PrevNextClasses(false) } aria-disabled="true">
+					<span class={ cfg.prevNextClasses(false) } aria-disabled="true">
 						@prevIcon()
 						Previous
 					</span>
@@ -75,7 +75,7 @@ templ paginationTemplate(cfg Config) {
 				for _, item := range cfg.Pages() {
 					if item.IsEllipsis {
 						<li>
-							<span class={ cfg.EllipsisClasses() } aria-label="more pages">
+							<span class={ cfg.ellipsisClasses() } aria-label="more pages">
 								@ellipsisIcon()
 							</span>
 						</li>
@@ -83,7 +83,7 @@ templ paginationTemplate(cfg Config) {
 						<li>
 							<a
 								href={ templ.URL(cfg.PageURL(item.Page)) }
-								class={ cfg.PageClasses(true) }
+								class={ cfg.pageClasses(true) }
 								aria-current="page"
 								aria-label={ "page " + itoa(item.Page) }
 							>
@@ -95,18 +95,18 @@ templ paginationTemplate(cfg Config) {
 							if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 								<a
 									href={ templ.URL(cfg.PageURL(item.Page)) }
-									class={ cfg.PageClasses(false) }
+									class={ cfg.pageClasses(false) }
 									aria-label={ "page " + itoa(item.Page) }
 									hx-get={ cfg.PageURL(item.Page) }
 									hx-target={ cfg.HTMX.Target }
-									hx-swap={ cfg.SwapStrategy() }
+									hx-swap={ cfg.swapStrategy() }
 								>
 									{ itoa(item.Page) }
 								</a>
 							} else {
 								<a
 									href={ templ.URL(cfg.PageURL(item.Page)) }
-									class={ cfg.PageClasses(false) }
+									class={ cfg.pageClasses(false) }
 									aria-label={ "page " + itoa(item.Page) }
 								>
 									{ itoa(item.Page) }
@@ -122,11 +122,11 @@ templ paginationTemplate(cfg Config) {
 					if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="next page"
 							hx-get={ cfg.PageURL(cfg.NextPage()) }
 							hx-target={ cfg.HTMX.Target }
-							hx-swap={ cfg.SwapStrategy() }
+							hx-swap={ cfg.swapStrategy() }
 						>
 							Next
 							@nextIcon()
@@ -134,7 +134,7 @@ templ paginationTemplate(cfg Config) {
 					} else {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="next page"
 						>
 							Next
@@ -142,7 +142,7 @@ templ paginationTemplate(cfg Config) {
 						</a>
 					}
 				} else {
-					<span class={ cfg.PrevNextClasses(false) } aria-disabled="true">
+					<span class={ cfg.prevNextClasses(false) } aria-disabled="true">
 						Next
 						@nextIcon()
 					</span>

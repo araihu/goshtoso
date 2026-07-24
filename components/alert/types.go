@@ -63,7 +63,7 @@ type Config struct {
 }
 
 // ContainerClasses returns the outer container CSS classes
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "relative w-full overflow-hidden rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"
 
 	switch cfg.Tone {
@@ -87,7 +87,7 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // InnerClasses returns the inner wrapper CSS classes
-func (cfg Config) InnerClasses() string {
+func (cfg Config) innerClasses() string {
 	base := "flex w-full items-center gap-2 p-4"
 
 	switch cfg.Tone {
@@ -107,7 +107,7 @@ func (cfg Config) InnerClasses() string {
 }
 
 // IconBadgeClasses returns the icon badge CSS classes
-func (cfg Config) IconBadgeClasses() string {
+func (cfg Config) iconBadgeClasses() string {
 	base := "rounded-full p-1"
 
 	switch cfg.Tone {
@@ -127,7 +127,7 @@ func (cfg Config) IconBadgeClasses() string {
 }
 
 // TitleClasses returns the title CSS classes
-func (cfg Config) TitleClasses() string {
+func (cfg Config) titleClasses() string {
 	base := "text-sm font-semibold"
 
 	switch cfg.Tone {
@@ -147,7 +147,7 @@ func (cfg Config) TitleClasses() string {
 }
 
 // LinkClasses returns the link CSS classes
-func (cfg Config) LinkClasses() string {
+func (cfg Config) linkClasses() string {
 	base := "whitespace-nowrap ml-auto text-sm font-medium tracking-wide transition hover:opacity-75 text-center active:opacity-100"
 
 	switch cfg.Tone {
@@ -167,7 +167,7 @@ func (cfg Config) LinkClasses() string {
 }
 
 // PrimaryActionClasses returns the primary action button CSS classes
-func (cfg Config) PrimaryActionClasses() string {
+func (cfg Config) primaryActionClasses() string {
 	base := "whitespace-nowrap text-center text-sm font-semibold tracking-wide transition hover:opacity-75 active:opacity-100"
 
 	switch cfg.Tone {
@@ -187,7 +187,7 @@ func (cfg Config) PrimaryActionClasses() string {
 }
 
 // ListClasses returns the list CSS classes
-func (cfg Config) ListClasses() string {
+func (cfg Config) listClasses() string {
 	base := "mt-2 list-inside list-disc pl-2 text-xs font-medium sm:text-sm"
 
 	if cfg.Tone == ToneDanger {

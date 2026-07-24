@@ -19,7 +19,7 @@ func render(t *testing.T, cfg Config) string {
 
 func TestPalette_GridAndStaticDispatch(t *testing.T) {
 	html := render(t, Config{ID: "palette-surface"})
-	want := len(DefaultHues) * len(DefaultShades)
+	want := len(defaultHues) * len(defaultShades)
 	assert.Equal(t, want, strings.Count(html, `style="background-color: var(--color-`), "one grid button per hue×shade")
 	assert.Contains(t, html, `data-cls="blue-700"`)
 	assert.Contains(t, html, `style="background-color: var(--color-blue-700)"`)

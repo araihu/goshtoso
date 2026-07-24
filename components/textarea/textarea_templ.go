@@ -51,7 +51,7 @@ func textareaTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -79,7 +79,7 @@ func textareaTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var4 = []any{cfg.TextareaClasses()}
+		var templ_7745c5c3_Var4 = []any{cfg.textareaClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -138,7 +138,7 @@ func textareaTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetRows())
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.getRows())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textarea/textarea.templ`, Line: 36, Col: 23}
 		}
@@ -203,7 +203,7 @@ func textareaTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.HelperText != "" {
-			var templ_7745c5c3_Var11 = []any{cfg.HelperTextClasses()}
+			var templ_7745c5c3_Var11 = []any{cfg.helperTextClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -329,7 +329,7 @@ func textareaWithActionsTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetRows())
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.getRows())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textarea/textarea.templ`, Line: 65, Col: 24}
 		}
@@ -436,7 +436,7 @@ func textareaLabel(cfg Config) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if cfg.State == StateError {
-			var templ_7745c5c3_Var23 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var23 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var23...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -485,7 +485,7 @@ func textareaLabel(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if cfg.State == StateSuccess {
-			var templ_7745c5c3_Var27 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var27 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var27...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -534,7 +534,7 @@ func textareaLabel(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var31 = []any{cfg.LabelClasses()}
+			var templ_7745c5c3_Var31 = []any{cfg.labelClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var31...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

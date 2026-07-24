@@ -204,7 +204,7 @@ clustersProvider := func(ctx context.Context, search string, deps map[string]str
 		{Name: "Mode", Type: "Mode", Default: "ModeSingle", Description: "combobox.ModeSingle or combobox.ModeMultiple."},
 		{Name: "Source.Static", Type: "[]Option", Default: "nil", Description: "Client-mode options rendered into the first page. Use InitialState() to pass them into State."},
 		{Name: "Source.LazyEndpoint", Type: "string", Default: `""`, Description: "Server-mode endpoint used for first load/search. Cannot be combined with Source.Static."},
-		{Name: "Option", Type: "struct", Default: "-", Description: "Option row fields: Value, Label, Disabled. Meta, Img, Initials, Badge, and BadgeColor are data-model fields not rendered by the current list template."},
+		{Name: "Option", Type: "struct", Default: "-", Description: "Selectable option fields: Value, Label, and Disabled."},
 		{Name: "Selected", Type: "[]string", Default: "nil", Description: "Initial selected values for first-paint/static renders."},
 		{Name: "State.Options", Type: "[]Option", Default: "nil", Description: "Options available for this render. Client mode usually uses cfg.InitialState()."},
 		{Name: "State.Selected", Type: "[]string", Default: "nil", Description: "Selected values for this render; server handlers return updated Body/OptionsList state."},

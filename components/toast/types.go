@@ -79,7 +79,7 @@ type MessageConfig struct {
 }
 
 // HasAction reports whether the toast should render an inline action button.
-func (cfg Config) HasAction() bool { return cfg.ActionLabel != "" }
+func (cfg Config) hasAction() bool { return cfg.ActionLabel != "" }
 
 func (cfg MessageConfig) hasAction() bool { return cfg.ActionLabel != "" }
 
@@ -131,7 +131,7 @@ func (cfg ContainerConfig) effectiveDuration() int {
 }
 
 // BorderClass returns the border color class for the tone.
-func (cfg Config) BorderClass() string {
+func (cfg Config) borderClass() string {
 	switch cfg.Tone {
 	case ToneInfo:
 		return "border-info"
@@ -147,7 +147,7 @@ func (cfg Config) BorderClass() string {
 }
 
 // BgClass returns the inner background class for the tone.
-func (cfg Config) BgClass() string {
+func (cfg Config) bgClass() string {
 	switch cfg.Tone {
 	case ToneInfo:
 		return "bg-info/10"
@@ -163,7 +163,7 @@ func (cfg Config) BgClass() string {
 }
 
 // IconBgClass returns the icon badge background class
-func (cfg Config) IconBgClass() string {
+func (cfg Config) iconBgClass() string {
 	switch cfg.Tone {
 	case ToneInfo:
 		return "bg-info/15 text-info"
@@ -179,7 +179,7 @@ func (cfg Config) IconBgClass() string {
 }
 
 // TitleClass returns the title text color class
-func (cfg Config) TitleClass() string {
+func (cfg Config) titleClass() string {
 	switch cfg.Tone {
 	case ToneInfo:
 		return "text-info"

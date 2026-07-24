@@ -17,7 +17,7 @@ templ sidebarTemplate(cfg Config) {
 	{{ if logoHref == "" { logoHref = "/" } }}
 	
 	<nav
-		class={ cfg.ContainerClasses() + " " + cfg.RootClass }
+		class={ cfg.containerClasses() + " " + cfg.RootClass }
 		aria-label="sidebar navigation"
 	>
 		<!-- Skip to main content link for accessibility -->
@@ -56,7 +56,7 @@ templ sidebarTemplate(cfg Config) {
 		}
 		
 		<!-- Navigation -->
-		<div class={ cfg.NavClasses() }>
+		<div class={ cfg.navClasses() }>
 			<!-- Top-level items (icon links) -->
 			if len(cfg.Items) > 0 {
 				<div class="flex flex-col gap-1">
@@ -96,19 +96,19 @@ templ sidebarTemplate(cfg Config) {
 // The inner panel renders a normal Sidebar so consumers keep the same item,
 // section, slot, and HTMX APIs.
 templ overlayTemplate(cfg OverlayConfig) {
-	{{ state := cfg.StateVar() }}
-	{{ panelID := cfg.PanelID() }}
+	{{ state := cfg.stateVar() }}
+	{{ panelID := cfg.panelID() }}
 	<div
 		x-data={ fmt.Sprintf("{ %s: false }", state) }
-		class={ cfg.RootClasses() }
+		class={ cfg.rootClasses() }
 	>
 		<button
 			type="button"
 			x-on:click={ fmt.Sprintf("%s = !%s", state, state) }
 			x-bind:aria-expanded={ fmt.Sprintf("%s.toString()", state) }
 			aria-controls={ panelID }
-			aria-label={ cfg.TriggerLabelText() }
-			class={ cfg.TriggerClasses() }
+			aria-label={ cfg.triggerLabelText() }
+			class={ cfg.triggerClasses() }
 		>
 			if cfg.Trigger != nil {
 				@cfg.Trigger
@@ -121,7 +121,7 @@ templ overlayTemplate(cfg OverlayConfig) {
 			x-show={ state }
 			x-transition.opacity.duration.200ms
 			x-on:click={ fmt.Sprintf("%s = false", state) }
-			class={ cfg.BackdropClasses() }
+			class={ cfg.backdropClasses() }
 			aria-hidden="true"
 		></div>
 		<div
@@ -134,7 +134,7 @@ templ overlayTemplate(cfg OverlayConfig) {
 			x-transition:leave="transition-transform ease-in duration-150 motion-reduce:transition-none"
 			x-transition:leave-start="translate-x-0"
 			x-transition:leave-end="-translate-x-full"
-			class={ cfg.PanelClasses() }
+			class={ cfg.panelClasses() }
 		>
 			<div
 				class="h-full"

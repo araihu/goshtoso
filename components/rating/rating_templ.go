@@ -91,7 +91,7 @@ func ratingInteractive(cfg Config) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var4 = []any{cfg.RootClasses()}
+		var templ_7745c5c3_Var4 = []any{cfg.rootClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -101,7 +101,7 @@ func ratingInteractive(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ResolvedID())
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.resolvedID())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 17, Col: 23}
 		}
@@ -127,7 +127,7 @@ func ratingInteractive(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.XData())
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.xData())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 19, Col: 22}
 		}
@@ -153,7 +153,7 @@ func ratingInteractive(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ResolvedLabel())
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.resolvedLabel())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 23, Col: 114}
 			}
@@ -166,7 +166,7 @@ func ratingInteractive(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var9 = []any{cfg.ControlClasses()}
+		var templ_7745c5c3_Var9 = []any{cfg.controlClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -189,7 +189,7 @@ func ratingInteractive(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ResolvedLabel())
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.resolvedLabel())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 25, Col: 88}
 		}
@@ -201,7 +201,7 @@ func ratingInteractive(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for i := 1; i <= cfg.ResolvedMax(); i++ {
+		for i := 1; i <= cfg.resolvedMax(); i++ {
 			templ_7745c5c3_Err = ratingOption(cfg, i).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -415,7 +415,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var24 string
-		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.InputID(value))
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.inputID(value))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 61, Col: 32}
 		}
@@ -428,7 +428,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var25 string
-		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ValueLabel(value))
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.valueLabel(value))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 62, Col: 47}
 		}
@@ -441,7 +441,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var26 string
-		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.InputID(value))
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.inputID(value))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 64, Col: 26}
 		}
@@ -454,7 +454,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var27 string
-		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ResolvedName())
+		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.resolvedName())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 66, Col: 28}
 		}
@@ -479,7 +479,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.ResolvedValue() == value {
+		if cfg.resolvedValue() == value {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, " checked")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -495,7 +495,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var29 = []any{cfg.IconClasses() + " group-hover/rating-option:scale-110"}
+		var templ_7745c5c3_Var29 = []any{cfg.iconClasses() + " group-hover/rating-option:scale-110"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var29...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -518,7 +518,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var31 string
-		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.BindClass(value))
+		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.bindClass(value))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 79, Col: 38}
 		}
@@ -532,7 +532,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 		}
 		if cfg.Appearance == AppearanceEmoji {
 			var templ_7745c5c3_Var32 string
-			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.EmojiIcon(value))
+			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.emojiIcon(value))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/rating/rating.templ`, Line: 83, Col: 26}
 			}

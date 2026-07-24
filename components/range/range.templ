@@ -15,11 +15,11 @@ package rangeinput
 //	})
 templ rangeTemplate(cfg Config) {
 	if cfg.ShowValue {
-		<div x-data={ cfg.AlpineData() } class={ cfg.RootClasses() }>
+		<div x-data={ cfg.alpineData() } class={ cfg.rootClasses() }>
 			@rangeInner(cfg, true)
 		</div>
 	} else {
-		<div class={ cfg.RootClasses() }>
+		<div class={ cfg.rootClasses() }>
 			@rangeInner(cfg, false)
 		</div>
 	}
@@ -27,26 +27,26 @@ templ rangeTemplate(cfg Config) {
 
 templ rangeInner(cfg Config, alpine bool) {
 	if cfg.Label != "" && cfg.LeadingIcon == nil && cfg.TrailingIcon == nil && !cfg.ShowValue {
-		<label for={ cfg.ID } class={ cfg.LabelClasses() }>{ cfg.Label }</label>
+		<label for={ cfg.ID } class={ cfg.labelClasses() }>{ cfg.Label }</label>
 	}
-	<div class={ cfg.ControlClasses() }>
+	<div class={ cfg.controlClasses() }>
 		if cfg.LeadingIcon != nil {
-			<span class={ cfg.IconClasses() } aria-hidden="true">
+			<span class={ cfg.iconClasses() } aria-hidden="true">
 				@cfg.LeadingIcon
 			</span>
 		}
 		if cfg.Label != "" && (cfg.LeadingIcon != nil || cfg.TrailingIcon != nil || cfg.ShowValue) {
-			<label for={ cfg.ID } class={ cfg.LabelClasses() }>{ cfg.Label }</label>
+			<label for={ cfg.ID } class={ cfg.labelClasses() }>{ cfg.Label }</label>
 		}
 		<input
 			id={ cfg.ID }
 			type="range"
-			class={ cfg.InputClasses() }
+			class={ cfg.inputClasses() }
 			name={ cfg.Name }
-			value={ cfg.ValueOrDefault() }
-			min={ cfg.MinOrDefault() }
-			max={ cfg.MaxOrDefault() }
-			step={ cfg.StepOrDefault() }
+			value={ cfg.valueOrDefault() }
+			min={ cfg.minOrDefault() }
+			max={ cfg.maxOrDefault() }
+			step={ cfg.stepOrDefault() }
 			if alpine {
 				x-model="currentVal"
 			}
@@ -55,18 +55,18 @@ templ rangeInner(cfg Config, alpine bool) {
 			{ cfg.InputAttrs... }
 		/>
 		if cfg.ShowValue {
-			<span class={ cfg.ValueClasses() } x-text="currentVal">{ cfg.ValueOrDefault() }</span>
+			<span class={ cfg.valueClasses() } x-text="currentVal">{ cfg.valueOrDefault() }</span>
 		}
 		if cfg.TrailingIcon != nil {
-			<span class={ cfg.IconClasses() } aria-hidden="true">
+			<span class={ cfg.iconClasses() } aria-hidden="true">
 				@cfg.TrailingIcon
 			</span>
 		}
 	</div>
 	if cfg.ShowTicks {
 		<div class="flex w-full items-center justify-between px-0.5" aria-hidden="true">
-			for _, tick := range cfg.TickLabels() {
-				<span class={ cfg.TickClasses(tick) }>{ tick.Label }</span>
+			for _, tick := range cfg.tickLabels() {
+				<span class={ cfg.tickClasses(tick) }>{ tick.Label }</span>
 			}
 		</div>
 	}

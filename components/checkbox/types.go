@@ -155,7 +155,7 @@ func (cfg Config) svgTextClass() string {
 }
 
 // InputClasses returns the full CSS class string for the checkbox input
-func (cfg Config) InputClasses() string {
+func (cfg Config) inputClasses() string {
 	base := "before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface-alt before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:focus:outline-outline-dark-strong"
 
 	if cfg.Container {
@@ -177,7 +177,7 @@ func (cfg Config) InputClasses() string {
 }
 
 // SvgClasses returns the CSS class string for the SVG icon
-func (cfg Config) SvgClasses() string {
+func (cfg Config) svgClasses() string {
 	base := "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:visible"
 
 	classes := base + " " + cfg.svgTextClass()

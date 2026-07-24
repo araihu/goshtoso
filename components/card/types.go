@@ -41,7 +41,7 @@ type Config struct {
 }
 
 // ContainerClasses returns the container CSS classes
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "group flex rounded-radius overflow-hidden border bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
 
 	// Appearance
@@ -62,7 +62,7 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // ImageContainerClasses returns the image container classes
-func (cfg Config) ImageContainerClasses() string {
+func (cfg Config) imageContainerClasses() string {
 	if cfg.Layout == LayoutHorizontal {
 		return "col-span-3 overflow-hidden"
 	}
@@ -70,7 +70,7 @@ func (cfg Config) ImageContainerClasses() string {
 }
 
 // ImageClasses returns the image classes
-func (cfg Config) ImageClasses() string {
+func (cfg Config) imageClasses() string {
 	if cfg.Layout == LayoutHorizontal {
 		return "h-52 md:h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
 	}
@@ -78,7 +78,7 @@ func (cfg Config) ImageClasses() string {
 }
 
 // ContentClasses returns the content container classes
-func (cfg Config) ContentClasses() string {
+func (cfg Config) contentClasses() string {
 	if cfg.Layout == LayoutHorizontal {
 		return "flex flex-col justify-center p-6 col-span-5"
 	}
@@ -86,21 +86,21 @@ func (cfg Config) ContentClasses() string {
 }
 
 // TagClasses returns the tag classes
-func (cfg Config) TagClasses() string {
+func (cfg Config) tagClasses() string {
 	return "text-sm font-medium"
 }
 
 // TitleClasses returns the title classes
-func (cfg Config) TitleClasses() string {
+func (cfg Config) titleClasses() string {
 	return "text-balance text-xl lg:text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong"
 }
 
 // DescriptionClasses returns the description classes
-func (cfg Config) DescriptionClasses() string {
+func (cfg Config) descriptionClasses() string {
 	return "text-pretty text-sm"
 }
 
 // HasImage returns true if card has an image
-func (cfg Config) HasImage() bool {
+func (cfg Config) hasImage() bool {
 	return cfg.Image != ""
 }

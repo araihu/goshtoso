@@ -48,22 +48,22 @@ func TestConfig_Validate(t *testing.T) {
 
 func TestState_IsSelected(t *testing.T) {
 	s := State{Selected: []string{"a", "b"}}
-	assert.True(t, s.IsSelected("a"))
-	assert.True(t, s.IsSelected("b"))
-	assert.False(t, s.IsSelected("c"))
-	assert.False(t, s.IsSelected(""))
+	assert.True(t, s.isSelected("a"))
+	assert.True(t, s.isSelected("b"))
+	assert.False(t, s.isSelected("c"))
+	assert.False(t, s.isSelected(""))
 }
 
 func TestConfig_DepsSelector(t *testing.T) {
-	assert.Equal(t, "", Config{}.DepsSelector())
-	assert.Equal(t, "[name='provider']", Config{DependsOn: []string{"provider"}}.DepsSelector())
-	assert.Equal(t, "[name='provider'],[name='zone']", Config{DependsOn: []string{"provider", "zone"}}.DepsSelector())
+	assert.Equal(t, "", Config{}.depsSelector())
+	assert.Equal(t, "[name='provider']", Config{DependsOn: []string{"provider"}}.depsSelector())
+	assert.Equal(t, "[name='provider'],[name='zone']", Config{DependsOn: []string{"provider", "zone"}}.depsSelector())
 }
 
 func TestConfig_HXIncludeSelector(t *testing.T) {
 	base := "closest [data-combobox] input[type=hidden]"
-	assert.Equal(t, base, Config{}.HXIncludeSelector())
-	assert.Equal(t, base+",[name='provider']", Config{DependsOn: []string{"provider"}}.HXIncludeSelector())
+	assert.Equal(t, base, Config{}.hxIncludeSelector())
+	assert.Equal(t, base+",[name='provider']", Config{DependsOn: []string{"provider"}}.hxIncludeSelector())
 }
 
 func TestConfig_Validate_ClientMode(t *testing.T) {
@@ -106,8 +106,8 @@ func TestConfig_Validate_ClientMode(t *testing.T) {
 
 func TestConfig_IsClientMode(t *testing.T) {
 	static := Config{Source: Source{Static: []Option{{Value: "a"}}}}
-	assert.True(t, static.IsClientMode())
+	assert.True(t, static.isClientMode())
 
 	lazy := Config{Source: Source{LazyEndpoint: "/x"}}
-	assert.False(t, lazy.IsClientMode())
+	assert.False(t, lazy.isClientMode())
 }

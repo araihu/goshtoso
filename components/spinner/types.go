@@ -34,7 +34,7 @@ type Config struct {
 }
 
 // SizeClasses returns the CSS size class for the spinner
-func (cfg Config) SizeClasses() string {
+func (cfg Config) sizeClasses() string {
 	switch cfg.Size {
 	case SizeSM:
 		return "size-4"
@@ -48,7 +48,7 @@ func (cfg Config) SizeClasses() string {
 }
 
 // FillClasses returns the CSS fill classes for the spinner variant
-func (cfg Config) FillClasses() string {
+func (cfg Config) fillClasses() string {
 	switch cfg.Tone {
 	case TonePrimary:
 		return "fill-primary dark:fill-primary-dark"

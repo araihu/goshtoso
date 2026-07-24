@@ -63,8 +63,8 @@ func TestCoveragePreviousNextAndSwapDefaults(t *testing.T) {
 	assert.Equal(t, 2, last.PreviousPage())
 	assert.Equal(t, 3, last.NextPage())
 
-	assert.Equal(t, "innerHTML", Config{}.SwapStrategy())
-	assert.Equal(t, "outerHTML", Config{HTMX: &HTMXConfig{Swap: "outerHTML"}}.SwapStrategy())
+	assert.Equal(t, "innerHTML", Config{}.swapStrategy())
+	assert.Equal(t, "outerHTML", Config{HTMX: &HTMXConfig{Swap: "outerHTML"}}.swapStrategy())
 }
 
 func TestCoverageRenderEllipsisAndHTMXBranches(t *testing.T) {

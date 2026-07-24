@@ -14,16 +14,16 @@ templ ratingDisplayTemplate(cfg DisplayConfig) {
 
 templ ratingInteractive(cfg Config) {
 	<div
-		id={ cfg.ResolvedID() }
-		class={ cfg.RootClasses() }
-		x-data={ cfg.XData() }
+		id={ cfg.resolvedID() }
+		class={ cfg.rootClasses() }
+		x-data={ cfg.xData() }
 		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.ResolvedLabel() }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.resolvedLabel() }</span>
 		}
-		<div class={ cfg.ControlClasses() } role="radiogroup" aria-label={ cfg.ResolvedLabel() }>
-			for i := 1; i <= cfg.ResolvedMax(); i++ {
+		<div class={ cfg.controlClasses() } role="radiogroup" aria-label={ cfg.resolvedLabel() }>
+			for i := 1; i <= cfg.resolvedMax(); i++ {
 				@ratingOption(cfg, i)
 			}
 		</div>
@@ -58,16 +58,16 @@ templ ratingDisplay(cfg DisplayConfig) {
 }
 
 templ ratingOption(cfg Config, value int) {
-	<label for={ cfg.InputID(value) } class="group/rating-option cursor-pointer has-disabled:cursor-not-allowed">
-		<span class="sr-only">{ cfg.ValueLabel(value) }</span>
+	<label for={ cfg.inputID(value) } class="group/rating-option cursor-pointer has-disabled:cursor-not-allowed">
+		<span class="sr-only">{ cfg.valueLabel(value) }</span>
 		<input
-			id={ cfg.InputID(value) }
+			id={ cfg.inputID(value) }
 			type="radio"
-			name={ cfg.ResolvedName() }
+			name={ cfg.resolvedName() }
 			value={ fmt.Sprintf("%d", value) }
 			class="sr-only"
 			x-model.number="currentVal"
-			if cfg.ResolvedValue() == value {
+			if cfg.resolvedValue() == value {
 				checked
 			}
 			if cfg.Disabled {
@@ -75,12 +75,12 @@ templ ratingOption(cfg Config, value int) {
 			}
 		/>
 		<span
-			class={ cfg.IconClasses() + " group-hover/rating-option:scale-110" }
-			x-bind:class={ cfg.BindClass(value) }
+			class={ cfg.iconClasses() + " group-hover/rating-option:scale-110" }
+			x-bind:class={ cfg.bindClass(value) }
 			aria-hidden="true"
 		>
 			if cfg.Appearance == AppearanceEmoji {
-				{ cfg.EmojiIcon(value) }
+				{ cfg.emojiIcon(value) }
 			} else {
 				@starIcon()
 			}

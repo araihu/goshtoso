@@ -117,7 +117,7 @@ func simpleBanner(cfg Config) templ.Component {
 		if dismissAction == "" {
 			dismissAction = "show = false"
 		}
-		var templ_7745c5c3_Var4 = []any{cfg.ContainerClasses()}
+		var templ_7745c5c3_Var4 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -144,7 +144,7 @@ func simpleBanner(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var6 = []any{cfg.TextClasses()}
+			var templ_7745c5c3_Var6 = []any{cfg.textClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -180,7 +180,7 @@ func simpleBanner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if cfg.CTA.Href != "" {
-				var templ_7745c5c3_Var9 = []any{cfg.CTAClasses()}
+				var templ_7745c5c3_Var9 = []any{cfg.ctaClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -229,7 +229,7 @@ func simpleBanner(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var13 = []any{cfg.CTAClasses()}
+				var templ_7745c5c3_Var13 = []any{cfg.ctaClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -283,7 +283,7 @@ func simpleBanner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var17 = []any{cfg.TextClasses()}
+			var templ_7745c5c3_Var17 = []any{cfg.textClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var17...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

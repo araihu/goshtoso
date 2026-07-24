@@ -78,11 +78,11 @@ type AlertDialogConfig struct {
 	PanelClass string
 }
 
-func (cfg Config) StateVar() string {
+func (cfg Config) stateVar() string {
 	return safeJSIdentifier(cfg.ID, "modal") + "IsOpen"
 }
 
-func (cfg Config) TitleID() string {
+func (cfg Config) titleID() string {
 	base := cfg.ID
 	if base == "" {
 		base = "modal"
@@ -103,7 +103,7 @@ func (cfg AlertDialogConfig) titleID() string {
 }
 
 // TriggerClasses returns the trigger button CSS classes
-func (cfg Config) TriggerClasses() string {
+func (cfg Config) triggerClasses() string {
 	return "whitespace-nowrap rounded-radius border border-primary dark:border-primary-dark bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
 }
 
@@ -127,7 +127,7 @@ func (cfg AlertDialogConfig) triggerClasses() string {
 }
 
 // DialogClasses returns the modal dialog container CSS classes
-func (cfg Config) DialogClasses() string {
+func (cfg Config) dialogClasses() string {
 	return dialogClasses(cfg.PanelClass)
 }
 
@@ -174,7 +174,7 @@ func safeJSIdentifier(raw, fallback string) string {
 }
 
 // HeaderClasses returns the dialog header CSS classes
-func (cfg Config) HeaderClasses() string {
+func (cfg Config) headerClasses() string {
 	return "flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20"
 }
 

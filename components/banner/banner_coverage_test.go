@@ -59,7 +59,7 @@ func TestCoverageContainerClassesCoverPositionVariantsAndRootClass(t *testing.T)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			classes := tt.cfg.ContainerClasses()
+			classes := tt.cfg.containerClasses()
 			for _, want := range tt.wantParts {
 				assert.Contains(t, classes, want)
 			}
@@ -83,7 +83,7 @@ func TestCoverageLinkClassesCoverEveryVariant(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			classes := tt.cfg.LinkClasses()
+			classes := tt.cfg.linkClasses()
 			assert.Contains(t, classes, "font-medium")
 			assert.Contains(t, classes, "hover:underline")
 			assert.Contains(t, classes, tt.want)

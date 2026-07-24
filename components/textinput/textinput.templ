@@ -31,9 +31,9 @@ package textinput
 //	    HelperText: "Error: Email is required",
 //	})
 templ textInputTemplate(cfg Config) {
-	if cfg.IsPassword() {
+	if cfg.isPassword() {
 		@passwordInput(cfg)
-	} else if cfg.IsSearch() {
+	} else if cfg.isSearch() {
 		@searchInput(cfg)
 	} else {
 		@defaultInput(cfg)
@@ -42,16 +42,16 @@ templ textInputTemplate(cfg Config) {
 
 // defaultInput renders a standard text input with label
 templ defaultInput(cfg Config) {
-	<div class={ cfg.ContainerClasses() }>
+	<div class={ cfg.containerClasses() }>
 		if cfg.Label != "" {
 			@inputLabel(cfg)
 		}
-		if cfg.HasMask() {
+		if cfg.hasMask() {
 			<input
 				x-data
 				id={ cfg.ID }
-				type={ string(cfg.GetType()) }
-				class={ cfg.InputClasses() }
+				type={ string(cfg.getType()) }
+				class={ cfg.inputClasses() }
 				name={ cfg.Name }
 				placeholder={ cfg.Placeholder }
 				value={ cfg.Value }
@@ -68,19 +68,19 @@ templ defaultInput(cfg Config) {
 				if cfg.Autocomplete != "" {
 					autocomplete={ cfg.Autocomplete }
 				}
-				if cfg.HasPattern() {
+				if cfg.hasPattern() {
 					pattern={ cfg.Pattern }
 				}
-				if cfg.HasMaxLength() {
-					maxlength={ cfg.MaxLengthStr() }
+				if cfg.hasMaxLength() {
+					maxlength={ cfg.maxLengthStr() }
 				}
 				{ cfg.InputAttrs... }
 			/>
 		} else {
 			<input
 				id={ cfg.ID }
-				type={ string(cfg.GetType()) }
-				class={ cfg.InputClasses() }
+				type={ string(cfg.getType()) }
+				class={ cfg.inputClasses() }
 				name={ cfg.Name }
 				placeholder={ cfg.Placeholder }
 				value={ cfg.Value }
@@ -96,24 +96,24 @@ templ defaultInput(cfg Config) {
 				if cfg.Autocomplete != "" {
 					autocomplete={ cfg.Autocomplete }
 				}
-				if cfg.HasPattern() {
+				if cfg.hasPattern() {
 					pattern={ cfg.Pattern }
 				}
-				if cfg.HasMaxLength() {
-					maxlength={ cfg.MaxLengthStr() }
+				if cfg.hasMaxLength() {
+					maxlength={ cfg.maxLengthStr() }
 				}
 				{ cfg.InputAttrs... }
 			/>
 		}
 		if cfg.HelperText != "" {
-			<small class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
+			<small class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 		}
 	</div>
 }
 
 // passwordInput renders a password input with show/hide toggle
 templ passwordInput(cfg Config) {
-	<div class={ cfg.ContainerClasses() }>
+	<div class={ cfg.containerClasses() }>
 		if cfg.Label != "" {
 			@inputLabel(cfg)
 		}
@@ -121,7 +121,7 @@ templ passwordInput(cfg Config) {
 			<input
 				x-bind:type="showPassword ? 'text' : 'password'"
 				id={ cfg.ID }
-				class={ cfg.InputClasses() }
+				class={ cfg.inputClasses() }
 				name={ cfg.Name }
 				placeholder={ cfg.Placeholder }
 				value={ cfg.Value }
@@ -137,11 +137,11 @@ templ passwordInput(cfg Config) {
 				if cfg.Autocomplete != "" {
 					autocomplete={ cfg.Autocomplete }
 				}
-				if cfg.HasPattern() {
+				if cfg.hasPattern() {
 					pattern={ cfg.Pattern }
 				}
-				if cfg.HasMaxLength() {
-					maxlength={ cfg.MaxLengthStr() }
+				if cfg.hasMaxLength() {
+					maxlength={ cfg.maxLengthStr() }
 				}
 				{ cfg.InputAttrs... }
 			/>
@@ -161,14 +161,14 @@ templ passwordInput(cfg Config) {
 			</button>
 		</div>
 		if cfg.HelperText != "" {
-			<small class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
+			<small class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 		}
 	</div>
 }
 
 // searchInput renders a search input with search icon
 templ searchInput(cfg Config) {
-	<div class={ "relative " + cfg.ContainerClasses() }>
+	<div class={ "relative " + cfg.containerClasses() }>
 		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute left-2.5 top-1/2 size-5 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted">
 			<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
 		</svg>
@@ -187,11 +187,11 @@ templ searchInput(cfg Config) {
 			if cfg.Readonly {
 				readonly
 			}
-			if cfg.HasPattern() {
+			if cfg.hasPattern() {
 				pattern={ cfg.Pattern }
 			}
-			if cfg.HasMaxLength() {
-				maxlength={ cfg.MaxLengthStr() }
+			if cfg.hasMaxLength() {
+				maxlength={ cfg.maxLengthStr() }
 			}
 			aria-label="search"
 			{ cfg.InputAttrs... }
@@ -201,7 +201,7 @@ templ searchInput(cfg Config) {
 
 // inputLabel renders the label element with optional state icon
 templ inputLabel(cfg Config) {
-	<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+	<label for={ cfg.ID } class={ cfg.labelClasses() }>
 		if cfg.State == StateError {
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor" class="w-4 h-4">
 				<path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path>

@@ -54,7 +54,7 @@ templ tabButton(containerID string, tab Tab) {
 		x-on:click={ fmt.Sprintf("selectedTab = '%s'", jsEscapeSingle(tab.ID)) }
 		x-bind:aria-selected={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
 		x-bind:tabindex={ fmt.Sprintf("selectedTab === '%s' ? '0' : '-1'", jsEscapeSingle(tab.ID)) }
-		x-bind:class={ fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), ActiveClasses(), InactiveClasses()) }
+		x-bind:class={ fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), activeClasses(), inactiveClasses()) }
 		class={ baseClass }
 		type="button"
 		role="tab"
@@ -73,7 +73,7 @@ templ tabButton(containerID string, tab Tab) {
 		}
 		if tab.Badge != "" {
 			<span
-				x-bind:class={ fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), BadgeActiveClasses(), BadgeInactiveClasses()) }
+				x-bind:class={ fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), badgeActiveClasses(), badgeInactiveClasses()) }
 				class="text-xs font-medium px-1 rounded-full border"
 			>
 				{ tab.Badge }

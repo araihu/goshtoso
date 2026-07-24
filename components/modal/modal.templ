@@ -24,10 +24,10 @@ func buttonClickExpr(stateVar string, action *ButtonAction) string {
 
 // defaultModal renders a standard modal with header/body/footer
 templ defaultModal(cfg Config) {
-	{{ titleID := cfg.TitleID() }}
-	{{ stateVar := cfg.StateVar() }}
+	{{ titleID := cfg.titleID() }}
+	{{ stateVar := cfg.stateVar() }}
 	<div x-data={ fmt.Sprintf("{%s: false}", stateVar) }>
-		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.TriggerClasses() }>
+		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.triggerClasses() }>
 			{ cfg.TriggerLabel }
 		</button>
 		<div
@@ -47,10 +47,10 @@ templ defaultModal(cfg Config) {
 				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
 				x-transition:enter-start="opacity-0 scale-50"
 				x-transition:enter-end="opacity-100 scale-100"
-				class={ cfg.DialogClasses() }
+				class={ cfg.dialogClasses() }
 			>
 				<!-- Dialog Header -->
-				<div class={ cfg.HeaderClasses() }>
+				<div class={ cfg.headerClasses() }>
 					<h3 id={ titleID } class="font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
 					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label="close modal">
 						@closeIcon()

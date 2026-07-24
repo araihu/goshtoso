@@ -50,7 +50,7 @@ func TestRenderHeaderAndCopyButton(t *testing.T) {
 	}
 }
 
-// TestGetIDBaseSelection exercises the slug-base fallback chain in GetID:
+// TestGetIDBaseSelection exercises the slug-base fallback chain in getID:
 // explicit ID wins, else label slug, else language slug, else "snippet".
 func TestGetIDBaseSelection(t *testing.T) {
 	tests := []struct {
@@ -87,9 +87,9 @@ func TestGetIDBaseSelection(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.cfg.GetID()
+			got := tt.cfg.getID()
 			if !strings.HasPrefix(got, tt.wantSub) && !strings.Contains(got, tt.wantSub) {
-				t.Fatalf("GetID() = %q; want to contain %q", got, tt.wantSub)
+				t.Fatalf("getID() = %q; want to contain %q", got, tt.wantSub)
 			}
 		})
 	}
@@ -98,8 +98,8 @@ func TestGetIDBaseSelection(t *testing.T) {
 // TestGetIDDiffersByContent confirms the hash suffix changes the ID when the
 // code differs even though the base slug is identical.
 func TestGetIDDiffersByContent(t *testing.T) {
-	a := Config{Language: "go", Label: "Same", Code: "one"}.GetID()
-	b := Config{Language: "go", Label: "Same", Code: "two"}.GetID()
+	a := Config{Language: "go", Label: "Same", Code: "one"}.getID()
+	b := Config{Language: "go", Label: "Same", Code: "two"}.getID()
 	if a == b {
 		t.Fatalf("expected distinct IDs for differing code, both = %q", a)
 	}
@@ -108,20 +108,20 @@ func TestGetIDDiffersByContent(t *testing.T) {
 	}
 }
 
-// TestGetLabelDefaultsToLanguage covers both GetLabel branches.
+// TestGetLabelDefaultsToLanguage covers both getLabel branches.
 func TestGetLabelDefaultsToLanguage(t *testing.T) {
-	if got := (Config{Label: "Custom", Language: "go"}).GetLabel(); got != "Custom" {
-		t.Fatalf("GetLabel() = %q; want explicit label", got)
+	if got := (Config{Label: "Custom", Language: "go"}).getLabel(); got != "Custom" {
+		t.Fatalf("getLabel() = %q; want explicit label", got)
 	}
-	if got := (Config{Language: "bash"}).GetLabel(); got != "bash" {
-		t.Fatalf("GetLabel() = %q; want language fallback", got)
+	if got := (Config{Language: "bash"}).getLabel(); got != "bash" {
+		t.Fatalf("getLabel() = %q; want language fallback", got)
 	}
-	if got := (Config{}).GetLabel(); got != "" {
-		t.Fatalf("GetLabel() = %q; want empty when both unset", got)
+	if got := (Config{}).getLabel(); got != "" {
+		t.Fatalf("getLabel() = %q; want empty when both unset", got)
 	}
 }
 
-// TestCopyLabelFallsBackToID covers the copyLabel branch where GetLabel is
+// TestCopyLabelFallsBackToID covers the copyLabel branch where getLabel is
 // empty and the accessible name is built from the generated ID instead.
 func TestCopyLabelFallsBackToID(t *testing.T) {
 	withLabel := Config{Label: "Install", Language: "bash"}.copyLabel()
@@ -131,7 +131,7 @@ func TestCopyLabelFallsBackToID(t *testing.T) {
 
 	cfg := Config{Code: "x"} // no label, no language
 	got := cfg.copyLabel()
-	id := cfg.GetID()
+	id := cfg.getID()
 	want := "Copy " + id + " code"
 	if got != want {
 		t.Fatalf("copyLabel() = %q; want %q (ID fallback)", got, want)

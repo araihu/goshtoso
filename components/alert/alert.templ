@@ -15,11 +15,11 @@ templ alertTemplate(cfg Config) {
 
 // defaultAlert renders a simple alert (with or without list items)
 templ defaultAlert(cfg Config) {
-	<div class={ cfg.ContainerClasses() } role="alert">
-		<div class={ cfg.InnerClasses() }>
+	<div class={ cfg.containerClasses() } role="alert">
+		<div class={ cfg.innerClasses() }>
 			@iconBadge(cfg)
 			<div class="ml-2">
-				<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+				<h3 class={ cfg.titleClasses() }>{ cfg.Title }</h3>
 				<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
 				if len(cfg.ListItems) > 0 {
 					@listContent(cfg)
@@ -34,16 +34,16 @@ templ dismissibleAlert(cfg Config) {
 	<div
 		x-data="{ alertIsVisible: true }"
 		x-show="alertIsVisible"
-		class={ cfg.ContainerClasses() }
+		class={ cfg.containerClasses() }
 		role="alert"
 		x-transition:leave="transition ease-in duration-300"
 		x-transition:leave-start="opacity-100 scale-100"
 		x-transition:leave-end="opacity-0 scale-90"
 	>
-		<div class={ cfg.InnerClasses() }>
+		<div class={ cfg.innerClasses() }>
 			@iconBadge(cfg)
 			<div class="ml-2">
-				<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+				<h3 class={ cfg.titleClasses() }>{ cfg.Title }</h3>
 				<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
 				if len(cfg.ListItems) > 0 {
 					@listContent(cfg)
@@ -58,15 +58,15 @@ templ dismissibleAlert(cfg Config) {
 
 // linkAlert renders an alert with an action link
 templ linkAlert(cfg Config) {
-	<div class={ cfg.ContainerClasses() } role="alert">
-		<div class={ cfg.InnerClasses() }>
+	<div class={ cfg.containerClasses() } role="alert">
+		<div class={ cfg.innerClasses() }>
 			@iconBadge(cfg)
 			<div class="flex w-full flex-col items-center justify-between gap-2 ml-2 sm:flex-row">
 				<div>
-					<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+					<h3 class={ cfg.titleClasses() }>{ cfg.Title }</h3>
 					<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
 				</div>
-				<a href={ templ.URL(cfg.Link.Href) } class={ cfg.LinkClasses() }>
+				<a href={ templ.URL(cfg.Link.Href) } class={ cfg.linkClasses() }>
 					{ cfg.Link.Label }
 				</a>
 			</div>
@@ -78,18 +78,18 @@ templ linkAlert(cfg Config) {
 templ actionAlert(cfg Config) {
 	{{ dismissText := cfg.Action.DismissLabel }}
 	{{ if dismissText == "" { dismissText = "Dismiss" } }}
-	<div class={ cfg.ContainerClasses() } role="alert">
-		<div class={ cfg.InnerClasses() }>
+	<div class={ cfg.containerClasses() } role="alert">
+		<div class={ cfg.innerClasses() }>
 			@iconBadge(cfg)
 			<div class="flex flex-col gap-2 ml-2">
 				<div>
-					<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+					<h3 class={ cfg.titleClasses() }>{ cfg.Title }</h3>
 					<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
 				</div>
 				<div class="flex items-center gap-4">
 					<button
 						type="button"
-						class={ cfg.PrimaryActionClasses() }
+						class={ cfg.primaryActionClasses() }
 						if cfg.Action.PrimaryOnClick != "" {
 							@click={ cfg.Action.PrimaryOnClick }
 						}
@@ -122,7 +122,7 @@ templ actionAlert(cfg Config) {
 
 // listContent renders a bullet list inside the alert
 templ listContent(cfg Config) {
-	<ul class={ cfg.ListClasses() }>
+	<ul class={ cfg.listClasses() }>
 		for _, item := range cfg.ListItems {
 			<li>{ item }</li>
 		}
@@ -131,7 +131,7 @@ templ listContent(cfg Config) {
 
 // iconBadge renders the variant-specific icon
 templ iconBadge(cfg Config) {
-	<div class={ cfg.IconBadgeClasses() } aria-hidden="true">
+	<div class={ cfg.iconBadgeClasses() } aria-hidden="true">
 		switch cfg.Tone {
 			case ToneInfo:
 				@infoIcon()

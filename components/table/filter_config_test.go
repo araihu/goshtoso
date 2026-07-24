@@ -33,9 +33,9 @@ func TestFilterConfig_ResolvedHxTarget(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := tc.filter.ResolvedHxTarget(tc.cfg)
+			got := tc.filter.resolvedHXTarget(tc.cfg)
 			if got != tc.want {
-				t.Fatalf("ResolvedHxTarget = %q; want %q", got, tc.want)
+				t.Fatalf("resolvedHXTarget = %q; want %q", got, tc.want)
 			}
 		})
 	}
@@ -137,9 +137,9 @@ func TestFilterConfig_ResolvedHxSwap(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := tc.filter.ResolvedHxSwap()
+			got := tc.filter.resolvedHXSwap()
 			if got != tc.want {
-				t.Fatalf("ResolvedHxSwap = %q; want %q", got, tc.want)
+				t.Fatalf("resolvedHXSwap = %q; want %q", got, tc.want)
 			}
 		})
 	}
