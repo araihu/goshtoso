@@ -2068,3 +2068,127 @@ if ! git diff --cached --quiet; then
   git commit -m "chore: verify component API documentation contracts"
 fi
 ```
+
+---
+
+### Task 20: Publish the release changelog and migration guide
+
+**Files:**
+
+- Create: `CHANGELOG.md`
+- Create: `docs/MIGRATING_COMPONENT_API.md`
+- Create: `docs/migration_examples_test.go`
+- Modify: `README.md`
+
+**Interfaces:**
+
+- Consumes: the previous released Git tag and the final public API produced by
+  Tasks 1–19.
+- Produces: an `Unreleased` changelog entry explicitly based on the previous
+  release, plus a compile-checked consumer migration guide.
+
+- [ ] **Step 1: Lock the release comparison base**
+
+Resolve and record the previous released version:
+
+```bash
+git describe --tags --abbrev=0
+git log --oneline "$(git describe --tags --abbrev=0)"..HEAD
+git diff --stat "$(git describe --tags --abbrev=0)"..HEAD
+```
+
+The changelog heading must say `Unreleased` until the release version and date
+are known, and must state the exact previous tag used as the migration base.
+Do not invent the next version number.
+
+- [ ] **Step 2: Write failing compile checks for migration examples**
+
+Add `docs/migration_examples_test.go` with external-package examples covering:
+
+- the shared `components.Component` / `Kind()` identity contract;
+- `Tone`, `Appearance`, and `Mode` configuration dimensions;
+- one split primitive pair, such as `Modal` / `AlertDialog`;
+- the Button, Link, Kbd, and Tooltip functional-option constructors;
+- one concrete component return value stored and switched on by Kind.
+
+Write the intended new API first and run:
+
+```bash
+go test ./docs -count=1
+```
+
+Expected before the guide/API names are corrected: compile failure or a failing
+example assertion. Keep the final snippets in the guide aligned with these
+compile-checked examples.
+
+- [ ] **Step 3: Write the release changelog**
+
+Create `CHANGELOG.md` with an `Unreleased` entry that:
+
+- links to `docs/MIGRATING_COMPONENT_API.md`;
+- calls out the release as breaking while the project is alpha;
+- summarizes component identity, dimension vocabulary, split primitives,
+  functional options, concrete renderable instances, curated helpers, and the
+  documentation/smoke-test contract;
+- distinguishes source-breaking changes from behavioral/default changes;
+- lists removals without implying compatibility aliases exist.
+
+- [ ] **Step 4: Write the consumer migration guide**
+
+Build the exact old-to-new mapping from the final diff and generated consumer
+reference, not from memory:
+
+```bash
+previous_tag="$(git describe --tags --abbrev=0)"
+git diff "$previous_tag"..HEAD -- components internal/skillgen \
+  .agents/skills/using-goshtoso/references/components-reference.md
+```
+
+The guide must include:
+
+- a searchable old symbol → new symbol/action table;
+- before/after Go snippets for each breaking-change family;
+- split-primitive selection guidance;
+- effective-default notes where zero values or constructor defaults matter;
+- a mechanical upgrade checklist with `rg` searches for removed names;
+- the shared `Kind()` loop-and-switch example and the rationale for concrete
+  dimension names instead of a universal `Variant`.
+
+- [ ] **Step 5: Link and verify the release documentation**
+
+Link the changelog and migration guide from `README.md`, then run:
+
+```bash
+go test ./docs -count=1
+rg -n 'Unreleased|MIGRATING_COMPONENT_API|Breaking' CHANGELOG.md README.md
+rg -n '\bVariant\b|Variant[A-Z]|[A-Z][A-Za-z]+Variant\b' \
+  CHANGELOG.md docs/MIGRATING_COMPONENT_API.md
+git diff --check
+```
+
+Expected: tests pass; `Variant` matches only historical old-symbol mappings or
+the rationale explaining why it is no longer universal.
+
+- [ ] **Step 6: Perform a release-note completeness audit**
+
+Compare every breaking public API commit and the final generated component
+reference against the changelog. Record evidence that all of these are covered:
+
+```text
+identity and Kind
+dimension renames
+split primitives
+functional-option constructors
+concrete renderable returns
+removed/private helpers
+effective default or behavior changes
+documentation and smoke-test guarantees
+```
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add CHANGELOG.md README.md docs/MIGRATING_COMPONENT_API.md \
+  docs/migration_examples_test.go
+git commit -m "docs: add component API migration changelog"
+```
