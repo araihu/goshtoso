@@ -26,7 +26,7 @@ import (
 //	    AvatarInitials: "AL",
 	//	    AvatarTone:     avatar.ToneInfo,
 //	})
-templ ChatBubble(cfg Config) {
+templ chatBubbleTemplate(cfg Config) {
 	<div
 		class={ cfg.RowClasses() }
 		data-mine={ cfg.DataMine() }
@@ -64,7 +64,7 @@ templ ChatBubble(cfg Config) {
 //	    AvatarInitials: "AL",
 	//	    AvatarTone:     avatar.ToneInfo,
 //	})
-templ TypingIndicator(cfg Config) {
+templ typingIndicatorTemplate(cfg Config) {
 	<div class={ cfg.RowClasses() } data-mine="false" aria-label="typing" aria-live="polite">
 		if cfg.HasAvatar() {
 			@bubbleAvatar(cfg)

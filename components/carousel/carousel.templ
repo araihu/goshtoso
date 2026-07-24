@@ -13,7 +13,7 @@ import "fmt"
 //	        {ImgSrc: "/img/2.webp", ImgAlt: "Slide 2"},
 //	    },
 //	})
-templ Carousel(cfg Config) {
+templ carouselTemplate(cfg Config) {
 	if cfg.HTMX != nil {
 		@htmxCarousel(cfg)
 	} else {
@@ -22,7 +22,7 @@ templ Carousel(cfg Config) {
 }
 
 // CardCarousel renders a carousel inside an article card.
-templ CardCarousel(cfg CardConfig) {
+templ cardCarouselTemplate(cfg CardConfig) {
 	@cardCarousel(cfg)
 }
 

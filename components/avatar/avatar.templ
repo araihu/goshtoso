@@ -32,7 +32,7 @@ import "fmt"
 //	@avatar.Avatar(avatar.Config{
 //	    Initials: "JS",
 //	})
-templ Avatar(cfg Config) {
+templ avatarTemplate(cfg Config) {
 	if cfg.Status != "" {
 		@avatarWithStatus(cfg)
 	} else {
@@ -41,7 +41,7 @@ templ Avatar(cfg Config) {
 }
 
 // AvatarStack renders an overlapping group of avatars.
-templ AvatarStack(cfg StackConfig) {
+templ avatarStackTemplate(cfg StackConfig) {
 	{{
 		label := cfg.Label
 		if label == "" {

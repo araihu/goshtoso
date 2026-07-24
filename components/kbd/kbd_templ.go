@@ -15,7 +15,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //	@kbd.Kbd("Ctrl")
 //	@kbd.Kbd("K", kbd.WithSize(kbd.SizeSM))
 //	@kbd.Kbd("", kbd.WithIcon(commandIcon()), kbd.WithLabel("Command"))
-func Kbd(text string, options ...Option) templ.Component {
+func kbdTemplate(text string, options ...Option) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

@@ -20,7 +20,7 @@ import "fmt"
 //	    Code:     "go get github.com/a-h/templ",
 //	    MaxHeight: "200px",
 //	})
-templ CodeBlock(cfg Config) {
+templ codeBlockTemplate(cfg Config) {
 	{{ id := cfg.GetID() }}
 	{{ jsID := jsStringSingle(id) }}
 	<div

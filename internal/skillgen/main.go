@@ -2,8 +2,8 @@
 //
 // It parses every package under components/ via go/ast and emits the
 // per-component reference consumed by the using-goshtoso skill. Because the
-// output is derived from types.go (and the generated *_templ.go entry points),
-// it can never drift from or misrepresent the real API.
+// output is derived from each component package's Go source, it can never drift
+// from or misrepresent the real API.
 //
 // Run from the repo root:
 //
@@ -130,13 +130,18 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 	}
 	api := pkgAPI{dir: dirName}
 	enums := map[string][]string{}
+	parsedFiles := make([]*ast.File, 0, len(files))
 	for _, f := range files {
 		af, err := parser.ParseFile(fset, f, nil, parser.ParseComments)
 		if err != nil {
 			return pkgAPI{}, false, err
 		}
 		api.name = af.Name.Name
-		collectFile(fset, af, &api, enums)
+		parsedFiles = append(parsedFiles, af)
+	}
+	componentTypes := collectComponentTypes(parsedFiles)
+	for _, af := range parsedFiles {
+		collectFile(fset, af, &api, enums, componentTypes)
 	}
 	if api.name == "" {
 		return pkgAPI{}, false, nil
@@ -151,12 +156,62 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 	return api, true, nil
 }
 
+// collectComponentTypes returns package-local receiver types that expose the
+// methods required by components.Component. Signatures are intentionally not
+// type-checked: skillgen remains an AST-only source documentation generator.
+func collectComponentTypes(files []*ast.File) map[string]struct{} {
+	methods := map[string]map[string]struct{}{}
+	for _, af := range files {
+		for _, decl := range af.Decls {
+			fn, ok := decl.(*ast.FuncDecl)
+			if !ok || fn.Recv == nil || len(fn.Recv.List) != 1 {
+				continue
+			}
+			name := receiverTypeName(fn.Recv.List[0].Type)
+			if name == "" || (fn.Name.Name != "Kind" && fn.Name.Name != "Render") {
+				continue
+			}
+			if methods[name] == nil {
+				methods[name] = map[string]struct{}{}
+			}
+			methods[name][fn.Name.Name] = struct{}{}
+		}
+	}
+
+	componentTypes := map[string]struct{}{}
+	for name, names := range methods {
+		_, hasKind := names["Kind"]
+		_, hasRender := names["Render"]
+		if hasKind && hasRender {
+			componentTypes[name] = struct{}{}
+		}
+	}
+	return componentTypes
+}
+
+func receiverTypeName(expr ast.Expr) string {
+	if pointer, ok := expr.(*ast.StarExpr); ok {
+		expr = pointer.X
+	}
+	ident, ok := expr.(*ast.Ident)
+	if !ok {
+		return ""
+	}
+	return ident.Name
+}
+
 // collectFile walks one file's top-level decls into the package API.
-func collectFile(fset *token.FileSet, af *ast.File, api *pkgAPI, enums map[string][]string) {
+func collectFile(
+	fset *token.FileSet,
+	af *ast.File,
+	api *pkgAPI,
+	enums map[string][]string,
+	componentTypes map[string]struct{},
+) {
 	for _, decl := range af.Decls {
 		switch d := decl.(type) {
 		case *ast.FuncDecl:
-			if isEntry(fset, d) {
+			if isEntry(fset, d, componentTypes) {
 				api.entries = append(api.entries, entrySig(fset, d))
 			}
 			if isOption(fset, d) {
@@ -174,8 +229,13 @@ func collectFile(fset *token.FileSet, af *ast.File, api *pkgAPI, enums map[strin
 }
 
 // isEntry reports whether fn is an exported component entry point: a top-level
-// function with no receiver returning templ.Component.
-func isEntry(fset *token.FileSet, fn *ast.FuncDecl) bool {
+// function with no receiver returning templ.Component or a package-local type
+// that exposes both Kind and Render methods.
+func isEntry(
+	fset *token.FileSet,
+	fn *ast.FuncDecl,
+	componentTypes map[string]struct{},
+) bool {
 	if fn.Recv != nil || !fn.Name.IsExported() || fn.Type.Results == nil {
 		return false
 	}
@@ -184,7 +244,16 @@ func isEntry(fset *token.FileSet, fn *ast.FuncDecl) bool {
 			return true
 		}
 	}
-	return false
+	results := fn.Type.Results.List
+	if len(results) != 1 || len(results[0].Names) > 1 {
+		return false
+	}
+	result, ok := results[0].Type.(*ast.Ident)
+	if !ok {
+		return false
+	}
+	_, ok = componentTypes[result.Name]
+	return ok
 }
 
 // isOption reports whether fn is an exported functional option constructor:

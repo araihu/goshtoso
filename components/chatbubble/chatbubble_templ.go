@@ -34,7 +34,7 @@ import (
 //	    AvatarInitials: "AL",
 //	    AvatarTone:     avatar.ToneInfo,
 //	})
-func ChatBubble(cfg Config) templ.Component {
+func chatBubbleTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -209,7 +209,7 @@ func ChatBubble(cfg Config) templ.Component {
 //	    AvatarInitials: "AL",
 //	    AvatarTone:     avatar.ToneInfo,
 //	})
-func TypingIndicator(cfg Config) templ.Component {
+func typingIndicatorTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

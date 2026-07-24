@@ -133,7 +133,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 import "github.com/araihu/goshtoso/components/badge"  // package badge
 ```
 
-**Entry points:** `AnimatingDot(variant Tone)` · `Badge(cfg Config)` · `NotificationBadge(count int)` · `NotificationDot()`
+**Entry points:** `AnimatingDot(tone Tone)` · `Badge(cfg Config)` · `NotificationBadge(count int)` · `NotificationDot()`
 
 - **Appearance** — AppearanceSolid = "", AppearanceSoft = "soft"
 - **Size** — SizeSM = "sm", SizeMD = "md", SizeLG = "lg"

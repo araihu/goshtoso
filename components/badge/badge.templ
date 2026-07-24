@@ -25,7 +25,7 @@ import "fmt"
 //	    Tone: badge.ToneDanger,
 //	    Indicator: true,
 //	})
-templ Badge(cfg Config) {
+templ badgeTemplate(cfg Config) {
 	if cfg.IsSoft() || cfg.Icon != nil || cfg.Indicator {
 		@badgeWithInner(cfg)
 	} else {
@@ -67,7 +67,7 @@ templ badgeWithInner(cfg Config) {
 // Usage:
 //
 //	@badge.NotificationBadge(99)
-templ NotificationBadge(count int) {
+templ notificationBadgeTemplate(count int) {
 	if count > 0 {
 		<span class="absolute left-1/2 -top-1 rounded-full bg-danger px-1 leading-4 text-xs font-medium text-on-danger">
 			if count > 99 {
@@ -80,7 +80,7 @@ templ NotificationBadge(count int) {
 }
 
 // NotificationDot renders a simple notification dot (red badge without text)
-templ NotificationDot() {
+templ notificationDotTemplate() {
 	<span class="absolute -right-0.5 top-0 size-3 rounded-full bg-danger text-xs font-medium"></span>
 }
 
@@ -88,9 +88,9 @@ templ NotificationDot() {
 // Usage:
 //
 //	@badge.AnimatingDot(badge.TonePrimary)
-templ AnimatingDot(variant Tone) {
+templ animatingDotTemplate(tone Tone) {
 	{{ colorClass := "bg-primary dark:bg-primary-dark" }}
-	switch variant {
+	switch tone {
 		case ToneSecondary:
 			{{ colorClass = "bg-secondary dark:bg-secondary-dark" }}
 		case ToneInfo:

@@ -74,6 +74,39 @@ func Button(options ...Option) templ.Component { return nil }
 	}
 }
 
+func TestRunDocumentsConcreteComponentConstructors(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "alert", "types.go"), `package alert
+
+import (
+	"context"
+	"io"
+
+	"github.com/araihu/goshtoso/components"
+)
+
+type Config struct{}
+
+type Instance struct{}
+
+func (Instance) Kind() components.Kind { return components.KindAlert }
+
+func (Instance) Render(context.Context, io.Writer) error { return nil }
+
+func Alert(config Config) Instance { return Instance{} }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	if !strings.Contains(reference, "`Alert(config Config)`") {
+		t.Fatalf("generated reference missing concrete component constructor:\n%s", reference)
+	}
+}
+
 func mustWrite(t *testing.T, path, contents string) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {

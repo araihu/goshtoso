@@ -32,7 +32,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //	    Position: banner.PositionFixed,
 //	    Tone: banner.ToneWarning,
 //	})
-func Banner(cfg Config) templ.Component {
+func bannerTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -62,7 +62,7 @@ func Banner(cfg Config) templ.Component {
 }
 
 // CookieBanner renders a cookie-consent dialog.
-func CookieBanner(cfg CookieBannerConfig) templ.Component {
+func cookieBannerTemplate(cfg CookieBannerConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

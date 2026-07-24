@@ -23,7 +23,7 @@ import "github.com/araihu/goshtoso/assets"
 // Assets are bundled with the module (no runtime CDN), so page loads are
 // deterministic. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
 // tokens, which only exist in the compiled styles.css.
-templ Dependencies() {
+templ dependenciesTemplate() {
 	<link rel="stylesheet" href="/assets/styles.css"/>
 	<!-- Alpine.js Collapse Plugin (must load before Alpine core) -->
 	<script defer src={ assets.AlpineCollapseURL }></script>
@@ -40,7 +40,7 @@ templ Dependencies() {
 // DependenciesMinimal renders just the CSS, Alpine core, HTMX, and combobox nav
 // (no collapse/focus plugins). Use it when your page needs neither the accordion
 // nor a focus trap. Same /assets/ mount requirement as Dependencies.
-templ DependenciesMinimal() {
+templ dependenciesMinimalTemplate() {
 	<link rel="stylesheet" href="/assets/styles.css"/>
 	<script defer src={ assets.AlpineJSURL }></script>
 	<script src={ assets.HTMXURL }></script>

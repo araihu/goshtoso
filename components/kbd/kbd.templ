@@ -7,7 +7,7 @@ package kbd
 //	@kbd.Kbd("Ctrl")
 //	@kbd.Kbd("K", kbd.WithSize(kbd.SizeSM))
 //	@kbd.Kbd("", kbd.WithIcon(commandIcon()), kbd.WithLabel("Command"))
-templ Kbd(text string, options ...Option) {
+templ kbdTemplate(text string, options ...Option) {
 	{{ cfg := newConfig(text, options) }}
 	<kbd
 		class={ cfg.rootClasses() }

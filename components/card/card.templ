@@ -26,7 +26,7 @@ import "fmt"
 //	    Image:  "image.jpg",
 //	    Title:  "Article Title",
 //	})
-templ Card(cfg Config) {
+templ cardTemplate(cfg Config) {
 	<article class={ cfg.ContainerClasses() }>
 		if cfg.HasImage() {
 			<div class={ cfg.ImageContainerClasses() }>

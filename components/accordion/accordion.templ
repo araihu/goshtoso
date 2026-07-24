@@ -12,7 +12,7 @@ import "fmt"
 //	        {ID: "item2", Title: "Section 2", Content: templ.Raw("<p>Content 2</p>")},
 //	    },
 //	})
-templ Accordion(cfg AccordionConfig) {
+templ accordionTemplate(cfg AccordionConfig) {
 	{{ containerID := cfg.ID }}
 	{{ if containerID == "" { containerID = "accordion" } }}
 	{{ alpineData := generateAlpineData(cfg) }}

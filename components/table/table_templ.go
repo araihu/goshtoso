@@ -60,7 +60,7 @@ import (
 //	    Rows:           rows,
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
 //	})
-func Table(cfg Config) templ.Component {
+func tableTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1188,7 +1188,7 @@ func TableHead(cfg Config) templ.Component {
 
 // TableHeadContent renders just the thead row content (without the <thead> wrapper).
 // Used by the handler for OOB innerHTML swaps targeting the thead element.
-func TableHeadContent(cfg Config) templ.Component {
+func tableHeadContentTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1476,7 +1476,7 @@ func TableBody(cfg Config) templ.Component {
 
 // TableRows renders just the row elements without the tbody wrapper.
 // Use this for infinite scroll append responses.
-func TableRows(cfg Config) templ.Component {
+func tableRowsTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1530,7 +1530,7 @@ func hasMoreRows(cfg Config) bool {
 }
 
 // TableRow renders a single table row, optionally with expandable detail panel or row link
-func TableRow(cfg Config, row Row) templ.Component {
+func tableRowTemplate(cfg Config, row Row) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -2353,7 +2353,7 @@ func TablePagination(cfg Config) templ.Component {
 }
 
 // TablePaginationNav renders just the pagination nav element (for OOB swaps)
-func TablePaginationNav(cfg Config) templ.Component {
+func tablePaginationNavTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -2663,7 +2663,7 @@ func StatusBadge(label string, status string) templ.Component {
 // ImageCell renders a compact image, primary label, and optional secondary label.
 // When imageURL is provided, shows the image; otherwise falls back to initials
 // derived from the label/detail.
-func ImageCell(imageURL string, label string, detail string) templ.Component {
+func imageCellTemplate(imageURL string, label string, detail string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

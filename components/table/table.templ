@@ -52,7 +52,7 @@ import (
 //	    Rows:           rows,
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
 //	})
-templ Table(cfg Config) {
+templ tableTemplate(cfg Config) {
 	if cfg.HasFilters() {
 		@filterScript(cfg)
 		<div x-data={ filterAlpineInit(cfg) }>
@@ -297,7 +297,7 @@ templ TableHead(cfg Config) {
 
 // TableHeadContent renders just the thead row content (without the <thead> wrapper).
 // Used by the handler for OOB innerHTML swaps targeting the thead element.
-templ TableHeadContent(cfg Config) {
+templ tableHeadContentTemplate(cfg Config) {
 	@tableHeadRow(cfg)
 }
 
@@ -346,7 +346,7 @@ templ TableBody(cfg Config) {
 
 // TableRows renders just the row elements without the tbody wrapper.
 // Use this for infinite scroll append responses.
-templ TableRows(cfg Config) {
+templ tableRowsTemplate(cfg Config) {
 	for _, row := range cfg.Rows {
 		@TableRow(cfg, row)
 	}
@@ -372,7 +372,7 @@ func hasMoreRows(cfg Config) bool {
 }
 
 // TableRow renders a single table row, optionally with expandable detail panel or row link
-templ TableRow(cfg Config, row Row) {
+templ tableRowTemplate(cfg Config, row Row) {
 	<tr
 		class={ cfg.RowClasses() + interactiveRowClasses(row) }
 			if row.Expandable && row.Link == "" && row.OnClick == "" && !row.HasHTMXAction() {
@@ -659,7 +659,7 @@ templ TablePagination(cfg Config) {
 }
 
 // TablePaginationNav renders just the pagination nav element (for OOB swaps)
-templ TablePaginationNav(cfg Config) {
+templ tablePaginationNavTemplate(cfg Config) {
 	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
 		@pagination.Pagination(pagination.Config{
 			Mode:        pagination.ModeEllipsis,
@@ -709,7 +709,7 @@ templ StatusBadge(label string, status string) {
 // ImageCell renders a compact image, primary label, and optional secondary label.
 // When imageURL is provided, shows the image; otherwise falls back to initials
 // derived from the label/detail.
-templ ImageCell(imageURL string, label string, detail string) {
+templ imageCellTemplate(imageURL string, label string, detail string) {
 	<div class="flex w-max items-center gap-2">
 		if imageURL != "" {
 			@avatar.Avatar(avatar.Config{

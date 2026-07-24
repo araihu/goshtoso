@@ -24,12 +24,12 @@ package banner
 //	    Position: banner.PositionFixed,
 //	    Tone: banner.ToneWarning,
 //	})
-templ Banner(cfg Config) {
+templ bannerTemplate(cfg Config) {
 	@simpleBanner(cfg)
 }
 
 // CookieBanner renders a cookie-consent dialog.
-templ CookieBanner(cfg CookieBannerConfig) {
+templ cookieBannerTemplate(cfg CookieBannerConfig) {
 	@cookieBanner(cfg)
 }
 

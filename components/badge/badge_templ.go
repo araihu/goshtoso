@@ -33,7 +33,7 @@ import "fmt"
 //	    Tone: badge.ToneDanger,
 //	    Indicator: true,
 //	})
-func Badge(cfg Config) templ.Component {
+func badgeTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -263,7 +263,7 @@ func badgeWithInner(cfg Config) templ.Component {
 // Usage:
 //
 //	@badge.NotificationBadge(99)
-func NotificationBadge(count int) templ.Component {
+func notificationBadgeTemplate(count int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -315,7 +315,7 @@ func NotificationBadge(count int) templ.Component {
 }
 
 // NotificationDot renders a simple notification dot (red badge without text)
-func NotificationDot() templ.Component {
+func notificationDotTemplate() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -348,7 +348,7 @@ func NotificationDot() templ.Component {
 // Usage:
 //
 //	@badge.AnimatingDot(badge.TonePrimary)
-func AnimatingDot(variant Tone) templ.Component {
+func animatingDotTemplate(tone Tone) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -370,7 +370,7 @@ func AnimatingDot(variant Tone) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		colorClass := "bg-primary dark:bg-primary-dark"
-		switch variant {
+		switch tone {
 		case ToneSecondary:
 			colorClass = "bg-secondary dark:bg-secondary-dark"
 		case ToneInfo:
