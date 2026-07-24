@@ -105,7 +105,7 @@ func toggleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variations",
-				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+				Description: "Set Tone: toggle.TonePrimary, toggle.ToneSecondary, toggle.ToneInfo, toggle.ToneSuccess, toggle.ToneWarning, or toggle.ToneDanger.",
 			},
 			toggleColorsPreview(),
 			`@toggle.Toggle(toggle.Config{ID: "successToggle", Label: "success", Tone: toggle.ToneSuccess, Checked: true})

@@ -135,7 +135,7 @@ func radioDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variants",
-				Description: "Six semantic colors via Variant: Primary, Secondary, Info, Success, Warning, Danger.",
+				Description: "Six semantic colors via Tone: radio.TonePrimary, radio.ToneSecondary, radio.ToneInfo, radio.ToneSuccess, radio.ToneWarning, radio.ToneDanger.",
 			},
 			radioColorPreview(),
 			`@radio.Radio(radio.Config{ID: "r-success", Name: "v", Value: "su", Label: "Success", Tone: radio.ToneSuccess, Checked: true})

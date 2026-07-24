@@ -86,7 +86,7 @@ func spinnerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variants",
-				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+				Description: "Set Tone: spinner.TonePrimary, spinner.ToneSecondary, spinner.ToneInfo, spinner.ToneSuccess, spinner.ToneWarning, or spinner.ToneDanger.",
 			},
 			spinnerVariantsPreview(),
 			`@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary})

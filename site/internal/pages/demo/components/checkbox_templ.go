@@ -89,7 +89,7 @@ func checkboxDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variants",
-				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+				Description: "Set Tone: checkbox.TonePrimary, checkbox.ToneSecondary, checkbox.ToneInfo, checkbox.ToneSuccess, checkbox.ToneWarning, or checkbox.ToneDanger.",
 			},
 			checkboxColorsPreview(),
 			`@checkbox.Checkbox(checkbox.Config{ID: "success", Label: "Success", Tone: checkbox.ToneSuccess, Checked: true})`,
