@@ -112,12 +112,12 @@ func TestFilterScriptDataEscapesFilterDefaultValues(t *testing.T) {
 
 // TestFilterVariant_Constants keeps the enum surface honest — consumers
 // import these, so renaming is a breaking change.
-func TestFilterVariant_Constants(t *testing.T) {
-	if FilterVariantBar != "" {
-		t.Fatalf("FilterVariantBar must be empty string (zero value); got %q", FilterVariantBar)
+func TestFilterAppearanceConstants(t *testing.T) {
+	if FilterAppearanceBar != "" {
+		t.Fatalf("FilterAppearanceBar must be empty string (zero value); got %q", FilterAppearanceBar)
 	}
-	if FilterVariantInline != "inline" {
-		t.Fatalf("FilterVariantInline must be %q; got %q", "inline", FilterVariantInline)
+	if FilterAppearanceInline != "inline" {
+		t.Fatalf("FilterAppearanceInline must be %q; got %q", "inline", FilterAppearanceInline)
 	}
 }
 

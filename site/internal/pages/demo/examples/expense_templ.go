@@ -378,7 +378,7 @@ func ExpenseList(s expense.State, oob bool) templ.Component {
 			}
 			templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
 				ID:          "expense-pagination",
-				Variant:     pagination.WithEllipsis,
+				Mode:        pagination.ModeEllipsis,
 				CurrentPage: s.CurrentPage(),
 				TotalPages:  s.PageCount(),
 				BaseURL:     "/api/examples/expense/page",

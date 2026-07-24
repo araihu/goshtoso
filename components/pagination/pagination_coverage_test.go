@@ -70,7 +70,7 @@ func TestCoveragePreviousNextAndSwapDefaults(t *testing.T) {
 func TestCoverageRenderEllipsisAndHTMXBranches(t *testing.T) {
 	rendered := renderPagination(t, Config{
 		ID:          "paged-items",
-		Variant:     WithEllipsis,
+		Mode:        ModeEllipsis,
 		CurrentPage: 15,
 		TotalPages:  30,
 		BaseURL:     "/items?filter=active",
@@ -93,7 +93,7 @@ func TestCoverageRenderEllipsisAndHTMXBranches(t *testing.T) {
 
 func TestCoverageRenderSimpleLastPageDisablesNext(t *testing.T) {
 	rendered := renderPagination(t, Config{
-		Variant:     Simple,
+		Mode:        ModeSimple,
 		CurrentPage: 4,
 		TotalPages:  4,
 		BaseURL:     "/items",

@@ -14,12 +14,12 @@ const (
 	ToneDanger    Tone = "danger"
 )
 
-// Style represents toggle layout style
-type Style string
+// Appearance represents the toggle layout treatment.
+type Appearance string
 
 const (
-	StyleDefault   Style = "default"   // Inline toggle with label
-	StyleContainer Style = "container" // Toggle wrapped in bordered container
+	AppearanceDefault   Appearance = ""          // Inline toggle with label
+	AppearanceContainer Appearance = "container" // Toggle wrapped in bordered container
 )
 
 // Config holds configuration for the toggle component
@@ -30,8 +30,8 @@ type Config struct {
 	Label string
 	// Tone determines the checked color scheme (default: TonePrimary)
 	Tone Tone
-	// Style determines the layout style (default or container)
-	Style Style
+	// Appearance determines the layout treatment (default or container).
+	Appearance Appearance
 	// Checked sets the initial checked state
 	Checked bool
 	// Disabled disables the toggle
@@ -53,8 +53,8 @@ type Config struct {
 func (cfg Config) ToggleClasses() string {
 	base := "relative h-6 w-11 after:h-5 after:w-5 peer-checked:after:translate-x-5 rounded-full border border-outline after:absolute after:bottom-0 after:left-[0.0625rem] after:top-0 after:my-auto after:rounded-full after:bg-on-surface after:transition-all after:content-[''] peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-outline-strong peer-active:outline-offset-0 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:border-outline-dark dark:after:bg-on-surface-dark dark:peer-focus:outline-outline-dark-strong"
 
-	switch cfg.Style {
-	case StyleContainer:
+	switch cfg.Appearance {
+	case AppearanceContainer:
 		base += " bg-surface dark:bg-surface-dark"
 	default:
 		base += " bg-surface-alt dark:bg-surface-dark-alt"
@@ -87,7 +87,7 @@ func (cfg Config) checkedClasses() string {
 func (cfg Config) LabelClasses() string {
 	base := "inline-flex items-center gap-3"
 
-	if cfg.Style == StyleContainer {
+	if cfg.Appearance == AppearanceContainer {
 		base = "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-1.5 dark:border-outline-dark dark:bg-surface-dark-alt"
 	}
 

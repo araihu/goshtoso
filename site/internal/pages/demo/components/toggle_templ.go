@@ -89,13 +89,13 @@ func toggleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Container",
-				Description: "Style: toggle.StyleContainer wraps the switch and label in a bordered container.",
+				Description: "Appearance: toggle.AppearanceContainer wraps the switch and label in a bordered container.",
 			},
 			toggleContainerPreview(),
 			`@toggle.Toggle(toggle.Config{
     ID:      "containerToggle",
     Label:   "Toggle",
-    Style:   toggle.StyleContainer,
+    Appearance: toggle.AppearanceContainer,
     Checked: true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -137,7 +137,7 @@ func toggleDemoContent() templ.Component {
 			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial on state."},
 			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
 			{Name: "Tone", Type: "Tone", Default: "TonePrimary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Style", Type: "Style", Default: "StyleDefault", Description: `Layout: "default" (inline) or "container" (bordered).`},
+			{Name: "Appearance", Type: "Appearance", Default: "AppearanceDefault", Description: `Layout: default (inline) or container (bordered).`},
 			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the toggle root."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -211,7 +211,7 @@ func toggleContainerPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoContainer", Label: "Toggle", Style: toggle.StyleContainer, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoContainer", Label: "Toggle", Appearance: toggle.AppearanceContainer, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

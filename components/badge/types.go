@@ -16,12 +16,12 @@ const (
 	ToneDanger    Tone = "danger"
 )
 
-// Style represents badge style (solid or soft)
-type Style string
+// Appearance represents the badge fill treatment.
+type Appearance string
 
 const (
-	StyleSolid Style = "solid" // Default solid background
-	StyleSoft  Style = "soft"  // Subtle background with border
+	AppearanceSolid Appearance = ""     // Default solid background
+	AppearanceSoft  Appearance = "soft" // Subtle background with border
 )
 
 // Size represents badge size
@@ -39,8 +39,8 @@ type Config struct {
 	Label string
 	// Tone determines the color scheme
 	Tone Tone
-	// Style determines solid or soft appearance
-	Style Style
+	// Appearance determines solid or soft rendering.
+	Appearance Appearance
 	// Size of the badge
 	Size Size
 	// Icon is an optional icon component
@@ -172,5 +172,5 @@ func (cfg Config) IndicatorClasses() string {
 
 // IsSoft returns true if badge uses soft style
 func (cfg Config) IsSoft() bool {
-	return cfg.Style == StyleSoft
+	return cfg.Appearance == AppearanceSoft
 }

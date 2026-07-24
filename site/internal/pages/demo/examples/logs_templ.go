@@ -93,10 +93,10 @@ func LogRow(line logs.LogLine) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = badge.Badge(badge.Config{
-			Tone:  levelBadge(line.Level),
-			Style: badge.StyleSoft,
-			Size:  badge.SizeSM,
-			Label: line.Level.String(),
+			Tone:       levelBadge(line.Level),
+			Appearance: badge.AppearanceSoft,
+			Size:       badge.SizeSM,
+			Label:      line.Level.String(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -488,11 +488,11 @@ func filterBarBodyClasses(cfg Config) string {
 	return "px-4 py-4"
 }
 
-// filterBar renders the filter controls above the table. Two variants:
+// filterBar renders the filter controls above the table. Two appearances:
 //
-//   - FilterVariantBar (default) — bordered block, optional collapsible
+//   - FilterAppearanceBar (default) — bordered block, optional collapsible
 //     header. Use for primary page tables.
-//   - FilterVariantInline — no border, no collapse, plain flex row. Use when
+//   - FilterAppearanceInline — no border, no collapse, plain flex row. Use when
 //     the host container already provides chrome (modals, toolbar strips).
 //     Ignores Collapsible / InitiallyExpanded.
 func filterBar(cfg Config) templ.Component {
@@ -516,7 +516,7 @@ func filterBar(cfg Config) templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.Filters.Variant == FilterVariantInline {
+		if cfg.Filters.Appearance == FilterAppearanceInline {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -2334,7 +2334,7 @@ func TablePagination(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
+				Mode:        pagination.ModeEllipsis,
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
 				BaseURL:     cfg.PaginationBaseURL(),
@@ -2376,7 +2376,7 @@ func TablePaginationNav(cfg Config) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
 			templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
+				Mode:        pagination.ModeEllipsis,
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
 				BaseURL:     cfg.PaginationBaseURL(),

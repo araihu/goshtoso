@@ -36,7 +36,7 @@ templ LogRow(line logs.LogLine) {
 		<span class="w-16 shrink-0">
 			@badge.Badge(badge.Config{
 				Tone: levelBadge(line.Level),
-				Style:   badge.StyleSoft,
+				Appearance: badge.AppearanceSoft,
 				Size:    badge.SizeSM,
 				Label:    line.Level.String(),
 			})

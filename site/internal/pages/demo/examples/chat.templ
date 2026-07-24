@@ -39,7 +39,7 @@ templ OnlineBadge(count int, oob bool) {
 		@badge.Badge(badge.Config{
 			Label:    fmt.Sprintf("%d online", count),
 			Tone: badge.ToneSuccess,
-			Style:   badge.StyleSoft,
+			Appearance: badge.AppearanceSoft,
 		})
 	</span>
 }

@@ -25,11 +25,11 @@ import templruntime "github.com/a-h/templ/runtime"
 //	    Checked: true,
 //	})
 //
-//	// Toggle with container style
+//	// Toggle with container appearance
 //	@toggle.Toggle(toggle.Config{
 //	    ID:    "containerToggle",
 //	    Label: "Setting",
-//	    Style: toggle.StyleContainer,
+//	    Appearance: toggle.AppearanceContainer,
 //	})
 func Toggle(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

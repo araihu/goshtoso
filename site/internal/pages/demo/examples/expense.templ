@@ -166,7 +166,7 @@ templ ExpenseList(s expense.State, oob bool) {
 			<div class="flex justify-center pt-1">
 				@pagination.Pagination(pagination.Config{
 					ID:          "expense-pagination",
-					Variant:     pagination.WithEllipsis,
+					Mode:        pagination.ModeEllipsis,
 					CurrentPage: s.CurrentPage(),
 					TotalPages:  s.PageCount(),
 					BaseURL:     "/api/examples/expense/page",

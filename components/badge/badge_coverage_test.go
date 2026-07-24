@@ -142,8 +142,8 @@ func TestIndicatorClasses_AllArms(t *testing.T) {
 }
 
 func TestIsSoft(t *testing.T) {
-	assert.True(t, Config{Style: StyleSoft}.IsSoft())
-	assert.False(t, Config{Style: StyleSolid}.IsSoft())
+	assert.True(t, Config{Appearance: AppearanceSoft}.IsSoft())
+	assert.False(t, Config{Appearance: AppearanceSolid}.IsSoft())
 	assert.False(t, Config{}.IsSoft())
 }
 
@@ -158,7 +158,7 @@ func TestBadge_SimplePath(t *testing.T) {
 }
 
 func TestBadge_SoftPath(t *testing.T) {
-	html := renderComponent(t, Badge(Config{Label: "Active", Tone: ToneSuccess, Style: StyleSoft, RootClass: "mr-1"}))
+	html := renderComponent(t, Badge(Config{Label: "Active", Tone: ToneSuccess, Appearance: AppearanceSoft, RootClass: "mr-1"}))
 	assert.Contains(t, html, "Active")
 	assert.Contains(t, html, "inline-flex")   // badgeWithInner container
 	assert.Contains(t, html, "text-success")  // soft variant text color
@@ -185,10 +185,10 @@ func TestBadge_IconPath(t *testing.T) {
 
 func TestBadge_AllVariantsRender(t *testing.T) {
 	for _, v := range allVariants {
-		for _, style := range []Style{StyleSolid, StyleSoft} {
-			html := renderComponent(t, Badge(Config{Label: "x", Tone: v, Style: style}))
-			assert.NotEmptyf(t, html, "variant %q style %q rendered empty", v, style)
-			assert.Containsf(t, html, "class=", "variant %q style %q missing class", v, style)
+		for _, appearance := range []Appearance{AppearanceSolid, AppearanceSoft} {
+			html := renderComponent(t, Badge(Config{Label: "x", Tone: v, Appearance: appearance}))
+			assert.NotEmptyf(t, html, "tone %q appearance %q rendered empty", v, appearance)
+			assert.Containsf(t, html, "class=", "tone %q appearance %q missing class", v, appearance)
 		}
 	}
 }

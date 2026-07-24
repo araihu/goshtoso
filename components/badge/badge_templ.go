@@ -19,11 +19,11 @@ import "fmt"
 //	    Tone: badge.TonePrimary,
 //	})
 //
-//	// Soft style badge with icon
+//	// Soft appearance badge with icon
 //	@badge.Badge(badge.Config{
 //	    Label: "Active",
 //	    Tone: badge.ToneSuccess,
-//	    Style: badge.StyleSoft,
+//	    Appearance: badge.AppearanceSoft,
 //	    Icon: checkIcon,
 //	})
 //

@@ -17,11 +17,11 @@ package toggle
 //	    Checked: true,
 //	})
 //
-//	// Toggle with container style
+//	// Toggle with container appearance
 //	@toggle.Toggle(toggle.Config{
 //	    ID:    "containerToggle",
 //	    Label: "Setting",
-//	    Style: toggle.StyleContainer,
+//	    Appearance: toggle.AppearanceContainer,
 //	})
 templ Toggle(cfg Config) {
 	<label for={ cfg.ID } class={ cfg.LabelClasses() }>

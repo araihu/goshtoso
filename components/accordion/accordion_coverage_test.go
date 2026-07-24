@@ -14,7 +14,7 @@ func TestCoverageRenderConfiguredAccordion(t *testing.T) {
 	err := Accordion(AccordionConfig{
 		ID:            "faq",
 		RootClass:     "custom-root",
-		Variant:       Split,
+		Appearance:    AppearanceSplit,
 		AllowMultiple: true,
 		Items: []AccordionItem{
 			{
@@ -103,8 +103,8 @@ func TestCoverageAccordionClassHelpers(t *testing.T) {
 		want string
 	}{
 		{name: "default", cfg: AccordionConfig{}, want: "bg-surface-alt/40"},
-		{name: "no background", cfg: AccordionConfig{Variant: NoBackground}, want: "bg-surface dark:bg-surface-dark"},
-		{name: "split", cfg: AccordionConfig{Variant: Split}, want: "flex w-full flex-col gap-4"},
+		{name: "plain", cfg: AccordionConfig{Appearance: AppearancePlain}, want: "bg-surface dark:bg-surface-dark"},
+		{name: "split", cfg: AccordionConfig{Appearance: AppearanceSplit}, want: "flex w-full flex-col gap-4"},
 	}
 
 	for _, tt := range tests {
@@ -123,12 +123,12 @@ func TestCoverageAccordionClassHelpers(t *testing.T) {
 		t.Fatalf("default ItemButtonClasses() = %q, want default background classes", got)
 	}
 
-	noBackgroundData := AccordionItemData{Variant: NoBackground}
-	if got := noBackgroundData.ItemButtonClasses(); !strings.Contains(got, "bg-surface hover:bg-surface-alt") {
-		t.Fatalf("no-background ItemButtonClasses() = %q, want plain surface classes", got)
+	plainData := AccordionItemData{Appearance: AppearancePlain}
+	if got := plainData.ItemButtonClasses(); !strings.Contains(got, "bg-surface hover:bg-surface-alt") {
+		t.Fatalf("plain ItemButtonClasses() = %q, want plain surface classes", got)
 	}
 
-	splitData := AccordionItemData{Variant: Split}
+	splitData := AccordionItemData{Appearance: AppearanceSplit}
 	if got := splitData.ItemContainerClasses(); !strings.Contains(got, "rounded-radius border border-outline") {
 		t.Fatalf("split ItemContainerClasses() = %q, want split card classes", got)
 	}
@@ -140,6 +140,12 @@ func TestCoverageAccordionClassHelpers(t *testing.T) {
 	}
 	if got := splitData.ContentClasses(); !strings.Contains(got, "text-pretty") {
 		t.Fatalf("ContentClasses() = %q, want content typography", got)
+	}
+}
+
+func TestZeroValueAllowsOnlyOneOpen(t *testing.T) {
+	if got := generateAlpineData(AccordionConfig{}); !strings.Contains(got, "allowMultiple: false") {
+		t.Fatalf("zero-value accordion must allow only one open item; got %q", got)
 	}
 }
 

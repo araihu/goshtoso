@@ -88,11 +88,11 @@ func badgeDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Soft Style",
-				Description: "Style: badge.StyleSoft swaps the solid fill for a subtle tinted background with a border.",
+				Title:       "Soft Appearance",
+				Description: "Appearance: badge.AppearanceSoft swaps the solid fill for a subtle tinted background with a border.",
 			},
 			badgeSoftPreview(),
-			`@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Style: badge.StyleSoft})`,
+			`@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Appearance: badge.AppearanceSoft})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -171,7 +171,7 @@ func badgeDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "Label", Type: "string", Default: `""`, Description: "Badge label text."},
 			{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color: "default", "inverse", "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Style", Type: "Style", Default: "StyleSolid", Description: `Fill style: "solid" or "soft".`},
+			{Name: "Appearance", Type: "Appearance", Default: "AppearanceSolid", Description: `Fill treatment: solid or soft.`},
 			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg".`},
 			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading icon component."},
 			{Name: "Indicator", Type: "bool", Default: "false", Description: "Prepend a small status dot."},
@@ -385,31 +385,31 @@ func badgeSoftPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Default", Tone: badge.ToneDefault, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Default", Tone: badge.ToneDefault, Appearance: badge.AppearanceSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Primary", Tone: badge.TonePrimary, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Primary", Tone: badge.TonePrimary, Appearance: badge.AppearanceSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Secondary", Tone: badge.ToneSecondary, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Secondary", Tone: badge.ToneSecondary, Appearance: badge.AppearanceSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Info", Tone: badge.ToneInfo, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Info", Tone: badge.ToneInfo, Appearance: badge.AppearanceSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Success", Tone: badge.ToneSuccess, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Success", Tone: badge.ToneSuccess, Appearance: badge.AppearanceSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Warning", Tone: badge.ToneWarning, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Warning", Tone: badge.ToneWarning, Appearance: badge.AppearanceSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Danger", Tone: badge.ToneDanger, Style: badge.StyleSoft}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "Danger", Tone: badge.ToneDanger, Appearance: badge.AppearanceSoft}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

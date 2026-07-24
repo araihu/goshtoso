@@ -2,18 +2,16 @@ package accordion
 
 import "github.com/a-h/templ"
 
-// Variant represents accordion style variants
-type Variant string
+// Appearance represents the accordion's visual treatment.
+type Appearance string
 
 const (
-	// Default variant with background and borders
-	Default Variant = "default"
-	// NoBackground variant without background styling
-	NoBackground Variant = "no-background"
-	// Split variant with different layout
-	Split Variant = "split"
-	// SingleOpen ensures only one item can be open at a time
-	SingleOpen Variant = "single-open"
+	// AppearanceDefault renders the shared bordered accordion treatment.
+	AppearanceDefault Appearance = ""
+	// AppearancePlain removes the tinted background.
+	AppearancePlain Appearance = "no-background"
+	// AppearanceSplit renders each item as a separate card.
+	AppearanceSplit Appearance = "split"
 )
 
 // AccordionConfig holds configuration for the accordion
@@ -23,8 +21,8 @@ type AccordionConfig struct {
 	// AllowMultiple allows multiple items to be open simultaneously
 	// If false (default), only one item can be open at a time
 	AllowMultiple bool
-	// Variant determines the visual style
-	Variant Variant
+	// Appearance determines the visual treatment.
+	Appearance Appearance
 	// ID is the container ID for accessibility
 	ID string
 	// RootClass allows additional CSS classes on the accordion root.
@@ -55,8 +53,8 @@ type AccordionItemData struct {
 	Index int
 	// AllowMultiple indicates whether multiple sections can be open simultaneously.
 	AllowMultiple bool
-	// Variant is the visual style variant inherited from the parent accordion.
-	Variant Variant
+	// Appearance is the visual treatment inherited from the parent accordion.
+	Appearance Appearance
 	// ContainerID is the parent accordion's element ID for accessibility.
 	ContainerID string
 }
@@ -65,14 +63,14 @@ type AccordionItemData struct {
 func (cfg AccordionConfig) ContainerClasses() string {
 	// Split renders each item as its own gapped card, so the container drops
 	// the shared divider/border/background and just lays the cards out vertically.
-	if cfg.Variant == Split {
+	if cfg.Appearance == AppearanceSplit {
 		return "flex w-full flex-col gap-4 text-on-surface dark:text-on-surface-dark"
 	}
 
 	base := "w-full divide-y divide-outline overflow-hidden rounded-radius border border-outline text-on-surface dark:divide-outline-dark dark:border-outline-dark dark:text-on-surface-dark"
 
-	switch cfg.Variant {
-	case NoBackground:
+	switch cfg.Appearance {
+	case AppearancePlain:
 		return base + " bg-surface dark:bg-surface-dark"
 	default:
 		return base + " bg-surface-alt/40 dark:bg-surface-dark-alt/50"
@@ -83,7 +81,7 @@ func (cfg AccordionConfig) ContainerClasses() string {
 // uses these: each item becomes a self-contained bordered card. Other variants
 // return "" since the shared container already provides borders and dividers.
 func (data AccordionItemData) ItemContainerClasses() string {
-	if data.Variant == Split {
+	if data.Appearance == AppearanceSplit {
 		return "overflow-hidden rounded-radius border border-outline bg-surface-alt/40 dark:border-outline-dark dark:bg-surface-dark-alt/50"
 	}
 	return ""
@@ -93,8 +91,8 @@ func (data AccordionItemData) ItemContainerClasses() string {
 func (data AccordionItemData) ItemButtonClasses() string {
 	base := "flex w-full items-center justify-between gap-4 p-4 text-left underline-offset-2 focus-visible:underline focus-visible:outline-hidden"
 
-	switch data.Variant {
-	case NoBackground:
+	switch data.Appearance {
+	case AppearancePlain:
 		return base + " bg-surface hover:bg-surface-alt focus-visible:bg-surface-alt dark:bg-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:bg-surface-dark-alt"
 	default:
 		return base + " bg-surface-alt hover:bg-surface-alt/75 focus-visible:bg-surface-alt/75 dark:bg-surface-dark-alt dark:hover:bg-surface-dark-alt/75 dark:focus-visible:bg-surface-dark-alt/75"

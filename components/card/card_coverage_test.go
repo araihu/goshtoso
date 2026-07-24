@@ -32,8 +32,8 @@ func TestContainerClasses(t *testing.T) {
 			absent:   []string{"border-primary", "md:grid-cols-8"},
 		},
 		{
-			name:     "primary variant",
-			cfg:      Config{Variant: Primary},
+			name:     "primary appearance",
+			cfg:      Config{Appearance: AppearancePrimary},
 			contains: []string{"border-2 border-primary", "dark:border-primary-dark"},
 			absent:   []string{" border-outline "},
 		},
@@ -111,21 +111,6 @@ func TestPredicates(t *testing.T) {
 	}
 	if !(Config{Image: "x.png"}).HasImage() {
 		t.Error("set Image should be HasImage()=true")
-	}
-	if (Config{}).HasRating() {
-		t.Error("zero Rating should be HasRating()=false")
-	}
-	if !(Config{Rating: 1}).HasRating() {
-		t.Error("positive Rating should be HasRating()=true")
-	}
-	if (Config{Rating: -1}).HasRating() {
-		t.Error("negative Rating should be HasRating()=false")
-	}
-	if (Config{}).HasPrice() {
-		t.Error("empty Price should be HasPrice()=false")
-	}
-	if !(Config{Price: "$1"}).HasPrice() {
-		t.Error("set Price should be HasPrice()=true")
 	}
 }
 

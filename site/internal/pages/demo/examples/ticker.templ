@@ -92,7 +92,7 @@ templ TickerCellInner(sym ticker.Symbol) {
 		<span class="font-mono tabular-nums">{ tickerPrice(sym) }</span>
 		@badge.Badge(badge.Config{
 			Tone: tickerBadgeVariant(sym),
-			Style:   badge.StyleSoft,
+			Appearance: badge.AppearanceSoft,
 			Size:    badge.SizeSM,
 			Label:    tickerChange(sym),
 		})

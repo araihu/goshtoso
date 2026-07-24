@@ -9,13 +9,12 @@ import (
 	"github.com/a-h/templ"
 )
 
-// Variant represents table style variants
-type Variant string
+// Appearance represents the table's visual treatment.
+type Appearance string
 
 const (
-	Default      Variant = "default"
-	Striped      Variant = "striped"
-	WithCheckbox Variant = "checkbox"
+	AppearanceDefault Appearance = ""
+	AppearanceStriped Appearance = "striped"
 )
 
 // SortDir represents the sort direction
@@ -307,17 +306,17 @@ type FilterOptionsHTMXConfig struct {
 	Get string
 }
 
-// FilterVariant switches the filter bar layout. FilterVariantBar (the
+// FilterAppearance switches the filter bar layout. FilterAppearanceBar (the
 // default, empty string) is the full-width bordered block with an optional
-// collapsible header — suitable for primary page tables. FilterVariantInline
+// collapsible header — suitable for primary page tables. FilterAppearanceInline
 // drops the border, collapsible toggle, and padding wrapper so the filter
 // controls render as a plain flex row; suitable for modals and tight chrome
 // where the bar's own chrome would compete with the host's.
-type FilterVariant string
+type FilterAppearance string
 
 const (
-	FilterVariantBar    FilterVariant = ""
-	FilterVariantInline FilterVariant = "inline"
+	FilterAppearanceBar    FilterAppearance = ""
+	FilterAppearanceInline FilterAppearance = "inline"
 )
 
 // FilterConfig holds the filter bar configuration
@@ -325,13 +324,13 @@ type FilterConfig struct {
 	// Filters is the list of filter controls
 	Filters []Filter
 	// Collapsible enables a toggle to show/hide the filter bar.
-	// Ignored when Variant is FilterVariantInline.
+	// Ignored when Appearance is FilterAppearanceInline.
 	Collapsible bool
 	// InitiallyExpanded controls whether filters start visible (default: true).
-	// Ignored when Variant is FilterVariantInline.
+	// Ignored when Appearance is FilterAppearanceInline.
 	InitiallyExpanded bool
-	// Variant selects the layout (bar vs inline). See FilterVariant.
-	Variant FilterVariant
+	// Appearance selects the layout (bar vs inline). See FilterAppearance.
+	Appearance FilterAppearance
 	// HTMX configures filter request behavior.
 	HTMX *FilterHTMXConfig
 }
@@ -387,8 +386,8 @@ type Config struct {
 	Columns []Column
 	// Rows holds the table data
 	Rows []Row
-	// Variant determines the table style
-	Variant Variant
+	// Appearance determines the table's visual treatment.
+	Appearance Appearance
 	// ShowCheckbox adds a select-all checkbox column
 	ShowCheckbox bool
 	// RootClass allows additional CSS classes on the container.
@@ -644,8 +643,8 @@ func (cfg Config) TbodyClasses() string {
 
 // RowClasses returns CSS classes for a table row
 func (cfg Config) RowClasses() string {
-	if cfg.Variant == Striped {
-		return "even:bg-primary/5 dark:even:bg-primary-dark/10"
+	if cfg.Appearance == AppearanceStriped {
+		return "odd:bg-surface-alt dark:odd:bg-surface-dark-alt"
 	}
 	return ""
 }

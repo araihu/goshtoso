@@ -148,12 +148,12 @@ func TestCoverageCheckedClassesAllVariants(t *testing.T) {
 }
 
 func TestCoverageToggleClassesStyleBranches(t *testing.T) {
-	defaultClasses := Config{Style: StyleDefault}.ToggleClasses()
+	defaultClasses := Config{Appearance: AppearanceDefault}.ToggleClasses()
 	if !strings.Contains(defaultClasses, "bg-surface-alt") {
 		t.Errorf("default style should use bg-surface-alt: %s", defaultClasses)
 	}
 
-	containerClasses := Config{Style: StyleContainer}.ToggleClasses()
+	containerClasses := Config{Appearance: AppearanceContainer}.ToggleClasses()
 	if strings.Contains(containerClasses, "bg-surface-alt") {
 		t.Errorf("container style should not use bg-surface-alt: %s", containerClasses)
 	}
@@ -168,29 +168,29 @@ func TestCoverageToggleClassesStyleBranches(t *testing.T) {
 }
 
 func TestCoverageLabelClassesBranches(t *testing.T) {
-	def := Config{Style: StyleDefault}.LabelClasses()
+	def := Config{Appearance: AppearanceDefault}.LabelClasses()
 	if def != "inline-flex items-center gap-3" {
 		t.Errorf("unexpected default LabelClasses: %s", def)
 	}
 
-	container := Config{Style: StyleContainer}.LabelClasses()
+	container := Config{Appearance: AppearanceContainer}.LabelClasses()
 	if !strings.Contains(container, "min-w-52") || !strings.Contains(container, "rounded-radius") {
 		t.Errorf("container LabelClasses missing expected styling: %s", container)
 	}
 
-	withRoot := Config{Style: StyleDefault, RootClass: "mb-4"}.LabelClasses()
+	withRoot := Config{Appearance: AppearanceDefault, RootClass: "mb-4"}.LabelClasses()
 	if !strings.HasSuffix(withRoot, " mb-4") {
 		t.Errorf("RootClass should be appended: %s", withRoot)
 	}
 
-	containerWithRoot := Config{Style: StyleContainer, RootClass: "shadow"}.LabelClasses()
+	containerWithRoot := Config{Appearance: AppearanceContainer, RootClass: "shadow"}.LabelClasses()
 	if !strings.HasSuffix(containerWithRoot, " shadow") {
 		t.Errorf("RootClass should append to container LabelClasses: %s", containerWithRoot)
 	}
 }
 
 func TestCoverageToneClassesRendered(t *testing.T) {
-	html := renderToggle(t, Config{ID: "t6", Label: "Warn", Tone: ToneWarning, Style: StyleContainer})
+	html := renderToggle(t, Config{ID: "t6", Label: "Warn", Tone: ToneWarning, Appearance: AppearanceContainer})
 
 	if !strings.Contains(html, "peer-checked:bg-warning") {
 		t.Fatalf("expected warning variant class in track: %s", html)

@@ -98,7 +98,7 @@ func TestTable_DefaultTable(t *testing.T) {
 }
 
 // TestTable_StripedVariant tests the striped table variant
-func TestTable_StripedVariant(t *testing.T) {
+func TestTableStripedAppearance(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -135,8 +135,8 @@ func TestTable_StripedVariant(t *testing.T) {
 	})
 }
 
-// TestTable_WithCheckbox tests the checkbox table variant
-func TestTable_WithCheckbox(t *testing.T) {
+// TestTableCheckboxSelection tests the checkbox selection behavior.
+func TestTableCheckboxSelection(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}

@@ -12,7 +12,7 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 
 **Entry points:** `Accordion(cfg AccordionConfig)`
 
-- **Variant** — Default = "default", NoBackground = "no-background", Split = "split", SingleOpen = "single-open"
+- **Appearance** — AppearanceDefault = "", AppearancePlain = "no-background", AppearanceSplit = "split"
 
 **AccordionConfig**
 
@@ -20,7 +20,7 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 |-------|------|-------------|
 | `Items` | `[]AccordionItem` | Items are the accordion sections |
 | `AllowMultiple` | `bool` | AllowMultiple allows multiple items to be open simultaneously |
-| `Variant` | `Variant` | Variant determines the visual style |
+| `Appearance` | `Appearance` | Appearance determines the visual treatment. |
 | `ID` | `string` | ID is the container ID for accessibility |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the accordion root. |
 
@@ -135,8 +135,8 @@ import "github.com/araihu/goshtoso/components/badge"  // package badge
 
 **Entry points:** `AnimatingDot(variant Tone)` · `Badge(cfg Config)` · `NotificationBadge(count int)` · `NotificationDot()`
 
+- **Appearance** — AppearanceSolid = "", AppearanceSoft = "soft"
 - **Size** — SizeSM = "sm", SizeMD = "md", SizeLG = "lg"
-- **Style** — StyleSolid = "solid", StyleSoft = "soft"
 - **Tone** — ToneDefault = "default", ToneInverse = "inverse", TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
@@ -145,7 +145,7 @@ import "github.com/araihu/goshtoso/components/badge"  // package badge
 |-------|------|-------------|
 | `Label` | `string` | Label is the badge content |
 | `Tone` | `Tone` | Tone determines the color scheme |
-| `Style` | `Style` | Style determines solid or soft appearance |
+| `Appearance` | `Appearance` | Appearance determines solid or soft rendering. |
 | `Size` | `Size` | Size of the badge |
 | `Icon` | `templ.Component` | Icon is an optional icon component |
 | `Indicator` | `bool` | Indicator adds a colored dot indicator |
@@ -286,8 +286,8 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 
 **Entry points:** `Card(cfg Config)` · `StarRating(rating int)`
 
+- **Appearance** — AppearanceDefault = "", AppearancePrimary = "primary"
 - **Layout** — LayoutVertical = "vertical", LayoutHorizontal = "horizontal"
-- **Variant** — Default = "default", Primary = "primary"
 
 **Config**
 
@@ -299,9 +299,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `Title` | `string` | Title is the card title |
 | `Description` | `string` | Description is the card body text |
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |
-| `Price` | `string` | Price is the product price (for ecommerce cards) |
-| `Rating` | `int` | Rating is the product rating 0-5 (for ecommerce/testimonial cards) |
-| `Variant` | `Variant` | Variant determines the card style |
+| `Appearance` | `Appearance` | Appearance determines the card's visual treatment. |
 | `Layout` | `Layout` | Layout determines vertical or horizontal layout |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the card root. |
 
@@ -574,13 +572,13 @@ import "github.com/araihu/goshtoso/components/fileinput"  // package fileinput
 
 **Entry points:** `FileInput(cfg Config)`
 
-- **Variant** — VariantDropZone = "", VariantUpload = "upload"
+- **Appearance** — AppearanceDropZone = "", AppearanceUpload = "upload"
 
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Variant` | `Variant` | Variant controls the visual style (default: drop zone) |
+| `Appearance` | `Appearance` | Appearance controls the visual treatment (default: drop zone). |
 | `ID` | `string` | ID is the HTML id for the file input element |
 | `Name` | `string` | Name is the form field name |
 | `Label` | `string` | Label text displayed above the drop zone (e.g. "Cover Picture") |
@@ -938,14 +936,14 @@ import "github.com/araihu/goshtoso/components/pagination"  // package pagination
 
 **Entry points:** `Pagination(cfg Config)`
 
-- **Variant** — WithEllipsis = "ellipsis", Simple = "simple"
+- **Mode** — ModeEllipsis = "", ModeSimple = "simple"
 
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `ID` | `string` | ID is the pagination element ID |
-| `Variant` | `Variant` | Variant determines the pagination style |
+| `Mode` | `Mode` | Mode determines which pagination controls render. |
 | `CurrentPage` | `int` | CurrentPage is the 1-indexed current page number |
 | `TotalPages` | `int` | TotalPages is the total number of pages |
 | `BaseURL` | `string` | BaseURL is the base URL for page links (appends ?page=N) |
@@ -1434,12 +1432,12 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 
 **Entry points:** `ActionButton(label string)` · `ImageCell(imageURL string, label string, detail string)` · `StatusBadge(label string, status string)` · `Table(cfg Config)` · `TableBody(cfg Config)` · `TableHead(cfg Config)` · `TableHeadContent(cfg Config)` · `TablePagination(cfg Config)` · `TablePaginationNav(cfg Config)` · `TableRow(cfg Config, row Row)` · `TableRows(cfg Config)`
 
+- **Appearance** — AppearanceDefault = "", AppearanceStriped = "striped"
+- **FilterAppearance** — FilterAppearanceBar = "", FilterAppearanceInline = "inline"
 - **FilterType** — FilterSearch = "search", FilterSelect = "select", FilterToggle = "toggle"
-- **FilterVariant** — FilterVariantBar = "", FilterVariantInline = "inline"
 - **LinkMode** — LinkSPA = "", LinkBoost = "boost", LinkFull = "full"
 - **PaginationMode** — PaginationTraditional = "", PaginationInfiniteScroll = "infinite"
 - **SortDir** — SortAsc = "asc", SortDesc = "desc", SortNone = ""
-- **Variant** — Default = "default", Striped = "striped", WithCheckbox = "checkbox"
 
 **Cell**
 
@@ -1469,7 +1467,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `Caption` | `string` | Caption is a screen-reader-only description of the table (rendered as <caption class="sr-only">). |
 | `Columns` | `[]Column` | Columns defines the table headers |
 | `Rows` | `[]Row` | Rows holds the table data |
-| `Variant` | `Variant` | Variant determines the table style |
+| `Appearance` | `Appearance` | Appearance determines the table's visual treatment. |
 | `ShowCheckbox` | `bool` | ShowCheckbox adds a select-all checkbox column |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
 | `SortBy` | `string` | --- Sorting --- |
@@ -1501,7 +1499,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `Filters` | `[]Filter` | Filters is the list of filter controls |
 | `Collapsible` | `bool` | Collapsible enables a toggle to show/hide the filter bar. |
 | `InitiallyExpanded` | `bool` | InitiallyExpanded controls whether filters start visible (default: true). |
-| `Variant` | `FilterVariant` | Variant selects the layout (bar vs inline). See FilterVariant. |
+| `Appearance` | `FilterAppearance` | Appearance selects the layout (bar vs inline). See FilterAppearance. |
 | `HTMX` | `*FilterHTMXConfig` | HTMX configures filter request behavior. |
 
 **FilterHTMXConfig**
@@ -1745,7 +1743,7 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 
 **Entry points:** `Toggle(cfg Config)`
 
-- **Style** — StyleDefault = "default", StyleContainer = "container"
+- **Appearance** — AppearanceDefault = "", AppearanceContainer = "container"
 - **Tone** — TonePrimary = "primary", ToneSecondary = "secondary", ToneInfo = "info", ToneSuccess = "success", ToneWarning = "warning", ToneDanger = "danger"
 
 **Config**
@@ -1755,7 +1753,7 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 | `ID` | `string` | ID is the unique identifier for the toggle input |
 | `Label` | `string` | Label is the text label displayed next to the toggle |
 | `Tone` | `Tone` | Tone determines the checked color scheme (default: TonePrimary) |
-| `Style` | `Style` | Style determines the layout style (default or container) |
+| `Appearance` | `Appearance` | Appearance determines the layout treatment (default or container). |
 | `Checked` | `bool` | Checked sets the initial checked state |
 | `Disabled` | `bool` | Disabled disables the toggle |
 | `Name` | `string` | Name is the form field name |

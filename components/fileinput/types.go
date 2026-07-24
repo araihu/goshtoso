@@ -2,20 +2,20 @@ package fileinput
 
 import "github.com/a-h/templ"
 
-// Variant controls the visual style of the file input.
-type Variant string
+// Appearance controls the visual treatment of the file input.
+type Appearance string
 
 const (
-	// VariantDropZone renders the drag-and-drop drop zone. This is the default.
-	VariantDropZone Variant = ""
-	// VariantUpload renders a compact text-input-style upload control.
-	VariantUpload Variant = "upload"
+	// AppearanceDropZone renders the drag-and-drop drop zone. This is the default.
+	AppearanceDropZone Appearance = ""
+	// AppearanceUpload renders a compact text-input-style upload control.
+	AppearanceUpload Appearance = "upload"
 )
 
 // Config holds configuration for the file input component
 type Config struct {
-	// Variant controls the visual style (default: drop zone)
-	Variant Variant
+	// Appearance controls the visual treatment (default: drop zone).
+	Appearance Appearance
 	// ID is the HTML id for the file input element
 	ID string
 	// Name is the form field name
@@ -73,9 +73,9 @@ func (cfg Config) BrowseLabelClasses() string {
 	return "font-medium text-primary group-focus-within:underline dark:text-primary-dark cursor-pointer"
 }
 
-// IsUpload returns true when the compact upload variant should render.
+// IsUpload returns true when the compact upload appearance should render.
 func (cfg Config) IsUpload() bool {
-	return cfg.Variant == VariantUpload
+	return cfg.Appearance == AppearanceUpload
 }
 
 // UploadControlClasses returns classes for the compact upload control.

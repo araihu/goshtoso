@@ -2,14 +2,14 @@ package pagination
 
 import "net/url"
 
-// Variant represents pagination style variants
-type Variant string
+// Mode determines which pagination controls render.
+type Mode string
 
 const (
-	// WithEllipsis shows page numbers with ellipsis for gaps
-	WithEllipsis Variant = "ellipsis"
-	// Simple shows only Previous and Next buttons
-	Simple Variant = "simple"
+	// ModeEllipsis shows page numbers with ellipsis for gaps. This is the default.
+	ModeEllipsis Mode = ""
+	// ModeSimple shows only Previous and Next buttons.
+	ModeSimple Mode = "simple"
 )
 
 // PageItem represents a single item in the pagination list
@@ -32,8 +32,8 @@ type HTMXConfig struct {
 type Config struct {
 	// ID is the pagination element ID
 	ID string
-	// Variant determines the pagination style
-	Variant Variant
+	// Mode determines which pagination controls render.
+	Mode Mode
 	// CurrentPage is the 1-indexed current page number
 	CurrentPage int
 	// TotalPages is the total number of pages

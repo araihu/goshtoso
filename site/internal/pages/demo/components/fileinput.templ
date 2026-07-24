@@ -37,7 +37,7 @@ templ fileInputDemoContent() {
 			},
 			fileInputUploadPreview(),
 			`@fileinput.FileInput(fileinput.Config{
-    Variant:    fileinput.VariantUpload,
+    Appearance: fileinput.AppearanceUpload,
     ID:         "resume",
     Name:       "resume",
     Label:      "Resume",
@@ -92,7 +92,7 @@ templ fileInputDemoContent() {
 	</div>
 	// API reference lives outside #fileinput-fragment.
 	@demo.APIReference([]demo.PropDoc{
-		{Name: "Variant", Type: "fileinput.Variant", Default: "fileinput.VariantDropZone", Description: "Visual style: VariantDropZone or VariantUpload."},
+		{Name: "Appearance", Type: "fileinput.Appearance", Default: "fileinput.AppearanceDropZone", Description: "Visual treatment: AppearanceDropZone or AppearanceUpload."},
 		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
 		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
 		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the drop zone (omit for none)."},
@@ -122,7 +122,7 @@ templ fileInputDefaultPreview() {
 templ fileInputUploadPreview() {
 	<div id="fileinput-upload" class="w-full max-w-md mx-auto">
 		@fileinput.FileInput(fileinput.Config{
-			Variant:    fileinput.VariantUpload,
+			Appearance: fileinput.AppearanceUpload,
 			ID:         "demoUpload",
 			Name:       "resume",
 			Label:      "Resume",

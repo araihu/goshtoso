@@ -27,7 +27,7 @@ templ Accordion(cfg AccordionConfig) {
 				Item:          item,
 				Index:         i,
 				AllowMultiple: cfg.AllowMultiple,
-				Variant:       cfg.Variant,
+				Appearance:    cfg.Appearance,
 				ContainerID:   containerID,
 			} }}
 			@accordionItem(itemData)
@@ -70,7 +70,7 @@ templ accordionItem(data AccordionItemData) {
 	{{ chevronBinding := "isOpen(" + idx + ") ? 'rotate-180' : ''" }}
 	
 	<div
-		if data.Variant == Split {
+		if data.Appearance == AppearanceSplit {
 			class={ data.ItemContainerClasses() }
 		}
 	>

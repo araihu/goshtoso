@@ -95,7 +95,7 @@ func fileInputDemoContent() templ.Component {
 			},
 			fileInputUploadPreview(),
 			`@fileinput.FileInput(fileinput.Config{
-    Variant:    fileinput.VariantUpload,
+    Appearance: fileinput.AppearanceUpload,
     ID:         "resume",
     Name:       "resume",
     Label:      "Resume",
@@ -161,7 +161,7 @@ func fileInputDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Variant", Type: "fileinput.Variant", Default: "fileinput.VariantDropZone", Description: "Visual style: VariantDropZone or VariantUpload."},
+			{Name: "Appearance", Type: "fileinput.Appearance", Default: "fileinput.AppearanceDropZone", Description: "Visual treatment: AppearanceDropZone or AppearanceUpload."},
 			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
 			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
 			{Name: "Label", Type: "string", Default: `""`, Description: "Label above the drop zone (omit for none)."},
@@ -250,7 +250,7 @@ func fileInputUploadPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = fileinput.FileInput(fileinput.Config{
-			Variant:    fileinput.VariantUpload,
+			Appearance: fileinput.AppearanceUpload,
 			ID:         "demoUpload",
 			Name:       "resume",
 			Label:      "Resume",

@@ -22,7 +22,7 @@ templ paginationDemoContent() {
 			},
 			paginationSimplePreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.Simple,
+    Mode:        pagination.ModeSimple,
     CurrentPage: 3,
     TotalPages:  10,
     BaseURL:     "/items",
@@ -36,7 +36,7 @@ templ paginationDemoContent() {
 			},
 			paginationFirstPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.Simple,
+    Mode:        pagination.ModeSimple,
     CurrentPage: 1,
     TotalPages:  10,
     BaseURL:     "/items",
@@ -46,11 +46,11 @@ templ paginationDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Ellipsis — Beginning",
-				Description: "Variant: pagination.WithEllipsis shows page numbers, collapsing large ranges with an ellipsis.",
+				Description: "Mode: pagination.ModeEllipsis shows page numbers, collapsing large ranges with an ellipsis.",
 			},
 			paginationEllipsisBeginPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 2,
     TotalPages:  30,
     BaseURL:     "/items",
@@ -64,7 +64,7 @@ templ paginationDemoContent() {
 			},
 			paginationEllipsisMidPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 15,
     TotalPages:  30,
     BaseURL:     "/items",
@@ -78,7 +78,7 @@ templ paginationDemoContent() {
 			},
 			paginationEllipsisEndPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 29,
     TotalPages:  30,
     BaseURL:     "/items",
@@ -92,7 +92,7 @@ templ paginationDemoContent() {
 			},
 			paginationSmallPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 5,
     TotalPages:  30,
     BaseURL:     "/api/items",
@@ -102,7 +102,7 @@ templ paginationDemoContent() {
 	</div>
 	// API reference lives outside #pagination-fragment.
 	@demo.APIReference([]demo.PropDoc{
-		{Name: "Variant", Type: "Variant", Default: "WithEllipsis", Description: `Style: "simple" (prev/next only) or "ellipsis" (page numbers).`},
+		{Name: "Mode", Type: "Mode", Default: "ModeEllipsis", Description: `ModeSimple renders prev/next only; ModeEllipsis renders page numbers.`},
 		{Name: "CurrentPage", Type: "int", Default: "1", Description: "The active page (1-indexed)."},
 		{Name: "TotalPages", Type: "int", Default: "1", Description: "Total number of pages."},
 		{Name: "BaseURL", Type: "string", Default: `""`, Description: "Base href for page links (page appended as a query/path)."},
@@ -115,35 +115,35 @@ templ paginationDemoContent() {
 // paginationSimplePreview renders the simple prev/next variant.
 templ paginationSimplePreview() {
 	<div id="pagination-simple" class="w-full max-w-2xl mx-auto">
-		@pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 3, TotalPages: 10, BaseURL: "#"})
+		@pagination.Pagination(pagination.Config{Mode: pagination.ModeSimple, CurrentPage: 3, TotalPages: 10, BaseURL: "#"})
 	</div>
 }
 
 // paginationFirstPreview renders the simple variant on the first page.
 templ paginationFirstPreview() {
 	<div id="pagination-first" class="w-full max-w-2xl mx-auto">
-		@pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 1, TotalPages: 10, BaseURL: "#"})
+		@pagination.Pagination(pagination.Config{Mode: pagination.ModeSimple, CurrentPage: 1, TotalPages: 10, BaseURL: "#"})
 	</div>
 }
 
 // paginationEllipsisBeginPreview renders ellipsis pagination near the start.
 templ paginationEllipsisBeginPreview() {
 	<div id="pagination-ellipsis-begin" class="w-full max-w-2xl mx-auto">
-		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 2, TotalPages: 30, BaseURL: "#"})
+		@pagination.Pagination(pagination.Config{Mode: pagination.ModeEllipsis, CurrentPage: 2, TotalPages: 30, BaseURL: "#"})
 	</div>
 }
 
 // paginationEllipsisMidPreview renders ellipsis pagination in the middle.
 templ paginationEllipsisMidPreview() {
 	<div id="pagination-ellipsis-mid" class="w-full max-w-2xl mx-auto">
-		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 15, TotalPages: 30, BaseURL: "#"})
+		@pagination.Pagination(pagination.Config{Mode: pagination.ModeEllipsis, CurrentPage: 15, TotalPages: 30, BaseURL: "#"})
 	</div>
 }
 
 // paginationEllipsisEndPreview renders ellipsis pagination near the end.
 templ paginationEllipsisEndPreview() {
 	<div id="pagination-ellipsis-end" class="w-full max-w-2xl mx-auto">
-		@pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 29, TotalPages: 30, BaseURL: "#"})
+		@pagination.Pagination(pagination.Config{Mode: pagination.ModeEllipsis, CurrentPage: 29, TotalPages: 30, BaseURL: "#"})
 	</div>
 }
 
@@ -151,7 +151,7 @@ templ paginationEllipsisEndPreview() {
 templ paginationSmallPreview() {
 	<div id="pagination-small" class="w-full max-w-2xl mx-auto">
 		@pagination.Pagination(pagination.Config{
-			Variant:     pagination.WithEllipsis,
+			Mode:        pagination.ModeEllipsis,
 			CurrentPage: 3,
 			TotalPages:  5,
 			BaseURL:     "/api/items",

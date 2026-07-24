@@ -37,11 +37,11 @@ templ tableDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Striped Table",
-				Description: "Set Variant: table.Striped to zebra-stripe the rows.",
+				Description: "Set Appearance: table.AppearanceStriped to zebra-stripe the rows.",
 			},
 			tableStripedPreview(),
 			`@table.Table(table.Config{
-    Variant: table.Striped,
+    Appearance: table.AppearanceStriped,
     Columns: columns,
     Rows:    rows,
 })`,
@@ -175,12 +175,12 @@ templ tableDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Inline Filter Variant",
-				Description: "Set Filters.Variant: table.FilterVariantInline for the same controls without the bordered block or collapsible toggle — suited to modal bodies and toolbar strips.",
+				Title:       "Inline Filter Appearance",
+				Description: "Set Filters.Appearance: table.FilterAppearanceInline for the same controls without the bordered block or collapsible toggle — suited to modal bodies and toolbar strips.",
 			},
 			tableInlineFilteredPreview(),
 			`Filters: &table.FilterConfig{
-    Variant: table.FilterVariantInline,
+    Appearance: table.FilterAppearanceInline,
     Filters: []table.Filter{
         {Key: "search", Type: table.FilterSearch, Placeholder: "Search…"},
         {Key: "membership", Type: table.FilterSelect, Options: memberships},
@@ -214,7 +214,7 @@ templ tableDemoContent() {
 	@demo.APIReference([]demo.PropDoc{
 		{Name: "Columns", Type: "[]Column", Default: "nil", Description: "Column definitions (Key, Label, Sortable, Width, Align)."},
 		{Name: "Rows", Type: "[]Row", Default: "nil", Description: "Row data; each Row.Cells maps a column Key to a Cell (Text or Component)."},
-		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default", "striped", or "checkbox".`},
+		{Name: "Appearance", Type: "Appearance", Default: "AppearanceDefault", Description: `Visual treatment: default or striped.`},
 		{Name: "ShowCheckbox", Type: "bool", Default: "false", Description: "Adds a leading select column with a header check-all toggle."},
 		{Name: "ID", Type: "string", Default: `""`, Description: "Table element id; required for HTMX variants (seeds tbody/paginator ids)."},
 		{Name: "Caption", Type: "string", Default: `""`, Description: "Optional accessible table caption."},
@@ -231,8 +231,8 @@ templ tableDemoContent() {
 		{Name: "Pagination.HasMore", Type: "bool", Default: "false", Description: "Infinite-scroll sentinel flag; false stops requesting more rows."},
 		{Name: "Pagination.ContainerHeight", Type: "string", Default: `""`, Description: `Optional table-local scroll height, such as "400px"; empty uses the nearest page scroller.`},
 		{Name: "InfiniteScroll", Type: "*InfiniteScrollConfig", Default: "nil", Description: "Deprecated compatibility field; prefer Pagination.Mode: PaginationInfiniteScroll."},
-		{Name: "Filters", Type: "*FilterConfig", Default: "nil", Description: "Filter bar config (Variant, Collapsible, Filters[]: search/select/toggle)."},
-		{Name: "Filters.Variant", Type: "FilterVariant", Default: "FilterVariantBar", Description: "Switches between the bordered/collapsible filter bar and inline filter controls."},
+		{Name: "Filters", Type: "*FilterConfig", Default: "nil", Description: "Filter bar config (Appearance, Collapsible, Filters[]: search/select/toggle)."},
+		{Name: "Filters.Appearance", Type: "FilterAppearance", Default: "FilterAppearanceBar", Description: "Switches between the bordered/collapsible filter bar and inline filter controls."},
 		{Name: "Filters.HTMX", Type: "*FilterHTMXConfig", Default: "nil", Description: "Optional Target and Swap overrides for filter requests; defaults to the table tbody and innerHTML."},
 		{Name: "Filter.OptionsHTMX", Type: "*FilterOptionsHTMXConfig", Default: "nil", Description: "Loads select-filter options from a GET endpoint when static Options are not enough."},
 		{Name: "ExtraQueryParams", Type: "string", Default: `""`, Description: "Extra query string appended to every HTMX request."},
@@ -254,7 +254,7 @@ templ tableDefaultPreview() {
 templ tableStripedPreview() {
 	<div id="table-striped" class="w-full">
 		@table.Table(table.Config{
-			Variant: table.Striped,
+			Appearance: table.AppearanceStriped,
 			Columns: defaultColumns(),
 			Rows:    stripedRows(),
 		})
@@ -399,7 +399,7 @@ templ tableInlineFilteredPreview() {
 			Rows:       paginatedRows(1),
 			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 			Filters: &table.FilterConfig{
-				Variant: table.FilterVariantInline,
+				Appearance: table.FilterAppearanceInline,
 				Filters: []table.Filter{
 					{
 						Key:         "search",

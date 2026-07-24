@@ -99,7 +99,7 @@ func Accordion(cfg AccordionConfig) templ.Component {
 				Item:          item,
 				Index:         i,
 				AllowMultiple: cfg.AllowMultiple,
-				Variant:       cfg.Variant,
+				Appearance:    cfg.Appearance,
 				ContainerID:   containerID,
 			}
 			templ_7745c5c3_Err = accordionItem(itemData).Render(ctx, templ_7745c5c3_Buffer)
@@ -179,7 +179,7 @@ func accordionItem(data AccordionItemData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if data.Variant == Split {
+		if data.Appearance == AppearanceSplit {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

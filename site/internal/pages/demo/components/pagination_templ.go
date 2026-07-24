@@ -78,7 +78,7 @@ func paginationDemoContent() templ.Component {
 			},
 			paginationSimplePreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.Simple,
+    Mode:        pagination.ModeSimple,
     CurrentPage: 3,
     TotalPages:  10,
     BaseURL:     "/items",
@@ -94,7 +94,7 @@ func paginationDemoContent() templ.Component {
 			},
 			paginationFirstPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.Simple,
+    Mode:        pagination.ModeSimple,
     CurrentPage: 1,
     TotalPages:  10,
     BaseURL:     "/items",
@@ -106,11 +106,11 @@ func paginationDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Ellipsis — Beginning",
-				Description: "Variant: pagination.WithEllipsis shows page numbers, collapsing large ranges with an ellipsis.",
+				Description: "Mode: pagination.ModeEllipsis shows page numbers, collapsing large ranges with an ellipsis.",
 			},
 			paginationEllipsisBeginPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 2,
     TotalPages:  30,
     BaseURL:     "/items",
@@ -126,7 +126,7 @@ func paginationDemoContent() templ.Component {
 			},
 			paginationEllipsisMidPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 15,
     TotalPages:  30,
     BaseURL:     "/items",
@@ -142,7 +142,7 @@ func paginationDemoContent() templ.Component {
 			},
 			paginationEllipsisEndPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 29,
     TotalPages:  30,
     BaseURL:     "/items",
@@ -158,7 +158,7 @@ func paginationDemoContent() templ.Component {
 			},
 			paginationSmallPreview(),
 			`@pagination.Pagination(pagination.Config{
-    Variant:     pagination.WithEllipsis,
+    Mode:        pagination.ModeEllipsis,
     CurrentPage: 5,
     TotalPages:  30,
     BaseURL:     "/api/items",
@@ -173,7 +173,7 @@ func paginationDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Variant", Type: "Variant", Default: "WithEllipsis", Description: `Style: "simple" (prev/next only) or "ellipsis" (page numbers).`},
+			{Name: "Mode", Type: "Mode", Default: "ModeEllipsis", Description: `ModeSimple renders prev/next only; ModeEllipsis renders page numbers.`},
 			{Name: "CurrentPage", Type: "int", Default: "1", Description: "The active page (1-indexed)."},
 			{Name: "TotalPages", Type: "int", Default: "1", Description: "Total number of pages."},
 			{Name: "BaseURL", Type: "string", Default: `""`, Description: "Base href for page links (page appended as a query/path)."},
@@ -214,7 +214,7 @@ func paginationSimplePreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 3, TotalPages: 10, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Mode: pagination.ModeSimple, CurrentPage: 3, TotalPages: 10, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -252,7 +252,7 @@ func paginationFirstPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.Simple, CurrentPage: 1, TotalPages: 10, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Mode: pagination.ModeSimple, CurrentPage: 1, TotalPages: 10, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -290,7 +290,7 @@ func paginationEllipsisBeginPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 2, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Mode: pagination.ModeEllipsis, CurrentPage: 2, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -328,7 +328,7 @@ func paginationEllipsisMidPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 15, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Mode: pagination.ModeEllipsis, CurrentPage: 15, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -366,7 +366,7 @@ func paginationEllipsisEndPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Variant: pagination.WithEllipsis, CurrentPage: 29, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{Mode: pagination.ModeEllipsis, CurrentPage: 29, TotalPages: 30, BaseURL: "#"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -405,7 +405,7 @@ func paginationSmallPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-			Variant:     pagination.WithEllipsis,
+			Mode:        pagination.ModeEllipsis,
 			CurrentPage: 3,
 			TotalPages:  5,
 			BaseURL:     "/api/items",

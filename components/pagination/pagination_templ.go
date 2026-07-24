@@ -9,13 +9,13 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 // Pagination renders a pagination navigation component based on PenguinUI.
-// Supports two variants: WithEllipsis (page numbers with ellipsis) and Simple (prev/next only).
+// Supports two modes: ModeEllipsis (page numbers with ellipsis) and ModeSimple (prev/next only).
 //
 // Usage:
 //
 //	// Simple pagination (prev/next only)
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.Simple,
+//	    Mode:        pagination.ModeSimple,
 //	    CurrentPage: 3,
 //	    TotalPages:  10,
 //	    BaseURL:     "/items",
@@ -23,7 +23,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //
 //	// With ellipsis and page numbers
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.WithEllipsis,
+//	    Mode:        pagination.ModeEllipsis,
 //	    CurrentPage: 5,
 //	    TotalPages:  30,
 //	    BaseURL:     "/items",
@@ -31,7 +31,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //
 //	// With HTMX integration
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.WithEllipsis,
+//	    Mode:        pagination.ModeEllipsis,
 //	    CurrentPage: 2,
 //	    TotalPages:  10,
 //	    BaseURL:     "/api/items",
@@ -290,7 +290,7 @@ func Pagination(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.Variant != Simple {
+		if cfg.Mode != ModeSimple {
 			for _, item := range cfg.Pages() {
 				if item.IsEllipsis {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>")

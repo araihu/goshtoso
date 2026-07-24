@@ -1,13 +1,13 @@
 package pagination
 
 // Pagination renders a pagination navigation component based on PenguinUI.
-// Supports two variants: WithEllipsis (page numbers with ellipsis) and Simple (prev/next only).
+// Supports two modes: ModeEllipsis (page numbers with ellipsis) and ModeSimple (prev/next only).
 //
 // Usage:
 //
 //	// Simple pagination (prev/next only)
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.Simple,
+//	    Mode:        pagination.ModeSimple,
 //	    CurrentPage: 3,
 //	    TotalPages:  10,
 //	    BaseURL:     "/items",
@@ -15,7 +15,7 @@ package pagination
 //
 //	// With ellipsis and page numbers
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.WithEllipsis,
+//	    Mode:        pagination.ModeEllipsis,
 //	    CurrentPage: 5,
 //	    TotalPages:  30,
 //	    BaseURL:     "/items",
@@ -23,7 +23,7 @@ package pagination
 //
 //	// With HTMX integration
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.WithEllipsis,
+//	    Mode:        pagination.ModeEllipsis,
 //	    CurrentPage: 2,
 //	    TotalPages:  10,
 //	    BaseURL:     "/api/items",
@@ -71,7 +71,7 @@ templ Pagination(cfg Config) {
 				}
 			</li>
 			// Page numbers (ellipsis variant only)
-			if cfg.Variant != Simple {
+			if cfg.Mode != ModeSimple {
 				for _, item := range cfg.Pages() {
 					if item.IsEllipsis {
 						<li>

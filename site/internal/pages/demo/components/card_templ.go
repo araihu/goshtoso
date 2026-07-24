@@ -197,7 +197,7 @@ templ bookNowButton() {
 			{Name: "Title", Type: "string", Default: `""`, Description: "Card title (also seeds the aria-describedby id)."},
 			{Name: "Description", Type: "string", Default: `""`, Description: "Body text."},
 			{Name: "Footer", Type: "templ.Component", Default: "nil", Description: "Optional footer content (buttons, links, ratings) rendered below the body."},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default" or "primary" (adds a 2px primary border accent).`},
+			{Name: "Appearance", Type: "Appearance", Default: "AppearanceDefault", Description: `Visual treatment: default or primary (adds a 2px primary border accent).`},
 			{Name: "Layout", Type: "Layout", Default: "LayoutVertical", Description: `Layout: "vertical" (image top) or "horizontal" (image beside content).`},
 			{Name: "Price", Type: "string", Default: `""`, Description: "Exposed for ecommerce recipes; render via a custom Footer (base template does not emit it)."},
 			{Name: "Rating", Type: "int", Default: "0", Description: "Exposed for ecommerce recipes; render with card.StarRating in a Footer."},

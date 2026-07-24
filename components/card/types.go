@@ -2,12 +2,12 @@ package card
 
 import "github.com/a-h/templ"
 
-// Variant represents card style variants
-type Variant string
+// Appearance represents the card's visual treatment.
+type Appearance string
 
 const (
-	Default Variant = "default"
-	Primary Variant = "primary"
+	AppearanceDefault Appearance = ""
+	AppearancePrimary Appearance = "primary"
 )
 
 // Layout represents card layout
@@ -32,12 +32,8 @@ type Config struct {
 	Description string
 	// Footer is optional footer content (buttons, links, etc.)
 	Footer templ.Component
-	// Price is the product price (for ecommerce cards)
-	Price string
-	// Rating is the product rating 0-5 (for ecommerce/testimonial cards)
-	Rating int
-	// Variant determines the card style
-	Variant Variant
+	// Appearance determines the card's visual treatment.
+	Appearance Appearance
 	// Layout determines vertical or horizontal layout
 	Layout Layout
 	// RootClass allows additional CSS classes on the card root.
@@ -48,8 +44,8 @@ type Config struct {
 func (cfg Config) ContainerClasses() string {
 	base := "group flex rounded-radius overflow-hidden border bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
 
-	// Variant
-	if cfg.Variant == Primary {
+	// Appearance
+	if cfg.Appearance == AppearancePrimary {
 		base += " border-2 border-primary dark:border-primary-dark"
 	} else {
 		base += " border-outline"
@@ -107,14 +103,4 @@ func (cfg Config) DescriptionClasses() string {
 // HasImage returns true if card has an image
 func (cfg Config) HasImage() bool {
 	return cfg.Image != ""
-}
-
-// HasRating returns true if card has a rating
-func (cfg Config) HasRating() bool {
-	return cfg.Rating > 0
-}
-
-// HasPrice returns true if card has a price
-func (cfg Config) HasPrice() bool {
-	return cfg.Price != ""
 }

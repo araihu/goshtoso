@@ -328,10 +328,10 @@ func TickerCellInner(sym ticker.Symbol) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = badge.Badge(badge.Config{
-			Tone:  tickerBadgeVariant(sym),
-			Style: badge.StyleSoft,
-			Size:  badge.SizeSM,
-			Label: tickerChange(sym),
+			Tone:       tickerBadgeVariant(sym),
+			Appearance: badge.AppearanceSoft,
+			Size:       badge.SizeSM,
+			Label:      tickerChange(sym),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

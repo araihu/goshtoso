@@ -127,15 +127,15 @@ func filterBarBodyClasses(cfg Config) string {
 	return "px-4 py-4"
 }
 
-// filterBar renders the filter controls above the table. Two variants:
+// filterBar renders the filter controls above the table. Two appearances:
 //
-//   - FilterVariantBar (default) — bordered block, optional collapsible
+//   - FilterAppearanceBar (default) — bordered block, optional collapsible
 //     header. Use for primary page tables.
-//   - FilterVariantInline — no border, no collapse, plain flex row. Use when
+//   - FilterAppearanceInline — no border, no collapse, plain flex row. Use when
 //     the host container already provides chrome (modals, toolbar strips).
 //     Ignores Collapsible / InitiallyExpanded.
 templ filterBar(cfg Config) {
-	if cfg.Filters.Variant == FilterVariantInline {
+	if cfg.Filters.Appearance == FilterAppearanceInline {
 		<div id={ cfg.FilterBarID() } class="mb-3 flex flex-wrap items-end gap-3">
 			for _, filter := range cfg.Filters.Filters {
 				@filterControl(cfg, filter)
@@ -648,7 +648,7 @@ templ TablePagination(cfg Config) {
 				Page { itoa(cfg.Pagination.CurrentPage) } of { itoa(cfg.Pagination.TotalPages) }
 			</div>
 			@pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
+				Mode:        pagination.ModeEllipsis,
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
 				BaseURL:     cfg.PaginationBaseURL(),
@@ -662,7 +662,7 @@ templ TablePagination(cfg Config) {
 templ TablePaginationNav(cfg Config) {
 	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
 		@pagination.Pagination(pagination.Config{
-			Variant:     pagination.WithEllipsis,
+			Mode:        pagination.ModeEllipsis,
 			CurrentPage: cfg.Pagination.CurrentPage,
 			TotalPages:  cfg.Pagination.TotalPages,
 			BaseURL:     cfg.PaginationBaseURL(),

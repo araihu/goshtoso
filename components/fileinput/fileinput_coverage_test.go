@@ -84,7 +84,7 @@ func TestCoverageDropZoneDisabled(t *testing.T) {
 
 func TestCoverageUploadVariantAllBranches(t *testing.T) {
 	html := renderConfig(t, Config{
-		Variant:    VariantUpload,
+		Appearance: AppearanceUpload,
 		ID:         "resume",
 		Name:       "resume",
 		Label:      "Resume",
@@ -119,7 +119,7 @@ func TestCoverageUploadVariantAllBranches(t *testing.T) {
 }
 
 func TestCoverageUploadDisabled(t *testing.T) {
-	html := renderConfig(t, Config{Variant: VariantUpload, ID: "u", Disabled: true})
+	html := renderConfig(t, Config{Appearance: AppearanceUpload, ID: "u", Disabled: true})
 	for _, want := range []string{"disabled", "cursor-not-allowed", "opacity-75"} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("disabled upload missing %q in %s", want, html)
@@ -138,7 +138,7 @@ func TestCoverageNoLabelNoHelper(t *testing.T) {
 	}
 
 	// Upload variant without label/helper.
-	up := renderConfig(t, Config{Variant: VariantUpload, ID: "bareup"})
+	up := renderConfig(t, Config{Appearance: AppearanceUpload, ID: "bareup"})
 	if strings.Contains(up, "aria-describedby") {
 		t.Fatalf("bare upload should not set aria-describedby: %s", up)
 	}
@@ -148,7 +148,7 @@ func TestCoverageIsUpload(t *testing.T) {
 	if (Config{}).IsUpload() {
 		t.Fatal("default config should not be upload")
 	}
-	if !(Config{Variant: VariantUpload}).IsUpload() {
+	if !(Config{Appearance: AppearanceUpload}).IsUpload() {
 		t.Fatal("upload variant should report IsUpload")
 	}
 }

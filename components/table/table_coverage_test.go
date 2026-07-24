@@ -290,8 +290,8 @@ func TestRowAndSortableHeaderClasses(t *testing.T) {
 	if (Config{}).RowClasses() != "" {
 		t.Fatal("default variant rows should have no extra class")
 	}
-	striped := Config{Variant: Striped}.RowClasses()
-	mustContainAll(t, striped, "even:bg-primary/5")
+	striped := Config{Appearance: AppearanceStriped}.RowClasses()
+	mustContainAll(t, striped, "odd:bg-surface-alt")
 
 	cfg := Config{SortBy: "name", SortDir: SortAsc}
 	sorted := cfg.SortableHeaderClasses("name")
@@ -336,12 +336,12 @@ func TestRenderDefaultTable(t *testing.T) {
 
 func TestRenderCaptionAndStriped(t *testing.T) {
 	html := renderT(t, Table(Config{
-		Caption: "Customer list",
-		Variant: Striped,
-		Columns: []Column{{Key: "name", Label: "Name"}},
-		Rows:    []Row{{ID: "1", Cells: map[string]Cell{"name": {Text: "Bob"}}}},
+		Caption:    "Customer list",
+		Appearance: AppearanceStriped,
+		Columns:    []Column{{Key: "name", Label: "Name"}},
+		Rows:       []Row{{ID: "1", Cells: map[string]Cell{"name": {Text: "Bob"}}}},
 	}))
-	mustContainAll(t, html, "<caption", "Customer list", "even:bg-primary/5")
+	mustContainAll(t, html, "<caption", "Customer list", "odd:bg-surface-alt")
 }
 
 func TestRenderCellContentVariants(t *testing.T) {
@@ -661,8 +661,8 @@ func TestRenderInlineFilterVariant(t *testing.T) {
 		Columns: []Column{{Key: "name", Label: "Name"}},
 		Rows:    []Row{{ID: "1", Cells: map[string]Cell{"name": {Text: "A"}}}},
 		Filters: &FilterConfig{
-			Variant: FilterVariantInline,
-			Filters: []Filter{{Key: "q", Type: FilterSearch, Placeholder: "Search…"}},
+			Appearance: FilterAppearanceInline,
+			Filters:    []Filter{{Key: "q", Type: FilterSearch, Placeholder: "Search…"}},
 		},
 	}
 	html := renderT(t, Table(cfg))

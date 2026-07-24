@@ -98,11 +98,11 @@ func accordionDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "No Background",
-				Description: "Drops the tinted fill for a cleaner look on plain surfaces. Set Variant: accordion.NoBackground.",
+				Description: "Drops the tinted fill for a cleaner look on plain surfaces. Set Appearance: accordion.AppearancePlain.",
 			},
 			accordionNoBgPreview(),
 			`@accordion.Accordion(accordion.AccordionConfig{
-    Variant: accordion.NoBackground,
+    Appearance: accordion.AppearancePlain,
     Items: []accordion.AccordionItem{
         {ID: "nobg-1", Title: "First section without background", Content: content1},
         {ID: "nobg-2", Title: "Second section", Content: content2},
@@ -115,11 +115,11 @@ func accordionDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Split",
-				Description: "Each section becomes its own gapped, bordered card instead of a single divided block. Set Variant: accordion.Split.",
+				Description: "Each section becomes its own gapped, bordered card instead of a single divided block. Set Appearance: accordion.AppearanceSplit.",
 			},
 			accordionSplitPreview(),
 			`@accordion.Accordion(accordion.AccordionConfig{
-    Variant:       accordion.Split,
+    Appearance:    accordion.AppearanceSplit,
     AllowMultiple: true,
     Items: []accordion.AccordionItem{
         {ID: "split-1", Title: "What browsers are supported?", Content: content1},
@@ -179,7 +179,7 @@ templ lazyLoadingContent(targetID string) {
 		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
 			{Name: "Items", Type: "[]AccordionItem", Default: "nil", Description: "The accordion sections (ID, Title, Content, optional Icon/Disabled/InitiallyExpanded)."},
 			{Name: "AllowMultiple", Type: "bool", Default: "false", Description: "Allow multiple sections open at once. When false, opening one closes the others."},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Visual style: "default", "no-background", or "split".`},
+			{Name: "Appearance", Type: "Appearance", Default: "AppearanceDefault", Description: `Visual treatment: default, plain, or split.`},
 			{Name: "ID", Type: "string", Default: `"accordion"`, Description: "Container element ID used for accessibility wiring."},
 			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the container."},
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -274,8 +274,8 @@ func accordionNoBgPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
-			ID:      "accordion-nobg",
-			Variant: accordion.NoBackground,
+			ID:         "accordion-nobg",
+			Appearance: accordion.AppearancePlain,
 			Items: []accordion.AccordionItem{
 				{
 					ID:      "nobg-1",
@@ -328,7 +328,7 @@ func accordionSplitPreview() templ.Component {
 		}
 		templ_7745c5c3_Err = accordion.Accordion(accordion.AccordionConfig{
 			ID:            "accordion-split",
-			Variant:       accordion.Split,
+			Appearance:    accordion.AppearanceSplit,
 			AllowMultiple: true,
 			Items: []accordion.AccordionItem{
 				{

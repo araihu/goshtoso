@@ -30,7 +30,7 @@ func TestPageURL_EncodesPageParamWithoutStringConcatenation(t *testing.T) {
 
 func TestPagination_RenderedHrefSanitizesUnsafeBaseURL(t *testing.T) {
 	rendered := renderPagination(t, Config{
-		Variant:     Simple,
+		Mode:        ModeSimple,
 		CurrentPage: 1,
 		TotalPages:  2,
 		BaseURL:     "javascript:alert(1)",
