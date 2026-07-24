@@ -2,8 +2,10 @@ package e2e
 
 import (
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -110,4 +112,59 @@ func tooltipAttribute(t *testing.T, loc playwright.Locator, name string) string 
 	value, err := loc.GetAttribute(name)
 	require.NoError(t, err)
 	return value
+}
+
+func TestTooltipCustomButtonTriggerFocusWiring(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/examples/logs", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForTooltipAlpine(page))
+
+	wrapper := page.Locator("#log-pause-tip").Locator("xpath=preceding-sibling::span[1]")
+	trigger := wrapper.Locator("button").First()
+	require.NoError(t, trigger.WaitFor())
+
+	describedBy, err := trigger.GetAttribute("aria-describedby")
+	require.NoError(t, err)
+	assert.Equal(t, "log-pause-tip", describedBy,
+		"the actual focusable custom trigger must describe the tooltip")
+	wrapperTabIndex, err := wrapper.Evaluate("el => el.tabIndex", nil)
+	require.NoError(t, err)
+	assert.Equal(t, -1, wrapperTabIndex,
+		"a focusable custom child must not leave a duplicate wrapper tab stop")
+
+	require.NoError(t, trigger.Focus())
+	assert.Eventually(t, func() bool {
+		opacity, evalErr := page.Evaluate(
+			"() => getComputedStyle(document.querySelector('#log-pause-tip')).opacity",
+			nil,
+		)
+		return evalErr == nil && opacity == "1"
+	}, 2*time.Second, 50*time.Millisecond,
+		"keyboard focus on the custom button should reveal its tooltip")
+
+	_, err = page.Evaluate(`() => {
+		const content = document.createElement('div')
+		content.id = 'fallback-tooltip-content'
+		content.setAttribute('role', 'tooltip')
+		document.body.appendChild(content)
+		const root = document.createElement('span')
+		root.id = 'fallback-tooltip-trigger'
+		root.dataset.tooltipContentId = content.id
+		root.textContent = 'More information'
+		document.body.appendChild(root)
+		window.goshtosoInitTooltipTrigger(root)
+	}`, nil)
+	require.NoError(t, err)
+
+	fallback := page.Locator("#fallback-tooltip-trigger")
+	require.Equal(t, "0", tooltipAttribute(t, fallback, "tabindex"))
+	require.Equal(t, "button", tooltipAttribute(t, fallback, "role"))
+	require.Equal(t, "fallback-tooltip-content", tooltipAttribute(t, fallback, "aria-describedby"))
 }

@@ -21,6 +21,9 @@ package tooltip
 //	)
 templ Tooltip(id, label string, options ...Option) {
 	{{ cfg := newConfig(id, label, options) }}
+	if cfg.trigger != nil {
+		@triggerScript()
+	}
 	if cfg.activation == ActivationClick {
 		@clickTooltip(cfg)
 	} else if cfg.isRich() {
@@ -34,13 +37,19 @@ templ Tooltip(id, label string, options ...Option) {
 templ defaultTooltip(cfg config) {
 	<div class="relative w-fit">
 		if cfg.trigger != nil {
-			<span class="peer" aria-describedby={ cfg.id }>
+			<span
+				class="peer"
+				x-data
+				data-tooltip-content-id={ cfg.id }
+				data-tooltip-activation={ string(cfg.activation) }
+				x-init="goshtosoInitTooltipTrigger($el)"
+			>
 				@cfg.trigger
 			</span>
 		} else {
 			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
 		}
-		<div id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:bg-surface dark:text-on-surface-strong" } role="tooltip">{ cfg.label }</div>
+		<div id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface-strong" } role="tooltip">{ cfg.label }</div>
 	</div>
 }
 
@@ -48,13 +57,19 @@ templ defaultTooltip(cfg config) {
 templ richTooltip(cfg config) {
 	<div class="relative w-fit">
 		if cfg.trigger != nil {
-			<span class="peer" aria-describedby={ cfg.id }>
+			<span
+				class="peer"
+				x-data
+				data-tooltip-content-id={ cfg.id }
+				data-tooltip-activation={ string(cfg.activation) }
+				x-init="goshtosoInitTooltipTrigger($el)"
+			>
 				@cfg.trigger
 			</span>
 		} else {
 			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
 		}
-		<div id={ cfg.id } class={ cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-sm bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:bg-surface dark:text-on-surface" } role="tooltip">
+		<div id={ cfg.id } class={ cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-sm bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface" } role="tooltip">
 			<span class="text-sm font-medium text-on-surface-dark-strong dark:text-on-surface-strong">{ cfg.label }</span>
 			<p class="text-balance">{ cfg.description }</p>
 		</div>
@@ -65,7 +80,13 @@ templ richTooltip(cfg config) {
 templ clickTooltip(cfg config) {
 	<div x-data="{ showTooltip: false }" class="relative w-fit">
 		if cfg.trigger != nil {
-			<span x-on:click="showTooltip = !showTooltip" aria-describedby={ cfg.id }>
+			<span
+				x-on:click="showTooltip = !showTooltip"
+				x-data
+				data-tooltip-content-id={ cfg.id }
+				data-tooltip-activation={ string(cfg.activation) }
+				x-init="goshtosoInitTooltipTrigger($el)"
+			>
 				@cfg.trigger
 			</span>
 		} else {
@@ -73,4 +94,40 @@ templ clickTooltip(cfg config) {
 		}
 		<div x-cloak x-show="showTooltip" x-on:click.outside="showTooltip = false" id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-out" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">{ cfg.label }</div>
 	</div>
+}
+
+// triggerScript annotates the first focusable element inside an opaque custom
+// trigger with the tooltip relationship. If the custom component has no
+// focusable descendant, its wrapper becomes the single focus target instead.
+templ triggerScript() {
+	@templ.Raw(`<script>
+(function () {
+	if (window.goshtosoInitTooltipTrigger) return;
+	window.goshtosoInitTooltipTrigger = function (root) {
+		var id = root.dataset.tooltipContentId;
+		if (!id) return;
+		var selector = 'button:not([disabled]),a[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[contenteditable="true"],[tabindex]:not([tabindex="-1"])';
+		var candidates = root.querySelectorAll(selector);
+		var target = Array.prototype.find.call(candidates, function (candidate) {
+			return candidate.tabIndex >= 0 && !candidate.closest('[hidden],[inert]');
+		});
+		if (target) {
+			var ids = (target.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+			if (ids.indexOf(id) === -1) ids.push(id);
+			target.setAttribute('aria-describedby', ids.join(' '));
+			return;
+		}
+		root.setAttribute('tabindex', '0');
+		root.setAttribute('role', 'button');
+		root.setAttribute('aria-describedby', id);
+		if (root.dataset.tooltipActivation === 'click') {
+			root.addEventListener('keydown', function (event) {
+				if (event.target !== root || (event.key !== 'Enter' && event.key !== ' ')) return;
+				event.preventDefault();
+				root.click();
+			});
+		}
+	};
+})();
+</script>`)
 }

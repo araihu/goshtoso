@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components/button"
 )
 
 func TestTooltipCoverageConfigHelpers(t *testing.T) {
@@ -157,7 +158,7 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 			},
 			want: []string{
 				`class="peer"`,
-				`aria-describedby="customTip"`,
+				`data-tooltip-content-id="customTip"`,
 				`data-testid="custom-trigger"`,
 				"Custom trigger context",
 				"right-full mr-2",
@@ -249,5 +250,25 @@ func TestTooltipRequiresIDAndLabel(t *testing.T) {
 	}
 	if !strings.Contains(html, "top-full mt-2") {
 		t.Fatalf("tooltip position option missing in %s", html)
+	}
+}
+
+func TestTooltipCustomTriggerSupportsDescendantFocus(t *testing.T) {
+	trigger := button.Button(button.WithID("custom-tooltip-button"))
+	html := renderTooltip(t,
+		"customTip",
+		"Custom trigger context",
+		WithTrigger(trigger),
+	)
+
+	for _, want := range []string{
+		`data-tooltip-content-id="customTip"`,
+		`x-data`,
+		`x-init="goshtosoInitTooltipTrigger($el)"`,
+		"peer-focus-within:opacity-100",
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("custom trigger render missing %q in %s", want, html)
+		}
 	}
 }
