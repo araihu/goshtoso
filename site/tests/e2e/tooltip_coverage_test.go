@@ -253,4 +253,98 @@ func TestTooltipCustomTriggerInitializerLifecycle(t *testing.T) {
 		assert.Equal(t, "-1|||", state,
 			"disabled native controls must remain non-activatable without wrapper button semantics")
 	})
+
+	t.Run("external wrapper description survives initialization and rerun", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'external-wrapper-content'
+			root.setAttribute('aria-describedby', 'external-help')
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			const first = root.getAttribute('aria-describedby') || ''
+			window.goshtosoInitTooltipTrigger(root)
+			const second = root.getAttribute('aria-describedby') || ''
+			return first + '|' + second
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t,
+			"external-help external-wrapper-content|external-help external-wrapper-content",
+			state,
+			"initializer must preserve external descriptions and add its token exactly once")
+	})
+
+	t.Run("consumer role and tabindex survive fallback transition", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'consumer-state-content'
+			root.setAttribute('role', 'group')
+			root.setAttribute('tabindex', '-1')
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			const fallbackState = [
+				root.getAttribute('tabindex') || '',
+				root.getAttribute('role') || '',
+			].join('|')
+			const button = document.createElement('button')
+			root.appendChild(button)
+			window.goshtosoInitTooltipTrigger(root)
+			return [
+				fallbackState,
+				root.getAttribute('tabindex') || '',
+				root.getAttribute('role') || '',
+				button.getAttribute('aria-describedby') || '',
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t, "-1|group|-1|group|consumer-state-content", state,
+			"initializer must retain consumer-owned wrapper role and tabindex")
+	})
+
+	t.Run("aria disabled role control does not create wrapper fallback", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'aria-disabled-content'
+			const control = document.createElement('span')
+			control.setAttribute('role', 'button')
+			control.setAttribute('aria-disabled', 'true')
+			root.appendChild(control)
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			return [
+				String(root.tabIndex),
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+				control.getAttribute('aria-describedby') || '',
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t, "-1|||", state,
+			"non-tabbable ARIA controls must remain non-activatable without wrapper fallback")
+	})
+
+	t.Run("usable role control is described without wrapper fallback", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'usable-role-content'
+			const control = document.createElement('span')
+			control.setAttribute('role', 'button')
+			control.setAttribute('tabindex', '0')
+			root.appendChild(control)
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			control.focus()
+			return [
+				String(root.tabIndex),
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+				control.getAttribute('aria-describedby') || '',
+				String(control.tabIndex),
+				control.getAttribute('role') || '',
+				String(document.activeElement === control),
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t, "-1|||usable-role-content|0|button|true", state,
+			"tabbable ARIA controls must receive the relationship and remain the sole focus target")
+	})
 }

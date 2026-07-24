@@ -563,26 +563,44 @@ func triggerScript() templ.Component {
 (function () {
 	if (window.goshtosoInitTooltipTrigger) return;
 	window.goshtosoInitTooltipTrigger = function (root) {
+		var removeDescription = function (element, token) {
+			var ids = (element.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+			ids = ids.filter(function (candidate) { return candidate !== token; });
+			if (ids.length) {
+				element.setAttribute('aria-describedby', ids.join(' '));
+			} else {
+				element.removeAttribute('aria-describedby');
+			}
+		};
+		var restoreAttribute = function (element, name, snapshot) {
+			if (!snapshot || !snapshot.changed) return;
+			if (snapshot.present) {
+				element.setAttribute(name, snapshot.value);
+			} else {
+				element.removeAttribute(name);
+			}
+		};
 		var id = root.dataset.tooltipContentId;
 		var previousId = root.__goshtosoTooltipContentID;
 		var previousTarget = root.__goshtosoTooltipTarget;
-		if (previousTarget && previousId) {
-			var previousIDs = (previousTarget.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
-			previousIDs = previousIDs.filter(function (candidate) { return candidate !== previousId; });
-			if (previousIDs.length) {
-				previousTarget.setAttribute('aria-describedby', previousIDs.join(' '));
-			} else {
-				previousTarget.removeAttribute('aria-describedby');
-			}
+		if (previousTarget && previousId && root.__goshtosoTooltipTargetDescriptionAdded) {
+			removeDescription(previousTarget, previousId);
 		}
 		root.__goshtosoTooltipTarget = null;
+		root.__goshtosoTooltipTargetDescriptionAdded = false;
 		if (root.__goshtosoTooltipFallbackKeydown) {
 			root.removeEventListener('keydown', root.__goshtosoTooltipFallbackKeydown);
 			root.__goshtosoTooltipFallbackKeydown = null;
 		}
-		root.removeAttribute('tabindex');
-		root.removeAttribute('role');
-		root.removeAttribute('aria-describedby');
+		var previousFallback = root.__goshtosoTooltipFallbackState;
+		if (previousFallback) {
+			restoreAttribute(root, 'tabindex', previousFallback.tabindex);
+			restoreAttribute(root, 'role', previousFallback.role);
+			if (previousFallback.descriptionAdded) {
+				removeDescription(root, previousFallback.contentID);
+			}
+			root.__goshtosoTooltipFallbackState = null;
+		}
 		root.__goshtosoTooltipContentID = id || '';
 		if (!id) return;
 		var focusableSelector = 'button:not([disabled]),a[href],area[href],input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),audio[controls],video[controls],summary,[contenteditable]:not([contenteditable="false"]),[tabindex]:not([tabindex="-1"])';
@@ -592,16 +610,46 @@ func triggerScript() templ.Component {
 		});
 		if (target) {
 			var ids = (target.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
-			if (ids.indexOf(id) === -1) ids.push(id);
-			target.setAttribute('aria-describedby', ids.join(' '));
+			var descriptionAdded = ids.indexOf(id) === -1;
+			if (descriptionAdded) {
+				ids.push(id);
+				target.setAttribute('aria-describedby', ids.join(' '));
+			}
 			root.__goshtosoTooltipTarget = target;
+			root.__goshtosoTooltipTargetDescriptionAdded = descriptionAdded;
 			return;
 		}
-		var interactiveSelector = 'button,a[href],area[href],input,select,textarea,audio[controls],video[controls],summary,[contenteditable],[tabindex]';
+		var interactiveSelector = 'button,a[href],area[href],input,select,textarea,audio[controls],video[controls],summary,[contenteditable],[tabindex],[role="button"],[role="link"],[role="checkbox"],[role="radio"],[role="switch"],[role="tab"],[role="menuitem"],[role="option"],[role="textbox"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="treeitem"]';
 		if (root.querySelector(interactiveSelector)) return;
-		root.setAttribute('tabindex', '0');
-		root.setAttribute('role', 'button');
-		root.setAttribute('aria-describedby', id);
+		var fallbackState = {
+			contentID: id,
+			tabindex: {
+				present: root.hasAttribute('tabindex'),
+				value: root.getAttribute('tabindex'),
+				changed: false
+			},
+			role: {
+				present: root.hasAttribute('role'),
+				value: root.getAttribute('role'),
+				changed: false
+			},
+			descriptionAdded: false
+		};
+		if (!fallbackState.tabindex.present) {
+			root.setAttribute('tabindex', '0');
+			fallbackState.tabindex.changed = true;
+		}
+		if (!fallbackState.role.present) {
+			root.setAttribute('role', 'button');
+			fallbackState.role.changed = true;
+		}
+		var fallbackIDs = (root.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+		if (fallbackIDs.indexOf(id) === -1) {
+			fallbackIDs.push(id);
+			root.setAttribute('aria-describedby', fallbackIDs.join(' '));
+			fallbackState.descriptionAdded = true;
+		}
+		root.__goshtosoTooltipFallbackState = fallbackState;
 		if (root.dataset.tooltipActivation === 'click') {
 			var fallbackKeydown = function (event) {
 				if (event.target !== root || (event.key !== 'Enter' && event.key !== ' ')) return;
