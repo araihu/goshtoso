@@ -23,7 +23,7 @@ package toggle
 //	    Label: "Setting",
 //	    Appearance: toggle.AppearanceContainer,
 //	})
-templ Toggle(cfg Config) {
+templ toggleTemplate(cfg Config) {
 	<label for={ cfg.ID } class={ cfg.LabelClasses() }>
 		<input
 			id={ cfg.ID }

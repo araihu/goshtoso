@@ -30,7 +30,7 @@ package textinput
 //	    State:      textinput.StateError,
 //	    HelperText: "Error: Email is required",
 //	})
-templ TextInput(cfg Config) {
+templ textInputTemplate(cfg Config) {
 	if cfg.IsPassword() {
 		@passwordInput(cfg)
 	} else if cfg.IsSearch() {

@@ -22,7 +22,7 @@ import "fmt"
 //	    State:      textarea.StateError,
 //	    HelperText: "Error: Please add some comments to your evaluation",
 //	})
-templ Textarea(cfg Config) {
+templ textareaTemplate(cfg Config) {
 	<div class={ cfg.ContainerClasses() }>
 		if cfg.Label != "" {
 			@textareaLabel(cfg)
@@ -53,7 +53,7 @@ templ Textarea(cfg Config) {
 
 // TextareaWithActions renders a textarea with action buttons in a card-like container.
 // This matches the PenguinUI "textarea with actions" variant.
-templ TextareaWithActions(cfg Config) {
+templ textareaWithActionsTemplate(cfg Config) {
 	<div class={ fmt.Sprintf("flex w-full max-w-md flex-col overflow-hidden rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark%s", condClass(cfg.RootClass)) }>
 		<div class="bg-surface-alt/50 dark:bg-surface-dark-alt/50 p-2">
 			<textarea

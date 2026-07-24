@@ -30,7 +30,7 @@ import "fmt"
 //	    State:      textarea.StateError,
 //	    HelperText: "Error: Please add some comments to your evaluation",
 //	})
-func Textarea(cfg Config) templ.Component {
+func textareaTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -249,7 +249,7 @@ func Textarea(cfg Config) templ.Component {
 
 // TextareaWithActions renders a textarea with action buttons in a card-like container.
 // This matches the PenguinUI "textarea with actions" variant.
-func TextareaWithActions(cfg Config) templ.Component {
+func textareaWithActionsTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

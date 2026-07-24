@@ -1,20 +1,20 @@
 package combobox
 
-// BodyOOB renders the combobox body wrapped with hx-swap-oob so it can be
+// bodyOOB renders the combobox body wrapped with hx-swap-oob so it can be
 // emitted inside any HTMX response that should reconcile the combobox
 // (e.g., a filter form GET that returns the main content plus OOB updates).
-// The Alpine shell around the Body is NOT swapped — its ephemeral state
+// The Alpine shell around the body is NOT swapped — its ephemeral state
 // (isOpen, focusIndex) survives the update.
-templ BodyOOB(cfg Config, state State) {
+templ bodyOOB(cfg Config, state State) {
 	<div data-combobox-body id={ cfg.ID + "-body" } hx-swap-oob="outerHTML" class="flex flex-col">
 		@bodyInner(cfg, state)
 	</div>
 }
 
-// TriggerLabelOOB emits an OOB swap for the outer trigger label span. The
-// outer label lives inside the <button> (outside Body), so a full Body OOB
-// doesn't reach it — emit TriggerLabelOOB alongside BodyOOB so the chip
+// triggerLabelOOB emits an OOB swap for the outer trigger label span. The
+// outer label lives inside the <button> (outside the body), so a full body OOB
+// doesn't reach it — emit the trigger label alongside the body so the chip
 // reflects new selection state.
-templ TriggerLabelOOB(cfg Config, state State) {
+templ triggerLabelOOB(cfg Config, state State) {
 	<span id={ cfg.ID + "-trigger-label" } hx-swap-oob="true" data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
 }

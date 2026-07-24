@@ -13,7 +13,7 @@ package rangeinput
 //	    Max:   "100",
 //	    Step:  "1",
 //	})
-templ Range(cfg Config) {
+templ rangeTemplate(cfg Config) {
 	if cfg.ShowValue {
 		<div x-data={ cfg.AlpineData() } class={ cfg.RootClasses() }>
 			@rangeInner(cfg, true)

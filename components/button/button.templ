@@ -1,7 +1,7 @@
 package button
 
 // Button renders a PenguinUI-styled button with Tailwind utility classes.
-templ Button(options ...Option) {
+templ buttonTemplate(options ...Option) {
 	{{ cfg := newConfig(options) }}
 	{{ classes := buttonClasses(cfg) }}
 	{{ hasHTMX := cfg.htmx != nil }}

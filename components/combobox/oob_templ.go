@@ -8,12 +8,12 @@ package combobox
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// BodyOOB renders the combobox body wrapped with hx-swap-oob so it can be
+// bodyOOB renders the combobox body wrapped with hx-swap-oob so it can be
 // emitted inside any HTMX response that should reconcile the combobox
 // (e.g., a filter form GET that returns the main content plus OOB updates).
-// The Alpine shell around the Body is NOT swapped — its ephemeral state
+// The Alpine shell around the body is NOT swapped — its ephemeral state
 // (isOpen, focusIndex) survives the update.
-func BodyOOB(cfg Config, state State) templ.Component {
+func bodyOOB(cfg Config, state State) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -63,11 +63,11 @@ func BodyOOB(cfg Config, state State) templ.Component {
 	})
 }
 
-// TriggerLabelOOB emits an OOB swap for the outer trigger label span. The
-// outer label lives inside the <button> (outside Body), so a full Body OOB
-// doesn't reach it — emit TriggerLabelOOB alongside BodyOOB so the chip
+// triggerLabelOOB emits an OOB swap for the outer trigger label span. The
+// outer label lives inside the <button> (outside the body), so a full body OOB
+// doesn't reach it — emit the trigger label alongside the body so the chip
 // reflects new selection state.
-func TriggerLabelOOB(cfg Config, state State) templ.Component {
+func triggerLabelOOB(cfg Config, state State) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

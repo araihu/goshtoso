@@ -3,12 +3,12 @@ package rating
 import "fmt"
 
 // Rating renders a star or emoji rating control.
-templ Rating(cfg Config) {
+templ ratingTemplate(cfg Config) {
 	@ratingInteractive(cfg)
 }
 
 // RatingDisplay renders a non-interactive star or emoji rating.
-templ RatingDisplay(cfg DisplayConfig) {
+templ ratingDisplayTemplate(cfg DisplayConfig) {
 	@ratingDisplay(cfg)
 }
 

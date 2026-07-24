@@ -17,7 +17,7 @@ import (
 
 // Search renders a command-palette style search dialog. Results are supplied by
 // the caller; the component only handles presentation and client-side filtering.
-func Search(cfg Config) templ.Component {
+func searchTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -82,7 +82,7 @@ func Search(cfg Config) templ.Component {
 
 // SearchField renders the compact trigger. It can be placed anywhere and linked
 // to a SearchModal with the same Config.ID.
-func SearchField(cfg Config) templ.Component {
+func searchFieldTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -218,7 +218,7 @@ func SearchField(cfg Config) templ.Component {
 
 // SearchModal renders the global dialog surface. Pair it with SearchField using
 // the same Config.ID.
-func SearchModal(cfg Config) templ.Component {
+func searchModalTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

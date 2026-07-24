@@ -12,7 +12,7 @@ package radio
 //	    Value: "root",
 //	    Label: "Root",
 //	})
-templ Radio(cfg Config) {
+templ radioTemplate(cfg Config) {
 	if cfg.Segmented {
 		@radioSegmented(cfg)
 	} else if cfg.HelperText != "" {
@@ -113,7 +113,7 @@ templ segmentedInput(cfg Config) {
 
 // RadioBar groups a set of segmented radios into a single connected pill bar
 // (PenguinUI-style segmented control). Children should each have Segmented: true.
-templ RadioBar() {
+templ radioBarTemplate() {
 	<div class="inline-flex w-fit overflow-clip rounded-radius border border-outline bg-surface-alt divide-x divide-outline dark:border-outline-dark dark:bg-surface-dark-alt dark:divide-outline-dark">
 		{ children... }
 	</div>
@@ -249,7 +249,7 @@ templ radioInput(cfg Config) {
 //	        {ID: "role-admin", Name: "role", Value: "admin", Label: "Admin"},
 //	    },
 //	})
-templ RadioGroup(cfg GroupConfig) {
+templ radioGroupTemplate(cfg GroupConfig) {
 	if cfg.Title != "" {
 		<h3 class="mb-2 pl-1 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
 	}

@@ -40,9 +40,9 @@ func triggerLabelText(cfg Config, state State) string {
 	}
 }
 
-// Body renders the swappable region: hidden inputs + trigger label + options ul.
+// body renders the swappable region: hidden inputs + trigger label + options ul.
 // Do NOT use this directly as the top-level combobox; use Combobox which wraps it in the Alpine shell.
-func Body(cfg Config, state State) templ.Component {
+func body(cfg Config, state State) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -252,7 +252,7 @@ func bodyInner(cfg Config, state State) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = OptionsList(cfg, state).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = optionsList(cfg, state).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -266,8 +266,8 @@ func hxValsJSON(value string) string {
 	return string(b)
 }
 
-// OptionsList renders just the <ul>. Swap target for search and lazy first-load.
-func OptionsList(cfg Config, state State) templ.Component {
+// optionsList renders just the <ul>. Swap target for search and lazy first-load.
+func optionsList(cfg Config, state State) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -704,9 +704,9 @@ func optionCheckbox(selected bool) templ.Component {
 	})
 }
 
-// ClientScript emits the delegated client-side listener as an inline script.
+// clientScript emits the delegated client-side listener as an inline script.
 // The IIFE guard (window.__goshtosoComboboxInit) makes repeated renders safe.
-func ClientScript() templ.Component {
+func clientScript() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -738,7 +738,7 @@ func ClientScript() templ.Component {
 // Combobox is the top-level component. Alpine lives here with ephemeral UI state
 // only (isOpen, openedWithKeyboard, focusIndex). Data state (options, selection,
 // search) lives server-side and in DOM.
-func Combobox(cfg Config, state State) templ.Component {
+func comboboxTemplate(cfg Config, state State) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1006,7 +1006,7 @@ func Combobox(cfg Config, state State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Body(cfg, state).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = body(cfg, state).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1015,7 +1015,7 @@ func Combobox(cfg Config, state State) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.IsClientMode() {
-			templ_7745c5c3_Err = ClientScript().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = clientScript().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

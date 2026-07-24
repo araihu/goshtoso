@@ -8,9 +8,9 @@ import (
 
 // Handler returns an http.Handler that routes three sub-paths:
 //
-//	GET  /options   → OptionsList
-//	POST /toggle    → Body, sets HX-Trigger
-//	POST /clear     → Body (Selected=[]), sets HX-Trigger
+//	GET  /options   → options list
+//	POST /toggle    → body, sets HX-Trigger
+//	POST /clear     → body (Selected=[]), sets HX-Trigger
 //
 // Sub-paths are matched by the suffix of the request URL path.
 func Handler(cfg Config, provider OptionsProvider) http.Handler {
@@ -63,7 +63,7 @@ func (h *comboHandler) serveOptions(w http.ResponseWriter, r *http.Request) {
 	}
 	state := State{Options: opts, Selected: selected, Search: search, Deps: deps}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = OptionsList(h.cfg, state).Render(r.Context(), w)
+	_ = optionsList(h.cfg, state).Render(r.Context(), w)
 }
 
 func (h *comboHandler) serveToggle(w http.ResponseWriter, r *http.Request) {
@@ -89,8 +89,8 @@ func (h *comboHandler) serveToggle(w http.ResponseWriter, r *http.Request) {
 	state := State{Options: opts, Selected: selected, Search: search, Deps: deps}
 	writeHXTrigger(w, h.cfg.ID, selected)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = Body(h.cfg, state).Render(r.Context(), w)
-	_ = TriggerLabelOOB(h.cfg, state).Render(r.Context(), w)
+	_ = body(h.cfg, state).Render(r.Context(), w)
+	_ = triggerLabelOOB(h.cfg, state).Render(r.Context(), w)
 }
 
 func (h *comboHandler) serveClear(w http.ResponseWriter, r *http.Request) {
@@ -103,8 +103,8 @@ func (h *comboHandler) serveClear(w http.ResponseWriter, r *http.Request) {
 	state := State{Options: opts, Selected: nil, Search: search, Deps: deps}
 	writeHXTrigger(w, h.cfg.ID, nil)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = Body(h.cfg, state).Render(r.Context(), w)
-	_ = TriggerLabelOOB(h.cfg, state).Render(r.Context(), w)
+	_ = body(h.cfg, state).Render(r.Context(), w)
+	_ = triggerLabelOOB(h.cfg, state).Render(r.Context(), w)
 }
 
 func toggleMembership(selected []string, value string) []string {
@@ -144,5 +144,5 @@ func writeProviderError(w http.ResponseWriter, r *http.Request, cfg Config) {
 	w.Header().Set("HX-Retarget", "#"+cfg.ID+"-options")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusBadGateway)
-	_ = ProviderError(cfg).Render(r.Context(), w)
+	_ = providerError(cfg).Render(r.Context(), w)
 }

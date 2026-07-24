@@ -11,7 +11,7 @@ package tagslist
 //	    Values:      []string{"production", "gpu"},
 //	    Placeholder: "Add a tag...",
 //	})
-templ TagsList(cfg Config) {
+templ tagsListTemplate(cfg Config) {
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }

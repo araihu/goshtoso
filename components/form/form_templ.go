@@ -30,7 +30,7 @@ import (
 //	}) {
 //	    @form.Section(...) { ... }
 //	}
-func Form(cfg Config) templ.Component {
+func formTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -290,7 +290,7 @@ func Form(cfg Config) templ.Component {
 }
 
 // Section renders a regular form section — a card with title and a responsive grid of children.
-func Section(cfg SectionConfig) templ.Component {
+func sectionTemplate(cfg SectionConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -420,7 +420,7 @@ func Section(cfg SectionConfig) templ.Component {
 }
 
 // CollapsibleSection renders an accordion-style form section with expand/collapse toggle.
-func CollapsibleSection(cfg CollapsibleSectionConfig) templ.Component {
+func collapsibleSectionTemplate(cfg CollapsibleSectionConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -628,7 +628,7 @@ func CollapsibleSection(cfg CollapsibleSectionConfig) templ.Component {
 // FlipSection renders a flip-card section with a read-only front and editable back.
 // The readView component shows the summary/read-only state.
 // Children are the editable form fields shown when the user clicks "Edit".
-func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Component {
+func flipSectionTemplate(cfg FlipSectionConfig, readView templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -799,7 +799,7 @@ func FlipSection(cfg FlipSectionConfig, readView templ.Component) templ.Componen
 }
 
 // SubSection renders a nested subsection card within a section.
-func SubSection(cfg SubSectionConfig) templ.Component {
+func subSectionTemplate(cfg SubSectionConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -921,7 +921,7 @@ func SubSection(cfg SubSectionConfig) templ.Component {
 // FieldGroup wraps a single form field with label, validation errors, and hints.
 // Set a built-in field type (Input, Select, Combobox, etc.) on FieldGroupConfig to render
 // a Goshtoso component automatically. If none are set, renders { children... } instead.
-func FieldGroup(cfg FieldGroupConfig) templ.Component {
+func fieldGroupTemplate(cfg FieldGroupConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

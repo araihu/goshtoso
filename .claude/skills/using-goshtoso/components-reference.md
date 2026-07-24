@@ -438,7 +438,7 @@ import "github.com/araihu/goshtoso/components/codeblock"  // package codeblock
 import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 ```
 
-**Entry points:** `Body(cfg Config, state State)` · `BodyOOB(cfg Config, state State)` · `ClientScript()` · `Combobox(cfg Config, state State)` · `OptionsList(cfg Config, state State)` · `ProviderError(cfg Config)` · `TriggerLabelOOB(cfg Config, state State)`
+**Entry points:** `Combobox(cfg Config, state State)`
 
 - **Mode** — ModeSingle = iota, ModeMultiple
 

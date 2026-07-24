@@ -5,7 +5,7 @@ import "fmt"
 // Select renders a custom dropdown select with Alpine.js, matching
 // the combobox component styling. Supports validation states,
 // disabled/readonly, Alpine.js binding, and hidden input for form submission.
-templ Select(cfg Config) {
+templ selectTemplate(cfg Config) {
 	<div class={ cfg.ContainerClasses() }>
 		if cfg.Label != "" {
 			<label for={ cfg.ID } class={ cfg.LabelClasses() }>

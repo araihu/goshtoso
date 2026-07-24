@@ -20,7 +20,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //	    Value: "root",
 //	    Label: "Root",
 //	})
-func Radio(cfg Config) templ.Component {
+func radioTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -575,7 +575,7 @@ func segmentedInput(cfg Config) templ.Component {
 
 // RadioBar groups a set of segmented radios into a single connected pill bar
 // (PenguinUI-style segmented control). Children should each have Segmented: true.
-func RadioBar() templ.Component {
+func radioBarTemplate() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1389,7 +1389,7 @@ func radioInput(cfg Config) templ.Component {
 //	        {ID: "role-admin", Name: "role", Value: "admin", Label: "Admin"},
 //	    },
 //	})
-func RadioGroup(cfg GroupConfig) templ.Component {
+func radioGroupTemplate(cfg GroupConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

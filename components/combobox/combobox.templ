@@ -32,9 +32,9 @@ func triggerLabelText(cfg Config, state State) string {
 	}
 }
 
-// Body renders the swappable region: hidden inputs + trigger label + options ul.
+// body renders the swappable region: hidden inputs + trigger label + options ul.
 // Do NOT use this directly as the top-level combobox; use Combobox which wraps it in the Alpine shell.
-templ Body(cfg Config, state State) {
+templ body(cfg Config, state State) {
 	<div data-combobox-body id={ cfg.ID + "-body" } class="flex flex-col">
 		@bodyInner(cfg, state)
 	</div>
@@ -87,7 +87,7 @@ templ bodyInner(cfg Config, state State) {
 			/>
 		</div>
 	}
-	@OptionsList(cfg, state)
+	@optionsList(cfg, state)
 }
 
 // hxValsJSON returns the JSON payload for hx-vals carrying the toggled value.
@@ -96,8 +96,8 @@ func hxValsJSON(value string) string {
 	return string(b)
 }
 
-// OptionsList renders just the <ul>. Swap target for search and lazy first-load.
-templ OptionsList(cfg Config, state State) {
+// optionsList renders just the <ul>. Swap target for search and lazy first-load.
+templ optionsList(cfg Config, state State) {
 	<ul id={ cfg.ID + "-options" } class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
 		if len(state.Options) == 0 {
 			<li class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60">No matches found</li>
@@ -173,16 +173,16 @@ templ optionCheckbox(selected bool) {
 	</div>
 }
 
-// ClientScript emits the delegated client-side listener as an inline script.
+// clientScript emits the delegated client-side listener as an inline script.
 // The IIFE guard (window.__goshtosoComboboxInit) makes repeated renders safe.
-templ ClientScript() {
+templ clientScript() {
 	@templ.Raw("<script>" + clientJS + "</script>")
 }
 
 // Combobox is the top-level component. Alpine lives here with ephemeral UI state
 // only (isOpen, openedWithKeyboard, focusIndex). Data state (options, selection,
 // search) lives server-side and in DOM.
-templ Combobox(cfg Config, state State) {
+templ comboboxTemplate(cfg Config, state State) {
 	<div
 		data-combobox
 		data-combobox-mode={ comboboxModeAttr(cfg) }
@@ -224,10 +224,10 @@ templ Combobox(cfg Config, state State) {
 			x-on:click.outside="isOpen = false; openedWithKeyboard = false"
 			class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 		>
-			@Body(cfg, state)
+			@body(cfg, state)
 		</div>
 		if cfg.IsClientMode() {
-			@ClientScript()
+			@clientScript()
 		}
 	</div>
 }

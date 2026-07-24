@@ -3,7 +3,7 @@ package structuredinput
 // StructuredInput renders repeatable structured form rows powered by Alpine.js.
 //
 // Submitted hidden inputs use name[index][columnKey]=value.
-templ StructuredInput(cfg Config) {
+templ structuredInputTemplate(cfg Config) {
 	{{ columns := cfg.NormalizedColumns() }}
 	@structuredInputScript()
 	<div

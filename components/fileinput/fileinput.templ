@@ -10,7 +10,7 @@ package fileinput
 //	    Accept:     "image/*",
 //	    HelperText: "PNG, JPG, WebP - Max 5MB",
 //	})
-templ FileInput(cfg Config) {
+templ fileInputTemplate(cfg Config) {
 	if cfg.IsUpload() {
 		@uploadInput(cfg)
 	} else {
