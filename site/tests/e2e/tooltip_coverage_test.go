@@ -300,6 +300,38 @@ func TestTooltipCustomTriggerInitializerLifecycle(t *testing.T) {
 			"initializer must retain consumer-owned wrapper role and tabindex")
 	})
 
+	t.Run("consumer mutations after fallback survive rerun and transition", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'consumer-mutation-content'
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			root.setAttribute('role', 'group')
+			root.setAttribute('tabindex', '-1')
+			window.goshtosoInitTooltipTrigger(root)
+			const afterRerun = [
+				root.getAttribute('tabindex') || '',
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+			].join('|')
+			const button = document.createElement('button')
+			root.appendChild(button)
+			window.goshtosoInitTooltipTrigger(root)
+			return [
+				afterRerun,
+				root.getAttribute('tabindex') || '',
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+				button.getAttribute('aria-describedby') || '',
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t,
+			"-1|group|consumer-mutation-content|-1|group||consumer-mutation-content",
+			state,
+			"initializer must relinquish wrapper attributes changed by the consumer")
+	})
+
 	t.Run("aria disabled role control does not create wrapper fallback", func(t *testing.T) {
 		state, evalErr := page.Evaluate(`() => {
 			const root = document.createElement('span')
@@ -346,5 +378,55 @@ func TestTooltipCustomTriggerInitializerLifecycle(t *testing.T) {
 		require.NoError(t, evalErr)
 		assert.Equal(t, "-1|||usable-role-content|0|button|true", state,
 			"tabbable ARIA controls must receive the relationship and remain the sole focus target")
+	})
+
+	t.Run("multi-token aria role control does not create wrapper fallback", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'multi-token-disabled-content'
+			const control = document.createElement('span')
+			control.setAttribute('role', 'switch checkbox')
+			control.setAttribute('aria-disabled', 'true')
+			root.appendChild(control)
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			return [
+				String(root.tabIndex),
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+				control.getAttribute('aria-describedby') || '',
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t, "-1|||", state,
+			"non-tabbable multi-token ARIA controls must not promote the wrapper")
+	})
+
+	t.Run("usable multi-token aria role control is described", func(t *testing.T) {
+		state, evalErr := page.Evaluate(`() => {
+			const root = document.createElement('span')
+			root.dataset.tooltipContentId = 'multi-token-usable-content'
+			const control = document.createElement('span')
+			control.setAttribute('role', 'switch checkbox')
+			control.setAttribute('tabindex', '0')
+			root.appendChild(control)
+			document.body.appendChild(root)
+			window.goshtosoInitTooltipTrigger(root)
+			control.focus()
+			return [
+				String(root.tabIndex),
+				root.getAttribute('role') || '',
+				root.getAttribute('aria-describedby') || '',
+				control.getAttribute('aria-describedby') || '',
+				String(control.tabIndex),
+				control.getAttribute('role') || '',
+				String(document.activeElement === control),
+			].join('|')
+		}`, nil)
+		require.NoError(t, evalErr)
+		assert.Equal(t,
+			"-1|||multi-token-usable-content|0|switch checkbox|true",
+			state,
+			"tabbable multi-token ARIA controls must receive the relationship")
 	})
 }

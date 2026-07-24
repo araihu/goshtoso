@@ -114,7 +114,8 @@ templ triggerScript() {
 			}
 		};
 		var restoreAttribute = function (element, name, snapshot) {
-			if (!snapshot || !snapshot.changed) return;
+			if (!snapshot || !snapshot.owned) return;
+			if (element.getAttribute(name) !== snapshot.appliedValue) return;
 			if (snapshot.present) {
 				element.setAttribute(name, snapshot.value);
 			} else {
@@ -160,29 +161,33 @@ templ triggerScript() {
 			root.__goshtosoTooltipTargetDescriptionAdded = descriptionAdded;
 			return;
 		}
-		var interactiveSelector = 'button,a[href],area[href],input,select,textarea,audio[controls],video[controls],summary,[contenteditable],[tabindex],[role="button"],[role="link"],[role="checkbox"],[role="radio"],[role="switch"],[role="tab"],[role="menuitem"],[role="option"],[role="textbox"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="treeitem"]';
+		var interactiveSelector = 'button,a[href],area[href],input,select,textarea,audio[controls],video[controls],summary,[contenteditable],[tabindex],[role~="button"],[role~="link"],[role~="checkbox"],[role~="radio"],[role~="switch"],[role~="tab"],[role~="menuitem"],[role~="option"],[role~="textbox"],[role~="slider"],[role~="spinbutton"],[role~="combobox"],[role~="treeitem"]';
 		if (root.querySelector(interactiveSelector)) return;
 		var fallbackState = {
 			contentID: id,
 			tabindex: {
 				present: root.hasAttribute('tabindex'),
 				value: root.getAttribute('tabindex'),
-				changed: false
+				owned: false,
+				appliedValue: null
 			},
 			role: {
 				present: root.hasAttribute('role'),
 				value: root.getAttribute('role'),
-				changed: false
+				owned: false,
+				appliedValue: null
 			},
 			descriptionAdded: false
 		};
 		if (!fallbackState.tabindex.present) {
 			root.setAttribute('tabindex', '0');
-			fallbackState.tabindex.changed = true;
+			fallbackState.tabindex.owned = true;
+			fallbackState.tabindex.appliedValue = '0';
 		}
 		if (!fallbackState.role.present) {
 			root.setAttribute('role', 'button');
-			fallbackState.role.changed = true;
+			fallbackState.role.owned = true;
+			fallbackState.role.appliedValue = 'button';
 		}
 		var fallbackIDs = (root.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
 		if (fallbackIDs.indexOf(id) === -1) {
