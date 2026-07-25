@@ -103,7 +103,9 @@ Goshtoso components ship pre-generated, so consumers do not run
 own `.templ` files.
 
 For a complete integration guide, including custom Tailwind builds and manual
-asset wiring, see [docs/USAGE.md](docs/USAGE.md).
+asset wiring, see [docs/USAGE.md](docs/USAGE.md). The
+[Goshtoso Component Model](docs/COMPONENT_MODEL.md) explains themes, primitives,
+stable `Kind` identity, configuration dimensions, and component boundaries.
 
 ## AI Agent Skill
 

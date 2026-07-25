@@ -41,6 +41,37 @@ func Alert(config Config) templ.Component { return nil }
 	}
 }
 
+func TestRunIntroducesTheComponentModel(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "alert", "types.go"), `package alert
+
+import "github.com/a-h/templ"
+
+func Alert() templ.Component { return nil }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	for _, phrase := range []string{
+		"Theme",
+		"Primitive",
+		"Kind",
+		"configuration dimension",
+		"docs/COMPONENT_MODEL.md",
+	} {
+		if !strings.Contains(reference, phrase) {
+			t.Errorf("generated introduction missing %q", phrase)
+		}
+	}
+	if t.Failed() {
+		t.Logf("generated reference:\n%s", reference)
+	}
+}
+
 func TestRunDocumentsFunctionalOptions(t *testing.T) {
 	t.Chdir(t.TempDir())
 

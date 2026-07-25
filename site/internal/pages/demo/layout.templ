@@ -402,6 +402,7 @@ func tocRailRight(activeComponent string) string {
 func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
+		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebarComponentModelIcon(), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "examples", Label: "Examples", Href: "/examples", Icon: sidebarExamplesIcon(), Active: activeComponent == "examples", LinkAttrs: navHxAttrs("/examples", "")},
 		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: sidebarAgentsIcon(), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
@@ -430,6 +431,12 @@ func docsSearchConfig() searchfield.Config {
 templ sidebarHomeIcon() {
 	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
 		<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+	</svg>
+}
+
+templ sidebarComponentModelIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+		<path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25M21 7.5v9L12 21.75m0-9L3 7.5m9 5.25v9M3 7.5v9l9 5.25"/>
 	</svg>
 }
 
@@ -476,6 +483,7 @@ func sItem(id, label, href, activeComponent string) sidebar.Item {
 func getSearchItems() []searchfield.Item {
 	items := []searchfield.Item{
 		{ID: "search-getting-started", Title: "Getting Started", Description: "Install Goshtoso, wire assets, and render your first component.", Href: "/getting-started", Section: "Docs", Attrs: navHxAttrs("/getting-started", "")},
+		{ID: "search-component-model", Title: "Component Model", Description: "Learn about themes, primitives, stable Kind identity, and configuration dimensions.", Href: "/docs/component-model", Section: "Docs", Attrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "search-examples", Title: "Examples", Description: "Full runnable app examples built with Goshtoso components.", Href: "/examples", Section: "Examples", Attrs: navHxAttrs("/examples", "")},
 		{ID: "search-agents", Title: "AI Agents", Description: "Install and verify the Goshtoso consumer integration skill for AI coding tools.", Href: "/docs/agents", Section: "Docs", Attrs: navHxAttrs("/docs/agents", "")},
 		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},

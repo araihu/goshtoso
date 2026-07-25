@@ -77,6 +77,12 @@ Read `references/components-reference.md` when you need exact component import
 paths, package names, entry points, config fields, enum values, or package names
 that differ from the directory name.
 
+Read the public
+[component model](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md)
+before choosing between constructors or configuration fields. It defines Theme,
+Primitive, stable Kind identity, configuration dimensions, and the rule for
+deciding whether a difference belongs to one primitive or two.
+
 ## CSS Strategy
 
 Prefer the embedded stylesheet served by `assets.Handler()`. Stock CDN Tailwind

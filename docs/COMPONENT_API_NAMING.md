@@ -4,6 +4,11 @@ This guide defines the naming grammar for public Goshtoso component config
 fields. Use it when adding a component, changing a component API, or normalizing
 similar props across components.
 
+This maintainer guide applies the consumer vocabulary defined in the
+[Goshtoso Component Model](COMPONENT_MODEL.md). Read that guide first for the
+definitions of Theme, Primitive, Kind, configuration dimension, and the
+one-primitive-or-two rule.
+
 Breaking changes are acceptable during the normalization pass. Prefer the
 canonical name over preserving an old component-specific spelling.
 
@@ -124,4 +129,3 @@ When renaming public fields:
 5. Update API reference tables and examples.
 6. Add focused tests for render contracts or renamed behavior when risk is not
    purely mechanical.
-
