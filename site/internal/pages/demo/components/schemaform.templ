@@ -44,6 +44,7 @@ var schemaFormAPISections = []demo.APISection{
 		"",
 		"Documents allow-list policy constants and the public transformations that build or filter schema-form data.",
 		[]demo.APIPropDoc{
+			{Name: "AllowMode", Signature: "type AllowMode string", Default: `"" (editable path)`, Allowed: []string{"AllowModeManaged", "AllowModeDisabled"}, Description: "Names the per-path allow-list policy used by the schema transforms."},
 			{Name: "AllowModeManaged", Signature: `const AllowModeManaged AllowMode = "managed"`, Default: "n/a", Description: "Keeps a path visible but marks its Field managed so the rendered control is unavailable."},
 			{Name: "AllowModeDisabled", Signature: `const AllowModeDisabled AllowMode = "disabled"`, Default: "n/a", Description: "Omits a path from generated Fields and removes it through PruneDisabled."},
 			{Name: "FlattenAllowList", Signature: "func FlattenAllowList(m *map[string]any) map[string]AllowMode", Default: "empty map for nil", Description: "Flattens nested maps to dotted paths. True and case-insensitive \"managed\" become managed; case-insensitive \"disabled\" becomes disabled; false and unsupported leaves are ignored."},

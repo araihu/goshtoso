@@ -1701,7 +1701,7 @@ import "github.com/araihu/goshtoso/components/toast"  // package toast
 | `Title` | `string` | Title is the notification heading. |
 | `Message` | `string` | Message is the notification body text |
 | `DisplayDuration` | `int` | DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually. |
-| `ActionLabel` | `string` | ActionLabel, when set, renders an inline action button in the toast (e.g. |
+| `ActionLabel` | `string` | ActionLabel, when set, renders an optional action button in the toast. |
 | `ActionHTMX` | `*HTMXConfig` | ActionHTMX configures the action button's HTMX request. |
 
 **ContainerConfig**

@@ -2,7 +2,13 @@ package components
 
 import (
 	"context"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"io/fs"
+	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -24,6 +30,7 @@ import (
 	"github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/components/fileinput"
 	"github.com/araihu/goshtoso/components/form"
+	formvalidation "github.com/araihu/goshtoso/components/form/validation"
 	linkcomponent "github.com/araihu/goshtoso/components/link"
 	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/components/navbar"
@@ -352,6 +359,11 @@ func TestFeedbackNavigationMetadataMatchesRepresentativeRenderBranches(t *testin
 
 	require.Equal(t, "/items?filter=open&page=3", pagination.Config{BaseURL: "/items?filter=open"}.PageURL(3))
 	require.Equal(t, `"innerHTML" when Target is non-empty`, apiProp(t, paginationAPISections, "HTMXConfig", "Swap").Default)
+	require.Equal(
+		t,
+		`"sidebarOverlayOpen" state and "sidebar-overlay-panel" panel ID`,
+		apiProp(t, sidebarAPISections, "OverlayConfig", "ID").Default,
+	)
 }
 
 func TestCorrectedCatalogDescriptionsMatchRenderedBehavior(t *testing.T) {
@@ -361,6 +373,7 @@ func TestCorrectedCatalogDescriptionsMatchRenderedBehavior(t *testing.T) {
 	}
 
 	require.Contains(t, descriptions["components/fileinput"], "native accept hints")
+	require.NotContains(t, descriptions["components/fileinput"], "validation states")
 	require.Contains(t, descriptions["components/range"], "generated or custom ticks")
 	require.Contains(t, descriptions["components/tags-list"], "duplicate-preserving")
 	require.NotContains(t, descriptions["components/textarea"], "counter")
@@ -377,6 +390,53 @@ func TestEveryComponentDemoRegistersStructuredAPI(t *testing.T) {
 		require.Truef(t, ok, "catalog component %s must be registered", page.Key)
 		require.NotEmptyf(t, entry.API, "%s must register structured API metadata", page.Key)
 	}
+}
+
+func TestEveryStructuredAPISectionIsComplete(t *testing.T) {
+	for _, page := range catalog.ComponentPages() {
+		entry := Demos[page.Key]
+		seenIDs := make(map[string]struct{}, len(entry.API))
+
+		for _, section := range entry.API {
+			require.NotEmptyf(t, strings.TrimSpace(section.ID), "%s section ID", page.Key)
+			require.NotContainsf(t, seenIDs, section.ID, "%s duplicate section ID %q", page.Key, section.ID)
+			seenIDs[section.ID] = struct{}{}
+			require.NotEmptyf(t, strings.TrimSpace(section.Title), "%s section %q title", page.Key, section.ID)
+			require.NotEmptyf(t, strings.TrimSpace(section.Description), "%s section %q description", page.Key, section.ID)
+
+			if section.StructType != nil {
+				assertStructSectionComplete(t, page.Key, section)
+			} else {
+				assertFunctionSectionComplete(t, page.Key, section)
+			}
+			assertAllowedValuesComplete(t, page.Key, section)
+		}
+	}
+}
+
+func TestEveryExportedComponentStructIsRegisteredExactlyOnce(t *testing.T) {
+	want := exportedComponentStructKeys(t)
+	require.Contains(t, want, "github.com/araihu/goshtoso/components/form.FormErrorsConfig")
+	require.Contains(t, want, "github.com/araihu/goshtoso/components/form.FormErrorItem")
+	require.Contains(t, want, "github.com/araihu/goshtoso/components/schemaform.FieldsConfig")
+	got := make([]string, 0, len(want))
+	seen := make(map[string]struct{}, len(want))
+
+	for _, page := range catalog.ComponentPages() {
+		for _, section := range Demos[page.Key].API {
+			if section.StructType == nil {
+				continue
+			}
+			require.Equalf(t, reflect.Struct, section.StructType.Kind(), "%s.%s StructType", page.Key, section.ID)
+			key := section.StructType.PkgPath() + "." + section.StructType.Name()
+			require.NotContainsf(t, seen, key, "%s registered more than once", key)
+			seen[key] = struct{}{}
+			got = append(got, key)
+		}
+	}
+
+	slices.Sort(got)
+	require.Equal(t, want, got)
 }
 
 func TestDisplayAPIMetadataRegistered(t *testing.T) {
@@ -640,6 +700,10 @@ func TestComplexInputStructAPIsDocumentEveryExportedFieldExactlyOnce(t *testing.
 		reflect.TypeFor[form.FieldGroupConfig](),
 		reflect.TypeFor[form.FieldMeta](),
 		reflect.TypeFor[form.ValidationConfig](),
+		reflect.TypeFor[formvalidation.ValidationContext](),
+		reflect.TypeFor[formvalidation.FormDef](),
+		reflect.TypeFor[formvalidation.FieldDef](),
+		reflect.TypeFor[formvalidation.Result](),
 		reflect.TypeFor[form.FormErrorsConfig](),
 		reflect.TypeFor[form.FormErrorItem](),
 		reflect.TypeFor[schemaform.FieldsConfig](),
@@ -726,6 +790,7 @@ func TestComplexInputMetadataCapturesSourceTruthAndPublicSignatures(t *testing.T
 		"Config.InitialState":   "func (c Config) InitialState() State",
 		"OptionsProvider":       "type OptionsProvider func(ctx context.Context, search string, deps map[string]string) ([]Option, error)",
 		"Handler":               "func Handler(cfg Config, provider OptionsProvider) http.Handler",
+		"AllowMode":             "type AllowMode string",
 		"AllowModeManaged":      `const AllowModeManaged AllowMode = "managed"`,
 		"AllowModeDisabled":     `const AllowModeDisabled AllowMode = "disabled"`,
 		"FlattenAllowList":      "func FlattenAllowList(m *map[string]any) map[string]AllowMode",
@@ -1313,6 +1378,164 @@ func isComponentNamedScalar(typ reflect.Type) bool {
 		return true
 	default:
 		return false
+	}
+}
+
+func assertStructSectionComplete(t *testing.T, pageKey string, section demo.APISection) {
+	t.Helper()
+	typ := section.StructType
+	require.Equalf(t, reflect.Struct, typ.Kind(), "%s.%s StructType", pageKey, section.ID)
+
+	documented := make(map[string]demo.APIPropDoc, len(section.Props))
+	for _, prop := range section.Props {
+		require.NotEmptyf(t, strings.TrimSpace(prop.Name), "%s.%s field name", pageKey, section.ID)
+		require.NotContainsf(t, documented, prop.Name, "%s.%s field %q documented twice", pageKey, section.ID, prop.Name)
+		require.Emptyf(t, prop.Signature, "%s.%s.%s reflected fields must not declare signatures", pageKey, section.ID, prop.Name)
+		require.NotEmptyf(t, strings.TrimSpace(prop.Default), "%s.%s.%s default", pageKey, section.ID, prop.Name)
+		require.NotEmptyf(t, strings.TrimSpace(prop.Description), "%s.%s.%s description", pageKey, section.ID, prop.Name)
+		documented[prop.Name] = prop
+	}
+
+	exportedCount := 0
+	for index := range typ.NumField() {
+		field := typ.Field(index)
+		if !field.IsExported() {
+			continue
+		}
+		exportedCount++
+		prop, ok := documented[field.Name]
+		require.Truef(t, ok, "%s.%s must document reflected field %s %s", pageKey, section.ID, field.Name, field.Type)
+		if isComponentNamedScalar(field.Type) {
+			require.NotEmptyf(t, prop.Allowed, "%s.%s.%s must list allowed values", pageKey, section.ID, field.Name)
+		}
+	}
+	require.Lenf(t, documented, exportedCount, "%s.%s must match the exact exported field count for %s", pageKey, section.ID, typ)
+}
+
+func assertFunctionSectionComplete(t *testing.T, pageKey string, section demo.APISection) {
+	t.Helper()
+	require.Truef(
+		t,
+		strings.TrimSpace(section.Constructor) != "" || len(section.Props) > 0,
+		"%s.%s must document a constructor or explicit signatures",
+		pageKey,
+		section.ID,
+	)
+	seen := make(map[string]struct{}, len(section.Props))
+	for _, prop := range section.Props {
+		require.NotEmptyf(t, strings.TrimSpace(prop.Name), "%s.%s function/option name", pageKey, section.ID)
+		require.NotContainsf(t, seen, prop.Name, "%s.%s function/option %q documented twice", pageKey, section.ID, prop.Name)
+		seen[prop.Name] = struct{}{}
+		require.NotEmptyf(t, strings.TrimSpace(prop.Signature), "%s.%s.%s signature", pageKey, section.ID, prop.Name)
+		require.NotEmptyf(t, strings.TrimSpace(prop.Default), "%s.%s.%s default", pageKey, section.ID, prop.Name)
+		require.NotEmptyf(t, strings.TrimSpace(prop.Description), "%s.%s.%s description", pageKey, section.ID, prop.Name)
+	}
+}
+
+func assertAllowedValuesComplete(t *testing.T, pageKey string, section demo.APISection) {
+	t.Helper()
+	for _, prop := range section.Props {
+		seen := make(map[string]struct{}, len(prop.Allowed))
+		for _, allowed := range prop.Allowed {
+			require.NotEmptyf(t, strings.TrimSpace(allowed), "%s.%s.%s contains an empty allowed value", pageKey, section.ID, prop.Name)
+			require.NotContainsf(t, seen, allowed, "%s.%s.%s repeats allowed value %q", pageKey, section.ID, prop.Name, allowed)
+			seen[allowed] = struct{}{}
+		}
+	}
+}
+
+func exportedComponentStructKeys(t *testing.T) []string {
+	t.Helper()
+	const modulePath = "github.com/araihu/goshtoso/components"
+	root := filepath.Clean("../../../../../components")
+	fset := token.NewFileSet()
+	keys := make(map[string]struct{})
+
+	// templ permits Go type declarations in .templ sources. Their generated
+	// *_templ.go copies supplement ordinary source discovery; the key set
+	// deduplicates declarations that also exist in handwritten Go.
+	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() ||
+			!strings.HasSuffix(path, ".go") ||
+			strings.HasSuffix(path, "_test.go") {
+			return nil
+		}
+
+		file, err := parser.ParseFile(fset, path, nil, 0)
+		if err != nil {
+			return err
+		}
+		relativeDir, err := filepath.Rel(root, filepath.Dir(path))
+		if err != nil {
+			return err
+		}
+		importPath := modulePath
+		if relativeDir != "." {
+			importPath += "/" + filepath.ToSlash(relativeDir)
+		}
+
+		for _, declaration := range file.Decls {
+			genDecl, ok := declaration.(*ast.GenDecl)
+			if !ok || genDecl.Tok != token.TYPE {
+				continue
+			}
+			for _, spec := range genDecl.Specs {
+				typeSpec, ok := spec.(*ast.TypeSpec)
+				if !ok || !typeSpec.Name.IsExported() {
+					continue
+				}
+				structType, ok := typeSpec.Type.(*ast.StructType)
+				if !ok || !hasExportedStructField(structType) {
+					continue
+				}
+				keys[importPath+"."+typeSpec.Name.Name] = struct{}{}
+			}
+		}
+		return nil
+	})
+	require.NoError(t, err)
+
+	result := make([]string, 0, len(keys))
+	for key := range keys {
+		result = append(result, key)
+	}
+	slices.Sort(result)
+	return result
+}
+
+func hasExportedStructField(structType *ast.StructType) bool {
+	for _, field := range structType.Fields.List {
+		for _, name := range field.Names {
+			if name.IsExported() {
+				return true
+			}
+		}
+		if len(field.Names) == 0 && ast.IsExported(embeddedFieldName(field.Type)) {
+			return true
+		}
+	}
+	return false
+}
+
+func embeddedFieldName(expr ast.Expr) string {
+	switch value := expr.(type) {
+	case *ast.Ident:
+		return value.Name
+	case *ast.SelectorExpr:
+		return value.Sel.Name
+	case *ast.StarExpr:
+		return embeddedFieldName(value.X)
+	case *ast.IndexExpr:
+		return embeddedFieldName(value.X)
+	case *ast.IndexListExpr:
+		return embeddedFieldName(value.X)
+	case *ast.ParenExpr:
+		return embeddedFieldName(value.X)
+	default:
+		return ""
 	}
 }
 

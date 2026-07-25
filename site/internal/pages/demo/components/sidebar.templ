@@ -67,7 +67,7 @@ var sidebarAPISections = []demo.APISection{
 		"sidebar.Overlay(cfg OverlayConfig) OverlayInstance",
 		"Configures an Alpine-controlled off-canvas wrapper around Sidebar.",
 		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"sidebarOverlay" state and "sidebar-overlay-panel" panel ID`, Description: "Derives Alpine state and the panel ID; non-empty input produces <ID>-panel."},
+			{Name: "ID", Default: `"sidebarOverlayOpen" state and "sidebar-overlay-panel" panel ID`, Description: "Derives Alpine state and the panel ID; non-empty input produces <ID>Open state and <ID>-panel."},
 			{Name: "Sidebar", Default: "zero Config", Description: "Sidebar configuration rendered inside the panel."},
 			{Name: "Trigger", Default: "nil (menu icon)", Description: "Replaces the built-in menu icon inside the trigger button."},
 			{Name: "TriggerLabel", Default: `"Open sidebar"`, Description: "Accessible trigger label after trimming whitespace."},

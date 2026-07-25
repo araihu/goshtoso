@@ -16,7 +16,7 @@ const (
 type Icon string
 
 const (
-	IconCheck Icon = "check" // ToneDefault checkmark
+	IconCheck Icon = "check" // Default checkmark
 	IconXmark Icon = "xmark" // X mark
 	IconMinus Icon = "minus" // Minus/dash
 	IconPlus  Icon = "plus"  // Plus sign

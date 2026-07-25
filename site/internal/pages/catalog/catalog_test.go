@@ -1,9 +1,13 @@
-package catalog
+package catalog_test
 
 import (
+	"slices"
+	"strings"
 	"testing"
 
 	"github.com/araihu/goshtoso/components"
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
+	democomponents "github.com/araihu/goshtoso/site/internal/pages/demo/components"
 	"github.com/stretchr/testify/require"
 )
 
@@ -56,7 +60,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/tabs", "Navigation"},
 	}
 
-	pages := ComponentPages()
+	pages := catalog.ComponentPages()
 	require.Len(t, pages, 42)
 	require.Len(t, pages, len(expected))
 
@@ -77,7 +81,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {
 	var got []components.Kind
 	seen := map[components.Kind]bool{}
-	for _, page := range ComponentPages() {
+	for _, page := range catalog.ComponentPages() {
 		for _, kind := range page.Kinds {
 			require.False(t, seen[kind], "duplicate component Kind %q", kind)
 			seen[kind] = true
@@ -86,26 +90,54 @@ func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {
 	}
 
 	require.Len(t, got, 74)
-	require.ElementsMatch(t, components.AllKinds(), got)
+	want := components.AllKinds()
+	slices.Sort(got)
+	slices.Sort(want)
+	require.Equal(t, want, got)
+}
+
+func TestComponentCatalogPathsMatchDemoRegistryExactly(t *testing.T) {
+	pages := catalog.ComponentPages()
+	catalogKeys := make([]string, 0, len(pages))
+	registryKeys := make([]string, 0, len(pages))
+
+	for _, page := range pages {
+		require.Equalf(t, "/"+page.Key, page.Path, "%s canonical component path", page.Key)
+		entry, ok := democomponents.Demos[page.Key]
+		require.Truef(t, ok, "missing demo registry entry for %s", page.Key)
+		require.Equalf(t, page.Active, entry.Active, "%s navigation active key", page.Key)
+		require.NotNilf(t, entry.Content, "%s route content", page.Key)
+		catalogKeys = append(catalogKeys, strings.TrimPrefix(page.Path, "/"))
+	}
+	for key := range democomponents.Demos {
+		if strings.HasPrefix(key, "components/") {
+			registryKeys = append(registryKeys, key)
+		}
+	}
+
+	slices.Sort(catalogKeys)
+	slices.Sort(registryKeys)
+	require.Len(t, catalogKeys, 42)
+	require.Equal(t, catalogKeys, registryKeys)
 }
 
 func TestComponentCatalogReturnsDefensiveCopies(t *testing.T) {
-	pages := ComponentPages()
+	pages := catalog.ComponentPages()
 	originalPath := pages[0].Path
 	originalKind := pages[0].Kinds[0]
 
 	pages[0].Path = "/mutated"
 	pages[0].Kinds[0] = "mutated"
 
-	fresh := ComponentPages()
+	fresh := catalog.ComponentPages()
 	require.Equal(t, originalPath, fresh[0].Path)
 	require.Equal(t, originalKind, fresh[0].Kinds[0])
 
-	entry, ok := Lookup(fresh[0].Key)
+	entry, ok := catalog.Lookup(fresh[0].Key)
 	require.True(t, ok)
 	entry.Kinds[0] = "mutated"
 
-	freshEntry, ok := Lookup(fresh[0].Key)
+	freshEntry, ok := catalog.Lookup(fresh[0].Key)
 	require.True(t, ok)
 	require.Equal(t, originalKind, freshEntry.Kinds[0])
 }

@@ -2,8 +2,9 @@ package components
 
 import (
 	rootcomponents "github.com/araihu/goshtoso/components"
-	"github.com/araihu/goshtoso/components/form"
 	gocombobox "github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/form"
+	formvalidation "github.com/araihu/goshtoso/components/form/validation"
 	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
@@ -163,6 +164,52 @@ var formAPISections = []demo.APISection{
 			{Name: "Endpoint", Default: `"" (hx-post, hx-trigger, and name omitted)`, Description: "Validation POST URL. Target/swap/include/vals still render when Validation is non-nil but Endpoint is empty."},
 			{Name: "Target", Default: `"this"`, Description: "Optional hx-target; a non-nil Validation config falls back to this."},
 			{Name: "Trigger", Default: `"change" when Endpoint is non-empty`, Description: "Validation trigger; it is rendered only together with a non-empty Endpoint."},
+		},
+	),
+	demo.StructAPI[formvalidation.ValidationContext](
+		"",
+		"validation.ValidationContext",
+		"",
+		"Describes why a validation hook is running and the complete submitted form state available to it.",
+		[]demo.APIPropDoc{
+			{Name: "Type", Default: "ValidationSubmit", Allowed: []string{"ValidationSubmit", "ValidationFieldChange", "ValidationDependency"}, Description: "Identifies full-form submission, direct field change, or dependent-field validation."},
+			{Name: "TriggerField", Default: `"" for full-form submit`, Description: "Names the field that initiated field-change or dependency validation."},
+			{Name: "FormValues", Default: "nil", Description: "Contains all parsed form values supplied to the validation hook."},
+		},
+	),
+	demo.StructAPI[formvalidation.FormDef](
+		"",
+		"validation.FormDef",
+		"",
+		"Defines the form and field inventory consumed by the validation handler.",
+		[]demo.APIPropDoc{
+			{Name: "FormID", Default: `""`, Description: "Identifies the form whose fields are being validated."},
+			{Name: "Endpoint", Default: `""`, Description: "Default HTMX validation endpoint bound to configured fields."},
+			{Name: "Fields", Default: "nil", Description: "Maps submitted field names to their validation definitions."},
+		},
+	),
+	demo.StructAPI[formvalidation.FieldDef](
+		"",
+		"validation.FieldDef",
+		"",
+		"Defines one mutable field configuration and its dependency behavior.",
+		[]demo.APIPropDoc{
+			{Name: "Name", Default: `""`, Description: "Submitted field name used as the definition key and validation target."},
+			{Name: "FieldGroup", Default: "nil", Description: "FieldGroup configuration mutated by the validation hook before rendering."},
+			{Name: "DependsOn", Default: "nil", Description: "Names fields whose changes also trigger validation for this field."},
+			{Name: "OnChange", Default: "false", Description: "Enables direct field-level validation on change."},
+		},
+	),
+	demo.StructAPI[formvalidation.Result](
+		"",
+		"validation.Result",
+		"",
+		"Reports the validated primary field, affected dependents, and complete field map.",
+		[]demo.APIPropDoc{
+			{Name: "Valid", Default: "false", Description: "Reports whether the validation operation succeeded."},
+			{Name: "Primary", Default: "nil", Description: "Points to the field definition directly selected for validation."},
+			{Name: "Dependents", Default: "nil", Description: "Lists field definitions revalidated because they depend on the trigger field."},
+			{Name: "AllFields", Default: "nil", Description: "Contains the complete field-definition map after validation mutations."},
 		},
 	),
 	demo.StructAPI[form.FormErrorsConfig](

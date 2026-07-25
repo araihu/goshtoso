@@ -54,7 +54,7 @@ templ Layout() {
 ```
 
 The served `styles.css` already carries every component style + the theme system
-(13 themes). **Stock CDN Tailwind will not work** — the theme tokens
+(15 themes). **Stock CDN Tailwind will not work** — the theme tokens
 (`bg-primary`, `text-on-surface`, …) live only in this compiled CSS.
 
 Skip the rest of this section unless you maintain your own Tailwind build.
@@ -86,7 +86,7 @@ Then import it in your Tailwind entry point:
 @import "./goshtoso-base.css";
 ```
 
-The extracted CSS includes all Goshtoso component styles, the theme system (13 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
+The extracted CSS includes all Goshtoso component styles, the theme system (15 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
 
 ### 3. Required JavaScript
 
@@ -161,6 +161,7 @@ so mount it regardless of which path you choose.
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
+The catalog has 42 component packages, 42 documentation pages, and 74 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.

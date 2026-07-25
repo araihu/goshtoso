@@ -54,9 +54,7 @@ type Config struct {
 	Message string
 	// DisplayDuration in milliseconds (default 8000); negative keeps a server-rendered toast visible until dismissed manually.
 	DisplayDuration int
-	// ActionLabel, when set, renders an inline action button in the toast (e.g.
-	// "Undo"). Clicking it fires the configured HTMX request and dismisses the
-	// toast. The close (dismiss) button is always present regardless.
+	// ActionLabel, when set, renders an optional action button in the toast.
 	ActionLabel string
 	// ActionHTMX configures the action button's HTMX request.
 	ActionHTMX *HTMXConfig

@@ -28,13 +28,14 @@ copy-paste snippets.
 
 ## Highlights
 
-- **42 templ components** for common app UI: forms, navigation, overlays, data
+- **42 component packages** documented across **42 documentation pages**,
+  exposing **74 renderable primitives** for forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
   instant local interaction makes sense.
 - **Bundled assets** for Tailwind CSS, Alpine.js, HTMX, htmx extensions, fonts,
   and images. No runtime CDN dependency is required.
-- **Theme system included** with light/dark support and 13 built-in themes.
+- **Theme system included** with light/dark support and 15 built-in themes.
 - **Two-module repository**: a slim publishable library at the repo root and a
   demo/test site under `site/`.
 - **Go-native examples and tests** using templ generation and Playwright-backed

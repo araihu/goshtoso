@@ -88,6 +88,53 @@ func TestConsumerChannelsAvoidObsoleteVariantVocabulary(t *testing.T) {
 	}
 }
 
+func TestConsumerDocsPublishCurrentInventoryCounts(t *testing.T) {
+	channels := map[string]string{
+		"README":      "../README.md",
+		"usage guide": "USAGE.md",
+	}
+	for name, path := range channels {
+		t.Run(name, func(t *testing.T) {
+			content := readDoc(t, path)
+			for _, count := range []string{
+				"42 component packages",
+				"42 documentation pages",
+				"74 renderable primitives",
+			} {
+				if !strings.Contains(content, count) {
+					t.Errorf("%s missing current inventory count %q", path, count)
+				}
+			}
+			if strings.Contains(content, "13 themes") {
+				t.Errorf("%s contains the stale 13-theme count", path)
+			}
+		})
+	}
+
+	if content := readDoc(t, "../README.md"); !strings.Contains(content, "15 built-in themes") {
+		t.Error("../README.md missing the current 15 built-in themes count")
+	}
+	if count := strings.Count(readDoc(t, "USAGE.md"), "15 themes"); count != 2 {
+		t.Errorf("USAGE.md current theme count occurrences = %d, want 2", count)
+	}
+}
+
+func TestGeneratedComponentReferenceKeepsCompleteToastActionLabelComment(t *testing.T) {
+	const complete = "ActionLabel, when set, renders an optional action button in the toast."
+	for _, path := range []string{
+		"../.agents/skills/using-goshtoso/references/components-reference.md",
+		"../.claude/skills/using-goshtoso/components-reference.md",
+	} {
+		content := readDoc(t, path)
+		if !strings.Contains(content, complete) {
+			t.Errorf("%s missing complete Toast Config.ActionLabel description", path)
+		}
+		if strings.Contains(content, "ActionLabel, when set, renders an inline action button in the toast (e.g. |") {
+			t.Errorf("%s contains the truncated Toast Config.ActionLabel description", path)
+		}
+	}
+}
+
 func readDoc(t *testing.T, path string) string {
 	t.Helper()
 	content, err := os.ReadFile(path)

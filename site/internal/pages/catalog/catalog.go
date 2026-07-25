@@ -178,7 +178,7 @@ var componentPages = []Entry{
 		Path:        "/components/fileinput",
 		Title:       "File Input",
 		Active:      "fileinput",
-		Description: "Create file upload controls with labels, helper text, selected-file display, native accept hints, and visual validation states in Goshtoso.",
+		Description: "Create file upload controls with labels, helper text, selected-file display, native accept hints, and drop-zone or upload-button appearances in Goshtoso.",
 		Section:     "Input",
 		Order:       14,
 		Kinds:       []components.Kind{components.KindFileInput},
