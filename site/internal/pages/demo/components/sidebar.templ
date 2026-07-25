@@ -36,7 +36,7 @@ var sidebarAPISections = []demo.APISection{
 			{Name: "Label", Default: `""`, Description: "Visible item text and the default native title for enabled links."},
 			{Name: "Icon", Default: "nil", Description: "Optional icon rendered only by the top-level item path; section item paths ignore it."},
 			{Name: "Href", Default: `""`, Description: "Enabled-link destination passed through templ.URL. Collapsible section items prevent navigation and toggle children."},
-			{Name: "Active", Default: "false", Description: "Selects active styling for top-level items and leaf section items. Section items with children take their child/disclosure branch first; top-level active links omit Badge."},
+			{Name: "Active", Default: "false", Description: "Selects active styling and aria-current=page for top-level items and leaf section items. Section items with children take their child/disclosure branch first; top-level active links omit Badge."},
 			{Name: "Disabled", Default: "false", Description: "Renders a non-interactive span for top-level items and ordinary section items. A section item with children that enters disclosure first ignores Disabled; disabled spans omit link attributes and badges."},
 			{Name: "Badge", Default: `"" (omitted)`, Description: "Optional badge on ordinary top-level and enabled section links; the top-level active and disabled paths omit it."},
 			{Name: "BadgeClass", Default: `"bg-primary text-on-primary" treatment`, Description: "Appends caller badge treatment instead of the default colors when Badge renders."},
