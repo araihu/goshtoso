@@ -36,6 +36,7 @@ var textareaAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/textarea",
 		rootcomponents.KindTextareaWithActions,
 		"TextareaWithActions",
 		"",

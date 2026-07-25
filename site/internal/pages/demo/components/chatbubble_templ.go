@@ -39,6 +39,7 @@ var chatBubbleAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/chatbubble",
 		rootcomponents.KindTypingIndicator,
 		"TypingIndicator",
 		"",

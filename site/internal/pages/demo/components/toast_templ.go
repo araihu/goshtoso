@@ -76,6 +76,7 @@ var toastAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/toast",
 		rootcomponents.KindOOBToast,
 		"OOBToast",
 		"toast.OOBToast(cfg Config) OOBInstance",
@@ -83,6 +84,7 @@ var toastAPISections = []demo.APISection{
 		nil,
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/toast",
 		rootcomponents.KindOOBMessageToast,
 		"OOBMessageToast",
 		"toast.OOBMessageToast(cfg MessageConfig) OOBMessageInstance",

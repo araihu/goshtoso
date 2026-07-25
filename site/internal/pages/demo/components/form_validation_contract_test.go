@@ -2,11 +2,14 @@ package components
 
 import (
 	"context"
+	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/form"
 	formvalidation "github.com/araihu/goshtoso/components/form/validation"
 	"github.com/araihu/goshtoso/components/textinput"
@@ -130,6 +133,7 @@ func TestFormValidationOperationalSurfaceAndFieldResponseAreDocumented(t *testin
 			ID:    "confirm-field",
 			Label: "Confirm email",
 			Input: &textinput.Config{ID: "confirm-input"},
+			OOB:   true,
 		},
 	}
 	recorder := httptest.NewRecorder()
@@ -143,7 +147,26 @@ func TestFormValidationOperationalSurfaceAndFieldResponseAreDocumented(t *testin
 	require.Contains(t, recorder.Body.String(), `id="email-field"`)
 	require.Contains(t, recorder.Body.String(), `id="confirm-field"`)
 	require.Contains(t, recorder.Body.String(), `hx-swap-oob="true"`)
-	require.False(t, dependent.FieldGroup.OOB, "RenderFieldResponse restores dependent OOB state")
+	require.False(t, dependent.FieldGroup.OOB, "RenderFieldResponse always resets dependent OOB false")
+
+	renderError := errors.New("render failure")
+	failing := &formvalidation.FieldDef{
+		Name:       "failing",
+		FieldGroup: &form.FieldGroupConfig{ID: "failing-field", OOB: true},
+	}
+	failingContext := templ.WithChildren(
+		context.Background(),
+		templ.ComponentFunc(func(context.Context, io.Writer) error {
+			return renderError
+		}),
+	)
+	err = formvalidation.RenderFieldResponse(
+		failingContext,
+		httptest.NewRecorder(),
+		formvalidation.Result{Dependents: []*formvalidation.FieldDef{failing}},
+	)
+	require.ErrorIs(t, err, renderError)
+	require.False(t, failing.FieldGroup.OOB, "error path always resets dependent OOB false")
 
 	operations := []string{
 		"ValidationType",
@@ -171,9 +194,8 @@ func TestFormValidationOperationalSurfaceAndFieldResponseAreDocumented(t *testin
 		apiProp(t, formAPISections, "validation operations", "Handle").Description,
 		"Result.Valid initialized true",
 	)
-	require.Contains(
-		t,
-		apiProp(t, formAPISections, "validation operations", "RenderFieldResponse").Description,
-		"out-of-band",
-	)
+	responseDoc := apiProp(t, formAPISections, "validation operations", "RenderFieldResponse")
+	require.Contains(t, responseDoc.Description, "out-of-band")
+	require.Contains(t, responseDoc.Description, "always resets each dependent OOB flag to false")
+	require.NotContains(t, responseDoc.Description, "restores")
 }

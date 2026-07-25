@@ -73,6 +73,7 @@ var comboboxAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/combobox",
 		"",
 		"Combobox server contracts",
 		"",
@@ -552,7 +553,7 @@ func comboboxClusterPreview() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(ClusterCfg.OptionsEndpoint)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/combobox.templ`, Line: 311, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/combobox.templ`, Line: 312, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {

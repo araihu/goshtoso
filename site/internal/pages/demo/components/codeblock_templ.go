@@ -29,6 +29,7 @@ var codeBlockAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/codeblock",
 		"",
 		"Helpers",
 		"",

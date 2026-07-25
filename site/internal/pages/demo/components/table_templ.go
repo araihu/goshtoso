@@ -190,6 +190,7 @@ var tableAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/table",
 		"",
 		"Config helpers",
 		"",
@@ -203,6 +204,7 @@ var tableAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/table",
 		rootcomponents.KindTableHeadContent,
 		"TableHeadContent",
 		"",
@@ -212,6 +214,7 @@ var tableAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/table",
 		rootcomponents.KindTableRows,
 		"TableRows",
 		"",
@@ -221,6 +224,7 @@ var tableAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/table",
 		rootcomponents.KindTableRow,
 		"TableRow",
 		"",
@@ -230,6 +234,7 @@ var tableAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/table",
 		rootcomponents.KindTablePaginationNav,
 		"TablePaginationNav",
 		"",
@@ -239,6 +244,7 @@ var tableAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/table",
 		rootcomponents.KindTableImageCell,
 		"ImageCell",
 		"",

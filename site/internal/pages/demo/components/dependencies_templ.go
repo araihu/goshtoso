@@ -15,6 +15,7 @@ import (
 
 var dependenciesAPISections = []demo.APISection{
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/head",
 		rootcomponents.KindDependencies,
 		"Dependencies",
 		"",
@@ -24,6 +25,7 @@ var dependenciesAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/head",
 		rootcomponents.KindDependenciesMinimal,
 		"DependenciesMinimal",
 		"",
@@ -168,7 +170,7 @@ func dependenciesFullPreview() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("@head.Dependencies()\n\n/assets/styles.css\n/assets/js/runtime/alpinejs\n/assets/js/runtime/htmx\n/assets/js/combobox.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/dependencies.templ`, Line: 74, Col: 268}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/dependencies.templ`, Line: 76, Col: 268}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

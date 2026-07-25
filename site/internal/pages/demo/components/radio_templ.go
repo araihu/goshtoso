@@ -85,6 +85,7 @@ var radioAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/radio",
 		rootcomponents.KindRadioBar,
 		"RadioBar",
 		"",

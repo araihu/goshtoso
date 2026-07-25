@@ -57,6 +57,7 @@ var searchAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/search",
 		rootcomponents.KindSearchField,
 		"SearchField",
 		"search.SearchField(cfg Config) FieldInstance",
@@ -64,6 +65,7 @@ var searchAPISections = []demo.APISection{
 		nil,
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/search",
 		rootcomponents.KindSearchModal,
 		"SearchModal",
 		"search.SearchModal(cfg Config) ModalInstance",
@@ -71,6 +73,7 @@ var searchAPISections = []demo.APISection{
 		nil,
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/search",
 		"",
 		"Item methods",
 		"",

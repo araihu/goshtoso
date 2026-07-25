@@ -17,6 +17,7 @@ import (
 
 var kbdAPISections = []demo.APISection{
 	demo.OptionsAPI(
+		"github.com/araihu/goshtoso/components/kbd",
 		rootcomponents.KindKbd,
 		"Kbd options",
 		"kbd.Kbd(text string, options ...Option) Instance",
@@ -446,7 +447,7 @@ func kbdInlinePreview() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(" or to ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 166, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 167, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -931,7 +932,7 @@ func arrowKeyIcon(path string) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(path)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 271, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 272, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
 		if templ_7745c5c3_Err != nil {

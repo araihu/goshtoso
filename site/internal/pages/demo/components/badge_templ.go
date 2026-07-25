@@ -33,6 +33,7 @@ var badgeAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/badge",
 		rootcomponents.KindNotificationBadge,
 		"NotificationBadge",
 		"",
@@ -42,6 +43,7 @@ var badgeAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/badge",
 		rootcomponents.KindNotificationDot,
 		"NotificationDot",
 		"",
@@ -51,6 +53,7 @@ var badgeAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/badge",
 		rootcomponents.KindAnimatingDot,
 		"AnimatingDot",
 		"",

@@ -26,9 +26,13 @@ type APISection struct {
 	Title       string
 	Description string
 	Constructor string
-	Kind        components.Kind
-	StructType  reflect.Type
-	Props       []APIPropDoc
+	// SourcePackage binds explicit declarations in this section to one exact
+	// component import path. StructAPI sections derive it from StructType when
+	// this override is empty.
+	SourcePackage string
+	Kind          components.Kind
+	StructType    reflect.Type
+	Props         []APIPropDoc
 }
 
 // StructAPI describes a public struct. Field signatures are derived from
@@ -46,11 +50,12 @@ func StructAPI[T any](
 	}
 	validateAPIProps(props, false)
 
-	return newAPISection(kind, title, constructor, description, typ, props)
+	return newAPISection(kind, title, constructor, description, "", typ, props)
 }
 
 // OptionsAPI describes a constructor configured by functional options.
 func OptionsAPI(
+	sourcePackage string,
 	kind components.Kind,
 	title string,
 	constructor string,
@@ -58,12 +63,13 @@ func OptionsAPI(
 	props []APIPropDoc,
 ) APISection {
 	validateAPIProps(props, true)
-	return newAPISection(kind, title, constructor, description, nil, props)
+	return newAPISection(kind, title, constructor, description, sourcePackage, nil, props)
 }
 
 // FunctionsAPI describes constructors and deliberate non-render helpers that
 // have explicit function signatures rather than reflected struct fields.
 func FunctionsAPI(
+	sourcePackage string,
 	kind components.Kind,
 	title string,
 	constructor string,
@@ -71,7 +77,7 @@ func FunctionsAPI(
 	props []APIPropDoc,
 ) APISection {
 	validateAPIProps(props, true)
-	return newAPISection(kind, title, constructor, description, nil, props)
+	return newAPISection(kind, title, constructor, description, sourcePackage, nil, props)
 }
 
 func newAPISection(
@@ -79,6 +85,7 @@ func newAPISection(
 	title string,
 	constructor string,
 	description string,
+	sourcePackage string,
 	structType reflect.Type,
 	props []APIPropDoc,
 ) APISection {
@@ -86,15 +93,19 @@ func newAPISection(
 	if id == "" {
 		panic("demo: API section title must produce a non-empty ID")
 	}
+	if structType == nil && sourcePackage == "" {
+		panic(fmt.Sprintf("demo: function-only API section %q requires a source package", title))
+	}
 
 	return APISection{
-		ID:          id,
-		Title:       title,
-		Description: description,
-		Constructor: constructor,
-		Kind:        kind,
-		StructType:  structType,
-		Props:       cloneAPIProps(props),
+		ID:            id,
+		Title:         title,
+		Description:   description,
+		Constructor:   constructor,
+		SourcePackage: sourcePackage,
+		Kind:          kind,
+		StructType:    structType,
+		Props:         cloneAPIProps(props),
 	}
 }
 

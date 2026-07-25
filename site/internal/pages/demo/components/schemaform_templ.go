@@ -47,6 +47,7 @@ var schemaFormAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/schemaform",
 		"",
 		"AllowMode and transforms",
 		"",

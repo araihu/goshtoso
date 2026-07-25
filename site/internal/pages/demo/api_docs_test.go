@@ -48,6 +48,7 @@ func TestStructuredAPIHelpersEnforceSignatureMode(t *testing.T) {
 	for _, build := range []func() APISection{
 		func() APISection {
 			return OptionsAPI(
+				"github.com/araihu/goshtoso/components/button",
 				components.KindButton,
 				"Options",
 				"button.Button",
@@ -57,6 +58,7 @@ func TestStructuredAPIHelpersEnforceSignatureMode(t *testing.T) {
 		},
 		func() APISection {
 			return FunctionsAPI(
+				"github.com/araihu/goshtoso/components/badge",
 				components.KindBadge,
 				"Functions",
 				"",
@@ -71,6 +73,7 @@ func TestStructuredAPIHelpersEnforceSignatureMode(t *testing.T) {
 	}
 
 	options := OptionsAPI(
+		"github.com/araihu/goshtoso/components/button",
 		components.KindButton,
 		"Options",
 		"button.Button",
@@ -78,6 +81,7 @@ func TestStructuredAPIHelpersEnforceSignatureMode(t *testing.T) {
 		[]APIPropDoc{{Name: "WithTone", Signature: "func(Tone) Option"}},
 	)
 	functions := FunctionsAPI(
+		"github.com/araihu/goshtoso/components/badge",
 		components.KindBadge,
 		"Functions",
 		"",
@@ -86,6 +90,8 @@ func TestStructuredAPIHelpersEnforceSignatureMode(t *testing.T) {
 	)
 	require.Nil(t, options.StructType)
 	require.Nil(t, functions.StructType)
+	require.Equal(t, "github.com/araihu/goshtoso/components/button", options.SourcePackage)
+	require.Equal(t, "github.com/araihu/goshtoso/components/badge", functions.SourcePackage)
 }
 
 func TestStructuredAPIReferenceRendersExactTypesAndStableHooks(t *testing.T) {
@@ -101,6 +107,7 @@ func TestStructuredAPIReferenceRendersExactTypesAndStableHooks(t *testing.T) {
 			},
 		),
 		FunctionsAPI(
+			"github.com/araihu/goshtoso/components/badge",
 			components.KindBadge,
 			"Functions",
 			"",

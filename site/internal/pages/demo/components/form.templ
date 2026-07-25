@@ -213,6 +213,7 @@ var formAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/form/validation",
 		"",
 		"validation operations",
 		"",
@@ -225,7 +226,7 @@ var formAPISections = []demo.APISection{
 			{Name: "FormDef.Dependents", Signature: "func (fd *FormDef) Dependents(fieldName string) []string", Default: "nil when no direct dependents exist", Description: "Returns only direct dependent field names; traversal is non-transitive."},
 			{Name: "FormDef.PopulateValues", Signature: "func (fd *FormDef) PopulateValues(values map[string]string)", Default: "missing submitted values become empty or unchecked", Description: "Copies submitted values into supported input, textarea, toggle, and checkbox configs. Every FieldDef must have a non-nil FieldGroup."},
 			{Name: "IsFieldValidation", Signature: "func IsFieldValidation(r *http.Request) bool", Default: "false unless X-Goshtoso-Validation equals field", Description: "Parses the request form and distinguishes field-level validation from full submission."},
-			{Name: "RenderFieldResponse", Signature: "func RenderFieldResponse(ctx context.Context, w http.ResponseWriter, result Result) error", Default: "empty body when Primary and Dependents are nil", Description: "Writes the primary FieldGroup as the main response, renders dependents as out-of-band swaps, restores each dependent OOB flag, and returns the first render error."},
+			{Name: "RenderFieldResponse", Signature: "func RenderFieldResponse(ctx context.Context, w http.ResponseWriter, result Result) error", Default: "empty body when Primary and Dependents are nil", Description: "Writes the primary FieldGroup as the main response, forces each dependent OOB flag true while rendering its out-of-band swap, always resets each dependent OOB flag to false afterward or on error, and returns the first render error."},
 		},
 	),
 	demo.StructAPI[form.FormErrorsConfig](

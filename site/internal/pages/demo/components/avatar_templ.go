@@ -53,6 +53,7 @@ var avatarAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/avatar",
 		"",
 		"Helpers",
 		"",

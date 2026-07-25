@@ -17,6 +17,7 @@ import (
 
 var buttonAPISections = []demo.APISection{
 	demo.OptionsAPI(
+		"github.com/araihu/goshtoso/components/button",
 		rootcomponents.KindButton,
 		"Button options",
 		"button.Button(options ...Option) Instance",
@@ -789,7 +790,7 @@ func buttonHTMXResult(id string) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/button.templ`, Line: 268, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/button.templ`, Line: 269, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {

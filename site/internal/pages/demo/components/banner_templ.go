@@ -58,6 +58,7 @@ var bannerAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/banner",
 		"",
 		"Constructors",
 		"",

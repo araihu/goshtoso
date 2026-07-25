@@ -52,6 +52,7 @@ var paginationAPISections = []demo.APISection{
 		},
 	),
 	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/pagination",
 		"",
 		"Config helpers",
 		"",
