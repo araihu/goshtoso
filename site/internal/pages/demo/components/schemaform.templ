@@ -1,9 +1,59 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/schemaform"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var schemaFormAPISections = []demo.APISection{
+	demo.StructAPI[schemaform.FieldsConfig](
+		rootcomponents.KindSchemaFormFields,
+		"FieldsConfig",
+		"schemaform.Fields(cfg FieldsConfig) Instance",
+		"Configures the schema-derived field list rendered inside a caller-owned form.",
+		[]demo.APIPropDoc{
+			{Name: "Fields", Default: "nil (empty container)", Description: "Ordered controls produced by Walk, FallbackFromDefaults, or caller-authored Field values."},
+			{Name: "NamePrefix", Default: `"values"`, Description: "Prefixes generated input names as <prefix>.<Field.Path>; the fallback applies when this field is empty."},
+		},
+	),
+	demo.StructAPI[schemaform.Field](
+		"",
+		"Field",
+		"",
+		"Describes one generated scalar control, object group, array tag list, or unknown-value fallback.",
+		[]demo.APIPropDoc{
+			{Name: "Path", Default: `""`, Description: "Dotted path appended to FieldsConfig.NamePrefix for input IDs and names; also emitted as data-field-path for non-object fields."},
+			{Name: "Name", Default: `"" (currently no rendered effect)`, Description: "Transform-populated name, usually equal to Path. The current renderer derives IDs and names from Path and does not read this field."},
+			{Name: "Label", Default: `""`, Description: "Visible control label or object-group legend; single-child normalization prefixes parent labels with a separator."},
+			{Name: "HelperText", Default: `"" (omitted)`, Description: "Supporting text shown before non-object controls."},
+			{Name: "Kind", Default: `Kind("") (unknown fallback)`, Allowed: []string{"KindString", "KindNumber", "KindInteger", "KindBoolean", "KindEnum", "KindObject", "KindArray", "KindUnknown"}, Description: "Selects the text, numeric, checkbox, select, fieldset, tags-list, or read-only textarea render path."},
+			{Name: "Required", Default: "false", Description: "Adds a visible required marker to non-object fields. Native required is added only to string, number, integer, and enum controls; boolean, array, unknown, and object paths do not receive it."},
+			{Name: "Managed", Default: "false", Description: "Adds a managed badge and disables non-object controls. Text, number, and unknown controls also receive readonly; object-level Managed is ignored while children retain their own modes."},
+			{Name: "Default", Default: `""`, Description: "Serialized default used as placeholder and, for string/number/integer/enum/boolean, as the initial value when Value is empty."},
+			{Name: "ArrayDefault", Default: "nil", Description: "Initial tag values used only by the KindArray renderer; populated in parallel with Default by the public transforms."},
+			{Name: "Value", Default: `""`, Description: "Current string/number/integer/enum/boolean value wins over Default on re-render. Unknown uses Value as textarea content; array rendering ignores Value in favor of ArrayDefault."},
+			{Name: "Enum", Default: "nil", Description: "Option values rendered by KindEnum; optional fields also receive an empty dash option."},
+			{Name: "Children", Default: "nil", Description: "Nested fields rendered inside a KindObject fieldset. Public transforms unwrap single-child objects and omit empty objects."},
+			{Name: "Errors", Default: "nil", Description: "Validation messages rendered after non-object controls; object-group rendering does not display errors on the parent Field."},
+		},
+	),
+	demo.FunctionsAPI(
+		"",
+		"AllowMode and transforms",
+		"",
+		"Documents allow-list policy constants and the public transformations that build or filter schema-form data.",
+		[]demo.APIPropDoc{
+			{Name: "AllowModeManaged", Signature: `const AllowModeManaged AllowMode = "managed"`, Default: "n/a", Description: "Keeps a path visible but marks its Field managed so the rendered control is unavailable."},
+			{Name: "AllowModeDisabled", Signature: `const AllowModeDisabled AllowMode = "disabled"`, Default: "n/a", Description: "Omits a path from generated Fields and removes it through PruneDisabled."},
+			{Name: "FlattenAllowList", Signature: "func FlattenAllowList(m *map[string]any) map[string]AllowMode", Default: "empty map for nil", Description: "Flattens nested maps to dotted paths. True and case-insensitive \"managed\" become managed; case-insensitive \"disabled\" becomes disabled; false and unsupported leaves are ignored."},
+			{Name: "Walk", Signature: "func Walk(schema map[string]any, defaults, values map[string]any, allowList map[string]AllowMode) []Field", Default: "nil without a non-empty properties map", Description: "Builds sorted Fields from the supported JSON Schema object subset, skips nil and disabled nodes, applies defaults/current values, and unwraps single-child objects."},
+			{Name: "FallbackFromDefaults", Signature: "func FallbackFromDefaults(defaults, values map[string]any, allowList map[string]AllowMode) []Field", Default: "nil when defaults is empty", Description: "Builds sorted Fields by inferring kinds from defaults, recursively handling maps and simple arrays while treating complex arrays as unknown."},
+			{Name: "PruneDisabled", Signature: "func PruneDisabled(values map[string]any, allowList map[string]AllowMode) map[string]any", Default: "empty non-nil map when values is empty", Description: "Returns a deep pruned map with disabled paths and newly empty parent maps removed; it does not mutate the input."},
+			{Name: "HasOnlySimpleScalars", Signature: "func HasOnlySimpleScalars(fields []Field) bool", Default: "true for nil", Description: "Backward-compatibility predicate that rejects object and unknown fields and arrays with children; new callers can render Fields unconditionally."},
+		},
+	),
+}
 
 // SchemaFormDemoPage renders the Schema Form component demo.
 templ SchemaFormDemoPage() {
@@ -57,23 +107,7 @@ templ schemaFormDemoContent() {
 			schemaFormSubmitCode,
 		)
 	</div>
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Fields", Type: "[]Field", Default: "nil", Description: "Ordered form controls produced by Walk or FallbackFromDefaults."},
-		{Name: "NamePrefix", Type: "string", Default: `"values"`, Description: "Prefix applied to generated input names, such as values.replicaCount."},
-		{Name: "Walk", Type: "func", Default: "-", Description: "Builds fields from a draft-agnostic JSON Schema object subset, defaults, current values, and allow-list modes."},
-		{Name: "FallbackFromDefaults", Type: "func", Default: "-", Description: "Infers a form from default values when no JSON Schema is available."},
-		{Name: "FlattenAllowList", Type: "func", Default: "-", Description: "Converts nested allow_list data into dotted paths with managed or disabled modes."},
-		{Name: "PruneDisabled", Type: "func", Default: "-", Description: "Removes disabled paths from values before serializing or submitting configuration."},
-		{Name: "Field.Path", Type: "string", Default: `""`, Description: "Dotted config path used for generated names and allow-list matching."},
-		{Name: "Field.Label", Type: "string", Default: `""`, Description: "Display label, usually sourced from schema title or the path segment."},
-		{Name: "Field.HelperText", Type: "string", Default: `""`, Description: "Supporting copy, usually sourced from schema description."},
-		{Name: "Field.Kind", Type: "Kind", Default: "-", Description: "Generated control kind: string, number, integer, boolean, enum, array, object, or unknown fallback."},
-		{Name: "Field.Managed", Type: "bool", Default: "false", Description: "Marks visible read-only fields produced by AllowModeManaged."},
-		{Name: "Field.Default / Field.Value", Type: "string", Default: `""`, Description: "Serialized default and current values; current submitted values override defaults on re-render."},
-		{Name: "Field.Children", Type: "[]Field", Default: "nil", Description: "Nested object fields; single-child objects unwrap into the child control."},
-		{Name: "AllowModeManaged", Type: "AllowMode", Default: "-", Description: "Visible but disabled/read-only with a managed badge."},
-		{Name: "AllowModeDisabled", Type: "AllowMode", Default: "-", Description: "Hidden entirely; prune the same path before saving posted values."},
-	})
+	@demo.StructuredAPIReference(schemaFormAPISections)
 }
 
 templ schemaFormGeneratedPreview() {

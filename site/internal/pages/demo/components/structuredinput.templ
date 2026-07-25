@@ -1,9 +1,53 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/structuredinput"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var structuredInputAPISections = []demo.APISection{
+	demo.StructAPI[structuredinput.Config](
+		rootcomponents.KindStructuredInput,
+		"Config",
+		"structuredinput.StructuredInput(cfg Config) Instance",
+		"Configures repeatable structured rows whose values are submitted through typed column controls and hidden nested names.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (omitted)`, Description: "Optional root element ID."},
+			{Name: "Name", Default: `"" (names start with [index])`, Description: "Base submitted field name; hidden values use Name[index][columnKey].", Required: true},
+			{Name: "Columns", Default: "nil (rows have no controls)", Description: "Ordered typed columns rendered in every repeatable row. Empty keys and later duplicate keys are discarded.", Required: true},
+			{Name: "Entries", Default: "nil (starts with no rows)", Description: "Initial repeatable row values keyed by Column.Key. Missing values become empty strings and extra map keys are ignored."},
+			{Name: "AddActionLabel", Default: `"Add row"`, Description: "Visible add-row button label."},
+			{Name: "Disabled", Default: "false", Description: "Disables visible text/select controls and hides both add-row and remove-row actions; hidden submitted values remain enabled."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the structured-input root."},
+		},
+	),
+	demo.StructAPI[structuredinput.Column](
+		"",
+		"Column",
+		"",
+		"Describes one typed control repeated across every structured row.",
+		[]demo.APIPropDoc{
+			{Name: "Key", Default: `"" (column discarded)`, Description: "Stable nested submission key. Empty keys and duplicates after the first are removed.", Required: true},
+			{Name: "Label", Default: `""`, Description: "Accessible aria-label for the visible text or select control."},
+			{Name: "Type", Default: "ColumnText when empty", Allowed: []string{"ColumnText", "ColumnSelect"}, Description: "ColumnSelect renders a select; every other value, including the zero value, renders a text input."},
+			{Name: "Placeholder", Default: `""`, Description: "Text-column placeholder; select columns ignore it."},
+			{Name: "Separator", Default: `"" (omitted)`, Description: "Optional visual text rendered after this column, such as = or :; it is aria-hidden and does not change submitted values."},
+			{Name: "Options", Default: "nil", Description: "Select-column choices; text columns ignore them."},
+			{Name: "Default", Default: `""`, Description: "Value copied into a newly added row. When empty on a select column, the first option value is used; otherwise the new value remains empty."},
+		},
+	),
+	demo.StructAPI[structuredinput.Option](
+		"",
+		"Option",
+		"",
+		"Describes one choice for a ColumnSelect column.",
+		[]demo.APIPropDoc{
+			{Name: "Value", Default: `""`, Description: "Native option value and the value stored in the row.", Required: true},
+			{Name: "Label", Default: "Value", Description: "Visible option text; an empty label falls back to Value."},
+		},
+	),
+}
 
 // StructuredInputDemoPage renders the Structured Input component demo.
 templ StructuredInputDemoPage() {
@@ -89,16 +133,7 @@ templ structuredInputDemoContent() {
 })`,
 		)
 	</div>
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the structured input root."},
-		{Name: "Name", Type: "string", Default: `""`, Description: "Base form field name; submitted inputs use name[index][columnKey]."},
-		{Name: "Columns", Type: "[]Column", Default: "nil", Description: "Column schema for every repeatable row."},
-		{Name: "Column.Separator", Type: "string", Default: `""`, Description: "Optional short visual separator rendered after a column, such as = or :."},
-		{Name: "Entries", Type: "[]Entry", Default: "nil", Description: "Initial row values keyed by column key."},
-		{Name: "AddActionLabel", Type: "string", Default: `"Add row"`, Description: "Label of the add-row button."},
-		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable controls and hide add/remove actions."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
-	})
+	@demo.StructuredAPIReference(structuredInputAPISections)
 }
 
 templ structuredInputMetadataPreview() {

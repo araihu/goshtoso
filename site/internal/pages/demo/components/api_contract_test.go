@@ -17,12 +17,17 @@ import (
 	"github.com/araihu/goshtoso/components/chatbubble"
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/form"
 	"github.com/araihu/goshtoso/components/palette"
 	"github.com/araihu/goshtoso/components/radio"
 	rangeinput "github.com/araihu/goshtoso/components/range"
 	"github.com/araihu/goshtoso/components/rating"
+	"github.com/araihu/goshtoso/components/schemaform"
+	"github.com/araihu/goshtoso/components/search"
 	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/structuredinput"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
@@ -179,6 +184,336 @@ func TestAtomicInputAPIMetadataRegistered(t *testing.T) {
 		}
 		require.ElementsMatchf(t, wantKinds, gotKinds, "%s API section Kinds", key)
 	}
+}
+
+func TestComplexInputAPIMetadataRegistered(t *testing.T) {
+	expected := map[string][]rootcomponents.Kind{
+		"components/combobox": {
+			rootcomponents.KindCombobox,
+		},
+		"components/form": {
+			rootcomponents.KindForm,
+			rootcomponents.KindFormSection,
+			rootcomponents.KindFormCollapsibleSection,
+			rootcomponents.KindFormFlipSection,
+			rootcomponents.KindFormSubSection,
+			rootcomponents.KindFormFieldGroup,
+			rootcomponents.KindFormErrors,
+		},
+		"components/schema-form": {
+			rootcomponents.KindSchemaFormFields,
+		},
+		"components/search": {
+			rootcomponents.KindSearch,
+			rootcomponents.KindSearchField,
+			rootcomponents.KindSearchModal,
+		},
+		"components/structured-input": {
+			rootcomponents.KindStructuredInput,
+		},
+	}
+
+	require.Len(t, expected, 5)
+	for key, wantKinds := range expected {
+		entry, ok := Demos[key]
+		require.Truef(t, ok, "missing complex Input registry entry %q", key)
+		require.NotEmptyf(t, entry.API, "%s must register structured API metadata", key)
+
+		var catalogKinds []rootcomponents.Kind
+		for _, page := range catalog.ComponentPages() {
+			if page.Key == key {
+				catalogKinds = page.Kinds
+				break
+			}
+		}
+		require.Equalf(t, wantKinds, catalogKinds, "%s catalog Kinds", key)
+
+		seenIDs := make(map[string]struct{}, len(entry.API))
+		gotKinds := make([]rootcomponents.Kind, 0, len(entry.API))
+		for _, section := range entry.API {
+			require.NotEmptyf(t, section.ID, "%s contains an empty API section ID", key)
+			_, duplicate := seenIDs[section.ID]
+			require.Falsef(t, duplicate, "%s contains duplicate API section ID %q", key, section.ID)
+			seenIDs[section.ID] = struct{}{}
+			if section.Kind != "" {
+				gotKinds = append(gotKinds, section.Kind)
+			}
+		}
+		require.ElementsMatchf(t, wantKinds, gotKinds, "%s API section Kinds", key)
+	}
+}
+
+func TestComplexInputAPIRegistryUsesPageSectionSlices(t *testing.T) {
+	expected := map[string][]demo.APISection{
+		"components/combobox":         comboboxAPISections,
+		"components/form":             formAPISections,
+		"components/schema-form":      schemaFormAPISections,
+		"components/search":           searchAPISections,
+		"components/structured-input": structuredInputAPISections,
+	}
+
+	require.Len(t, expected, 5)
+	for key, pageSections := range expected {
+		entry := Demos[key]
+		require.NotEmpty(t, entry.API, key)
+		require.NotEmpty(t, pageSections, key)
+		require.Samef(
+			t,
+			&pageSections[0],
+			&entry.API[0],
+			"%s registry API must use the page's named metadata slice",
+			key,
+		)
+
+		var rendered strings.Builder
+		require.NoError(t, entry.Content().Render(context.Background(), &rendered))
+		html := rendered.String()
+		require.Equalf(t, 1, strings.Count(html, "data-api-reference"), "%s must render one structured API reference", key)
+		for _, section := range pageSections {
+			require.Equalf(
+				t,
+				1,
+				strings.Count(html, `data-api-section="`+section.ID+`"`),
+				"%s must render its %q API section exactly once",
+				key,
+				section.ID,
+			)
+		}
+	}
+}
+
+func TestComplexInputStructAPIsDocumentEveryExportedFieldExactlyOnce(t *testing.T) {
+	expectedTypes := []reflect.Type{
+		reflect.TypeFor[combobox.Config](),
+		reflect.TypeFor[combobox.Option](),
+		reflect.TypeFor[combobox.Source](),
+		reflect.TypeFor[combobox.State](),
+		reflect.TypeFor[form.Config](),
+		reflect.TypeFor[form.HTMXConfig](),
+		reflect.TypeFor[form.FooterConfig](),
+		reflect.TypeFor[form.CancelHTMXConfig](),
+		reflect.TypeFor[form.SectionConfig](),
+		reflect.TypeFor[form.CollapsibleSectionConfig](),
+		reflect.TypeFor[form.FlipSectionConfig](),
+		reflect.TypeFor[form.SubSectionConfig](),
+		reflect.TypeFor[form.FieldGroupConfig](),
+		reflect.TypeFor[form.FieldMeta](),
+		reflect.TypeFor[form.ValidationConfig](),
+		reflect.TypeFor[form.FormErrorsConfig](),
+		reflect.TypeFor[form.FormErrorItem](),
+		reflect.TypeFor[schemaform.FieldsConfig](),
+		reflect.TypeFor[schemaform.Field](),
+		reflect.TypeFor[search.Config](),
+		reflect.TypeFor[search.Item](),
+		reflect.TypeFor[structuredinput.Config](),
+		reflect.TypeFor[structuredinput.Column](),
+		reflect.TypeFor[structuredinput.Option](),
+	}
+
+	sectionsByType := make(map[reflect.Type][]demo.APISection, len(expectedTypes))
+	for _, sections := range complexInputAPISectionSlices() {
+		for _, section := range sections {
+			require.NotEmpty(t, section.ID)
+			require.NotEmpty(t, section.Title)
+			require.NotEmptyf(t, section.Description, "%s section description", section.Title)
+			for _, prop := range section.Props {
+				require.NotEmptyf(t, prop.Default, "%s.%s default", section.Title, prop.Name)
+				require.NotEmptyf(t, prop.Description, "%s.%s description", section.Title, prop.Name)
+			}
+			if section.StructType != nil {
+				sectionsByType[section.StructType] = append(sectionsByType[section.StructType], section)
+			}
+		}
+	}
+	require.Len(t, sectionsByType, len(expectedTypes))
+
+	for _, typ := range expectedTypes {
+		sections := sectionsByType[typ]
+		require.Lenf(t, sections, 1, "%s must have exactly one StructAPI section", typ)
+		section := sections[0]
+
+		wantFields := make([]string, 0, typ.NumField())
+		for index := range typ.NumField() {
+			field := typ.Field(index)
+			if field.IsExported() {
+				wantFields = append(wantFields, field.Name)
+			}
+		}
+		gotFields := make([]string, 0, len(section.Props))
+		for _, prop := range section.Props {
+			gotFields = append(gotFields, prop.Name)
+		}
+		require.ElementsMatchf(t, wantFields, gotFields, "%s exported fields", typ)
+		require.Lenf(t, gotFields, len(wantFields), "%s must document every field once", typ)
+	}
+}
+
+func TestComplexInputMetadataCapturesSourceTruthAndPublicSignatures(t *testing.T) {
+	require.True(t, apiProp(t, comboboxAPISections, "Config", "ID").Required)
+	require.True(t, apiProp(t, comboboxAPISections, "Config", "Name").Required)
+	require.Contains(t, apiProp(t, comboboxAPISections, "Config", "Required").Default, "no rendered effect")
+	require.Contains(t, apiProp(t, comboboxAPISections, "Source", "LazyEndpoint").Description, "value is not rendered")
+	require.Contains(t, apiProp(t, comboboxAPISections, "State", "Deps").Description, "not read by the renderer")
+
+	require.Equal(t, "nil (prevention enabled)", apiProp(t, formAPISections, "Config", "PreventEnterSubmit").Default)
+	require.Equal(t, `"post" when Action is non-empty`, apiProp(t, formAPISections, "Config", "Method").Default)
+	require.Contains(t, apiProp(t, formAPISections, "FooterConfig", "CancelHTMX").Description, "does not suppress CancelHref")
+	require.Contains(t, apiProp(t, formAPISections, "FieldGroupConfig", "Input").Description, "first non-nil")
+	require.Contains(t, apiProp(t, formAPISections, "FieldGroupConfig", "FileInput").Description, "last built-in")
+
+	require.Equal(t, `"values"`, apiProp(t, schemaFormAPISections, "FieldsConfig", "NamePrefix").Default)
+	require.Contains(t, apiProp(t, schemaFormAPISections, "Field", "Value").Description, "wins over Default")
+	require.Contains(t, apiProp(t, schemaFormAPISections, "Field", "ArrayDefault").Description, "KindArray")
+
+	require.Equal(t, `"search"`, apiProp(t, searchAPISections, "Config", "ID").Default)
+	require.Equal(t, "4 when <= 0", apiProp(t, searchAPISections, "Config", "MaxResults").Default)
+	require.Equal(t, "120 when <= 0", apiProp(t, searchAPISections, "Config", "DescriptionMaxLength").Default)
+	require.Contains(t, apiProp(t, searchAPISections, "Config", "ItemsURL").Description, "instead of Items")
+	require.Contains(t, apiProp(t, searchAPISections, "Item", "Attrs").Description, "duplicate attributes")
+
+	require.Equal(t, `"Add row"`, apiProp(t, structuredInputAPISections, "Config", "AddActionLabel").Default)
+	require.Contains(t, apiProp(t, structuredInputAPISections, "Config", "Columns").Description, "repeatable row")
+	require.Equal(t, "ColumnText when empty", apiProp(t, structuredInputAPISections, "Column", "Type").Default)
+	require.Contains(t, apiProp(t, structuredInputAPISections, "Column", "Default").Description, "first option value")
+	require.Contains(t, apiProp(t, structuredInputAPISections, "Option", "Label").Description, "falls back to Value")
+
+	expectedSignatures := map[string]string{
+		"Config.Validate":       "func (c Config) Validate() error",
+		"Config.InitialState":   "func (c Config) InitialState() State",
+		"OptionsProvider":       "type OptionsProvider func(ctx context.Context, search string, deps map[string]string) ([]Option, error)",
+		"Handler":               "func Handler(cfg Config, provider OptionsProvider) http.Handler",
+		"AllowModeManaged":      `const AllowModeManaged AllowMode = "managed"`,
+		"AllowModeDisabled":     `const AllowModeDisabled AllowMode = "disabled"`,
+		"FlattenAllowList":      "func FlattenAllowList(m *map[string]any) map[string]AllowMode",
+		"Walk":                  "func Walk(schema map[string]any, defaults, values map[string]any, allowList map[string]AllowMode) []Field",
+		"FallbackFromDefaults":  "func FallbackFromDefaults(defaults, values map[string]any, allowList map[string]AllowMode) []Field",
+		"PruneDisabled":         "func PruneDisabled(values map[string]any, allowList map[string]AllowMode) map[string]any",
+		"HasOnlySimpleScalars":  "func HasOnlySimpleScalars(fields []Field) bool",
+		"Item.SearchText":       "func (item Item) SearchText() string",
+		"Item.NormalizedMethod": "func (item Item) NormalizedMethod() string",
+		"Item.SafeHref":         "func (item Item) SafeHref() string",
+	}
+	gotSignatures := make(map[string]string, len(expectedSignatures))
+	for _, sections := range complexInputAPISectionSlices() {
+		for _, section := range sections {
+			for _, prop := range section.Props {
+				if prop.Signature == "" {
+					continue
+				}
+				_, duplicate := gotSignatures[prop.Name]
+				require.Falsef(t, duplicate, "public signature %s documented more than once", prop.Name)
+				gotSignatures[prop.Name] = prop.Signature
+			}
+		}
+	}
+	require.Equal(t, expectedSignatures, gotSignatures)
+}
+
+func TestComplexInputConstructorsAreDocumentedExactlyOnce(t *testing.T) {
+	expected := map[string]rootcomponents.Kind{
+		"combobox.Combobox(cfg Config, state State) Instance":                                   rootcomponents.KindCombobox,
+		"form.Form(cfg Config) Instance":                                                        rootcomponents.KindForm,
+		"form.Section(cfg SectionConfig) SectionInstance":                                       rootcomponents.KindFormSection,
+		"form.CollapsibleSection(cfg CollapsibleSectionConfig) CollapsibleSectionInstance":      rootcomponents.KindFormCollapsibleSection,
+		"form.FlipSection(cfg FlipSectionConfig, readView templ.Component) FlipSectionInstance": rootcomponents.KindFormFlipSection,
+		"form.SubSection(cfg SubSectionConfig) SubSectionInstance":                              rootcomponents.KindFormSubSection,
+		"form.FieldGroup(cfg FieldGroupConfig) FieldGroupInstance":                              rootcomponents.KindFormFieldGroup,
+		"form.FormErrors(cfg FormErrorsConfig) FormErrorsInstance":                              rootcomponents.KindFormErrors,
+		"schemaform.Fields(cfg FieldsConfig) Instance":                                          rootcomponents.KindSchemaFormFields,
+		"search.Search(cfg Config) Instance":                                                    rootcomponents.KindSearch,
+		"search.SearchField(cfg Config) FieldInstance":                                          rootcomponents.KindSearchField,
+		"search.SearchModal(cfg Config) ModalInstance":                                          rootcomponents.KindSearchModal,
+		"structuredinput.StructuredInput(cfg Config) Instance":                                  rootcomponents.KindStructuredInput,
+	}
+
+	got := make(map[string]rootcomponents.Kind, len(expected))
+	for _, sections := range complexInputAPISectionSlices() {
+		for _, section := range sections {
+			if section.Constructor == "" {
+				continue
+			}
+			_, duplicate := got[section.Constructor]
+			require.Falsef(t, duplicate, "constructor %s documented more than once", section.Constructor)
+			got[section.Constructor] = section.Kind
+		}
+	}
+	require.Equal(t, expected, got)
+}
+
+func TestComplexInputMetadataMatchesRepresentativeRenderBranches(t *testing.T) {
+	staticConfig := combobox.Config{
+		ID:     "required-audit",
+		Name:   "required-audit",
+		Source: combobox.Source{Static: []combobox.Option{{Value: "a", Label: "A"}}},
+	}
+	var optionalCombobox strings.Builder
+	require.NoError(t, combobox.Combobox(staticConfig, staticConfig.InitialState()).Render(context.Background(), &optionalCombobox))
+	staticConfig.Required = true
+	var requiredCombobox strings.Builder
+	require.NoError(t, combobox.Combobox(staticConfig, staticConfig.InitialState()).Render(context.Background(), &requiredCombobox))
+	require.Equal(t, optionalCombobox.String(), requiredCombobox.String(), "Config.Required currently has no rendered effect")
+
+	lazyConfig := combobox.Config{
+		ID:              "lazy-audit",
+		Name:            "lazy-audit",
+		EnableSearch:    true,
+		ToggleEndpoint:  "/toggle",
+		OptionsEndpoint: "/options",
+		ClearEndpoint:   "/clear",
+		Source:          combobox.Source{LazyEndpoint: "/lazy-source"},
+	}
+	var lazyCombobox strings.Builder
+	require.NoError(t, combobox.Combobox(lazyConfig, combobox.State{}).Render(context.Background(), &lazyCombobox))
+	require.Contains(t, lazyCombobox.String(), `hx-get="/options"`)
+	require.NotContains(t, lazyCombobox.String(), "/lazy-source")
+
+	var defaultForm strings.Builder
+	require.NoError(t, form.Form(form.Config{}).Render(context.Background(), &defaultForm))
+	require.Contains(t, defaultForm.String(), "@keydown.enter")
+	allowEnter := false
+	var enterForm strings.Builder
+	require.NoError(t, form.Form(form.Config{PreventEnterSubmit: &allowEnter}).Render(context.Background(), &enterForm))
+	require.NotContains(t, enterForm.String(), "@keydown.enter")
+
+	var schemaFields strings.Builder
+	require.NoError(t, schemaform.Fields(schemaform.FieldsConfig{
+		Fields: []schemaform.Field{{Path: "replicas", Label: "Replicas", Kind: schemaform.KindInteger}},
+	}).Render(context.Background(), &schemaFields))
+	require.Contains(t, schemaFields.String(), `name="values.replicas"`)
+	require.Contains(t, schemaFields.String(), `step="1"`)
+
+	var searchField strings.Builder
+	require.NoError(t, search.SearchField(search.Config{}).Render(context.Background(), &searchField))
+	require.Contains(t, searchField.String(), `id="search"`)
+	require.Contains(t, searchField.String(), "⌘ K")
+
+	var structured strings.Builder
+	require.NoError(t, structuredinput.StructuredInput(structuredinput.Config{
+		Name: "rules",
+		Columns: []structuredinput.Column{{
+			Key:     "priority",
+			Type:    structuredinput.ColumnSelect,
+			Options: []structuredinput.Option{{Value: "high"}},
+		}},
+	}).Render(context.Background(), &structured))
+	require.Contains(t, structured.String(), "Add row")
+	require.Contains(t, structured.String(), "high")
+	require.Contains(t, structured.String(), "structuredInput")
+}
+
+func TestStructuredInputCatalogCopyDescribesActualDataModel(t *testing.T) {
+	for _, page := range catalog.ComponentPages() {
+		if page.Key != "components/structured-input" {
+			continue
+		}
+		require.Contains(t, page.Description, "repeatable")
+		require.Contains(t, page.Description, "typed columns")
+		require.NotContains(t, page.Description, "prefixes")
+		require.NotContains(t, page.Description, "suffixes")
+		require.NotContains(t, page.Description, "segmented")
+		return
+	}
+	t.Fatal("structured-input catalog entry not found")
 }
 
 func TestAtomicInputAPIRegistryUsesPageSectionSlices(t *testing.T) {
@@ -590,6 +925,16 @@ func atomicInputAPISectionSlices() [][]demo.APISection {
 		textareaAPISections,
 		textInputAPISections,
 		toggleAPISections,
+	}
+}
+
+func complexInputAPISectionSlices() [][]demo.APISection {
+	return [][]demo.APISection{
+		comboboxAPISections,
+		formAPISections,
+		schemaFormAPISections,
+		searchAPISections,
+		structuredInputAPISections,
 	}
 }
 

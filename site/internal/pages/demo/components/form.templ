@@ -1,6 +1,7 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/form"
 	gocombobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/modal"
@@ -11,6 +12,183 @@ import (
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var formAPISections = []demo.APISection{
+	demo.StructAPI[form.Config](
+		rootcomponents.KindForm,
+		"Config",
+		"form.Form(cfg Config) Instance",
+		"Configures the form element, native or HTMX submission, Enter-key policy, and optional footer.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (omitted)`, Description: "Form element ID, including the target used by external controls with form=\"...\"."},
+			{Name: "Action", Default: `"" (action and method omitted)`, Description: "Native action URL. Method is rendered only when Action is non-empty."},
+			{Name: "Method", Default: `"post" when Action is non-empty`, Allowed: []string{"post", "get", "dialog"}, Description: "Native form method paired with Action; arbitrary strings are passed through."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the form element."},
+			{Name: "HTMX", Default: "nil (no HTMX attributes)", Description: "Optional request and swap attributes. Native Action attributes may coexist when both are configured."},
+			{Name: "PreventEnterSubmit", Default: "nil (prevention enabled)", Description: "Nil or true adds an Alpine keydown handler that prevents Enter submission except from submit controls and textareas; a pointer to false omits the handler."},
+			{Name: "Footer", Default: "nil (no footer)", Description: "Renders the built-in cancel/submit footer after child content when non-nil."},
+		},
+	),
+	demo.StructAPI[form.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Maps non-empty request, target, swap, and encoding fields onto Form.",
+		[]demo.APIPropDoc{
+			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL rendered as hx-post."},
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL rendered as hx-get."},
+			{Name: "Put", Default: `"" (omitted)`, Description: "PUT request URL rendered as hx-put."},
+			{Name: "Delete", Default: `"" (omitted)`, Description: "DELETE request URL rendered as hx-delete."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "Selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+			{Name: "Encoding", Default: `"" (browser form encoding)`, Description: "Encoding rendered as hx-encoding, for example multipart/form-data."},
+		},
+	),
+	demo.StructAPI[form.FooterConfig](
+		"",
+		"FooterConfig",
+		"",
+		"Configures the footer rendered by Form when Config.Footer is non-nil.",
+		[]demo.APIPropDoc{
+			{Name: "SubmitLabel", Default: `"" (empty submit button)`, Description: "Visible text of the always-rendered submit button."},
+			{Name: "CancelLabel", Default: `"" (cancel link omitted)`, Description: "Visible cancel-link text; an empty value suppresses the link."},
+			{Name: "CancelHref", Default: `"" (href omitted)`, Description: "Fallback or ordinary href for the cancel link. It is still rendered when CancelHTMX is non-nil."},
+			{Name: "CancelHTMX", Default: "nil (no cancel HTMX attributes)", Description: "Optional HTMX navigation attributes for the cancel link; it does not suppress CancelHref when that fallback is also provided."},
+			{Name: "SubmitDisabled", Default: `"" (no Alpine disabled binding)`, Description: "Alpine expression rendered as x-bind:disabled on the submit button."},
+			{Name: "Sticky", Default: "false", Description: "Adds sticky bottom positioning and footer background classes when true."},
+		},
+	),
+	demo.StructAPI[form.CancelHTMXConfig](
+		"",
+		"CancelHTMXConfig",
+		"",
+		"Maps optional HTMX navigation attributes onto the footer cancel link.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET URL rendered as hx-get."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "Selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+			{Name: "PushURL", Default: "false", Description: "When true, renders hx-push-url=\"true\"."},
+		},
+	),
+	demo.StructAPI[form.SectionConfig](
+		rootcomponents.KindFormSection,
+		"SectionConfig",
+		"form.Section(cfg SectionConfig) SectionInstance",
+		"Configures a child-rendering form section card.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (omitted)`, Description: "Section element ID, commonly used as an HTMX target."},
+			{Name: "Title", Default: `"" (heading omitted)`, Description: "Section heading above the field grid."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the section wrapper."},
+			{Name: "OOB", Default: "false", Description: "When true, adds hx-swap-oob=\"true\" to the wrapper."},
+			{Name: "Columns", Default: `"2" responsive layout`, Allowed: []string{"1", "2"}, Description: "Only the literal \"1\" selects one column; every other value uses the responsive two-column grid."},
+		},
+	),
+	demo.StructAPI[form.CollapsibleSectionConfig](
+		rootcomponents.KindFormCollapsibleSection,
+		"CollapsibleSectionConfig",
+		"form.CollapsibleSection(cfg CollapsibleSectionConfig) CollapsibleSectionInstance",
+		"Configures an Alpine disclosure section and embeds the shared section fields.",
+		[]demo.APIPropDoc{
+			{Name: "SectionConfig", Default: "SectionConfig{}", Description: "Embedded ID, Title, RootClass, OOB, and Columns settings; the title is always rendered in the disclosure trigger, even when empty."},
+			{Name: "Collapsed", Default: "false (starts expanded)", Description: "Initial Alpine disclosure state."},
+			{Name: "Summary", Default: `"" (omitted)`, Description: "Supporting text shown only while the section is collapsed."},
+		},
+	),
+	demo.StructAPI[form.FlipSectionConfig](
+		rootcomponents.KindFormFlipSection,
+		"FlipSectionConfig",
+		"form.FlipSection(cfg FlipSectionConfig, readView templ.Component) FlipSectionInstance",
+		"Configures a read-view/edit-view form section and embeds the shared section fields.",
+		[]demo.APIPropDoc{
+			{Name: "SectionConfig", Default: "SectionConfig{}", Description: "Embedded ID, Title, RootClass, OOB, and Columns settings used by both views."},
+			{Name: "Flipped", Default: "false (read view shown)", Description: "Initial Alpine editing state; true starts on the editable child-content view."},
+			{Name: "EditLabel", Default: `"Edit"`, Description: "Label of the control that switches from read view to edit view."},
+			{Name: "DoneLabel", Default: `"Done"`, Description: "Label of the control that switches from edit view to read view."},
+		},
+	),
+	demo.StructAPI[form.SubSectionConfig](
+		rootcomponents.KindFormSubSection,
+		"SubSectionConfig",
+		"form.SubSection(cfg SubSectionConfig) SubSectionInstance",
+		"Configures a nested child-rendering subsection card.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (omitted)`, Description: "Subsection wrapper ID."},
+			{Name: "Title", Default: `"" (heading omitted)`, Description: "Subsection heading."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the subsection wrapper."},
+			{Name: "Columns", Default: `"2" responsive layout`, Allowed: []string{"1", "2"}, Description: "Only the literal \"1\" selects one column; every other value uses the responsive two-column grid."},
+		},
+	),
+	demo.StructAPI[form.FieldGroupConfig](
+		rootcomponents.KindFormFieldGroup,
+		"FieldGroupConfig",
+		"form.FieldGroup(cfg FieldGroupConfig) FieldGroupInstance",
+		"Configures a label/error/hint wrapper around the first configured built-in field, or around caller children when every built-in pointer is nil.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (wrapper ID and label for omitted)`, Description: "Wrapper ID and the label's for target; it is not copied into the nested field config."},
+			{Name: "Label", Default: `"" (label omitted)`, Description: "Visible wrapper label."},
+			{Name: "Required", Default: "false", Description: "Adds only the visible required asterisk; it does not set required on the nested input."},
+			{Name: "Errors", Default: "nil", Description: "Validation messages rendered after the field and before hints."},
+			{Name: "Hints", Default: "nil", Description: "Supporting messages rendered after any errors."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the field-group wrapper."},
+			{Name: "Validation", Default: "nil (no validation attributes)", Description: "Optional field-validation HTMX contract. A non-nil config always adds target, swap, include, and vals; Endpoint additionally enables post and trigger."},
+			{Name: "Input", Default: "nil", Description: "TextInput config and first non-nil built-in checked by FieldGroup."},
+			{Name: "Combobox", Default: "nil", Description: "Combobox config and second non-nil built-in; rendered with Config.InitialState without calling Validate."},
+			{Name: "Textarea", Default: "nil", Description: "Textarea config and third non-nil built-in."},
+			{Name: "Toggle", Default: "nil", Description: "Toggle config and fourth non-nil built-in."},
+			{Name: "Checkbox", Default: "nil", Description: "Checkbox config and fifth non-nil built-in."},
+			{Name: "TagsList", Default: "nil", Description: "TagsList config and sixth non-nil built-in."},
+			{Name: "StructuredInput", Default: "nil", Description: "StructuredInput config and seventh non-nil built-in."},
+			{Name: "FileInput", Default: "nil", Description: "FileInput config and last built-in checked before falling back to children."},
+			{Name: "OOB", Default: "false", Description: "When true, adds hx-swap-oob=\"true\" to the wrapper."},
+			{Name: "Meta", Default: "nil (no metadata attributes)", Description: "Optional validation metadata rendered as data-goshtoso-* attributes; validation.FormDef.Bind normally supplies it."},
+		},
+	),
+	demo.StructAPI[form.FieldMeta](
+		"",
+		"FieldMeta",
+		"",
+		"Carries validation reconstruction and dependency metadata for FieldGroup.",
+		[]demo.APIPropDoc{
+			{Name: "FormID", Default: `""`, Description: "Rendered as data-goshtoso-form when Meta is non-nil."},
+			{Name: "FieldName", Default: `""`, Description: "Rendered as data-goshtoso-field and, when validation Endpoint is non-empty, as the wrapper name."},
+			{Name: "DependsOn", Default: `"" (attribute omitted)`, Description: "Comma-separated dependency names rendered as data-goshtoso-depends."},
+		},
+	),
+	demo.StructAPI[form.ValidationConfig](
+		"",
+		"ValidationConfig",
+		"",
+		"Configures HTMX validation attributes on FieldGroup.",
+		[]demo.APIPropDoc{
+			{Name: "Endpoint", Default: `"" (hx-post, hx-trigger, and name omitted)`, Description: "Validation POST URL. Target/swap/include/vals still render when Validation is non-nil but Endpoint is empty."},
+			{Name: "Target", Default: `"this"`, Description: "Optional hx-target; a non-nil Validation config falls back to this."},
+			{Name: "Trigger", Default: `"change" when Endpoint is non-empty`, Description: "Validation trigger; it is rendered only together with a non-empty Endpoint."},
+		},
+	),
+	demo.StructAPI[form.FormErrorsConfig](
+		rootcomponents.KindFormErrors,
+		"FormErrorsConfig",
+		"form.FormErrors(cfg FormErrorsConfig) FormErrorsInstance",
+		"Configures a form-level alert summary; the entire component renders nothing when Items is empty.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"form-errors" when Items is non-empty`, Description: "Alert wrapper ID."},
+			{Name: "Title", Default: `"Validation failed" when Items is non-empty`, Description: "Summary heading."},
+			{Name: "Items", Default: "nil (component renders nothing)", Description: "Error entries. One item without a Path renders as a paragraph; all other non-empty sets render as a list."},
+			{Name: "Hint", Default: `"" (omitted)`, Description: "Optional supporting text under the title."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the alert wrapper."},
+		},
+	),
+	demo.StructAPI[form.FormErrorItem](
+		"",
+		"FormErrorItem",
+		"",
+		"Describes one error rendered by FormErrors.",
+		[]demo.APIPropDoc{
+			{Name: "Path", Default: `"" (path code omitted)`, Description: "Optional field name or JSONPath shown before the message."},
+			{Name: "Message", Default: `""`, Description: "Human-readable error text.", Required: true},
+		},
+	),
+}
 
 // FormDemoPage renders the Form component demo
 templ FormDemoPage() {
@@ -84,28 +262,7 @@ templ formDemoContent() {
 		)
 	</div>
 	// API reference lives outside #form-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "ID", Type: "string", Default: `""`, Description: "Form element id (target of external submit buttons via form=\"...\")."},
-		{Name: "Action", Type: "string", Default: `""`, Description: "Non-HTMX form action URL."},
-		{Name: "Method", Type: "string", Default: `"post"`, Description: "HTTP method for non-HTMX submits."},
-		{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX submit config (Post/Put/Target/Swap, inline validation)."},
-		{Name: "PreventEnterSubmit", Type: "*bool", Default: "nil", Description: "When true, Enter in a field does not submit the form."},
-		{Name: "Footer", Type: "*FooterConfig", Default: "nil", Description: "Submit/cancel footer; omit for the external-submit pattern."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the <form>."},
-		{Name: "FieldGroup", Type: "FieldGroupConfig", Default: "—", Description: "Per-field wrapper: Label, Required, Errors, Hints + one built-in (Input/Combobox/Textarea/Toggle/...) or children."},
-		{Name: "Section / SubSection", Type: "SectionConfig", Default: "—", Description: "Group fields under a titled section; SubSection nests within a Section."},
-		{Name: "CollapsibleSection", Type: "CollapsibleSectionConfig", Default: "—", Description: "A Section that collapses, with a Summary shown when collapsed."},
-		{Name: "FlipSection", Type: "FlipSectionConfig", Default: "—", Description: "A section with a read-only front view and an editable back."},
-		{Name: "FormDef.FormID", Type: "string", Default: `""`, Description: "DOM id of the form (must match form.Config.ID)."},
-		{Name: "FormDef.Endpoint", Type: "string", Default: `""`, Description: "Server URL that handles field + full-form validation requests."},
-		{Name: "FormDef.Fields", Type: "map[string]*FieldDef", Default: "nil", Description: "Per-field definitions keyed by field name."},
-		{Name: "FieldDef.Name", Type: "string", Default: `""`, Description: "Form field name (matches the input's Name)."},
-		{Name: "FieldDef.FieldGroup", Type: "*form.FieldGroupConfig", Default: "nil", Description: "The field's FieldGroup (label, input, hints, errors)."},
-		{Name: "FieldDef.OnChange", Type: "bool", Default: "false", Description: "Validate this field on change (blur), not just on submit."},
-		{Name: "FieldDef.DependsOn", Type: "[]string", Default: "nil", Description: "Other field names that re-trigger this field's validation (e.g. slug depends on name)."},
-		{Name: "def.Bind()", Type: "method", Default: "—", Description: "Wires HTMX attributes + metadata onto each FieldGroup; call once after defining."},
-		{Name: "validation.Handle", Type: "func", Default: "—", Description: "Server entry point: routes field vs full-form requests and runs your per-field validator."},
-	})
+	@demo.StructuredAPIReference(formAPISections)
 }
 
 var formValidationDemoCode = `// 1. Define the form fields and validation rules

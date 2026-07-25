@@ -9,9 +9,79 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/search"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var searchAPISections = []demo.APISection{
+	demo.StructAPI[search.Config](
+		rootcomponents.KindSearch,
+		"Config",
+		"search.Search(cfg Config) Instance",
+		"Configures the composed Search primitive and the same Config shared by standalone SearchField and SearchModal.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"search"`, Description: "Stable relationship namespace used by the trigger root, modal, input, label, and cross-component open/close events."},
+			{Name: "Label", Default: `"Search"`, Description: "Visible SearchField trigger text and SearchModal accessible label/results label."},
+			{Name: "Placeholder", Default: `"Search"`, Description: "SearchModal input placeholder; SearchField does not use it."},
+			{Name: "ShortcutText", Default: `"⌘ K"`, Description: "SearchField KBD hint; it is display text and does not choose the actual keyboard binding."},
+			{Name: "GlobalShortcut", Default: "false", Description: "SearchField listens for Cmd/Ctrl+K when true; SearchModal always listens for its open event and Escape while open."},
+			{Name: "EscapeText", Default: `"Esc"`, Description: "SearchModal close-hint KBD text; the actual Escape handler remains enabled regardless of this value."},
+			{Name: "Items", Default: "nil", Description: "Server-provided result records pre-rendered by SearchModal only when ItemsURL is empty."},
+			{Name: "ItemsURL", Default: `"" (Items are pre-rendered)`, Description: "When non-empty, SearchModal fetches and normalizes JSON result records instead of Items; failed or unsupported payloads become an empty client list."},
+			{Name: "MaxResults", Default: "4 when <= 0", Description: "Maximum client-visible matches used by SearchModal."},
+			{Name: "DescriptionMaxLength", Default: "120 when <= 0", Description: "SearchModal client-side truncation limit; an ellipsis is appended when a description exceeds it."},
+			{Name: "EmptyText", Default: `"No results found."`, Description: "SearchModal empty-state text shown only for a non-empty query with no visible matches."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes only to the composed Search outer wrapper; standalone SearchField and SearchModal do not render it."},
+			{Name: "TriggerClass", Default: `""`, Description: "Appends CSS classes to the SearchField trigger button."},
+			{Name: "DialogClass", Default: `""`, Description: "Appends CSS classes to the inner SearchModal panel."},
+			{Name: "InputAttrs", Default: "nil", Description: "Additional non-conflicting attributes appended to the SearchModal input. Conflicts with modeled attributes create duplicate attributes rather than overriding them."},
+		},
+	),
+	demo.StructAPI[search.Item](
+		"",
+		"Item",
+		"",
+		"Describes one server-provided search result and its filtering/navigation metadata.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (omitted)`, Description: "Optional result-button ID."},
+			{Name: "Title", Default: `""`, Description: "Primary visible text and the first field considered for title-prioritized matching.", Required: true},
+			{Name: "Description", Default: `"" (omitted)`, Description: "Supporting result text included in filtering and client-side truncation/highlighting."},
+			{Name: "Href", Default: `"" (no plain navigation)`, Description: "Navigation target accepted only when SafeHref permits its scheme. Plain navigation is skipped when Attrs supplies hx-get or hx-post."},
+			{Name: "Kind", Default: `"" (omitted)`, Description: "Optional visible type metadata included in filtering."},
+			{Name: "Method", Default: `"" (badge omitted)`, Description: "Trimmed and uppercased by NormalizedMethod, included in filtering, and rendered with method-specific badge tone."},
+			{Name: "Path", Default: `"" (omitted)`, Description: "Optional visible route/resource metadata included in filtering."},
+			{Name: "Section", Default: `"" (omitted)`, Description: "Optional result eyebrow/group label included in filtering."},
+			{Name: "Keywords", Default: "nil", Description: "Additional terms appended to SearchText but not rendered visibly."},
+			{Name: "Attrs", Default: "nil", Description: "Additional non-conflicting attributes appended to the result button. Conflicts with modeled fields create duplicate attributes; hx-get or hx-post suppresses plain Href navigation."},
+		},
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindSearchField,
+		"SearchField",
+		"search.SearchField(cfg Config) FieldInstance",
+		"Creates the compact trigger; pair it with SearchModal using the same resolved Config.ID.",
+		nil,
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindSearchModal,
+		"SearchModal",
+		"search.SearchModal(cfg Config) ModalInstance",
+		"Creates the dialog, input, result source, filtering, keyboard navigation, and selection behavior.",
+		nil,
+	),
+	demo.FunctionsAPI(
+		"",
+		"Item methods",
+		"",
+		"Documents the public normalization and safety helpers used by server-rendered Items.",
+		[]demo.APIPropDoc{
+			{Name: "Item.SearchText", Signature: "func (item Item) SearchText() string", Default: `"" for an empty Item`, Description: "Joins non-empty trimmed title, description, kind, normalized method, path, section, and keyword values with spaces."},
+			{Name: "Item.NormalizedMethod", Signature: "func (item Item) NormalizedMethod() string", Default: `""`, Description: "Returns Method trimmed and uppercased."},
+			{Name: "Item.SafeHref", Signature: "func (item Item) SafeHref() string", Default: `"" for empty, invalid, or executable schemes`, Description: "Returns trimmed relative URLs plus http, https, mailto, and tel URLs; rejects every other scheme."},
+		},
+	),
+}
 
 // SearchDemoPage renders the Search component demo.
 func SearchDemoPage() templ.Component {
@@ -128,23 +198,7 @@ func searchDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `"search"`, Description: "Unique id used for the root, dialog, input, and label relationships."},
-			{Name: "Label", Type: "string", Default: `"Search"`, Description: "Accessible label and trigger text."},
-			{Name: "Placeholder", Type: "string", Default: `"Search"`, Description: "Placeholder shown in the dialog input."},
-			{Name: "ShortcutText", Type: "string", Default: `"⌘ K"`, Description: "Keyboard hint rendered in the trigger KBD."},
-			{Name: "GlobalShortcut", Type: "bool", Default: "false", Description: "When true, Cmd/Ctrl+K opens this search instance."},
-			{Name: "EscapeText", Type: "string", Default: `"Esc"`, Description: "Keyboard hint rendered beside the dialog input."},
-			{Name: "Items", Type: "[]Item", Default: "nil", Description: "Caller-provided result records. The component only filters and displays them."},
-			{Name: "ItemsURL", Type: "string", Default: `""`, Description: "JSON endpoint for client-loaded result records. When set, records are fetched and only visible matches are rendered."},
-			{Name: "MaxResults", Type: "int", Default: "4", Description: "Maximum number of visible matches."},
-			{Name: "DescriptionMaxLength", Type: "int", Default: "120", Description: "Maximum visible description length before truncation."},
-			{Name: "EmptyText", Type: "string", Default: `"No results found."`, Description: "Message shown when the current query has no matches."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the root element."},
-			{Name: "TriggerClass", Type: "string", Default: `""`, Description: "Extra classes on the trigger button."},
-			{Name: "DialogClass", Type: "string", Default: `""`, Description: "Extra classes on the dialog panel."},
-			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Additional attributes on the search input."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(searchAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -276,7 +276,7 @@ var componentPages = []Entry{
 		Path:        "/components/structured-input",
 		Title:       "Structured Input",
 		Active:      "structured-input",
-		Description: "Compose inputs for prefixes, suffixes, segmented values, metadata rows, and constrained data entry in Go.",
+		Description: "Build repeatable structured form rows with typed columns for text and select controls, nested submitted names, defaults, and add/remove actions in Go.",
 		Section:     "Input",
 		Order:       23,
 		Kinds:       []components.Kind{components.KindStructuredInput},
