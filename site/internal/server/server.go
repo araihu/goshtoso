@@ -117,6 +117,7 @@ func (s *Server) setupRoutes() {
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
+	s.mux.HandleFunc("/docs/application-patterns", s.handleApplicationPatternsPage)
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
@@ -413,6 +414,10 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/agents")
+}
+
+func (s *Server) handleApplicationPatternsPage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "docs/application-patterns")
 }
 
 func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request) {
