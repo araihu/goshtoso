@@ -9,11 +9,32 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
 	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var cardAPISections = []demo.APISection{
+	demo.StructAPI[card.Config](
+		rootcomponents.KindCard,
+		"Config",
+		"card.Card(cfg Config) Instance",
+		"Configures a composable card article.",
+		[]demo.APIPropDoc{
+			{Name: "Image", Default: `"" (no image)`, Description: "Optional image URL."},
+			{Name: "ImageAlt", Default: `""`, Description: "Alternative text for Image."},
+			{Name: "Tag", Default: `""`, Description: "Optional category text above the title."},
+			{Name: "Title", Default: `""`, Description: "Card heading and source for the description ID.", Required: true},
+			{Name: "Description", Default: `""`, Description: "Optional body text."},
+			{Name: "Footer", Default: "nil", Description: "Optional component content below the body, such as actions or ratings."},
+			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearancePrimary"}, Description: "Default border or primary-accent border."},
+			{Name: "Layout", Default: "LayoutVertical", Allowed: []string{"LayoutVertical", "LayoutHorizontal"}, Description: "Stacks media above content or places it beside content."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the card article."},
+		},
+	),
+}
 
 // CardDemoPage renders the Card component demo
 func CardDemoPage() templ.Component {
@@ -191,17 +212,7 @@ templ bookNowButton() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Image", Type: "string", Default: `""`, Description: "Card image URL (rendered above the body, or beside it in horizontal layout)."},
-			{Name: "ImageAlt", Type: "string", Default: `""`, Description: "Alt text for the image."},
-			{Name: "Tag", Type: "string", Default: `""`, Description: "Optional category/tag shown above the title."},
-			{Name: "Title", Type: "string", Default: `""`, Description: "Card title (also seeds the aria-describedby id)."},
-			{Name: "Description", Type: "string", Default: `""`, Description: "Body text."},
-			{Name: "Footer", Type: "templ.Component", Default: "nil", Description: "Optional footer content (buttons, links, ratings) rendered below the body."},
-			{Name: "Appearance", Type: "Appearance", Default: "AppearanceDefault", Description: `Visual treatment: default or primary (adds a 2px primary border accent).`},
-			{Name: "Layout", Type: "Layout", Default: "LayoutVertical", Description: `Layout: "vertical" (image top) or "horizontal" (image beside content).`},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the article container."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(cardAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

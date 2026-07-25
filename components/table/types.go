@@ -326,8 +326,8 @@ type FilterConfig struct {
 	// Collapsible enables a toggle to show/hide the filter bar.
 	// Ignored when Appearance is FilterAppearanceInline.
 	Collapsible bool
-	// InitiallyExpanded controls whether filters start visible (default: true).
-	// Ignored when Appearance is FilterAppearanceInline.
+	// InitiallyExpanded starts a collapsible bar open; zero starts it closed.
+	// Non-collapsible and inline filters are always visible.
 	InitiallyExpanded bool
 	// Appearance selects the layout (bar vs inline). See FilterAppearance.
 	Appearance FilterAppearance
@@ -372,7 +372,7 @@ func (c *FilterConfig) resolvedHXSwap() string {
 type HTMXConfig struct {
 	// Endpoint is the base URL for HTMX requests (sorting, pagination, lazy load).
 	Endpoint string
-	// Target overrides the default HTMX swap target (defaults to tbody ID).
+	// Target is reserved; built-in requests always use the derived tbody ID.
 	Target string
 }
 

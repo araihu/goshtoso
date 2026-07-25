@@ -1,10 +1,59 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var avatarAPISections = []demo.APISection{
+	demo.StructAPI[avatar.Config](
+		rootcomponents.KindAvatar,
+		"Config",
+		"avatar.Avatar(cfg Config) Instance",
+		"Configures one image, initials, or icon avatar.",
+		[]demo.APIPropDoc{
+			{Name: "Src", Default: `""`, Description: "Static image URL; load failures reveal the initials or icon fallback."},
+			{Name: "Alt", Default: `""`, Description: "Alternative text for the image layer."},
+			{Name: "Name", Default: `""`, Description: "Name used to derive initials when Initials is empty."},
+			{Name: "Initials", Default: `"?" or derived from Name`, Description: "Explicit fallback initials; overrides initials derived from Name."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeXS", "SizeSM", "SizeMD", "SizeLG", "SizeXL", "Size2XL"}, Description: "Rendered avatar size unless Reactive supplies classes."},
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneInverse", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Color treatment for the initials or icon fallback."},
+			{Name: "Shape", Default: "ShapeCircle", Allowed: []string{"ShapeCircle", "ShapeSquare"}, Description: "Circular or square avatar shape."},
+			{Name: "Radius", Default: "RadiusDefault", Allowed: []string{"RadiusDefault", "RadiusNone", "RadiusXS", "RadiusSM", "RadiusMD", "RadiusLG"}, Description: "Corner radius used only for square avatars; the default renders rounded-md."},
+			{Name: "Border", Default: "false", Description: "Adds a two-pixel ring around the avatar."},
+			{Name: "BorderColor", Default: "Semantic status tone; otherwise border-primary", Description: "CSS border-color class used when Border is true."},
+			{Name: "Status", Default: `"" (no status)`, Allowed: []string{"StatusOffline", "StatusInfo", "StatusSuccess", "StatusWarning", "StatusDanger"}, Description: "Optional presence indicator."},
+			{Name: "Icon", Default: "nil", Description: "Fallback component rendered instead of initials."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the avatar root."},
+			{Name: "SrcExpr", Default: `""`, Description: "Trusted Alpine expression that supplies the image URL at runtime."},
+			{Name: "Reactive", Default: "false", Description: "Reads size and status-size classes from the parent Alpine scope."},
+			{Name: "ReactiveRadius", Default: "false", Description: "Reads square-radius classes from the parent Alpine scope."},
+		},
+	),
+	demo.StructAPI[avatar.StackConfig](
+		rootcomponents.KindAvatarStack,
+		"StackConfig",
+		"avatar.AvatarStack(cfg StackConfig) StackInstance",
+		"Configures an accessible overlapping group of avatars.",
+		[]demo.APIPropDoc{
+			{Name: "Items", Default: "nil", Description: "Avatar configurations rendered from left to right.", Required: true},
+			{Name: "Label", Default: `"Avatar group"`, Description: "Accessible label for the group."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the stack root."},
+			{Name: "Reactive", Default: "false", Description: "Enables shared reactive sizing for every stack item."},
+		},
+	),
+	demo.FunctionsAPI(
+		"",
+		"Helpers",
+		"",
+		"Public helper for deriving compact fallback initials.",
+		[]demo.APIPropDoc{
+			{Name: "GetInitials", Signature: "func GetInitials(name, email string) string", Default: `"?" when both inputs are empty`, Description: "Returns one or two uppercase initials from name, then email."},
+		},
+	),
+}
 
 // AvatarDemoPage renders the Avatar component demo as a full document.
 // Kept for direct invocation; the registry uses avatarDemoContent directly.
@@ -190,27 +239,7 @@ templ avatarDemoContent() {
 @avatar.Avatar(avatar.Config{Name: "Initials Only", Size: avatar.SizeMD, Tone: avatar.TonePrimary})`,
 			)
 		</div>
-		@demo.APIReference([]demo.PropDoc{
-			{Name: "Src", Type: "string", Default: `""`, Description: "Image URL (falls back to initials/icon on error)."},
-			{Name: "Alt", Type: "string", Default: `""`, Description: "Image alt text."},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Full name used to derive initials when Src is missing/broken."},
-			{Name: "Initials", Type: "string", Default: `""`, Description: "Explicit initials (overrides Name-derived)."},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Fixed size: "xs", "sm", "md", "lg", "xl", "2xl" (ignored when Reactive).`},
-			{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color for initials/icon: default, primary, secondary, info, success, warning, danger.`},
-			{Name: "Shape", Type: "Shape", Default: "ShapeCircle", Description: `Shape: "circle" or "square".`},
-			{Name: "Radius", Type: "Radius", Default: "RadiusDefault", Description: `Square-avatar radius: "none", "xs", "sm", "md", "lg".`},
-			{Name: "Border", Type: "bool", Default: "false", Description: "Add a ring border."},
-			{Name: "BorderColor", Type: "string", Default: `""`, Description: "Tailwind border color class for the ring."},
-			{Name: "Status", Type: "Status", Default: `""`, Description: `Presence dot: "offline", "info", "success", "warning", "danger".`},
-			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Custom placeholder icon (overrides the default user icon)."},
-			{Name: "Reactive", Type: "bool", Default: "false", Description: "Read size classes from the parent Alpine scope (avatarSizeClass) instead of Size."},
-			{Name: "ReactiveRadius", Type: "bool", Default: "false", Description: "Read square radius classes from the parent Alpine scope (avatarRadiusClass)."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the avatar root."},
-			{Name: "StackConfig.Items", Type: "[]avatar.Config", Default: "nil", Description: "Avatar configs rendered as an overlapping group."},
-			{Name: "StackConfig.Label", Type: "string", Default: `"Avatar group"`, Description: "Accessible label for the stacked avatar group."},
-			{Name: "StackConfig.RootClass", Type: "string", Default: `""`, Description: "Extra classes on the stack root."},
-			{Name: "StackConfig.Reactive", Type: "bool", Default: "false", Description: "Apply the shared reactive size binding to every stack item."},
-		})
+		@demo.StructuredAPIReference(avatarAPISections)
 	</div>
 }
 

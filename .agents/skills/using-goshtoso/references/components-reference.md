@@ -40,7 +40,7 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 |-------|------|-------------|
 | `ID` | `string` | ID unique identifier for the item (used for accessibility) |
 | `Title` | `string` | Title is the header text |
-| `Content` | `templ.Component` | Content is the body content (can be templ.Component or string) |
+| `Content` | `templ.Component` | Content is the body component. |
 | `Icon` | `templ.Component` | Icon is an optional leading icon (templ.Component) |
 | `Disabled` | `bool` | Disabled prevents interaction with this item |
 | `InitiallyExpanded` | `bool` | InitiallyExpanded sets the initial state |
@@ -120,7 +120,7 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 | `Shape` | `Shape` | Shape of the avatar (circle or square) |
 | `Radius` | `Radius` | Radius controls the corner radius for square avatars. |
 | `Border` | `bool` | Border adds a colored border (for image avatars) |
-| `BorderColor` | `string` | BorderColor is the border color (defaults to variant color if empty) |
+| `BorderColor` | `string` | BorderColor overrides the border; empty uses semantic status tones or primary. |
 | `Status` | `Status` | Status adds a status indicator dot |
 | `Icon` | `templ.Component` | Icon is an optional icon component (replaces initials in the base layer) |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the avatar root. |
@@ -199,7 +199,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 |-------|------|-------------|
 | `Title` | `string` | Title of the cookie banner |
 | `Description` | `string` | Description is the cookie banner body. |
-| `Icon` | `templ.Component` | Icon is an optional icon (emoji or component) |
+| `Icon` | `templ.Component` | Icon is an optional component; nil renders the default cookie emoji. |
 | `AcceptLabel` | `string` | AcceptLabel is the accept button label |
 | `RejectLabel` | `string` | RejectLabel is the reject button label |
 | `AcceptAction` | `string` | AcceptAction is the Alpine.js action for accept |
@@ -377,7 +377,7 @@ import "github.com/araihu/goshtoso/components/chatbubble"  // package chatbubble
 | `Message` | `string` | Message is the bubble text. |
 | `SenderName` | `string` | SenderName is shown above the bubble (hidden when Grouped). |
 | `Timestamp` | `string` | Timestamp is shown next to the sender name, e.g. "11:32 AM". |
-| `Status` | `Status` | Status is shown under sent/own bubbles, e.g. "Delivered". |
+| `Status` | `Status` | Status renders under any bubble; conventionally use it for sent messages. |
 | `AvatarSrc` | `string` | AvatarSrc is an optional avatar image URL. |
 | `AvatarInitials` | `string` | AvatarInitials is the initials fallback when no image is set. |
 | `AvatarTone` | `avatar.Tone` | AvatarTone controls the initials fallback when no Src is set. |
@@ -1491,7 +1491,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `Filters` | `[]Filter` | Filters is the list of filter controls |
 | `Collapsible` | `bool` | Collapsible enables a toggle to show/hide the filter bar. |
-| `InitiallyExpanded` | `bool` | InitiallyExpanded controls whether filters start visible (default: true). |
+| `InitiallyExpanded` | `bool` | InitiallyExpanded starts a collapsible bar open; zero starts it closed. |
 | `Appearance` | `FilterAppearance` | Appearance selects the layout (bar vs inline). See FilterAppearance. |
 | `HTMX` | `*FilterHTMXConfig` | HTMX configures filter request behavior. |
 
@@ -1520,7 +1520,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | Field | Type | Description |
 |-------|------|-------------|
 | `Endpoint` | `string` | Endpoint is the base URL for HTMX requests (sorting, pagination, lazy load). |
-| `Target` | `string` | Target overrides the default HTMX swap target (defaults to tbody ID). |
+| `Target` | `string` | Target is reserved; built-in requests always use the derived tbody ID. |
 
 **InfiniteScrollConfig**
 

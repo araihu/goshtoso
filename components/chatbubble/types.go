@@ -34,7 +34,7 @@ type Config struct {
 	SenderName string
 	// Timestamp is shown next to the sender name, e.g. "11:32 AM".
 	Timestamp string
-	// Status is shown under sent/own bubbles, e.g. "Delivered".
+	// Status renders under any bubble; conventionally use it for sent messages.
 	Status Status
 	// AvatarSrc is an optional avatar image URL.
 	AvatarSrc string

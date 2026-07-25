@@ -95,7 +95,7 @@ func accordionTemplate(cfg AccordionConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for i, item := range cfg.Items {
-			itemData := AccordionItemData{
+			itemData := accordionItemData{
 				Item:          item,
 				Index:         i,
 				AllowMultiple: cfg.AllowMultiple,
@@ -135,7 +135,7 @@ func generateAlpineData(cfg AccordionConfig) string {
 }
 
 // accordionItem renders a single accordion item
-func accordionItem(data AccordionItemData) templ.Component {
+func accordionItem(data accordionItemData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

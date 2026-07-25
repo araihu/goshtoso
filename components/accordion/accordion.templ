@@ -23,7 +23,7 @@ templ accordionTemplate(cfg AccordionConfig) {
 		x-data={ alpineData }
 	>
 		for i, item := range cfg.Items {
-			{{ itemData := AccordionItemData{
+			{{ itemData := accordionItemData{
 				Item:          item,
 				Index:         i,
 				AllowMultiple: cfg.AllowMultiple,
@@ -55,7 +55,7 @@ func generateAlpineData(cfg AccordionConfig) string {
 }
 
 // accordionItem renders a single accordion item
-templ accordionItem(data AccordionItemData) {
+templ accordionItem(data accordionItemData) {
 	{{ item := data.Item }}
 	{{ index := data.Index }}
 	{{ itemID := item.ID }}

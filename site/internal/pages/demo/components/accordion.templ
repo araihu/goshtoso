@@ -1,9 +1,40 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/accordion"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var accordionAPISections = []demo.APISection{
+	demo.StructAPI[accordion.AccordionConfig](
+		rootcomponents.KindAccordion,
+		"AccordionConfig",
+		"accordion.Accordion(cfg AccordionConfig) Instance",
+		"Configures the accordion container and disclosure behavior.",
+		[]demo.APIPropDoc{
+			{Name: "Items", Default: "nil", Description: "Accordion sections rendered in order.", Required: true},
+			{Name: "AllowMultiple", Default: "false", Description: "Allows more than one item to remain expanded."},
+			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearancePlain", "AppearanceSplit"}, Description: "Selects the shared, plain, or split visual treatment."},
+			{Name: "ID", Default: `"accordion"`, Description: "Container ID used to derive accessible control and region IDs."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the accordion root."},
+		},
+	),
+	demo.StructAPI[accordion.AccordionItem](
+		"",
+		"AccordionItem",
+		"",
+		"Describes one disclosure header and its body content.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"accordion-item-<index>"`, Description: "Stable item identifier used to derive the control and content IDs."},
+			{Name: "Title", Default: `""`, Description: "Visible disclosure-button text.", Required: true},
+			{Name: "Content", Default: "nil", Description: "Component rendered inside the expanded region.", Required: true},
+			{Name: "Icon", Default: "nil", Description: "Optional leading icon in the disclosure button."},
+			{Name: "Disabled", Default: "false", Description: "Disables the disclosure button."},
+			{Name: "InitiallyExpanded", Default: "false", Description: "Starts this item expanded."},
+		},
+	),
+}
 
 // AccordionDemoPage renders the Accordion component demo
 templ AccordionDemoPage() {
@@ -108,13 +139,7 @@ templ lazyLoadingContent(targetID string) {
 	</div>
 	// API reference lives outside #accordion-fragment so its table rows don't
 	// pollute the .divide-y accordion selectors the e2e suite relies on.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Items", Type: "[]AccordionItem", Default: "nil", Description: "The accordion sections (ID, Title, Content, optional Icon/Disabled/InitiallyExpanded)."},
-		{Name: "AllowMultiple", Type: "bool", Default: "false", Description: "Allow multiple sections open at once. When false, opening one closes the others."},
-		{Name: "Appearance", Type: "Appearance", Default: "AppearanceDefault", Description: `Visual treatment: default, plain, or split.`},
-		{Name: "ID", Type: "string", Default: `"accordion"`, Description: "Container element ID used for accessibility wiring."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the container."},
-	})
+	@demo.StructuredAPIReference(accordionAPISections)
 }
 
 // accordionDefaultPreview renders the default variant.

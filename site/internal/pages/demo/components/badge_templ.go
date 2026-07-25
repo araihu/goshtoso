@@ -9,10 +9,57 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var badgeAPISections = []demo.APISection{
+	demo.StructAPI[badge.Config](
+		rootcomponents.KindBadge,
+		"Config",
+		"badge.Badge(cfg Config) Instance",
+		"Configures a text badge with optional icon or indicator.",
+		[]demo.APIPropDoc{
+			{Name: "Label", Default: `""`, Description: "Visible badge text.", Required: true},
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneInverse", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Semantic color treatment."},
+			{Name: "Appearance", Default: "AppearanceSolid", Allowed: []string{"AppearanceSolid", "AppearanceSoft"}, Description: "Solid or softly tinted fill treatment."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG"}, Description: "Badge text size and padding."},
+			{Name: "Icon", Default: "nil", Description: "Optional leading icon."},
+			{Name: "Indicator", Default: "false", Description: "Prepends a small tone-colored status dot."},
+			{Name: "IndicatorColor", Default: "Tone-derived", Description: "CSS color class that overrides the indicator tone."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the badge root."},
+		},
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindNotificationBadge,
+		"NotificationBadge",
+		"",
+		"Renders an absolute-positioned notification count.",
+		[]demo.APIPropDoc{
+			{Name: "NotificationBadge", Signature: "func NotificationBadge(count int) NotificationBadgeInstance", Default: "count <= 0 renders nothing; counts > 99 render 99+", Description: "Creates a notification count badge for a relatively positioned parent."},
+		},
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindNotificationDot,
+		"NotificationDot",
+		"",
+		"Renders a fixed danger-colored notification dot.",
+		[]demo.APIPropDoc{
+			{Name: "NotificationDot", Signature: "func NotificationDot() NotificationDotInstance", Default: "n/a", Description: "Creates a bare notification dot for a relatively positioned parent."},
+		},
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindAnimatingDot,
+		"AnimatingDot",
+		"",
+		"Renders a pulsing semantic notification dot.",
+		[]demo.APIPropDoc{
+			{Name: "AnimatingDot", Signature: "func AnimatingDot(tone Tone) AnimatingDotInstance", Default: "TonePrimary appearance", Allowed: []string{"ToneDefault", "ToneInverse", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Creates an animated dot; default, inverse, and primary tones use the primary color."},
+		},
+	),
+}
 
 // BadgeDemoPage renders the Badge component demo
 func BadgeDemoPage() templ.Component {
@@ -168,16 +215,7 @@ func badgeDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Label", Type: "string", Default: `""`, Description: "Badge label text."},
-			{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color: "default", "inverse", "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Appearance", Type: "Appearance", Default: "AppearanceSolid", Description: `Fill treatment: solid or soft.`},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg".`},
-			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading icon component."},
-			{Name: "Indicator", Type: "bool", Default: "false", Description: "Prepend a small status dot."},
-			{Name: "IndicatorColor", Type: "string", Default: `""`, Description: "Override the indicator dot color."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the badge."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(badgeAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

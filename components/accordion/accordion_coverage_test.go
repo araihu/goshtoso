@@ -115,7 +115,7 @@ func TestCoverageAccordionClassHelpers(t *testing.T) {
 		})
 	}
 
-	defaultData := AccordionItemData{}
+	defaultData := accordionItemData{}
 	if got := defaultData.itemContainerClasses(); got != "" {
 		t.Fatalf("default itemContainerClasses() = %q, want empty", got)
 	}
@@ -123,12 +123,12 @@ func TestCoverageAccordionClassHelpers(t *testing.T) {
 		t.Fatalf("default itemButtonClasses() = %q, want default background classes", got)
 	}
 
-	plainData := AccordionItemData{Appearance: AppearancePlain}
+	plainData := accordionItemData{Appearance: AppearancePlain}
 	if got := plainData.itemButtonClasses(); !strings.Contains(got, "bg-surface hover:bg-surface-alt") {
 		t.Fatalf("plain itemButtonClasses() = %q, want plain surface classes", got)
 	}
 
-	splitData := AccordionItemData{Appearance: AppearanceSplit}
+	splitData := accordionItemData{Appearance: AppearanceSplit}
 	if got := splitData.itemContainerClasses(); !strings.Contains(got, "rounded-radius border border-outline") {
 		t.Fatalf("split itemContainerClasses() = %q, want split card classes", got)
 	}

@@ -1,10 +1,27 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/kbd"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var kbdAPISections = []demo.APISection{
+	demo.OptionsAPI(
+		rootcomponents.KindKbd,
+		"Kbd options",
+		"kbd.Kbd(text string, options ...Option) Instance",
+		"Pass visible key text followed by any functional options. For an icon-only key, use empty text with WithIcon and WithLabel.",
+		[]demo.APIPropDoc{
+			{Name: "WithLabel", Signature: "func WithLabel(label string) Option", Default: `""`, Description: "Sets the accessible label and icon-only screen-reader text."},
+			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMD", Allowed: []string{"SizeXS", "SizeSM", "SizeMD", "SizeLG"}, Description: "Sets the rendered key size."},
+			{Name: "WithIcon", Signature: "func WithIcon(icon templ.Component) Option", Default: "nil", Description: "Adds a leading or icon-only glyph."},
+			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the kbd element."},
+			{Name: "WithAttrs", Signature: "func WithAttrs(attrs templ.Attributes) Option", Default: "nil", Description: "Adds arbitrary attributes to the kbd element."},
+		},
+	),
+}
 
 // KbdDemoPage renders the KBD component demo.
 templ KbdDemoPage() {
@@ -83,14 +100,7 @@ templ kbdDemoContent() {
 			`@kbd.Kbd("Esc")`,
 		)
 	</div>
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "text", Type: "string", Default: "required", Description: "Visible key text; pass an empty string for icon-only keys."},
-		{Name: "WithLabel", Type: "string", Default: `""`, Description: "Accessible label, especially useful for icon-only keys."},
-		{Name: "WithSize", Type: "Size", Default: "SizeMD", Description: `Size: "xs", "sm", "md", "lg".`},
-		{Name: "WithIcon", Type: "templ.Component", Default: "nil", Description: "Optional leading or icon-only key glyph."},
-		{Name: "WithRootClass", Type: "string", Default: `""`, Description: "Extra classes on the kbd element."},
-		{Name: "WithAttrs", Type: "templ.Attributes", Default: "nil", Description: "Additional attributes on the kbd element."},
-	})
+	@demo.StructuredAPIReference(kbdAPISections)
 }
 
 templ kbdSizeSelector() {

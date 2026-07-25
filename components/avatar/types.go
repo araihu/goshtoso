@@ -92,7 +92,7 @@ type Config struct {
 	Radius Radius
 	// Border adds a colored border (for image avatars)
 	Border bool
-	// BorderColor is the border color (defaults to variant color if empty)
+	// BorderColor overrides the border; empty uses semantic status tones or primary.
 	BorderColor string
 	// Status adds a status indicator dot
 	Status Status

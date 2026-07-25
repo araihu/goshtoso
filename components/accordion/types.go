@@ -35,7 +35,7 @@ type AccordionItem struct {
 	ID string
 	// Title is the header text
 	Title string
-	// Content is the body content (can be templ.Component or string)
+	// Content is the body component.
 	Content templ.Component
 	// Icon is an optional leading icon (templ.Component)
 	Icon templ.Component
@@ -45,8 +45,8 @@ type AccordionItem struct {
 	InitiallyExpanded bool
 }
 
-// AccordionItemData is used internally for rendering
-type AccordionItemData struct {
+// accordionItemData is used internally for rendering.
+type accordionItemData struct {
 	// Item is the accordion section being rendered.
 	Item AccordionItem
 	// Index is the zero-based position of the item in the accordion.
@@ -80,7 +80,7 @@ func (cfg AccordionConfig) containerClasses() string {
 // ItemContainerClasses returns per-item wrapper classes. Only the Split variant
 // uses these: each item becomes a self-contained bordered card. Other variants
 // return "" since the shared container already provides borders and dividers.
-func (data AccordionItemData) itemContainerClasses() string {
+func (data accordionItemData) itemContainerClasses() string {
 	if data.Appearance == AppearanceSplit {
 		return "overflow-hidden rounded-radius border border-outline bg-surface-alt/40 dark:border-outline-dark dark:bg-surface-dark-alt/50"
 	}
@@ -88,7 +88,7 @@ func (data AccordionItemData) itemContainerClasses() string {
 }
 
 // ItemButtonClasses returns button classes based on variant and state
-func (data AccordionItemData) itemButtonClasses() string {
+func (data accordionItemData) itemButtonClasses() string {
 	base := "flex w-full items-center justify-between gap-4 p-4 text-left underline-offset-2 focus-visible:underline focus-visible:outline-hidden"
 
 	switch data.Appearance {
@@ -100,16 +100,16 @@ func (data AccordionItemData) itemButtonClasses() string {
 }
 
 // ExpandedClasses returns classes when item is expanded
-func (data AccordionItemData) expandedClasses() string {
+func (data accordionItemData) expandedClasses() string {
 	return "text-on-surface-strong dark:text-on-surface-dark-strong font-bold"
 }
 
 // CollapsedClasses returns classes when item is collapsed
-func (data AccordionItemData) collapsedClasses() string {
+func (data accordionItemData) collapsedClasses() string {
 	return "text-on-surface dark:text-on-surface-dark font-medium"
 }
 
 // ContentClasses returns content container classes
-func (data AccordionItemData) contentClasses() string {
+func (data accordionItemData) contentClasses() string {
 	return "p-4 text-sm sm:text-base text-pretty"
 }

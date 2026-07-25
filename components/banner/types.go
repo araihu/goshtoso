@@ -56,7 +56,7 @@ type CookieBannerConfig struct {
 	Title string
 	// Description is the cookie banner body.
 	Description string
-	// Icon is an optional icon (emoji or component)
+	// Icon is an optional component; nil renders the default cookie emoji.
 	Icon templ.Component
 	// AcceptLabel is the accept button label
 	AcceptLabel string
