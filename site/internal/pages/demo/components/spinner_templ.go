@@ -9,10 +9,25 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/spinner"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var spinnerAPISections = []demo.APISection{
+	demo.StructAPI[spinner.Config](
+		rootcomponents.KindSpinner,
+		"Config",
+		"spinner.Spinner(cfg Config) Instance",
+		"Configures a decorative aria-hidden SVG spinner. It does not render a label, status role, aria-busy state, or busy-state wrapper.",
+		[]demo.APIPropDoc{
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets the SVG fill color; empty or unknown values use the on-surface default."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets the SVG dimensions; empty or unknown values render size-5."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the spinner SVG."},
+		},
+	),
+}
 
 // SpinnerDemoPage renders the Spinner component demo
 func SpinnerDemoPage() templ.Component {
@@ -112,11 +127,7 @@ func spinnerDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg", "xl".`},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(spinnerAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

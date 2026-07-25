@@ -27,14 +27,6 @@ func slugify(title string) string {
 	return strings.Trim(b.String(), "-")
 }
 
-// PropDoc documents a single Config struct field for the API reference table
-type PropDoc struct {
-	Name        string // Field name (e.g. "Variant")
-	Type        string // Go type (e.g. "Variant", "string", "bool")
-	Default     string // Default value (e.g. `""`, "false", "SizeMedium")
-	Description string // One-line description
-}
-
 // ComponentDemoProps holds configuration for component demo pages
 type ComponentDemoProps struct {
 	Title       string
@@ -44,7 +36,6 @@ type ComponentDemoProps struct {
 	// size selector) that belong to the demo but should sit in page chrome
 	// rather than inside the preview frame.
 	AbovePreview templ.Component
-	Props        []PropDoc // Optional API reference table
 }
 
 // DemoSectionProps holds configuration for individual demo sections within a page
@@ -97,47 +88,12 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 					ID:        "code-example",
 				})
 			</div>
-
-			<!-- Props Reference Table -->
-			@APIReference(props.Props)
 		</div>
 	</div>
 }
 
-// APIReference renders the prop documentation table. No-op when props is empty,
-// so it can be dropped at the bottom of a page or inlined inside ComponentDemo.
-templ APIReference(props []PropDoc) {
-	if len(props) > 0 {
-		<div data-api-reference class="mt-8">
-			<h2 id="api-reference" data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-4">API Reference</h2>
-			<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
-				<table class="w-full text-sm text-left border-collapse">
-					<thead class="bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark">
-						<tr>
-							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Prop</th>
-							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Type</th>
-							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Default</th>
-							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Description</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-outline dark:divide-outline-dark">
-						for _, p := range props {
-							<tr class="bg-surface dark:bg-surface-dark">
-								<td class="px-4 py-2.5"><code class="font-mono text-xs bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded">{ p.Name }</code></td>
-								<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ p.Type }</code></td>
-								<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ p.Default }</code></td>
-								<td class="px-4 py-2.5 text-on-surface dark:text-on-surface-dark">{ p.Description }</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-	}
-}
-
 // StructuredAPIReference renders one or more named public API surfaces. It is
-// kept alongside APIReference while component pages migrate off the flat table.
+// the single API renderer used by component pages.
 templ StructuredAPIReference(sections []APISection) {
 	if len(sections) > 0 {
 		<div data-api-reference class="mt-8">

@@ -8,9 +8,11 @@ import (
 
 	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/accordion"
+	"github.com/araihu/goshtoso/components/alert"
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/banner"
+	"github.com/araihu/goshtoso/components/breadcrumbs"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
 	"github.com/araihu/goshtoso/components/carousel"
@@ -18,8 +20,14 @@ import (
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/drawer"
+	"github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/components/fileinput"
 	"github.com/araihu/goshtoso/components/form"
+	linkcomponent "github.com/araihu/goshtoso/components/link"
+	"github.com/araihu/goshtoso/components/modal"
+	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/pagination"
 	"github.com/araihu/goshtoso/components/palette"
 	"github.com/araihu/goshtoso/components/radio"
 	rangeinput "github.com/araihu/goshtoso/components/range"
@@ -27,16 +35,349 @@ import (
 	"github.com/araihu/goshtoso/components/schemaform"
 	"github.com/araihu/goshtoso/components/search"
 	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/sidebar"
+	"github.com/araihu/goshtoso/components/spinner"
+	"github.com/araihu/goshtoso/components/steps"
 	"github.com/araihu/goshtoso/components/structuredinput"
 	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/components/tabs"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/stretchr/testify/require"
 )
+
+func TestFeedbackNavigationAPIMetadataRegistered(t *testing.T) {
+	expected := map[string][]rootcomponents.Kind{
+		"components/alert":       {rootcomponents.KindAlert},
+		"components/toast":       {rootcomponents.KindToastContainer, rootcomponents.KindToast, rootcomponents.KindMessageToast, rootcomponents.KindOOBToast, rootcomponents.KindOOBMessageToast},
+		"components/modal":       {rootcomponents.KindModal, rootcomponents.KindAlertDialog},
+		"components/drawer":      {rootcomponents.KindDrawer},
+		"components/spinner":     {rootcomponents.KindSpinner},
+		"components/steps":       {rootcomponents.KindSteps},
+		"components/tooltip":     {rootcomponents.KindTooltip},
+		"components/breadcrumbs": {rootcomponents.KindBreadcrumbs},
+		"components/dropdown":    {rootcomponents.KindDropdown},
+		"components/link":        {rootcomponents.KindLink},
+		"components/navbar":      {rootcomponents.KindNavbar},
+		"components/pagination":  {rootcomponents.KindPagination},
+		"components/sidebar":     {rootcomponents.KindSidebar, rootcomponents.KindSidebarOverlay},
+		"components/tabs":        {rootcomponents.KindTabs},
+	}
+
+	require.Len(t, expected, 14)
+	for key, wantKinds := range expected {
+		entry, ok := Demos[key]
+		require.Truef(t, ok, "missing Feedback/Navigation registry entry %q", key)
+		require.NotEmptyf(t, entry.API, "%s must register structured API metadata", key)
+
+		var catalogKinds []rootcomponents.Kind
+		for _, page := range catalog.ComponentPages() {
+			if page.Key == key {
+				catalogKinds = page.Kinds
+				break
+			}
+		}
+		require.Equalf(t, wantKinds, catalogKinds, "%s catalog Kinds", key)
+
+		seenIDs := make(map[string]struct{}, len(entry.API))
+		gotKinds := make([]rootcomponents.Kind, 0, len(entry.API))
+		for _, section := range entry.API {
+			require.NotEmptyf(t, section.ID, "%s contains an empty API section ID", key)
+			_, duplicate := seenIDs[section.ID]
+			require.Falsef(t, duplicate, "%s contains duplicate API section ID %q", key, section.ID)
+			seenIDs[section.ID] = struct{}{}
+			if section.Kind != "" {
+				gotKinds = append(gotKinds, section.Kind)
+			}
+		}
+		require.ElementsMatchf(t, wantKinds, gotKinds, "%s API section Kinds", key)
+	}
+}
+
+func TestFeedbackNavigationAPIRegistryUsesPageSectionSlices(t *testing.T) {
+	expected := map[string][]demo.APISection{
+		"components/alert":       alertAPISections,
+		"components/toast":       toastAPISections,
+		"components/modal":       modalAPISections,
+		"components/drawer":      drawerAPISections,
+		"components/spinner":     spinnerAPISections,
+		"components/steps":       stepsAPISections,
+		"components/tooltip":     tooltipAPISections,
+		"components/breadcrumbs": breadcrumbsAPISections,
+		"components/dropdown":    dropdownAPISections,
+		"components/link":        linkAPISections,
+		"components/navbar":      navbarAPISections,
+		"components/pagination":  paginationAPISections,
+		"components/sidebar":     sidebarAPISections,
+		"components/tabs":        tabsAPISections,
+	}
+
+	require.Len(t, expected, 14)
+	for key, pageSections := range expected {
+		entry := Demos[key]
+		require.NotEmpty(t, entry.API, key)
+		require.NotEmpty(t, pageSections, key)
+		require.Samef(
+			t,
+			&pageSections[0],
+			&entry.API[0],
+			"%s registry API must use the page's named metadata slice",
+			key,
+		)
+
+		var rendered strings.Builder
+		require.NoError(t, entry.Content().Render(context.Background(), &rendered))
+		html := rendered.String()
+		require.Equalf(t, 1, strings.Count(html, "data-api-reference"), "%s must render one structured API reference", key)
+		for _, section := range pageSections {
+			require.Equalf(
+				t,
+				1,
+				strings.Count(html, `data-api-section="`+section.ID+`"`),
+				"%s must render its %q API section exactly once",
+				key,
+				section.ID,
+			)
+		}
+	}
+}
+
+func TestFeedbackNavigationStructAPIsDocumentEveryExportedFieldExactlyOnce(t *testing.T) {
+	expectedTypes := []reflect.Type{
+		reflect.TypeFor[alert.Config](),
+		reflect.TypeFor[alert.LinkConfig](),
+		reflect.TypeFor[alert.HTMXConfig](),
+		reflect.TypeFor[alert.ActionConfig](),
+		reflect.TypeFor[drawer.Config](),
+		reflect.TypeFor[modal.Config](),
+		reflect.TypeFor[modal.AlertDialogConfig](),
+		reflect.TypeFor[modal.ButtonAction](),
+		reflect.TypeFor[modal.HTMXConfig](),
+		reflect.TypeFor[spinner.Config](),
+		reflect.TypeFor[steps.Config](),
+		reflect.TypeFor[steps.Step](),
+		reflect.TypeFor[toast.Config](),
+		reflect.TypeFor[toast.MessageConfig](),
+		reflect.TypeFor[toast.Sender](),
+		reflect.TypeFor[toast.HTMXConfig](),
+		reflect.TypeFor[toast.ContainerConfig](),
+		reflect.TypeFor[breadcrumbs.Config](),
+		reflect.TypeFor[breadcrumbs.Item](),
+		reflect.TypeFor[dropdown.Config](),
+		reflect.TypeFor[dropdown.Item](),
+		reflect.TypeFor[dropdown.Section](),
+		reflect.TypeFor[navbar.Config](),
+		reflect.TypeFor[navbar.NavLink](),
+		reflect.TypeFor[navbar.UserProfile](),
+		reflect.TypeFor[navbar.UserMenuItem](),
+		reflect.TypeFor[navbar.ActionItem](),
+		reflect.TypeFor[pagination.Config](),
+		reflect.TypeFor[pagination.HTMXConfig](),
+		reflect.TypeFor[pagination.PageItem](),
+		reflect.TypeFor[sidebar.Config](),
+		reflect.TypeFor[sidebar.Item](),
+		reflect.TypeFor[sidebar.Section](),
+		reflect.TypeFor[sidebar.OverlayConfig](),
+		reflect.TypeFor[tabs.Config](),
+		reflect.TypeFor[tabs.Tab](),
+		reflect.TypeFor[tabs.TabHTMX](),
+	}
+
+	sectionsByType := make(map[reflect.Type][]demo.APISection, len(expectedTypes))
+	for _, sections := range feedbackNavigationAPISectionSlices() {
+		for _, section := range sections {
+			require.NotEmpty(t, section.ID)
+			require.NotEmpty(t, section.Title)
+			require.NotEmptyf(t, section.Description, "%s section description", section.Title)
+
+			seenProps := make(map[string]struct{}, len(section.Props))
+			for _, prop := range section.Props {
+				require.NotContainsf(t, seenProps, prop.Name, "%s.%s documented twice", section.Title, prop.Name)
+				seenProps[prop.Name] = struct{}{}
+				require.NotEmptyf(t, prop.Default, "%s.%s default", section.Title, prop.Name)
+				require.NotEmptyf(t, prop.Description, "%s.%s description", section.Title, prop.Name)
+			}
+			if section.StructType != nil {
+				sectionsByType[section.StructType] = append(sectionsByType[section.StructType], section)
+			}
+		}
+	}
+	require.Len(t, sectionsByType, len(expectedTypes))
+
+	for _, typ := range expectedTypes {
+		sections := sectionsByType[typ]
+		require.Lenf(t, sections, 1, "%s must have exactly one StructAPI section", typ)
+		section := sections[0]
+
+		documented := make(map[string]demo.APIPropDoc, len(section.Props))
+		for _, prop := range section.Props {
+			documented[prop.Name] = prop
+		}
+		exportedCount := 0
+		for index := range typ.NumField() {
+			field := typ.Field(index)
+			if !field.IsExported() {
+				continue
+			}
+			exportedCount++
+			prop, ok := documented[field.Name]
+			require.Truef(t, ok, "%s.%s must be documented", typ, field.Name)
+			if isComponentNamedScalar(field.Type) {
+				require.NotEmptyf(t, prop.Allowed, "%s.%s must list allowed values", typ, field.Name)
+			}
+		}
+		require.Lenf(t, documented, exportedCount, "%s must document every exported field exactly once", typ)
+	}
+}
+
+func TestFeedbackNavigationPublicSignaturesAreExactAndUnique(t *testing.T) {
+	expected := map[string]string{
+		"Tooltip options.id":               "id string",
+		"Tooltip options.label":            "label string",
+		"Tooltip options.WithDescription":  "func WithDescription(description string) Option",
+		"Tooltip options.WithPosition":     "func WithPosition(position Position) Option",
+		"Tooltip options.WithActivation":   "func WithActivation(activation Activation) Option",
+		"Tooltip options.WithTriggerLabel": "func WithTriggerLabel(label string) Option",
+		"Tooltip options.WithTrigger":      "func WithTrigger(trigger templ.Component) Option",
+		"Link options.href":                "href string",
+		"Link options.WithTarget":          "func WithTarget(target string) Option",
+		"Link options.WithRel":             "func WithRel(rel string) Option",
+		"Link options.WithRole":            "func WithRole(role string) Option",
+		"Link options.WithID":              "func WithID(id string) Option",
+		"Link options.WithAppearance":      "func WithAppearance(appearance Appearance) Option",
+		"Link options.WithSize":            "func WithSize(size Size) Option",
+		"Link options.WithIcon":            "func WithIcon(icon templ.Component) Option",
+		"Link options.WithIconPosition":    "func WithIconPosition(position IconPosition) Option",
+		"Link options.WithRootClass":       "func WithRootClass(class string) Option",
+		"Link options.WithAttrs":           "func WithAttrs(attrs templ.Attributes) Option",
+		"Config helpers.HasPrevious":       "func (cfg Config) HasPrevious() bool",
+		"Config helpers.HasNext":           "func (cfg Config) HasNext() bool",
+		"Config helpers.PreviousPage":      "func (cfg Config) PreviousPage() int",
+		"Config helpers.NextPage":          "func (cfg Config) NextPage() int",
+		"Config helpers.PageURL":           "func (cfg Config) PageURL(page int) string",
+		"Config helpers.Pages":             "func (cfg Config) Pages() []PageItem",
+	}
+
+	got := make(map[string]string, len(expected))
+	for _, sections := range feedbackNavigationAPISectionSlices() {
+		for _, section := range sections {
+			for _, prop := range section.Props {
+				if prop.Signature == "" {
+					continue
+				}
+				key := section.Title + "." + prop.Name
+				require.NotContainsf(t, got, key, "%s documented more than once", key)
+				got[key] = prop.Signature
+			}
+		}
+	}
+	require.Equal(t, expected, got)
+}
+
+func TestFeedbackNavigationConstructorsAreDocumentedExactlyOnce(t *testing.T) {
+	expected := map[string]rootcomponents.Kind{
+		"alert.Alert(cfg Config) Instance":                                     rootcomponents.KindAlert,
+		"drawer.Drawer(cfg Config) Instance":                                   rootcomponents.KindDrawer,
+		"modal.Modal(cfg Config) Instance":                                     rootcomponents.KindModal,
+		"modal.AlertDialog(cfg AlertDialogConfig) AlertDialogInstance":         rootcomponents.KindAlertDialog,
+		"spinner.Spinner(cfg Config) Instance":                                 rootcomponents.KindSpinner,
+		"steps.Steps(cfg Config) Instance":                                     rootcomponents.KindSteps,
+		"toast.ToastContainer(cfg ContainerConfig) ContainerInstance":          rootcomponents.KindToastContainer,
+		"toast.Toast(cfg Config) Instance":                                     rootcomponents.KindToast,
+		"toast.MessageToast(cfg MessageConfig) MessageInstance":                rootcomponents.KindMessageToast,
+		"toast.OOBToast(cfg Config) OOBInstance":                               rootcomponents.KindOOBToast,
+		"toast.OOBMessageToast(cfg MessageConfig) OOBMessageInstance":          rootcomponents.KindOOBMessageToast,
+		"tooltip.Tooltip(id string, label string, options ...Option) Instance": rootcomponents.KindTooltip,
+		"breadcrumbs.Breadcrumbs(cfg Config) Instance":                         rootcomponents.KindBreadcrumbs,
+		"dropdown.Dropdown(cfg Config) Instance":                               rootcomponents.KindDropdown,
+		"link.Link(href string, options ...Option) Instance":                   rootcomponents.KindLink,
+		"navbar.Navbar(cfg Config) Instance":                                   rootcomponents.KindNavbar,
+		"pagination.Pagination(cfg Config) Instance":                           rootcomponents.KindPagination,
+		"sidebar.Sidebar(cfg Config) Instance":                                 rootcomponents.KindSidebar,
+		"sidebar.Overlay(cfg OverlayConfig) OverlayInstance":                   rootcomponents.KindSidebarOverlay,
+		"tabs.Tabs(cfg Config) Instance":                                       rootcomponents.KindTabs,
+	}
+
+	got := make(map[string]rootcomponents.Kind, len(expected))
+	for _, sections := range feedbackNavigationAPISectionSlices() {
+		for _, section := range sections {
+			if section.Constructor == "" {
+				continue
+			}
+			require.NotContainsf(t, got, section.Constructor, "%s documented more than once", section.Constructor)
+			got[section.Constructor] = section.Kind
+		}
+	}
+	require.Equal(t, expected, got)
+}
+
+func TestFeedbackNavigationMetadataMatchesRepresentativeRenderBranches(t *testing.T) {
+	var sidebarOut strings.Builder
+	require.NoError(t, sidebar.Sidebar(sidebar.Config{LogoText: "Docs"}).Render(context.Background(), &sidebarOut))
+	require.Contains(t, sidebarOut.String(), `href="/"`)
+	require.Equal(t, `"/"`, apiProp(t, sidebarAPISections, "Config", "LogoHref").Default)
+
+	var tooltipOut strings.Builder
+	require.NoError(t, tooltip.Tooltip("audit-tooltip", "Audit label").Render(context.Background(), &tooltipOut))
+	require.Contains(t, tooltipOut.String(), ">Hover Me</button>")
+	require.Contains(t, tooltipOut.String(), `aria-describedby="audit-tooltip"`)
+	require.True(t, apiProp(t, tooltipAPISections, "Tooltip options", "id").Required)
+	require.True(t, apiProp(t, tooltipAPISections, "Tooltip options", "label").Required)
+	require.Equal(t, `"Hover Me"`, apiProp(t, tooltipAPISections, "Tooltip options", "WithTriggerLabel").Default)
+
+	var spinnerOut strings.Builder
+	require.NoError(t, spinner.Spinner(spinner.Config{}).Render(context.Background(), &spinnerOut))
+	spinnerHTML := spinnerOut.String()
+	require.Contains(t, spinnerHTML, `aria-hidden="true"`)
+	require.NotContains(t, spinnerHTML, "aria-busy")
+	require.NotContains(t, spinnerHTML, `role="status"`)
+	require.Contains(t, spinnerAPISections[0].Description, "does not render a label")
+	require.Contains(t, spinnerAPISections[0].Description, "busy-state wrapper")
+
+	var toastOut strings.Builder
+	require.NoError(t, toast.ToastContainer(toast.ContainerConfig{}).Render(context.Background(), &toastOut))
+	require.Contains(t, toastOut.String(), "md:bottom-0")
+	require.Contains(t, toastOut.String(), "md:right-0")
+	require.NotContains(t, strings.ToLower(toastAPISections[0].Description), "configurable position")
+
+	var linkOut strings.Builder
+	require.NoError(t, linkcomponent.Link("/docs", linkcomponent.WithTarget("_blank")).Render(context.Background(), &linkOut))
+	require.Contains(t, linkOut.String(), `rel="noopener noreferrer"`)
+
+	require.Equal(t, "/items?filter=open&page=3", pagination.Config{BaseURL: "/items?filter=open"}.PageURL(3))
+	require.Equal(t, `"innerHTML" when Target is non-empty`, apiProp(t, paginationAPISections, "HTMXConfig", "Swap").Default)
+}
+
+func TestCorrectedCatalogDescriptionsMatchRenderedBehavior(t *testing.T) {
+	descriptions := make(map[string]string)
+	for _, page := range catalog.ComponentPages() {
+		descriptions[page.Key] = strings.ToLower(page.Description)
+	}
+
+	require.Contains(t, descriptions["components/fileinput"], "native accept hints")
+	require.Contains(t, descriptions["components/range"], "generated or custom ticks")
+	require.Contains(t, descriptions["components/tags-list"], "duplicate-preserving")
+	require.NotContains(t, descriptions["components/textarea"], "counter")
+	require.Contains(t, descriptions["components/structured-input"], "repeatable")
+	require.Contains(t, descriptions["components/structured-input"], "typed columns")
+	require.NotContains(t, descriptions["components/toast"], "position")
+	require.Contains(t, descriptions["components/spinner"], "decorative")
+	require.NotContains(t, descriptions["components/spinner"], "label")
+}
+
+func TestEveryComponentDemoRegistersStructuredAPI(t *testing.T) {
+	for _, page := range catalog.ComponentPages() {
+		entry, ok := Demos[page.Key]
+		require.Truef(t, ok, "catalog component %s must be registered", page.Key)
+		require.NotEmptyf(t, entry.API, "%s must register structured API metadata", page.Key)
+	}
+}
 
 func TestDisplayAPIMetadataRegistered(t *testing.T) {
 	expected := map[string][]rootcomponents.Kind{
@@ -938,6 +1279,40 @@ func complexInputAPISectionSlices() [][]demo.APISection {
 		schemaFormAPISections,
 		searchAPISections,
 		structuredInputAPISections,
+	}
+}
+
+func feedbackNavigationAPISectionSlices() [][]demo.APISection {
+	return [][]demo.APISection{
+		alertAPISections,
+		toastAPISections,
+		modalAPISections,
+		drawerAPISections,
+		spinnerAPISections,
+		stepsAPISections,
+		tooltipAPISections,
+		breadcrumbsAPISections,
+		dropdownAPISections,
+		linkAPISections,
+		navbarAPISections,
+		paginationAPISections,
+		sidebarAPISections,
+		tabsAPISections,
+	}
+}
+
+func isComponentNamedScalar(typ reflect.Type) bool {
+	if typ.Name() == "" ||
+		!strings.HasPrefix(typ.PkgPath(), "github.com/araihu/goshtoso/components/") {
+		return false
+	}
+	switch typ.Kind() {
+	case reflect.String,
+		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return true
+	default:
+		return false
 	}
 }
 

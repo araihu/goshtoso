@@ -1,9 +1,32 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	linkcomponent "github.com/araihu/goshtoso/components/link"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var linkAPISections = []demo.APISection{
+	demo.OptionsAPI(
+		rootcomponents.KindLink,
+		"Link options",
+		"link.Link(href string, options ...Option) Instance",
+		"Creates a styled anchor from a required destination and child content, then applies functional options over the documented defaults.",
+		[]demo.APIPropDoc{
+			{Name: "href", Signature: "href string", Default: "required", Description: "Anchor destination passed through templ.URL.", Required: true},
+			{Name: "WithTarget", Signature: "func WithTarget(target string) Option", Default: `"" (omitted)`, Description: "Sets the native target attribute."},
+			{Name: "WithRel", Signature: "func WithRel(rel string) Option", Default: `"noopener noreferrer" for target "_blank"; otherwise omitted`, Description: "Sets the native rel attribute and overrides the _blank safety fallback when non-empty."},
+			{Name: "WithRole", Signature: "func WithRole(role string) Option", Default: `"button" for AppearanceButton; otherwise omitted`, Description: "Sets the native role attribute and overrides the button-appearance fallback when non-empty."},
+			{Name: "WithID", Signature: "func WithID(id string) Option", Default: `"" (omitted)`, Description: "Sets the anchor ID."},
+			{Name: "WithAppearance", Signature: "func WithAppearance(appearance Appearance) Option", Default: "AppearanceText", Allowed: []string{"AppearanceText", "AppearanceButton"}, Description: "Selects text or button styling; empty or unknown values use text styling."},
+			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMedium", Allowed: []string{"SizeSmall", "SizeMedium", "SizeLarge", "SizeXLarge"}, Description: "Sets dimensions only for AppearanceButton; empty or unknown values use medium."},
+			{Name: "WithIcon", Signature: "func WithIcon(icon templ.Component) Option", Default: "nil", Description: "Adds an icon and inline-flex layout."},
+			{Name: "WithIconPosition", Signature: "func WithIconPosition(position IconPosition) Option", Default: "IconTrailing", Allowed: []string{"IconLeading", "IconTrailing"}, Description: "IconLeading renders before child content; every other value renders after it."},
+			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the anchor."},
+			{Name: "WithAttrs", Signature: "func WithAttrs(attrs templ.Attributes) Option", Default: "nil", Description: "Appends arbitrary attributes after modeled attributes; conflicts can produce duplicate attributes rather than overriding typed options."},
+		},
+	),
+}
 
 // LinkDemoPage renders the Link component demo.
 templ LinkDemoPage() {
@@ -57,19 +80,7 @@ templ linkDemoContent() {
 }`,
 		)
 	</div>
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "href", Type: "string", Default: "required", Description: "Link destination."},
-		{Name: "WithTarget", Type: "string", Default: `""`, Description: "Native anchor target attribute."},
-		{Name: "WithRel", Type: "string", Default: `""`, Description: `Native rel attribute. Defaults to "noopener noreferrer" for target "_blank".`},
-		{Name: "WithRole", Type: "string", Default: `""`, Description: `Native role attribute. AppearanceButton defaults to "button".`},
-		{Name: "WithAppearance", Type: "Appearance", Default: "AppearanceText", Description: `Visual treatment: "text" or "button".`},
-		{Name: "WithSize", Type: "Size", Default: "SizeMedium", Description: `Button-link size: "sm", "md", "lg", "xl".`},
-		{Name: "WithIcon", Type: "templ.Component", Default: "nil", Description: "Optional icon rendered inside the link."},
-		{Name: "WithIconPosition", Type: "IconPosition", Default: "IconTrailing", Description: `Icon placement: "leading" or "trailing".`},
-		{Name: "WithID", Type: "string", Default: `""`, Description: "Optional element id."},
-		{Name: "WithRootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the anchor."},
-		{Name: "WithAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the anchor."},
-	})
+	@demo.StructuredAPIReference(linkAPISections)
 }
 
 templ linkDefaultPreview() {

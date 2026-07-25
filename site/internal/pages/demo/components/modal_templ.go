@@ -9,9 +9,68 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var modalAPISections = []demo.APISection{
+	demo.StructAPI[modal.Config](
+		rootcomponents.KindModal,
+		"Config",
+		"modal.Modal(cfg Config) Instance",
+		"Configures a role=dialog surface with a trigger, primary action, and optional secondary action.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: "required", Description: "Scopes Alpine state and aria-labelledby wiring; empty input falls back to the modal state and title-ID namespace.", Required: true},
+			{Name: "Title", Default: `""`, Description: "Visible dialog heading."},
+			{Name: "Body", Default: `""`, Description: "Visible dialog body text."},
+			{Name: "TriggerLabel", Default: `""`, Description: "Visible text on the always-rendered trigger button."},
+			{Name: "PrimaryLabel", Default: `""`, Description: "Visible text on the always-rendered primary button."},
+			{Name: "PrimaryAction", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression after closing the dialog."},
+			{Name: "SecondaryLabel", Default: `"" (secondary button omitted)`, Description: "Non-empty text renders a secondary button."},
+			{Name: "SecondaryAction", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression to the secondary button when it renders."},
+			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the dialog panel."},
+		},
+	),
+	demo.StructAPI[modal.AlertDialogConfig](
+		rootcomponents.KindAlertDialog,
+		"AlertDialogConfig",
+		"modal.AlertDialog(cfg AlertDialogConfig) AlertDialogInstance",
+		"Configures a role=alertdialog surface with one action and a semantic icon treatment.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: "required", Description: "Scopes Alpine state and aria-labelledby wiring; empty input falls back to the alertDialog state and title-ID namespace.", Required: true},
+			{Name: "Title", Default: `""`, Description: "Visible alert-dialog heading."},
+			{Name: "Body", Default: `""`, Description: "Visible alert-dialog body text."},
+			{Name: "TriggerLabel", Default: `""`, Description: "Visible text on the always-rendered trigger button."},
+			{Name: "ActionLabel", Default: `""`, Description: "Visible text on the always-rendered action button."},
+			{Name: "Action", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression after closing the alert dialog."},
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneSuccess", "ToneInfo", "ToneWarning", "ToneDanger"}, Description: "Sets the trigger, icon, and action treatment; empty or unknown values use the primary default."},
+			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the dialog panel."},
+		},
+	),
+	demo.StructAPI[modal.ButtonAction](
+		"",
+		"ButtonAction",
+		"",
+		"Configures behavior shared by modal and alert-dialog buttons.",
+		[]demo.APIPropDoc{
+			{Name: "OnClick", Default: `"" (close only)`, Description: "Alpine expression appended after the built-in state assignment that closes the dialog."},
+			{Name: "HTMX", Default: "nil (no HTMX attributes)", Description: "Adds non-empty HTMXConfig fields to the action button."},
+		},
+	),
+	demo.StructAPI[modal.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Maps optional HTMX request and swap attributes onto a dialog action button.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL rendered as hx-get."},
+			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL rendered as hx-post; it may be rendered together with Get."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+		},
+	),
+}
 
 // ModalDemoPage renders the Modal component demo
 func ModalDemoPage() templ.Component {
@@ -151,17 +210,7 @@ func modalDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the dialog and scopes Alpine state)."},
-			{Name: "Title", Type: "string", Default: `""`, Description: "Dialog heading."},
-			{Name: "Body", Type: "string", Default: `""`, Description: "Dialog body text."},
-			{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Label of the button that opens the modal."},
-			{Name: "PrimaryLabel", Type: "string", Default: `""`, Description: "Primary button label."},
-			{Name: "PrimaryAction", Type: "*ButtonAction", Default: "nil", Description: "Primary button behavior (OnClick or hx-* fields)."},
-			{Name: "SecondaryLabel", Type: "string", Default: `""`, Description: "Secondary button label (omit to hide)."},
-			{Name: "SecondaryAction", Type: "*ButtonAction", Default: "nil", Description: "Secondary button behavior."},
-			{Name: "PanelClass", Type: "string", Default: `""`, Description: "Extra classes on the dialog."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(modalAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

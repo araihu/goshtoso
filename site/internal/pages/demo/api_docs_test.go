@@ -183,9 +183,6 @@ func TestDemoRenderersExposeStableDocumentationHooks(t *testing.T) {
 		ComponentDemoProps{
 			Title:       "Sample",
 			Description: "Sample description.",
-			Props: []PropDoc{
-				{Name: "Label", Type: "string", Default: `""`, Description: "Visible label."},
-			},
 		},
 		templ.Raw("preview"),
 		"sample.New()",
@@ -198,7 +195,7 @@ func TestDemoRenderersExposeStableDocumentationHooks(t *testing.T) {
 	require.Contains(t, componentHTML, "data-demo-section")
 	require.Contains(t, componentHTML, "data-demo-preview")
 	require.Contains(t, componentHTML, "data-demo-code")
-	require.Contains(t, componentHTML, "data-api-reference")
+	require.NotContains(t, componentHTML, "data-api-reference")
 
 	var sectionOut strings.Builder
 	require.NoError(t, DemoSection(

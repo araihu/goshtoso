@@ -9,9 +9,63 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/pagination"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var paginationAPISections = []demo.APISection{
+	demo.StructAPI[pagination.Config](
+		rootcomponents.KindPagination,
+		"Config",
+		"pagination.Pagination(cfg Config) Instance",
+		"Configures simple previous/next or numbered ellipsis pagination.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (omitted)`, Description: "Sets the nav element ID."},
+			{Name: "Mode", Default: "ModeEllipsis", Allowed: []string{"ModeEllipsis", "ModeSimple"}, Description: "ModeSimple hides numbered items; every other value renders the numbered ellipsis mode."},
+			{Name: "CurrentPage", Default: "required 1-based input; 0 is not normalized", Description: "Determines active, previous, and next state.", Required: true},
+			{Name: "TotalPages", Default: "required positive input; 0 renders no numbered items", Description: "Determines available page range and next-state behavior.", Required: true},
+			{Name: "BaseURL", Default: `"" (generated hrefs are "#")`, Description: "Base URL whose query receives or replaces the page parameter. Invalid URLs also resolve to #."},
+			{Name: "NavClass", Default: `""`, Description: "Appends CSS classes to the nav."},
+			{Name: "HTMX", Default: "nil (ordinary navigation)", Description: "Enables in-place requests only when HTMXConfig.Target is non-empty."},
+		},
+	),
+	demo.StructAPI[pagination.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Configures in-place pagination links.",
+		[]demo.APIPropDoc{
+			{Name: "Target", Default: `"" (HTMX attributes omitted)`, Description: "Non-empty CSS selector enables hx-get, hx-target, and hx-swap on enabled non-current links."},
+			{Name: "Swap", Default: `"innerHTML" when Target is non-empty`, Description: "Sets the swap strategy; empty values use innerHTML."},
+		},
+	),
+	demo.StructAPI[pagination.PageItem](
+		"",
+		"PageItem",
+		"",
+		"Describes one value produced by Config.Pages.",
+		[]demo.APIPropDoc{
+			{Name: "Page", Default: "0 for ellipsis; otherwise page number", Description: "Page number used for links."},
+			{Name: "IsEllipsis", Default: "false", Description: "When true, renders a non-link more-pages marker."},
+			{Name: "IsCurrent", Default: "false", Description: "When true, renders current styling and aria-current=page without HTMX attributes."},
+		},
+	),
+	demo.FunctionsAPI(
+		"",
+		"Config helpers",
+		"",
+		"Public helpers expose the exact navigation state and page-item generation used by Pagination.",
+		[]demo.APIPropDoc{
+			{Name: "HasPrevious", Signature: "func (cfg Config) HasPrevious() bool", Default: "CurrentPage > 1", Description: "Reports whether an enabled previous link renders."},
+			{Name: "HasNext", Signature: "func (cfg Config) HasNext() bool", Default: "CurrentPage < TotalPages", Description: "Reports whether an enabled next link renders."},
+			{Name: "PreviousPage", Signature: "func (cfg Config) PreviousPage() int", Default: "1 when CurrentPage <= 1", Description: "Returns the previous page clamped at 1."},
+			{Name: "NextPage", Signature: "func (cfg Config) NextPage() int", Default: "TotalPages when CurrentPage >= TotalPages", Description: "Returns the next page or TotalPages at the upper boundary."},
+			{Name: "PageURL", Signature: "func (cfg Config) PageURL(page int) string", Default: `"#" when BaseURL is empty or invalid`, Description: "Parses BaseURL and sets its page query parameter."},
+			{Name: "Pages", Signature: "func (cfg Config) Pages() []PageItem", Default: "nil when TotalPages <= 0", Description: "Returns all pages for totals up to seven, otherwise first/last pages plus a window and ellipsis items."},
+		},
+	),
+}
 
 // PaginationDemoPage renders the Pagination component demo
 func PaginationDemoPage() templ.Component {
@@ -172,15 +226,7 @@ func paginationDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Mode", Type: "Mode", Default: "ModeEllipsis", Description: `ModeSimple renders prev/next only; ModeEllipsis renders page numbers.`},
-			{Name: "CurrentPage", Type: "int", Default: "1", Description: "The active page (1-indexed)."},
-			{Name: "TotalPages", Type: "int", Default: "1", Description: "Total number of pages."},
-			{Name: "BaseURL", Type: "string", Default: `""`, Description: "Base href for page links (page appended as a query/path)."},
-			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "In-place HTMX navigation (Target, Swap)."},
-			{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id on the nav."},
-			{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(paginationAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

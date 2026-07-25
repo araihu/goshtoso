@@ -9,9 +9,87 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var toastAPISections = []demo.APISection{
+	demo.StructAPI[toast.ContainerConfig](
+		rootcomponents.KindToastContainer,
+		"ContainerConfig",
+		"toast.ToastContainer(cfg ContainerConfig) ContainerInstance",
+		"Configures the single notify-event listener and stack host. Placement is fixed by the component: top inset on small screens and bottom-right on medium screens and above.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"toast-container"`, Description: "Sets the listener root ID and derives the <ID>-oob target."},
+			{Name: "DisplayDuration", Default: "8000ms when <= 0", Description: "Sets the client-notification auto-dismiss delay; the container does not configure placement."},
+		},
+	),
+	demo.StructAPI[toast.Config](
+		rootcomponents.KindToast,
+		"Config",
+		"toast.Toast(cfg Config) Instance",
+		"Configures a server-rendered semantic toast with a generated ID and an always-present icon dismiss button.",
+		[]demo.APIPropDoc{
+			{Name: "Tone", Default: "ToneInfo", Allowed: []string{"ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets border, background, icon, and title treatment; empty or unknown values use info."},
+			{Name: "Title", Default: `"" (heading omitted)`, Description: "Non-empty notification heading."},
+			{Name: "Message", Default: `"" (paragraph omitted)`, Description: "Non-empty notification body text."},
+			{Name: "DisplayDuration", Default: "8000ms when <= 0; negative stays visible", Description: "Positive values set auto-dismiss milliseconds. Negative values keep server-rendered toasts visible until dismissal."},
+			{Name: "ActionLabel", Default: `"" (action omitted)`, Description: "Non-empty text renders one inline action button; the action does not immediately dismiss the toast so an HTMX request can finish."},
+			{Name: "ActionHTMX", Default: "nil (no HTMX attributes)", Description: "Adds non-empty HTMXConfig fields to the action button when ActionLabel is non-empty."},
+		},
+	),
+	demo.StructAPI[toast.MessageConfig](
+		rootcomponents.KindMessageToast,
+		"MessageConfig",
+		"toast.MessageToast(cfg MessageConfig) MessageInstance",
+		"Configures a sender-oriented server-rendered message toast.",
+		[]demo.APIPropDoc{
+			{Name: "Sender", Default: "zero Sender (name and avatar omitted)", Description: "Supplies optional sender identity."},
+			{Name: "Message", Default: `"" (paragraph omitted)`, Description: "Non-empty message body text."},
+			{Name: "DisplayDuration", Default: "8000ms when <= 0; negative stays visible", Description: "Positive values set auto-dismiss milliseconds. Negative values keep server-rendered toasts visible until dismissal."},
+			{Name: "ActionLabel", Default: `"" (action omitted)`, Description: "Non-empty text renders one inline action button."},
+			{Name: "ActionHTMX", Default: "nil (no HTMX attributes)", Description: "Adds non-empty HTMXConfig fields to the action button when ActionLabel is non-empty."},
+			{Name: "DismissLabel", Default: `"Dismiss"`, Description: "Labels the text dismiss control; the icon dismiss button remains present."},
+		},
+	),
+	demo.StructAPI[toast.Sender](
+		"",
+		"Sender",
+		"",
+		"Describes the identity shown by MessageToast.",
+		[]demo.APIPropDoc{
+			{Name: "Name", Default: `"" (heading omitted)`, Description: "Sender display name."},
+			{Name: "Avatar", Default: `"" (image omitted)`, Description: "Sender image URL rendered with decorative alt text."},
+		},
+	),
+	demo.StructAPI[toast.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Maps optional HTMX attributes onto a server-rendered toast action button.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL rendered as hx-get."},
+			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL rendered as hx-post; it may be rendered together with Get."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+		},
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindOOBToast,
+		"OOBToast",
+		"toast.OOBToast(cfg Config) OOBInstance",
+		"Wraps Toast in #toast-container-oob with hx-swap-oob=beforeend. The target is fixed and does not follow ContainerConfig.ID.",
+		nil,
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindOOBMessageToast,
+		"OOBMessageToast",
+		"toast.OOBMessageToast(cfg MessageConfig) OOBMessageInstance",
+		"Wraps MessageToast in #toast-container-oob with hx-swap-oob=beforeend. The target is fixed and does not follow ContainerConfig.ID.",
+		nil,
+	),
+}
 
 // ToastDemoPage renders the Toast component demo
 func ToastDemoPage() templ.Component {
@@ -164,14 +242,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Tone", Type: "Tone", Default: "ToneInfo", Description: `Semantic color: "info", "success", "warning", or "danger".`},
-			{Name: "Title", Type: "string", Default: `""`, Description: "Toast heading."},
-			{Name: "Message", Type: "string", Default: `""`, Description: "Toast body text."},
-			{Name: "DisplayDuration", Type: "int", Default: "0", Description: "Auto-dismiss delay in ms (0 uses the container default; negative keeps a server-rendered toast visible until dismissed)."},
-			{Name: "ActionLabel", Type: "string", Default: `""`, Description: "Optional inline action button label for server-rendered toasts."},
-			{Name: "ActionHTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX request for the action button (Get/Post, Target, Swap)."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(toastAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

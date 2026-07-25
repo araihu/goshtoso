@@ -1,10 +1,25 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/spinner"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var spinnerAPISections = []demo.APISection{
+	demo.StructAPI[spinner.Config](
+		rootcomponents.KindSpinner,
+		"Config",
+		"spinner.Spinner(cfg Config) Instance",
+		"Configures a decorative aria-hidden SVG spinner. It does not render a label, status role, aria-busy state, or busy-state wrapper.",
+		[]demo.APIPropDoc{
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets the SVG fill color; empty or unknown values use the on-surface default."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets the SVG dimensions; empty or unknown values render size-5."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the spinner SVG."},
+		},
+	),
+}
 
 // SpinnerDemoPage renders the Spinner component demo
 templ SpinnerDemoPage() {
@@ -45,11 +60,7 @@ templ spinnerDemoContent() {
 		)
 	</div>
 	// API reference lives outside #spinner-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Tone", Type: "Tone", Default: "ToneDefault", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
-		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg", "xl".`},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
-	})
+	@demo.StructuredAPIReference(spinnerAPISections)
 }
 
 // spinnerSizeSelector renders the segmented size control above the sizes
