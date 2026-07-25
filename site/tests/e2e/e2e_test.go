@@ -24,6 +24,10 @@ var (
 	screenshotDir = "test-results/screenshots"
 )
 
+const avatarBrokenImagePath = "/assets/images/does-not-exist-404.png"
+
+const pageSettleGraceMilliseconds = 250
+
 // Shared singleton state — initialized once in TestMain, shared across all tests.
 var (
 	sharedPW      *playwright.Playwright
@@ -208,6 +212,22 @@ func newPage(t *testing.T, browser playwright.Browser, opts ...playwright.Browse
 	return page
 }
 
+func waitForPageSettled(t *testing.T, page playwright.Page) {
+	t.Helper()
+	require.NoError(t, page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{
+		State:   playwright.LoadStateNetworkidle,
+		Timeout: playwright.Float(3000),
+	}))
+	// Network idle may already have been reached before the caller starts
+	// waiting. Give timers and Playwright's asynchronous event callbacks one
+	// bounded turn before pageFailures takes its final snapshot.
+	_, err := page.Evaluate(
+		"milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds))",
+		pageSettleGraceMilliseconds,
+	)
+	require.NoError(t, err)
+}
+
 type pageFailures struct {
 	mu       sync.Mutex
 	messages []string
@@ -226,7 +246,7 @@ func watchPageFailures(page playwright.Page) *pageFailures {
 	})
 	page.OnConsole(func(message playwright.ConsoleMessage) {
 		if message.Type() == "error" {
-			add(fmt.Sprintf("console error: %s", message.Text()))
+			add(consoleFailureMessage(message))
 		}
 	})
 	page.OnRequestFailed(func(request playwright.Request) {
@@ -249,6 +269,38 @@ func watchPageFailures(page playwright.Page) *pageFailures {
 	})
 
 	return failures
+}
+
+func consoleFailureMessage(message playwright.ConsoleMessage) string {
+	location := message.Location()
+	if location == nil {
+		return fmt.Sprintf("console error: %s", message.Text())
+	}
+	return fmt.Sprintf(
+		"console error: %s [url=%s line=%d column=%d]",
+		message.Text(),
+		location.URL,
+		location.LineNumber,
+		location.ColumnNumber,
+	)
+}
+
+// filterIgnorable drops only the intentional broken-image fixture used by the
+// Avatar fallback demo. Category, status, and exact local URL must all match.
+func filterIgnorable(messages []string) []string {
+	kept := make([]string, 0, len(messages))
+	fixtureURL := baseURL + avatarBrokenImagePath
+	for _, message := range messages {
+		knownHTTP404 := message == "HTTP response: 404 Not Found: "+fixtureURL
+		knownConsole404 := strings.HasPrefix(message,
+			"console error: Failed to load resource: the server responded with a status of 404 (Not Found) "+
+				"[url="+fixtureURL+" ")
+		if knownHTTP404 || knownConsole404 {
+			continue
+		}
+		kept = append(kept, message)
+	}
+	return kept
 }
 
 func (failures *pageFailures) RequireEmpty(t *testing.T) {

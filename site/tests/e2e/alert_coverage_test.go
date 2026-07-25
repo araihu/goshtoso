@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -79,17 +78,4 @@ func TestAlertCoverageDemo(t *testing.T) {
 
 	require.Empty(t, pageErrors, "uncaught JS exceptions on alert demo")
 	require.Empty(t, filterIgnorable(consoleErrors), "console errors on alert demo")
-}
-
-// filterIgnorable drops console errors that are not caused by the component
-// under test (e.g. unrelated network 404s for optional assets).
-func filterIgnorable(errs []string) []string {
-	var kept []string
-	for _, e := range errs {
-		if strings.Contains(e, "404") || strings.Contains(e, "favicon") {
-			continue
-		}
-		kept = append(kept, e)
-	}
-	return kept
 }

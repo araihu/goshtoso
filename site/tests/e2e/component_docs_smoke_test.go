@@ -46,6 +46,7 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 			apiCount, err := page.Locator("[data-api-reference]").Count()
 			require.NoError(t, err)
 			require.Equal(t, 1, apiCount)
+			waitForPageSettled(t, page)
 			failures.RequireEmpty(t)
 		})
 	}
