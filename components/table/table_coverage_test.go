@@ -631,7 +631,7 @@ func TestRenderFilterBarVariants(t *testing.T) {
 	)
 }
 
-func TestRenderInlineFilterVariant(t *testing.T) {
+func TestRenderInlineFilterAppearance(t *testing.T) {
 	cfg := Config{
 		ID:      "inline",
 		HTMX:    &HTMXConfig{Endpoint: "/api/x"},
@@ -644,7 +644,7 @@ func TestRenderInlineFilterVariant(t *testing.T) {
 	}
 	html := renderT(t, Table(cfg))
 	mustContainAll(t, html, `id="inline-filters"`, "flex flex-wrap items-end gap-3", `type="search"`)
-	// Inline variant drops the collapsible toggle.
+	// Inline appearance drops the collapsible toggle.
 	mustNotContain(t, html, `@click="filtersExpanded`)
 }
 

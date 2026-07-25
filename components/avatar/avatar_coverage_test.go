@@ -209,13 +209,13 @@ func TestToneClasses(t *testing.T) {
 			t.Errorf("toneClasses(%q) returned empty", v)
 		}
 	}
-	// ToneDefault and unknown variant produce the same outline classes.
+	// ToneDefault and an unknown tone produce the same outline classes.
 	if (Config{Tone: ToneDefault}).toneClasses() != (Config{Tone: Tone("nope")}).toneClasses() {
-		t.Error("unknown variant should match ToneDefault")
+		t.Error("unknown tone should match ToneDefault")
 	}
 }
 
-func TestVariantFillClasses(t *testing.T) {
+func TestToneFillClasses(t *testing.T) {
 	cases := map[Tone]string{
 		ToneInverse:   "bg-surface-dark-alt",
 		TonePrimary:   "bg-primary",

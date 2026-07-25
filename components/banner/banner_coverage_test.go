@@ -67,7 +67,7 @@ func TestCoverageContainerClassesCoverPositionVariantsAndRootClass(t *testing.T)
 	}
 }
 
-func TestCoverageLinkClassesCoverEveryVariant(t *testing.T) {
+func TestCoverageLinkClassesCoverEveryTone(t *testing.T) {
 	tests := []struct {
 		name string
 		cfg  Config

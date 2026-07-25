@@ -82,7 +82,7 @@ func TestCoverageDropZoneDisabled(t *testing.T) {
 	}
 }
 
-func TestCoverageUploadVariantAllBranches(t *testing.T) {
+func TestCoverageUploadAppearanceAllBranches(t *testing.T) {
 	html := renderConfig(t, Config{
 		Appearance: AppearanceUpload,
 		ID:         "resume",

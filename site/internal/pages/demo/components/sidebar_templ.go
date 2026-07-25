@@ -245,7 +245,7 @@ func sidebarDemoContent() templ.Component {
 	})
 }
 
-// --- Variant 1: Simple Sidebar ---
+// --- Example 1: Simple Sidebar ---
 func sidebarSimplePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -302,7 +302,7 @@ func sidebarSimplePreview() templ.Component {
 	})
 }
 
-// --- Variant 2: Sidebar with Sections ---
+// --- Example 2: Sidebar with Sections ---
 func sidebarSectionsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -375,7 +375,7 @@ func sidebarSectionsPreview() templ.Component {
 	})
 }
 
-// --- Variant 3: Sidebar with Sub-Items ---
+// --- Example 3: Sidebar with Sub-Items ---
 func sidebarSubItemsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -449,7 +449,7 @@ func sidebarSubItemsPreview() templ.Component {
 	})
 }
 
-// --- Variant 4: Collapsible Sidebar ---
+// --- Example 4: Collapsible Sidebar ---
 func sidebarCollapsiblePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -597,7 +597,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 	})
 }
 
-// --- Variant 5: Overlay Sidebar ---
+// --- Example 5: Overlay Sidebar ---
 func sidebarOverlayPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

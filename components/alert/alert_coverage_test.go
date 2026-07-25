@@ -50,19 +50,19 @@ func TestDefaultAlertRendersTitleDescriptionAndRole(t *testing.T) {
 	mustNotContain(t, html, "x-data", "dismiss alert", "<a ", "hx-")
 }
 
-func TestDefaultAlertVariantIcons(t *testing.T) {
-	// Each variant selects a distinct icon path snippet from iconBadge.
+func TestDefaultAlertToneIcons(t *testing.T) {
+	// Each tone selects a distinct icon path snippet from iconBadge.
 	cases := map[Tone]string{
 		ToneInfo:    "M18 10a8 8 0 1 1-16 0",
 		ToneSuccess: "M10 18a8 8 0 1 0 0-16",
 		ToneWarning: "a.75.75 0 0 1 .75.75v4.5",
 		ToneDanger:  "M8.28 7.22a.75.75 0 0 0-1.06 1.06",
 	}
-	for variant, path := range cases {
-		html := render(t, Config{Tone: variant, Title: "T"})
+	for tone, path := range cases {
+		html := render(t, Config{Tone: tone, Title: "T"})
 		mustContainAll(t, html, `aria-hidden="true"`, path)
 	}
-	// Empty variant falls back to the info icon.
+	// Empty tone falls back to the info icon.
 	html := render(t, Config{Title: "T"})
 	mustContainAll(t, html, "M18 10a8 8 0 1 1-16 0")
 }

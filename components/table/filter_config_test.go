@@ -110,7 +110,7 @@ func TestFilterScriptDataEscapesFilterDefaultValues(t *testing.T) {
 	}
 }
 
-// TestFilterVariant_Constants keeps the enum surface honest — consumers
+// TestFilterAppearanceConstants keeps the enum surface honest — consumers
 // import these, so renaming is a breaking change.
 func TestFilterAppearanceConstants(t *testing.T) {
 	if FilterAppearanceBar != "" {

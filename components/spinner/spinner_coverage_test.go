@@ -108,7 +108,7 @@ func TestCoverageRootClassEmptyNotAppended(t *testing.T) {
 	}
 }
 
-func TestCoverageVariantAndSizeCombined(t *testing.T) {
+func TestCoverageToneAndSizeCombined(t *testing.T) {
 	html := renderSpinner(t, Config{Tone: ToneDanger, Size: SizeXL, RootClass: "mx-auto"})
 	for _, want := range []string{"size-12", "fill-danger", "dark:fill-danger", "motion-safe:animate-spin", "mx-auto"} {
 		if !strings.Contains(html, want) {
