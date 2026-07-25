@@ -23,15 +23,17 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `assets/vendor_gen.go`
   - `.claude/skills/using-goshtoso/components-reference.md`
   - `.agents/skills/using-goshtoso/references/components-reference.md`
+  - `.agents/skills/using-goshtoso/references/application-patterns.md`
+  - `.agents/skills/using-goshtoso/references/visual-acceptance.md`
 - Update `VERSIONS.md` when the release uses a new Goshtoso tag or Tailwind
   version.
 - Review `README.md`, `docs/USAGE.md`, and `ROADMAP.md` for stale version,
   component, or stability language.
-- Review `/docs/agents` and `.agents/skills/using-goshtoso/SKILL.md` for stale
-  consumer-agent installation guidance.
+- Review `/docs/agents`, application recipes, and
+  `.agents/skills/using-goshtoso/SKILL.md` for stale consumer-agent guidance.
 - Prepare release notes that call out:
   - breaking API changes,
-  - new components or variants,
+  - new components or configuration choices,
   - asset/runtime version changes,
   - migration steps for consumers.
 - Give the release a dated `CHANGELOG.md` heading matching the tag. The release

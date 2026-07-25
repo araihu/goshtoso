@@ -38,6 +38,19 @@ func TestReadmeMakesApplicationGuidanceDiscoverable(t *testing.T) {
 	}
 }
 
+func TestReleaseChecklistProtectsApplicationReferences(t *testing.T) {
+	checklist := readDoc(t, "RELEASE_CHECKLIST.md")
+	for _, want := range []string{
+		"references/application-patterns.md",
+		"references/visual-acceptance.md",
+		"application recipes",
+	} {
+		if !strings.Contains(checklist, want) {
+			t.Errorf("release checklist missing application artifact %q", want)
+		}
+	}
+}
+
 func TestApplicationPatternReferencesCoverApprovedArchetypesAndStates(t *testing.T) {
 	patterns := readDoc(t, "../.agents/skills/using-goshtoso/references/application-patterns.md")
 	for _, want := range []string{
