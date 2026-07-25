@@ -2,16 +2,16 @@ package banner
 
 import "github.com/a-h/templ"
 
-// Variant represents banner style variants
-type Variant string
+// Tone represents a banner's semantic color treatment.
+type Tone string
 
 const (
-	Default Variant = "default"
-	Primary Variant = "primary"
-	Info    Variant = "info"
-	Success Variant = "success"
-	Warning Variant = "warning"
-	Danger  Variant = "danger"
+	ToneDefault Tone = "default"
+	TonePrimary Tone = "primary"
+	ToneInfo    Tone = "info"
+	ToneSuccess Tone = "success"
+	ToneWarning Tone = "warning"
+	ToneDanger  Tone = "danger"
 )
 
 // Position represents banner position
@@ -26,8 +26,8 @@ const (
 type Config struct {
 	// Description is the main banner content
 	Description string
-	// Variant determines the color scheme
-	Variant Variant
+	// Tone determines the color scheme
+	Tone Tone
 	// Position determines if banner is fixed or relative
 	Position Position
 	// Persistent disables the dismiss button (default: banners are dismissible)
@@ -36,10 +36,6 @@ type Config struct {
 	DismissAction string
 	// CTA is the call-to-action button config (optional)
 	CTA *CTAConfig
-	// CookieBanner enables cookie consent mode
-	CookieBanner bool
-	// CookieConfig holds cookie banner specific settings
-	CookieConfig *CookieBannerConfig
 	// RootClass allows additional CSS classes on the banner root.
 	RootClass string
 }
@@ -58,7 +54,9 @@ type CTAConfig struct {
 type CookieBannerConfig struct {
 	// Title of the cookie banner
 	Title string
-	// Icon is an optional icon (emoji or component)
+	// Description is the cookie banner body.
+	Description string
+	// Icon is an optional component; nil renders the default cookie emoji.
 	Icon templ.Component
 	// AcceptLabel is the accept button label
 	AcceptLabel string
@@ -68,10 +66,12 @@ type CookieBannerConfig struct {
 	AcceptAction string
 	// RejectAction is the Alpine.js action for reject
 	RejectAction string
+	// RootClass allows additional CSS classes on the dialog root.
+	RootClass string
 }
 
 // ContainerClasses returns the container CSS classes
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "flex w-full p-4 text-on-surface dark:text-on-surface-dark"
 
 	// Position
@@ -79,17 +79,17 @@ func (cfg Config) ContainerClasses() string {
 		base = "fixed inset-x-0 top-0 z-50 " + base
 	}
 
-	// Variant styles
-	switch cfg.Variant {
-	case Primary:
+	// Tone styles
+	switch cfg.Tone {
+	case TonePrimary:
 		base += " border-b border-primary bg-primary/10 dark:border-primary-dark dark:bg-primary-dark/10"
-	case Info:
+	case ToneInfo:
 		base += " border-b border-info bg-info/10 dark:border-info dark:bg-info/10"
-	case Success:
+	case ToneSuccess:
 		base += " border-b border-success bg-success/10 dark:border-success dark:bg-success/10"
-	case Warning:
+	case ToneWarning:
 		base += " border-b border-warning bg-warning/10 dark:border-warning dark:bg-warning/10"
-	case Danger:
+	case ToneDanger:
 		base += " border-b border-danger bg-danger/10 dark:border-danger dark:bg-danger/10"
 	default:
 		base += " border-b border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt"
@@ -99,22 +99,22 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // TextClasses returns the text content classes
-func (cfg Config) TextClasses() string {
+func (cfg Config) textClasses() string {
 	return "px-6 text-xs sm:text-sm text-pretty mx-auto"
 }
 
 // LinkClasses returns the link classes within the banner
-func (cfg Config) LinkClasses() string {
-	switch cfg.Variant {
-	case Primary:
+func (cfg Config) linkClasses() string {
+	switch cfg.Tone {
+	case TonePrimary:
 		return "font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark"
-	case Info:
+	case ToneInfo:
 		return "font-medium text-info underline-offset-2 hover:underline focus:underline focus:outline-hidden"
-	case Success:
+	case ToneSuccess:
 		return "font-medium text-success underline-offset-2 hover:underline focus:underline focus:outline-hidden"
-	case Warning:
+	case ToneWarning:
 		return "font-medium text-warning underline-offset-2 hover:underline focus:underline focus:outline-hidden"
-	case Danger:
+	case ToneDanger:
 		return "font-medium text-danger underline-offset-2 hover:underline focus:underline focus:outline-hidden"
 	default:
 		return "font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark"
@@ -122,16 +122,31 @@ func (cfg Config) LinkClasses() string {
 }
 
 // CTAClasses returns the CTA button classes
-func (cfg Config) CTAClasses() string {
+func (cfg Config) ctaClasses() string {
 	return "whitespace-nowrap bg-primary px-4 py-1 text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark rounded-radius"
 }
 
-// CookieContainerClasses returns the container CSS classes for cookie banners.
-func (cfg Config) CookieContainerClasses() string {
-	position := "fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50"
-	if cfg.Position == PositionRelative {
-		position = "absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm"
-	}
+func (cfg CookieBannerConfig) containerClasses() string {
+	return "fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.RootClass
+}
 
-	return position + " flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.RootClass
+func (cfg CookieBannerConfig) effectiveTitle() string {
+	if cfg.Title != "" {
+		return cfg.Title
+	}
+	return "Cookie Consent"
+}
+
+func (cfg CookieBannerConfig) effectiveAcceptLabel() string {
+	if cfg.AcceptLabel != "" {
+		return cfg.AcceptLabel
+	}
+	return "Accept"
+}
+
+func (cfg CookieBannerConfig) effectiveRejectLabel() string {
+	if cfg.RejectLabel != "" {
+		return cfg.RejectLabel
+	}
+	return "Decline"
 }

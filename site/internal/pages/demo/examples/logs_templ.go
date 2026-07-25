@@ -19,16 +19,16 @@ import (
 )
 
 // levelBadge maps a log level to a badge variant.
-func levelBadge(l logs.Level) badge.Variant {
+func levelBadge(l logs.Level) badge.Tone {
 	switch l {
 	case logs.Error:
-		return badge.Danger
+		return badge.ToneDanger
 	case logs.Warn:
-		return badge.Warning
+		return badge.ToneWarning
 	case logs.Info:
-		return badge.Info
+		return badge.ToneInfo
 	default: // Debug
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
 }
 
@@ -93,10 +93,10 @@ func LogRow(line logs.LogLine) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = badge.Badge(badge.Config{
-			Variant: levelBadge(line.Level),
-			Style:   badge.StyleSoft,
-			Size:    badge.SizeSM,
-			Label:   line.Level.String(),
+			Tone:       levelBadge(line.Level),
+			Appearance: badge.AppearanceSoft,
+			Size:       badge.SizeSM,
+			Label:      line.Level.String(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -326,11 +326,11 @@ func LogsApp() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:      "log-pause-tip",
-			Label:   "Pause closes the stream; resume reconnects",
-			Trigger: pauseButton(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip(
+			"log-pause-tip",
+			"Pause closes the stream; resume reconnects",
+			tooltip.WithTrigger(pauseButton()),
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -352,12 +352,11 @@ func LogsApp() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Size:    button.SizeSmall,
-			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "clearFeed()"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithAlpine(&button.AlpineConfig{OnClick: "clearFeed()"}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -410,12 +409,11 @@ func pauseButton() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Size:    button.SizeSmall,
-			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "togglePause()"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithAlpine(&button.AlpineConfig{OnClick: "togglePause()"}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

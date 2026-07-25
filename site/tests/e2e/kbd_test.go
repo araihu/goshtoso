@@ -29,7 +29,7 @@ func TestKbdComponentDemoVariants(t *testing.T) {
 		frequentlyUsed := page.Locator("#kbd-frequently-used")
 		for _, key := range []string{"Tab", "Shift", "Space", "Ctrl", "Command", "Alt", "Enter", "Esc", "Caps Lock"} {
 			require.NoError(t, frequentlyUsed.GetByText(key, playwright.LocatorGetByTextOptions{
-				Exact: playwright.Bool(true),
+				Exact: new(true),
 			}).WaitFor())
 		}
 
@@ -55,18 +55,18 @@ func TestKbdComponentDemoVariants(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 26, alphabetCount)
 		alphabet := page.Locator("#kbd-alphabet")
-		require.NoError(t, alphabet.GetByText("A", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-		require.NoError(t, alphabet.GetByText("Z", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, alphabet.GetByText("A", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
+		require.NoError(t, alphabet.GetByText("Z", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 		numberCount, err := page.Locator("#kbd-numbers kbd").Count()
 		require.NoError(t, err)
 		assert.Equal(t, 10, numberCount)
-		require.NoError(t, page.Locator("#kbd-numbers").GetByText("0", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, page.Locator("#kbd-numbers").GetByText("0", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 		functions := page.Locator("#kbd-functions")
 		for _, key := range []string{"F1", "F8", "F12"} {
 			require.NoError(t, functions.GetByText(key, playwright.LocatorGetByTextOptions{
-				Exact: playwright.Bool(true),
+				Exact: new(true),
 			}).WaitFor())
 		}
 	})

@@ -16,18 +16,18 @@ const (
 	Size2XL Size = "2xl" // 2x extra large (matches PenguinUI)
 )
 
-// Variant represents avatar style variants
-type Variant string
+// Tone represents avatar style variants
+type Tone string
 
 const (
-	Default   Variant = "default"
-	Inverse   Variant = "inverse"
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Info      Variant = "info"
-	Success   Variant = "success"
-	Warning   Variant = "warning"
-	Danger    Variant = "danger"
+	ToneDefault   Tone = "default"
+	ToneInverse   Tone = "inverse"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneInfo      Tone = "info"
+	ToneSuccess   Tone = "success"
+	ToneWarning   Tone = "warning"
+	ToneDanger    Tone = "danger"
 )
 
 // Shape represents avatar shape
@@ -84,15 +84,15 @@ type Config struct {
 	Initials string
 	// Size of the avatar
 	Size Size
-	// Variant determines the color scheme (for initials/icon placeholders)
-	Variant Variant
+	// Tone determines the color scheme (for initials/icon placeholders)
+	Tone Tone
 	// Shape of the avatar (circle or square)
 	Shape Shape
 	// Radius controls the corner radius for square avatars.
 	Radius Radius
 	// Border adds a colored border (for image avatars)
 	Border bool
-	// BorderColor is the border color (defaults to variant color if empty)
+	// BorderColor overrides the border; empty uses semantic status tones or primary.
 	BorderColor string
 	// Status adds a status indicator dot
 	Status Status
@@ -141,7 +141,7 @@ type StackConfig struct {
 }
 
 // ResolvedInitials returns the initials to display: explicit Initials, or derived from Name.
-func (cfg Config) ResolvedInitials() string {
+func (cfg Config) resolvedInitials() string {
 	if cfg.Initials != "" {
 		return cfg.Initials
 	}
@@ -152,7 +152,7 @@ func (cfg Config) ResolvedInitials() string {
 }
 
 // SizeClasses returns the CSS classes for the size
-func (cfg Config) SizeClasses() string {
+func (cfg Config) sizeClasses() string {
 	switch cfg.Size {
 	case SizeXS:
 		return "size-8 text-xs"
@@ -172,17 +172,17 @@ func (cfg Config) SizeClasses() string {
 }
 
 // ShapeClasses returns the CSS classes for the shape
-func (cfg Config) ShapeClasses() string {
+func (cfg Config) shapeClasses() string {
 	switch cfg.Shape {
 	case ShapeSquare:
-		return cfg.RadiusClasses()
+		return cfg.radiusClasses()
 	default:
 		return "rounded-full"
 	}
 }
 
 // RadiusClasses returns the CSS classes for square avatar radius.
-func (cfg Config) RadiusClasses() string {
+func (cfg Config) radiusClasses() string {
 	switch cfg.Radius {
 	case RadiusNone:
 		return "rounded-none"
@@ -197,44 +197,44 @@ func (cfg Config) RadiusClasses() string {
 	}
 }
 
-// VariantClasses returns the CSS classes for the variant (for initials/icon)
-func (cfg Config) VariantClasses() string {
-	switch cfg.Variant {
-	case Inverse:
+// toneClasses returns the CSS classes for the variant (for initials/icon)
+func (cfg Config) toneClasses() string {
+	switch cfg.Tone {
+	case ToneInverse:
 		return "border border-outline-dark bg-surface-dark-alt text-on-surface-dark/80 dark:border-outline dark:bg-surface-alt dark:text-on-surface/80"
-	case Primary:
+	case TonePrimary:
 		return "border border-primary bg-primary text-on-primary/80 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark/80"
-	case Secondary:
+	case ToneSecondary:
 		return "border border-secondary bg-secondary text-on-secondary/80 dark:border-secondary-dark dark:bg-secondary-dark dark:text-on-secondary-dark/80"
-	case Info:
+	case ToneInfo:
 		return "border border-info bg-info text-on-info/80"
-	case Success:
+	case ToneSuccess:
 		return "border border-success bg-success text-on-success/80"
-	case Warning:
+	case ToneWarning:
 		return "border border-warning bg-warning text-on-warning/80"
-	case Danger:
+	case ToneDanger:
 		return "border border-danger bg-danger text-on-danger/80"
 	default:
 		return "border border-outline bg-surface-alt text-on-surface/80 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark/80"
 	}
 }
 
-// VariantFillClasses returns variant classes without border color.
-func (cfg Config) VariantFillClasses() string {
-	switch cfg.Variant {
-	case Inverse:
+// toneFillClasses returns variant classes without border color.
+func (cfg Config) toneFillClasses() string {
+	switch cfg.Tone {
+	case ToneInverse:
 		return "bg-surface-dark-alt text-on-surface-dark/80 dark:bg-surface-alt dark:text-on-surface/80"
-	case Primary:
+	case TonePrimary:
 		return "bg-primary text-on-primary/80 dark:bg-primary-dark dark:text-on-primary-dark/80"
-	case Secondary:
+	case ToneSecondary:
 		return "bg-secondary text-on-secondary/80 dark:bg-secondary-dark dark:text-on-secondary-dark/80"
-	case Info:
+	case ToneInfo:
 		return "bg-info text-on-info/80"
-	case Success:
+	case ToneSuccess:
 		return "bg-success text-on-success/80"
-	case Warning:
+	case ToneWarning:
 		return "bg-warning text-on-warning/80"
-	case Danger:
+	case ToneDanger:
 		return "bg-danger text-on-danger/80"
 	default:
 		return "bg-surface-alt text-on-surface/80 dark:bg-surface-dark-alt dark:text-on-surface-dark/80"
@@ -242,21 +242,21 @@ func (cfg Config) VariantFillClasses() string {
 }
 
 // BorderClasses returns border classes if border is enabled
-func (cfg Config) BorderClasses() string {
+func (cfg Config) borderClasses() string {
 	if !cfg.Border {
 		return ""
 	}
 
 	color := cfg.BorderColor
 	if color == "" {
-		switch cfg.Variant {
-		case Info:
+		switch cfg.Tone {
+		case ToneInfo:
 			color = "border-info"
-		case Success:
+		case ToneSuccess:
 			color = "border-success"
-		case Warning:
+		case ToneWarning:
 			color = "border-warning"
-		case Danger:
+		case ToneDanger:
 			color = "border-danger"
 		default:
 			color = "border-primary"
@@ -267,7 +267,7 @@ func (cfg Config) BorderClasses() string {
 }
 
 // StatusClasses returns status dot classes
-func (cfg Config) StatusClasses() string {
+func (cfg Config) statusClasses() string {
 	switch cfg.Status {
 	case StatusOffline:
 		return "bg-outline dark:bg-outline-dark"
@@ -285,7 +285,7 @@ func (cfg Config) StatusClasses() string {
 }
 
 // StatusSizeClasses returns status dot size based on avatar size
-func (cfg Config) StatusSizeClasses() string {
+func (cfg Config) statusSizeClasses() string {
 	switch cfg.Size {
 	case SizeXS:
 		return "size-2"
@@ -303,7 +303,7 @@ func (cfg Config) StatusSizeClasses() string {
 }
 
 // SpinnerSizeClasses returns spinner size classes based on avatar size
-func (cfg Config) SpinnerSizeClasses() string {
+func (cfg Config) spinnerSizeClasses() string {
 	switch cfg.Size {
 	case SizeXS:
 		return "size-4"
@@ -321,12 +321,12 @@ func (cfg Config) SpinnerSizeClasses() string {
 }
 
 // HasImage returns true if avatar uses an image
-func (cfg Config) HasImage() bool {
+func (cfg Config) hasImage() bool {
 	return cfg.Src != "" || cfg.SrcExpr != ""
 }
 
 // HasInitials returns true if avatar uses initials
-func (cfg Config) HasInitials() bool {
+func (cfg Config) hasInitials() bool {
 	return cfg.Initials != ""
 }
 

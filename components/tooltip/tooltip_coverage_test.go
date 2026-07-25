@@ -9,66 +9,71 @@ import (
 	"testing"
 
 	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components/button"
 )
 
 func TestTooltipCoverageConfigHelpers(t *testing.T) {
 	tests := []struct {
 		name     string
-		cfg      Config
-		position string
-		rich     bool
 		id       string
 		label    string
+		options  []Option
+		position string
+		rich     bool
+		trigger  string
 	}{
 		{
 			name:     "defaults",
-			cfg:      Config{},
+			id:       "default-tip",
+			label:    "Default tooltip",
 			position: "absolute bottom-full mb-2 left-1/2 -translate-x-1/2",
-			id:       "tooltipExample",
-			label:    "Hover Me",
+			trigger:  "Hover Me",
 		},
 		{
-			name: "bottom rich custom labels",
-			cfg: Config{
-				ID:           "help",
-				Description:  "More details",
-				Position:     Bottom,
-				TriggerLabel: "Details",
+			name:  "bottom rich custom labels",
+			id:    "help",
+			label: "Help",
+			options: []Option{
+				WithDescription("More details"),
+				WithPosition(PositionBottom),
+				WithTriggerLabel("Details"),
 			},
 			position: "absolute top-full mt-2 left-1/2 -translate-x-1/2",
 			rich:     true,
-			id:       "help",
-			label:    "Details",
+			trigger:  "Details",
 		},
 		{
 			name:     "left",
-			cfg:      Config{Position: Left},
+			id:       "left-tip",
+			label:    "Left",
+			options:  []Option{WithPosition(PositionLeft)},
 			position: "absolute right-full mr-2 top-1/2 -translate-y-1/2",
-			id:       "tooltipExample",
-			label:    "Hover Me",
+			trigger:  "Hover Me",
 		},
 		{
 			name:     "right",
-			cfg:      Config{Position: Right},
+			id:       "right-tip",
+			label:    "Right",
+			options:  []Option{WithPosition(PositionRight)},
 			position: "absolute left-full ml-2 top-1/2 -translate-y-1/2",
-			id:       "tooltipExample",
-			label:    "Hover Me",
+			trigger:  "Hover Me",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.cfg.positionClasses(); got != tt.position {
+			cfg := newConfig(tt.id, tt.label, tt.options)
+			if got := cfg.positionClasses(); got != tt.position {
 				t.Fatalf("positionClasses() = %q, want %q", got, tt.position)
 			}
-			if got := tt.cfg.isRich(); got != tt.rich {
+			if got := cfg.isRich(); got != tt.rich {
 				t.Fatalf("isRich() = %v, want %v", got, tt.rich)
 			}
-			if got := tt.cfg.tooltipID(); got != tt.id {
-				t.Fatalf("tooltipID() = %q, want %q", got, tt.id)
+			if cfg.id != tt.id {
+				t.Fatalf("id = %q, want %q", cfg.id, tt.id)
 			}
-			if got := tt.cfg.triggerLabel(); got != tt.label {
-				t.Fatalf("triggerLabel() = %q, want %q", got, tt.label)
+			if cfg.triggerLabel != tt.trigger {
+				t.Fatalf("triggerLabel = %q, want %q", cfg.triggerLabel, tt.trigger)
 			}
 		})
 	}
@@ -81,18 +86,17 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 	})
 
 	tests := []struct {
-		name string
-		cfg  Config
-		want []string
+		name    string
+		id      string
+		label   string
+		options []Option
+		want    []string
 	}{
 		{
-			name: "default hover tooltip",
-			cfg: Config{
-				ID:           "plainTip",
-				Label:        "Helpful context",
-				Position:     Top,
-				TriggerLabel: "Hover help",
-			},
+			name:    "default hover tooltip",
+			id:      "plainTip",
+			label:   "Helpful context",
+			options: []Option{WithTriggerLabel("Hover help")},
 			want: []string{
 				`type="button"`,
 				`aria-describedby="plainTip"`,
@@ -105,13 +109,13 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 			},
 		},
 		{
-			name: "rich tooltip",
-			cfg: Config{
-				ID:           "richTip",
-				Label:        "Storage",
-				Description:  "Backed up every hour",
-				Position:     Bottom,
-				TriggerLabel: "Show storage help",
+			name:  "rich tooltip",
+			id:    "richTip",
+			label: "Storage",
+			options: []Option{
+				WithDescription("Backed up every hour"),
+				WithPosition(PositionBottom),
+				WithTriggerLabel("Show storage help"),
 			},
 			want: []string{
 				`aria-describedby="richTip"`,
@@ -125,13 +129,13 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 			},
 		},
 		{
-			name: "click tooltip",
-			cfg: Config{
-				ID:           "clickTip",
-				Label:        "Click details",
-				Position:     Right,
-				TriggerMode:  Click,
-				TriggerLabel: "Toggle help",
+			name:  "click tooltip",
+			id:    "clickTip",
+			label: "Click details",
+			options: []Option{
+				WithPosition(PositionRight),
+				WithActivation(ActivationClick),
+				WithTriggerLabel("Toggle help"),
 			},
 			want: []string{
 				`x-data="{ showTooltip: false }"`,
@@ -145,16 +149,16 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 			},
 		},
 		{
-			name: "custom trigger",
-			cfg: Config{
-				ID:       "customTip",
-				Label:    "Custom trigger context",
-				Position: Left,
-				Trigger:  customTrigger,
+			name:  "custom trigger",
+			id:    "customTip",
+			label: "Custom trigger context",
+			options: []Option{
+				WithPosition(PositionLeft),
+				WithTrigger(customTrigger),
 			},
 			want: []string{
 				`class="peer"`,
-				`aria-describedby="customTip"`,
+				`data-tooltip-content-id="customTip"`,
 				`data-testid="custom-trigger"`,
 				"Custom trigger context",
 				"right-full mr-2",
@@ -164,7 +168,7 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			html := renderTooltip(t, tt.cfg)
+			html := renderTooltip(t, tt.id, tt.label, tt.options...)
 			for _, want := range tt.want {
 				if !strings.Contains(html, want) {
 					t.Fatalf("Tooltip render missing %q in %s", want, html)
@@ -181,38 +185,34 @@ func TestTooltipCoverageCustomTriggerRenderErrors(t *testing.T) {
 	})
 
 	tests := []struct {
-		name string
-		cfg  Config
+		name       string
+		activation Activation
+		rich       bool
 	}{
 		{
 			name: "default",
-			cfg: Config{
-				Label:   "Default tooltip",
-				Trigger: failingTrigger,
-			},
 		},
 		{
 			name: "rich",
-			cfg: Config{
-				Label:       "Rich tooltip",
-				Description: "Trigger should fail before details render",
-				Trigger:     failingTrigger,
-			},
+			rich: true,
 		},
 		{
-			name: "click",
-			cfg: Config{
-				Label:       "Click tooltip",
-				TriggerMode: Click,
-				Trigger:     failingTrigger,
-			},
+			name:       "click",
+			activation: ActivationClick,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			err := Tooltip(tt.cfg).Render(context.Background(), &buf)
+			options := []Option{WithTrigger(failingTrigger)}
+			if tt.rich {
+				options = append(options, WithDescription("Trigger should fail before details render"))
+			}
+			if tt.activation != "" {
+				options = append(options, WithActivation(tt.activation))
+			}
+			err := Tooltip(tt.name+"-tip", tt.name+" tooltip", options...).Render(context.Background(), &buf)
 			if !errors.Is(err, errTrigger) {
 				t.Fatalf("Tooltip render error = %v, want %v", err, errTrigger)
 			}
@@ -220,12 +220,55 @@ func TestTooltipCoverageCustomTriggerRenderErrors(t *testing.T) {
 	}
 }
 
-func renderTooltip(t *testing.T, cfg Config) string {
+func renderTooltip(t *testing.T, id, label string, options ...Option) string {
 	t.Helper()
 
 	var buf bytes.Buffer
-	if err := Tooltip(cfg).Render(context.Background(), &buf); err != nil {
+	if err := Tooltip(id, label, options...).Render(context.Background(), &buf); err != nil {
 		t.Fatalf("render tooltip: %v", err)
 	}
 	return buf.String()
+}
+
+func TestTooltipRequiresIDAndLabel(t *testing.T) {
+	var buf bytes.Buffer
+	err := Tooltip(
+		"copy-url-tooltip",
+		"Copies the URL",
+		WithPosition(PositionBottom),
+	).Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatalf("render tooltip: %v", err)
+	}
+
+	html := buf.String()
+	if !strings.Contains(html, "Copies the URL") {
+		t.Fatalf("tooltip required label missing in %s", html)
+	}
+	if !strings.Contains(html, `id="copy-url-tooltip"`) {
+		t.Fatalf("tooltip required ID missing in %s", html)
+	}
+	if !strings.Contains(html, "top-full mt-2") {
+		t.Fatalf("tooltip position option missing in %s", html)
+	}
+}
+
+func TestTooltipCustomTriggerSupportsDescendantFocus(t *testing.T) {
+	trigger := button.Button(button.WithID("custom-tooltip-button"))
+	html := renderTooltip(t,
+		"customTip",
+		"Custom trigger context",
+		WithTrigger(trigger),
+	)
+
+	for _, want := range []string{
+		`data-tooltip-content-id="customTip"`,
+		`x-data`,
+		`x-init="goshtosoInitTooltipTrigger($el)"`,
+		"peer-focus-within:opacity-100",
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("custom trigger render missing %q in %s", want, html)
+		}
+	}
 }

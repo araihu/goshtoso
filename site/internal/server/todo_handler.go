@@ -173,14 +173,14 @@ func (s *Server) handleTodoAdd(w http.ResponseWriter, r *http.Request) {
 			msg = "Task added."
 		}
 		_ = toast.OOBToast(toast.Config{
-			Variant: toast.Success,
+			Tone:    toast.ToneSuccess,
 			Title:   "Added",
 			Message: msg,
 		}).Render(r.Context(), w)
 	} else if title != "" {
 		// Non-blank title but add was rejected — list is full.
 		_ = toast.OOBToast(toast.Config{
-			Variant: toast.Warning,
+			Tone:    toast.ToneWarning,
 			Title:   "List full",
 			Message: "Remove a task before adding more.",
 		}).Render(r.Context(), w)
@@ -225,7 +225,7 @@ func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
 	writeHTML(w)
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
-	cfg := toast.Config{Variant: toast.Info, Title: "Task deleted"}
+	cfg := toast.Config{Tone: toast.ToneInfo, Title: "Task deleted"}
 	if deleted != nil {
 		// The toast itself carries the Undo action (no separate undo bar); the
 		// toast's own close button handles dismissal.
@@ -298,7 +298,7 @@ func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request
 	writeListAndCount(r, w, st)
 	writeClearButton(r, w, st)
 	_ = toast.OOBToast(toast.Config{
-		Variant: toast.Info,
+		Tone:    toast.ToneInfo,
 		Title:   "Cleared",
 		Message: "Completed tasks removed.",
 	}).Render(r.Context(), w)

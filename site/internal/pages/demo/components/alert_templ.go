@@ -9,9 +9,63 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/alert"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var alertAPISections = []demo.APISection{
+	demo.StructAPI[alert.Config](
+		rootcomponents.KindAlert,
+		"Config",
+		"alert.Alert(cfg Config) Instance",
+		"Configures an inline role=alert surface. Dismissible, Action, and Link select mutually exclusive render paths in that priority order.",
+		[]demo.APIPropDoc{
+			{Name: "Title", Default: `""`, Description: "Alert heading; an empty value still renders an empty heading."},
+			{Name: "Description", Default: `""`, Description: "Alert body text; an empty value still renders an empty paragraph."},
+			{Name: "Tone", Default: "ToneInfo", Allowed: []string{"ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets the semantic border, background, heading, action, and icon treatment; empty or unknown values use info."},
+			{Name: "Dismissible", Default: "false", Description: "When true, selects the Alpine-powered dismissible path and takes precedence over Action and Link."},
+			{Name: "Link", Default: "nil", Description: "Selects the trailing-link path only when Dismissible is false and Action is nil."},
+			{Name: "Action", Default: "nil", Description: "Selects the primary-plus-dismiss action path when Dismissible is false; takes precedence over Link."},
+			{Name: "ListItems", Default: "nil", Description: "Renders a bulleted list only in the default and dismissible paths; the link and action paths ignore it."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer alert element."},
+		},
+	),
+	demo.StructAPI[alert.LinkConfig](
+		"",
+		"LinkConfig",
+		"",
+		"Configures the optional trailing link selected by Config.Link.",
+		[]demo.APIPropDoc{
+			{Name: "Label", Default: `""`, Description: "Visible anchor text."},
+			{Name: "Href", Default: `""`, Description: "Anchor destination passed through templ.URL."},
+		},
+	),
+	demo.StructAPI[alert.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Maps optional HTMX attributes onto the primary action button.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL rendered as hx-get."},
+			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL rendered as hx-post; it may be rendered together with Get."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+		},
+	),
+	demo.StructAPI[alert.ActionConfig](
+		"",
+		"ActionConfig",
+		"",
+		"Configures the action-alert path.",
+		[]demo.APIPropDoc{
+			{Name: "PrimaryLabel", Default: `""`, Description: "Visible primary button text; the button renders even when the label is empty."},
+			{Name: "PrimaryOnClick", Default: `"" (omitted)`, Description: "Alpine expression rendered as @click on the primary button."},
+			{Name: "PrimaryHTMX", Default: "nil (no HTMX attributes)", Description: "Adds non-empty HTMXConfig fields to the primary button."},
+			{Name: "DismissLabel", Default: `"Dismiss"`, Description: "Visible text on the secondary button. The current secondary button has no built-in click behavior."},
+		},
+	),
+}
 
 // AlertDemoPage renders the Alert component demo
 func AlertDemoPage() templ.Component {
@@ -80,7 +134,7 @@ func alertDemoContent() templ.Component {
 			`@alert.Alert(alert.Config{
     Title:       "Update Available",
     Description: "A new version is available.",
-    Variant:     alert.Info,
+    Tone:     alert.ToneInfo,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -95,7 +149,7 @@ func alertDemoContent() templ.Component {
 			`@alert.Alert(alert.Config{
     Title:       "Successfully Subscribed",
     Description: "Welcome aboard!",
-    Variant:     alert.Success,
+    Tone:     alert.ToneSuccess,
     Dismissible: true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -111,7 +165,7 @@ func alertDemoContent() templ.Component {
 			`@alert.Alert(alert.Config{
     Title:       "Update Available",
     Description: "A new version is available.",
-    Variant:     alert.Info,
+    Tone:     alert.ToneInfo,
     Link: &alert.LinkConfig{Label: "Details", Href: "#"},
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -127,7 +181,7 @@ func alertDemoContent() templ.Component {
 			`@alert.Alert(alert.Config{
     Title:       "Password Requirements",
     Description: "Make sure your password:",
-    Variant:     alert.Info,
+    Tone:     alert.ToneInfo,
     ListItems: []string{
         "has minimum 8 characters",
         "includes both upper and lower cases",
@@ -147,7 +201,7 @@ func alertDemoContent() templ.Component {
 			`@alert.Alert(alert.Config{
     Title:       "Update Available",
     Description: "A new version is available.",
-    Variant:     alert.Info,
+    Tone:     alert.ToneInfo,
     Action: &alert.ActionConfig{
         PrimaryLabel:    "Update Now",
         PrimaryOnClick: "alert('Updating...')",
@@ -162,16 +216,7 @@ func alertDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Title", Type: "string", Default: `""`, Description: "Alert heading."},
-			{Name: "Description", Type: "string", Default: `""`, Description: "Alert body text."},
-			{Name: "Variant", Type: "Variant", Default: "Info", Description: `Color: "info", "success", "warning", "danger".`},
-			{Name: "Dismissible", Type: "bool", Default: "false", Description: "Add a close button with a fade transition."},
-			{Name: "Link", Type: "*LinkConfig", Default: "nil", Description: "Trailing action link (Text + Href)."},
-			{Name: "Action", Type: "*ActionConfig", Default: "nil", Description: "Primary + dismiss action buttons."},
-			{Name: "ListItems", Type: "[]string", Default: "nil", Description: "Bulleted list rendered under the description."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the alert."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(alertAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -208,7 +253,7 @@ func alertDefaultPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Update Available",
 			Description: "A new version is available. Please update to the latest version.",
-			Variant:     alert.Info,
+			Tone:        alert.ToneInfo,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -216,7 +261,7 @@ func alertDefaultPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Successfully Subscribed",
 			Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
-			Variant:     alert.Success,
+			Tone:        alert.ToneSuccess,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -224,7 +269,7 @@ func alertDefaultPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Credit Card Expires Soon",
 			Description: "Your credit card expires soon. Please update your payment information.",
-			Variant:     alert.Warning,
+			Tone:        alert.ToneWarning,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -232,7 +277,7 @@ func alertDefaultPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Invalid Email Address",
 			Description: "The email address you entered is invalid. Please try again.",
-			Variant:     alert.Danger,
+			Tone:        alert.ToneDanger,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -274,7 +319,7 @@ func alertDismissiblePreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Update Available",
 			Description: "A new version is available. Please update to the latest version.",
-			Variant:     alert.Info,
+			Tone:        alert.ToneInfo,
 			Dismissible: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -283,7 +328,7 @@ func alertDismissiblePreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Successfully Subscribed",
 			Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
-			Variant:     alert.Success,
+			Tone:        alert.ToneSuccess,
 			Dismissible: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -292,7 +337,7 @@ func alertDismissiblePreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Credit Card Expires Soon",
 			Description: "Your credit card expires soon. Please update your payment information.",
-			Variant:     alert.Warning,
+			Tone:        alert.ToneWarning,
 			Dismissible: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -301,7 +346,7 @@ func alertDismissiblePreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Invalid Email Address",
 			Description: "The email address you entered is invalid. Please try again.",
-			Variant:     alert.Danger,
+			Tone:        alert.ToneDanger,
 			Dismissible: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -344,7 +389,7 @@ func alertLinkPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Update Available",
 			Description: "A new version is available. Please update to the latest version.",
-			Variant:     alert.Info,
+			Tone:        alert.ToneInfo,
 			Link: &alert.LinkConfig{
 				Label: "Details",
 				Href:  "#",
@@ -356,7 +401,7 @@ func alertLinkPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Successfully Subscribed",
 			Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
-			Variant:     alert.Success,
+			Tone:        alert.ToneSuccess,
 			Link: &alert.LinkConfig{
 				Label: "Details",
 				Href:  "#",
@@ -368,7 +413,7 @@ func alertLinkPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Credit Card Expires Soon",
 			Description: "Your credit card expires soon. Please update your payment information.",
-			Variant:     alert.Warning,
+			Tone:        alert.ToneWarning,
 			Link: &alert.LinkConfig{
 				Label: "Details",
 				Href:  "#",
@@ -380,7 +425,7 @@ func alertLinkPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Invalid Email Address",
 			Description: "The email address you entered is invalid. Please try again.",
-			Variant:     alert.Danger,
+			Tone:        alert.ToneDanger,
 			Link: &alert.LinkConfig{
 				Label: "Details",
 				Href:  "#",
@@ -426,7 +471,7 @@ func alertListPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Password is not strong",
 			Description: "The password you entered does not meet the requirements. Make sure your password:",
-			Variant:     alert.Danger,
+			Tone:        alert.ToneDanger,
 			ListItems: []string{
 				"has minimum 8 characters",
 				"includes both upper and lower cases",
@@ -439,7 +484,7 @@ func alertListPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Password Requirements",
 			Description: "In order to keep your account secure, make sure your password:",
-			Variant:     alert.Info,
+			Tone:        alert.ToneInfo,
 			ListItems: []string{
 				"has minimum 8 characters",
 				"includes both upper and lower cases",
@@ -486,7 +531,7 @@ func alertActionPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Update Available",
 			Description: "A new version is available. Please update to the latest version.",
-			Variant:     alert.Info,
+			Tone:        alert.ToneInfo,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Update Now",
 				DismissLabel: "Dismiss",
@@ -498,7 +543,7 @@ func alertActionPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Successfully Subscribed",
 			Description: "Success! You've subscribed to our newsletter. Welcome aboard!",
-			Variant:     alert.Success,
+			Tone:        alert.ToneSuccess,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Dashboard",
 				DismissLabel: "Dismiss",
@@ -510,7 +555,7 @@ func alertActionPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Credit Card Expires Soon",
 			Description: "Your credit card expires soon. Please update your payment information.",
-			Variant:     alert.Warning,
+			Tone:        alert.ToneWarning,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Update Now",
 				DismissLabel: "Dismiss",
@@ -522,7 +567,7 @@ func alertActionPreview() templ.Component {
 		templ_7745c5c3_Err = alert.Alert(alert.Config{
 			Title:       "Invalid Email Address",
 			Description: "The email address you entered is invalid. Please try again.",
-			Variant:     alert.Danger,
+			Tone:        alert.ToneDanger,
 			Action: &alert.ActionConfig{
 				PrimaryLabel: "Try Again",
 				DismissLabel: "Dismiss",

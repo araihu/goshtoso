@@ -13,14 +13,17 @@ import "fmt"
 //	        {ImgSrc: "/img/2.webp", ImgAlt: "Slide 2"},
 //	    },
 //	})
-templ Carousel(cfg Config) {
+templ carouselTemplate(cfg Config) {
 	if cfg.HTMX != nil {
 		@htmxCarousel(cfg)
-	} else if cfg.Variant == OnCard {
-		@cardCarousel(cfg)
 	} else {
 		@staticCarousel(cfg)
 	}
+}
+
+// CardCarousel renders a carousel inside an article card.
+templ cardCarouselTemplate(cfg CardConfig) {
+	@cardCarousel(cfg)
 }
 
 // staticCarousel renders the full Alpine.js carousel with slides from Go config
@@ -39,7 +42,7 @@ templ staticCarousel(cfg Config) {
 		}
 		class={ containerClasses(cfg) }
 	>
-		if !hasOverlay(cfg.Variant) && cfg.Autoplay == nil {
+		if !hasOverlay(cfg) && cfg.Autoplay == nil {
 			@prevButton()
 			@nextButton()
 		}
@@ -59,9 +62,7 @@ templ staticCarousel(cfg Config) {
 					class="absolute inset-0"
 					{ transitionAttrs(transitionAttr)... }
 				>
-					if hasOverlay(cfg.Variant) {
-						@slideOverlay(cfg)
-					}
+					@slideOverlay()
 					<img
 						class="absolute w-full h-full inset-0 object-cover text-on-surface dark:text-on-surface-dark"
 						x-bind:src="slide.imgSrc"
@@ -70,7 +71,7 @@ templ staticCarousel(cfg Config) {
 				</div>
 			</template>
 		</div>
-		if hasOverlay(cfg.Variant) || cfg.Autoplay != nil {
+		if hasOverlay(cfg) || cfg.Autoplay != nil {
 			@prevButton()
 			@nextButton()
 		}
@@ -82,29 +83,36 @@ templ staticCarousel(cfg Config) {
 }
 
 // cardCarousel renders the carousel inside a card article
-templ cardCarousel(cfg Config) {
-	{{ cardCfg := cfg }}
+templ cardCarousel(cfg CardConfig) {
+	{{ cardCfg := Config{ID: cfg.ID, Slides: cfg.Slides, Touch: cfg.Touch, Height: cfg.Height} }}
 	{{ if cardCfg.Height == "" { cardCfg.Height = "h-48 lg:h-64" } }}
 	{{ alpineData := generateAlpineData(cardCfg) }}
-	{{ transitionAttr := transitionAttr(cardCfg) }}
 	<article
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
 		x-data={ alpineData }
-		class={ cardContainerClasses() }
+		class={ cardContainerClasses(cfg.RootClass) }
 		style="-webkit-mask-image: -webkit-radial-gradient(white, black)"
 	>
 		<!-- carousel area -->
 		<div class={ "relative " + cardCfg.Height + " w-full" }>
 			@prevButton()
 			@nextButton()
+			if cfg.Touch {
+				<div
+					class="absolute inset-0 z-10"
+					x-on:touchstart="handleTouchStart($event)"
+					x-on:touchmove="handleTouchMove($event)"
+					x-on:touchend="handleTouchEnd()"
+				></div>
+			}
 			<template x-for="(slide, index) in slides">
 				<div
 					x-cloak
 					x-show="currentSlideIndex == index + 1"
 					class="absolute inset-0"
-					{ transitionAttrs(transitionAttr)... }
+					{ transitionAttrs("300ms")... }
 				>
 					<img
 						class="absolute w-full h-full inset-0 object-cover text-on-surface dark:text-on-surface-dark"
@@ -229,24 +237,29 @@ templ autoplayButton() {
 }
 
 // slideOverlay renders the gradient overlay with title/description/CTA
-templ slideOverlay(cfg Config) {
-	<div class="lg:px-32 lg:py-14 absolute inset-0 z-10 flex flex-col items-center justify-end gap-2 bg-linear-to-t from-surface-dark/85 to-transparent px-16 py-12 text-center">
+templ slideOverlay() {
+	<div
+		x-show="slide.title || slide.description || (slide.ctaText && slide.ctaUrl)"
+		class="lg:px-32 lg:py-14 absolute inset-0 z-10 flex flex-col items-center justify-end gap-2 bg-linear-to-t from-surface-dark/85 to-transparent px-16 py-12 text-center"
+	>
 		<h3
+			x-show="slide.title"
 			class="w-full lg:w-[80%] text-balance text-2xl lg:text-3xl font-bold text-on-surface-dark-strong"
 			x-text="slide.title"
 			x-bind:aria-describedby="'slide' + (index + 1) + 'Description'"
 		></h3>
 		<p
+			x-show="slide.description"
 			class="lg:w-1/2 w-full text-pretty text-sm text-on-surface-dark"
 			x-text="slide.description"
 			x-bind:id="'slide' + (index + 1) + 'Description'"
 		></p>
-		if cfg.Variant == WithCTA {
+		<template x-if="slide.ctaText && slide.ctaUrl">
 			<a
 				class="mt-2 whitespace-nowrap border border-on-surface-dark-strong bg-transparent px-4 py-2 text-center text-xs font-medium tracking-wide text-on-surface-dark-strong transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-surface-dark-strong active:opacity-100 active:outline-offset-0 lg:text-sm"
 				x-bind:href="slide.ctaUrl"
 				x-text="slide.ctaText"
 			></a>
-		}
+		</template>
 	</div>
 }

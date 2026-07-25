@@ -11,16 +11,16 @@ import (
 )
 
 // levelBadge maps a log level to a badge variant.
-func levelBadge(l logs.Level) badge.Variant {
+func levelBadge(l logs.Level) badge.Tone {
 	switch l {
 	case logs.Error:
-		return badge.Danger
+		return badge.ToneDanger
 	case logs.Warn:
-		return badge.Warning
+		return badge.ToneWarning
 	case logs.Info:
-		return badge.Info
+		return badge.ToneInfo
 	default: // Debug
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
 }
 
@@ -35,8 +35,8 @@ templ LogRow(line logs.LogLine) {
 		</time>
 		<span class="w-16 shrink-0">
 			@badge.Badge(badge.Config{
-				Variant: levelBadge(line.Level),
-				Style:   badge.StyleSoft,
+				Tone: levelBadge(line.Level),
+				Appearance: badge.AppearanceSoft,
 				Size:    badge.SizeSM,
 				Label:    line.Level.String(),
 			})
@@ -166,17 +166,16 @@ templ LogsApp() {
 							</span>
 							<span x-text="statusText"></span>
 						</span>
-						@tooltip.Tooltip(tooltip.Config{
-							ID:             "log-pause-tip",
-							Label:           "Pause closes the stream; resume reconnects",
-							Trigger: pauseButton(),
-						})
-						@button.Button(button.Config{
-							Variant: button.Secondary,
-							Size:    button.SizeSmall,
-							Type:    "button",
-							Alpine:  &button.AlpineConfig{OnClick: "clearFeed()"},
-						}) {
+						@tooltip.Tooltip(
+							"log-pause-tip",
+							"Pause closes the stream; resume reconnects",
+							tooltip.WithTrigger(pauseButton()),
+						)
+						@button.Button(
+							button.WithTone(button.ToneSecondary),
+							button.WithSize(button.SizeSmall),
+							button.WithAlpine(&button.AlpineConfig{OnClick: "clearFeed()"}),
+						) {
 							Clear
 						}
 					</div>
@@ -202,12 +201,11 @@ templ LogsApp() {
 // pauseButton is the Pause/Resume button used as the tooltip trigger; its label
 // flips with the Alpine `paused` flag.
 templ pauseButton() {
-	@button.Button(button.Config{
-		Variant: button.Secondary,
-		Size:    button.SizeSmall,
-		Type:    "button",
-		Alpine:  &button.AlpineConfig{OnClick: "togglePause()"},
-	}) {
+	@button.Button(
+		button.WithTone(button.ToneSecondary),
+		button.WithSize(button.SizeSmall),
+		button.WithAlpine(&button.AlpineConfig{OnClick: "togglePause()"}),
+	) {
 		<span x-text="paused ? 'Resume' : 'Pause'">Pause</span>
 	}
 }

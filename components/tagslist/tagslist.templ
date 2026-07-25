@@ -11,13 +11,13 @@ package tagslist
 //	    Values:      []string{"production", "gpu"},
 //	    Placeholder: "Add a tag...",
 //	})
-templ TagsList(cfg Config) {
+templ tagsListTemplate(cfg Config) {
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		class={ cfg.ContainerClasses() }
-		x-data={ cfg.AlpineData() }
+		class={ cfg.containerClasses() }
+		x-data={ cfg.alpineData() }
 		data-tagslist
 	>
 		<div class="flex flex-wrap gap-2" data-tagslist-chips>
@@ -45,7 +45,7 @@ templ TagsList(cfg Config) {
 				<input
 					type="text"
 					x-model="newTag"
-					placeholder={ cfg.GetPlaceholder() }
+					placeholder={ cfg.getPlaceholder() }
 					x-on:keydown.enter.prevent="addTag()"
 					class="flex-1 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark text-on-surface-strong dark:text-on-surface-dark-strong placeholder:text-on-surface-muted dark:placeholder:text-on-surface-dark-muted focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
 					data-tagslist-input
@@ -56,7 +56,7 @@ templ TagsList(cfg Config) {
 					class="cursor-pointer px-3 py-2 text-sm font-medium rounded-radius border border-outline-strong bg-surface text-on-surface-strong transition hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark-strong dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
 					data-tagslist-add
 				>
-					{ cfg.GetAddLabel() }
+					{ cfg.getAddLabel() }
 				</button>
 			</div>
 		}

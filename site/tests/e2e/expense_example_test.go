@@ -200,7 +200,7 @@ func TestExpenseExample_ClearAllModal(t *testing.T) {
 	// Open the modal (trigger button), then confirm via the dialog's CTA.
 	require.NoError(t, page.Locator("#expense-fragment button:has-text('Clear all')").First().Click())
 	clickUntil(t, page,
-		page.Locator("[role='dialog'] button:has-text('Clear all')"),
+		page.Locator("[role='alertdialog'] button:has-text('Clear all')"),
 		fmt.Sprintf("() => %s === 0", rowCountExpr))
 }
 

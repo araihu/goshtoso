@@ -11,6 +11,15 @@ import (
 	"github.com/araihu/goshtoso/components/table"
 )
 
+const tableHeadClasses = "border-b border-outline bg-surface-alt text-sm text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong"
+
+func resolvedTableID(cfg table.Config) string {
+	if cfg.ID != "" {
+		return cfg.ID
+	}
+	return "table"
+}
+
 // tableRecord is the server-side data model for demo table rows
 type tableRecord struct {
 	ID         string
@@ -219,14 +228,14 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	// when they appear alongside tbody <tr> rows in the response.
 	if tableID != "" {
 		_, _ = fmt.Fprintf(w, `<template><thead id="%s" hx-swap-oob="outerHTML" class="%s">`,
-			cfg.TheadID(), cfg.TheadClasses())
+			resolvedTableID(cfg)+"-thead", tableHeadClasses)
 		_ = table.TableHeadContent(cfg).Render(r.Context(), w)
 		_, _ = fmt.Fprintf(w, `</thead></template>`)
 	}
 
 	// OOB swap: update pagination controls so active page, prev/next states refresh
 	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
-		_, _ = fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">`, cfg.PaginationID())
+		_, _ = fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">`, resolvedTableID(cfg)+"-pagination")
 		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">Page %d of %d</div>`, page, totalPages)
 		_ = table.TablePaginationNav(cfg).Render(r.Context(), w)
 		_, _ = fmt.Fprintf(w, `</div>`)

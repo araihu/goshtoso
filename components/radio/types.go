@@ -13,23 +13,24 @@
 //     cfg.Alpine (Model/OnChange/BindChecked/BindDisabled/Data).
 //   - Both → set both. HTMX hits the server while Alpine updates local
 //     state. Useful for optimistic UI / hybrid flows.
-//   - InputAttrs → generic templ.Attributes escape hatch for any
-//     hx-*/x-*/data-*/aria-* not modelled above. Rendered LAST so the
-//     caller can always override.
+//   - InputAttrs → generic templ.Attributes escape hatch for non-conflicting
+//     hx-*/x-*/data-*/aria-* not modeled above. Appended after modeled
+//     attributes; conflicting keys serialize duplicates and are not reliable
+//     overrides. Use typed Config fields for modeled attributes.
 package radio
 
 import "github.com/a-h/templ"
 
-// Variant represents radio button color variants.
-type Variant string
+// Tone represents radio button color variants.
+type Tone string
 
 const (
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Info      Variant = "info"
-	Success   Variant = "success"
-	Warning   Variant = "warning"
-	Danger    Variant = "danger"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneInfo      Tone = "info"
+	ToneSuccess   Tone = "success"
+	ToneWarning   Tone = "warning"
+	ToneDanger    Tone = "danger"
 )
 
 // Size represents radio input sizes.
@@ -61,7 +62,7 @@ type HTMXConfig struct {
 
 // HasHxVerb reports whether any HTMX verb field is set, used to default
 // hx-trigger to "change" when the caller omits it.
-func (h *HTMXConfig) HasHxVerb() bool {
+func (h *HTMXConfig) hasHXVerb() bool {
 	if h == nil {
 		return false
 	}
@@ -73,14 +74,14 @@ func (h *HTMXConfig) HasHxVerb() bool {
 // Collapsing the decision into one method lets templates use a single
 // attribute conditional and avoid `else if` in attribute context, which templ
 // mis-parses into a stray `else` text node.
-func (h *HTMXConfig) EffectiveTrigger() string {
+func (h *HTMXConfig) effectiveTrigger() string {
 	if h == nil {
 		return ""
 	}
 	if h.Trigger != "" {
 		return h.Trigger
 	}
-	if h.HasHxVerb() {
+	if h.hasHXVerb() {
 		return "change"
 	}
 	return ""
@@ -109,8 +110,8 @@ type Config struct {
 	Checked bool
 	// Disabled disables the radio
 	Disabled bool
-	// Variant determines the color scheme (default: Primary)
-	Variant Variant
+	// Tone determines the color scheme (default: TonePrimary)
+	Tone Tone
 	// Size sets the input box size (default: SizeMD)
 	Size Size
 	// HelperText adds helper text below the label
@@ -136,7 +137,7 @@ type Config struct {
 	HTMX *HTMXConfig
 	// Alpine wires client-side state.
 	Alpine *AlpineConfig
-	// InputAttrs is an escape hatch applied last to the input; wins on conflict.
+	// InputAttrs contains additional non-conflicting attributes appended to the input. Conflicting modeled keys serialize duplicate attributes rather than reliably overriding them; use typed fields for modeled attributes.
 	InputAttrs templ.Attributes
 }
 
@@ -150,16 +151,16 @@ type GroupConfig struct {
 
 // checkedBorderClass returns the checked border color class
 func (cfg Config) checkedBorderClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:border-secondary dark:checked:border-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:border-info dark:checked:border-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:border-success dark:checked:border-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:border-warning dark:checked:border-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:border-danger dark:checked:border-danger"
 	default:
 		return "checked:border-primary dark:checked:border-primary-dark"
@@ -168,16 +169,16 @@ func (cfg Config) checkedBorderClass() string {
 
 // checkedBgClass returns the checked background color class on the before pseudo
 func (cfg Config) checkedBgClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:before:bg-secondary dark:checked:before:bg-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:before:bg-info dark:checked:before:bg-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:before:bg-success dark:checked:before:bg-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:before:bg-warning dark:checked:before:bg-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:before:bg-danger dark:checked:before:bg-danger"
 	default:
 		return "checked:before:bg-primary dark:checked:before:bg-primary-dark"
@@ -186,16 +187,16 @@ func (cfg Config) checkedBgClass() string {
 
 // focusCheckedClass returns the focus outline color when checked
 func (cfg Config) focusCheckedClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:focus:outline-secondary dark:checked:focus:outline-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:focus:outline-info dark:checked:focus:outline-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:focus:outline-success dark:checked:focus:outline-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:focus:outline-warning dark:checked:focus:outline-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:focus:outline-danger dark:checked:focus:outline-danger"
 	default:
 		return "checked:focus:outline-primary dark:checked:focus:outline-primary-dark"
@@ -217,7 +218,7 @@ func (cfg Config) sizeBoxClass() string {
 }
 
 // BadgeClasses returns CSS classes for a badge-styled label
-func BadgeClasses(color string) string {
+func badgeClasses(color string) string {
 	base := "w-fit rounded-radius px-2 py-0.5 text-xs font-medium"
 	switch color {
 	case "success":
@@ -240,7 +241,7 @@ func BadgeClasses(color string) string {
 }
 
 // InputClasses returns the full CSS class string for the radio input
-func (cfg Config) InputClasses() string {
+func (cfg Config) inputClasses() string {
 	bg := "bg-surface-alt dark:bg-surface-dark-alt"
 	if cfg.Container {
 		bg = "bg-surface dark:bg-surface-dark"
@@ -258,24 +259,24 @@ func (cfg Config) InputClasses() string {
 // The label fully replaces the visual; the transparent input covers the segment
 // and acts as the state holder. Active styling rides on Tailwind v4's
 // `has-checked:` selector (label has a checked input child → primary fill).
-func (cfg Config) SegmentedLabelClasses() string {
-	checkedVariant := segmentedCheckedClasses(cfg.Variant)
+func (cfg Config) segmentedLabelClasses() string {
+	checkedVariant := segmentedCheckedClasses(cfg.Tone)
 	return "relative cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors " +
 		"text-on-surface hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark " +
 		"has-disabled:cursor-not-allowed has-disabled:opacity-75 " + checkedVariant
 }
 
-func segmentedCheckedClasses(v Variant) string {
+func segmentedCheckedClasses(v Tone) string {
 	switch v {
-	case Secondary:
+	case ToneSecondary:
 		return "has-checked:bg-secondary has-checked:text-on-secondary dark:has-checked:bg-secondary-dark dark:has-checked:text-on-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "has-checked:bg-info has-checked:text-on-info"
-	case Success:
+	case ToneSuccess:
 		return "has-checked:bg-success has-checked:text-on-success"
-	case Warning:
+	case ToneWarning:
 		return "has-checked:bg-warning has-checked:text-on-warning"
-	case Danger:
+	case ToneDanger:
 		return "has-checked:bg-danger has-checked:text-on-danger"
 	default:
 		return "has-checked:bg-primary has-checked:text-on-primary dark:has-checked:bg-primary-dark dark:has-checked:text-on-primary-dark"
@@ -283,11 +284,11 @@ func segmentedCheckedClasses(v Variant) string {
 }
 
 // HasAlpine reports whether any Alpine field is set.
-func (cfg Config) HasAlpine() bool {
+func (cfg Config) hasAlpine() bool {
 	return cfg.Alpine != nil
 }
 
 // HasHTMX reports whether the HTMX block is non-nil.
-func (cfg Config) HasHTMX() bool {
+func (cfg Config) hasHTMX() bool {
 	return cfg.HTMX != nil
 }

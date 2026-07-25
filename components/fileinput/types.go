@@ -2,20 +2,20 @@ package fileinput
 
 import "github.com/a-h/templ"
 
-// Variant controls the visual style of the file input.
-type Variant string
+// Appearance controls the visual treatment of the file input.
+type Appearance string
 
 const (
-	// VariantDropZone renders the drag-and-drop drop zone. This is the default.
-	VariantDropZone Variant = ""
-	// VariantUpload renders a compact text-input-style upload control.
-	VariantUpload Variant = "upload"
+	// AppearanceDropZone renders the drag-and-drop drop zone. This is the default.
+	AppearanceDropZone Appearance = ""
+	// AppearanceUpload renders a compact text-input-style upload control.
+	AppearanceUpload Appearance = "upload"
 )
 
 // Config holds configuration for the file input component
 type Config struct {
-	// Variant controls the visual style (default: drop zone)
-	Variant Variant
+	// Appearance controls the visual treatment (default: drop zone).
+	Appearance Appearance
 	// ID is the HTML id for the file input element
 	ID string
 	// Name is the form field name
@@ -37,7 +37,7 @@ type Config struct {
 }
 
 // ContainerClasses returns CSS classes for the outermost wrapper div
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "flex w-full max-w-xl flex-col gap-1 text-center"
 	if cfg.RootClass != "" {
 		return base + " " + cfg.RootClass
@@ -46,7 +46,7 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // UploadContainerClasses returns classes for the compact upload wrapper.
-func (cfg Config) UploadContainerClasses() string {
+func (cfg Config) uploadContainerClasses() string {
 	base := "flex w-full max-w-xl flex-col gap-1 text-left text-on-surface dark:text-on-surface-dark"
 	if cfg.RootClass != "" {
 		return base + " " + cfg.RootClass
@@ -55,12 +55,12 @@ func (cfg Config) UploadContainerClasses() string {
 }
 
 // LabelClasses returns CSS classes for the label text above the drop zone
-func (cfg Config) LabelClasses() string {
+func (cfg Config) labelClasses() string {
 	return "w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark"
 }
 
 // DropZoneClasses returns the static (non-dynamic) CSS classes for the drop zone
-func (cfg Config) DropZoneClasses() string {
+func (cfg Config) dropZoneClasses() string {
 	base := "flex w-full flex-col items-center justify-center gap-2 rounded-radius border border-dashed p-8 text-on-surface dark:text-on-surface-dark"
 	if cfg.Disabled {
 		return base + " opacity-50 cursor-not-allowed"
@@ -69,17 +69,17 @@ func (cfg Config) DropZoneClasses() string {
 }
 
 // BrowseLabelClasses returns CSS classes for the "Browse" label link
-func (cfg Config) BrowseLabelClasses() string {
+func (cfg Config) browseLabelClasses() string {
 	return "font-medium text-primary group-focus-within:underline dark:text-primary-dark cursor-pointer"
 }
 
-// IsUpload returns true when the compact upload variant should render.
-func (cfg Config) IsUpload() bool {
-	return cfg.Variant == VariantUpload
+// IsUpload returns true when the compact upload appearance should render.
+func (cfg Config) isUpload() bool {
+	return cfg.Appearance == AppearanceUpload
 }
 
 // UploadControlClasses returns classes for the compact upload control.
-func (cfg Config) UploadControlClasses() string {
+func (cfg Config) uploadControlClasses() string {
 	base := "flex w-full items-stretch overflow-hidden rounded-radius border border-outline bg-surface-alt text-sm text-on-surface focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-within:outline-primary-dark"
 	if cfg.Disabled {
 		return base + " cursor-not-allowed opacity-75"
@@ -88,12 +88,12 @@ func (cfg Config) UploadControlClasses() string {
 }
 
 // UploadFileNameClasses returns classes for the compact file-name display.
-func (cfg Config) UploadFileNameClasses() string {
+func (cfg Config) uploadFileNameClasses() string {
 	return "flex min-w-0 flex-1 items-center px-2 py-2 text-on-surface-muted dark:text-on-surface-dark-muted"
 }
 
 // UploadButtonClasses returns classes for the compact Browse affordance.
-func (cfg Config) UploadButtonClasses() string {
+func (cfg Config) uploadButtonClasses() string {
 	base := "flex shrink-0 items-center border-l border-outline bg-surface px-3 py-2 font-medium text-primary dark:border-outline-dark dark:bg-surface-dark dark:text-primary-dark"
 	if cfg.Disabled {
 		return base + " cursor-not-allowed"
@@ -102,6 +102,6 @@ func (cfg Config) UploadButtonClasses() string {
 }
 
 // HelperTextClasses returns classes for helper text below the field.
-func (cfg Config) HelperTextClasses() string {
+func (cfg Config) helperTextClasses() string {
 	return "pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
 }

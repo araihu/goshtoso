@@ -9,9 +9,59 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var selectAPISections = []demo.APISection{
+	demo.StructAPI[selectfield.Config](
+		rootcomponents.KindSelect,
+		"Config",
+		"selectfield.Select(cfg Config) Instance",
+		"Configures an Alpine-backed single-select dropdown or a child-rendering picker shell.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `""`, Description: "Hidden-input ID and prefix for trigger and option IDs; shell mode uses only the trigger prefix."},
+			{Name: "Name", Default: `""`, Description: "Hidden form-field name in data mode; shell mode renders no hidden input."},
+			{Name: "Label", Default: `"" (omitted)`, Description: "Visible field label and listbox aria-label prefix."},
+			{Name: "Placeholder", Default: `"Please Select"`, Description: "Trigger text when data mode has no selected option; ignored in shell mode."},
+			{Name: "Options", Default: "nil (empty list)", Description: "Options available in data mode; ignored in shell mode."},
+			{Name: "State", Default: "StateDefault", Allowed: []string{"StateDefault", "StateError", "StateSuccess"}, Description: "Controls label, trigger-border, and helper-text validation styling."},
+			{Name: "HelperText", Default: `"" (omitted)`, Description: "Text rendered below the dropdown using State styling."},
+			{Name: "Disabled", Default: "false", Description: "Disables the trigger."},
+			{Name: "Autocomplete", Default: `"" (omitted)`, Description: "Autocomplete attribute applied to the hidden text input in data mode."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer wrapper."},
+			{Name: "Alpine", Default: "nil", Description: "Optional model synchronization in data mode and disabled binding on the trigger."},
+			{Name: "Readonly", Default: "false", Description: "Disables the trigger while retaining the data-mode hidden input for submission."},
+			{Name: "InputAttrs", Default: "nil (currently not rendered)", Description: "Exported compatibility field; the current custom-select template does not apply it to any element."},
+			{Name: "Shell", Default: "false", Description: "Uses arbitrary templ children as dropdown content and omits option data and the hidden input."},
+			{Name: "TriggerLeading", Default: "nil", Description: "Optional component rendered before trigger text in either mode."},
+			{Name: "ValueExpr", Default: `""`, Description: "Shell-mode Alpine expression used for trigger text and aria-label; ignored in data mode."},
+			{Name: "TriggerLabel", Default: `""`, Description: "Optional shell-mode static left label; ValueExpr is then shown as a muted right value."},
+		},
+	),
+	demo.StructAPI[selectfield.Option](
+		"",
+		"Option",
+		"",
+		"Describes one data-mode choice.",
+		[]demo.APIPropDoc{
+			{Name: "Value", Default: `""`, Description: "Value stored in the hidden input when selected."},
+			{Name: "Label", Default: `""`, Description: "Visible option and trigger text.", Required: true},
+			{Name: "Selected", Default: "false", Description: "Marks an initial selection; when several are true, the first is used."},
+		},
+	),
+	demo.StructAPI[selectfield.AlpineConfig](
+		"",
+		"AlpineConfig",
+		"",
+		"Connects the select trigger and selected value to surrounding Alpine state.",
+		[]demo.APIPropDoc{
+			{Name: "Model", Default: `"" (no synchronization)`, Description: "Data-mode expression synchronized bidirectionally with the selected option."},
+			{Name: "BindDisabled", Default: `"" (omitted)`, Description: "Expression rendered as x-bind:disabled on the trigger in both modes."},
+		},
+	),
+}
 
 // SelectDemoPage renders the Select component demo
 func SelectDemoPage() templ.Component {
@@ -220,25 +270,7 @@ func selectDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (seeds the trigger id <id>-trigger and option ids)."},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
-			{Name: "Label", Type: "string", Default: `""`, Description: "Label above the select."},
-			{Name: "Placeholder", Type: "string", Default: `""`, Description: "Placeholder option shown when nothing is selected."},
-			{Name: "Options", Type: "[]Option", Default: "nil", Description: "Options (Value, Label, Selected)."},
-			{Name: "State", Type: "State", Default: "StateDefault", Description: `Validation state: "" (default), "error", "success".`},
-			{Name: "HelperText", Type: "string", Default: `""`, Description: "Text below the field, recolored by State."},
-			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable the select."},
-			{Name: "Readonly", Type: "bool", Default: "false", Description: "Non-editable but submittable."},
-			{Name: "Autocomplete", Type: "string", Default: `""`, Description: "HTML autocomplete attribute."},
-			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side Alpine bindings (Model, BindDisabled)."},
-			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the select."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
-			{Name: "Shell", Type: "bool", Default: "false", Description: "Render only the trigger/dropdown shell and use child content as the dropdown body."},
-			{Name: "TriggerLeading", Type: "templ.Component", Default: "nil", Description: "Optional component rendered before the trigger text, such as a swatch or icon."},
-			{Name: "ValueExpr", Type: "string", Default: `""`, Description: "Alpine expression used for shell-mode trigger text and aria-label."},
-			{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Static label shown on the left side of a shell trigger, with ValueExpr rendered muted on the right."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(selectAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

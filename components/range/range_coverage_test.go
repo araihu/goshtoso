@@ -18,8 +18,8 @@ func renderCov(t *testing.T, cfg Config) string {
 	return buf.String()
 }
 
-// Icons exercise IconClasses (0% baseline), the leading/trailing icon
-// branches in rangeInner, the icon-aware ControlClasses path, and the
+// Icons exercise iconClasses (0% baseline), the leading/trailing icon
+// branches in rangeInner, the icon-aware controlClasses path, and the
 // label-with-decorations branch.
 func TestCoverageWithIcons(t *testing.T) {
 	html := renderCov(t, Config{
@@ -33,8 +33,8 @@ func TestCoverageWithIcons(t *testing.T) {
 		`<svg id="lead">`,
 		`<svg id="trail">`,
 		`aria-hidden="true"`,
-		`shrink-0`,                       // IconClasses
-		`flex w-full items-center gap-3`, // ControlClasses with decorations
+		`shrink-0`,                       // iconClasses
+		`flex w-full items-center gap-3`, // controlClasses with decorations
 		`Brightness`,
 	} {
 		if !strings.Contains(html, want) {
@@ -49,7 +49,7 @@ func TestCoverageWithIcons(t *testing.T) {
 	}
 }
 
-// LeadingIcon alone still takes the decorated ControlClasses branch.
+// LeadingIcon alone still takes the decorated controlClasses branch.
 func TestCoverageLeadingIconOnly(t *testing.T) {
 	html := renderCov(t, Config{ID: "x", LeadingIcon: templ.Raw(`<svg id="only"></svg>`)})
 
@@ -61,8 +61,8 @@ func TestCoverageLeadingIconOnly(t *testing.T) {
 	}
 }
 
-// RootClass and InputClass exercise the non-empty branches of RootClasses and
-// InputClasses.
+// RootClass and InputClass exercise the non-empty branches of rootClasses and
+// inputClasses.
 func TestCoverageExtraClasses(t *testing.T) {
 	html := renderCov(t, Config{
 		ID:         "x",
@@ -95,11 +95,11 @@ func TestCoverageInputAttrs(t *testing.T) {
 	}
 }
 
-// AlpineData must fall back to 0 for non-numeric values rather than emitting
+// alpineData must fall back to 0 for non-numeric values rather than emitting
 // invalid Alpine state.
 func TestCoverageAlpineDataInvalidValue(t *testing.T) {
 	cfg := Config{ID: "x", Value: "not-a-number", ShowValue: true}
-	if got := cfg.AlpineData(); got != "{ currentVal: 0 }" {
+	if got := cfg.alpineData(); got != "{ currentVal: 0 }" {
 		t.Fatalf("expected fallback alpine data, got %q", got)
 	}
 
@@ -109,15 +109,15 @@ func TestCoverageAlpineDataInvalidValue(t *testing.T) {
 	}
 }
 
-// AlpineData should preserve fractional values exactly.
+// alpineData should preserve fractional values exactly.
 func TestCoverageAlpineDataFractional(t *testing.T) {
 	cfg := Config{Value: "12.5"}
-	if got := cfg.AlpineData(); got != "{ currentVal: 12.5 }" {
+	if got := cfg.alpineData(); got != "{ currentVal: 12.5 }" {
 		t.Fatalf("expected fractional alpine data, got %q", got)
 	}
 }
 
-// Custom Ticks take the override branch of TickLabels and render verbatim.
+// Custom Ticks take the override branch of tickLabels and render verbatim.
 func TestCoverageCustomTicks(t *testing.T) {
 	html := renderCov(t, Config{
 		ID:        "x",
@@ -140,25 +140,25 @@ func TestCoverageCustomTicks(t *testing.T) {
 	}
 }
 
-// TickClasses returns the non-hidden base classes when HideOnMobile is false.
+// tickClasses returns the non-hidden base classes when HideOnMobile is false.
 func TestCoverageTickClassesVisible(t *testing.T) {
 	cfg := Config{}
-	visible := cfg.TickClasses(Tick{Label: "0"})
+	visible := cfg.tickClasses(Tick{Label: "0"})
 	if strings.Contains(visible, "hidden") {
 		t.Fatalf("expected visible tick classes, got %q", visible)
 	}
-	hidden := cfg.TickClasses(Tick{Label: "|", HideOnMobile: true})
+	hidden := cfg.tickClasses(Tick{Label: "|", HideOnMobile: true})
 	if !strings.Contains(hidden, "hidden sm:inline") {
 		t.Fatalf("expected hidden tick classes, got %q", hidden)
 	}
 }
 
-// StepOrDefault defaults to "1" and honors an explicit step.
+// stepOrDefault defaults to "1" and honors an explicit step.
 func TestCoverageStepOrDefault(t *testing.T) {
-	if got := (Config{}).StepOrDefault(); got != "1" {
+	if got := (Config{}).stepOrDefault(); got != "1" {
 		t.Fatalf("expected default step 1, got %q", got)
 	}
-	if got := (Config{Step: "5"}).StepOrDefault(); got != "5" {
+	if got := (Config{Step: "5"}).stepOrDefault(); got != "5" {
 		t.Fatalf("expected step 5, got %q", got)
 	}
 }

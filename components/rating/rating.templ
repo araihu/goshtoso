@@ -3,48 +3,51 @@ package rating
 import "fmt"
 
 // Rating renders a star or emoji rating control.
-templ Rating(cfg Config) {
-	if cfg.ReadOnly {
-		@ratingReadOnly(cfg)
-	} else {
-		@ratingInteractive(cfg)
-	}
+templ ratingTemplate(cfg Config) {
+	@ratingInteractive(cfg)
+}
+
+// RatingDisplay renders a non-interactive star or emoji rating.
+templ ratingDisplayTemplate(cfg DisplayConfig) {
+	@ratingDisplay(cfg)
 }
 
 templ ratingInteractive(cfg Config) {
 	<div
-		id={ cfg.ResolvedID() }
-		class={ cfg.RootClasses() }
-		x-data={ cfg.XData() }
-		{ cfg.Attrs... }
+		id={ cfg.resolvedID() }
+		class={ cfg.rootClasses() }
+		x-data={ cfg.xData() }
+		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.ResolvedLabel() }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.resolvedLabel() }</span>
 		}
-		<div class={ cfg.ControlClasses() } role="radiogroup" aria-label={ cfg.ResolvedLabel() }>
-			for i := 1; i <= cfg.ResolvedMax(); i++ {
+		<div class={ cfg.controlClasses() } role="radiogroup" aria-label={ cfg.resolvedLabel() }>
+			for i := 1; i <= cfg.resolvedMax(); i++ {
 				@ratingOption(cfg, i)
 			}
 		</div>
 	</div>
 }
 
-templ ratingReadOnly(cfg Config) {
+templ ratingDisplay(cfg DisplayConfig) {
+	{{ accessibleLabel := cfg.Label }}
+	{{ if accessibleLabel == "" { accessibleLabel = cfg.valueLabel(cfg.resolvedValue()) } }}
 	<div
-		id={ cfg.ResolvedID() }
-		class={ cfg.RootClasses() }
+		id={ cfg.resolvedID() }
+		class={ cfg.rootClasses() }
 		role="img"
-		aria-label={ cfg.ValueLabel(cfg.ResolvedValue()) }
-		{ cfg.Attrs... }
+		aria-label={ accessibleLabel }
+		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.ResolvedLabel() }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.resolvedLabel() }</span>
 		}
-		<div class={ cfg.ControlClasses() }>
-			for i := 1; i <= cfg.ResolvedMax(); i++ {
-				<span class={ cfg.IconClasses() + " " + readOnlyIconState(cfg, i) } aria-hidden="true">
-					if cfg.Style == StyleEmoji {
-						{ cfg.EmojiIcon(i) }
+		<div class={ cfg.controlClasses() }>
+			for i := 1; i <= cfg.resolvedMax(); i++ {
+				<span class={ cfg.iconClasses() + " " + displayIconState(cfg, i) } aria-hidden="true">
+					if cfg.Appearance == AppearanceEmoji {
+						{ cfg.emojiIcon(i) }
 					} else {
 						@starIcon()
 					}
@@ -55,16 +58,16 @@ templ ratingReadOnly(cfg Config) {
 }
 
 templ ratingOption(cfg Config, value int) {
-	<label for={ cfg.InputID(value) } class="group/rating-option cursor-pointer has-disabled:cursor-not-allowed">
-		<span class="sr-only">{ cfg.ValueLabel(value) }</span>
+	<label for={ cfg.inputID(value) } class="group/rating-option cursor-pointer has-disabled:cursor-not-allowed">
+		<span class="sr-only">{ cfg.valueLabel(value) }</span>
 		<input
-			id={ cfg.InputID(value) }
+			id={ cfg.inputID(value) }
 			type="radio"
-			name={ cfg.ResolvedName() }
+			name={ cfg.resolvedName() }
 			value={ fmt.Sprintf("%d", value) }
 			class="sr-only"
 			x-model.number="currentVal"
-			if cfg.ResolvedValue() == value {
+			if cfg.resolvedValue() == value {
 				checked
 			}
 			if cfg.Disabled {
@@ -72,12 +75,12 @@ templ ratingOption(cfg Config, value int) {
 			}
 		/>
 		<span
-			class={ cfg.IconClasses() + " group-hover/rating-option:scale-110" }
-			x-bind:class={ cfg.BindClass(value) }
+			class={ cfg.iconClasses() + " group-hover/rating-option:scale-110" }
+			x-bind:class={ cfg.bindClass(value) }
 			aria-hidden="true"
 		>
-			if cfg.Style == StyleEmoji {
-				{ cfg.EmojiIcon(value) }
+			if cfg.Appearance == AppearanceEmoji {
+				{ cfg.emojiIcon(value) }
 			} else {
 				@starIcon()
 			}

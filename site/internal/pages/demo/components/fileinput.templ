@@ -1,16 +1,38 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/fileinput"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var fileInputAPISections = []demo.APISection{
+	demo.StructAPI[fileinput.Config](
+		rootcomponents.KindFileInput,
+		"Config",
+		"fileinput.FileInput(cfg Config) Instance",
+		"Configures a native file input rendered as a drop zone or compact upload control.",
+		[]demo.APIPropDoc{
+			{Name: "Appearance", Default: "AppearanceDropZone", Allowed: []string{"AppearanceDropZone", "AppearanceUpload"}, Description: "Selects the drag-and-drop zone or compact upload treatment."},
+			{Name: "ID", Default: `""`, Description: "Native input ID, label target, and helper-text ID prefix; supply a unique value when labels or helper text are used."},
+			{Name: "Name", Default: `""`, Description: "Native file input form-field name."},
+			{Name: "Label", Default: `"" (omitted)`, Description: "Visible field label; the drop-zone appearance renders it as text and the upload appearance uses a label element."},
+			{Name: "Accept", Default: `"" (browser accepts any file type)`, Description: "Native accept attribute hint; it does not validate file size or server-side file content."},
+			{Name: "HelperText", Default: `"" (omitted)`, Description: "Hint text associated through <ID>-helper; descriptive limits are display text, not enforced validation."},
+			{Name: "Required", Default: "false", Description: "Adds the native required attribute."},
+			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute and disabled visual treatment."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer container."},
+			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native file input."},
+		},
+	),
+}
 
 // FileInputDemoPage renders the File Input component demo
 templ FileInputDemoPage() {
 	@demo.Layout("File Input", "fileinput", fileInputDemoContent())
 }
 
-// fileInputDemoContent renders the demo. Each file-input variant lives in its
+// fileInputDemoContent renders the demo. Each file-input appearance lives in its
 // own preview frame followed by its own code block (mirrors
 // penguinui.com/components/file-input). Wrapped in #fileinput-fragment.
 templ fileInputDemoContent() {
@@ -18,7 +40,7 @@ templ fileInputDemoContent() {
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "File Input",
-				Description: "A drag-and-drop drop zone that lets users browse or drag files. Supports Accept filters, helper text, required, and disabled states.",
+				Description: "A native file input rendered as a drag-and-drop zone or compact upload control. Accept supplies a browser file-type hint; applications must validate files and size on the server.",
 			},
 			fileInputDefaultPreview(),
 			`@fileinput.FileInput(fileinput.Config{
@@ -33,11 +55,11 @@ templ fileInputDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Upload",
-				Description: "VariantUpload uses a compact text-input-style control for dense forms.",
+				Description: "AppearanceUpload uses a compact text-input-style control for dense forms.",
 			},
 			fileInputUploadPreview(),
 			`@fileinput.FileInput(fileinput.Config{
-    Variant:    fileinput.VariantUpload,
+    Appearance: fileinput.AppearanceUpload,
     ID:         "resume",
     Name:       "resume",
     Label:      "Resume",
@@ -65,7 +87,7 @@ templ fileInputDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Disabled",
-				Description: "Disabled: true blocks browsing and drops and dims the zone.",
+				Description: "Disabled: true adds the native disabled attribute and dims the control.",
 			},
 			fileInputDisabledPreview(),
 			`@fileinput.FileInput(fileinput.Config{
@@ -91,18 +113,7 @@ templ fileInputDemoContent() {
 		)
 	</div>
 	// API reference lives outside #fileinput-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Variant", Type: "fileinput.Variant", Default: "fileinput.VariantDropZone", Description: "Visual style: VariantDropZone or VariantUpload."},
-		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
-		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
-		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the drop zone (omit for none)."},
-		{Name: "Accept", Type: "string", Default: `""`, Description: `Accepted file types (e.g. "image/*", ".pdf,.doc").`},
-		{Name: "HelperText", Type: "string", Default: `""`, Description: "Hint text shown inside/under the zone."},
-		{Name: "Required", Type: "bool", Default: "false", Description: "Mark the field as required."},
-		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable browsing and drops."},
-		{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <input>."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
-	})
+	@demo.StructuredAPIReference(fileInputAPISections)
 }
 
 // fileInputDefaultPreview renders the default drag-and-drop input.
@@ -122,7 +133,7 @@ templ fileInputDefaultPreview() {
 templ fileInputUploadPreview() {
 	<div id="fileinput-upload" class="w-full max-w-md mx-auto">
 		@fileinput.FileInput(fileinput.Config{
-			Variant:    fileinput.VariantUpload,
+			Appearance: fileinput.AppearanceUpload,
 			ID:         "demoUpload",
 			Name:       "resume",
 			Label:      "Resume",

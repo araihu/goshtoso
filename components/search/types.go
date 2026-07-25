@@ -17,7 +17,7 @@ type Item struct {
 	Title string
 	// Description is optional supporting text.
 	Description string
-	// Href turns the result into a link.
+	// Href is the preferred navigation target; it is filtered when rendered and revalidated before client-side navigation.
 	Href string
 	// Kind is optional type metadata for the result.
 	Kind string
@@ -29,12 +29,12 @@ type Item struct {
 	Section string
 	// Keywords are extra terms included in client-side filtering.
 	Keywords []string
-	// Attrs are extra attributes spread onto the result button.
+	// Attrs are extra button attributes; use Href for navigation because reserved data-search-href values are revalidated before use.
 	Attrs templ.Attributes
 }
 
 // JSString escapes a value for use inside a single-quoted Alpine expression.
-func JSString(value string) string {
+func jsString(value string) string {
 	value = strings.ReplaceAll(value, `\`, `\\`)
 	value = strings.ReplaceAll(value, `'`, `\'`)
 	return value
@@ -77,7 +77,7 @@ type Config struct {
 }
 
 // GetID returns a stable ID.
-func (cfg Config) GetID() string {
+func (cfg Config) getID() string {
 	if cfg.ID != "" {
 		return cfg.ID
 	}
@@ -85,7 +85,7 @@ func (cfg Config) GetID() string {
 }
 
 // GetLabel returns the accessible label.
-func (cfg Config) GetLabel() string {
+func (cfg Config) getLabel() string {
 	if cfg.Label != "" {
 		return cfg.Label
 	}
@@ -93,7 +93,7 @@ func (cfg Config) GetLabel() string {
 }
 
 // GetPlaceholder returns the input placeholder.
-func (cfg Config) GetPlaceholder() string {
+func (cfg Config) getPlaceholder() string {
 	if cfg.Placeholder != "" {
 		return cfg.Placeholder
 	}
@@ -101,7 +101,7 @@ func (cfg Config) GetPlaceholder() string {
 }
 
 // GetShortcutText returns the trigger shortcut hint.
-func (cfg Config) GetShortcutText() string {
+func (cfg Config) getShortcutText() string {
 	if cfg.ShortcutText != "" {
 		return cfg.ShortcutText
 	}
@@ -109,7 +109,7 @@ func (cfg Config) GetShortcutText() string {
 }
 
 // GetEscapeText returns the dialog close shortcut hint.
-func (cfg Config) GetEscapeText() string {
+func (cfg Config) getEscapeText() string {
 	if cfg.EscapeText != "" {
 		return cfg.EscapeText
 	}
@@ -117,7 +117,7 @@ func (cfg Config) GetEscapeText() string {
 }
 
 // GetEmptyText returns the empty-state copy.
-func (cfg Config) GetEmptyText() string {
+func (cfg Config) getEmptyText() string {
 	if cfg.EmptyText != "" {
 		return cfg.EmptyText
 	}
@@ -125,7 +125,7 @@ func (cfg Config) GetEmptyText() string {
 }
 
 // GetMaxResults returns the maximum number of visible results.
-func (cfg Config) GetMaxResults() int {
+func (cfg Config) getMaxResults() int {
 	if cfg.MaxResults > 0 {
 		return cfg.MaxResults
 	}
@@ -133,7 +133,7 @@ func (cfg Config) GetMaxResults() int {
 }
 
 // GetDescriptionMaxLength returns the maximum visible description length.
-func (cfg Config) GetDescriptionMaxLength() int {
+func (cfg Config) getDescriptionMaxLength() int {
 	if cfg.DescriptionMaxLength > 0 {
 		return cfg.DescriptionMaxLength
 	}
@@ -141,7 +141,7 @@ func (cfg Config) GetDescriptionMaxLength() int {
 }
 
 // RootClasses returns classes for the component root.
-func (cfg Config) RootClasses() string {
+func (cfg Config) rootClasses() string {
 	classes := "w-full"
 	if cfg.RootClass != "" {
 		classes += " " + cfg.RootClass
@@ -150,7 +150,7 @@ func (cfg Config) RootClasses() string {
 }
 
 // TriggerClasses returns classes for the search trigger.
-func (cfg Config) TriggerClasses() string {
+func (cfg Config) triggerClasses() string {
 	classes := "flex min-h-10 w-full items-center gap-2 rounded-radius border border-outline bg-surface px-3 text-left text-sm text-on-surface-muted transition hover:border-outline-strong hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark/50 dark:text-on-surface-dark-muted dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark"
 	if cfg.TriggerClass != "" {
 		classes += " " + cfg.TriggerClass
@@ -159,7 +159,7 @@ func (cfg Config) TriggerClasses() string {
 }
 
 // DialogClasses returns classes for the search panel.
-func (cfg Config) DialogClasses() string {
+func (cfg Config) dialogClasses() string {
 	classes := "relative mt-16 flex w-full max-w-2xl flex-col text-on-surface shadow-2xl shadow-black/20 dark:text-on-surface-dark"
 	if cfg.DialogClass != "" {
 		classes += " " + cfg.DialogClass
@@ -209,17 +209,17 @@ func (item Item) SafeHref() string {
 	}
 }
 
-func methodBadgeVariant(method string) badge.Variant {
+func methodBadgeTone(method string) badge.Tone {
 	switch strings.ToUpper(strings.TrimSpace(method)) {
 	case "GET":
-		return badge.Primary
+		return badge.TonePrimary
 	case "POST":
-		return badge.Success
+		return badge.ToneSuccess
 	case "PUT", "PATCH":
-		return badge.Warning
+		return badge.ToneWarning
 	case "DELETE":
-		return badge.Danger
+		return badge.ToneDanger
 	default:
-		return badge.Default
+		return badge.ToneDefault
 	}
 }

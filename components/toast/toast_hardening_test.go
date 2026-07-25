@@ -25,11 +25,9 @@ func TestToast_UniqueIDIsConcurrencySafe(t *testing.T) {
 	var wg sync.WaitGroup
 
 	for range count {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			ids <- uniqueID()
-		}()
+		})
 	}
 	wg.Wait()
 	close(ids)
@@ -45,7 +43,7 @@ func TestToast_UniqueIDIsConcurrencySafe(t *testing.T) {
 func TestToast_RenderedDismissExpressionsUseGeneratedSafeID(t *testing.T) {
 	idCounter.Store(0)
 	rendered := renderToast(t, Config{
-		Variant: Success,
+		Tone:    ToneSuccess,
 		Title:   "Saved",
 		Message: "Done",
 	})

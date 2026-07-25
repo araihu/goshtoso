@@ -9,10 +9,50 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var ratingAPISections = []demo.APISection{
+	demo.StructAPI[rating.Config](
+		rootcomponents.KindRating,
+		"Config",
+		"rating.Rating(cfg Config) Instance",
+		"Configures an interactive native-radio rating control.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `Name, then "rating"`, Description: "Root ID and prefix for generated option IDs."},
+			{Name: "Name", Default: `ID, then "rating"`, Description: "Native radio-group form-field name."},
+			{Name: "Value", Default: "0", Description: "Initial selection clamped into 0 through the effective Max."},
+			{Name: "Max", Default: "5 when <= 0", Description: "Number of native radio options."},
+			{Name: "Label", Default: `"Rating"`, Description: "Radiogroup aria-label and, when ShowLabel is true, visible label text."},
+			{Name: "ShowLabel", Default: "false", Description: "Renders the effective Label visibly above the options."},
+			{Name: "Appearance", Default: "AppearanceStars", Allowed: []string{"AppearanceStars", "AppearanceEmoji"}, Description: "Uses cumulative stars or one selected sentiment emoji."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets icon dimensions and emoji text size."},
+			{Name: "Disabled", Default: "false", Description: "Disables every native radio option."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the rating root."},
+			{Name: "RootAttrs", Default: "nil", Description: "Attributes applied last to the rating root."},
+		},
+	),
+	demo.StructAPI[rating.DisplayConfig](
+		rootcomponents.KindRatingDisplay,
+		"DisplayConfig",
+		"rating.RatingDisplay(cfg DisplayConfig) DisplayInstance",
+		"Configures a non-interactive rating rendered with role=\"img\" and no form inputs.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"rating"`, Description: "Rating-display root element ID."},
+			{Name: "Value", Default: "0", Description: "Displayed value clamped into 0 through the effective Max."},
+			{Name: "Max", Default: "5 when <= 0", Description: "Number of rendered visual options."},
+			{Name: "Label", Default: `"0 stars" aria-label; "Rating" when visibly shown`, Description: "Explicit role=img aria-label and, when ShowLabel is true, visible label; without it the aria-label describes the clamped value."},
+			{Name: "ShowLabel", Default: "false", Description: "Renders the effective visible Label above the display."},
+			{Name: "Appearance", Default: "AppearanceStars", Allowed: []string{"AppearanceStars", "AppearanceEmoji"}, Description: "Uses cumulative stars or one active sentiment emoji."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets icon dimensions and emoji text size."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the display root."},
+			{Name: "RootAttrs", Default: "nil", Description: "Attributes applied last to the display root."},
+		},
+	),
+}
 
 // RatingDemoPage renders the Rating component demo as a full document.
 func RatingDemoPage() templ.Component {
@@ -72,7 +112,7 @@ func ratingDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Rating",
-				Description: "Collect product scores, satisfaction signals, and read-only rating summaries with accessible radio semantics.",
+				Description: "Collect product scores and satisfaction signals with accessible radio semantics, or present a non-interactive RatingDisplay.",
 			},
 			ratingDefaultPreview(),
 			`@rating.Rating(rating.Config{
@@ -95,7 +135,7 @@ func ratingDemoContent() templ.Component {
     ID: "rating-emoji",
     Name: "sentiment",
     Value: 4,
-    Style: rating.StyleEmoji,
+    Appearance: rating.AppearanceEmoji,
     Label: "Satisfaction",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -139,14 +179,13 @@ func ratingDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Read Only",
-				Description: "ReadOnly renders the same visual language as a non-interactive summary.",
+				Title:       "Rating Display",
+				Description: "RatingDisplay owns the same visual language as a non-interactive summary.",
 			},
-			ratingReadOnlyPreview(),
-			`@rating.Rating(rating.Config{
-    ID: "rating-readonly",
+			ratingDisplayPreview(),
+			`@rating.RatingDisplay(rating.DisplayConfig{
+    ID: "rating-display",
     Value: 4,
-    ReadOnly: true,
     Label: "Average rating",
     ShowLabel: true,
 })`,
@@ -158,20 +197,7 @@ func ratingDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: `Prefix for generated input IDs. Falls back to Name, then "rating".`},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Radio group field name. Falls back to ID."},
-			{Name: "Value", Type: "int", Default: "0", Description: "Initially selected rating, clamped to 0..Max."},
-			{Name: "Max", Type: "int", Default: "5", Description: "Number of rating options."},
-			{Name: "Label", Type: "string", Default: `"Rating"`, Description: "Accessible radiogroup label; visible when ShowLabel is true."},
-			{Name: "ShowLabel", Type: "bool", Default: "false", Description: "Renders the label above the control."},
-			{Name: "Style", Type: "Style", Default: "StyleStars", Description: `Visual style: "stars" or "emoji".`},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Icon size: "sm", "md", "lg", "xl".`},
-			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables all radio inputs."},
-			{Name: "ReadOnly", Type: "bool", Default: "false", Description: "Renders a non-interactive rating summary."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the root element."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the root element."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(ratingAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -368,12 +394,12 @@ func ratingEmojiPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = rating.Rating(rating.Config{
-			ID:        "rating-sentiment",
-			Name:      "rating-sentiment",
-			Value:     4,
-			Label:     "Satisfaction",
-			ShowLabel: true,
-			Style:     rating.StyleEmoji,
+			ID:         "rating-sentiment",
+			Name:       "rating-sentiment",
+			Value:      4,
+			Label:      "Satisfaction",
+			ShowLabel:  true,
+			Appearance: rating.AppearanceEmoji,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -491,7 +517,7 @@ func ratingDisabledPreview() templ.Component {
 	})
 }
 
-func ratingReadOnlyPreview() templ.Component {
+func ratingDisplayPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -516,12 +542,11 @@ func ratingReadOnlyPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = rating.Rating(rating.Config{
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{
 			ID:        "rating-readonly-summary",
 			Value:     4,
 			Label:     "Average rating",
 			ShowLabel: true,
-			ReadOnly:  true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

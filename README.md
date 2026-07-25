@@ -28,13 +28,14 @@ copy-paste snippets.
 
 ## Highlights
 
-- **42 templ components** for common app UI: forms, navigation, overlays, data
+- **42 component packages** documented across **42 documentation pages**,
+  exposing **74 renderable primitives** for forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
   instant local interaction makes sense.
 - **Bundled assets** for Tailwind CSS, Alpine.js, HTMX, htmx extensions, fonts,
   and images. No runtime CDN dependency is required.
-- **Theme system included** with light/dark support and 13 built-in themes.
+- **Theme system included** with light/dark support and 15 built-in themes.
 - **Two-module repository**: a slim publishable library at the repo root and a
   demo/test site under `site/`.
 - **Go-native examples and tests** using templ generation and Playwright-backed
@@ -89,10 +90,10 @@ Render components from their packages:
 import "github.com/araihu/goshtoso/components/button"
 
 templ Example() {
-    @button.Button(button.Config{
-        Variant: button.Primary,
-        Type:    "button",
-    }) {
+    @button.Button(
+        button.WithTone(button.TonePrimary),
+        button.WithType("button"),
+    ) {
         Save changes
     }
 }
@@ -103,7 +104,13 @@ Goshtoso components ship pre-generated, so consumers do not run
 own `.templ` files.
 
 For a complete integration guide, including custom Tailwind builds and manual
-asset wiring, see [docs/USAGE.md](docs/USAGE.md).
+asset wiring, see [docs/USAGE.md](docs/USAGE.md). The
+[Goshtoso Component Model](docs/COMPONENT_MODEL.md) documents the common
+component interface, concrete return values, constructor styles, stable `Kind`
+identity, and rendered defaults.
+Release changes are recorded in the [changelog](CHANGELOG.md); applications
+upgrading from `v0.0.11` should follow the
+[component API migration guide](docs/MIGRATING_COMPONENT_API.md).
 
 ## AI Agent Skill
 
@@ -156,8 +163,8 @@ table            tabs        tagslist     textarea     textinput    toast
 toggle           tooltip
 ```
 
-Run the demo site to explore variants, API tables, HTMX behavior, Alpine.js
-states, themes, and example apps:
+Run the demo site to explore component options, API tables, HTMX
+behavior, Alpine.js states, themes, and example apps:
 
 ```bash
 go run ./site/cmd/server

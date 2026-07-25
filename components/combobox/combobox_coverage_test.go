@@ -55,7 +55,7 @@ func TestClientOptionLI_SingleMode_DisabledOption(t *testing.T) {
 	}
 	state := State{Options: cfg.Source.Static, Selected: []string{"tech"}}
 
-	html := renderHTML(t, OptionsList(cfg, state))
+	html := renderHTML(t, optionsList(cfg, state))
 
 	// Single mode never renders the checkbox.
 	assert.NotContains(t, html, `type="checkbox"`, "single-select has no per-row checkbox")
@@ -91,7 +91,7 @@ func TestOptionCheckbox_CheckedReflectsSelection(t *testing.T) {
 	}
 	state := State{Options: cfg.Source.Static, Selected: []string{"go"}}
 
-	html := renderHTML(t, OptionsList(cfg, state))
+	html := renderHTML(t, optionsList(cfg, state))
 
 	goIdx := strings.Index(html, `data-value="go"`)
 	rustIdx := strings.Index(html, `data-value="rust"`)
@@ -183,7 +183,7 @@ func TestProviderError_RendersRetryAndEscapesID(t *testing.T) {
 		ID: "x<script>", Name: "x",
 		OptionsEndpoint: "/api/x/options",
 	}
-	html := renderHTML(t, ProviderError(cfg))
+	html := renderHTML(t, providerError(cfg))
 
 	assert.Contains(t, html, `Failed to load`)
 	assert.Contains(t, html, `hx-get="/api/x/options"`)
@@ -253,6 +253,6 @@ func TestHandler_ParseFormError_Returns400(t *testing.T) {
 func TestOptionsList_EmptyState_RendersNoMatches(t *testing.T) {
 	cfg := Config{ID: "x", Name: "x", Mode: ModeMultiple,
 		Source: Source{Static: []Option{{Value: "a"}}}}
-	html := renderHTML(t, OptionsList(cfg, State{Options: nil}))
+	html := renderHTML(t, optionsList(cfg, State{Options: nil}))
 	assert.Contains(t, html, "No matches found")
 }

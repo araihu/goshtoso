@@ -9,9 +9,31 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var toggleAPISections = []demo.APISection{
+	demo.StructAPI[toggle.Config](
+		rootcomponents.KindToggle,
+		"Config",
+		"toggle.Toggle(cfg Config) Instance",
+		"Configures a native checkbox exposed visually as an inline or bordered switch.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `""`, Description: "Native checkbox ID and label for target."},
+			{Name: "Label", Default: `""`, Description: "Visible switch label."},
+			{Name: "Tone", Default: "TonePrimary", Allowed: []string{"TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets the checked track, thumb, and focus colors."},
+			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearanceContainer"}, Description: "Selects an inline label or bordered justify-between container."},
+			{Name: "Checked", Default: "false", Description: "Sets the initial native checked state."},
+			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute."},
+			{Name: "Name", Default: `"" (not submitted)`, Description: "Native form-field name; when set without Value, an additional hidden Name=off input is rendered."},
+			{Name: "Value", Default: `"" (checkbox uses the browser default value)`, Description: "When both Name and Value are non-empty, sets the checked submission value and suppresses the hidden off input; ignored without Name."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the root label."},
+			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native checkbox; use dynamic bindings rather than duplicate static checked or disabled keys."},
+		},
+	),
+}
 
 // ToggleDemoPage renders the Toggle component demo
 func ToggleDemoPage() templ.Component {
@@ -89,13 +111,13 @@ func toggleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Container",
-				Description: "Style: toggle.StyleContainer wraps the switch and label in a bordered container.",
+				Description: "Appearance: toggle.AppearanceContainer wraps the switch and label in a bordered container.",
 			},
 			toggleContainerPreview(),
 			`@toggle.Toggle(toggle.Config{
     ID:      "containerToggle",
     Label:   "Toggle",
-    Style:   toggle.StyleContainer,
+    Appearance: toggle.AppearanceContainer,
     Checked: true,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -105,11 +127,11 @@ func toggleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variations",
-				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+				Description: "Set Tone: toggle.TonePrimary, toggle.ToneSecondary, toggle.ToneInfo, toggle.ToneSuccess, toggle.ToneWarning, or toggle.ToneDanger.",
 			},
 			toggleColorsPreview(),
-			`@toggle.Toggle(toggle.Config{ID: "successToggle", Label: "success", Variant: toggle.Success, Checked: true})
-@toggle.Toggle(toggle.Config{ID: "dangerToggle", Label: "danger", Variant: toggle.Danger, Checked: true})`,
+			`@toggle.Toggle(toggle.Config{ID: "successToggle", Label: "success", Tone: toggle.ToneSuccess, Checked: true})
+@toggle.Toggle(toggle.Config{ID: "dangerToggle", Label: "danger", Tone: toggle.ToneDanger, Checked: true})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -130,16 +152,7 @@ func toggleDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the toggle input (and label's for target)."},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
-			{Name: "Label", Type: "string", Default: `""`, Description: "Label text beside the switch."},
-			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial on state."},
-			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
-			{Name: "Variant", Type: "Variant", Default: "Primary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Style", Type: "Style", Default: "StyleDefault", Description: `Layout: "default" (inline) or "container" (bordered).`},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the toggle root."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(toggleAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -211,7 +224,7 @@ func toggleContainerPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoContainer", Label: "Toggle", Style: toggle.StyleContainer, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoContainer", Label: "Toggle", Appearance: toggle.AppearanceContainer, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -249,27 +262,27 @@ func toggleColorsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoPrimary", Label: "primary", Variant: toggle.Primary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoPrimary", Label: "primary", Tone: toggle.TonePrimary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSecondary", Label: "secondary", Variant: toggle.Secondary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSecondary", Label: "secondary", Tone: toggle.ToneSecondary, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSuccess", Label: "success", Variant: toggle.Success, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoSuccess", Label: "success", Tone: toggle.ToneSuccess, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoWarning", Label: "warning", Variant: toggle.Warning, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoWarning", Label: "warning", Tone: toggle.ToneWarning, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDanger", Label: "danger", Variant: toggle.Danger, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoDanger", Label: "danger", Tone: toggle.ToneDanger, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoInfo", Label: "info", Variant: toggle.Info, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toggle.Toggle(toggle.Config{ID: "demoInfo", Label: "info", Tone: toggle.ToneInfo, Checked: true}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

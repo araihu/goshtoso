@@ -8,25 +8,25 @@ import "fmt"
 //	// Simple badge
 //	@badge.Badge(badge.Config{
 //	    Label: "New",
-//	    Variant: badge.Primary,
+//	    Tone: badge.TonePrimary,
 //	})
 //
-//	// Soft style badge with icon
+//	// Soft appearance badge with icon
 //	@badge.Badge(badge.Config{
 //	    Label: "Active",
-//	    Variant: badge.Success,
-//	    Style: badge.StyleSoft,
+//	    Tone: badge.ToneSuccess,
+//	    Appearance: badge.AppearanceSoft,
 //	    Icon: checkIcon,
 //	})
 //
 //	// Badge with indicator dot
 //	@badge.Badge(badge.Config{
 //	    Label: "Live",
-//	    Variant: badge.Danger,
+//	    Tone: badge.ToneDanger,
 //	    Indicator: true,
 //	})
-templ Badge(cfg Config) {
-	if cfg.IsSoft() || cfg.Icon != nil || cfg.Indicator {
+templ badgeTemplate(cfg Config) {
+	if cfg.isSoft() || cfg.Icon != nil || cfg.Indicator {
 		@badgeWithInner(cfg)
 	} else {
 		@simpleBadge(cfg)
@@ -35,7 +35,7 @@ templ Badge(cfg Config) {
 
 // simpleBadge renders a basic solid badge
 templ simpleBadge(cfg Config) {
-	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.RootClass }}
+	{{ classes := "rounded-radius w-fit font-medium " + cfg.sizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass }}
 	
 	<span class={ classes }>
 		{ cfg.Label }
@@ -44,14 +44,14 @@ templ simpleBadge(cfg Config) {
 
 // badgeWithInner renders a badge with inner span (for soft style, icons, or indicators)
 templ badgeWithInner(cfg Config) {
-	{{ containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " " }}
-	{{ if cfg.IsSoft() { containerClasses = containerClasses + cfg.SoftVariantClasses() } else { containerClasses = containerClasses + cfg.VariantClasses() } }}
+	{{ containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.sizeTextClass() + " " }}
+	{{ if cfg.isSoft() { containerClasses = containerClasses + cfg.softToneClasses() } else { containerClasses = containerClasses + cfg.toneClasses() } }}
 	{{ containerClasses = containerClasses + " " + cfg.RootClass }}
 
 	<span class={ containerClasses }>
-		<span class={ "flex items-center gap-1 " + cfg.SizeClasses() + " " + cfg.SoftInnerClasses() }>
+		<span class={ "flex items-center gap-1 " + cfg.sizeClasses() + " " + cfg.softInnerClasses() }>
 			if cfg.Indicator {
-				<span class={ cfg.IndicatorClasses() } aria-hidden="true"></span>
+				<span class={ cfg.indicatorClasses() } aria-hidden="true"></span>
 			}
 			if cfg.Icon != nil {
 				<span class="shrink-0">
@@ -67,7 +67,7 @@ templ badgeWithInner(cfg Config) {
 // Usage:
 //
 //	@badge.NotificationBadge(99)
-templ NotificationBadge(count int) {
+templ notificationBadgeTemplate(count int) {
 	if count > 0 {
 		<span class="absolute left-1/2 -top-1 rounded-full bg-danger px-1 leading-4 text-xs font-medium text-on-danger">
 			if count > 99 {
@@ -80,26 +80,26 @@ templ NotificationBadge(count int) {
 }
 
 // NotificationDot renders a simple notification dot (red badge without text)
-templ NotificationDot() {
+templ notificationDotTemplate() {
 	<span class="absolute -right-0.5 top-0 size-3 rounded-full bg-danger text-xs font-medium"></span>
 }
 
 // AnimatingDot renders a pulsing notification dot
 // Usage:
 //
-//	@badge.AnimatingDot(badge.Primary)
-templ AnimatingDot(variant Variant) {
+//	@badge.AnimatingDot(badge.TonePrimary)
+templ animatingDotTemplate(tone Tone) {
 	{{ colorClass := "bg-primary dark:bg-primary-dark" }}
-	switch variant {
-		case Secondary:
+	switch tone {
+		case ToneSecondary:
 			{{ colorClass = "bg-secondary dark:bg-secondary-dark" }}
-		case Info:
+		case ToneInfo:
 			{{ colorClass = "bg-info" }}
-		case Success:
+		case ToneSuccess:
 			{{ colorClass = "bg-success" }}
-		case Warning:
+		case ToneWarning:
 			{{ colorClass = "bg-warning" }}
-		case Danger:
+		case ToneDanger:
 			{{ colorClass = "bg-danger" }}
 	}
 	

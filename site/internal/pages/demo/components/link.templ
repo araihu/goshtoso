@@ -1,9 +1,33 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	linkcomponent "github.com/araihu/goshtoso/components/link"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var linkAPISections = []demo.APISection{
+	demo.OptionsAPI(
+		"github.com/araihu/goshtoso/components/link",
+		rootcomponents.KindLink,
+		"Link options",
+		"link.Link(href string, options ...Option) Instance",
+		"Creates a styled anchor from a required destination and child content, then applies functional options over the documented defaults.",
+		[]demo.APIPropDoc{
+			{Name: "href", Signature: "href string", Default: "required", Description: "Anchor destination passed through templ.URL.", Required: true},
+			{Name: "WithTarget", Signature: "func WithTarget(target string) Option", Default: `"" (omitted)`, Description: "Sets the native target attribute."},
+			{Name: "WithRel", Signature: "func WithRel(rel string) Option", Default: `"noopener noreferrer" for target "_blank"; otherwise omitted`, Description: "Sets the native rel attribute and overrides the _blank safety fallback when non-empty."},
+			{Name: "WithRole", Signature: "func WithRole(role string) Option", Default: `"button" for AppearanceButton; otherwise omitted`, Description: "Sets the native role attribute and overrides the button-appearance fallback when non-empty."},
+			{Name: "WithID", Signature: "func WithID(id string) Option", Default: `"" (omitted)`, Description: "Sets the anchor ID."},
+			{Name: "WithAppearance", Signature: "func WithAppearance(appearance Appearance) Option", Default: "AppearanceText", Allowed: []string{"AppearanceText", "AppearanceButton"}, Description: "Selects text or button styling; empty or unknown values use text styling."},
+			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMedium", Allowed: []string{"SizeSmall", "SizeMedium", "SizeLarge", "SizeXLarge"}, Description: "Sets dimensions only for AppearanceButton; empty or unknown values use medium."},
+			{Name: "WithIcon", Signature: "func WithIcon(icon templ.Component) Option", Default: "nil", Description: "Adds an icon and inline-flex layout."},
+			{Name: "WithIconPosition", Signature: "func WithIconPosition(position IconPosition) Option", Default: "IconTrailing", Allowed: []string{"IconLeading", "IconTrailing"}, Description: "IconLeading renders before child content; every other value renders after it."},
+			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the anchor."},
+			{Name: "WithAttrs", Signature: "func WithAttrs(attrs templ.Attributes) Option", Default: "nil", Description: "Appends arbitrary attributes after modeled attributes; conflicts can produce duplicate attributes rather than overriding typed options."},
+		},
+	),
+}
 
 // LinkDemoPage renders the Link component demo.
 templ LinkDemoPage() {
@@ -18,7 +42,7 @@ templ linkDemoContent() {
 				Description: "Direct users to another page, section, or resource with themed focus, hover, and optional button styling.",
 			},
 			linkDefaultPreview(),
-			`@link.Link(link.Config{Href: "#"}) {
+			`@link.Link("#") {
     Read if bored
 }`,
 		)
@@ -30,7 +54,7 @@ templ linkDemoContent() {
 			},
 			linkInlinePreview(),
 			`<p>
-    Follow us on @link.Link(link.Config{Href: "#"}) { social media }
+    Follow us on @link.Link("#") { social media }
     and become our virtual BFF.
 </p>`,
 		)
@@ -41,10 +65,7 @@ templ linkDemoContent() {
 				Description: "Pass an icon component to add a compact directional cue.",
 			},
 			linkIconPreview(),
-			`@link.Link(link.Config{
-    Href: "#",
-    Icon: linkArrowIcon(),
-}) {
+			`@link.Link("#", link.WithIcon(linkArrowIcon())) {
     about our company
 }`,
 		)
@@ -52,35 +73,20 @@ templ linkDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Button Link",
-				Description: "Use StyleButton when navigation should visually match a primary action.",
+				Description: "Use AppearanceButton when navigation should visually match a primary action.",
 			},
 			linkButtonPreview(),
-			`@link.Link(link.Config{
-    Href:  "#",
-    Style: link.StyleButton,
-}) {
+			`@link.Link("#", link.WithAppearance(link.AppearanceButton)) {
     I'm a link
 }`,
 		)
 	</div>
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Href", Type: "string", Default: `"#"`, Description: "Link destination."},
-		{Name: "Target", Type: "string", Default: `""`, Description: "Native anchor target attribute."},
-		{Name: "Rel", Type: "string", Default: `""`, Description: `Native rel attribute. Defaults to "noopener noreferrer" for target "_blank".`},
-		{Name: "Role", Type: "string", Default: `""`, Description: `Native role attribute. StyleButton defaults to "button".`},
-		{Name: "Style", Type: "Style", Default: "StyleText", Description: `Visual treatment: "text" or "button".`},
-		{Name: "Size", Type: "Size", Default: "SizeMedium", Description: `Button-link size: "sm", "md", "lg", "xl".`},
-		{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional icon rendered inside the link."},
-		{Name: "IconPosition", Type: "IconPosition", Default: "IconTrailing", Description: `Icon placement: "leading" or "trailing".`},
-		{Name: "ID", Type: "string", Default: `""`, Description: "Optional element id."},
-		{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes appended to the anchor."},
-		{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the anchor."},
-	})
+	@demo.StructuredAPIReference(linkAPISections)
 }
 
 templ linkDefaultPreview() {
 	<div id="link-default" class="flex w-full justify-center">
-		@linkcomponent.Link(linkcomponent.Config{Href: "#"}) {
+		@linkcomponent.Link("#") {
 			Read if bored
 		}
 	</div>
@@ -90,7 +96,7 @@ templ linkInlinePreview() {
 	<div id="link-inline" class="mx-auto max-w-2xl text-center text-on-surface dark:text-on-surface-dark">
 		<p>
 			{ "Follow us on " }
-			@linkcomponent.Link(linkcomponent.Config{Href: "#"}) {
+			@linkcomponent.Link("#") {
 				social media
 			}
 			{ " and become our virtual BFF. We promise to send only the useful updates." }
@@ -102,10 +108,7 @@ templ linkIconPreview() {
 	<div id="link-icon" class="flex w-full justify-center">
 		<p class="text-on-surface dark:text-on-surface-dark">
 			{ "Find out more " }
-			@linkcomponent.Link(linkcomponent.Config{
-				Href: "#",
-				Icon: linkArrowIcon(),
-			}) {
+			@linkcomponent.Link("#", linkcomponent.WithIcon(linkArrowIcon())) {
 				about our company
 			}
 		</p>
@@ -114,10 +117,7 @@ templ linkIconPreview() {
 
 templ linkButtonPreview() {
 	<div id="link-button" class="flex w-full justify-center">
-		@linkcomponent.Link(linkcomponent.Config{
-			Href:  "#",
-			Style: linkcomponent.StyleButton,
-		}) {
+		@linkcomponent.Link("#", linkcomponent.WithAppearance(linkcomponent.AppearanceButton)) {
 			I'm a link
 		}
 	</div>

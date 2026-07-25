@@ -6,6 +6,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/site/internal/examples/chat"
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
 )
@@ -17,6 +18,7 @@ type DemoEntry struct {
 	Title   string
 	Active  string
 	Content func() templ.Component
+	API     []demo.APISection
 }
 
 // Demos is the single registry of every page that can be loaded either
@@ -27,62 +29,63 @@ type DemoEntry struct {
 // "components/button", "docs/theme", "getting-started". Server handlers
 // translate their URL into a registry key.
 var Demos = map[string]DemoEntry{
-	"components/accordion":        {"Accordion", "accordion", accordionDemoContent},
-	"components/alert":            {"Alert", "alert", alertDemoContent},
-	"components/avatar":           {"Avatar", "avatar", avatarDemoContent},
-	"components/badge":            {"Badge", "badge", badgeDemoContent},
-	"components/banner":           {"Banner", "banner", bannerDemoContent},
-	"components/breadcrumbs":      {"Breadcrumbs", "breadcrumbs", breadcrumbsDemoContent},
-	"components/button":           {"Buttons", "button", buttonDemoContent},
-	"components/card":             {"Card", "card", cardDemoContent},
-	"components/carousel":         {"Carousel", "carousel", carouselDemoContent},
-	"components/chatbubble":       {"Chat Bubble", "chatbubble", chatBubbleDemoContent},
-	"components/checkbox":         {"Checkbox", "checkbox", checkboxDemoContent},
-	"components/codeblock":        {"Code Block", "codeblock", codeBlockDemoContent},
-	"components/combobox":         {"Combobox", "combobox", comboboxDemoContent},
-	"components/dependencies":     {"Dependencies", "dependencies", dependenciesDemoContent},
-	"components/drawer":           {"Drawer", "drawer", drawerDemoContent},
-	"components/dropdown":         {"Dropdown", "dropdown", dropdownDemoContent},
-	"components/fileinput":        {"File Input", "fileinput", fileInputDemoContent},
-	"components/form":             {"Form", "form", formDemoContent},
-	"components/kbd":              {"KBD", "kbd", kbdDemoContent},
-	"components/link":             {"Link", "link", linkDemoContent},
-	"components/modal":            {"Modal", "modal", modalDemoContent},
-	"components/navbar":           {"Navbar", "navbar", navbarDemoContent},
-	"components/pagination":       {"Pagination", "pagination", paginationDemoContent},
-	"components/palette":          {"Palette", "palette", paletteDemoContent},
-	"components/radio":            {"Radio", "radio", radioDemoContent},
-	"components/range":            {"Range", "range", rangeDemoContent},
-	"components/rating":           {"Rating", "rating", ratingDemoContent},
-	"components/select":           {"Select", "select", selectDemoContent},
-	"components/schema-form":      {"Schema Form", "schema-form", schemaFormDemoContent},
-	"components/search":           {"Search", "search", searchDemoContent},
-	"components/sidebar":          {"Sidebar", "sidebar", sidebarDemoContent},
-	"components/spinner":          {"Spinner", "spinner", spinnerDemoContent},
-	"components/steps":            {"Steps", "steps", stepsDemoContent},
-	"components/table":            {"Table", "table", tableDemoContent},
-	"components/tabs":             {"Tabs", "tabs", tabsDemoContent},
-	"components/tags-list":        {"Tags List", "tags-list", tagsListDemoContent},
-	"components/text-input":       {"Text Input", "text-input", textInputDemoContent},
-	"components/textarea":         {"Textarea", "textarea", textareaDemoContent},
-	"components/toast":            {"Toast", "toast", toastDemoContent},
-	"components/toggle":           {"Toggle", "toggle", toggleDemoContent},
-	"components/structured-input": {"Structured Input", "structured-input", structuredInputDemoContent},
-	"components/tooltip":          {"Tooltip", "tooltip", tooltipDemoContent},
-	"docs/agents":                 {"AI Agents", "agents", agentsContent},
-	"docs/theme":                  {"Theme", "theme", themeDemoContent},
-	"getting-started":             {"Getting Started", "", gettingStartedContent},
-	"attributions":                {"Attributions", "attributions", attributionsContent},
-	"license":                     {"License", "license", licenseContent},
-	"privacy":                     {"Privacy Policy", "privacy", privacyContent},
-	"examples":                    {"Examples", "examples", examples.IndexContent},
-	"examples/todo":               {"Todo List", "todo", examples.TodoContent},
-	"examples/expense":            {"Expense Tracker", "expense", examples.ExpenseContent},
-	"examples/chat":               {"Chat", "chat", func() templ.Component { return examples.ChatApp(chat.NewGuest(0)) }},
-	"examples/logs":               {"Live Log Feed", "logs", examples.LogsContent},
-	"examples/profile":            {"Profile", "profile", examples.ProfileContent},
-	"examples/ticker":             {"Live Ticker", "ticker", examples.TickerContent},
-	"examples/wizard":             {"Onboarding Wizard", "wizard", examples.WizardContent},
+	"components/accordion":        {Title: "Accordion", Active: "accordion", Content: accordionDemoContent, API: accordionAPISections},
+	"components/alert":            {Title: "Alert", Active: "alert", Content: alertDemoContent, API: alertAPISections},
+	"components/avatar":           {Title: "Avatar", Active: "avatar", Content: avatarDemoContent, API: avatarAPISections},
+	"components/badge":            {Title: "Badge", Active: "badge", Content: badgeDemoContent, API: badgeAPISections},
+	"components/banner":           {Title: "Banner", Active: "banner", Content: bannerDemoContent, API: bannerAPISections},
+	"components/breadcrumbs":      {Title: "Breadcrumbs", Active: "breadcrumbs", Content: breadcrumbsDemoContent, API: breadcrumbsAPISections},
+	"components/button":           {Title: "Buttons", Active: "button", Content: buttonDemoContent, API: buttonAPISections},
+	"components/card":             {Title: "Card", Active: "card", Content: cardDemoContent, API: cardAPISections},
+	"components/carousel":         {Title: "Carousel", Active: "carousel", Content: carouselDemoContent, API: carouselAPISections},
+	"components/chatbubble":       {Title: "Chat Bubble", Active: "chatbubble", Content: chatBubbleDemoContent, API: chatBubbleAPISections},
+	"components/checkbox":         {Title: "Checkbox", Active: "checkbox", Content: checkboxDemoContent, API: checkboxAPISections},
+	"components/codeblock":        {Title: "Code Block", Active: "codeblock", Content: codeBlockDemoContent, API: codeBlockAPISections},
+	"components/combobox":         {Title: "Combobox", Active: "combobox", Content: comboboxDemoContent, API: comboboxAPISections},
+	"components/dependencies":     {Title: "Dependencies", Active: "dependencies", Content: dependenciesDemoContent, API: dependenciesAPISections},
+	"components/drawer":           {Title: "Drawer", Active: "drawer", Content: drawerDemoContent, API: drawerAPISections},
+	"components/dropdown":         {Title: "Dropdown", Active: "dropdown", Content: dropdownDemoContent, API: dropdownAPISections},
+	"components/fileinput":        {Title: "File Input", Active: "fileinput", Content: fileInputDemoContent, API: fileInputAPISections},
+	"components/form":             {Title: "Form", Active: "form", Content: formDemoContent, API: formAPISections},
+	"components/kbd":              {Title: "KBD", Active: "kbd", Content: kbdDemoContent, API: kbdAPISections},
+	"components/link":             {Title: "Link", Active: "link", Content: linkDemoContent, API: linkAPISections},
+	"components/modal":            {Title: "Modal", Active: "modal", Content: modalDemoContent, API: modalAPISections},
+	"components/navbar":           {Title: "Navbar", Active: "navbar", Content: navbarDemoContent, API: navbarAPISections},
+	"components/pagination":       {Title: "Pagination", Active: "pagination", Content: paginationDemoContent, API: paginationAPISections},
+	"components/palette":          {Title: "Palette", Active: "palette", Content: paletteDemoContent, API: paletteAPISections},
+	"components/radio":            {Title: "Radio", Active: "radio", Content: radioDemoContent, API: radioAPISections},
+	"components/range":            {Title: "Range", Active: "range", Content: rangeDemoContent, API: rangeAPISections},
+	"components/rating":           {Title: "Rating", Active: "rating", Content: ratingDemoContent, API: ratingAPISections},
+	"components/select":           {Title: "Select", Active: "select", Content: selectDemoContent, API: selectAPISections},
+	"components/schema-form":      {Title: "Schema Form", Active: "schema-form", Content: schemaFormDemoContent, API: schemaFormAPISections},
+	"components/search":           {Title: "Search", Active: "search", Content: searchDemoContent, API: searchAPISections},
+	"components/sidebar":          {Title: "Sidebar", Active: "sidebar", Content: sidebarDemoContent, API: sidebarAPISections},
+	"components/spinner":          {Title: "Spinner", Active: "spinner", Content: spinnerDemoContent, API: spinnerAPISections},
+	"components/steps":            {Title: "Steps", Active: "steps", Content: stepsDemoContent, API: stepsAPISections},
+	"components/table":            {Title: "Table", Active: "table", Content: tableDemoContent, API: tableAPISections},
+	"components/tabs":             {Title: "Tabs", Active: "tabs", Content: tabsDemoContent, API: tabsAPISections},
+	"components/tags-list":        {Title: "Tags List", Active: "tags-list", Content: tagsListDemoContent, API: tagsListAPISections},
+	"components/text-input":       {Title: "Text Input", Active: "text-input", Content: textInputDemoContent, API: textInputAPISections},
+	"components/textarea":         {Title: "Textarea", Active: "textarea", Content: textareaDemoContent, API: textareaAPISections},
+	"components/toast":            {Title: "Toast", Active: "toast", Content: toastDemoContent, API: toastAPISections},
+	"components/toggle":           {Title: "Toggle", Active: "toggle", Content: toggleDemoContent, API: toggleAPISections},
+	"components/structured-input": {Title: "Structured Input", Active: "structured-input", Content: structuredInputDemoContent, API: structuredInputAPISections},
+	"components/tooltip":          {Title: "Tooltip", Active: "tooltip", Content: tooltipDemoContent, API: tooltipAPISections},
+	"docs/agents":                 {Title: "AI Agents", Active: "agents", Content: agentsContent},
+	"docs/component-model":        {Title: "Component Model", Active: "component-model", Content: componentModelContent},
+	"docs/theme":                  {Title: "Theme", Active: "theme", Content: themeDemoContent},
+	"getting-started":             {Title: "Getting Started", Content: gettingStartedContent},
+	"attributions":                {Title: "Attributions", Active: "attributions", Content: attributionsContent},
+	"license":                     {Title: "License", Active: "license", Content: licenseContent},
+	"privacy":                     {Title: "Privacy Policy", Active: "privacy", Content: privacyContent},
+	"examples":                    {Title: "Examples", Active: "examples", Content: examples.IndexContent},
+	"examples/todo":               {Title: "Todo List", Active: "todo", Content: examples.TodoContent},
+	"examples/expense":            {Title: "Expense Tracker", Active: "expense", Content: examples.ExpenseContent},
+	"examples/chat":               {Title: "Chat", Active: "chat", Content: func() templ.Component { return examples.ChatApp(chat.NewGuest(0)) }},
+	"examples/logs":               {Title: "Live Log Feed", Active: "logs", Content: examples.LogsContent},
+	"examples/profile":            {Title: "Profile", Active: "profile", Content: examples.ProfileContent},
+	"examples/ticker":             {Title: "Live Ticker", Active: "ticker", Content: examples.TickerContent},
+	"examples/wizard":             {Title: "Onboarding Wizard", Active: "wizard", Content: examples.WizardContent},
 }
 
 // LookupDemo returns the entry for a given canonical key (no leading slash).
@@ -94,13 +97,7 @@ func LookupDemo(key string) (DemoEntry, bool) {
 // componentCount uses registered component pages so the homepage reflects the
 // public catalog rather than package directories that may not be user-facing.
 func componentCount() int {
-	var count int
-	for key := range Demos {
-		if strings.HasPrefix(key, "components/") {
-			count++
-		}
-	}
-	return count
+	return len(catalog.ComponentPages())
 }
 
 func DemoMeta(key string, entry DemoEntry) demo.PageMeta {
@@ -123,6 +120,8 @@ func DemoMeta(key string, entry DemoEntry) demo.PageMeta {
 		title = "Getting Started with Goshtoso Go UI Components"
 	case key == "docs/agents":
 		title = "Using Goshtoso With AI Agents"
+	case key == "docs/component-model":
+		title = "Goshtoso Component Model"
 	case key == "docs/theme":
 		title = "Themes - Goshtoso UI Library for Go"
 	}
@@ -157,62 +156,26 @@ func AllPublicMeta() []demo.PageMeta {
 }
 
 func demoDescription(key string, entry DemoEntry) string {
+	if component, ok := catalog.Lookup(key); ok {
+		return component.Description
+	}
+
 	descriptions := map[string]string{
-		"components/accordion":        "Build accessible accordion interfaces in Go with server-rendered templ markup, HTMX-friendly content, and Alpine.js disclosure behavior.",
-		"components/avatar":           "Render Go avatar components with images, initials, placeholders, status indicators, borders, and stacked group layouts.",
-		"components/badge":            "Use Goshtoso badge components for statuses, counts, semantic colors, icon labels, and notification dots in Go applications.",
-		"components/banner":           "Create inline announcement and alert banners with tones, icons, actions, and dismiss patterns for server-rendered Go UIs.",
-		"components/breadcrumbs":      "Add hierarchical breadcrumb navigation to Go documentation routes, nested pages, and HTMX-enhanced server-rendered apps.",
-		"components/button":           "Build Go button components with variants, sizes, icons, loading states, and HTMX request integrations.",
-		"components/card":             "Compose structured card layouts in Go with media, headings, body content, actions, and responsive variants.",
-		"components/carousel":         "Render carousel content rails for images, feature panels, and grouped cards with Goshtoso, templ, and Alpine.js.",
-		"components/chatbubble":       "Create conversation message bubbles with alignment, avatars, metadata, and grouped thread layouts for Go chat interfaces.",
-		"components/checkbox":         "Build checkbox fields and groups with accessible labels, helper text, disabled states, and validation in Go.",
-		"components/codeblock":        "Show copy-pasteable code snippets with semantic pre and code markup, labels, scroll bounds, copy actions, and themes.",
-		"components/combobox":         "Add searchable single and multi-select combobox controls with keyboard navigation to server-rendered Go forms.",
-		"components/dependencies":     "Load Goshtoso's local CSS, Alpine.js, HTMX, and runtime helpers from embedded assets without CDN dependencies.",
-		"components/drawer":           "Create slide-over panels for details, filters, and HTMX workflows with Alpine.js state and focus trapping.",
-		"components/dropdown":         "Render dropdown menus with grouped actions, icons, alignment, and keyboard-friendly behavior for Go UI workflows.",
-		"components/fileinput":        "Create file upload controls with labels, helper text, selected-file display, and validation states in Goshtoso.",
-		"components/form":             "Build form layout patterns, field groups, server validation messages, and HTMX submit behavior with Go and templ.",
-		"components/kbd":              "Display semantic keyboard shortcut hints for command palettes, forms, and toolbar controls in Go documentation.",
-		"components/link":             "Render accessible link components for inline navigation, external links, icon links, and disabled states in Go UIs.",
-		"components/modal":            "Create modal dialogs with focus management, actions, dismissal, and scroll handling using Goshtoso and Alpine.js.",
-		"components/navbar":           "Build top navigation bars with links, actions, responsive menus, and brand areas for server-rendered Go sites.",
-		"components/pagination":       "Add pagination controls for tables, lists, and HTMX-powered result sets in Go applications.",
-		"components/palette":          "Render color picking surfaces with swatches, hex entry, token labels, and theme integration in Goshtoso.",
-		"components/radio":            "Build radio groups and segmented controls with accessible labels, helper copy, and validation states in Go.",
-		"components/range":            "Create range sliders with labels, helper text, value output, and accessible input behavior for Go forms.",
-		"components/rating":           "Render rating inputs and display patterns with stars, labels, accessible values, and form integration in Goshtoso.",
-		"components/search":           "Add command-palette search with a sidebar trigger, global modal, filtering, highlighting, and docs navigation.",
-		"components/select":           "Build native-feeling select menus with trigger content, grouped options, and keyboard support in Go.",
-		"components/schema-form":      "Generate complete form sections from JSON Schema defaults, submitted values, and allow-list rules in server-rendered Go interfaces.",
-		"components/sidebar":          "Create persistent or overlay side navigation with sections, search slots, active states, and responsive behavior.",
-		"components/spinner":          "Show loading indicators with size, color, label, and accessible busy-state patterns for Go and HTMX UIs.",
-		"components/steps":            "Render progress indicators for wizards, onboarding, and multi-step workflows in server-rendered Go applications.",
-		"components/structured-input": "Compose inputs for prefixes, suffixes, segmented values, metadata rows, and constrained data entry in Go.",
-		"components/table":            "Build sortable, paginated, filterable Go data tables with HTMX loading, rich cells, and server-rendered rows.",
-		"components/tabs":             "Create segmented content navigation with keyboard support, panels, active states, and HTMX-loaded tab content.",
-		"components/tags-list":        "Manage editable tag collections with add, remove, duplicate handling, and keyboard flows in Goshtoso.",
-		"components/text-input":       "Render text fields with icons, search affordances, masks, validation, and password controls for Go forms.",
-		"components/textarea":         "Build multi-line text entry with resize behavior, helper text, counters, and validation in server-rendered Go UIs.",
-		"components/toast":            "Create transient notifications with positions, timing, actions, and status variants, including HTMX OOB toasts.",
-		"components/toggle":           "Render binary switches for settings, feature flags, and compact on-off choices in Go applications.",
-		"components/tooltip":          "Add contextual hints for icons, controls, and abbreviated UI labels with hover, focus, or click triggers.",
-		"docs/agents":                 "Install the Goshtoso consumer agent skill for AI coding tools and verify npx skills distribution.",
-		"docs/theme":                  "Customize Goshtoso themes with Tailwind CSS tokens, dark mode, live previews, and server-rendered component examples.",
-		"getting-started":             "Start a Go HTMX app with Goshtoso, templ, Tailwind CSS, local runtime assets, and copy-pasteable setup code.",
-		"attributions":                "Review third-party licenses and asset attributions for the Goshtoso documentation site and component library.",
-		"license":                     "Read the Goshtoso license terms for using the Go UI component library in personal and commercial projects.",
-		"privacy":                     "Understand how the Goshtoso demo site uses browser storage for preferences and local example state without analytics.",
-		"examples":                    "Explore full runnable Go apps built with Goshtoso components, HTMX fragments, Alpine.js state, and server-rendered templ pages.",
-		"examples/todo":               "Run a cookie-backed HTMX todo list example built with Goshtoso Go components and server-rendered fragments.",
-		"examples/expense":            "Track expenses in a cookie-backed HTMX example with search, category filters, pagination, a running total, and Goshtoso combobox, modal, and toast components.",
-		"examples/logs":               "Explore a live log feed example using Go, SSE, htmx-ext-sse, filters, and Goshtoso interface components.",
-		"examples/profile":            "Edit a profile settings screen composed from Goshtoso form, avatar, modal, toggle, and validation components.",
-		"examples/ticker":             "Watch a live ticker table update with Go server-sent events, HTMX row swaps, and Goshtoso table components.",
-		"examples/chat":               "Try a real-time Go chat interface with WebSockets, server-rendered message bubbles, and Goshtoso components.",
-		"examples/wizard":             "Step through a cookie-backed onboarding wizard with per-step server-side validation, HTMX fragment swaps, and Goshtoso steps, form, and toast components.",
+		"docs/agents":          "Install the Goshtoso consumer agent skill for AI coding tools and verify npx skills distribution.",
+		"docs/component-model": "Understand Goshtoso's common component interface, concrete return values, constructor styles, stable Kind identity, and rendered defaults.",
+		"docs/theme":           "Customize Goshtoso themes with Tailwind CSS tokens, dark mode, live previews, and server-rendered component examples.",
+		"getting-started":      "Start a Go HTMX app with Goshtoso, templ, Tailwind CSS, local runtime assets, and copy-pasteable setup code.",
+		"attributions":         "Review third-party licenses and asset attributions for the Goshtoso documentation site and component library.",
+		"license":              "Read the Goshtoso license terms for using the Go UI component library in personal and commercial projects.",
+		"privacy":              "Understand how the Goshtoso demo site uses browser storage for preferences and local example state without analytics.",
+		"examples":             "Explore full runnable Go apps built with Goshtoso components, HTMX fragments, Alpine.js state, and server-rendered templ pages.",
+		"examples/todo":        "Run a cookie-backed HTMX todo list example built with Goshtoso Go components and server-rendered fragments.",
+		"examples/expense":     "Track expenses in a cookie-backed HTMX example with search, category filters, pagination, a running total, and Goshtoso combobox, modal, and toast components.",
+		"examples/logs":        "Explore a live log feed example using Go, SSE, htmx-ext-sse, filters, and Goshtoso interface components.",
+		"examples/profile":     "Edit a profile settings screen composed from Goshtoso form, avatar, modal, toggle, and validation components.",
+		"examples/ticker":      "Watch a live ticker table update with Go server-sent events, HTMX row swaps, and Goshtoso table components.",
+		"examples/chat":        "Try a real-time Go chat interface with WebSockets, server-rendered message bubbles, and Goshtoso components.",
+		"examples/wizard":      "Step through a cookie-backed onboarding wizard with per-step server-side validation, HTMX fragment swaps, and Goshtoso steps, form, and toast components.",
 	}
 	if description, ok := descriptions[key]; ok {
 		return description

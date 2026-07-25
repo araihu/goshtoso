@@ -20,8 +20,8 @@ package dropdown
 //	    TriggerMode: dropdown.TriggerHover,
 //	    Sections: []dropdown.Section{...},
 //	})
-templ Dropdown(cfg Config) {
-	switch cfg.GetTriggerMode() {
+templ dropdownTemplate(cfg Config) {
+	switch cfg.getTriggerMode() {
 		case TriggerHover:
 			@hoverDropdown(cfg)
 		case TriggerContext:
@@ -84,9 +84,9 @@ templ triggerButton(cfg Config) {
 	<button
 		type="button"
 		x-on:click="isOpen = ! isOpen"
-		class={ cfg.ButtonClasses() }
+		class={ cfg.buttonClasses() }
 		aria-haspopup="true"
-		if cfg.UseIconOnlyTrigger() {
+		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
 		}
 		x-on:keydown.space.prevent="openedWithKeyboard = true"
@@ -95,7 +95,7 @@ templ triggerButton(cfg Config) {
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 	>
-		if cfg.UseIconOnlyTrigger() {
+		if cfg.useIconOnlyTrigger() {
 			@cfg.TriggerIcon
 		} else {
 			{ cfg.Label }
@@ -112,15 +112,15 @@ templ hoverTriggerButton(cfg Config) {
 		x-on:keydown.space.prevent="openedWithKeyboard = true"
 		x-on:keydown.enter.prevent="openedWithKeyboard = true"
 		x-on:keydown.down.prevent="openedWithKeyboard = true"
-		class={ cfg.ButtonClasses() }
-		if cfg.UseIconOnlyTrigger() {
+		class={ cfg.buttonClasses() }
+		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
 		}
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 		aria-haspopup="true"
 	>
-		if cfg.UseIconOnlyTrigger() {
+		if cfg.useIconOnlyTrigger() {
 			@cfg.TriggerIcon
 		} else {
 			{ cfg.Label }
@@ -139,7 +139,7 @@ templ contextTriggerButton(cfg Config) {
 		x-on:keydown.space.prevent="openedWithKeyboard = true"
 		x-on:keydown.enter.prevent="openedWithKeyboard = true"
 		x-on:keydown.down.prevent="openedWithKeyboard = true"
-		class={ cfg.ButtonClasses() }
+		class={ cfg.buttonClasses() }
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 		aria-haspopup="true"
@@ -165,7 +165,7 @@ templ dropdownMenu(cfg Config) {
 		class={ menuClasses(cfg) }
 		role="menu"
 	>
-		if cfg.HasDividers() {
+		if cfg.hasDividers() {
 			for _, section := range cfg.Sections {
 				<div class="flex flex-col py-1.5">
 					for _, item := range section.Items {
@@ -209,7 +209,7 @@ templ contextDropdownMenu(cfg Config) {
 // menuItem renders a single menu item — dispatches to button or link renderer
 // based on whether the item carries a click handler or disabled state.
 templ menuItem(cfg Config, item Item) {
-	if item.IsButton() {
+	if item.isButton() {
 		@menuItemButton(cfg, item)
 	} else {
 		@menuItemLink(cfg, item)
@@ -267,7 +267,7 @@ templ menuItemButton(cfg Config, item Item) {
 // When the item is a button variant, the <li> wraps a <button> to preserve
 // valid HTML while keeping list semantics.
 templ contextMenuItem(cfg Config, item Item) {
-	if item.IsButton() {
+	if item.isButton() {
 		@contextMenuItemButton(cfg, item)
 	} else {
 		@contextMenuItemPlain(cfg, item)
@@ -343,8 +343,8 @@ templ contextMenuItemButton(cfg Config, item Item) {
 
 // menuClasses returns the appropriate menu classes based on config
 func menuClasses(cfg Config) string {
-	base := cfg.MenuClasses()
-	if cfg.HasDividers() {
+	base := cfg.menuClasses()
+	if cfg.hasDividers() {
 		return base + " divide-y divide-outline dark:divide-outline-dark"
 	}
 	return base
@@ -353,13 +353,13 @@ func menuClasses(cfg Config) string {
 // itemClassList composes the class string for a menu item, layering the
 // base item classes with danger and disabled variants when applicable.
 func itemClassList(cfg Config, item Item) string {
-	hasIcon := item.Icon != nil || cfg.HasIcons()
-	out := cfg.ItemClasses(hasIcon)
+	hasIcon := item.Icon != nil || cfg.hasIcons()
+	out := cfg.itemClasses(hasIcon)
 	if item.Danger {
-		out += " " + cfg.DangerClasses()
+		out += " " + cfg.dangerClasses()
 	}
 	if item.Disabled {
-		out += " " + cfg.DisabledClasses()
+		out += " " + cfg.disabledClasses()
 	}
 	return out
 }

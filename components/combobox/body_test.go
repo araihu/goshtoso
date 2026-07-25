@@ -27,7 +27,7 @@ func TestBody_MultiSelect_RendersHiddenInputsPerSelected(t *testing.T) {
 	}
 
 	var buf bytes.Buffer
-	require.NoError(t, Body(cfg, state).Render(context.Background(), &buf))
+	require.NoError(t, body(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
 	assert.Equal(t, 2, strings.Count(html, `type="hidden"`), "one hidden input per selected value")
@@ -50,21 +50,21 @@ func TestBody_MultiSelect_TriggerLabelReflectsSelection(t *testing.T) {
 
 	t.Run("no selection shows placeholder", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, TriggerLabelOOB(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
+		require.NoError(t, triggerLabelOOB(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
 		assert.Contains(t, buf.String(), "Select statuses")
 	})
 
 	t.Run("one selection shows label", func(t *testing.T) {
 		var buf bytes.Buffer
 		s := State{Options: cfg.Source.Static, Selected: []string{"a"}}
-		require.NoError(t, TriggerLabelOOB(cfg, s).Render(context.Background(), &buf))
+		require.NoError(t, triggerLabelOOB(cfg, s).Render(context.Background(), &buf))
 		assert.Contains(t, buf.String(), "A")
 	})
 
 	t.Run("multi-selection shows count", func(t *testing.T) {
 		var buf bytes.Buffer
 		s := State{Options: cfg.Source.Static, Selected: []string{"a", "b"}}
-		require.NoError(t, TriggerLabelOOB(cfg, s).Render(context.Background(), &buf))
+		require.NoError(t, triggerLabelOOB(cfg, s).Render(context.Background(), &buf))
 		assert.Contains(t, buf.String(), "2 selected")
 	})
 }
@@ -81,13 +81,13 @@ func TestBody_SingleSelect_TriggerLabelShowsSelectedOption(t *testing.T) {
 
 	t.Run("hidden input in body", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg, state).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg, state).Render(context.Background(), &buf))
 		assert.Equal(t, 1, strings.Count(buf.String(), `type="hidden"`), "single-select has one hidden input")
 	})
 
 	t.Run("label in trigger label OOB", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, TriggerLabelOOB(cfg, state).Render(context.Background(), &buf))
+		require.NoError(t, triggerLabelOOB(cfg, state).Render(context.Background(), &buf))
 		assert.Contains(t, buf.String(), "MAAS")
 	})
 }
@@ -101,7 +101,7 @@ func TestOptionsList_AriaSelectedMatchesState(t *testing.T) {
 	state := State{Options: cfg.Source.Static, Selected: []string{"a", "c"}}
 
 	var buf bytes.Buffer
-	require.NoError(t, OptionsList(cfg, state).Render(context.Background(), &buf))
+	require.NoError(t, optionsList(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
 	assert.Contains(t, html, `data-value="a" aria-selected="true"`)
@@ -121,7 +121,7 @@ func TestOptionsList_LiHasHXAttributesForToggle(t *testing.T) {
 	state := State{Options: []Option{{Value: "running", Label: "Running"}}}
 
 	var buf bytes.Buffer
-	require.NoError(t, OptionsList(cfg, state).Render(context.Background(), &buf))
+	require.NoError(t, optionsList(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
 	assert.Contains(t, html, `hx-post="/ui/combobox/status/toggle"`)
@@ -142,7 +142,7 @@ func TestBody_SearchInput_RenderedWhenEnabled(t *testing.T) {
 
 	t.Run("renders when enabled", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg, State{Options: cfg.Source.Static, Search: "foo"}).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg, State{Options: cfg.Source.Static, Search: "foo"}).Render(context.Background(), &buf))
 		html := buf.String()
 		assert.Contains(t, html, `data-combobox-search`)
 		assert.Contains(t, html, `value="foo"`)
@@ -156,7 +156,7 @@ func TestBody_SearchInput_RenderedWhenEnabled(t *testing.T) {
 		cfg2 := cfg
 		cfg2.EnableSearch = false
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg2, State{Options: cfg2.Source.Static}).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg2, State{Options: cfg2.Source.Static}).Render(context.Background(), &buf))
 		assert.NotContains(t, buf.String(), `data-combobox-search`)
 	})
 }
@@ -172,7 +172,7 @@ func TestBody_ClearAllButton(t *testing.T) {
 
 	t.Run("renders when enabled and selection non-empty", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg, State{Options: opts, Selected: []string{"a"}}).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg, State{Options: opts, Selected: []string{"a"}}).Render(context.Background(), &buf))
 		html := buf.String()
 		assert.Contains(t, html, `data-combobox-clear-all`)
 		assert.Contains(t, html, `hx-post="/ui/combobox/t/clear"`)
@@ -181,7 +181,7 @@ func TestBody_ClearAllButton(t *testing.T) {
 
 	t.Run("absent when selection empty", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg, State{Options: opts}).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg, State{Options: opts}).Render(context.Background(), &buf))
 		assert.NotContains(t, buf.String(), `data-combobox-clear-all`)
 	})
 
@@ -189,7 +189,7 @@ func TestBody_ClearAllButton(t *testing.T) {
 		cfg2 := cfg
 		cfg2.EnableClearAll = false
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg2, State{Options: opts, Selected: []string{"a"}}).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg2, State{Options: opts, Selected: []string{"a"}}).Render(context.Background(), &buf))
 		assert.NotContains(t, buf.String(), `data-combobox-clear-all`)
 	})
 }
@@ -222,7 +222,7 @@ func TestOptionsList_ClientMode_NoHXPost(t *testing.T) {
 	state := State{Options: cfg.Source.Static}
 
 	var buf bytes.Buffer
-	require.NoError(t, OptionsList(cfg, state).Render(context.Background(), &buf))
+	require.NoError(t, optionsList(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
 	assert.NotContains(t, html, `hx-post`, "client-mode <li> must not trigger server toggle")
@@ -344,7 +344,7 @@ func TestOptionsList_DisabledOption_OmitsHXPost(t *testing.T) {
 	}}
 
 	var buf bytes.Buffer
-	require.NoError(t, OptionsList(cfg, state).Render(context.Background(), &buf))
+	require.NoError(t, optionsList(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
 	// Red must have hx-post; blue must not.
@@ -369,7 +369,7 @@ func TestBodyOOB_EmitsSwapAttribute(t *testing.T) {
 	state := State{Options: cfg.Source.Static, Selected: []string{"a"}}
 
 	var buf bytes.Buffer
-	require.NoError(t, BodyOOB(cfg, state).Render(context.Background(), &buf))
+	require.NoError(t, bodyOOB(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
 	assert.Contains(t, html, `id="status-body"`)
@@ -386,7 +386,7 @@ func TestTriggerLabelOOB_EmitsSiblingSwap(t *testing.T) {
 	state := State{Options: cfg.Source.Static, Selected: []string{"a"}}
 
 	var buf bytes.Buffer
-	require.NoError(t, TriggerLabelOOB(cfg, state).Render(context.Background(), &buf))
+	require.NoError(t, triggerLabelOOB(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
 	assert.Contains(t, html, `id="status-trigger-label"`)
@@ -413,7 +413,7 @@ func TestBody_ClientMode_ClearAllAlwaysRendered(t *testing.T) {
 
 	t.Run("empty selection renders hidden button", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
 		html := buf.String()
 		assert.Contains(t, html, `data-combobox-clear`)
 		assert.Contains(t, html, `hidden`, "button has hidden attribute when empty")
@@ -421,7 +421,7 @@ func TestBody_ClientMode_ClearAllAlwaysRendered(t *testing.T) {
 
 	t.Run("non-empty selection renders visible button", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NoError(t, Body(cfg, State{Options: cfg.Source.Static, Selected: []string{"a"}}).Render(context.Background(), &buf))
+		require.NoError(t, body(cfg, State{Options: cfg.Source.Static, Selected: []string{"a"}}).Render(context.Background(), &buf))
 		html := buf.String()
 		assert.Contains(t, html, `data-combobox-clear`)
 		// No `hidden` attribute within the button tag.

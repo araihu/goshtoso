@@ -24,7 +24,7 @@ import (
 // fragment-nav case) or on alpine:init for a cold page load — mirroring the
 // table's filterScriptData registration pattern.
 //
-// _toast dispatches the real `notify` window CustomEvent that toast.Container
+// _toast dispatches the real `notify` window CustomEvent that toast.ToastContainer
 // listens for (x-on:notify.window="addNotification(...)"). This is the same
 // client-side toast API the toast demo page uses via $dispatch('notify', ...).
 func profileImagesScript() string {
@@ -76,9 +76,9 @@ func profileImagesScript() string {
         if (this.avatarSrc) URL.revokeObjectURL(this.avatarSrc);
         if (this.bannerSrc) URL.revokeObjectURL(this.bannerSrc);
       },
-      _toast(variant, title, message) {
+      _toast(tone, title, message) {
         try {
-          window.dispatchEvent(new CustomEvent('notify', { detail: { variant: variant, title: title, message: message } }));
+          window.dispatchEvent(new CustomEvent('notify', { detail: { kind: 'toast', tone: tone, title: title, message: message } }));
         } catch (e) {
           console.warn('[profileImages] toast unavailable:', title, '-', message);
         }
@@ -164,7 +164,7 @@ templ ProfileApp(s profile.State) {
 				{ID: "appearance", Label: "Appearance", Content: profileAppearancePanel()},
 			},
 		})
-		@toast.Container(toast.ContainerConfig{})
+		@toast.ToastContainer(toast.ContainerConfig{})
 	</div>
 }
 
@@ -217,29 +217,26 @@ templ profileMainPanel(s profile.State) {
 			InputAttrs: templ.Attributes{"x-on:change": "onFile('banner', $event)"},
 		})
 		<div class="flex flex-wrap items-center justify-center gap-3 p-4">
-			@button.Button(button.Config{
-				Variant: button.Secondary,
-				Size:    button.SizeSmall,
-				Type:    "button",
-				Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
-			}) {
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithSize(button.SizeSmall),
+				button.WithAlpine(&button.AlpineConfig{OnClick: "pick('avatar')"}),
+			) {
 				Upload avatar
 			}
-			@button.Button(button.Config{
-				Variant: button.Secondary,
-				Size:    button.SizeSmall,
-				Type:    "button",
-				Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
-			}) {
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithSize(button.SizeSmall),
+				button.WithAlpine(&button.AlpineConfig{OnClick: "pick('banner')"}),
+			) {
 				Upload cover
 			}
 			<!-- Tooltip: upload requirements hint (hover/focus) -->
-			@tooltip.Tooltip(tooltip.Config{
-				ID:          "profile-upload-hint",
-				Label:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
-				Position:    tooltip.Top,
-				TriggerLabel: "Upload requirements",
-			})
+			@tooltip.Tooltip(
+				"profile-upload-hint",
+				"PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+				tooltip.WithTriggerLabel("Upload requirements"),
+			)
 			<!-- Modal-confirmed photo removal; only meaningful when an image exists -->
 			<span x-show="avatarSrc || bannerSrc">
 				@modal.Modal(modal.Config{
@@ -247,7 +244,6 @@ templ profileMainPanel(s profile.State) {
 					Title:         "Remove photos?",
 					Body:          "This removes your avatar and cover image from this browser. It cannot be undone.",
 					TriggerLabel:   "Remove photos",
-					Variant:       modal.Danger,
 					PrimaryLabel:   "Remove",
 					PrimaryAction: &modal.ButtonAction{OnClick: "remove('avatar'); remove('banner')"},
 					SecondaryLabel: "Cancel",
@@ -270,7 +266,7 @@ templ profileMainPanel(s profile.State) {
 			>
 				@IdentityFields(s)
 				<div class="flex justify-end">
-					@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+					@button.Button(button.WithType("submit")) {
 						Save
 					}
 				</div>
@@ -287,7 +283,7 @@ templ profileAppearancePanel() {
 		<div class="flex flex-col gap-4 p-4">
 			<div class="flex items-center gap-2">
 				<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Appearance</h2>
-				@badge.Badge(badge.Config{Variant: badge.Secondary, Label: "live"})
+				@badge.Badge(badge.Config{Tone: badge.ToneSecondary, Label: "live"})
 			</div>
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 				These reuse the app's own theme engine — changes apply instantly and persist in your browser.

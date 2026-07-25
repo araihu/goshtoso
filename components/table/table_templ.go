@@ -60,7 +60,7 @@ import (
 //	    Rows:           rows,
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
 //	})
-func Table(cfg Config) templ.Component {
+func tableTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -81,7 +81,7 @@ func Table(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.HasFilters() {
+		if cfg.hasFilters() {
 			templ_7745c5c3_Err = filterScript(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -112,7 +112,7 @@ func Table(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if showTraditionalPagination(cfg) {
-				templ_7745c5c3_Err = TablePagination(cfg).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = tablePagination(cfg).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -131,7 +131,7 @@ func Table(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if showTraditionalPagination(cfg) {
-				templ_7745c5c3_Err = TablePagination(cfg).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = tablePagination(cfg).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -170,9 +170,9 @@ func tableContainer(cfg Config) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.Pagination.IsContained() {
-			if cfg.ShowCheckbox && cfg.HasExpandableRows() {
-				var templ_7745c5c3_Var4 = []any{cfg.ContainerClasses()}
+		if cfg.Pagination.isContained() {
+			if cfg.ShowCheckbox && cfg.hasExpandableRows() {
+				var templ_7745c5c3_Var4 = []any{cfg.containerClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -195,7 +195,7 @@ func tableContainer(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;")
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;")
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 84, Col: 168}
 				}
@@ -216,7 +216,7 @@ func tableContainer(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else if cfg.ShowCheckbox {
-				var templ_7745c5c3_Var7 = []any{cfg.ContainerClasses()}
+				var templ_7745c5c3_Var7 = []any{cfg.containerClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -239,7 +239,7 @@ func tableContainer(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;")
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;")
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 88, Col: 154}
 				}
@@ -259,8 +259,8 @@ func tableContainer(cfg Config) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else if cfg.HasExpandableRows() {
-				var templ_7745c5c3_Var10 = []any{cfg.ContainerClasses()}
+			} else if cfg.hasExpandableRows() {
+				var templ_7745c5c3_Var10 = []any{cfg.containerClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -283,7 +283,7 @@ func tableContainer(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;")
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;")
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 92, Col: 151}
 				}
@@ -304,7 +304,7 @@ func tableContainer(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var13 = []any{cfg.ContainerClasses()}
+				var templ_7745c5c3_Var13 = []any{cfg.containerClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -327,7 +327,7 @@ func tableContainer(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;")
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;")
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 96, Col: 125}
 				}
@@ -348,8 +348,8 @@ func tableContainer(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-		} else if cfg.ShowCheckbox && cfg.HasExpandableRows() {
-			var templ_7745c5c3_Var16 = []any{cfg.ContainerClasses()}
+		} else if cfg.ShowCheckbox && cfg.hasExpandableRows() {
+			var templ_7745c5c3_Var16 = []any{cfg.containerClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -380,7 +380,7 @@ func tableContainer(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if cfg.ShowCheckbox {
-			var templ_7745c5c3_Var18 = []any{cfg.ContainerClasses()}
+			var templ_7745c5c3_Var18 = []any{cfg.containerClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var18...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -410,8 +410,8 @@ func tableContainer(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		} else if cfg.HasExpandableRows() {
-			var templ_7745c5c3_Var20 = []any{cfg.ContainerClasses()}
+		} else if cfg.hasExpandableRows() {
+			var templ_7745c5c3_Var20 = []any{cfg.containerClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var20...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -442,7 +442,7 @@ func tableContainer(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var22 = []any{cfg.ContainerClasses()}
+			var templ_7745c5c3_Var22 = []any{cfg.containerClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var22...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -478,7 +478,7 @@ func tableContainer(cfg Config) templ.Component {
 }
 
 func showTraditionalPagination(cfg Config) bool {
-	return cfg.Pagination != nil && !cfg.Pagination.IsInfiniteScroll()
+	return cfg.Pagination != nil && !cfg.Pagination.isInfiniteScroll()
 }
 
 func filterBarBodyClasses(cfg Config) string {
@@ -488,11 +488,11 @@ func filterBarBodyClasses(cfg Config) string {
 	return "px-4 py-4"
 }
 
-// filterBar renders the filter controls above the table. Two variants:
+// filterBar renders the filter controls above the table. Two appearances:
 //
-//   - FilterVariantBar (default) — bordered block, optional collapsible
+//   - FilterAppearanceBar (default) — bordered block, optional collapsible
 //     header. Use for primary page tables.
-//   - FilterVariantInline — no border, no collapse, plain flex row. Use when
+//   - FilterAppearanceInline — no border, no collapse, plain flex row. Use when
 //     the host container already provides chrome (modals, toolbar strips).
 //     Ignores Collapsible / InitiallyExpanded.
 func filterBar(cfg Config) templ.Component {
@@ -516,13 +516,13 @@ func filterBar(cfg Config) templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.Filters.Variant == FilterVariantInline {
+		if cfg.Filters.Appearance == FilterAppearanceInline {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var25 string
-			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.FilterBarID())
+			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.filterBarID())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 139, Col: 29}
 			}
@@ -550,7 +550,7 @@ func filterBar(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var26 string
-			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.FilterBarID())
+			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.filterBarID())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 145, Col: 29}
 			}
@@ -983,7 +983,7 @@ func filterToggleInput(cfg Config, filter Filter) templ.Component {
 	})
 }
 
-// tableHeadRow renders the header row contents (used by both TableHead and TableHeadOOB).
+// tableHeadRow renders the header row contents.
 func tableHeadRow(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -1010,7 +1010,7 @@ func tableHeadRow(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.ShowCheckbox {
-			var templ_7745c5c3_Var47 = []any{cfg.HeaderCellClasses()}
+			var templ_7745c5c3_Var47 = []any{cfg.headerCellClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var47...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1042,13 +1042,13 @@ func tableHeadRow(cfg Config) templ.Component {
 			}
 		}
 		for _, col := range cfg.Columns {
-			if col.Sortable && cfg.HTMXEndpointValue() != "" {
+			if col.Sortable && cfg.htmxEndpointValue() != "" {
 				templ_7745c5c3_Err = sortableHeader(cfg, col).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var49 = []any{ColumnHeaderClasses(col)}
+				var templ_7745c5c3_Var49 = []any{columnHeaderClasses(col)}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var49...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -1085,8 +1085,8 @@ func tableHeadRow(cfg Config) templ.Component {
 				}
 			}
 		}
-		if cfg.HasActions() || cfg.HasExpandableRows() {
-			var templ_7745c5c3_Var52 = []any{cfg.HeaderCellClasses()}
+		if cfg.hasActions() || cfg.hasExpandableRows() {
+			var templ_7745c5c3_Var52 = []any{cfg.headerCellClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var52...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1117,8 +1117,8 @@ func tableHeadRow(cfg Config) templ.Component {
 	})
 }
 
-// TableHead renders the thead element for initial page render.
-func TableHead(cfg Config) templ.Component {
+// tableHead renders the thead element for initial page render.
+func tableHead(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1139,7 +1139,7 @@ func TableHead(cfg Config) templ.Component {
 			templ_7745c5c3_Var54 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var55 = []any{cfg.TheadClasses()}
+		var templ_7745c5c3_Var55 = []any{cfg.theadClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var55...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1149,7 +1149,7 @@ func TableHead(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var56 string
-		templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.TheadID())
+		templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.theadID())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 293, Col: 26}
 		}
@@ -1188,7 +1188,7 @@ func TableHead(cfg Config) templ.Component {
 
 // TableHeadContent renders just the thead row content (without the <thead> wrapper).
 // Used by the handler for OOB innerHTML swaps targeting the thead element.
-func TableHeadContent(cfg Config) templ.Component {
+func tableHeadContentTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1238,7 +1238,7 @@ func tableInner(cfg Config) templ.Component {
 			templ_7745c5c3_Var59 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var60 = []any{cfg.TableClasses()}
+		var templ_7745c5c3_Var60 = []any{cfg.tableClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var60...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1261,7 +1261,7 @@ func tableInner(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var62 string
-		templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetID())
+		templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.getID())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 305, Col: 53}
 		}
@@ -1292,12 +1292,12 @@ func tableInner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = TableHead(cfg).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tableHead(cfg).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.LazyLoad && cfg.HTMXEndpointValue() != "" {
-			var templ_7745c5c3_Var64 = []any{cfg.TbodyClasses()}
+		if cfg.LazyLoad && cfg.htmxEndpointValue() != "" {
+			var templ_7745c5c3_Var64 = []any{cfg.tbodyClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var64...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1307,7 +1307,7 @@ func tableInner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var65 string
-			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.TbodyID())
+			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.tbodyID())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 313, Col: 22}
 			}
@@ -1333,7 +1333,7 @@ func tableInner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var67 string
-			templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HTMXEndpointValue())
+			templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmxEndpointValue())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 315, Col: 36}
 			}
@@ -1346,7 +1346,7 @@ func tableInner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var68 string
-			templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.LazyLoadTrigger())
+			templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.lazyLoadTrigger())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 316, Col: 38}
 			}
@@ -1380,7 +1380,7 @@ func tableInner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = TableBody(cfg).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tableBody(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1393,12 +1393,12 @@ func tableInner(cfg Config) templ.Component {
 	})
 }
 
-// TableBody renders just the tbody element. Use this for HTMX fragment responses.
+// tableBody renders the tbody element for the initial table render.
 //
 // When infinite-scroll is enabled, tbody receives `data-transition="append"`
 // so consumer CSS can fade in rows appended by the scroll sentinel. Consumers
 // opt into the animation by defining a rule on `[data-transition="append"] > .htmx-added`.
-func TableBody(cfg Config) templ.Component {
+func tableBody(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1419,7 +1419,7 @@ func TableBody(cfg Config) templ.Component {
 			templ_7745c5c3_Var70 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var71 = []any{cfg.TbodyClasses()}
+		var templ_7745c5c3_Var71 = []any{cfg.tbodyClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var71...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1429,7 +1429,7 @@ func TableBody(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var72 string
-		templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.TbodyID())
+		templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.tbodyID())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 337, Col: 26}
 		}
@@ -1476,7 +1476,7 @@ func TableBody(cfg Config) templ.Component {
 
 // TableRows renders just the row elements without the tbody wrapper.
 // Use this for infinite scroll append responses.
-func TableRows(cfg Config) templ.Component {
+func tableRowsTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1515,11 +1515,11 @@ func TableRows(cfg Config) templ.Component {
 
 // hasMoreRows returns true if the table should render a scroll sentinel for infinite scroll
 func hasMoreRows(cfg Config) bool {
-	if cfg.HTMXEndpointValue() == "" {
+	if cfg.htmxEndpointValue() == "" {
 		return false
 	}
 	// New pagination-based infinite scroll
-	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() && cfg.Pagination.HasMore {
+	if cfg.Pagination != nil && cfg.Pagination.isInfiniteScroll() && cfg.Pagination.HasMore {
 		return true
 	}
 	// Legacy InfiniteScrollConfig
@@ -1530,7 +1530,7 @@ func hasMoreRows(cfg Config) bool {
 }
 
 // TableRow renders a single table row, optionally with expandable detail panel or row link
-func TableRow(cfg Config, row Row) templ.Component {
+func tableRowTemplate(cfg Config, row Row) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1551,7 +1551,7 @@ func TableRow(cfg Config, row Row) templ.Component {
 			templ_7745c5c3_Var75 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var76 = []any{cfg.RowClasses() + interactiveRowClasses(row)}
+		var templ_7745c5c3_Var76 = []any{cfg.rowClasses() + interactiveRowClasses(row)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var76...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -1573,7 +1573,7 @@ func TableRow(cfg Config, row Row) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if row.Expandable && row.Link == "" && row.OnClick == "" && !row.HasHTMXAction() {
+		if row.Expandable && row.Link == "" && row.OnClick == "" && !row.hasHTMXAction() {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 100, " x-on:click=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1617,7 +1617,7 @@ func TableRow(cfg Config, row Row) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.ShowCheckbox {
-			var templ_7745c5c3_Var79 = []any{cfg.CellClasses()}
+			var templ_7745c5c3_Var79 = []any{cfg.cellClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var79...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1649,7 +1649,7 @@ func TableRow(cfg Config, row Row) templ.Component {
 			}
 		}
 		for _, col := range cfg.Columns {
-			var templ_7745c5c3_Var81 = []any{ColumnCellClasses(col)}
+			var templ_7745c5c3_Var81 = []any{columnCellClasses(col)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var81...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1682,8 +1682,8 @@ func TableRow(cfg Config, row Row) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.HasActions() || cfg.HasExpandableRows() {
-			var templ_7745c5c3_Var83 = []any{cfg.CellClasses() + " text-right whitespace-nowrap"}
+		if cfg.hasActions() || cfg.hasExpandableRows() {
+			var templ_7745c5c3_Var83 = []any{cfg.cellClasses() + " text-right whitespace-nowrap"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var83...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1758,7 +1758,7 @@ func TableRow(cfg Config, row Row) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var87 string
-			templ_7745c5c3_Var87, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", cfg.ColCount()))
+			templ_7745c5c3_Var87, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", cfg.colCount()))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 429, Col: 50}
 			}
@@ -1811,7 +1811,7 @@ func cellContent(cell Cell) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if cell.BadgeColor != "" {
-			var templ_7745c5c3_Var89 = []any{BadgeCellClasses(cell.BadgeColor)}
+			var templ_7745c5c3_Var89 = []any{badgeCellClasses(cell.BadgeColor)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var89...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1967,7 +1967,7 @@ func jsStringSingle(s string) string {
 }
 
 func interactiveRowClasses(row Row) string {
-	if row.IsActionable() {
+	if row.isActionable() {
 		return " cursor-pointer hover:bg-surface-alt/30 dark:hover:bg-surface-dark-alt/30"
 	}
 	return ""
@@ -2025,7 +2025,7 @@ func rowActionAttrs(row Row) templ.Attributes {
 // interactions live inside nested controls (Actions column, Expandable with
 // its own toggle) keep native cell focus order.
 func rowA11yAttrs(row Row) templ.Attributes {
-	role := row.ClickableRole()
+	role := row.clickableRole()
 	if role == "" {
 		return nil
 	}
@@ -2073,7 +2073,7 @@ func sortableHeader(cfg Config, col Column) templ.Component {
 			templ_7745c5c3_Var96 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var97 = []any{cfg.SortableHeaderClasses(col.Key)}
+		var templ_7745c5c3_Var97 = []any{cfg.sortableHeaderClasses(col.Key)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var97...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -2109,7 +2109,7 @@ func sortableHeader(cfg Config, col Column) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var100 string
-		templ_7745c5c3_Var100, templ_7745c5c3_Err = templ.ResolveAttributeValue("#" + cfg.TbodyID())
+		templ_7745c5c3_Var100, templ_7745c5c3_Err = templ.ResolveAttributeValue("#" + cfg.tbodyID())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 601, Col: 33}
 		}
@@ -2213,7 +2213,7 @@ func scrollSentinel(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var104 string
-		templ_7745c5c3_Var104, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetID() + "-sentinel")
+		templ_7745c5c3_Var104, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.getID() + "-sentinel")
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 632, Col: 32}
 		}
@@ -2239,7 +2239,7 @@ func scrollSentinel(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var106 string
-		templ_7745c5c3_Var106, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", cfg.ColCount()))
+		templ_7745c5c3_Var106, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", cfg.colCount()))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 636, Col: 49}
 		}
@@ -2255,7 +2255,7 @@ func scrollSentinel(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var url=el.getAttribute('data-hx-get');if(!url)return;var fire=function(){htmx.ajax('GET',url,{source:el,target:el,swap:'outerHTML settle:200ms'})};if(typeof IntersectionObserver==='undefined'){fire();return}var root=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]')||null;var fired=false;var io=new IntersectionObserver(function(entries){if(fired)return;for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting){fired=true;io.disconnect();fire();return}}},{root:root,rootMargin:'400px 0px'});io.observe(el)})()</script>`, cfg.GetID())).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var url=el.getAttribute('data-hx-get');if(!url)return;var fire=function(){htmx.ajax('GET',url,{source:el,target:el,swap:'outerHTML settle:200ms'})};if(typeof IntersectionObserver==='undefined'){fire();return}var root=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]')||null;var fired=false;var io=new IntersectionObserver(function(entries){if(fired)return;for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting){fired=true;io.disconnect();fire();return}}},{root:root,rootMargin:'400px 0px'});io.observe(el)})()</script>`, cfg.getID())).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2267,8 +2267,8 @@ func scrollSentinel(cfg Config) templ.Component {
 	})
 }
 
-// TablePagination renders page navigation controls below the table using the pagination component
-func TablePagination(cfg Config) templ.Component {
+// tablePagination renders page navigation controls below the table using the pagination component.
+func tablePagination(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -2295,7 +2295,7 @@ func TablePagination(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var108 string
-			templ_7745c5c3_Var108, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.PaginationID())
+			templ_7745c5c3_Var108, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.paginationID())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 646, Col: 30}
 			}
@@ -2334,11 +2334,11 @@ func TablePagination(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
+				Mode:        pagination.ModeEllipsis,
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
-				BaseURL:     cfg.PaginationBaseURL(),
-				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
+				BaseURL:     cfg.paginationBaseURL(),
+				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.tbodyID(), Swap: "innerHTML"},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -2353,7 +2353,7 @@ func TablePagination(cfg Config) templ.Component {
 }
 
 // TablePaginationNav renders just the pagination nav element (for OOB swaps)
-func TablePaginationNav(cfg Config) templ.Component {
+func tablePaginationNavTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -2376,11 +2376,11 @@ func TablePaginationNav(cfg Config) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
 			templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
-				Variant:     pagination.WithEllipsis,
+				Mode:        pagination.ModeEllipsis,
 				CurrentPage: cfg.Pagination.CurrentPage,
 				TotalPages:  cfg.Pagination.TotalPages,
-				BaseURL:     cfg.PaginationBaseURL(),
-				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.TbodyID(), Swap: "innerHTML"},
+				BaseURL:     cfg.paginationBaseURL(),
+				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.tbodyID(), Swap: "innerHTML"},
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -2458,7 +2458,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if isHeader {
-			var templ_7745c5c3_Var115 = []any{cfg.CheckboxClasses()}
+			var templ_7745c5c3_Var115 = []any{cfg.checkboxClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var115...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -2494,7 +2494,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var118 = []any{cfg.CheckboxClasses()}
+			var templ_7745c5c3_Var118 = []any{cfg.checkboxClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var118...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -2538,8 +2538,10 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 	})
 }
 
-// ActionButton renders an action button for table rows
-func ActionButton(label string) templ.Component {
+// ImageCell renders a compact image, primary label, and optional secondary label.
+// When imageURL is provided, shows the image; otherwise falls back to initials
+// derived from the label/detail.
+func imageCellTemplate(imageURL string, label string, detail string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -2560,131 +2562,7 @@ func ActionButton(label string) templ.Component {
 			templ_7745c5c3_Var121 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var122 = []any{ActionButtonClasses()}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var122...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 156, "<button type=\"button\" class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var123 string
-		templ_7745c5c3_Var123, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var122).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var123)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 157, "\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var124 string
-		templ_7745c5c3_Var124, templ_7745c5c3_Err = templ.JoinStringErrs(label)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 701, Col: 62}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var124))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 158, "</button>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// StatusBadge renders a status badge for table cells
-func StatusBadge(label string, status string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var125 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var125 == nil {
-			templ_7745c5c3_Var125 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var126 = []any{StatusBadgeClasses(status)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var126...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 159, "<span class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var127 string
-		templ_7745c5c3_Var127, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var126).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var127)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 160, "\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var128 string
-		templ_7745c5c3_Var128, templ_7745c5c3_Err = templ.JoinStringErrs(label)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 706, Col: 51}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var128))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 161, "</span>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// ImageCell renders a compact image, primary label, and optional secondary label.
-// When imageURL is provided, shows the image; otherwise falls back to initials
-// derived from the label/detail.
-func ImageCell(imageURL string, label string, detail string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var129 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var129 == nil {
-			templ_7745c5c3_Var129 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 162, "<div class=\"flex w-max items-center gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 156, "<div class=\"flex w-max items-center gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2708,43 +2586,43 @@ func ImageCell(imageURL string, label string, detail string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 163, "<div class=\"flex flex-col\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 157, "<div class=\"flex flex-col\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if label != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 164, "<span class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 158, "<span class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var130 string
-			templ_7745c5c3_Var130, templ_7745c5c3_Err = templ.JoinStringErrs(label)
+			var templ_7745c5c3_Var122 string
+			templ_7745c5c3_Var122, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 730, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 720, Col: 81}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var130))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var122))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 165, "</span> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 159, "</span> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 166, "<span class=\"text-sm text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 160, "<span class=\"text-sm text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var131 string
-		templ_7745c5c3_Var131, templ_7745c5c3_Err = templ.JoinStringErrs(detail)
+		var templ_7745c5c3_Var123 string
+		templ_7745c5c3_Var123, templ_7745c5c3_Err = templ.JoinStringErrs(detail)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 732, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 722, Col: 75}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var131))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var123))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 167, "</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 161, "</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

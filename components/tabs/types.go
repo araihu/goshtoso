@@ -90,21 +90,21 @@ func tabsData(cfg Config) string {
 }
 
 // ActiveClasses returns the CSS classes for the active tab button
-func ActiveClasses() string {
+func activeClasses() string {
 	return "font-bold text-primary border-b-2 border-primary dark:border-primary-dark dark:text-primary-dark"
 }
 
 // InactiveClasses returns the CSS classes for inactive tab buttons
-func InactiveClasses() string {
+func inactiveClasses() string {
 	return "text-on-surface font-medium dark:text-on-surface-dark dark:hover:border-b-outline-dark-strong dark:hover:text-on-surface-dark-strong hover:border-b-2 hover:border-b-outline-strong hover:text-on-surface-strong"
 }
 
 // BadgeActiveClasses returns CSS for badge when tab is active
-func BadgeActiveClasses() string {
+func badgeActiveClasses() string {
 	return "border-primary bg-primary/10 dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark"
 }
 
 // BadgeInactiveClasses returns CSS for badge when tab is inactive
-func BadgeInactiveClasses() string {
+func badgeInactiveClasses() string {
 	return "border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt"
 }

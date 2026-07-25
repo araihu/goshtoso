@@ -127,20 +127,20 @@ func TestCoverageInputAttrsPassthrough(t *testing.T) {
 
 func TestCoverageCheckedClassesAllVariants(t *testing.T) {
 	cases := []struct {
-		variant Variant
+		variant Tone
 		want    string
 	}{
-		{Primary, "peer-checked:bg-primary"},
-		{Secondary, "peer-checked:bg-secondary"},
-		{Info, "peer-checked:bg-info"},
-		{Success, "peer-checked:bg-success"},
-		{Warning, "peer-checked:bg-warning"},
-		{Danger, "peer-checked:bg-danger"},
-		{Variant("unknown"), "peer-checked:bg-primary"}, // falls back to Primary
+		{TonePrimary, "peer-checked:bg-primary"},
+		{ToneSecondary, "peer-checked:bg-secondary"},
+		{ToneInfo, "peer-checked:bg-info"},
+		{ToneSuccess, "peer-checked:bg-success"},
+		{ToneWarning, "peer-checked:bg-warning"},
+		{ToneDanger, "peer-checked:bg-danger"},
+		{Tone("unknown"), "peer-checked:bg-primary"}, // falls back to TonePrimary
 	}
 
 	for _, c := range cases {
-		got := Config{Variant: c.variant}.checkedClasses()
+		got := Config{Tone: c.variant}.checkedClasses()
 		if !strings.Contains(got, c.want) {
 			t.Errorf("variant %q checkedClasses missing %q: %s", c.variant, c.want, got)
 		}
@@ -148,12 +148,12 @@ func TestCoverageCheckedClassesAllVariants(t *testing.T) {
 }
 
 func TestCoverageToggleClassesStyleBranches(t *testing.T) {
-	defaultClasses := Config{Style: StyleDefault}.ToggleClasses()
+	defaultClasses := Config{Appearance: AppearanceDefault}.toggleClasses()
 	if !strings.Contains(defaultClasses, "bg-surface-alt") {
 		t.Errorf("default style should use bg-surface-alt: %s", defaultClasses)
 	}
 
-	containerClasses := Config{Style: StyleContainer}.ToggleClasses()
+	containerClasses := Config{Appearance: AppearanceContainer}.toggleClasses()
 	if strings.Contains(containerClasses, "bg-surface-alt") {
 		t.Errorf("container style should not use bg-surface-alt: %s", containerClasses)
 	}
@@ -161,36 +161,36 @@ func TestCoverageToggleClassesStyleBranches(t *testing.T) {
 		t.Errorf("container style should use bg-surface: %s", containerClasses)
 	}
 
-	// ToggleClasses always appends variant (checked) classes.
+	// toggleClasses always appends variant (checked) classes.
 	if !strings.Contains(defaultClasses, "peer-checked:bg-primary") {
-		t.Errorf("ToggleClasses should append checked classes: %s", defaultClasses)
+		t.Errorf("toggleClasses should append checked classes: %s", defaultClasses)
 	}
 }
 
 func TestCoverageLabelClassesBranches(t *testing.T) {
-	def := Config{Style: StyleDefault}.LabelClasses()
+	def := Config{Appearance: AppearanceDefault}.labelClasses()
 	if def != "inline-flex items-center gap-3" {
-		t.Errorf("unexpected default LabelClasses: %s", def)
+		t.Errorf("unexpected default labelClasses: %s", def)
 	}
 
-	container := Config{Style: StyleContainer}.LabelClasses()
+	container := Config{Appearance: AppearanceContainer}.labelClasses()
 	if !strings.Contains(container, "min-w-52") || !strings.Contains(container, "rounded-radius") {
-		t.Errorf("container LabelClasses missing expected styling: %s", container)
+		t.Errorf("container labelClasses missing expected styling: %s", container)
 	}
 
-	withRoot := Config{Style: StyleDefault, RootClass: "mb-4"}.LabelClasses()
+	withRoot := Config{Appearance: AppearanceDefault, RootClass: "mb-4"}.labelClasses()
 	if !strings.HasSuffix(withRoot, " mb-4") {
 		t.Errorf("RootClass should be appended: %s", withRoot)
 	}
 
-	containerWithRoot := Config{Style: StyleContainer, RootClass: "shadow"}.LabelClasses()
+	containerWithRoot := Config{Appearance: AppearanceContainer, RootClass: "shadow"}.labelClasses()
 	if !strings.HasSuffix(containerWithRoot, " shadow") {
-		t.Errorf("RootClass should append to container LabelClasses: %s", containerWithRoot)
+		t.Errorf("RootClass should append to container labelClasses: %s", containerWithRoot)
 	}
 }
 
-func TestCoverageVariantClassesRendered(t *testing.T) {
-	html := renderToggle(t, Config{ID: "t6", Label: "Warn", Variant: Warning, Style: StyleContainer})
+func TestCoverageToneClassesRendered(t *testing.T) {
+	html := renderToggle(t, Config{ID: "t6", Label: "Warn", Tone: ToneWarning, Appearance: AppearanceContainer})
 
 	if !strings.Contains(html, "peer-checked:bg-warning") {
 		t.Fatalf("expected warning variant class in track: %s", html)

@@ -1,15 +1,15 @@
 package checkbox
 
-// Variant represents checkbox color variants
-type Variant string
+// Tone represents checkbox color variants
+type Tone string
 
 const (
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Info      Variant = "info"
-	Success   Variant = "success"
-	Warning   Variant = "warning"
-	Danger    Variant = "danger"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneInfo      Tone = "info"
+	ToneSuccess   Tone = "success"
+	ToneWarning   Tone = "warning"
+	ToneDanger    Tone = "danger"
 )
 
 // Icon represents custom checkbox icon types
@@ -46,8 +46,8 @@ type Config struct {
 	Checked bool
 	// Disabled disables the checkbox
 	Disabled bool
-	// Variant determines the color scheme (default: Primary)
-	Variant Variant
+	// Tone determines the color scheme (default: TonePrimary)
+	Tone Tone
 	// Icon determines the check icon (default: IconCheck)
 	Icon Icon
 	// Animation sets the animation style
@@ -84,16 +84,16 @@ func (cfg Config) iconPath() string {
 
 // checkedBorderClass returns the checked border color class
 func (cfg Config) checkedBorderClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:border-secondary dark:checked:border-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:border-info dark:checked:border-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:border-success dark:checked:border-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:border-warning dark:checked:border-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:border-danger dark:checked:border-danger"
 	default:
 		return "checked:border-primary dark:checked:border-primary-dark"
@@ -102,16 +102,16 @@ func (cfg Config) checkedBorderClass() string {
 
 // checkedBgClass returns the checked background color class
 func (cfg Config) checkedBgClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:before:bg-secondary dark:checked:before:bg-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:before:bg-info dark:checked:before:bg-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:before:bg-success dark:checked:before:bg-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:before:bg-warning dark:checked:before:bg-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:before:bg-danger dark:checked:before:bg-danger"
 	default:
 		return "checked:before:bg-primary dark:checked:before:bg-primary-dark"
@@ -120,16 +120,16 @@ func (cfg Config) checkedBgClass() string {
 
 // focusCheckedClass returns the focus outline color when checked
 func (cfg Config) focusCheckedClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "checked:focus:outline-secondary dark:checked:focus:outline-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "checked:focus:outline-info dark:checked:focus:outline-info"
-	case Success:
+	case ToneSuccess:
 		return "checked:focus:outline-success dark:checked:focus:outline-success"
-	case Warning:
+	case ToneWarning:
 		return "checked:focus:outline-warning dark:checked:focus:outline-warning"
-	case Danger:
+	case ToneDanger:
 		return "checked:focus:outline-danger dark:checked:focus:outline-danger"
 	default:
 		return "checked:focus:outline-primary dark:checked:focus:outline-primary-dark"
@@ -138,16 +138,16 @@ func (cfg Config) focusCheckedClass() string {
 
 // svgTextClass returns the text color class for the SVG icon
 func (cfg Config) svgTextClass() string {
-	switch cfg.Variant {
-	case Secondary:
+	switch cfg.Tone {
+	case ToneSecondary:
 		return "text-on-secondary dark:text-on-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "text-on-info dark:text-on-info-dark"
-	case Success:
+	case ToneSuccess:
 		return "text-on-success dark:text-on-success-dark"
-	case Warning:
+	case ToneWarning:
 		return "text-on-warning dark:text-on-warning-dark"
-	case Danger:
+	case ToneDanger:
 		return "text-on-danger dark:text-on-danger-dark"
 	default:
 		return "text-on-primary dark:text-on-primary-dark"
@@ -155,7 +155,7 @@ func (cfg Config) svgTextClass() string {
 }
 
 // InputClasses returns the full CSS class string for the checkbox input
-func (cfg Config) InputClasses() string {
+func (cfg Config) inputClasses() string {
 	base := "before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface-alt before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:focus:outline-outline-dark-strong"
 
 	if cfg.Container {
@@ -177,7 +177,7 @@ func (cfg Config) InputClasses() string {
 }
 
 // SvgClasses returns the CSS class string for the SVG icon
-func (cfg Config) SvgClasses() string {
+func (cfg Config) svgClasses() string {
 	base := "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:visible"
 
 	classes := base + " " + cfg.svgTextClass()

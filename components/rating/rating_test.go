@@ -31,25 +31,25 @@ func TestRatingDefaultRendersFiveStarRadios(t *testing.T) {
 	}
 }
 
-func TestRatingReadOnlyClampsValue(t *testing.T) {
+func TestRatingDisplayClampsValue(t *testing.T) {
 	var buf bytes.Buffer
-	err := Rating(Config{ID: "readonly-rating", Value: 99, ReadOnly: true}).Render(context.Background(), &buf)
+	err := RatingDisplay(DisplayConfig{ID: "rating-display", Value: 99}).Render(context.Background(), &buf)
 	if err != nil {
-		t.Fatalf("render read-only rating: %v", err)
+		t.Fatalf("render rating display: %v", err)
 	}
 
 	html := buf.String()
 	if strings.Contains(html, `type="radio"`) {
-		t.Fatalf("read-only rating must not render radio inputs:\n%s", html)
+		t.Fatalf("rating display must not render radio inputs:\n%s", html)
 	}
 	if !strings.Contains(html, `aria-label="5 stars"`) {
-		t.Fatalf("read-only rating should clamp aria label to max value:\n%s", html)
+		t.Fatalf("rating display should clamp aria label to max value:\n%s", html)
 	}
 }
 
 func TestEmojiRatingRendersSentimentLabels(t *testing.T) {
 	var buf bytes.Buffer
-	err := Rating(Config{ID: "sentiment", Style: StyleEmoji, Value: 4}).Render(context.Background(), &buf)
+	err := Rating(Config{ID: "sentiment", Appearance: AppearanceEmoji, Value: 4}).Render(context.Background(), &buf)
 	if err != nil {
 		t.Fatalf("render emoji rating: %v", err)
 	}
@@ -63,26 +63,26 @@ func TestEmojiRatingRendersSentimentLabels(t *testing.T) {
 }
 
 func TestEmojiRatingUsesExactSelectionExpression(t *testing.T) {
-	cfg := Config{Style: StyleEmoji, Value: 4}
+	cfg := Config{Appearance: AppearanceEmoji, Value: 4}
 
-	if got := cfg.BindClass(3); !strings.Contains(got, "currentVal === 3") {
+	if got := cfg.bindClass(3); !strings.Contains(got, "currentVal === 3") {
 		t.Fatalf("emoji ratings should bind exact selection, got %q", got)
 	}
-	if cfg.IsActive(3) {
+	if cfg.isActive(3) {
 		t.Fatal("emoji rating should not render lower values active")
 	}
-	if !cfg.IsActive(4) {
+	if !cfg.isActive(4) {
 		t.Fatal("emoji rating should render only the selected value active")
 	}
 }
 
 func TestStarRatingUsesCumulativeSelectionExpression(t *testing.T) {
-	cfg := Config{Style: StyleStars, Value: 4}
+	cfg := Config{Appearance: AppearanceStars, Value: 4}
 
-	if got := cfg.BindClass(3); !strings.Contains(got, "currentVal >= 3") {
+	if got := cfg.bindClass(3); !strings.Contains(got, "currentVal >= 3") {
 		t.Fatalf("star ratings should bind cumulative selection, got %q", got)
 	}
-	if !cfg.IsActive(3) {
+	if !cfg.isActive(3) {
 		t.Fatal("star rating should render lower values active")
 	}
 }

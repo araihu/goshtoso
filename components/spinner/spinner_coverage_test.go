@@ -49,8 +49,8 @@ func TestCoverageSizeClasses(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(string(tc.size), func(t *testing.T) {
-			if got := (Config{Size: tc.size}).SizeClasses(); got != tc.want {
-				t.Fatalf("SizeClasses(%q) = %q, want %q", tc.size, got, tc.want)
+			if got := (Config{Size: tc.size}).sizeClasses(); got != tc.want {
+				t.Fatalf("sizeClasses(%q) = %q, want %q", tc.size, got, tc.want)
 			}
 			if html := renderSpinner(t, Config{Size: tc.size}); !strings.Contains(html, tc.want) {
 				t.Fatalf("render size %q missing class %q in %s", tc.size, tc.want, html)
@@ -61,26 +61,26 @@ func TestCoverageSizeClasses(t *testing.T) {
 
 func TestCoverageFillClasses(t *testing.T) {
 	cases := []struct {
-		variant Variant
+		variant Tone
 		want    string
 	}{
-		{Default, "fill-on-surface dark:fill-on-surface-dark"},
-		{Primary, "fill-primary dark:fill-primary-dark"},
-		{Secondary, "fill-secondary dark:fill-secondary-dark"},
-		{Info, "fill-info dark:fill-info"},
-		{Success, "fill-success dark:fill-success"},
-		{Warning, "fill-warning dark:fill-warning"},
-		{Danger, "fill-danger dark:fill-danger"},
-		{Variant("bogus"), "fill-on-surface dark:fill-on-surface-dark"}, // unknown falls back
-		{"", "fill-on-surface dark:fill-on-surface-dark"},               // zero value falls back
+		{ToneDefault, "fill-on-surface dark:fill-on-surface-dark"},
+		{TonePrimary, "fill-primary dark:fill-primary-dark"},
+		{ToneSecondary, "fill-secondary dark:fill-secondary-dark"},
+		{ToneInfo, "fill-info dark:fill-info"},
+		{ToneSuccess, "fill-success dark:fill-success"},
+		{ToneWarning, "fill-warning dark:fill-warning"},
+		{ToneDanger, "fill-danger dark:fill-danger"},
+		{Tone("bogus"), "fill-on-surface dark:fill-on-surface-dark"}, // unknown falls back
+		{"", "fill-on-surface dark:fill-on-surface-dark"},            // zero value falls back
 	}
 
 	for _, tc := range cases {
 		t.Run(string(tc.variant), func(t *testing.T) {
-			if got := (Config{Variant: tc.variant}).FillClasses(); got != tc.want {
-				t.Fatalf("FillClasses(%q) = %q, want %q", tc.variant, got, tc.want)
+			if got := (Config{Tone: tc.variant}).fillClasses(); got != tc.want {
+				t.Fatalf("fillClasses(%q) = %q, want %q", tc.variant, got, tc.want)
 			}
-			if html := renderSpinner(t, Config{Variant: tc.variant}); !strings.Contains(html, tc.want) {
+			if html := renderSpinner(t, Config{Tone: tc.variant}); !strings.Contains(html, tc.want) {
 				t.Fatalf("render variant %q missing fill %q in %s", tc.variant, tc.want, html)
 			}
 		})
@@ -108,8 +108,8 @@ func TestCoverageRootClassEmptyNotAppended(t *testing.T) {
 	}
 }
 
-func TestCoverageVariantAndSizeCombined(t *testing.T) {
-	html := renderSpinner(t, Config{Variant: Danger, Size: SizeXL, RootClass: "mx-auto"})
+func TestCoverageToneAndSizeCombined(t *testing.T) {
+	html := renderSpinner(t, Config{Tone: ToneDanger, Size: SizeXL, RootClass: "mx-auto"})
 	for _, want := range []string{"size-12", "fill-danger", "dark:fill-danger", "motion-safe:animate-spin", "mx-auto"} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("combined render missing %q in %s", want, html)

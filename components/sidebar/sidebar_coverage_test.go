@@ -108,6 +108,30 @@ func TestCoverageRenderSidebarBranches(t *testing.T) {
 	}
 }
 
+func TestActiveSidebarLinksExposeCurrentPageSemantics(t *testing.T) {
+	html := renderSidebar(t, Config{
+		Items: []Item{
+			{ID: "overview", Label: "Overview", Href: "/overview", Active: true},
+			{ID: "activity", Label: "Activity", Href: "/activity"},
+		},
+		Sections: []Section{{
+			Title: "Components",
+			Items: []Item{
+				{ID: "button", Label: "Button", Href: "/components/button", Active: true},
+				{ID: "card", Label: "Card", Href: "/components/card"},
+			},
+		}},
+	})
+
+	assertContainsAll(t, html,
+		`href="/overview" title="Overview" aria-current="page"`,
+		`href="/components/button" title="Button" aria-current="page"`,
+	)
+	if count := strings.Count(html, `aria-current="page"`); count != 2 {
+		t.Fatalf("rendered %d current-page attributes, want one per active link: %s", count, html)
+	}
+}
+
 func TestSidebarLinksExposeFullLabelTitleByDefault(t *testing.T) {
 	html := renderSidebar(t, Config{
 		Sections: []Section{{
@@ -456,14 +480,14 @@ func TestCoverageSearchSlotOverridesDefaultSearch(t *testing.T) {
 func TestCoverageSidebarClassHelpers(t *testing.T) {
 	cfg := Config{}
 
-	assertContainsAll(t, cfg.ContainerClasses(),
+	assertContainsAll(t, cfg.containerClasses(),
 		`h-full`,
 		`border-r`,
 		`bg-surface`,
 		`dark:bg-surface-dark`,
 		`flex flex-col`,
 	)
-	assertContainsAll(t, cfg.NavClasses(),
+	assertContainsAll(t, cfg.navClasses(),
 		`flex-1`,
 		`overflow-y-auto`,
 		`sidebar-scroll`,

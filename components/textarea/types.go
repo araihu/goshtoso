@@ -41,7 +41,7 @@ type Config struct {
 
 // ContainerClasses returns CSS classes for the outer container.
 // Width is determined by the parent layout — no max-width is imposed.
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
 	if cfg.RootClass != "" {
 		return base + " " + cfg.RootClass
@@ -50,7 +50,7 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // LabelClasses returns CSS classes for the label element
-func (cfg Config) LabelClasses() string {
+func (cfg Config) labelClasses() string {
 	switch cfg.State {
 	case StateError:
 		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-danger"
@@ -62,7 +62,7 @@ func (cfg Config) LabelClasses() string {
 }
 
 // TextareaClasses returns CSS classes for the textarea element
-func (cfg Config) TextareaClasses() string {
+func (cfg Config) textareaClasses() string {
 	base := "w-full rounded-radius border bg-surface px-2.5 py-2 text-sm text-on-surface-strong placeholder:text-on-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface-alt disabled:text-on-surface-muted disabled:placeholder:text-on-surface-muted disabled:opacity-50 dark:bg-surface-dark dark:text-on-surface-dark-strong dark:placeholder:text-on-surface-dark-muted dark:focus-visible:outline-primary-dark dark:disabled:bg-surface-dark-alt dark:disabled:text-on-surface-dark-muted dark:disabled:placeholder:text-on-surface-dark-muted"
 
 	switch cfg.State {
@@ -76,7 +76,7 @@ func (cfg Config) TextareaClasses() string {
 }
 
 // HelperTextClasses returns CSS classes for helper text
-func (cfg Config) HelperTextClasses() string {
+func (cfg Config) helperTextClasses() string {
 	switch cfg.State {
 	case StateError:
 		return "pl-0.5 text-xs text-danger"
@@ -88,7 +88,7 @@ func (cfg Config) HelperTextClasses() string {
 }
 
 // GetRows returns the number of rows, defaulting to 3
-func (cfg Config) GetRows() string {
+func (cfg Config) getRows() string {
 	switch cfg.Rows {
 	case 0:
 		return "3"

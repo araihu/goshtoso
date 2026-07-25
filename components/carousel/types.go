@@ -2,23 +2,10 @@ package carousel
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/a-h/templ"
-)
-
-// Variant represents carousel visual variants
-type Variant string
-
-const (
-	// Default shows images only with prev/next buttons and indicators
-	Default Variant = "default"
-	// WithText adds title + description overlay with gradient background
-	WithText Variant = "with-text"
-	// WithCTA adds title + description + call-to-action button
-	WithCTA Variant = "with-cta"
-	// OnCard wraps the carousel in an article card with product info below
-	OnCard Variant = "on-card"
 )
 
 // Slide represents a single carousel slide
@@ -27,13 +14,13 @@ type Slide struct {
 	ImgSrc string
 	// ImgAlt is the image alt text
 	ImgAlt string
-	// Title is the slide heading (used by WithText, WithCTA)
+	// Title is the optional slide heading.
 	Title string
-	// Description is the slide body text (used by WithText, WithCTA)
+	// Description is the optional slide body text.
 	Description string
-	// CTAHref is the call-to-action link (used by WithCTA)
+	// CTAHref is the call-to-action link.
 	CTAHref string
-	// CTALabel is the call-to-action button label (used by WithCTA)
+	// CTALabel is the call-to-action button label.
 	CTALabel string
 }
 
@@ -61,15 +48,13 @@ type Config struct {
 	ID string
 	// Slides are the static slide data (ignored if HTMX is set)
 	Slides []Slide
-	// Variant determines the visual style
-	Variant Variant
-	// Autoplay enables automatic slide rotation (nil = disabled)
+	// Autoplay enables rotation in static mode; ignored when HTMX is non-nil.
 	Autoplay *AutoplayConfig
-	// Touch enables swipe gesture support
+	// Touch enables swipe gestures in static mode; ignored when HTMX is non-nil.
 	Touch bool
-	// AspectRatio sets a fixed aspect ratio (e.g. "3/1"), empty = min-h-[50svh]
+	// AspectRatio sets static-mode sizing; ignored when HTMX is non-nil.
 	AspectRatio string
-	// Height overrides the slides container height (e.g. "h-48 lg:h-64" for card variant)
+	// Height overrides static-mode slide height; ignored when HTMX is non-nil.
 	Height string
 	// RootClass allows additional CSS classes on the container.
 	RootClass string
@@ -77,9 +62,28 @@ type Config struct {
 	HTMX *HTMXConfig
 }
 
-// hasOverlay returns true if the variant shows text/CTA over the slides
-func hasOverlay(v Variant) bool {
-	return v == WithText || v == WithCTA
+// CardConfig holds configuration for the card-framed carousel.
+type CardConfig struct {
+	// ID is a unique identifier for the carousel instance.
+	ID string
+	// Slides are the static slide data.
+	Slides []Slide
+	// Touch enables swipe gesture support.
+	Touch bool
+	// Height overrides the slides container height.
+	Height string
+	// RootClass allows additional CSS classes on the article container.
+	RootClass string
+}
+
+func slideHasOverlay(slide Slide) bool {
+	return slide.Title != "" ||
+		slide.Description != "" ||
+		(slide.CTALabel != "" && slide.CTAHref != "")
+}
+
+func hasOverlay(cfg Config) bool {
+	return slices.ContainsFunc(cfg.Slides, slideHasOverlay)
 }
 
 // transitionAttr returns the duration suffix for Alpine's x-transition modifier
@@ -88,15 +92,10 @@ func hasOverlay(v Variant) bool {
 // duration as part of the attribute key, not as a value (a value like "1000ms"
 // gets evaluated as a JS expression and breaks).
 func transitionAttr(cfg Config) string {
-	switch cfg.Variant {
-	case OnCard:
-		return "300ms"
-	default:
-		if cfg.Touch {
-			return "700ms"
-		}
-		return "1000ms"
+	if cfg.Touch {
+		return "700ms"
 	}
+	return "1000ms"
 }
 
 // transitionAttrs builds a templ attribute map encoding Alpine's
@@ -136,7 +135,7 @@ func navButtonClasses() string {
 // indicatorContainerClasses returns CSS for the indicators wrapper
 func indicatorContainerClasses(cfg Config) string {
 	base := "absolute rounded-radius bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 px-1.5 py-1 md:px-2"
-	if hasOverlay(cfg.Variant) || cfg.Autoplay != nil {
+	if hasOverlay(cfg) || cfg.Autoplay != nil {
 		// No background when text overlay is present (indicators over dark gradient)
 		return base
 	}
@@ -145,7 +144,7 @@ func indicatorContainerClasses(cfg Config) string {
 
 // indicatorActiveClasses returns CSS for the active indicator dot
 func indicatorActiveClasses(cfg Config) string {
-	if hasOverlay(cfg.Variant) || cfg.Autoplay != nil {
+	if hasOverlay(cfg) || cfg.Autoplay != nil {
 		return "bg-on-surface-dark"
 	}
 	return "bg-on-surface dark:bg-on-surface-dark"
@@ -153,7 +152,7 @@ func indicatorActiveClasses(cfg Config) string {
 
 // indicatorInactiveClasses returns CSS for inactive indicator dots
 func indicatorInactiveClasses(cfg Config) string {
-	if hasOverlay(cfg.Variant) || cfg.Autoplay != nil {
+	if hasOverlay(cfg) || cfg.Autoplay != nil {
 		return "bg-on-surface-dark/50"
 	}
 	return "bg-on-surface/50 dark:bg-on-surface-dark/50"
@@ -209,10 +208,8 @@ func slidesToJSON(slides []Slide) string {
 		if s.Description != "" {
 			fmt.Fprintf(&b, ",description:'%s'", jsEscape(s.Description))
 		}
-		if s.CTAHref != "" {
+		if s.CTAHref != "" && s.CTALabel != "" {
 			fmt.Fprintf(&b, ",ctaUrl:'%s'", jsEscape(string(templ.URL(s.CTAHref))))
-		}
-		if s.CTALabel != "" {
 			fmt.Fprintf(&b, ",ctaText:'%s'", jsEscape(s.CTALabel))
 		}
 		b.WriteString("}")
@@ -233,7 +230,11 @@ func jsEscape(s string) string {
 	return s
 }
 
-// cardContainerClasses returns CSS for the card wrapper (OnCard variant)
-func cardContainerClasses() string {
-	return "group flex max-w-sm flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
+// cardContainerClasses returns CSS for the card wrapper.
+func cardContainerClasses(rootClass string) string {
+	base := "group flex max-w-sm flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
+	if rootClass != "" {
+		base += " " + rootClass
+	}
+	return base
 }

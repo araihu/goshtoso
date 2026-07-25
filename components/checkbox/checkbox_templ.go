@@ -15,7 +15,7 @@ import templruntime "github.com/a-h/templ/runtime"
 //	    ID:    "notifications",
 //	    Label: "Notifications",
 //	})
-func Checkbox(cfg Config) templ.Component {
+func checkboxTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -302,7 +302,7 @@ func checkboxInput(cfg Config) templ.Component {
 		}
 		if cfg.HelperText != "" {
 			if cfg.Checked {
-				var templ_7745c5c3_Var14 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var14 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -351,7 +351,7 @@ func checkboxInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else if cfg.Disabled {
-				var templ_7745c5c3_Var18 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var18 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var18...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -400,7 +400,7 @@ func checkboxInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var22 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var22 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var22...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -451,7 +451,7 @@ func checkboxInput(cfg Config) templ.Component {
 			}
 		} else if cfg.Value != "" {
 			if cfg.Checked {
-				var templ_7745c5c3_Var26 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var26 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -513,7 +513,7 @@ func checkboxInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else if cfg.Disabled {
-				var templ_7745c5c3_Var31 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var31 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var31...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -575,7 +575,7 @@ func checkboxInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var36 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var36 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var36...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -639,7 +639,7 @@ func checkboxInput(cfg Config) templ.Component {
 			}
 		} else {
 			if cfg.Checked {
-				var templ_7745c5c3_Var41 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var41 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var41...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -675,7 +675,7 @@ func checkboxInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else if cfg.Disabled {
-				var templ_7745c5c3_Var44 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var44 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var44...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -711,7 +711,7 @@ func checkboxInput(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				var templ_7745c5c3_Var47 = []any{cfg.InputClasses()}
+				var templ_7745c5c3_Var47 = []any{cfg.inputClasses()}
 				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var47...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -748,7 +748,7 @@ func checkboxInput(cfg Config) templ.Component {
 				}
 			}
 		}
-		var templ_7745c5c3_Var50 = []any{cfg.SvgClasses()}
+		var templ_7745c5c3_Var50 = []any{cfg.svgClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var50...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -798,7 +798,7 @@ func checkboxInput(cfg Config) templ.Component {
 //	        {ID: "sms", Label: "SMS alerts", Value: "sms", Checked: true},
 //	    },
 //	})
-func CheckboxGroup(cfg GroupConfig) templ.Component {
+func checkboxGroupTemplate(cfg GroupConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

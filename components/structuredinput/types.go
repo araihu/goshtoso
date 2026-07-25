@@ -45,7 +45,7 @@ type Config struct {
 }
 
 // NormalizedColumns returns usable columns with stable defaults.
-func (c Config) NormalizedColumns() []Column {
+func (c Config) normalizedColumns() []Column {
 	seen := map[string]bool{}
 	cols := make([]Column, 0, len(c.Columns))
 	for _, col := range c.Columns {
@@ -62,7 +62,7 @@ func (c Config) NormalizedColumns() []Column {
 }
 
 // DefaultValue returns the value used when a new row is added.
-func (c Column) DefaultValue() string {
+func (c Column) defaultValue() string {
 	if c.Default != "" {
 		return c.Default
 	}
@@ -73,7 +73,7 @@ func (c Column) DefaultValue() string {
 }
 
 // OptionLabel returns the visible label for an option.
-func (o Option) OptionLabel() string {
+func (o Option) optionLabel() string {
 	if o.Label != "" {
 		return o.Label
 	}
@@ -81,7 +81,7 @@ func (o Option) OptionLabel() string {
 }
 
 // GetAddLabel returns the add button label with default.
-func (c Config) GetAddLabel() string {
+func (c Config) getAddLabel() string {
 	if c.AddActionLabel != "" {
 		return c.AddActionLabel
 	}
@@ -89,7 +89,7 @@ func (c Config) GetAddLabel() string {
 }
 
 // ContainerClasses returns CSS classes for the outer container.
-func (c Config) ContainerClasses() string {
+func (c Config) containerClasses() string {
 	base := "flex flex-col gap-2"
 	if c.RootClass != "" {
 		return base + " " + c.RootClass
@@ -98,7 +98,7 @@ func (c Config) ContainerClasses() string {
 }
 
 // EntriesJSON returns ordered row values for Alpine initialization.
-func (c Config) EntriesJSON() string {
+func (c Config) entriesJSON() string {
 	rows := c.entryRows()
 	b, err := json.Marshal(rows)
 	if err != nil {
@@ -108,10 +108,10 @@ func (c Config) EntriesJSON() string {
 }
 
 // NewRowJSON returns ordered default values for new rows.
-func (c Config) NewRowJSON() string {
-	row := make([]string, 0, len(c.NormalizedColumns()))
-	for _, col := range c.NormalizedColumns() {
-		row = append(row, col.DefaultValue())
+func (c Config) newRowJSON() string {
+	row := make([]string, 0, len(c.normalizedColumns()))
+	for _, col := range c.normalizedColumns() {
+		row = append(row, col.defaultValue())
 	}
 	b, err := json.Marshal(row)
 	if err != nil {
@@ -121,17 +121,17 @@ func (c Config) NewRowJSON() string {
 }
 
 // EntryAccessor returns a JavaScript expression for this column's entry value.
-func (c Column) EntryAccessor(index int) string {
+func (c Column) entryAccessor(index int) string {
 	return "entry[" + strconv.Itoa(index) + "]"
 }
 
 // NameBinding returns a JavaScript expression for this column's hidden input name.
-func (c Column) NameBinding() string {
+func (c Column) nameBinding() string {
 	return "inputName(index, $el.dataset.columnKey)"
 }
 
 func (c Config) entryRows() [][]string {
-	cols := c.NormalizedColumns()
+	cols := c.normalizedColumns()
 	if len(c.Entries) == 0 {
 		return [][]string{}
 	}

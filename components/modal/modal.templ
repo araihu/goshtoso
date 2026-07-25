@@ -4,12 +4,13 @@ import "fmt"
 
 // Modal renders a modal dialog component matching PenguinUI's modal design.
 // It includes a trigger button and the modal overlay with transitions.
-templ Modal(cfg Config) {
-	if cfg.AlertMode {
-		@alertModal(cfg)
-	} else {
-		@defaultModal(cfg)
-	}
+templ modalTemplate(cfg Config) {
+	@defaultModal(cfg)
+}
+
+// AlertDialog renders an alert dialog with a single action and dismiss control.
+templ alertDialogTemplate(cfg AlertDialogConfig) {
+	@alertDialog(cfg)
 }
 
 // buttonClickExpr builds the Alpine.js click expression: close modal + optional custom action
@@ -23,10 +24,10 @@ func buttonClickExpr(stateVar string, action *ButtonAction) string {
 
 // defaultModal renders a standard modal with header/body/footer
 templ defaultModal(cfg Config) {
-	{{ titleID := cfg.TitleID() }}
-	{{ stateVar := cfg.StateVar() }}
+	{{ titleID := cfg.titleID() }}
+	{{ stateVar := cfg.stateVar() }}
 	<div x-data={ fmt.Sprintf("{%s: false}", stateVar) }>
-		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.TriggerClasses() }>
+		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.triggerClasses() }>
 			{ cfg.TriggerLabel }
 		</button>
 		<div
@@ -46,10 +47,10 @@ templ defaultModal(cfg Config) {
 				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
 				x-transition:enter-start="opacity-0 scale-50"
 				x-transition:enter-end="opacity-100 scale-100"
-				class={ cfg.DialogClasses() }
+				class={ cfg.dialogClasses() }
 			>
 				<!-- Dialog Header -->
-				<div class={ cfg.HeaderClasses() }>
+				<div class={ cfg.headerClasses() }>
 					<h3 id={ titleID } class="font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
 					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label="close modal">
 						@closeIcon()
@@ -71,12 +72,12 @@ templ defaultModal(cfg Config) {
 	</div>
 }
 
-// alertModal renders an alert-style modal with icon, centered text, and single CTA
-templ alertModal(cfg Config) {
-	{{ titleID := cfg.TitleID() }}
-	{{ stateVar := cfg.StateVar() }}
+// alertDialog renders an alert-style dialog with icon, centered text, and single action.
+templ alertDialog(cfg AlertDialogConfig) {
+	{{ titleID := cfg.titleID() }}
+	{{ stateVar := cfg.stateVar() }}
 	<div x-data={ fmt.Sprintf("{%s: false}", stateVar) }>
-		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.TriggerClasses() }>
+		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.triggerClasses() }>
 			{ cfg.TriggerLabel }
 		</button>
 		<div
@@ -87,7 +88,7 @@ templ alertModal(cfg Config) {
 			x-on:keydown.esc.window={ fmt.Sprintf("%s = false", stateVar) }
 			x-on:click.self={ fmt.Sprintf("%s = false", stateVar) }
 			class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
-			role="dialog"
+			role="alertdialog"
 			aria-modal="true"
 			aria-labelledby={ titleID }
 		>
@@ -96,12 +97,12 @@ templ alertModal(cfg Config) {
 				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
 				x-transition:enter-start="opacity-0 scale-50"
 				x-transition:enter-end="opacity-100 scale-100"
-				class={ cfg.DialogClasses() }
+				class={ cfg.dialogClasses() }
 			>
 				<!-- Dialog Header -->
-				<div class={ cfg.HeaderClasses() }>
-					<div class={ cfg.IconBadgeClasses() }>
-						@alertIcon(cfg.Variant)
+				<div class={ cfg.headerClasses() }>
+					<div class={ cfg.iconBadgeClasses() }>
+						@alertIcon(cfg.Tone)
 					</div>
 					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label="close modal">
 						@closeIcon()
@@ -114,7 +115,7 @@ templ alertModal(cfg Config) {
 				</div>
 				<!-- Dialog Footer -->
 				<div class="flex items-center justify-center border-outline p-4 dark:border-outline-dark">
-					@alertCTAButton(stateVar, cfg.PrimaryLabel, cfg.AlertCTAClasses(), cfg.PrimaryAction)
+					@alertCTAButton(stateVar, cfg.ActionLabel, cfg.actionClasses(), cfg.Action)
 				</div>
 			</div>
 		</div>
@@ -190,22 +191,22 @@ templ alertCTAButton(stateVar string, text string, classes string, action *Butto
 	</button>
 }
 
-// alertIcon renders the variant-specific icon for alert modals
-templ alertIcon(variant Variant) {
-	switch variant {
-		case Success:
+// alertIcon renders the tone-specific icon for alert dialogs.
+templ alertIcon(tone Tone) {
+	switch tone {
+		case ToneSuccess:
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
 				<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
 			</svg>
-		case Info:
+		case ToneInfo:
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
 				<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"></path>
 			</svg>
-		case Warning:
+		case ToneWarning:
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
 				<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
 			</svg>
-		case Danger:
+		case ToneDanger:
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
 				<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"></path>
 			</svg>

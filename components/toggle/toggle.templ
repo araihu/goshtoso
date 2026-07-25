@@ -13,18 +13,18 @@ package toggle
 //	@toggle.Toggle(toggle.Config{
 //	    ID:      "darkMode",
 //	    Label:   "Dark mode",
-//	    Variant: toggle.Secondary,
+//	    Tone: toggle.ToneSecondary,
 //	    Checked: true,
 //	})
 //
-//	// Toggle with container style
+//	// Toggle with container appearance
 //	@toggle.Toggle(toggle.Config{
 //	    ID:    "containerToggle",
 //	    Label: "Setting",
-//	    Style: toggle.StyleContainer,
+//	    Appearance: toggle.AppearanceContainer,
 //	})
-templ Toggle(cfg Config) {
-	<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+templ toggleTemplate(cfg Config) {
+	<label for={ cfg.ID } class={ cfg.labelClasses() }>
 		<input
 			id={ cfg.ID }
 			type="checkbox"
@@ -47,6 +47,6 @@ templ Toggle(cfg Config) {
 		<span class="trancking-wide text-sm font-medium text-on-surface peer-checked:text-on-surface-strong peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-on-surface-dark dark:peer-checked:text-on-surface-dark-strong">
 			{ cfg.Label }
 		</span>
-		<div class={ cfg.ToggleClasses() } aria-hidden="true"></div>
+		<div class={ cfg.toggleClasses() } aria-hidden="true"></div>
 	</label>
 }

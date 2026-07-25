@@ -64,10 +64,10 @@ templ component from your own `.templ` files:
 import "github.com/araihu/goshtoso/components/button"
 
 templ Example() {
-	@button.Button(button.Config{
-		Variant: button.Primary,
-		Type:    "button",
-	}) {
+	@button.Button(
+		button.WithTone(button.TonePrimary),
+		button.WithType("button"),
+	) {
 		Save changes
 	}
 }
@@ -76,6 +76,12 @@ templ Example() {
 Read `references/components-reference.md` when you need exact component import
 paths, package names, entry points, config fields, enum values, or package names
 that differ from the directory name.
+
+Read the public
+[component model](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md)
+before choosing between constructors or configuration fields. It documents the
+common component interface, concrete return values, constructor styles, stable
+Kind identity, and rendered defaults.
 
 ## CSS Strategy
 

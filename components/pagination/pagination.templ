@@ -1,13 +1,13 @@
 package pagination
 
 // Pagination renders a pagination navigation component based on PenguinUI.
-// Supports two variants: WithEllipsis (page numbers with ellipsis) and Simple (prev/next only).
+// Supports two modes: ModeEllipsis (page numbers with ellipsis) and ModeSimple (prev/next only).
 //
 // Usage:
 //
 //	// Simple pagination (prev/next only)
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.Simple,
+//	    Mode:        pagination.ModeSimple,
 //	    CurrentPage: 3,
 //	    TotalPages:  10,
 //	    BaseURL:     "/items",
@@ -15,7 +15,7 @@ package pagination
 //
 //	// With ellipsis and page numbers
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.WithEllipsis,
+//	    Mode:        pagination.ModeEllipsis,
 //	    CurrentPage: 5,
 //	    TotalPages:  30,
 //	    BaseURL:     "/items",
@@ -23,32 +23,32 @@ package pagination
 //
 //	// With HTMX integration
 //	@pagination.Pagination(pagination.Config{
-//	    Variant:     pagination.WithEllipsis,
+//	    Mode:        pagination.ModeEllipsis,
 //	    CurrentPage: 2,
 //	    TotalPages:  10,
 //	    BaseURL:     "/api/items",
 //	    HTMX: &pagination.HTMXConfig{Target: "#items-tbody", Swap: "innerHTML"},
 //	})
-templ Pagination(cfg Config) {
+templ paginationTemplate(cfg Config) {
 	<nav
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
 		aria-label="pagination"
-		class={ cfg.NavClasses() }
+		class={ cfg.navClasses() }
 	>
-		<ul class={ cfg.ListClasses() }>
+		<ul class={ cfg.listClasses() }>
 			// Previous button
 			<li>
 				if cfg.HasPrevious() {
 					if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="previous page"
 							hx-get={ cfg.PageURL(cfg.PreviousPage()) }
 							hx-target={ cfg.HTMX.Target }
-							hx-swap={ cfg.SwapStrategy() }
+							hx-swap={ cfg.swapStrategy() }
 						>
 							@prevIcon()
 							Previous
@@ -56,7 +56,7 @@ templ Pagination(cfg Config) {
 					} else {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="previous page"
 						>
 							@prevIcon()
@@ -64,18 +64,18 @@ templ Pagination(cfg Config) {
 						</a>
 					}
 				} else {
-					<span class={ cfg.PrevNextClasses(false) } aria-disabled="true">
+					<span class={ cfg.prevNextClasses(false) } aria-disabled="true">
 						@prevIcon()
 						Previous
 					</span>
 				}
 			</li>
 			// Page numbers (ellipsis variant only)
-			if cfg.Variant != Simple {
+			if cfg.Mode != ModeSimple {
 				for _, item := range cfg.Pages() {
 					if item.IsEllipsis {
 						<li>
-							<span class={ cfg.EllipsisClasses() } aria-label="more pages">
+							<span class={ cfg.ellipsisClasses() } aria-label="more pages">
 								@ellipsisIcon()
 							</span>
 						</li>
@@ -83,7 +83,7 @@ templ Pagination(cfg Config) {
 						<li>
 							<a
 								href={ templ.URL(cfg.PageURL(item.Page)) }
-								class={ cfg.PageClasses(true) }
+								class={ cfg.pageClasses(true) }
 								aria-current="page"
 								aria-label={ "page " + itoa(item.Page) }
 							>
@@ -95,18 +95,18 @@ templ Pagination(cfg Config) {
 							if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 								<a
 									href={ templ.URL(cfg.PageURL(item.Page)) }
-									class={ cfg.PageClasses(false) }
+									class={ cfg.pageClasses(false) }
 									aria-label={ "page " + itoa(item.Page) }
 									hx-get={ cfg.PageURL(item.Page) }
 									hx-target={ cfg.HTMX.Target }
-									hx-swap={ cfg.SwapStrategy() }
+									hx-swap={ cfg.swapStrategy() }
 								>
 									{ itoa(item.Page) }
 								</a>
 							} else {
 								<a
 									href={ templ.URL(cfg.PageURL(item.Page)) }
-									class={ cfg.PageClasses(false) }
+									class={ cfg.pageClasses(false) }
 									aria-label={ "page " + itoa(item.Page) }
 								>
 									{ itoa(item.Page) }
@@ -122,11 +122,11 @@ templ Pagination(cfg Config) {
 					if cfg.HTMX != nil && cfg.HTMX.Target != "" {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="next page"
 							hx-get={ cfg.PageURL(cfg.NextPage()) }
 							hx-target={ cfg.HTMX.Target }
-							hx-swap={ cfg.SwapStrategy() }
+							hx-swap={ cfg.swapStrategy() }
 						>
 							Next
 							@nextIcon()
@@ -134,7 +134,7 @@ templ Pagination(cfg Config) {
 					} else {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
-							class={ cfg.PrevNextClasses(true) }
+							class={ cfg.prevNextClasses(true) }
 							aria-label="next page"
 						>
 							Next
@@ -142,7 +142,7 @@ templ Pagination(cfg Config) {
 						</a>
 					}
 				} else {
-					<span class={ cfg.PrevNextClasses(false) } aria-disabled="true">
+					<span class={ cfg.prevNextClasses(false) } aria-disabled="true">
 						Next
 						@nextIcon()
 					</span>

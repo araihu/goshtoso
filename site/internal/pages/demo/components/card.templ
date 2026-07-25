@@ -1,10 +1,32 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
+	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var cardAPISections = []demo.APISection{
+	demo.StructAPI[card.Config](
+		rootcomponents.KindCard,
+		"Config",
+		"card.Card(cfg Config) Instance",
+		"Configures a composable card article.",
+		[]demo.APIPropDoc{
+			{Name: "Image", Default: `"" (no image)`, Description: "Optional image URL."},
+			{Name: "ImageAlt", Default: `""`, Description: "Alternative text for Image."},
+			{Name: "Tag", Default: `""`, Description: "Optional category text above the title."},
+			{Name: "Title", Default: `""`, Description: "Card heading and source for the description ID.", Required: true},
+			{Name: "Description", Default: `""`, Description: "Optional body text."},
+			{Name: "Footer", Default: "nil", Description: "Optional component content below the body, such as actions or ratings."},
+			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearancePrimary"}, Description: "Default border or primary-accent border."},
+			{Name: "Layout", Default: "LayoutVertical", Allowed: []string{"LayoutVertical", "LayoutHorizontal"}, Description: "Stacks media above content or places it beside content."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the card article."},
+		},
+	),
+}
 
 // CardDemoPage renders the Card component demo
 templ CardDemoPage() {
@@ -45,7 +67,7 @@ templ cardDemoContent() {
 
 templ bookNowButton() {
     <div class="mt-2">
-        @button.Button(button.Config{Variant: button.Primary, Type: "button"}) { Book Now }
+        @button.Button() { Book Now }
     </div>
 }`,
 		)
@@ -68,7 +90,7 @@ templ bookNowButton() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Product Card",
-				Description: "An e-commerce recipe: compose a bordered article with card.StarRating, a price, and an Add to Cart button. (Config.Price/Rating are exposed but rendered by the caller, not the base template.)",
+				Description: "An e-commerce recipe: compose a bordered article with rating.RatingDisplay, a price, and an Add to Cart button. Price and rating are application content, not Card config fields.",
 			},
 			cardProductPreview(),
 			`<article class="group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt ...">
@@ -77,9 +99,9 @@ templ bookNowButton() {
     </div>
     <div class="flex flex-col gap-4 p-6">
         <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
-        @card.StarRating(3)
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"})
         <span class="text-xl font-medium">$99.99</span>
-        @button.Button(button.Config{Variant: button.Primary}) { Add to Cart }
+        @button.Button() { Add to Cart }
     </div>
 </article>`,
 		)
@@ -95,14 +117,14 @@ templ bookNowButton() {
     <h3 class="text-xl font-bold">Premium</h3>
     <span class="mt-8 text-3xl font-medium">$8.99</span>
     <ul class="mt-4 list-inside list-disc space-y-2 text-sm">...</ul>
-    @button.Button(button.Config{Variant: button.Primary, RootClass: "w-full"}) { Start your free trial }
+    @button.Button(button.WithRootClass("w-full")) { Start your free trial }
 </article>`,
 		)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Testimonial Card",
-				Description: "A quote recipe pairing a person, role, and card.StarRating in the footer row.",
+				Description: "A quote recipe pairing a person, role, and rating.RatingDisplay in the footer row.",
 			},
 			cardTestimonialPreview(),
 			`<article class="group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 ...">
@@ -113,25 +135,13 @@ templ bookNowButton() {
             <img src="/assets/images/avatars/avatar-1.webp" class="size-10 rounded-full" alt="Bob Johnson" />
             <div><h3 class="font-bold">Bob Johnson</h3><span class="text-xs">CEO - TechNova</span></div>
         </div>
-        @card.StarRating(4)
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"})
     </div>
 </article>`,
 		)
 	</div>
 	// API reference lives outside #card-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Image", Type: "string", Default: `""`, Description: "Card image URL (rendered above the body, or beside it in horizontal layout)."},
-		{Name: "ImageAlt", Type: "string", Default: `""`, Description: "Alt text for the image."},
-		{Name: "Tag", Type: "string", Default: `""`, Description: "Optional category/tag shown above the title."},
-		{Name: "Title", Type: "string", Default: `""`, Description: "Card title (also seeds the aria-describedby id)."},
-		{Name: "Description", Type: "string", Default: `""`, Description: "Body text."},
-		{Name: "Footer", Type: "templ.Component", Default: "nil", Description: "Optional footer content (buttons, links, ratings) rendered below the body."},
-		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default" or "primary" (adds a 2px primary border accent).`},
-		{Name: "Layout", Type: "Layout", Default: "LayoutVertical", Description: `Layout: "vertical" (image top) or "horizontal" (image beside content).`},
-		{Name: "Price", Type: "string", Default: `""`, Description: "Exposed for ecommerce recipes; render via a custom Footer (base template does not emit it)."},
-		{Name: "Rating", Type: "int", Default: "0", Description: "Exposed for ecommerce recipes; render with card.StarRating in a Footer."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the article container."},
-	})
+	@demo.StructuredAPIReference(cardAPISections)
 }
 
 // cardDefaultPreview renders the simple default card.
@@ -198,10 +208,7 @@ templ cardTestimonialPreview() {
 // bookNowButton creates a book now button for cards
 templ bookNowButton() {
 	<div class="mt-2">
-		@button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-		}) {
+		@button.Button() {
 			Book Now
 		}
 	</div>
@@ -217,15 +224,12 @@ templ ecommerceProductCard() {
 			<div class="flex flex-col md:flex-row gap-4 md:gap-12 justify-between">
 				<div class="flex flex-col">
 					<h3 class="text-lg lg:text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">CASIO G-SHOCK GA2100</h3>
-					@card.StarRating(3)
+					@rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"})
 				</div>
 				<span class="text-xl font-medium">$99.99</span>
 			</div>
 			<p class="mb-2 text-pretty text-sm">The Casio G-Shock GA2100 is simply designed for easy timekeeping, featuring a sleek profile and clear display.</p>
-			@button.Button(button.Config{
-				Variant: button.Primary,
-				Type:    "button",
-			}) {
+			@button.Button() {
 				Add to Cart
 			}
 		</div>
@@ -250,11 +254,7 @@ templ pricingCard() {
 			<li>Cancel anytime</li>
 		</ul>
 		<div class="mt-12">
-			@button.Button(button.Config{
-				Variant: button.Primary,
-				Type:    "button",
-				RootClass:   "w-full",
-			}) {
+			@button.Button(button.WithRootClass("w-full")) {
 				Start your free trial
 			}
 		</div>
@@ -278,7 +278,7 @@ templ testimonialCard() {
 					<span class="text-xs">CEO - TechNova</span>
 				</div>
 			</div>
-			@card.StarRating(4)
+			@rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"})
 		</div>
 	</article>
 }

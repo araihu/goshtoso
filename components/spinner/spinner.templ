@@ -3,21 +3,21 @@ package spinner
 // Spinner renders an animated loading spinner based on PenguinUI
 // Usage:
 //
-//	// Default spinner
+//	// ToneDefault spinner
 //	@spinner.Spinner(spinner.Config{})
 //
-//	// Primary colored spinner
+//	// TonePrimary colored spinner
 //	@spinner.Spinner(spinner.Config{
-//	    Variant: spinner.Primary,
+//	    Tone: spinner.TonePrimary,
 //	})
 //
 //	// Large danger spinner
 //	@spinner.Spinner(spinner.Config{
-//	    Variant: spinner.Danger,
+//	    Tone: spinner.ToneDanger,
 //	    Size:    spinner.SizeLG,
 //	})
-templ Spinner(cfg Config) {
-	{{ classes := cfg.SizeClasses() + " " + cfg.FillClasses() + " motion-safe:animate-spin" }}
+templ spinnerTemplate(cfg Config) {
+	{{ classes := cfg.sizeClasses() + " " + cfg.fillClasses() + " motion-safe:animate-spin" }}
 	if cfg.RootClass != "" {
 		{{ classes = classes + " " + cfg.RootClass }}
 	}

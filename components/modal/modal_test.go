@@ -19,19 +19,19 @@ func renderModal(t *testing.T, cfg Config) string {
 func TestModalStateVarIsSafeIdentifier(t *testing.T) {
 	cfg := Config{ID: "billing-modal.1"}
 
-	if got := cfg.StateVar(); got != "billingModal1IsOpen" {
-		t.Fatalf("StateVar = %q; want %q", got, "billingModal1IsOpen")
+	if got := cfg.stateVar(); got != "billingModal1IsOpen" {
+		t.Fatalf("stateVar = %q; want %q", got, "billingModal1IsOpen")
 	}
 }
 
 func TestModalEmptyIDUsesDeterministicFallback(t *testing.T) {
 	cfg := Config{}
 
-	if got := cfg.StateVar(); got != "modalIsOpen" {
-		t.Fatalf("StateVar = %q; want modalIsOpen", got)
+	if got := cfg.stateVar(); got != "modalIsOpen" {
+		t.Fatalf("stateVar = %q; want modalIsOpen", got)
 	}
-	if got := cfg.TitleID(); got != "modalTitle" {
-		t.Fatalf("TitleID = %q; want modalTitle", got)
+	if got := cfg.titleID(); got != "modalTitle" {
+		t.Fatalf("titleID = %q; want modalTitle", got)
 	}
 }
 

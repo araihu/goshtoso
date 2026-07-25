@@ -53,7 +53,7 @@ func (s *Server) handleProfileIdentity(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = examples.IdentityFields(st).Render(r.Context(), w)
 	_ = toast.OOBToast(toast.Config{
-		Variant: toast.Success,
+		Tone:    toast.ToneSuccess,
 		Title:   "Saved",
 		Message: "Your profile was updated.",
 	}).Render(r.Context(), w)

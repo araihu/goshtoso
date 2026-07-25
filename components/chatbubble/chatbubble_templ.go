@@ -32,9 +32,9 @@ import (
 //	    Timestamp:      "11:32 AM",
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-//	    AvatarVariant:  "info",
+//	    AvatarTone:     avatar.ToneInfo,
 //	})
-func ChatBubble(cfg Config) templ.Component {
+func chatBubbleTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -55,7 +55,7 @@ func ChatBubble(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{cfg.RowClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.rowClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -78,7 +78,7 @@ func ChatBubble(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.DataMine())
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.dataMine())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/chatbubble/chatbubble.templ`, Line: 32, Col: 28}
 		}
@@ -117,7 +117,7 @@ func ChatBubble(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.HasAvatar() {
+		if cfg.hasAvatar() {
 			templ_7745c5c3_Err = bubbleAvatar(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -127,7 +127,7 @@ func ChatBubble(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 = []any{cfg.BubbleClasses()}
+		var templ_7745c5c3_Var6 = []any{cfg.bubbleClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -149,7 +149,7 @@ func ChatBubble(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.HasHeader() {
+		if cfg.hasHeader() {
 			templ_7745c5c3_Err = bubbleHeader(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -207,9 +207,9 @@ func ChatBubble(cfg Config) templ.Component {
 //	@chatbubble.TypingIndicator(chatbubble.Config{
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-//	    AvatarVariant:  "info",
+//	    AvatarTone:     avatar.ToneInfo,
 //	})
-func TypingIndicator(cfg Config) templ.Component {
+func typingIndicatorTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -230,7 +230,7 @@ func TypingIndicator(cfg Config) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var11 = []any{cfg.RowClasses()}
+		var templ_7745c5c3_Var11 = []any{cfg.rowClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -252,7 +252,7 @@ func TypingIndicator(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.HasAvatar() {
+		if cfg.hasAvatar() {
 			templ_7745c5c3_Err = bubbleAvatar(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -297,7 +297,7 @@ func bubbleAvatar(cfg Config) templ.Component {
 			Src:      cfg.AvatarSrc,
 			Name:     cfg.SenderName,
 			Initials: cfg.AvatarInitials,
-			Variant:  avatar.Variant(cfg.AvatarVariant),
+			Tone:     cfg.AvatarTone,
 			Size:     avatar.SizeSM,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -354,7 +354,7 @@ func bubbleHeader(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.IsBot {
-			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "BOT", Variant: badge.Info, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = badge.Badge(badge.Config{Label: "BOT", Tone: badge.ToneInfo, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -24,23 +24,23 @@ import (
 //	    Timestamp:      "11:32 AM",
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-//	    AvatarVariant:  "info",
+	//	    AvatarTone:     avatar.ToneInfo,
 //	})
-templ ChatBubble(cfg Config) {
+templ chatBubbleTemplate(cfg Config) {
 	<div
-		class={ cfg.RowClasses() }
-		data-mine={ cfg.DataMine() }
+		class={ cfg.rowClasses() }
+		data-mine={ cfg.dataMine() }
 		if cfg.Side == Auto && cfg.Sender != "" {
 			data-sender={ cfg.Sender }
 		}
 		{ cfg.RootAttrs... }
 	>
-		if cfg.HasAvatar() {
+		if cfg.hasAvatar() {
 			@bubbleAvatar(cfg)
 		}
 		<div class="flex min-w-0 flex-1 flex-col gap-1 group-data-[mine=true]:items-end">
-			<div class={ cfg.BubbleClasses() }>
-				if cfg.HasHeader() {
+			<div class={ cfg.bubbleClasses() }>
+				if cfg.hasHeader() {
 					@bubbleHeader(cfg)
 				}
 				<p class="whitespace-pre-wrap break-words">{ cfg.Message }</p>
@@ -62,11 +62,11 @@ templ ChatBubble(cfg Config) {
 //	@chatbubble.TypingIndicator(chatbubble.Config{
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-//	    AvatarVariant:  "info",
+	//	    AvatarTone:     avatar.ToneInfo,
 //	})
-templ TypingIndicator(cfg Config) {
-	<div class={ cfg.RowClasses() } data-mine="false" aria-label="typing" aria-live="polite">
-		if cfg.HasAvatar() {
+templ typingIndicatorTemplate(cfg Config) {
+	<div class={ cfg.rowClasses() } data-mine="false" aria-label="typing" aria-live="polite">
+		if cfg.hasAvatar() {
 			@bubbleAvatar(cfg)
 		}
 		<div
@@ -87,7 +87,7 @@ templ bubbleAvatar(cfg Config) {
 			Src:      cfg.AvatarSrc,
 			Name:     cfg.SenderName,
 			Initials: cfg.AvatarInitials,
-			Variant:  avatar.Variant(cfg.AvatarVariant),
+			Tone:     cfg.AvatarTone,
 			Size:     avatar.SizeSM,
 		})
 	</div>
@@ -103,7 +103,7 @@ templ bubbleHeader(cfg Config) {
 			{ cfg.SenderName }
 		</span>
 		if cfg.IsBot {
-			@badge.Badge(badge.Config{Label: "BOT", Variant: badge.Info, Size: badge.SizeSM})
+			@badge.Badge(badge.Config{Label: "BOT", Tone: badge.ToneInfo, Size: badge.SizeSM})
 		}
 		if cfg.Timestamp != "" {
 			<span class="text-xs font-normal opacity-70">

@@ -63,14 +63,14 @@ func TestCoveragePreviousNextAndSwapDefaults(t *testing.T) {
 	assert.Equal(t, 2, last.PreviousPage())
 	assert.Equal(t, 3, last.NextPage())
 
-	assert.Equal(t, "innerHTML", Config{}.SwapStrategy())
-	assert.Equal(t, "outerHTML", Config{HTMX: &HTMXConfig{Swap: "outerHTML"}}.SwapStrategy())
+	assert.Equal(t, "innerHTML", Config{}.swapStrategy())
+	assert.Equal(t, "outerHTML", Config{HTMX: &HTMXConfig{Swap: "outerHTML"}}.swapStrategy())
 }
 
 func TestCoverageRenderEllipsisAndHTMXBranches(t *testing.T) {
 	rendered := renderPagination(t, Config{
 		ID:          "paged-items",
-		Variant:     WithEllipsis,
+		Mode:        ModeEllipsis,
 		CurrentPage: 15,
 		TotalPages:  30,
 		BaseURL:     "/items?filter=active",
@@ -93,7 +93,7 @@ func TestCoverageRenderEllipsisAndHTMXBranches(t *testing.T) {
 
 func TestCoverageRenderSimpleLastPageDisablesNext(t *testing.T) {
 	rendered := renderPagination(t, Config{
-		Variant:     Simple,
+		Mode:        ModeSimple,
 		CurrentPage: 4,
 		TotalPages:  4,
 		BaseURL:     "/items",

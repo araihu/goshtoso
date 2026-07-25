@@ -23,14 +23,9 @@ type Source struct {
 
 // Option is one selectable item.
 type Option struct {
-	Value      string
-	Label      string
-	Meta       string
-	Img        string
-	Initials   string
-	Badge      string
-	BadgeColor string // one of: primary, secondary, info, success, warning, danger, neutral
-	Disabled   bool
+	Value    string
+	Label    string
+	Disabled bool
 }
 
 // Config holds the combobox configuration. ID must be globally unique per page.
@@ -72,7 +67,7 @@ type OptionsProvider func(ctx context.Context, search string, deps map[string]st
 // Source.Static or by populating State.Options). Configs with neither
 // Source.Static nor Source.LazyEndpoint are rejected by Validate, so in
 // practice "not lazy" implies "options are in DOM at paint".
-func (c Config) IsClientMode() bool {
+func (c Config) isClientMode() bool {
 	return c.Source.LazyEndpoint == ""
 }
 
@@ -91,7 +86,7 @@ func (c Config) Validate() error {
 		return fmt.Errorf("combobox: Config.Source must have Static or LazyEndpoint set")
 	}
 	// Server-mode (lazy or cascading) requires endpoints.
-	if !c.IsClientMode() {
+	if !c.isClientMode() {
 		if c.ToggleEndpoint == "" {
 			return fmt.Errorf("combobox: Config.ToggleEndpoint is required for server mode")
 		}
@@ -111,7 +106,7 @@ func (c Config) InitialState() State {
 }
 
 // IsSelected reports whether value is in the selected set.
-func (s State) IsSelected(value string) bool {
+func (s State) isSelected(value string) bool {
 	return slices.Contains(s.Selected, value)
 }
 
@@ -119,7 +114,7 @@ func (s State) IsSelected(value string) bool {
 // used by hx-include. Example for DependsOn=["provider","zone"]:
 //
 //	[name='provider'],[name='zone']
-func (c Config) DepsSelector() string {
+func (c Config) depsSelector() string {
 	if len(c.DependsOn) == 0 {
 		return ""
 	}
@@ -132,9 +127,9 @@ func (c Config) DepsSelector() string {
 
 // HXIncludeSelector returns the full hx-include selector for toggle/search requests:
 // own hidden inputs plus all dependency hidden inputs.
-func (c Config) HXIncludeSelector() string {
+func (c Config) hxIncludeSelector() string {
 	base := "closest [data-combobox] input[type=hidden]"
-	if deps := c.DepsSelector(); deps != "" {
+	if deps := c.depsSelector(); deps != "" {
 		return base + "," + deps
 	}
 	return base

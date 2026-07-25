@@ -2,26 +2,26 @@ package badge
 
 import "github.com/a-h/templ"
 
-// Variant represents badge style variants
-type Variant string
+// Tone represents badge style variants
+type Tone string
 
 const (
-	Default   Variant = "default"
-	Inverse   Variant = "inverse"
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Info      Variant = "info"
-	Success   Variant = "success"
-	Warning   Variant = "warning"
-	Danger    Variant = "danger"
+	ToneDefault   Tone = "default"
+	ToneInverse   Tone = "inverse"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneInfo      Tone = "info"
+	ToneSuccess   Tone = "success"
+	ToneWarning   Tone = "warning"
+	ToneDanger    Tone = "danger"
 )
 
-// Style represents badge style (solid or soft)
-type Style string
+// Appearance represents the badge fill treatment.
+type Appearance string
 
 const (
-	StyleSolid Style = "solid" // Default solid background
-	StyleSoft  Style = "soft"  // Subtle background with border
+	AppearanceSolid Appearance = ""     // Default solid background
+	AppearanceSoft  Appearance = "soft" // Subtle background with border
 )
 
 // Size represents badge size
@@ -37,10 +37,10 @@ const (
 type Config struct {
 	// Label is the badge content
 	Label string
-	// Variant determines the color scheme
-	Variant Variant
-	// Style determines solid or soft appearance
-	Style Style
+	// Tone determines the color scheme
+	Tone Tone
+	// Appearance determines solid or soft rendering.
+	Appearance Appearance
 	// Size of the badge
 	Size Size
 	// Icon is an optional icon component
@@ -54,7 +54,7 @@ type Config struct {
 }
 
 // SizeClasses returns the CSS classes for the size (text + padding)
-func (cfg Config) SizeClasses() string {
+func (cfg Config) sizeClasses() string {
 	switch cfg.Size {
 	case SizeSM:
 		return "text-[10px] px-1.5 py-0.5"
@@ -67,7 +67,7 @@ func (cfg Config) SizeClasses() string {
 
 // SizeTextClass returns only the text size class (no padding),
 // used on the outer container of badgeWithInner so the inner span controls padding.
-func (cfg Config) SizeTextClass() string {
+func (cfg Config) sizeTextClass() string {
 	switch cfg.Size {
 	case SizeSM:
 		return "text-[10px]"
@@ -78,44 +78,44 @@ func (cfg Config) SizeTextClass() string {
 	}
 }
 
-// VariantClasses returns the CSS classes for solid variant
-func (cfg Config) VariantClasses() string {
-	switch cfg.Variant {
-	case Inverse:
+// toneClasses returns the CSS classes for solid variant
+func (cfg Config) toneClasses() string {
+	switch cfg.Tone {
+	case ToneInverse:
 		return "border border-outline-dark bg-surface-dark-alt text-on-surface-dark dark:border-outline dark:bg-surface-alt dark:text-on-surface"
-	case Primary:
+	case TonePrimary:
 		return "border border-primary bg-primary text-on-primary dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark"
-	case Secondary:
+	case ToneSecondary:
 		return "border border-secondary bg-secondary text-on-secondary dark:border-secondary-dark dark:bg-secondary-dark dark:text-on-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "border border-info bg-info text-on-info"
-	case Success:
+	case ToneSuccess:
 		return "border border-success bg-success text-on-success"
-	case Warning:
+	case ToneWarning:
 		return "border border-warning bg-warning text-on-warning"
-	case Danger:
+	case ToneDanger:
 		return "border border-danger bg-danger text-on-danger"
 	default:
 		return "border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
 	}
 }
 
-// SoftVariantClasses returns the CSS classes for soft variant
-func (cfg Config) SoftVariantClasses() string {
-	switch cfg.Variant {
-	case Inverse:
+// softToneClasses returns the CSS classes for soft variant
+func (cfg Config) softToneClasses() string {
+	switch cfg.Tone {
+	case ToneInverse:
 		return "border border-outline-dark bg-surface text-on-surface dark:border-outline dark:bg-surface-dark dark:text-on-surface-dark"
-	case Primary:
+	case TonePrimary:
 		return "border border-primary bg-surface text-primary dark:border-primary-dark dark:bg-surface-dark dark:text-primary-dark"
-	case Secondary:
+	case ToneSecondary:
 		return "border border-secondary bg-surface text-secondary dark:border-secondary-dark dark:bg-surface-dark dark:text-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "border border-info bg-surface text-info dark:border-info dark:bg-surface-dark dark:text-info"
-	case Success:
+	case ToneSuccess:
 		return "border border-success bg-surface text-success dark:border-success dark:bg-surface-dark dark:text-success"
-	case Warning:
+	case ToneWarning:
 		return "border border-warning bg-surface text-warning dark:border-warning dark:bg-surface-dark dark:text-warning"
-	case Danger:
+	case ToneDanger:
 		return "border border-danger bg-surface text-danger dark:border-danger dark:bg-surface-dark dark:text-danger"
 	default:
 		return "border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
@@ -123,21 +123,21 @@ func (cfg Config) SoftVariantClasses() string {
 }
 
 // SoftInnerClasses returns the inner span classes for soft variant
-func (cfg Config) SoftInnerClasses() string {
-	switch cfg.Variant {
-	case Inverse:
+func (cfg Config) softInnerClasses() string {
+	switch cfg.Tone {
+	case ToneInverse:
 		return "bg-surface-dark-alt/10 dark:bg-surface-alt/10"
-	case Primary:
+	case TonePrimary:
 		return "bg-primary/10 dark:bg-primary-dark/10"
-	case Secondary:
+	case ToneSecondary:
 		return "bg-secondary/10 dark:bg-secondary-dark/10"
-	case Info:
+	case ToneInfo:
 		return "bg-info/10 dark:bg-info/10"
-	case Success:
+	case ToneSuccess:
 		return "bg-success/10 dark:bg-success/10"
-	case Warning:
+	case ToneWarning:
 		return "bg-warning/10 dark:bg-warning/10"
-	case Danger:
+	case ToneDanger:
 		return "bg-danger/10 dark:bg-danger/10"
 	default:
 		return "bg-surface-alt/10 dark:bg-surface-dark-alt/10"
@@ -145,25 +145,25 @@ func (cfg Config) SoftInnerClasses() string {
 }
 
 // IndicatorClasses returns the indicator dot classes
-func (cfg Config) IndicatorClasses() string {
+func (cfg Config) indicatorClasses() string {
 	if cfg.IndicatorColor != "" {
 		return "size-1.5 rounded-full " + cfg.IndicatorColor
 	}
 
-	switch cfg.Variant {
-	case Inverse:
+	switch cfg.Tone {
+	case ToneInverse:
 		return "size-1.5 rounded-full bg-on-surface dark:bg-on-surface-dark"
-	case Primary:
+	case TonePrimary:
 		return "size-1.5 rounded-full bg-primary dark:bg-primary-dark"
-	case Secondary:
+	case ToneSecondary:
 		return "size-1.5 rounded-full bg-secondary dark:bg-secondary-dark"
-	case Info:
+	case ToneInfo:
 		return "size-1.5 rounded-full bg-info"
-	case Success:
+	case ToneSuccess:
 		return "size-1.5 rounded-full bg-success"
-	case Warning:
+	case ToneWarning:
 		return "size-1.5 rounded-full bg-warning"
-	case Danger:
+	case ToneDanger:
 		return "size-1.5 rounded-full bg-danger"
 	default:
 		return "size-1.5 rounded-full bg-on-surface dark:bg-on-surface-dark"
@@ -171,6 +171,6 @@ func (cfg Config) IndicatorClasses() string {
 }
 
 // IsSoft returns true if badge uses soft style
-func (cfg Config) IsSoft() bool {
-	return cfg.Style == StyleSoft
+func (cfg Config) isSoft() bool {
+	return cfg.Appearance == AppearanceSoft
 }

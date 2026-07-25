@@ -14,26 +14,24 @@ func (s *Server) handleToastOOB(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	variant := r.FormValue("variant")
+	tone := r.FormValue("tone")
 	title := r.FormValue("title")
 	message := r.FormValue("message")
 
-	var v toast.Variant
-	switch variant {
+	var selectedTone toast.Tone
+	switch tone {
 	case "success":
-		v = toast.Success
+		selectedTone = toast.ToneSuccess
 	case "warning":
-		v = toast.Warning
+		selectedTone = toast.ToneWarning
 	case "danger":
-		v = toast.Danger
-	case "message":
-		v = toast.Message
+		selectedTone = toast.ToneDanger
 	default:
-		v = toast.Info
+		selectedTone = toast.ToneInfo
 	}
 
 	cfg := toast.Config{
-		Variant: v,
+		Tone:    selectedTone,
 		Title:   title,
 		Message: message,
 	}

@@ -15,6 +15,7 @@ import (
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/araihu/goshtoso/components/link"
 	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/search"
 	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/playwright-community/playwright-go"
@@ -68,10 +69,10 @@ func TestSecurityAttackSurfaceUnsafeHrefSchemesDoNotExecute(t *testing.T) {
 
 	jsHref := `javascript:void(window.__goshtosoHrefPwned='href')`
 	body := templ.Raw(strings.Join([]string{
-		renderSecurityComponentWithChildren(t, link.Link(link.Config{
-			Href:  jsHref,
-			Attrs: templ.Attributes{"data-attack-surface": "link"},
-		}), templ.Raw("Link")),
+		renderSecurityComponentWithChildren(t, link.Link(
+			jsHref,
+			link.WithAttrs(templ.Attributes{"data-attack-surface": "link"}),
+		), templ.Raw("Link")),
 		renderSecurityComponent(t, navbar.Navbar(navbar.Config{
 			Brand:     templ.Raw("Brand"),
 			BrandHref: jsHref,
@@ -140,6 +141,116 @@ func TestSecurityAttackSurfaceUnsafeHrefSchemesDoNotExecute(t *testing.T) {
 	got, err := page.Evaluate(`() => window.__goshtosoHrefPwned || ''`, nil)
 	require.NoError(t, err)
 	require.Empty(t, got, "unsafe href schemes must not execute script")
+}
+
+func TestSecurityAttackSurfaceSearchAttrsNavigationIsRevalidated(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+	page.SetDefaultTimeout(5000)
+
+	jsHref := `javascript:void(window.__goshtosoSearchPwned='attrs')`
+	srv := securityFixtureServer(t, search.Search(search.Config{
+		ID: "security-search",
+		Items: []search.Item{
+			{
+				Title: "Unsafe attrs result",
+				Attrs: templ.Attributes{"data-search-href": jsHref},
+			},
+			{
+				Title: "HTMX GET result",
+				Attrs: templ.Attributes{
+					"data-search-href": "/must-not-navigate-get",
+					"hx-get":           "/htmx-get",
+					"hx-swap":          "none",
+				},
+			},
+			{
+				Title: "HTMX POST result",
+				Attrs: templ.Attributes{
+					"data-search-href": "/must-not-navigate-post",
+					"hx-post":          "/htmx-post",
+					"hx-swap":          "none",
+				},
+			},
+			{
+				Title: "Allowed relative result",
+				Href:  "/safe-target",
+			},
+		},
+	}))
+
+	_, err := page.Goto(srv.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => typeof Alpine !== 'undefined'`, nil)
+	require.NoError(t, err)
+	_, err = page.Evaluate(`() => {
+		const modal = document.querySelector('#security-search-dialog');
+		const state = modal && modal._x_dataStack && modal._x_dataStack[0];
+		if (!state) throw new Error('search Alpine state is unavailable');
+		const safeHref = state.safeHref.bind(state);
+		window.__goshtosoSearchSafeHrefCalls = [];
+		state.safeHref = function (value) {
+			window.__goshtosoSearchSafeHrefCalls.push(value);
+			return safeHref(value);
+		};
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator(`#security-search button[aria-haspopup="dialog"]`)
+	require.NoError(t, trigger.Click())
+	input := page.Locator("#security-search-input")
+	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, input.Fill("unsafe attrs"))
+	unsafeResult := page.Locator(`#security-search-dialog [data-search-result]:visible`)
+	require.NoError(t, unsafeResult.Click())
+
+	got, err := page.Evaluate(`() => window.__goshtosoSearchPwned || ''`, nil)
+	require.NoError(t, err)
+	require.Empty(t, got, "Attrs-provided data-search-href must be revalidated before navigation")
+	revalidated, err := page.Evaluate(
+		`expected => window.__goshtosoSearchSafeHrefCalls.length === 1 && window.__goshtosoSearchSafeHrefCalls[0] === expected`,
+		jsHref,
+	)
+	require.NoError(t, err)
+	require.Equal(t, true, revalidated, "selection must pass the live DOM data-search-href through safeHref")
+	require.Equal(t, srv.URL+"/", page.URL(), "unsafe Attrs navigation must leave the current page unchanged")
+
+	for _, tc := range []struct {
+		query  string
+		path   string
+		method string
+	}{
+		{query: "htmx get", path: "/htmx-get", method: "GET"},
+		{query: "htmx post", path: "/htmx-post", method: "POST"},
+	} {
+		require.NoError(t, trigger.Click())
+		require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{
+			State: playwright.WaitForSelectorStateVisible,
+		}))
+		require.NoError(t, input.Fill(tc.query))
+		htmxResult := page.Locator(`#security-search-dialog [data-search-result]:visible`)
+		request, requestErr := page.ExpectRequest("**"+tc.path, func() error {
+			return htmxResult.Click()
+		})
+		require.NoError(t, requestErr)
+		require.Equal(t, tc.method, request.Method())
+		require.Equal(t, srv.URL+"/", page.URL(), "HTMX result must suppress plain data-search-href navigation")
+	}
+
+	require.NoError(t, trigger.Click())
+	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, input.Fill("allowed relative"))
+	allowedResult := page.Locator(`#security-search-dialog [data-search-result]:visible`)
+	require.NoError(t, allowedResult.Click())
+	require.NoError(t, page.WaitForURL("**/safe-target"))
 }
 
 func TestSecurityAttackSurfaceTableFilterTargetDoesNotExecuteScript(t *testing.T) {

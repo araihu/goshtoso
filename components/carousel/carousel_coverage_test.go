@@ -8,11 +8,13 @@ import (
 )
 
 func TestCoverageCarouselConfigHelpers(t *testing.T) {
-	if !hasOverlay(WithText) || !hasOverlay(WithCTA) {
-		t.Fatal("text and CTA variants should render overlays")
+	if !hasOverlay(Config{Slides: []Slide{{Title: "Title"}}}) ||
+		!hasOverlay(Config{Slides: []Slide{{Description: "Description"}}}) ||
+		!hasOverlay(Config{Slides: []Slide{{CTALabel: "Open", CTAHref: "/open"}}}) {
+		t.Fatal("slide content should render overlays")
 	}
-	if hasOverlay(Default) || hasOverlay(OnCard) {
-		t.Fatal("default and card variants should not render overlays")
+	if hasOverlay(Config{}) || hasOverlay(Config{Slides: []Slide{{CTALabel: "Missing href"}}}) {
+		t.Fatal("empty slides and incomplete CTAs should not render overlays")
 	}
 
 	helperCases := []struct {
@@ -22,19 +24,19 @@ func TestCoverageCarouselConfigHelpers(t *testing.T) {
 	}{
 		{"default transition", transitionAttr(Config{}), "1000ms"},
 		{"touch transition", transitionAttr(Config{Touch: true}), "700ms"},
-		{"card transition", transitionAttr(Config{Variant: OnCard, Touch: true}), "300ms"},
 		{"root class", containerClasses(Config{RootClass: "custom-root"}), "relative w-full overflow-hidden custom-root"},
 		{"default slides classes", slidesContainerClasses(Config{}), "relative min-h-[50svh] w-full"},
 		{"height slides classes", slidesContainerClasses(Config{Height: "h-32"}), "relative h-32 w-full"},
 		{"aspect slides classes", slidesContainerClasses(Config{AspectRatio: "3/1"}), "aspect-3/1 relative w-full"},
 		{"nav button classes", navButtonClasses(), "absolute top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-surface/40 p-2 text-on-surface transition hover:bg-surface/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:outline-offset-0 dark:bg-surface-dark/40 dark:text-on-surface-dark dark:hover:bg-surface-dark/60 dark:focus-visible:outline-primary-dark"},
 		{"default indicators", indicatorContainerClasses(Config{}), "absolute rounded-radius bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 px-1.5 py-1 md:px-2 bg-surface/75 dark:bg-surface-dark/75"},
-		{"overlay indicators", indicatorContainerClasses(Config{Variant: WithText}), "absolute rounded-radius bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 px-1.5 py-1 md:px-2"},
+		{"overlay indicators", indicatorContainerClasses(Config{Slides: []Slide{{Title: "Title"}}}), "absolute rounded-radius bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 px-1.5 py-1 md:px-2"},
 		{"default active indicator", indicatorActiveClasses(Config{}), "bg-on-surface dark:bg-on-surface-dark"},
 		{"autoplay active indicator", indicatorActiveClasses(Config{Autoplay: &AutoplayConfig{}}), "bg-on-surface-dark"},
 		{"default inactive indicator", indicatorInactiveClasses(Config{}), "bg-on-surface/50 dark:bg-on-surface-dark/50"},
-		{"overlay inactive indicator", indicatorInactiveClasses(Config{Variant: WithCTA}), "bg-on-surface-dark/50"},
-		{"card container", cardContainerClasses(), "group flex max-w-sm flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"},
+		{"overlay inactive indicator", indicatorInactiveClasses(Config{Slides: []Slide{{Description: "Description"}}}), "bg-on-surface-dark/50"},
+		{"card container", cardContainerClasses(""), "group flex max-w-sm flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"},
+		{"card root class", cardContainerClasses("custom-card"), "group flex max-w-sm flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark custom-card"},
 	}
 	for _, tc := range helperCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -79,8 +81,11 @@ func TestCoverageGenerateAlpineDataIncludesOptionalBehavior(t *testing.T) {
 
 func TestCoverageRenderDefaultCarousel(t *testing.T) {
 	html := renderCoverageCarousel(t, Config{
-		ID:          "coverage-default",
-		Slides:      coverageSlides(),
+		ID: "coverage-default",
+		Slides: []Slide{
+			{ImgSrc: "/assets/one.webp", ImgAlt: "Slide one"},
+			{ImgSrc: "/assets/two.webp", ImgAlt: "Slide two"},
+		},
 		Touch:       true,
 		AspectRatio: "3/1",
 		RootClass:   "coverage-root",
@@ -105,12 +110,11 @@ func TestCoverageRenderDefaultCarousel(t *testing.T) {
 	}
 }
 
-func TestCoverageRenderTextAndCTACarousels(t *testing.T) {
+func TestCoverageRenderInferredSlideOverlays(t *testing.T) {
 	textHTML := renderCoverageCarousel(t, Config{
-		ID:      "coverage-text",
-		Variant: WithText,
-		Slides:  coverageSlides(),
-		Height:  "h-64",
+		ID:     "coverage-text",
+		Slides: coverageSlides(),
+		Height: "h-64",
 	})
 	for _, want := range []string{
 		`id="coverage-text"`,
@@ -125,22 +129,13 @@ func TestCoverageRenderTextAndCTACarousels(t *testing.T) {
 			t.Fatalf("text carousel render missing %q in:\n%s", want, textHTML)
 		}
 	}
-	if strings.Contains(textHTML, `x-bind:href="slide.ctaUrl"`) {
-		t.Fatalf("text carousel should not render CTA link:\n%s", textHTML)
-	}
-
-	ctaHTML := renderCoverageCarousel(t, Config{
-		ID:      "coverage-cta",
-		Variant: WithCTA,
-		Slides:  coverageSlides(),
-	})
 	for _, want := range []string{
-		`id="coverage-cta"`,
 		`x-bind:href="slide.ctaUrl"`,
 		`x-text="slide.ctaText"`,
+		`x-if="slide.ctaText && slide.ctaUrl"`,
 	} {
-		if !strings.Contains(ctaHTML, want) {
-			t.Fatalf("CTA carousel render missing %q in:\n%s", want, ctaHTML)
+		if !strings.Contains(textHTML, want) {
+			t.Fatalf("CTA carousel render missing %q in:\n%s", want, textHTML)
 		}
 	}
 }
@@ -164,17 +159,20 @@ func TestCoverageRenderAutoplayCardAndHTMXCarousels(t *testing.T) {
 		}
 	}
 
-	cardHTML := renderCoverageCarousel(t, Config{
-		ID:      "coverage-card",
-		Variant: OnCard,
-		Slides:  coverageSlides(),
-	})
+	cardHTML := renderStructuralCarousel(t, CardCarousel(CardConfig{
+		ID:        "coverage-card",
+		Slides:    coverageSlides(),
+		RootClass: "coverage-card-root",
+		Touch:     true,
+	}))
 	for _, want := range []string{
 		`<article`,
 		`id="coverage-card"`,
 		`style="-webkit-mask-image: -webkit-radial-gradient(white, black)"`,
 		`relative h-48 lg:h-64 w-full`,
 		`x-transition.opacity.duration.300ms`,
+		`coverage-card-root`,
+		`x-on:touchstart="handleTouchStart($event)"`,
 		`x-text="slides[currentSlideIndex - 1]?.title || ''"`,
 		`x-text="slides[currentSlideIndex - 1]?.description || ''"`,
 	} {

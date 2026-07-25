@@ -17,14 +17,14 @@ import (
 func rowID(id int) string { return fmt.Sprintf("todo-row-%d", id) }
 
 // priorityVariant maps a priority string to a badge variant.
-func priorityVariant(p string) badge.Variant {
+func priorityVariant(p string) badge.Tone {
 	switch p {
 	case "high":
-		return badge.Danger
+		return badge.ToneDanger
 	case "low":
-		return badge.Secondary
+		return badge.ToneSecondary
 	default:
-		return badge.Warning
+		return badge.ToneWarning
 	}
 }
 
@@ -55,17 +55,19 @@ templ ClearButton(doneCount int, oob bool) {
 			hx-swap-oob="true"
 		}
 	>
-		@button.Button(button.Config{
-			Variant:  button.Secondary,
-			Size:     button.SizeSmall,
-			Type:     "button",
-			Disabled: doneCount == 0,
-			HTMX: &button.HTMXConfig{
+		{{ options := []button.Option{
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithHTMX(&button.HTMXConfig{
 				Post:   "/api/examples/todo/clear-completed",
 				Target: "#todo-list",
 				Swap:   "outerHTML",
-			},
-		}) {
+			}),
+		} }}
+		if doneCount == 0 {
+			{{ options = append(options, button.Disabled()) }}
+		}
+		@button.Button(options...) {
 			Clear completed
 		}
 	</div>
@@ -119,7 +121,7 @@ templ TodoRow(t todo.Todo) {
 		if t.Due != "" {
 			<span class="shrink-0 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ t.Due }</span>
 		}
-		@badge.Badge(badge.Config{Variant: priorityVariant(t.Priority), Label: t.Priority})
+		@badge.Badge(badge.Config{Tone: priorityVariant(t.Priority), Label: t.Priority})
 		<button
 			type="button"
 			aria-label="Move up"
@@ -233,7 +235,7 @@ templ TodoApp(s todo.State) {
 							@textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "due", Label: "Due"})
 						</div>
 						<div class="sm:ml-auto">
-							@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+							@button.Button(button.WithType("submit")) {
 								Add task
 							}
 						</div>
@@ -251,7 +253,7 @@ templ TodoApp(s todo.State) {
 				@TodoList(s)
 			</div>
 		</div>
-		@toast.Container(toast.ContainerConfig{})
+		@toast.ToastContainer(toast.ContainerConfig{})
 	</div>
 }
 
@@ -261,4 +263,3 @@ templ TodoApp(s todo.State) {
 templ TodoContent() {
 	@TodoApp(todo.State{Filter: "all"})
 }
-

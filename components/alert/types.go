@@ -1,13 +1,13 @@
 package alert
 
-// Variant represents alert color variants
-type Variant string
+// Tone represents alert color variants
+type Tone string
 
 const (
-	Info    Variant = "info"
-	Success Variant = "success"
-	Warning Variant = "warning"
-	Danger  Variant = "danger"
+	ToneInfo    Tone = "info"
+	ToneSuccess Tone = "success"
+	ToneWarning Tone = "warning"
+	ToneDanger  Tone = "danger"
 )
 
 // LinkConfig holds configuration for an alert link
@@ -48,8 +48,8 @@ type Config struct {
 	Title string
 	// Description is the alert body text
 	Description string
-	// Variant determines the color scheme (info, success, warning, danger)
-	Variant Variant
+	// Tone determines the color scheme (info, success, warning, danger)
+	Tone Tone
 	// Dismissible enables the dismiss button with Alpine.js transition
 	Dismissible bool
 	// Link adds a link action to the alert
@@ -63,17 +63,17 @@ type Config struct {
 }
 
 // ContainerClasses returns the outer container CSS classes
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	base := "relative w-full overflow-hidden rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"
 
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		base += " border-info"
-	case Success:
+	case ToneSuccess:
 		base += " border-success"
-	case Warning:
+	case ToneWarning:
 		base += " border-warning"
-	case Danger:
+	case ToneDanger:
 		base += " border-danger"
 	default:
 		base += " border-info"
@@ -87,17 +87,17 @@ func (cfg Config) ContainerClasses() string {
 }
 
 // InnerClasses returns the inner wrapper CSS classes
-func (cfg Config) InnerClasses() string {
+func (cfg Config) innerClasses() string {
 	base := "flex w-full items-center gap-2 p-4"
 
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		base += " bg-info/10"
-	case Success:
+	case ToneSuccess:
 		base += " bg-success/10"
-	case Warning:
+	case ToneWarning:
 		base += " bg-warning/10"
-	case Danger:
+	case ToneDanger:
 		base += " bg-danger/10"
 	default:
 		base += " bg-info/10"
@@ -107,17 +107,17 @@ func (cfg Config) InnerClasses() string {
 }
 
 // IconBadgeClasses returns the icon badge CSS classes
-func (cfg Config) IconBadgeClasses() string {
+func (cfg Config) iconBadgeClasses() string {
 	base := "rounded-full p-1"
 
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		base += " bg-info/15 text-info"
-	case Success:
+	case ToneSuccess:
 		base += " bg-success/15 text-success"
-	case Warning:
+	case ToneWarning:
 		base += " bg-warning/15 text-warning"
-	case Danger:
+	case ToneDanger:
 		base += " bg-danger/15 text-danger"
 	default:
 		base += " bg-info/15 text-info"
@@ -127,17 +127,17 @@ func (cfg Config) IconBadgeClasses() string {
 }
 
 // TitleClasses returns the title CSS classes
-func (cfg Config) TitleClasses() string {
+func (cfg Config) titleClasses() string {
 	base := "text-sm font-semibold"
 
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		base += " text-info"
-	case Success:
+	case ToneSuccess:
 		base += " text-success"
-	case Warning:
+	case ToneWarning:
 		base += " text-warning"
-	case Danger:
+	case ToneDanger:
 		base += " text-danger"
 	default:
 		base += " text-info"
@@ -147,17 +147,17 @@ func (cfg Config) TitleClasses() string {
 }
 
 // LinkClasses returns the link CSS classes
-func (cfg Config) LinkClasses() string {
+func (cfg Config) linkClasses() string {
 	base := "whitespace-nowrap ml-auto text-sm font-medium tracking-wide transition hover:opacity-75 text-center active:opacity-100"
 
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		base += " text-info"
-	case Success:
+	case ToneSuccess:
 		base += " text-success"
-	case Warning:
+	case ToneWarning:
 		base += " text-warning"
-	case Danger:
+	case ToneDanger:
 		base += " text-danger"
 	default:
 		base += " text-info"
@@ -167,17 +167,17 @@ func (cfg Config) LinkClasses() string {
 }
 
 // PrimaryActionClasses returns the primary action button CSS classes
-func (cfg Config) PrimaryActionClasses() string {
+func (cfg Config) primaryActionClasses() string {
 	base := "whitespace-nowrap text-center text-sm font-semibold tracking-wide transition hover:opacity-75 active:opacity-100"
 
-	switch cfg.Variant {
-	case Info:
+	switch cfg.Tone {
+	case ToneInfo:
 		base += " text-info"
-	case Success:
+	case ToneSuccess:
 		base += " text-success"
-	case Warning:
+	case ToneWarning:
 		base += " text-warning"
-	case Danger:
+	case ToneDanger:
 		base += " text-danger"
 	default:
 		base += " text-info"
@@ -187,10 +187,10 @@ func (cfg Config) PrimaryActionClasses() string {
 }
 
 // ListClasses returns the list CSS classes
-func (cfg Config) ListClasses() string {
+func (cfg Config) listClasses() string {
 	base := "mt-2 list-inside list-disc pl-2 text-xs font-medium sm:text-sm"
 
-	if cfg.Variant == Danger {
+	if cfg.Tone == ToneDanger {
 		base += " text-danger"
 	}
 

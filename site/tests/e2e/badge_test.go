@@ -25,7 +25,7 @@ func TestBadgeComponentDemo(t *testing.T) {
 		for _, id := range []string{"#badge-solid", "#badge-soft"} {
 			for _, label := range []string{"Default", "Primary", "Secondary", "Info", "Success", "Warning", "Danger"} {
 				require.NoError(t, page.Locator(id).GetByText(label, playwright.LocatorGetByTextOptions{
-					Exact: playwright.Bool(true),
+					Exact: new(true),
 				}).WaitFor())
 			}
 		}
@@ -62,8 +62,8 @@ func TestBadgeComponentDemo(t *testing.T) {
 		require.NoError(t, page.Locator("#badge-notification button[aria-label='messages']").WaitFor())
 		require.NoError(t, page.Locator("#badge-notification button[aria-label='alerts']").WaitFor())
 
-		require.NoError(t, page.Locator("#badge-notification").GetByText("99", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-		require.NoError(t, page.Locator("#badge-notification").GetByText("5", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, page.Locator("#badge-notification").GetByText("99", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
+		require.NoError(t, page.Locator("#badge-notification").GetByText("5", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 		dotCount, err := page.Locator("#badge-notification span.size-3").Count()
 		require.NoError(t, err)
@@ -92,7 +92,7 @@ func TestBadgeComponentDemo(t *testing.T) {
 				State: playwright.WaitForSelectorStateVisible,
 			}))
 			visible, err := page.Locator("[data-testid='badge-size-preview-"+tc.size+"']").GetByText(tc.label, playwright.LocatorGetByTextOptions{
-				Exact: playwright.Bool(true),
+				Exact: new(true),
 			}).IsVisible()
 			require.NoError(t, err)
 			assert.True(t, visible, "expected %s badge to be visible", tc.label)

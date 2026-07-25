@@ -32,8 +32,8 @@ func TestToastCoverageDemo(t *testing.T) {
 	require.NoError(t, waitForAlpine(page))
 
 	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-		Name:  "Toast Notification",
-		Exact: playwright.Bool(true),
+		Name:  "Toast",
+		Exact: new(true),
 	}).WaitFor())
 	for _, selector := range []string{"#toast-fragment", "#toast-container", "#toast-alpine", "#toast-htmx", "#toast-static"} {
 		require.NoErrorf(t, page.Locator(selector).WaitFor(playwright.LocatorWaitForOptions{
@@ -46,7 +46,6 @@ func TestToastCoverageDemo(t *testing.T) {
 		`() => Array.from(document.querySelectorAll('#toast-container [role="alert"]')).some(el =>
 			el.textContent.includes('Jack Ellis') &&
 			el.textContent.includes('Hey, can you review the PR I just submitted?') &&
-			el.textContent.includes('Reply') &&
 			el.textContent.includes('Dismiss'))`,
 		nil,
 	)
@@ -64,9 +63,9 @@ func TestToastCoverageDemo(t *testing.T) {
 	staticAlerts := page.Locator("#toast-static [role='alert']")
 	count, err := staticAlerts.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 5, count, "static preview should render every documented toast variant")
+	assert.Equal(t, 5, count, "static preview should render every documented toast primitive")
 	require.NoError(t, page.Locator("#toast-static").GetByText("Jack Ellis", playwright.LocatorGetByTextOptions{
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).WaitFor())
 
 	clickUntil(t, page, page.Locator("#toast-htmx button", playwright.PageLocatorOptions{HasText: "Server Info Toast"}),

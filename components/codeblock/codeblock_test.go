@@ -20,48 +20,46 @@ func renderCodeBlock(t *testing.T, cfg Config) string {
 func TestConfigGetIDIsDeterministicWithoutMutableCounter(t *testing.T) {
 	cfg := Config{Language: "go", Label: "Example", Code: "fmt.Println(\"hi\")"}
 
-	first := cfg.GetID()
-	second := cfg.GetID()
+	first := cfg.getID()
+	second := cfg.getID()
 
 	if first == "" {
-		t.Fatal("GetID returned empty ID")
+		t.Fatal("getID returned empty ID")
 	}
 	if first != second {
-		t.Fatalf("GetID = %q then %q; want deterministic result", first, second)
+		t.Fatalf("getID = %q then %q; want deterministic result", first, second)
 	}
 	if strings.Contains(first, " ") {
-		t.Fatalf("GetID contains whitespace: %q", first)
+		t.Fatalf("getID contains whitespace: %q", first)
 	}
 }
 
 func TestConfigGetIDHonorsExplicitID(t *testing.T) {
 	cfg := Config{ID: "install-snippet"}
 
-	if got := cfg.GetID(); got != "install-snippet" {
-		t.Fatalf("GetID = %q; want explicit ID", got)
+	if got := cfg.getID(); got != "install-snippet" {
+		t.Fatalf("getID = %q; want explicit ID", got)
 	}
 }
 
 func TestConfigGetIDConcurrentCallsAreStable(t *testing.T) {
 	cfg := Config{Language: "bash", Label: "Install", Code: "go test ./components/..."}
-	want := cfg.GetID()
+	want := cfg.getID()
 
 	var wg sync.WaitGroup
 	errs := make(chan string, 32)
 	for range 32 {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			if got := cfg.GetID(); got != want {
+		wg.Go(func() {
+			if got := cfg.getID(); got != want {
 				errs <- got
 			}
-		}()
+		})
 	}
 	wg.Wait()
 	close(errs)
 
 	for got := range errs {
-		t.Fatalf("concurrent GetID = %q; want %q", got, want)
+		t.Fatalf("concurrent getID = %q; want %q", got, want)
 	}
 }
 
@@ -70,7 +68,7 @@ func TestCodeBlockCopyButtonHasDistinctAccessibleName(t *testing.T) {
 		ID:       "component-example",
 		Language: "go",
 		Label:    "Button usage",
-		Code:     `@button.Button(button.Config{})`,
+		Code:     `@button.Button()`,
 	})
 
 	if !strings.Contains(html, `aria-label="Copy Button usage code"`) {

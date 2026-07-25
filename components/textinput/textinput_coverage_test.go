@@ -178,35 +178,35 @@ func TestCoverageLabelStateIcons(t *testing.T) {
 // TestCoverageConfigHelpers exercises the pure config helpers directly so each
 // branch is covered without rendering.
 func TestCoverageConfigHelpers(t *testing.T) {
-	assert.Equal(t, TypeText, Config{}.GetType())
-	assert.Equal(t, TypeEmail, Config{Type: TypeEmail}.GetType())
+	assert.Equal(t, TypeText, Config{}.getType())
+	assert.Equal(t, TypeEmail, Config{Type: TypeEmail}.getType())
 
-	assert.True(t, Config{Type: TypePassword}.IsPassword())
-	assert.False(t, Config{}.IsPassword())
-	assert.True(t, Config{Type: TypeSearch}.IsSearch())
-	assert.False(t, Config{}.IsSearch())
+	assert.True(t, Config{Type: TypePassword}.isPassword())
+	assert.False(t, Config{}.isPassword())
+	assert.True(t, Config{Type: TypeSearch}.isSearch())
+	assert.False(t, Config{}.isSearch())
 
-	assert.True(t, Config{Mask: "x"}.HasMask())
-	assert.False(t, Config{}.HasMask())
-	assert.True(t, Config{Pattern: "x"}.HasPattern())
-	assert.False(t, Config{}.HasPattern())
-	assert.True(t, Config{MaxLength: 1}.HasMaxLength())
-	assert.False(t, Config{}.HasMaxLength())
-	assert.Equal(t, "0", Config{}.MaxLengthStr())
-	assert.Equal(t, "42", Config{MaxLength: 42}.MaxLengthStr())
+	assert.True(t, Config{Mask: "x"}.hasMask())
+	assert.False(t, Config{}.hasMask())
+	assert.True(t, Config{Pattern: "x"}.hasPattern())
+	assert.False(t, Config{}.hasPattern())
+	assert.True(t, Config{MaxLength: 1}.hasMaxLength())
+	assert.False(t, Config{}.hasMaxLength())
+	assert.Equal(t, "0", Config{}.maxLengthStr())
+	assert.Equal(t, "42", Config{MaxLength: 42}.maxLengthStr())
 
 	// Class helpers: default, error, success branches.
 	for _, st := range []State{StateDefault, StateError, StateSuccess} {
 		cfg := Config{State: st}
-		assert.NotEmpty(t, cfg.InputClasses())
-		assert.NotEmpty(t, cfg.LabelClasses())
-		assert.NotEmpty(t, cfg.HelperTextClasses())
+		assert.NotEmpty(t, cfg.inputClasses())
+		assert.NotEmpty(t, cfg.labelClasses())
+		assert.NotEmpty(t, cfg.helperTextClasses())
 		assert.NotEmpty(t, searchInputClasses(cfg))
 	}
 
 	// Container with and without RootClass.
-	assert.NotContains(t, Config{}.ContainerClasses(), "extra")
-	assert.Contains(t, Config{RootClass: "extra"}.ContainerClasses(), "extra")
+	assert.NotContains(t, Config{}.containerClasses(), "extra")
+	assert.Contains(t, Config{RootClass: "extra"}.containerClasses(), "extra")
 }
 
 // TestCoverageDefaultNoLabelNoHelper covers the false branches for label and

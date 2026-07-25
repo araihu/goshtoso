@@ -67,7 +67,7 @@ func TestRating_EmojiSelectionUpdates(t *testing.T) {
 	assert.Equal(t, 1, activeEmojiCount, "emoji rating should activate exactly one sentiment")
 }
 
-func TestRating_DisabledAndReadOnly(t *testing.T) {
+func TestRating_DisabledAndDisplay(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	navigateToRatingDemo(t, page)
 
@@ -76,11 +76,11 @@ func TestRating_DisabledAndReadOnly(t *testing.T) {
 	assert.False(t, ratingChecked(t, page, "#rating-disabled-control-5"))
 	assert.True(t, ratingChecked(t, page, "#rating-disabled-control-2"))
 
-	readOnlyRadios, err := page.Locator("#rating-readonly input[type='radio']").Count()
+	displayRadios, err := page.Locator("#rating-readonly input[type='radio']").Count()
 	require.NoError(t, err)
-	assert.Equal(t, 0, readOnlyRadios)
+	assert.Equal(t, 0, displayRadios)
 
 	label, err := page.Locator("#rating-readonly-summary").GetAttribute("aria-label")
 	require.NoError(t, err)
-	assert.Equal(t, "4 stars", label)
+	assert.Equal(t, "Average rating", label)
 }

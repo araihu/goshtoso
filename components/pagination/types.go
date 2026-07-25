@@ -2,14 +2,14 @@ package pagination
 
 import "net/url"
 
-// Variant represents pagination style variants
-type Variant string
+// Mode determines which pagination controls render.
+type Mode string
 
 const (
-	// WithEllipsis shows page numbers with ellipsis for gaps
-	WithEllipsis Variant = "ellipsis"
-	// Simple shows only Previous and Next buttons
-	Simple Variant = "simple"
+	// ModeEllipsis shows page numbers with ellipsis for gaps. This is the default.
+	ModeEllipsis Mode = ""
+	// ModeSimple shows only Previous and Next buttons.
+	ModeSimple Mode = "simple"
 )
 
 // PageItem represents a single item in the pagination list
@@ -32,8 +32,8 @@ type HTMXConfig struct {
 type Config struct {
 	// ID is the pagination element ID
 	ID string
-	// Variant determines the pagination style
-	Variant Variant
+	// Mode determines which pagination controls render.
+	Mode Mode
 	// CurrentPage is the 1-indexed current page number
 	CurrentPage int
 	// TotalPages is the total number of pages
@@ -89,7 +89,7 @@ func (cfg Config) PageURL(page int) string {
 }
 
 // SwapStrategy returns the HTMX swap strategy, defaulting to innerHTML
-func (cfg Config) SwapStrategy() string {
+func (cfg Config) swapStrategy() string {
 	if cfg.HTMX != nil && cfg.HTMX.Swap != "" {
 		return cfg.HTMX.Swap
 	}
@@ -97,7 +97,7 @@ func (cfg Config) SwapStrategy() string {
 }
 
 // NavClasses returns CSS classes for the nav element
-func (cfg Config) NavClasses() string {
+func (cfg Config) navClasses() string {
 	base := "flex items-center"
 	if cfg.NavClass != "" {
 		base += " " + cfg.NavClass
@@ -106,12 +106,12 @@ func (cfg Config) NavClasses() string {
 }
 
 // ListClasses returns CSS classes for the ul element
-func (cfg Config) ListClasses() string {
+func (cfg Config) listClasses() string {
 	return "flex shrink-0 items-center gap-2 text-sm font-medium"
 }
 
 // PrevNextClasses returns CSS classes for previous/next links
-func (cfg Config) PrevNextClasses(enabled bool) string {
+func (cfg Config) prevNextClasses(enabled bool) string {
 	if enabled {
 		return "flex items-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark"
 	}
@@ -119,7 +119,7 @@ func (cfg Config) PrevNextClasses(enabled bool) string {
 }
 
 // PageClasses returns CSS classes for a page number link
-func (cfg Config) PageClasses(isCurrent bool) string {
+func (cfg Config) pageClasses(isCurrent bool) string {
 	if isCurrent {
 		return "flex size-6 items-center justify-center rounded-radius bg-primary p-1 font-bold text-on-primary dark:bg-primary-dark dark:text-on-primary-dark"
 	}
@@ -127,7 +127,7 @@ func (cfg Config) PageClasses(isCurrent bool) string {
 }
 
 // EllipsisClasses returns CSS classes for the ellipsis indicator
-func (cfg Config) EllipsisClasses() string {
+func (cfg Config) ellipsisClasses() string {
 	return "flex size-6 items-center justify-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark"
 }
 

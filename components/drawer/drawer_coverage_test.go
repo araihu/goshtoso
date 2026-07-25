@@ -40,10 +40,10 @@ func TestCoveragePanelClassesCoverSidesWidthsAndCustomClass(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.cfg.PanelClasses()
+			got := tt.cfg.panelClasses()
 			for _, want := range tt.want {
 				if !strings.Contains(got, want) {
-					t.Fatalf("PanelClasses() = %q; missing %q", got, want)
+					t.Fatalf("panelClasses() = %q; missing %q", got, want)
 				}
 			}
 		})
@@ -52,20 +52,20 @@ func TestCoveragePanelClassesCoverSidesWidthsAndCustomClass(t *testing.T) {
 
 func TestCoverageBodyAndTransitionDefaults(t *testing.T) {
 	cfg := Config{ID: "filters"}
-	if got := cfg.GetBodyID(); got != "filters-body" {
-		t.Fatalf("GetBodyID() = %q; want filters-body", got)
+	if got := cfg.getBodyID(); got != "filters-body" {
+		t.Fatalf("getBodyID() = %q; want filters-body", got)
 	}
-	if got := (Config{BodyID: "custom-body"}).GetBodyID(); got != "custom-body" {
-		t.Fatalf("custom GetBodyID() = %q; want custom-body", got)
+	if got := (Config{BodyID: "custom-body"}).getBodyID(); got != "custom-body" {
+		t.Fatalf("custom getBodyID() = %q; want custom-body", got)
 	}
-	if got := (Config{Side: SideLeft}).EnterStart(); got != "-translate-x-full" {
-		t.Fatalf("left EnterStart() = %q; want -translate-x-full", got)
+	if got := (Config{Side: SideLeft}).enterStart(); got != "-translate-x-full" {
+		t.Fatalf("left enterStart() = %q; want -translate-x-full", got)
 	}
-	if got := (Config{Side: SideRight}).EnterStart(); got != "translate-x-full" {
-		t.Fatalf("right EnterStart() = %q; want translate-x-full", got)
+	if got := (Config{Side: SideRight}).enterStart(); got != "translate-x-full" {
+		t.Fatalf("right enterStart() = %q; want translate-x-full", got)
 	}
-	if got := (Config{}).EnterEnd(); got != "translate-x-0" {
-		t.Fatalf("EnterEnd() = %q; want translate-x-0", got)
+	if got := (Config{}).enterEnd(); got != "translate-x-0" {
+		t.Fatalf("enterEnd() = %q; want translate-x-0", got)
 	}
 }
 

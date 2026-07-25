@@ -84,7 +84,7 @@ func TestHandler_PostToggle_Multi_AppendsValue(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rec.Code)
 
-	// Body now has two hidden inputs.
+	// The body now has two hidden inputs.
 	body := rec.Body.String()
 	assert.Equal(t, 2, strings.Count(body, `type="hidden"`))
 	assert.Contains(t, body, `value="creating"`)

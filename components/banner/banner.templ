@@ -22,14 +22,15 @@ package banner
 //	@banner.Banner(banner.Config{
 //	    Description: "Important announcement",
 //	    Position: banner.PositionFixed,
-//	    Variant: banner.Warning,
+//	    Tone: banner.ToneWarning,
 //	})
-templ Banner(cfg Config) {
-	if cfg.CookieBanner {
-		@cookieBanner(cfg)
-	} else {
-		@simpleBanner(cfg)
-	}
+templ bannerTemplate(cfg Config) {
+	@simpleBanner(cfg)
+}
+
+// CookieBanner renders a cookie-consent dialog.
+templ cookieBannerTemplate(cfg CookieBannerConfig) {
+	@cookieBanner(cfg)
 }
 
 // simpleBanner renders a standard banner
@@ -41,20 +42,20 @@ templ simpleBanner(cfg Config) {
 		x-data="{ show: true }"
 		x-show="show"
 		x-cloak
-		class={ cfg.ContainerClasses() }
+		class={ cfg.containerClasses() }
 		role="banner"
 	>
 		if cfg.CTA != nil {
 			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
-				<p class={ cfg.TextClasses() }>{ cfg.Description }</p>
+				<p class={ cfg.textClasses() }>{ cfg.Description }</p>
 				if cfg.CTA.Href != "" {
-					<a href={ templ.URL(cfg.CTA.Href) } class={ cfg.CTAClasses() }>
+					<a href={ templ.URL(cfg.CTA.Href) } class={ cfg.ctaClasses() }>
 						{ cfg.CTA.ActionLabel }
 					</a>
 				} else {
 					<button 
 						type="button"
-						class={ cfg.CTAClasses() }
+						class={ cfg.ctaClasses() }
 						@click={ cfg.CTA.OnClick }
 					>
 						{ cfg.CTA.ActionLabel }
@@ -62,7 +63,7 @@ templ simpleBanner(cfg Config) {
 				}
 			</div>
 		} else {
-			<p class={ cfg.TextClasses() }>{ cfg.Description }</p>
+			<p class={ cfg.textClasses() }>{ cfg.Description }</p>
 		}
 		
 		if !cfg.Persistent {
@@ -80,27 +81,24 @@ templ simpleBanner(cfg Config) {
 }
 
 // cookieBanner renders a cookie consent banner
-templ cookieBanner(cfg Config) {
-	{{ cookieCfg := cfg.CookieConfig }}
-	{{ if cookieCfg == nil { cookieCfg = &CookieBannerConfig{Title: "Cookie Consent", AcceptLabel: "Accept", RejectLabel: "Decline"} } }}
-	
+templ cookieBanner(cfg CookieBannerConfig) {
 	<div 
 		x-data="{ show: true }"
 		x-show="show"
 		x-cloak
-		class={ cfg.CookieContainerClasses() }
+		class={ cfg.containerClasses() }
 		role="dialog"
 		aria-label="Cookie consent"
 	>
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b border-outline bg-surface-alt/60 px-4 py-2 dark:border-outline-dark dark:bg-surface-dark-alt/20">
 			<h3 class="flex items-center gap-2 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">
-				if cookieCfg.Icon != nil {
-					<span class="text-2xl" aria-hidden="true">@cookieCfg.Icon</span>
+				if cfg.Icon != nil {
+					<span class="text-2xl" aria-hidden="true">@cfg.Icon</span>
 				} else {
 					<span class="text-2xl" aria-hidden="true">🍪</span>
 				}
-				{ cookieCfg.Title }
+				{ cfg.effectiveTitle() }
 			</h3>
 		</div>
 		
@@ -114,16 +112,16 @@ templ cookieBanner(cfg Config) {
 			<button 
 				type="button"
 				class="cursor-pointer whitespace-nowrap p-2 text-center text-xs font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius"
-				@click={ cookieCfg.RejectAction }
+				@click={ cfg.RejectAction }
 			>
-				{ cookieCfg.RejectLabel }
+				{ cfg.effectiveRejectLabel() }
 			</button>
 			<button 
 				type="button"
 				class="cursor-pointer whitespace-nowrap bg-primary px-4 py-2 border border-primary text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:border-primary-dark dark:focus-visible:outline-primary-dark rounded-radius"
-				@click={ cookieCfg.AcceptAction }
+				@click={ cfg.AcceptAction }
 			>
-				{ cookieCfg.AcceptLabel }
+				{ cfg.effectiveAcceptLabel() }
 			</button>
 		</div>
 	</div>

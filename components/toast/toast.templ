@@ -1,24 +1,23 @@
 package toast
 
 import "fmt"
-import "strconv"
 
-// Container renders the toast notification container.
+// ToastContainer renders the toast notification container.
 // Place this once in your layout. It listens for "notify" window events
 // dispatched via Alpine.js ($dispatch('notify', {...})) to show client-side toasts.
 //
 // Usage:
 //
-//	@toast.Container(toast.ContainerConfig{})
+//	@toast.ToastContainer(toast.ContainerConfig{})
 //
 // Then trigger toasts from anywhere:
 //
-//	<button x-on:click="$dispatch('notify', { variant: 'success', title: 'Saved!', message: 'Your changes have been saved.' })">Save</button>
-templ Container(cfg ContainerConfig) {
+//	<button x-on:click="$dispatch('notify', { kind: 'toast', tone: 'success', title: 'Saved!', message: 'Your changes have been saved.' })">Save</button>
+templ toastContainerTemplate(cfg ContainerConfig) {
 	<div
 		id={ cfg.effectiveID() }
 		x-data={ containerAlpineData(cfg) }
-		x-on:notify.window="addNotification({ variant: $event.detail.variant, sender: $event.detail.sender, title: $event.detail.title, message: $event.detail.message })"
+		x-on:notify.window="addNotification($event.detail)"
 		x-on:toast-dismiss.window="removeNotification($event.detail.id)"
 	>
 		<div
@@ -29,23 +28,23 @@ templ Container(cfg ContainerConfig) {
 			<template x-for="(notification, index) in notifications" x-bind:key="notification.id">
 				<div>
 					<!-- Info Notification -->
-					<template x-if="notification.variant === 'info'">
+					<template x-if="notification.kind === 'toast' && notification.tone === 'info'">
 						@clientNotification("info")
 					</template>
 					<!-- Success Notification -->
-					<template x-if="notification.variant === 'success'">
+					<template x-if="notification.kind === 'toast' && notification.tone === 'success'">
 						@clientNotification("success")
 					</template>
 					<!-- Warning Notification -->
-					<template x-if="notification.variant === 'warning'">
+					<template x-if="notification.kind === 'toast' && notification.tone === 'warning'">
 						@clientNotification("warning")
 					</template>
 					<!-- Danger Notification -->
-					<template x-if="notification.variant === 'danger'">
+					<template x-if="notification.kind === 'toast' && notification.tone === 'danger'">
 						@clientNotification("danger")
 					</template>
 					<!-- Message Notification -->
-					<template x-if="notification.variant === 'message'">
+					<template x-if="notification.kind === 'message-toast'">
 						@clientMessageNotification()
 					</template>
 				</div>
@@ -56,13 +55,13 @@ templ Container(cfg ContainerConfig) {
 	</div>
 }
 
-// clientNotification renders a single notification template for a given variant (used inside x-for)
-templ clientNotification(variant string) {
+// clientNotification renders a single notification template for a given tone (used inside x-for).
+templ clientNotification(tone string) {
 	{{ borderClass := "border-info" }}
 	{{ bgClass := "bg-info/10" }}
 	{{ iconBgClass := "bg-info/15 text-info" }}
 	{{ titleClass := "text-info" }}
-	switch variant {
+	switch tone {
 		case "success":
 			{{ borderClass = "border-success" }}
 			{{ bgClass = "bg-success/10" }}
@@ -98,7 +97,7 @@ templ clientNotification(variant string) {
 		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", bgClass }>
 			<!-- Icon -->
 			<div class={ "rounded-full p-0.5", iconBgClass } aria-hidden="true">
-				switch variant {
+				switch tone {
 					case "success":
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
 							<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
@@ -133,7 +132,7 @@ templ clientNotification(variant string) {
 	</div>
 }
 
-// clientMessageNotification renders the message variant notification template (used inside x-for)
+// clientMessageNotification renders the message notification template (used inside x-for)
 templ clientMessageNotification() {
 	<div
 		x-data="{ isVisible: false, timeout: null }"
@@ -160,9 +159,8 @@ templ clientMessageNotification() {
 					<h3 x-cloak x-show="notification.sender && notification.sender.name" class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong" x-text="notification.sender ? notification.sender.name : ''"></h3>
 					<!-- Message -->
 					<p x-cloak x-show="notification.message" class="text-pretty text-sm" x-text="notification.message"></p>
-					<!-- Action Buttons -->
+					<!-- Dismiss Action -->
 					<div class="flex items-center gap-4">
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-primary transition hover:opacity-75 active:opacity-100 dark:text-primary-dark">Reply</button>
 						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="isVisible = false; setTimeout(() => { removeNotification(notification.id) }, 400)">Dismiss</button>
 					</div>
 				</div>
@@ -185,19 +183,18 @@ templ clientMessageNotification() {
 //	<!-- In your HTMX response, include an OOB swap: -->
 //	<div id="toast-container-oob" hx-swap-oob="beforeend">
 //	    @toast.Toast(toast.Config{
-//	        Variant: toast.Success,
+//	        Tone:    toast.ToneSuccess,
 //	        Title:   "Saved!",
 //	        Message: "Your changes have been saved.",
 //	    })
 //	</div>
-templ Toast(cfg Config) {
-	{{ duration := cfg.effectiveDuration() }}
-	{{ durationStr := strconv.Itoa(duration) }}
-	if cfg.Variant == Message {
-		@serverMessageToast(cfg, durationStr)
-	} else {
-		@serverVariantToast(cfg, durationStr)
-	}
+templ toastTemplate(cfg Config) {
+	@serverToast(cfg)
+}
+
+// MessageToast renders a sender-oriented server-side toast notification.
+templ messageToastTemplate(cfg MessageConfig) {
+	@serverMessageToast(cfg)
 }
 
 // OOBToast renders a toast wrapped in an OOB swap container for HTMX responses.
@@ -207,18 +204,25 @@ templ Toast(cfg Config) {
 // Usage in a Go handler:
 //
 //	toast.OOBToast(toast.Config{
-//	    Variant: toast.Success,
+//	    Tone:    toast.ToneSuccess,
 //	    Title:   "Created!",
 //	    Message: "Item was created.",
 //	}).Render(r.Context(), w)
-templ OOBToast(cfg Config) {
+templ oobToastTemplate(cfg Config) {
 	<div id="toast-container-oob" hx-swap-oob="beforeend">
-		@Toast(cfg)
+		@toastTemplate(cfg)
 	</div>
 }
 
-// serverVariantToast renders a single server-pushed toast for info/success/warning/danger
-templ serverVariantToast(cfg Config, durationStr string) {
+// OOBMessageToast renders a message toast wrapped in an OOB swap container.
+templ oobMessageToastTemplate(cfg MessageConfig) {
+	<div id="toast-container-oob" hx-swap-oob="beforeend">
+		@messageToastTemplate(cfg)
+	</div>
+}
+
+// serverToast renders a single server-pushed toast for info/success/warning/danger.
+templ serverToast(cfg Config) {
 	{{ toastID := fmt.Sprintf("server-toast-%d", uniqueID()) }}
 	<div
 		id={ toastID }
@@ -227,7 +231,7 @@ templ serverVariantToast(cfg Config, durationStr string) {
 		x-cloak
 		x-show="isVisible"
 		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
-		class={ "pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.BorderClass() }
+		class={ "pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.borderClass() }
 		role="alert"
 		x-transition:enter="transition duration-300 ease-out"
 		x-transition:enter-end="translate-y-0"
@@ -236,15 +240,15 @@ templ serverVariantToast(cfg Config, durationStr string) {
 		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
-		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.BgClass() }>
+		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.bgClass() }>
 			<!-- Icon -->
-			<div class={ "rounded-full p-0.5", cfg.IconBgClass() } aria-hidden="true">
-				switch cfg.Variant {
-					case Success:
+			<div class={ "rounded-full p-0.5", cfg.iconBgClass() } aria-hidden="true">
+				switch cfg.Tone {
+					case ToneSuccess:
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
 							<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
 						</svg>
-					case Warning, Danger:
+					case ToneWarning, ToneDanger:
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
 							<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
 						</svg>
@@ -257,12 +261,12 @@ templ serverVariantToast(cfg Config, durationStr string) {
 			<!-- Title & Message -->
 			<div class="flex flex-col gap-2">
 				if cfg.Title != "" {
-					<h3 class={ "text-sm font-semibold", cfg.TitleClass() }>{ cfg.Title }</h3>
+					<h3 class={ "text-sm font-semibold", cfg.titleClass() }>{ cfg.Title }</h3>
 				}
 				if cfg.Message != "" {
 					<p class="text-pretty text-sm">{ cfg.Message }</p>
 				}
-				if cfg.HasAction() {
+				if cfg.hasAction() {
 					// No Alpine dismiss here: removing the element on click would
 					// race the HTMX request and cancel it. The toast auto-dismisses
 					// on its timer; the action fires its HTMX request cleanly.
@@ -295,7 +299,7 @@ templ serverVariantToast(cfg Config, durationStr string) {
 }
 
 // serverMessageToast renders a single server-pushed message toast
-templ serverMessageToast(cfg Config, durationStr string) {
+templ serverMessageToast(cfg MessageConfig) {
 	{{ toastID := fmt.Sprintf("server-toast-%d", uniqueID()) }}
 	<div
 		id={ toastID }
@@ -315,19 +319,36 @@ templ serverMessageToast(cfg Config, durationStr string) {
 	>
 		<div class="flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 dark:bg-surface-dark-alt">
 			<div class="flex w-full items-center gap-2.5">
-				if cfg.Sender != nil && cfg.Sender.Avatar != "" {
+				if cfg.Sender.Avatar != "" {
 					<img class="mr-2 size-12 rounded-full" alt="avatar" aria-hidden="true" src={ cfg.Sender.Avatar }/>
 				}
 				<div class="flex flex-col items-start gap-2">
-					if cfg.Sender != nil && cfg.Sender.Name != "" {
+					if cfg.Sender.Name != "" {
 						<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Sender.Name }</h3>
 					}
 					if cfg.Message != "" {
 						<p class="text-pretty text-sm">{ cfg.Message }</p>
 					}
 					<div class="flex items-center gap-4">
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-primary transition hover:opacity-75 active:opacity-100 dark:text-primary-dark">Reply</button>
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click={ fmt.Sprintf("isVisible = false; setTimeout(() => { $dispatch('toast-dismiss', { id: '%s' }) }, 400)", jsEscapeSingle(toastID)) }>Dismiss</button>
+						if cfg.hasAction() {
+							<button
+								type="button"
+								class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-primary transition hover:opacity-75 active:opacity-100 dark:text-primary-dark"
+								if cfg.ActionHTMX != nil && cfg.ActionHTMX.Get != "" {
+									hx-get={ cfg.ActionHTMX.Get }
+								}
+								if cfg.ActionHTMX != nil && cfg.ActionHTMX.Post != "" {
+									hx-post={ cfg.ActionHTMX.Post }
+								}
+								if cfg.ActionHTMX != nil && cfg.ActionHTMX.Target != "" {
+									hx-target={ cfg.ActionHTMX.Target }
+								}
+								if cfg.ActionHTMX != nil && cfg.ActionHTMX.Swap != "" {
+									hx-swap={ cfg.ActionHTMX.Swap }
+								}
+							>{ cfg.ActionLabel }</button>
+						}
+						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click={ fmt.Sprintf("isVisible = false; setTimeout(() => { $dispatch('toast-dismiss', { id: '%s' }) }, 400)", jsEscapeSingle(toastID)) }>{ cfg.effectiveDismissLabel() }</button>
 					</div>
 				</div>
 			</div>

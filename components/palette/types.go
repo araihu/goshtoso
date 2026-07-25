@@ -17,8 +17,8 @@ import (
 	"github.com/a-h/templ"
 )
 
-// DefaultHues lists Tailwind v4's named hue families in display order.
-var DefaultHues = []string{
+// defaultHues lists Tailwind v4's named hue families in display order.
+var defaultHues = [...]string{
 	"red", "orange", "amber", "yellow", "lime",
 	"green", "emerald", "teal", "cyan", "sky",
 	"blue", "indigo", "violet", "purple", "fuchsia",
@@ -26,8 +26,8 @@ var DefaultHues = []string{
 	"neutral", "stone",
 }
 
-// DefaultShades lists the shade steps for each hue.
-var DefaultShades = []string{"50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"}
+// defaultShades lists the shade steps for each hue.
+var defaultShades = [...]string{"50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"}
 
 // AlpineConfig wires client-side Alpine bindings.
 type AlpineConfig struct {
@@ -62,18 +62,18 @@ func (c Config) hues() []string {
 	if len(c.Hues) > 0 {
 		return c.Hues
 	}
-	return DefaultHues
+	return defaultHues[:]
 }
 
 func (c Config) shades() []string {
 	if len(c.Shades) > 0 {
 		return c.Shades
 	}
-	return DefaultShades
+	return defaultShades[:]
 }
 
 // ContainerClasses returns wrapper classes.
-func (c Config) ContainerClasses() string {
+func (c Config) containerClasses() string {
 	base := "p-2 space-y-2"
 	if c.RootClass != "" {
 		base += " " + c.RootClass

@@ -112,7 +112,7 @@ func waitForTabSelected(page playwright.Page, selector string, selected bool) er
 	}
 	_, err := page.WaitForFunction(
 		`([selector, expected]) => document.querySelector(selector)?.getAttribute('aria-selected') === expected`,
-		[]interface{}{selector, expected},
+		[]any{selector, expected},
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
 	)
 	return err
@@ -126,7 +126,7 @@ func waitForPanelVisibility(page playwright.Page, selector string, visible bool)
 			const isVisible = getComputedStyle(el).display !== 'none' && el.offsetParent !== null;
 			return isVisible === visible;
 		}`,
-		[]interface{}{selector, visible},
+		[]any{selector, visible},
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
 	)
 	return err

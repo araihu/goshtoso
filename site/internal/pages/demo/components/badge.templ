@@ -1,10 +1,60 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var badgeAPISections = []demo.APISection{
+	demo.StructAPI[badge.Config](
+		rootcomponents.KindBadge,
+		"Config",
+		"badge.Badge(cfg Config) Instance",
+		"Configures a text badge with optional icon or indicator.",
+		[]demo.APIPropDoc{
+			{Name: "Label", Default: `""`, Description: "Visible badge text.", Required: true},
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneInverse", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Semantic color treatment."},
+			{Name: "Appearance", Default: "AppearanceSolid", Allowed: []string{"AppearanceSolid", "AppearanceSoft"}, Description: "Solid or softly tinted fill treatment."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG"}, Description: "Badge text size and padding."},
+			{Name: "Icon", Default: "nil", Description: "Optional leading icon."},
+			{Name: "Indicator", Default: "false", Description: "Prepends a small tone-colored status dot."},
+			{Name: "IndicatorColor", Default: "Tone-derived", Description: "CSS color class that overrides the indicator tone."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the badge root."},
+		},
+	),
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/badge",
+		rootcomponents.KindNotificationBadge,
+		"NotificationBadge",
+		"",
+		"Renders an absolute-positioned notification count.",
+		[]demo.APIPropDoc{
+			{Name: "NotificationBadge", Signature: "func NotificationBadge(count int) NotificationBadgeInstance", Default: "count <= 0 renders nothing; counts > 99 render 99+", Description: "Creates a notification count badge for a relatively positioned parent."},
+		},
+	),
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/badge",
+		rootcomponents.KindNotificationDot,
+		"NotificationDot",
+		"",
+		"Renders a fixed danger-colored notification dot.",
+		[]demo.APIPropDoc{
+			{Name: "NotificationDot", Signature: "func NotificationDot() NotificationDotInstance", Default: "n/a", Description: "Creates a bare notification dot for a relatively positioned parent."},
+		},
+	),
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/badge",
+		rootcomponents.KindAnimatingDot,
+		"AnimatingDot",
+		"",
+		"Renders a pulsing semantic notification dot.",
+		[]demo.APIPropDoc{
+			{Name: "AnimatingDot", Signature: "func AnimatingDot(tone Tone) AnimatingDotInstance", Default: "TonePrimary appearance", Allowed: []string{"ToneDefault", "ToneInverse", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Creates an animated dot; default, inverse, and primary tones use the primary color."},
+		},
+	),
+}
 
 // BadgeDemoPage renders the Badge component demo
 templ BadgeDemoPage() {
@@ -22,18 +72,18 @@ templ badgeDemoContent() {
 				Description: "A small label for status, counts, or categorization. Solid and soft styles, semantic colors, icons, indicators, notification counts, and animating dots.",
 			},
 			badgeSolidPreview(),
-			`@badge.Badge(badge.Config{Label: "Default", Variant: badge.Default})
-@badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary})
-@badge.Badge(badge.Config{Label: "Success", Variant: badge.Success})
-@badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger})`,
+			`@badge.Badge(badge.Config{Label: "Default", Tone: badge.ToneDefault})
+@badge.Badge(badge.Config{Label: "Primary", Tone: badge.TonePrimary})
+@badge.Badge(badge.Config{Label: "Success", Tone: badge.ToneSuccess})
+@badge.Badge(badge.Config{Label: "Danger", Tone: badge.ToneDanger})`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Soft Style",
-				Description: "Style: badge.StyleSoft swaps the solid fill for a subtle tinted background with a border.",
+				Title:       "Soft Appearance",
+				Description: "Appearance: badge.AppearanceSoft swaps the solid fill for a subtle tinted background with a border.",
 			},
 			badgeSoftPreview(),
-			`@badge.Badge(badge.Config{Label: "Active", Variant: badge.Success, Style: badge.StyleSoft})`,
+			`@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Appearance: badge.AppearanceSoft})`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -41,7 +91,7 @@ templ badgeDemoContent() {
 				Description: "Pass any templ.Component as Icon to render it before the text.",
 			},
 			badgeIconsPreview(),
-			`@badge.Badge(badge.Config{Label: "Verified", Variant: badge.Info, Icon: checkIcon()})`,
+			`@badge.Badge(badge.Config{Label: "Verified", Tone: badge.ToneInfo, Icon: checkIcon()})`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -49,7 +99,7 @@ templ badgeDemoContent() {
 				Description: "Indicator: true prepends a small status dot tinted to the variant.",
 			},
 			badgeIndicatorPreview(),
-			`@badge.Badge(badge.Config{Label: "Live", Variant: badge.Danger, Indicator: true})`,
+			`@badge.Badge(badge.Config{Label: "Live", Tone: badge.ToneDanger, Indicator: true})`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -72,7 +122,7 @@ templ badgeDemoContent() {
 				Description: "badge.AnimatingDot(variant) renders a pulsing presence dot.",
 			},
 			badgeAnimatingPreview(),
-			`@badge.AnimatingDot(badge.Danger)`,
+			`@badge.AnimatingDot(badge.ToneDanger)`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -82,23 +132,14 @@ templ badgeDemoContent() {
 			},
 			badgeSizesPreview(),
 			`<div x-data="{ selected: 'md' }">
-    @badge.Badge(badge.Config{Label: "Small", Variant: badge.Primary, Size: badge.SizeSM})
-    @badge.Badge(badge.Config{Label: "Medium", Variant: badge.Primary, Size: badge.SizeMD})
-    @badge.Badge(badge.Config{Label: "Large", Variant: badge.Primary, Size: badge.SizeLG})
+    @badge.Badge(badge.Config{Label: "Small", Tone: badge.TonePrimary, Size: badge.SizeSM})
+    @badge.Badge(badge.Config{Label: "Medium", Tone: badge.TonePrimary, Size: badge.SizeMD})
+    @badge.Badge(badge.Config{Label: "Large", Tone: badge.TonePrimary, Size: badge.SizeLG})
 </div>`,
 		)
 	</div>
 	// API reference lives outside #badge-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Label", Type: "string", Default: `""`, Description: "Badge label text."},
-		{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "inverse", "primary", "secondary", "info", "success", "warning", "danger".`},
-		{Name: "Style", Type: "Style", Default: "StyleSolid", Description: `Fill style: "solid" or "soft".`},
-		{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg".`},
-		{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading icon component."},
-		{Name: "Indicator", Type: "bool", Default: "false", Description: "Prepend a small status dot."},
-		{Name: "IndicatorColor", Type: "string", Default: `""`, Description: "Override the indicator dot color."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the badge."},
-	})
+	@demo.StructuredAPIReference(badgeAPISections)
 }
 
 // badgeSizeSelector renders the segmented size selector for the size preview.
@@ -135,13 +176,13 @@ templ badgeSizeOption(value, label string) {
 templ badgeSolidPreview() {
 	<div id="badge-solid" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap gap-2">
-			@badge.Badge(badge.Config{Label: "Default", Variant: badge.Default})
-			@badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary})
-			@badge.Badge(badge.Config{Label: "Secondary", Variant: badge.Secondary})
-			@badge.Badge(badge.Config{Label: "Info", Variant: badge.Info})
-			@badge.Badge(badge.Config{Label: "Success", Variant: badge.Success})
-			@badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning})
-			@badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger})
+			@badge.Badge(badge.Config{Label: "Default", Tone: badge.ToneDefault})
+			@badge.Badge(badge.Config{Label: "Primary", Tone: badge.TonePrimary})
+			@badge.Badge(badge.Config{Label: "Secondary", Tone: badge.ToneSecondary})
+			@badge.Badge(badge.Config{Label: "Info", Tone: badge.ToneInfo})
+			@badge.Badge(badge.Config{Label: "Success", Tone: badge.ToneSuccess})
+			@badge.Badge(badge.Config{Label: "Warning", Tone: badge.ToneWarning})
+			@badge.Badge(badge.Config{Label: "Danger", Tone: badge.ToneDanger})
 		</div>
 	</div>
 }
@@ -150,13 +191,13 @@ templ badgeSolidPreview() {
 templ badgeSoftPreview() {
 	<div id="badge-soft" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap gap-2">
-			@badge.Badge(badge.Config{Label: "Default", Variant: badge.Default, Style: badge.StyleSoft})
-			@badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary, Style: badge.StyleSoft})
-			@badge.Badge(badge.Config{Label: "Secondary", Variant: badge.Secondary, Style: badge.StyleSoft})
-			@badge.Badge(badge.Config{Label: "Info", Variant: badge.Info, Style: badge.StyleSoft})
-			@badge.Badge(badge.Config{Label: "Success", Variant: badge.Success, Style: badge.StyleSoft})
-			@badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning, Style: badge.StyleSoft})
-			@badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger, Style: badge.StyleSoft})
+			@badge.Badge(badge.Config{Label: "Default", Tone: badge.ToneDefault, Appearance: badge.AppearanceSoft})
+			@badge.Badge(badge.Config{Label: "Primary", Tone: badge.TonePrimary, Appearance: badge.AppearanceSoft})
+			@badge.Badge(badge.Config{Label: "Secondary", Tone: badge.ToneSecondary, Appearance: badge.AppearanceSoft})
+			@badge.Badge(badge.Config{Label: "Info", Tone: badge.ToneInfo, Appearance: badge.AppearanceSoft})
+			@badge.Badge(badge.Config{Label: "Success", Tone: badge.ToneSuccess, Appearance: badge.AppearanceSoft})
+			@badge.Badge(badge.Config{Label: "Warning", Tone: badge.ToneWarning, Appearance: badge.AppearanceSoft})
+			@badge.Badge(badge.Config{Label: "Danger", Tone: badge.ToneDanger, Appearance: badge.AppearanceSoft})
 		</div>
 	</div>
 }
@@ -165,12 +206,12 @@ templ badgeSoftPreview() {
 templ badgeIconsPreview() {
 	<div id="badge-icons" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap gap-2">
-			@badge.Badge(badge.Config{Label: "Penguin", Variant: badge.Primary, Icon: penguinIcon()})
-			@badge.Badge(badge.Config{Label: "Filter", Variant: badge.Secondary, Icon: closeIcon()})
-			@badge.Badge(badge.Config{Label: "Verified", Variant: badge.Info, Icon: checkIcon()})
-			@badge.Badge(badge.Config{Label: "Active", Variant: badge.Success, Icon: checkCircleIcon()})
-			@badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning, Icon: shieldIcon()})
-			@badge.Badge(badge.Config{Label: "Error", Variant: badge.Danger, Icon: alertIcon()})
+			@badge.Badge(badge.Config{Label: "Penguin", Tone: badge.TonePrimary, Icon: penguinIcon()})
+			@badge.Badge(badge.Config{Label: "Filter", Tone: badge.ToneSecondary, Icon: closeIcon()})
+			@badge.Badge(badge.Config{Label: "Verified", Tone: badge.ToneInfo, Icon: checkIcon()})
+			@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess, Icon: checkCircleIcon()})
+			@badge.Badge(badge.Config{Label: "Warning", Tone: badge.ToneWarning, Icon: shieldIcon()})
+			@badge.Badge(badge.Config{Label: "Error", Tone: badge.ToneDanger, Icon: alertIcon()})
 		</div>
 	</div>
 }
@@ -179,12 +220,12 @@ templ badgeIconsPreview() {
 templ badgeIndicatorPreview() {
 	<div id="badge-indicators" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap gap-2">
-			@badge.Badge(badge.Config{Label: "Default", Variant: badge.Default, Indicator: true})
-			@badge.Badge(badge.Config{Label: "Primary", Variant: badge.Primary, Indicator: true})
-			@badge.Badge(badge.Config{Label: "Info", Variant: badge.Info, Indicator: true})
-			@badge.Badge(badge.Config{Label: "Success", Variant: badge.Success, Indicator: true})
-			@badge.Badge(badge.Config{Label: "Warning", Variant: badge.Warning, Indicator: true})
-			@badge.Badge(badge.Config{Label: "Danger", Variant: badge.Danger, Indicator: true})
+			@badge.Badge(badge.Config{Label: "Default", Tone: badge.ToneDefault, Indicator: true})
+			@badge.Badge(badge.Config{Label: "Primary", Tone: badge.TonePrimary, Indicator: true})
+			@badge.Badge(badge.Config{Label: "Info", Tone: badge.ToneInfo, Indicator: true})
+			@badge.Badge(badge.Config{Label: "Success", Tone: badge.ToneSuccess, Indicator: true})
+			@badge.Badge(badge.Config{Label: "Warning", Tone: badge.ToneWarning, Indicator: true})
+			@badge.Badge(badge.Config{Label: "Danger", Tone: badge.ToneDanger, Indicator: true})
 		</div>
 	</div>
 }
@@ -220,12 +261,12 @@ templ badgeNotificationPreview() {
 templ badgeAnimatingPreview() {
 	<div id="badge-animating" class="w-full max-w-2xl mx-auto">
 		<div class="flex items-center gap-4">
-			@badge.AnimatingDot(badge.Primary)
-			@badge.AnimatingDot(badge.Secondary)
-			@badge.AnimatingDot(badge.Info)
-			@badge.AnimatingDot(badge.Success)
-			@badge.AnimatingDot(badge.Warning)
-			@badge.AnimatingDot(badge.Danger)
+			@badge.AnimatingDot(badge.TonePrimary)
+			@badge.AnimatingDot(badge.ToneSecondary)
+			@badge.AnimatingDot(badge.ToneInfo)
+			@badge.AnimatingDot(badge.ToneSuccess)
+			@badge.AnimatingDot(badge.ToneWarning)
+			@badge.AnimatingDot(badge.ToneDanger)
 		</div>
 	</div>
 }
@@ -235,13 +276,13 @@ templ badgeSizesPreview() {
 	<div id="badge-sizes" class="w-full max-w-2xl mx-auto">
 		<div class="flex items-center justify-center">
 			<div data-testid="badge-size-preview-sm" x-show="selected === 'sm'" x-cloak>
-				@badge.Badge(badge.Config{Label: "Small", Variant: badge.Primary, Size: badge.SizeSM})
+				@badge.Badge(badge.Config{Label: "Small", Tone: badge.TonePrimary, Size: badge.SizeSM})
 			</div>
 			<div data-testid="badge-size-preview-md" x-show="selected === 'md'">
-				@badge.Badge(badge.Config{Label: "Medium", Variant: badge.Primary, Size: badge.SizeMD})
+				@badge.Badge(badge.Config{Label: "Medium", Tone: badge.TonePrimary, Size: badge.SizeMD})
 			</div>
 			<div data-testid="badge-size-preview-lg" x-show="selected === 'lg'" x-cloak>
-				@badge.Badge(badge.Config{Label: "Large", Variant: badge.Primary, Size: badge.SizeLG})
+				@badge.Badge(badge.Config{Label: "Large", Tone: badge.TonePrimary, Size: badge.SizeLG})
 			</div>
 		</div>
 	</div>

@@ -14,7 +14,7 @@ import "fmt"
 //	        {Label: "Checkout", Status: steps.StatusUpcoming},
 //	    },
 //	})
-templ Steps(cfg Config) {
+templ stepsTemplate(cfg Config) {
 	{{ orientation := cfg.normalizedOrientation() }}
 	<ol
 		if cfg.ID != "" {

@@ -167,15 +167,14 @@ func stepFooter(showBack bool, nextLabel, nextPost string) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = button.Button(button.Config{
-				Variant: button.Secondary,
-				Type:    "button",
-				HTMX: &button.HTMXConfig{
+			templ_7745c5c3_Err = button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithHTMX(&button.HTMXConfig{
 					Post:   "/api/examples/wizard/back",
 					Target: "#" + wizardSwapTarget,
 					Swap:   "outerHTML",
-				},
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+				}),
+			).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -200,7 +199,7 @@ func stepFooter(showBack bool, nextLabel, nextPost string) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(nextLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 111, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 110, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -208,7 +207,7 @@ func stepFooter(showBack bool, nextLabel, nextPost string) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Variant: button.Primary, Type: "submit"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithType("submit")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -279,7 +278,7 @@ func accountStep(s wizard.WizardState, errs map[string]string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue("#" + wizardSwapTarget)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 129, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 128, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -355,7 +354,7 @@ func addressStep(s wizard.WizardState, errs map[string]string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue("#" + wizardSwapTarget)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 156, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 155, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -460,7 +459,7 @@ func planCard(p wizard.Plan, selected bool) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(p.Key)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 205, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 204, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -483,7 +482,7 @@ func planCard(p wizard.Plan, selected bool) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 211, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 210, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -493,7 +492,7 @@ func planCard(p wizard.Plan, selected bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: planBadgeVariant(p), Label: planPrice(p)}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: planBadgeVariant(p), Label: planPrice(p)}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -504,7 +503,7 @@ func planCard(p wizard.Plan, selected bool) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(p.Blurb)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 214, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 213, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -519,11 +518,11 @@ func planCard(p wizard.Plan, selected bool) templ.Component {
 }
 
 // planBadgeVariant tints the price badge: paid tiers stand out, free is muted.
-func planBadgeVariant(p wizard.Plan) badge.Variant {
+func planBadgeVariant(p wizard.Plan) badge.Tone {
 	if p.PriceCents == 0 {
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
-	return badge.Success
+	return badge.ToneSuccess
 }
 
 // planStep is step 3: choose a plan.
@@ -555,7 +554,7 @@ func planStep(s wizard.WizardState, errs map[string]string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue("#" + wizardSwapTarget)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 233, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 232, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -573,7 +572,7 @@ func planStep(s wizard.WizardState, errs map[string]string) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(errs["plan"])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 238, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 237, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -639,7 +638,7 @@ func summaryRow(label, value string) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 252, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 251, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -652,7 +651,7 @@ func summaryRow(label, value string) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 253, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 252, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -695,7 +694,7 @@ func reviewStep(s wizard.WizardState) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue("#" + wizardSwapTarget)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 263, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 262, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {
@@ -784,7 +783,7 @@ func WizardSuccess(s wizard.WizardState) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: badge.Success, Label: "All set"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: badge.ToneSuccess, Label: "All set"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -795,7 +794,7 @@ func WizardSuccess(s wizard.WizardState) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(firstName(s.Account.Name))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 293, Col: 123}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 292, Col: 123}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -808,7 +807,7 @@ func WizardSuccess(s wizard.WizardState) templ.Component {
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(planSummary(s.Plan))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 295, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 294, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -836,15 +835,13 @@ func WizardSuccess(s wizard.WizardState) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-			HTMX: &button.HTMXConfig{
+		templ_7745c5c3_Err = button.Button(
+			button.WithHTMX(&button.HTMXConfig{
 				Post:   "/api/examples/wizard/reset",
 				Target: "#" + wizardSwapTarget,
 				Swap:   "outerHTML",
-			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
+			}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var26), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -900,7 +897,7 @@ func WizardBody(s wizard.WizardState, errs map[string]string) templ.Component {
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(wizardSwapTarget)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 329, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/wizard.templ`, Line: 326, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
 		if templ_7745c5c3_Err != nil {
@@ -987,7 +984,7 @@ func WizardApp(s wizard.WizardState, errs map[string]string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toast.ToastContainer(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

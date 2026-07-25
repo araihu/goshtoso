@@ -1,20 +1,20 @@
 package button
 
-// Variant represents button style variants
-type Variant string
+// Tone controls the semantic color treatment of a button.
+type Tone string
 
 const (
-	Primary   Variant = "primary"
-	Secondary Variant = "secondary"
-	Alternate Variant = "alternate"
-	Inverse   Variant = "inverse"
-	Info      Variant = "info"
-	Danger    Variant = "danger"
-	Warning   Variant = "warning"
-	Success   Variant = "success"
+	TonePrimary   Tone = "primary"
+	ToneSecondary Tone = "secondary"
+	ToneAlternate Tone = "alternate"
+	ToneInverse   Tone = "inverse"
+	ToneInfo      Tone = "info"
+	ToneDanger    Tone = "danger"
+	ToneWarning   Tone = "warning"
+	ToneSuccess   Tone = "success"
 )
 
-// Size represents button sizes
+// Size represents button sizes.
 type Size string
 
 const (
@@ -24,7 +24,7 @@ const (
 	SizeXLarge Size = "xl"
 )
 
-// HTMXConfig holds HTMX attributes for server-side interactions
+// HTMXConfig holds HTMX attributes for server-side interactions.
 type HTMXConfig struct {
 	// Get is the URL for an HTMX GET request.
 	Get string
@@ -52,7 +52,7 @@ type HTMXConfig struct {
 	Vals string
 }
 
-// AlpineConfig holds Alpine.js directives for client-side interactions
+// AlpineConfig holds Alpine.js directives for client-side interactions.
 type AlpineConfig struct {
 	// OnClick is the Alpine x-on:click expression.
 	OnClick string
@@ -66,61 +66,130 @@ type AlpineConfig struct {
 	Data string
 }
 
-// Config holds all configuration for a Button component
-type Config struct {
-	// Variant is the visual style variant of the button.
-	Variant Variant
-	// Size is the button size, defaults to SizeMedium.
-	Size Size
-	// Type is the HTML button type attribute (e.g. "button", "submit").
-	Type string
-	// Disabled disables the button, preventing interaction.
-	Disabled bool
-	// ID is the HTML id attribute for the button element.
-	ID string
-	// RootClass is additional CSS classes appended to the button.
-	RootClass string
-	// HTMX is an optional HTMX config for server-side interaction.
-	HTMX *HTMXConfig
-	// Alpine is an optional Alpine.js config for client-side behavior.
-	Alpine *AlpineConfig
-	// LoadingText is the text shown during an HTMX request.
-	LoadingText string
+type config struct {
+	tone        Tone
+	size        Size
+	buttonType  string
+	disabled    bool
+	id          string
+	rootClass   string
+	htmx        *HTMXConfig
+	alpine      *AlpineConfig
+	loadingText string
 }
 
-// variantClasses returns the Tailwind utility classes for a variant
-func variantClasses(variant Variant) string {
-	switch variant {
-	case Primary:
-		// Black background, white text
+// Option configures a Button.
+type Option interface {
+	apply(*config)
+}
+
+type optionFunc func(*config)
+
+func (fn optionFunc) apply(cfg *config) {
+	fn(cfg)
+}
+
+// WithTone sets the button's semantic color treatment.
+func WithTone(tone Tone) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.tone = tone
+	})
+}
+
+// WithSize sets the button size.
+func WithSize(size Size) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.size = size
+	})
+}
+
+// WithType sets the native button type attribute.
+func WithType(buttonType string) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.buttonType = buttonType
+	})
+}
+
+// Disabled disables the button.
+func Disabled() Option {
+	return optionFunc(func(cfg *config) {
+		cfg.disabled = true
+	})
+}
+
+// WithID sets the button's HTML id attribute.
+func WithID(id string) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.id = id
+	})
+}
+
+// WithRootClass appends CSS classes to the button.
+func WithRootClass(class string) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.rootClass = class
+	})
+}
+
+// WithHTMX configures HTMX attributes for the button.
+func WithHTMX(htmx *HTMXConfig) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.htmx = htmx
+	})
+}
+
+// WithAlpine configures Alpine.js directives for the button.
+func WithAlpine(alpine *AlpineConfig) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.alpine = alpine
+	})
+}
+
+// WithLoadingText sets text shown during an HTMX request.
+func WithLoadingText(text string) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.loadingText = text
+	})
+}
+
+func newConfig(options []Option) config {
+	cfg := config{
+		tone:       TonePrimary,
+		size:       SizeMedium,
+		buttonType: "button",
+	}
+	for _, option := range options {
+		if option != nil {
+			option.apply(&cfg)
+		}
+	}
+	return cfg
+}
+
+// toneClasses returns the Tailwind utility classes for a tone.
+func toneClasses(tone Tone) string {
+	switch tone {
+	case TonePrimary:
 		return "bg-primary text-on-primary border-primary dark:bg-primary-dark dark:text-on-primary-dark dark:border-primary-dark"
-	case Secondary:
-		// Dark gray background, white text
+	case ToneSecondary:
 		return "bg-secondary text-on-secondary border-secondary dark:bg-secondary-dark dark:text-on-secondary-dark dark:border-secondary-dark"
-	case Alternate:
-		// Light gray background, dark text
+	case ToneAlternate:
 		return "bg-surface-alt text-on-surface-strong border-surface-alt dark:bg-surface-dark-alt dark:text-on-surface-dark-strong dark:border-surface-dark-alt"
-	case Inverse:
-		// Black background (in light mode), white in dark mode
+	case ToneInverse:
 		return "bg-surface-dark text-on-surface-dark border-surface-dark dark:bg-surface dark:text-on-surface dark:border-surface"
-	case Info:
-		// Sky blue background, white text
+	case ToneInfo:
 		return "bg-info text-on-info border-info dark:bg-info-dark dark:text-on-info-dark dark:border-info-dark"
-	case Danger:
-		// Red background, white text
+	case ToneDanger:
 		return "bg-danger text-on-danger border-danger dark:bg-danger-dark dark:text-on-danger-dark dark:border-danger-dark"
-	case Warning:
-		// Yellow/amber background, dark text
+	case ToneWarning:
 		return "bg-warning text-on-warning border-warning dark:bg-warning-dark dark:text-on-warning-dark dark:border-warning-dark"
-	case Success:
-		// Green background, dark text
+	case ToneSuccess:
 		return "bg-success text-on-success border-success dark:bg-success-dark dark:text-on-success-dark dark:border-success-dark"
 	default:
 		return "bg-primary text-on-primary border-primary"
 	}
 }
 
-// sizeClasses returns the size-specific classes
 func sizeClasses(size Size) string {
 	switch size {
 	case SizeSmall:
@@ -129,24 +198,13 @@ func sizeClasses(size Size) string {
 		return "px-4 py-2 text-base"
 	case SizeXLarge:
 		return "px-4 py-2 text-lg"
-	default: // Medium
+	default:
 		return "px-4 py-2 text-sm"
 	}
 }
 
-// buttonClasses returns all CSS classes for the button
-func buttonClasses(cfg Config) string {
-	// Base classes
+func buttonClasses(cfg config) string {
 	base := "whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border"
-
-	// Variant classes
-	variant := variantClasses(cfg.Variant)
-
-	// Size classes
-	size := sizeClasses(cfg.Size)
-
-	// Outline color based on variant
-	outline := "focus-visible:outline-" + string(cfg.Variant)
-
-	return base + " " + variant + " " + size + " " + outline + " " + cfg.RootClass
+	outline := "focus-visible:outline-" + string(cfg.tone)
+	return base + " " + toneClasses(cfg.tone) + " " + sizeClasses(cfg.size) + " " + outline + " " + cfg.rootClass
 }

@@ -11,20 +11,20 @@ import templruntime "github.com/a-h/templ/runtime"
 // Spinner renders an animated loading spinner based on PenguinUI
 // Usage:
 //
-//	// Default spinner
+//	// ToneDefault spinner
 //	@spinner.Spinner(spinner.Config{})
 //
-//	// Primary colored spinner
+//	// TonePrimary colored spinner
 //	@spinner.Spinner(spinner.Config{
-//	    Variant: spinner.Primary,
+//	    Tone: spinner.TonePrimary,
 //	})
 //
 //	// Large danger spinner
 //	@spinner.Spinner(spinner.Config{
-//	    Variant: spinner.Danger,
+//	    Tone: spinner.ToneDanger,
 //	    Size:    spinner.SizeLG,
 //	})
-func Spinner(cfg Config) templ.Component {
+func spinnerTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -45,7 +45,7 @@ func Spinner(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		classes := cfg.SizeClasses() + " " + cfg.FillClasses() + " motion-safe:animate-spin"
+		classes := cfg.sizeClasses() + " " + cfg.fillClasses() + " motion-safe:animate-spin"
 		if cfg.RootClass != "" {
 			classes = classes + " " + cfg.RootClass
 		}

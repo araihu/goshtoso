@@ -9,9 +9,68 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var modalAPISections = []demo.APISection{
+	demo.StructAPI[modal.Config](
+		rootcomponents.KindModal,
+		"Config",
+		"modal.Modal(cfg Config) Instance",
+		"Configures a role=dialog surface with a trigger, primary action, and optional secondary action.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: "required", Description: "Scopes Alpine state and aria-labelledby wiring; empty input falls back to the modal state and title-ID namespace.", Required: true},
+			{Name: "Title", Default: `""`, Description: "Visible dialog heading."},
+			{Name: "Body", Default: `""`, Description: "Visible dialog body text."},
+			{Name: "TriggerLabel", Default: `""`, Description: "Visible text on the always-rendered trigger button."},
+			{Name: "PrimaryLabel", Default: `""`, Description: "Visible text on the always-rendered primary button."},
+			{Name: "PrimaryAction", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression after closing the dialog."},
+			{Name: "SecondaryLabel", Default: `"" (secondary button omitted)`, Description: "Non-empty text renders a secondary button."},
+			{Name: "SecondaryAction", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression to the secondary button when it renders."},
+			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the dialog panel."},
+		},
+	),
+	demo.StructAPI[modal.AlertDialogConfig](
+		rootcomponents.KindAlertDialog,
+		"AlertDialogConfig",
+		"modal.AlertDialog(cfg AlertDialogConfig) AlertDialogInstance",
+		"Configures a role=alertdialog surface with one action and a semantic icon treatment.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: "required", Description: "Scopes Alpine state and aria-labelledby wiring; empty input falls back to the alertDialog state and title-ID namespace.", Required: true},
+			{Name: "Title", Default: `""`, Description: "Visible alert-dialog heading."},
+			{Name: "Body", Default: `""`, Description: "Visible alert-dialog body text."},
+			{Name: "TriggerLabel", Default: `""`, Description: "Visible text on the always-rendered trigger button."},
+			{Name: "ActionLabel", Default: `""`, Description: "Visible text on the always-rendered action button."},
+			{Name: "Action", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression after closing the alert dialog."},
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneSuccess", "ToneInfo", "ToneWarning", "ToneDanger"}, Description: "Sets the trigger, icon, and action treatment; empty or unknown values use the primary default."},
+			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the dialog panel."},
+		},
+	),
+	demo.StructAPI[modal.ButtonAction](
+		"",
+		"ButtonAction",
+		"",
+		"Configures behavior shared by modal and alert-dialog buttons.",
+		[]demo.APIPropDoc{
+			{Name: "OnClick", Default: `"" (close only)`, Description: "Alpine expression appended after the built-in state assignment that closes the dialog."},
+			{Name: "HTMX", Default: "nil (no HTMX attributes)", Description: "Adds non-empty HTMXConfig fields to the action button."},
+		},
+	),
+	demo.StructAPI[modal.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Maps optional HTMX request and swap attributes onto a dialog action button.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL rendered as hx-get."},
+			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL rendered as hx-post; it may be rendered together with Get."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+		},
+	),
+}
 
 // ModalDemoPage renders the Modal component demo
 func ModalDemoPage() templ.Component {
@@ -43,7 +102,7 @@ func ModalDemoPage() templ.Component {
 	})
 }
 
-// modalDemoContent renders the demo. Each modal variant lives in its own preview
+// modalDemoContent renders the demo. Each dialog example lives in its own preview
 // frame followed by its own code block (mirrors penguinui.com/components/modal).
 // Wrapped in #modal-fragment.
 func modalDemoContent() templ.Component {
@@ -74,7 +133,7 @@ func modalDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Modal",
-				Description: "Focused overlay content with default and alert variants, plus optional HTMX or JavaScript actions on the primary/secondary buttons.",
+				Description: "Focused overlay content with Modal and AlertDialog primitives, plus optional HTMX or JavaScript actions.",
 			},
 			modalDefaultPreview(),
 			`@modal.Modal(modal.Config{
@@ -91,18 +150,17 @@ func modalDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Alert Modals",
-				Description: "AlertMode: true plus a Variant renders a compact, icon-led alert dialog (Success, Info, Warning, Danger).",
+				Title:       "Alert Dialogs",
+				Description: "AlertDialog renders a compact, icon-led alert dialog with one action and a semantic Tone.",
 			},
 			modalAlertPreview(),
-			`@modal.Modal(modal.Config{
+			`@modal.AlertDialog(modal.AlertDialogConfig{
     ID:          "txComplete",
     Title:       "Transaction Complete",
     Body:        "Your funds transfer was successful.",
     TriggerLabel: "Success Modal",
-    PrimaryLabel: "Go to My Balance",
-    Variant:     modal.Success,
-    AlertMode:   true,
+    ActionLabel: "Go to My Balance",
+    Tone:        modal.ToneSuccess,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -152,19 +210,7 @@ func modalDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id (wires the trigger to the dialog and scopes Alpine state)."},
-			{Name: "Title", Type: "string", Default: `""`, Description: "Dialog heading."},
-			{Name: "Body", Type: "string", Default: `""`, Description: "Dialog body text."},
-			{Name: "TriggerLabel", Type: "string", Default: `""`, Description: "Label of the button that opens the modal."},
-			{Name: "PrimaryLabel", Type: "string", Default: `""`, Description: "Primary button label."},
-			{Name: "PrimaryAction", Type: "*ButtonAction", Default: "nil", Description: "Primary button behavior (OnClick or hx-* fields)."},
-			{Name: "SecondaryLabel", Type: "string", Default: `""`, Description: "Secondary button label (omit to hide)."},
-			{Name: "SecondaryAction", Type: "*ButtonAction", Default: "nil", Description: "Secondary button behavior."},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Alert color: "default", "success", "info", "warning", "danger".`},
-			{Name: "AlertMode", Type: "bool", Default: "false", Description: "Render the compact icon-led alert dialog layout."},
-			{Name: "PanelClass", Type: "string", Default: `""`, Description: "Extra classes on the dialog."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(modalAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -217,7 +263,7 @@ func modalDefaultPreview() templ.Component {
 	})
 }
 
-// modalAlertPreview renders the four alert-mode variants.
+// modalAlertPreview renders the four alert-dialog tones.
 func modalAlertPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -243,50 +289,46 @@ func modalAlertPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = modal.Modal(modal.Config{
+		templ_7745c5c3_Err = modal.AlertDialog(modal.AlertDialogConfig{
 			ID:           "successDemo",
 			Title:        "Transaction Complete",
 			Body:         "Your funds transfer was successful. Check your balance for confirmation.",
 			TriggerLabel: "Success Modal",
-			PrimaryLabel: "Go to My Balance",
-			Variant:      modal.Success,
-			AlertMode:    true,
+			ActionLabel:  "Go to My Balance",
+			Tone:         modal.ToneSuccess,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = modal.Modal(modal.Config{
+		templ_7745c5c3_Err = modal.AlertDialog(modal.AlertDialogConfig{
 			ID:           "infoDemo",
 			Title:        "New Update Available",
 			Body:         "A new version of the application is ready for download. Enhance your experience with the latest features and improvements.",
 			TriggerLabel: "Info Modal",
-			PrimaryLabel: "Install Updates Now",
-			Variant:      modal.Info,
-			AlertMode:    true,
+			ActionLabel:  "Install Updates Now",
+			Tone:         modal.ToneInfo,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = modal.Modal(modal.Config{
+		templ_7745c5c3_Err = modal.AlertDialog(modal.AlertDialogConfig{
 			ID:           "warningDemo",
 			Title:        "Forgot your password?",
 			Body:         "Your account will be locked after three unsuccessful login attempts.",
 			TriggerLabel: "Warning Modal",
-			PrimaryLabel: "Recover My Password",
-			Variant:      modal.Warning,
-			AlertMode:    true,
+			ActionLabel:  "Recover My Password",
+			Tone:         modal.ToneWarning,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = modal.Modal(modal.Config{
+		templ_7745c5c3_Err = modal.AlertDialog(modal.AlertDialogConfig{
 			ID:           "dangerDemo",
 			Title:        "Update Required",
 			Body:         "You are missing critical security updates, putting your system at risk of potential vulnerabilities.",
 			TriggerLabel: "Danger Modal",
-			PrimaryLabel: "Install Updates Now",
-			Variant:      modal.Danger,
-			AlertMode:    true,
+			ActionLabel:  "Install Updates Now",
+			Tone:         modal.ToneDanger,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

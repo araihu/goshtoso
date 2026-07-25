@@ -16,24 +16,24 @@ import "fmt"
 //	// Simple badge
 //	@badge.Badge(badge.Config{
 //	    Label: "New",
-//	    Variant: badge.Primary,
+//	    Tone: badge.TonePrimary,
 //	})
 //
-//	// Soft style badge with icon
+//	// Soft appearance badge with icon
 //	@badge.Badge(badge.Config{
 //	    Label: "Active",
-//	    Variant: badge.Success,
-//	    Style: badge.StyleSoft,
+//	    Tone: badge.ToneSuccess,
+//	    Appearance: badge.AppearanceSoft,
 //	    Icon: checkIcon,
 //	})
 //
 //	// Badge with indicator dot
 //	@badge.Badge(badge.Config{
 //	    Label: "Live",
-//	    Variant: badge.Danger,
+//	    Tone: badge.ToneDanger,
 //	    Indicator: true,
 //	})
-func Badge(cfg Config) templ.Component {
+func badgeTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -54,7 +54,7 @@ func Badge(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if cfg.IsSoft() || cfg.Icon != nil || cfg.Indicator {
+		if cfg.isSoft() || cfg.Icon != nil || cfg.Indicator {
 			templ_7745c5c3_Err = badgeWithInner(cfg).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -91,7 +91,7 @@ func simpleBadge(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.RootClass
+		classes := "rounded-radius w-fit font-medium " + cfg.sizeClasses() + " " + cfg.toneClasses() + " " + cfg.RootClass
 		var templ_7745c5c3_Var3 = []any{classes}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
@@ -153,11 +153,11 @@ func badgeWithInner(cfg Config) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " "
-		if cfg.IsSoft() {
-			containerClasses = containerClasses + cfg.SoftVariantClasses()
+		containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.sizeTextClass() + " "
+		if cfg.isSoft() {
+			containerClasses = containerClasses + cfg.softToneClasses()
 		} else {
-			containerClasses = containerClasses + cfg.VariantClasses()
+			containerClasses = containerClasses + cfg.toneClasses()
 		}
 		containerClasses = containerClasses + " " + cfg.RootClass
 		var templ_7745c5c3_Var7 = []any{containerClasses}
@@ -182,7 +182,7 @@ func badgeWithInner(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{"flex items-center gap-1 " + cfg.SizeClasses() + " " + cfg.SoftInnerClasses()}
+		var templ_7745c5c3_Var9 = []any{"flex items-center gap-1 " + cfg.sizeClasses() + " " + cfg.softInnerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -205,7 +205,7 @@ func badgeWithInner(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.Indicator {
-			var templ_7745c5c3_Var11 = []any{cfg.IndicatorClasses()}
+			var templ_7745c5c3_Var11 = []any{cfg.indicatorClasses()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -263,7 +263,7 @@ func badgeWithInner(cfg Config) templ.Component {
 // Usage:
 //
 //	@badge.NotificationBadge(99)
-func NotificationBadge(count int) templ.Component {
+func notificationBadgeTemplate(count int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -315,7 +315,7 @@ func NotificationBadge(count int) templ.Component {
 }
 
 // NotificationDot renders a simple notification dot (red badge without text)
-func NotificationDot() templ.Component {
+func notificationDotTemplate() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -347,8 +347,8 @@ func NotificationDot() templ.Component {
 // AnimatingDot renders a pulsing notification dot
 // Usage:
 //
-//	@badge.AnimatingDot(badge.Primary)
-func AnimatingDot(variant Variant) templ.Component {
+//	@badge.AnimatingDot(badge.TonePrimary)
+func animatingDotTemplate(tone Tone) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -370,16 +370,16 @@ func AnimatingDot(variant Variant) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		colorClass := "bg-primary dark:bg-primary-dark"
-		switch variant {
-		case Secondary:
+		switch tone {
+		case ToneSecondary:
 			colorClass = "bg-secondary dark:bg-secondary-dark"
-		case Info:
+		case ToneInfo:
 			colorClass = "bg-info"
-		case Success:
+		case ToneSuccess:
 			colorClass = "bg-success"
-		case Warning:
+		case ToneWarning:
 			colorClass = "bg-warning"
-		case Danger:
+		case ToneDanger:
 			colorClass = "bg-danger"
 		}
 		var templ_7745c5c3_Var18 = []any{"flex size-3 items-center justify-center rounded-full " + colorClass}

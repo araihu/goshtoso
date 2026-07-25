@@ -9,9 +9,66 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/banner"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var bannerAPISections = []demo.APISection{
+	demo.StructAPI[banner.Config](
+		rootcomponents.KindBanner,
+		"Config",
+		"",
+		"Configures an announcement banner.",
+		[]demo.APIPropDoc{
+			{Name: "Description", Default: `""`, Description: "Visible announcement text.", Required: true},
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "TonePrimary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Semantic color treatment."},
+			{Name: "Position", Default: "PositionRelative", Allowed: []string{"PositionRelative", "PositionFixed"}, Description: "Inline flow or fixed top-of-viewport placement."},
+			{Name: "Persistent", Default: "false (dismissible)", Description: "Hides the dismiss button when true."},
+			{Name: "DismissAction", Default: `"show = false"`, Description: "Alpine expression executed by the dismiss button."},
+			{Name: "CTA", Default: "nil", Description: "Optional inline call to action."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the banner root."},
+		},
+	),
+	demo.StructAPI[banner.CTAConfig](
+		"",
+		"CTAConfig",
+		"",
+		"Configures the banner's optional link or button action.",
+		[]demo.APIPropDoc{
+			{Name: "ActionLabel", Default: `""`, Description: "Visible action label.", Required: true},
+			{Name: "Href", Default: `""`, Description: "When non-empty, renders the action as a link."},
+			{Name: "OnClick", Default: `""`, Description: "Alpine expression used by the button path when Href is empty."},
+		},
+	),
+	demo.StructAPI[banner.CookieBannerConfig](
+		rootcomponents.KindCookieBanner,
+		"CookieBannerConfig",
+		"",
+		"Configures the fixed cookie-consent dialog.",
+		[]demo.APIPropDoc{
+			{Name: "Title", Default: `"Cookie Consent"`, Description: "Dialog heading."},
+			{Name: "Description", Default: `""`, Description: "Consent message body.", Required: true},
+			{Name: "Icon", Default: `"🍪"`, Description: "Optional heading icon; a cookie emoji renders when nil."},
+			{Name: "AcceptLabel", Default: `"Accept"`, Description: "Accept-button label."},
+			{Name: "RejectLabel", Default: `"Decline"`, Description: "Reject-button label."},
+			{Name: "AcceptAction", Default: `""`, Description: "Alpine expression executed by the accept button."},
+			{Name: "RejectAction", Default: `""`, Description: "Alpine expression executed by the reject button."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the dialog root."},
+		},
+	),
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/banner",
+		"",
+		"Constructors",
+		"",
+		"Constructs announcement and cookie-consent banners.",
+		[]demo.APIPropDoc{
+			{Name: "Banner", Signature: "func Banner(cfg Config) Instance", Default: "n/a", Description: "Creates an announcement banner."},
+			{Name: "CookieBanner", Signature: "func CookieBanner(cfg CookieBannerConfig) CookieBannerInstance", Default: "n/a", Description: "Creates a cookie-consent dialog."},
+		},
+	),
+}
 
 // BannerDemoPage renders the Banner component demo
 func BannerDemoPage() templ.Component {
@@ -43,7 +100,7 @@ func BannerDemoPage() templ.Component {
 	})
 }
 
-// bannerDemoContent renders the demo. Each banner variant lives in its own
+// bannerDemoContent renders the demo. Each banner example lives in its own
 // preview frame followed by its own code block (mirrors
 // penguinui.com/components/banner). Wrapped in #banner-fragment.
 func bannerDemoContent() templ.Component {
@@ -74,7 +131,7 @@ func bannerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Banner",
-				Description: "A prominent page/section message for announcements, promotions, alerts, and cookie consent. Dismissible by default; supports CTAs, semantic colors, and a cookie-consent mode.",
+				Description: "A prominent page or section message for announcements, promotions, and alerts. Dismissible by default, with optional CTAs and semantic tones.",
 			},
 			bannerSimplePreview(),
 			`@banner.Banner(banner.Config{
@@ -117,12 +174,12 @@ func bannerDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Color Variants",
-				Description: "Set Variant for semantic coloring: Default, Primary, Info, Success, Warning, Danger.",
+				Title:       "Semantic Tones",
+				Description: "Set Tone for semantic coloring: Default, Primary, Info, Success, Warning, or Danger.",
 			},
 			bannerVariantsPreview(),
-			`@banner.Banner(banner.Config{Description: "Success! Your changes have been saved", Variant: banner.Success})
-@banner.Banner(banner.Config{Description: "Warning: Please review your settings", Variant: banner.Warning})`,
+			`@banner.Banner(banner.Config{Description: "Success! Your changes have been saved", Tone: banner.ToneSuccess})
+@banner.Banner(banner.Config{Description: "Warning: Please review your settings", Tone: banner.ToneWarning})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -130,20 +187,16 @@ func bannerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Cookie Consent",
-				Description: "CookieBanner: true plus a CookieConfig renders a corner-anchored consent card with accept/reject actions.",
+				Description: "CookieBanner is a separate corner-anchored dialog with consent-specific content and accept/reject actions.",
 			},
 			bannerCookiePreview(),
-			`@banner.Banner(banner.Config{
-    CookieBanner: true,
-    Position:     banner.PositionRelative,
-    Description:         "We use cookies to improve your experience.",
-    CookieConfig: &banner.CookieBannerConfig{
-        Title:        "Cookie Settings",
-        AcceptLabel:  "Accept All",
-        RejectLabel:  "Decline",
-        AcceptAction: "acceptCookies()",
-        RejectAction: "show = false",
-    },
+			`@banner.CookieBanner(banner.CookieBannerConfig{
+    Title:        "Cookie Settings",
+    Description:  "We use cookies to improve your experience.",
+    AcceptLabel:  "Accept All",
+    RejectLabel:  "Decline",
+    AcceptAction: "acceptCookies()",
+    RejectAction: "show = false",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -153,17 +206,7 @@ func bannerDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Description", Type: "string", Default: `""`, Description: "Banner message text."},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "info", "success", "warning", "danger".`},
-			{Name: "Position", Type: "Position", Default: "PositionRelative", Description: `Layout: "relative" (inline) or "fixed" (pinned to top).`},
-			{Name: "Persistent", Type: "bool", Default: "false", Description: "Remove the dismiss control."},
-			{Name: "DismissAction", Type: "string", Default: `""`, Description: "Extra Alpine expression run when dismissed."},
-			{Name: "CTA", Type: "*CTAConfig", Default: "nil", Description: "Inline call-to-action (ActionLabel + Href or OnClick)."},
-			{Name: "CookieBanner", Type: "bool", Default: "false", Description: "Render as a corner cookie-consent card."},
-			{Name: "CookieConfig", Type: "*CookieBannerConfig", Default: "nil", Description: "Cookie card content + accept/reject actions."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the banner."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(bannerAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -296,7 +339,7 @@ func bannerCTAPreview() templ.Component {
 	})
 }
 
-// bannerVariantsPreview renders the semantic color variants.
+// bannerVariantsPreview renders the semantic color tones.
 func bannerVariantsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -322,27 +365,27 @@ func bannerVariantsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Default variant banner", Variant: banner.Default}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Default tone banner", Tone: banner.ToneDefault}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Primary variant for promotions", Variant: banner.Primary}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Primary tone for promotions", Tone: banner.TonePrimary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Info variant for general information", Variant: banner.Info}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Info tone for general information", Tone: banner.ToneInfo}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Success! Operation completed successfully", Variant: banner.Success}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Success! Operation completed successfully", Tone: banner.ToneSuccess}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Warning: Please review your settings", Variant: banner.Warning}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Warning: Please review your settings", Tone: banner.ToneWarning}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Error: Something went wrong", Variant: banner.Danger}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = banner.Banner(banner.Config{Description: "Error: Something went wrong", Tone: banner.ToneDanger}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -354,7 +397,7 @@ func bannerVariantsPreview() templ.Component {
 	})
 }
 
-// bannerCookiePreview renders the cookie-consent banner inside a framed stage.
+// bannerCookiePreview renders the fixed cookie-consent dialog.
 func bannerCookiePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -376,26 +419,22 @@ func bannerCookiePreview() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"banner-cookie\" class=\"w-full max-w-2xl mx-auto\"><div class=\"relative h-80 overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><div class=\"absolute inset-0 bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"banner-cookie\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			CookieBanner: true,
-			Position:     banner.PositionRelative,
+		templ_7745c5c3_Err = banner.CookieBanner(banner.CookieBannerConfig{
+			Title:        "Cookie Time!",
 			Description:  "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
-			CookieConfig: &banner.CookieBannerConfig{
-				Title:        "Cookie Time!",
-				AcceptLabel:  "Sounds Good!",
-				RejectLabel:  "No, thank you",
-				AcceptAction: "show = false",
-				RejectAction: "show = false",
-			},
+			AcceptLabel:  "Sounds Good!",
+			RejectLabel:  "No, thank you",
+			AcceptAction: "show = false",
+			RejectAction: "show = false",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

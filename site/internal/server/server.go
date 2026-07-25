@@ -117,6 +117,7 @@ func (s *Server) setupRoutes() {
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
+	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
 	s.mux.HandleFunc("/attributions", s.handleAttributions)
@@ -297,7 +298,7 @@ func (s *Server) handleFormExternalSubmit(w http.ResponseWriter, r *http.Request
 		version = "v" + version
 	}
 	_ = toast.OOBToast(toast.Config{
-		Variant: toast.Success,
+		Tone:    toast.ToneSuccess,
 		Title:   "Upgrade request submitted",
 		Message: fmt.Sprintf("Target version: %s", version),
 	}).Render(r.Context(), w)
@@ -414,6 +415,10 @@ func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/agents")
 }
 
+func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "docs/component-model")
+}
+
 func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/theme")
 }
@@ -442,7 +447,6 @@ func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
 
 	// Return a rendered static carousel with sample slides
 	cfg := carousel.Config{
-		Variant: carousel.WithText,
 		Slides: []carousel.Slide{
 			{
 				ImgSrc:      "/assets/images/carousel/slide-1.webp",

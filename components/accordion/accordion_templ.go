@@ -20,7 +20,7 @@ import "fmt"
 //	        {ID: "item2", Title: "Section 2", Content: templ.Raw("<p>Content 2</p>")},
 //	    },
 //	})
-func Accordion(cfg AccordionConfig) templ.Component {
+func accordionTemplate(cfg AccordionConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -46,7 +46,7 @@ func Accordion(cfg AccordionConfig) templ.Component {
 			containerID = "accordion"
 		}
 		alpineData := generateAlpineData(cfg)
-		var templ_7745c5c3_Var2 = []any{cfg.ContainerClasses() + " " + cfg.RootClass}
+		var templ_7745c5c3_Var2 = []any{cfg.containerClasses() + " " + cfg.RootClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -95,11 +95,11 @@ func Accordion(cfg AccordionConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for i, item := range cfg.Items {
-			itemData := AccordionItemData{
+			itemData := accordionItemData{
 				Item:          item,
 				Index:         i,
 				AllowMultiple: cfg.AllowMultiple,
-				Variant:       cfg.Variant,
+				Appearance:    cfg.Appearance,
 				ContainerID:   containerID,
 			}
 			templ_7745c5c3_Err = accordionItem(itemData).Render(ctx, templ_7745c5c3_Buffer)
@@ -135,7 +135,7 @@ func generateAlpineData(cfg AccordionConfig) string {
 }
 
 // accordionItem renders a single accordion item
-func accordionItem(data AccordionItemData) templ.Component {
+func accordionItem(data accordionItemData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -166,11 +166,11 @@ func accordionItem(data AccordionItemData) templ.Component {
 		contentID := "content-" + itemID
 		idx := fmt.Sprintf("%d", index)
 		clickHandler := "toggle(" + idx + ")"
-		classBinding := "isOpen(" + idx + ") ? '" + data.ExpandedClasses() + "' : '" + data.CollapsedClasses() + "'"
+		classBinding := "isOpen(" + idx + ") ? '" + data.expandedClasses() + "' : '" + data.collapsedClasses() + "'"
 		ariaBinding := "isOpen(" + idx + ") ? 'true' : 'false'"
 		showBinding := "isOpen(" + idx + ")"
 		chevronBinding := "isOpen(" + idx + ") ? 'rotate-180' : ''"
-		var templ_7745c5c3_Var7 = []any{data.ItemContainerClasses()}
+		var templ_7745c5c3_Var7 = []any{data.itemContainerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -179,7 +179,7 @@ func accordionItem(data AccordionItemData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if data.Variant == Split {
+		if data.Appearance == AppearanceSplit {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -202,7 +202,7 @@ func accordionItem(data AccordionItemData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{data.ItemButtonClasses()}
+		var templ_7745c5c3_Var9 = []any{data.itemButtonClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -378,7 +378,7 @@ func accordionItem(data AccordionItemData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var21 = []any{data.ContentClasses()}
+		var templ_7745c5c3_Var21 = []any{data.contentClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var21...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

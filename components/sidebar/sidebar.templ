@@ -12,12 +12,12 @@ import "fmt"
 //	        {ID: "profile", Label: "Profile", Href: "/profile", Icon: profileIcon},
 //	    },
 //	})
-templ Sidebar(cfg Config) {
+templ sidebarTemplate(cfg Config) {
 	{{ logoHref := cfg.LogoHref }}
 	{{ if logoHref == "" { logoHref = "/" } }}
 	
 	<nav
-		class={ cfg.ContainerClasses() + " " + cfg.RootClass }
+		class={ cfg.containerClasses() + " " + cfg.RootClass }
 		aria-label="sidebar navigation"
 	>
 		<!-- Skip to main content link for accessibility -->
@@ -56,7 +56,7 @@ templ Sidebar(cfg Config) {
 		}
 		
 		<!-- Navigation -->
-		<div class={ cfg.NavClasses() }>
+		<div class={ cfg.navClasses() }>
 			<!-- Top-level items (icon links) -->
 			if len(cfg.Items) > 0 {
 				<div class="flex flex-col gap-1">
@@ -95,20 +95,20 @@ templ Sidebar(cfg Config) {
 // Overlay renders a responsive off-canvas sidebar with a trigger and backdrop.
 // The inner panel renders a normal Sidebar so consumers keep the same item,
 // section, slot, and HTMX APIs.
-templ Overlay(cfg OverlayConfig) {
-	{{ state := cfg.StateVar() }}
-	{{ panelID := cfg.PanelID() }}
+templ overlayTemplate(cfg OverlayConfig) {
+	{{ state := cfg.stateVar() }}
+	{{ panelID := cfg.panelID() }}
 	<div
 		x-data={ fmt.Sprintf("{ %s: false }", state) }
-		class={ cfg.RootClasses() }
+		class={ cfg.rootClasses() }
 	>
 		<button
 			type="button"
 			x-on:click={ fmt.Sprintf("%s = !%s", state, state) }
 			x-bind:aria-expanded={ fmt.Sprintf("%s.toString()", state) }
 			aria-controls={ panelID }
-			aria-label={ cfg.TriggerLabelText() }
-			class={ cfg.TriggerClasses() }
+			aria-label={ cfg.triggerLabelText() }
+			class={ cfg.triggerClasses() }
 		>
 			if cfg.Trigger != nil {
 				@cfg.Trigger
@@ -121,7 +121,7 @@ templ Overlay(cfg OverlayConfig) {
 			x-show={ state }
 			x-transition.opacity.duration.200ms
 			x-on:click={ fmt.Sprintf("%s = false", state) }
-			class={ cfg.BackdropClasses() }
+			class={ cfg.backdropClasses() }
 			aria-hidden="true"
 		></div>
 		<div
@@ -134,13 +134,13 @@ templ Overlay(cfg OverlayConfig) {
 			x-transition:leave="transition-transform ease-in duration-150 motion-reduce:transition-none"
 			x-transition:leave-start="translate-x-0"
 			x-transition:leave-end="-translate-x-full"
-			class={ cfg.PanelClasses() }
+			class={ cfg.panelClasses() }
 		>
 			<div
 				class="h-full"
 				x-on:click={ fmt.Sprintf("if ($event.target.closest('a[href]:not([aria-controls])')) %s = false", state) }
 			>
-				@Sidebar(cfg.Sidebar)
+				@sidebarTemplate(cfg.Sidebar)
 			</div>
 		</div>
 	</div>
@@ -158,7 +158,7 @@ templ sidebarItem(item Item) {
 			<span>{ item.Label }</span>
 		</span>
 	} else if item.Active {
-		<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } class="flex items-center gap-2 py-2 text-base font-medium text-primary dark:text-primary-dark">
+		<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } aria-current="page" class="flex items-center gap-2 py-2 text-base font-medium text-primary dark:text-primary-dark">
 			if item.Icon != nil {
 				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark">
 					@item.Icon
@@ -236,6 +236,7 @@ templ sidebarSectionItem(item Item, collapseChildGroups bool) {
 		<a
 			href={ templ.URL(item.Href) }
 			{ sidebarLinkAttrs(item)... }
+			aria-current="page"
 			class="pointer-events-none flex items-center gap-2 border-l-2 border-primary py-2.5 pl-4 text-sm font-bold text-primary dark:border-primary-dark dark:text-primary-dark"
 		>
 			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>

@@ -85,7 +85,7 @@ func (s *Server) handleWizardNext(w http.ResponseWriter, r *http.Request) {
 		persistWizard(r, w, st)
 		writeWizardBody(r, w, st, errs)
 		_ = toast.OOBToast(toast.Config{
-			Variant: toast.Warning,
+			Tone:    toast.ToneWarning,
 			Title:   "Check your entries",
 			Message: "Please fix the highlighted fields.",
 		}).Render(r.Context(), w)
@@ -96,7 +96,7 @@ func (s *Server) handleWizardNext(w http.ResponseWriter, r *http.Request) {
 	persistWizard(r, w, st)
 	writeWizardBody(r, w, st, nil)
 	_ = toast.OOBToast(toast.Config{
-		Variant: toast.Success,
+		Tone:    toast.ToneSuccess,
 		Title:   "Saved",
 		Message: "Step saved.",
 	}).Render(r.Context(), w)
@@ -125,7 +125,7 @@ func (s *Server) handleWizardConfirm(w http.ResponseWriter, r *http.Request) {
 		persistWizard(r, w, st)
 		writeWizardBody(r, w, st, errs)
 		_ = toast.OOBToast(toast.Config{
-			Variant: toast.Warning,
+			Tone:    toast.ToneWarning,
 			Title:   "Almost there",
 			Message: "Some details still need fixing.",
 		}).Render(r.Context(), w)
@@ -136,7 +136,7 @@ func (s *Server) handleWizardConfirm(w http.ResponseWriter, r *http.Request) {
 	persistWizard(r, w, st)
 	writeWizardBody(r, w, st, nil)
 	_ = toast.OOBToast(toast.Config{
-		Variant: toast.Success,
+		Tone:    toast.ToneSuccess,
 		Title:   "Welcome aboard",
 		Message: "Your account is ready.",
 	}).Render(r.Context(), w)

@@ -6,7 +6,7 @@ import (
 )
 
 func TestInputClassesUseActiveSurfaceVocabulary(t *testing.T) {
-	classes := Config{}.InputClasses()
+	classes := Config{}.inputClasses()
 
 	for _, want := range []string{
 		"bg-surface",
@@ -17,7 +17,7 @@ func TestInputClassesUseActiveSurfaceVocabulary(t *testing.T) {
 		"disabled:text-on-surface-muted",
 	} {
 		if !strings.Contains(classes, want) {
-			t.Fatalf("InputClasses() missing %q in %q", want, classes)
+			t.Fatalf("inputClasses() missing %q in %q", want, classes)
 		}
 	}
 }

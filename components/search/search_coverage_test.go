@@ -43,12 +43,12 @@ func TestConfigCustomValueBranches(t *testing.T) {
 		got  string
 		want string
 	}{
-		{"ID", cfg.GetID(), "custom-id"},
-		{"Label", cfg.GetLabel(), "Find anything"},
-		{"Placeholder", cfg.GetPlaceholder(), "Type to search..."},
-		{"ShortcutText", cfg.GetShortcutText(), "Ctrl K"},
-		{"EscapeText", cfg.GetEscapeText(), "ESC"},
-		{"EmptyText", cfg.GetEmptyText(), "Nothing here."},
+		{"ID", cfg.getID(), "custom-id"},
+		{"Label", cfg.getLabel(), "Find anything"},
+		{"Placeholder", cfg.getPlaceholder(), "Type to search..."},
+		{"ShortcutText", cfg.getShortcutText(), "Ctrl K"},
+		{"EscapeText", cfg.getEscapeText(), "ESC"},
+		{"EmptyText", cfg.getEmptyText(), "Nothing here."},
 	}
 	for _, c := range checks {
 		if c.got != c.want {
@@ -56,11 +56,11 @@ func TestConfigCustomValueBranches(t *testing.T) {
 		}
 	}
 
-	if cfg.GetMaxResults() != 9 {
-		t.Errorf("GetMaxResults = %d, want 9", cfg.GetMaxResults())
+	if cfg.getMaxResults() != 9 {
+		t.Errorf("getMaxResults = %d, want 9", cfg.getMaxResults())
 	}
-	if cfg.GetDescriptionMaxLength() != 42 {
-		t.Errorf("GetDescriptionMaxLength = %d, want 42", cfg.GetDescriptionMaxLength())
+	if cfg.getDescriptionMaxLength() != 42 {
+		t.Errorf("getDescriptionMaxLength = %d, want 42", cfg.getDescriptionMaxLength())
 	}
 
 	classChecks := []struct {
@@ -68,9 +68,9 @@ func TestConfigCustomValueBranches(t *testing.T) {
 		got  string
 		want string
 	}{
-		{"RootClasses", cfg.RootClasses(), "root-extra"},
-		{"TriggerClasses", cfg.TriggerClasses(), "trigger-extra"},
-		{"DialogClasses", cfg.DialogClasses(), "dialog-extra"},
+		{"rootClasses", cfg.rootClasses(), "root-extra"},
+		{"triggerClasses", cfg.triggerClasses(), "trigger-extra"},
+		{"dialogClasses", cfg.dialogClasses(), "dialog-extra"},
 	}
 	for _, c := range classChecks {
 		if !strings.Contains(c.got, c.want) {
@@ -82,9 +82,9 @@ func TestConfigCustomValueBranches(t *testing.T) {
 // TestRootClassesDefaultOmitsExtra confirms the default branch leaves the base
 // classes untouched.
 func TestRootClassesDefaultOmitsExtra(t *testing.T) {
-	got := Config{}.RootClasses()
+	got := Config{}.rootClasses()
 	if got != "w-full" {
-		t.Fatalf("RootClasses default = %q, want %q", got, "w-full")
+		t.Fatalf("rootClasses default = %q, want %q", got, "w-full")
 	}
 }
 
@@ -247,8 +247,8 @@ func TestJSStringEscaping(t *testing.T) {
 		{`both'\`, `both\'\\`},
 	}
 	for _, tc := range cases {
-		if got := JSString(tc.in); got != tc.want {
-			t.Errorf("JSString(%q) = %q, want %q", tc.in, got, tc.want)
+		if got := jsString(tc.in); got != tc.want {
+			t.Errorf("jsString(%q) = %q, want %q", tc.in, got, tc.want)
 		}
 	}
 }

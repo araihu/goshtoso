@@ -34,6 +34,8 @@ many of these steps, but the checklist keeps the public release story coherent.
   - new components or variants,
   - asset/runtime version changes,
   - migration steps for consumers.
+- Give the release a dated `CHANGELOG.md` heading matching the tag. The release
+  workflow publishes that section as the GitHub release notes.
 
 ## After the Tag Workflow
 
@@ -41,8 +43,9 @@ many of these steps, but the checklist keeps the public release story coherent.
   `assets/goshtoso-theme.css`.
 - Confirm the release badge endpoint has the new tag.
 - Confirm the coverage badge endpoint still renders.
-- Confirm the release workflow bumped `site/go.mod` to the new tag, or open a
-  follow-up PR if the public module proxy lagged.
+- Open a follow-up PR that pins `site/go.mod` to the new tag and updates any
+  version-aware documentation links. Never push this follow-up directly to the
+  protected `main` branch.
 - Confirm `VERSIONS.md` has a row for the released tag.
 - Confirm the documentation site deploy completed or was intentionally skipped.
 - Confirm `npx skills add araihu/goshtoso --list` discovers the released

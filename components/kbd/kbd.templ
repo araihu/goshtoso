@@ -4,26 +4,27 @@ package kbd
 //
 // Usage:
 //
-//	@kbd.Kbd(kbd.Config{Text: "Ctrl"})
-//	@kbd.Kbd(kbd.Config{Text: "K", Size: kbd.SizeSM})
-//	@kbd.Kbd(kbd.Config{Icon: commandIcon(), Label: "Command"})
-templ Kbd(cfg Config) {
+//	@kbd.Kbd("Ctrl")
+//	@kbd.Kbd("K", kbd.WithSize(kbd.SizeSM))
+//	@kbd.Kbd("", kbd.WithIcon(commandIcon()), kbd.WithLabel("Command"))
+templ kbdTemplate(text string, options ...Option) {
+	{{ cfg := newConfig(text, options) }}
 	<kbd
-		class={ cfg.RootClasses() }
-		if cfg.Label != "" {
-			aria-label={ cfg.Label }
+		class={ cfg.rootClasses() }
+		if cfg.label != "" {
+			aria-label={ cfg.label }
 		}
-		{ cfg.Attrs... }
+		{ cfg.attrs... }
 	>
-		if cfg.Icon != nil {
-			<span class={ "shrink-0 " + cfg.IconClasses() } aria-hidden="true">
-				@cfg.Icon
+		if cfg.icon != nil {
+			<span class={ "shrink-0 " + cfg.iconClasses() } aria-hidden="true">
+				@cfg.icon
 			</span>
 		}
-		if cfg.Text != "" {
-			{ cfg.Text }
-		} else if cfg.AccessibleLabel() != "" {
-			<span class="sr-only">{ cfg.AccessibleLabel() }</span>
+		if cfg.text != "" {
+			{ cfg.text }
+		} else if cfg.accessibleLabel() != "" {
+			<span class="sr-only">{ cfg.accessibleLabel() }</span>
 		}
 	</kbd>
 }

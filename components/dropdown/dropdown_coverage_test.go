@@ -131,13 +131,13 @@ func TestCoverageRenderDividersAndDefaultIconOnlyAriaLabel(t *testing.T) {
 }
 
 func TestCoverageConfigHasShortcuts(t *testing.T) {
-	assert.False(t, Config{}.HasShortcuts())
+	assert.False(t, Config{}.hasShortcuts())
 	assert.False(t, Config{
 		Sections: []Section{{Items: []Item{{Label: "Copy"}}}},
-	}.HasShortcuts())
+	}.hasShortcuts())
 	assert.True(t, Config{
 		Sections: []Section{{Items: []Item{{Label: "Copy", Shortcut: "C"}}}},
-	}.HasShortcuts())
+	}.hasShortcuts())
 }
 
 func TestCoverageDropdownRenderPropagatesNestedIconErrors(t *testing.T) {

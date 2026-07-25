@@ -22,7 +22,7 @@ import (
 //	}) {
 //	    @form.Section(...) { ... }
 //	}
-templ Form(cfg Config) {
+templ formTemplate(cfg Config) {
 	<form
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -65,7 +65,7 @@ templ Form(cfg Config) {
 }
 
 // Section renders a regular form section — a card with title and a responsive grid of children.
-templ Section(cfg SectionConfig) {
+templ sectionTemplate(cfg SectionConfig) {
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -87,7 +87,7 @@ templ Section(cfg SectionConfig) {
 }
 
 // CollapsibleSection renders an accordion-style form section with expand/collapse toggle.
-templ CollapsibleSection(cfg CollapsibleSectionConfig) {
+templ collapsibleSectionTemplate(cfg CollapsibleSectionConfig) {
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -159,7 +159,7 @@ templ CollapsibleSection(cfg CollapsibleSectionConfig) {
 // FlipSection renders a flip-card section with a read-only front and editable back.
 // The readView component shows the summary/read-only state.
 // Children are the editable form fields shown when the user clicks "Edit".
-templ FlipSection(cfg FlipSectionConfig, readView templ.Component) {
+templ flipSectionTemplate(cfg FlipSectionConfig, readView templ.Component) {
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -216,7 +216,7 @@ templ FlipSection(cfg FlipSectionConfig, readView templ.Component) {
 }
 
 // SubSection renders a nested subsection card within a section.
-templ SubSection(cfg SubSectionConfig) {
+templ subSectionTemplate(cfg SubSectionConfig) {
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -237,7 +237,7 @@ templ SubSection(cfg SubSectionConfig) {
 // FieldGroup wraps a single form field with label, validation errors, and hints.
 // Set a built-in field type (Input, Select, Combobox, etc.) on FieldGroupConfig to render
 // a Goshtoso component automatically. If none are set, renders { children... } instead.
-templ FieldGroup(cfg FieldGroupConfig) {
+templ fieldGroupTemplate(cfg FieldGroupConfig) {
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }

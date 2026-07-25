@@ -9,9 +9,86 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var sidebarAPISections = []demo.APISection{
+	demo.StructAPI[sidebar.Config](
+		rootcomponents.KindSidebar,
+		"Config",
+		"sidebar.Sidebar(cfg Config) Instance",
+		"Configures persistent sidebar branding, search, flat items, grouped sections, and slots.",
+		[]demo.APIPropDoc{
+			{Name: "Items", Default: "nil", Description: "Top-level item tree rendered before Sections."},
+			{Name: "SectionsTitle", Default: `"" (omitted)`, Description: "Optional heading above grouped Sections."},
+			{Name: "Sections", Default: "nil", Description: "Grouped navigation rendered after Items."},
+			{Name: "Logo", Default: "nil", Description: "Optional logo component; takes visible precedence over LogoText."},
+			{Name: "LogoText", Default: `""`, Description: "Text branding rendered only when Logo is nil. The entire brand block is omitted when both are empty."},
+			{Name: "LogoHref", Default: `"/"`, Description: "Brand link destination when branding renders; an empty value resolves to /."},
+			{Name: "ShowSearch", Default: "false", Description: "Renders the built-in search input only when SearchSlot is nil."},
+			{Name: "SearchPlaceholder", Default: `""`, Description: "Placeholder on the built-in search input."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the sidebar nav."},
+			{Name: "SearchSlot", Default: "nil", Description: "Custom search-area component rendered in place of the built-in search regardless of ShowSearch."},
+			{Name: "FooterSlot", Default: "nil", Description: "Optional component pinned after the scrollable navigation."},
+		},
+	),
+	demo.StructAPI[sidebar.Item](
+		"",
+		"Item",
+		"",
+		"Describes a navigation item. Some fields apply differently to top-level and section render paths.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"" (collapsible child ID "sidebar-children")`, Description: "Derives <ID>-children for collapsible section items. Ordinary item links do not render ID as their element id."},
+			{Name: "Label", Default: `""`, Description: "Visible item text and the default native title for enabled links."},
+			{Name: "Icon", Default: "nil", Description: "Optional icon rendered only by the top-level item path; section item paths ignore it."},
+			{Name: "Href", Default: `""`, Description: "Enabled-link destination passed through templ.URL. Collapsible section items prevent navigation and toggle children."},
+			{Name: "Active", Default: "false", Description: "Selects active styling and aria-current=page for top-level items and leaf section items. Section items with children take their child/disclosure branch first; top-level active links omit Badge."},
+			{Name: "Disabled", Default: "false", Description: "Renders a non-interactive span for top-level items and ordinary section items. A section item with children that enters disclosure first ignores Disabled; disabled spans omit link attributes and badges."},
+			{Name: "Badge", Default: `"" (omitted)`, Description: "Optional badge on ordinary top-level and enabled section links; the top-level active and disabled paths omit it."},
+			{Name: "BadgeClass", Default: `"bg-primary text-on-primary" treatment`, Description: "Appends caller badge treatment instead of the default colors when Badge renders."},
+			{Name: "Items", Default: "nil", Description: "Child items. Top-level items always expand them; section items may render them inline or behind disclosure."},
+			{Name: "Collapsible", Default: "false", Description: "Enables disclosure only in the section-item path when Items is non-empty; the top-level path ignores it."},
+			{Name: "Open", Default: "false", Description: "Sets initial disclosure state for collapsible section items; ignored by non-collapsible and top-level paths."},
+			{Name: "Title", Default: `"Item.Label"`, Description: "Overrides the generated native title on enabled links when LinkAttrs does not already contain title."},
+			{Name: "DisableAutoTitle", Default: "false", Description: "Prevents Label from becoming a title; an explicit Title or LinkAttrs title still wins."},
+			{Name: "AriaLabel", Default: `"" (omitted)`, Description: "Sets aria-label on enabled links only when LinkAttrs does not already contain one."},
+			{Name: "LinkAttrs", Default: "nil", Description: "Adds attributes to enabled links. Existing title and aria-label values take precedence over typed fallbacks; other modeled conflicts can produce duplicate attributes."},
+		},
+	),
+	demo.StructAPI[sidebar.Section](
+		"",
+		"Section",
+		"",
+		"Groups sidebar items under an optional heading.",
+		[]demo.APIPropDoc{
+			{Name: "Title", Default: `"" (heading omitted)`, Description: "Section heading and data-sidebar-section value."},
+			{Name: "Items", Default: "nil", Description: "Section items rendered in order."},
+			{Name: "Collapsible", Default: "false", Description: "Makes every direct child with nested Items use independent disclosure behavior."},
+			{Name: "IndentItems", Default: "false", Description: "Adds a left margin to the section item group."},
+		},
+	),
+	demo.StructAPI[sidebar.OverlayConfig](
+		rootcomponents.KindSidebarOverlay,
+		"OverlayConfig",
+		"sidebar.Overlay(cfg OverlayConfig) OverlayInstance",
+		"Configures an Alpine-controlled off-canvas wrapper around Sidebar.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"sidebarOverlayOpen" state and "sidebar-overlay-panel" panel ID`, Description: "Derives Alpine state and the panel ID; non-empty input produces <ID>Open state and <ID>-panel."},
+			{Name: "Sidebar", Default: "zero Config", Description: "Sidebar configuration rendered inside the panel."},
+			{Name: "Trigger", Default: "nil (menu icon)", Description: "Replaces the built-in menu icon inside the trigger button."},
+			{Name: "TriggerLabel", Default: `"Open sidebar"`, Description: "Accessible trigger label after trimming whitespace."},
+			{Name: "RootClass", Default: `""`, Description: "Sets additional classes on the overlay root."},
+			{Name: "TriggerClass", Default: `""`, Description: "Appends CSS classes to the trigger button."},
+			{Name: "BackdropPositionClass", Default: `"fixed inset-0"`, Description: "Replaces the backdrop positioning classes when non-blank."},
+			{Name: "BackdropClass", Default: `""`, Description: "Appends CSS classes to the backdrop."},
+			{Name: "PanelPositionClass", Default: `"fixed inset-y-0 left-0"`, Description: "Replaces panel positioning classes when non-blank."},
+			{Name: "PanelWidthClass", Default: `"w-72"`, Description: "Replaces the panel width class when non-blank."},
+			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the off-canvas panel wrapper."},
+		},
+	),
+}
 
 // SidebarDemoPage renders the Sidebar component demo
 func SidebarDemoPage() templ.Component {
@@ -160,30 +237,7 @@ func sidebarDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Items", Type: "[]Item", Default: "nil", Description: "Flat item list. Item: ID, Label, Href, Icon, Active, Disabled, Badge, nested Items."},
-			{Name: "Sections", Type: "[]Section", Default: "nil", Description: "Grouped sections, each with a Title and Items (use instead of, or with, Items)."},
-			{Name: "SectionsTitle", Type: "string", Default: `""`, Description: "Optional heading above the sections."},
-			{Name: "Logo", Type: "templ.Component", Default: "nil", Description: "Custom logo content (overrides LogoText)."},
-			{Name: "LogoText", Type: "string", Default: `""`, Description: "Text logo shown at the top."},
-			{Name: "LogoHref", Type: "string", Default: `""`, Description: "Link target for the logo."},
-			{Name: "ShowSearch", Type: "bool", Default: "false", Description: "Render a search input below the logo."},
-			{Name: "SearchPlaceholder", Type: "string", Default: `""`, Description: "Placeholder for the search input."},
-			{Name: "SearchSlot", Type: "templ.Component", Default: "nil", Description: "Custom search-area content."},
-			{Name: "FooterSlot", Type: "templ.Component", Default: "nil", Description: "Content pinned to the bottom of the sidebar."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
-			{Name: "OverlayConfig.Sidebar", Type: "Config", Default: "Config{}", Description: "Sidebar configuration rendered inside the off-canvas panel."},
-			{Name: "OverlayConfig.ID", Type: "string", Default: `""`, Description: "Panel id prefix and Alpine state source."},
-			{Name: "OverlayConfig.Trigger", Type: "templ.Component", Default: "nil", Description: "Custom trigger contents."},
-			{Name: "OverlayConfig.TriggerLabel", Type: "string", Default: `"Open sidebar"`, Description: "Accessible trigger label."},
-			{Name: "OverlayConfig.RootClass", Type: "string", Default: `""`, Description: "Extra classes on the overlay root."},
-			{Name: "OverlayConfig.TriggerClass", Type: "string", Default: `""`, Description: "Extra classes on the trigger button."},
-			{Name: "OverlayConfig.BackdropPositionClass", Type: "string", Default: `"fixed inset-0"`, Description: "Backdrop positioning classes."},
-			{Name: "OverlayConfig.BackdropClass", Type: "string", Default: `""`, Description: "Extra classes on the backdrop."},
-			{Name: "OverlayConfig.PanelPositionClass", Type: "string", Default: `"fixed inset-y-0 left-0"`, Description: "Panel positioning classes."},
-			{Name: "OverlayConfig.PanelWidthClass", Type: "string", Default: `"w-72"`, Description: "Panel width classes."},
-			{Name: "OverlayConfig.PanelClass", Type: "string", Default: `""`, Description: "Extra classes on the panel wrapper."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(sidebarAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -191,7 +245,7 @@ func sidebarDemoContent() templ.Component {
 	})
 }
 
-// --- Variant 1: Simple Sidebar ---
+// --- Example 1: Simple Sidebar ---
 func sidebarSimplePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -248,7 +302,7 @@ func sidebarSimplePreview() templ.Component {
 	})
 }
 
-// --- Variant 2: Sidebar with Sections ---
+// --- Example 2: Sidebar with Sections ---
 func sidebarSectionsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -321,7 +375,7 @@ func sidebarSectionsPreview() templ.Component {
 	})
 }
 
-// --- Variant 3: Sidebar with Sub-Items ---
+// --- Example 3: Sidebar with Sub-Items ---
 func sidebarSubItemsPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -395,7 +449,7 @@ func sidebarSubItemsPreview() templ.Component {
 	})
 }
 
-// --- Variant 4: Collapsible Sidebar ---
+// --- Example 4: Collapsible Sidebar ---
 func sidebarCollapsiblePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -510,7 +564,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 326, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 380, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -528,7 +582,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 330, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/sidebar.templ`, Line: 384, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -543,7 +597,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 	})
 }
 
-// --- Variant 5: Overlay Sidebar ---
+// --- Example 5: Overlay Sidebar ---
 func sidebarOverlayPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

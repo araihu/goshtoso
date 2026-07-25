@@ -20,8 +20,8 @@ import "fmt"
 //	    Code:     "go get github.com/a-h/templ",
 //	    MaxHeight: "200px",
 //	})
-templ CodeBlock(cfg Config) {
-	{{ id := cfg.GetID() }}
+templ codeBlockTemplate(cfg Config) {
+	{{ id := cfg.getID() }}
 	{{ jsID := jsStringSingle(id) }}
 	<div
 		x-data={ fmt.Sprintf("{ copied: false, copyCode() { navigator.clipboard.writeText(document.getElementById('%s').textContent).then(() => { this.copied = true; setTimeout(() => this.copied = false, 2000); }); } }", jsID) }
@@ -29,7 +29,7 @@ templ CodeBlock(cfg Config) {
 	>
 			<!-- Header -->
 			<div class="flex items-center justify-between px-4 py-2 bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark">
-				<span class="text-xs font-medium text-on-surface dark:text-on-surface-dark">{ cfg.GetLabel() }</span>
+				<span class="text-xs font-medium text-on-surface dark:text-on-surface-dark">{ cfg.getLabel() }</span>
 				<button
 					type="button"
 					@click="copyCode()"

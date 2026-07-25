@@ -26,16 +26,16 @@ type FormErrorsConfig struct {
 	RootClass string
 }
 
-// GetID returns the resolved id attribute.
-func (c FormErrorsConfig) GetID() string {
+// getID returns the resolved id attribute.
+func (c FormErrorsConfig) getID() string {
 	if c.ID == "" {
 		return "form-errors"
 	}
 	return c.ID
 }
 
-// GetTitle returns the resolved title.
-func (c FormErrorsConfig) GetTitle() string {
+// getTitle returns the resolved title.
+func (c FormErrorsConfig) getTitle() string {
 	if c.Title == "" {
 		return "Validation failed"
 	}
@@ -55,10 +55,10 @@ func (c FormErrorsConfig) GetTitle() string {
 //	        {Message: "Addon requires Kubernetes 1.28–1.31"},
 //	    },
 //	})
-templ FormErrors(cfg FormErrorsConfig) {
+templ formErrorsTemplate(cfg FormErrorsConfig) {
 	if len(cfg.Items) > 0 {
 		<div
-			id={ cfg.GetID() }
+			id={ cfg.getID() }
 			role="alert"
 			aria-live="polite"
 			class={ "flex flex-col gap-2 rounded-radius border border-danger bg-danger/10 px-4 py-3 text-on-surface dark:border-danger dark:bg-danger/15 dark:text-on-surface-dark " + cfg.RootClass }
@@ -68,7 +68,7 @@ templ FormErrors(cfg FormErrorsConfig) {
 					<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
 				</svg>
 				<div class="flex-1 min-w-0">
-					<p class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.GetTitle() }</p>
+					<p class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.getTitle() }</p>
 					if cfg.Hint != "" {
 						<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.Hint }</p>
 					}

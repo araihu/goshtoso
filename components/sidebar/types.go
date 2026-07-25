@@ -1,6 +1,7 @@
 package sidebar
 
 import (
+	"maps"
 	"strings"
 	"unicode"
 
@@ -117,22 +118,22 @@ type Section struct {
 }
 
 // ContainerClasses returns the container CSS classes
-func (cfg Config) ContainerClasses() string {
+func (cfg Config) containerClasses() string {
 	return "h-full w-full border-r border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark flex flex-col"
 }
 
 // NavClasses returns the navigation container classes
-func (cfg Config) NavClasses() string {
+func (cfg Config) navClasses() string {
 	return "flex-1 overflow-y-auto sidebar-scroll scrollbar-custom p-4"
 }
 
 // StateVar returns the Alpine state variable that controls the overlay.
-func (cfg OverlayConfig) StateVar() string {
+func (cfg OverlayConfig) stateVar() string {
 	return safeJSIdentifier(cfg.ID, "sidebarOverlay") + "Open"
 }
 
 // PanelID returns the id for the overlay panel.
-func (cfg OverlayConfig) PanelID() string {
+func (cfg OverlayConfig) panelID() string {
 	if id := strings.TrimSpace(cfg.ID); id != "" {
 		return id + "-panel"
 	}
@@ -140,7 +141,7 @@ func (cfg OverlayConfig) PanelID() string {
 }
 
 // TriggerLabelText returns the trigger button accessible label.
-func (cfg OverlayConfig) TriggerLabelText() string {
+func (cfg OverlayConfig) triggerLabelText() string {
 	if label := strings.TrimSpace(cfg.TriggerLabel); label != "" {
 		return label
 	}
@@ -148,12 +149,12 @@ func (cfg OverlayConfig) TriggerLabelText() string {
 }
 
 // RootClasses returns classes for the overlay root.
-func (cfg OverlayConfig) RootClasses() string {
+func (cfg OverlayConfig) rootClasses() string {
 	return strings.TrimSpace(cfg.RootClass)
 }
 
 // TriggerClasses returns classes for the overlay trigger button.
-func (cfg OverlayConfig) TriggerClasses() string {
+func (cfg OverlayConfig) triggerClasses() string {
 	base := "inline-flex items-center justify-center rounded-radius p-2 text-on-surface transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
 	if cfg.TriggerClass != "" {
 		base += " " + cfg.TriggerClass
@@ -162,7 +163,7 @@ func (cfg OverlayConfig) TriggerClasses() string {
 }
 
 // BackdropClasses returns classes for the overlay backdrop.
-func (cfg OverlayConfig) BackdropClasses() string {
+func (cfg OverlayConfig) backdropClasses() string {
 	position := strings.TrimSpace(cfg.BackdropPositionClass)
 	if position == "" {
 		position = "fixed inset-0"
@@ -175,7 +176,7 @@ func (cfg OverlayConfig) BackdropClasses() string {
 }
 
 // PanelClasses returns classes for the off-canvas panel wrapper.
-func (cfg OverlayConfig) PanelClasses() string {
+func (cfg OverlayConfig) panelClasses() string {
 	position := strings.TrimSpace(cfg.PanelPositionClass)
 	if position == "" {
 		position = "fixed inset-y-0 left-0"
@@ -193,9 +194,7 @@ func (cfg OverlayConfig) PanelClasses() string {
 
 func sidebarLinkAttrs(item Item) templ.Attributes {
 	attrs := templ.Attributes{}
-	for key, value := range item.LinkAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, item.LinkAttrs)
 
 	if _, ok := attrs["title"]; !ok {
 		title := strings.TrimSpace(item.Title)

@@ -25,20 +25,20 @@ import (
 
 // categoryVariant maps a spend category to a badge variant so each category
 // reads as a distinct color chip.
-func categoryVariant(c string) badge.Variant {
+func categoryVariant(c string) badge.Tone {
 	switch c {
 	case "Food":
-		return badge.Success
+		return badge.ToneSuccess
 	case "Transport":
-		return badge.Info
+		return badge.ToneInfo
 	case "Housing":
-		return badge.Primary
+		return badge.TonePrimary
 	case "Health":
-		return badge.Danger
+		return badge.ToneDanger
 	case "Entertainment":
-		return badge.Warning
+		return badge.ToneWarning
 	default:
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
 }
 
@@ -164,7 +164,7 @@ func SummaryBadge(s expense.State, oob bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: badge.Primary, Label: "Total " + expense.FormatCents(s.TotalCents())}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: badge.TonePrimary, Label: "Total " + expense.FormatCents(s.TotalCents())}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -259,7 +259,7 @@ func ExpenseRow(e expense.Expense) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: categoryVariant(e.Category), Label: e.Category}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: categoryVariant(e.Category), Label: e.Category}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,7 +378,7 @@ func ExpenseList(s expense.State, oob bool) templ.Component {
 			}
 			templ_7745c5c3_Err = pagination.Pagination(pagination.Config{
 				ID:          "expense-pagination",
-				Variant:     pagination.WithEllipsis,
+				Mode:        pagination.ModeEllipsis,
 				CurrentPage: s.CurrentPage(),
 				TotalPages:  s.PageCount(),
 				BaseURL:     "/api/examples/expense/page",
@@ -500,7 +500,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Type: "submit", Variant: button.Primary}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithType("submit")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -595,15 +595,14 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = modal.Modal(modal.Config{
+		templ_7745c5c3_Err = modal.AlertDialog(modal.AlertDialogConfig{
 			ID:           "expense-clear",
-			Variant:      modal.Danger,
-			AlertMode:    true,
+			Tone:         modal.ToneDanger,
 			TriggerLabel: "Clear all",
 			Title:        "Clear all expenses?",
 			Body:         "This removes every expense from your list. This cannot be undone.",
-			PrimaryLabel: "Clear all",
-			PrimaryAction: &modal.ButtonAction{
+			ActionLabel:  "Clear all",
+			Action: &modal.ButtonAction{
 				HTMX: &modal.HTMXConfig{
 					Post:   "/api/examples/expense/clear",
 					Target: "#expense-list",
@@ -626,7 +625,7 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toast.ToastContainer(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

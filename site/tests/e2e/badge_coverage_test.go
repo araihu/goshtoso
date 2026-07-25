@@ -47,7 +47,7 @@ func TestBadgeCoverageDemo(t *testing.T) {
 
 		// NotificationBadge(count) caps display at "99" for count > 99.
 		require.NoError(t, page.Locator("#badge-notification").GetByText("99", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 
 		// NotificationDot() renders a size-3 dot with no text.
@@ -89,7 +89,7 @@ func TestBadgeCoverageDemo(t *testing.T) {
 
 		// Solid badges stay rendered after the theme switch.
 		require.NoError(t, page.Locator("#badge-solid").GetByText("Primary", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).First().WaitFor())
 	})
 

@@ -1,6 +1,32 @@
 package components
 
-import "github.com/araihu/goshtoso/site/internal/pages/demo"
+import (
+	rootcomponents "github.com/araihu/goshtoso/components"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+var dependenciesAPISections = []demo.APISection{
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/head",
+		rootcomponents.KindDependencies,
+		"Dependencies",
+		"",
+		"Loads the complete local runtime required by all Goshtoso components.",
+		[]demo.APIPropDoc{
+			{Name: "Dependencies", Signature: "func Dependencies() Instance", Default: "n/a", Description: "Renders styles.css, Alpine collapse and focus plugins, Alpine core, HTMX, and combobox.js from /assets/."},
+		},
+	),
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/head",
+		rootcomponents.KindDependenciesMinimal,
+		"DependenciesMinimal",
+		"",
+		"Loads the local runtime without Alpine's collapse and focus plugins.",
+		[]demo.APIPropDoc{
+			{Name: "DependenciesMinimal", Signature: "func DependenciesMinimal() MinimalInstance", Default: "n/a", Description: "Renders styles.css, Alpine core, HTMX, and combobox.js from /assets/."},
+		},
+	),
+}
 
 // DependenciesDemoPage renders the head.Dependencies component demo.
 templ DependenciesDemoPage() {
@@ -40,11 +66,7 @@ templ dependenciesDemoContent() {
 http.Handle("/assets/", assets.Handler())`,
 		)
 	</div>
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Dependencies", Type: "templ.Component", Default: "-", Description: "Renders styles.css, Alpine collapse/focus/core, HTMX, and combobox.js from /assets/."},
-		{Name: "DependenciesMinimal", Type: "templ.Component", Default: "-", Description: "Renders styles.css, Alpine core, HTMX, and combobox.js without the collapse/focus plugins."},
-		{Name: "assets.Handler", Type: "http.Handler", Default: "-", Description: "Serves the embedded runtime bundle expected by the generated tags."},
-	})
+	@demo.StructuredAPIReference(dependenciesAPISections)
 }
 
 templ dependenciesFullPreview() {

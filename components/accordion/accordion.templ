@@ -12,22 +12,22 @@ import "fmt"
 //	        {ID: "item2", Title: "Section 2", Content: templ.Raw("<p>Content 2</p>")},
 //	    },
 //	})
-templ Accordion(cfg AccordionConfig) {
+templ accordionTemplate(cfg AccordionConfig) {
 	{{ containerID := cfg.ID }}
 	{{ if containerID == "" { containerID = "accordion" } }}
 	{{ alpineData := generateAlpineData(cfg) }}
 	
 	<div
 		id={ containerID }
-		class={ cfg.ContainerClasses() + " " + cfg.RootClass }
+		class={ cfg.containerClasses() + " " + cfg.RootClass }
 		x-data={ alpineData }
 	>
 		for i, item := range cfg.Items {
-			{{ itemData := AccordionItemData{
+			{{ itemData := accordionItemData{
 				Item:          item,
 				Index:         i,
 				AllowMultiple: cfg.AllowMultiple,
-				Variant:       cfg.Variant,
+				Appearance:    cfg.Appearance,
 				ContainerID:   containerID,
 			} }}
 			@accordionItem(itemData)
@@ -55,7 +55,7 @@ func generateAlpineData(cfg AccordionConfig) string {
 }
 
 // accordionItem renders a single accordion item
-templ accordionItem(data AccordionItemData) {
+templ accordionItem(data accordionItemData) {
 	{{ item := data.Item }}
 	{{ index := data.Index }}
 	{{ itemID := item.ID }}
@@ -64,20 +64,20 @@ templ accordionItem(data AccordionItemData) {
 	{{ contentID := "content-" + itemID }}
 	{{ idx := fmt.Sprintf("%d", index) }}
 	{{ clickHandler := "toggle(" + idx + ")" }}
-	{{ classBinding := "isOpen(" + idx + ") ? '" + data.ExpandedClasses() + "' : '" + data.CollapsedClasses() + "'" }}
+	{{ classBinding := "isOpen(" + idx + ") ? '" + data.expandedClasses() + "' : '" + data.collapsedClasses() + "'" }}
 	{{ ariaBinding := "isOpen(" + idx + ") ? 'true' : 'false'" }}
 	{{ showBinding := "isOpen(" + idx + ")" }}
 	{{ chevronBinding := "isOpen(" + idx + ") ? 'rotate-180' : ''" }}
 	
 	<div
-		if data.Variant == Split {
-			class={ data.ItemContainerClasses() }
+		if data.Appearance == AppearanceSplit {
+			class={ data.itemContainerClasses() }
 		}
 	>
 		<button
 			id={ controlID }
 			type="button"
-			class={ data.ItemButtonClasses() }
+			class={ data.itemButtonClasses() }
 			aria-controls={ contentID }
 			@click={ clickHandler }
 			:class={ classBinding }
@@ -113,7 +113,7 @@ templ accordionItem(data AccordionItemData) {
 			aria-labelledby={ controlID }
 			x-collapse
 		>
-			<div class={ data.ContentClasses() }>
+			<div class={ data.contentClasses() }>
 				@item.Content
 			</div>
 		</div>

@@ -29,7 +29,7 @@ func TestCoverageStandardRadio(t *testing.T) {
 	assert.Contains(t, html, `name="grp"`)
 	assert.Contains(t, html, `value="v"`)
 	assert.Contains(t, html, "Standard")
-	// Default variant -> primary classes wired through InputClasses.
+	// ToneDefault variant -> primary classes wired through inputClasses.
 	assert.Contains(t, html, "checked:border-primary")
 	assert.Contains(t, html, "size-4") // default SizeMD
 }
@@ -66,6 +66,48 @@ func TestCoverageHelperTextNoID(t *testing.T) {
 
 	assert.Contains(t, html, "ctx only")
 	assert.NotContains(t, html, "aria-describedby")
+}
+
+func TestHelperTextIDRenderBranchContract(t *testing.T) {
+	t.Run("normal standalone", func(t *testing.T) {
+		html := render(t, Radio(Config{
+			ID:           "normal",
+			Label:        "Normal",
+			HelperText:   "Normal helper",
+			HelperTextID: "normal-desc",
+		}))
+
+		assert.Contains(t, html, "Normal helper")
+		assert.Contains(t, html, `aria-describedby="normal-desc"`)
+		assert.Contains(t, html, `<span id="normal-desc"`)
+	})
+
+	t.Run("segmented takes precedence", func(t *testing.T) {
+		html := render(t, Radio(Config{
+			ID:           "segmented",
+			Label:        "Segmented",
+			HelperText:   "Segmented helper",
+			HelperTextID: "segmented-desc",
+			Segmented:    true,
+		}))
+
+		assert.NotContains(t, html, "Segmented helper")
+		assert.NotContains(t, html, "aria-describedby")
+		assert.NotContains(t, html, `id="segmented-desc"`)
+	})
+
+	t.Run("group has unmatched association", func(t *testing.T) {
+		html := render(t, RadioGroup(GroupConfig{Items: []Config{{
+			ID:           "grouped",
+			Label:        "Grouped",
+			HelperText:   "Grouped helper",
+			HelperTextID: "grouped-desc",
+		}}}))
+
+		assert.Contains(t, html, "Grouped helper")
+		assert.Contains(t, html, `aria-describedby="grouped-desc"`)
+		assert.NotContains(t, html, `<span id="grouped-desc"`)
+	})
 }
 
 // TestCoverageSegmented hits radioSegmented + segmentedInput.
@@ -260,7 +302,7 @@ func TestCoverageRadioGroup(t *testing.T) {
 	assert.Contains(t, html, "Described")
 	assert.Contains(t, html, "more")
 	assert.Contains(t, html, "Badged")
-	// BadgeColor success -> BadgeClasses success palette.
+	// BadgeColor success -> badgeClasses success palette.
 	assert.Contains(t, html, "bg-success/10 text-success")
 }
 
@@ -274,23 +316,35 @@ func TestCoverageRadioGroupNoTitle(t *testing.T) {
 	assert.Contains(t, html, "Only")
 }
 
-// TestCoverageVariantClasses asserts each Variant flows through the three
-// checked-color helpers via InputClasses.
-func TestCoverageVariantClasses(t *testing.T) {
+func TestRadioGroupContainerOnlyChangesInnerInputBackground(t *testing.T) {
+	html := render(t, RadioGroup(GroupConfig{Items: []Config{{
+		ID:        "group-container",
+		Label:     "Grouped container flag",
+		Container: true,
+	}}}))
+
+	assert.Contains(t, html, `class="flex items-center gap-2 p-3`)
+	assert.NotContains(t, html, `class="inline-flex min-w-52 items-center justify-between`)
+	assert.Contains(t, html, "bg-surface dark:bg-surface-dark")
+}
+
+// TestCoverageToneClasses asserts each Tone flows through the three
+// checked-color helpers via inputClasses.
+func TestCoverageToneClasses(t *testing.T) {
 	cases := []struct {
-		variant Variant
+		variant Tone
 		border  string
 	}{
-		{Primary, "checked:border-primary"},
-		{Secondary, "checked:border-secondary"},
-		{Info, "checked:border-info"},
-		{Success, "checked:border-success"},
-		{Warning, "checked:border-warning"},
-		{Danger, "checked:border-danger"},
-		{Variant("bogus"), "checked:border-primary"}, // default fallthrough
+		{TonePrimary, "checked:border-primary"},
+		{ToneSecondary, "checked:border-secondary"},
+		{ToneInfo, "checked:border-info"},
+		{ToneSuccess, "checked:border-success"},
+		{ToneWarning, "checked:border-warning"},
+		{ToneDanger, "checked:border-danger"},
+		{Tone("bogus"), "checked:border-primary"}, // default fallthrough
 	}
 	for _, tc := range cases {
-		cls := Config{Variant: tc.variant}.InputClasses()
+		cls := Config{Tone: tc.variant}.inputClasses()
 		assert.Contains(t, cls, tc.border, "variant %q border", tc.variant)
 	}
 }
@@ -305,7 +359,7 @@ func TestCoverageSizeClasses(t *testing.T) {
 		Size("bogus"): "size-4", // default
 	}
 	for size, want := range cases {
-		assert.Contains(t, Config{Size: size}.InputClasses(), want, "size %q", size)
+		assert.Contains(t, Config{Size: size}.inputClasses(), want, "size %q", size)
 	}
 }
 
@@ -322,55 +376,55 @@ func TestCoverageBadgeClasses(t *testing.T) {
 		"neutral":   "bg-on-surface/10",
 	}
 	for color, want := range cases {
-		got := BadgeClasses(color)
+		got := badgeClasses(color)
 		assert.Contains(t, got, want, "color %q", color)
 		assert.True(t, strings.HasPrefix(got, "w-fit rounded-radius"), "color %q base prefix", color)
 	}
-	assert.Equal(t, "", BadgeClasses("unknown"), "unknown color yields empty string")
+	assert.Equal(t, "", badgeClasses("unknown"), "unknown color yields empty string")
 }
 
 // TestCoverageSegmentedLabelClasses covers segmentedCheckedClasses for every
 // variant.
 func TestCoverageSegmentedLabelClasses(t *testing.T) {
 	cases := []struct {
-		variant Variant
+		variant Tone
 		want    string
 	}{
-		{Primary, "has-checked:bg-primary"},
-		{Secondary, "has-checked:bg-secondary"},
-		{Info, "has-checked:bg-info"},
-		{Success, "has-checked:bg-success"},
-		{Warning, "has-checked:bg-warning"},
-		{Danger, "has-checked:bg-danger"},
-		{Variant("bogus"), "has-checked:bg-primary"},
+		{TonePrimary, "has-checked:bg-primary"},
+		{ToneSecondary, "has-checked:bg-secondary"},
+		{ToneInfo, "has-checked:bg-info"},
+		{ToneSuccess, "has-checked:bg-success"},
+		{ToneWarning, "has-checked:bg-warning"},
+		{ToneDanger, "has-checked:bg-danger"},
+		{Tone("bogus"), "has-checked:bg-primary"},
 	}
 	for _, tc := range cases {
-		cls := Config{Variant: tc.variant}.SegmentedLabelClasses()
+		cls := Config{Tone: tc.variant}.segmentedLabelClasses()
 		assert.Contains(t, cls, tc.want, "variant %q", tc.variant)
 		assert.Contains(t, cls, "relative")
 		assert.Contains(t, cls, "has-disabled:cursor-not-allowed")
 	}
 }
 
-// TestCoveragePredicates covers HasAlpine / HasHTMX / HasHxVerb and
-// EffectiveTrigger including the nil receiver paths.
+// TestCoveragePredicates covers hasAlpine / hasHTMX / hasHXVerb and
+// effectiveTrigger including the nil receiver paths.
 func TestCoveragePredicates(t *testing.T) {
-	assert.False(t, Config{}.HasAlpine())
-	assert.False(t, Config{}.HasHTMX())
-	assert.True(t, Config{Alpine: &AlpineConfig{}}.HasAlpine())
-	assert.True(t, Config{HTMX: &HTMXConfig{}}.HasHTMX())
+	assert.False(t, Config{}.hasAlpine())
+	assert.False(t, Config{}.hasHTMX())
+	assert.True(t, Config{Alpine: &AlpineConfig{}}.hasAlpine())
+	assert.True(t, Config{HTMX: &HTMXConfig{}}.hasHTMX())
 
 	var nilHTMX *HTMXConfig
-	assert.False(t, nilHTMX.HasHxVerb(), "nil HTMXConfig has no verb")
-	assert.Equal(t, "", nilHTMX.EffectiveTrigger(), "nil HTMXConfig has no trigger")
-	assert.False(t, (&HTMXConfig{}).HasHxVerb())
-	assert.True(t, (&HTMXConfig{Get: "/x"}).HasHxVerb())
-	assert.True(t, (&HTMXConfig{Patch: "/x"}).HasHxVerb())
+	assert.False(t, nilHTMX.hasHXVerb(), "nil HTMXConfig has no verb")
+	assert.Equal(t, "", nilHTMX.effectiveTrigger(), "nil HTMXConfig has no trigger")
+	assert.False(t, (&HTMXConfig{}).hasHXVerb())
+	assert.True(t, (&HTMXConfig{Get: "/x"}).hasHXVerb())
+	assert.True(t, (&HTMXConfig{Patch: "/x"}).hasHXVerb())
 
-	// EffectiveTrigger precedence: explicit > defaulted > empty.
-	assert.Equal(t, "click", (&HTMXConfig{Post: "/p", Trigger: "click"}).EffectiveTrigger())
-	assert.Equal(t, "change", (&HTMXConfig{Post: "/p"}).EffectiveTrigger())
-	assert.Equal(t, "", (&HTMXConfig{}).EffectiveTrigger())
+	// effectiveTrigger precedence: explicit > defaulted > empty.
+	assert.Equal(t, "click", (&HTMXConfig{Post: "/p", Trigger: "click"}).effectiveTrigger())
+	assert.Equal(t, "change", (&HTMXConfig{Post: "/p"}).effectiveTrigger())
+	assert.Equal(t, "", (&HTMXConfig{}).effectiveTrigger())
 }
 
 // TestCoverageCanceledContextPropagates covers the generated template

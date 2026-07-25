@@ -2,9 +2,75 @@ package components
 
 import (
 	templpkg "github.com/a-h/templ"
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var navbarAPISections = []demo.APISection{
+	demo.StructAPI[navbar.Config](
+		rootcomponents.KindNavbar,
+		"Config",
+		"navbar.Navbar(cfg Config) Instance",
+		"Configures responsive brand, navigation, action, and user-menu content.",
+		[]demo.APIPropDoc{
+			{Name: "Brand", Default: "nil (brand link omitted)", Description: "Optional brand component rendered inside a leading anchor."},
+			{Name: "BrandHref", Default: `"/"`, Description: "Brand anchor destination when Brand is non-nil."},
+			{Name: "Links", Default: "nil", Description: "Navigation links rendered on desktop and in the mobile menu."},
+			{Name: "Actions", Default: "nil", Description: "Custom controls partitioned by ActionItem.Position."},
+			{Name: "User", Default: "nil (user UI omitted)", Description: "Enables the desktop avatar dropdown. On mobile, non-empty name or email renders the user header."},
+			{Name: "UserMenu", Default: "nil", Description: "User links render in the desktop dropdown only when User is non-nil, and in the mobile menu when Links, User, or a right action causes that menu to render. Mobile links omit UserMenuItem.Icon."},
+			{Name: "NavClass", Default: `""`, Description: "Appends CSS classes to the outer nav."},
+			{Name: "NavAttrs", Default: "nil", Description: "Appends arbitrary attributes after modeled nav attributes; conflicting keys can produce duplicate attributes."},
+		},
+	),
+	demo.StructAPI[navbar.NavLink](
+		"",
+		"NavLink",
+		"",
+		"Describes one desktop and mobile navigation link.",
+		[]demo.APIPropDoc{
+			{Name: "Label", Default: `""`, Description: "Visible anchor text."},
+			{Name: "Href", Default: `""`, Description: "Anchor destination passed through templ.URL."},
+			{Name: "Active", Default: "false", Description: "Adds active styling and aria-current=page in both responsive renderers."},
+			{Name: "LinkAttrs", Default: "nil", Description: "Appends arbitrary attributes before modeled class and active-state attributes; conflicts can produce duplicate attributes."},
+		},
+	),
+	demo.StructAPI[navbar.UserProfile](
+		"",
+		"UserProfile",
+		"",
+		"Describes the optional user identity.",
+		[]demo.APIPropDoc{
+			{Name: "Name", Default: `"" (name omitted)`, Description: "User display name in desktop and mobile profile headers."},
+			{Name: "Email", Default: `"" (email omitted)`, Description: "User email in desktop and mobile profile headers."},
+			{Name: "Avatar", Default: "nil (default desktop user icon)", Description: "Custom avatar trigger content on desktop and optional avatar content in the mobile profile header."},
+		},
+	),
+	demo.StructAPI[navbar.UserMenuItem](
+		"",
+		"UserMenuItem",
+		"",
+		"Describes one link in the user menu.",
+		[]demo.APIPropDoc{
+			{Name: "Label", Default: `""`, Description: "Visible anchor text."},
+			{Name: "Href", Default: `""`, Description: "Anchor destination passed through templ.URL."},
+			{Name: "Icon", Default: "nil", Description: "Optional leading icon rendered only in the desktop dropdown."},
+			{Name: "LinkAttrs", Default: "nil", Description: "Appends arbitrary attributes before modeled classes; conflicts can produce duplicate attributes."},
+			{Name: "Danger", Default: "false", Description: "Adds destructive styling in desktop and mobile menus."},
+		},
+	),
+	demo.StructAPI[navbar.ActionItem](
+		"",
+		"ActionItem",
+		"",
+		"Describes custom navbar content and its responsive placement.",
+		[]demo.APIPropDoc{
+			{Name: "Content", Default: "nil (renders nothing)", Description: "Component rendered at the selected action position."},
+			{Name: "Position", Default: "ActionLeft", Allowed: []string{"ActionLeft", "ActionRight"}, Description: "Empty or ActionLeft renders after the brand on desktop only. ActionRight renders before the desktop avatar and inside the mobile menu. Unknown values render nowhere."},
+		},
+	),
+}
 
 // NavbarDemoPage renders the Navbar component demo
 templ NavbarDemoPage() {
@@ -94,21 +160,7 @@ templ navbarDemoContent() {
 		)
 	</div>
 	// API reference lives outside #navbar-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "Brand", Type: "templ.Component", Default: "nil", Description: "Brand/logo content shown at the start of the bar."},
-		{Name: "BrandHref", Type: "string", Default: `"/"`, Description: "Link target for the brand. Empty values fall back to /."},
-		{Name: "Links", Type: "[]NavLink", Default: "nil", Description: "Primary desktop and mobile nav links."},
-		{Name: "NavLink", Type: "struct", Default: "-", Description: "Link row: Label, Href, Active, and LinkAttrs. Active adds aria-current=\"page\"."},
-		{Name: "Actions", Type: "[]ActionItem", Default: "nil", Description: "Custom controls rendered after the brand or before the avatar."},
-		{Name: "ActionItem.Content", Type: "templ.Component", Default: "nil", Description: "Button, badge, theme selector, or other control to render in the navbar."},
-		{Name: "ActionItem.Position", Type: "ActionPosition", Default: "ActionLeft", Description: "ActionLeft renders after the brand; ActionRight renders before the avatar and inside the mobile menu."},
-		{Name: "User", Type: "*UserProfile", Default: "nil", Description: "User profile; when present, renders the avatar dropdown trigger."},
-		{Name: "UserProfile", Type: "struct", Default: "-", Description: "Name and Email render in the dropdown header. Avatar overrides the default user icon."},
-		{Name: "UserMenu", Type: "[]UserMenuItem", Default: "nil", Description: "Items in the user dropdown and mobile menu."},
-		{Name: "UserMenuItem", Type: "struct", Default: "-", Description: "Menu row: Label, Href, optional Icon, LinkAttrs, and Danger styling."},
-		{Name: "NavAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <nav>."},
-		{Name: "NavClass", Type: "string", Default: `""`, Description: "Extra classes on the nav."},
-	})
+	@demo.StructuredAPIReference(navbarAPISections)
 }
 
 // navbarSimplePreview renders the basic navbar (kept first for e2e .First()).

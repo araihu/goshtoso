@@ -85,7 +85,7 @@ func TestCodeblockCoverageDemo(t *testing.T) {
 
 	// The Alpine label flips to "Copied!" after the click.
 	require.NoError(t, wrapper.GetByText("Copied!", playwright.LocatorGetByTextOptions{
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).First().WaitFor(playwright.LocatorWaitForOptions{
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(3000),

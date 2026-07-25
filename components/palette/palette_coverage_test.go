@@ -29,8 +29,8 @@ func TestPalette_CustomHuesShades(t *testing.T) {
 // TestConfig_HuesShadesDefaults covers the default-return branch directly.
 func TestConfig_HuesShadesDefaults(t *testing.T) {
 	c := Config{}
-	assert.Equal(t, DefaultHues, c.hues())
-	assert.Equal(t, DefaultShades, c.shades())
+	assert.Equal(t, defaultHues[:], c.hues())
+	assert.Equal(t, defaultShades[:], c.shades())
 
 	c2 := Config{Hues: []string{"teal"}, Shades: []string{"300"}}
 	assert.Equal(t, []string{"teal"}, c2.hues())
@@ -38,10 +38,10 @@ func TestConfig_HuesShadesDefaults(t *testing.T) {
 }
 
 // TestConfig_ContainerClasses covers both the plain and RootClass-appended
-// branches of ContainerClasses().
+// branches of containerClasses().
 func TestConfig_ContainerClasses(t *testing.T) {
-	assert.Equal(t, "p-2 space-y-2", Config{}.ContainerClasses())
-	assert.Equal(t, "p-2 space-y-2 my-extra", Config{RootClass: "my-extra"}.ContainerClasses())
+	assert.Equal(t, "p-2 space-y-2", Config{}.containerClasses())
+	assert.Equal(t, "p-2 space-y-2 my-extra", Config{RootClass: "my-extra"}.containerClasses())
 }
 
 // TestPalette_RootClassRendered confirms RootClass reaches the wrapper class.

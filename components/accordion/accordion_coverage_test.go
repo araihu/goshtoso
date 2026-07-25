@@ -14,7 +14,7 @@ func TestCoverageRenderConfiguredAccordion(t *testing.T) {
 	err := Accordion(AccordionConfig{
 		ID:            "faq",
 		RootClass:     "custom-root",
-		Variant:       Split,
+		Appearance:    AppearanceSplit,
 		AllowMultiple: true,
 		Items: []AccordionItem{
 			{
@@ -103,43 +103,49 @@ func TestCoverageAccordionClassHelpers(t *testing.T) {
 		want string
 	}{
 		{name: "default", cfg: AccordionConfig{}, want: "bg-surface-alt/40"},
-		{name: "no background", cfg: AccordionConfig{Variant: NoBackground}, want: "bg-surface dark:bg-surface-dark"},
-		{name: "split", cfg: AccordionConfig{Variant: Split}, want: "flex w-full flex-col gap-4"},
+		{name: "plain", cfg: AccordionConfig{Appearance: AppearancePlain}, want: "bg-surface dark:bg-surface-dark"},
+		{name: "split", cfg: AccordionConfig{Appearance: AppearanceSplit}, want: "flex w-full flex-col gap-4"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.cfg.ContainerClasses(); !strings.Contains(got, tt.want) {
-				t.Fatalf("ContainerClasses() = %q, want it to contain %q", got, tt.want)
+			if got := tt.cfg.containerClasses(); !strings.Contains(got, tt.want) {
+				t.Fatalf("containerClasses() = %q, want it to contain %q", got, tt.want)
 			}
 		})
 	}
 
-	defaultData := AccordionItemData{}
-	if got := defaultData.ItemContainerClasses(); got != "" {
-		t.Fatalf("default ItemContainerClasses() = %q, want empty", got)
+	defaultData := accordionItemData{}
+	if got := defaultData.itemContainerClasses(); got != "" {
+		t.Fatalf("default itemContainerClasses() = %q, want empty", got)
 	}
-	if got := defaultData.ItemButtonClasses(); !strings.Contains(got, "bg-surface-alt hover:bg-surface-alt/75") {
-		t.Fatalf("default ItemButtonClasses() = %q, want default background classes", got)
-	}
-
-	noBackgroundData := AccordionItemData{Variant: NoBackground}
-	if got := noBackgroundData.ItemButtonClasses(); !strings.Contains(got, "bg-surface hover:bg-surface-alt") {
-		t.Fatalf("no-background ItemButtonClasses() = %q, want plain surface classes", got)
+	if got := defaultData.itemButtonClasses(); !strings.Contains(got, "bg-surface-alt hover:bg-surface-alt/75") {
+		t.Fatalf("default itemButtonClasses() = %q, want default background classes", got)
 	}
 
-	splitData := AccordionItemData{Variant: Split}
-	if got := splitData.ItemContainerClasses(); !strings.Contains(got, "rounded-radius border border-outline") {
-		t.Fatalf("split ItemContainerClasses() = %q, want split card classes", got)
+	plainData := accordionItemData{Appearance: AppearancePlain}
+	if got := plainData.itemButtonClasses(); !strings.Contains(got, "bg-surface hover:bg-surface-alt") {
+		t.Fatalf("plain itemButtonClasses() = %q, want plain surface classes", got)
 	}
-	if got := splitData.ExpandedClasses(); !strings.Contains(got, "font-bold") {
-		t.Fatalf("ExpandedClasses() = %q, want bold text", got)
+
+	splitData := accordionItemData{Appearance: AppearanceSplit}
+	if got := splitData.itemContainerClasses(); !strings.Contains(got, "rounded-radius border border-outline") {
+		t.Fatalf("split itemContainerClasses() = %q, want split card classes", got)
 	}
-	if got := splitData.CollapsedClasses(); !strings.Contains(got, "font-medium") {
-		t.Fatalf("CollapsedClasses() = %q, want medium text", got)
+	if got := splitData.expandedClasses(); !strings.Contains(got, "font-bold") {
+		t.Fatalf("expandedClasses() = %q, want bold text", got)
 	}
-	if got := splitData.ContentClasses(); !strings.Contains(got, "text-pretty") {
-		t.Fatalf("ContentClasses() = %q, want content typography", got)
+	if got := splitData.collapsedClasses(); !strings.Contains(got, "font-medium") {
+		t.Fatalf("collapsedClasses() = %q, want medium text", got)
+	}
+	if got := splitData.contentClasses(); !strings.Contains(got, "text-pretty") {
+		t.Fatalf("contentClasses() = %q, want content typography", got)
+	}
+}
+
+func TestZeroValueAllowsOnlyOneOpen(t *testing.T) {
+	if got := generateAlpineData(AccordionConfig{}); !strings.Contains(got, "allowMultiple: false") {
+		t.Fatalf("zero-value accordion must allow only one open item; got %q", got)
 	}
 }
 

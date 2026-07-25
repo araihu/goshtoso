@@ -9,9 +9,46 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
+	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/chatbubble"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var chatBubbleAPISections = []demo.APISection{
+	demo.StructAPI[chatbubble.Config](
+		rootcomponents.KindChatBubble,
+		"Config",
+		"chatbubble.ChatBubble(cfg Config) Instance",
+		"Configures a message bubble. TypingIndicator reuses its avatar and row fields.",
+		[]demo.APIPropDoc{
+			{Name: "Side", Default: "Received", Allowed: []string{"Received", "Sent", "Auto"}, Description: "Aligns and colors the bubble; Auto renders received until client code updates data-mine."},
+			{Name: "Message", Default: `""`, Description: "Visible message text for ChatBubble.", Required: true},
+			{Name: "SenderName", Default: `""`, Description: "Sender name shown on ungrouped received bubbles."},
+			{Name: "Timestamp", Default: `""`, Description: "Optional time shown beside SenderName."},
+			{Name: "Status", Default: "StatusNone", Allowed: []string{"StatusNone", "StatusSending", "StatusDelivered", "StatusSeen"}, Description: "Delivery status rendered beneath the bubble."},
+			{Name: "AvatarSrc", Default: `""`, Description: "Optional avatar image URL."},
+			{Name: "AvatarInitials", Default: `"?" or derived from SenderName`, Description: "Avatar fallback initials."},
+			{Name: "AvatarTone", Default: "avatar.ToneDefault", Allowed: []string{"avatar.ToneDefault", "avatar.ToneInverse", "avatar.TonePrimary", "avatar.ToneSecondary", "avatar.ToneInfo", "avatar.ToneSuccess", "avatar.ToneWarning", "avatar.ToneDanger"}, Description: "Color treatment for the avatar fallback."},
+			{Name: "ShowAvatar", Default: "false", Description: "Renders the avatar column unless Grouped is true."},
+			{Name: "Grouped", Default: "false", Description: "Tightens spacing and suppresses the avatar and sender header."},
+			{Name: "Sender", Default: `""`, Description: "data-sender value emitted only for Auto bubbles."},
+			{Name: "IsBot", Default: "false", Description: "Adds a BOT badge beside the sender name."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the row."},
+			{Name: "RootAttrs", Default: "nil", Description: "Additional HTML attributes on the row."},
+		},
+	),
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/chatbubble",
+		rootcomponents.KindTypingIndicator,
+		"TypingIndicator",
+		"",
+		"Renders a received-style animated typing row using Config's avatar and row settings.",
+		[]demo.APIPropDoc{
+			{Name: "TypingIndicator", Signature: "func TypingIndicator(cfg Config) TypingIndicatorInstance", Default: "n/a", Description: "Creates a typing indicator; Message, Side, sender header, status, and root attributes are not rendered."},
+		},
+	),
+}
 
 // ChatBubbleDemoPage renders the Chat Bubble component demo.
 func ChatBubbleDemoPage() templ.Component {
@@ -116,7 +153,7 @@ func chatBubbleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Avatar",
-				Description: "Set ShowAvatar: true to render the avatar column. Provide AvatarInitials + AvatarVariant for a colored fallback, or AvatarSrc for an image. The avatar flips to the correct side automatically for sent messages.",
+				Description: "Set ShowAvatar: true to render the avatar column. Provide AvatarInitials + AvatarTone for a colored fallback, or AvatarSrc for an image. The avatar flips to the correct side automatically for sent messages.",
 			},
 			chatBubbleAvatarPreview(),
 			`@chatbubble.ChatBubble(chatbubble.Config{
@@ -124,7 +161,7 @@ func chatBubbleDemoContent() templ.Component {
     Message:        "Welcome to the team channel!",
     ShowAvatar:     true,
     AvatarInitials: "AL",
-    AvatarVariant:  "info",
+    AvatarTone:     avatar.ToneInfo,
 })
 @chatbubble.ChatBubble(chatbubble.Config{
     Side:       chatbubble.Sent,
@@ -139,7 +176,7 @@ func chatBubbleDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Sender Name & Status",
-				Description: "SenderName labels a received message; Status (Sending / Delivered / Seen) renders under your own sent bubbles to convey delivery state.",
+				Description: "SenderName labels a received message. Status renders beneath a bubble; use Sending, Delivered, or Seen on sent messages to convey delivery state.",
 			},
 			chatBubbleStatusPreview(),
 			`@chatbubble.ChatBubble(chatbubble.Config{
@@ -172,7 +209,7 @@ func chatBubbleDemoContent() templ.Component {
     SenderName:     "Ada",
     ShowAvatar:     true,
     AvatarInitials: "AL",
-    AvatarVariant:  "info",
+    AvatarTone:     avatar.ToneInfo,
     Message:        "I split the work into three slices.",
 })
 @chatbubble.ChatBubble(chatbubble.Config{
@@ -198,7 +235,7 @@ func chatBubbleDemoContent() templ.Component {
 			`@chatbubble.TypingIndicator(chatbubble.Config{
     ShowAvatar:     true,
     AvatarInitials: "AL",
-    AvatarVariant:  "info",
+    AvatarTone:     avatar.ToneInfo,
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -208,22 +245,7 @@ func chatBubbleDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Side", Type: "Side", Default: `"received"`, Description: `Alignment + color: Received (left/neutral), Sent (right/primary), or Auto (resolved client-side via data-mine).`},
-			{Name: "Message", Type: "string", Default: `""`, Description: "The bubble text."},
-			{Name: "SenderName", Type: "string", Default: `""`, Description: "Name shown bold inside the bubble, above the message (hidden on own/Sent bubbles and when Grouped)."},
-			{Name: "Timestamp", Type: "string", Default: `""`, Description: `Send time shown next to the sender name, e.g. "11:32 AM".`},
-			{Name: "Status", Type: "Status", Default: "StatusNone", Description: "Delivery state under a sent bubble: StatusSending, StatusDelivered, or StatusSeen."},
-			{Name: "AvatarSrc", Type: "string", Default: `""`, Description: "Optional avatar image URL; takes precedence over initials."},
-			{Name: "AvatarInitials", Type: "string", Default: `""`, Description: "Initials fallback shown when no AvatarSrc is set."},
-			{Name: "AvatarVariant", Type: "string", Default: `""`, Description: `avatar.Variant token for the initials fallback color, e.g. "info".`},
-			{Name: "ShowAvatar", Type: "bool", Default: "false", Description: "Render the avatar column (suppressed when Grouped)."},
-			{Name: "Grouped", Type: "bool", Default: "false", Description: "Mark a consecutive message: tighten spacing, hide avatar + name."},
-			{Name: "Sender", Type: "string", Default: `""`, Description: "For Side=Auto, emitted as data-sender for client mine-detection."},
-			{Name: "IsBot", Type: "bool", Default: "false", Description: "Render a small BOT badge beside the sender name."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra CSS classes appended to the row element."},
-			{Name: "RootAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary HTML attributes on the row element (e.g. hx-*)."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(chatBubbleAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -371,7 +393,7 @@ func chatBubbleAvatarPreview() templ.Component {
 			Message:        "Welcome to the team channel!",
 			ShowAvatar:     true,
 			AvatarInitials: "AL",
-			AvatarVariant:  "info",
+			AvatarTone:     avatar.ToneInfo,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -381,7 +403,7 @@ func chatBubbleAvatarPreview() templ.Component {
 			Message:        "Thanks, glad to be here.",
 			ShowAvatar:     true,
 			AvatarInitials: "ME",
-			AvatarVariant:  "success",
+			AvatarTone:     avatar.ToneSuccess,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -483,7 +505,7 @@ func chatBubbleGroupedPreview() templ.Component {
 			SenderName:     "Ada",
 			ShowAvatar:     true,
 			AvatarInitials: "AL",
-			AvatarVariant:  "info",
+			AvatarTone:     avatar.ToneInfo,
 			Message:        "I split the work into three slices.",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -542,7 +564,7 @@ func chatBubbleTypingPreview() templ.Component {
 		templ_7745c5c3_Err = chatbubble.TypingIndicator(chatbubble.Config{
 			ShowAvatar:     true,
 			AvatarInitials: "AL",
-			AvatarVariant:  "info",
+			AvatarTone:     avatar.ToneInfo,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

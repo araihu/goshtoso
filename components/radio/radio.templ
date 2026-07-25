@@ -12,7 +12,7 @@ package radio
 //	    Value: "root",
 //	    Label: "Root",
 //	})
-templ Radio(cfg Config) {
+templ radioTemplate(cfg Config) {
 	if cfg.Segmented {
 		@radioSegmented(cfg)
 	} else if cfg.HelperText != "" {
@@ -28,7 +28,7 @@ templ Radio(cfg Config) {
 // The transparent input covers the visible segment so focusing it cannot scroll
 // the outer document to an offscreen sr-only box.
 templ radioSegmented(cfg Config) {
-	<label for={ cfg.ID } class={ cfg.SegmentedLabelClasses() + " " + cfg.RootClass }>
+	<label for={ cfg.ID } class={ cfg.segmentedLabelClasses() + " " + cfg.RootClass }>
 		@segmentedInput(cfg)
 		<span>{ cfg.Label }</span>
 	</label>
@@ -49,7 +49,7 @@ templ segmentedInput(cfg Config) {
 		if cfg.Disabled {
 			disabled
 		}
-		if cfg.HasHTMX() {
+		if cfg.hasHTMX() {
 			if cfg.HTMX.Get != "" {
 				hx-get={ cfg.HTMX.Get }
 			}
@@ -71,7 +71,7 @@ templ segmentedInput(cfg Config) {
 			if cfg.HTMX.Swap != "" {
 				hx-swap={ cfg.HTMX.Swap }
 			}
-			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+			if trigger := cfg.HTMX.effectiveTrigger(); trigger != "" {
 				hx-trigger={ trigger }
 			}
 			if cfg.HTMX.Indicator != "" {
@@ -90,7 +90,7 @@ templ segmentedInput(cfg Config) {
 				hx-include={ cfg.HTMX.Include }
 			}
 		}
-		if cfg.HasAlpine() {
+		if cfg.hasAlpine() {
 			if cfg.Alpine.Data != "" {
 				x-data={ cfg.Alpine.Data }
 			}
@@ -113,7 +113,7 @@ templ segmentedInput(cfg Config) {
 
 // RadioBar groups a set of segmented radios into a single connected pill bar
 // (PenguinUI-style segmented control). Children should each have Segmented: true.
-templ RadioBar() {
+templ radioBarTemplate() {
 	<div class="inline-flex w-fit overflow-clip rounded-radius border border-outline bg-surface-alt divide-x divide-outline dark:border-outline-dark dark:bg-surface-dark-alt dark:divide-outline-dark">
 		{ children... }
 	</div>
@@ -160,14 +160,14 @@ templ radioWithContainer(cfg Config) {
 //  3. checked / disabled / aria-describedby
 //  4. HTMX attrs (hx-*) — server roundtrip on change
 //  5. Alpine attrs (x-*) — client-side state
-//  6. cfg.InputAttrs (escape hatch) — wins on conflict
+//  6. cfg.InputAttrs (escape hatch) — appended; conflicts serialize duplicates
 templ radioInput(cfg Config) {
 	<input
 		id={ cfg.ID }
 		type="radio"
 		name={ cfg.Name }
 		value={ cfg.Value }
-		class={ cfg.InputClasses() }
+		class={ cfg.inputClasses() }
 		if cfg.Checked {
 			checked
 		}
@@ -177,7 +177,7 @@ templ radioInput(cfg Config) {
 		if cfg.HelperTextID != "" {
 			aria-describedby={ cfg.HelperTextID }
 		}
-		if cfg.HasHTMX() {
+		if cfg.hasHTMX() {
 			if cfg.HTMX.Get != "" {
 				hx-get={ cfg.HTMX.Get }
 			}
@@ -199,7 +199,7 @@ templ radioInput(cfg Config) {
 			if cfg.HTMX.Swap != "" {
 				hx-swap={ cfg.HTMX.Swap }
 			}
-			if trigger := cfg.HTMX.EffectiveTrigger(); trigger != "" {
+			if trigger := cfg.HTMX.effectiveTrigger(); trigger != "" {
 				hx-trigger={ trigger }
 			}
 			if cfg.HTMX.Indicator != "" {
@@ -218,7 +218,7 @@ templ radioInput(cfg Config) {
 				hx-include={ cfg.HTMX.Include }
 			}
 		}
-		if cfg.HasAlpine() {
+		if cfg.hasAlpine() {
 			if cfg.Alpine.Data != "" {
 				x-data={ cfg.Alpine.Data }
 			}
@@ -249,7 +249,7 @@ templ radioInput(cfg Config) {
 //	        {ID: "role-admin", Name: "role", Value: "admin", Label: "Admin"},
 //	    },
 //	})
-templ RadioGroup(cfg GroupConfig) {
+templ radioGroupTemplate(cfg GroupConfig) {
 	if cfg.Title != "" {
 		<h3 class="mb-2 pl-1 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
 	}
@@ -282,7 +282,7 @@ templ groupRadioItemWithDescription(cfg Config) {
 		</span>
 		<div class="flex min-w-0 flex-col gap-0.5">
 			if cfg.BadgeColor != "" {
-				<span class={ BadgeClasses(cfg.BadgeColor) }>{ cfg.Label }</span>
+				<span class={ badgeClasses(cfg.BadgeColor) }>{ cfg.Label }</span>
 			} else {
 				<span>{ cfg.Label }</span>
 			}

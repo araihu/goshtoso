@@ -17,20 +17,20 @@ import (
 
 // categoryVariant maps a spend category to a badge variant so each category
 // reads as a distinct color chip.
-func categoryVariant(c string) badge.Variant {
+func categoryVariant(c string) badge.Tone {
 	switch c {
 	case "Food":
-		return badge.Success
+		return badge.ToneSuccess
 	case "Transport":
-		return badge.Info
+		return badge.ToneInfo
 	case "Housing":
-		return badge.Primary
+		return badge.TonePrimary
 	case "Health":
-		return badge.Danger
+		return badge.ToneDanger
 	case "Entertainment":
-		return badge.Warning
+		return badge.ToneWarning
 	default:
-		return badge.Secondary
+		return badge.ToneSecondary
 	}
 }
 
@@ -94,7 +94,7 @@ templ SummaryBadge(s expense.State, oob bool) {
 		<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 			{ fmt.Sprintf("%d shown", len(s.Filtered())) }
 		</span>
-		@badge.Badge(badge.Config{Variant: badge.Primary, Label: "Total " + expense.FormatCents(s.TotalCents())})
+		@badge.Badge(badge.Config{Tone: badge.TonePrimary, Label: "Total " + expense.FormatCents(s.TotalCents())})
 	</div>
 }
 
@@ -124,7 +124,7 @@ templ ExpenseRow(e expense.Expense) {
 		class="flex items-center gap-3 rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark"
 	>
 		<span class="min-w-0 flex-1 truncate text-sm text-on-surface dark:text-on-surface-dark">{ e.Desc }</span>
-		@badge.Badge(badge.Config{Variant: categoryVariant(e.Category), Label: e.Category})
+		@badge.Badge(badge.Config{Tone: categoryVariant(e.Category), Label: e.Category})
 		if e.Date != "" {
 			<span class="hidden shrink-0 text-xs text-on-surface-muted sm:inline dark:text-on-surface-dark-muted">{ e.Date }</span>
 		}
@@ -166,7 +166,7 @@ templ ExpenseList(s expense.State, oob bool) {
 			<div class="flex justify-center pt-1">
 				@pagination.Pagination(pagination.Config{
 					ID:          "expense-pagination",
-					Variant:     pagination.WithEllipsis,
+					Mode:        pagination.ModeEllipsis,
 					CurrentPage: s.CurrentPage(),
 					TotalPages:  s.PageCount(),
 					BaseURL:     "/api/examples/expense/page",
@@ -215,7 +215,7 @@ templ ExpenseAddForm(preserve bool) {
 				@textinput.TextInput(textinput.Config{Type: textinput.TypeDate, Name: "date", Label: "Date"})
 			</div>
 			<div class="sm:ml-auto">
-				@button.Button(button.Config{Type: "submit", Variant: button.Primary}) {
+				@button.Button(button.WithType("submit")) {
 					Add expense
 				}
 			</div>
@@ -269,15 +269,14 @@ templ ExpenseApp(s expense.State) {
 					</div>
 				</form>
 				<div class="flex items-center justify-end">
-					@modal.Modal(modal.Config{
+					@modal.AlertDialog(modal.AlertDialogConfig{
 						ID:           "expense-clear",
-						Variant:      modal.Danger,
-						AlertMode:    true,
+						Tone:         modal.ToneDanger,
 						TriggerLabel: "Clear all",
 						Title:        "Clear all expenses?",
 						Body:         "This removes every expense from your list. This cannot be undone.",
-						PrimaryLabel: "Clear all",
-						PrimaryAction: &modal.ButtonAction{
+						ActionLabel:  "Clear all",
+						Action: &modal.ButtonAction{
 							HTMX: &modal.HTMXConfig{
 								Post:   "/api/examples/expense/clear",
 								Target: "#expense-list",
@@ -289,7 +288,7 @@ templ ExpenseApp(s expense.State) {
 				@ExpenseList(s, false)
 			</div>
 		</div>
-		@toast.Container(toast.ContainerConfig{})
+		@toast.ToastContainer(toast.ContainerConfig{})
 	</div>
 }
 

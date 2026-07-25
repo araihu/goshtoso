@@ -28,7 +28,7 @@ import "fmt"
 //	    Code:     "go get github.com/a-h/templ",
 //	    MaxHeight: "200px",
 //	})
-func CodeBlock(cfg Config) templ.Component {
+func codeBlockTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -49,7 +49,7 @@ func CodeBlock(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		id := cfg.GetID()
+		id := cfg.getID()
 		jsID := jsStringSingle(id)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"")
 		if templ_7745c5c3_Err != nil {
@@ -69,7 +69,7 @@ func CodeBlock(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetLabel())
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getLabel())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 32, Col: 96}
 		}

@@ -30,81 +30,81 @@ func TestResolvedIDFallbacks(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.cfg.ResolvedID(); got != tt.want {
-				t.Fatalf("ResolvedID() = %q, want %q", got, tt.want)
+			if got := tt.cfg.resolvedID(); got != tt.want {
+				t.Fatalf("resolvedID() = %q, want %q", got, tt.want)
 			}
 		})
 	}
 }
 
 func TestResolvedName(t *testing.T) {
-	if got := (Config{Name: "field"}).ResolvedName(); got != "field" {
-		t.Fatalf("ResolvedName with Name = %q, want %q", got, "field")
+	if got := (Config{Name: "field"}).resolvedName(); got != "field" {
+		t.Fatalf("resolvedName with Name = %q, want %q", got, "field")
 	}
-	// No name: falls back to ResolvedID which falls back to "rating".
-	if got := (Config{ID: "rid"}).ResolvedName(); got != "rid" {
-		t.Fatalf("ResolvedName fallback to ID = %q, want %q", got, "rid")
+	// No name: falls back to resolvedID which falls back to "rating".
+	if got := (Config{ID: "rid"}).resolvedName(); got != "rid" {
+		t.Fatalf("resolvedName fallback to ID = %q, want %q", got, "rid")
 	}
-	if got := (Config{}).ResolvedName(); got != "rating" {
-		t.Fatalf("ResolvedName default = %q, want %q", got, "rating")
+	if got := (Config{}).resolvedName(); got != "rating" {
+		t.Fatalf("resolvedName default = %q, want %q", got, "rating")
 	}
 }
 
 func TestResolvedMax(t *testing.T) {
-	if got := (Config{Max: 10}).ResolvedMax(); got != 10 {
-		t.Fatalf("ResolvedMax(10) = %d, want 10", got)
+	if got := (Config{Max: 10}).resolvedMax(); got != 10 {
+		t.Fatalf("resolvedMax(10) = %d, want 10", got)
 	}
-	if got := (Config{}).ResolvedMax(); got != 5 {
-		t.Fatalf("ResolvedMax default = %d, want 5", got)
+	if got := (Config{}).resolvedMax(); got != 5 {
+		t.Fatalf("resolvedMax default = %d, want 5", got)
 	}
-	if got := (Config{Max: -2}).ResolvedMax(); got != 5 {
-		t.Fatalf("ResolvedMax(-2) = %d, want default 5", got)
+	if got := (Config{Max: -2}).resolvedMax(); got != 5 {
+		t.Fatalf("resolvedMax(-2) = %d, want default 5", got)
 	}
 }
 
 func TestResolvedValueClamping(t *testing.T) {
-	if got := (Config{Value: -5}).ResolvedValue(); got != 0 {
-		t.Fatalf("ResolvedValue(-5) = %d, want 0", got)
+	if got := (Config{Value: -5}).resolvedValue(); got != 0 {
+		t.Fatalf("resolvedValue(-5) = %d, want 0", got)
 	}
-	if got := (Config{Value: 99, Max: 5}).ResolvedValue(); got != 5 {
-		t.Fatalf("ResolvedValue(99) = %d, want 5", got)
+	if got := (Config{Value: 99, Max: 5}).resolvedValue(); got != 5 {
+		t.Fatalf("resolvedValue(99) = %d, want 5", got)
 	}
-	if got := (Config{Value: 3}).ResolvedValue(); got != 3 {
-		t.Fatalf("ResolvedValue(3) = %d, want 3", got)
+	if got := (Config{Value: 3}).resolvedValue(); got != 3 {
+		t.Fatalf("resolvedValue(3) = %d, want 3", got)
 	}
 }
 
 func TestResolvedLabel(t *testing.T) {
-	if got := (Config{Label: "Stars"}).ResolvedLabel(); got != "Stars" {
-		t.Fatalf("ResolvedLabel(Stars) = %q", got)
+	if got := (Config{Label: "Stars"}).resolvedLabel(); got != "Stars" {
+		t.Fatalf("resolvedLabel(Stars) = %q", got)
 	}
-	if got := (Config{}).ResolvedLabel(); got != "Rating" {
-		t.Fatalf("ResolvedLabel default = %q, want Rating", got)
+	if got := (Config{}).resolvedLabel(); got != "Rating" {
+		t.Fatalf("resolvedLabel default = %q, want Rating", got)
 	}
 }
 
 func TestRootClasses(t *testing.T) {
-	base := (Config{}).RootClasses()
+	base := (Config{}).rootClasses()
 	if !strings.Contains(base, "inline-flex flex-col gap-2") {
-		t.Fatalf("RootClasses missing base: %q", base)
+		t.Fatalf("rootClasses missing base: %q", base)
 	}
 	if strings.Contains(base, "custom") {
-		t.Fatalf("RootClasses should not contain custom when Class empty: %q", base)
+		t.Fatalf("rootClasses should not contain custom when Class empty: %q", base)
 	}
-	withClass := (Config{Class: "custom-class"}).RootClasses()
+	withClass := (Config{RootClass: "custom-class"}).rootClasses()
 	if !strings.Contains(withClass, "custom-class") {
-		t.Fatalf("RootClasses missing appended Class: %q", withClass)
+		t.Fatalf("rootClasses missing appended Class: %q", withClass)
 	}
 }
 
 func TestControlClasses(t *testing.T) {
-	interactive := (Config{}).ControlClasses()
+	interactive := (Config{}).controlClasses()
 	if !strings.Contains(interactive, "focus-within:outline-2") {
-		t.Fatalf("interactive ControlClasses should add focus outline: %q", interactive)
+		t.Fatalf("interactive controlClasses should add focus outline: %q", interactive)
 	}
-	readOnly := (Config{ReadOnly: true}).ControlClasses()
-	if strings.Contains(readOnly, "focus-within:outline-2") {
-		t.Fatalf("read-only ControlClasses should not add focus outline: %q", readOnly)
+	display := (DisplayConfig{}).controlClasses()
+	if strings.Contains(display, "focus-within:outline-2") {
+		t.Fatalf("display controlClasses should not add focus outline: %q", display)
 	}
 }
 
@@ -121,96 +121,96 @@ func TestIconClassesSizes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(string(tt.size), func(t *testing.T) {
-			got := (Config{Size: tt.size}).IconClasses()
+			got := (Config{Size: tt.size}).iconClasses()
 			if !strings.Contains(got, tt.want) {
-				t.Fatalf("IconClasses(%q) = %q, want substring %q", tt.size, got, tt.want)
+				t.Fatalf("iconClasses(%q) = %q, want substring %q", tt.size, got, tt.want)
 			}
 			if strings.Contains(got, "opacity-60") {
-				t.Fatalf("IconClasses should not dim when enabled: %q", got)
+				t.Fatalf("iconClasses should not dim when enabled: %q", got)
 			}
 		})
 	}
-	disabled := (Config{Disabled: true}).IconClasses()
+	disabled := (Config{Disabled: true}).iconClasses()
 	if !strings.Contains(disabled, "opacity-60") {
-		t.Fatalf("disabled IconClasses should dim: %q", disabled)
+		t.Fatalf("disabled iconClasses should dim: %q", disabled)
 	}
 }
 
 func TestActiveInactiveIconClasses(t *testing.T) {
-	star := Config{Style: StyleStars}
-	if got := star.ActiveIconClasses(); got != "text-warning" {
-		t.Fatalf("star ActiveIconClasses = %q", got)
+	star := Config{Appearance: AppearanceStars}
+	if got := star.activeIconClasses(); got != "text-warning" {
+		t.Fatalf("star activeIconClasses = %q", got)
 	}
-	if !strings.Contains(star.InactiveIconClasses(), "text-on-surface-muted") {
-		t.Fatalf("star InactiveIconClasses = %q", star.InactiveIconClasses())
+	if !strings.Contains(star.inactiveIconClasses(), "text-on-surface-muted") {
+		t.Fatalf("star inactiveIconClasses = %q", star.inactiveIconClasses())
 	}
-	emoji := Config{Style: StyleEmoji}
-	if !strings.Contains(emoji.ActiveIconClasses(), "scale-110") {
-		t.Fatalf("emoji ActiveIconClasses = %q", emoji.ActiveIconClasses())
+	emoji := Config{Appearance: AppearanceEmoji}
+	if !strings.Contains(emoji.activeIconClasses(), "scale-110") {
+		t.Fatalf("emoji activeIconClasses = %q", emoji.activeIconClasses())
 	}
-	if !strings.Contains(emoji.InactiveIconClasses(), "grayscale") {
-		t.Fatalf("emoji InactiveIconClasses = %q", emoji.InactiveIconClasses())
+	if !strings.Contains(emoji.inactiveIconClasses(), "grayscale") {
+		t.Fatalf("emoji inactiveIconClasses = %q", emoji.inactiveIconClasses())
 	}
 }
 
 func TestXDataAndInputID(t *testing.T) {
-	if got := (Config{Value: 2}).XData(); got != "{ currentVal: 2 }" {
-		t.Fatalf("XData = %q", got)
+	if got := (Config{Value: 2}).xData(); got != "{ currentVal: 2 }" {
+		t.Fatalf("xData = %q", got)
 	}
-	if got := (Config{ID: "r"}).InputID(3); got != "r-3" {
-		t.Fatalf("InputID = %q, want r-3", got)
+	if got := (Config{ID: "r"}).inputID(3); got != "r-3" {
+		t.Fatalf("inputID = %q, want r-3", got)
 	}
 }
 
 func TestValueLabel(t *testing.T) {
-	star := Config{Style: StyleStars}
-	if got := star.ValueLabel(1); got != "one star" {
-		t.Fatalf("ValueLabel(1) = %q, want 'one star'", got)
+	star := Config{Appearance: AppearanceStars}
+	if got := star.valueLabel(1); got != "one star" {
+		t.Fatalf("valueLabel(1) = %q, want 'one star'", got)
 	}
-	if got := star.ValueLabel(3); got != "3 stars" {
-		t.Fatalf("ValueLabel(3) = %q, want '3 stars'", got)
+	if got := star.valueLabel(3); got != "3 stars" {
+		t.Fatalf("valueLabel(3) = %q, want '3 stars'", got)
 	}
-	emoji := Config{Style: StyleEmoji}
-	if got := emoji.ValueLabel(3); got != "neutral" {
-		t.Fatalf("emoji ValueLabel(3) = %q, want 'neutral'", got)
+	emoji := Config{Appearance: AppearanceEmoji}
+	if got := emoji.valueLabel(3); got != "neutral" {
+		t.Fatalf("emoji valueLabel(3) = %q, want 'neutral'", got)
 	}
 	// Emoji with value outside the default option set falls back to star wording.
-	if got := emoji.ValueLabel(9); got != "9 stars" {
-		t.Fatalf("emoji ValueLabel(9) = %q, want '9 stars'", got)
+	if got := emoji.valueLabel(9); got != "9 stars" {
+		t.Fatalf("emoji valueLabel(9) = %q, want '9 stars'", got)
 	}
-	if got := emoji.ValueLabel(1); got != "very dissatisfied" {
-		t.Fatalf("emoji ValueLabel(1) = %q", got)
+	if got := emoji.valueLabel(1); got != "very dissatisfied" {
+		t.Fatalf("emoji valueLabel(1) = %q", got)
 	}
 }
 
 func TestEmojiIcon(t *testing.T) {
-	cfg := Config{Style: StyleEmoji}
-	if got := cfg.EmojiIcon(5); got != "😍" {
-		t.Fatalf("EmojiIcon(5) = %q, want 😍", got)
+	cfg := Config{Appearance: AppearanceEmoji}
+	if got := cfg.emojiIcon(5); got != "😍" {
+		t.Fatalf("emojiIcon(5) = %q, want 😍", got)
 	}
-	if got := cfg.EmojiIcon(99); got != "🙂" {
-		t.Fatalf("EmojiIcon(99) fallback = %q, want 🙂", got)
+	if got := cfg.emojiIcon(99); got != "🙂" {
+		t.Fatalf("emojiIcon(99) fallback = %q, want 🙂", got)
 	}
 }
 
 func TestBindClass(t *testing.T) {
-	emoji := (Config{Style: StyleEmoji}).BindClass(2)
+	emoji := (Config{Appearance: AppearanceEmoji}).bindClass(2)
 	if !strings.Contains(emoji, "currentVal === 2") {
-		t.Fatalf("emoji BindClass = %q", emoji)
+		t.Fatalf("emoji bindClass = %q", emoji)
 	}
-	star := (Config{Style: StyleStars}).BindClass(2)
+	star := (Config{Appearance: AppearanceStars}).bindClass(2)
 	if !strings.Contains(star, "currentVal >= 2") {
-		t.Fatalf("star BindClass = %q", star)
+		t.Fatalf("star bindClass = %q", star)
 	}
 }
 
-func TestReadOnlyIconState(t *testing.T) {
-	cfg := Config{Style: StyleStars, Value: 3}
-	if got := readOnlyIconState(cfg, 2); got != cfg.ActiveIconClasses() {
-		t.Fatalf("readOnlyIconState active = %q", got)
+func TestDisplayIconState(t *testing.T) {
+	cfg := DisplayConfig{Appearance: AppearanceStars, Value: 3}
+	if got := displayIconState(cfg, 2); got != cfg.activeIconClasses() {
+		t.Fatalf("displayIconState active = %q", got)
 	}
-	if got := readOnlyIconState(cfg, 4); got != cfg.InactiveIconClasses() {
-		t.Fatalf("readOnlyIconState inactive = %q", got)
+	if got := displayIconState(cfg, 4); got != cfg.inactiveIconClasses() {
+		t.Fatalf("displayIconState inactive = %q", got)
 	}
 }
 
@@ -235,13 +235,13 @@ func TestRenderDisabledInputs(t *testing.T) {
 	}
 }
 
-func TestRenderReadOnlyEmoji(t *testing.T) {
-	html := renderRating(t, Config{Style: StyleEmoji, ReadOnly: true, Value: 3})
+func TestRenderEmojiDisplay(t *testing.T) {
+	html := renderStructuralRating(t, RatingDisplay(DisplayConfig{Appearance: AppearanceEmoji, Value: 3}))
 	if strings.Contains(html, `type="radio"`) {
-		t.Fatalf("read-only emoji must not render radios:\n%s", html)
+		t.Fatalf("emoji display must not render radios:\n%s", html)
 	}
 	if !strings.Contains(html, `role="img"`) {
-		t.Fatalf("read-only rating should render role=img:\n%s", html)
+		t.Fatalf("rating display should render role=img:\n%s", html)
 	}
 	if !strings.Contains(html, `aria-label="neutral"`) {
 		t.Fatalf("read-only emoji aria-label should use sentiment:\n%s", html)
@@ -253,9 +253,9 @@ func TestRenderReadOnlyEmoji(t *testing.T) {
 
 func TestRenderSizesAndAttrs(t *testing.T) {
 	html := renderRating(t, Config{
-		Size:  SizeLG,
-		Value: 1,
-		Attrs: templ.Attributes{"data-test": "rating-root"},
+		Size:      SizeLG,
+		Value:     1,
+		RootAttrs: templ.Attributes{"data-test": "rating-root"},
 	})
 	if !strings.Contains(html, "size-8") {
 		t.Fatalf("large rating should use size-8 icons:\n%s", html)

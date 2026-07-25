@@ -9,10 +9,32 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
+	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var cardAPISections = []demo.APISection{
+	demo.StructAPI[card.Config](
+		rootcomponents.KindCard,
+		"Config",
+		"card.Card(cfg Config) Instance",
+		"Configures a composable card article.",
+		[]demo.APIPropDoc{
+			{Name: "Image", Default: `"" (no image)`, Description: "Optional image URL."},
+			{Name: "ImageAlt", Default: `""`, Description: "Alternative text for Image."},
+			{Name: "Tag", Default: `""`, Description: "Optional category text above the title."},
+			{Name: "Title", Default: `""`, Description: "Card heading and source for the description ID.", Required: true},
+			{Name: "Description", Default: `""`, Description: "Optional body text."},
+			{Name: "Footer", Default: "nil", Description: "Optional component content below the body, such as actions or ratings."},
+			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearancePrimary"}, Description: "Default border or primary-accent border."},
+			{Name: "Layout", Default: "LayoutVertical", Allowed: []string{"LayoutVertical", "LayoutHorizontal"}, Description: "Stacks media above content or places it beside content."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the card article."},
+		},
+	),
+}
 
 // CardDemoPage renders the Card component demo
 func CardDemoPage() templ.Component {
@@ -103,7 +125,7 @@ func cardDemoContent() templ.Component {
 
 templ bookNowButton() {
     <div class="mt-2">
-        @button.Button(button.Config{Variant: button.Primary, Type: "button"}) { Book Now }
+        @button.Button() { Book Now }
     </div>
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -130,7 +152,7 @@ templ bookNowButton() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Product Card",
-				Description: "An e-commerce recipe: compose a bordered article with card.StarRating, a price, and an Add to Cart button. (Config.Price/Rating are exposed but rendered by the caller, not the base template.)",
+				Description: "An e-commerce recipe: compose a bordered article with rating.RatingDisplay, a price, and an Add to Cart button. Price and rating are application content, not Card config fields.",
 			},
 			cardProductPreview(),
 			`<article class="group flex rounded-radius max-w-sm flex-col overflow-hidden border border-outline bg-surface-alt ...">
@@ -139,9 +161,9 @@ templ bookNowButton() {
     </div>
     <div class="flex flex-col gap-4 p-6">
         <h3 class="text-lg font-bold">CASIO G-SHOCK GA2100</h3>
-        @card.StarRating(3)
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"})
         <span class="text-xl font-medium">$99.99</span>
-        @button.Button(button.Config{Variant: button.Primary}) { Add to Cart }
+        @button.Button() { Add to Cart }
     </div>
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -159,7 +181,7 @@ templ bookNowButton() {
     <h3 class="text-xl font-bold">Premium</h3>
     <span class="mt-8 text-3xl font-medium">$8.99</span>
     <ul class="mt-4 list-inside list-disc space-y-2 text-sm">...</ul>
-    @button.Button(button.Config{Variant: button.Primary, RootClass: "w-full"}) { Start your free trial }
+    @button.Button(button.WithRootClass("w-full")) { Start your free trial }
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -168,7 +190,7 @@ templ bookNowButton() {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Testimonial Card",
-				Description: "A quote recipe pairing a person, role, and card.StarRating in the footer row.",
+				Description: "A quote recipe pairing a person, role, and rating.RatingDisplay in the footer row.",
 			},
 			cardTestimonialPreview(),
 			`<article class="group rounded-radius flex max-w-md flex-col border border-outline bg-surface-alt p-6 ...">
@@ -179,7 +201,7 @@ templ bookNowButton() {
             <img src="/assets/images/avatars/avatar-1.webp" class="size-10 rounded-full" alt="Bob Johnson" />
             <div><h3 class="font-bold">Bob Johnson</h3><span class="text-xs">CEO - TechNova</span></div>
         </div>
-        @card.StarRating(4)
+        @rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"})
     </div>
 </article>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -190,19 +212,7 @@ templ bookNowButton() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Image", Type: "string", Default: `""`, Description: "Card image URL (rendered above the body, or beside it in horizontal layout)."},
-			{Name: "ImageAlt", Type: "string", Default: `""`, Description: "Alt text for the image."},
-			{Name: "Tag", Type: "string", Default: `""`, Description: "Optional category/tag shown above the title."},
-			{Name: "Title", Type: "string", Default: `""`, Description: "Card title (also seeds the aria-describedby id)."},
-			{Name: "Description", Type: "string", Default: `""`, Description: "Body text."},
-			{Name: "Footer", Type: "templ.Component", Default: "nil", Description: "Optional footer content (buttons, links, ratings) rendered below the body."},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Style: "default" or "primary" (adds a 2px primary border accent).`},
-			{Name: "Layout", Type: "Layout", Default: "LayoutVertical", Description: `Layout: "vertical" (image top) or "horizontal" (image beside content).`},
-			{Name: "Price", Type: "string", Default: `""`, Description: "Exposed for ecommerce recipes; render via a custom Footer (base template does not emit it)."},
-			{Name: "Rating", Type: "int", Default: "0", Description: "Exposed for ecommerce recipes; render with card.StarRating in a Footer."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the article container."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(cardAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -501,10 +511,7 @@ func bookNowButton() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -542,7 +549,7 @@ func ecommerceProductCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = card.StarRating(3).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 3, Size: rating.SizeSM, Label: "Rated 3 stars"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -568,10 +575,7 @@ func ecommerceProductCard() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -627,11 +631,7 @@ func pricingCard() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant:   button.Primary,
-			Type:      "button",
-			RootClass: "w-full",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithRootClass("w-full")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -669,7 +669,7 @@ func testimonialCard() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = card.StarRating(4).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = rating.RatingDisplay(rating.DisplayConfig{Value: 4, Size: rating.SizeSM, Label: "Rated 4 stars"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

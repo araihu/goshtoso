@@ -9,69 +9,63 @@ import (
 	"github.com/a-h/templ"
 )
 
-// render renders Button(cfg) with the given child text into a string.
-func render(t *testing.T, cfg Config, child string) string {
+// render renders Button(options...) with the given child text into a string.
+func render(t *testing.T, child string, options ...Option) string {
 	t.Helper()
 	var buf bytes.Buffer
 	ctx := templ.WithChildren(context.Background(), templ.Raw(child))
-	if err := Button(cfg).Render(ctx, &buf); err != nil {
+	if err := Button(options...).Render(ctx, &buf); err != nil {
 		t.Fatalf("render Button: %v", err)
 	}
 	return buf.String()
 }
 
 func TestCoverageRenderDefaultButton(t *testing.T) {
-	html := render(t, Config{}, "Click")
+	html := render(t, "Click")
 	for _, want := range []string{"<button", "class=", "Click", "</button>"} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("default render missing %q in %s", want, html)
 		}
 	}
-	// Empty variant hits the default branches of variantClasses (bg-primary)
-	// and sizeClasses (text-sm), plus an empty outline color suffix.
 	if !strings.Contains(html, "bg-primary") {
-		t.Fatalf("default variant should use bg-primary:\n%s", html)
+		t.Fatalf("default tone should use bg-primary:\n%s", html)
 	}
 	if !strings.Contains(html, "text-sm") {
 		t.Fatalf("default size should use text-sm:\n%s", html)
 	}
 }
 
-// TestVariantClasses exercises every variant branch (variantClasses, 40% → 100%).
-func TestVariantClasses(t *testing.T) {
+func TestToneClasses(t *testing.T) {
 	cases := []struct {
-		variant Variant
-		want    string
+		tone Tone
+		want string
 	}{
-		{Primary, "bg-primary"},
-		{Secondary, "bg-secondary"},
-		{Alternate, "bg-surface-alt"},
-		{Inverse, "bg-surface-dark"},
-		{Info, "bg-info"},
-		{Danger, "bg-danger"},
-		{Warning, "bg-warning"},
-		{Success, "bg-success"},
+		{TonePrimary, "bg-primary"},
+		{ToneSecondary, "bg-secondary"},
+		{ToneAlternate, "bg-surface-alt"},
+		{ToneInverse, "bg-surface-dark"},
+		{ToneInfo, "bg-info"},
+		{ToneDanger, "bg-danger"},
+		{ToneWarning, "bg-warning"},
+		{ToneSuccess, "bg-success"},
 	}
 	for _, tc := range cases {
-		t.Run(string(tc.variant), func(t *testing.T) {
-			html := render(t, Config{Variant: tc.variant}, "x")
+		t.Run(string(tc.tone), func(t *testing.T) {
+			html := render(t, "x", WithTone(tc.tone))
 			if !strings.Contains(html, tc.want) {
-				t.Fatalf("variant %q missing %q:\n%s", tc.variant, tc.want, html)
+				t.Fatalf("tone %q missing %q:\n%s", tc.tone, tc.want, html)
 			}
-			// The outline color suffix is derived from the variant string.
-			if !strings.Contains(html, "focus-visible:outline-"+string(tc.variant)) {
-				t.Fatalf("variant %q missing outline color suffix:\n%s", tc.variant, html)
+			if !strings.Contains(html, "focus-visible:outline-"+string(tc.tone)) {
+				t.Fatalf("tone %q missing outline color suffix:\n%s", tc.tone, html)
 			}
 		})
 	}
 }
 
-// TestVariantClassesUnknownDefaults covers the default branch of variantClasses
-// when an unrecognized variant value is supplied.
-func TestVariantClassesUnknownDefaults(t *testing.T) {
-	html := render(t, Config{Variant: Variant("nope")}, "x")
+func TestToneClassesUnknownDefaults(t *testing.T) {
+	html := render(t, "x", WithTone(Tone("nope")))
 	if !strings.Contains(html, "bg-primary text-on-primary border-primary") {
-		t.Fatalf("unknown variant should fall back to primary classes:\n%s", html)
+		t.Fatalf("unknown tone should fall back to primary classes:\n%s", html)
 	}
 }
 
@@ -89,7 +83,7 @@ func TestSizeClasses(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(string(tc.size), func(t *testing.T) {
-			html := render(t, Config{Variant: Primary, Size: tc.size}, "x")
+			html := render(t, "x", WithSize(tc.size))
 			if !strings.Contains(html, tc.want) {
 				t.Fatalf("size %q missing %q:\n%s", tc.size, tc.want, html)
 			}
@@ -99,13 +93,12 @@ func TestSizeClasses(t *testing.T) {
 
 // TestButtonAttributes covers the ID, Type, Disabled, and RootClass branches.
 func TestButtonAttributes(t *testing.T) {
-	html := render(t, Config{
-		ID:        "save-btn",
-		Type:      "submit",
-		Disabled:  true,
-		Variant:   Primary,
-		RootClass: "w-full custom-x",
-	}, "Save")
+	html := render(t, "Save",
+		WithID("save-btn"),
+		WithType("submit"),
+		Disabled(),
+		WithRootClass("w-full custom-x"),
+	)
 
 	for _, want := range []string{
 		`id="save-btn"`,
@@ -121,7 +114,7 @@ func TestButtonAttributes(t *testing.T) {
 
 // TestButtonNoIDOmitsAttribute confirms an empty ID emits no id attribute.
 func TestButtonNoIDOmitsAttribute(t *testing.T) {
-	html := render(t, Config{Variant: Primary}, "x")
+	html := render(t, "x")
 	if strings.Contains(html, "id=") {
 		t.Fatalf("empty ID should not emit id attribute:\n%s", html)
 	}
@@ -134,16 +127,15 @@ func TestButtonNoIDOmitsAttribute(t *testing.T) {
 
 // TestAlpineAttributes covers every AlpineConfig branch in the templ.
 func TestAlpineAttributes(t *testing.T) {
-	html := render(t, Config{
-		Variant: Primary,
-		Alpine: &AlpineConfig{
+	html := render(t, "x",
+		WithAlpine(&AlpineConfig{
 			OnClick:      "open = true",
 			Show:         "open",
 			BindDisabled: "busy",
 			Transition:   true,
 			Data:         "{ open: false }",
-		},
-	}, "x")
+		}),
+	)
 
 	for _, want := range []string{
 		`x-on:click="open = true"`,
@@ -161,7 +153,7 @@ func TestAlpineAttributes(t *testing.T) {
 // TestAlpineEmptyOmitsAttributes confirms a zero-value AlpineConfig pointer
 // emits no Alpine directives (hasAlpine true, but all fields empty).
 func TestAlpineEmptyOmitsAttributes(t *testing.T) {
-	html := render(t, Config{Variant: Primary, Alpine: &AlpineConfig{}}, "x")
+	html := render(t, "x", WithAlpine(&AlpineConfig{}))
 	for _, unwanted := range []string{"x-on:click", "x-show", ":disabled", "x-transition", "x-data"} {
 		if strings.Contains(html, unwanted) {
 			t.Fatalf("empty AlpineConfig should not emit %q:\n%s", unwanted, html)
@@ -171,9 +163,8 @@ func TestAlpineEmptyOmitsAttributes(t *testing.T) {
 
 // TestHTMXAttributes covers every HTMXConfig branch in the templ.
 func TestHTMXAttributes(t *testing.T) {
-	html := render(t, Config{
-		Variant: Primary,
-		HTMX: &HTMXConfig{
+	html := render(t, "x",
+		WithHTMX(&HTMXConfig{
 			Get:       "/g",
 			Post:      "/p",
 			Put:       "/u",
@@ -186,8 +177,8 @@ func TestHTMXAttributes(t *testing.T) {
 			PushURL:   true,
 			Confirm:   "Sure?",
 			Vals:      `{"a":1}`,
-		},
-	}, "x")
+		}),
+	)
 
 	for _, want := range []string{
 		`hx-get="/g"`,
@@ -212,7 +203,7 @@ func TestHTMXAttributes(t *testing.T) {
 // TestHTMXEmptyOmitsAttributes confirms a zero-value HTMXConfig pointer emits
 // no hx-* attributes (hasHTMX true, but all fields empty/false).
 func TestHTMXEmptyOmitsAttributes(t *testing.T) {
-	html := render(t, Config{Variant: Primary, HTMX: &HTMXConfig{}}, "x")
+	html := render(t, "x", WithHTMX(&HTMXConfig{}))
 	for _, unwanted := range []string{"hx-get", "hx-post", "hx-put", "hx-delete", "hx-patch", "hx-push-url"} {
 		if strings.Contains(html, unwanted) {
 			t.Fatalf("empty HTMXConfig should not emit %q:\n%s", unwanted, html)
@@ -224,11 +215,10 @@ func TestHTMXEmptyOmitsAttributes(t *testing.T) {
 // that wraps children in an htmx-indicator-content span and adds a hidden
 // indicator span with the loading text.
 func TestLoadingTextRendersIndicatorSpans(t *testing.T) {
-	html := render(t, Config{
-		Variant:     Primary,
-		HTMX:        &HTMXConfig{Post: "/save"},
-		LoadingText: "Saving...",
-	}, "Save")
+	html := render(t, "Save",
+		WithHTMX(&HTMXConfig{Post: "/save"}),
+		WithLoadingText("Saving..."),
+	)
 
 	for _, want := range []string{
 		`<span class="htmx-indicator-content">Save</span>`,

@@ -1,8 +1,8 @@
 package combobox
 
-// ProviderError renders the inline error list shown when an OptionsProvider
+// providerError renders the inline error list shown when an OptionsProvider
 // returns an error. Rendered via templ so cfg values are HTML-escaped.
-templ ProviderError(cfg Config) {
+templ providerError(cfg Config) {
 	<ul id={ cfg.ID + "-options" } role="listbox">
 		<li class="px-4 py-3 text-sm text-danger">
 			Failed to load.

@@ -59,7 +59,7 @@ type Item struct {
 
 // IsButton reports whether the item should render as a <button> rather than
 // an anchor. Buttons are required for click handlers and disabled state.
-func (i Item) IsButton() bool {
+func (i Item) isButton() bool {
 	return i.OnClick != "" || i.Disabled
 }
 
@@ -95,7 +95,7 @@ type Config struct {
 }
 
 // GetTriggerMode returns the trigger mode with a default of click
-func (cfg Config) GetTriggerMode() TriggerMode {
+func (cfg Config) getTriggerMode() TriggerMode {
 	if cfg.TriggerMode == "" {
 		return TriggerClick
 	}
@@ -103,12 +103,12 @@ func (cfg Config) GetTriggerMode() TriggerMode {
 }
 
 // HasDividers returns true if there are multiple sections
-func (cfg Config) HasDividers() bool {
+func (cfg Config) hasDividers() bool {
 	return len(cfg.Sections) > 1
 }
 
 // HasIcons returns true if any item has an icon
-func (cfg Config) HasIcons() bool {
+func (cfg Config) hasIcons() bool {
 	for _, section := range cfg.Sections {
 		for _, item := range section.Items {
 			if item.Icon != nil {
@@ -120,7 +120,7 @@ func (cfg Config) HasIcons() bool {
 }
 
 // HasShortcuts returns true if any item has a shortcut
-func (cfg Config) HasShortcuts() bool {
+func (cfg Config) hasShortcuts() bool {
 	for _, section := range cfg.Sections {
 		for _, item := range section.Items {
 			if item.Shortcut != "" {
@@ -132,31 +132,31 @@ func (cfg Config) HasShortcuts() bool {
 }
 
 // IsContextMenu returns true if this is a context menu trigger
-func (cfg Config) IsContextMenu() bool {
-	return cfg.GetTriggerMode() == TriggerContext
+func (cfg Config) isContextMenu() bool {
+	return cfg.getTriggerMode() == TriggerContext
 }
 
 // UseIconOnlyTrigger reports whether the click/hover trigger should render
 // the icon alone (no label + chevron).
-func (cfg Config) UseIconOnlyTrigger() bool {
-	return cfg.TriggerIconOnly && cfg.TriggerIcon != nil && !cfg.IsContextMenu()
+func (cfg Config) useIconOnlyTrigger() bool {
+	return cfg.TriggerIconOnly && cfg.TriggerIcon != nil && !cfg.isContextMenu()
 }
 
 // MenuClasses returns the CSS classes for the dropdown menu container
-func (cfg Config) MenuClasses() string {
+func (cfg Config) menuClasses() string {
 	align := "left-0"
 	if cfg.MenuAlign == AlignEnd {
 		align = "right-0"
 	}
 	base := "absolute " + align + " z-30 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-md dark:border-outline-dark dark:bg-surface-dark-alt"
-	if cfg.IsContextMenu() {
+	if cfg.isContextMenu() {
 		return "top-8 " + base
 	}
 	return "top-11 " + base
 }
 
 // ItemClasses returns the CSS classes for a dropdown menu item
-func (cfg Config) ItemClasses(hasIcon bool) string {
+func (cfg Config) itemClasses(hasIcon bool) string {
 	base := "bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/10 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong"
 	if hasIcon {
 		return "flex items-center gap-2 " + base
@@ -167,23 +167,23 @@ func (cfg Config) ItemClasses(hasIcon bool) string {
 // DangerClasses returns the destructive-variant classes applied in addition
 // to ItemClasses when Item.Danger is true. Palette matches the navbar
 // UserMenuItem danger styling for parity.
-func (cfg Config) DangerClasses() string {
+func (cfg Config) dangerClasses() string {
 	return "text-danger hover:bg-danger/5 hover:text-danger focus-visible:bg-danger/10 focus-visible:text-danger dark:text-danger dark:hover:bg-danger/10 dark:hover:text-danger dark:focus-visible:bg-danger/10 dark:focus-visible:text-danger"
 }
 
 // DisabledClasses returns the classes applied when Item.Disabled is true.
 // opacity-50 + cursor-not-allowed communicates the state; pointer-events-none
 // backs up the native disabled attribute against Alpine event listeners.
-func (cfg Config) DisabledClasses() string {
+func (cfg Config) disabledClasses() string {
 	return "opacity-50 cursor-not-allowed pointer-events-none"
 }
 
 // ButtonClasses returns the CSS classes for the trigger button
-func (cfg Config) ButtonClasses() string {
-	if cfg.IsContextMenu() {
+func (cfg Config) buttonClasses() string {
+	if cfg.isContextMenu() {
 		return "inline-flex items-center bg-transparent transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong active:opacity-100 dark:focus-visible:outline-outline-dark-strong"
 	}
-	if cfg.UseIconOnlyTrigger() {
+	if cfg.useIconOnlyTrigger() {
 		return "inline-flex items-center justify-center rounded-radius border border-outline bg-surface-alt p-2 transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-outline-dark-strong"
 	}
 	return "inline-flex items-center gap-2 whitespace-nowrap rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-outline-dark-strong"

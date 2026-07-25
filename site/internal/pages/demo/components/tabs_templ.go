@@ -9,10 +9,53 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/tabs"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var tabsAPISections = []demo.APISection{
+	demo.StructAPI[tabs.Config](
+		rootcomponents.KindTabs,
+		"Config",
+		"tabs.Tabs(cfg Config) Instance",
+		"Configures an Alpine-powered tab list with static or HTMX-loaded panels.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `"tabs" for panel-ID namespace`, Description: "Namespaces generated panel IDs. The root container itself does not render this ID."},
+			{Name: "Tabs", Default: "nil (empty tab list)", Description: "Tab definitions rendered in order."},
+			{Name: "DefaultTab", Default: `"first Tab.ID"`, Description: "Initial selected ID; an explicit value is not validated when SyncHash is false."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the root tab container."},
+			{Name: "SyncHash", Default: "false", Description: "When true, initializes from a valid URL hash and replaces the hash whenever selectedTab changes; invalid hashes retain DefaultTab."},
+		},
+	),
+	demo.StructAPI[tabs.Tab](
+		"",
+		"Tab",
+		"",
+		"Describes one tab button and its static or lazy-loaded panel.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: "required", Description: "Selection key and suffix for the generated panel ID.", Required: true},
+			{Name: "Label", Default: "required", Description: "Visible button and panel accessible text, or aria-label when LabelSlot replaces visible text.", Required: true},
+			{Name: "LabelSlot", Default: "nil", Description: "Replaces visible label content while Label supplies the button accessible name."},
+			{Name: "Icon", Default: "nil", Description: "Optional leading tab icon."},
+			{Name: "Badge", Default: `"" (omitted)`, Description: "Optional text badge with active-state styling."},
+			{Name: "Content", Default: "nil (empty static panel)", Description: "Static panel component. It is ignored when HTMX is non-nil."},
+			{Name: "HTMX", Default: "nil (static panel)", Description: "Non-nil configuration selects the lazy-loaded panel and ignores Content."},
+		},
+	),
+	demo.StructAPI[tabs.TabHTMX](
+		"",
+		"TabHTMX",
+		"",
+		"Configures lazy panel loading.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: "required for a useful lazy panel", Description: "GET URL used by both the Alpine x-effect htmx.ajax call and the panel hx-get attribute.", Required: true},
+			{Name: "Swap", Default: `"innerHTML"`, Description: "Swap strategy used by both lazy-loading paths."},
+			{Name: "Indicator", Default: `"" (hx-indicator omitted)`, Description: "Optional loading-indicator selector on the panel."},
+		},
+	),
+}
 
 // TabsDemoPage renders the Tabs component demo
 func TabsDemoPage() templ.Component {
@@ -132,8 +175,8 @@ func tabsDemoContent() templ.Component {
 			`@tabs.Tabs(tabs.Config{
     ID: "status-demo",
     Tabs: []tabs.Tab{
-        {ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
-        {ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
+        {ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.ToneSuccess), Content: responseContent("200")},
+        {ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.ToneDanger), Content: responseContent("404")},
     },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -179,13 +222,7 @@ func tabsDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique tab-set id (scopes Alpine state and panel ids)."},
-			{Name: "Tabs", Type: "[]Tab", Default: "nil", Description: "Tab definitions (ID, Label, optional LabelSlot, Icon, Badge, Content, HTMX)."},
-			{Name: "DefaultTab", Type: "string", Default: `""`, Description: "ID of the initially active tab (defaults to the first)."},
-			{Name: "SyncHash", Type: "bool", Default: "false", Description: "Mirror the active tab in the URL fragment."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the tab-set container."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(tabsAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -360,9 +397,9 @@ func tabsCustomLabelPreview() templ.Component {
 		templ_7745c5c3_Err = tabs.Tabs(tabs.Config{
 			ID: "status",
 			Tabs: []tabs.Tab{
-				{ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.Success), Content: responseContent("200")},
-				{ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.Danger), Content: responseContent("404")},
-				{ID: "queued", Label: "202", LabelSlot: statusBadge("202", badge.Info), Content: responseContent("202")},
+				{ID: "ok", Label: "200", LabelSlot: statusBadge("200", badge.ToneSuccess), Content: responseContent("200")},
+				{ID: "missing", Label: "404", LabelSlot: statusBadge("404", badge.ToneDanger), Content: responseContent("404")},
+				{ID: "queued", Label: "202", LabelSlot: statusBadge("202", badge.ToneInfo), Content: responseContent("202")},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -497,7 +534,7 @@ func tabContent(name string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 211, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 248, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -539,7 +576,7 @@ func responseContent(status string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(status)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 215, Col: 12}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 252, Col: 12}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -553,7 +590,7 @@ func responseContent(status string) templ.Component {
 	})
 }
 
-func statusBadge(status string, variant badge.Variant) templ.Component {
+func statusBadge(status string, variant badge.Tone) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -574,7 +611,7 @@ func statusBadge(status string, variant badge.Variant) templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: status, Variant: variant, Indicator: true, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Label: status, Tone: variant, Indicator: true, Size: badge.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -73,9 +73,9 @@ func OnlineBadge(count int, oob bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = badge.Badge(badge.Config{
-			Label:   fmt.Sprintf("%d online", count),
-			Variant: badge.Success,
-			Style:   badge.StyleSoft,
+			Label:      fmt.Sprintf("%d online", count),
+			Tone:       badge.ToneSuccess,
+			Appearance: badge.AppearanceSoft,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -113,22 +113,22 @@ func MessageBubble(m Message) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		variant := m.Color
+		variant := avatar.Tone(m.Color)
 		side := chatbubble.Received
 		if m.Mine {
 			side = chatbubble.Sent
 		}
 		if m.IsBot {
-			variant = "info"
+			variant = avatar.ToneInfo
 		}
 		templ_7745c5c3_Err = chatbubble.ChatBubble(chatbubble.Config{
-			Side:          side,
-			SenderName:    m.Nick,
-			Message:       m.Text,
-			Timestamp:     m.Time,
-			ShowAvatar:    true,
-			IsBot:         m.IsBot,
-			AvatarVariant: variant,
+			Side:       side,
+			SenderName: m.Nick,
+			Message:    m.Text,
+			Timestamp:  m.Time,
+			ShowAvatar: true,
+			IsBot:      m.IsBot,
+			AvatarTone: variant,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -348,7 +348,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Variant: avatar.Variant(me.Color), Status: avatar.StatusSuccess}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Tone: avatar.Tone(me.Color), Status: avatar.StatusSuccess}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -409,7 +409,7 @@ func ChatApp(me chat.Identity) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Type: "submit", Variant: button.Secondary, Size: button.SizeSmall}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithType("submit"), button.WithTone(button.ToneSecondary), button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -466,7 +466,7 @@ func ChatApp(me chat.Identity) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Type: "submit", Variant: button.Primary}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithType("submit")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

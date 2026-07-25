@@ -22,8 +22,8 @@ import "fmt"
 //	    State:      textarea.StateError,
 //	    HelperText: "Error: Please add some comments to your evaluation",
 //	})
-templ Textarea(cfg Config) {
-	<div class={ cfg.ContainerClasses() }>
+templ textareaTemplate(cfg Config) {
+	<div class={ cfg.containerClasses() }>
 		if cfg.Label != "" {
 			@textareaLabel(cfg)
 		}
@@ -32,8 +32,8 @@ templ Textarea(cfg Config) {
 			if cfg.Name != "" {
 				name={ cfg.Name }
 			}
-			class={ cfg.TextareaClasses() }
-			rows={ cfg.GetRows() }
+			class={ cfg.textareaClasses() }
+			rows={ cfg.getRows() }
 			if cfg.Placeholder != "" {
 				placeholder={ cfg.Placeholder }
 			}
@@ -46,14 +46,14 @@ templ Textarea(cfg Config) {
 			{ cfg.InputAttrs... }
 		>{ cfg.Value }</textarea>
 		if cfg.HelperText != "" {
-			<small class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
+			<small class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 		}
 	</div>
 }
 
 // TextareaWithActions renders a textarea with action buttons in a card-like container.
 // This matches the PenguinUI "textarea with actions" variant.
-templ TextareaWithActions(cfg Config) {
+templ textareaWithActionsTemplate(cfg Config) {
 	<div class={ fmt.Sprintf("flex w-full max-w-md flex-col overflow-hidden rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark%s", condClass(cfg.RootClass)) }>
 		<div class="bg-surface-alt/50 dark:bg-surface-dark-alt/50 p-2">
 			<textarea
@@ -62,7 +62,7 @@ templ TextareaWithActions(cfg Config) {
 					name={ cfg.Name }
 				}
 				class="scroll-on z-10 w-full resize-none bg-transparent p-4 text-sm focus:outline-hidden"
-				rows={ cfg.GetRows() }
+				rows={ cfg.getRows() }
 				if cfg.Placeholder != "" {
 					placeholder={ cfg.Placeholder }
 				}
@@ -98,21 +98,21 @@ templ TextareaWithActions(cfg Config) {
 // textareaLabel renders the label with optional state icon
 templ textareaLabel(cfg Config) {
 	if cfg.State == StateError {
-		<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+		<label for={ cfg.ID } class={ cfg.labelClasses() }>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor" class="w-4 h-4">
 				<path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path>
 			</svg>
 			{ cfg.Label }
 		</label>
 	} else if cfg.State == StateSuccess {
-		<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+		<label for={ cfg.ID } class={ cfg.labelClasses() }>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor" class="w-4 h-4">
 				<path fill-rule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd"></path>
 			</svg>
 			{ cfg.Label }
 		</label>
 	} else {
-		<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+		<label for={ cfg.ID } class={ cfg.labelClasses() }>
 			{ cfg.Label }
 		</label>
 	}

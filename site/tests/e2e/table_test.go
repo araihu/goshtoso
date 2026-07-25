@@ -97,8 +97,8 @@ func TestTable_DefaultTable(t *testing.T) {
 	})
 }
 
-// TestTable_StripedVariant tests the striped table variant
-func TestTable_StripedVariant(t *testing.T) {
+// TestTableStripedAppearance tests the striped table appearance.
+func TestTableStripedAppearance(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -116,7 +116,7 @@ func TestTable_StripedVariant(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	t.Run("Striped_Rows_Have_Even_Classes", func(t *testing.T) {
+	t.Run("StripedRowsHaveAppearanceClasses", func(t *testing.T) {
 		// Scope to the per-variant preview wrapper (#table-striped) so the
 		// codeblock's syntax-highlight spans never leak into the table query.
 		stripedSection := page.Locator("#table-striped")
@@ -129,14 +129,14 @@ func TestTable_StripedVariant(t *testing.T) {
 		firstRow := rows.First()
 		classAttr, err := firstRow.GetAttribute("class")
 		require.NoError(t, err)
-		assert.Contains(t, classAttr, "even:bg-primary/5", "striped rows should have even background")
+		assert.Contains(t, classAttr, "odd:bg-surface-alt", "striped rows should have the striped appearance class")
 
 		t.Log("✓ Striped table rows have correct classes")
 	})
 }
 
-// TestTable_WithCheckbox tests the checkbox table variant
-func TestTable_WithCheckbox(t *testing.T) {
+// TestTableCheckboxSelection tests the checkbox selection behavior.
+func TestTableCheckboxSelection(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -217,7 +217,82 @@ func TestTable_WithAction(t *testing.T) {
 		firstButton := editButtons.First()
 		classAttr, err := firstButton.GetAttribute("class")
 		require.NoError(t, err)
-		assert.Contains(t, classAttr, "text-primary", "Edit button should have primary color")
+		for _, className := range []string{
+			"!bg-transparent",
+			"!border-transparent",
+			"!text-primary",
+			"dark:!text-primary-dark",
+			"!p-0.5",
+			"!rounded-radius",
+		} {
+			assert.Contains(t, classAttr, className, "Edit button should preserve text-action styling")
+		}
+		assert.Equal(t, "button", mustAttribute(t, firstButton, "type"))
+		assert.Equal(t, "Edit", strings.TrimSpace(mustText(t, firstButton)))
+
+		appearanceValue, err := firstButton.Evaluate(`el => {
+			const style = getComputedStyle(el);
+			const probe = document.createElement("span");
+			probe.style.color = "var(--color-primary)";
+			probe.style.borderRadius = "var(--radius-radius)";
+			el.parentElement.appendChild(probe);
+			const expectedColor = getComputedStyle(probe).color;
+			const expectedRadius = getComputedStyle(probe).borderRadius;
+			probe.remove();
+			return {
+				backgroundColor: style.backgroundColor,
+				borderColor: style.borderTopColor,
+				color: style.color,
+				expectedColor,
+				paddingTop: style.paddingTop,
+				paddingRight: style.paddingRight,
+				borderRadius: style.borderRadius,
+				expectedRadius,
+			};
+		}`, nil)
+		require.NoError(t, err)
+		appearance, ok := appearanceValue.(map[string]any)
+		require.True(t, ok, "computed appearance result should be an object")
+		assert.Equal(t, "rgba(0, 0, 0, 0)", appearance["backgroundColor"])
+		assert.Equal(t, "rgba(0, 0, 0, 0)", appearance["borderColor"])
+		assert.Equal(t, appearance["expectedColor"], appearance["color"])
+		assert.Equal(t, "2px", appearance["paddingTop"])
+		assert.Equal(t, "2px", appearance["paddingRight"])
+		assert.Equal(t, appearance["expectedRadius"], appearance["borderRadius"])
+
+		_, err = page.Evaluate("() => document.documentElement.classList.add('dark')", nil)
+		require.NoError(t, err)
+		_, err = page.WaitForFunction(
+			"() => document.documentElement.classList.contains('dark')",
+			nil,
+		)
+		require.NoError(t, err)
+		_, err = page.WaitForFunction(`() => {
+			const el = document.querySelector("#table-action button");
+			if (!el) return false;
+			const probe = document.createElement("span");
+			probe.style.color = "var(--color-primary-dark)";
+			el.parentElement.appendChild(probe);
+			const ready = getComputedStyle(el).color === getComputedStyle(probe).color;
+			probe.remove();
+			return ready;
+		}`, nil)
+		require.NoError(t, err)
+		darkAppearanceValue, err := firstButton.Evaluate(`el => {
+			const probe = document.createElement("span");
+			probe.style.color = "var(--color-primary-dark)";
+			el.parentElement.appendChild(probe);
+			const expectedColor = getComputedStyle(probe).color;
+			probe.remove();
+			return {
+				color: getComputedStyle(el).color,
+				expectedColor,
+			};
+		}`, nil)
+		require.NoError(t, err)
+		darkAppearance, ok := darkAppearanceValue.(map[string]any)
+		require.True(t, ok, "dark computed appearance result should be an object")
+		assert.Equal(t, darkAppearance["expectedColor"], darkAppearance["color"])
 
 		t.Log("✓ Action table has correctly styled Edit buttons")
 	})

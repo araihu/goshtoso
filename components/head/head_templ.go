@@ -31,7 +31,7 @@ import "github.com/araihu/goshtoso/assets"
 // Assets are bundled with the module (no runtime CDN), so page loads are
 // deterministic. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
 // tokens, which only exist in the compiled styles.css.
-func Dependencies() templ.Component {
+func dependenciesTemplate() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -115,7 +115,7 @@ func Dependencies() templ.Component {
 // DependenciesMinimal renders just the CSS, Alpine core, HTMX, and combobox nav
 // (no collapse/focus plugins). Use it when your page needs neither the accordion
 // nor a focus trap. Same /assets/ mount requirement as Dependencies.
-func DependenciesMinimal() templ.Component {
+func dependenciesMinimalTemplate() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

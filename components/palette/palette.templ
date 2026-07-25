@@ -1,11 +1,11 @@
 package palette
 
-templ Palette(cfg Config) {
+templ paletteTemplate(cfg Config) {
 	<div
 		x-data={ cfg.alpineData() }
 		data-palette
 		id={ cfg.ID }
-		class={ cfg.ContainerClasses() }
+		class={ cfg.containerClasses() }
 		if cfg.modelAssignExpr() != "" {
 			x-on:select-close={ cfg.modelAssignExpr() }
 		}

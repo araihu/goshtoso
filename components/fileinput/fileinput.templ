@@ -10,8 +10,8 @@ package fileinput
 //	    Accept:     "image/*",
 //	    HelperText: "PNG, JPG, WebP - Max 5MB",
 //	})
-templ FileInput(cfg Config) {
-	if cfg.IsUpload() {
+templ fileInputTemplate(cfg Config) {
+	if cfg.isUpload() {
 		@uploadInput(cfg)
 	} else {
 		@dropZoneInput(cfg)
@@ -20,9 +20,9 @@ templ FileInput(cfg Config) {
 
 // dropZoneInput renders the drag-and-drop file input variant.
 templ dropZoneInput(cfg Config) {
-	<div class={ cfg.ContainerClasses() }>
+	<div class={ cfg.containerClasses() }>
 		if cfg.Label != "" {
-			<span class={ cfg.LabelClasses() }>{ cfg.Label }</span>
+			<span class={ cfg.labelClasses() }>{ cfg.Label }</span>
 		}
 		<div
 			data-fileinput-variant="dropzone"
@@ -31,14 +31,14 @@ templ dropZoneInput(cfg Config) {
 			@dragenter="dragging = true"
 			@dragleave="dragging = false"
 			@drop.prevent="dragging = false; $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change', { bubbles: true }))"
-			class={ cfg.DropZoneClasses() }
+			class={ cfg.dropZoneClasses() }
 			:class="dragging ? 'border-primary dark:border-primary-dark' : 'border-outline dark:border-outline-dark'"
 		>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="w-12 h-12 opacity-75">
 				<path fill-rule="evenodd" d="M10.5 3.75a6 6 0 0 0-5.98 6.496A5.25 5.25 0 0 0 6.75 20.25H18a4.5 4.5 0 0 0 2.206-8.423 3.75 3.75 0 0 0-4.133-4.303A6.001 6.001 0 0 0 10.5 3.75Zm2.03 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v4.94a.75.75 0 0 0 1.5 0v-4.94l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3Z" clip-rule="evenodd"></path>
 			</svg>
 			<div class="group">
-				<label for={ cfg.ID } class={ cfg.BrowseLabelClasses() }>
+				<label for={ cfg.ID } class={ cfg.browseLabelClasses() }>
 					<input
 						x-ref="fileInput"
 						id={ cfg.ID }
@@ -64,7 +64,7 @@ templ dropZoneInput(cfg Config) {
 				 or drag and drop here
 			</div>
 			if cfg.HelperText != "" {
-				<small id={ cfg.ID + "-helper" } class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
+				<small id={ cfg.ID + "-helper" } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 			}
 		</div>
 	</div>
@@ -72,16 +72,16 @@ templ dropZoneInput(cfg Config) {
 
 // uploadInput renders the compact text-input-style upload variant.
 templ uploadInput(cfg Config) {
-	<div class={ cfg.UploadContainerClasses() }>
+	<div class={ cfg.uploadContainerClasses() }>
 		if cfg.Label != "" {
-			<label for={ cfg.ID } class={ cfg.LabelClasses() }>{ cfg.Label }</label>
+			<label for={ cfg.ID } class={ cfg.labelClasses() }>{ cfg.Label }</label>
 		}
 		<label
 			for={ cfg.ID }
 			data-fileinput-variant="upload"
 			x-data="{ fileName: '' }"
 			x-on:change.capture="fileName = $event.target.files.length ? $event.target.files[0].name : ''"
-			class={ cfg.UploadControlClasses() }
+			class={ cfg.uploadControlClasses() }
 		>
 			<input
 				id={ cfg.ID }
@@ -102,13 +102,13 @@ templ uploadInput(cfg Config) {
 				}
 				{ cfg.InputAttrs... }
 			/>
-			<span class={ cfg.UploadFileNameClasses() }>
+			<span class={ cfg.uploadFileNameClasses() }>
 				<span class="truncate" x-text="fileName || 'No file selected'">No file selected</span>
 			</span>
-			<span aria-hidden="true" class={ cfg.UploadButtonClasses() }>Browse</span>
+			<span aria-hidden="true" class={ cfg.uploadButtonClasses() }>Browse</span>
 		</label>
 		if cfg.HelperText != "" {
-			<small id={ cfg.ID + "-helper" } class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
+			<small id={ cfg.ID + "-helper" } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 		}
 	</div>
 }

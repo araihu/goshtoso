@@ -9,10 +9,25 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/spinner"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var spinnerAPISections = []demo.APISection{
+	demo.StructAPI[spinner.Config](
+		rootcomponents.KindSpinner,
+		"Config",
+		"spinner.Spinner(cfg Config) Instance",
+		"Configures a decorative aria-hidden SVG spinner. It does not render a label, status role, aria-busy state, or busy-state wrapper.",
+		[]demo.APIPropDoc{
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets the SVG fill color; empty or unknown values use the on-surface default."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets the SVG dimensions; empty or unknown values render size-5."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the spinner SVG."},
+		},
+	),
+}
 
 // SpinnerDemoPage renders the Spinner component demo
 func SpinnerDemoPage() templ.Component {
@@ -86,11 +101,11 @@ func spinnerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Color Variants",
-				Description: "Set Variant: Primary, Secondary, Info, Success, Warning, or Danger.",
+				Description: "Set Tone: spinner.TonePrimary, spinner.ToneSecondary, spinner.ToneInfo, spinner.ToneSuccess, spinner.ToneWarning, or spinner.ToneDanger.",
 			},
 			spinnerVariantsPreview(),
-			`@spinner.Spinner(spinner.Config{Variant: spinner.Primary})
-@spinner.Spinner(spinner.Config{Variant: spinner.Danger})`,
+			`@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary})
+@spinner.Spinner(spinner.Config{Tone: spinner.ToneDanger})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -112,11 +127,7 @@ func spinnerDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color: "default", "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "sm", "md", "lg", "xl".`},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the spinner SVG."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(spinnerAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -310,27 +321,27 @@ func spinnerVariantsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Primary}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Secondary}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.ToneSecondary}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Info}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.ToneInfo}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Success}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.ToneSuccess}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Warning}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.ToneWarning}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Danger}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.ToneDanger}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -368,7 +379,7 @@ func spinnerSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -376,7 +387,7 @@ func spinnerSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeMD}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeMD}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -384,7 +395,7 @@ func spinnerSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeLG}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeLG}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -392,7 +403,7 @@ func spinnerSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Variant: spinner.Primary, Size: spinner.SizeXL}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeXL}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

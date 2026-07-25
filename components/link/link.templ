@@ -1,30 +1,31 @@
 package link
 
 // Link renders a styled anchor element.
-templ Link(cfg Config) {
+templ linkTemplate(href string, options ...Option) {
+	{{ cfg := newConfig(href, options) }}
 	<a
-		if cfg.ID != "" {
-			id={ cfg.ID }
+		if cfg.id != "" {
+			id={ cfg.id }
 		}
-		href={ cfg.href() }
-		if cfg.Target != "" {
-			target={ cfg.Target }
+		href={ cfg.safeHref() }
+		if cfg.target != "" {
+			target={ cfg.target }
 		}
-		if cfg.rel() != "" {
-			rel={ cfg.rel() }
+		if cfg.effectiveRel() != "" {
+			rel={ cfg.effectiveRel() }
 		}
-		if cfg.role() != "" {
-			role={ cfg.role() }
+		if cfg.effectiveRole() != "" {
+			role={ cfg.effectiveRole() }
 		}
 		class={ cfg.classes() }
-		{ cfg.Attrs... }
+		{ cfg.attrs... }
 	>
-		if cfg.Icon != nil && cfg.IconPosition == IconLeading {
-			@cfg.Icon
+		if cfg.icon != nil && cfg.iconPosition == IconLeading {
+			@cfg.icon
 		}
 		{ children... }
-		if cfg.Icon != nil && cfg.IconPosition != IconLeading {
-			@cfg.Icon
+		if cfg.icon != nil && cfg.iconPosition != IconLeading {
+			@cfg.icon
 		}
 	</a>
 }

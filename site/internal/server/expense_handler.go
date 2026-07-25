@@ -80,10 +80,10 @@ func (s *Server) handleExpenseAdd(w http.ResponseWriter, r *http.Request) {
 	_ = examples.SummaryBadge(st, true).Render(r.Context(), w)
 	switch {
 	case added:
-		_ = toast.OOBToast(toast.Config{Variant: toast.Success, Title: "Added", Message: desc}).Render(r.Context(), w)
+		_ = toast.OOBToast(toast.Config{Tone: toast.ToneSuccess, Title: "Added", Message: desc}).Render(r.Context(), w)
 	default:
 		_ = toast.OOBToast(toast.Config{
-			Variant: toast.Warning,
+			Tone:    toast.ToneWarning,
 			Title:   "Not added",
 			Message: "Enter a description and a valid amount (e.g. 12.34).",
 		}).Render(r.Context(), w)
@@ -100,7 +100,7 @@ func (s *Server) handleExpenseDelete(w http.ResponseWriter, r *http.Request) {
 	persistExpense(r, w, st)
 	writeHTML(w)
 	writeExpenseListAndTotal(r, w, st)
-	cfg := toast.Config{Variant: toast.Info, Title: "Expense deleted"}
+	cfg := toast.Config{Tone: toast.ToneInfo, Title: "Expense deleted"}
 	if found {
 		cfg.Message = deleted.Desc
 		cfg.ActionLabel = "Undo"
@@ -163,5 +163,5 @@ func (s *Server) handleExpenseClear(w http.ResponseWriter, r *http.Request) {
 	persistExpense(r, w, st)
 	writeHTML(w)
 	writeExpenseListAndTotal(r, w, st)
-	_ = toast.OOBToast(toast.Config{Variant: toast.Info, Title: "Cleared", Message: "All expenses removed."}).Render(r.Context(), w)
+	_ = toast.OOBToast(toast.Config{Tone: toast.ToneInfo, Title: "Cleared", Message: "All expenses removed."}).Render(r.Context(), w)
 }

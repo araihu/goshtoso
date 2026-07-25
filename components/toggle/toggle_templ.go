@@ -21,17 +21,17 @@ import templruntime "github.com/a-h/templ/runtime"
 //	@toggle.Toggle(toggle.Config{
 //	    ID:      "darkMode",
 //	    Label:   "Dark mode",
-//	    Variant: toggle.Secondary,
+//	    Tone: toggle.ToneSecondary,
 //	    Checked: true,
 //	})
 //
-//	// Toggle with container style
+//	// Toggle with container appearance
 //	@toggle.Toggle(toggle.Config{
 //	    ID:    "containerToggle",
 //	    Label: "Setting",
-//	    Style: toggle.StyleContainer,
+//	    Appearance: toggle.AppearanceContainer,
 //	})
-func Toggle(cfg Config) templ.Component {
+func toggleTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -52,7 +52,7 @@ func Toggle(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{cfg.LabelClasses()}
+		var templ_7745c5c3_Var2 = []any{cfg.labelClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -207,7 +207,7 @@ func Toggle(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 = []any{cfg.ToggleClasses()}
+		var templ_7745c5c3_Var11 = []any{cfg.toggleClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

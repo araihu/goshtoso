@@ -34,16 +34,16 @@ type FormErrorsConfig struct {
 	RootClass string
 }
 
-// GetID returns the resolved id attribute.
-func (c FormErrorsConfig) GetID() string {
+// getID returns the resolved id attribute.
+func (c FormErrorsConfig) getID() string {
 	if c.ID == "" {
 		return "form-errors"
 	}
 	return c.ID
 }
 
-// GetTitle returns the resolved title.
-func (c FormErrorsConfig) GetTitle() string {
+// getTitle returns the resolved title.
+func (c FormErrorsConfig) getTitle() string {
 	if c.Title == "" {
 		return "Validation failed"
 	}
@@ -63,7 +63,7 @@ func (c FormErrorsConfig) GetTitle() string {
 //	        {Message: "Addon requires Kubernetes 1.28–1.31"},
 //	    },
 //	})
-func FormErrors(cfg FormErrorsConfig) templ.Component {
+func formErrorsTemplate(cfg FormErrorsConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -95,7 +95,7 @@ func FormErrors(cfg FormErrorsConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.GetID())
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.getID())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/errors.templ`, Line: 61, Col: 19}
 			}
@@ -121,7 +121,7 @@ func FormErrors(cfg FormErrorsConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetTitle())
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getTitle())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/form/errors.templ`, Line: 71, Col: 110}
 			}

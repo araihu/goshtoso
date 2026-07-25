@@ -16,47 +16,47 @@ func renderConfig(t *testing.T, cfg Config) string {
 }
 
 func TestOptionLabelFallsBackToValue(t *testing.T) {
-	if got := (Option{Value: "NoExecute"}).OptionLabel(); got != "NoExecute" {
-		t.Fatalf("OptionLabel() = %q, want value fallback", got)
+	if got := (Option{Value: "NoExecute"}).optionLabel(); got != "NoExecute" {
+		t.Fatalf("optionLabel() = %q, want value fallback", got)
 	}
-	if got := (Option{Value: "x", Label: "Explicit"}).OptionLabel(); got != "Explicit" {
-		t.Fatalf("OptionLabel() = %q, want explicit label", got)
+	if got := (Option{Value: "x", Label: "Explicit"}).optionLabel(); got != "Explicit" {
+		t.Fatalf("optionLabel() = %q, want explicit label", got)
 	}
 }
 
 func TestGetAddLabelUsesCustomAndDefault(t *testing.T) {
-	if got := (Config{}).GetAddLabel(); got != "Add row" {
-		t.Fatalf("GetAddLabel() = %q, want default", got)
+	if got := (Config{}).getAddLabel(); got != "Add row" {
+		t.Fatalf("getAddLabel() = %q, want default", got)
 	}
-	if got := (Config{AddActionLabel: "Add taint"}).GetAddLabel(); got != "Add taint" {
-		t.Fatalf("GetAddLabel() = %q, want custom", got)
+	if got := (Config{AddActionLabel: "Add taint"}).getAddLabel(); got != "Add taint" {
+		t.Fatalf("getAddLabel() = %q, want custom", got)
 	}
 }
 
 func TestContainerClassesAppendsRootClass(t *testing.T) {
-	base := (Config{}).ContainerClasses()
+	base := (Config{}).containerClasses()
 	if base != "flex flex-col gap-2" {
-		t.Fatalf("ContainerClasses() = %q, want base only", base)
+		t.Fatalf("containerClasses() = %q, want base only", base)
 	}
-	withRoot := (Config{RootClass: "mt-4 w-full"}).ContainerClasses()
+	withRoot := (Config{RootClass: "mt-4 w-full"}).containerClasses()
 	if !strings.HasPrefix(withRoot, "flex flex-col gap-2 ") || !strings.Contains(withRoot, "mt-4 w-full") {
-		t.Fatalf("ContainerClasses() = %q, want base plus RootClass", withRoot)
+		t.Fatalf("containerClasses() = %q, want base plus RootClass", withRoot)
 	}
 }
 
 func TestDefaultValueBranches(t *testing.T) {
-	if got := (Column{Default: "explicit"}).DefaultValue(); got != "explicit" {
-		t.Fatalf("DefaultValue() = %q, want explicit default", got)
+	if got := (Column{Default: "explicit"}).defaultValue(); got != "explicit" {
+		t.Fatalf("defaultValue() = %q, want explicit default", got)
 	}
 	sel := Column{Type: ColumnSelect, Options: []Option{{Value: "first"}, {Value: "second"}}}
-	if got := sel.DefaultValue(); got != "first" {
-		t.Fatalf("DefaultValue() = %q, want first option", got)
+	if got := sel.defaultValue(); got != "first" {
+		t.Fatalf("defaultValue() = %q, want first option", got)
 	}
-	if got := (Column{Type: ColumnSelect}).DefaultValue(); got != "" {
-		t.Fatalf("DefaultValue() = %q, want empty for optionless select", got)
+	if got := (Column{Type: ColumnSelect}).defaultValue(); got != "" {
+		t.Fatalf("defaultValue() = %q, want empty for optionless select", got)
 	}
-	if got := (Column{}).DefaultValue(); got != "" {
-		t.Fatalf("DefaultValue() = %q, want empty text default", got)
+	if got := (Column{}).defaultValue(); got != "" {
+		t.Fatalf("defaultValue() = %q, want empty text default", got)
 	}
 }
 
@@ -147,7 +147,7 @@ func TestEntriesJSONOrdersValuesByColumn(t *testing.T) {
 		},
 	}
 
-	if got := cfg.EntriesJSON(); got != `[["app","web"]]` {
-		t.Fatalf("EntriesJSON() = %s, want column-ordered rows", got)
+	if got := cfg.entriesJSON(); got != `[["app","web"]]` {
+		t.Fatalf("entriesJSON() = %s, want column-ordered rows", got)
 	}
 }

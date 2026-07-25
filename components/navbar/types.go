@@ -80,7 +80,7 @@ type Config struct {
 }
 
 // LeftActions returns action items positioned on the left
-func (cfg Config) LeftActions() []ActionItem {
+func (cfg Config) leftActions() []ActionItem {
 	var items []ActionItem
 	for _, a := range cfg.Actions {
 		if a.Position == "" || a.Position == ActionLeft {
@@ -91,7 +91,7 @@ func (cfg Config) LeftActions() []ActionItem {
 }
 
 // RightActions returns action items positioned on the right
-func (cfg Config) RightActions() []ActionItem {
+func (cfg Config) rightActions() []ActionItem {
 	var items []ActionItem
 	for _, a := range cfg.Actions {
 		if a.Position == ActionRight {
@@ -102,7 +102,7 @@ func (cfg Config) RightActions() []ActionItem {
 }
 
 // NavClasses returns the CSS classes for the outer nav element
-func (cfg Config) NavClasses() string {
+func (cfg Config) navClasses() string {
 	base := "flex items-center justify-between border-b border-outline px-6 py-4 dark:border-outline-dark"
 	if cfg.NavClass != "" {
 		return base + " " + cfg.NavClass
@@ -111,7 +111,7 @@ func (cfg Config) NavClasses() string {
 }
 
 // LinkClasses returns the CSS classes for a nav link
-func LinkClasses(active bool) string {
+func linkClasses(active bool) string {
 	if active {
 		return "font-bold text-primary underline-offset-2 hover:text-primary focus:outline-hidden focus:underline dark:text-primary-dark dark:hover:text-primary-dark"
 	}
@@ -119,7 +119,7 @@ func LinkClasses(active bool) string {
 }
 
 // MenuItemClasses returns the CSS classes for a user menu item
-func MenuItemClasses(danger bool) string {
+func menuItemClasses(danger bool) string {
 	if danger {
 		return "block bg-surface-alt px-4 py-2 text-sm text-danger hover:bg-danger/5 focus-visible:bg-danger/10 focus-visible:outline-hidden dark:bg-surface-dark-alt dark:hover:bg-danger/10"
 	}

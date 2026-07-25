@@ -25,14 +25,14 @@ import "fmt"
 //	// Initials only
 //	@avatar.Avatar(avatar.Config{
 //	    Name:    "dev-ops",
-//	    Variant: avatar.Primary,
+//	    Tone: avatar.TonePrimary,
 //	})
 //
 //	// Explicit initials
 //	@avatar.Avatar(avatar.Config{
 //	    Initials: "JS",
 //	})
-templ Avatar(cfg Config) {
+templ avatarTemplate(cfg Config) {
 	if cfg.Status != "" {
 		@avatarWithStatus(cfg)
 	} else {
@@ -41,7 +41,7 @@ templ Avatar(cfg Config) {
 }
 
 // AvatarStack renders an overlapping group of avatars.
-templ AvatarStack(cfg StackConfig) {
+templ avatarStackTemplate(cfg StackConfig) {
 	{{
 		label := cfg.Label
 		if label == "" {
@@ -72,11 +72,11 @@ templ AvatarStack(cfg StackConfig) {
 // the live value from the parent Alpine scope instead — see Config.Reactive.
 templ avatarLayers(cfg Config) {
 	{{
-		sizePart := cfg.SizeClasses()
+		sizePart := cfg.sizeClasses()
 		if cfg.Reactive {
 			sizePart = ""
 		}
-		radiusPart := cfg.ShapeClasses()
+		radiusPart := cfg.shapeClasses()
 		if cfg.ReactiveRadius {
 			radiusPart = ""
 		}
@@ -88,16 +88,16 @@ templ avatarLayers(cfg Config) {
 		} else if cfg.ReactiveRadius {
 			bindClass = "avatarRadiusClass"
 		}
-		rootSkinClasses := cfg.VariantClasses()
+		rootSkinClasses := cfg.toneClasses()
 		layerSkinClasses := ""
 		if cfg.Border {
 			rootSkinClasses = ""
-			layerSkinClasses = cfg.VariantFillClasses()
+			layerSkinClasses = cfg.toneFillClasses()
 		}
-		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.RootClass
+		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.borderClasses() + " " + cfg.RootClass
 		layerBoxClasses := "relative block size-full overflow-hidden " + radiusPart + " " + layerSkinClasses
 	}}
-	if cfg.HasImage() {
+	if cfg.hasImage() {
 		<div
 			x-data="{ imgLoaded: false, imgError: false }"
 			class={ containerClasses }
@@ -156,7 +156,7 @@ templ layerInitials(cfg Config, withImageOverlay bool) {
 				@cfg.Icon
 			</span>
 		} else {
-			{ cfg.ResolvedInitials() }
+			{ cfg.resolvedInitials() }
 		}
 	</span>
 }
@@ -174,7 +174,7 @@ templ layerLoading(cfg Config) {
 		class="absolute inset-0 flex items-center justify-center bg-surface-alt dark:bg-surface-dark-alt"
 		aria-hidden="true"
 	>
-		<svg class={ "animate-spin text-on-surface-muted dark:text-on-surface-dark-muted " + cfg.SpinnerSizeClasses() } xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+		<svg class={ "animate-spin text-on-surface-muted dark:text-on-surface-dark-muted " + cfg.spinnerSizeClasses() } xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 			<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 		</svg>
@@ -223,13 +223,13 @@ templ avatarWithStatus(cfg Config) {
 		@avatarLayers(cfg)
 		{{
 			positionClass := "bottom-0.5 end-0"
-			statusSizePart := cfg.StatusSizeClasses()
+			statusSizePart := cfg.statusSizeClasses()
 			if cfg.Reactive {
 				statusSizePart = ""
 			}
 		}}
 		<span
-			class={ "absolute rounded-full border-2 border-surface dark:border-surface-dark " + statusSizePart + " " + cfg.StatusClasses() + " " + positionClass }
+			class={ "absolute rounded-full border-2 border-surface dark:border-surface-dark " + statusSizePart + " " + cfg.statusClasses() + " " + positionClass }
 			if cfg.Reactive {
 				x-bind:class="avatarStatusSizeClass"
 			}
@@ -238,8 +238,8 @@ templ avatarWithStatus(cfg Config) {
 	</div>
 }
 
-// UserIcon returns the default user icon component
-func UserIcon() templ.Component {
+// userIcon returns the default user icon component.
+func userIcon() templ.Component {
 	return userIconTempl()
 }
 

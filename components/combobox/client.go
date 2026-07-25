@@ -15,8 +15,8 @@ var clientJS string
 // Parent pages listen for this event to trigger form submission or reactive UI
 // updates.
 //
-// The listener itself (emitted by ClientScript) is safe to render repeatedly —
+// The listener itself (emitted by the private client script fragment) is safe to render repeatedly —
 // a module-init guard (window.__goshtosoComboboxInit) prevents double-binding.
-// ClientScript is emitted automatically by Combobox when cfg.IsClientMode() is
-// true; consumers rarely need to call it directly.
+// The client script is emitted automatically by Combobox when
+// Source.LazyEndpoint is empty; consumers rarely need to call it directly.
 const ClientEvent = "combobox:change"

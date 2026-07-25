@@ -8,9 +8,9 @@ package combobox
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// ProviderError renders the inline error list shown when an OptionsProvider
+// providerError renders the inline error list shown when an OptionsProvider
 // returns an error. Rendered via templ so cfg values are HTML-escaped.
-func ProviderError(cfg Config) templ.Component {
+func providerError(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

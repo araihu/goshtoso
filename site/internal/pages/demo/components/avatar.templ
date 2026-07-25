@@ -1,10 +1,60 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var avatarAPISections = []demo.APISection{
+	demo.StructAPI[avatar.Config](
+		rootcomponents.KindAvatar,
+		"Config",
+		"avatar.Avatar(cfg Config) Instance",
+		"Configures one image, initials, or icon avatar.",
+		[]demo.APIPropDoc{
+			{Name: "Src", Default: `""`, Description: "Static image URL; load failures reveal the initials or icon fallback."},
+			{Name: "Alt", Default: `""`, Description: "Alternative text for the image layer."},
+			{Name: "Name", Default: `""`, Description: "Name used to derive initials when Initials is empty."},
+			{Name: "Initials", Default: `"?" or derived from Name`, Description: "Explicit fallback initials; overrides initials derived from Name."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeXS", "SizeSM", "SizeMD", "SizeLG", "SizeXL", "Size2XL"}, Description: "Rendered avatar size unless Reactive supplies classes."},
+			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneInverse", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Color treatment for the initials or icon fallback."},
+			{Name: "Shape", Default: "ShapeCircle", Allowed: []string{"ShapeCircle", "ShapeSquare"}, Description: "Circular or square avatar shape."},
+			{Name: "Radius", Default: "RadiusDefault", Allowed: []string{"RadiusDefault", "RadiusNone", "RadiusXS", "RadiusSM", "RadiusMD", "RadiusLG"}, Description: "Corner radius used only for square avatars; the default renders rounded-md."},
+			{Name: "Border", Default: "false", Description: "Adds a two-pixel ring around the avatar."},
+			{Name: "BorderColor", Default: "Semantic status tone; otherwise border-primary", Description: "CSS border-color class used when Border is true."},
+			{Name: "Status", Default: `"" (no status)`, Allowed: []string{"StatusOffline", "StatusInfo", "StatusSuccess", "StatusWarning", "StatusDanger"}, Description: "Optional presence indicator."},
+			{Name: "Icon", Default: "nil", Description: "Fallback component rendered instead of initials."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the avatar root."},
+			{Name: "SrcExpr", Default: `""`, Description: "Trusted Alpine expression that supplies the image URL at runtime."},
+			{Name: "Reactive", Default: "false", Description: "Reads size and status-size classes from the parent Alpine scope."},
+			{Name: "ReactiveRadius", Default: "false", Description: "Reads square-radius classes from the parent Alpine scope."},
+		},
+	),
+	demo.StructAPI[avatar.StackConfig](
+		rootcomponents.KindAvatarStack,
+		"StackConfig",
+		"avatar.AvatarStack(cfg StackConfig) StackInstance",
+		"Configures an accessible overlapping group of avatars.",
+		[]demo.APIPropDoc{
+			{Name: "Items", Default: "nil", Description: "Avatar configurations rendered from left to right.", Required: true},
+			{Name: "Label", Default: `"Avatar group"`, Description: "Accessible label for the group."},
+			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the stack root."},
+			{Name: "Reactive", Default: "false", Description: "Enables shared reactive sizing for every stack item."},
+		},
+	),
+	demo.FunctionsAPI(
+		"github.com/araihu/goshtoso/components/avatar",
+		"",
+		"Helpers",
+		"",
+		"Public helper for deriving compact fallback initials.",
+		[]demo.APIPropDoc{
+			{Name: "GetInitials", Signature: "func GetInitials(name, email string) string", Default: `"?" when both inputs are empty`, Description: "Returns one or two uppercase initials from name, then email."},
+		},
+	),
+}
 
 // AvatarDemoPage renders the Avatar component demo as a full document.
 // Kept for direct invocation; the registry uses avatarDemoContent directly.
@@ -74,7 +124,7 @@ templ avatarDemoContent() {
 		<div id="avatar-fragment">
 			@demo.ComponentDemo(
 				demo.ComponentDemoProps{
-					Title:        "Default Avatar",
+					Title:        "Avatar",
 					Description:  "A circle avatar in various sizes.",
 					AbovePreview: avatarSizeSelector(),
 				},
@@ -110,14 +160,14 @@ templ avatarDemoContent() {
 					Description: "An avatar in various colors with an icon placeholder.",
 				},
 				avatarIconPreview(),
-				`@avatar.Avatar(avatar.Config{Variant: avatar.Default, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Inverse, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Secondary, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Info, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Success, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Warning, Reactive: true})
-@avatar.Avatar(avatar.Config{Variant: avatar.Danger, Reactive: true})`,
+				`@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneInverse, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.TonePrimary, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneSecondary, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneInfo, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneSuccess, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneWarning, Reactive: true})
+@avatar.Avatar(avatar.Config{Tone: avatar.ToneDanger, Reactive: true})`,
 			)
 
 			@demo.DemoSection(
@@ -126,14 +176,14 @@ templ avatarDemoContent() {
 					Description: "An avatar in various colors with an initials placeholder.",
 				},
 				avatarInitialsPreview(),
-				`@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Default, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Inverse, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Primary, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Secondary, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Info, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Success, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Warning, Reactive: true})
-@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Danger, Reactive: true})`,
+				`@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDefault, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInverse, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.TonePrimary, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSecondary, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInfo, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSuccess, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneWarning, Reactive: true})
+@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDanger, Reactive: true})`,
 			)
 
 			@demo.DemoSection(
@@ -187,30 +237,10 @@ templ avatarDemoContent() {
 				avatarFixturesPreview(),
 				`@avatar.Avatar(avatar.Config{Src: imgURL, Name: "Load Test", Size: avatar.SizeMD})
 @avatar.Avatar(avatar.Config{Src: "/missing.png", Name: "Error Fallback", Size: avatar.SizeMD})
-@avatar.Avatar(avatar.Config{Name: "Initials Only", Size: avatar.SizeMD, Variant: avatar.Primary})`,
+@avatar.Avatar(avatar.Config{Name: "Initials Only", Size: avatar.SizeMD, Tone: avatar.TonePrimary})`,
 			)
 		</div>
-		@demo.APIReference([]demo.PropDoc{
-			{Name: "Src", Type: "string", Default: `""`, Description: "Image URL (falls back to initials/icon on error)."},
-			{Name: "Alt", Type: "string", Default: `""`, Description: "Image alt text."},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Full name used to derive initials when Src is missing/broken."},
-			{Name: "Initials", Type: "string", Default: `""`, Description: "Explicit initials (overrides Name-derived)."},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Fixed size: "xs", "sm", "md", "lg", "xl", "2xl" (ignored when Reactive).`},
-			{Name: "Variant", Type: "Variant", Default: "Default", Description: `Color for initials/icon: default, primary, secondary, info, success, warning, danger.`},
-			{Name: "Shape", Type: "Shape", Default: "ShapeCircle", Description: `Shape: "circle" or "square".`},
-			{Name: "Radius", Type: "Radius", Default: "RadiusDefault", Description: `Square-avatar radius: "none", "xs", "sm", "md", "lg".`},
-			{Name: "Border", Type: "bool", Default: "false", Description: "Add a ring border."},
-			{Name: "BorderColor", Type: "string", Default: `""`, Description: "Tailwind border color class for the ring."},
-			{Name: "Status", Type: "Status", Default: `""`, Description: `Presence dot: "offline", "info", "success", "warning", "danger".`},
-			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Custom placeholder icon (overrides the default user icon)."},
-			{Name: "Reactive", Type: "bool", Default: "false", Description: "Read size classes from the parent Alpine scope (avatarSizeClass) instead of Size."},
-			{Name: "ReactiveRadius", Type: "bool", Default: "false", Description: "Read square radius classes from the parent Alpine scope (avatarRadiusClass)."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the avatar root."},
-			{Name: "StackConfig.Items", Type: "[]avatar.Config", Default: "nil", Description: "Avatar configs rendered as an overlapping group."},
-			{Name: "StackConfig.Label", Type: "string", Default: `"Avatar group"`, Description: "Accessible label for the stacked avatar group."},
-			{Name: "StackConfig.RootClass", Type: "string", Default: `""`, Description: "Extra classes on the stack root."},
-			{Name: "StackConfig.Reactive", Type: "bool", Default: "false", Description: "Apply the shared reactive size binding to every stack item."},
-		})
+		@demo.StructuredAPIReference(avatarAPISections)
 	</div>
 }
 
@@ -297,14 +327,14 @@ templ avatarDefaultPreview() {
 templ avatarInitialsPreview() {
 	<div id="avatar-initials" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center justify-center gap-4" data-testid="avatar-section-initials">
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Default, Reactive: true})
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Inverse, Reactive: true})
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Primary, Reactive: true})
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Secondary, Reactive: true})
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Info, Reactive: true})
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Success, Reactive: true})
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Warning, Reactive: true})
-			@avatar.Avatar(avatar.Config{Initials: "JS", Variant: avatar.Danger, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDefault, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInverse, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.TonePrimary, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSecondary, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneInfo, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneSuccess, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneWarning, Reactive: true})
+			@avatar.Avatar(avatar.Config{Initials: "JS", Tone: avatar.ToneDanger, Reactive: true})
 		</div>
 	</div>
 }
@@ -313,14 +343,14 @@ templ avatarInitialsPreview() {
 templ avatarIconPreview() {
 	<div id="avatar-icon" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center justify-center gap-4" data-testid="avatar-section-icon">
-			@avatar.Avatar(avatar.Config{Variant: avatar.Default, Reactive: true})
-			@avatar.Avatar(avatar.Config{Variant: avatar.Inverse, Reactive: true})
-			@avatar.Avatar(avatar.Config{Variant: avatar.Primary, Reactive: true})
-			@avatar.Avatar(avatar.Config{Variant: avatar.Secondary, Reactive: true})
-			@avatar.Avatar(avatar.Config{Variant: avatar.Info, Reactive: true})
-			@avatar.Avatar(avatar.Config{Variant: avatar.Success, Reactive: true})
-			@avatar.Avatar(avatar.Config{Variant: avatar.Warning, Reactive: true})
-			@avatar.Avatar(avatar.Config{Variant: avatar.Danger, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneInverse, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.TonePrimary, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneSecondary, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneInfo, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneSuccess, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneWarning, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneDanger, Reactive: true})
 		</div>
 	</div>
 }
@@ -395,7 +425,7 @@ templ avatarFixturesPreview() {
 					Alt:     "Loaded",
 					Name:    "Load Test",
 					Size:    avatar.SizeMD,
-					Variant: avatar.Default,
+					Tone: avatar.ToneDefault,
 				})
 			</div>
 			<div data-testid="avatar-test-error">
@@ -404,14 +434,14 @@ templ avatarFixturesPreview() {
 					Alt:     "Error",
 					Name:    "Error Fallback",
 					Size:    avatar.SizeMD,
-					Variant: avatar.Default,
+					Tone: avatar.ToneDefault,
 				})
 			</div>
 			<div data-testid="avatar-test-initials">
 				@avatar.Avatar(avatar.Config{
 					Name:    "Initials Only",
 					Size:    avatar.SizeMD,
-					Variant: avatar.Primary,
+					Tone: avatar.TonePrimary,
 				})
 			</div>
 		</div>

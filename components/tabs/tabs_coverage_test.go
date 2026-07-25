@@ -47,7 +47,7 @@ func TestCoverageRootClassApplied(t *testing.T) {
 }
 
 // TestCoverageIconAndBadgeBranches exercises the tabButton icon+badge layout
-// branch plus BadgeActiveClasses / BadgeInactiveClasses.
+// branch plus badgeActiveClasses / badgeInactiveClasses.
 func TestCoverageIconAndBadgeBranches(t *testing.T) {
 	out := render(t, Config{
 		ID: "acct",
@@ -70,8 +70,8 @@ func TestCoverageIconAndBadgeBranches(t *testing.T) {
 	// Icon+badge layout class branch (flex variant).
 	assert.Contains(t, browser, "flex h-min items-center gap-2 px-4 py-2 text-sm")
 	// Badge active/inactive classes wired into x-bind:class.
-	assert.Contains(t, browser, BadgeActiveClasses())
-	assert.Contains(t, browser, BadgeInactiveClasses())
+	assert.Contains(t, browser, badgeActiveClasses())
+	assert.Contains(t, browser, badgeInactiveClasses())
 }
 
 // TestCoverageLabelSlotOverridesVisibleLabel keeps Label available for ARIA
@@ -112,8 +112,8 @@ func TestCoverageActiveInactiveClassesWired(t *testing.T) {
 	out := render(t, Config{
 		Tabs: []Tab{{ID: "a", Label: "A"}},
 	})
-	assert.Contains(t, out, ActiveClasses())
-	assert.Contains(t, out, InactiveClasses())
+	assert.Contains(t, out, activeClasses())
+	assert.Contains(t, out, inactiveClasses())
 }
 
 // TestCoverageStaticPanelNilContent confirms a static panel renders even when

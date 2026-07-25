@@ -9,10 +9,28 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/kbd"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var kbdAPISections = []demo.APISection{
+	demo.OptionsAPI(
+		"github.com/araihu/goshtoso/components/kbd",
+		rootcomponents.KindKbd,
+		"Kbd options",
+		"kbd.Kbd(text string, options ...Option) Instance",
+		"Pass visible key text followed by any functional options. For an icon-only key, use empty text with WithIcon and WithLabel.",
+		[]demo.APIPropDoc{
+			{Name: "WithLabel", Signature: "func WithLabel(label string) Option", Default: `""`, Description: "Sets the accessible label and icon-only screen-reader text."},
+			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMD", Allowed: []string{"SizeXS", "SizeSM", "SizeMD", "SizeLG"}, Description: "Sets the rendered key size."},
+			{Name: "WithIcon", Signature: "func WithIcon(icon templ.Component) Option", Default: "nil", Description: "Adds a leading or icon-only glyph."},
+			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the kbd element."},
+			{Name: "WithAttrs", Signature: "func WithAttrs(attrs templ.Attributes) Option", Default: "nil", Description: "Adds arbitrary attributes to the kbd element."},
+		},
+	),
+}
 
 // KbdDemoPage renders the KBD component demo.
 func KbdDemoPage() templ.Component {
@@ -75,10 +93,10 @@ func kbdDemoContent() templ.Component {
 				Description: "Display keyboard shortcuts and user input hints with semantic <kbd> markup.",
 			},
 			kbdFrequentlyUsedPreview(),
-			`@kbd.Kbd(kbd.Config{Text: "Tab"})
-@kbd.Kbd(kbd.Config{Text: "Shift"})
-@kbd.Kbd(kbd.Config{Text: "Space"})
-@kbd.Kbd(kbd.Config{Text: "Ctrl"})`,
+			`@kbd.Kbd("Tab")
+@kbd.Kbd("Shift")
+@kbd.Kbd("Space")
+@kbd.Kbd("Ctrl")`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -89,9 +107,9 @@ func kbdDemoContent() templ.Component {
 				Description: "Render an icon-only key by passing Icon and Label.",
 			},
 			kbdIconsPreview(),
-			`@kbd.Kbd(kbd.Config{Icon: commandKeyIcon(), Label: "Command"})
-@kbd.Kbd(kbd.Config{Icon: shiftKeyIcon(), Label: "Shift"})
-@kbd.Kbd(kbd.Config{Icon: upKeyIcon(), Label: "Up"})`,
+			`@kbd.Kbd("", kbd.WithIcon(commandKeyIcon()), kbd.WithLabel("Command"))
+@kbd.Kbd("", kbd.WithIcon(shiftKeyIcon()), kbd.WithLabel("Shift"))
+@kbd.Kbd("", kbd.WithIcon(upKeyIcon()), kbd.WithLabel("Up"))`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -103,7 +121,7 @@ func kbdDemoContent() templ.Component {
 			},
 			kbdInlinePreview(),
 			`<p>
-    To @kbd.Kbd(kbd.Config{Text: "Tab", Size: kbd.SizeSM}) or to @kbd.Kbd(kbd.Config{Text: "Space", Size: kbd.SizeSM}), that's the question.
+    To @kbd.Kbd("Tab", kbd.WithSize(kbd.SizeSM)) or to @kbd.Kbd("Space", kbd.WithSize(kbd.SizeSM)), that's the question.
 </p>`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -116,7 +134,7 @@ func kbdDemoContent() templ.Component {
 			},
 			kbdAlphabetPreview(),
 			`for _, key := range []string{"A", "B", "C"} {
-    @kbd.Kbd(kbd.Config{Text: key})
+    @kbd.Kbd(key)
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -129,7 +147,7 @@ func kbdDemoContent() templ.Component {
 			},
 			kbdNumberPreview(),
 			`for _, key := range []string{"1", "2", "3"} {
-    @kbd.Kbd(kbd.Config{Text: key})
+    @kbd.Kbd(key)
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -141,8 +159,8 @@ func kbdDemoContent() templ.Component {
 				Description: "Function keys are compact while leaving room for two- and three-character labels.",
 			},
 			kbdFunctionPreview(),
-			`@kbd.Kbd(kbd.Config{Text: "F1"})
-@kbd.Kbd(kbd.Config{Text: "F12"})`,
+			`@kbd.Kbd("F1")
+@kbd.Kbd("F12")`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -154,7 +172,7 @@ func kbdDemoContent() templ.Component {
 				AbovePreview: kbdSizeSelector(),
 			},
 			kbdSizesPreview(),
-			`@kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD})`,
+			`@kbd.Kbd("Esc")`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -163,14 +181,7 @@ func kbdDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Text", Type: "string", Default: `""`, Description: "Visible key text."},
-			{Name: "Label", Type: "string", Default: `""`, Description: "Accessible label, especially useful for icon-only keys."},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Size: "xs", "sm", "md", "lg".`},
-			{Name: "Icon", Type: "templ.Component", Default: "nil", Description: "Optional leading or icon-only key glyph."},
-			{Name: "Class", Type: "string", Default: `""`, Description: "Extra classes on the kbd element."},
-			{Name: "Attrs", Type: "templ.Attributes", Default: "nil", Description: "Additional attributes on the kbd element."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(kbdAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -322,7 +333,7 @@ func kbdFrequentlyUsedPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, key := range []string{"Tab", "Shift", "Space", "Ctrl", "Command", "Alt", "Option", "Enter", "Backspace", "Esc", "Delete", "Up", "Down", "Left", "Right", "Caps Lock"} {
-			templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: key}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = kbd.Kbd(key).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -360,39 +371,39 @@ func kbdIconsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: commandKeyIcon(), Label: "Command"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(commandKeyIcon()), kbd.WithLabel("Command")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: shiftKeyIcon(), Label: "Shift"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(shiftKeyIcon()), kbd.WithLabel("Shift")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: optionKeyIcon(), Label: "Option"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(optionKeyIcon()), kbd.WithLabel("Option")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: controlKeyIcon(), Label: "Control"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(controlKeyIcon()), kbd.WithLabel("Control")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: tabKeyIcon(), Label: "Tab"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(tabKeyIcon()), kbd.WithLabel("Tab")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: upKeyIcon(), Label: "Up"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(upKeyIcon()), kbd.WithLabel("Up")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: downKeyIcon(), Label: "Down"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(downKeyIcon()), kbd.WithLabel("Down")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: leftKeyIcon(), Label: "Left"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(leftKeyIcon()), kbd.WithLabel("Left")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Icon: rightKeyIcon(), Label: "Right"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("", kbd.WithIcon(rightKeyIcon()), kbd.WithLabel("Right")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -429,20 +440,20 @@ func kbdInlinePreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: "Tab", Size: kbd.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("Tab", kbd.WithSize(kbd.SizeSM)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(" or to ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 156, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 167, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: "Space", Size: kbd.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("Space", kbd.WithSize(kbd.SizeSM)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -480,7 +491,7 @@ func kbdAlphabetPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, key := range []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"} {
-			templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: key}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = kbd.Kbd(key).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -519,7 +530,7 @@ func kbdNumberPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, key := range []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"} {
-			templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: key}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = kbd.Kbd(key).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -558,7 +569,7 @@ func kbdFunctionPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, key := range []string{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F10", "F11", "F12"} {
-			templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: key}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = kbd.Kbd(key).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -596,7 +607,7 @@ func kbdSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeXS}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("Esc", kbd.WithSize(kbd.SizeXS)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -604,7 +615,7 @@ func kbdSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeSM}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("Esc", kbd.WithSize(kbd.SizeSM)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -612,7 +623,7 @@ func kbdSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeMD}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("Esc").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -620,7 +631,7 @@ func kbdSizesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = kbd.Kbd(kbd.Config{Text: "Esc", Size: kbd.SizeLG}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = kbd.Kbd("Esc", kbd.WithSize(kbd.SizeLG)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -921,7 +932,7 @@ func arrowKeyIcon(path string) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(path)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 261, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 272, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
 		if templ_7745c5c3_Err != nil {

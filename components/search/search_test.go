@@ -168,7 +168,10 @@ func TestSearchSafeHrefFiltersExecutableNavigationTargets(t *testing.T) {
 	}{
 		{name: "relative path", href: "/components/kbd", want: `/components/kbd`},
 		{name: "relative path trims whitespace", href: " /components/kbd ", want: `/components/kbd`},
+		{name: "http", href: "http://example.test/docs", want: `http://example.test/docs`},
 		{name: "https", href: "https://example.test/docs", want: `https://example.test/docs`},
+		{name: "mailto", href: "mailto:docs@example.test", want: `mailto:docs@example.test`},
+		{name: "tel", href: "tel:+15551234567", want: `tel:+15551234567`},
 		{name: "mixed case javascript", href: "JaVaScRiPt:alert(1)", want: ``},
 		{name: "javascript with whitespace", href: " javascript:alert(1) ", want: ``},
 		{name: "data scheme", href: "data:text/html,<script>alert(1)</script>", want: ``},
@@ -205,21 +208,43 @@ func TestSearchSafeHrefFiltersExecutableNavigationTargets(t *testing.T) {
 	}
 }
 
+func TestSearchSelectResultRevalidatesEveryNavigationSink(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{ID: "docs-search"}))
+
+	for _, unsafeAssignment := range []string{
+		`window.location.href = result.dataset.searchHref`,
+		`window.location.href = result.href`,
+	} {
+		if strings.Contains(html, unsafeAssignment) {
+			t.Fatalf("SearchModal assigns an unvalidated result href through %q:\n%s", unsafeAssignment, html)
+		}
+	}
+	for _, want := range []string{
+		`var href = this.safeHref(result.dataset.searchHref);`,
+		`var href = this.safeHref(result.href);`,
+		`if (href) window.location.href = href;`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal selectResult missing validated navigation sink %q:\n%s", want, html)
+		}
+	}
+}
+
 func TestSearchDefaults(t *testing.T) {
 	cfg := Config{}
-	if cfg.GetID() != "search" {
-		t.Fatalf("default ID = %q", cfg.GetID())
+	if cfg.getID() != "search" {
+		t.Fatalf("default ID = %q", cfg.getID())
 	}
-	if cfg.GetLabel() != "Search" {
-		t.Fatalf("default label = %q", cfg.GetLabel())
+	if cfg.getLabel() != "Search" {
+		t.Fatalf("default label = %q", cfg.getLabel())
 	}
-	if cfg.GetShortcutText() == "" || cfg.GetEscapeText() == "" || cfg.GetEmptyText() == "" {
+	if cfg.getShortcutText() == "" || cfg.getEscapeText() == "" || cfg.getEmptyText() == "" {
 		t.Fatalf("default shortcut, escape, and empty text should be populated")
 	}
-	if cfg.GetMaxResults() != 4 {
-		t.Fatalf("default max results = %d", cfg.GetMaxResults())
+	if cfg.getMaxResults() != 4 {
+		t.Fatalf("default max results = %d", cfg.getMaxResults())
 	}
-	if cfg.GetDescriptionMaxLength() != 120 {
-		t.Fatalf("default description max length = %d", cfg.GetDescriptionMaxLength())
+	if cfg.getDescriptionMaxLength() != 120 {
+		t.Fatalf("default description max length = %d", cfg.getDescriptionMaxLength())
 	}
 }

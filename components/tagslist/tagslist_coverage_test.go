@@ -17,36 +17,36 @@ func renderTagsList(t *testing.T, cfg Config) string {
 }
 
 func TestGetAddLabelDefaultAndCustom(t *testing.T) {
-	if got := (Config{}).GetAddLabel(); got != "Add" {
+	if got := (Config{}).getAddLabel(); got != "Add" {
 		t.Fatalf("default add label = %q, want %q", got, "Add")
 	}
-	if got := (Config{AddActionLabel: "Append"}).GetAddLabel(); got != "Append" {
+	if got := (Config{AddActionLabel: "Append"}).getAddLabel(); got != "Append" {
 		t.Fatalf("custom add label = %q, want %q", got, "Append")
 	}
 }
 
 func TestGetPlaceholderDefaultAndCustom(t *testing.T) {
-	if got := (Config{}).GetPlaceholder(); got != "Add a tag..." {
+	if got := (Config{}).getPlaceholder(); got != "Add a tag..." {
 		t.Fatalf("default placeholder = %q, want %q", got, "Add a tag...")
 	}
-	if got := (Config{Placeholder: "Type here"}).GetPlaceholder(); got != "Type here" {
+	if got := (Config{Placeholder: "Type here"}).getPlaceholder(); got != "Type here" {
 		t.Fatalf("custom placeholder = %q, want %q", got, "Type here")
 	}
 }
 
 func TestContainerClassesDefaultAndRootClass(t *testing.T) {
-	base := (Config{}).ContainerClasses()
+	base := (Config{}).containerClasses()
 	if base != "flex flex-col gap-2" {
 		t.Fatalf("default container classes = %q", base)
 	}
-	withRoot := (Config{RootClass: "mt-4 custom"}).ContainerClasses()
+	withRoot := (Config{RootClass: "mt-4 custom"}).containerClasses()
 	if withRoot != "flex flex-col gap-2 mt-4 custom" {
 		t.Fatalf("rootclass container classes = %q", withRoot)
 	}
 }
 
 func TestAlpineDataEmptyValues(t *testing.T) {
-	got := (Config{Name: "tags"}).AlpineData()
+	got := (Config{Name: "tags"}).alpineData()
 	if !strings.Contains(got, "items: []") {
 		t.Fatalf("empty values should yield empty items array: %s", got)
 	}
@@ -59,14 +59,14 @@ func TestAlpineDataEmptyValues(t *testing.T) {
 }
 
 func TestAlpineDataMultipleValuesCommaSeparated(t *testing.T) {
-	got := (Config{Name: "tags", Values: []string{"a", "b", "c"}}).AlpineData()
+	got := (Config{Name: "tags", Values: []string{"a", "b", "c"}}).alpineData()
 	if !strings.Contains(got, "items: ['a','b','c']") {
 		t.Fatalf("multiple values should be comma-separated single-quoted: %s", got)
 	}
 }
 
 func TestAlpineDataEscapesBackslash(t *testing.T) {
-	got := (Config{Name: `na\me`, Values: []string{`a\b`}}).AlpineData()
+	got := (Config{Name: `na\me`, Values: []string{`a\b`}}).alpineData()
 	if !strings.Contains(got, `'a\\b'`) {
 		t.Fatalf("backslash in value should be escaped: %s", got)
 	}

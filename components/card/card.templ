@@ -1,7 +1,5 @@
 package card
 
-import "fmt"
-
 // Card renders a card component based on PenguinUI
 // Usage:
 //
@@ -26,45 +24,24 @@ import "fmt"
 //	    Image:  "image.jpg",
 //	    Title:  "Article Title",
 //	})
-templ Card(cfg Config) {
-	<article class={ cfg.ContainerClasses() }>
-		if cfg.HasImage() {
-			<div class={ cfg.ImageContainerClasses() }>
-				<img src={ cfg.Image } class={ cfg.ImageClasses() } alt={ cfg.ImageAlt } />
+templ cardTemplate(cfg Config) {
+	<article class={ cfg.containerClasses() }>
+		if cfg.hasImage() {
+			<div class={ cfg.imageContainerClasses() }>
+				<img src={ cfg.Image } class={ cfg.imageClasses() } alt={ cfg.ImageAlt } />
 			</div>
 		}
-		<div class={ cfg.ContentClasses() }>
+		<div class={ cfg.contentClasses() }>
 			if cfg.Tag != "" {
-				<span class={ cfg.TagClasses() }>{ cfg.Tag }</span>
+				<span class={ cfg.tagClasses() }>{ cfg.Tag }</span>
 			}
-			<h3 class={ cfg.TitleClasses() } aria-describedby={ cfg.Title + "-desc" }>{ cfg.Title }</h3>
+			<h3 class={ cfg.titleClasses() } aria-describedby={ cfg.Title + "-desc" }>{ cfg.Title }</h3>
 			if cfg.Description != "" {
-				<p id={ cfg.Title + "-desc" } class={ cfg.DescriptionClasses() }>{ cfg.Description }</p>
+				<p id={ cfg.Title + "-desc" } class={ cfg.descriptionClasses() }>{ cfg.Description }</p>
 			}
 			if cfg.Footer != nil {
 				@cfg.Footer
 			}
 		</div>
 	</article>
-}
-
-// StarRating renders a 5-star rating component
-// Usage:
-//
-//	@card.StarRating(4)
-templ StarRating(rating int) {
-	<div class="flex items-center gap-1">
-		<span class="sr-only">Rated { fmt.Sprintf("%d", rating) } stars</span>
-		for i := 0; i < 5; i++ {
-			if i < rating {
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 text-amber-500" aria-hidden="true">
-					<path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
-				</svg>
-			} else {
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 text-on-surface-muted dark:text-on-surface-dark-muted" aria-hidden="true">
-					<path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
-				</svg>
-			}
-		}
-	</div>
 }

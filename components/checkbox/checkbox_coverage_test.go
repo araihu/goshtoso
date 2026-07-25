@@ -16,7 +16,7 @@ func renderCheckboxGroup(t *testing.T, cfg GroupConfig) string {
 	return buf.String()
 }
 
-func TestCoverageCheckboxVariantClassesAndIcons(t *testing.T) {
+func TestCoverageCheckboxToneClassesAndIcons(t *testing.T) {
 	tests := []struct {
 		name        string
 		cfg         Config
@@ -37,7 +37,7 @@ func TestCoverageCheckboxVariantClassesAndIcons(t *testing.T) {
 		},
 		{
 			name:        "secondary xmark",
-			cfg:         Config{Variant: Secondary, Icon: IconXmark},
+			cfg:         Config{Tone: ToneSecondary, Icon: IconXmark},
 			wantBorder:  "checked:border-secondary dark:checked:border-secondary-dark",
 			wantBg:      "checked:before:bg-secondary dark:checked:before:bg-secondary-dark",
 			wantFocus:   "checked:focus:outline-secondary dark:checked:focus:outline-secondary-dark",
@@ -46,7 +46,7 @@ func TestCoverageCheckboxVariantClassesAndIcons(t *testing.T) {
 		},
 		{
 			name:        "info minus",
-			cfg:         Config{Variant: Info, Icon: IconMinus},
+			cfg:         Config{Tone: ToneInfo, Icon: IconMinus},
 			wantBorder:  "checked:border-info dark:checked:border-info",
 			wantBg:      "checked:before:bg-info dark:checked:before:bg-info",
 			wantFocus:   "checked:focus:outline-info dark:checked:focus:outline-info",
@@ -55,7 +55,7 @@ func TestCoverageCheckboxVariantClassesAndIcons(t *testing.T) {
 		},
 		{
 			name:        "success plus",
-			cfg:         Config{Variant: Success, Icon: IconPlus},
+			cfg:         Config{Tone: ToneSuccess, Icon: IconPlus},
 			wantBorder:  "checked:border-success dark:checked:border-success",
 			wantBg:      "checked:before:bg-success dark:checked:before:bg-success",
 			wantFocus:   "checked:focus:outline-success dark:checked:focus:outline-success",
@@ -64,7 +64,7 @@ func TestCoverageCheckboxVariantClassesAndIcons(t *testing.T) {
 		},
 		{
 			name:        "warning",
-			cfg:         Config{Variant: Warning},
+			cfg:         Config{Tone: ToneWarning},
 			wantBorder:  "checked:border-warning dark:checked:border-warning",
 			wantBg:      "checked:before:bg-warning dark:checked:before:bg-warning",
 			wantFocus:   "checked:focus:outline-warning dark:checked:focus:outline-warning",
@@ -73,7 +73,7 @@ func TestCoverageCheckboxVariantClassesAndIcons(t *testing.T) {
 		},
 		{
 			name:        "danger",
-			cfg:         Config{Variant: Danger},
+			cfg:         Config{Tone: ToneDanger},
 			wantBorder:  "checked:border-danger dark:checked:border-danger",
 			wantBg:      "checked:before:bg-danger dark:checked:before:bg-danger",
 			wantFocus:   "checked:focus:outline-danger dark:checked:focus:outline-danger",
@@ -94,23 +94,23 @@ func TestCoverageCheckboxVariantClassesAndIcons(t *testing.T) {
 }
 
 func TestCoverageCheckboxAnimationClasses(t *testing.T) {
-	scaleInput := Config{Animation: AnimationScaleUp}.InputClasses()
+	scaleInput := Config{Animation: AnimationScaleUp}.inputClasses()
 	assert.Contains(t, scaleInput, "before:scale-0")
 	assert.Contains(t, scaleInput, "checked:before:scale-125")
 
-	slideDownInput := Config{Animation: AnimationSlideDown}.InputClasses()
+	slideDownInput := Config{Animation: AnimationSlideDown}.inputClasses()
 	assert.Contains(t, slideDownInput, "before:-translate-y-4")
 	assert.Contains(t, slideDownInput, "checked:before:translate-y-0")
 
-	slideUpSVG := Config{Animation: AnimationSlideUp}.SvgClasses()
+	slideUpSVG := Config{Animation: AnimationSlideUp}.svgClasses()
 	assert.Contains(t, slideUpSVG, "-translate-y-1/4")
 	assert.Contains(t, slideUpSVG, "peer-checked:-translate-y-1/2")
 
-	scaleSVG := Config{Animation: AnimationScaleUp}.SvgClasses()
+	scaleSVG := Config{Animation: AnimationScaleUp}.svgClasses()
 	assert.Contains(t, scaleSVG, "scale-0")
 	assert.Contains(t, scaleSVG, "peer-checked:scale-100")
 
-	slideDownSVG := Config{Animation: AnimationSlideDown}.SvgClasses()
+	slideDownSVG := Config{Animation: AnimationSlideDown}.svgClasses()
 	assert.Contains(t, slideDownSVG, "opacity-0")
 	assert.Contains(t, slideDownSVG, "peer-checked:opacity-100")
 }

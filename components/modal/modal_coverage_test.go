@@ -133,44 +133,43 @@ func TestCoverageSecondaryButtonHTMX(t *testing.T) {
 	)
 }
 
-// TestCoverageAlertModalVariants covers alertModal, alertIcon (every case),
-// IconBadgeClasses, AlertCTAClasses, alertTriggerClasses, and alertCTAButton.
-func TestCoverageAlertModalVariants(t *testing.T) {
+// TestCoverageAlertDialogTones covers alertDialog, alertIcon (every case),
+// iconBadgeClasses, actionClasses, triggerClasses, and alertCTAButton.
+func TestCoverageAlertDialogTones(t *testing.T) {
 	cases := []struct {
-		variant   Variant
+		tone      Tone
 		iconColor string
 		ctaColor  string
 		hasIcon   bool
 	}{
-		{Success, "text-success", "bg-success", true},
-		{Info, "text-info", "bg-info", true},
-		{Warning, "text-warning", "bg-warning", true},
-		{Danger, "text-danger", "bg-danger", true},
-		{Default, "", "bg-primary", false},
+		{ToneSuccess, "text-success", "bg-success", true},
+		{ToneInfo, "text-info", "bg-info", true},
+		{ToneWarning, "text-warning", "bg-warning", true},
+		{ToneDanger, "text-danger", "bg-danger", true},
+		{ToneDefault, "", "bg-primary", false},
 	}
 
 	for _, tc := range cases {
-		t.Run(string(tc.variant), func(t *testing.T) {
-			html := render(t, Config{
+		t.Run(string(tc.tone), func(t *testing.T) {
+			html := renderStructuralModal(t, AlertDialog(AlertDialogConfig{
 				ID:           "alert",
 				Title:        "Heads up",
 				Body:         "Something happened",
 				TriggerLabel: "Show alert",
-				PrimaryLabel: "Got it",
-				Variant:      tc.variant,
-				AlertMode:    true,
-			})
+				ActionLabel:  "Got it",
+				Tone:         tc.tone,
+			}))
 
 			// Alert header has an icon badge wrapper.
 			mustContain(t, html, "rounded-full", "Got it", "Heads up")
-			// CTA button carries the variant CTA classes.
+			// Action button carries the tone-specific classes.
 			mustContain(t, html, tc.ctaColor)
 
 			if tc.hasIcon {
-				// Variant-specific SVG icon present (fill-rule path icons).
+				// Tone-specific SVG icon present (fill-rule path icons).
 				mustContain(t, html, tc.iconColor, "fill-rule")
 			} else {
-				// Default alert variant: no colored icon, no SVG icon path.
+				// Default alert tone: no colored icon, no SVG icon path.
 				mustNotContain(t, html, "fill-rule")
 			}
 		})
@@ -179,14 +178,13 @@ func TestCoverageAlertModalVariants(t *testing.T) {
 
 // TestCoverageAlertCTAButtonHTMX covers HTMX branches on alertCTAButton.
 func TestCoverageAlertCTAButtonHTMX(t *testing.T) {
-	html := render(t, Config{
+	html := renderStructuralModal(t, AlertDialog(AlertDialogConfig{
 		ID:           "confirm",
 		Title:        "Confirm",
 		TriggerLabel: "Open",
-		PrimaryLabel: "Proceed",
-		AlertMode:    true,
-		Variant:      Danger,
-		PrimaryAction: &ButtonAction{
+		ActionLabel:  "Proceed",
+		Tone:         ToneDanger,
+		Action: &ButtonAction{
 			OnClick: "proceed()",
 			HTMX: &HTMXConfig{
 				Get:    "/api/go",
@@ -195,7 +193,7 @@ func TestCoverageAlertCTAButtonHTMX(t *testing.T) {
 				Swap:   "beforeend",
 			},
 		},
-	})
+	}))
 
 	mustContain(t,
 		html,
@@ -207,7 +205,7 @@ func TestCoverageAlertCTAButtonHTMX(t *testing.T) {
 	)
 }
 
-// TestCoveragePanelClassAppended covers the PanelClass branch of DialogClasses.
+// TestCoveragePanelClassAppended covers the PanelClass branch of dialogClasses.
 func TestCoveragePanelClassAppended(t *testing.T) {
 	html := render(t, Config{
 		ID:           "wide",
@@ -219,33 +217,32 @@ func TestCoveragePanelClassAppended(t *testing.T) {
 	mustContain(t, html, "custom-panel")
 }
 
-// TestCoverageTriggerClassesByMode exercises both branches of TriggerClasses
-// and the variant switch in alertTriggerClasses.
-func TestCoverageTriggerClassesByMode(t *testing.T) {
+// TestCoverageTriggerClassesByPrimitive exercises modal and alert-dialog triggers.
+func TestCoverageTriggerClassesByPrimitive(t *testing.T) {
 	def := Config{}
-	if got := def.TriggerClasses(); !strings.Contains(got, "bg-primary") {
-		t.Fatalf("default TriggerClasses missing bg-primary: %q", got)
+	if got := def.triggerClasses(); !strings.Contains(got, "bg-primary") {
+		t.Fatalf("default triggerClasses missing bg-primary: %q", got)
 	}
 
-	variants := map[Variant]string{
-		Success: "bg-success",
-		Info:    "bg-info",
-		Warning: "bg-warning",
-		Danger:  "bg-danger",
-		Default: "bg-primary",
+	tones := map[Tone]string{
+		ToneSuccess: "bg-success",
+		ToneInfo:    "bg-info",
+		ToneWarning: "bg-warning",
+		ToneDanger:  "bg-danger",
+		ToneDefault: "bg-primary",
 	}
-	for v, want := range variants {
-		cfg := Config{AlertMode: true, Variant: v}
-		if got := cfg.TriggerClasses(); !strings.Contains(got, want) {
-			t.Fatalf("alert TriggerClasses(%s) missing %q: %q", v, want, got)
+	for tone, want := range tones {
+		cfg := AlertDialogConfig{Tone: tone}
+		if got := cfg.triggerClasses(); !strings.Contains(got, want) {
+			t.Fatalf("alert triggerClasses(%s) missing %q: %q", tone, want, got)
 		}
 	}
 }
 
-// TestCoverageHeaderClassesByMode exercises both branches of HeaderClasses.
-func TestCoverageHeaderClassesByMode(t *testing.T) {
-	alert := Config{AlertMode: true}.HeaderClasses()
-	def := Config{}.HeaderClasses()
+// TestCoverageHeaderClassesByPrimitive exercises modal and alert-dialog headers.
+func TestCoverageHeaderClassesByPrimitive(t *testing.T) {
+	alert := (AlertDialogConfig{}).headerClasses()
+	def := Config{}.headerClasses()
 	if alert == def {
 		t.Fatalf("alert and default header classes should differ")
 	}
@@ -258,28 +255,28 @@ func TestCoverageHeaderClassesByMode(t *testing.T) {
 	}
 }
 
-// TestCoverageIconBadgeAndCTAClassesDirect exercises the helper methods across
-// all variants directly, including the default (uncolored) badge branch.
-func TestCoverageIconBadgeAndCTAClassesDirect(t *testing.T) {
-	if got := (Config{Variant: Default}).IconBadgeClasses(); strings.Contains(got, "bg-success") {
-		t.Fatalf("default IconBadgeClasses should not be colored: %q", got)
+// TestCoverageIconBadgeAndActionClassesDirect exercises alert-dialog helpers
+// across all tones, including the default (uncolored) badge branch.
+func TestCoverageIconBadgeAndActionClassesDirect(t *testing.T) {
+	if got := (AlertDialogConfig{Tone: ToneDefault}).iconBadgeClasses(); strings.Contains(got, "bg-success") {
+		t.Fatalf("default iconBadgeClasses should not be colored: %q", got)
 	}
-	for v, want := range map[Variant]string{
-		Success: "text-success",
-		Info:    "text-info",
-		Warning: "text-warning",
-		Danger:  "text-danger",
+	for tone, want := range map[Tone]string{
+		ToneSuccess: "text-success",
+		ToneInfo:    "text-info",
+		ToneWarning: "text-warning",
+		ToneDanger:  "text-danger",
 	} {
-		if got := (Config{Variant: v}).IconBadgeClasses(); !strings.Contains(got, want) {
-			t.Fatalf("IconBadgeClasses(%s) missing %q: %q", v, want, got)
+		if got := (AlertDialogConfig{Tone: tone}).iconBadgeClasses(); !strings.Contains(got, want) {
+			t.Fatalf("iconBadgeClasses(%s) missing %q: %q", tone, want, got)
 		}
-		// CTA buttons use the solid bg-<variant> fill, not the text- token.
+		// Action buttons use the solid bg-<tone> fill, not the text- token.
 		ctaWant := strings.Replace(want, "text-", "bg-", 1)
-		if got := (Config{Variant: v}).AlertCTAClasses(); !strings.Contains(got, ctaWant) {
-			t.Fatalf("AlertCTAClasses(%s) missing %q: %q", v, ctaWant, got)
+		if got := (AlertDialogConfig{Tone: tone}).actionClasses(); !strings.Contains(got, ctaWant) {
+			t.Fatalf("actionClasses(%s) missing %q: %q", tone, ctaWant, got)
 		}
 	}
-	if got := (Config{Variant: Default}).AlertCTAClasses(); !strings.Contains(got, "bg-primary") {
-		t.Fatalf("default AlertCTAClasses missing bg-primary: %q", got)
+	if got := (AlertDialogConfig{Tone: ToneDefault}).actionClasses(); !strings.Contains(got, "bg-primary") {
+		t.Fatalf("default actionClasses missing bg-primary: %q", got)
 	}
 }

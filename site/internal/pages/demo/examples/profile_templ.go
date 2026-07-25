@@ -32,7 +32,7 @@ import (
 // fragment-nav case) or on alpine:init for a cold page load — mirroring the
 // table's filterScriptData registration pattern.
 //
-// _toast dispatches the real `notify` window CustomEvent that toast.Container
+// _toast dispatches the real `notify` window CustomEvent that toast.ToastContainer
 // listens for (x-on:notify.window="addNotification(...)"). This is the same
 // client-side toast API the toast demo page uses via $dispatch('notify', ...).
 func profileImagesScript() string {
@@ -84,9 +84,9 @@ func profileImagesScript() string {
         if (this.avatarSrc) URL.revokeObjectURL(this.avatarSrc);
         if (this.bannerSrc) URL.revokeObjectURL(this.bannerSrc);
       },
-      _toast(variant, title, message) {
+      _toast(tone, title, message) {
         try {
-          window.dispatchEvent(new CustomEvent('notify', { detail: { variant: variant, title: title, message: message } }));
+          window.dispatchEvent(new CustomEvent('notify', { detail: { kind: 'toast', tone: tone, title: title, message: message } }));
         } catch (e) {
           console.warn('[profileImages] toast unavailable:', title, '-', message);
         }
@@ -251,7 +251,7 @@ func ProfileApp(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toast.Container(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = toast.ToastContainer(toast.ContainerConfig{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -347,12 +347,11 @@ func profileMainPanel(s profile.State) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Size:    button.SizeSmall,
-			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "pick('avatar')"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithAlpine(&button.AlpineConfig{OnClick: "pick('avatar')"}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -374,12 +373,11 @@ func profileMainPanel(s profile.State) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{
-			Variant: button.Secondary,
-			Size:    button.SizeSmall,
-			Type:    "button",
-			Alpine:  &button.AlpineConfig{OnClick: "pick('banner')"},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(
+			button.WithTone(button.ToneSecondary),
+			button.WithSize(button.SizeSmall),
+			button.WithAlpine(&button.AlpineConfig{OnClick: "pick('banner')"}),
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -387,12 +385,11 @@ func profileMainPanel(s profile.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = tooltip.Tooltip(tooltip.Config{
-			ID:           "profile-upload-hint",
-			Label:        "PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
-			Position:     tooltip.Top,
-			TriggerLabel: "Upload requirements",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = tooltip.Tooltip(
+			"profile-upload-hint",
+			"PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+			tooltip.WithTriggerLabel("Upload requirements"),
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -405,7 +402,6 @@ func profileMainPanel(s profile.State) templ.Component {
 			Title:          "Remove photos?",
 			Body:           "This removes your avatar and cover image from this browser. It cannot be undone.",
 			TriggerLabel:   "Remove photos",
-			Variant:        modal.Danger,
 			PrimaryLabel:   "Remove",
 			PrimaryAction:  &modal.ButtonAction{OnClick: "remove('avatar'); remove('banner')"},
 			SecondaryLabel: "Cancel",
@@ -443,7 +439,7 @@ func profileMainPanel(s profile.State) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Config{Type: "submit", Variant: button.Primary}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithType("submit")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -482,7 +478,7 @@ func profileAppearancePanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = badge.Badge(badge.Config{Variant: badge.Secondary, Label: "live"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = badge.Badge(badge.Config{Tone: badge.ToneSecondary, Label: "live"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

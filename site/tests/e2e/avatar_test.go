@@ -145,12 +145,12 @@ func TestAvatar_FragmentNav_ShowcaseRegistered(t *testing.T) {
 	var pageErrors []string
 	page.On("pageerror", func(err error) { pageErrors = append(pageErrors, err.Error()) })
 
-	// consoleErrors captures console.error, EXCLUDING the intentional 404 from
-	// the error-fallback fixture (does-not-exist-404.png), which is expected.
+	// consoleErrors captures every console.error with its source location. The
+	// shared filter below recognizes only the intentional broken-image fixture.
 	var consoleErrors []string
 	page.On("console", func(m playwright.ConsoleMessage) {
-		if m.Type() == "error" && !strings.Contains(m.Text(), "404") {
-			consoleErrors = append(consoleErrors, m.Text())
+		if m.Type() == "error" {
+			consoleErrors = append(consoleErrors, consoleFailureMessage(m))
 		}
 	})
 
@@ -184,7 +184,7 @@ func TestAvatar_FragmentNav_ShowcaseRegistered(t *testing.T) {
 	require.NoError(t, err, "avatarShowcase must be registered after fragment nav so the size selector drives reactive avatars")
 
 	require.Empty(t, pageErrors, "no uncaught JS exceptions on fragment-nav avatar page: %v", pageErrors)
-	require.Empty(t, consoleErrors, "no unexpected console errors on fragment-nav avatar page: %v", consoleErrors)
+	require.Empty(t, filterIgnorable(consoleErrors), "no unexpected console errors on fragment-nav avatar page: %v", consoleErrors)
 }
 
 // TestAvatar_SizeSelector_RendersSixPills verifies the interactive size selector

@@ -23,8 +23,7 @@ func TestCarouselRejectsExecutableCTAHref(t *testing.T) {
 	require.NoError(t, err)
 
 	html := renderInteractiveDocument(t, head.DependenciesMinimal(), carousel.Carousel(carousel.Config{
-		ID:      "security-carousel",
-		Variant: carousel.WithCTA,
+		ID: "security-carousel",
 		Slides: []carousel.Slide{
 			{
 				ImgSrc:      "/assets/images/avatars/avatar-1.webp",

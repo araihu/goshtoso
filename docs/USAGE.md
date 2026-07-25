@@ -3,6 +3,11 @@
 This guide explains how to use Goshtoso components in Go web applications built
 with templ, Tailwind CSS, HTMX, and Alpine.js.
 
+Before choosing component constructors and options, read the
+[Goshtoso Component Model](COMPONENT_MODEL.md). It documents the common
+`components.Component` interface, concrete return values, stable `Kind`
+identity, constructor styles, and rendered defaults.
+
 ## Installation
 
 ### 1. Add the dependency
@@ -49,7 +54,7 @@ templ Layout() {
 ```
 
 The served `styles.css` already carries every component style + the theme system
-(13 themes). **Stock CDN Tailwind will not work** — the theme tokens
+(15 themes). **Stock CDN Tailwind will not work** — the theme tokens
 (`bg-primary`, `text-on-surface`, …) live only in this compiled CSS.
 
 Skip the rest of this section unless you maintain your own Tailwind build.
@@ -81,7 +86,7 @@ Then import it in your Tailwind entry point:
 @import "./goshtoso-base.css";
 ```
 
-The extracted CSS includes all Goshtoso component styles, the theme system (13 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
+The extracted CSS includes all Goshtoso component styles, the theme system (15 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
 
 ### 3. Required JavaScript
 
@@ -145,7 +150,7 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 ```css
 /* your main.css */
 @import "tailwindcss";
-@import "./goshtoso-theme.css";                 /* tokens + variants + themes */
+@import "./goshtoso-theme.css";                 /* tokens + selectors + themes */
 @source "/…/goshtoso@vX.Y.Z/components";        /* emit Goshtoso's classes (path from -source-path) */
 @theme { --color-brand: oklch(0.7 0.15 250); }  /* your own tokens too */
 ```
@@ -156,23 +161,24 @@ so mount it regardless of which path you choose.
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
+The catalog has 42 component packages, 42 documentation pages, and 74 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
-variant previews, and API tables.
+configuration previews, and API tables.
 
 | Component | Import | Description |
 |-----------|--------|-------------|
-| `accordion` | `components/accordion` | Collapsible sections with multiple variants (default, no-background, bordered) |
-| `alert` | `components/alert` | Dismissable alert banners with info/success/warning/danger variants |
+| `accordion` | `components/accordion` | Collapsible sections with default, plain, and split appearances |
+| `alert` | `components/alert` | Dismissable alert banners with info, success, warning, and danger tones |
 | `avatar` | `components/avatar` | User avatar with image, initials fallback, status indicator |
-| `badge` | `components/badge` | Inline status badges with solid/soft variants and sizes |
-| `banner` | `components/banner` | Full-width notification banners with CTAs, cookie consent variant |
+| `badge` | `components/badge` | Inline status badges with independent tone, appearance, and size dimensions |
+| `banner` | `components/banner` | Full-width notifications and consent dialogs as separate `Banner` and `CookieBanner` primitives |
 | `breadcrumbs` | `components/breadcrumbs` | Navigation breadcrumb trail with custom separators |
-| `button` | `components/button` | Buttons with 8 variants, 4 sizes, HTMX and Alpine.js integration |
+| `button` | `components/button` | Buttons with tone and size options plus HTMX and Alpine.js integration |
 | `card` | `components/card` | Content cards with image, rating, price, and multiple layouts |
 | `carousel` | `components/carousel` | Image carousel with autoplay, navigation, and HTMX lazy loading |
 | `chatbubble` | `components/chatbubble` | Chat/message bubbles with sender alignment and avatar support |
-| `checkbox` | `components/checkbox` | Checkboxes with 6 color variants, group layout, indeterminate state |
+| `checkbox` | `components/checkbox` | Checkboxes with semantic tones, group layout, and indeterminate state |
 | `codeblock` | `components/codeblock` | Code display block with copy button and max-height scrolling |
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
 | `drawer` | `components/drawer` | Slide-over drawers for navigation and contextual panels |
@@ -181,18 +187,18 @@ variant previews, and API tables.
 | `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
 | `kbd` | `components/kbd` | Semantic keyboard shortcut and user input hints |
 | `link` | `components/link` | Styled link primitives with external-link and navigation affordances |
-| `modal` | `components/modal` | Dialogs with info/danger/warning variants, custom actions |
+| `modal` | `components/modal` | General and confirmation dialogs as separate `Modal` and `AlertDialog` primitives; `Tone` belongs to `AlertDialog` |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
 | `palette` | `components/palette` | Color palette and swatch utilities for theme demos and pickers |
-| `radio` | `components/radio` | Radio inputs and groups with validation and variant styling |
+| `radio` | `components/radio` | Radio inputs and groups with validation and semantic tones |
 | `range` | `components/range` | Range sliders with labels, helper text, and icon slots |
 | `rating` | `components/rating` | Rating controls and display states |
 | `schemaform` | `components/schemaform` | Schema Form: generate form controls from JSON Schema, defaults, current values, and allow-list rules |
 | `search` | `components/search` | Search input and command-palette style result lists |
 | `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
-| `spinner` | `components/spinner` | Loading spinner with size and color variants |
+| `spinner` | `components/spinner` | Loading spinner with independent size and tone dimensions |
 | `steps` | `components/steps` | Stepper/progress navigation for multi-step flows |
 | `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |
 | `table` | `components/table` | Data table with sorting, pagination, infinite scroll, filters, row links |
@@ -200,23 +206,24 @@ variant previews, and API tables.
 | `tagslist` | `components/tagslist` | Dynamic tag list editor (add/remove string tags) |
 | `textarea` | `components/textarea` | Multi-line text input with validation states |
 | `textinput` | `components/textinput` | Text input with types (text, email, password, number), validation |
-| `toast` | `components/toast` | Toast notifications with auto-dismiss, position, sender avatar |
-| `toggle` | `components/toggle` | Toggle switch with 6 color variants |
+| `toast` | `components/toast` | Notifications as separate `Toast` and `MessageToast` primitives; sender and avatar content belongs to `MessageToast` |
+| `toggle` | `components/toggle` | Toggle switch with semantic tones |
 | `tooltip` | `components/tooltip` | Hover tooltips with position options, rich content support |
 
 ## Basic Component Pattern
 
-Import the component package you need, pass its `Config`, and provide child
-content when the component accepts children:
+Import the component package you need and follow its constructor contract.
+Atomic primitives such as Button use functional options; provide child content
+when the component accepts children:
 
 ```go
 import "github.com/araihu/goshtoso/components/button"
 
 templ Actions() {
-    @button.Button(button.Config{
-        Variant: button.Primary,
-        Type:    "submit",
-    }) {
+    @button.Button(
+        button.WithTone(button.TonePrimary),
+        button.WithType("submit"),
+    ) {
         Save changes
     }
 }

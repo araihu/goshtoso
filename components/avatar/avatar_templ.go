@@ -33,14 +33,14 @@ import "fmt"
 //	// Initials only
 //	@avatar.Avatar(avatar.Config{
 //	    Name:    "dev-ops",
-//	    Variant: avatar.Primary,
+//	    Tone: avatar.TonePrimary,
 //	})
 //
 //	// Explicit initials
 //	@avatar.Avatar(avatar.Config{
 //	    Initials: "JS",
 //	})
-func Avatar(cfg Config) templ.Component {
+func avatarTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -77,7 +77,7 @@ func Avatar(cfg Config) templ.Component {
 }
 
 // AvatarStack renders an overlapping group of avatars.
-func AvatarStack(cfg StackConfig) templ.Component {
+func avatarStackTemplate(cfg StackConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -191,11 +191,11 @@ func avatarLayers(cfg Config) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		sizePart := cfg.SizeClasses()
+		sizePart := cfg.sizeClasses()
 		if cfg.Reactive {
 			sizePart = ""
 		}
-		radiusPart := cfg.ShapeClasses()
+		radiusPart := cfg.shapeClasses()
 		if cfg.ReactiveRadius {
 			radiusPart = ""
 		}
@@ -207,15 +207,15 @@ func avatarLayers(cfg Config) templ.Component {
 		} else if cfg.ReactiveRadius {
 			bindClass = "avatarRadiusClass"
 		}
-		rootSkinClasses := cfg.VariantClasses()
+		rootSkinClasses := cfg.toneClasses()
 		layerSkinClasses := ""
 		if cfg.Border {
 			rootSkinClasses = ""
-			layerSkinClasses = cfg.VariantFillClasses()
+			layerSkinClasses = cfg.toneFillClasses()
 		}
-		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.BorderClasses() + " " + cfg.RootClass
+		containerClasses := "relative inline-flex " + sizePart + " " + radiusPart + " " + rootSkinClasses + " " + cfg.borderClasses() + " " + cfg.RootClass
 		layerBoxClasses := "relative block size-full overflow-hidden " + radiusPart + " " + layerSkinClasses
-		if cfg.HasImage() {
+		if cfg.hasImage() {
 			var templ_7745c5c3_Var7 = []any{containerClasses}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 			if templ_7745c5c3_Err != nil {
@@ -492,7 +492,7 @@ func layerInitials(cfg Config, withImageOverlay bool) templ.Component {
 			}
 		} else {
 			var templ_7745c5c3_Var21 string
-			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ResolvedInitials())
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.resolvedInitials())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/avatar/avatar.templ`, Line: 159, Col: 27}
 			}
@@ -565,7 +565,7 @@ func layerLoading(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var24 = []any{"animate-spin text-on-surface-muted dark:text-on-surface-dark-muted " + cfg.SpinnerSizeClasses()}
+		var templ_7745c5c3_Var24 = []any{"animate-spin text-on-surface-muted dark:text-on-surface-dark-muted " + cfg.spinnerSizeClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var24...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -762,11 +762,11 @@ func avatarWithStatus(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		positionClass := "bottom-0.5 end-0"
-		statusSizePart := cfg.StatusSizeClasses()
+		statusSizePart := cfg.statusSizeClasses()
 		if cfg.Reactive {
 			statusSizePart = ""
 		}
-		var templ_7745c5c3_Var34 = []any{"absolute rounded-full border-2 border-surface dark:border-surface-dark " + statusSizePart + " " + cfg.StatusClasses() + " " + positionClass}
+		var templ_7745c5c3_Var34 = []any{"absolute rounded-full border-2 border-surface dark:border-surface-dark " + statusSizePart + " " + cfg.statusClasses() + " " + positionClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var34...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -802,8 +802,8 @@ func avatarWithStatus(cfg Config) templ.Component {
 	})
 }
 
-// UserIcon returns the default user icon component
-func UserIcon() templ.Component {
+// userIcon returns the default user icon component.
+func userIcon() templ.Component {
 	return userIconTempl()
 }
 

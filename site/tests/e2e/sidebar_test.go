@@ -3,6 +3,7 @@ package e2e
 import (
 	"testing"
 
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,7 +22,10 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 
 	page := newPage(t, browser)
 
-	_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+	componentPages := catalog.ComponentPages()
+	require.Len(t, componentPages, 42)
+
+	_, err := page.Goto(baseURL+componentPages[0].Path, playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
@@ -32,56 +36,14 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		Timeout: playwright.Float(3000),
 	}))
 
-	// Every component directory should have a sidebar link
-	expectedComponents := []struct {
-		href  string
-		label string
-	}{
-		{"/components/accordion", "Accordion"},
-		{"/components/alert", "Alert"},
-		{"/components/avatar", "Avatar"},
-		{"/components/badge", "Badge"},
-		{"/components/banner", "Banner"},
-		{"/components/button", "Buttons"},
-		{"/components/card", "Card"},
-		{"/components/carousel", "Carousel"},
-		{"/components/checkbox", "Checkbox"},
-		{"/components/combobox", "Combobox"},
-		{"/components/dependencies", "Dependencies"},
-		{"/components/drawer", "Drawer"},
-		{"/components/dropdown", "Dropdown"},
-		{"/components/form", "Form"},
-		{"/components/kbd", "KBD"},
-		{"/components/structured-input", "Structured Input"},
-		{"/components/link", "Link"},
-		{"/components/modal", "Modal"},
-		{"/components/navbar", "Navbar"},
-		{"/components/pagination", "Pagination"},
-		{"/components/palette", "Palette"},
-		{"/components/range", "Range"},
-		{"/components/rating", "Rating"},
-		{"/components/search", "Search"},
-		{"/components/select", "Select"},
-		{"/components/schema-form", "Schema Form"},
-		{"/components/sidebar", "Sidebar"},
-		{"/components/spinner", "Spinner"},
-		{"/components/steps", "Steps"},
-		{"/components/table", "Table"},
-		{"/components/tabs", "Tabs"},
-		{"/components/tags-list", "Tags List"},
-		{"/components/text-input", "Text Input"},
-		{"/components/textarea", "Textarea"},
-		{"/components/toast", "Toast"},
-		{"/components/toggle", "Toggle"},
-		{"/components/tooltip", "Tooltip"},
-	}
-
-	for _, comp := range expectedComponents {
-		t.Run(comp.label, func(t *testing.T) {
-			link := sidebar.Locator("a[href='" + comp.href + "']")
+	for _, componentPage := range componentPages {
+		t.Run(componentPage.Title, func(t *testing.T) {
+			link := sidebar.Locator("a[href='" + componentPage.Path + "']").Filter(playwright.LocatorFilterOptions{
+				HasText: componentPage.Title,
+			})
 			count, err := link.Count()
 			require.NoError(t, err)
-			assert.Equal(t, 1, count, "%s should have a sidebar link to %s", comp.label, comp.href)
+			assert.Equal(t, 1, count, "%s should have one sidebar link to %s", componentPage.Title, componentPage.Path)
 		})
 	}
 
@@ -181,19 +143,19 @@ func TestSidebarComponentDemoVariants(t *testing.T) {
 	require.NoError(t, waitForAlpine(page))
 
 	simple := page.Locator("#sidebar-simple")
-	require.NoError(t, simple.GetByText("MyApp", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+	require.NoError(t, simple.GetByText("MyApp", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 	require.NoError(t, simple.Locator("input[type='search'][placeholder='Search...']").WaitFor())
 	require.NoError(t, simple.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "Profile"}).WaitFor())
-	require.NoError(t, simple.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "Inbox"}).GetByText("3", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+	require.NoError(t, simple.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "Inbox"}).GetByText("3", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 	sections := page.Locator("#sidebar-sections")
 	for _, heading := range []string{"Getting Started", "Components", "Settings"} {
 		require.NoError(t, sections.Locator("h3").Filter(playwright.LocatorFilterOptions{HasText: heading}).WaitFor())
 	}
-	require.NoError(t, sections.Locator("[data-sidebar-section='Components']").GetByText("Table", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+	require.NoError(t, sections.Locator("[data-sidebar-section='Components']").GetByText("Table", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 	subItems := page.Locator("#sidebar-sub-items")
-	require.NoError(t, subItems.GetByText("API Docs", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+	require.NoError(t, subItems.GetByText("API Docs", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 	for _, label := range []string{"Create User", "Get User", "Update User", "Delete User"} {
 		count, err := subItems.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: label}).Count()
 		require.NoError(t, err)
@@ -207,12 +169,12 @@ func TestSidebarComponentDemoVariants(t *testing.T) {
 
 	contentButton := page.Locator("#sidebar-collapsible button").Filter(playwright.LocatorFilterOptions{HasText: "Content"})
 	require.NoError(t, contentButton.Click())
-	require.NoError(t, page.Locator("#sidebar-collapsible").GetByText("Articles", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor(playwright.LocatorWaitForOptions{
+	require.NoError(t, page.Locator("#sidebar-collapsible").GetByText("Articles", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor(playwright.LocatorWaitForOptions{
 		State: playwright.WaitForSelectorStateVisible,
 	}))
 
 	overlay := page.Locator("#sidebar-overlay")
-	panel := overlay.GetByText("Overlay", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)})
+	panel := overlay.GetByText("Overlay", playwright.LocatorGetByTextOptions{Exact: new(true)})
 	visible, err := panel.IsVisible()
 	require.NoError(t, err)
 	assert.False(t, visible)
