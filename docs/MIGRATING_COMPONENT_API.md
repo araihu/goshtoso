@@ -162,6 +162,7 @@ pagination.Pagination(pagination.Config{
 
 After:
 
+<!-- compile-current: dimensions -->
 ```go
 badge.Badge(badge.Config{
     Label:      "Requires attention",
@@ -194,6 +195,7 @@ button.Button(button.Config{
 
 Button after:
 
+<!-- compile-current: button -->
 ```go
 button.Button(
     button.WithTone(button.ToneDanger),
@@ -203,45 +205,54 @@ button.Button(
 )
 ```
 
-Link before and after:
+Link before:
 
 ```go
-// Before
 link.Link(link.Config{
     Href:   "/docs",
     Style:  link.StyleButton,
     Target: "_blank",
 })
+```
 
-// After
+Link after:
+
+<!-- compile-current: link -->
+```go
 link.Link("/docs",
     link.WithAppearance(link.AppearanceButton),
     link.WithTarget("_blank"),
 )
 ```
 
-Kbd before and after:
+Kbd before:
 
 ```go
-// Before
 kbd.Kbd(kbd.Config{Text: "K", Label: "Command K", Size: kbd.SizeSM})
+```
 
-// After
+Kbd after:
+
+<!-- compile-current: kbd -->
+```go
 kbd.Kbd("K", kbd.WithLabel("Command K"), kbd.WithSize(kbd.SizeSM))
 ```
 
-Tooltip before and after:
+Tooltip before:
 
 ```go
-// Before
 tooltip.Tooltip(tooltip.Config{
     ID:          "save-help",
     Label:       "Saves changes",
     Position:    tooltip.Bottom,
     TriggerMode: tooltip.Click,
 })
+```
 
-// After
+Tooltip after:
+
+<!-- compile-current: tooltip -->
+```go
 tooltip.Tooltip("save-help", "Saves changes",
     tooltip.WithPosition(tooltip.PositionBottom),
     tooltip.WithActivation(tooltip.ActivationClick),
@@ -282,6 +293,7 @@ modal.Modal(modal.Config{
 
 Modal after:
 
+<!-- compile-current: modal -->
 ```go
 modal.AlertDialog(modal.AlertDialogConfig{
     ID:           "remove-profile",
@@ -298,12 +310,17 @@ and sender/message settings to `MessageConfig`.
 
 ### Concrete return types and stable Kind identity
 
-Every public renderable used to return `templ.Component`. Every one now returns
-an exported concrete value that implements `components.Component`. Ordinary
-rendering remains source-compatible because the concrete value still has
-`Render(context.Context, io.Writer) error`. Code that stores constructors as
-function values, declares exact return types, or mocks `templ.Component`
-factories must update its type signatures.
+Sixty-seven same-name public constructors changed their return type from
+`templ.Component` to an exported concrete value that implements
+`components.Component`. Seven constructors are new or renamed split
+primitives: `banner.CookieBanner`, `carousel.CardCarousel`,
+`modal.AlertDialog`, `rating.RatingDisplay`, `toast.MessageToast`,
+`toast.OOBMessageToast`, and `toast.ToastContainer`. Together they form the
+current 74-constructor inventory. Ordinary rendering remains source-compatible
+because each concrete value still has
+`Render(context.Context, io.Writer) error`. Code that stores same-name
+constructors as function values, declares exact return types, or mocks
+`templ.Component` factories must update its type signatures.
 
 The complete constructor-to-result inventory is:
 
@@ -354,6 +371,7 @@ The complete constructor-to-result inventory is:
 
 Store mixed primitives through the shared interface and switch on stable Kind:
 
+<!-- compile-current: kind -->
 ```go
 pageComponents := []components.Component{
     badge.Badge(badge.Config{Label: "New"}),
@@ -416,11 +434,57 @@ Five table URL/sort helpers intentionally remain public:
 | `palette.DefaultHues`, `palette.DefaultShades` | Omit `Config.Hues`/`Shades` for built-in defaults or pass owned slices. Mutable package defaults are private. |
 | `rating.EmojiOption`, its fields `rating.EmojiOption.Value`, `rating.EmojiOption.Label`, `rating.EmojiOption.Icon`, and `rating.DefaultEmojiOptions` | Emoji render data is private. Choose `rating.AppearanceEmoji`; custom emoji sets are not a supported API. |
 
-Across the remaining component packages, exported CSS-class assemblers,
-default/ID resolvers, and render-only predicates were similarly privatized.
-If an application called a method whose result was fed back into Goshtoso
-markup, remove that call and use the documented config field or composition
-hook. Intentional non-rendering helpers such as validation, URL construction,
+#### Complete removed public method inventory
+
+The following table is the exact qualified method inventory removed since
+`v0.0.11`. A method listed as renderer-owned has no public replacement: remove
+the call and configure the documented field, attribute, slot, or composition
+hook instead. This list intentionally names every method even when several
+share the same migration action.
+
+| Removed public methods | Migration or action |
+| --- | --- |
+| `accordion.AccordionConfig.ContainerClasses` | Use `AccordionConfig.RootClass`; the base class list is renderer-owned. |
+| `accordion.AccordionItemData.CollapsedClasses`, `accordion.AccordionItemData.ContentClasses`, `accordion.AccordionItemData.ExpandedClasses`, `accordion.AccordionItemData.ItemButtonClasses`, `accordion.AccordionItemData.ItemContainerClasses` | Stop constructing `AccordionItemData`; pass `AccordionConfig` and `AccordionItem` values to `accordion.Accordion`. |
+| `alert.Config.ContainerClasses`, `alert.Config.IconBadgeClasses`, `alert.Config.InnerClasses`, `alert.Config.LinkClasses`, `alert.Config.ListClasses`, `alert.Config.PrimaryActionClasses`, `alert.Config.TitleClasses` | Configure Alert content, action, Tone, and `RootClass`; all class assembly is renderer-owned. |
+| `avatar.Config.BorderClasses`, `avatar.Config.HasImage`, `avatar.Config.HasInitials`, `avatar.Config.RadiusClasses`, `avatar.Config.ResolvedInitials`, `avatar.Config.ShapeClasses`, `avatar.Config.SizeClasses`, `avatar.Config.SpinnerSizeClasses`, `avatar.Config.StatusClasses`, `avatar.Config.StatusSizeClasses`, `avatar.Config.VariantClasses`, `avatar.Config.VariantFillClasses` | Set the documented image, initials, shape, size, Tone, and status fields; fallback selection and classes are renderer-owned. |
+| `badge.Config.IndicatorClasses`, `badge.Config.IsSoft`, `badge.Config.SizeClasses`, `badge.Config.SizeTextClass`, `badge.Config.SoftInnerClasses`, `badge.Config.SoftVariantClasses`, `badge.Config.VariantClasses` | Set `Tone`, `Appearance`, and `Size`; renderer-owned predicates and classes have no public replacement. |
+| `banner.Config.CTAClasses`, `banner.Config.ContainerClasses`, `banner.Config.CookieContainerClasses`, `banner.Config.LinkClasses`, `banner.Config.TextClasses` | Configure Banner fields and `RootClass`; use `CookieBanner` for consent behavior. Class assembly is renderer-owned. |
+| `card.Config.ContainerClasses`, `card.Config.ContentClasses`, `card.Config.DescriptionClasses`, `card.Config.HasImage`, `card.Config.HasPrice`, `card.Config.HasRating`, `card.Config.ImageClasses`, `card.Config.ImageContainerClasses`, `card.Config.TagClasses`, `card.Config.TitleClasses` | Configure `card.Card`, its slots, and `RootClass`; compose price content and `rating.RatingDisplay` instead of calling render predicates. |
+| `chatbubble.Config.BubbleClasses`, `chatbubble.Config.DataMine`, `chatbubble.Config.HasAvatar`, `chatbubble.Config.HasHeader`, `chatbubble.Config.IsMine`, `chatbubble.Config.RowClasses` | Set `Side`, sender/avatar fields, `Grouped`, and `RootClass`; row state and classes are renderer-owned. |
+| `checkbox.Config.InputClasses`, `checkbox.Config.SvgClasses` | Use Checkbox configuration and `RootClass`; native-input and icon classes are renderer-owned. |
+| `codeblock.Config.GetID`, `codeblock.Config.GetLabel` | Read owned input fields in application code if needed. Rendering still derives Label from `Language` and generates a stable content-based ID when `ID` is empty. |
+| `combobox.Config.DepsSelector`, `combobox.Config.HXIncludeSelector`, `combobox.Config.IsClientMode`, `combobox.State.IsSelected` | Use `Config.Validate`, `Config.InitialState`, and `combobox.Handler`; selector, mode, and render-state decisions are internal. |
+| `drawer.Config.EnterEnd`, `drawer.Config.EnterStart`, `drawer.Config.GetBodyID`, `drawer.Config.OverlayClasses`, `drawer.Config.PanelClasses`, `drawer.Config.StateVar`, `drawer.Config.TitleID` | Configure Drawer ID, position, classes, and Alpine/HTMX hooks through public fields; derived IDs, state names, transitions, and classes are renderer-owned. |
+| `dropdown.Config.ButtonClasses`, `dropdown.Config.DangerClasses`, `dropdown.Config.DisabledClasses`, `dropdown.Config.GetTriggerMode`, `dropdown.Config.HasDividers`, `dropdown.Config.HasIcons`, `dropdown.Config.HasShortcuts`, `dropdown.Config.IsContextMenu`, `dropdown.Config.ItemClasses`, `dropdown.Config.MenuClasses`, `dropdown.Config.UseIconOnlyTrigger`, `dropdown.Item.IsButton` | Set `TriggerMode`, sections/items, `TriggerIcon`, and `TriggerIconOnly`. Empty `TriggerMode` still renders click mode; layout predicates and classes are internal. |
+| `fileinput.Config.BrowseLabelClasses`, `fileinput.Config.ContainerClasses`, `fileinput.Config.DropZoneClasses`, `fileinput.Config.HelperTextClasses`, `fileinput.Config.IsUpload`, `fileinput.Config.LabelClasses`, `fileinput.Config.UploadButtonClasses`, `fileinput.Config.UploadContainerClasses`, `fileinput.Config.UploadControlClasses`, `fileinput.Config.UploadFileNameClasses` | Select `AppearanceDropZone` or `AppearanceUpload` and use documented class/attribute fields; mode checks and classes are renderer-owned. |
+| `form.FormErrorsConfig.GetID`, `form.FormErrorsConfig.GetTitle` | Set `ID` or `Title` when application code needs explicit values. Rendering still defaults them to `form-errors` and `Validation failed`. |
+| `kbd.Config.AccessibleLabel`, `kbd.Config.IconClasses`, `kbd.Config.RootClasses`, `kbd.Config.SizeClasses` | Replace `kbd.Config` with `kbd.Kbd(text, options...)`; use `WithLabel`, `WithIcon`, `WithRootClass`, and `WithSize`. |
+| `modal.Config.AlertCTAClasses`, `modal.Config.DialogClasses`, `modal.Config.HeaderClasses`, `modal.Config.IconBadgeClasses`, `modal.Config.StateVar`, `modal.Config.TitleID`, `modal.Config.TriggerClasses` | Use `Modal` or `AlertDialog` plus their public configuration. Classes, Alpine state, and derived IDs are renderer-owned. |
+| `navbar.Config.LeftActions`, `navbar.Config.NavClasses`, `navbar.Config.RightActions` | Supply documented Navbar items/actions and classes; action partitioning and base classes are renderer-owned. |
+| `pagination.Config.EllipsisClasses`, `pagination.Config.ListClasses`, `pagination.Config.NavClasses`, `pagination.Config.PageClasses`, `pagination.Config.PrevNextClasses`, `pagination.Config.SwapStrategy` | Set `NavClass` and `HTMX.Swap`; rendering still defaults an empty swap to `innerHTML`. Other class helpers are internal. |
+| `palette.Config.ContainerClasses` | Use Palette configuration and `RootClass`; base classes are renderer-owned. |
+| `radio.Config.HasAlpine`, `radio.Config.HasHTMX`, `radio.Config.InputClasses`, `radio.Config.SegmentedLabelClasses` | Configure `Alpine`, `HTMX`, `Tone`, and public class/attribute fields; wiring predicates and classes are renderer-owned. |
+| `radio.HTMXConfig.EffectiveTrigger`, `radio.HTMXConfig.HasHxVerb` | Set `HTMXConfig.Trigger` explicitly when application code needs the value. Rendering uses it, otherwise defaults to `change` when any HTMX verb is set, otherwise emits no trigger. |
+| `range.Config.AlpineData`, `range.Config.ControlClasses`, `range.Config.IconClasses`, `range.Config.InputClasses`, `range.Config.LabelClasses`, `range.Config.MaxOrDefault`, `range.Config.MinOrDefault`, `range.Config.RootClasses`, `range.Config.StepOrDefault`, `range.Config.TickClasses`, `range.Config.TickLabels`, `range.Config.ValueClasses`, `range.Config.ValueOrDefault` | Use Range fields and class/attribute hooks directly. Empty `Value`, `Min`, `Max`, and `Step` still render as `0`, `0`, `100`, and `1`; Alpine data, ticks, and classes are internal. |
+| `rating.Config.ActiveIconClasses`, `rating.Config.BindClass`, `rating.Config.ControlClasses`, `rating.Config.EmojiIcon`, `rating.Config.IconClasses`, `rating.Config.InactiveIconClasses`, `rating.Config.InputID`, `rating.Config.IsActive`, `rating.Config.ResolvedID`, `rating.Config.ResolvedLabel`, `rating.Config.ResolvedMax`, `rating.Config.ResolvedName`, `rating.Config.ResolvedValue`, `rating.Config.RootClasses`, `rating.Config.ValueLabel`, `rating.Config.XData` | Use `Rating` for input or `RatingDisplay` for output and set their documented fields. ID/name/label/value resolution, clamping, icons, Alpine data, and classes are renderer-owned. |
+| `search.Config.DialogClasses`, `search.Config.GetDescriptionMaxLength`, `search.Config.GetEmptyText`, `search.Config.GetEscapeText`, `search.Config.GetID`, `search.Config.GetLabel`, `search.Config.GetMaxResults`, `search.Config.GetPlaceholder`, `search.Config.GetShortcutText`, `search.Config.RootClasses`, `search.Config.TriggerClasses` | Set the corresponding Config fields directly. Rendering still defaults ID `search`, Label/Placeholder `Search`, ShortcutText `⌘ K`, EscapeText `Esc`, EmptyText `No results found.`, MaxResults `4`, and DescriptionMaxLength `120`; classes are internal. |
+| `select.Config.ContainerClasses`, `select.Config.GetPlaceholder`, `select.Config.IsEffectivelyDisabled`, `select.Config.LabelClasses`, `select.Config.SelectClasses`, `select.Config.SelectedValue`, `select.Config.TriggerClasses` | Set Select fields and `RootClass`; empty Placeholder still renders `Please Select`, and disabled/readonly/selection/class resolution is renderer-owned. |
+| `sidebar.Config.ContainerClasses`, `sidebar.Config.NavClasses` | Configure Sidebar and `RootClass`; base layout classes are renderer-owned. |
+| `sidebar.OverlayConfig.BackdropClasses`, `sidebar.OverlayConfig.PanelClasses`, `sidebar.OverlayConfig.PanelID`, `sidebar.OverlayConfig.RootClasses`, `sidebar.OverlayConfig.StateVar`, `sidebar.OverlayConfig.TriggerClasses`, `sidebar.OverlayConfig.TriggerLabelText` | Configure `sidebar.Overlay` through public fields. Derived panel/state IDs, fallback trigger text, and classes are renderer-owned. |
+| `spinner.Config.FillClasses`, `spinner.Config.SizeClasses` | Set Spinner `Tone` and `Size`; class assembly is renderer-owned. |
+| `structuredinput.Column.DefaultValue`, `structuredinput.Column.EntryAccessor`, `structuredinput.Column.NameBinding`, `structuredinput.Config.ContainerClasses`, `structuredinput.Config.EntriesJSON`, `structuredinput.Config.GetAddLabel`, `structuredinput.Config.NewRowJSON`, `structuredinput.Config.NormalizedColumns`, `structuredinput.Option.OptionLabel` | Supply Columns, Options, Entries, and `AddActionLabel`; rendering still falls back to `Add row`, option Value labels, and first select-option defaults. Normalization, bindings, JSON, and classes are internal. |
+| `table.Config.CellClasses`, `table.Config.CheckboxClasses`, `table.Config.ColCount`, `table.Config.ContainerClasses`, `table.Config.FilterBarID`, `table.Config.GetID`, `table.Config.HTMXEndpointValue`, `table.Config.HTMXTargetValue`, `table.Config.HasActionableRows`, `table.Config.HasActions`, `table.Config.HasExpandableRows`, `table.Config.HasFilters`, `table.Config.HasLinkedRows`, `table.Config.HasSortableColumns`, `table.Config.HeaderCellClasses`, `table.Config.LazyLoadTrigger`, `table.Config.PaginationBaseURL`, `table.Config.PaginationID`, `table.Config.RowClasses`, `table.Config.SortableHeaderClasses`, `table.Config.TableClasses`, `table.Config.TbodyClasses`, `table.Config.TbodyID`, `table.Config.TheadClasses`, `table.Config.TheadID` | Keep using documented Table fields and the five supported URL/sort helpers. IDs, HTMX values, feature predicates, triggers, column counts, and classes are renderer-owned. |
+| `table.FilterConfig.ResolvedHxSwap`, `table.FilterConfig.ResolvedHxTarget` | Set `FilterHTMXConfig` values explicitly when needed; default target/swap resolution is renderer-owned. |
+| `table.PaginationConfig.GetContainerHeight`, `table.PaginationConfig.IsContained`, `table.PaginationConfig.IsInfiniteScroll`, `table.PaginationConfig.NextPage`, `table.PaginationConfig.PaginationPages` | Configure pagination and use public Table fragments for server responses; containment, infinite-scroll, page-window, and next-page calculations are internal. |
+| `table.Row.ClickableRole`, `table.Row.HasHTMXAction`, `table.Row.IsActionable` | Set `Row.Link`, `LinkMode`, `OnClick`, or `HTMX`; actionability and role derivation are renderer-owned. |
+| `tagslist.Config.AlpineData`, `tagslist.Config.ContainerClasses`, `tagslist.Config.GetAddLabel`, `tagslist.Config.GetPlaceholder` | Set `AddActionLabel`, `Placeholder`, Values, Name, and `RootClass`. Rendering still defaults to `Add` and `Add a tag...`; Alpine data and classes are internal. |
+| `textarea.Config.ContainerClasses`, `textarea.Config.GetRows`, `textarea.Config.HelperTextClasses`, `textarea.Config.LabelClasses`, `textarea.Config.TextareaClasses` | Set `Rows`, State, and `RootClass`; zero Rows still renders `3`, while validation and class selection are renderer-owned. |
+| `textinput.Config.ContainerClasses`, `textinput.Config.GetType`, `textinput.Config.HasMask`, `textinput.Config.HasMaxLength`, `textinput.Config.HasPattern`, `textinput.Config.HelperTextClasses`, `textinput.Config.InputClasses`, `textinput.Config.IsPassword`, `textinput.Config.IsSearch`, `textinput.Config.LabelClasses`, `textinput.Config.MaxLengthStr` | Set the documented Type, Mask, Pattern, MaxLength, State, and class fields; empty Type still renders `text`. Predicates, formatting, and classes are renderer-owned. |
+| `toast.Config.BgClass`, `toast.Config.BorderClass`, `toast.Config.HasAction`, `toast.Config.IconBgClass`, `toast.Config.TitleClass` | Set Toast `Tone`, content, and action fields or use the MessageToast split; action predicates and semantic classes are renderer-owned. |
+| `toggle.Config.LabelClasses`, `toggle.Config.ToggleClasses` | Set Toggle Tone, Appearance, Size, and class/attribute fields; class assembly is renderer-owned. |
+
+Intentional non-rendering helpers such as validation, URL construction,
 initial-state creation, initials derivation, and schema transforms remain
 public and appear in the generated component reference.
 
@@ -534,20 +598,37 @@ Test the branches an application depends on.
    rg -n 'combobox\.(Body|OptionsList|ClientScript|ProviderError|BodyOOB|TriggerLabelOOB)\b' .
    ```
 
-6. Find raw constant comparisons that may depend on the changed empty-string
+6. Find every removed public method name. The qualified table above resolves
+   false positives when two packages used the same method name:
+
+   ```bash
+   removed_methods='AccessibleLabel|ActiveIconClasses|AlertCTAClasses|AlpineData|BackdropClasses|BgClass|BindClass|BorderClass|BorderClasses|BrowseLabelClasses|BubbleClasses|ButtonClasses|CTAClasses|CellClasses|CheckboxClasses|ClickableRole|ColCount|CollapsedClasses|ContainerClasses|ContentClasses'
+   removed_methods+='|ControlClasses|CookieContainerClasses|DangerClasses|DataMine|DefaultValue|DepsSelector|DescriptionClasses|DialogClasses|DisabledClasses|DropZoneClasses|EffectiveTrigger|EllipsisClasses|EmojiIcon|EnterEnd|EnterStart|EntriesJSON|EntryAccessor|ExpandedClasses|FillClasses|FilterBarID'
+   removed_methods+='|GetAddLabel|GetBodyID|GetContainerHeight|GetDescriptionMaxLength|GetEmptyText|GetEscapeText|GetID|GetLabel|GetMaxResults|GetPlaceholder|GetRows|GetShortcutText|GetTitle|GetTriggerMode|GetType|HTMXEndpointValue|HTMXTargetValue|HXIncludeSelector|HasAction|HasActionableRows'
+   removed_methods+='|HasActions|HasAlpine|HasAvatar|HasDividers|HasExpandableRows|HasFilters|HasHTMX|HasHTMXAction|HasHeader|HasHxVerb|HasIcons|HasImage|HasInitials|HasLinkedRows|HasMask|HasMaxLength|HasPattern|HasPrice|HasRating|HasShortcuts'
+   removed_methods+='|HasSortableColumns|HeaderCellClasses|HeaderClasses|HelperTextClasses|IconBadgeClasses|IconBgClass|IconClasses|ImageClasses|ImageContainerClasses|InactiveIconClasses|IndicatorClasses|InnerClasses|InputClasses|InputID|IsActionable|IsActive|IsButton|IsClientMode|IsContained|IsContextMenu'
+   removed_methods+='|IsEffectivelyDisabled|IsInfiniteScroll|IsMine|IsPassword|IsSearch|IsSelected|IsSoft|IsUpload|ItemButtonClasses|ItemClasses|ItemContainerClasses|LabelClasses|LazyLoadTrigger|LeftActions|LinkClasses|ListClasses|MaxLengthStr|MaxOrDefault|MenuClasses|MinOrDefault'
+   removed_methods+='|NameBinding|NavClasses|NewRowJSON|NextPage|NormalizedColumns|OptionLabel|OverlayClasses|PageClasses|PaginationBaseURL|PaginationID|PaginationPages|PanelClasses|PanelID|PrevNextClasses|PrimaryActionClasses|RadiusClasses|ResolvedHxSwap|ResolvedHxTarget|ResolvedID|ResolvedInitials'
+   removed_methods+='|ResolvedLabel|ResolvedMax|ResolvedName|ResolvedValue|RightActions|RootClasses|RowClasses|SegmentedLabelClasses|SelectClasses|SelectedValue|ShapeClasses|SizeClasses|SizeTextClass|SoftInnerClasses|SoftVariantClasses|SortableHeaderClasses|SpinnerSizeClasses|StateVar|StatusClasses|StatusSizeClasses'
+   removed_methods+='|StepOrDefault|SvgClasses|SwapStrategy|TableClasses|TagClasses|TbodyClasses|TbodyID|TextClasses|TextareaClasses|TheadClasses|TheadID|TickClasses|TickLabels|TitleClass|TitleClasses|TitleID|ToggleClasses|TriggerClasses|TriggerLabelText|UploadButtonClasses'
+   removed_methods+='|UploadContainerClasses|UploadControlClasses|UploadFileNameClasses|UseIconOnlyTrigger|ValueClasses|ValueLabel|ValueOrDefault|VariantClasses|VariantFillClasses|XData'
+   rg -n "\\.(${removed_methods})[[:space:]]*\\(" .
+   ```
+
+7. Find raw constant comparisons that may depend on the changed empty-string
    defaults:
 
    ```bash
    rg -n '"(default|solid|ellipsis)"|string\([^)]*(Appearance|Mode)' .
    ```
 
-7. Update exact function types from `func(...) templ.Component` where the
+8. Update exact function types from `func(...) templ.Component` where the
    assigned constructor now has a concrete return type. Prefer accepting
    `components.Component` values unless the concrete type matters.
-8. Run `go test ./...` in every module, regenerate the consumer application's
+9. Run `go test ./...` in every module, regenerate the consumer application's
    templ output, and render-test affected pages in light/dark and supported
    themes.
-9. Consult the generated
+10. Consult the generated
    `.agents/skills/using-goshtoso/references/components-reference.md` for the
    current public constructors, options, enums, structs, and fields.
 

@@ -17,9 +17,10 @@ before upgrading.
 #### Source-breaking
 
 - Added the root `components.Component` / `Kind` identity contract and a stable
-  74-entry `AllKinds()` registry. All 74 public renderable constructors now
-  return exported concrete instance types that implement the shared contract,
-  instead of returning `templ.Component` directly.
+  74-entry `AllKinds()` registry. Sixty-seven same-name public constructors now
+  return exported concrete instance types instead of `templ.Component`.
+  Seven new or renamed split constructors complete the 74-constructor
+  inventory.
 - Replaced ambiguous component `Variant` and `Style` APIs with package-owned
   dimensions such as `Tone`, `Appearance`, and `Mode`. There is no universal
   `Variant` API and there are no compatibility aliases.
