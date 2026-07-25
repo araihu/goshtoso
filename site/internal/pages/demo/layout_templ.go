@@ -772,7 +772,7 @@ func sItem(id, label, href, activeComponent string) sidebar.Item {
 func getSearchItems() []searchfield.Item {
 	items := []searchfield.Item{
 		{ID: "search-getting-started", Title: "Getting Started", Description: "Install Goshtoso, wire assets, and render your first component.", Href: "/getting-started", Section: "Docs", Attrs: navHxAttrs("/getting-started", "")},
-		{ID: "search-component-model", Title: "Component Model", Description: "Learn about themes, primitives, stable Kind identity, and configuration dimensions.", Href: "/docs/component-model", Section: "Docs", Attrs: navHxAttrs("/docs/component-model", "")},
+		{ID: "search-component-model", Title: "Component Model", Description: "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.", Href: "/docs/component-model", Section: "Docs", Attrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "search-examples", Title: "Examples", Description: "Full runnable app examples built with Goshtoso components.", Href: "/examples", Section: "Examples", Attrs: navHxAttrs("/examples", "")},
 		{ID: "search-agents", Title: "AI Agents", Description: "Install and verify the Goshtoso consumer integration skill for AI coding tools.", Href: "/docs/agents", Section: "Docs", Attrs: navHxAttrs("/docs/agents", "")},
 		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},

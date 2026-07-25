@@ -8,7 +8,10 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/araihu/goshtoso/site/internal/pages/demo"
+import (
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
 
 func ComponentModelPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -60,114 +63,67 @@ func componentModelContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"component-model-fragment\" class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-3\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Component model</p><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">The Goshtoso Component Model</h1><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">Goshtoso separates application-wide styling, component identity, and component configuration so each concept has one clear meaning.</p></header><section id=\"vocabulary\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Consumer vocabulary</h2><div class=\"grid gap-4 sm:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"component-model-fragment\" class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-3\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Component API</p><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Working with Goshtoso Components</h1><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">Public component constructors return concrete renderable values. Those values work anywhere a templ component is accepted and expose stable identity when generic code needs it.</p></header><section id=\"public-interface\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">A common renderable interface</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Every public component value implements <code class=\"font-mono\">components.Component</code>. The interface embeds <code class=\"font-mono\">templ.Component</code> and adds stable component identity through <code class=\"font-mono\">Kind()</code>.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = componentModelTerm(
-			"Theme",
-			"A theme is the token set selected for a page or application. It controls colors, typography, radii, and dark-mode behavior, independently of component identity.",
-		).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "Public interface",
+			Code:     componentModelInterfaceExample(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = componentModelTerm(
-			"Primitive",
-			"A primitive is one meaningful public renderable concept with a semantic and interaction contract, such as Button, Modal, or AlertDialog.",
-		).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Render returned values normally in templ. Keep the concrete return value when code uses component-specific behavior; use the common interface when a collection contains different components.</p></section><section id=\"constructor-styles\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Constructor styles</h2><p class=\"text-on-surface dark:text-on-surface-dark\">There is no shared configuration type. Each package exposes the fields or options supported by that component, and its API reference records the exact constructor signature.</p><div class=\"grid gap-6 lg:grid-cols-2\"><div class=\"space-y-3\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Configuration structs</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Components with structured data use package-specific config structs.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = componentModelTerm(
-			"Kind",
-			"Kind is the stable identity returned by a concrete components.Component value's Kind() method. It identifies the primitive, not its styling or state.",
-		).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "Badge configuration",
+			Code:     componentModelConfigExample(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = componentModelTerm(
-			"Configuration dimension",
-			"A configuration dimension is one independent choice within a primitive, such as Tone, Appearance, Size, Orientation, Position, or Mode.",
-		).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"space-y-3\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional options</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Button, Link, Kbd, and Tooltip use functional options instead of config structs.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono\">Dimension</code> is documentation vocabulary, not a public Go type. Goshtoso also does not expose a public <code class=\"font-mono\">Axis</code> type.</p></section><section id=\"theme-kind-dimensions\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Theme, Kind, and dimensions</h2><p class=\"text-on-surface dark:text-on-surface-dark\">The page selects a theme. The constructor creates the <code class=\"font-mono\">Badge</code> primitive, whose stable <code class=\"font-mono\">Kind</code> is <code class=\"font-mono\">components.KindBadge</code>. <code class=\"font-mono\">Tone</code>, <code class=\"font-mono\">Appearance</code>, and <code class=\"font-mono\">Size</code> are independent configuration dimensions of that badge.</p><div class=\"space-y-3\">")
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "Button options",
+			Code:     componentModelOptionsExample(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = componentModelCode("html", componentModelThemeExample()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div></section><section id=\"concrete-values\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Concrete return values</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Constructors return exported values such as <code class=\"font-mono\">button.Instance</code>, <code class=\"font-mono\">modal.AlertDialogInstance</code>, and <code class=\"font-mono\">table.Instance</code>. They still satisfy both common renderable interfaces.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = componentModelCode("go", componentModelBadgeExample()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "Concrete and common types",
+			Code:     componentModelConcreteExample(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></section><section id=\"no-universal-variant\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">There is no universal Variant</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A universal <code class=\"font-mono\">Variant</code> would conflate semantic tone, visual appearance, layout, behavior, and distinct component identities. Goshtoso has no common <code class=\"font-mono\">Variant()</code> method. Look for the specific dimension that describes the choice, or another primitive when the contract changes.</p></section><section id=\"one-or-two\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">One primitive or two</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Style or configuration differences stay dimensions of one primitive. Distinct semantics, DOM responsibilities, accessibility, or interaction contracts become separate primitives.</p><div class=\"grid gap-4 sm:grid-cols-2\"><div class=\"rounded-radius border border-outline p-4 dark:border-outline-dark\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">One primitive</h3><ul class=\"mt-2 list-disc space-y-1 pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><li>Drawer left or right: Position</li><li>Tabs horizontal or vertical: Orientation</li><li>Button solid or outline: Appearance</li><li>Pagination numbered or simple: Mode</li></ul></div><div class=\"rounded-radius border border-outline p-4 dark:border-outline-dark\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Separate primitives</h3><ul class=\"mt-2 list-disc space-y-1 pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><li>Modal and AlertDialog</li><li>Toast and MessageToast</li><li>Carousel and CardCarousel</li><li>Rating and RatingDisplay</li></ul></div></div></section><section id=\"runtime-identity\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Use Kind in generic Go code</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A <code class=\"font-mono\">[]components.Component</code> can contain different Goshtoso primitives. Call <code class=\"font-mono\">component.Kind()</code> when orchestration depends on a primitive's stable identity.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</section><section id=\"runtime-identity\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Use Kind in generic Go code</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A <code class=\"font-mono\">[]components.Component</code> can contain values from different packages. Call <code class=\"font-mono\">component.Kind()</code> when a registry, diagnostic, or switch needs the stable identity of a component.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = componentModelCode("go", componentModelKindSwitchExample()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "Switch on Kind",
+			Code:     componentModelKindSwitchExample(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</section><section id=\"defaults\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Effective defaults and atomic primitives</h2><p class=\"text-on-surface dark:text-on-surface-dark\">API documentation records effective defaults: the behavior consumers see after rendering. Go zero values may resolve to non-zero rendered behavior.</p><p class=\"text-on-surface dark:text-on-surface-dark\">Data-heavy components keep config structs. Atomic primitives with a small required core and mostly independent optional choices use functional options; Button, Link, Kbd, and Tooltip follow that pattern.</p></section></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func componentModelTerm(title, body string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<article class=\"rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(title)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/component_model.templ`, Line: 105, Col: 91}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h3><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(body)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/component_model.templ`, Line: 106, Col: 86}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Kind values are stable kebab-case identifiers. They are not CSS classes or HTML element names.</p></section><section id=\"defaults\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Rendered defaults</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A zero-valued field may render a documented default. Each component page's API reference lists its constructor, fields, options, and effective rendered values.</p><p class=\"text-on-surface dark:text-on-surface-dark\">For examples, compare the <a href=\"/components/button\" hx-get=\"/components/button\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Button API</a> with the config-heavy <a href=\"/components/table\" hx-get=\"/components/table\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Table API</a>.</p></section><section id=\"related-guides\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Related guides</h2><div class=\"grid gap-4 sm:grid-cols-2\"><a href=\"/getting-started\" hx-get=\"/getting-started\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline bg-surface-alt p-4 transition-colors hover:border-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:border-primary-dark\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Getting Started</span> <span class=\"mt-1 block text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Install the module, serve its assets, and render your first component.</span></a> <a href=\"/docs/theme\" hx-get=\"/docs/theme\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline bg-surface-alt p-4 transition-colors hover:border-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:border-primary-dark\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Themes</span> <span class=\"mt-1 block text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Configure tokens, dark mode, and application-wide styling.</span></a></div></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -175,72 +131,35 @@ func componentModelTerm(title, body string) templ.Component {
 	})
 }
 
-func componentModelCode(language, code string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"overflow-hidden rounded-radius border border-outline dark:border-outline-dark\"><div class=\"border-b border-outline bg-surface-alt px-4 py-2 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(language)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/component_model.templ`, Line: 112, Col: 198}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><pre class=\"overflow-x-auto p-4 text-sm text-on-surface dark:text-on-surface-dark\"><code>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(code)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/component_model.templ`, Line: 113, Col: 97}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</code></pre></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
+func componentModelInterfaceExample() string {
+	return `type Component interface {
+    templ.Component
+    Kind() Kind
+}`
 }
 
-func componentModelThemeExample() string {
-	return `<html data-theme="minimal">`
-}
-
-func componentModelBadgeExample() string {
+func componentModelConfigExample() string {
 	return `badge.Badge(badge.Config{
     Label:      "Requires attention",
     Tone:       badge.ToneDanger,
     Appearance: badge.AppearanceSoft,
     Size:       badge.SizeSM,
 })`
+}
+
+func componentModelOptionsExample() string {
+	return `button.Button(
+    button.WithTone(button.TonePrimary),
+    button.WithSize(button.SizeSmall),
+    button.WithType("submit"),
+)`
+}
+
+func componentModelConcreteExample() string {
+	return `saveButton := button.Button(button.WithType("submit"))
+
+var component components.Component = saveButton
+var renderable templ.Component = saveButton`
 }
 
 func componentModelKindSwitchExample() string {

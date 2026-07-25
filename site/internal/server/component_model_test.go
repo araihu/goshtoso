@@ -30,7 +30,7 @@ func TestComponentModelRouteRendersDirectlyAndAsFragment(t *testing.T) {
 
 			require.Equal(t, http.StatusOK, rec.Code)
 			require.Contains(t, rec.Body.String(), tc.wantMarker)
-			require.Contains(t, rec.Body.String(), "The Goshtoso Component Model")
+			require.Contains(t, rec.Body.String(), "Working with Goshtoso Components")
 		})
 	}
 }

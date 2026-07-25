@@ -9,26 +9,38 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestComponentModelDocumentsConsumerVocabulary(t *testing.T) {
+func TestComponentModelDocumentsPublicAPI(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, componentModelContent().Render(context.Background(), &buf))
 	html := buf.String()
 
 	for _, phrase := range []string{
-		"Theme",
-		"Primitive",
+		"components.Component",
+		"templ.Component",
 		"Kind",
-		"Configuration dimension",
-		"There is no universal Variant",
-		"One primitive or two",
-		"effective defaults",
-		"zero values",
-		"functional options",
+		"Concrete return values",
+		"Configuration structs",
+		"Functional options",
+		"Rendered defaults",
 		"component.Kind()",
-		"case components.KindAlertDialog:",
-		"case components.KindTable:",
+		"KindAlertDialog",
+		"KindTable",
+		`href="/components/button"`,
+		`href="/docs/theme"`,
+		`<pre class="ch-chroma"`,
 	} {
 		require.Contains(t, html, phrase)
+	}
+
+	for _, internalPhrase := range []string{
+		"Consumer vocabulary",
+		"Configuration dimension",
+		"documentation vocabulary",
+		"Axis",
+		"There is no universal Variant",
+		"One primitive or two",
+	} {
+		require.NotContains(t, html, internalPhrase)
 	}
 }
 

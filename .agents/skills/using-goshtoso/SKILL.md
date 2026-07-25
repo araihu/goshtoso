@@ -79,9 +79,9 @@ that differ from the directory name.
 
 Read the public
 [component model](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md)
-before choosing between constructors or configuration fields. It defines Theme,
-Primitive, stable Kind identity, configuration dimensions, and the rule for
-deciding whether a difference belongs to one primitive or two.
+before choosing between constructors or configuration fields. It documents the
+common component interface, concrete return values, constructor styles, stable
+Kind identity, and rendered defaults.
 
 ## CSS Strategy
 

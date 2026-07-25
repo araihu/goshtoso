@@ -4,10 +4,10 @@ This guide defines the naming grammar for public Goshtoso component config
 fields. Use it when adding a component, changing a component API, or normalizing
 similar props across components.
 
-This maintainer guide applies the consumer vocabulary defined in the
+This maintainer guide complements the public interfaces documented in the
 [Goshtoso Component Model](COMPONENT_MODEL.md). Read that guide first for the
-definitions of Theme, Primitive, Kind, configuration dimension, and the
-one-primitive-or-two rule.
+common component interface, concrete return values, constructor styles, and
+stable `Kind` identity.
 
 Breaking changes are acceptable during the normalization pass. Prefer the
 canonical name over preserving an old component-specific spelling.

@@ -4,9 +4,9 @@ This guide explains how to use Goshtoso components in Go web applications built
 with templ, Tailwind CSS, HTMX, and Alpine.js.
 
 Before choosing component constructors and options, read the
-[Goshtoso Component Model](COMPONENT_MODEL.md). It defines themes, primitives,
-stable `Kind` identity, configuration dimensions, and the rule for deciding
-whether a difference is a dimension of one primitive or a separate primitive.
+[Goshtoso Component Model](COMPONENT_MODEL.md). It documents the common
+`components.Component` interface, concrete return values, stable `Kind`
+identity, constructor styles, and rendered defaults.
 
 ## Installation
 

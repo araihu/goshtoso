@@ -105,8 +105,9 @@ own `.templ` files.
 
 For a complete integration guide, including custom Tailwind builds and manual
 asset wiring, see [docs/USAGE.md](docs/USAGE.md). The
-[Goshtoso Component Model](docs/COMPONENT_MODEL.md) explains themes, primitives,
-stable `Kind` identity, configuration dimensions, and component boundaries.
+[Goshtoso Component Model](docs/COMPONENT_MODEL.md) documents the common
+component interface, concrete return values, constructor styles, stable `Kind`
+identity, and rendered defaults.
 Release changes are recorded in the [changelog](CHANGELOG.md); applications
 upgrading from `v0.0.11` should follow the
 [component API migration guide](docs/MIGRATING_COMPONENT_API.md).
@@ -162,7 +163,7 @@ table            tabs        tagslist     textarea     textinput    toast
 toggle           tooltip
 ```
 
-Run the demo site to explore configuration dimensions, API tables, HTMX
+Run the demo site to explore component options, API tables, HTMX
 behavior, Alpine.js states, themes, and example apps:
 
 ```bash

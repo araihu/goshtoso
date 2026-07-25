@@ -162,7 +162,7 @@ func demoDescription(key string, entry DemoEntry) string {
 
 	descriptions := map[string]string{
 		"docs/agents":          "Install the Goshtoso consumer agent skill for AI coding tools and verify npx skills distribution.",
-		"docs/component-model": "Understand Goshtoso themes, primitives, stable Kind identity, configuration dimensions, and component boundaries.",
+		"docs/component-model": "Understand Goshtoso's common component interface, concrete return values, constructor styles, stable Kind identity, and rendered defaults.",
 		"docs/theme":           "Customize Goshtoso themes with Tailwind CSS tokens, dark mode, live previews, and server-rendered component examples.",
 		"getting-started":      "Start a Go HTMX app with Goshtoso, templ, Tailwind CSS, local runtime assets, and copy-pasteable setup code.",
 		"attributions":         "Review third-party licenses and asset attributions for the Goshtoso documentation site and component library.",

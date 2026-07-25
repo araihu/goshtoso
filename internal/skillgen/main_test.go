@@ -57,10 +57,10 @@ func Alert() templ.Component { return nil }
 
 	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
 	for _, phrase := range []string{
-		"Theme",
-		"Primitive",
 		"Kind",
-		"configuration dimension",
+		"components.Component",
+		"templ.Component",
+		"rendered defaults",
 		"docs/COMPONENT_MODEL.md",
 	} {
 		if !strings.Contains(reference, phrase) {
