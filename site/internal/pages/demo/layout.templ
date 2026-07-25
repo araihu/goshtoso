@@ -6,6 +6,7 @@ import (
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
+	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
 // HeadMeta renders crawler metadata and social-preview tags shared by full pages.
@@ -691,23 +692,12 @@ templ siteFooter() {
 }
 
 func getThemeOptions() []selectfield.Option {
-	return []selectfield.Option{
-		{Value: "goshtoso", Label: "Goshtoso"},
-		{Value: "minimal", Label: "Minimal"},
-		{Value: "modern", Label: "Modern"},
-		{Value: "arctic", Label: "Arctic"},
-		{Value: "high-contrast", Label: "High Contrast"},
-		{Value: "neo-brutalism", Label: "Neo Brutalism"},
-		{Value: "news", Label: "News"},
-		{Value: "industrial", Label: "Industrial"},
-		{Value: "90s", Label: "90s"},
-		{Value: "pastel", Label: "Pastel"},
-		{Value: "christmas", Label: "Christmas"},
-		{Value: "halloween", Label: "Halloween"},
-		{Value: "zombie", Label: "Halloween II"},
-		{Value: "prototype", Label: "Prototype"},
-		{Value: "dracula", Label: "Dracula"},
+	all := themes.All()
+	options := make([]selectfield.Option, 0, len(all))
+	for _, theme := range all {
+		options = append(options, selectfield.Option{Value: theme.Key, Label: theme.Label})
 	}
+	return options
 }
 
 templ themeSelectIcon() {

@@ -9,6 +9,7 @@ import (
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
 type exampleApp struct {
@@ -123,7 +124,7 @@ templ landingContent() {
 					{ componentCount() } components
 				</span>
 				<span class="rounded-radius border border-outline px-3 py-1 text-sm font-medium text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
-					{ len(getThemeInfos()) } themes
+					{ themes.Count() } themes
 				</span>
 				<span class="rounded-radius border border-outline px-3 py-1 text-sm font-medium text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
 					Local assets
@@ -266,7 +267,7 @@ templ landingContent() {
 		<!-- Footer -->
 		<div class="text-center pb-8">
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				{ componentCount() } components · { len(getThemeInfos()) } themes ·
+				{ componentCount() } components · { themes.Count() } themes ·
 				<a href="/getting-started" class="text-primary dark:text-primary-dark underline underline-offset-2">Get started</a>
 			</p>
 		</div>
