@@ -89,10 +89,10 @@ Render components from their packages:
 import "github.com/araihu/goshtoso/components/button"
 
 templ Example() {
-    @button.Button(button.Config{
-        Variant: button.Primary,
-        Type:    "button",
-    }) {
+    @button.Button(
+        button.WithTone(button.TonePrimary),
+        button.WithType("button"),
+    ) {
         Save changes
     }
 }
@@ -158,8 +158,8 @@ table            tabs        tagslist     textarea     textinput    toast
 toggle           tooltip
 ```
 
-Run the demo site to explore variants, API tables, HTMX behavior, Alpine.js
-states, themes, and example apps:
+Run the demo site to explore configuration dimensions, API tables, HTMX
+behavior, Alpine.js states, themes, and example apps:
 
 ```bash
 go run ./site/cmd/server

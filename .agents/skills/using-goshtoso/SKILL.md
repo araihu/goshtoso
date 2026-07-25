@@ -64,10 +64,10 @@ templ component from your own `.templ` files:
 import "github.com/araihu/goshtoso/components/button"
 
 templ Example() {
-	@button.Button(button.Config{
-		Variant: button.Primary,
-		Type:    "button",
-	}) {
+	@button.Button(
+		button.WithTone(button.TonePrimary),
+		button.WithType("button"),
+	) {
 		Save changes
 	}
 }
