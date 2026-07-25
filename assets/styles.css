@@ -731,6 +731,9 @@
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
   }
+  .mt-5 {
+    margin-top: calc(var(--spacing) * 5);
+  }
   .mt-6 {
     margin-top: calc(var(--spacing) * 6);
   }
@@ -829,6 +832,9 @@
   }
   .aspect-3\/1 {
     aspect-ratio: 3/1;
+  }
+  .aspect-\[16\/10\] {
+    aspect-ratio: 16/10;
   }
   .size-1\.5 {
     width: calc(var(--spacing) * 1.5);
@@ -3590,6 +3596,13 @@
       }
     }
   }
+  .group-hover\:scale-\[1\.02\] {
+    &:is(:where(.group):hover *) {
+      @media (hover: hover) {
+        scale: 1.02;
+      }
+    }
+  }
   .group-hover\:gap-2 {
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
@@ -5499,6 +5512,11 @@
       grid-template-columns: minmax(0,1fr) 12rem auto;
     }
   }
+  .md\:grid-cols-\[minmax\(0\,2fr\)_minmax\(18rem\,3fr\)\] {
+    @media (width >= 48rem) {
+      grid-template-columns: minmax(0,2fr) minmax(18rem,3fr);
+    }
+  }
   .md\:flex-row {
     @media (width >= 48rem) {
       flex-direction: row;
@@ -5532,6 +5550,11 @@
   .md\:gap-6 {
     @media (width >= 48rem) {
       gap: calc(var(--spacing) * 6);
+    }
+  }
+  .md\:gap-10 {
+    @media (width >= 48rem) {
+      gap: calc(var(--spacing) * 10);
     }
   }
   .md\:gap-12 {

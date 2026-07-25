@@ -32,4 +32,7 @@ func TestExamplesIndexPublishesEveryRegisteredAppAsExtractableRecipe(t *testing.
 	for _, label := range []string{"Components", "States", "Complexity", "View source"} {
 		require.Contains(t, body, label)
 	}
+	require.Equal(t, 7, strings.Count(body, `data-example-recipe`))
+	require.Equal(t, 7, strings.Count(body, `/assets/images/homepage/examples/`))
+	require.Contains(t, body, "Run example")
 }
