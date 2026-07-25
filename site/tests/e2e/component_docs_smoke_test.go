@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/playwright-community/playwright-go"
@@ -71,18 +72,105 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 	require.NotNil(t, response)
 	require.Equal(t, http.StatusOK, response.Status())
 
-	for index, entry := range entries {
-		if index > 0 {
-			link := page.Locator(fmt.Sprintf(
-				`#sidebar-nav-content a[href=%q]`,
-				entry.Path,
-			))
-			require.NoError(t, link.ScrollIntoViewIfNeeded())
-			clickUntil(t, page, link, componentDocsDestinationReady(entry))
-		}
-
+	requireComponentDocsDestination(t, page, failures, entries[0])
+	sentinel := installComponentDocsHTMXProof(t, page)
+	mainContentSwapCount := 0
+	for _, entry := range entries[1:] {
+		link := page.Locator(fmt.Sprintf(
+			`#sidebar-nav-content a[href=%q]`,
+			entry.Path,
+		))
+		require.NoError(t, link.ScrollIntoViewIfNeeded())
+		clickUntil(t, page, link, componentDocsDestinationReady(entry))
 		requireComponentDocsDestination(t, page, failures, entry)
+		mainContentSwapCount = requireComponentDocsHTMXProof(
+			t,
+			page,
+			sentinel,
+			mainContentSwapCount,
+		)
 	}
+}
+
+func installComponentDocsHTMXProof(t *testing.T, page playwright.Page) string {
+	t.Helper()
+
+	sentinel := fmt.Sprintf("%s-%d", t.Name(), time.Now().UnixNano())
+	_, err := page.Evaluate(
+		`sentinel => {
+			const proof = { sentinel, mainContentSwaps: 0 };
+			window.__componentDocsHTMXProof = proof;
+			document.addEventListener("htmx:afterSwap", event => {
+				if (event.detail?.target?.id === "main-content") {
+					proof.mainContentSwaps += 1;
+				}
+			});
+		}`,
+		sentinel,
+	)
+	require.NoError(t, err)
+	return sentinel
+}
+
+func requireComponentDocsHTMXProof(
+	t *testing.T,
+	page playwright.Page,
+	sentinel string,
+	previousMainContentSwapCount int,
+) int {
+	t.Helper()
+
+	sentinelSurvived, err := componentDocsHTMXSentinelSurvived(page, sentinel)
+	require.NoError(t, err)
+	require.True(
+		t,
+		sentinelSurvived,
+		"component docs navigation replaced the document instead of preserving the HTMX sentinel",
+	)
+
+	actualSwapCountValue, err := page.Evaluate(
+		"() => window.__componentDocsHTMXProof?.mainContentSwaps",
+	)
+	require.NoError(t, err)
+	actualSwapCount := playwrightInt(t, actualSwapCountValue)
+	require.Greater(
+		t,
+		actualSwapCount,
+		previousMainContentSwapCount,
+		"component docs navigation did not increment the #main-content htmx:afterSwap count for this click",
+	)
+	return actualSwapCount
+}
+
+func playwrightInt(t *testing.T, value any) int {
+	t.Helper()
+
+	switch value := value.(type) {
+	case int:
+		return value
+	case float64:
+		integer := int(value)
+		require.Equal(t, value, float64(integer), "Playwright number is not an integer")
+		return integer
+	default:
+		require.Failf(t, "unexpected Playwright number", "got %T, want int or float64", value)
+		return 0
+	}
+}
+
+func componentDocsHTMXSentinelSurvived(page playwright.Page, sentinel string) (bool, error) {
+	value, err := page.Evaluate(
+		"expected => window.__componentDocsHTMXProof?.sentinel === expected",
+		sentinel,
+	)
+	if err != nil {
+		return false, err
+	}
+	survived, ok := value.(bool)
+	if !ok {
+		return false, fmt.Errorf("HTMX sentinel predicate returned %T, want bool", value)
+	}
+	return survived, nil
 }
 
 func componentDocsDestinationReady(entry catalog.Entry) string {
@@ -152,6 +240,63 @@ func requireComponentDocsDestination(
 
 	waitForPageSettled(t, page)
 	failures.RequireEmpty(t)
+}
+
+func TestComponentDocsHTMXProofRejectsFullPageReload(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	entries := catalog.ComponentPages()
+	require.GreaterOrEqual(t, len(entries), 2)
+
+	page := newPage(t, sharedBrowser)
+	failures := watchPageFailures(page)
+	response, err := page.Goto(baseURL+entries[0].Path, playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, response)
+	require.Equal(t, http.StatusOK, response.Status())
+	requireComponentDocsDestination(t, page, failures, entries[0])
+
+	sentinel := installComponentDocsHTMXProof(t, page)
+	destination := entries[1]
+	linkSelector := fmt.Sprintf(`#sidebar-nav-content a[href=%q]`, destination.Path)
+	replaceComponentDocsLinkWithOrdinaryHref(t, page, destination.Path)
+
+	require.NoError(t, page.Locator(linkSelector).Click())
+	require.NoError(t, page.WaitForURL("**"+destination.Path))
+	requireComponentDocsDestination(t, page, failures, destination)
+
+	sentinelSurvived, err := componentDocsHTMXSentinelSurvived(page, sentinel)
+	require.NoError(t, err)
+	require.False(
+		t,
+		sentinelSurvived,
+		"ordinary href navigation must replace the document and invalidate the HTMX sentinel",
+	)
+}
+
+func replaceComponentDocsLinkWithOrdinaryHref(
+	t *testing.T,
+	page playwright.Page,
+	path string,
+) {
+	t.Helper()
+
+	link := page.Locator(fmt.Sprintf(`#sidebar-nav-content a[href=%q]`, path))
+	_, err := link.Evaluate(
+		`link => {
+			const ordinaryLink = link.cloneNode(true);
+			for (const attribute of ["hx-get", "hx-target", "hx-swap", "hx-push-url"]) {
+				ordinaryLink.removeAttribute(attribute);
+			}
+			link.replaceWith(ordinaryLink);
+		}`,
+		nil,
+	)
+	require.NoError(t, err)
 }
 
 func TestComponentDocsThemeMatrix(t *testing.T) {
