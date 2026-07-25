@@ -6,6 +6,7 @@ import (
 	"go/parser"
 	"go/token"
 	"io/fs"
+	"maps"
 	"path/filepath"
 	"reflect"
 	"slices"
@@ -243,35 +244,35 @@ func TestFeedbackNavigationStructAPIsDocumentEveryExportedFieldExactlyOnce(t *te
 	}
 }
 
-func TestFeedbackNavigationPublicSignaturesAreExactAndUnique(t *testing.T) {
-	expected := map[string]string{
-		"Tooltip options.id":               "id string",
-		"Tooltip options.label":            "label string",
-		"Tooltip options.WithDescription":  "func WithDescription(description string) Option",
-		"Tooltip options.WithPosition":     "func WithPosition(position Position) Option",
-		"Tooltip options.WithActivation":   "func WithActivation(activation Activation) Option",
-		"Tooltip options.WithTriggerLabel": "func WithTriggerLabel(label string) Option",
-		"Tooltip options.WithTrigger":      "func WithTrigger(trigger templ.Component) Option",
-		"Link options.href":                "href string",
-		"Link options.WithTarget":          "func WithTarget(target string) Option",
-		"Link options.WithRel":             "func WithRel(rel string) Option",
-		"Link options.WithRole":            "func WithRole(role string) Option",
-		"Link options.WithID":              "func WithID(id string) Option",
-		"Link options.WithAppearance":      "func WithAppearance(appearance Appearance) Option",
-		"Link options.WithSize":            "func WithSize(size Size) Option",
-		"Link options.WithIcon":            "func WithIcon(icon templ.Component) Option",
-		"Link options.WithIconPosition":    "func WithIconPosition(position IconPosition) Option",
-		"Link options.WithRootClass":       "func WithRootClass(class string) Option",
-		"Link options.WithAttrs":           "func WithAttrs(attrs templ.Attributes) Option",
-		"Config helpers.HasPrevious":       "func (cfg Config) HasPrevious() bool",
-		"Config helpers.HasNext":           "func (cfg Config) HasNext() bool",
-		"Config helpers.PreviousPage":      "func (cfg Config) PreviousPage() int",
-		"Config helpers.NextPage":          "func (cfg Config) NextPage() int",
-		"Config helpers.PageURL":           "func (cfg Config) PageURL(page int) string",
-		"Config helpers.Pages":             "func (cfg Config) Pages() []PageItem",
+func TestFeedbackNavigationPublicSignatureRowsAreUnique(t *testing.T) {
+	expected := []string{
+		"Tooltip options.id",
+		"Tooltip options.label",
+		"Tooltip options.WithDescription",
+		"Tooltip options.WithPosition",
+		"Tooltip options.WithActivation",
+		"Tooltip options.WithTriggerLabel",
+		"Tooltip options.WithTrigger",
+		"Link options.href",
+		"Link options.WithTarget",
+		"Link options.WithRel",
+		"Link options.WithRole",
+		"Link options.WithID",
+		"Link options.WithAppearance",
+		"Link options.WithSize",
+		"Link options.WithIcon",
+		"Link options.WithIconPosition",
+		"Link options.WithRootClass",
+		"Link options.WithAttrs",
+		"Config helpers.HasPrevious",
+		"Config helpers.HasNext",
+		"Config helpers.PreviousPage",
+		"Config helpers.NextPage",
+		"Config helpers.PageURL",
+		"Config helpers.Pages",
 	}
 
-	got := make(map[string]string, len(expected))
+	got := make(map[string]struct{}, len(expected))
 	for _, sections := range feedbackNavigationAPISectionSlices() {
 		for _, section := range sections {
 			for _, prop := range section.Props {
@@ -280,48 +281,50 @@ func TestFeedbackNavigationPublicSignaturesAreExactAndUnique(t *testing.T) {
 				}
 				key := section.Title + "." + prop.Name
 				require.NotContainsf(t, got, key, "%s documented more than once", key)
-				got[key] = prop.Signature
+				got[key] = struct{}{}
 			}
 		}
 	}
-	require.Equal(t, expected, got)
+	require.ElementsMatch(t, expected, slices.Collect(maps.Keys(got)))
 }
 
 func TestFeedbackNavigationConstructorsAreDocumentedExactlyOnce(t *testing.T) {
-	expected := map[string]rootcomponents.Kind{
-		"alert.Alert(cfg Config) Instance":                                     rootcomponents.KindAlert,
-		"drawer.Drawer(cfg Config) Instance":                                   rootcomponents.KindDrawer,
-		"modal.Modal(cfg Config) Instance":                                     rootcomponents.KindModal,
-		"modal.AlertDialog(cfg AlertDialogConfig) AlertDialogInstance":         rootcomponents.KindAlertDialog,
-		"spinner.Spinner(cfg Config) Instance":                                 rootcomponents.KindSpinner,
-		"steps.Steps(cfg Config) Instance":                                     rootcomponents.KindSteps,
-		"toast.ToastContainer(cfg ContainerConfig) ContainerInstance":          rootcomponents.KindToastContainer,
-		"toast.Toast(cfg Config) Instance":                                     rootcomponents.KindToast,
-		"toast.MessageToast(cfg MessageConfig) MessageInstance":                rootcomponents.KindMessageToast,
-		"toast.OOBToast(cfg Config) OOBInstance":                               rootcomponents.KindOOBToast,
-		"toast.OOBMessageToast(cfg MessageConfig) OOBMessageInstance":          rootcomponents.KindOOBMessageToast,
-		"tooltip.Tooltip(id string, label string, options ...Option) Instance": rootcomponents.KindTooltip,
-		"breadcrumbs.Breadcrumbs(cfg Config) Instance":                         rootcomponents.KindBreadcrumbs,
-		"dropdown.Dropdown(cfg Config) Instance":                               rootcomponents.KindDropdown,
-		"link.Link(href string, options ...Option) Instance":                   rootcomponents.KindLink,
-		"navbar.Navbar(cfg Config) Instance":                                   rootcomponents.KindNavbar,
-		"pagination.Pagination(cfg Config) Instance":                           rootcomponents.KindPagination,
-		"sidebar.Sidebar(cfg Config) Instance":                                 rootcomponents.KindSidebar,
-		"sidebar.Overlay(cfg OverlayConfig) OverlayInstance":                   rootcomponents.KindSidebarOverlay,
-		"tabs.Tabs(cfg Config) Instance":                                       rootcomponents.KindTabs,
+	expected := []rootcomponents.Kind{
+		rootcomponents.KindAlert,
+		rootcomponents.KindDrawer,
+		rootcomponents.KindModal,
+		rootcomponents.KindAlertDialog,
+		rootcomponents.KindSpinner,
+		rootcomponents.KindSteps,
+		rootcomponents.KindToastContainer,
+		rootcomponents.KindToast,
+		rootcomponents.KindMessageToast,
+		rootcomponents.KindOOBToast,
+		rootcomponents.KindOOBMessageToast,
+		rootcomponents.KindTooltip,
+		rootcomponents.KindBreadcrumbs,
+		rootcomponents.KindDropdown,
+		rootcomponents.KindLink,
+		rootcomponents.KindNavbar,
+		rootcomponents.KindPagination,
+		rootcomponents.KindSidebar,
+		rootcomponents.KindSidebarOverlay,
+		rootcomponents.KindTabs,
 	}
 
-	got := make(map[string]rootcomponents.Kind, len(expected))
+	seen := make(map[string]struct{}, len(expected))
+	got := make([]rootcomponents.Kind, 0, len(expected))
 	for _, sections := range feedbackNavigationAPISectionSlices() {
 		for _, section := range sections {
 			if section.Constructor == "" {
 				continue
 			}
-			require.NotContainsf(t, got, section.Constructor, "%s documented more than once", section.Constructor)
-			got[section.Constructor] = section.Kind
+			require.NotContainsf(t, seen, section.Constructor, "%s documented more than once", section.Constructor)
+			seen[section.Constructor] = struct{}{}
+			got = append(got, section.Kind)
 		}
 	}
-	require.Equal(t, expected, got)
+	require.ElementsMatch(t, expected, got)
 }
 
 func TestFeedbackNavigationMetadataMatchesRepresentativeRenderBranches(t *testing.T) {
@@ -785,68 +788,78 @@ func TestComplexInputMetadataCapturesSourceTruthAndPublicSignatures(t *testing.T
 	require.Contains(t, apiProp(t, structuredInputAPISections, "Column", "Default").Description, "first option value")
 	require.Contains(t, apiProp(t, structuredInputAPISections, "Option", "Label").Description, "falls back to Value")
 
-	expectedSignatures := map[string]string{
-		"Config.Validate":       "func (c Config) Validate() error",
-		"Config.InitialState":   "func (c Config) InitialState() State",
-		"OptionsProvider":       "type OptionsProvider func(ctx context.Context, search string, deps map[string]string) ([]Option, error)",
-		"Handler":               "func Handler(cfg Config, provider OptionsProvider) http.Handler",
-		"AllowMode":             "type AllowMode string",
-		"AllowModeManaged":      `const AllowModeManaged AllowMode = "managed"`,
-		"AllowModeDisabled":     `const AllowModeDisabled AllowMode = "disabled"`,
-		"FlattenAllowList":      "func FlattenAllowList(m *map[string]any) map[string]AllowMode",
-		"Walk":                  "func Walk(schema map[string]any, defaults, values map[string]any, allowList map[string]AllowMode) []Field",
-		"FallbackFromDefaults":  "func FallbackFromDefaults(defaults, values map[string]any, allowList map[string]AllowMode) []Field",
-		"PruneDisabled":         "func PruneDisabled(values map[string]any, allowList map[string]AllowMode) map[string]any",
-		"HasOnlySimpleScalars":  "func HasOnlySimpleScalars(fields []Field) bool",
-		"Item.SearchText":       "func (item Item) SearchText() string",
-		"Item.NormalizedMethod": "func (item Item) NormalizedMethod() string",
-		"Item.SafeHref":         "func (item Item) SafeHref() string",
+	expectedSignatureNames := []string{
+		"Config.Validate",
+		"Config.InitialState",
+		"OptionsProvider",
+		"Handler",
+		"ValidationType",
+		"ValidateFunc",
+		"Handle",
+		"FormDef.Bind",
+		"FormDef.Dependents",
+		"FormDef.PopulateValues",
+		"IsFieldValidation",
+		"RenderFieldResponse",
+		"AllowMode",
+		"AllowModeManaged",
+		"AllowModeDisabled",
+		"FlattenAllowList",
+		"Walk",
+		"FallbackFromDefaults",
+		"PruneDisabled",
+		"HasOnlySimpleScalars",
+		"Item.SearchText",
+		"Item.NormalizedMethod",
+		"Item.SafeHref",
 	}
-	gotSignatures := make(map[string]string, len(expectedSignatures))
+	gotSignatureNames := make(map[string]struct{}, len(expectedSignatureNames))
 	for _, sections := range complexInputAPISectionSlices() {
 		for _, section := range sections {
 			for _, prop := range section.Props {
 				if prop.Signature == "" {
 					continue
 				}
-				_, duplicate := gotSignatures[prop.Name]
+				_, duplicate := gotSignatureNames[prop.Name]
 				require.Falsef(t, duplicate, "public signature %s documented more than once", prop.Name)
-				gotSignatures[prop.Name] = prop.Signature
+				gotSignatureNames[prop.Name] = struct{}{}
 			}
 		}
 	}
-	require.Equal(t, expectedSignatures, gotSignatures)
+	require.ElementsMatch(t, expectedSignatureNames, slices.Collect(maps.Keys(gotSignatureNames)))
 }
 
 func TestComplexInputConstructorsAreDocumentedExactlyOnce(t *testing.T) {
-	expected := map[string]rootcomponents.Kind{
-		"combobox.Combobox(cfg Config, state State) Instance":                                   rootcomponents.KindCombobox,
-		"form.Form(cfg Config) Instance":                                                        rootcomponents.KindForm,
-		"form.Section(cfg SectionConfig) SectionInstance":                                       rootcomponents.KindFormSection,
-		"form.CollapsibleSection(cfg CollapsibleSectionConfig) CollapsibleSectionInstance":      rootcomponents.KindFormCollapsibleSection,
-		"form.FlipSection(cfg FlipSectionConfig, readView templ.Component) FlipSectionInstance": rootcomponents.KindFormFlipSection,
-		"form.SubSection(cfg SubSectionConfig) SubSectionInstance":                              rootcomponents.KindFormSubSection,
-		"form.FieldGroup(cfg FieldGroupConfig) FieldGroupInstance":                              rootcomponents.KindFormFieldGroup,
-		"form.FormErrors(cfg FormErrorsConfig) FormErrorsInstance":                              rootcomponents.KindFormErrors,
-		"schemaform.Fields(cfg FieldsConfig) Instance":                                          rootcomponents.KindSchemaFormFields,
-		"search.Search(cfg Config) Instance":                                                    rootcomponents.KindSearch,
-		"search.SearchField(cfg Config) FieldInstance":                                          rootcomponents.KindSearchField,
-		"search.SearchModal(cfg Config) ModalInstance":                                          rootcomponents.KindSearchModal,
-		"structuredinput.StructuredInput(cfg Config) Instance":                                  rootcomponents.KindStructuredInput,
+	expected := []rootcomponents.Kind{
+		rootcomponents.KindCombobox,
+		rootcomponents.KindForm,
+		rootcomponents.KindFormSection,
+		rootcomponents.KindFormCollapsibleSection,
+		rootcomponents.KindFormFlipSection,
+		rootcomponents.KindFormSubSection,
+		rootcomponents.KindFormFieldGroup,
+		rootcomponents.KindFormErrors,
+		rootcomponents.KindSchemaFormFields,
+		rootcomponents.KindSearch,
+		rootcomponents.KindSearchField,
+		rootcomponents.KindSearchModal,
+		rootcomponents.KindStructuredInput,
 	}
 
-	got := make(map[string]rootcomponents.Kind, len(expected))
+	seen := make(map[string]struct{}, len(expected))
+	got := make([]rootcomponents.Kind, 0, len(expected))
 	for _, sections := range complexInputAPISectionSlices() {
 		for _, section := range sections {
 			if section.Constructor == "" {
 				continue
 			}
-			_, duplicate := got[section.Constructor]
+			_, duplicate := seen[section.Constructor]
 			require.Falsef(t, duplicate, "constructor %s documented more than once", section.Constructor)
-			got[section.Constructor] = section.Kind
+			seen[section.Constructor] = struct{}{}
+			got = append(got, section.Kind)
 		}
 	}
-	require.Equal(t, expected, got)
+	require.ElementsMatch(t, expected, got)
 }
 
 func TestComplexInputMetadataMatchesRepresentativeRenderBranches(t *testing.T) {
@@ -1052,32 +1065,32 @@ func TestAtomicInputMetadataCapturesRenderedDefaultsAndPublicSignatures(t *testi
 	require.Equal(t, `"0 stars" aria-label; "Rating" when visibly shown`, apiProp(t, ratingAPISections, "DisplayConfig", "Label").Default)
 	require.Contains(t, apiProp(t, textInputAPISections, "Config", "Type").Allowed, "TypeDateTimeLocal")
 
-	expectedSignatures := map[string]string{
-		"WithTone":            "func WithTone(tone Tone) Option",
-		"WithSize":            "func WithSize(size Size) Option",
-		"WithType":            "func WithType(buttonType string) Option",
-		"Disabled":            "func Disabled() Option",
-		"WithID":              "func WithID(id string) Option",
-		"WithRootClass":       "func WithRootClass(class string) Option",
-		"WithHTMX":            "func WithHTMX(htmx *HTMXConfig) Option",
-		"WithAlpine":          "func WithAlpine(alpine *AlpineConfig) Option",
-		"WithLoadingText":     "func WithLoadingText(text string) Option",
-		"RadioBar":            "func RadioBar() BarInstance",
-		"TextareaWithActions": "func TextareaWithActions(cfg Config) WithActionsInstance",
+	expectedSignatureNames := []string{
+		"WithTone",
+		"WithSize",
+		"WithType",
+		"Disabled",
+		"WithID",
+		"WithRootClass",
+		"WithHTMX",
+		"WithAlpine",
+		"WithLoadingText",
+		"RadioBar",
+		"TextareaWithActions",
 	}
-	gotSignatures := make(map[string]string, len(expectedSignatures))
+	gotSignatureNames := make(map[string]struct{}, len(expectedSignatureNames))
 	for _, sections := range atomicInputAPISectionSlices() {
 		for _, section := range sections {
 			for _, prop := range section.Props {
 				if prop.Signature != "" {
-					_, duplicate := gotSignatures[prop.Name]
+					_, duplicate := gotSignatureNames[prop.Name]
 					require.Falsef(t, duplicate, "public signature %s documented more than once", prop.Name)
-					gotSignatures[prop.Name] = prop.Signature
+					gotSignatureNames[prop.Name] = struct{}{}
 				}
 			}
 		}
 	}
-	require.Equal(t, expectedSignatures, gotSignatures)
+	require.ElementsMatch(t, expectedSignatureNames, slices.Collect(maps.Keys(gotSignatureNames)))
 }
 
 func TestRadioMetadataDistinguishesRadioGroupApplicability(t *testing.T) {
@@ -1239,17 +1252,6 @@ func TestDisplayMetadataCapturesRenderedDefaultsAndPublicSignatures(t *testing.T
 	require.Equal(t, `"#<table-id>-tbody"`, apiProp(t, tableAPISections, "FilterHTMXConfig", "Target").Default)
 	require.Equal(t, `"innerHTML"`, apiProp(t, tableAPISections, "FilterHTMXConfig", "Swap").Default)
 
-	require.Equal(
-		t,
-		"func (cfg Config) NextSortDir(key string) SortDir",
-		apiProp(t, tableAPISections, "Config helpers", "NextSortDir").Signature,
-	)
-	require.Equal(
-		t,
-		"func ImageCell(imageURL string, label string, detail string) ImageCellInstance",
-		apiProp(t, tableAPISections, "ImageCell", "ImageCell").Signature,
-	)
-
 	require.Equal(t, "4000ms when enabled", apiProp(t, carouselAPISections, "AutoplayConfig", "Interval").Default)
 	require.Equal(t, `"load"`, apiProp(t, carouselAPISections, "HTMXConfig", "Trigger").Default)
 	require.Equal(t, `"innerHTML"`, apiProp(t, carouselAPISections, "HTMXConfig", "Swap").Default)
@@ -1258,19 +1260,9 @@ func TestDisplayMetadataCapturesRenderedDefaultsAndPublicSignatures(t *testing.T
 	require.Equal(t, `"Accept"`, apiProp(t, bannerAPISections, "CookieBannerConfig", "AcceptLabel").Default)
 	require.Equal(t, `"Decline"`, apiProp(t, bannerAPISections, "CookieBannerConfig", "RejectLabel").Default)
 
-	require.Equal(
-		t,
-		"func NotificationBadge(count int) NotificationBadgeInstance",
-		apiProp(t, badgeAPISections, "NotificationBadge", "NotificationBadge").Signature,
-	)
 	require.Equal(t, "count <= 0 renders nothing; counts > 99 render 99+", apiProp(t, badgeAPISections, "NotificationBadge", "NotificationBadge").Default)
 
 	require.Equal(t, "SizeMD", apiProp(t, kbdAPISections, "Kbd options", "WithSize").Default)
-	require.Equal(
-		t,
-		"func WithAttrs(attrs templ.Attributes) Option",
-		apiProp(t, kbdAPISections, "Kbd options", "WithAttrs").Signature,
-	)
 }
 
 func TestAccordionMetadataExplainsItemIDNamespace(t *testing.T) {

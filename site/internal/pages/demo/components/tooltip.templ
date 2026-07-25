@@ -10,7 +10,7 @@ var tooltipAPISections = []demo.APISection{
 	demo.OptionsAPI(
 		rootcomponents.KindTooltip,
 		"Tooltip options",
-		"tooltip.Tooltip(id string, label string, options ...Option) Instance",
+		"tooltip.Tooltip(id, label string, options ...Option) Instance",
 		"Creates a tooltip from a required content ID and required accessible label, then applies functional options over the documented defaults.",
 		[]demo.APIPropDoc{
 			{Name: "id", Signature: "id string", Default: "required", Description: "Unique tooltip-content ID used by aria-describedby and custom-trigger wiring.", Required: true},

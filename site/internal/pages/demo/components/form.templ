@@ -174,7 +174,7 @@ var formAPISections = []demo.APISection{
 		[]demo.APIPropDoc{
 			{Name: "Type", Default: "ValidationSubmit", Allowed: []string{"ValidationSubmit", "ValidationFieldChange", "ValidationDependency"}, Description: "Identifies full-form submission, direct field change, or dependent-field validation."},
 			{Name: "TriggerField", Default: `"" for full-form submit`, Description: "Names the field that initiated field-change or dependency validation."},
-			{Name: "FormValues", Default: "nil", Description: "Contains all parsed form values supplied to the validation hook."},
+			{Name: "FormValues", Default: "non-nil parsed map when created by Handle; nil only in manually constructed contexts", Description: "Contains the first value for each submitted key supplied to every validation hook invocation."},
 		},
 	),
 	demo.StructAPI[formvalidation.FormDef](
@@ -195,7 +195,7 @@ var formAPISections = []demo.APISection{
 		"Defines one mutable field configuration and its dependency behavior.",
 		[]demo.APIPropDoc{
 			{Name: "Name", Default: `""`, Description: "Submitted field name used as the definition key and validation target."},
-			{Name: "FieldGroup", Default: "nil", Description: "FieldGroup configuration mutated by the validation hook before rendering."},
+			{Name: "FieldGroup", Default: "required for Bind and PopulateValues", Description: "FieldGroup configuration mutated by the validation hook before rendering. Nil is invalid in the standard lifecycle because Bind and PopulateValues dereference it.", Required: true},
 			{Name: "DependsOn", Default: "nil", Description: "Names fields whose changes also trigger validation for this field."},
 			{Name: "OnChange", Default: "false", Description: "Enables direct field-level validation on change."},
 		},
@@ -206,10 +206,26 @@ var formAPISections = []demo.APISection{
 		"",
 		"Reports the validated primary field, affected dependents, and complete field map.",
 		[]demo.APIPropDoc{
-			{Name: "Valid", Default: "false", Description: "Reports whether the validation operation succeeded."},
+			{Name: "Valid", Default: "true when created by Handle", Description: "Starts true and becomes false when any validation hook returns false."},
 			{Name: "Primary", Default: "nil", Description: "Points to the field definition directly selected for validation."},
 			{Name: "Dependents", Default: "nil", Description: "Lists field definitions revalidated because they depend on the trigger field."},
 			{Name: "AllFields", Default: "nil", Description: "Contains the complete field-definition map after validation mutations."},
+		},
+	),
+	demo.FunctionsAPI(
+		"",
+		"validation operations",
+		"",
+		"Public types and operations that drive the form-validation lifecycle and field-level HTMX responses.",
+		[]demo.APIPropDoc{
+			{Name: "ValidationType", Signature: "type ValidationType int", Default: "ValidationSubmit", Allowed: []string{"ValidationSubmit", "ValidationFieldChange", "ValidationDependency"}, Description: "Identifies a full submit, the directly changed field, or a field reached through a dependency."},
+			{Name: "ValidateFunc", Signature: "type ValidateFunc func(ctx ValidationContext, name string, fg *form.FieldGroupConfig) bool", Default: "required by Handle", Description: "Receives each selected mutable FieldGroupConfig and returns whether that field is valid."},
+			{Name: "Handle", Signature: "func Handle(r *http.Request, def *FormDef, validate ValidateFunc) *Result", Default: "Result.Valid initialized true", Description: "Parses the request into a non-nil first-value map, populates configured inputs, selects submit or field/dependency validation, and creates a Result with Result.Valid initialized true before setting it false when any hook fails."},
+			{Name: "FormDef.Bind", Signature: "func (fd *FormDef) Bind()", Default: "mutates every configured FieldGroup", Description: "Adds FieldMeta, generates an ID when empty, and installs change validation for OnChange fields. Every FieldDef must have a non-nil FieldGroup."},
+			{Name: "FormDef.Dependents", Signature: "func (fd *FormDef) Dependents(fieldName string) []string", Default: "nil when no direct dependents exist", Description: "Returns only direct dependent field names; traversal is non-transitive."},
+			{Name: "FormDef.PopulateValues", Signature: "func (fd *FormDef) PopulateValues(values map[string]string)", Default: "missing submitted values become empty or unchecked", Description: "Copies submitted values into supported input, textarea, toggle, and checkbox configs. Every FieldDef must have a non-nil FieldGroup."},
+			{Name: "IsFieldValidation", Signature: "func IsFieldValidation(r *http.Request) bool", Default: "false unless X-Goshtoso-Validation equals field", Description: "Parses the request form and distinguishes field-level validation from full submission."},
+			{Name: "RenderFieldResponse", Signature: "func RenderFieldResponse(ctx context.Context, w http.ResponseWriter, result Result) error", Default: "empty body when Primary and Dependents are nil", Description: "Writes the primary FieldGroup as the main response, renders dependents as out-of-band swaps, restores each dependent OOB flag, and returns the first render error."},
 		},
 	),
 	demo.StructAPI[form.FormErrorsConfig](
