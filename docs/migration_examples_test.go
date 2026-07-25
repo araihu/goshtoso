@@ -20,6 +20,7 @@ import (
 )
 
 const (
+	releaseTag        = "v0.0.12"
 	releaseBaseTag    = "v0.0.11"
 	releaseBaseCommit = "10b4dcbf3da3c1dd534d8d2baa949d043b9d0f1f"
 )
@@ -147,7 +148,7 @@ func TestReleaseMigrationDocsLockBaseAndEntryPoints(t *testing.T) {
 	}
 
 	for _, required := range []string{
-		"Unreleased",
+		releaseTag,
 		"Breaking",
 		"v0.0.11",
 		"docs/MIGRATING_COMPONENT_API.md",
@@ -156,7 +157,11 @@ func TestReleaseMigrationDocsLockBaseAndEntryPoints(t *testing.T) {
 			t.Errorf("CHANGELOG.md missing %q", required)
 		}
 	}
+	if strings.Contains(changelog, "[Unreleased]") || strings.Contains(guide, "**Unreleased**") {
+		t.Error("release documentation still presents v0.0.12 as unreleased")
+	}
 	for _, required := range []string{
+		releaseTag,
 		"v0.0.11",
 		"Source-breaking",
 		"Behavior and effective defaults",

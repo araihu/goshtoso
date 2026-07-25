@@ -46,12 +46,22 @@ jobs:
 
       - name: Release notes
         run: |
+          tag="${GITHUB_REF_NAME}"
           ver="$(cat assets/tailwind.version)"
+          awk -v heading="## [${tag}]" '
+            index($0, heading) == 1 { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+            END { if (!found) exit 1 }
+          ' CHANGELOG.md > release-notes.md
           {
+            echo
+            echo "## Build artifacts"
+            echo
             echo "Built with Tailwind CSS ${ver}."
             echo
             echo "Assets attached: \`styles.css\` (serve directly) and \`goshtoso-theme.css\` (import into your own Tailwind v4 build)."
-          } > release-notes.md
+          } >> release-notes.md
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
@@ -73,24 +83,3 @@ jobs:
           label: release
           message: ${{ github.ref_name }}
           color: blue
-
-      # The site module tracks released library tags (not every main SHA).
-      # Bump its require to this tag and commit the pin back to main.
-      - name: Bump site module to released library tag
-        run: |
-          set -euo pipefail
-          tag="${GITHUB_REF_NAME}"
-          git fetch origin main
-          git checkout -B main origin/main
-          # GOPROXY=direct fetches the tag straight from the VCS — the public
-          # module proxy can lag minutes behind a freshly pushed tag.
-          (cd site && GOPROXY=direct go get "github.com/araihu/goshtoso@${tag}" && go mod tidy)
-          if git diff --quiet -- site/go.mod site/go.sum; then
-            echo "site already pinned to ${tag} — nothing to commit"
-            exit 0
-          fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add site/go.mod site/go.sum
-          git commit -m "chore(site): pin library to ${tag} [skip ci]"
-          git push origin main

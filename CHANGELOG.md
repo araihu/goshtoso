@@ -2,14 +2,12 @@
 
 All notable changes to Goshtoso are documented in this file.
 
-## [Unreleased]
+## [v0.0.12] - 2026-07-25
 
 ### Breaking component API changes
 
-This is an intentionally **Breaking** alpha release line. The exact migration
-base is `v0.0.11`
-(`10b4dcbf3da3c1dd534d8d2baa949d043b9d0f1f`). No next version or release date
-has been assigned.
+This is an intentionally **Breaking** alpha release. The exact migration base
+is `v0.0.11` (`10b4dcbf3da3c1dd534d8d2baa949d043b9d0f1f`).
 
 Read the complete [component API migration guide](docs/MIGRATING_COMPONENT_API.md)
 before upgrading.
@@ -65,4 +63,4 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
-[Unreleased]: https://github.com/araihu/goshtoso/compare/v0.0.11...main
+[v0.0.12]: https://github.com/araihu/goshtoso/compare/v0.0.11...v0.0.12

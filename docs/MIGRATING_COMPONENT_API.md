@@ -1,8 +1,7 @@
 # Migrating the component API from v0.0.11
 
-This guide covers the breaking component API changes in the current
-**Unreleased** development line, using `v0.0.11` as the exact comparison base.
-The base tag resolves to commit
+This guide covers the breaking component API changes in `v0.0.12`, using
+`v0.0.11` as the exact comparison base. The base tag resolves to commit
 `10b4dcbf3da3c1dd534d8d2baa949d043b9d0f1f`.
 
 Goshtoso is still alpha. This migration deliberately removes accidental public
