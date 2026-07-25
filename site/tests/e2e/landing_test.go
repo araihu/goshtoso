@@ -29,14 +29,61 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		h1 := page.Locator("#hero h1")
 		txt, err := h1.InnerText()
 		require.NoError(t, err)
-		require.Equal(t, "Goshtoso", txt)
+		require.Equal(t, "Build Go interfaces that feel alive.", txt)
 		body, err := page.Locator("body").InnerText()
 		require.NoError(t, err)
 		require.NotContains(t, body, "Build interactive UIs in Go")
 	})
 
+	t.Run("ProductSpecificFirstViewport", func(t *testing.T) {
+		preview := page.Locator("#hero [data-hero-preview]")
+		visible, err := preview.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "hero should show a real Goshtoso component surface")
+
+		text, err := preview.InnerText()
+		require.NoError(t, err)
+		require.Contains(t, text, "Ready to ship")
+		require.Contains(t, text, "templ DeployPanel()")
+		require.Contains(t, text, "Typed props in, accessible HTML out")
+		require.Contains(t, text, "Deploy")
+	})
+
+	t.Run("HomepageNavigation", func(t *testing.T) {
+		nav := page.Locator("#hero nav[aria-label='Primary navigation']")
+		visible, err := nav.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible)
+		count, err := nav.Locator("a[href='/getting-started']").Count()
+		require.NoError(t, err)
+		require.Equal(t, 1, count)
+	})
+
+	t.Run("MainLandmarkAndSkipLink", func(t *testing.T) {
+		main := page.Locator("main#main-content")
+		count, err := main.Count()
+		require.NoError(t, err)
+		require.Equal(t, 1, count, "standalone homepage should expose one main landmark")
+
+		skip := page.Locator("a[href='#hero-content']")
+		count, err = skip.Count()
+		require.NoError(t, err)
+		require.Equal(t, 1, count, "keyboard users should be able to skip the homepage navigation")
+		require.NoError(t, skip.Focus())
+		require.NoError(t, skip.Press("Enter"))
+		activeID, err := page.Evaluate("() => document.activeElement && document.activeElement.id", nil)
+		require.NoError(t, err)
+		require.Equal(t, "hero-content", activeID, "skip link should move keyboard focus beyond the site navigation")
+	})
+
+	t.Run("HomepageHasNoRemoteFontDependency", func(t *testing.T) {
+		count, err := page.Locator("link[href*='fonts.googleapis.com'], link[href*='fonts.gstatic.com']").Count()
+		require.NoError(t, err)
+		require.Zero(t, count, "homepage typography should work without a third-party font request")
+	})
+
 	t.Run("BrowseComponentsCTA", func(t *testing.T) {
-		cta := page.Locator("#hero a[href='/components/accordion']")
+		cta := page.Locator("#hero a[data-primary-cta][href='/components/accordion']")
 		visible, err := cta.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "Browse components CTA should be visible")
@@ -55,7 +102,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		txt, err := lockup.InnerText()
 		require.NoError(t, err)
 		require.Contains(t, txt, "Goshtoso")
-		require.Contains(t, txt, "Go UI components for server-rendered apps")
+		require.Contains(t, txt, "Server-rendered Go UI")
 	})
 
 	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {
@@ -82,15 +129,31 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		checked, err := page.Locator("#home-theme-picker input[data-theme-key='dracula']").IsChecked()
 		require.NoError(t, err)
 		require.True(t, checked, "selected theme segment should be checked")
+
+		stored, err := page.Evaluate("() => localStorage.getItem('theme')", nil)
+		require.NoError(t, err)
+		require.Nil(t, stored, "theme choice must not persist before explicit storage consent")
+
+		require.NoError(t, page.Locator("button", playwright.PageLocatorOptions{HasText: "Allow browser storage"}).Click())
+		require.NoError(t, page.Locator("#home-theme-picker label:has(input[data-theme-key='minimal'])").Click())
+		stored, err = page.Evaluate("() => localStorage.getItem('theme')", nil)
+		require.NoError(t, err)
+		require.Equal(t, "minimal", stored, "theme choice should persist after explicit storage consent")
 	})
 
 	t.Run("LiveTableLoadsRows", func(t *testing.T) {
-		// lazy table fetches rows via HTMX on load
+		// The table is intentionally lazy. Bring it into the viewport, then prove
+		// the HTMX response replaced the loading placeholder with real cells.
+		require.NoError(t, page.Locator("#home-table").ScrollIntoViewIfNeeded())
 		_, err := page.WaitForFunction(
-			"() => document.querySelectorAll('#home-table tbody tr').length > 0", nil,
+			"() => { const body = document.querySelector('#home-table tbody'); return body && body.querySelector('td') && !body.textContent.includes('Loading...'); }", nil,
 			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)},
 		)
 		require.NoError(t, err, "live HTMX table should populate rows")
+		text, err := page.Locator("#home-table tbody").InnerText()
+		require.NoError(t, err)
+		require.NotContains(t, text, "Loading...")
+		require.Contains(t, text, "Sarah Adams")
 	})
 
 	t.Run("PlaygroundOmitsServerEndpointCopy", func(t *testing.T) {
@@ -131,10 +194,11 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 			img := images.Nth(i)
 			src, err := img.GetAttribute("src")
 			require.NoError(t, err)
-			require.Contains(t, src, "/assets/images/homepage/examples/", "example card image should be served from embedded assets")
+			require.Contains(t, src, "/assets/images/homepage/examples/", "example screenshot should be served from embedded assets")
 			alt, err := img.GetAttribute("alt")
 			require.NoError(t, err)
-			require.NotEmpty(t, alt, "example card image should have alt text")
+			require.NotEmpty(t, alt, "example screenshot should have alt text")
+			require.NotContains(t, alt, "Abstract", "gallery should show the real example interfaces")
 		}
 	})
 
