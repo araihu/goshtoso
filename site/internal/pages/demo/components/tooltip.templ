@@ -1,29 +1,9 @@
 package components
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var tooltipAPISections = []demo.APISection{
-	demo.OptionsAPI(
-		"github.com/araihu/goshtoso/components/tooltip",
-		rootcomponents.KindTooltip,
-		"Tooltip options",
-		"tooltip.Tooltip(id, label string, options ...Option) Instance",
-		"Creates a tooltip from a required content ID and required accessible label, then applies functional options over the documented defaults.",
-		[]demo.APIPropDoc{
-			{Name: "id", Signature: "id string", Default: "required", Description: "Unique tooltip-content ID used by aria-describedby and custom-trigger wiring.", Required: true},
-			{Name: "label", Signature: "label string", Default: "required", Description: "Tooltip text, or the heading in rich mode.", Required: true},
-			{Name: "WithDescription", Signature: "func WithDescription(description string) Option", Default: `"" (simple tooltip)`, Description: "Non-empty secondary text selects the rich hover/focus renderer unless click activation takes precedence."},
-			{Name: "WithPosition", Signature: "func WithPosition(position Position) Option", Default: "PositionTop", Allowed: []string{"PositionTop", "PositionBottom", "PositionLeft", "PositionRight"}, Description: "Sets placement relative to the trigger; empty or unknown values use top."},
-			{Name: "WithActivation", Signature: "func WithActivation(activation Activation) Option", Default: "ActivationHover", Allowed: []string{"ActivationHover", "ActivationClick"}, Description: "ActivationClick selects the Alpine click renderer; empty or unknown values use hover and focus styling."},
-			{Name: "WithTriggerLabel", Signature: "func WithTriggerLabel(label string) Option", Default: `"Hover Me"`, Description: "Sets visible text on the built-in trigger button. It is ignored when WithTrigger supplies custom content."},
-			{Name: "WithTrigger", Signature: "func WithTrigger(trigger templ.Component) Option", Default: "nil (built-in trigger labeled \"Hover Me\")", Description: "Replaces the built-in button. Runtime wiring annotates the first eligible focusable descendant or makes a non-interactive wrapper focusable."},
-		},
-	),
-}
 
 // TooltipDemoPage renders the Tooltip component demo
 templ TooltipDemoPage() {
@@ -71,8 +51,6 @@ templ tooltipDemoContent() {
 )`,
 		)
 	</div>
-	// API reference lives outside #tooltip-fragment.
-	@demo.StructuredAPIReference(tooltipAPISections)
 }
 
 // tooltipDefaultPreview renders the four hover positions.

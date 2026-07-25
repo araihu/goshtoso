@@ -9,28 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/drawer"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var drawerAPISections = []demo.APISection{
-	demo.StructAPI[drawer.Config](
-		rootcomponents.KindDrawer,
-		"Config",
-		"drawer.Drawer(cfg Config) Instance",
-		"Configures an Alpine-controlled slide-over dialog opened and closed through ID-scoped drawer events.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: "required", Description: "Scopes Alpine state and drawer events and derives the title and default body IDs.", Required: true},
-			{Name: "Title", Default: "required", Description: "Visible heading referenced by aria-labelledby.", Required: true},
-			{Name: "Side", Default: "SideRight", Allowed: []string{"SideRight", "SideLeft"}, Description: "Selects the edge and transition direction."},
-			{Name: "Width", Default: "WidthMD", Allowed: []string{"WidthSM", "WidthMD", "WidthLG", "WidthXL", "WidthFull"}, Description: "Selects the panel maximum width; empty or unknown values use the 420px medium preset."},
-			{Name: "BodyID", Default: `"<ID>-body"`, Description: "Sets the scrollable body slot ID for direct HTMX targeting."},
-			{Name: "Persistent", Default: "false", Description: "When true, disables backdrop and Escape dismissal; the close button and close events remain active."},
-			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the sliding panel, not the backdrop."},
-		},
-	),
-}
 
 // DrawerDemoPage renders the Drawer component demo.
 func DrawerDemoPage() templ.Component {
@@ -165,10 +146,6 @@ func drawerDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(drawerAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

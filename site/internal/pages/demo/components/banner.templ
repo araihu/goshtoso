@@ -1,66 +1,9 @@
 package components
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/banner"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var bannerAPISections = []demo.APISection{
-	demo.StructAPI[banner.Config](
-		rootcomponents.KindBanner,
-		"Config",
-		"",
-		"Configures an announcement banner.",
-		[]demo.APIPropDoc{
-			{Name: "Description", Default: `""`, Description: "Visible announcement text.", Required: true},
-			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "TonePrimary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Semantic color treatment."},
-			{Name: "Position", Default: "PositionRelative", Allowed: []string{"PositionRelative", "PositionFixed"}, Description: "Inline flow or fixed top-of-viewport placement."},
-			{Name: "Persistent", Default: "false (dismissible)", Description: "Hides the dismiss button when true."},
-			{Name: "DismissAction", Default: `"show = false"`, Description: "Alpine expression executed by the dismiss button."},
-			{Name: "CTA", Default: "nil", Description: "Optional inline call to action."},
-			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the banner root."},
-		},
-	),
-	demo.StructAPI[banner.CTAConfig](
-		"",
-		"CTAConfig",
-		"",
-		"Configures the banner's optional link or button action.",
-		[]demo.APIPropDoc{
-			{Name: "ActionLabel", Default: `""`, Description: "Visible action label.", Required: true},
-			{Name: "Href", Default: `""`, Description: "When non-empty, renders the action as a link."},
-			{Name: "OnClick", Default: `""`, Description: "Alpine expression used by the button path when Href is empty."},
-		},
-	),
-	demo.StructAPI[banner.CookieBannerConfig](
-		rootcomponents.KindCookieBanner,
-		"CookieBannerConfig",
-		"",
-		"Configures the fixed cookie-consent dialog.",
-		[]demo.APIPropDoc{
-			{Name: "Title", Default: `"Cookie Consent"`, Description: "Dialog heading."},
-			{Name: "Description", Default: `""`, Description: "Consent message body.", Required: true},
-			{Name: "Icon", Default: `"🍪"`, Description: "Optional heading icon; a cookie emoji renders when nil."},
-			{Name: "AcceptLabel", Default: `"Accept"`, Description: "Accept-button label."},
-			{Name: "RejectLabel", Default: `"Decline"`, Description: "Reject-button label."},
-			{Name: "AcceptAction", Default: `""`, Description: "Alpine expression executed by the accept button."},
-			{Name: "RejectAction", Default: `""`, Description: "Alpine expression executed by the reject button."},
-			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the dialog root."},
-		},
-	),
-	demo.FunctionsAPI(
-		"github.com/araihu/goshtoso/components/banner",
-		"",
-		"Constructors",
-		"",
-		"Constructs announcement and cookie-consent banners.",
-		[]demo.APIPropDoc{
-			{Name: "Banner", Signature: "func Banner(cfg Config) Instance", Default: "n/a", Description: "Creates an announcement banner."},
-			{Name: "CookieBanner", Signature: "func CookieBanner(cfg CookieBannerConfig) CookieBannerInstance", Default: "n/a", Description: "Creates a cookie-consent dialog."},
-		},
-	),
-}
 
 // BannerDemoPage renders the Banner component demo
 templ BannerDemoPage() {
@@ -136,8 +79,6 @@ templ bannerDemoContent() {
 })`,
 		)
 	</div>
-	// API reference lives outside #banner-fragment.
-	@demo.StructuredAPIReference(bannerAPISections)
 }
 
 // bannerSimplePreview renders the default dismissible banner.

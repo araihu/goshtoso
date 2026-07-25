@@ -9,32 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var dependenciesAPISections = []demo.APISection{
-	demo.FunctionsAPI(
-		"github.com/araihu/goshtoso/components/head",
-		rootcomponents.KindDependencies,
-		"Dependencies",
-		"",
-		"Loads the complete local runtime required by all Goshtoso components.",
-		[]demo.APIPropDoc{
-			{Name: "Dependencies", Signature: "func Dependencies() Instance", Default: "n/a", Description: "Renders styles.css, Alpine collapse and focus plugins, Alpine core, HTMX, and combobox.js from /assets/."},
-		},
-	),
-	demo.FunctionsAPI(
-		"github.com/araihu/goshtoso/components/head",
-		rootcomponents.KindDependenciesMinimal,
-		"DependenciesMinimal",
-		"",
-		"Loads the local runtime without Alpine's collapse and focus plugins.",
-		[]demo.APIPropDoc{
-			{Name: "DependenciesMinimal", Signature: "func DependenciesMinimal() MinimalInstance", Default: "n/a", Description: "Renders styles.css, Alpine core, HTMX, and combobox.js from /assets/."},
-		},
-	),
-}
 
 // DependenciesDemoPage renders the head.Dependencies component demo.
 func DependenciesDemoPage() templ.Component {
@@ -134,10 +110,6 @@ http.Handle("/assets/", assets.Handler())`,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(dependenciesAPISections).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		return nil
 	})
 }
@@ -170,7 +142,7 @@ func dependenciesFullPreview() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("@head.Dependencies()\n\n/assets/styles.css\n/assets/js/runtime/alpinejs\n/assets/js/runtime/htmx\n/assets/js/combobox.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/dependencies.templ`, Line: 76, Col: 268}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/dependencies.templ`, Line: 51, Col: 268}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

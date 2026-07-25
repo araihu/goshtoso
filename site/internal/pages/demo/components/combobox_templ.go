@@ -9,83 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	combobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var comboboxAPISections = []demo.APISection{
-	demo.StructAPI[combobox.Config](
-		rootcomponents.KindCombobox,
-		"Config",
-		"combobox.Combobox(cfg Config, state State) Instance",
-		"Configures the combobox shell and its client- or server-mode integration. Validate enforces the usable server contract; the renderer itself does not call Validate.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"" (Validate error)`, Description: "Globally unique root ID; also prefixes the trigger, body, options, and trigger-label IDs. Handler registration panics when the same ID is registered twice.", Required: true},
-			{Name: "Name", Default: `"" (Validate error)`, Description: "Name used by one hidden input per selected value.", Required: true},
-			{Name: "Label", Default: `"" (omitted)`, Description: "Visible label above the trigger."},
-			{Name: "Placeholder", Default: `"Select…"`, Description: "Trigger text when State.Selected is empty; the literal fallback is used when this field is empty."},
-			{Name: "Mode", Default: "ModeSingle", Allowed: []string{"ModeSingle", "ModeMultiple"}, Description: "Selects single-value replacement or multi-value membership toggling. Single mode closes the client dropdown after a selection."},
-			{Name: "Source", Default: "Source{} (Validate error)", Description: "Exactly one source mode is required by Validate: non-empty Static selects client mode, while non-empty LazyEndpoint selects server mode.", Required: true},
-			{Name: "Selected", Default: "nil", Description: "Initial selection copied by InitialState. Combobox renders State.Selected, so this field has no direct effect when callers construct State themselves."},
-			{Name: "EnableSearch", Default: "false", Description: "Renders the search input. It issues GET requests to OptionsEndpoint after input changes; client-side option filtering is not implemented."},
-			{Name: "EnableClearAll", Default: "false", Description: "Renders a clear-all action. Client mode toggles it locally; server mode renders it only while State.Selected is non-empty and posts to ClearEndpoint."},
-			{Name: "Required", Default: "false (currently no rendered effect)", Description: "Retained exported flag that is not read by Validate or any render path; it does not add required or aria-required."},
-			{Name: "DependsOn", Default: "nil", Description: "Additional form field names included in server search, toggle, and clear requests through hx-include."},
-			{Name: "ToggleEndpoint", Default: `"" (Validate error in server mode)`, Description: "Server-mode POST URL used by enabled option rows.", Required: false},
-			{Name: "OptionsEndpoint", Default: `"" (Validate error in server mode)`, Description: "Server-mode GET URL used by the search input and provider-error retry action.", Required: false},
-			{Name: "ClearEndpoint", Default: `"" (Validate error in server mode)`, Description: "Server-mode POST URL used by the clear-all action.", Required: false},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the combobox root."},
-			{Name: "Disabled", Default: "false", Description: "Disables the trigger button. Option/search markup remains present but is unreachable through the disabled trigger."},
-		},
-	),
-	demo.StructAPI[combobox.Option](
-		"",
-		"Option",
-		"",
-		"Describes one selectable client- or server-provided option.",
-		[]demo.APIPropDoc{
-			{Name: "Value", Default: `""`, Description: "Selection and submitted value.", Required: true},
-			{Name: "Label", Default: `""`, Description: "Visible option text; an empty matching label remains empty, while an unmatched selected value falls back to the value."},
-			{Name: "Disabled", Default: "false", Description: "Keeps the option visible but marks it unavailable and removes server/client selection behavior."},
-		},
-	),
-	demo.StructAPI[combobox.Source](
-		"",
-		"Source",
-		"",
-		"Selects which combobox state workflow is used; Validate requires exactly one non-empty branch.",
-		[]demo.APIPropDoc{
-			{Name: "Static", Default: "nil", Description: "Non-empty in-memory options select client mode. Pass Config.InitialState or the same options through State so they render on first paint."},
-			{Name: "LazyEndpoint", Default: `""`, Description: "Any non-empty value selects server mode, but the value is not rendered or requested. OptionsEndpoint is the GET URL used by search and retry; Static and LazyEndpoint cannot both be set."},
-		},
-	),
-	demo.StructAPI[combobox.State](
-		"",
-		"State",
-		"",
-		"Carries the per-render option, selection, search, and dependency snapshot.",
-		[]demo.APIPropDoc{
-			{Name: "Options", Default: "nil (renders No matches found)", Description: "Options rendered into the list for this response."},
-			{Name: "Selected", Default: "nil", Description: "Current selected values; drives hidden inputs, labels, selected styling, and clear-all visibility."},
-			{Name: "Search", Default: `""`, Description: "Current search-input value on server-rendered responses."},
-			{Name: "Deps", Default: "nil", Description: "Dependency values populated by Handler responses for state transport; currently not read by the renderer."},
-		},
-	),
-	demo.FunctionsAPI(
-		"github.com/araihu/goshtoso/components/combobox",
-		"",
-		"Combobox server contracts",
-		"",
-		"Documents Config methods plus the server-side provider and handler contracts.",
-		[]demo.APIPropDoc{
-			{Name: "Config.Validate", Signature: "func (c Config) Validate() error", Default: "nil for a usable config", Description: "Requires ID, Name, exactly one Source branch, and all three endpoints in server mode."},
-			{Name: "Config.InitialState", Signature: "func (c Config) InitialState() State", Default: "State with Static options and Config.Selected", Description: "Builds first-paint client state; Search and Deps remain zero-valued."},
-			{Name: "OptionsProvider", Signature: "type OptionsProvider func(ctx context.Context, search string, deps map[string]string) ([]Option, error)", Default: "required by Handler", Description: "Receives the request context, q search term, and configured dependency values; returns the complete valid option set or an error."},
-			{Name: "Handler", Signature: "func Handler(cfg Config, provider OptionsProvider) http.Handler", Default: "n/a", Description: "Validates and registers cfg, then serves GET /options, POST /toggle, and POST /clear by path suffix. Unsupported method/path returns 404, form parse errors return 400, and provider errors return a 502 retry fragment."},
-		},
-	),
-}
 
 // IndustryCfg: client-mode single-select.
 var IndustryCfg = combobox.Config{
@@ -364,10 +290,6 @@ clustersProvider := func(ctx context.Context, search string, deps map[string]str
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(comboboxAPISections).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		return nil
 	})
 }
@@ -553,7 +475,7 @@ func comboboxClusterPreview() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(ClusterCfg.OptionsEndpoint)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/combobox.templ`, Line: 312, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/combobox.templ`, Line: 236, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {

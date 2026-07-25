@@ -7,8 +7,4 @@ exclude = [
   '^http://localhost(:[0-9]+)?/',
   '^https://localhost(:[0-9]+)?/',
   '^http://127\\.0\\.0\\.1(:[0-9]+)?/',
-  # These targets are created by this release PR. Remove both exclusions in
-  # the post-release site/version-link follow-up once main and v0.0.12 exist.
-  '^https://github\.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL\.md$',
-  '^https://github\.com/araihu/goshtoso/compare/v0\.0\.11\.\.\.v0\.0\.12$',
 ]

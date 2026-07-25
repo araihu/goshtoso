@@ -1,0 +1,44 @@
+package demo
+
+templ componentGoAPIReference(activeComponent string) {
+	{{ reference := componentGoAPIReferenceData(activeComponent) }}
+	if reference.PackagePath != "" {
+		<section
+			data-api-reference
+			data-go-api-reference
+			data-go-api-version={ reference.Version }
+			class="mt-10 scroll-mt-8 rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark"
+		>
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+				<div class="min-w-0">
+					<div class="mb-2 flex flex-wrap items-center gap-2">
+						<h2 id="api-reference" data-toc-heading class="scroll-mt-8 font-title text-lg font-semibold">Go API</h2>
+						<span class="rounded-radius border border-outline px-2 py-0.5 font-mono text-xs text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">
+							{ reference.Version }
+						</span>
+					</div>
+					<p class="max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+						The examples above cover behavior and composition. pkg.go.dev is the canonical reference for exported types, functions, methods, and Go documentation.
+					</p>
+					<code class="mt-3 block break-all font-mono text-xs text-on-surface-strong dark:text-on-surface-dark-strong">{ reference.PackagePath }</code>
+				</div>
+				if reference.Versioned {
+					<a
+						href={ templ.URL(reference.URL) }
+						target="_blank"
+						rel="noopener noreferrer"
+						data-go-api-link
+						class="inline-flex shrink-0 items-center justify-center gap-2 rounded-radius bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark-hover"
+					>
+						Open { reference.Version } API
+						<span aria-hidden="true">↗</span>
+					</a>
+				} else {
+					<p data-go-api-development class="max-w-xs text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+						An exact external API link is added to versioned builds.
+					</p>
+				}
+			</div>
+		</section>
+	}
+}

@@ -9,28 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/kbd"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var kbdAPISections = []demo.APISection{
-	demo.OptionsAPI(
-		"github.com/araihu/goshtoso/components/kbd",
-		rootcomponents.KindKbd,
-		"Kbd options",
-		"kbd.Kbd(text string, options ...Option) Instance",
-		"Pass visible key text followed by any functional options. For an icon-only key, use empty text with WithIcon and WithLabel.",
-		[]demo.APIPropDoc{
-			{Name: "WithLabel", Signature: "func WithLabel(label string) Option", Default: `""`, Description: "Sets the accessible label and icon-only screen-reader text."},
-			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMD", Allowed: []string{"SizeXS", "SizeSM", "SizeMD", "SizeLG"}, Description: "Sets the rendered key size."},
-			{Name: "WithIcon", Signature: "func WithIcon(icon templ.Component) Option", Default: "nil", Description: "Adds a leading or icon-only glyph."},
-			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the kbd element."},
-			{Name: "WithAttrs", Signature: "func WithAttrs(attrs templ.Attributes) Option", Default: "nil", Description: "Adds arbitrary attributes to the kbd element."},
-		},
-	),
-}
 
 // KbdDemoPage renders the KBD component demo.
 func KbdDemoPage() templ.Component {
@@ -178,10 +160,6 @@ func kbdDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(kbdAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -447,7 +425,7 @@ func kbdInlinePreview() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(" or to ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 167, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 148, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -932,7 +910,7 @@ func arrowKeyIcon(path string) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(path)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 272, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/kbd.templ`, Line: 253, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
 		if templ_7745c5c3_Err != nil {

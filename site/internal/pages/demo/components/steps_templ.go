@@ -10,44 +10,9 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/steps"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var stepsAPISections = []demo.APISection{
-	demo.StructAPI[steps.Config](
-		rootcomponents.KindSteps,
-		"Config",
-		"steps.Steps(cfg Config) Instance",
-		"Configures an ordered progress list in horizontal or vertical orientation.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"" (omitted)`, Description: "Sets the root ordered-list ID."},
-			{Name: "Steps", Default: "nil (empty list)", Description: "Progress items rendered in input order."},
-			{Name: "Orientation", Default: "OrientationHorizontal", Allowed: []string{"OrientationHorizontal", "OrientationVertical"}, Description: "Sets layout direction; every value other than OrientationVertical resolves to horizontal."},
-			{Name: "ShowLabels", Default: "false", Description: "Shows non-empty Step.Label text beside indicators."},
-			{Name: "AriaLabel", Default: `"progress"`, Description: "Sets the ordered list accessible label."},
-			{Name: "LiveRegion", Default: "false", Description: "When true, adds aria-live=polite and aria-atomic=true to the ordered list."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the ordered list."},
-			{Name: "RootAttrs", Default: "nil", Description: "Appends arbitrary attributes after modeled root attributes; conflicting keys can produce duplicate attributes."},
-		},
-	),
-	demo.StructAPI[steps.Step](
-		"",
-		"Step",
-		"",
-		"Describes one progress item.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"step-<1-based-index>"`, Description: "Sets the list-item ID; empty values are generated from the item index."},
-			{Name: "Label", Default: `""`, Description: "Visible text when Config.ShowLabels is true and the fallback accessible label when AriaLabel is empty."},
-			{Name: "AriaLabel", Default: `"Step.Label"`, Description: "Overrides the item accessible label; when both values are empty aria-label is omitted."},
-			{Name: "Number", Default: "1-based item index when 0", Description: "Overrides the displayed number for current and upcoming steps; completed steps render a check icon."},
-			{Name: "Status", Default: "StatusUpcoming", Allowed: []string{"StatusCompleted", "StatusCurrent", "StatusUpcoming"}, Description: "Sets indicator, connector, label, and aria-current treatment; empty values resolve to upcoming."},
-			{Name: "StepAttrs", Default: "nil", Description: "Appends arbitrary list-item attributes after modeled attributes; conflicting keys can produce duplicate attributes."},
-		},
-	),
-}
 
 // StepsDemoPage renders the Steps component demo.
 func StepsDemoPage() templ.Component {
@@ -181,10 +146,6 @@ func stepsDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(stepsAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -336,7 +297,7 @@ func StepsHTMXFlow(current int) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", current))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/steps.templ`, Line: 169, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/steps.templ`, Line: 133, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -354,7 +315,7 @@ func StepsHTMXFlow(current int) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/api/components/steps/demo?step=%d", current-1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/steps.templ`, Line: 176, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/steps.templ`, Line: 140, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -382,7 +343,7 @@ func StepsHTMXFlow(current int) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/api/components/steps/demo?step=%d", current+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/steps.templ`, Line: 189, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/steps.templ`, Line: 153, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {

@@ -9,31 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/fileinput"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var fileInputAPISections = []demo.APISection{
-	demo.StructAPI[fileinput.Config](
-		rootcomponents.KindFileInput,
-		"Config",
-		"fileinput.FileInput(cfg Config) Instance",
-		"Configures a native file input rendered as a drop zone or compact upload control.",
-		[]demo.APIPropDoc{
-			{Name: "Appearance", Default: "AppearanceDropZone", Allowed: []string{"AppearanceDropZone", "AppearanceUpload"}, Description: "Selects the drag-and-drop zone or compact upload treatment."},
-			{Name: "ID", Default: `""`, Description: "Native input ID, label target, and helper-text ID prefix; supply a unique value when labels or helper text are used."},
-			{Name: "Name", Default: `""`, Description: "Native file input form-field name."},
-			{Name: "Label", Default: `"" (omitted)`, Description: "Visible field label; the drop-zone appearance renders it as text and the upload appearance uses a label element."},
-			{Name: "Accept", Default: `"" (browser accepts any file type)`, Description: "Native accept attribute hint; it does not validate file size or server-side file content."},
-			{Name: "HelperText", Default: `"" (omitted)`, Description: "Hint text associated through <ID>-helper; descriptive limits are display text, not enforced validation."},
-			{Name: "Required", Default: "false", Description: "Adds the native required attribute."},
-			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute and disabled visual treatment."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer container."},
-			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native file input."},
-		},
-	),
-}
 
 // FileInputDemoPage renders the File Input component demo
 func FileInputDemoPage() templ.Component {
@@ -179,10 +157,6 @@ func fileInputDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(fileInputAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

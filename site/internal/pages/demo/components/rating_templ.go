@@ -9,50 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var ratingAPISections = []demo.APISection{
-	demo.StructAPI[rating.Config](
-		rootcomponents.KindRating,
-		"Config",
-		"rating.Rating(cfg Config) Instance",
-		"Configures an interactive native-radio rating control.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `Name, then "rating"`, Description: "Root ID and prefix for generated option IDs."},
-			{Name: "Name", Default: `ID, then "rating"`, Description: "Native radio-group form-field name."},
-			{Name: "Value", Default: "0", Description: "Initial selection clamped into 0 through the effective Max."},
-			{Name: "Max", Default: "5 when <= 0", Description: "Number of native radio options."},
-			{Name: "Label", Default: `"Rating"`, Description: "Radiogroup aria-label and, when ShowLabel is true, visible label text."},
-			{Name: "ShowLabel", Default: "false", Description: "Renders the effective Label visibly above the options."},
-			{Name: "Appearance", Default: "AppearanceStars", Allowed: []string{"AppearanceStars", "AppearanceEmoji"}, Description: "Uses cumulative stars or one selected sentiment emoji."},
-			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets icon dimensions and emoji text size."},
-			{Name: "Disabled", Default: "false", Description: "Disables every native radio option."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the rating root."},
-			{Name: "RootAttrs", Default: "nil", Description: "Attributes applied last to the rating root."},
-		},
-	),
-	demo.StructAPI[rating.DisplayConfig](
-		rootcomponents.KindRatingDisplay,
-		"DisplayConfig",
-		"rating.RatingDisplay(cfg DisplayConfig) DisplayInstance",
-		"Configures a non-interactive rating rendered with role=\"img\" and no form inputs.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"rating"`, Description: "Rating-display root element ID."},
-			{Name: "Value", Default: "0", Description: "Displayed value clamped into 0 through the effective Max."},
-			{Name: "Max", Default: "5 when <= 0", Description: "Number of rendered visual options."},
-			{Name: "Label", Default: `"0 stars" aria-label; "Rating" when visibly shown`, Description: "Explicit role=img aria-label and, when ShowLabel is true, visible label; without it the aria-label describes the clamped value."},
-			{Name: "ShowLabel", Default: "false", Description: "Renders the effective visible Label above the display."},
-			{Name: "Appearance", Default: "AppearanceStars", Allowed: []string{"AppearanceStars", "AppearanceEmoji"}, Description: "Uses cumulative stars or one active sentiment emoji."},
-			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets icon dimensions and emoji text size."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the display root."},
-			{Name: "RootAttrs", Default: "nil", Description: "Attributes applied last to the display root."},
-		},
-	),
-}
 
 // RatingDemoPage renders the Rating component demo as a full document.
 func RatingDemoPage() templ.Component {
@@ -194,10 +154,6 @@ func ratingDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(ratingAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

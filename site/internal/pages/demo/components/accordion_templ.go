@@ -9,40 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/accordion"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var accordionAPISections = []demo.APISection{
-	demo.StructAPI[accordion.AccordionConfig](
-		rootcomponents.KindAccordion,
-		"AccordionConfig",
-		"accordion.Accordion(cfg AccordionConfig) Instance",
-		"Configures the accordion container and disclosure behavior.",
-		[]demo.APIPropDoc{
-			{Name: "Items", Default: "nil", Description: "Accordion sections rendered in order.", Required: true},
-			{Name: "AllowMultiple", Default: "false", Description: "Allows more than one item to remain expanded."},
-			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearancePlain", "AppearanceSplit"}, Description: "Selects the shared, plain, or split visual treatment."},
-			{Name: "ID", Default: `"accordion"`, Description: "Accordion root element ID only; it does not namespace item control or region IDs."},
-			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the accordion root."},
-		},
-	),
-	demo.StructAPI[accordion.AccordionItem](
-		"",
-		"AccordionItem",
-		"",
-		"Describes one disclosure header and its body content.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"accordion-item-<index>"`, Description: "The namespace source for this item's control and region IDs; supply a unique value when multiple accordions coexist."},
-			{Name: "Title", Default: `""`, Description: "Visible disclosure-button text.", Required: true},
-			{Name: "Content", Default: "nil", Description: "Component rendered inside the expanded region.", Required: true},
-			{Name: "Icon", Default: "nil", Description: "Optional leading icon in the disclosure button."},
-			{Name: "Disabled", Default: "false", Description: "Disables the disclosure button."},
-			{Name: "InitiallyExpanded", Default: "false", Description: "Starts this item expanded."},
-		},
-	),
-}
 
 // AccordionDemoPage renders the Accordion component demo
 func AccordionDemoPage() templ.Component {
@@ -204,10 +173,6 @@ templ lazyLoadingContent(targetID string) {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(accordionAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -514,7 +479,7 @@ func demoContent(text string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/accordion.templ`, Line: 266, Col: 7}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/accordion.templ`, Line: 233, Col: 7}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -553,7 +518,7 @@ func lazyLoadingContent(targetID string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(targetID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/accordion.templ`, Line: 271, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/accordion.templ`, Line: 238, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -566,7 +531,7 @@ func lazyLoadingContent(targetID string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue("/api/components/accordion-content/" + targetID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/accordion.templ`, Line: 271, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/accordion.templ`, Line: 238, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {

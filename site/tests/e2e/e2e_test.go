@@ -20,8 +20,9 @@ import (
 )
 
 var (
-	baseURL       = "" // set dynamically in TestMain
-	screenshotDir = "test-results/screenshots"
+	baseURL             = "" // set dynamically in TestMain
+	goshtosoDocsVersion = ""
+	screenshotDir       = "test-results/screenshots"
 )
 
 const avatarBrokenImagePath = "/assets/images/does-not-exist-404.png"
@@ -51,6 +52,15 @@ func TestMain(m *testing.M) {
 	// Build server
 	projectRoot, _ := filepath.Abs("../..")
 	buildArgs := []string{"build", "-o", "bin/server"}
+	docsVersion, err := pinnedGoshtosoVersion(projectRoot)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to resolve pinned Goshtoso version: %v\n", err)
+		os.Exit(1)
+	}
+	goshtosoDocsVersion = docsVersion
+	buildArgs = append(buildArgs,
+		"-ldflags=-X github.com/araihu/goshtoso/site/internal/buildinfo.goDocsVersion="+docsVersion,
+	)
 	if coverDir := os.Getenv("GOSHTOSO_E2E_COVERDIR"); coverDir != "" {
 		buildArgs = append(buildArgs, "-cover")
 		if coverPkg := os.Getenv("GOSHTOSO_E2E_COVERPKG"); coverPkg != "" {
@@ -132,6 +142,28 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(code)
+}
+
+func pinnedGoshtosoVersion(projectRoot string) (string, error) {
+	cmd := exec.Command(
+		"go",
+		"list",
+		"-m",
+		"-f",
+		"{{.Version}}",
+		"github.com/araihu/goshtoso",
+	)
+	cmd.Dir = projectRoot
+	cmd.Env = append(os.Environ(), "GOWORK=off")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	version := strings.TrimSpace(string(output))
+	if version == "" {
+		return "", fmt.Errorf("empty module version")
+	}
+	return version, nil
 }
 
 func stopServer(cmd *exec.Cmd, url, token string) error {

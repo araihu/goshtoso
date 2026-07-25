@@ -9,28 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var tagsListAPISections = []demo.APISection{
-	demo.StructAPI[tagslist.Config](
-		rootcomponents.KindTagsList,
-		"Config",
-		"tagslist.TagsList(cfg Config) Instance",
-		"Configures removable chips backed by Alpine state and indexed hidden form inputs.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"" (omitted)`, Description: "Optional outer-container ID; the add input has no generated ID."},
-			{Name: "Name", Default: `""`, Description: "Hidden inputs submit as Name[0], Name[1], and so on."},
-			{Name: "Values", Default: "nil (empty list)", Description: "Initial chips in order; duplicate values are preserved and new duplicate tags are allowed."},
-			{Name: "Placeholder", Default: `"Add a tag..."`, Description: "Placeholder for the add-tag input when enabled."},
-			{Name: "AddActionLabel", Default: `"Add"`, Description: "Visible add-button text."},
-			{Name: "Disabled", Default: "false", Description: "When true, removes add and remove controls while retaining chips and their hidden inputs."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer container."},
-		},
-	),
-}
 
 // TagsListDemoPage renders the Tags List component demo
 func TagsListDemoPage() templ.Component {
@@ -136,10 +117,6 @@ func tagsListDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(tagsListAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

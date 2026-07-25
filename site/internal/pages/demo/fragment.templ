@@ -23,6 +23,7 @@ templ FragmentWithMeta(meta PageMeta, activeComponent string, content templ.Comp
 		})
 	</div>
 	@content
+	@componentGoAPIReference(activeComponent)
 	@componentNavFooter(activeComponent)
 	@siteFooter()
 }

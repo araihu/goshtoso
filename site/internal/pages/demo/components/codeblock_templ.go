@@ -9,36 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var codeBlockAPISections = []demo.APISection{
-	demo.StructAPI[codeblock.Config](
-		rootcomponents.KindCodeBlock,
-		"Config",
-		"codeblock.CodeBlock(cfg Config) Instance",
-		"Configures a server-highlighted code panel with a copy action.",
-		[]demo.APIPropDoc{
-			{Name: "Language", Default: `"" (plain text)`, Description: `Chroma lexer key; "templ" aliases to Go and unknown values fall back to escaped plain text.`},
-			{Name: "Code", Default: `""`, Description: "Source text displayed and copied.", Required: true},
-			{Name: "Label", Default: "Language", Description: "Header text; uses Language when empty."},
-			{Name: "MaxHeight", Default: `"" (no vertical limit)`, Description: "CSS max-height applied with vertical scrolling."},
-			{Name: "ID", Default: `"codeblock-<label-or-language-or-snippet>-<hash>"`, Description: "Stable code-element ID derived from the content when empty."},
-		},
-	),
-	demo.FunctionsAPI(
-		"github.com/araihu/goshtoso/components/codeblock",
-		"",
-		"Helpers",
-		"",
-		"Low-level server-side syntax highlighting helper.",
-		[]demo.APIPropDoc{
-			{Name: "Render", Signature: "func Render(code, lang string) string", Default: "escaped plain text for unknown languages", Description: "Returns a Chroma-highlighted pre/code HTML fragment for trusted templ.Raw insertion."},
-		},
-	),
-}
 
 // CodeBlockDemoPage renders the CodeBlock component demo
 func CodeBlockDemoPage() templ.Component {
@@ -173,10 +146,6 @@ func main() {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(codeBlockAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
