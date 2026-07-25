@@ -107,6 +107,9 @@ For a complete integration guide, including custom Tailwind builds and manual
 asset wiring, see [docs/USAGE.md](docs/USAGE.md). The
 [Goshtoso Component Model](docs/COMPONENT_MODEL.md) explains themes, primitives,
 stable `Kind` identity, configuration dimensions, and component boundaries.
+Release changes are recorded in the [changelog](CHANGELOG.md); applications
+upgrading from `v0.0.11` should follow the
+[component API migration guide](docs/MIGRATING_COMPONENT_API.md).
 
 ## AI Agent Skill
 
