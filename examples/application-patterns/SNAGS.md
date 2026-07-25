@@ -1,0 +1,46 @@
+# Benchmark snags
+
+This ledger records consumer source-dives and integration friction encountered
+while building the standalone application-patterns benchmark.
+
+## 2026-07-25
+
+### Constructor styles required a model/source check
+
+The public packages do not share one constructor style: `button.Button` uses
+functional options while `badge`, `alert`, `card`, `steps`, and `table` use
+package-specific config structs. The benchmark consulted
+`docs/COMPONENT_MODEL.md`, `.agents/skills/using-goshtoso`, and the public
+`types.go` files to keep calls idiomatic. This is documented behavior, but it
+slows blind composition until the consumer learns which style each package
+uses.
+
+### Table status cells required a type source-dive
+
+The generated consumer reference identified `table.Table`, but composing a
+status badge inside a row required checking `components/table/types.go` to
+confirm that `table.Cell.Component` accepts `templ.Component`, and checking
+`table.LinkMode` to choose safe full navigation for detail workspaces. The API
+worked without an adapter once those types were found.
+
+### Workflow submit buttons cannot carry native name/value attributes
+
+`button.Button` exposes type, ID, class, HTMX, Alpine, and loading options, but
+not arbitrary native attributes. A multi-action form therefore cannot put
+`name="action"` and `value="back|next"` on Goshtoso buttons. This benchmark uses
+a normal link for Back and derives Continue versus Deploy from the posted step.
+
+### Theme mechanics required source confirmation
+
+The consumer guide covers embedded CSS, but the exact selectors for the two
+benchmark appearances were confirmed in `all-themes.css`: themes use
+`data-theme="goshtoso|minimal"` and dark mode uses `.dark`. The application
+keeps these choices in query/form values instead of writing browser storage,
+and its embedded CSS consumes the same public custom properties.
+
+### templ injects its own package import
+
+The first generation pass failed because `views.templ` explicitly imported
+`github.com/a-h/templ` while also using `templ.URL` and `templ.KV`; the generated
+file already injects that import, producing a redeclaration. Removing the
+explicit import and regenerating is the correct consumer pattern.
