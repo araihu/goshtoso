@@ -370,6 +370,9 @@ func TestComplexInputMetadataCapturesSourceTruthAndPublicSignatures(t *testing.T
 	require.Equal(t, "120 when <= 0", apiProp(t, searchAPISections, "Config", "DescriptionMaxLength").Default)
 	require.Contains(t, apiProp(t, searchAPISections, "Config", "ItemsURL").Description, "instead of Items")
 	require.Contains(t, apiProp(t, searchAPISections, "Item", "Attrs").Description, "duplicate attributes")
+	require.Contains(t, apiProp(t, searchAPISections, "Item", "Attrs").Description, "revalidated")
+	require.Contains(t, apiProp(t, searchAPISections, "Item", "Href").Description, "revalidated client-side")
+	require.Contains(t, apiProp(t, searchAPISections, "Item methods", "Item.SafeHref").Description, "revalidates both DOM dataset and client-item navigation")
 
 	require.Equal(t, `"Add row"`, apiProp(t, structuredInputAPISections, "Config", "AddActionLabel").Default)
 	require.Contains(t, apiProp(t, structuredInputAPISections, "Config", "Columns").Description, "repeatable row")

@@ -494,12 +494,14 @@ templ searchScript() {
 				if (!result) return;
 				if (result.dataset) {
 					if (!result.hasAttribute('hx-get') && !result.hasAttribute('hx-post') && result.dataset.searchHref) {
-						window.location.href = result.dataset.searchHref;
+						var href = this.safeHref(result.dataset.searchHref);
+						if (href) window.location.href = href;
 					}
 					return;
 				}
 				if (result.href) {
-					window.location.href = result.href;
+					var href = this.safeHref(result.href);
+					if (href) window.location.href = href;
 				}
 			},
 			truncate: function (value) {

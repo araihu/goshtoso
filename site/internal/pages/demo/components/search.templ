@@ -39,13 +39,13 @@ var searchAPISections = []demo.APISection{
 			{Name: "ID", Default: `"" (omitted)`, Description: "Optional result-button ID."},
 			{Name: "Title", Default: `""`, Description: "Primary visible text and the first field considered for title-prioritized matching.", Required: true},
 			{Name: "Description", Default: `"" (omitted)`, Description: "Supporting result text included in filtering and client-side truncation/highlighting."},
-			{Name: "Href", Default: `"" (no plain navigation)`, Description: "Navigation target accepted only when SafeHref permits its scheme. Plain navigation is skipped when Attrs supplies hx-get or hx-post."},
+			{Name: "Href", Default: `"" (no plain navigation)`, Description: "Preferred typed navigation target, filtered when rendered and revalidated client-side before assignment. Plain navigation is skipped when Attrs supplies hx-get or hx-post."},
 			{Name: "Kind", Default: `"" (omitted)`, Description: "Optional visible type metadata included in filtering."},
 			{Name: "Method", Default: `"" (badge omitted)`, Description: "Trimmed and uppercased by NormalizedMethod, included in filtering, and rendered with method-specific badge tone."},
 			{Name: "Path", Default: `"" (omitted)`, Description: "Optional visible route/resource metadata included in filtering."},
 			{Name: "Section", Default: `"" (omitted)`, Description: "Optional result eyebrow/group label included in filtering."},
 			{Name: "Keywords", Default: "nil", Description: "Additional terms appended to SearchText but not rendered visibly."},
-			{Name: "Attrs", Default: "nil", Description: "Additional non-conflicting attributes appended to the result button. Conflicts with modeled fields create duplicate attributes; hx-get or hx-post suppresses plain Href navigation."},
+			{Name: "Attrs", Default: "nil", Description: "Additional non-conflicting attributes appended to the result button. Conflicts with modeled fields create duplicate attributes; use typed Href for navigation. Reserved data-search-href values are revalidated with the same client allowlist, and hx-get or hx-post suppresses plain navigation."},
 		},
 	),
 	demo.FunctionsAPI(
@@ -70,7 +70,7 @@ var searchAPISections = []demo.APISection{
 		[]demo.APIPropDoc{
 			{Name: "Item.SearchText", Signature: "func (item Item) SearchText() string", Default: `"" for an empty Item`, Description: "Joins non-empty trimmed title, description, kind, normalized method, path, section, and keyword values with spaces."},
 			{Name: "Item.NormalizedMethod", Signature: "func (item Item) NormalizedMethod() string", Default: `""`, Description: "Returns Method trimmed and uppercased."},
-			{Name: "Item.SafeHref", Signature: "func (item Item) SafeHref() string", Default: `"" for empty, invalid, or executable schemes`, Description: "Returns trimmed relative URLs plus http, https, mailto, and tel URLs; rejects every other scheme."},
+			{Name: "Item.SafeHref", Signature: "func (item Item) SafeHref() string", Default: `"" for empty, invalid, or executable schemes`, Description: "Returns trimmed relative URLs plus http, https, mailto, and tel URLs; rejects every other scheme. Selection revalidates both DOM dataset and client-item navigation through the equivalent client allowlist before assigning window.location.href."},
 		},
 	),
 }

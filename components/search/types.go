@@ -17,7 +17,7 @@ type Item struct {
 	Title string
 	// Description is optional supporting text.
 	Description string
-	// Href turns the result into a link.
+	// Href is the preferred navigation target; it is filtered when rendered and revalidated before client-side navigation.
 	Href string
 	// Kind is optional type metadata for the result.
 	Kind string
@@ -29,7 +29,7 @@ type Item struct {
 	Section string
 	// Keywords are extra terms included in client-side filtering.
 	Keywords []string
-	// Attrs are extra attributes spread onto the result button.
+	// Attrs are extra button attributes; use Href for navigation because reserved data-search-href values are revalidated before use.
 	Attrs templ.Attributes
 }
 

@@ -168,7 +168,10 @@ func TestSearchSafeHrefFiltersExecutableNavigationTargets(t *testing.T) {
 	}{
 		{name: "relative path", href: "/components/kbd", want: `/components/kbd`},
 		{name: "relative path trims whitespace", href: " /components/kbd ", want: `/components/kbd`},
+		{name: "http", href: "http://example.test/docs", want: `http://example.test/docs`},
 		{name: "https", href: "https://example.test/docs", want: `https://example.test/docs`},
+		{name: "mailto", href: "mailto:docs@example.test", want: `mailto:docs@example.test`},
+		{name: "tel", href: "tel:+15551234567", want: `tel:+15551234567`},
 		{name: "mixed case javascript", href: "JaVaScRiPt:alert(1)", want: ``},
 		{name: "javascript with whitespace", href: " javascript:alert(1) ", want: ``},
 		{name: "data scheme", href: "data:text/html,<script>alert(1)</script>", want: ``},
@@ -202,6 +205,28 @@ func TestSearchSafeHrefFiltersExecutableNavigationTargets(t *testing.T) {
 				t.Fatalf("safe href %q did not render as %q:\n%s", tc.href, wantAttr, html)
 			}
 		})
+	}
+}
+
+func TestSearchSelectResultRevalidatesEveryNavigationSink(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{ID: "docs-search"}))
+
+	for _, unsafeAssignment := range []string{
+		`window.location.href = result.dataset.searchHref`,
+		`window.location.href = result.href`,
+	} {
+		if strings.Contains(html, unsafeAssignment) {
+			t.Fatalf("SearchModal assigns an unvalidated result href through %q:\n%s", unsafeAssignment, html)
+		}
+	}
+	for _, want := range []string{
+		`var href = this.safeHref(result.dataset.searchHref);`,
+		`var href = this.safeHref(result.href);`,
+		`if (href) window.location.href = href;`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal selectResult missing validated navigation sink %q:\n%s", want, html)
+		}
 	}
 }
 
