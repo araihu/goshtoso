@@ -9,31 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var toggleAPISections = []demo.APISection{
-	demo.StructAPI[toggle.Config](
-		rootcomponents.KindToggle,
-		"Config",
-		"toggle.Toggle(cfg Config) Instance",
-		"Configures a native checkbox exposed visually as an inline or bordered switch.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `""`, Description: "Native checkbox ID and label for target."},
-			{Name: "Label", Default: `""`, Description: "Visible switch label."},
-			{Name: "Tone", Default: "TonePrimary", Allowed: []string{"TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets the checked track, thumb, and focus colors."},
-			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearanceContainer"}, Description: "Selects an inline label or bordered justify-between container."},
-			{Name: "Checked", Default: "false", Description: "Sets the initial native checked state."},
-			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute."},
-			{Name: "Name", Default: `"" (not submitted)`, Description: "Native form-field name; when set without Value, an additional hidden Name=off input is rendered."},
-			{Name: "Value", Default: `"" (checkbox uses the browser default value)`, Description: "When both Name and Value are non-empty, sets the checked submission value and suppresses the hidden off input; ignored without Name."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the root label."},
-			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native checkbox; use dynamic bindings rather than duplicate static checked or disabled keys."},
-		},
-	),
-}
 
 // ToggleDemoPage renders the Toggle component demo
 func ToggleDemoPage() templ.Component {
@@ -149,10 +127,6 @@ func toggleDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(toggleAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

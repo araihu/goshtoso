@@ -9,48 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	rangeinput "github.com/araihu/goshtoso/components/range"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var rangeAPISections = []demo.APISection{
-	demo.StructAPI[rangeinput.Config](
-		rootcomponents.KindRange,
-		"Config",
-		"rangeinput.Range(cfg Config) Instance",
-		"Configures a native range input with optional icons, ticks, and an Alpine-backed live value.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `""`, Description: "Native range input ID and label for target."},
-			{Name: "Name", Default: `""`, Description: "Native form-field name."},
-			{Name: "Label", Default: `"" (omitted)`, Description: "Visible input label."},
-			{Name: "Value", Default: `"0"`, Description: "Native input value and initial live-value text."},
-			{Name: "Min", Default: `"0"`, Description: "Native minimum value and first generated tick label."},
-			{Name: "Max", Default: `"100"`, Description: "Native maximum value and last generated tick label."},
-			{Name: "Step", Default: `"1"`, Description: "Native increment between valid values."},
-			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute."},
-			{Name: "Required", Default: "false", Description: "Adds the native required attribute."},
-			{Name: "ShowTicks", Default: "false", Description: "Renders an aria-hidden tick row below the input."},
-			{Name: "Ticks", Default: "21 generated ticks from Min to Max", Description: "Non-empty values replace the generated endpoints and 19 intermediate marks."},
-			{Name: "ShowValue", Default: "false", Description: "Adds Alpine state, x-model, and a live current-value badge; an invalid numeric initial value starts the badge at 0."},
-			{Name: "LeadingIcon", Default: "nil", Description: "Optional aria-hidden component before the labelled input."},
-			{Name: "TrailingIcon", Default: "nil", Description: "Optional aria-hidden component after the input and live value."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer container."},
-			{Name: "InputClass", Default: `""`, Description: "Appends CSS classes to the native range input."},
-			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native range input."},
-		},
-	),
-	demo.StructAPI[rangeinput.Tick](
-		"",
-		"Tick",
-		"",
-		"Describes one position in a custom tick row.",
-		[]demo.APIPropDoc{
-			{Name: "Label", Default: `""`, Description: "Visible tick text; use \"|\" for an unlabeled mark."},
-			{Name: "HideOnMobile", Default: "false", Description: "Hides the tick below the sm breakpoint."},
-		},
-	),
-}
 
 // RangeDemoPage renders the Range component demo.
 func RangeDemoPage() templ.Component {
@@ -201,10 +162,6 @@ func rangeDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(rangeAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,77 +1,9 @@
 package components
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/carousel"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var carouselAPISections = []demo.APISection{
-	demo.StructAPI[carousel.Config](
-		rootcomponents.KindCarousel,
-		"Config",
-		"carousel.Carousel(cfg Config) Instance",
-		"Configures the image carousel or its HTMX loading shell.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"" (attribute omitted)`, Description: "Optional container ID."},
-			{Name: "Slides", Default: "nil", Description: "Static slides, required in static mode and ignored when HTMX is non-nil."},
-			{Name: "Autoplay", Default: "nil (disabled)", Description: "Optional automatic-rotation settings for static mode; ignored when HTMX is non-nil."},
-			{Name: "Touch", Default: "false", Description: "Enables horizontal swipe navigation in static mode; ignored when HTMX is non-nil."},
-			{Name: "AspectRatio", Default: `"min-h-[50svh]"`, Description: `Frame aspect ratio in static mode, such as "3/1"; Height takes precedence; ignored when HTMX is non-nil.`},
-			{Name: "Height", Default: `"" (AspectRatio or min-height used)`, Description: "Tailwind height classes for the static mode slide frame; ignored when HTMX is non-nil."},
-			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the carousel root."},
-			{Name: "HTMX", Default: "nil (static mode)", Description: "Optional server-loading settings; when set, Slides are not rendered initially."},
-		},
-	),
-	demo.StructAPI[carousel.CardConfig](
-		rootcomponents.KindCardCarousel,
-		"CardConfig",
-		"carousel.CardCarousel(cfg CardConfig) CardCarouselInstance",
-		"Configures a carousel inside an article card.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"" (attribute omitted)`, Description: "Optional article ID."},
-			{Name: "Slides", Default: "nil", Description: "Static slides rendered in the card.", Required: true},
-			{Name: "Touch", Default: "false", Description: "Enables horizontal swipe navigation."},
-			{Name: "Height", Default: `"h-48 lg:h-64"`, Description: "Tailwind height classes for the card's slide frame."},
-			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the article root."},
-		},
-	),
-	demo.StructAPI[carousel.Slide](
-		"",
-		"Slide",
-		"",
-		"Describes one image and optional overlay content.",
-		[]demo.APIPropDoc{
-			{Name: "ImgSrc", Default: `""`, Description: "Image URL.", Required: true},
-			{Name: "ImgAlt", Default: `""`, Description: "Alternative text for the image.", Required: true},
-			{Name: "Title", Default: `""`, Description: "Optional overlay or card heading."},
-			{Name: "Description", Default: `""`, Description: "Optional overlay or card body."},
-			{Name: "CTAHref", Default: `""`, Description: "CTA URL; rendered only when CTALabel is also non-empty."},
-			{Name: "CTALabel", Default: `""`, Description: "CTA text; rendered only when CTAHref is also non-empty."},
-		},
-	),
-	demo.StructAPI[carousel.AutoplayConfig](
-		"",
-		"AutoplayConfig",
-		"",
-		"Controls automatic slide rotation.",
-		[]demo.APIPropDoc{
-			{Name: "Interval", Default: "4000ms when enabled", Description: "Milliseconds between slides; values less than or equal to zero use 4000."},
-		},
-	),
-	demo.StructAPI[carousel.HTMXConfig](
-		"",
-		"HTMXConfig",
-		"",
-		"Configures the server-loaded carousel shell.",
-		[]demo.APIPropDoc{
-			{Name: "Get", Default: `""`, Description: "URL loaded into the carousel root.", Required: true},
-			{Name: "Trigger", Default: `"load"`, Description: "HTMX request trigger."},
-			{Name: "Swap", Default: `"innerHTML"`, Description: "HTMX swap strategy."},
-			{Name: "Indicator", Default: `"" (attribute omitted)`, Description: "Optional CSS selector for a loading indicator."},
-		},
-	),
-}
 
 // CarouselDemoPage renders the Carousel component demo
 templ CarouselDemoPage() {
@@ -183,8 +115,6 @@ templ carouselDemoContent() {
 })`,
 		)
 	</div>
-	// API reference lives outside #carousel-fragment.
-	@demo.StructuredAPIReference(carouselAPISections)
 }
 
 // carouselDefaultPreview renders the image-only default carousel.

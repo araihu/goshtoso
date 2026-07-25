@@ -74,6 +74,19 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		require.NotEmpty(t, page.Title)
 		require.NotEmpty(t, page.Active)
 		require.NotEmpty(t, page.Description)
+		require.Equal(
+			t,
+			"github.com/araihu/goshtoso/"+strings.ReplaceAll(page.Key, "-", ""),
+			page.GoPackagePath(),
+		)
+		activeEntry, ok := catalog.LookupActive(page.Active)
+		require.True(t, ok)
+		require.Equal(t, page.Key, activeEntry.Key)
+		require.Equal(
+			t,
+			"https://pkg.go.dev/github.com/araihu/goshtoso@v0.0.12/"+strings.ReplaceAll(page.Key, "-", ""),
+			page.GoDocsURL("v0.0.12"),
+		)
 		seen[page.Path] = true
 	}
 }

@@ -9,60 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var avatarAPISections = []demo.APISection{
-	demo.StructAPI[avatar.Config](
-		rootcomponents.KindAvatar,
-		"Config",
-		"avatar.Avatar(cfg Config) Instance",
-		"Configures one image, initials, or icon avatar.",
-		[]demo.APIPropDoc{
-			{Name: "Src", Default: `""`, Description: "Static image URL; load failures reveal the initials or icon fallback."},
-			{Name: "Alt", Default: `""`, Description: "Alternative text for the image layer."},
-			{Name: "Name", Default: `""`, Description: "Name used to derive initials when Initials is empty."},
-			{Name: "Initials", Default: `"?" or derived from Name`, Description: "Explicit fallback initials; overrides initials derived from Name."},
-			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeXS", "SizeSM", "SizeMD", "SizeLG", "SizeXL", "Size2XL"}, Description: "Rendered avatar size unless Reactive supplies classes."},
-			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneInverse", "TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Color treatment for the initials or icon fallback."},
-			{Name: "Shape", Default: "ShapeCircle", Allowed: []string{"ShapeCircle", "ShapeSquare"}, Description: "Circular or square avatar shape."},
-			{Name: "Radius", Default: "RadiusDefault", Allowed: []string{"RadiusDefault", "RadiusNone", "RadiusXS", "RadiusSM", "RadiusMD", "RadiusLG"}, Description: "Corner radius used only for square avatars; the default renders rounded-md."},
-			{Name: "Border", Default: "false", Description: "Adds a two-pixel ring around the avatar."},
-			{Name: "BorderColor", Default: "Semantic status tone; otherwise border-primary", Description: "CSS border-color class used when Border is true."},
-			{Name: "Status", Default: `"" (no status)`, Allowed: []string{"StatusOffline", "StatusInfo", "StatusSuccess", "StatusWarning", "StatusDanger"}, Description: "Optional presence indicator."},
-			{Name: "Icon", Default: "nil", Description: "Fallback component rendered instead of initials."},
-			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the avatar root."},
-			{Name: "SrcExpr", Default: `""`, Description: "Trusted Alpine expression that supplies the image URL at runtime."},
-			{Name: "Reactive", Default: "false", Description: "Reads size and status-size classes from the parent Alpine scope."},
-			{Name: "ReactiveRadius", Default: "false", Description: "Reads square-radius classes from the parent Alpine scope."},
-		},
-	),
-	demo.StructAPI[avatar.StackConfig](
-		rootcomponents.KindAvatarStack,
-		"StackConfig",
-		"avatar.AvatarStack(cfg StackConfig) StackInstance",
-		"Configures an accessible overlapping group of avatars.",
-		[]demo.APIPropDoc{
-			{Name: "Items", Default: "nil", Description: "Avatar configurations rendered from left to right.", Required: true},
-			{Name: "Label", Default: `"Avatar group"`, Description: "Accessible label for the group."},
-			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the stack root."},
-			{Name: "Reactive", Default: "false", Description: "Enables shared reactive sizing for every stack item."},
-		},
-	),
-	demo.FunctionsAPI(
-		"github.com/araihu/goshtoso/components/avatar",
-		"",
-		"Helpers",
-		"",
-		"Public helper for deriving compact fallback initials.",
-		[]demo.APIPropDoc{
-			{Name: "GetInitials", Signature: "func GetInitials(name, email string) string", Default: `"?" when both inputs are empty`, Description: "Returns one or two uppercase initials from name, then email."},
-		},
-	),
-}
 
 // AvatarDemoPage renders the Avatar component demo as a full document.
 // Kept for direct invocation; the registry uses avatarDemoContent directly.
@@ -339,15 +289,7 @@ func avatarDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(avatarAPISections).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,7 +320,7 @@ func avatarSizeSelector() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"mb-3 flex items-center gap-4\"><label class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Size</label><div data-testid=\"avatar-size-selector\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mb-3 flex items-center gap-4\"><label class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Size</label><div data-testid=\"avatar-size-selector\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -398,7 +340,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -406,7 +348,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -414,7 +356,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -422,7 +364,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -430,7 +372,7 @@ func avatarSizeSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -444,7 +386,7 @@ func avatarSizeSelector() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><span class=\"sr-only\" data-testid=\"avatar-size-selected\" x-text=\"selected\"></span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><span class=\"sr-only\" data-testid=\"avatar-size-selected\" x-text=\"selected\"></span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -474,7 +416,7 @@ func avatarRadiusSelector() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"mb-3 flex flex-wrap items-center gap-4\"><label class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Border Radius</label><div data-testid=\"avatar-radius-selector\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"mb-3 flex flex-wrap items-center gap-4\"><label class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Border Radius</label><div data-testid=\"avatar-radius-selector\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -494,7 +436,7 @@ func avatarRadiusSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -502,7 +444,7 @@ func avatarRadiusSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -510,7 +452,7 @@ func avatarRadiusSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -518,7 +460,7 @@ func avatarRadiusSelector() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -532,7 +474,7 @@ func avatarRadiusSelector() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><span class=\"sr-only\" data-testid=\"avatar-radius-selected\" x-text=\"radius\"></span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><span class=\"sr-only\" data-testid=\"avatar-radius-selected\" x-text=\"radius\"></span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -642,7 +584,7 @@ func avatarDefaultPreview() templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"avatar-image\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-image\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div id=\"avatar-image\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-image\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -654,7 +596,7 @@ func avatarDefaultPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -684,7 +626,7 @@ func avatarInitialsPreview() templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div id=\"avatar-initials\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-initials\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div id=\"avatar-initials\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-initials\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -720,7 +662,7 @@ func avatarInitialsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -750,7 +692,7 @@ func avatarIconPreview() templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div id=\"avatar-icon\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-icon\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div id=\"avatar-icon\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -786,7 +728,7 @@ func avatarIconPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -816,7 +758,7 @@ func avatarBorderPreview() templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div id=\"avatar-border\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-border\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div id=\"avatar-border\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-border\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -836,7 +778,7 @@ func avatarBorderPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -866,7 +808,7 @@ func avatarStatusPreview() templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div id=\"avatar-status\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-status\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div id=\"avatar-status\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-status\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -890,7 +832,7 @@ func avatarStatusPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -920,7 +862,7 @@ func avatarSquarePreview() templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<div id=\"avatar-square\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-square\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div id=\"avatar-square\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-wrap items-center justify-center gap-4\" data-testid=\"avatar-section-square\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -935,7 +877,7 @@ func avatarSquarePreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -965,7 +907,7 @@ func avatarStackedPreview() templ.Component {
 			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div id=\"avatar-stacked\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex items-center justify-center\" data-testid=\"avatar-section-stacked\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div id=\"avatar-stacked\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex items-center justify-center\" data-testid=\"avatar-section-stacked\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -982,7 +924,7 @@ func avatarStackedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1013,7 +955,7 @@ func avatarFixturesPreview() templ.Component {
 			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div id=\"avatar-fixtures\" class=\"w-full max-w-2xl mx-auto\" data-testid=\"avatar-e2e-fixtures\"><div class=\"flex flex-wrap items-center justify-center gap-4\"><div data-testid=\"avatar-test-loaded\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div id=\"avatar-fixtures\" class=\"w-full max-w-2xl mx-auto\" data-testid=\"avatar-e2e-fixtures\"><div class=\"flex flex-wrap items-center justify-center gap-4\"><div data-testid=\"avatar-test-loaded\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1027,7 +969,7 @@ func avatarFixturesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><div data-testid=\"avatar-test-error\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><div data-testid=\"avatar-test-error\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1041,7 +983,7 @@ func avatarFixturesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div><div data-testid=\"avatar-test-initials\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><div data-testid=\"avatar-test-initials\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1053,7 +995,7 @@ func avatarFixturesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

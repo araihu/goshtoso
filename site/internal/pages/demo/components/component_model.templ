@@ -35,7 +35,7 @@ templ componentModelContent() {
 		<section id="constructor-styles" class="space-y-4">
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Constructor styles</h2>
 			<p class="text-on-surface dark:text-on-surface-dark">
-				There is no shared configuration type. Each package exposes the fields or options supported by that component, and its API reference records the exact constructor signature.
+				There is no shared configuration type. Each package exposes only the fields or options supported by that component. The versioned pkg.go.dev link on every component page is the source of truth for exact constructor signatures.
 			</p>
 			<div class="grid gap-6 lg:grid-cols-2">
 				<div class="space-y-3">
@@ -90,7 +90,7 @@ templ componentModelContent() {
 		<section id="defaults" class="space-y-3">
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Rendered defaults</h2>
 			<p class="text-on-surface dark:text-on-surface-dark">
-				A zero-valued field may render a documented default. Each component page's API reference lists its constructor, fields, options, and effective rendered values.
+				A zero-valued field may render a documented default. Component pages demonstrate the rendered behavior; their versioned pkg.go.dev links document exported constructors, fields, options, and methods.
 			</p>
 			<p class="text-on-surface dark:text-on-surface-dark">
 				For examples, compare the <a href="/components/button" hx-get="/components/button" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="text-primary underline underline-offset-2 dark:text-primary-dark">Button API</a> with the config-heavy <a href="/components/table" hx-get="/components/table" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="text-primary underline underline-offset-2 dark:text-primary-dark">Table API</a>.

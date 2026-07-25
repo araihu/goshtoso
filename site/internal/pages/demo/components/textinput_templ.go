@@ -9,38 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var textInputAPISections = []demo.APISection{
-	demo.StructAPI[textinput.Config](
-		rootcomponents.KindTextInput,
-		"Config",
-		"textinput.TextInput(cfg Config) Instance",
-		"Configures a native input; password and search types select specialized renderers with the conditional behavior noted below.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `""`, Description: "Input ID and label for target; an empty ID is omitted only by the specialized search renderer."},
-			{Name: "Name", Default: `""`, Description: "Native form-field name."},
-			{Name: "Label", Default: `"" (omitted)`, Description: "Visible label for default and password renderers; the search renderer ignores it."},
-			{Name: "Placeholder", Default: `""`, Description: "Native placeholder in every renderer."},
-			{Name: "Value", Default: `""`, Description: "Native initial input value in every renderer."},
-			{Name: "Type", Default: "TypeText", Allowed: []string{"TypeText", "TypePassword", "TypeSearch", "TypeEmail", "TypeTel", "TypeURL", "TypeNumber", "TypeDate", "TypeDateTimeLocal"}, Description: "Native input type; password and search choose specialized markup."},
-			{Name: "State", Default: "StateDefault", Allowed: []string{"StateDefault", "StateError", "StateSuccess"}, Description: "Controls input border styling in every renderer and label/helper styling where those elements render."},
-			{Name: "HelperText", Default: `"" (omitted)`, Description: "Helper text for default and password renderers; the search renderer ignores it."},
-			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute in every renderer."},
-			{Name: "Required", Default: "false", Description: "Adds the native required attribute in default and password renderers; the search renderer currently ignores it."},
-			{Name: "Autocomplete", Default: `"" (omitted)`, Description: "Native autocomplete attribute in default and password renderers; the search renderer currently ignores it."},
-			{Name: "Mask", Default: `"" (omitted)`, Description: "Adds Alpine x-data and x-mask only for the default renderer; password and search types take precedence."},
-			{Name: "Pattern", Default: `"" (omitted)`, Description: "Native pattern attribute in every renderer."},
-			{Name: "MaxLength", Default: "0 (omitted)", Description: "Positive values render the native maxlength attribute in every renderer."},
-			{Name: "Readonly", Default: "false", Description: "Adds the native readonly attribute in every renderer."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer container."},
-			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native input in every renderer."},
-		},
-	),
-}
 
 // TextInputDemoPage renders the Text Input component demo
 func TextInputDemoPage() templ.Component {
@@ -251,10 +222,6 @@ func textInputDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(textInputAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

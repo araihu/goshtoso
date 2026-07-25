@@ -1,59 +1,9 @@
 package components
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var selectAPISections = []demo.APISection{
-	demo.StructAPI[selectfield.Config](
-		rootcomponents.KindSelect,
-		"Config",
-		"selectfield.Select(cfg Config) Instance",
-		"Configures an Alpine-backed single-select dropdown or a child-rendering picker shell.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `""`, Description: "Hidden-input ID and prefix for trigger and option IDs; shell mode uses only the trigger prefix."},
-			{Name: "Name", Default: `""`, Description: "Hidden form-field name in data mode; shell mode renders no hidden input."},
-			{Name: "Label", Default: `"" (omitted)`, Description: "Visible field label and listbox aria-label prefix."},
-			{Name: "Placeholder", Default: `"Please Select"`, Description: "Trigger text when data mode has no selected option; ignored in shell mode."},
-			{Name: "Options", Default: "nil (empty list)", Description: "Options available in data mode; ignored in shell mode."},
-			{Name: "State", Default: "StateDefault", Allowed: []string{"StateDefault", "StateError", "StateSuccess"}, Description: "Controls label, trigger-border, and helper-text validation styling."},
-			{Name: "HelperText", Default: `"" (omitted)`, Description: "Text rendered below the dropdown using State styling."},
-			{Name: "Disabled", Default: "false", Description: "Disables the trigger."},
-			{Name: "Autocomplete", Default: `"" (omitted)`, Description: "Autocomplete attribute applied to the hidden text input in data mode."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer wrapper."},
-			{Name: "Alpine", Default: "nil", Description: "Optional model synchronization in data mode and disabled binding on the trigger."},
-			{Name: "Readonly", Default: "false", Description: "Disables the trigger while retaining the data-mode hidden input for submission."},
-			{Name: "InputAttrs", Default: "nil (currently not rendered)", Description: "Exported compatibility field; the current custom-select template does not apply it to any element."},
-			{Name: "Shell", Default: "false", Description: "Uses arbitrary templ children as dropdown content and omits option data and the hidden input."},
-			{Name: "TriggerLeading", Default: "nil", Description: "Optional component rendered before trigger text in either mode."},
-			{Name: "ValueExpr", Default: `""`, Description: "Shell-mode Alpine expression used for trigger text and aria-label; ignored in data mode."},
-			{Name: "TriggerLabel", Default: `""`, Description: "Optional shell-mode static left label; ValueExpr is then shown as a muted right value."},
-		},
-	),
-	demo.StructAPI[selectfield.Option](
-		"",
-		"Option",
-		"",
-		"Describes one data-mode choice.",
-		[]demo.APIPropDoc{
-			{Name: "Value", Default: `""`, Description: "Value stored in the hidden input when selected."},
-			{Name: "Label", Default: `""`, Description: "Visible option and trigger text.", Required: true},
-			{Name: "Selected", Default: "false", Description: "Marks an initial selection; when several are true, the first is used."},
-		},
-	),
-	demo.StructAPI[selectfield.AlpineConfig](
-		"",
-		"AlpineConfig",
-		"",
-		"Connects the select trigger and selected value to surrounding Alpine state.",
-		[]demo.APIPropDoc{
-			{Name: "Model", Default: `"" (no synchronization)`, Description: "Data-mode expression synchronized bidirectionally with the selected option."},
-			{Name: "BindDisabled", Default: `"" (omitted)`, Description: "Expression rendered as x-bind:disabled on the trigger in both modes."},
-		},
-	),
-}
 
 // SelectDemoPage renders the Select component demo
 templ SelectDemoPage() {
@@ -187,8 +137,6 @@ templ selectDemoContent() {
 </div>`,
 		)
 	</div>
-	// API reference lives outside #select-fragment.
-	@demo.StructuredAPIReference(selectAPISections)
 }
 
 // selectDefaultPreview renders the default select.

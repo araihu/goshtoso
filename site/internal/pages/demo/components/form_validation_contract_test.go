@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFormValidationMetadataMatchesOperationalLifecycle(t *testing.T) {
+func TestFormValidationOperationalLifecycle(t *testing.T) {
 	newRequest := func() *http.Request {
 		request := httptest.NewRequest(
 			http.MethodPost,
@@ -61,27 +61,6 @@ func TestFormValidationMetadataMatchesOperationalLifecycle(t *testing.T) {
 		},
 	)
 	require.False(t, invalidResult.Valid, "one failed hook makes the complete Result invalid")
-
-	require.Equal(
-		t,
-		"non-nil parsed map when created by Handle; nil only in manually constructed contexts",
-		apiProp(t, formAPISections, "validation.ValidationContext", "FormValues").Default,
-	)
-	require.Contains(
-		t,
-		apiProp(t, formAPISections, "validation.ValidationContext", "FormValues").Description,
-		"first value for each submitted key",
-	)
-	require.Equal(
-		t,
-		"true when created by Handle",
-		apiProp(t, formAPISections, "validation.Result", "Valid").Default,
-	)
-	require.Contains(
-		t,
-		apiProp(t, formAPISections, "validation.Result", "Valid").Description,
-		"false when any validation hook returns false",
-	)
 }
 
 func TestFormValidationFieldGroupRequirementMatchesBindAndPopulateLifecycle(t *testing.T) {
@@ -110,15 +89,9 @@ func TestFormValidationFieldGroupRequirementMatchesBindAndPopulateLifecycle(t *t
 	require.Panics(t, func() {
 		invalid.PopulateValues(map[string]string{"email": "person@example.com"})
 	})
-
-	fieldGroup := apiProp(t, formAPISections, "validation.FieldDef", "FieldGroup")
-	require.True(t, fieldGroup.Required)
-	require.Equal(t, "required for Bind and PopulateValues", fieldGroup.Default)
-	require.Contains(t, strings.ToLower(fieldGroup.Description), "nil is invalid")
-	require.Contains(t, fieldGroup.Description, "dereference")
 }
 
-func TestFormValidationOperationalSurfaceAndFieldResponseAreDocumented(t *testing.T) {
+func TestFormValidationFieldResponseLifecycle(t *testing.T) {
 	primary := &formvalidation.FieldDef{
 		Name: "email",
 		FieldGroup: &form.FieldGroupConfig{
@@ -167,35 +140,4 @@ func TestFormValidationOperationalSurfaceAndFieldResponseAreDocumented(t *testin
 	)
 	require.ErrorIs(t, err, renderError)
 	require.False(t, failing.FieldGroup.OOB, "error path always resets dependent OOB false")
-
-	operations := []string{
-		"ValidationType",
-		"ValidateFunc",
-		"Handle",
-		"FormDef.Bind",
-		"FormDef.Dependents",
-		"FormDef.PopulateValues",
-		"IsFieldValidation",
-		"RenderFieldResponse",
-	}
-	for _, name := range operations {
-		prop := apiProp(t, formAPISections, "validation operations", name)
-		require.NotEmpty(t, prop.Signature, name)
-		require.NotEmpty(t, prop.Default, name)
-		require.NotEmpty(t, prop.Description, name)
-	}
-	require.Equal(
-		t,
-		[]string{"ValidationSubmit", "ValidationFieldChange", "ValidationDependency"},
-		apiProp(t, formAPISections, "validation operations", "ValidationType").Allowed,
-	)
-	require.Contains(
-		t,
-		apiProp(t, formAPISections, "validation operations", "Handle").Description,
-		"Result.Valid initialized true",
-	)
-	responseDoc := apiProp(t, formAPISections, "validation operations", "RenderFieldResponse")
-	require.Contains(t, responseDoc.Description, "out-of-band")
-	require.Contains(t, responseDoc.Description, "always resets each dependent OOB flag to false")
-	require.NotContains(t, responseDoc.Description, "restores")
 }

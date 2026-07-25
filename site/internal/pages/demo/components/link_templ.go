@@ -9,33 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	linkcomponent "github.com/araihu/goshtoso/components/link"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var linkAPISections = []demo.APISection{
-	demo.OptionsAPI(
-		"github.com/araihu/goshtoso/components/link",
-		rootcomponents.KindLink,
-		"Link options",
-		"link.Link(href string, options ...Option) Instance",
-		"Creates a styled anchor from a required destination and child content, then applies functional options over the documented defaults.",
-		[]demo.APIPropDoc{
-			{Name: "href", Signature: "href string", Default: "required", Description: "Anchor destination passed through templ.URL.", Required: true},
-			{Name: "WithTarget", Signature: "func WithTarget(target string) Option", Default: `"" (omitted)`, Description: "Sets the native target attribute."},
-			{Name: "WithRel", Signature: "func WithRel(rel string) Option", Default: `"noopener noreferrer" for target "_blank"; otherwise omitted`, Description: "Sets the native rel attribute and overrides the _blank safety fallback when non-empty."},
-			{Name: "WithRole", Signature: "func WithRole(role string) Option", Default: `"button" for AppearanceButton; otherwise omitted`, Description: "Sets the native role attribute and overrides the button-appearance fallback when non-empty."},
-			{Name: "WithID", Signature: "func WithID(id string) Option", Default: `"" (omitted)`, Description: "Sets the anchor ID."},
-			{Name: "WithAppearance", Signature: "func WithAppearance(appearance Appearance) Option", Default: "AppearanceText", Allowed: []string{"AppearanceText", "AppearanceButton"}, Description: "Selects text or button styling; empty or unknown values use text styling."},
-			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMedium", Allowed: []string{"SizeSmall", "SizeMedium", "SizeLarge", "SizeXLarge"}, Description: "Sets dimensions only for AppearanceButton; empty or unknown values use medium."},
-			{Name: "WithIcon", Signature: "func WithIcon(icon templ.Component) Option", Default: "nil", Description: "Adds an icon and inline-flex layout."},
-			{Name: "WithIconPosition", Signature: "func WithIconPosition(position IconPosition) Option", Default: "IconTrailing", Allowed: []string{"IconLeading", "IconTrailing"}, Description: "IconLeading renders before child content; every other value renders after it."},
-			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the anchor."},
-			{Name: "WithAttrs", Signature: "func WithAttrs(attrs templ.Attributes) Option", Default: "nil", Description: "Appends arbitrary attributes after modeled attributes; conflicts can produce duplicate attributes rather than overriding typed options."},
-		},
-	),
-}
 
 // LinkDemoPage renders the Link component demo.
 func LinkDemoPage() templ.Component {
@@ -149,10 +125,6 @@ func linkDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(linkAPISections).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		return nil
 	})
 }
@@ -240,7 +212,7 @@ func linkInlinePreview() templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("Follow us on ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 98, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 73, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -271,7 +243,7 @@ func linkInlinePreview() templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(" and become our virtual BFF. We promise to send only the useful updates.")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 102, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 77, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -313,7 +285,7 @@ func linkIconPreview() templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("Find out more ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 110, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 85, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {

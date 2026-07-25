@@ -9,53 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/tabs"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var tabsAPISections = []demo.APISection{
-	demo.StructAPI[tabs.Config](
-		rootcomponents.KindTabs,
-		"Config",
-		"tabs.Tabs(cfg Config) Instance",
-		"Configures an Alpine-powered tab list with static or HTMX-loaded panels.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"tabs" for panel-ID namespace`, Description: "Namespaces generated panel IDs. The root container itself does not render this ID."},
-			{Name: "Tabs", Default: "nil (empty tab list)", Description: "Tab definitions rendered in order."},
-			{Name: "DefaultTab", Default: `"first Tab.ID"`, Description: "Initial selected ID; an explicit value is not validated when SyncHash is false."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the root tab container."},
-			{Name: "SyncHash", Default: "false", Description: "When true, initializes from a valid URL hash and replaces the hash whenever selectedTab changes; invalid hashes retain DefaultTab."},
-		},
-	),
-	demo.StructAPI[tabs.Tab](
-		"",
-		"Tab",
-		"",
-		"Describes one tab button and its static or lazy-loaded panel.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: "required", Description: "Selection key and suffix for the generated panel ID.", Required: true},
-			{Name: "Label", Default: "required", Description: "Visible button and panel accessible text, or aria-label when LabelSlot replaces visible text.", Required: true},
-			{Name: "LabelSlot", Default: "nil", Description: "Replaces visible label content while Label supplies the button accessible name."},
-			{Name: "Icon", Default: "nil", Description: "Optional leading tab icon."},
-			{Name: "Badge", Default: `"" (omitted)`, Description: "Optional text badge with active-state styling."},
-			{Name: "Content", Default: "nil (empty static panel)", Description: "Static panel component. It is ignored when HTMX is non-nil."},
-			{Name: "HTMX", Default: "nil (static panel)", Description: "Non-nil configuration selects the lazy-loaded panel and ignores Content."},
-		},
-	),
-	demo.StructAPI[tabs.TabHTMX](
-		"",
-		"TabHTMX",
-		"",
-		"Configures lazy panel loading.",
-		[]demo.APIPropDoc{
-			{Name: "Get", Default: "required for a useful lazy panel", Description: "GET URL used by both the Alpine x-effect htmx.ajax call and the panel hx-get attribute.", Required: true},
-			{Name: "Swap", Default: `"innerHTML"`, Description: "Swap strategy used by both lazy-loading paths."},
-			{Name: "Indicator", Default: `"" (hx-indicator omitted)`, Description: "Optional loading-indicator selector on the panel."},
-		},
-	),
-}
 
 // TabsDemoPage renders the Tabs component demo
 func TabsDemoPage() templ.Component {
@@ -219,10 +176,6 @@ func tabsDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(tabsAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -534,7 +487,7 @@ func tabContent(name string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 248, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 203, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -576,7 +529,7 @@ func responseContent(status string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(status)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 252, Col: 12}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/tabs.templ`, Line: 207, Col: 12}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {

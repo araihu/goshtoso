@@ -49,6 +49,7 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 			apiCount, err := page.Locator("[data-api-reference]").Count()
 			require.NoError(t, err)
 			require.Equal(t, 1, apiCount)
+			requireComponentGoAPILink(t, page, entry)
 			waitForPageSettled(t, page)
 			failures.RequireEmpty(t)
 		})
@@ -219,6 +220,7 @@ func requireComponentDocsDestination(
 	apiCount, err := page.Locator("[data-api-reference]").Count()
 	require.NoError(t, err)
 	require.Equal(t, 1, apiCount)
+	requireComponentGoAPILink(t, page, entry)
 
 	previewCount, err := page.Locator("[data-demo-preview]").Count()
 	require.NoError(t, err)
@@ -240,6 +242,30 @@ func requireComponentDocsDestination(
 
 	waitForPageSettled(t, page)
 	failures.RequireEmpty(t)
+}
+
+func requireComponentGoAPILink(t *testing.T, page playwright.Page, entry catalog.Entry) {
+	t.Helper()
+
+	reference := page.Locator("[data-go-api-reference]")
+	version, err := reference.GetAttribute("data-go-api-version")
+	require.NoError(t, err)
+	require.Equal(t, goshtosoDocsVersion, version)
+
+	link := reference.Locator("[data-go-api-link]")
+	require.Equal(t, 1, mustLocatorCount(t, link))
+	href, err := link.GetAttribute("href")
+	require.NoError(t, err)
+	require.Equal(t, entry.GoDocsURL(goshtosoDocsVersion), href)
+	require.Equal(t, "_blank", mustAttribute(t, link, "target"))
+	require.Equal(t, "noopener noreferrer", mustAttribute(t, link, "rel"))
+}
+
+func mustLocatorCount(t *testing.T, locator playwright.Locator) int {
+	t.Helper()
+	count, err := locator.Count()
+	require.NoError(t, err)
+	return count
 }
 
 func TestComponentDocsHTMXProofRejectsFullPageReload(t *testing.T) {

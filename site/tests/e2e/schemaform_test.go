@@ -69,8 +69,12 @@ func TestSchemaFormDemoPage(t *testing.T) {
 	assert.Contains(t, submitPruneText, "values.serviceType")
 	assert.Contains(t, submitPruneText, "values.internalToken")
 
-	apiText, err := page.Locator("#api-reference").Locator("xpath=ancestor::div[1]").TextContent()
+	apiLink := page.Locator("[data-go-api-link]")
+	href, err := apiLink.GetAttribute("href")
 	require.NoError(t, err)
-	assert.Contains(t, apiText, "Field.Path")
-	assert.Contains(t, apiText, "AllowModeDisabled")
+	assert.Equal(
+		t,
+		"https://pkg.go.dev/github.com/araihu/goshtoso@"+goshtosoDocsVersion+"/components/schemaform",
+		href,
+	)
 }

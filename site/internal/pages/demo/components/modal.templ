@@ -1,68 +1,9 @@
 package components
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var modalAPISections = []demo.APISection{
-	demo.StructAPI[modal.Config](
-		rootcomponents.KindModal,
-		"Config",
-		"modal.Modal(cfg Config) Instance",
-		"Configures a role=dialog surface with a trigger, primary action, and optional secondary action.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: "required", Description: "Scopes Alpine state and aria-labelledby wiring; empty input falls back to the modal state and title-ID namespace.", Required: true},
-			{Name: "Title", Default: `""`, Description: "Visible dialog heading."},
-			{Name: "Body", Default: `""`, Description: "Visible dialog body text."},
-			{Name: "TriggerLabel", Default: `""`, Description: "Visible text on the always-rendered trigger button."},
-			{Name: "PrimaryLabel", Default: `""`, Description: "Visible text on the always-rendered primary button."},
-			{Name: "PrimaryAction", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression after closing the dialog."},
-			{Name: "SecondaryLabel", Default: `"" (secondary button omitted)`, Description: "Non-empty text renders a secondary button."},
-			{Name: "SecondaryAction", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression to the secondary button when it renders."},
-			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the dialog panel."},
-		},
-	),
-	demo.StructAPI[modal.AlertDialogConfig](
-		rootcomponents.KindAlertDialog,
-		"AlertDialogConfig",
-		"modal.AlertDialog(cfg AlertDialogConfig) AlertDialogInstance",
-		"Configures a role=alertdialog surface with one action and a semantic icon treatment.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: "required", Description: "Scopes Alpine state and aria-labelledby wiring; empty input falls back to the alertDialog state and title-ID namespace.", Required: true},
-			{Name: "Title", Default: `""`, Description: "Visible alert-dialog heading."},
-			{Name: "Body", Default: `""`, Description: "Visible alert-dialog body text."},
-			{Name: "TriggerLabel", Default: `""`, Description: "Visible text on the always-rendered trigger button."},
-			{Name: "ActionLabel", Default: `""`, Description: "Visible text on the always-rendered action button."},
-			{Name: "Action", Default: "nil (close only)", Description: "Adds optional HTMX attributes and an Alpine expression after closing the alert dialog."},
-			{Name: "Tone", Default: "ToneDefault", Allowed: []string{"ToneDefault", "ToneSuccess", "ToneInfo", "ToneWarning", "ToneDanger"}, Description: "Sets the trigger, icon, and action treatment; empty or unknown values use the primary default."},
-			{Name: "PanelClass", Default: `""`, Description: "Appends CSS classes to the dialog panel."},
-		},
-	),
-	demo.StructAPI[modal.ButtonAction](
-		"",
-		"ButtonAction",
-		"",
-		"Configures behavior shared by modal and alert-dialog buttons.",
-		[]demo.APIPropDoc{
-			{Name: "OnClick", Default: `"" (close only)`, Description: "Alpine expression appended after the built-in state assignment that closes the dialog."},
-			{Name: "HTMX", Default: "nil (no HTMX attributes)", Description: "Adds non-empty HTMXConfig fields to the action button."},
-		},
-	),
-	demo.StructAPI[modal.HTMXConfig](
-		"",
-		"HTMXConfig",
-		"",
-		"Maps optional HTMX request and swap attributes onto a dialog action button.",
-		[]demo.APIPropDoc{
-			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL rendered as hx-get."},
-			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL rendered as hx-post; it may be rendered together with Get."},
-			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
-			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
-		},
-	),
-}
 
 // ModalDemoPage renders the Modal component demo
 templ ModalDemoPage() {
@@ -142,8 +83,6 @@ templ modalDemoContent() {
 })`,
 		)
 	</div>
-	// API reference lives outside #modal-fragment.
-	@demo.StructuredAPIReference(modalAPISections)
 }
 
 // modalDefaultPreview renders the default modal trigger.

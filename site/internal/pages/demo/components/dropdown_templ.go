@@ -9,55 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var dropdownAPISections = []demo.APISection{
-	demo.StructAPI[dropdown.Config](
-		rootcomponents.KindDropdown,
-		"Config",
-		"dropdown.Dropdown(cfg Config) Instance",
-		"Configures a click, hover, or context menu with section grouping and keyboard navigation.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"" (omitted)`, Description: "Sets the dropdown root ID."},
-			{Name: "Label", Default: `""`, Description: "Visible click/hover trigger text and the icon-only trigger accessible label; context mode uses a fixed context-menu label."},
-			{Name: "TriggerMode", Default: "TriggerClick", Allowed: []string{"TriggerClick", "TriggerHover", "TriggerContext"}, Description: "Selects the renderer; empty or unknown values resolve to click."},
-			{Name: "Sections", Default: "nil (empty menu)", Description: "Groups menu items; multiple non-context sections receive divider styling, while context sections render separate lists."},
-			{Name: "TriggerIcon", Default: "nil", Description: "Replaces the context dots icon, or supplies click/hover icon-only content when TriggerIconOnly is true."},
-			{Name: "TriggerIconOnly", Default: "false", Description: "With a non-nil TriggerIcon, renders an icon-only click/hover trigger. Context mode ignores this flag."},
-			{Name: "MenuAlign", Default: "AlignStart", Allowed: []string{"AlignStart", "AlignEnd"}, Description: "AlignEnd anchors the panel to the trigger's right edge; empty or unknown values align to the left/start edge."},
-		},
-	),
-	demo.StructAPI[dropdown.Item](
-		"",
-		"Item",
-		"",
-		"Describes one menu item. OnClick or Disabled selects button markup; otherwise non-context menus render an anchor and context menus render a focusable list item.",
-		[]demo.APIPropDoc{
-			{Name: "Label", Default: `""`, Description: "Visible menu-item text."},
-			{Name: "Href", Default: `""`, Description: "Anchor destination for enabled items without OnClick. Context-mode plain items do not render an anchor, so Href is ignored there."},
-			{Name: "Icon", Default: "nil", Description: "Optional leading icon. Its presence also aligns sibling non-context items."},
-			{Name: "Shortcut", Default: `"" (omitted)`, Description: "Shortcut text rendered only by context-menu item paths."},
-			{Name: "ShortcutIcon", Default: "nil (Command icon fallback)", Description: "Custom modifier icon used only when a context-menu Shortcut is non-empty."},
-			{Name: "OnClick", Default: `""`, Description: "Non-empty Alpine expression selects button markup and runs only when Disabled is false."},
-			{Name: "Disabled", Default: "false", Description: "Selects a native disabled button, suppresses OnClick, and applies muted non-interactive styling."},
-			{Name: "Danger", Default: "false", Description: "Adds destructive color styling without changing markup or behavior."},
-			{Name: "Tooltip", Default: `"" (omitted)`, Description: "Sets a native title attribute on the rendered item element."},
-			{Name: "ID", Default: `"" (omitted)`, Description: "Sets the rendered item element ID."},
-		},
-	),
-	demo.StructAPI[dropdown.Section](
-		"",
-		"Section",
-		"",
-		"Groups menu items. Sections have no public heading field.",
-		[]demo.APIPropDoc{
-			{Name: "Items", Default: "nil", Description: "Menu items rendered in order."},
-		},
-	),
-}
 
 // DropdownDemoPage renders the Dropdown component demo
 func DropdownDemoPage() templ.Component {
@@ -226,10 +180,6 @@ func dropdownDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(dropdownAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

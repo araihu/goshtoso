@@ -9,39 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/breadcrumbs"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var breadcrumbsAPISections = []demo.APISection{
-	demo.StructAPI[breadcrumbs.Config](
-		rootcomponents.KindBreadcrumbs,
-		"Config",
-		"breadcrumbs.Breadcrumbs(cfg Config) Instance",
-		"Configures a breadcrumb nav containing linked ancestors and an optional current-page item.",
-		[]demo.APIPropDoc{
-			{Name: "Items", Default: "nil", Description: "Intermediate linked ancestors rendered in order, each followed by a separator."},
-			{Name: "Current", Default: `"" (current-page item omitted)`, Description: "Non-empty current-page text renders last with aria-current=page and no link."},
-			{Name: "Separator", Default: "Chevron", Allowed: []string{"Chevron", "Slash"}, Description: "Sets separator markup and spacing; empty or unknown values use the chevron."},
-			{Name: "NavClass", Default: `""`, Description: "Appends CSS classes to the outer nav."},
-			{Name: "NavAttrs", Default: "nil", Description: "Appends arbitrary attributes after the modeled class and aria-label; conflicting keys can produce duplicate attributes."},
-		},
-	),
-	demo.StructAPI[breadcrumbs.Item](
-		"",
-		"Item",
-		"",
-		"Describes one linked breadcrumb ancestor.",
-		[]demo.APIPropDoc{
-			{Name: "Label", Default: `""`, Description: "Visible anchor text."},
-			{Name: "Href", Default: `""`, Description: "Anchor destination passed through templ.URL."},
-			{Name: "Icon", Default: "nil", Description: "Optional leading icon component."},
-			{Name: "Tooltip", Default: `"" (omitted)`, Description: "Sets a native title only on the icon wrapper and is ignored when Icon is nil."},
-			{Name: "LinkAttrs", Default: "nil", Description: "Appends arbitrary anchor attributes before the modeled class; conflicting keys can produce duplicate attributes."},
-		},
-	),
-}
 
 // BreadcrumbsDemoPage renders the Breadcrumbs component demo
 func BreadcrumbsDemoPage() templ.Component {
@@ -151,10 +121,6 @@ func breadcrumbsDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(breadcrumbsAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

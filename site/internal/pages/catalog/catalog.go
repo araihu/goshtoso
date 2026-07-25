@@ -4,9 +4,13 @@ package catalog
 
 import (
 	"slices"
+	"strings"
 
 	"github.com/araihu/goshtoso/components"
 )
+
+const componentModulePath = "github.com/araihu/goshtoso/components/"
+const pkgGoDevModuleURL = "https://pkg.go.dev/github.com/araihu/goshtoso@"
 
 // Entry describes one public component documentation page.
 type Entry struct {
@@ -18,6 +22,19 @@ type Entry struct {
 	Section     string
 	Order       int
 	Kinds       []components.Kind
+}
+
+// GoPackagePath returns the public Go import path documented by this page.
+// Route names use kebab case for readability; Go package directories do not.
+func (e Entry) GoPackagePath() string {
+	name := strings.TrimPrefix(e.Key, "components/")
+	return componentModulePath + strings.ReplaceAll(name, "-", "")
+}
+
+// GoDocsURL returns the pkg.go.dev URL for this package at an exact module version.
+func (e Entry) GoDocsURL(version string) string {
+	name := strings.TrimPrefix(e.GoPackagePath(), componentModulePath)
+	return pkgGoDevModuleURL + version + "/components/" + name
 }
 
 var componentPages = []Entry{
@@ -483,6 +500,17 @@ func ComponentPages() []Entry {
 func Lookup(key string) (Entry, bool) {
 	for _, entry := range componentPages {
 		if entry.Key == key {
+			entry.Kinds = slices.Clone(entry.Kinds)
+			return entry, true
+		}
+	}
+	return Entry{}, false
+}
+
+// LookupActive returns the component documentation entry for a navigation key.
+func LookupActive(active string) (Entry, bool) {
+	for _, entry := range componentPages {
+		if entry.Active == active {
 			entry.Kinds = slices.Clone(entry.Kinds)
 			return entry, true
 		}

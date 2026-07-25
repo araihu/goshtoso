@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -85,9 +86,9 @@ func TestKbdCoverageDemo(t *testing.T) {
 		HasText: "F12",
 	}).WaitFor())
 
-	require.NoError(t, page.Locator("table").Filter(playwright.LocatorFilterOptions{
-		HasText: "Accessible label",
-	}).WaitFor())
+	entry, ok := catalog.Lookup("components/kbd")
+	require.True(t, ok)
+	requireComponentGoAPILink(t, page, entry)
 
 	before, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
 	require.NoError(t, err)

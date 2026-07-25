@@ -9,92 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var radioAPISections = []demo.APISection{
-	demo.StructAPI[radio.Config](
-		rootcomponents.KindRadio,
-		"Config",
-		"radio.Radio(cfg Config) Instance",
-		"Configures one native radio input, including optional container, segmented, HTMX, and Alpine behavior.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `""`, Description: "Native input ID and label for target; supply a unique value for an associated label."},
-			{Name: "Name", Default: `""`, Description: "Native form-field name shared by mutually exclusive radios."},
-			{Name: "Value", Default: `""`, Description: "Value submitted when this radio is selected."},
-			{Name: "Label", Default: `""`, Description: "Visible option label."},
-			{Name: "Checked", Default: "false", Description: "Sets the initial native checked state."},
-			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute."},
-			{Name: "Tone", Default: "TonePrimary", Allowed: []string{"TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets checked and focus colors, including segmented selection colors."},
-			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets the native radio size; segmented mode uses its own pill dimensions."},
-			{Name: "HelperText", Default: `""`, Description: "Non-empty text selects the description layout unless Segmented is true."},
-			{Name: "HelperTextID", Default: `"" (helper has no ID)`, Description: "Normal standalone Radio with non-empty HelperText renders aria-describedby on the input and the matching helper span ID. Segmented Radio takes precedence and renders neither the typed aria-describedby attribute nor a helper span. RadioGroup renders aria-describedby on the input but does not give its helper span a matching ID."},
-			{Name: "BadgeColor", Default: `"" (plain group label)`, Allowed: []string{"success", "danger", "warning", "info", "neutral", "primary", "secondary"}, Description: "Applies badge styling only to RadioGroup items that also have HelperText."},
-			{Name: "Container", Default: "false", Description: "Selects the bordered wrapper for a non-segmented standalone Radio. Segmented Radio ignores it. RadioGroup ignores the wrapper layout, but Container still changes the grouped item's inner input background through shared input classes."},
-			{Name: "Segmented", Default: "false", Description: "Selects the standalone segmented-pill renderer, intended for RadioBar; RadioGroup ignores it and renders its own standard item path."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to a standalone Radio root; RadioGroup ignores it."},
-			{Name: "HTMX", Default: "nil (no HTMX attributes)", Description: "Optional server-interaction attributes applied to the input."},
-			{Name: "Alpine", Default: "nil (no Alpine directives)", Description: "Optional client-side directives applied to the input."},
-			{Name: "InputAttrs", Default: "nil", Description: "Additional non-conflicting attributes appended to the native input. Conflicts with modeled keys create duplicate attributes rather than overriding them; use typed fields for name, value, disabled, checked, HTMX, and Alpine behavior."},
-		},
-	),
-	demo.StructAPI[radio.GroupConfig](
-		rootcomponents.KindRadioGroup,
-		"GroupConfig",
-		"radio.RadioGroup(cfg GroupConfig) GroupInstance",
-		"Configures a bordered list of radio options.",
-		[]demo.APIPropDoc{
-			{Name: "Title", Default: `"" (omitted)`, Description: "Optional heading rendered above the group."},
-			{Name: "Items", Default: "nil (empty group)", Description: "Radio configurations rendered in order.", Required: true},
-		},
-	),
-	demo.StructAPI[radio.HTMXConfig](
-		"",
-		"HTMXConfig",
-		"",
-		"Maps HTMX request, swap, and submission attributes onto a radio input.",
-		[]demo.APIPropDoc{
-			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL."},
-			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL."},
-			{Name: "Put", Default: `"" (omitted)`, Description: "PUT request URL."},
-			{Name: "Delete", Default: `"" (omitted)`, Description: "DELETE request URL."},
-			{Name: "Patch", Default: `"" (omitted)`, Description: "PATCH request URL."},
-			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
-			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
-			{Name: "Trigger", Default: `"change" when a verb is set; otherwise omitted`, Description: "Explicit trigger override, or the radio-native change event synthesized for requests."},
-			{Name: "Indicator", Default: `"" (omitted)`, Description: "CSS selector rendered as hx-indicator."},
-			{Name: "PushURL", Default: "false", Description: "When true, renders hx-push-url=\"true\"."},
-			{Name: "Confirm", Default: `"" (omitted)`, Description: "Confirmation message rendered as hx-confirm."},
-			{Name: "Vals", Default: `"" (omitted)`, Description: "Caller-provided hx-vals JSON expression."},
-			{Name: "Include", Default: `"" (omitted)`, Description: "CSS selector rendered as hx-include."},
-		},
-	),
-	demo.StructAPI[radio.AlpineConfig](
-		"",
-		"AlpineConfig",
-		"",
-		"Maps optional Alpine.js directives onto a radio input.",
-		[]demo.APIPropDoc{
-			{Name: "Data", Default: `"" (omitted)`, Description: "Expression rendered as x-data."},
-			{Name: "Model", Default: `"" (omitted)`, Description: "Expression rendered as x-model."},
-			{Name: "OnChange", Default: `"" (omitted)`, Description: "Expression rendered as x-on:change."},
-			{Name: "BindChecked", Default: `"" (omitted)`, Description: "Expression rendered as x-bind:checked."},
-			{Name: "BindDisabled", Default: `"" (omitted)`, Description: "Expression rendered as x-bind:disabled."},
-		},
-	),
-	demo.FunctionsAPI(
-		"github.com/araihu/goshtoso/components/radio",
-		rootcomponents.KindRadioBar,
-		"RadioBar",
-		"",
-		"Groups segmented Radio children in a connected bordered pill bar.",
-		[]demo.APIPropDoc{
-			{Name: "RadioBar", Signature: "func RadioBar() BarInstance", Default: "n/a", Description: "Creates the child-rendering segmented-control wrapper; children should set Config.Segmented."},
-		},
-	),
-}
 
 // RadioDemoPage renders the Radio component demo as a full document.
 // Kept for direct invocation; the registry uses radioDemoContent directly.
@@ -305,10 +222,6 @@ func radioDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(radioAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

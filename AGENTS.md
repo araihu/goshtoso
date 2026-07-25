@@ -118,14 +118,22 @@ When adding or changing a component:
 
 1. Update the component source in `components/<name>/`.
 2. Update or add the demo page under `site/internal/pages/demo/components/`.
-3. Register the route in `site/internal/server/server.go`.
-4. Add the sidebar entry in `site/internal/pages/demo/layout.templ`.
+3. Register the page in the demo registry and component catalog.
+4. Register any component-specific HTTP endpoints in `site/internal/server/server.go`.
 5. Add focused E2E coverage under `site/tests/e2e/`.
 6. If `types.go` or entry points changed, run `go run ./cmd/skillgen`.
 7. Run `templ generate`, `just css` when needed, and the relevant tests.
 
-Demo pages should use one preview and one code block per variant, followed by an
-API reference table. Keep variant containers uniquely identified.
+Demo pages should use one preview and one code block per variant. Keep variant
+containers uniquely identified. The shared layout appends the component's exact
+versioned pkg.go.dev link from the catalog; keep exported Go declarations and
+their Go doc comments authoritative instead of maintaining a second API table.
+
+Release builds resolve the documented Goshtoso version from `site/go.mod` and
+inject it into `site/internal/buildinfo` with `go build -ldflags -X`. Plain local
+builds deliberately show `development` without an external API link. Do not
+hardcode a release version in templates or replace this with mutable runtime
+configuration.
 
 ## Frontend Rules
 

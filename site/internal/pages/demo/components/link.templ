@@ -1,33 +1,9 @@
 package components
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	linkcomponent "github.com/araihu/goshtoso/components/link"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var linkAPISections = []demo.APISection{
-	demo.OptionsAPI(
-		"github.com/araihu/goshtoso/components/link",
-		rootcomponents.KindLink,
-		"Link options",
-		"link.Link(href string, options ...Option) Instance",
-		"Creates a styled anchor from a required destination and child content, then applies functional options over the documented defaults.",
-		[]demo.APIPropDoc{
-			{Name: "href", Signature: "href string", Default: "required", Description: "Anchor destination passed through templ.URL.", Required: true},
-			{Name: "WithTarget", Signature: "func WithTarget(target string) Option", Default: `"" (omitted)`, Description: "Sets the native target attribute."},
-			{Name: "WithRel", Signature: "func WithRel(rel string) Option", Default: `"noopener noreferrer" for target "_blank"; otherwise omitted`, Description: "Sets the native rel attribute and overrides the _blank safety fallback when non-empty."},
-			{Name: "WithRole", Signature: "func WithRole(role string) Option", Default: `"button" for AppearanceButton; otherwise omitted`, Description: "Sets the native role attribute and overrides the button-appearance fallback when non-empty."},
-			{Name: "WithID", Signature: "func WithID(id string) Option", Default: `"" (omitted)`, Description: "Sets the anchor ID."},
-			{Name: "WithAppearance", Signature: "func WithAppearance(appearance Appearance) Option", Default: "AppearanceText", Allowed: []string{"AppearanceText", "AppearanceButton"}, Description: "Selects text or button styling; empty or unknown values use text styling."},
-			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMedium", Allowed: []string{"SizeSmall", "SizeMedium", "SizeLarge", "SizeXLarge"}, Description: "Sets dimensions only for AppearanceButton; empty or unknown values use medium."},
-			{Name: "WithIcon", Signature: "func WithIcon(icon templ.Component) Option", Default: "nil", Description: "Adds an icon and inline-flex layout."},
-			{Name: "WithIconPosition", Signature: "func WithIconPosition(position IconPosition) Option", Default: "IconTrailing", Allowed: []string{"IconLeading", "IconTrailing"}, Description: "IconLeading renders before child content; every other value renders after it."},
-			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the anchor."},
-			{Name: "WithAttrs", Signature: "func WithAttrs(attrs templ.Attributes) Option", Default: "nil", Description: "Appends arbitrary attributes after modeled attributes; conflicts can produce duplicate attributes rather than overriding typed options."},
-		},
-	),
-}
 
 // LinkDemoPage renders the Link component demo.
 templ LinkDemoPage() {
@@ -81,7 +57,6 @@ templ linkDemoContent() {
 }`,
 		)
 	</div>
-	@demo.StructuredAPIReference(linkAPISections)
 }
 
 templ linkDefaultPreview() {

@@ -57,9 +57,7 @@ func TestComponentRegistryAndMetadataFollowCatalog(t *testing.T) {
 		require.Truef(t, ok, "missing demo registry entry for %s", page.Key)
 		require.Equal(t, page.Active, entry.Active)
 		require.NotNil(t, entry.Content)
-		if entry.API != nil {
-			require.NotEmpty(t, entry.API, "non-nil transitional API metadata must contain sections")
-		}
+		require.NotEmpty(t, page.GoPackagePath())
 
 		meta := MetaForKey(page.Key)
 		require.Equal(t, page.Description, meta.Description)

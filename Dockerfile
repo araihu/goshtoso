@@ -13,7 +13,10 @@ COPY site/go.mod site/go.sum ./site/
 RUN go work init . ./site && go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/server ./site/cmd/server
+RUN GOSHTOSO_DOCS_VERSION="$(cd site && GOWORK=off go list -m -f '{{.Version}}' github.com/araihu/goshtoso)" && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+      -ldflags "-X github.com/araihu/goshtoso/site/internal/buildinfo.goDocsVersion=${GOSHTOSO_DOCS_VERSION}" \
+      -o /out/server ./site/cmd/server
 # Drop the build-only workspace so it is never baked into the runtime image
 # (the final stage copies all of /src for its assets/).
 RUN rm -f go.work go.work.sum

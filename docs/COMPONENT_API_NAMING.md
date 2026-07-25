@@ -126,6 +126,7 @@ When renaming public fields:
 3. Regenerate templ output with `templ generate`.
 4. Run `go run ./scripts/skillgen` if a component `types.go` or entry point
    changed.
-5. Update API reference tables and examples.
+5. Update exported Go doc comments and demo examples; the demo layout links to
+   the exact versioned pkg.go.dev reference generated from those declarations.
 6. Add focused tests for render contracts or renamed behavior when risk is not
    purely mechanical.

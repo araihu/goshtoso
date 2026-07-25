@@ -9,40 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	rootcomponents "github.com/araihu/goshtoso/components"
 	palette "github.com/araihu/goshtoso/components/palette"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var paletteAPISections = []demo.APISection{
-	demo.StructAPI[palette.Config](
-		rootcomponents.KindPalette,
-		"Config",
-		"palette.Palette(cfg Config) Instance",
-		"Configures a Tailwind hue and shade picker that dispatches a bubbling select-close event for every selection.",
-		[]demo.APIPropDoc{
-			{Name: "ID", Default: `""`, Description: "Palette root element ID."},
-			{Name: "Alpine", Default: "nil (event dispatch only)", Description: "Optional model assignment performed when select-close reaches the palette root."},
-			{Name: "Hues", Default: "red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose, slate, gray, zinc, neutral, stone", Description: "Non-empty values replace the default Tailwind hue families."},
-			{Name: "Shades", Default: "50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950", Description: "Non-empty values replace the default shade steps."},
-			{Name: "HideNeutral", Default: "false (show white and black)", Description: "Hides the white and black quick swatches; it does not remove the neutral hue family from Hues."},
-			{Name: "HideReset", Default: "false (show Reset)", Description: "Hides the action that dispatches an empty selection."},
-			{Name: "ShowHex", Default: "false", Description: "Adds native-color and validated three- or six-digit hex inputs."},
-			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the palette root."},
-			{Name: "LazyWhen", Default: `"" (render the grid immediately)`, Description: "Non-empty Alpine expression wraps only the swatch grid in template x-if; Reset and hex controls remain immediate."},
-		},
-	),
-	demo.StructAPI[palette.AlpineConfig](
-		"",
-		"AlpineConfig",
-		"",
-		"Optionally mirrors each selected value into an Alpine expression.",
-		[]demo.APIPropDoc{
-			{Name: "Model", Default: `"" (no assignment)`, Description: "Left-hand Alpine expression assigned from $event.detail on select-close."},
-		},
-	),
-}
 
 // PaletteDemoPage renders the Palette component demo
 func PaletteDemoPage() templ.Component {
@@ -177,15 +147,7 @@ func paletteDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(paletteAPISections).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -215,7 +177,7 @@ func paletteStandalonePreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"palette-standalone\" class=\"w-full max-w-md mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"palette-standalone\" class=\"w-full max-w-md mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -227,7 +189,7 @@ func paletteStandalonePreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Selected: <span x-text=\"picked || '—'\"></span></p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Selected: <span x-text=\"picked || '—'\"></span></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -257,7 +219,7 @@ func paletteShellPreview() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"palette-shell\" class=\"w-full max-w-xs mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"palette-shell\" class=\"w-full max-w-xs mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -293,7 +255,7 @@ func paletteShellPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -323,7 +285,7 @@ func paletteRestrictedPreview() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div id=\"palette-restricted\" class=\"w-full max-w-sm mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"palette-restricted\" class=\"w-full max-w-sm mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -335,7 +297,7 @@ func paletteRestrictedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -365,7 +327,7 @@ func paletteCompactPreview() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div id=\"palette-compact\" class=\"w-full max-w-xs mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"palette-compact\" class=\"w-full max-w-xs mx-auto\"><div class=\"rounded-radius border border-outline dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -379,7 +341,7 @@ func paletteCompactPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -408,7 +370,7 @@ func paletteShellTriggerSwatch() templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span data-shell-selected-preview aria-hidden=\"true\" class=\"size-4 shrink-0 rounded-sm border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark\" x-bind:style=\"{ backgroundColor: shellPicked ? (shellPicked[0] === '#' ? shellPicked : (shellPicked === 'white' || shellPicked === 'black' ? shellPicked : 'var(--color-' + shellPicked + ')')) : 'transparent' }\"></span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span data-shell-selected-preview aria-hidden=\"true\" class=\"size-4 shrink-0 rounded-sm border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark\" x-bind:style=\"{ backgroundColor: shellPicked ? (shellPicked[0] === '#' ? shellPicked : (shellPicked === 'white' || shellPicked === 'black' ? shellPicked : 'var(--color-' + shellPicked + ')')) : 'transparent' }\"></span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

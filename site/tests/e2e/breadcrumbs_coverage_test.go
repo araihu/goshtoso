@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -54,9 +55,9 @@ func TestBreadcrumbsCoverageDemo(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "Home", iconTitle)
 
-	require.NoError(t, page.Locator("table").Filter(playwright.LocatorFilterOptions{
-		HasText: "NavClass",
-	}).WaitFor())
+	entry, ok := catalog.Lookup("components/breadcrumbs")
+	require.True(t, ok)
+	requireComponentGoAPILink(t, page, entry)
 
 	before, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
 	require.NoError(t, err)

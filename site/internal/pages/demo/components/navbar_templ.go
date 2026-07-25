@@ -10,75 +10,9 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	templpkg "github.com/a-h/templ"
-	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
-
-var navbarAPISections = []demo.APISection{
-	demo.StructAPI[navbar.Config](
-		rootcomponents.KindNavbar,
-		"Config",
-		"navbar.Navbar(cfg Config) Instance",
-		"Configures responsive brand, navigation, action, and user-menu content.",
-		[]demo.APIPropDoc{
-			{Name: "Brand", Default: "nil (brand link omitted)", Description: "Optional brand component rendered inside a leading anchor."},
-			{Name: "BrandHref", Default: `"/"`, Description: "Brand anchor destination when Brand is non-nil."},
-			{Name: "Links", Default: "nil", Description: "Navigation links rendered on desktop and in the mobile menu."},
-			{Name: "Actions", Default: "nil", Description: "Custom controls partitioned by ActionItem.Position."},
-			{Name: "User", Default: "nil (user UI omitted)", Description: "Enables the desktop avatar dropdown. On mobile, non-empty name or email renders the user header."},
-			{Name: "UserMenu", Default: "nil", Description: "User links render in the desktop dropdown only when User is non-nil, and in the mobile menu when Links, User, or a right action causes that menu to render. Mobile links omit UserMenuItem.Icon."},
-			{Name: "NavClass", Default: `""`, Description: "Appends CSS classes to the outer nav."},
-			{Name: "NavAttrs", Default: "nil", Description: "Appends arbitrary attributes after modeled nav attributes; conflicting keys can produce duplicate attributes."},
-		},
-	),
-	demo.StructAPI[navbar.NavLink](
-		"",
-		"NavLink",
-		"",
-		"Describes one desktop and mobile navigation link.",
-		[]demo.APIPropDoc{
-			{Name: "Label", Default: `""`, Description: "Visible anchor text."},
-			{Name: "Href", Default: `""`, Description: "Anchor destination passed through templ.URL."},
-			{Name: "Active", Default: "false", Description: "Adds active styling and aria-current=page in both responsive renderers."},
-			{Name: "LinkAttrs", Default: "nil", Description: "Appends arbitrary attributes before modeled class and active-state attributes; conflicts can produce duplicate attributes."},
-		},
-	),
-	demo.StructAPI[navbar.UserProfile](
-		"",
-		"UserProfile",
-		"",
-		"Describes the optional user identity.",
-		[]demo.APIPropDoc{
-			{Name: "Name", Default: `"" (name omitted)`, Description: "User display name in desktop and mobile profile headers."},
-			{Name: "Email", Default: `"" (email omitted)`, Description: "User email in desktop and mobile profile headers."},
-			{Name: "Avatar", Default: "nil (default desktop user icon)", Description: "Custom avatar trigger content on desktop and optional avatar content in the mobile profile header."},
-		},
-	),
-	demo.StructAPI[navbar.UserMenuItem](
-		"",
-		"UserMenuItem",
-		"",
-		"Describes one link in the user menu.",
-		[]demo.APIPropDoc{
-			{Name: "Label", Default: `""`, Description: "Visible anchor text."},
-			{Name: "Href", Default: `""`, Description: "Anchor destination passed through templ.URL."},
-			{Name: "Icon", Default: "nil", Description: "Optional leading icon rendered only in the desktop dropdown."},
-			{Name: "LinkAttrs", Default: "nil", Description: "Appends arbitrary attributes before modeled classes; conflicts can produce duplicate attributes."},
-			{Name: "Danger", Default: "false", Description: "Adds destructive styling in desktop and mobile menus."},
-		},
-	),
-	demo.StructAPI[navbar.ActionItem](
-		"",
-		"ActionItem",
-		"",
-		"Describes custom navbar content and its responsive placement.",
-		[]demo.APIPropDoc{
-			{Name: "Content", Default: "nil (renders nothing)", Description: "Component rendered at the selected action position."},
-			{Name: "Position", Default: "ActionLeft", Allowed: []string{"ActionLeft", "ActionRight"}, Description: "Empty or ActionLeft renders after the brand on desktop only. ActionRight renders before the desktop avatar and inside the mobile menu. Unknown values render nowhere."},
-		},
-	),
-}
 
 // NavbarDemoPage renders the Navbar component demo
 func NavbarDemoPage() templ.Component {
@@ -224,10 +158,6 @@ func navbarDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = demo.StructuredAPIReference(navbarAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -588,7 +518,7 @@ func demoInitialsAvatar(initials string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(initials)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/navbar.templ`, Line: 275, Col: 182}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/navbar.templ`, Line: 207, Col: 182}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
