@@ -13,6 +13,7 @@ import (
 	searchfield "github.com/araihu/goshtoso/components/search"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 )
 
 // HeadMeta renders crawler metadata and social-preview tags shared by full pages.
@@ -44,7 +45,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 12, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 13, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -57,7 +58,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 13, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 14, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -70,7 +71,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(meta.CanonicalURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 14, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 15, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -83,7 +84,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(SiteName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 15, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 16, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -96,7 +97,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 17, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 18, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -109,7 +110,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 18, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 19, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -122,7 +123,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.CanonicalURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 19, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 20, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -135,7 +136,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 20, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 21, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -148,7 +149,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 22, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 23, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -161,7 +162,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 23, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 24, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -174,7 +175,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 24, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 25, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -272,7 +273,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineFocusURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 69, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 70, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -285,7 +286,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineCollapseURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 70, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 71, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -298,7 +299,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineMaskURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 71, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 72, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 		if templ_7745c5c3_Err != nil {
@@ -311,7 +312,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineJSURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 72, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 73, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 		if templ_7745c5c3_Err != nil {
@@ -324,7 +325,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 73, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 74, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 		if templ_7745c5c3_Err != nil {
@@ -337,7 +338,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXExtWSURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 74, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 75, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
@@ -350,7 +351,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXExtSSEURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 75, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 76, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 		if templ_7745c5c3_Err != nil {
@@ -778,17 +779,30 @@ func getSearchItems() []searchfield.Item {
 		{ID: "search-attributions", Title: "Attributions", Description: "Third-party notices and project credits.", Href: "/attributions", Section: "Docs", Attrs: navHxAttrs("/attributions", "")},
 		{ID: "search-license", Title: "License", Description: "License details for using Goshtoso.", Href: "/license", Section: "Docs", Attrs: navHxAttrs("/license", "")},
 	}
+	for _, page := range catalog.ComponentPages() {
+		items = append(items, searchfield.Item{
+			ID:          "search-" + page.Active,
+			Title:       page.Title,
+			Description: page.Description,
+			Href:        page.Path,
+			Section:     page.Section,
+			Keywords:    []string{page.Active},
+			Attrs:       navHxAttrs(page.Path, ""),
+		})
+	}
 	for _, section := range getSidebarSections("") {
-		for _, item := range section.Items {
-			items = append(items, searchfield.Item{
-				ID:          "search-" + item.ID,
-				Title:       item.Label,
-				Description: searchItemDescription(item.ID, item.Label, section.Title),
-				Href:        item.Href,
-				Section:     section.Title,
-				Keywords:    []string{item.ID},
-				Attrs:       navHxAttrs(item.Href, ""),
-			})
+		if section.Title == "Example Apps" {
+			for _, item := range section.Items {
+				items = append(items, searchfield.Item{
+					ID:          "search-" + item.ID,
+					Title:       item.Label,
+					Description: searchItemDescription(item.ID, item.Label, section.Title),
+					Href:        item.Href,
+					Section:     section.Title,
+					Keywords:    []string{item.ID},
+					Attrs:       navHxAttrs(item.Href, ""),
+				})
+			}
 		}
 	}
 	items = append(items, getSearchSectionItems()...)
@@ -797,47 +811,11 @@ func getSearchItems() []searchfield.Item {
 
 func searchItemDescription(id, label, section string) string {
 	descriptions := map[string]string{
-		"accordion":        "Expandable content groups for FAQs, dense settings, and progressive disclosure.",
-		"avatar":           "User images, initials, placeholders, status indicators, borders, and stacked groups.",
-		"badge":            "Compact labels for statuses, counts, semantic colors, icons, and notification dots.",
-		"banner":           "Inline announcements and alerts with tone, icon, action, and dismiss patterns.",
-		"card":             "Structured content containers with media, headings, actions, and layout variants.",
-		"carousel":         "Swipeable or controlled content rails for images, feature panels, and grouped cards.",
-		"chatbubble":       "Conversation message bubbles with alignment, avatars, metadata, and grouped threads.",
-		"codeblock":        "Syntax-highlighted snippets with copy actions, labels, scroll bounds, and themes.",
-		"kbd":              "Semantic keyboard shortcut hints for command palettes, forms, and toolbar controls.",
-		"spinner":          "Loading indicators with size, color, label, and accessible busy-state patterns.",
-		"table":            "Sortable, paginated, filterable data grids with HTMX loading and rich cell content.",
-		"tabs":             "Segmented content navigation with keyboard support, panels, and active states.",
-		"button":           "Clickable actions with variants, sizes, icons, loading states, and HTMX integration.",
-		"checkbox":         "Boolean and grouped selections with labels, helper text, disabled states, and validation.",
-		"combobox":         "Searchable select controls for single or multiple choices with keyboard navigation.",
-		"dropdown":         "Menu triggers with grouped actions, icons, alignment, and keyboard-friendly behavior.",
-		"fileinput":        "File upload controls with labels, helper text, selected-file display, and validation states.",
-		"form":             "Form layout patterns, field groups, validation messages, and submit behavior.",
-		"pagination":       "Page navigation controls for tables, lists, and HTMX-powered result sets.",
-		"radio":            "Exclusive choice groups with accessible labels, helper copy, and validation states.",
-		"palette":          "Color picking surfaces with swatches, hex entry, token labels, and theme integration.",
-		"search":           "Command-palette search with a sidebar trigger, global modal, filtering, and highlights.",
-		"select":           "Native-feeling select menus with trigger content, grouped options, and keyboard support.",
-		"structured-input": "Composed inputs for prefixes, suffixes, segmented values, and constrained data entry.",
-		"tags-list":        "Editable tag collections with add, remove, duplicate handling, and keyboard flows.",
-		"text-input":       "Text fields with icons, search affordances, masks, validation, and password controls.",
-		"textarea":         "Multi-line text entry with resize behavior, helper text, counters, and validation.",
-		"toggle":           "Binary switches for settings, feature flags, and compact on/off choices.",
-		"alert":            "Contextual messages for info, success, warning, and danger states.",
-		"modal":            "Overlay dialogs with focus management, actions, dismissal, and scroll handling.",
-		"steps":            "Progress indicators for wizards, onboarding, and multi-step workflows.",
-		"toast":            "Transient notifications with positions, timing, actions, and status variants.",
-		"tooltip":          "Small contextual hints for icons, controls, and abbreviated UI labels.",
-		"breadcrumbs":      "Hierarchical navigation trails for nested pages and documentation routes.",
-		"navbar":           "Top navigation bars with links, actions, responsive menus, and brand areas.",
-		"sidebar":          "Persistent or overlay side navigation with sections, search slots, and active states.",
-		"todo":             "Runnable task-list example with add, edit, complete, and filter flows.",
-		"chat":             "Runnable chat interface example with messages, composer, and conversation layout.",
-		"logs":             "Live log-feed example with streaming updates and operational scanning patterns.",
-		"profile":          "Profile editing example with forms, preferences, validation, and persisted state.",
-		"ticker":           "Live ticker example with real-time list updates and compact status rows.",
+		"todo":    "Runnable task-list example with add, edit, complete, and filter flows.",
+		"chat":    "Runnable chat interface example with messages, composer, and conversation layout.",
+		"logs":    "Live log-feed example with streaming updates and operational scanning patterns.",
+		"profile": "Profile editing example with forms, preferences, validation, and persisted state.",
+		"ticker":  "Live ticker example with real-time list updates and compact status rows.",
 	}
 	if description, ok := descriptions[id]; ok {
 		return description
@@ -865,83 +843,34 @@ func getSearchSectionItems() []searchfield.Item {
 
 // getSidebarSections returns the component categories with left-border style items
 func getSidebarSections(activeComponent string) []sidebar.Section {
-	return []sidebar.Section{
-		{
-			Title: "Display",
-			Items: []sidebar.Item{
-				sItem("accordion", "Accordion", "/components/accordion", activeComponent),
-				sItem("avatar", "Avatar", "/components/avatar", activeComponent),
-				sItem("badge", "Badge", "/components/badge", activeComponent),
-				sItem("banner", "Banner", "/components/banner", activeComponent),
-				sItem("card", "Card", "/components/card", activeComponent),
-				sItem("carousel", "Carousel", "/components/carousel", activeComponent),
-				sItem("chatbubble", "Chat Bubble", "/components/chatbubble", activeComponent),
-				sItem("codeblock", "Code Block", "/components/codeblock", activeComponent),
-				sItem("dependencies", "Dependencies", "/components/dependencies", activeComponent),
-				sItem("kbd", "KBD", "/components/kbd", activeComponent),
-				sItem("table", "Table", "/components/table", activeComponent),
-			},
-		},
-		{
-			Title: "Input",
-			Items: []sidebar.Item{
-				sItem("button", "Button", "/components/button", activeComponent),
-				sItem("checkbox", "Checkbox", "/components/checkbox", activeComponent),
-				sItem("combobox", "Combobox", "/components/combobox", activeComponent),
-				sItem("fileinput", "File Input", "/components/fileinput", activeComponent),
-				sItem("form", "Form", "/components/form", activeComponent),
-				sItem("radio", "Radio", "/components/radio", activeComponent),
-				sItem("range", "Range", "/components/range", activeComponent),
-				sItem("rating", "Rating", "/components/rating", activeComponent),
-				sItem("palette", "Palette", "/components/palette", activeComponent),
-				sItem("search", "Search", "/components/search", activeComponent),
-				sItem("select", "Select", "/components/select", activeComponent),
-				sItem("schema-form", "Schema Form", "/components/schema-form", activeComponent),
-				sItem("structured-input", "Structured Input", "/components/structured-input", activeComponent),
-				sItem("tags-list", "Tags List", "/components/tags-list", activeComponent),
-				sItem("text-input", "Text Input", "/components/text-input", activeComponent),
-				sItem("textarea", "Textarea", "/components/textarea", activeComponent),
-				sItem("toggle", "Toggle", "/components/toggle", activeComponent),
-			},
-		},
-		{
-			Title: "Feedback",
-			Items: []sidebar.Item{
-				sItem("alert", "Alert", "/components/alert", activeComponent),
-				sItem("toast", "Toast", "/components/toast", activeComponent),
-				sItem("modal", "Modal", "/components/modal", activeComponent),
-				sItem("drawer", "Drawer", "/components/drawer", activeComponent),
-				sItem("spinner", "Spinner", "/components/spinner", activeComponent),
-				sItem("steps", "Steps", "/components/steps", activeComponent),
-				sItem("tooltip", "Tooltip", "/components/tooltip", activeComponent),
-			},
-		},
-		{
-			Title: "Navigation",
-			Items: []sidebar.Item{
-				sItem("breadcrumbs", "Breadcrumbs", "/components/breadcrumbs", activeComponent),
-				sItem("dropdown", "Dropdown", "/components/dropdown", activeComponent),
-				sItem("link", "Link", "/components/link", activeComponent),
-				sItem("navbar", "Navbar", "/components/navbar", activeComponent),
-				sItem("pagination", "Pagination", "/components/pagination", activeComponent),
-				sItem("sidebar", "Sidebar", "/components/sidebar", activeComponent),
-				sItem("tabs", "Tabs", "/components/tabs", activeComponent),
-			},
-		},
-		{
-			Title:       "Example Apps",
-			Collapsible: true,
-			Items: []sidebar.Item{
-				sItem("todo", "Todo List", "/examples/todo", activeComponent),
-				sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
-				sItem("chat", "Chat", "/examples/chat", activeComponent),
-				sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
-				sItem("profile", "Profile", "/examples/profile", activeComponent),
-				sItem("ticker", "Live Ticker", "/examples/ticker", activeComponent),
-				sItem("wizard", "Onboarding Wizard", "/examples/wizard", activeComponent),
-			},
-		},
+	sections := make([]sidebar.Section, 0, 5)
+	sectionIndex := map[string]int{}
+	for _, page := range catalog.ComponentPages() {
+		index, ok := sectionIndex[page.Section]
+		if !ok {
+			index = len(sections)
+			sectionIndex[page.Section] = index
+			sections = append(sections, sidebar.Section{Title: page.Section})
+		}
+		sections[index].Items = append(
+			sections[index].Items,
+			sItem(page.Active, page.Title, page.Path, activeComponent),
+		)
 	}
+
+	return append(sections, sidebar.Section{
+		Title:       "Example Apps",
+		Collapsible: true,
+		Items: []sidebar.Item{
+			sItem("todo", "Todo List", "/examples/todo", activeComponent),
+			sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
+			sItem("chat", "Chat", "/examples/chat", activeComponent),
+			sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
+			sItem("profile", "Profile", "/examples/profile", activeComponent),
+			sItem("ticker", "Live Ticker", "/examples/ticker", activeComponent),
+			sItem("wizard", "Onboarding Wizard", "/examples/wizard", activeComponent),
+		},
+	})
 }
 
 // componentNavLink represents a prev/next link for component navigation
@@ -950,61 +879,21 @@ type componentNavLink struct {
 	Href  string
 }
 
-// orderedComponents returns the flat ordered list of component IDs matching the sidebar order
-var orderedComponents = []componentNavLink{
-	{"Accordion", "/components/accordion"},
-	{"Avatar", "/components/avatar"},
-	{"Badge", "/components/badge"},
-	{"Banner", "/components/banner"},
-	{"Card", "/components/card"},
-	{"Carousel", "/components/carousel"},
-	{"Chat Bubble", "/components/chatbubble"},
-	{"Code Block", "/components/codeblock"},
-	{"Dependencies", "/components/dependencies"},
-	{"KBD", "/components/kbd"},
-	{"Table", "/components/table"},
-	{"Button", "/components/button"},
-	{"Checkbox", "/components/checkbox"},
-	{"Combobox", "/components/combobox"},
-	{"File Input", "/components/fileinput"},
-	{"Form", "/components/form"},
-	{"Radio", "/components/radio"},
-	{"Range", "/components/range"},
-	{"Rating", "/components/rating"},
-	{"Palette", "/components/palette"},
-	{"Search", "/components/search"},
-	{"Select", "/components/select"},
-	{"Schema Form", "/components/schema-form"},
-	{"Structured Input", "/components/structured-input"},
-	{"Tags List", "/components/tags-list"},
-	{"Text Input", "/components/text-input"},
-	{"Textarea", "/components/textarea"},
-	{"Toggle", "/components/toggle"},
-	{"Alert", "/components/alert"},
-	{"Toast", "/components/toast"},
-	{"Modal", "/components/modal"},
-	{"Drawer", "/components/drawer"},
-	{"Spinner", "/components/spinner"},
-	{"Steps", "/components/steps"},
-	{"Tooltip", "/components/tooltip"},
-	{"Breadcrumbs", "/components/breadcrumbs"},
-	{"Dropdown", "/components/dropdown"},
-	{"Link", "/components/link"},
-	{"Navbar", "/components/navbar"},
-	{"Pagination", "/components/pagination"},
-	{"Sidebar", "/components/sidebar"},
-	{"Tabs", "/components/tabs"},
-}
-
 func getComponentNav(activeComponent string) (prev, next *componentNavLink) {
-	href := "/components/" + activeComponent
-	for i, c := range orderedComponents {
-		if c.Href == href {
+	pages := catalog.ComponentPages()
+	for i, page := range pages {
+		if page.Active == activeComponent {
 			if i > 0 {
-				prev = &orderedComponents[i-1]
+				prev = &componentNavLink{
+					Label: pages[i-1].Title,
+					Href:  pages[i-1].Path,
+				}
 			}
-			if i < len(orderedComponents)-1 {
-				next = &orderedComponents[i+1]
+			if i < len(pages)-1 {
+				next = &componentNavLink{
+					Label: pages[i+1].Title,
+					Href:  pages[i+1].Path,
+				}
 			}
 			return
 		}
@@ -1048,7 +937,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var35 templ.SafeURL
 				templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 734, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 623, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 				if templ_7745c5c3_Err != nil {
@@ -1069,7 +958,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var36 string
 				templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 741, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 630, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 				if templ_7745c5c3_Err != nil {
@@ -1094,7 +983,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var37 templ.SafeURL
 				templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 749, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 638, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 				if templ_7745c5c3_Err != nil {
@@ -1115,7 +1004,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var38 string
 				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 753, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 642, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 				if templ_7745c5c3_Err != nil {

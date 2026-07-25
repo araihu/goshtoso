@@ -57,11 +57,11 @@ type DemoSectionProps struct {
 }
 
 templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeExample string) {
-	<div>
+	<div data-demo-section>
 		<!-- Header Section -->
 		<div class="mb-6">
 			<h1 id={ slugify(props.Title) } data-toc-heading class="scroll-mt-8 text-3xl font-bold font-title mb-2">{ props.Title }</h1>
-			<p class="text-lg text-on-surface-muted dark:text-on-surface-dark-muted max-w-3xl">
+			<p data-component-description class="text-lg text-on-surface-muted dark:text-on-surface-dark-muted max-w-3xl">
 				{ props.Description }
 			</p>
 		</div>
@@ -72,7 +72,7 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 				@props.AbovePreview
 			}
 			<!-- Preview -->
-			<div class="relative border border-transparent rounded-radius after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark">
+			<div data-demo-preview class="relative border border-transparent rounded-radius after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark">
 				<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">
 					<div class="flex gap-1.5">
 						<div class="rounded-full w-3 h-3 bg-red-500"></div>
@@ -88,13 +88,15 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 			</div>
 
 			<!-- Code Example -->
-			@codeblock.CodeBlock(codeblock.Config{
-				Language:  "go",
-				Label:     "Usage Example",
-				Code:      codeExample,
-				MaxHeight: "400px",
-				ID:        "code-example",
-			})
+			<div data-demo-code>
+				@codeblock.CodeBlock(codeblock.Config{
+					Language:  "go",
+					Label:     "Usage Example",
+					Code:      codeExample,
+					MaxHeight: "400px",
+					ID:        "code-example",
+				})
+			</div>
 
 			<!-- Props Reference Table -->
 			@APIReference(props.Props)
@@ -106,7 +108,7 @@ templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeE
 // so it can be dropped at the bottom of a page or inlined inside ComponentDemo.
 templ APIReference(props []PropDoc) {
 	if len(props) > 0 {
-		<div class="mt-8">
+		<div data-api-reference class="mt-8">
 			<h2 id="api-reference" data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-4">API Reference</h2>
 			<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
 				<table class="w-full text-sm text-left border-collapse">
@@ -134,10 +136,78 @@ templ APIReference(props []PropDoc) {
 	}
 }
 
+// StructuredAPIReference renders one or more named public API surfaces. It is
+// kept alongside APIReference while component pages migrate off the flat table.
+templ StructuredAPIReference(sections []APISection) {
+	if len(sections) > 0 {
+		<div data-api-reference class="mt-8">
+			<h2 id="api-reference" data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-4">API Reference</h2>
+			for _, section := range normalizedAPISections(sections) {
+				<section data-api-section={ section.ID } class="mt-8">
+					<h3 id={ "api-" + section.ID } data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-1">{ section.Title }</h3>
+					if section.Description != "" {
+						<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">{ section.Description }</p>
+					}
+					if section.Constructor != "" || section.Kind != "" {
+						<div class="mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+							if section.Constructor != "" {
+								<div>
+									<span class="font-semibold">Constructor:</span>
+									<code class="font-mono text-xs">{ section.Constructor }</code>
+								</div>
+							}
+							if section.Kind != "" {
+								<div>
+									<span class="font-semibold">Kind:</span>
+									<code class="font-mono text-xs">{ string(section.Kind) }</code>
+								</div>
+							}
+						</div>
+					}
+					if len(section.Props) > 0 {
+						<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
+							<table class="w-full text-sm text-left border-collapse">
+								<thead class="bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark">
+									<tr>
+										<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Name</th>
+										<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Type / Signature</th>
+										<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Required</th>
+										<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Default</th>
+										<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Allowed</th>
+										<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Description</th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-outline dark:divide-outline-dark">
+									for _, prop := range section.Props {
+										<tr class="bg-surface dark:bg-surface-dark">
+											<td class="px-4 py-2.5"><code class="font-mono text-xs bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded">{ prop.Name }</code></td>
+											<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ apiPropSignature(section, prop) }</code></td>
+											<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted">
+												if prop.Required {
+													<span>Yes</span>
+												} else {
+													<span>No</span>
+												}
+											</td>
+											<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono text-xs">{ prop.Default }</code></td>
+											<td class="px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted">{ apiPropAllowed(prop) }</td>
+											<td class="px-4 py-2.5 text-on-surface dark:text-on-surface-dark">{ prop.Description }</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</section>
+			}
+		</div>
+	}
+}
+
 // DemoSection renders an additional demo section with its own preview and code block.
 // Use after ComponentDemo to show variant-specific examples with separate code snippets.
 templ DemoSection(props DemoSectionProps, preview templ.Component, code string) {
-	<div class="mt-10">
+	<div data-demo-section class="mt-10">
 		<h2 id={ slugify(props.Title) } data-toc-heading class="scroll-mt-8 text-lg font-semibold font-title mb-1">{ props.Title }</h2>
 	if props.Description != "" {
 		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">{ props.Description }</p>
@@ -146,7 +216,7 @@ templ DemoSection(props DemoSectionProps, preview templ.Component, code string) 
 		@props.AbovePreview
 	}
 	<!-- Preview -->
-		<div class="relative border border-transparent rounded-radius mb-4 after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark">
+		<div data-demo-preview class="relative border border-transparent rounded-radius mb-4 after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark">
 			<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">
 				<div class="flex gap-1.5">
 					<div class="rounded-full w-3 h-3 bg-red-500"></div>
@@ -161,11 +231,13 @@ templ DemoSection(props DemoSectionProps, preview templ.Component, code string) 
 			</div>
 		</div>
 		<!-- Code -->
-		@codeblock.CodeBlock(codeblock.Config{
-			Language:  "go",
-			Label:     props.Title,
-			Code:      code,
-			MaxHeight: "300px",
-		})
+		<div data-demo-code>
+			@codeblock.CodeBlock(codeblock.Config{
+				Language:  "go",
+				Label:     props.Title,
+				Code:      code,
+				MaxHeight: "300px",
+			})
+		</div>
 	</div>
 }
