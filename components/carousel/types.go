@@ -47,13 +47,13 @@ type Config struct {
 	ID string
 	// Slides are the static slide data (ignored if HTMX is set)
 	Slides []Slide
-	// Autoplay enables automatic slide rotation (nil = disabled)
+	// Autoplay enables rotation in static mode; ignored when HTMX is non-nil.
 	Autoplay *AutoplayConfig
-	// Touch enables swipe gesture support
+	// Touch enables swipe gestures in static mode; ignored when HTMX is non-nil.
 	Touch bool
-	// AspectRatio sets a fixed aspect ratio (e.g. "3/1"), empty = min-h-[50svh]
+	// AspectRatio sets static-mode sizing; ignored when HTMX is non-nil.
 	AspectRatio string
-	// Height overrides the slides container height (for example, "h-48 lg:h-64").
+	// Height overrides static-mode slide height; ignored when HTMX is non-nil.
 	Height string
 	// RootClass allows additional CSS classes on the container.
 	RootClass string

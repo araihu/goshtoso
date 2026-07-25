@@ -263,6 +263,37 @@ func TestDisplayMetadataCapturesRenderedDefaultsAndPublicSignatures(t *testing.T
 	)
 }
 
+func TestAccordionMetadataExplainsItemIDNamespace(t *testing.T) {
+	configID := apiProp(t, accordionAPISections, "AccordionConfig", "ID")
+	require.Contains(t, configID.Description, "root element")
+	require.Contains(t, configID.Description, "does not namespace")
+
+	itemID := apiProp(t, accordionAPISections, "AccordionItem", "ID")
+	require.Contains(t, itemID.Description, "namespace source")
+	require.Contains(t, itemID.Description, "multiple accordions")
+}
+
+func TestCarouselMetadataMarksStaticOnlyFields(t *testing.T) {
+	for _, name := range []string{"Autoplay", "Touch", "AspectRatio", "Height"} {
+		description := apiProp(t, carouselAPISections, "Config", name).Description
+		require.Containsf(t, description, "static mode", "Config.%s", name)
+		require.Containsf(t, description, "ignored when HTMX is non-nil", "Config.%s", name)
+	}
+}
+
+func TestTableMetadataDocumentsConditionalOptionalFields(t *testing.T) {
+	totalPages := apiProp(t, tableAPISections, "PaginationConfig", "TotalPages")
+	require.False(t, totalPages.Required)
+	require.Equal(t, "0 (no numbered navigation)", totalPages.Default)
+	require.Contains(t, totalPages.Description, "traditional mode")
+	require.Contains(t, totalPages.Description, "ignored in infinite-scroll mode")
+
+	optionValue := apiProp(t, tableAPISections, "FilterOption", "Value")
+	require.False(t, optionValue.Required)
+	require.Equal(t, `""`, optionValue.Default)
+	require.Contains(t, optionValue.Description, "empty string is valid")
+}
+
 func displayAPISectionSlices() [][]demo.APISection {
 	return [][]demo.APISection{
 		accordionAPISections,

@@ -31,14 +31,14 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 | `Items` | `[]AccordionItem` | Items are the accordion sections |
 | `AllowMultiple` | `bool` | AllowMultiple allows multiple items to be open simultaneously |
 | `Appearance` | `Appearance` | Appearance determines the visual treatment. |
-| `ID` | `string` | ID is the container ID for accessibility |
+| `ID` | `string` | ID is the root element ID only; it does not namespace item controls or regions. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the accordion root. |
 
 **AccordionItem**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `ID` | `string` | ID unique identifier for the item (used for accessibility) |
+| `ID` | `string` | ID namespaces its control and region IDs; keep it unique across accordions on a page. |
 | `Title` | `string` | Title is the header text |
 | `Content` | `templ.Component` | Content is the body component. |
 | `Icon` | `templ.Component` | Icon is an optional leading icon (templ.Component) |
@@ -331,10 +331,10 @@ import "github.com/araihu/goshtoso/components/carousel"  // package carousel
 |-------|------|-------------|
 | `ID` | `string` | ID is a unique identifier for the carousel instance |
 | `Slides` | `[]Slide` | Slides are the static slide data (ignored if HTMX is set) |
-| `Autoplay` | `*AutoplayConfig` | Autoplay enables automatic slide rotation (nil = disabled) |
-| `Touch` | `bool` | Touch enables swipe gesture support |
-| `AspectRatio` | `string` | AspectRatio sets a fixed aspect ratio (e.g. "3/1"), empty = min-h-[50svh] |
-| `Height` | `string` | Height overrides the slides container height (for example, "h-48 lg:h-64"). |
+| `Autoplay` | `*AutoplayConfig` | Autoplay enables rotation in static mode; ignored when HTMX is non-nil. |
+| `Touch` | `bool` | Touch enables swipe gestures in static mode; ignored when HTMX is non-nil. |
+| `AspectRatio` | `string` | AspectRatio sets static-mode sizing; ignored when HTMX is non-nil. |
+| `Height` | `string` | Height overrides static-mode slide height; ignored when HTMX is non-nil. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
 | `HTMX` | `*HTMXConfig` | HTMX enables lazy loading of carousel content (nil = static mode) |
 
@@ -1506,7 +1506,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Value` | `string` |  |
+| `Value` | `string` | Value is submitted for the option; an empty string is valid. |
 | `Label` | `string` |  |
 
 **FilterOptionsHTMXConfig**
@@ -1535,7 +1535,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `Mode` | `PaginationMode` | Mode is the pagination style: traditional (default) or infinite scroll |
 | `CurrentPage` | `int` | CurrentPage is the 1-indexed current page number |
-| `TotalPages` | `int` | TotalPages is the total number of pages |
+| `TotalPages` | `int` | TotalPages controls traditional pagination; infinite scroll ignores it. |
 | `PerPage` | `int` | PerPage is the number of items per page |
 | `HasMore` | `bool` | HasMore indicates if more rows are available (used by infinite scroll) |
 | `ContainerHeight` | `string` | ContainerHeight opts into Pattern A for infinite scroll: the table wraps |

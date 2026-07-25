@@ -215,7 +215,7 @@ type PaginationConfig struct {
 	Mode PaginationMode
 	// CurrentPage is the 1-indexed current page number
 	CurrentPage int
-	// TotalPages is the total number of pages
+	// TotalPages controls traditional pagination; infinite scroll ignores it.
 	TotalPages int
 	// PerPage is the number of items per page
 	PerPage int
@@ -278,6 +278,7 @@ const (
 
 // FilterOption represents a single option in a select filter
 type FilterOption struct {
+	// Value is submitted for the option; an empty string is valid.
 	Value string
 	Label string
 }

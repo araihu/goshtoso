@@ -23,7 +23,7 @@ type AccordionConfig struct {
 	AllowMultiple bool
 	// Appearance determines the visual treatment.
 	Appearance Appearance
-	// ID is the container ID for accessibility
+	// ID is the root element ID only; it does not namespace item controls or regions.
 	ID string
 	// RootClass allows additional CSS classes on the accordion root.
 	RootClass string
@@ -31,7 +31,7 @@ type AccordionConfig struct {
 
 // AccordionItem represents a single accordion section
 type AccordionItem struct {
-	// ID unique identifier for the item (used for accessibility)
+	// ID namespaces its control and region IDs; keep it unique across accordions on a page.
 	ID string
 	// Title is the header text
 	Title string

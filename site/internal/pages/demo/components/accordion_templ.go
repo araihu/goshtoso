@@ -24,7 +24,7 @@ var accordionAPISections = []demo.APISection{
 			{Name: "Items", Default: "nil", Description: "Accordion sections rendered in order.", Required: true},
 			{Name: "AllowMultiple", Default: "false", Description: "Allows more than one item to remain expanded."},
 			{Name: "Appearance", Default: "AppearanceDefault", Allowed: []string{"AppearanceDefault", "AppearancePlain", "AppearanceSplit"}, Description: "Selects the shared, plain, or split visual treatment."},
-			{Name: "ID", Default: `"accordion"`, Description: "Container ID used to derive accessible control and region IDs."},
+			{Name: "ID", Default: `"accordion"`, Description: "Accordion root element ID only; it does not namespace item control or region IDs."},
 			{Name: "RootClass", Default: `""`, Description: "Additional CSS classes on the accordion root."},
 		},
 	),
@@ -34,7 +34,7 @@ var accordionAPISections = []demo.APISection{
 		"",
 		"Describes one disclosure header and its body content.",
 		[]demo.APIPropDoc{
-			{Name: "ID", Default: `"accordion-item-<index>"`, Description: "Stable item identifier used to derive the control and content IDs."},
+			{Name: "ID", Default: `"accordion-item-<index>"`, Description: "The namespace source for this item's control and region IDs; supply a unique value when multiple accordions coexist."},
 			{Name: "Title", Default: `""`, Description: "Visible disclosure-button text.", Required: true},
 			{Name: "Content", Default: "nil", Description: "Component rendered inside the expanded region.", Required: true},
 			{Name: "Icon", Default: "nil", Description: "Optional leading icon in the disclosure button."},

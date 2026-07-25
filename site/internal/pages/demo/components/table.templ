@@ -98,7 +98,7 @@ var tableAPISections = []demo.APISection{
 		[]demo.APIPropDoc{
 			{Name: "Mode", Default: "PaginationTraditional", Allowed: []string{"PaginationTraditional", "PaginationInfiniteScroll"}, Description: "Selects numbered navigation or an append sentinel."},
 			{Name: "CurrentPage", Default: "required 1-based value", Description: "Current page used by navigation and next-page calculations.", Required: true},
-			{Name: "TotalPages", Default: "required for numbered navigation", Description: "Number of pages; traditional navigation renders only when greater than one.", Required: true},
+			{Name: "TotalPages", Default: "0 (no numbered navigation)", Description: "Total page count for traditional mode; ignored in infinite-scroll mode, and numbered navigation renders only when greater than one."},
 			{Name: "PerPage", Default: "omitted from requests when <= 0", Description: "Rows requested per page."},
 			{Name: "HasMore", Default: "false", Description: "Controls whether infinite-scroll renders another sentinel."},
 			{Name: "ContainerHeight", Default: `"" (nearest page scroller)`, Description: "Raw CSS height that opts infinite scroll into a table-local scroll container."},
@@ -148,7 +148,7 @@ var tableAPISections = []demo.APISection{
 		"",
 		"Defines one static select-filter option.",
 		[]demo.APIPropDoc{
-			{Name: "Value", Default: `""`, Description: "Submitted option value.", Required: true},
+			{Name: "Value", Default: `""`, Description: "Submitted option value; an empty string is valid for placeholder or unfiltered options."},
 			{Name: "Label", Default: `""`, Description: "Visible option label.", Required: true},
 		},
 	),
