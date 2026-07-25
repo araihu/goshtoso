@@ -336,6 +336,39 @@ func TestAtomicInputMetadataCapturesRenderedDefaultsAndPublicSignatures(t *testi
 	require.Equal(t, expectedSignatures, gotSignatures)
 }
 
+func TestRadioMetadataDistinguishesRadioGroupApplicability(t *testing.T) {
+	require.Equal(
+		t,
+		"For standalone Radio with non-empty HelperText, identifies the helper element and supplies the input aria-describedby value. RadioGroup still puts this value on aria-describedby but does not give its helper span a matching id.",
+		apiProp(t, radioAPISections, "Config", "HelperTextID").Description,
+	)
+	require.Equal(
+		t,
+		"Selects the bordered standalone Radio layout; RadioGroup ignores it as an item-layout selector.",
+		apiProp(t, radioAPISections, "Config", "Container").Description,
+	)
+	require.Equal(
+		t,
+		"Selects the standalone segmented-pill renderer, intended for RadioBar; RadioGroup ignores it and renders its own standard item path.",
+		apiProp(t, radioAPISections, "Config", "Segmented").Description,
+	)
+	require.Equal(
+		t,
+		"Appends CSS classes to a standalone Radio root; RadioGroup ignores it.",
+		apiProp(t, radioAPISections, "Config", "RootClass").Description,
+	)
+}
+
+func TestRadioInputAttrsMetadataDoesNotPromiseOverrides(t *testing.T) {
+	description := apiProp(t, radioAPISections, "Config", "InputAttrs").Description
+	require.Equal(
+		t,
+		"Additional non-conflicting attributes appended to the native input. Conflicts with modeled keys create duplicate attributes rather than overriding them; use typed fields for name, value, disabled, checked, HTMX, and Alpine behavior.",
+		description,
+	)
+	require.NotContains(t, description, "able to override")
+}
+
 func TestDisplayAPIRegistryUsesPageSectionSlices(t *testing.T) {
 	expected := map[string][]demo.APISection{
 		"components/accordion":    accordionAPISections,
