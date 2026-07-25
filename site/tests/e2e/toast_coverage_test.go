@@ -33,7 +33,7 @@ func TestToastCoverageDemo(t *testing.T) {
 
 	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
 		Name:  "Toast",
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).WaitFor())
 	for _, selector := range []string{"#toast-fragment", "#toast-container", "#toast-alpine", "#toast-htmx", "#toast-static"} {
 		require.NoErrorf(t, page.Locator(selector).WaitFor(playwright.LocatorWaitForOptions{
@@ -65,7 +65,7 @@ func TestToastCoverageDemo(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 5, count, "static preview should render every documented toast primitive")
 	require.NoError(t, page.Locator("#toast-static").GetByText("Jack Ellis", playwright.LocatorGetByTextOptions{
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).WaitFor())
 
 	clickUntil(t, page, page.Locator("#toast-htmx button", playwright.PageLocatorOptions{HasText: "Server Info Toast"}),

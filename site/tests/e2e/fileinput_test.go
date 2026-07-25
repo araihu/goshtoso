@@ -147,7 +147,7 @@ func TestFileInputVariants(t *testing.T) {
 
 	t.Run("APIReferenceDocumentsAppearance", func(t *testing.T) {
 		appearanceName := page.Locator("[data-api-section='config'] tbody tr td:first-child code").
-			GetByText("Appearance", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)})
+			GetByText("Appearance", playwright.LocatorGetByTextOptions{Exact: new(true)})
 		count, err := appearanceName.Count()
 		require.NoError(t, err)
 		require.Equal(t, 1, count)

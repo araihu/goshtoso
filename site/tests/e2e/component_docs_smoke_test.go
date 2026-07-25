@@ -3,6 +3,7 @@ package e2e
 import (
 	"fmt"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -19,7 +20,6 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 	}
 
 	for _, entry := range catalog.ComponentPages() {
-		entry := entry
 		t.Run(entry.Active, func(t *testing.T) {
 			page := newPage(t, sharedBrowser)
 			failures := watchPageFailures(page)
@@ -378,10 +378,5 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 }
 
 func hasClass(className, target string) bool {
-	for _, name := range strings.Fields(className) {
-		if name == target {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(strings.Fields(className), target)
 }

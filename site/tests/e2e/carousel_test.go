@@ -118,7 +118,7 @@ func waitForCarouselIndex(page playwright.Page, selector string, index int) erro
 			const el = document.querySelector(selector);
 			return !!el && Alpine.$data(el).currentSlideIndex === index;
 		}`,
-		[]interface{}{selector, index},
+		[]any{selector, index},
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
 	)
 	return err

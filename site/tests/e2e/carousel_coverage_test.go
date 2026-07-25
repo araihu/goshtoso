@@ -33,7 +33,7 @@ func TestCarouselCoverageDemoVariants(t *testing.T) {
 
 	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
 		Name:  "Carousel",
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).WaitFor())
 	for _, selector := range []string{
 		"#carousel-default-c",
@@ -51,7 +51,7 @@ func TestCarouselCoverageDemoVariants(t *testing.T) {
 	}
 
 	require.NoError(t, page.Locator("#carousel-text-c").GetByText("Front end developers", playwright.LocatorGetByTextOptions{
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).WaitFor())
 	require.NoError(t, page.GetByRole("link", playwright.PageGetByRoleOptions{
 		Name: "Get Started",
@@ -73,11 +73,11 @@ func TestCarouselCoverageDemoVariants(t *testing.T) {
 	assert.EqualValues(t, 2, indexAfterSwipe)
 
 	require.NoError(t, page.Locator("#carousel-card-c").GetByText("Abstract Blue Series", playwright.LocatorGetByTextOptions{
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).WaitFor())
 	require.NoError(t, page.Locator("#carousel-card-c button[aria-label='next slide']").Click())
 	require.NoError(t, page.Locator("#carousel-card-c").GetByText("Sunset Collection", playwright.LocatorGetByTextOptions{
-		Exact: playwright.Bool(true),
+		Exact: new(true),
 	}).WaitFor())
 
 	loadedTitle := page.Locator("#carousel-htmx h3").Filter(playwright.LocatorFilterOptions{

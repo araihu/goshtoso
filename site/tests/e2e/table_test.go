@@ -251,7 +251,7 @@ func TestTable_WithAction(t *testing.T) {
 			};
 		}`, nil)
 		require.NoError(t, err)
-		appearance, ok := appearanceValue.(map[string]interface{})
+		appearance, ok := appearanceValue.(map[string]any)
 		require.True(t, ok, "computed appearance result should be an object")
 		assert.Equal(t, "rgba(0, 0, 0, 0)", appearance["backgroundColor"])
 		assert.Equal(t, "rgba(0, 0, 0, 0)", appearance["borderColor"])
@@ -290,7 +290,7 @@ func TestTable_WithAction(t *testing.T) {
 			};
 		}`, nil)
 		require.NoError(t, err)
-		darkAppearance, ok := darkAppearanceValue.(map[string]interface{})
+		darkAppearance, ok := darkAppearanceValue.(map[string]any)
 		require.True(t, ok, "dark computed appearance result should be an object")
 		assert.Equal(t, darkAppearance["expectedColor"], darkAppearance["color"])
 

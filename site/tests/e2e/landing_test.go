@@ -127,7 +127,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, count, imageCount, "each example card should include a generated image")
 
-		for i := 0; i < imageCount; i++ {
+		for i := range imageCount {
 			img := images.Nth(i)
 			src, err := img.GetAttribute("src")
 			require.NoError(t, err)

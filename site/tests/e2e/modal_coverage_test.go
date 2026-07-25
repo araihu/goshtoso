@@ -127,7 +127,7 @@ func TestModalCoverageDemo(t *testing.T) {
 
 		// Confirm fires the POST and closes the modal.
 		require.NoError(t, dialog.GetByRole("button", playwright.LocatorGetByRoleOptions{
-			Name: "Confirm", Exact: playwright.Bool(true),
+			Name: "Confirm", Exact: new(true),
 		}).Click())
 
 		result := page.Locator("#modal-htmx-result")
@@ -151,14 +151,14 @@ func TestModalCoverageDemo(t *testing.T) {
 		})
 
 		require.NoError(t, container.GetByRole("button", playwright.LocatorGetByRoleOptions{
-			Name: "Open JS Modal", Exact: playwright.Bool(true),
+			Name: "Open JS Modal", Exact: new(true),
 		}).Click())
 		require.NoError(t, dialog.WaitFor(playwright.LocatorWaitForOptions{
 			State: playwright.WaitForSelectorStateVisible,
 		}))
 
 		require.NoError(t, dialog.GetByRole("button", playwright.LocatorGetByRoleOptions{
-			Name: "Delete", Exact: playwright.Bool(true),
+			Name: "Delete", Exact: new(true),
 		}).Click())
 		require.NoError(t, dialog.WaitFor(playwright.LocatorWaitForOptions{
 			State: playwright.WaitForSelectorStateHidden,

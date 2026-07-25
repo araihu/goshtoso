@@ -116,7 +116,7 @@ func TestCodeBlock_DirectDemoPage(t *testing.T) {
 
 	for _, label := range []string{"main.go", "html", "css", "Install", "long.go"} {
 		require.NoError(t, page.GetByText(label, playwright.PageGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).First().WaitFor())
 	}
 

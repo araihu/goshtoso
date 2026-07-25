@@ -40,11 +40,11 @@ func TestSidebarCoverageDemo(t *testing.T) {
 		require.NoError(t, simple.ScrollIntoViewIfNeeded())
 		require.NoError(t, simple.Locator("input[type='search'][placeholder='Search...']").WaitFor())
 		require.NoError(t, simple.Locator("a.text-primary").Filter(playwright.LocatorFilterOptions{HasText: "Profile"}).WaitFor())
-		require.NoError(t, simple.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "Inbox"}).GetByText("3", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, simple.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "Inbox"}).GetByText("3", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 		sections := page.Locator("#sidebar-sections")
 		require.NoError(t, sections.ScrollIntoViewIfNeeded())
-		require.NoError(t, sections.Locator("[data-sidebar-section='Components']").GetByText("Table", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, sections.Locator("[data-sidebar-section='Components']").GetByText("Table", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 		require.NoError(t, sections.Locator("a.pointer-events-none").Filter(playwright.LocatorFilterOptions{HasText: "Overview"}).WaitFor())
 	})
 
@@ -90,7 +90,7 @@ func TestSidebarCoverageDemo(t *testing.T) {
 		overlay := page.Locator("#sidebar-overlay")
 		require.NoError(t, overlay.ScrollIntoViewIfNeeded())
 
-		panel := overlay.GetByText("Overlay", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)})
+		panel := overlay.GetByText("Overlay", playwright.LocatorGetByTextOptions{Exact: new(true)})
 		visible, err := panel.IsVisible()
 		require.NoError(t, err)
 		require.False(t, visible)

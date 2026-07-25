@@ -26,10 +26,10 @@ func TestChatBubbleComponentDemoVariants(t *testing.T) {
 	t.Run("default preview renders sent and received alignment hooks", func(t *testing.T) {
 		defaultPreview := page.Locator("#chatbubble-default")
 		require.NoError(t, defaultPreview.GetByText("Hi there! How can I assist you today?", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 		require.NoError(t, defaultPreview.GetByText("I accidentally deleted some important files. Can they be recovered?", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 
 		receivedCount, err := defaultPreview.Locator("[data-mine='false']").Count()
@@ -43,23 +43,23 @@ func TestChatBubbleComponentDemoVariants(t *testing.T) {
 
 	t.Run("timestamp and status previews expose message metadata", func(t *testing.T) {
 		timestamp := page.Locator("#chatbubble-timestamp")
-		require.NoError(t, timestamp.GetByText("Ada", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-		require.NoError(t, timestamp.GetByText("11:32 AM", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, timestamp.GetByText("Ada", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
+		require.NoError(t, timestamp.GetByText("11:32 AM", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
-		sentHeaderVisible, err := timestamp.GetByText("11:33 AM", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).IsVisible()
+		sentHeaderVisible, err := timestamp.GetByText("11:33 AM", playwright.LocatorGetByTextOptions{Exact: new(true)}).IsVisible()
 		require.NoError(t, err)
 		assert.False(t, sentHeaderVisible, "sent bubble headers are intentionally suppressed")
 
 		status := page.Locator("#chatbubble-status")
-		require.NoError(t, status.GetByText("Grace", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-		require.NoError(t, status.GetByText("Delivered", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-		require.NoError(t, status.GetByText("Seen", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, status.GetByText("Grace", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
+		require.NoError(t, status.GetByText("Delivered", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
+		require.NoError(t, status.GetByText("Seen", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 	})
 
 	t.Run("avatar and grouped previews keep avatars scoped to visible senders", func(t *testing.T) {
 		avatar := page.Locator("#chatbubble-avatar")
-		require.NoError(t, avatar.GetByText("AL", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
-		require.NoError(t, avatar.GetByText("ME", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, avatar.GetByText("AL", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
+		require.NoError(t, avatar.GetByText("ME", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 		grouped := page.Locator("#chatbubble-grouped")
 		for _, message := range []string{
@@ -67,14 +67,14 @@ func TestChatBubbleComponentDemoVariants(t *testing.T) {
 			"Taking the first one myself.",
 			"Can you grab the second?",
 		} {
-			require.NoError(t, grouped.GetByText(message, playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+			require.NoError(t, grouped.GetByText(message, playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 		}
 
-		adaCount, err := grouped.GetByText("Ada", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).Count()
+		adaCount, err := grouped.GetByText("Ada", playwright.LocatorGetByTextOptions{Exact: new(true)}).Count()
 		require.NoError(t, err)
 		assert.Equal(t, 1, adaCount)
 
-		initialsCount, err := grouped.GetByText("AL", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).Count()
+		initialsCount, err := grouped.GetByText("AL", playwright.LocatorGetByTextOptions{Exact: new(true)}).Count()
 		require.NoError(t, err)
 		assert.Equal(t, 1, initialsCount)
 	})

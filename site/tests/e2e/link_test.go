@@ -25,7 +25,7 @@ func TestLinkComponentDemo(t *testing.T) {
 	t.Run("default and inline links expose hrefs and visible text", func(t *testing.T) {
 		defaultLink := page.Locator("#link-default a").First()
 		require.NoError(t, defaultLink.GetByText("Read if bored", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 		assert.Equal(t, "#", mustAttribute(t, defaultLink, "href"))
 
@@ -33,7 +33,7 @@ func TestLinkComponentDemo(t *testing.T) {
 		assert.Contains(t, className, "text-primary")
 
 		inline := page.Locator("#link-inline")
-		require.NoError(t, inline.GetByText("Follow us on", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(false)}).WaitFor())
+		require.NoError(t, inline.GetByText("Follow us on", playwright.LocatorGetByTextOptions{Exact: new(false)}).WaitFor())
 		require.NoError(t, inline.Locator("a").Filter(playwright.LocatorFilterOptions{HasText: "social media"}).WaitFor())
 		assert.Equal(t, "#", mustAttribute(t, inline.Locator("a").First(), "href"))
 	})
@@ -41,7 +41,7 @@ func TestLinkComponentDemo(t *testing.T) {
 	t.Run("icon link keeps text and decorative icon together", func(t *testing.T) {
 		iconLink := page.Locator("#link-icon a").First()
 		require.NoError(t, iconLink.GetByText("about our company", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 
 		iconCount, err := iconLink.Locator("svg[aria-hidden='true']").Count()
@@ -56,7 +56,7 @@ func TestLinkComponentDemo(t *testing.T) {
 	t.Run("button link exposes button role and primary action styling", func(t *testing.T) {
 		buttonLink := page.Locator("#link-button a").First()
 		require.NoError(t, buttonLink.GetByText("I'm a link", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 		assert.Equal(t, "button", mustAttribute(t, buttonLink, "role"))
 

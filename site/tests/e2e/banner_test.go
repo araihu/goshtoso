@@ -26,7 +26,7 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 		simple := page.Locator("#banner-simple")
 		bannerEl := simple.Locator("[role='banner']")
 		require.NoError(t, bannerEl.GetByText("Limited Time Offer! Explore exclusive deals & savings", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 
 		require.NoError(t, simple.Locator("button[aria-label='dismiss banner']").Click())
@@ -42,7 +42,7 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 	t.Run("persistent and CTA banners expose expected controls", func(t *testing.T) {
 		persistent := page.Locator("#banner-persistent")
 		require.NoError(t, persistent.GetByText("This banner cannot be dismissed by users", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 
 		dismissCount, err := persistent.Locator("button[aria-label='dismiss banner']").Count()
@@ -51,7 +51,7 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 
 		cta := page.Locator("#banner-cta")
 		require.NoError(t, cta.GetByText("Get Fit Anywhere, Anytime 💪", playwright.LocatorGetByTextOptions{
-			Exact: playwright.Bool(true),
+			Exact: new(true),
 		}).WaitFor())
 		require.NoError(t, cta.Locator("button").Filter(playwright.LocatorFilterOptions{HasText: "Start free trial"}).WaitFor())
 	})
@@ -67,7 +67,7 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 			"Error: Something went wrong",
 		} {
 			require.NoError(t, variants.GetByText(text, playwright.LocatorGetByTextOptions{
-				Exact: playwright.Bool(true),
+				Exact: new(true),
 			}).WaitFor())
 		}
 	})
@@ -76,7 +76,7 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 		dialog := page.Locator("#banner-cookie [role='dialog']").First()
 		require.NoError(t, dialog.WaitFor())
 		require.NoError(t, dialog.Locator("h3").Filter(playwright.LocatorFilterOptions{HasText: "Cookie Time!"}).WaitFor())
-		require.NoError(t, dialog.GetByText("We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)}).WaitFor())
+		require.NoError(t, dialog.GetByText("We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.", playwright.LocatorGetByTextOptions{Exact: new(true)}).WaitFor())
 
 		classAttr, err := dialog.GetAttribute("class")
 		require.NoError(t, err)
