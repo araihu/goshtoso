@@ -13,9 +13,10 @@
 //     cfg.Alpine (Model/OnChange/BindChecked/BindDisabled/Data).
 //   - Both → set both. HTMX hits the server while Alpine updates local
 //     state. Useful for optimistic UI / hybrid flows.
-//   - InputAttrs → generic templ.Attributes escape hatch for any
-//     hx-*/x-*/data-*/aria-* not modelled above. Rendered LAST so the
-//     caller can always override.
+//   - InputAttrs → generic templ.Attributes escape hatch for non-conflicting
+//     hx-*/x-*/data-*/aria-* not modeled above. Appended after modeled
+//     attributes; conflicting keys serialize duplicates and are not reliable
+//     overrides. Use typed Config fields for modeled attributes.
 package radio
 
 import "github.com/a-h/templ"
@@ -136,7 +137,7 @@ type Config struct {
 	HTMX *HTMXConfig
 	// Alpine wires client-side state.
 	Alpine *AlpineConfig
-	// InputAttrs is an escape hatch applied last to the input; wins on conflict.
+	// InputAttrs contains additional non-conflicting attributes appended to the input. Conflicting modeled keys serialize duplicate attributes rather than reliably overriding them; use typed fields for modeled attributes.
 	InputAttrs templ.Attributes
 }
 

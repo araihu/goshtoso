@@ -920,7 +920,7 @@ func radioWithContainer(cfg Config) templ.Component {
 //  3. checked / disabled / aria-describedby
 //  4. HTMX attrs (hx-*) — server roundtrip on change
 //  5. Alpine attrs (x-*) — client-side state
-//  6. cfg.InputAttrs (escape hatch) — wins on conflict
+//  6. cfg.InputAttrs (escape hatch) — appended; conflicts serialize duplicates
 func radioInput(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

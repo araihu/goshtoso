@@ -339,12 +339,12 @@ func TestAtomicInputMetadataCapturesRenderedDefaultsAndPublicSignatures(t *testi
 func TestRadioMetadataDistinguishesRadioGroupApplicability(t *testing.T) {
 	require.Equal(
 		t,
-		"For standalone Radio with non-empty HelperText, identifies the helper element and supplies the input aria-describedby value. RadioGroup still puts this value on aria-describedby but does not give its helper span a matching id.",
+		"Normal standalone Radio with non-empty HelperText renders aria-describedby on the input and the matching helper span ID. Segmented Radio takes precedence and renders neither the typed aria-describedby attribute nor a helper span. RadioGroup renders aria-describedby on the input but does not give its helper span a matching ID.",
 		apiProp(t, radioAPISections, "Config", "HelperTextID").Description,
 	)
 	require.Equal(
 		t,
-		"Selects the bordered standalone Radio layout; RadioGroup ignores it as an item-layout selector.",
+		"Selects the bordered wrapper for a non-segmented standalone Radio. Segmented Radio ignores it. RadioGroup ignores the wrapper layout, but Container still changes the grouped item's inner input background through shared input classes.",
 		apiProp(t, radioAPISections, "Config", "Container").Description,
 	)
 	require.Equal(

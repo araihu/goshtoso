@@ -1022,7 +1022,7 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 | `RootClass` | `string` | RootClass is appended to the label root element. |
 | `HTMX` | `*HTMXConfig` | HTMX wires server interactions on change. |
 | `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
-| `InputAttrs` | `templ.Attributes` | InputAttrs is an escape hatch applied last to the input; wins on conflict. |
+| `InputAttrs` | `templ.Attributes` | InputAttrs contains additional non-conflicting attributes appended to the input. Conflicting modeled keys serialize duplicate attributes rather than reliably overriding them; use typed fields for modeled attributes. |
 
 **GroupConfig**
 

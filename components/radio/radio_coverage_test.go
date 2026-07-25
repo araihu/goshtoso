@@ -68,6 +68,48 @@ func TestCoverageHelperTextNoID(t *testing.T) {
 	assert.NotContains(t, html, "aria-describedby")
 }
 
+func TestHelperTextIDRenderBranchContract(t *testing.T) {
+	t.Run("normal standalone", func(t *testing.T) {
+		html := render(t, Radio(Config{
+			ID:           "normal",
+			Label:        "Normal",
+			HelperText:   "Normal helper",
+			HelperTextID: "normal-desc",
+		}))
+
+		assert.Contains(t, html, "Normal helper")
+		assert.Contains(t, html, `aria-describedby="normal-desc"`)
+		assert.Contains(t, html, `<span id="normal-desc"`)
+	})
+
+	t.Run("segmented takes precedence", func(t *testing.T) {
+		html := render(t, Radio(Config{
+			ID:           "segmented",
+			Label:        "Segmented",
+			HelperText:   "Segmented helper",
+			HelperTextID: "segmented-desc",
+			Segmented:    true,
+		}))
+
+		assert.NotContains(t, html, "Segmented helper")
+		assert.NotContains(t, html, "aria-describedby")
+		assert.NotContains(t, html, `id="segmented-desc"`)
+	})
+
+	t.Run("group has unmatched association", func(t *testing.T) {
+		html := render(t, RadioGroup(GroupConfig{Items: []Config{{
+			ID:           "grouped",
+			Label:        "Grouped",
+			HelperText:   "Grouped helper",
+			HelperTextID: "grouped-desc",
+		}}}))
+
+		assert.Contains(t, html, "Grouped helper")
+		assert.Contains(t, html, `aria-describedby="grouped-desc"`)
+		assert.NotContains(t, html, `<span id="grouped-desc"`)
+	})
+}
+
 // TestCoverageSegmented hits radioSegmented + segmentedInput.
 func TestCoverageSegmented(t *testing.T) {
 	html := render(t, Radio(Config{ID: "seg", Label: "Seg", Value: "seg", Segmented: true}))
@@ -272,6 +314,18 @@ func TestCoverageRadioGroupNoTitle(t *testing.T) {
 
 	assert.NotContains(t, html, "<h3")
 	assert.Contains(t, html, "Only")
+}
+
+func TestRadioGroupContainerOnlyChangesInnerInputBackground(t *testing.T) {
+	html := render(t, RadioGroup(GroupConfig{Items: []Config{{
+		ID:        "group-container",
+		Label:     "Grouped container flag",
+		Container: true,
+	}}}))
+
+	assert.Contains(t, html, `class="flex items-center gap-2 p-3`)
+	assert.NotContains(t, html, `class="inline-flex min-w-52 items-center justify-between`)
+	assert.Contains(t, html, "bg-surface dark:bg-surface-dark")
 }
 
 // TestCoverageToneClasses asserts each Tone flows through the three
