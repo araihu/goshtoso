@@ -9,9 +9,43 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var checkboxAPISections = []demo.APISection{
+	demo.StructAPI[checkbox.Config](
+		rootcomponents.KindCheckbox,
+		"Config",
+		"checkbox.Checkbox(cfg Config) Instance",
+		"Configures one native checkbox, its label, and optional helper or container presentation.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `""`, Description: "Input ID and label for target; supply a unique value for an associated label."},
+			{Name: "Name", Default: `"" (omitted)`, Description: "Form field name; currently rendered only when Value is non-empty and HelperText is empty."},
+			{Name: "Value", Default: `"" (name and value omitted)`, Description: "Submitted value; a non-empty value enables both the name and value attributes when HelperText is empty."},
+			{Name: "Label", Default: `""`, Description: "Visible text beside the checkbox."},
+			{Name: "Checked", Default: "false", Description: "Sets the initial native checked state; when both Checked and Disabled are true, the current renderer emits checked only."},
+			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute only when Checked is false in the current mutually exclusive rendering branches."},
+			{Name: "Tone", Default: "TonePrimary", Allowed: []string{"TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets the checked border, fill, focus, and icon colors."},
+			{Name: "Icon", Default: "IconCheck", Allowed: []string{"IconCheck", "IconXmark", "IconMinus", "IconPlus"}, Description: "Selects the glyph shown while checked."},
+			{Name: "Animation", Default: "AnimationNone", Allowed: []string{"AnimationNone", "AnimationSlideUp", "AnimationScaleUp", "AnimationSlideDown"}, Description: "Selects the checked-state transition."},
+			{Name: "HelperText", Default: `""`, Description: "Non-empty text selects the description layout and takes precedence over Container."},
+			{Name: "HelperTextID", Default: `""`, Description: "ID for the helper element and the input aria-describedby value when HelperText is non-empty."},
+			{Name: "Container", Default: "false", Description: "Uses a bordered, justify-between layout when HelperText is empty."},
+		},
+	),
+	demo.StructAPI[checkbox.GroupConfig](
+		rootcomponents.KindCheckboxGroup,
+		"GroupConfig",
+		"checkbox.CheckboxGroup(cfg GroupConfig) GroupInstance",
+		"Configures a bordered list of checkbox items.",
+		[]demo.APIPropDoc{
+			{Name: "Title", Default: `"" (omitted)`, Description: "Optional heading rendered above the group."},
+			{Name: "Items", Default: "nil (empty group)", Description: "Checkbox configurations rendered in order.", Required: true},
+		},
+	),
+}
 
 // CheckboxDemoPage renders the Checkbox component demo
 func CheckboxDemoPage() templ.Component {
@@ -186,20 +220,7 @@ func checkboxDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
-			{Name: "Value", Type: "string", Default: `""`, Description: "Form field value when checked."},
-			{Name: "Label", Type: "string", Default: `""`, Description: "Label text beside the box."},
-			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial checked state."},
-			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable interaction."},
-			{Name: "Tone", Type: "Tone", Default: "TonePrimary", Description: `Color: "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Icon", Type: "Icon", Default: "IconCheck", Description: `Check glyph: "check", "xmark", "minus", "plus".`},
-			{Name: "Animation", Type: "Animation", Default: "AnimationNone", Description: `Check transition: "", "slide-up", "scale-up", "slide-down".`},
-			{Name: "HelperText", Type: "string", Default: `""`, Description: "Helper text below the label."},
-			{Name: "HelperTextID", Type: "string", Default: `""`, Description: "ID of the description for aria-describedby."},
-			{Name: "Container", Type: "bool", Default: "false", Description: "Wrap in a bordered container."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(checkboxAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

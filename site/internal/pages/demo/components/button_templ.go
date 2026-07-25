@@ -9,10 +9,64 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var buttonAPISections = []demo.APISection{
+	demo.OptionsAPI(
+		rootcomponents.KindButton,
+		"Button options",
+		"button.Button(options ...Option) Instance",
+		"Creates a native button and applies functional options over the documented defaults.",
+		[]demo.APIPropDoc{
+			{Name: "WithTone", Signature: "func WithTone(tone Tone) Option", Default: "TonePrimary", Allowed: []string{"TonePrimary", "ToneSecondary", "ToneAlternate", "ToneInverse", "ToneInfo", "ToneDanger", "ToneWarning", "ToneSuccess"}, Description: "Sets the semantic color treatment."},
+			{Name: "WithSize", Signature: "func WithSize(size Size) Option", Default: "SizeMedium", Allowed: []string{"SizeSmall", "SizeMedium", "SizeLarge", "SizeXLarge"}, Description: "Sets the button padding and text size."},
+			{Name: "WithType", Signature: "func WithType(buttonType string) Option", Default: `"button"`, Description: "Sets the native type attribute; standard values are button, submit, and reset, but the string is not constrained."},
+			{Name: "Disabled", Signature: "func Disabled() Option", Default: "enabled", Description: "Adds the native disabled attribute."},
+			{Name: "WithID", Signature: "func WithID(id string) Option", Default: `"" (omitted)`, Description: "Sets the button element ID."},
+			{Name: "WithRootClass", Signature: "func WithRootClass(class string) Option", Default: `""`, Description: "Appends CSS classes to the button element."},
+			{Name: "WithHTMX", Signature: "func WithHTMX(htmx *HTMXConfig) Option", Default: "nil (no HTMX attributes)", Description: "Adds the non-empty HTMXConfig fields to the button."},
+			{Name: "WithAlpine", Signature: "func WithAlpine(alpine *AlpineConfig) Option", Default: "nil (no Alpine directives)", Description: "Adds the enabled AlpineConfig directives to the button."},
+			{Name: "WithLoadingText", Signature: "func WithLoadingText(text string) Option", Default: `"" (ordinary child content)`, Description: "When HTMXConfig is non-nil and text is non-empty, renders normal and htmx-indicator content spans."},
+		},
+	),
+	demo.StructAPI[button.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Maps optional HTMX request and swap attributes onto the button.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL."},
+			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL."},
+			{Name: "Put", Default: `"" (omitted)`, Description: "PUT request URL."},
+			{Name: "Delete", Default: `"" (omitted)`, Description: "DELETE request URL."},
+			{Name: "Patch", Default: `"" (omitted)`, Description: "PATCH request URL."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+			{Name: "Trigger", Default: `"" (HTMX default trigger)`, Description: "Trigger expression rendered as hx-trigger; Button does not synthesize one."},
+			{Name: "Indicator", Default: `"" (omitted)`, Description: "CSS selector rendered as hx-indicator."},
+			{Name: "PushURL", Default: "false", Description: "When true, renders hx-push-url=\"true\"."},
+			{Name: "Confirm", Default: `"" (omitted)`, Description: "Confirmation message rendered as hx-confirm."},
+			{Name: "Vals", Default: `"" (omitted)`, Description: "Caller-provided hx-vals expression."},
+		},
+	),
+	demo.StructAPI[button.AlpineConfig](
+		"",
+		"AlpineConfig",
+		"",
+		"Maps optional Alpine.js directives onto the button.",
+		[]demo.APIPropDoc{
+			{Name: "OnClick", Default: `"" (omitted)`, Description: "Expression rendered as x-on:click."},
+			{Name: "BindDisabled", Default: `"" (omitted)`, Description: "Expression rendered as :disabled."},
+			{Name: "Show", Default: `"" (omitted)`, Description: "Expression rendered as x-show."},
+			{Name: "Transition", Default: "false", Description: "When true, adds x-transition."},
+			{Name: "Data", Default: `"" (omitted)`, Description: "Expression rendered as x-data."},
+		},
+	),
+}
 
 // ButtonDemoPage renders the Button component demo
 func ButtonDemoPage() templ.Component {
@@ -141,17 +195,7 @@ func buttonDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "WithTone", Type: "Tone", Default: "TonePrimary", Description: `Semantic color: "primary", "secondary", "alternate", "inverse", "info", "danger", "warning", "success".`},
-			{Name: "WithSize", Type: "Size", Default: "SizeMedium", Description: `Size: "sm", "md", "lg", "xl".`},
-			{Name: "WithType", Type: "string", Default: `"button"`, Description: `Native button type: "button", "submit", "reset".`},
-			{Name: "Disabled", Type: "Option", Default: "enabled", Description: "Disable interaction."},
-			{Name: "WithHTMX", Type: "*HTMXConfig", Default: "nil", Description: "HTMX wiring (Get/Post/Put/Delete, Target, Swap, Trigger, Confirm, Indicator)."},
-			{Name: "WithAlpine", Type: "*AlpineConfig", Default: "nil", Description: "Alpine.js directives for client-side behavior."},
-			{Name: "WithLoadingText", Type: "string", Default: `""`, Description: "Text shown while an HTMX request is in flight."},
-			{Name: "WithID", Type: "string", Default: `""`, Description: "Optional element id."},
-			{Name: "WithRootClass", Type: "string", Default: `""`, Description: "Extra classes on the button."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(buttonAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -745,7 +789,7 @@ func buttonHTMXResult(id string) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/button.templ`, Line: 224, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/button.templ`, Line: 268, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {

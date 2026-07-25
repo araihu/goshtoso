@@ -1,9 +1,42 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var textareaAPISections = []demo.APISection{
+	demo.StructAPI[textarea.Config](
+		rootcomponents.KindTextarea,
+		"Config",
+		"textarea.Textarea(cfg Config) Instance",
+		"Configures Textarea and is also accepted by TextareaWithActions; fields that differ between the two renderers are called out below.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `""`, Description: "Textarea ID and the standard Textarea label for target."},
+			{Name: "Name", Default: `"" (omitted)`, Description: "Native form-field name."},
+			{Name: "Label", Default: `"" (omitted)`, Description: "Visible label for Textarea; TextareaWithActions does not render it."},
+			{Name: "Placeholder", Default: `"" (omitted)`, Description: "Native placeholder in both renderers."},
+			{Name: "Value", Default: `""`, Description: "Escaped initial textarea content in both renderers."},
+			{Name: "Rows", Default: "3 when 0 or outside 1..10", Description: "Native rows attribute; values 1 through 10 are rendered unchanged."},
+			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute in both renderers."},
+			{Name: "ReadOnly", Default: "false", Description: "Adds the native readonly attribute in both renderers."},
+			{Name: "State", Default: "StateDefault", Allowed: []string{"StateDefault", "StateError", "StateSuccess"}, Description: "Controls standard Textarea label, border, and helper styling; TextareaWithActions ignores it."},
+			{Name: "HelperText", Default: `"" (omitted)`, Description: "Standard Textarea helper text; TextareaWithActions does not render it and neither renderer adds a counter."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer wrapper in both renderers."},
+			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native textarea in both renderers."},
+		},
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindTextareaWithActions,
+		"TextareaWithActions",
+		"",
+		"Renders the same textarea field inside a card with a fixed presentation toolbar.",
+		[]demo.APIPropDoc{
+			{Name: "TextareaWithActions", Signature: "func TextareaWithActions(cfg Config) WithActionsInstance", Default: "static emoji, attachment, voice, and send buttons", Description: "Creates the actions presentation; toolbar buttons have no built-in callback, upload, voice, send, or counter behavior."},
+		},
+	),
+}
 
 // TextareaDemoPage renders the Textarea component demo
 templ TextareaDemoPage() {
@@ -91,19 +124,7 @@ templ textareaDemoContent() {
 		)
 	</div>
 	// API reference lives outside #textarea-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the textarea (and label's for target)."},
-		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
-		{Name: "Label", Type: "string", Default: `""`, Description: "Label above the textarea."},
-		{Name: "Placeholder", Type: "string", Default: `""`, Description: "Placeholder when empty."},
-		{Name: "Value", Type: "string", Default: `""`, Description: "Current value."},
-		{Name: "Rows", Type: "int", Default: "0", Description: "Visible rows (height)."},
-		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable the textarea."},
-		{Name: "ReadOnly", Type: "bool", Default: "false", Description: "Non-editable but submittable."},
-		{Name: "State", Type: "State", Default: "StateDefault", Description: `Validation state: "" (default), "error", "success".`},
-		{Name: "HelperText", Type: "string", Default: `""`, Description: "Text below the field, recolored by State."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
-	})
+	@demo.StructuredAPIReference(textareaAPISections)
 }
 
 // textareaDefaultPreview renders the default textarea.

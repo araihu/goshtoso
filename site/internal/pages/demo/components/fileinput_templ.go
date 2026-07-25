@@ -9,9 +9,31 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/fileinput"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var fileInputAPISections = []demo.APISection{
+	demo.StructAPI[fileinput.Config](
+		rootcomponents.KindFileInput,
+		"Config",
+		"fileinput.FileInput(cfg Config) Instance",
+		"Configures a native file input rendered as a drop zone or compact upload control.",
+		[]demo.APIPropDoc{
+			{Name: "Appearance", Default: "AppearanceDropZone", Allowed: []string{"AppearanceDropZone", "AppearanceUpload"}, Description: "Selects the drag-and-drop zone or compact upload treatment."},
+			{Name: "ID", Default: `""`, Description: "Native input ID, label target, and helper-text ID prefix; supply a unique value when labels or helper text are used."},
+			{Name: "Name", Default: `""`, Description: "Native file input form-field name."},
+			{Name: "Label", Default: `"" (omitted)`, Description: "Visible field label; the drop-zone appearance renders it as text and the upload appearance uses a label element."},
+			{Name: "Accept", Default: `"" (browser accepts any file type)`, Description: "Native accept attribute hint; it does not validate file size or server-side file content."},
+			{Name: "HelperText", Default: `"" (omitted)`, Description: "Hint text associated through <ID>-helper; descriptive limits are display text, not enforced validation."},
+			{Name: "Required", Default: "false", Description: "Adds the native required attribute."},
+			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute and disabled visual treatment."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer container."},
+			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native file input."},
+		},
+	),
+}
 
 // FileInputDemoPage renders the File Input component demo
 func FileInputDemoPage() templ.Component {
@@ -74,7 +96,7 @@ func fileInputDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "File Input",
-				Description: "A drag-and-drop drop zone that lets users browse or drag files. Supports Accept filters, helper text, required, and disabled states.",
+				Description: "A native file input rendered as a drag-and-drop zone or compact upload control. Accept supplies a browser file-type hint; applications must validate files and size on the server.",
 			},
 			fileInputDefaultPreview(),
 			`@fileinput.FileInput(fileinput.Config{
@@ -127,7 +149,7 @@ func fileInputDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Disabled",
-				Description: "Disabled: true blocks browsing and drops and dims the zone.",
+				Description: "Disabled: true adds the native disabled attribute and dims the control.",
 			},
 			fileInputDisabledPreview(),
 			`@fileinput.FileInput(fileinput.Config{
@@ -160,18 +182,7 @@ func fileInputDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "Appearance", Type: "fileinput.Appearance", Default: "fileinput.AppearanceDropZone", Description: "Visual treatment: AppearanceDropZone (default) or AppearanceUpload."},
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the input (and label's for target)."},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
-			{Name: "Label", Type: "string", Default: `""`, Description: "Label above the drop zone (omit for none)."},
-			{Name: "Accept", Type: "string", Default: `""`, Description: `Accepted file types (e.g. "image/*", ".pdf,.doc").`},
-			{Name: "HelperText", Type: "string", Default: `""`, Description: "Hint text shown inside/under the zone."},
-			{Name: "Required", Type: "bool", Default: "false", Description: "Mark the field as required."},
-			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disable browsing and drops."},
-			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the <input>."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(fileInputAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

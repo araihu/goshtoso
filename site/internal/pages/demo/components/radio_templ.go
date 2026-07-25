@@ -9,9 +9,91 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var radioAPISections = []demo.APISection{
+	demo.StructAPI[radio.Config](
+		rootcomponents.KindRadio,
+		"Config",
+		"radio.Radio(cfg Config) Instance",
+		"Configures one native radio input, including optional container, segmented, HTMX, and Alpine behavior.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `""`, Description: "Native input ID and label for target; supply a unique value for an associated label."},
+			{Name: "Name", Default: `""`, Description: "Native form-field name shared by mutually exclusive radios."},
+			{Name: "Value", Default: `""`, Description: "Value submitted when this radio is selected."},
+			{Name: "Label", Default: `""`, Description: "Visible option label."},
+			{Name: "Checked", Default: "false", Description: "Sets the initial native checked state."},
+			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute."},
+			{Name: "Tone", Default: "TonePrimary", Allowed: []string{"TonePrimary", "ToneSecondary", "ToneInfo", "ToneSuccess", "ToneWarning", "ToneDanger"}, Description: "Sets checked and focus colors, including segmented selection colors."},
+			{Name: "Size", Default: "SizeMD", Allowed: []string{"SizeSM", "SizeMD", "SizeLG", "SizeXL"}, Description: "Sets the native radio size; segmented mode uses its own pill dimensions."},
+			{Name: "HelperText", Default: `""`, Description: "Non-empty text selects the description layout unless Segmented is true."},
+			{Name: "HelperTextID", Default: `"" (helper has no ID)`, Description: "When non-empty, identifies the helper element and is rendered as aria-describedby on the input."},
+			{Name: "BadgeColor", Default: `"" (plain group label)`, Allowed: []string{"success", "danger", "warning", "info", "neutral", "primary", "secondary"}, Description: "Applies badge styling only to RadioGroup items that also have HelperText."},
+			{Name: "Container", Default: "false", Description: "Selects a bordered option layout; Segmented takes precedence and HelperText selects the description layout."},
+			{Name: "Segmented", Default: "false", Description: "Renders a full-segment transparent input and pill label, intended as a child of RadioBar."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the selected root label or description wrapper."},
+			{Name: "HTMX", Default: "nil (no HTMX attributes)", Description: "Optional server-interaction attributes applied to the input."},
+			{Name: "Alpine", Default: "nil (no Alpine directives)", Description: "Optional client-side directives applied to the input."},
+			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native input and therefore able to override earlier attributes."},
+		},
+	),
+	demo.StructAPI[radio.GroupConfig](
+		rootcomponents.KindRadioGroup,
+		"GroupConfig",
+		"radio.RadioGroup(cfg GroupConfig) GroupInstance",
+		"Configures a bordered list of radio options.",
+		[]demo.APIPropDoc{
+			{Name: "Title", Default: `"" (omitted)`, Description: "Optional heading rendered above the group."},
+			{Name: "Items", Default: "nil (empty group)", Description: "Radio configurations rendered in order.", Required: true},
+		},
+	),
+	demo.StructAPI[radio.HTMXConfig](
+		"",
+		"HTMXConfig",
+		"",
+		"Maps HTMX request, swap, and submission attributes onto a radio input.",
+		[]demo.APIPropDoc{
+			{Name: "Get", Default: `"" (omitted)`, Description: "GET request URL."},
+			{Name: "Post", Default: `"" (omitted)`, Description: "POST request URL."},
+			{Name: "Put", Default: `"" (omitted)`, Description: "PUT request URL."},
+			{Name: "Delete", Default: `"" (omitted)`, Description: "DELETE request URL."},
+			{Name: "Patch", Default: `"" (omitted)`, Description: "PATCH request URL."},
+			{Name: "Target", Default: `"" (HTMX default target)`, Description: "CSS selector rendered as hx-target."},
+			{Name: "Swap", Default: `"" (HTMX default swap)`, Description: "Swap strategy rendered as hx-swap."},
+			{Name: "Trigger", Default: `"change" when a verb is set; otherwise omitted`, Description: "Explicit trigger override, or the radio-native change event synthesized for requests."},
+			{Name: "Indicator", Default: `"" (omitted)`, Description: "CSS selector rendered as hx-indicator."},
+			{Name: "PushURL", Default: "false", Description: "When true, renders hx-push-url=\"true\"."},
+			{Name: "Confirm", Default: `"" (omitted)`, Description: "Confirmation message rendered as hx-confirm."},
+			{Name: "Vals", Default: `"" (omitted)`, Description: "Caller-provided hx-vals JSON expression."},
+			{Name: "Include", Default: `"" (omitted)`, Description: "CSS selector rendered as hx-include."},
+		},
+	),
+	demo.StructAPI[radio.AlpineConfig](
+		"",
+		"AlpineConfig",
+		"",
+		"Maps optional Alpine.js directives onto a radio input.",
+		[]demo.APIPropDoc{
+			{Name: "Data", Default: `"" (omitted)`, Description: "Expression rendered as x-data."},
+			{Name: "Model", Default: `"" (omitted)`, Description: "Expression rendered as x-model."},
+			{Name: "OnChange", Default: `"" (omitted)`, Description: "Expression rendered as x-on:change."},
+			{Name: "BindChecked", Default: `"" (omitted)`, Description: "Expression rendered as x-bind:checked."},
+			{Name: "BindDisabled", Default: `"" (omitted)`, Description: "Expression rendered as x-bind:disabled."},
+		},
+	),
+	demo.FunctionsAPI(
+		rootcomponents.KindRadioBar,
+		"RadioBar",
+		"",
+		"Groups segmented Radio children in a connected bordered pill bar.",
+		[]demo.APIPropDoc{
+			{Name: "RadioBar", Signature: "func RadioBar() BarInstance", Default: "n/a", Description: "Creates the child-rendering segmented-control wrapper; children should set Config.Segmented."},
+		},
+	),
+}
 
 // RadioDemoPage renders the Radio component demo as a full document.
 // Kept for direct invocation; the registry uses radioDemoContent directly.
@@ -225,25 +307,7 @@ func radioDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.APIReference([]demo.PropDoc{
-			{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the radio input (also the label's for target)."},
-			{Name: "Name", Type: "string", Default: `""`, Description: "Form field name shared by all radios in a group."},
-			{Name: "Value", Type: "string", Default: `""`, Description: "Form field value submitted when selected."},
-			{Name: "Label", Type: "string", Default: `""`, Description: "Text displayed next to the radio."},
-			{Name: "Checked", Type: "bool", Default: "false", Description: "Initial checked state."},
-			{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables interaction and dims the control."},
-			{Name: "Tone", Type: "Tone", Default: "TonePrimary", Description: `Color scheme: "primary", "secondary", "info", "success", "warning", "danger".`},
-			{Name: "Size", Type: "Size", Default: "SizeMD", Description: `Box size: "sm", "md", "lg", "xl".`},
-			{Name: "HelperText", Type: "string", Default: `""`, Description: "Helper text rendered below the label."},
-			{Name: "HelperTextID", Type: "string", Default: `""`, Description: "ID of the description element for aria-describedby wiring."},
-			{Name: "Container", Type: "bool", Default: "false", Description: "Wraps the radio in a bordered container."},
-			{Name: "Segmented", Type: "bool", Default: "false", Description: "Renders a segmented-control pill (sr-only input); group inside RadioBar."},
-			{Name: "BadgeColor", Type: "string", Default: `""`, Description: "Wraps the label in a semi-solid badge of the given color."},
-			{Name: "HTMX", Type: "*HTMXConfig", Default: "nil", Description: "Server interaction on change (Get/Post/Target/Swap/...)."},
-			{Name: "Alpine", Type: "*AlpineConfig", Default: "nil", Description: "Client-side state (Model/OnChange/BindChecked/...)."},
-			{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Escape hatch applied last to the input; wins on conflict."},
-			{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes appended to the label root."},
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.StructuredAPIReference(radioAPISections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

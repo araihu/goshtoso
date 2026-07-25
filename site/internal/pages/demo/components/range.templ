@@ -1,9 +1,48 @@
 package components
 
 import (
+	rootcomponents "github.com/araihu/goshtoso/components"
 	rangeinput "github.com/araihu/goshtoso/components/range"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
+
+var rangeAPISections = []demo.APISection{
+	demo.StructAPI[rangeinput.Config](
+		rootcomponents.KindRange,
+		"Config",
+		"rangeinput.Range(cfg Config) Instance",
+		"Configures a native range input with optional icons, ticks, and an Alpine-backed live value.",
+		[]demo.APIPropDoc{
+			{Name: "ID", Default: `""`, Description: "Native range input ID and label for target."},
+			{Name: "Name", Default: `""`, Description: "Native form-field name."},
+			{Name: "Label", Default: `"" (omitted)`, Description: "Visible input label."},
+			{Name: "Value", Default: `"0"`, Description: "Native input value and initial live-value text."},
+			{Name: "Min", Default: `"0"`, Description: "Native minimum value and first generated tick label."},
+			{Name: "Max", Default: `"100"`, Description: "Native maximum value and last generated tick label."},
+			{Name: "Step", Default: `"1"`, Description: "Native increment between valid values."},
+			{Name: "Disabled", Default: "false", Description: "Adds the native disabled attribute."},
+			{Name: "Required", Default: "false", Description: "Adds the native required attribute."},
+			{Name: "ShowTicks", Default: "false", Description: "Renders an aria-hidden tick row below the input."},
+			{Name: "Ticks", Default: "21 generated ticks from Min to Max", Description: "Non-empty values replace the generated endpoints and 19 intermediate marks."},
+			{Name: "ShowValue", Default: "false", Description: "Adds Alpine state, x-model, and a live current-value badge; an invalid numeric initial value starts the badge at 0."},
+			{Name: "LeadingIcon", Default: "nil", Description: "Optional aria-hidden component before the labelled input."},
+			{Name: "TrailingIcon", Default: "nil", Description: "Optional aria-hidden component after the input and live value."},
+			{Name: "RootClass", Default: `""`, Description: "Appends CSS classes to the outer container."},
+			{Name: "InputClass", Default: `""`, Description: "Appends CSS classes to the native range input."},
+			{Name: "InputAttrs", Default: "nil", Description: "Attributes applied last to the native range input."},
+		},
+	),
+	demo.StructAPI[rangeinput.Tick](
+		"",
+		"Tick",
+		"",
+		"Describes one position in a custom tick row.",
+		[]demo.APIPropDoc{
+			{Name: "Label", Default: `""`, Description: "Visible tick text; use \"|\" for an unlabeled mark."},
+			{Name: "HideOnMobile", Default: "false", Description: "Hides the tick below the sm breakpoint."},
+		},
+	),
+}
 
 // RangeDemoPage renders the Range component demo.
 templ RangeDemoPage() {
@@ -96,25 +135,7 @@ templ rangeDemoContent() {
 		)
 	</div>
 	// API reference lives outside #range-fragment.
-	@demo.APIReference([]demo.PropDoc{
-		{Name: "ID", Type: "string", Default: `""`, Description: "Unique id for the range input and label target."},
-		{Name: "Name", Type: "string", Default: `""`, Description: "Form field name."},
-		{Name: "Label", Type: "string", Default: `""`, Description: "Visible label for the slider."},
-		{Name: "Value", Type: "string", Default: `"0"`, Description: "Current value."},
-		{Name: "Min", Type: "string", Default: `"0"`, Description: "Minimum value."},
-		{Name: "Max", Type: "string", Default: `"100"`, Description: "Maximum value."},
-		{Name: "Step", Type: "string", Default: `"1"`, Description: "Increment between valid values."},
-		{Name: "Disabled", Type: "bool", Default: "false", Description: "Disables the slider."},
-		{Name: "Required", Type: "bool", Default: "false", Description: "Marks the input as required."},
-		{Name: "ShowTicks", Type: "bool", Default: "false", Description: "Renders a tick row below the input."},
-		{Name: "Ticks", Type: "[]Tick", Default: "nil", Description: "Custom tick labels; empty uses the default min-to-max scale."},
-		{Name: "ShowValue", Type: "bool", Default: "false", Description: "Renders a live Alpine.js value badge."},
-		{Name: "LeadingIcon", Type: "templ.Component", Default: "nil", Description: "Icon component rendered before the control."},
-		{Name: "TrailingIcon", Type: "templ.Component", Default: "nil", Description: "Icon component rendered after the control."},
-		{Name: "RootClass", Type: "string", Default: `""`, Description: "Extra classes on the container."},
-		{Name: "InputClass", Type: "string", Default: `""`, Description: "Extra classes on the range input."},
-		{Name: "InputAttrs", Type: "templ.Attributes", Default: "nil", Description: "Arbitrary attributes on the input (e.g. hx-post, x-on:input, data-*)."},
-	})
+	@demo.StructuredAPIReference(rangeAPISections)
 }
 
 templ rangeDefaultPreview() {
