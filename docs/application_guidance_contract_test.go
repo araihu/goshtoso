@@ -22,6 +22,22 @@ func TestAgentSkillRoutesFromIntegrationToApplicationPatterns(t *testing.T) {
 	}
 }
 
+func TestReadmeMakesApplicationGuidanceDiscoverable(t *testing.T) {
+	readme := readDoc(t, "../README.md")
+	for _, want := range []string{
+		"application-patterns.md",
+		"App Shell",
+		`mux.Handle("GET /assets/", assets.Handler())`,
+	} {
+		if !strings.Contains(readme, want) {
+			t.Errorf("README missing application guidance %q", want)
+		}
+	}
+	if strings.Contains(readme, "distribution checks") {
+		t.Error("README sends consumers to maintainer-only distribution checks")
+	}
+}
+
 func TestApplicationPatternReferencesCoverApprovedArchetypesAndStates(t *testing.T) {
 	patterns := readDoc(t, "../.agents/skills/using-goshtoso/references/application-patterns.md")
 	for _, want := range []string{

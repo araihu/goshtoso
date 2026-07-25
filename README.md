@@ -116,8 +116,9 @@ upgrading from `v0.0.11` should follow the
 
 Goshtoso ships an installable skill for AI coding agents that need to use the
 library inside consumer applications. It teaches agents how to install the Go
-module, serve bundled assets, wire `head.Dependencies()`, import components, and
-avoid common integration mistakes.
+module, serve bundled assets, wire `head.Dependencies()`, import components,
+choose a CSS strategy, and progress from the first component to App Shell,
+Operations List, Detail Workspace, and Multi-step Workflow patterns.
 
 Install the skill into a project or agent workspace:
 
@@ -139,8 +140,9 @@ npx skills use araihu/goshtoso --skill using-goshtoso
 
 The skill is intentionally consumer-focused. It does not cover maintaining
 Goshtoso itself, editing component internals, or running releases. The public
-docs site includes an AI Agents page at `/docs/agents` with install, usage, and
-distribution checks.
+docs site includes an AI Agents page at `/docs/agents`. The installed skill also
+ships an [application patterns reference](.agents/skills/using-goshtoso/references/application-patterns.md)
+and a [visual acceptance checklist](.agents/skills/using-goshtoso/references/visual-acceptance.md).
 
 ## Component Catalog
 
@@ -185,7 +187,8 @@ The public documentation site is available at
 The recommended path is to serve Goshtoso's embedded assets:
 
 ```go
-http.Handle("/assets/", assets.Handler())
+mux := http.NewServeMux()
+mux.Handle("GET /assets/", assets.Handler())
 ```
 
 and let `@head.Dependencies()` emit the matching stylesheet and script tags.
