@@ -30,6 +30,7 @@ templ layout(meta pageMeta) {
 			<link rel="stylesheet" href="/app.css"/>
 		</head>
 		<body class="app-body">
+			<a class="skip-link" href="#main-content">Skip to main content</a>
 			<div class="app-shell">
 				<aside class="app-sidebar" aria-label="Application">
 					<a class="app-brand" href={ templ.URL(routeURL("/", meta.Appearance)) }>
@@ -97,7 +98,7 @@ templ layout(meta pageMeta) {
 							<button type="submit">Apply</button>
 						</form>
 					</header>
-					<main id="main-content" class="app-content">
+					<main id="main-content" class="app-content" data-scroll-region="main" tabindex="-1">
 						{ children... }
 					</main>
 				</div>
@@ -245,6 +246,10 @@ templ operationsStatePanel(view operationsView) {
 					Description: "The current operational queue is empty. Start a deployment or adjust the upstream filters.",
 					Tone:        alert.ToneInfo,
 				})
+				<div class="state-actions">
+					<a class="app-primary-link" href={ templ.URL(routeURL("/workflows/deploy", view.Appearance)) }>Start a deployment</a>
+					<a href={ templ.URL(routeURLWith("/operations", view.Appearance, "state", "success")) }>Show all operations</a>
+				</div>
 			case stateError:
 				@alert.Alert(alert.Config{
 					Title:       "Operations unavailable",
@@ -252,6 +257,9 @@ templ operationsStatePanel(view operationsView) {
 					Tone:        alert.ToneDanger,
 					ListItems:   []string{"No mutation was attempted", "Last known state remains authoritative"},
 				})
+				<div class="state-actions">
+					<a class="app-primary-link" href={ templ.URL(routeURLWith("/operations", view.Appearance, "state", "success")) }>Retry operations</a>
+				</div>
 			default:
 				<div class="app-panel">
 					<div class="state-success-heading">

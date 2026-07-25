@@ -8,7 +8,6 @@
 	--app-primary: var(--color-primary);
 	--app-on-primary: var(--color-on-primary);
 	--app-border: color-mix(in srgb, var(--color-outline-strong) 22%, transparent);
-	--app-shadow: 0 24px 60px color-mix(in srgb, var(--color-on-surface-strong) 10%, transparent);
 }
 
 html.dark {
@@ -21,7 +20,6 @@ html.dark {
 	--app-primary: var(--color-primary-dark);
 	--app-on-primary: var(--color-on-primary-dark);
 	--app-border: color-mix(in srgb, var(--color-outline-dark-strong) 26%, transparent);
-	--app-shadow: 0 24px 60px color-mix(in srgb, #000 34%, transparent);
 }
 
 * {
@@ -37,9 +35,28 @@ html.dark {
 	font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 
+.skip-link {
+	position: fixed;
+	z-index: 100;
+	top: 0.75rem;
+	left: 0.75rem;
+	padding: 0.65rem 0.85rem;
+	transform: translateY(-180%);
+	border-radius: var(--radius-radius);
+	background: var(--app-primary);
+	color: var(--app-on-primary);
+	font-weight: 750;
+	text-decoration: none;
+}
+
+.skip-link:focus {
+	transform: translateY(0);
+}
+
 .app-shell {
 	display: grid;
 	grid-template-columns: 17rem minmax(0, 1fr);
+	height: 100vh;
 	min-height: 100vh;
 }
 
@@ -140,7 +157,11 @@ html.dark {
 }
 
 .app-main {
+	display: flex;
+	height: 100vh;
+	flex-direction: column;
 	min-width: 0;
+	overflow: hidden;
 }
 
 .app-topbar {
@@ -216,9 +237,11 @@ html.dark {
 }
 
 .app-content {
+	flex: 1;
 	width: min(100%, 90rem);
 	margin: 0 auto;
 	padding: clamp(1.25rem, 3vw, 2.75rem);
+	overflow-y: auto;
 }
 
 .app-stack {
@@ -235,10 +258,7 @@ html.dark {
 	overflow: hidden;
 	border: 1px solid var(--app-border);
 	border-radius: var(--radius-radius);
-	background:
-		radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--app-primary) 18%, transparent), transparent 38%),
-		var(--app-raised);
-	box-shadow: var(--app-shadow);
+	background: var(--app-raised);
 }
 
 .app-hero h2,
@@ -247,9 +267,9 @@ html.dark {
 	margin: 1rem 0 0.7rem;
 	color: var(--app-strong);
 	font-family: var(--font-title), ui-sans-serif, system-ui, sans-serif;
-	font-size: clamp(2rem, 5vw, 4.5rem);
-	line-height: 0.98;
-	letter-spacing: -0.045em;
+	font-size: clamp(2rem, 4vw, 3.25rem);
+	line-height: 1.05;
+	letter-spacing: -0.03em;
 }
 
 .app-hero p,
@@ -284,14 +304,17 @@ html.dark {
 
 .app-card-grid {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 1rem;
+}
+
+.app-card-grid > :first-child {
+	grid-column: 1 / -1;
 }
 
 .app-pattern-card {
 	width: 100%;
 	max-width: none;
-	box-shadow: 0 12px 30px color-mix(in srgb, var(--app-strong) 5%, transparent);
 }
 
 .app-card-link {
@@ -314,7 +337,6 @@ html.dark {
 	border: 1px solid var(--app-border);
 	border-radius: var(--radius-radius);
 	background: var(--app-raised);
-	box-shadow: 0 12px 32px color-mix(in srgb, var(--app-strong) 5%, transparent);
 }
 
 .app-section-heading,
@@ -404,6 +426,19 @@ html.dark {
 .state-card p {
 	margin: 0;
 	color: var(--app-muted);
+}
+
+.state-actions {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.state-actions > a:not(.app-primary-link) {
+	color: var(--app-text);
+	font-size: 0.85rem;
+	font-weight: 700;
 }
 
 .detail-heading {
@@ -566,7 +601,17 @@ dd {
 
 @media (max-width: 900px) {
 	.app-shell {
+		height: auto;
 		grid-template-columns: 1fr;
+	}
+
+	.app-main {
+		height: auto;
+		overflow: visible;
+	}
+
+	.app-content {
+		overflow-y: visible;
 	}
 
 	.app-sidebar {
@@ -620,7 +665,14 @@ dd {
 
 	.appearance-form {
 		display: grid;
+		width: 100%;
 		grid-template-columns: 1fr 1fr auto;
+	}
+
+	.appearance-form label,
+	.appearance-form select {
+		min-width: 0;
+		width: 100%;
 	}
 
 	.app-metric {
@@ -630,5 +682,10 @@ dd {
 	.app-contract-grid,
 	.review-grid {
 		grid-template-columns: 1fr;
+	}
+
+	.state-actions {
+		align-items: stretch;
+		flex-direction: column;
 	}
 }

@@ -44,3 +44,23 @@ The first generation pass failed because `views.templ` explicitly imported
 `github.com/a-h/templ` while also using `templ.URL` and `templ.KV`; the generated
 file already injects that import, producing a redeclaration. Removing the
 explicit import and regenerating is the correct consumer pattern.
+
+## Control-plane review and remediation
+
+The benchmark implementation was reviewed after integration. The following
+issues were fixed before accepting the slice:
+
+- the shell now starts with a keyboard-visible skip link and exposes one main
+  desktop scroll region;
+- empty and error states now offer concrete next actions instead of only
+  describing them;
+- decorative hero effects and broad shadows were removed so the operational
+  hierarchy carries the interface;
+- appearance parameters are preserved when state actions navigate;
+- the consumer reference now documents `table.Cell.Component`,
+  `table.LinkMode`, exact theme selectors, and templ's injected import. Those
+  additions remove four source lookups from the next blind build.
+
+The remaining button attribute gap is intentionally still open here. It will be
+closed in the consolidated branch and the workflow will then exercise the new
+public API with real Back and Continue submit actions.

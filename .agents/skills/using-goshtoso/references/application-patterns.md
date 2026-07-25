@@ -94,6 +94,23 @@ context. This is a work surface, not a dashboard gallery.
 5. A state region replaces the result surface during loading, empty, or error
    states without moving the page tools.
 
+For rich status cells and predictable row navigation, use the public cell and
+link-mode types directly:
+
+```go
+table.Row{
+	Link:     "/operations/op-104",
+	LinkMode: table.LinkFull,
+	Cells: map[string]table.Cell{
+		"status": {Component: badge.Badge(badge.Config{Text: "Healthy"})},
+	},
+}
+```
+
+`Cell.Component` accepts any `templ.Component`. Prefer `LinkFull` when the
+destination depends on a fresh document or complex Alpine state; use
+`LinkBoost` only when HTMX navigation preserves the destination contract.
+
 ### State matrix
 
 | State | Required response |
@@ -253,3 +270,6 @@ utilities, give it its own Tailwind build and load that stylesheet after
 `/assets/styles.css`. A valid class name can otherwise fail silently because no
 matching selector exists in the embedded CSS.
 
+Built-in themes are selected with `data-theme="goshtoso"` or
+`data-theme="minimal"` on `<html>`. Dark mode uses the `dark` class on the same
+element. Apply these markers before first paint when the app persists a choice.

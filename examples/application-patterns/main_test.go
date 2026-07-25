@@ -29,7 +29,7 @@ func TestApplicationRoutesRenderTheirPatterns(t *testing.T) {
 		{
 			name: "app shell",
 			path: "/",
-			want: []string{`data-pattern="app-shell"`, "Operate the platform without losing context"},
+			want: []string{`data-pattern="app-shell"`, "Operate the platform without losing context", `href="#main-content"`, `data-scroll-region="main"`},
 		},
 		{
 			name: "operations list",
@@ -68,8 +68,8 @@ func TestOperationsStateMatrixRenders(t *testing.T) {
 		want  string
 	}{
 		{state: stateLoading, want: "Refreshing operations"},
-		{state: stateEmpty, want: "No operations found"},
-		{state: stateError, want: "Operations unavailable"},
+		{state: stateEmpty, want: "Start a deployment"},
+		{state: stateError, want: "Retry operations"},
 		{state: stateSuccess, want: "Operations loaded"},
 	}
 
@@ -77,8 +77,9 @@ func TestOperationsStateMatrixRenders(t *testing.T) {
 		t.Run(string(tt.state), func(t *testing.T) {
 			t.Parallel()
 			view := operationsView{
-				State: tt.state,
-				Table: operationsTable(newApplication().operations, appearance{Theme: "goshtoso", Mode: "light"}),
+				State:      tt.state,
+				Table:      operationsTable(newApplication().operations, appearance{Theme: "goshtoso", Mode: "light"}),
+				Appearance: appearance{Theme: "goshtoso", Mode: "light"},
 			}
 			body := renderString(t, operationsStatePanel(view))
 			assertContains(t, body, `data-state="`+string(tt.state)+`"`, tt.want)

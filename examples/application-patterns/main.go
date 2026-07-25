@@ -61,8 +61,9 @@ type operation struct {
 }
 
 type operationsView struct {
-	State viewState
-	Table table.Config
+	State      viewState
+	Table      table.Config
+	Appearance appearance
 }
 
 type workflowView struct {
@@ -154,8 +155,9 @@ func (a *application) operationsList(w http.ResponseWriter, r *http.Request) {
 	prefs := appearanceFromRequest(r)
 	state := stateFromRequest(r)
 	view := operationsView{
-		State: state,
-		Table: operationsTable(a.operations, prefs),
+		State:      state,
+		Table:      operationsTable(a.operations, prefs),
+		Appearance: prefs,
 	}
 	if r.Header.Get("HX-Request") == "true" {
 		render(w, r, http.StatusOK, operationsStatePanel(view))

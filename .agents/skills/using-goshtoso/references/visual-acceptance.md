@@ -74,4 +74,3 @@ them.
 Record the tested routes, viewport matrix, states, console result, accessibility
 result, and known exceptions. Do not describe a surface as visually verified if
 it was only inspected as templ source or rendered HTML.
-

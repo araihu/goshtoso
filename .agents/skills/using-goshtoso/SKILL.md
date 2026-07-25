@@ -147,4 +147,7 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 - HTMX handlers should return rendered HTML fragments, not JSON.
 - Goshtoso's own components are pre-generated. Do not run `templ generate`
   against the module cache or vendor copy; run it for the consumer app's files.
+- `.templ` files can use `templ.URL`, `templ.KV`, and other templ helpers without
+  explicitly importing `github.com/a-h/templ`; the generator injects that import
+  and an explicit duplicate can fail generation.
 - Do not import `site/`; it is the Goshtoso demo app, not public library API.

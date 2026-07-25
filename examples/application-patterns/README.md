@@ -42,9 +42,12 @@ The operations state matrix is available with `?state=loading`, `empty`,
 - `breadcrumbs` structures the detail workspace.
 - `steps` represents workflow progress.
 
-The custom `app.css` consumes Goshtoso theme tokens. Theme selection is applied
-with `data-theme="goshtoso|minimal"` and dark mode with the `.dark` class; no
-browser storage is required.
+The custom `app.css` is deliberately application-owned: it defines product
+layout while consuming Goshtoso theme tokens. It is embedded with the binary
+and loaded after `/assets/styles.css`, so this fixture needs neither a CDN nor
+an application-specific Tailwind build. Theme selection is applied with
+`data-theme="goshtoso|minimal"` and dark mode with the `.dark` class; no browser
+storage is required.
 
 ## Commands
 
@@ -63,5 +66,7 @@ Then open <http://localhost:3000>. The tests also prove that:
   fragment;
 - Goshtoso and application CSS are served locally;
 - Minimal/Goshtoso and light/dark appearance markers are emitted;
+- the shell exposes a skip link and one desktop main scroll region;
+- empty and error states include useful next actions;
 - unsupported HTTP methods return `405 Method Not Allowed`;
 - the module has no `github.com/araihu/goshtoso/site` import.
