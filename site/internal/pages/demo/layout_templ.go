@@ -1137,7 +1137,6 @@ func getThemeOptions() []selectfield.Option {
 		{Value: "halloween", Label: "Halloween"},
 		{Value: "zombie", Label: "Halloween II"},
 		{Value: "prototype", Label: "Prototype"},
-		{Value: "totvs", Label: "TOTVS"},
 		{Value: "dracula", Label: "Dracula"},
 	}
 }

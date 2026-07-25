@@ -123,7 +123,7 @@ templ landingContent() {
 					{ componentCount() } components
 				</span>
 				<span class="rounded-radius border border-outline px-3 py-1 text-sm font-medium text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
-					16 themes
+					{ len(getThemeInfos()) } themes
 				</span>
 				<span class="rounded-radius border border-outline px-3 py-1 text-sm font-medium text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
 					Local assets
@@ -266,7 +266,7 @@ templ landingContent() {
 		<!-- Footer -->
 		<div class="text-center pb-8">
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				{ componentCount() } components · 16 themes ·
+				{ componentCount() } components · { len(getThemeInfos()) } themes ·
 				<a href="/getting-started" class="text-primary dark:text-primary-dark underline underline-offset-2">Get started</a>
 			</p>
 		</div>

@@ -153,16 +153,16 @@ func appMux() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// Serve embedded Goshtoso assets (CSS with themes, Alpine.js, HTMX, fonts)
-	mux.Handle("/assets/", assets.Handler())
+	mux.Handle("GET /assets/", assets.Handler())
 
 	dogImages, err := fs.Sub(dogImageFiles, "assets/dogs")
 	if err != nil {
 		panic(err)
 	}
-	mux.Handle("/dog-images/", http.StripPrefix("/dog-images/", http.FileServer(http.FS(dogImages))))
+	mux.Handle("GET /dog-images/", http.StripPrefix("/dog-images/", http.FileServer(http.FS(dogImages))))
 
 	// Main page — renders the full table with filters, sorting, and pagination
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
@@ -184,7 +184,7 @@ func appMux() *http.ServeMux {
 	})
 
 	// HTMX endpoint — returns filtered/sorted/paginated table rows
-	mux.HandleFunc("/api/breeds", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/breeds", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 
 		q := r.URL.Query()

@@ -24,12 +24,14 @@ go install github.com/a-h/templ/cmd/templ@latest
 templ generate
 ```
 
-Mount Goshtoso assets directly at `/assets/`:
+Mount Goshtoso assets directly at `/assets/` with a method-qualified Go
+`ServeMux` pattern:
 
 ```go
 import "github.com/araihu/goshtoso/assets"
 
-http.Handle("/assets/", assets.Handler())
+mux := http.NewServeMux()
+mux.Handle("GET /assets/", assets.Handler())
 ```
 
 Do not wrap `assets.Handler()` in `http.StripPrefix`; it already strips
@@ -83,10 +85,40 @@ before choosing between constructors or configuration fields. It documents the
 common component interface, concrete return values, constructor styles, stable
 Kind identity, and rendered defaults.
 
+## From First Component to Application
+
+Do not invent the page around isolated components. Choose the closest task
+pattern and read `references/application-patterns.md` before composing it:
+
+- **App Shell** for persistent top navigation, sidebar, global search, and one
+  main scroll region.
+- **Operations List** for page tools, filters, Table, and loading, empty, error,
+  and success states.
+- **Detail Workspace** for identity, status, tabs, actions, and a secondary
+  detail rail.
+- **Multi-step Workflow** for Steps, Form, server validation, review, and safe
+  submission.
+
+Keep domain vocabulary, authorization, data priority, and workflow rules in the
+application. Goshtoso supplies the component vocabulary and supported layout
+contract, not the product decisions.
+
+Before declaring the surface finished, apply
+`references/visual-acceptance.md`. It requires 390 px and 1440 px checks,
+Goshtoso and Minimal themes, light and dark modes, the full state matrix,
+keyboard use, console checks, and accessibility scanning.
+
 ## CSS Strategy
 
-Prefer the embedded stylesheet served by `assets.Handler()`. Stock CDN Tailwind
-does not include Goshtoso's theme tokens or component classes.
+Prefer the embedded stylesheet served by `assets.Handler()` for components and
+official recipes. Stock CDN Tailwind does not include Goshtoso's theme tokens or
+component classes.
+
+The embedded stylesheet is not a general Tailwind compiler for consumer markup.
+Hooks such as `RootClass` accept class names, but an arbitrary Tailwind utility
+can fail silently when that selector was not emitted. The official application
+patterns list the small guaranteed layout set. If the app needs other Tailwind
+utilities, build an app stylesheet and load it after `/assets/styles.css`.
 
 For apps with their own Tailwind build, keep Goshtoso CSS as a separate
 stylesheet unless a unified build is truly needed:

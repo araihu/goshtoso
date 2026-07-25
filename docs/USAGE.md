@@ -34,8 +34,9 @@ The fastest, deterministic path: serve Goshtoso's embedded assets and let
 // main.go
 import "github.com/araihu/goshtoso/assets"
 
-http.Handle("/assets/", assets.Handler()) // serves styles.css + js/ + fonts/ + images/
-                                          // NOTE: self-strips /assets/ — don't wrap in StripPrefix
+mux := http.NewServeMux()
+mux.Handle("GET /assets/", assets.Handler()) // styles.css + js/ + fonts/ + images/
+                                             // self-strips /assets/; do not use StripPrefix
 ```
 
 ```go
@@ -133,6 +134,17 @@ No recompiling Goshtoso.
 @theme { --color-brand: oklch(0.7 0.15 250); }
 ```
 
+The embedded stylesheet is a contract for Goshtoso components and the official
+application recipes, not a general Tailwind compiler for consumer markup.
+`RootClass` and attribute hooks accept arbitrary class names, but a valid
+Tailwind utility can fail silently if its selector was not emitted.
+
+The recipe contract explicitly guarantees these audited layout utilities:
+`max-w-7xl`, `xl:grid-cols-4`, `lg:col-span-2`, `min-h-64`, `sm:text-4xl`,
+`first:pt-0`, `last:pb-0`, `min-w-[220px]`, and `sm:col-span-2`. Give the
+application its own Tailwind build for any broader utility vocabulary and load
+its stylesheet after `/assets/styles.css`.
+
 ### Path B — unified build (one tree-shaken stylesheet)
 
 Compile Goshtoso's theme source together with your own. Requires your Tailwind
@@ -157,6 +169,32 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 
 Goshtoso's fonts/images are still served by `assets.Handler()` at `/assets/`,
 so mount it regardless of which path you choose.
+
+## From a component to an application
+
+After the first component renders, choose a task-oriented pattern instead of
+inventing a page from isolated demos:
+
+| Task | Pattern | Main packages |
+|---|---|---|
+| Persistent product navigation | App Shell | `navbar`, `sidebar`, `breadcrumbs`, `search` |
+| Search, filter, compare, act | Operations List | `table`, `combobox`, `search`, `badge`, `button` |
+| Inspect and change one resource | Detail Workspace | `breadcrumbs`, `badge`, `tabs`, `dropdown`, `button` |
+| Complete a long or risky task | Multi-step Workflow | `steps`, `form`, inputs, `alert`, `button` |
+
+The installable skill includes two progressive references:
+
+- [application patterns](../.agents/skills/using-goshtoso/references/application-patterns.md)
+  defines anatomy, state matrices, responsive behavior, accessibility, app
+  boundaries, and completion checks for all four patterns;
+- [visual acceptance](../.agents/skills/using-goshtoso/references/visual-acceptance.md)
+  requires 390 px and 1440 px, Goshtoso and Minimal, light and dark, keyboard,
+  console, accessibility, and screenshot checks.
+
+Model loading, empty, error, and success before polishing the happy path. Keep
+domain vocabulary, information priority, authorization, and workflow rules in
+the application. Goshtoso supplies a consistent component vocabulary, not the
+product decisions.
 
 ## Component Catalog
 

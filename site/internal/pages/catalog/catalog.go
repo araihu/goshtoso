@@ -22,12 +22,18 @@ type Entry struct {
 	Section     string
 	Order       int
 	Kinds       []components.Kind
+	// Package overrides the package directory when the documentation route and
+	// public Go package intentionally use different names.
+	Package string
 }
 
 // GoPackagePath returns the public Go import path documented by this page.
 // Route names use kebab case for readability; Go package directories do not.
 func (e Entry) GoPackagePath() string {
 	name := strings.TrimPrefix(e.Key, "components/")
+	if e.Package != "" {
+		name = e.Package
+	}
 	return componentModulePath + strings.ReplaceAll(name, "-", "")
 }
 
@@ -132,6 +138,7 @@ var componentPages = []Entry{
 		Section:     "Display",
 		Order:       8,
 		Kinds:       []components.Kind{components.KindDependencies, components.KindDependenciesMinimal},
+		Package:     "head",
 	},
 	{
 		Key:         "components/kbd",

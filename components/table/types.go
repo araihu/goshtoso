@@ -451,9 +451,14 @@ func (cfg Config) getID() string {
 	return "table"
 }
 
-// TbodyID returns the ID for the tbody element
-func (cfg Config) tbodyID() string {
+// TbodyID returns the ID for the tbody element so consumer HTMX handlers can
+// target the same fragment contract as Table.
+func (cfg Config) TbodyID() string {
 	return cfg.getID() + "-tbody"
+}
+
+func (cfg Config) tbodyID() string {
+	return cfg.TbodyID()
 }
 
 // LazyLoadTrigger returns the htmx trigger used by lazy-loaded tbody requests.
@@ -464,14 +469,24 @@ func (cfg Config) lazyLoadTrigger() string {
 	return "load"
 }
 
-// TheadID returns the ID for the thead element
-func (cfg Config) theadID() string {
+// TheadID returns the ID for the table head element so consumer HTMX handlers
+// can replace sorting state out of band.
+func (cfg Config) TheadID() string {
 	return cfg.getID() + "-thead"
 }
 
-// PaginationID returns the ID for the pagination container
-func (cfg Config) paginationID() string {
+func (cfg Config) theadID() string {
+	return cfg.TheadID()
+}
+
+// PaginationID returns the ID for the pagination container so consumer HTMX
+// handlers can replace its controls out of band.
+func (cfg Config) PaginationID() string {
 	return cfg.getID() + "-pagination"
+}
+
+func (cfg Config) paginationID() string {
+	return cfg.PaginationID()
 }
 
 // PaginationBaseURL returns the base URL for pagination links with per_page and sort params

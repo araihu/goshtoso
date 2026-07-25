@@ -115,15 +115,7 @@ func agentsContent() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><section id=\"scope\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Scope</h2><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">This skill is for consumer agents.</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">It does not teach agents how to maintain Goshtoso itself, edit component internals, run the release process, or operate an MCP server. Those workflows are intentionally separate so consumer agents get a compact, trustworthy integration guide.</p></div></section><section id=\"verify-distribution\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Verify Distribution</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Release maintainers can verify that the public skill remains discoverable and that supporting reference files are downloaded with it.</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: agentsVerifyCode()}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><section id=\"build-applications\" class=\"space-y-4\"><div class=\"space-y-2\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">From First Component to Application</h2><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">The installed skill routes agents to four task-oriented patterns: App Shell, Operations List, Detail Workspace, and Multi-step Workflow. Each reference includes a state matrix, responsive behavior, accessibility, CSS boundaries, and completion checks.</p></div><div class=\"flex flex-wrap gap-3 text-sm font-medium\"><a href=\"https://github.com/araihu/goshtoso/blob/main/.agents/skills/using-goshtoso/references/application-patterns.md\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Read application patterns</a> <a href=\"https://github.com/araihu/goshtoso/blob/main/.agents/skills/using-goshtoso/references/visual-acceptance.md\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Use the visual checklist</a></div></section><section id=\"scope\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Scope</h2><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">This skill is for consumer agents.</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">It does not teach agents how to maintain Goshtoso itself, edit component internals, run the release process, or operate an MCP server. Those workflows are intentionally separate so consumer agents get a compact, trustworthy integration guide.</p></div></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,6 +134,8 @@ func agentSkillTopics() []agentSkillTopic {
 		{Title: "Serve assets", Body: "Mount assets.Handler() directly at /assets/ and avoid the double StripPrefix 404 trap."},
 		{Title: "Wire the page head", Body: "Use head.Dependencies() so CSS, Alpine.js, HTMX, and component scripts stay in sync."},
 		{Title: "Render components", Body: "Import component packages, use typed Config values, and consult the generated component reference."},
+		{Title: "Compose application patterns", Body: "Start from App Shell, Operations List, Detail Workspace, or Multi-step Workflow instead of isolated cards."},
+		{Title: "Validate the result", Body: "Check states, viewports, Goshtoso and Minimal themes, light and dark modes, keyboard use, console, and accessibility."},
 		{Title: "Choose CSS strategy", Body: "Prefer the embedded stylesheet, or extract theme/source paths only for custom Tailwind builds."},
 		{Title: "Debug common misses", Body: "Check missing styles, combobox keyboard behavior, Alpine plugin order, and HTML-fragment HTMX handlers."},
 	}
@@ -160,11 +154,6 @@ npx skills add araihu/goshtoso --skill using-goshtoso --agent codex -g`
 
 func agentsUseCode() string {
 	return `npx skills use araihu/goshtoso --skill using-goshtoso`
-}
-
-func agentsVerifyCode() string {
-	return `npx --yes skills add araihu/goshtoso --list
-npx --yes skills use araihu/goshtoso --skill using-goshtoso`
 }
 
 var _ = templruntime.GeneratedTemplate
