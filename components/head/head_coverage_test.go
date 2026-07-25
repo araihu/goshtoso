@@ -90,7 +90,7 @@ func TestRenderWriteErrorPropagates(t *testing.T) {
 		total := len(full)
 
 		var sawError bool
-		for failAfter := 0; failAfter < total; failAfter++ {
+		for failAfter := range total {
 			fw := &failWriter{failAfter: failAfter}
 			if err := ep.comp.Render(context.Background(), tinyBuffer(fw)); err != nil {
 				sawError = true

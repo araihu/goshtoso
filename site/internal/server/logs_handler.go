@@ -45,12 +45,11 @@ func (s *Server) handleLogsStream(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("X-Accel-Buffering", "no")
 	interval := durParam(r, "interval", 500*time.Millisecond)
-	maxN := max(
+	maxN := min(
 		// 0 = unbounded; intParam is defined in todo_handler.go
-		intParam(r, "max", 0), 0)
-	if maxN > 10000 {
-		maxN = 10000
-	}
+		max(
+
+			intParam(r, "max", 0), 0), 10000)
 	streamLogs(r.Context(), w, flusher, interval, maxN)
 }
 

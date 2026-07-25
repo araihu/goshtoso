@@ -1,6 +1,7 @@
 package sidebar
 
 import (
+	"maps"
 	"strings"
 	"unicode"
 
@@ -193,9 +194,7 @@ func (cfg OverlayConfig) panelClasses() string {
 
 func sidebarLinkAttrs(item Item) templ.Attributes {
 	attrs := templ.Attributes{}
-	for key, value := range item.LinkAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, item.LinkAttrs)
 
 	if _, ok := attrs["title"]; !ok {
 		title := strings.TrimSpace(item.Title)

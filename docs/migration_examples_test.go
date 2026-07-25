@@ -344,7 +344,7 @@ func TestMigrationGuideIncludesMechanicalSearches(t *testing.T) {
 
 func TestMigrationGuideDocumentsEveryRemovedPublicMethod(t *testing.T) {
 	guide := readDoc(t, "MIGRATING_COMPONENT_API.md")
-	for _, symbol := range strings.Fields(removedPublicMethodsV0011) {
+	for symbol := range strings.FieldsSeq(removedPublicMethodsV0011) {
 		if !strings.Contains(guide, "`"+symbol+"`") {
 			t.Errorf("migration guide missing exact removed public method %q", symbol)
 		}
@@ -353,7 +353,7 @@ func TestMigrationGuideDocumentsEveryRemovedPublicMethod(t *testing.T) {
 
 func TestMigrationGuideDocumentsEveryRemovedPublicNonMethodSymbol(t *testing.T) {
 	guide := readDoc(t, "MIGRATING_COMPONENT_API.md")
-	for _, symbol := range strings.Fields(removedPublicNonMethodSymbolsV0011) {
+	for symbol := range strings.FieldsSeq(removedPublicNonMethodSymbolsV0011) {
 		if !strings.Contains(guide, "`"+symbol+"`") {
 			t.Errorf("migration guide missing exact removed public symbol %q", symbol)
 		}
@@ -369,7 +369,7 @@ func TestMigrationGuideMethodSearchFindsEveryRemovedMethodName(t *testing.T) {
 	checklist := guide[checklistStart:]
 
 	uniqueNames := make(map[string]struct{})
-	for _, symbol := range strings.Fields(removedPublicMethodsV0011) {
+	for symbol := range strings.FieldsSeq(removedPublicMethodsV0011) {
 		name := symbol[strings.LastIndex(symbol, ".")+1:]
 		uniqueNames[name] = struct{}{}
 	}

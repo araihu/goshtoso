@@ -2,6 +2,7 @@ package carousel
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -82,12 +83,7 @@ func slideHasOverlay(slide Slide) bool {
 }
 
 func hasOverlay(cfg Config) bool {
-	for _, slide := range cfg.Slides {
-		if slideHasOverlay(slide) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(cfg.Slides, slideHasOverlay)
 }
 
 // transitionAttr returns the duration suffix for Alpine's x-transition modifier

@@ -228,8 +228,7 @@ func TestFeedbackNavigationStructAPIsDocumentEveryExportedFieldExactlyOnce(t *te
 			documented[prop.Name] = prop
 		}
 		exportedCount := 0
-		for index := range typ.NumField() {
-			field := typ.Field(index)
+		for field := range typ.Fields() {
 			if !field.IsExported() {
 				continue
 			}
@@ -741,8 +740,7 @@ func TestComplexInputStructAPIsDocumentEveryExportedFieldExactlyOnce(t *testing.
 		section := sections[0]
 
 		wantFields := make([]string, 0, typ.NumField())
-		for index := range typ.NumField() {
-			field := typ.Field(index)
+		for field := range typ.Fields() {
 			if field.IsExported() {
 				wantFields = append(wantFields, field.Name)
 			}
@@ -1033,8 +1031,7 @@ func TestAtomicInputStructAPIsDocumentEveryExportedFieldExactlyOnce(t *testing.T
 		section := sections[0]
 
 		wantFields := make([]string, 0, typ.NumField())
-		for index := range typ.NumField() {
-			field := typ.Field(index)
+		for field := range typ.Fields() {
 			if field.IsExported() {
 				wantFields = append(wantFields, field.Name)
 			}
@@ -1227,8 +1224,7 @@ func TestDisplayStructAPIsDocumentEveryExportedFieldExactlyOnce(t *testing.T) {
 		section := sections[0]
 
 		wantFields := make([]string, 0, typ.NumField())
-		for index := range typ.NumField() {
-			field := typ.Field(index)
+		for field := range typ.Fields() {
 			if field.IsExported() {
 				wantFields = append(wantFields, field.Name)
 			}
@@ -1389,8 +1385,7 @@ func assertStructSectionComplete(t *testing.T, pageKey string, section demo.APIS
 	}
 
 	exportedCount := 0
-	for index := range typ.NumField() {
-		field := typ.Field(index)
+	for field := range typ.Fields() {
 		if !field.IsExported() {
 			continue
 		}
