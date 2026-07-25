@@ -38,7 +38,7 @@ func TestSizeSelectors_FragmentNavigationClicksKeepContent(t *testing.T) {
 		heading   string
 	}{
 		{"/components/badge", "#badge-fragment", "badge", "badge-size-lg", "lg", "badge-size-preview-lg", "Badge"},
-		{"/components/button", "#button-docs-fragment", "button", "button-size-xl", "xl", "button-size-preview-xl", "Buttons"},
+		{"/components/button", "#button-docs-fragment", "button", "button-size-xl", "xl", "button-size-preview-xl", "Button"},
 		{"/components/kbd", "#kbd-fragment", "kbd", "kbd-size-lg", "lg", "kbd-size-preview-lg", "KBD"},
 		{"/components/radio", "#radio-fragment", "radio", "radio-size-selector-xl", "xl", "radio-size-preview-xl", "Radio"},
 		{"/components/rating", "#rating-fragment", "rating", "rating-size-xl", "xl", "rating-size-preview-xl", "Rating"},

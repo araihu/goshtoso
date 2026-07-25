@@ -32,7 +32,7 @@ func TestToastCoverageDemo(t *testing.T) {
 	require.NoError(t, waitForAlpine(page))
 
 	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-		Name:  "Toast Notification",
+		Name:  "Toast",
 		Exact: playwright.Bool(true),
 	}).WaitFor())
 	for _, selector := range []string{"#toast-fragment", "#toast-container", "#toast-alpine", "#toast-htmx", "#toast-static"} {

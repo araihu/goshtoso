@@ -1,12 +1,44 @@
 package components
 
 import (
+	"context"
 	"strings"
 	"testing"
 
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/stretchr/testify/require"
 )
+
+func TestComponentDemoHeadingsMatchCanonicalCatalogTitles(t *testing.T) {
+	tests := []struct {
+		key   string
+		title string
+	}{
+		{key: "components/avatar", title: "Avatar"},
+		{key: "components/button", title: "Button"},
+		{key: "components/toast", title: "Toast"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			entry, ok := LookupDemo(tt.key)
+			require.True(t, ok)
+
+			var rendered strings.Builder
+			require.NoError(t, entry.Content().Render(context.Background(), &rendered))
+			page := rendered.String()
+			headingStart := strings.Index(page, "<h1 ")
+			require.NotEqual(t, -1, headingStart)
+			textStart := strings.Index(page[headingStart:], ">")
+			require.NotEqual(t, -1, textStart)
+			textStart += headingStart + 1
+			textEnd := strings.Index(page[textStart:], "</h1>")
+			require.NotEqual(t, -1, textEnd)
+
+			require.Equal(t, tt.title, page[textStart:textStart+textEnd])
+		})
+	}
+}
 
 func TestComponentRegistryAndMetadataFollowCatalog(t *testing.T) {
 	pages := catalog.ComponentPages()

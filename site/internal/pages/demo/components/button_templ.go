@@ -131,7 +131,7 @@ func buttonDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:       "Buttons",
+				Title:       "Button",
 				Description: "Trigger actions — submit a form, open a modal, navigate. Eight semantic tones, four sizes, disabled state, and first-class HTMX wiring (GET/POST/DELETE, confirm, loading indicator).",
 			},
 			buttonVariantsPreview(),

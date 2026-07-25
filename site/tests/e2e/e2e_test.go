@@ -9,6 +9,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
+	"sync"
 	"syscall"
 	"testing"
 	"time"
@@ -204,6 +206,64 @@ func newPage(t *testing.T, browser playwright.Browser, opts ...playwright.Browse
 	page.SetDefaultNavigationTimeout(3000)
 	t.Cleanup(func() { _ = page.Close() })
 	return page
+}
+
+type pageFailures struct {
+	mu       sync.Mutex
+	messages []string
+}
+
+func watchPageFailures(page playwright.Page) *pageFailures {
+	failures := &pageFailures{}
+	add := func(message string) {
+		failures.mu.Lock()
+		defer failures.mu.Unlock()
+		failures.messages = append(failures.messages, message)
+	}
+
+	page.OnPageError(func(err error) {
+		add(fmt.Sprintf("page error: %v", err))
+	})
+	page.OnConsole(func(message playwright.ConsoleMessage) {
+		if message.Type() == "error" {
+			add(fmt.Sprintf("console error: %s", message.Text()))
+		}
+	})
+	page.OnRequestFailed(func(request playwright.Request) {
+		add(fmt.Sprintf(
+			"request failed: %s %s: %v",
+			request.Method(),
+			request.URL(),
+			request.Failure(),
+		))
+	})
+	page.OnResponse(func(response playwright.Response) {
+		if response.Status() >= http.StatusBadRequest {
+			add(fmt.Sprintf(
+				"HTTP response: %d %s: %s",
+				response.Status(),
+				response.StatusText(),
+				response.URL(),
+			))
+		}
+	})
+
+	return failures
+}
+
+func (failures *pageFailures) RequireEmpty(t *testing.T) {
+	t.Helper()
+
+	failures.mu.Lock()
+	messages := append([]string(nil), failures.messages...)
+	failures.mu.Unlock()
+
+	require.Empty(
+		t,
+		filterIgnorable(messages),
+		"unexpected page failures: %s",
+		strings.Join(messages, "; "),
+	)
 }
 
 // clickUntil clicks loc and waits for jsCondition to hold, retrying the click

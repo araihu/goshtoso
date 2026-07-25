@@ -70,8 +70,8 @@ func TestCodeBlock_ChromaHighlighting(t *testing.T) {
 
 		require.Contains(t, text, "button.Button",
 			"expected source to contain the templ component call")
-		require.Contains(t, text, "Variant",
-			"expected source to mention the Variant field")
+		require.Contains(t, text, "button.WithTone(button.ToneSecondary)",
+			"expected source to contain the current tone option")
 
 		// Stub navigator.clipboard.writeText. navigator.clipboard is a
 		// read-only property in Chromium, so defineProperty is required —

@@ -207,7 +207,7 @@ func avatarDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:        "Default Avatar",
+				Title:        "Avatar",
 				Description:  "A circle avatar in various sizes.",
 				AbovePreview: avatarSizeSelector(),
 			},

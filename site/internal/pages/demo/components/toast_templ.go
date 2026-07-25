@@ -157,7 +157,7 @@ func toastDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
-				Title:       "Toast Notification",
+				Title:       "Toast",
 				Description: "Stacking toast and message-toast notifications with auto-dismiss and hover pause. Trigger client-side via Alpine.js $dispatch('notify', ...) or server-side via HTMX out-of-band swaps. Place @toast.ToastContainer once in your layout.",
 			},
 			toastAlpinePreview(),

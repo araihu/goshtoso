@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -145,16 +146,30 @@ func TestFileInputVariants(t *testing.T) {
 	})
 
 	t.Run("APIReferenceDocumentsAppearance", func(t *testing.T) {
-		appearanceRow := page.Locator("table").Filter(playwright.LocatorFilterOptions{HasText: "AppearanceDropZone"}).
-			Locator("tr").Filter(playwright.LocatorFilterOptions{HasText: "Appearance"})
-		count, err := appearanceRow.Count()
+		appearanceName := page.Locator("[data-api-section='config'] tbody tr td:first-child code").
+			GetByText("Appearance", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)})
+		count, err := appearanceName.Count()
 		require.NoError(t, err)
 		require.Equal(t, 1, count)
 
+		appearanceRow := appearanceName.Locator("xpath=ancestor::tr")
+		cells := appearanceRow.Locator("td")
+		count, err = cells.Count()
+		require.NoError(t, err)
+		require.Equal(t, 6, count)
+
+		signature, err := cells.Nth(1).TextContent()
+		require.NoError(t, err)
+		require.Equal(t, "fileinput.Appearance", strings.TrimSpace(signature))
+		defaultValue, err := cells.Nth(3).TextContent()
+		require.NoError(t, err)
+		require.Equal(t, "AppearanceDropZone", strings.TrimSpace(defaultValue))
+		allowed, err := cells.Nth(4).TextContent()
+		require.NoError(t, err)
+		require.Equal(t, "AppearanceDropZone, AppearanceUpload", strings.TrimSpace(allowed))
+
 		text, err := appearanceRow.TextContent()
 		require.NoError(t, err)
-		require.Contains(t, text, "fileinput.Appearance")
-		require.Contains(t, text, "AppearanceDropZone (default) or AppearanceUpload")
 		require.NotContains(t, text, "Variant")
 	})
 }
