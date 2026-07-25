@@ -128,7 +128,7 @@ func cloneAPIProps(props []APIPropDoc) []APIPropDoc {
 
 func normalizedAPISections(sections []APISection) []APISection {
 	normalized := slices.Clone(sections)
-	seen := make(map[string]int, len(normalized))
+	used := make(map[string]struct{}, len(normalized))
 	for i := range normalized {
 		normalized[i].Props = cloneAPIProps(normalized[i].Props)
 
@@ -140,11 +140,18 @@ func normalizedAPISections(sections []APISection) []APISection {
 			base = "api-section"
 		}
 
-		seen[base]++
-		normalized[i].ID = base
-		if seen[base] > 1 {
-			normalized[i].ID = fmt.Sprintf("%s-%d", base, seen[base])
+		id := base
+		if _, collision := used[id]; collision {
+			for suffix := 2; ; suffix++ {
+				candidate := fmt.Sprintf("%s-%d", base, suffix)
+				if _, collision = used[candidate]; !collision {
+					id = candidate
+					break
+				}
+			}
 		}
+		normalized[i].ID = id
+		used[id] = struct{}{}
 	}
 	return normalized
 }

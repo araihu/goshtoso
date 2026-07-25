@@ -126,28 +126,56 @@ func TestStructuredAPIReferenceRendersExactTypesAndStableHooks(t *testing.T) {
 	require.Contains(t, html, string(components.KindButton))
 }
 
-func TestStructuredAPIReferenceMakesDuplicateSectionIDsUnique(t *testing.T) {
+func TestStructuredAPIReferenceMakesCollisionChainAnchorsGloballyUnique(t *testing.T) {
 	sections := []APISection{
-		FunctionsAPI(
-			components.KindBadge,
-			"Functions",
-			"",
-			"",
-			[]APIPropDoc{{Name: "One", Signature: "func()", Default: "n/a", Description: "First."}},
-		),
-		FunctionsAPI(
-			components.KindToast,
-			"Functions",
-			"",
-			"",
-			[]APIPropDoc{{Name: "Two", Signature: "func()", Default: "n/a", Description: "Second."}},
-		),
+		{Title: "Functions"},
+		{Title: "Functions 2"},
+		{Title: "Functions"},
+		{ID: "x", Title: "X"},
+		{ID: "x-2", Title: "X 2"},
+		{ID: "x-3", Title: "X 3"},
+		{ID: "x", Title: "X again"},
+		{ID: "repeat", Title: "Repeat"},
+		{ID: "repeat", Title: "Repeat again"},
+		{ID: "repeat", Title: "Repeat once more"},
+	}
+	originalIDs := []string{"", "", "", "x", "x-2", "x-3", "x", "repeat", "repeat", "repeat"}
+	expectedIDs := []string{
+		"functions",
+		"functions-2",
+		"functions-3",
+		"x",
+		"x-2",
+		"x-3",
+		"x-4",
+		"repeat",
+		"repeat-2",
+		"repeat-3",
 	}
 
 	var out strings.Builder
 	require.NoError(t, StructuredAPIReference(sections).Render(context.Background(), &out))
-	require.Contains(t, out.String(), `data-api-section="functions"`)
-	require.Contains(t, out.String(), `data-api-section="functions-2"`)
+	html := out.String()
+
+	remaining := html
+	for _, id := range expectedIDs {
+		sectionHook := `data-api-section="` + id + `"`
+		headingID := `id="api-` + id + `"`
+		require.Equal(t, 1, strings.Count(html, sectionHook), "section hook %q must be unique", id)
+		require.Equal(t, 1, strings.Count(html, headingID), "heading ID %q must be unique", id)
+
+		index := strings.Index(remaining, sectionHook)
+		require.NotEqualf(t, -1, index, "section %q must preserve input order", id)
+		remaining = remaining[index+len(sectionHook):]
+	}
+
+	for i := range sections {
+		require.Equal(t, originalIDs[i], sections[i].ID, "renderer must not mutate caller section %d", i)
+	}
+
+	var second strings.Builder
+	require.NoError(t, StructuredAPIReference(sections).Render(context.Background(), &second))
+	require.Equal(t, html, second.String(), "anchor normalization must be deterministic")
 }
 
 func TestDemoRenderersExposeStableDocumentationHooks(t *testing.T) {
