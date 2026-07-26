@@ -2,8 +2,7 @@
 
 Date: 2026-07-26
 
-Status: builds complete; Assessment A complete with degraded independence;
-detector assessment pending
+Status: builds and dual assessment complete; remediation pending
 
 This file is the durable control-plane and evidence record for a second blind
 consumer round. It intentionally tests whether the current public Goshtoso
@@ -288,3 +287,48 @@ Across 1440x900 and 390x844, Goshtoso light and Minimal dark, the three apps had
 zero document-level horizontal overflow, one `h1`, one skip link, usable primary
 journeys, and no console errors or warnings. No P0 or P1 visual/usability issue
 was found. Assessment A did not use or claim axe/detector output.
+
+## Deterministic Assessment B
+
+Assessment B ran only after Assessment A was frozen. The full report is
+`/tmp/goshtoso-probes/round2/design-review/ASSESSMENT_B.md`.
+
+| App | Detector findings |
+|---|---|
+| Ledgerline approvals | `overused-font`: Inter |
+| Dockline receiving | `overused-font`: Inter |
+| Larkspur editorial | `overused-font`: Inter; `side-tab` on a rendered editorial blockquote |
+
+The recurring result is significant: three unrelated probes independently
+defaulted to Inter, so the public visual-acceptance guidance should actively
+discourage reflexive fashionable-font convergence. The editorial side accent is
+accepted as P3 context-appropriate blockquote styling, not a repeated card
+status tell.
+
+Browser overlay injection could not be performed because the in-app Browser
+surface exposes read-only Playwright evaluation and no script/HTML mutation
+capability; its only tab capability was `pageAssets`. A rendered-URL detector
+attempt also reported missing Puppeteer. The existing real-browser screenshots,
+DOM inspection and console checks remain the visibility evidence; no overlay is
+claimed. No live server or overlay artifact was created. Application servers
+were stopped and ports 8121-8123 were confirmed closed.
+
+## Remediation decision
+
+The round found no P0/P1. The next implementation slice will address the
+recurring or contract-level findings that can improve a new blind consumer:
+
+1. publish the minimum Go version and a setup order that generates templ before
+   dependency tidying;
+2. remove public inventory/theme count drift and lock it with executable tests;
+3. document stable semantic CSS custom properties for application-owned styling;
+4. document HTMX non-2xx swap behavior, semantic button-like GET navigation,
+   AppShell's header landmark, and templ's adjacent-child-content trap;
+5. strengthen visual acceptance against reflexive Inter/Geist/Roboto-style font
+   choices;
+6. evaluate focused typed hooks for `textarea.Required` and PageHeader title
+   styling with tests and generated consumer reference updates.
+
+The two visual P2s belong to the frozen probe applications, not the library's
+base components, so they remain evidence rather than speculative component
+changes.
