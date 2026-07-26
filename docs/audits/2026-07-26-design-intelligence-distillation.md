@@ -395,3 +395,80 @@ non-E2E tests, the standalone module with `GOWORK=off`, root/site golangci-lint,
 full browser suite passed in 309.353 seconds. Its preceding run found only
 outdated Select E2E selectors that still targeted the hidden submission input;
 the tests now assert the public label-to-trigger and helper-ID contract.
+
+### Snag: mobile documentation header and nested table overflow
+
+Manual inspection at 390 px found the documentation header's action group
+extending seven pixels past the viewport. The code examples were correctly
+contained scroll regions; the actual leak came from keeping the full Goshtoso
+wordmark beside the mobile menu, theme selector, and mode control. The wordmark
+now collapses below `sm` while the icon and accessible home label remain.
+
+The application-patterns operations preview also wrapped Table in a redundant
+48-rem scroll container even though Table already owns its horizontal access.
+Removing that wrapper leaves the component's scroll region as the single source
+of truth. A 390-pixel E2E assertion now verifies that the shared document body
+fits the viewport while the operations table itself remains horizontally
+scrollable.
+
+A post-fix full-suite rerun, while three blind builds and browser evidence
+captures were also active, timed out only in the unchanged Wizard sidebar
+`clickUntil` condition after five attempts. The exact
+`TestWizard_SidebarNavNoErrors` test passed immediately in isolation. The frozen
+candidate's earlier full suite was green; this is retained as concurrency/flaky
+test evidence rather than attributed to the documentation-layout change.
+
+## Blind probe round 1: builder evidence versus independent review
+
+Three agents received only the public skill, public docs, generated component
+reference, and exported `go doc` surface from frozen commit
+`a99415343fad5c26673bde34875ab1ad79d5b745`. They could compile through a local
+replace but could not inspect component source, the demo site, examples, tests,
+audits, history, other consumers, memory, or the internet. None asked the user a
+question. All three generated, tested, vetted, built, served local assets,
+captured the required eight-view matrix, and reported zero critical browser
+failures.
+
+Fresh reviewers then froze their visual and interaction critique before reading
+the builder report or supplied evidence. This separation exposed false
+confidence in each builder-owned harness:
+
+| Probe | Domain and archetype | Builder claim | Independent score | Result |
+|---|---|---|---:|---|
+| Northstar | reliability maintenance Decision Queue | all gates pass | 29/40 `[3,2,3,4,2,4,2,3,3,3]` | FAIL |
+| Riverbend | library holds Decision Queue/detail | all gates pass | 29/40 `[3,4,2,3,2,3,3,4,2,3]` | FAIL |
+| Watershed | interruption-safe custody workflow | all gates pass | 24/40 `[3,2,2,3,2,2,3,3,2,2]` | FAIL |
+
+Northstar allowed terminal decisions to overwrite one another, moved focus away
+from debounced search after every HTMX swap, allowed approval against stale
+evidence that could not actually refresh, and rendered unknown records as bare
+404s. Riverbend's offered conflict recovery reapplied a pickup notification,
+cancelled records remained in the active queue without undo, its animated skip
+link was still offscreen at the instant of focus, and soft semantic badges had
+insufficient text contrast. Watershed missed horizontal overflow on its second
+step, restored hidden Select values without synchronizing the visible composite
+state, contradicted its own temperature boundary, returned success directly
+from POST so Back reached `ERR_CACHE_MISS`, and used a sticky action row that
+covered content. Its Select inspection also found incomplete live combobox ARIA
+and keyboard behavior.
+
+### Round-1 feedback decisions
+
+The first round is not accepted as a pass. It changes the candidate in two ways:
+
+1. Goshtoso-owned component defects are fixed at their source: immediate visible
+   AppShell skip focus, contrast-safe soft Badge labels, visible Minimal form
+   control boundaries, Select external-value synchronization, and Select
+   listbox/keyboard semantics. The Form footer is independently audited for a
+   safe 390-pixel sticky/action baseline.
+2. Public guidance now requires a mutation transition table, terminal-state and
+   stale-evidence policy, two-tab conflict plus side-effect-count tests,
+   selective post-settle focus that preserves search/filter caret, native
+   constraint attributes, in-shell unknown-route recovery, display-context
+   preservation, Post/Redirect/Get for durable success documents, composite
+   draft synchronization, and route-by-route 390-pixel evidence instead of an
+   initial-page-only matrix.
+
+The probe artifacts remain outside the repository at
+`/tmp/gs-blind-northstar`, `/tmp/gs-blind-library`, and
+`/tmp/gs-blind-watershed`; the durable scorecard and decisions live here.

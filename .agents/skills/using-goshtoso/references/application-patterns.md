@@ -222,6 +222,8 @@ not choose a heading level or landmark role.
   changes the route.
 - Status is text, not color alone.
 - Mutation feedback moves focus only when the user's next action requires it.
+- Collection search/filter swaps preserve focus and caret in the initiating
+  control; only a response with an explicit focus target may move it.
 - Destructive confirmation names the resource and the irreversible effect.
 
 ### What stays application-specific
@@ -233,6 +235,8 @@ permissions, refresh model, and destructive policy.
 
 - A copied detail URL opens the same active view.
 - Status and action availability never contradict each other.
+- Stale or partial evidence has an explicit mutation policy; irreversible
+  actions are disabled when the available evidence cannot support them.
 - The rail follows the main content on small screens.
 - Partial failure does not replace the entire workspace unnecessarily.
 
@@ -290,9 +294,15 @@ effects, retry semantics, and success destination.
 ### Completion checks
 
 - Refresh and Back behavior are explicitly chosen and tested.
+- Successful native POSTs use Post/Redirect/Get when the receipt or completed
+  workflow is a durable route; Back must not land on a resubmission error page.
 - Invalid submission preserves every valid value.
 - Review shows the exact payload in language the user understands.
 - Double submission cannot create duplicate work.
+- Draft restoration keeps each composite control's visible label, submitted
+  value, status text, and dependent UI in agreement. When restoring client-side,
+  set the public input value and dispatch its documented `input` or `change`
+  event; otherwise rerender the selected config from the server.
 
 ## CSS boundary
 
@@ -337,13 +347,20 @@ structural, separate destructive actions, use a real form for mutations, and
 stack the selected record after the queue at 390 px. An error may replace only
 the detail region when the queue can remain useful.
 
+Treat the decision lifecycle as a state machine. Test a second terminal action,
+two stale tabs, the exact conflict-resolution control, and a repeated request
+with the same idempotency identity. Stale evidence must refresh to new evidence
+or block the decision; reloading the same stale fixture is not recovery.
+
 ### Interruption-safe Workflow
 
 Extend the Multi-step Workflow for dock, field, or tablet use. Default every
 line to the common case, ask the user to edit exceptions only, persist a bounded
 draft, review the exact changes before submission, and make retries idempotent.
 A sticky footer may keep Back/Review visible, but it must leave room for focused
-fields and the last error at 390 px.
+fields and the last error at 390 px. Exercise every step at 390 px: long action
+labels stack or wrap inside the viewport, and scrolling the final field into
+view leaves it completely above the footer.
 
 ### Content-first Review
 

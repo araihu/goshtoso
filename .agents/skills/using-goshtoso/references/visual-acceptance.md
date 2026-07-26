@@ -23,6 +23,10 @@ Also inspect loading, empty, error, and success. Add permission-denied, stale,
 partial, destructive confirmation, and filtered-empty when the domain supports
 them.
 
+The matrix applies to every distinct responsive composition, not only the first
+route. In a workflow, visit every step plus validation/review/success at 390 px;
+in a queue/detail app, visit collection, detail, conflict, and completed states.
+
 ## Hierarchy and composition
 
 - The rendered surface still matches the task, register, information priority,
@@ -43,6 +47,9 @@ them.
 - Toolbars stack or collapse without changing control order unexpectedly.
 - Detail rails follow main content on small screens.
 - Sticky actions do not cover focused inputs, errors, or the last result row.
+- At every workflow step, document width remains within 390 px and the longest
+  action label is fully visible. Do not infer later-step safety from the first
+  screenshot.
 - Inspect internal overflow containers, not only document width. A clipped
   alert inside a sidebar can pass a document-level horizontal-scroll check.
 
@@ -52,6 +59,9 @@ them.
   contrast personality change.
 - Light and dark modes expose readable text, outlines, hover, focus, selected,
   disabled, loading, error, warning, success, and info states.
+- Measure normal-size text contrast in semantic badges and the non-text boundary
+  of empty form controls; do not assume a named token is accessible in every
+  theme.
 - Status never depends on color alone.
 - Primary color marks actions and selection, not decoration.
 - Typography belongs to the product. Do not reflexively choose Inter, Geist,
@@ -70,15 +80,24 @@ them.
 ## Keyboard and focus
 
 - Use Tab and Shift+Tab through the complete task.
+- Focus the skip link and assert its box intersects the viewport immediately.
 - Activate every control with the expected keyboard command.
 - Escape closes overlays and returns focus to the trigger.
-- HTMX navigation and validation move focus deliberately.
+- Search and filter swaps preserve the initiating control and caret. Validation,
+  navigation, and mutation move focus only to an explicit response target after
+  settle; a global page-title fallback is a failure.
 - Focus is always visible and never hidden under sticky UI.
 
 ## Automated checks
 
 - Build and unit/render tests pass in a fresh consumer module.
 - Browser tests exercise direct navigation, HTMX navigation, Back, and refresh.
+- Exercise unknown IDs/routes and confirm an in-shell recovery path.
+- For consequential mutations, test two stale tabs, the offered conflict action,
+  a repeated terminal action, and idempotent request replay. Assert both status
+  and side-effect count.
+- For restored drafts, assert visible composite label, hidden/submitted value,
+  status copy, and dependent fields agree.
 - Capture JavaScript console errors and fail on unexpected messages.
 - Run axe or an equivalent accessibility scanner and resolve every P1 issue.
 - Assert that every utility required by the recipe exists in the delivered CSS.

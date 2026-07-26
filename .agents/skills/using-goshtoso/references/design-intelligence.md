@@ -181,10 +181,25 @@ filtered-empty, stale, partial, permission-denied, validation, interrupted,
 destructive confirmation, draft recovery, and duplicate-submit prevention when
 the domain can produce them.
 
+For every consequential mutation, write the allowed transition table before
+writing the handler: starting states, terminal states, authorized reversal,
+stale/partial evidence policy, idempotency identity, and the exact effect of
+retry or conflict recovery. A warning badge is not a safety policy. Terminal
+decisions cannot be overwritten by another terminal decision unless reversal
+is a named, authorized workflow; an offered recovery control must not reapply a
+notification, cancellation, receipt, or other side effect.
+
 Validation must retain valid values, focus a summary, link summary items to real
 controls, associate field errors and hints, and survive the same HTMX swap used
 in production. A simulated 422 or 503 must visibly swap or recover; a correct
 fragment that HTMX ignores is still a broken interface.
+
+Keep route and display context through every recovery: selected record, filters,
+theme, color mode, and valid form values. Render not-found and unknown-record
+responses inside the application shell with a route back to known state. For
+native consequential POSTs, use Post/Redirect/Get when refresh and Back should
+return to a stable document; idempotency remains required even with the
+redirect.
 
 ## Evidence before handoff
 

@@ -121,6 +121,20 @@ when you upgrade a dep; prefer `@head.Dependencies()` so you never hardcode
 them.** Don't forget `combobox.js` (the combobox component's keyboard nav is dead
 without it) — it is first-party, so it stays unversioned at `/assets/js/`.
 
+### Content Security Policy
+
+Local assets do not automatically make a strict CSP compatible. Goshtoso's
+bundled standard Alpine runtime uses dynamic function evaluation, and
+Alpine-backed components update inline style attributes. With the default
+runtime, permit `'unsafe-eval'` in `script-src` and the required inline style
+mutation while keeping sources local and retaining restrictive `default-src`,
+`connect-src`, `base-uri`, `form-action`, and `frame-ancestors` directives.
+
+If the application cannot permit those two runtime capabilities, do not use
+`head.Dependencies()` unchanged. Supply and test a CSP-compatible Alpine stack
+with the required plugins and component scripts. Verify behavior in the browser:
+a self-hosted file may return 200 while CSP still prevents Alpine from starting.
+
 ## Using your own Tailwind build
 
 `goshtoso -version` prints the Tailwind version Goshtoso's CSS was built with
@@ -398,6 +412,11 @@ For application tests, render your own templ pages and assert on the generated
 HTML, then cover important browser behavior with Playwright or your preferred
 E2E tool. The Goshtoso repository's `components/*/*_test.go` and
 `site/tests/e2e/*_test.go` files are useful examples.
+
+For HTMX validation or mutation fragments, restore focus on
+`htmx:afterSettle`, after the replacement has become reliably focusable. Prefer
+an explicit `[data-autofocus]` target or the rendered `FormErrors` summary, and
+assert the live `document.activeElement`; `htmx:afterSwap` can be too early.
 
 ## Known Pitfalls
 

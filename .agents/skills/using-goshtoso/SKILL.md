@@ -65,6 +65,15 @@ templ Layout() {
 and focus plugins, HTMX, and first-party component scripts such as
 `combobox.js`.
 
+If the consumer sets Content Security Policy, test the rendered application
+under that exact policy. The bundled standard Alpine runtime requires dynamic
+function evaluation, and Alpine/component state writes inline style
+attributes. A policy that allows only `script-src 'self'` can load every local
+file and still leave Alpine behavior dead. Allow the required local-runtime
+behavior (`'unsafe-eval'` for scripts and inline style mutation), or deliberately
+replace the default head/runtime wiring with a CSP-compatible stack and verify
+every Alpine-backed component. Do not weaken unrelated CSP directives.
+
 ## Rendering Components
 
 Import from `github.com/araihu/goshtoso/components/<name>` and call the exported
@@ -171,6 +180,22 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
   recovery fragments, either return a swappable 2xx response while preserving
   application status in a header, or deliberately opt in from
   `htmx:beforeSwap`. Do not let a correct server fragment fail silently.
+- Move focus after a fragment is settled, not merely swapped. Use
+  `htmx:afterSettle` to focus `[data-autofocus]`, `FormErrors`, or the next
+  task target only when the response deliberately marks one; filter and search
+  swaps must keep focus and caret in the initiating control. Never install a
+  global fallback that focuses the page title after every swap.
+- Before implementing a consequential POST, write its allowed state-transition
+  table. Terminal decisions stay terminal unless the product explicitly models
+  reversal; stale or partial evidence must have an explicit action policy; and
+  conflict/retry UI must not bypass idempotency or reapply a side effect. Test
+  the recovery action itself with two stale tabs and a repeated final request.
+- Keep native constraint attributes (`required`, `min`, `max`, `pattern`) on
+  app-owned native controls when the rule is known, while retaining identical
+  server validation. Composite controls still require server validation.
+- Render recovery inside the application shell for unknown IDs and routes.
+  Preserve selected record, filters, theme, and color mode across error,
+  conflict, retry, and success links.
 - Use `link.Link(..., link.WithAppearance(link.AppearanceButton))` for GET
   navigation that should look like a button. Keep `button.Button` for form
   submission and mutations; visual appearance must not erase native semantics.

@@ -360,9 +360,7 @@ templ operationsListPreview() {
 				}
 			</div>
 		</div>
-		<div class="overflow-x-auto">
-			<div class="min-w-[48rem]">
-				@table.Table(table.Config{
+		@table.Table(table.Config{
 					ID:           "operations-pattern-table",
 					Caption:      "Deployments awaiting operational review",
 					ShowCheckbox: true,
@@ -374,9 +372,7 @@ templ operationsListPreview() {
 						{Key: "owner", Label: "Owner", Width: "min-w-32"},
 					},
 					Rows: operationsPatternRows(),
-				})
-			</div>
-		</div>
+		})
 		<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Showing 3 of 18 deployments. Selection remains stable while filters update from the server.</p>
 	</div>
 }
