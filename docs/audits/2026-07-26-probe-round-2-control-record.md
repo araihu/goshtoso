@@ -350,3 +350,109 @@ callback: Send one completion message to /root with status, commands run, findin
 
 The parent continues generation, tests, lint and browser verification in
 parallel. The review is evidence only and owns no mutable path.
+
+## Remediation implementation
+
+The implementation distilled the recurring consumer evidence into public
+contracts instead of copying the three pre-remediation probe apps into the
+site. Their stable decision structures are useful; their app-owned P2s and
+domain-specific code are not suitable as canonical examples yet.
+
+- `textarea.Config.Required` now reaches the native `required` attribute in
+  both Textarea entry points, with unit, demo and E2E coverage.
+- `pageheader.Config` now exposes `TitleClass` and `TitleAttrs` on the `h1`,
+  with a consumer-oriented demo, unit coverage and an E2E element-routing
+  assertion.
+- AppShell's generated API reference now says that the component owns the
+  persistent `header` landmark. Skillgen now collapses complete multiline
+  field comments and escapes HTML delimiters for Markdown tables; regression
+  tests freeze the full Header, Content and MainAttrs descriptions.
+- README, the usage guide and generated consumer references publish the Go
+  floor and source-derived inventory: 48 public component packages, 47 docs
+  pages, 79 primitives and 15 themes.
+- The consumer skill records generation-before-tidy setup, semantic GET
+  navigation, expected HTMX error swaps and templ adjacent-text behavior.
+- The application-pattern and visual-acceptance references publish stable
+  semantic CSS variables, internal-overflow inspection and deliberate product
+  typography.
+- The docs site adds three compact field-proven extensions: Decision Queue,
+  Interruption-safe Workflow and Content-first Review.
+
+## Remediation verification before confirmation
+
+Generation was rerun after all edits: `templ generate` reported zero updates,
+`go run ./cmd/skillgen` reproduced both consumer reference mirrors, and
+`just css` rebuilt the theme and Tailwind assets. `git diff --check` is clean.
+
+Focused component/docs tests, focused site E2E, root tests, non-E2E site tests,
+the site build, and both golangci-lint modules passed. One parent lint command
+initially exited because two golangci-lint processes were started concurrently;
+the serial rerun reported zero issues. This is recorded as orchestration rework,
+not a code finding.
+
+The parent inspected the docs and component demos in the real in-app browser:
+
+- `/docs/application-patterns` renders one `h1` and all three field-proven
+  patterns at 1440x900 and 390x844;
+- the main content region has zero horizontal overflow in both viewports (the
+  intentionally scrollable recipe table is internally wider on mobile);
+- `PageHeader` puts `tracking-tight` and `data-heading-voice="editorial"` on
+  the custom `h1`, while the page remains responsive;
+- the required demo emits `textarea#demo-required[required]`;
+- the browser console reported zero errors or warnings.
+
+The local site server was stopped and port 8124 was confirmed closed. The
+temporary responsive viewport override and browser tabs were finalized.
+
+## Independent remediation review result
+
+`/root/probe_approvals` returned `DONE_WITH_CONCERNS` after a literal full-diff
+review, credential-pattern scan, focused component/docs tests, and site demo
+tests. CodeRabbit was attempted but its service rate limit prevented a review.
+The reviewer found no runtime or component defect, but reported three public
+documentation problems:
+
+1. setup prose said to create the consumer template before the “last two”
+   commands, which could be read as after `templ generate`;
+2. semantic-token prose incorrectly generalized every dark token to a `-dark`
+   suffix even though name placement varies and status tokens are shared;
+3. skillgen truncated multiline field docs and left raw HTML tags in Markdown
+   tables, already cutting AppShell Content and MainAttrs descriptions.
+
+All three were accepted. The setup instruction now says “before `templ
+generate`”; the token guide names representative exact dark tokens and the
+shared status rule; skillgen preserves full comments and escapes table HTML.
+The generator regression test and AppShell generated-reference contract now
+cover the formerly truncated fields. The reviewer made no mutations.
+
+The same reviewer then performed a narrow recheck and returned `CLEAN`: both
+generated channels contain complete Markdown-safe Header, Content and MainAttrs
+descriptions, focused `internal/skillgen` and `docs` tests pass, and no
+actionable anchor remains in the three accepted findings.
+
+## Confirmation probe dispatch
+
+The remediation implementation is frozen at
+`0badb7e2dd34702ad36f243ac3ac4f77b0da13df`. A fresh worker receives no parent
+conversation and may read only the public consumer surface in the detached
+snapshot at `/tmp/goshtoso-probes/round2/confirmation-library`.
+
+```yaml
+child_thread_id: /root/probe_confirmation
+goal: Build a new standalone maintenance-change review app that proves the recurring round-2 contracts can be discovered and used from public Goshtoso guidance alone.
+workspace: /tmp/goshtoso-probes/round2/confirmation
+library_snapshot: /tmp/goshtoso-probes/round2/confirmation-library@0badb7e2dd34702ad36f243ac3ac4f77b0da13df
+allowed_library_reads: [README.md, docs/USAGE.md, docs/THEMING.md, .agents/skills/using-goshtoso/SKILL.md, references linked directly by that skill]
+forbidden_reads: [components source, site source, tests, audit files, prior probe apps or reports, memory]
+required_contracts: [discover Go floor before setup, create templ before generate then tidy, local embedded assets, AppShell header content without nested header, PageHeader title hooks, native required Textarea, semantic GET Link appearance, deliberate HTMX non-2xx swap policy, explicit adjacent text wrapper, Goshtoso semantic CSS variables, deliberate non-Inter product typography, one field-proven composition]
+required_states: [default, empty, validation error, server error, success, interruption-safe retry or draft recovery]
+verification: [templ generate without drift, go test, go vet, go build, HTTP smoke]
+deliverable: CONFIRMATION_REPORT.md with exact lookups, source-dive count, authored line counts, snags, commands and PASS or FAIL
+forbidden_actions: [editing Goshtoso, branch or commit creation, publishing, memory writes]
+callback: Send one completion envelope to /root; parent owns browser, detector, integration and final audit.
+```
+
+Confirmation acceptance requires zero forbidden source dives, passing build
+gates, no recurrence of the remediated setup/API/guidance defects, no P0/P1,
+and browser usability at 1440x900 and 390x844 in Goshtoso light and Minimal
+dark. The detector remains sequenced after the parent's visual assessment.
