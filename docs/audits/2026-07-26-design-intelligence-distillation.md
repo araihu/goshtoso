@@ -651,3 +651,28 @@ viewport-owned (`fixed top-16 bottom-0`, adjusted to the header), never
 positive bounding box intersection at 390 px. The corrected consumer is gated
 on a third blind review; `38/40` remains a failed historical result rather than
 being promoted after source-level reasoning.
+
+The third independent reviewer froze a passing `37/40`
+`[4,4,4,4,4,4,3,3,3,4]`, with every heuristic at least three and zero P0/P1.
+The 390×844 drawer measured 44×44 at its trigger, 288×776.625 for the panel,
+and 390×776.625 for the backdrop, starting at the 67.375-pixel header bottom;
+Escape restored focus and truthful label/state. The reviewer also passed the
+eight-cell theme/mode/viewport matrix, 44-pixel task inputs, selection sync,
+held-request pending state, 422 retention/focus, stale/partial repair, forged
+403, two-tab conflict, transport recovery, fresh PRG history, exact replay,
+unknown route, keyboard, contrast, console, and same-origin gates. The immutable
+scorecard and source verification live under
+`/tmp/gs-confirmation-probe/evidence/reviewer3/`.
+
+One frozen P2 is source-confirmed: the connection-loss CTA says “Retry current
+evidence” but performs a server refresh that discards the retained draft after
+activation. The other frozen P2 (missing validation field links) was invalidated
+post-freeze: the links are siblings of the Alert inside the feedback region and
+were independently verified in source, tests, and a fresh 422 probe. The score
+remains immutable at 37/40. Manifest hashes, exact clean dependency `b274a5c`,
+isolated generation, unit/race/vet/build/module checks, and a fresh
+8-cell/9-journey browser run all passed with one reservation and one receipt.
+
+This satisfies the final acceptance rule: at least 35/40, no heuristic below
+three, and no P0/P1. The earlier 33/40 and 38/40 scorecards remain preserved to
+show which public guidance and component defaults each remediation addressed.
