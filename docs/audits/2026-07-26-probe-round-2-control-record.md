@@ -543,3 +543,36 @@ deliverable: /tmp/goshtoso-probes/round2/confirmation/VISUAL_ASSESSMENT.md with 
 forbidden_actions: [editing any file, running detector, publishing, memory writes]
 callback: Send one completion envelope to /root and confirm port 18473 is closed.
 ```
+
+The fresh reviewer returned `BLOCKED` rather than fabricating evidence. Its
+runtime exposed no in-app Browser: explicit `iab` selection reported unavailable
+and browser discovery returned an empty list. All four visual cells and all UI
+journeys remain explicitly untested by this delegated assessment. The report is
+`/tmp/goshtoso-probes/round2/confirmation/VISUAL_ASSESSMENT.md`; the server was
+stopped and port 18473 was confirmed closed.
+
+## Confirmation deterministic assessment B
+
+Assessment B ran only after the blocked visual report was frozen.
+
+- Static Impeccable detection over `page.templ` and `app.css` returned `[]`:
+  no registered anti-pattern finding, including no overused-font warning.
+- Rendered-URL detection could not run because the detector environment lacks
+  Puppeteer. It returned no rendered findings, and none are claimed.
+- The detector server was stopped and port 18473 was confirmed closed.
+
+## Current convergence status
+
+The public-contract and functional confirmation is proven against v2: zero
+source dives, all required recovered contracts exercised, all build/state gates
+passing, a focused 96-line application stylesheet, and a clean static detector.
+The confirmation itself found one new public-doc snag and one app-owned artifact;
+both were fixed, regression-covered, and revalidated.
+
+The full round is not yet visually proven because Browser was finalized after
+the remediation-site inspection and child runtimes have no Browser backend.
+The next control-plane turn must run the v2 confirmation app in the root in-app
+Browser at the four required viewport/theme cells, freeze that assessment, and
+only then decide whether the confirmation app is canonical enough to publish.
+Until that pass, the docs site keeps the distilled field-proven patterns rather
+than copying the entire app.
