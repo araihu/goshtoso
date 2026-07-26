@@ -161,6 +161,26 @@ For every probe:
 | approvals | `/root/probe_approvals` | yes | done with concerns | 10 minutes | yes | evidence accepted |
 | receiving | `/root/probe_receiving` | yes | done with concerns | 10 minutes | yes | evidence accepted |
 | editorial | `/root/probe_editorial` | yes | done with concerns | 10 minutes | yes | evidence accepted |
+| design review A | `/root/probe_design_review` | yes | acknowledged and running | 12 minutes | no | pending |
+
+### Control-plane snag: late persistence of Assessment A dispatch
+
+The complete Assessment A prompt, ownership, frozen inputs, acceptance matrix
+and callback envelope were constructed and sent at runtime, but this durable
+record was updated immediately after dispatch instead of before it. The worker
+still received every required field and acknowledged its runtime ID before
+work. This is a protocol-ordering miss, not an ownership or evidence collision;
+it will be counted in the control-plane self-evaluation.
+
+Assessment A owns only
+`/tmp/goshtoso-probes/round2/design-review/**`, reads the three completed apps
+except their `PROBE_REPORT.md` files, and is forbidden from the library,
+repository, audit, memory and deterministic detector. Acceptance requires fresh
+browser tabs, 390/1440 inspection, Goshtoso light and Minimal dark,
+representative states and primary journeys, separate Nielsen 0-4 scores,
+cognitive-load/persona review, prioritized issues, server cleanup and the
+shared completion envelope. Its report path is
+`/tmp/goshtoso-probes/round2/design-review/ASSESSMENT_A.md`.
 
 ## Combined gates after remediation
 
