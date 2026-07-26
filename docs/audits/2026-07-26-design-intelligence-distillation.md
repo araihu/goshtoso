@@ -472,3 +472,37 @@ The first round is not accepted as a pass. It changes the candidate in two ways:
 The probe artifacts remain outside the repository at
 `/tmp/gs-blind-northstar`, `/tmp/gs-blind-library`, and
 `/tmp/gs-blind-watershed`; the durable scorecard and decisions live here.
+
+### Round-1 remediation implementation
+
+The component fixes were developed and reviewed as isolated worktree slices,
+then cherry-picked onto this control-plane branch:
+
+- Select now has one correctly owned listbox, trigger `aria-controls`, live
+  `aria-selected`, deterministic wrapping ArrowUp/ArrowDown behavior, trigger
+  focus recovery, and visible-state synchronization when a consumer updates the
+  hidden public input and dispatches bubbling `input` or `change`.
+- AppShell removes motion from the offscreen-to-focused skip link so its first
+  focused frame is visible. Soft semantic Badges retain tone in border/tint/dot
+  but use the theme's strong surface foreground for normal-size label contrast.
+  A `control-outline` semantic token separates functional form boundaries from
+  Minimal's intentionally transparent structural outline; Textarea consumes it.
+- Form's existing Footer keeps its API but now stacks full-width actions below
+  `sm`, wraps long labels, preserves 44-pixel targets, returns to a desktop row,
+  and gives sticky mode an opaque semantic surface, `z-20`, safe-area padding,
+  and a normal-flow footprint. Arbitrary multi-action or POST-Back workflow bars
+  remain an explicit application-owned no-match.
+
+The combined public guidance adds CSP requirements, selective
+`htmx:afterSettle` focus, state-transition/idempotency tests, native constraint
+parity, unknown-route recovery, display-context preservation,
+Post/Redirect/Get, composite draft synchronization, and route-by-route mobile
+evidence.
+
+One isolation snag is retained: the Select slice's first compound shell command
+created its worktree but did not change the caller's working directory, briefly
+cherry-picking the frozen candidate into the primary checkout. The slice owner
+detected it immediately, verified the only other item was the user's pre-existing
+untracked Impeccable critique, restored primary to `origin/main` with that file
+preserved, and performed all actual edits and the final commit in the dedicated
+worktree. The control plane independently reverified primary afterward.
