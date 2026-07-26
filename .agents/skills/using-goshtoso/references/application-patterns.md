@@ -121,7 +121,7 @@ table.Row{
 	Link:     "/operations/op-104",
 	LinkMode: table.LinkFull,
 	Cells: map[string]table.Cell{
-		"status": {Component: badge.Badge(badge.Config{Text: "Healthy"})},
+		"status": {Component: badge.Badge(badge.Config{Label: "Healthy"})},
 	},
 }
 ```

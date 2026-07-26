@@ -164,10 +164,14 @@ func TestRoundTwoConsumerGuidancePublishesRecoveredContracts(t *testing.T) {
 		"Decision Queue",
 		"Interruption-safe Workflow",
 		"Content-first Review",
+		`badge.Config{Label: "Healthy"}`,
 	} {
 		if !strings.Contains(patterns, want) {
 			t.Errorf("application patterns missing recovered contract %q", want)
 		}
+	}
+	if strings.Contains(patterns, "badge.Config{Text:") {
+		t.Error("application patterns uses obsolete badge.Config.Text field")
 	}
 
 	acceptance := readDoc(t, "../.agents/skills/using-goshtoso/references/visual-acceptance.md")
