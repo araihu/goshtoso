@@ -2,7 +2,7 @@
 
 Date: 2026-07-26
 
-Status: dispatch prepared
+Status: probes running
 
 This file is the durable control-plane and evidence record for a second blind
 consumer round. It intentionally tests whether the current public Goshtoso
@@ -158,9 +158,9 @@ For every probe:
 
 | Probe | Child id | ID acknowledged | Last event | Expected heartbeat | Callback received | Parent acknowledgement |
 |---|---|---|---|---|---|---|
-| approvals | pending | no | dispatch prepared | 10 minutes | no | pending |
-| receiving | pending | no | dispatch prepared | 10 minutes | no | pending |
-| editorial | pending | no | dispatch prepared | 10 minutes | no | pending |
+| approvals | `/root/probe_approvals` | yes | acknowledged and running | 10 minutes | no | pending |
+| receiving | `/root/probe_receiving` | yes | acknowledged and running | 10 minutes | no | pending |
+| editorial | `/root/probe_editorial` | yes | acknowledged and running | 10 minutes | no | pending |
 
 ## Combined gates after remediation
 
