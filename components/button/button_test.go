@@ -70,14 +70,25 @@ func TestButtonOptionsApplyOverDefaults(t *testing.T) {
 	if !strings.Contains(html, `id="delete"`) {
 		t.Fatalf("button option did not set ID:\n%s", html)
 	}
-	if !strings.Contains(html, "bg-danger") {
+	if !strings.Contains(html, "bg-danger-action") {
 		t.Fatalf("button option did not set danger tone:\n%s", html)
+	}
+	if strings.Contains(html, "danger-dark") {
+		t.Fatalf("button must not depend on undefined status-dark tokens:\n%s", html)
 	}
 	if !strings.Contains(html, "text-xs") {
 		t.Fatalf("button option did not set small size:\n%s", html)
 	}
 	if !strings.Contains(html, `type="button"`) {
 		t.Fatalf("button default type is not button:\n%s", html)
+	}
+}
+
+func TestButtonHoverDoesNotReduceWholeControlOpacity(t *testing.T) {
+	html := renderButton(t, "Save")
+
+	if strings.Contains(html, "hover:opacity-75") {
+		t.Fatalf("button hover must not blend text and background toward the page surface:\n%s", html)
 	}
 }
 

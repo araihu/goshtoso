@@ -100,17 +100,17 @@ func TestFormValidation_SubmitEmpty(t *testing.T) {
 	time.Sleep(800 * time.Millisecond)
 
 	// Check for error messages on all 3 required fields
-	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text")
 	nameErrCount, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, nameErrCount, 1, "name field should have error messages")
 
-	slugErrors := page.Locator("#goshtoso-field-slug [id$='-errors'] .text-danger")
+	slugErrors := page.Locator("#goshtoso-field-slug [id$='-errors'] .text-danger-text")
 	slugErrCount, err := slugErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, slugErrCount, 1, "slug field should have error messages")
 
-	emailErrors := page.Locator("#goshtoso-field-email [id$='-errors'] .text-danger")
+	emailErrors := page.Locator("#goshtoso-field-email [id$='-errors'] .text-danger-text")
 	emailErrCount, err := emailErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, emailErrCount, 1, "email field should have error messages")
@@ -186,7 +186,7 @@ func TestFormValidation_FieldChange_NameValid(t *testing.T) {
 	assert.Contains(t, classes, "border-success", "name input should have border-success class")
 
 	// Check no error text in name field
-	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text")
 	count, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, count, "name field should have no error messages")
@@ -292,7 +292,7 @@ func TestFormValidation_ErrorClearing(t *testing.T) {
 	assert.NotContains(t, classes, "border-danger", "name input should not have border-danger after correction")
 
 	// No error messages
-	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text")
 	count, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, count, "name field should have no error messages after correction")

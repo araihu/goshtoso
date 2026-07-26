@@ -506,3 +506,87 @@ detected it immediately, verified the only other item was the user's pre-existin
 untracked Impeccable critique, restored primary to `origin/main` with that file
 preserved, and performed all actual edits and the final commit in the dedicated
 worktree. The control plane independently reverified primary afterward.
+
+## Blind probe round 2: novel domains
+
+The remediated candidate was frozen at `1bf02f5` and given to three new builders
+without access to the round-1 applications. Each builder received only the
+consumer skill, public Goshtoso documentation, and its assigned domain brief.
+Independent reviewers again froze browser and HTTP evidence before reading the
+builder report.
+
+| Probe | Domain and archetype | Independent score | Result |
+|---|---|---:|---|
+| Editorial | multi-state publishing review | 19/40 `[2,2,2,2,0,3,3,2,1,2]` | FAIL |
+| Specimen | three-step field collection | 34/40 `[4,4,3,3,3,4,3,3,4,3]` | CHANGES REQUESTED |
+| Dispatch | safety-critical railway restriction decisions | 24/40 `[2,2,3,2,4,3,2,3,1,2]` | FAIL |
+
+Editorial contained three P0 authorization/state defects: stale or
+Changes-Requested records could still publish, and an error/no-article state
+could accept a comment. It also erased drafts on validation and conflict,
+silently swallowed network failure, reported malformed mobile submissions as
+immediate success, left focus and queue state stale after swaps, hid urgency
+below the first viewport, and failed settled helper-text and hover contrast.
+Terminal replay and one-dispatch idempotency did pass.
+
+Specimen had no P0 defect and passed its 24-case responsive matrix, draft/Select
+agreement, offline and 503 checks, Post/Redirect/Get history, exact replay,
+unknown-route shell, local assets, semantics, and clean detached Go gates. Its
+mobile sticky footer nevertheless covered `owner_ref` and `collected_at` hit
+targets. Settled Goshtoso styles exposed marker contrast of 2.50 in dark mode,
+4.33 in light mode, 4.44 small-link contrast, and a 3.23 alert heading. Select
+Escape focus was inconsistent, validation order was mixed, cancel/404 recovery
+preserved values but returned to step one, and the app emitted a favicon 404 and
+unbounded receipt/debug information.
+
+Dispatch's raw browser packet is preserved at
+`/tmp/dispatch-r2-blind-browser.hnrE4Q/raw-probe-manifest.json`; full-page
+screenshots are explicitly excluded because internal-scroll capture produced
+blank images. Viewport screenshots plus DOM geometry are authoritative. The
+probe found no horizontal document overflow across its theme and route matrix,
+kept exact replay at one side effect, rejected forged stale, partial, and
+terminal-alternate actions, preserved the same receipt across completion,
+Back, Forward, and refresh, and kept invalid routes inside the application
+shell. It also found material workflow gaps: delayed HTMX filtering never set
+`aria-busy` or disabled duplicate controls, abort and raw 503 failures exposed
+no visible recovery, the sidebar count remained stale after a fragment swap,
+missing or malformed versions returned bare HTTP 400 responses, advertised
+secondary routes were generic 404 recovery screens, and a mobile row selection
+left the detail at y=1382 and its action at y=2008 while scroll remained at zero.
+The live shell also showed `14:08 local` while refreshed evidence and decisions
+were recorded around `09:11`/`09:12`. Source verification added a P1 permission
+failure: the permission-denied fixture still exposed and accepted an
+irreversible action because the server never enforced authority. Refresh
+idempotency was also decorative, while decision replay correctly retained one
+receipt and one actual side effect. Real Tab traversal remains unverified in
+this one browser harness because both supported keyboard APIs left focus
+unchanged; it is not counted as a pass. Dispatch's exact frozen score is 24/40
+with no P0, seven P1, and three P2 findings.
+
+### Round-2 remediation in progress
+
+The public skill now includes an executable state/action invariant ledger.
+Every consequential row must prove the server-side permission decision, retained
+values and context, focus or destination, final URL or receipt identity, and
+exact side-effect count. It requires forged hidden actions, terminal starting
+states, real transport failure, loading deduplication, 422 validation, PRG, and
+an independent observer; a builder-owned happy-path gallery is insufficient.
+
+The Goshtoso-owned settled-style defects are fixed at their source: helper text
+uses semantic muted foreground tokens instead of opacity, button-like hover
+states use contrast rather than lowering opacity, non-shell Select no longer
+traps focus and keyboard-open advances relative to the selected option, and
+Form's stacked mobile footer remains in normal flow while sticky behavior starts
+at `sm`. Semantic status text now has contrast-safe `*-text`/`*-text-dark`
+tokens, and filled status actions have explicit foreground/background pairs
+instead of undefined `danger-dark`-style utilities. Goshtoso's primary link
+color also clears AA on `surface-alt`. A focused E2E contrast matrix covers
+Button including Danger, Link, Alert status titles, required markers, Textarea,
+TextInput, and FileInput in Goshtoso/Minimal light/dark states.
+
+Final acceptance remains blocked until a fresh immutable candidate passes the
+full quality gates plus a new blind confirmation probe. The confirmation must
+start from the new invariant ledger and prove server authorization, actual
+loading/transport failures, retained recovery, mobile selected-detail focus or
+scroll, status-action contrast, and refresh idempotency rather than presentation
+fixtures.

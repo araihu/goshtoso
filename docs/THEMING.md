@@ -73,7 +73,11 @@ Goshtoso includes an Alpine.js dark mode store at `assets/js/darkmode.js` that p
 
 ### Semantic / Status Colors
 
-Shared across light and dark modes (no `-dark` variants):
+Base status colors are shared across modes and are intended for fills, borders,
+and icons. For labels, helper/error copy, and other small text on a surface, use
+the derived `*-text` pair; it mixes the tone into each mode's strongest readable
+surface foreground instead of assuming one status color contrasts on both
+backgrounds.
 
 | Token | Purpose | Usage in Tailwind |
 |-------|---------|-------------------|
@@ -85,6 +89,15 @@ Shared across light and dark modes (no `-dark` variants):
 | `--color-on-warning` | Text on warning backgrounds | `text-on-warning` |
 | `--color-danger` | Error/destructive states | `bg-danger`, `text-danger` |
 | `--color-on-danger` | Text on danger backgrounds | `text-on-danger` |
+| `--color-info-text` / `--color-info-text-dark` | Informational text on surfaces | `text-info-text dark:text-info-text-dark` |
+| `--color-success-text` / `--color-success-text-dark` | Success text on surfaces | `text-success-text dark:text-success-text-dark` |
+| `--color-warning-text` / `--color-warning-text-dark` | Warning text on surfaces | `text-warning-text dark:text-warning-text-dark` |
+| `--color-danger-text` / `--color-danger-text-dark` | Error/destructive text on surfaces | `text-danger-text dark:text-danger-text-dark` |
+
+Filled status actions use the derived `--color-*-action` /
+`--color-on-*-action` pairs (plus `*-action-dark`) so their text, hover, and
+focus states remain readable. Prefer `button.WithTone(button.ToneDanger)` over
+assembling `bg-danger text-on-danger` yourself.
 
 ### Border & Outline
 

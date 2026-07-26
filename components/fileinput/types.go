@@ -1,6 +1,7 @@
 package fileinput
 
 import (
+	"maps"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -42,9 +43,7 @@ type Config struct {
 
 func (cfg Config) inputAttributes() templ.Attributes {
 	attrs := make(templ.Attributes, len(cfg.InputAttrs)+1)
-	for key, value := range cfg.InputAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, cfg.InputAttrs)
 	if cfg.HelperText != "" && cfg.ID != "" {
 		existing, _ := attrs["aria-describedby"].(string)
 		attrs["aria-describedby"] = mergeAttributeTokens(existing, cfg.ID+"-helper")
@@ -56,7 +55,7 @@ func mergeAttributeTokens(values ...string) string {
 	seen := map[string]bool{}
 	result := make([]string, 0, len(values))
 	for _, value := range values {
-		for _, token := range strings.Fields(value) {
+		for token := range strings.FieldsSeq(value) {
 			if !seen[token] {
 				seen[token] = true
 				result = append(result, token)
@@ -133,5 +132,5 @@ func (cfg Config) uploadButtonClasses() string {
 
 // HelperTextClasses returns classes for helper text below the field.
 func (cfg Config) helperTextClasses() string {
-	return "pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+	return "pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 }

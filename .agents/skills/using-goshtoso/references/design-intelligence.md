@@ -14,6 +14,14 @@ Resolve design decisions in this order:
 4. A deliberate visual direction and anti-reflex critique.
 5. Browser evidence from the required acceptance matrix.
 
+Status fills and status text are different contracts. Use `bg-success`,
+`border-warning`, or `text-danger` for surfaces, boundaries, and icons; use the
+derived `text-*-text dark:text-*-text-dark` utilities for small status copy on
+surface backgrounds. This prevents one hue from being treated as readable text
+against both light and dark themes.
+Use `button.WithTone` for filled semantic actions; it consumes the paired
+`*-action` tokens and preserves contrast across default, hover, and focus.
+
 Never let a product category choose a palette, typeface, layout, or style. A
 monitoring tool is not automatically dark, a restaurant is not automatically
 warm orange, and an editorial product is not automatically serif.
@@ -45,6 +53,7 @@ Density: compact | standard | relaxed
 Motion: none | restrained | expressive with reason
 Visual direction:
 Chosen Goshtoso pattern and primitives:
+Invariant ledger path when actions are consequential:
 ```
 
 Keep the visual direction concrete: name hierarchy, density, geometry, type
@@ -188,6 +197,11 @@ retry or conflict recovery. A warning badge is not a safety policy. Terminal
 decisions cannot be overwritten by another terminal decision unless reversal
 is a named, authorized workflow; an offered recovery control must not reapply a
 notification, cancellation, receipt, or other side effect.
+
+Use `adversarial-acceptance.md` to expand that transition table into one row per
+state/action pair and derive tests from the complete ledger. Test terminal,
+stale, partial, missing, and permission-limited states as starting conditions;
+do not merely render them. Hidden actions still need server-side guards.
 
 Validation must retain valid values, focus a summary, link summary items to real
 controls, associate field errors and hints, and survive the same HTMX swap used

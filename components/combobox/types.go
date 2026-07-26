@@ -3,6 +3,7 @@ package combobox
 import (
 	"context"
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 
@@ -54,9 +55,7 @@ type Config struct {
 
 func (c Config) triggerAttributes() templ.Attributes {
 	attrs := make(templ.Attributes, len(c.TriggerAttrs)+1)
-	for key, value := range c.TriggerAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, c.TriggerAttrs)
 	if c.Required {
 		if _, exists := attrs["aria-required"]; !exists {
 			attrs["aria-required"] = "true"

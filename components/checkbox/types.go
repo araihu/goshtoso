@@ -1,6 +1,7 @@
 package checkbox
 
 import (
+	"maps"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -78,9 +79,7 @@ type GroupConfig struct {
 
 func (cfg Config) inputAttributes() templ.Attributes {
 	attrs := make(templ.Attributes, len(cfg.InputAttrs)+1)
-	for key, value := range cfg.InputAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, cfg.InputAttrs)
 	if cfg.HelperText != "" && cfg.HelperTextID != "" {
 		existing, _ := attrs["aria-describedby"].(string)
 		attrs["aria-describedby"] = mergeTokens(existing, cfg.HelperTextID)
@@ -92,7 +91,7 @@ func mergeTokens(values ...string) string {
 	seen := map[string]bool{}
 	result := make([]string, 0, len(values))
 	for _, value := range values {
-		for _, token := range strings.Fields(value) {
+		for token := range strings.FieldsSeq(value) {
 			if !seen[token] {
 				seen[token] = true
 				result = append(result, token)

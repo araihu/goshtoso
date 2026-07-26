@@ -44,6 +44,15 @@ func TestTextInputAssociatesHelperAndInvalidStateWithControl(t *testing.T) {
 	assert.Contains(t, html, `aria-invalid="true"`)
 }
 
+func TestTextInputHelperUsesSemanticMutedToken(t *testing.T) {
+	classes := (Config{}).helperTextClasses()
+
+	assert.Contains(t, classes, "text-on-surface-muted")
+	assert.Contains(t, classes, "dark:text-on-surface-dark-muted")
+	assert.NotContains(t, classes, "text-on-surface/60")
+	assert.NotContains(t, classes, "text-on-surface-dark/60")
+}
+
 func TestTextInputEscapesUserControlledText(t *testing.T) {
 	payload := `<img src=x onerror=alert(1)>`
 	html := renderTextInput(t, Config{

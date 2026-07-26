@@ -56,7 +56,7 @@ func TestCoverageRenderFullDefaultStateTextarea(t *testing.T) {
 		"<small",
 		"Optional helper",
 		"mt-4",                   // RootClass routed through containerClasses
-		"text-on-surface/60",     // default helperTextClasses branch
+		"text-on-surface-muted",  // default helperTextClasses branch
 		"border-control-outline", // default textareaClasses branch
 	} {
 		if !strings.Contains(html, want) {
@@ -218,7 +218,7 @@ func TestCoverageLabelClasses(t *testing.T) {
 
 func TestCoverageHelperTextClasses(t *testing.T) {
 	cases := map[State]string{
-		StateDefault: "text-on-surface/60",
+		StateDefault: "text-on-surface-muted",
 		StateError:   "text-danger",
 		StateSuccess: "text-success",
 	}

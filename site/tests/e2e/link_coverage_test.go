@@ -58,7 +58,8 @@ func TestLinkCoverageDemo(t *testing.T) {
 		buttonLink := page.Locator("#link-button a").First()
 		className := mustAttribute(t, buttonLink, "class")
 		assert.Contains(t, className, "focus-visible:outline-primary")
-		assert.Contains(t, className, "active:opacity-100")
+		assert.Contains(t, className, "active:contrast-100")
+		assert.NotContains(t, className, "hover:opacity-75")
 
 		require.NoError(t, buttonLink.Focus())
 		focused, err := buttonLink.Evaluate("el => el === document.activeElement", nil)

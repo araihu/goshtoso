@@ -326,12 +326,22 @@ instead of copying theme colors into a second palette. Start with
 `--color-surface`, `--color-surface-alt`, `--color-on-surface`,
 `--color-on-surface-strong`, `--color-on-surface-muted`, `--color-outline`, and
 `--color-primary`; use `--color-info`, `--color-success`, `--color-warning`, and
-`--color-danger` for states. Dark tokens follow their semantic group:
+`--color-danger` for status fills, borders, and icons. Small status text on a
+surface uses the contrast-safe derived pairs such as
+`text-danger-text dark:text-danger-text-dark` and
+`text-success-text dark:text-success-text-dark`; do not assume a single fill
+color also contrasts as text in both modes. Dark tokens follow their semantic group:
 `--color-surface-dark-alt`, `--color-on-surface-dark-strong`,
 `--color-outline-dark-strong`, and `--color-primary-dark` are representative
-names. Status tokens are shared across light and dark modes and have no dark
-variants. Alias these into product-named variables when that makes app CSS
-clearer. See `docs/THEMING.md` for the complete contract.
+names. Base status tokens are shared across modes; their derived `*-text-dark`
+variants follow the dark surface foreground. Alias these into product-named
+variables when that makes app CSS clearer. See `docs/THEMING.md` for the
+complete contract.
+
+For a filled semantic action, use `button.WithTone` rather than composing raw
+status utilities. Button's derived `*-action` pairs guarantee a matching
+foreground in both modes and keep hover contrast without lowering the whole
+control's opacity.
 
 ## Field-proven compositions
 

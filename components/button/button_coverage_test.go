@@ -37,17 +37,18 @@ func TestCoverageRenderDefaultButton(t *testing.T) {
 
 func TestToneClasses(t *testing.T) {
 	cases := []struct {
-		tone Tone
-		want string
+		tone        Tone
+		want        string
+		wantOutline string
 	}{
-		{TonePrimary, "bg-primary"},
-		{ToneSecondary, "bg-secondary"},
-		{ToneAlternate, "bg-surface-alt"},
-		{ToneInverse, "bg-surface-dark"},
-		{ToneInfo, "bg-info"},
-		{ToneDanger, "bg-danger"},
-		{ToneWarning, "bg-warning"},
-		{ToneSuccess, "bg-success"},
+		{TonePrimary, "bg-primary", "focus-visible:outline-primary dark:focus-visible:outline-primary-dark"},
+		{ToneSecondary, "bg-secondary", "focus-visible:outline-secondary dark:focus-visible:outline-secondary-dark"},
+		{ToneAlternate, "bg-surface-alt", "focus-visible:outline-on-surface-strong dark:focus-visible:outline-on-surface-dark-strong"},
+		{ToneInverse, "bg-surface-dark", "focus-visible:outline-on-surface-strong dark:focus-visible:outline-on-surface-dark-strong"},
+		{ToneInfo, "bg-info-action", "focus-visible:outline-info-action dark:focus-visible:outline-info-action-dark"},
+		{ToneDanger, "bg-danger-action", "focus-visible:outline-danger-action dark:focus-visible:outline-danger-action-dark"},
+		{ToneWarning, "bg-warning-action", "focus-visible:outline-warning-action dark:focus-visible:outline-warning-action-dark"},
+		{ToneSuccess, "bg-success-action", "focus-visible:outline-success-action dark:focus-visible:outline-success-action-dark"},
 	}
 	for _, tc := range cases {
 		t.Run(string(tc.tone), func(t *testing.T) {
@@ -55,7 +56,7 @@ func TestToneClasses(t *testing.T) {
 			if !strings.Contains(html, tc.want) {
 				t.Fatalf("tone %q missing %q:\n%s", tc.tone, tc.want, html)
 			}
-			if !strings.Contains(html, "focus-visible:outline-"+string(tc.tone)) {
+			if !strings.Contains(html, tc.wantOutline) {
 				t.Fatalf("tone %q missing outline color suffix:\n%s", tc.tone, html)
 			}
 		})

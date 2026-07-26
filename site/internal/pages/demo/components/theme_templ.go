@@ -104,7 +104,7 @@ type ThemeInfo struct {
 
 func getThemeInfos() []ThemeInfo {
 	classes := map[string][2]string{
-		"goshtoso":      {"bg-[#2276aa]", "bg-[#4b7d1c]"},
+		"goshtoso":      {"bg-[#2172a3]", "bg-[#4b7d1c]"},
 		"arctic":        {"bg-blue-700", "bg-indigo-700"},
 		"high-contrast": {"bg-sky-900", "bg-indigo-900"},
 		"minimal":       {"bg-black", "bg-neutral-800"},
@@ -739,7 +739,7 @@ func getThemeCSSBlocks() map[string]string {
     --color-surface-alt: #eaf4fb;
     --color-on-surface: #3a4b5f;
     --color-on-surface-strong: #081d2b;
-    --color-primary: #2276aa;
+    --color-primary: #2172a3;
     --color-on-primary: #ffffff;
     --color-secondary: #4b7d1c;
     --color-on-secondary: #ffffff;

@@ -245,11 +245,11 @@ func TestIconBadgeClassesVariants(t *testing.T) {
 
 func TestTitleClassesVariants(t *testing.T) {
 	want := map[Tone]string{
-		"":          "text-info",
-		ToneInfo:    "text-info",
-		ToneSuccess: "text-success",
-		ToneWarning: "text-warning",
-		ToneDanger:  "text-danger",
+		"":          "text-info-text dark:text-info-text-dark",
+		ToneInfo:    "text-info-text dark:text-info-text-dark",
+		ToneSuccess: "text-success-text dark:text-success-text-dark",
+		ToneWarning: "text-warning-text dark:text-warning-text-dark",
+		ToneDanger:  "text-danger-text dark:text-danger-text-dark",
 	}
 	for variant, text := range want {
 		cls := Config{Tone: variant}.titleClasses()
@@ -261,32 +261,38 @@ func TestTitleClassesVariants(t *testing.T) {
 
 func TestLinkClassesVariants(t *testing.T) {
 	want := map[Tone]string{
-		"":          "text-info",
-		ToneInfo:    "text-info",
-		ToneSuccess: "text-success",
-		ToneWarning: "text-warning",
-		ToneDanger:  "text-danger",
+		"":          "text-info-text dark:text-info-text-dark",
+		ToneInfo:    "text-info-text dark:text-info-text-dark",
+		ToneSuccess: "text-success-text dark:text-success-text-dark",
+		ToneWarning: "text-warning-text dark:text-warning-text-dark",
+		ToneDanger:  "text-danger-text dark:text-danger-text-dark",
 	}
 	for variant, text := range want {
 		cls := Config{Tone: variant}.linkClasses()
 		if !strings.Contains(cls, text) || !strings.Contains(cls, "whitespace-nowrap") {
 			t.Fatalf("variant %q: want %q in %q", variant, text, cls)
 		}
+		if strings.Contains(cls, "hover:opacity") {
+			t.Fatalf("variant %q: whole-control hover opacity is not contrast safe: %q", variant, cls)
+		}
 	}
 }
 
 func TestPrimaryActionClassesVariants(t *testing.T) {
 	want := map[Tone]string{
-		"":          "text-info",
-		ToneInfo:    "text-info",
-		ToneSuccess: "text-success",
-		ToneWarning: "text-warning",
-		ToneDanger:  "text-danger",
+		"":          "text-info-text dark:text-info-text-dark",
+		ToneInfo:    "text-info-text dark:text-info-text-dark",
+		ToneSuccess: "text-success-text dark:text-success-text-dark",
+		ToneWarning: "text-warning-text dark:text-warning-text-dark",
+		ToneDanger:  "text-danger-text dark:text-danger-text-dark",
 	}
 	for variant, text := range want {
 		cls := Config{Tone: variant}.primaryActionClasses()
 		if !strings.Contains(cls, text) || !strings.Contains(cls, "font-semibold") {
 			t.Fatalf("variant %q: want %q in %q", variant, text, cls)
+		}
+		if strings.Contains(cls, "hover:opacity") {
+			t.Fatalf("variant %q: whole-control hover opacity is not contrast safe: %q", variant, cls)
 		}
 	}
 }
@@ -297,7 +303,7 @@ func TestListClassesDangerOnly(t *testing.T) {
 		if !strings.Contains(cls, "list-disc") {
 			t.Fatalf("variant %q: missing base list classes in %q", variant, cls)
 		}
-		hasDanger := strings.Contains(cls, "text-danger")
+		hasDanger := strings.Contains(cls, "text-danger-text dark:text-danger-text-dark")
 		if variant == ToneDanger && !hasDanger {
 			t.Fatalf("danger variant missing text-danger: %q", cls)
 		}

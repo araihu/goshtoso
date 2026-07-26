@@ -1,6 +1,7 @@
 package textarea
 
 import (
+	"maps"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -54,9 +55,7 @@ func (cfg Config) helperTextID() string {
 
 func (cfg Config) inputAttributes() templ.Attributes {
 	attrs := make(templ.Attributes, len(cfg.InputAttrs)+2)
-	for key, value := range cfg.InputAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, cfg.InputAttrs)
 	if helperID := cfg.helperTextID(); helperID != "" {
 		existing, _ := attrs["aria-describedby"].(string)
 		attrs["aria-describedby"] = mergeTokens(existing, helperID)
@@ -71,7 +70,7 @@ func mergeTokens(values ...string) string {
 	seen := map[string]bool{}
 	result := make([]string, 0, len(values))
 	for _, value := range values {
-		for _, token := range strings.Fields(value) {
+		for token := range strings.FieldsSeq(value) {
 			if !seen[token] {
 				seen[token] = true
 				result = append(result, token)
@@ -95,9 +94,9 @@ func (cfg Config) containerClasses() string {
 func (cfg Config) labelClasses() string {
 	switch cfg.State {
 	case StateError:
-		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-danger"
+		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-success"
+		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-success-text dark:text-success-text-dark"
 	default:
 		return "w-fit pl-0.5 text-sm"
 	}
@@ -121,11 +120,11 @@ func (cfg Config) textareaClasses() string {
 func (cfg Config) helperTextClasses() string {
 	switch cfg.State {
 	case StateError:
-		return "pl-0.5 text-xs text-danger"
+		return "pl-0.5 text-xs text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "pl-0.5 text-xs text-success"
+		return "pl-0.5 text-xs text-success-text dark:text-success-text-dark"
 	default:
-		return "pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+		return "pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 	}
 }
 

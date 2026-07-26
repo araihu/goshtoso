@@ -590,7 +590,7 @@ func textInputPatternPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<small id=\"patternInput-feedback\" class=\"mt-1 block pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60\" x-text=\"message()\" x-bind:class=\"touched ? (valid ? 'text-success' : 'text-danger') : 'text-on-surface/60 dark:text-on-surface-dark/60'\" aria-live=\"polite\"></small></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<small id=\"patternInput-feedback\" class=\"mt-1 block pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" x-text=\"message()\" x-bind:class=\"touched ? (valid ? 'text-success' : 'text-danger') : 'text-on-surface-muted dark:text-on-surface-dark-muted'\" aria-live=\"polite\"></small></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

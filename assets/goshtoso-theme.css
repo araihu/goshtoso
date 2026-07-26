@@ -102,6 +102,38 @@
     --color-danger: var(--color-pink-500);
     --color-on-danger: var(--color-black);
 
+    /* Status colors carry tone in fills, borders, and icons. Text variants mix
+       a small amount of that tone into the theme's strongest readable
+       foreground so labels remain AA-safe on both surface levels. */
+    --color-info-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-info) 15%);
+    --color-success-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-success) 15%);
+    --color-warning-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-warning) 15%);
+    --color-danger-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-danger) 15%);
+    --color-info-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-info) 15%);
+    --color-success-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-success) 15%);
+    --color-warning-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-warning) 15%);
+    --color-danger-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-danger) 15%);
+
+    /* Filled status actions need a foreground/background pair, not a raw status
+       hue plus a guessed foreground. These stay close to the status hue while
+       inheriting the contrast direction of each theme surface. */
+    --color-info-action: color-mix(in srgb, var(--color-info) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-info-action: var(--color-surface);
+    --color-success-action: color-mix(in srgb, var(--color-success) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-success-action: var(--color-surface);
+    --color-warning-action: color-mix(in srgb, var(--color-warning) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-warning-action: var(--color-surface);
+    --color-danger-action: color-mix(in srgb, var(--color-danger) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-danger-action: var(--color-surface);
+    --color-info-action-dark: color-mix(in srgb, var(--color-info) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-info-action-dark: var(--color-surface-dark);
+    --color-success-action-dark: color-mix(in srgb, var(--color-success) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-success-action-dark: var(--color-surface-dark);
+    --color-warning-action-dark: color-mix(in srgb, var(--color-warning) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-warning-action-dark: var(--color-surface-dark);
+    --color-danger-action-dark: color-mix(in srgb, var(--color-danger) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-danger-action-dark: var(--color-surface-dark);
+
     /* Border Radius */
     --radius-radius: var(--radius-xl);
 }
@@ -606,7 +638,7 @@
         --color-surface-alt: #eaf4fb;            /* yale-blue-50 */
         --color-on-surface: #3a4b5f;             /* blue-slate-700 */
         --color-on-surface-strong: #081d2b;      /* yale-blue-900 */
-        --color-primary: #2276aa;                /* yale-blue-600 */
+        --color-primary: #2172a3;                /* link-safe Yale blue */
         --color-on-primary: #ffffff;
         --color-secondary: #4b7d1c;              /* forest-moss-700 */
         --color-on-secondary: #ffffff;

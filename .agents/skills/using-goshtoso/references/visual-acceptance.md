@@ -23,6 +23,10 @@ Also inspect loading, empty, error, and success. Add permission-denied, stale,
 partial, destructive confirmation, and filtered-empty when the domain supports
 them.
 
+For consequential actions, complete `adversarial-acceptance.md` first. The
+required state list becomes a state/action invariant ledger, and every ledger
+row must have HTTP plus rendered-browser evidence.
+
 The matrix applies to every distinct responsive composition, not only the first
 route. In a workflow, visit every step plus validation/review/success at 390 px;
 in a queue/detail app, visit collection, detail, conflict, and completed states.
@@ -62,6 +66,9 @@ in a queue/detail app, visit collection, detail, conflict, and completed states.
 - Measure normal-size text contrast in semantic badges and the non-text boundary
   of empty form controls; do not assume a named token is accessible in every
   theme.
+- Measure helper text and default, hover, and focus action contrast. Whole-control
+  opacity on hover can make an otherwise valid foreground/background pair fail
+  after it blends with the page surface.
 - Status never depends on color alone.
 - Primary color marks actions and selection, not decoration.
 - Typography belongs to the product. Do not reflexively choose Inter, Geist,
@@ -96,6 +103,12 @@ in a queue/detail app, visit collection, detail, conflict, and completed states.
 - For consequential mutations, test two stale tabs, the offered conflict action,
   a repeated terminal action, and idempotent request replay. Assert both status
   and side-effect count.
+- Attempt every consequential action from every ledger state, including forged
+  actions that are hidden or disabled in the normal UI. Assert server truth,
+  retained input, focus, and success destination identity.
+- Simulate a real transport failure in addition to a server-rendered 503. The
+  initiating surface must expose a visible, retryable error and prevent
+  duplicate submission while loading.
 - For restored drafts, assert visible composite label, hidden/submitted value,
   status copy, and dependent fields agree.
 - Capture JavaScript console errors and fail on unexpected messages.

@@ -725,7 +725,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `CancelHref` | `string` | CancelHref is the cancel link URL (plain navigation) |
 | `CancelHTMX` | `*CancelHTMXConfig` | CancelHTMX enables HTMX-powered cancel (SPA navigation). Overrides CancelHref when set. |
 | `SubmitDisabled` | `string` | SubmitDisabled is an Alpine.js expression for x-bind:disabled on submit |
-| `Sticky` | `bool` | Sticky keeps the footer at the bottom of its nearest scrolling ancestor while preserving its normal-flow footprint (default: false). The action surface is opaque, layered above content, and safe-area aware. |
+| `Sticky` | `bool` | Sticky keeps the compact single-row footer at the bottom of its nearest scrolling ancestor from the sm breakpoint upward (default: false). The stacked mobile footer remains in normal flow so it cannot cover fields. The action surface is opaque, layered above content, and safe-area aware. |
 
 **FormErrorItem**
 

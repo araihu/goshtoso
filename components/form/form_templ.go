@@ -1207,7 +1207,7 @@ func fieldGroupTemplate(cfg FieldGroupConfig) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if cfg.Required {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 113, "<span class=\"text-danger dark:text-danger-dark\">*</span>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 113, "<span class=\"text-danger-text dark:text-danger-text-dark\">*</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -1258,7 +1258,7 @@ func fieldGroupTemplate(cfg FieldGroupConfig) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if cfg.Required {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 120, "<span class=\"text-danger dark:text-danger-dark\">*</span>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 120, "<span class=\"text-danger-text dark:text-danger-text-dark\">*</span>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -1386,7 +1386,7 @@ func fieldErrors(id string, errors []string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			for _, err := range errors {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 127, "<span class=\"flex items-center gap-1.5 text-xs text-danger dark:text-danger-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-3.5 shrink-0\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z\" clip-rule=\"evenodd\"></path></svg> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 127, "<span class=\"flex items-center gap-1.5 text-xs text-danger-text dark:text-danger-text-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-3.5 shrink-0\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z\" clip-rule=\"evenodd\"></path></svg> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1491,8 +1491,8 @@ func fieldHints(id string, hints []string) templ.Component {
 }
 
 // formFooter renders the responsive footer with Cancel and Submit actions.
-// Sticky positioning remains in normal flow so the last form control can scroll
-// fully above the action surface.
+// Sticky positioning starts at sm, where actions fit on one row. The stacked
+// mobile footer remains in normal flow so it cannot cover the last controls.
 func formFooter(cfg FooterConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -1662,7 +1662,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 153, "<button type=\"submit\" class=\"inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:opacity-75 transition disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 153, "<button type=\"submit\" class=\"inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:contrast-125 active:contrast-100 transition disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

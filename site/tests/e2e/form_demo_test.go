@@ -148,7 +148,8 @@ func TestFormDemoStickyFooterKeepsMobileActionsAndLastControlUsable(t *testing.T
 		}
 	}
 	require.Equal(t, "column", metrics["flexDirection"])
-	require.Equal(t, "sticky", metrics["position"])
+	require.Equal(t, "static", metrics["position"],
+		"a stacked mobile action bar must remain in flow instead of covering the last controls")
 	require.GreaterOrEqual(t, number(metrics["zIndex"]), float64(20))
 	require.GreaterOrEqual(t, number(metrics["paddingBottom"]), float64(8))
 	require.Equal(t, true, metrics["opaque"])
@@ -187,6 +188,9 @@ func TestFormDemoStickyFooterKeepsMobileActionsAndLastControlUsable(t *testing.T
 	}
 
 	require.NoError(t, page.SetViewportSize(1440, 900))
+	desktopPosition, err := footer.Evaluate("element => getComputedStyle(element).position", nil)
+	require.NoError(t, err)
+	require.Equal(t, "sticky", desktopPosition, "Sticky should apply once actions fit on one row")
 	desktopDirection, err := footer.Evaluate("element => getComputedStyle(element).flexDirection", nil)
 	require.NoError(t, err)
 	require.Equal(t, "row", desktopDirection, "footer actions should return to an inline row at sm and above")

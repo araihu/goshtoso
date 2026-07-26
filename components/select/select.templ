@@ -119,7 +119,9 @@ templ selectTemplate(cfg Config) {
 					role="listbox"
 					aria-label={ cfg.Label + " list" }
 				}
-				x-trap="openedWithKeyboard"
+				if cfg.Shell {
+					x-trap="openedWithKeyboard"
+				}
 			>
 				if cfg.Shell {
 					{ children... }
@@ -178,9 +180,9 @@ templ selectTemplate(cfg Config) {
 func helperTextClasses(state State) string {
 	switch state {
 	case StateError:
-		return "pl-0.5 text-danger"
+		return "pl-0.5 text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "pl-0.5 text-success"
+		return "pl-0.5 text-success-text dark:text-success-text-dark"
 	default:
 		return "pl-0.5 text-on-surface-muted dark:text-on-surface-dark-muted"
 	}
@@ -304,7 +306,9 @@ func selectData(cfg Config) string {
 				const selectedIndex = this.selectedOption
 					? this.allOptions.findIndex(item => item.value === this.selectedOption.value)
 					: -1;
-				this.activeIndex = selectedIndex >= 0 ? selectedIndex : (direction < 0 ? options.length - 1 : 0);
+				this.activeIndex = selectedIndex >= 0
+					? (selectedIndex + direction + options.length) %% options.length
+					: (direction < 0 ? options.length - 1 : 0);
 				this.$nextTick(() => options[this.activeIndex].focus());
 			});
 		},

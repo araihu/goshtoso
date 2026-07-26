@@ -129,14 +129,14 @@ func TestCoverageFormFooter(t *testing.T) {
 		"Cancel",
 		`href="/back"`,
 		`x-bind:disabled="!valid"`,
-		"sticky bottom-0",
+		"sm:sticky sm:bottom-0",
 	)
 }
 
 func TestCoverageFormFooterNoSticky(t *testing.T) {
 	html := render(t, Form(Config{Footer: &FooterConfig{SubmitLabel: "Save"}}))
 	mustContain(t, html, "Save", `type="submit"`)
-	mustNotContain(t, html, "sticky bottom-0")
+	mustNotContain(t, html, "sm:sticky sm:bottom-0")
 	// no cancel label => no anchor
 	mustNotContain(t, html, "<a")
 }
@@ -291,7 +291,7 @@ func TestCoverageFieldGroupRequiredWithInput(t *testing.T) {
 	mustContain(t, html,
 		`for="email-input"`,
 		"Email",
-		`class="text-danger dark:text-danger-dark">*`,
+		`class="text-danger-text dark:text-danger-text-dark">*`,
 		"is required",
 		"we never share it",
 	)
@@ -480,7 +480,7 @@ func TestCoverageFooterClasses(t *testing.T) {
 		t.Fatalf("plain footer should not be sticky: %q", plain)
 	}
 	sticky := (FooterConfig{Sticky: true}).footerClasses()
-	if !strings.Contains(sticky, "sticky bottom-0") {
+	if !strings.Contains(sticky, "sm:sticky sm:bottom-0") {
 		t.Fatalf("sticky footer missing sticky class: %q", sticky)
 	}
 }

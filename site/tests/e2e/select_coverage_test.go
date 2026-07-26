@@ -166,6 +166,44 @@ func TestSelectKeyboardMovesActiveOption(t *testing.T) {
 	assert.Empty(t, filterIgnorable(consoleErrs), "unexpected console errors")
 }
 
+// TestSelectKeyboardAdvancesFromSelectedValue guards the consumer workflow
+// contract: ArrowDown on a closed Select advances from the current value,
+// Enter commits it, and focus returns to the trigger.
+func TestSelectKeyboardAdvancesFromSelectedValue(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page, errs := gotoSelectDemo(t)
+	trigger := page.Locator("#os-success-trigger")
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, trigger.Press("ArrowDown"))
+
+	_, err := page.WaitForFunction(
+		"() => document.activeElement?.id === 'os-success-option-1'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "ArrowDown should advance from selected Mac to Windows")
+
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	_, err = page.WaitForFunction(
+		"() => document.querySelector('#os-success').value === 'windows' && document.activeElement?.id === 'os-success-trigger'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	if err != nil {
+		state, stateErr := page.Evaluate(`() => ({
+			value: document.querySelector('#os-success')?.value,
+			focus: document.activeElement?.id,
+			label: document.querySelector('#os-success-trigger span')?.textContent?.trim(),
+			expanded: document.querySelector('#os-success-trigger')?.getAttribute('aria-expanded'),
+		})`, nil)
+		require.NoError(t, stateErr)
+		require.NoErrorf(t, err, "Enter should commit the active option and return focus to the trigger: state=%v", state)
+	}
+
+	pageErrs, consoleErrs := errs()
+	assert.Empty(t, filterIgnorable(pageErrs), "unexpected page errors")
+	assert.Empty(t, filterIgnorable(consoleErrs), "unexpected console errors")
+}
+
 // TestSelectExternalDraftRestoration exercises the public DOM synchronization
 // contract: external code sets the hidden submission input and dispatches a
 // bubbling standard event. The visible value and live ARIA selection follow.

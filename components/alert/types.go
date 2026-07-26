@@ -128,62 +128,19 @@ func (cfg Config) iconBadgeClasses() string {
 
 // TitleClasses returns the title CSS classes
 func (cfg Config) titleClasses() string {
-	base := "text-sm font-semibold"
-
-	switch cfg.Tone {
-	case ToneInfo:
-		base += " text-info"
-	case ToneSuccess:
-		base += " text-success"
-	case ToneWarning:
-		base += " text-warning"
-	case ToneDanger:
-		base += " text-danger"
-	default:
-		base += " text-info"
-	}
-
-	return base
+	return "text-sm font-semibold " + statusTextClasses(cfg.Tone)
 }
 
 // LinkClasses returns the link CSS classes
 func (cfg Config) linkClasses() string {
-	base := "whitespace-nowrap ml-auto text-sm font-medium tracking-wide transition hover:opacity-75 text-center active:opacity-100"
-
-	switch cfg.Tone {
-	case ToneInfo:
-		base += " text-info"
-	case ToneSuccess:
-		base += " text-success"
-	case ToneWarning:
-		base += " text-warning"
-	case ToneDanger:
-		base += " text-danger"
-	default:
-		base += " text-info"
-	}
-
-	return base
+	base := "whitespace-nowrap ml-auto text-sm font-medium tracking-wide transition hover:contrast-125 text-center active:contrast-100"
+	return base + " " + statusTextClasses(cfg.Tone)
 }
 
 // PrimaryActionClasses returns the primary action button CSS classes
 func (cfg Config) primaryActionClasses() string {
-	base := "whitespace-nowrap text-center text-sm font-semibold tracking-wide transition hover:opacity-75 active:opacity-100"
-
-	switch cfg.Tone {
-	case ToneInfo:
-		base += " text-info"
-	case ToneSuccess:
-		base += " text-success"
-	case ToneWarning:
-		base += " text-warning"
-	case ToneDanger:
-		base += " text-danger"
-	default:
-		base += " text-info"
-	}
-
-	return base
+	base := "whitespace-nowrap text-center text-sm font-semibold tracking-wide transition hover:contrast-125 active:contrast-100"
+	return base + " " + statusTextClasses(cfg.Tone)
 }
 
 // ListClasses returns the list CSS classes
@@ -191,8 +148,21 @@ func (cfg Config) listClasses() string {
 	base := "mt-2 list-inside list-disc pl-2 text-xs font-medium sm:text-sm"
 
 	if cfg.Tone == ToneDanger {
-		base += " text-danger"
+		base += " text-danger-text dark:text-danger-text-dark"
 	}
 
 	return base
+}
+
+func statusTextClasses(tone Tone) string {
+	switch tone {
+	case ToneSuccess:
+		return "text-success-text dark:text-success-text-dark"
+	case ToneWarning:
+		return "text-warning-text dark:text-warning-text-dark"
+	case ToneDanger:
+		return "text-danger-text dark:text-danger-text-dark"
+	default:
+		return "text-info-text dark:text-info-text-dark"
+	}
 }

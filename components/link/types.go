@@ -176,7 +176,7 @@ func (cfg config) textClasses() string {
 }
 
 func (cfg config) buttonClasses() string {
-	return "whitespace-nowrap rounded-2xl border border-primary bg-primary text-on-primary font-medium tracking-wide text-center transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark " + cfg.buttonSizeClasses()
+	return "whitespace-nowrap rounded-2xl border border-primary bg-primary text-on-primary font-medium tracking-wide text-center transition hover:contrast-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:contrast-100 active:outline-offset-0 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark " + cfg.buttonSizeClasses()
 }
 
 func (cfg config) buttonSizeClasses() string {

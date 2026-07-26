@@ -127,6 +127,12 @@ Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
 
+Before implementing a consequential action, stale-data recovery, or
+interruptible workflow, read `references/adversarial-acceptance.md`. Copy its
+invariant ledger into the consumer repository and derive the HTTP and browser
+tests from every state/action row. A rendered state gallery or builder-authored
+happy-path harness is not sufficient evidence.
+
 Use `panel.Panel` for neutral full-width application regions and `card.Card`
 only for genuinely card-like content. For invalid forms, give controls stable
 IDs, set `FormErrorItem.TargetID` from `FieldGroupConfig.FocusTargetID()` after
@@ -190,6 +196,11 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
   reversal; stale or partial evidence must have an explicit action policy; and
   conflict/retry UI must not bypass idempotency or reapply a side effect. Test
   the recovery action itself with two stale tabs and a repeated final request.
+- Treat `references/adversarial-acceptance.md` as the executable contract for
+  those transitions. Test forged or hidden actions against server truth, real
+  transport failure, retained drafts, loading deduplication, final URL or
+  receipt identity, focus, and the exact side-effect count. No consequential
+  ledger row may remain untested.
 - Keep native constraint attributes (`required`, `min`, `max`, `pattern`) on
   app-owned native controls when the rule is known, while retaining identical
   server validation. Composite controls still require server validation.

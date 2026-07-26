@@ -2,6 +2,7 @@ package form
 
 import (
 	"fmt"
+	"maps"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -76,9 +77,10 @@ type FooterConfig struct {
 	CancelHTMX *CancelHTMXConfig
 	// SubmitDisabled is an Alpine.js expression for x-bind:disabled on submit
 	SubmitDisabled string
-	// Sticky keeps the footer at the bottom of its nearest scrolling ancestor
-	// while preserving its normal-flow footprint (default: false). The action
-	// surface is opaque, layered above content, and safe-area aware.
+	// Sticky keeps the compact single-row footer at the bottom of its nearest
+	// scrolling ancestor from the sm breakpoint upward (default: false). The
+	// stacked mobile footer remains in normal flow so it cannot cover fields.
+	// The action surface is opaque, layered above content, and safe-area aware.
 	Sticky bool
 }
 
@@ -94,7 +96,7 @@ type CancelHTMXConfig struct {
 func (c FooterConfig) footerClasses() string {
 	base := "flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 mt-6 pt-4 border-t border-outline dark:border-outline-dark"
 	if c.Sticky {
-		base += " sticky bottom-0 z-20 bg-surface dark:bg-surface-dark pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+		base += " sm:sticky sm:bottom-0 z-20 bg-surface dark:bg-surface-dark pb-[max(0.5rem,env(safe-area-inset-bottom))]"
 	}
 	return base
 }
@@ -499,9 +501,7 @@ func (c FieldGroupConfig) fileInputConfig() fileinput.Config {
 
 func cloneAttributes(existing templ.Attributes) templ.Attributes {
 	attrs := make(templ.Attributes, len(existing)+2)
-	for key, value := range existing {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, existing)
 	return attrs
 }
 
@@ -514,7 +514,7 @@ func joinTokens(values ...string) string {
 	seen := map[string]bool{}
 	result := make([]string, 0, len(values))
 	for _, value := range values {
-		for _, token := range strings.Fields(value) {
+		for token := range strings.FieldsSeq(value) {
 			if !seen[token] {
 				seen[token] = true
 				result = append(result, token)

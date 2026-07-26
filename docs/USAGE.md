@@ -204,7 +204,7 @@ inventing a page from isolated demos:
 | Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `badge`, `tabs`, `button` |
 | Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `form`, `alert`, `button` |
 
-The installable skill includes three progressive references:
+The installable skill includes four progressive references:
 
 - [design intelligence](../.agents/skills/using-goshtoso/references/design-intelligence.md)
   turns the task, operating context, register, archetype, identity, states,
@@ -213,6 +213,10 @@ The installable skill includes three progressive references:
 - [application patterns](../.agents/skills/using-goshtoso/references/application-patterns.md)
   defines anatomy, state matrices, responsive behavior, accessibility, app
   boundaries, and completion checks for all four patterns;
+- [adversarial acceptance](../.agents/skills/using-goshtoso/references/adversarial-acceptance.md)
+  turns consequential state/action rules into an invariant ledger whose rows
+  drive HTTP and browser tests, including denied transitions, retained drafts,
+  transport failure, final identity, focus, and side-effect counts;
 - [visual acceptance](../.agents/skills/using-goshtoso/references/visual-acceptance.md)
   requires 390 px and 1440 px, Goshtoso and Minimal, light and dark, keyboard,
   console, accessibility, and screenshot checks.

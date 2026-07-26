@@ -1,6 +1,7 @@
 package selectfield
 
 import (
+	"maps"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -128,7 +129,7 @@ func (cfg Config) selectClasses() string {
 
 // TriggerClasses returns CSS classes for the custom dropdown trigger button
 func (cfg Config) triggerClasses() string {
-	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
+	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:contrast-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:contrast-100"
 
 	if cfg.isEffectivelyDisabled() {
 		return base + " border-outline bg-surface-alt text-on-surface-muted opacity-50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted"
@@ -150,9 +151,9 @@ func (cfg Config) labelClasses() string {
 
 	switch cfg.State {
 	case StateError:
-		return "flex w-fit gap-1 pl-0.5 text-sm text-danger"
+		return "flex w-fit gap-1 pl-0.5 text-sm text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "flex w-fit gap-1 pl-0.5 text-sm text-success"
+		return "flex w-fit gap-1 pl-0.5 text-sm text-success-text dark:text-success-text-dark"
 	default:
 		return base
 	}
@@ -183,9 +184,7 @@ func (cfg Config) isEffectivelyDisabled() bool {
 
 func (cfg Config) triggerAttributes() templ.Attributes {
 	attrs := make(templ.Attributes, len(cfg.TriggerAttrs)+2)
-	for key, value := range cfg.TriggerAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, cfg.TriggerAttrs)
 	if cfg.HelperText != "" && cfg.ID != "" {
 		existing, _ := attrs["aria-describedby"].(string)
 		attrs["aria-describedby"] = mergeAttributeTokens(existing, cfg.ID+"-helper")
@@ -205,7 +204,7 @@ func mergeAttributeTokens(values ...string) string {
 	seen := map[string]bool{}
 	result := make([]string, 0, len(values))
 	for _, value := range values {
-		for _, token := range strings.Fields(value) {
+		for token := range strings.FieldsSeq(value) {
 			if !seen[token] {
 				seen[token] = true
 				result = append(result, token)
