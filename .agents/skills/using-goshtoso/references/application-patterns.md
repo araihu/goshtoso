@@ -9,10 +9,10 @@ use `visual-acceptance.md` before calling the result complete.
 
 | User task | Start here | Primary Goshtoso packages |
 |---|---|---|
-| Navigate an authenticated product | App Shell | `navbar`, `sidebar`, `breadcrumbs`, `search` |
-| Find and act on many resources | Operations List | `table`, `combobox`, `search`, `badge`, `button` |
-| Inspect and change one resource | Detail Workspace | `breadcrumbs`, `badge`, `tabs`, `dropdown`, `button` |
-| Complete a long or risky task | Multi-step Workflow | `steps`, `form`, inputs, `alert`, `button` |
+| Navigate an authenticated product | App Shell | `appshell`, `navbar`, `sidebar`, `search` |
+| Find and act on many resources | Operations List | `pageheader`, `toolbar`, `table`, `emptystate`, `skeleton` |
+| Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `badge`, `tabs`, `button` |
+| Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `form`, `alert`, `button` |
 
 For every pattern, model `loading`, `empty`, `error`, and `success` before
 polishing the happy path. Add permission-denied, stale, partial, and destructive
@@ -37,6 +37,12 @@ updates, and overlays. Feature pages own their content and local tools.
 5. Breadcrumbs and the page title live immediately above feature content.
 6. Drawers, search results, and toasts render outside the scroll region so
    clipping does not hide them.
+
+Start with `appshell.AppShell` for the frame. Supply `navbar.Navbar` or another
+header component, `sidebar.Sidebar` for desktop navigation, and the route's
+content as `Config.Content`. Its defaults include the skip link and one
+scrollable `main`; app code still owns the mobile navigation trigger and route
+state.
 
 ### HTMX contract
 
@@ -93,6 +99,12 @@ context. This is a work surface, not a dashboard gallery.
 4. Table owns sortable columns, rows, pagination or infinite loading.
 5. A state region replaces the result surface during loading, empty, or error
    states without moving the page tools.
+
+Use `pageheader.PageHeader` for identity and the primary action,
+`toolbar.Toolbar` for search/filter/action regions, `skeleton.Skeleton` while
+rows load, and `emptystate.EmptyState` when there is no data. These composition
+components provide strong layout and accessibility defaults while keeping
+queries, permissions, and domain language in the app.
 
 For rich status cells and predictable row navigation, use the public cell and
 link-mode types directly:

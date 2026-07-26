@@ -8,10 +8,12 @@ import (
 	"github.com/araihu/goshtoso/components/breadcrumbs"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
+	"github.com/araihu/goshtoso/components/emptystate"
 	"github.com/araihu/goshtoso/components/head"
-	"github.com/araihu/goshtoso/components/spinner"
+	"github.com/araihu/goshtoso/components/skeleton"
 	"github.com/araihu/goshtoso/components/steps"
 	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/components/toolbar"
 )
 
 templ layout(meta pageMeta) {
@@ -138,6 +140,7 @@ templ appShellPage(meta pageMeta, operations []operation) {
 					Tag:         "Pattern 02",
 					Title:       "Operations List",
 					Description: "Scan status, ownership, environment, and start time before opening a focused workspace.",
+					Body:        patternSignals("Page header + toolbar", "Skeleton, empty, error, success"),
 					Footer:      patternLink(routeURL("/operations", meta.Appearance), "Open operations"),
 					RootClass:   "app-pattern-card",
 				})
@@ -173,6 +176,14 @@ templ appShellPage(meta pageMeta, operations []operation) {
 	}
 }
 
+templ patternSignals(items ...string) {
+	<ul class="app-pattern-signals">
+		for _, item := range items {
+			<li>{ item }</li>
+		}
+	</ul>
+}
+
 templ patternLink(href string, label string) {
 	<a class="app-card-link" href={ templ.URL(href) }>{ label } <span aria-hidden="true">→</span></a>
 }
@@ -188,25 +199,31 @@ templ operationsPage(meta pageMeta, view operationsView) {
 				</div>
 				<a class="app-primary-link" href={ templ.URL(routeURL("/workflows/deploy", meta.Appearance)) }>New deployment</a>
 			</div>
-			<div class="state-toolbar" aria-label="Operations state matrix">
-				for _, state := range []viewState{stateLoading, stateEmpty, stateError, stateSuccess} {
-					@button.Button(
-						button.WithTone(buttonTone(state)),
-						button.WithSize(button.SizeSmall),
-						button.WithHTMX(&button.HTMXConfig{
-							Get:     routeURLWith("/operations", meta.Appearance, "state", string(state)),
-							Target:  "#operations-state",
-							Swap:    "outerHTML",
-							PushURL: true,
-						}),
-						button.WithLoadingText("Switching…"),
-					) {
-						{ operationStateLabel(state) }
-					}
-				}
-			</div>
+			@toolbar.Toolbar(toolbar.Config{
+				Label:     "Operations state matrix",
+				Actions:   operationsStateButtons(meta),
+				RootClass: "state-toolbar",
+			})
 			@operationsStatePanel(view)
 		</section>
+	}
+}
+
+templ operationsStateButtons(meta pageMeta) {
+	for _, state := range []viewState{stateLoading, stateEmpty, stateError, stateSuccess} {
+		@button.Button(
+			button.WithTone(buttonTone(state)),
+			button.WithSize(button.SizeSmall),
+			button.WithHTMX(&button.HTMXConfig{
+				Get:     routeURLWith("/operations", meta.Appearance, "state", string(state)),
+				Target:  "#operations-state",
+				Swap:    "outerHTML",
+				PushURL: true,
+			}),
+			button.WithLoadingText("Switching…"),
+		) {
+			{ operationStateLabel(state) }
+		}
 	}
 }
 
@@ -234,22 +251,25 @@ templ operationsStatePanel(view operationsView) {
 		switch view.State {
 			case stateLoading:
 				<div class="state-card">
-					@spinner.Spinner(spinner.Config{Tone: spinner.TonePrimary, Size: spinner.SizeLG})
 					<div>
 						<h2>Refreshing operations</h2>
 						<p>Loading ownership, health signals, and rollout progress.</p>
 					</div>
+					@skeleton.Skeleton(skeleton.Config{
+						Shape:     skeleton.ShapeRectangle,
+						Count:     3,
+						Label:     "Refreshing operations",
+						RootClass: "state-skeleton",
+						ItemClass: "state-skeleton-row",
+					})
 				</div>
 			case stateEmpty:
-				@alert.Alert(alert.Config{
+				@emptystate.EmptyState(emptystate.Config{
 					Title:       "No operations found",
 					Description: "The current operational queue is empty. Start a deployment or adjust the upstream filters.",
-					Tone:        alert.ToneInfo,
+					Action:      operationsEmptyActions(view.Appearance),
+					RootClass:   "state-empty",
 				})
-				<div class="state-actions">
-					<a class="app-primary-link" href={ templ.URL(routeURL("/workflows/deploy", view.Appearance)) }>Start a deployment</a>
-					<a href={ templ.URL(routeURLWith("/operations", view.Appearance, "state", "success")) }>Show all operations</a>
-				</div>
 			case stateError:
 				@alert.Alert(alert.Config{
 					Title:       "Operations unavailable",
@@ -278,6 +298,13 @@ templ operationsStatePanel(view operationsView) {
 				</div>
 		}
 	</section>
+}
+
+templ operationsEmptyActions(prefs appearance) {
+	<div class="state-actions">
+		<a class="app-primary-link" href={ templ.URL(routeURL("/workflows/deploy", prefs)) }>Start a deployment</a>
+		<a href={ templ.URL(routeURLWith("/operations", prefs, "state", "success")) }>Show all operations</a>
+	</div>
 }
 
 templ operationDetailPage(meta pageMeta, op operation) {

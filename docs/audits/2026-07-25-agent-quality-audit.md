@@ -270,10 +270,10 @@ não apenas arquivos presentes.
 | Visual acceptance reference | feito | matriz de viewport/tema/modo e checks automatizados testados |
 | Contrato de CSS embutido | feito | nove utilities safelisted e presentes em `assets/styles.css` |
 | Drift de temas/TOTVS/package | feito | 15 opções contra CSS, TOTVS removido e Dependencies → `head` |
-| Índice extraível com sete apps | feito | Wizard, complexity, components, states e source links testados |
+| Índice extraível com sete apps | feito | sequência editorial com imagens, Wizard, complexity, components, states e source links testados |
 | Quatro recipes canônicas | feito | `/docs/application-patterns` com previews, contratos 390/1440, source maps, SEO, busca e E2E |
 | Benchmark externo | em validação | módulo integrado; build/testes verdes e revisão visual do control plane aplicada; matriz final ainda pendente |
-| Componentes promovidos | pendente | APIs, demos, catálogo, skillgen e E2E |
+| Componentes promovidos | feito | AppShell, PageHeader, Toolbar, EmptyState, Skeleton e Card Body; APIs, demos, catálogo, skillgen e E2E completo |
 | Reavaliação final | pendente | novo score e comparação com 26/40 |
 
 ## Tarefas paralelas sob o control plane
@@ -286,7 +286,7 @@ regeneração, testes finais e autoria do resultado consolidado.
 |---|---|---|---|
 | Benchmark externo | `019f9b9b-334f-7430-a575-b5e926c7566c` | `examples/application-patterns` autocontido | integrado e revisado |
 | Recipes públicas | `019f9b9b-3351-7180-bba6-4ab77609fcb1` | `/docs/application-patterns`, preview, SEO e testes | integrado e revisado |
-| Kit de composição | `019f9b9b-3351-7180-bba6-4ad8292435a0` | AppShell, PageHeader, Toolbar, EmptyState, Skeleton e Card Body | em andamento |
+| Kit de composição | `019f9b9b-3351-7180-bba6-4ad8292435a0` | AppShell, PageHeader, Toolbar, EmptyState, Skeleton e Card Body | integrado e revisado |
 
 ## Snags já registrados
 
@@ -313,6 +313,10 @@ regeneração, testes finais e autoria do resultado consolidado.
   de DOM contratual; o E2E passou a escopar pelo preview, sem acoplar-se a uma
   estrutura privada. A tabela também precisou de largura mínima explícita para
   cumprir a promessa de rolagem horizontal em 390 px.
+- Após integrar o kit, a recipe e a demo AppShell colidiram no helper templ
+  privado `appShellCreateAction`. Os helpers da recipe receberam prefixo
+  `applicationPattern` e o build integrado ganhou uma regressão real que os
+  slices isolados não podiam detectar.
 
 ## Decisão de encerramento
 

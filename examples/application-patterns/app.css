@@ -317,6 +317,15 @@ html.dark {
 	max-width: none;
 }
 
+.app-pattern-signals {
+	display: grid;
+	gap: 0.35rem;
+	margin: 0;
+	padding-left: 1rem;
+	color: var(--app-muted);
+	font-size: 0.78rem;
+}
+
 .app-card-link {
 	display: inline-flex;
 	align-items: center;
@@ -433,6 +442,18 @@ html.dark {
 	align-items: center;
 	gap: 1rem;
 	margin-top: 1rem;
+}
+
+.state-empty {
+	background: var(--app-raised);
+}
+
+.state-skeleton {
+	min-width: min(100%, 36rem);
+}
+
+.state-skeleton-row {
+	height: 3.25rem;
 }
 
 .state-actions > a:not(.app-primary-link) {

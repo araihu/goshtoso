@@ -9,9 +9,9 @@ Slice: `AppShell`, `PageHeader`, `Toolbar`, `EmptyState`, `Skeleton`, and
 
 ### The audit was not present in the base branch
 
-The requested audit file did not exist in `origin/main` or in the committed
-coordinator branch. The evidence and approved candidate list were read from the
-uncommitted coordinator worktree at
+The requested audit file did not exist in `origin/main`, the isolated slice's
+base. The evidence and approved candidate list were read from the coordinator
+worktree at
 `/private/tmp/gs-agent-quality-improvements/docs/audits/2026-07-25-agent-quality-audit.md`.
 The critique in `/private/tmp/gs-agent-quality-audit/.impeccable/critique/` was
 also consulted to confirm the Sourceboard Card-body failure and the repeated
@@ -53,10 +53,10 @@ component API requirement.
 ### Count prose remains outside this slice
 
 The new inventory is 47 component pages and 79 renderable primitives. Existing
-count prose in `docs/USAGE.md` and migration history still says 42 and 74.
-Those files were explicitly excluded from this slice, so coordinated integration
-must update or remove volatile counts separately. Only the two generated
-component-reference files changed here.
+count prose in `README.md` and `docs/USAGE.md` still said 42 and 74. Those files
+were explicitly excluded from the isolated slice and were updated by the
+coordinator after integration. Migration and changelog counts remain unchanged
+because they document the earlier release surface.
 
 ### CSS generation downloaded its pinned binary
 
@@ -80,3 +80,11 @@ absolute link had no positioned shell ancestor, so its containing block could
 escape the root overflow boundary. A regression assertion and `relative` root
 default now keep the link hidden until focus while preserving the real skip
 target.
+
+### Integration exposed a private templ helper collision
+
+The isolated component demo and the independently built application recipe both
+used `appShellCreateAction` in the same Go package. Each slice compiled alone,
+but the integrated package did not. The coordinator prefixed every recipe-local
+AppShell helper with `applicationPattern`, regenerated templ output, and reran
+the merged-package tests.

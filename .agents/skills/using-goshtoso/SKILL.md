@@ -90,14 +90,14 @@ Kind identity, and rendered defaults.
 Do not invent the page around isolated components. Choose the closest task
 pattern and read `references/application-patterns.md` before composing it:
 
-- **App Shell** for persistent top navigation, sidebar, global search, and one
-  main scroll region.
-- **Operations List** for page tools, filters, Table, and loading, empty, error,
-  and success states.
-- **Detail Workspace** for identity, status, tabs, actions, and a secondary
-  detail rail.
-- **Multi-step Workflow** for Steps, Form, server validation, review, and safe
-  submission.
+- **App Shell** starts with `appshell.AppShell`, then supplies navigation,
+  sidebar, global search, and route content.
+- **Operations List** combines `pageheader.PageHeader`, `toolbar.Toolbar`,
+  `table.Table`, `skeleton.Skeleton`, and `emptystate.EmptyState`.
+- **Detail Workspace** combines `pageheader.PageHeader`, identity, status,
+  tabs, actions, and a secondary detail rail.
+- **Multi-step Workflow** combines `pageheader.PageHeader`, Steps, Form,
+  server validation, review, and safe submission.
 
 Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout

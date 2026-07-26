@@ -177,10 +177,10 @@ inventing a page from isolated demos:
 
 | Task | Pattern | Main packages |
 |---|---|---|
-| Persistent product navigation | App Shell | `navbar`, `sidebar`, `breadcrumbs`, `search` |
-| Search, filter, compare, act | Operations List | `table`, `combobox`, `search`, `badge`, `button` |
-| Inspect and change one resource | Detail Workspace | `breadcrumbs`, `badge`, `tabs`, `dropdown`, `button` |
-| Complete a long or risky task | Multi-step Workflow | `steps`, `form`, inputs, `alert`, `button` |
+| Persistent product navigation | App Shell | `appshell`, `navbar`, `sidebar`, `search` |
+| Search, filter, compare, act | Operations List | `pageheader`, `toolbar`, `table`, `emptystate`, `skeleton` |
+| Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `badge`, `tabs`, `button` |
+| Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `form`, `alert`, `button` |
 
 The installable skill includes two progressive references:
 
@@ -199,7 +199,7 @@ product decisions.
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The catalog has 42 component packages, 42 documentation pages, and 74 renderable primitives.
+The catalog has 47 component packages, 47 documentation pages, and 79 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -208,6 +208,7 @@ configuration previews, and API tables.
 |-----------|--------|-------------|
 | `accordion` | `components/accordion` | Collapsible sections with default, plain, and split appearances |
 | `alert` | `components/alert` | Dismissable alert banners with info, success, warning, and danger tones |
+| `appshell` | `components/appshell` | Application frame with skip link, persistent regions, and one scrollable main surface |
 | `avatar` | `components/avatar` | User avatar with image, initials fallback, status indicator |
 | `badge` | `components/badge` | Inline status badges with independent tone, appearance, and size dimensions |
 | `banner` | `components/banner` | Full-width notifications and consent dialogs as separate `Banner` and `CookieBanner` primitives |
@@ -221,12 +222,14 @@ configuration previews, and API tables.
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
 | `drawer` | `components/drawer` | Slide-over drawers for navigation and contextual panels |
 | `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |
+| `emptystate` | `components/emptystate` | Instructive empty surfaces with optional icon and next action |
 | `fileinput` | `components/fileinput` | File input controls with labels, helper text, and validation states |
 | `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
 | `kbd` | `components/kbd` | Semantic keyboard shortcut and user input hints |
 | `link` | `components/link` | Styled link primitives with external-link and navigation affordances |
 | `modal` | `components/modal` | General and confirmation dialogs as separate `Modal` and `AlertDialog` primitives; `Tone` belongs to `AlertDialog` |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
+| `pageheader` | `components/pageheader` | Page identity, breadcrumbs, description, and task-level actions |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
 | `palette` | `components/palette` | Color palette and swatch utilities for theme demos and pickers |
 | `radio` | `components/radio` | Radio inputs and groups with validation and semantic tones |
@@ -236,6 +239,7 @@ configuration previews, and API tables.
 | `search` | `components/search` | Search input and command-palette style result lists |
 | `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
+| `skeleton` | `components/skeleton` | Accessible loading placeholders for text, rectangles, and circles |
 | `spinner` | `components/spinner` | Loading spinner with independent size and tone dimensions |
 | `steps` | `components/steps` | Stepper/progress navigation for multi-step flows |
 | `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |
@@ -245,6 +249,7 @@ configuration previews, and API tables.
 | `textarea` | `components/textarea` | Multi-line text input with validation states |
 | `textinput` | `components/textinput` | Text input with types (text, email, password, number), validation |
 | `toast` | `components/toast` | Notifications as separate `Toast` and `MessageToast` primitives; sender and avatar content belongs to `MessageToast` |
+| `toolbar` | `components/toolbar` | Accessible search, filter, and action regions with responsive wrapping |
 | `toggle` | `components/toggle` | Toggle switch with semantic tones |
 | `tooltip` | `components/tooltip` | Hover tooltips with position options, rich content support |
 

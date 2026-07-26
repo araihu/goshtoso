@@ -65,3 +65,10 @@ The button attribute gap was closed in the consolidated branch with
 `button.WithAttrs(templ.Attributes)`. The workflow now exercises it with real
 Back and Continue submit actions, and the handler tests Back without validating
 the step being left. This converts the original snag into a public API contract.
+
+The consolidated benchmark also replaced its hand-built state toolbar, spinner,
+and empty alert with `toolbar.Toolbar`, `skeleton.Skeleton`, and
+`emptystate.EmptyState`, and exercises `card.Config.Body`. These APIs were
+promoted from repeated consumer composition after the original benchmark, so
+they are recorded as remediation rather than hidden in the initial source-dive
+measurement.

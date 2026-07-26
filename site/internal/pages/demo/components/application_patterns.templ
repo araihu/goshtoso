@@ -55,7 +55,7 @@ templ applicationPatternsContent() {
 			@applicationPatternIndexLink("04", "Multi-step Workflow", "#multi-step-workflow")
 		</nav>
 		<div class="divide-y divide-outline dark:divide-outline-dark">
-			@applicationPatternSection("01", "app-shell", "App Shell", "Give every task a stable place to start.", appShellPreview(), appShellContract())
+			@applicationPatternSection("01", "app-shell", "App Shell", "Give every task a stable place to start.", applicationPatternAppShellPreview(), applicationPatternAppShellContract())
 			@applicationPatternSection("02", "operations-list", "Operations List", "Help operators scan, narrow, select, and act without losing context.", operationsListPreview(), operationsListContract())
 			@applicationPatternSection("03", "detail-workspace", "Detail Workspace", "Keep identity, status, actions, and deeper context in one navigable workspace.", detailWorkspacePreview(), detailWorkspaceContract())
 			@applicationPatternSection("04", "multi-step-workflow", "Multi-step Workflow", "Make progress, validation, review, and recovery explicit.", multiStepWorkflowPreview(), multiStepWorkflowContract())
@@ -162,16 +162,16 @@ templ applicationPatternList(items []string) {
 	</ul>
 }
 
-templ appShellPreview() {
+templ applicationPatternAppShellPreview() {
 	<div id="app-shell-preview" class="bg-surface dark:bg-surface-dark">
 		@navbar.Navbar(navbar.Config{
-			Brand: appShellBrand(),
+			Brand: applicationPatternAppShellBrand(),
 			Links: []navbar.NavLink{
 				{Label: "Operations", Href: "#app-shell", Active: true},
 				{Label: "Runbooks", Href: "#app-shell"},
 			},
 			Actions: []navbar.ActionItem{
-				{Content: appShellCreateAction(), Position: navbar.ActionRight},
+				{Content: applicationPatternAppShellCreateAction(), Position: navbar.ActionRight},
 			},
 			User: &navbar.UserProfile{Name: "Sam Rivera", Email: "sam@example.com"},
 			UserMenu: []navbar.UserMenuItem{
@@ -216,9 +216,9 @@ templ appShellPreview() {
 					<section aria-labelledby="shell-priority-title">
 						<h4 id="shell-priority-title" class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Needs attention</h4>
 						<div class="mt-3 divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
-							@appShellTask("payments-api", "Ready for approval", badge.ToneWarning)
-							@appShellTask("identity-worker", "Deploying", badge.ToneInfo)
-							@appShellTask("docs-site", "Healthy", badge.ToneSuccess)
+							@applicationPatternAppShellTask("payments-api", "Ready for approval", badge.ToneWarning)
+							@applicationPatternAppShellTask("identity-worker", "Deploying", badge.ToneInfo)
+							@applicationPatternAppShellTask("docs-site", "Healthy", badge.ToneSuccess)
 						</div>
 					</section>
 					<aside class="border-t border-outline pt-5 dark:border-outline-dark lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" aria-label="App shell preview context">
@@ -232,17 +232,17 @@ templ appShellPreview() {
 	</div>
 }
 
-templ appShellBrand() {
+templ applicationPatternAppShellBrand() {
 	<span class="font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Northstar</span>
 }
 
-templ appShellCreateAction() {
+templ applicationPatternAppShellCreateAction() {
 	@button.Button(button.WithSize(button.SizeSmall), button.WithRootClass("hidden sm:inline-flex")) {
 		New change
 	}
 }
 
-templ appShellTask(name, state string, tone badge.Tone) {
+templ applicationPatternAppShellTask(name, state string, tone badge.Tone) {
 	<div class="flex items-center justify-between gap-3 py-3">
 		<div class="min-w-0">
 			<p class="truncate font-mono text-sm text-on-surface-strong dark:text-on-surface-dark-strong">{ name }</p>
@@ -536,7 +536,7 @@ templ multiStepWorkflowPreview() {
 	</div>
 }
 
-func appShellContract() applicationPatternContract {
+func applicationPatternAppShellContract() applicationPatternContract {
 	return applicationPatternContract{
 		Problem: "Repeated page chrome drifts quickly. The shell must own global navigation, responsive positioning, identity, and page framing while each route supplies only its task content.",
 		Components: []applicationPatternComponent{

@@ -36,10 +36,12 @@ The operations state matrix is available with `?state=loading`, `empty`,
 
 - `head.Dependencies` and `assets.Handler` provide local CSS, Alpine.js, HTMX,
   and component scripts.
-- `card`, `badge`, and `button` provide shell navigation, status controls, and
-  native multi-action form submits through `button.WithAttrs`.
+- `card`, `badge`, and `button` provide shell navigation, status controls,
+  arbitrary Card body content, and native multi-action form submits through
+  `button.WithAttrs`.
 - `table` provides the success-state operations list and full-row navigation.
-- `spinner` and `alert` represent loading, empty, and error outcomes.
+- `toolbar` groups the state controls; `skeleton`, `emptystate`, and `alert`
+  represent loading, empty, and error outcomes.
 - `breadcrumbs` structures the detail workspace.
 - `steps` represents workflow progress.
 

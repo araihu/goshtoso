@@ -97,9 +97,9 @@ func TestConsumerDocsPublishCurrentInventoryCounts(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			content := readDoc(t, path)
 			for _, count := range []string{
-				"42 component packages",
-				"42 documentation pages",
-				"74 renderable primitives",
+				"47 component packages",
+				"47 documentation pages",
+				"79 renderable primitives",
 			} {
 				if !strings.Contains(content, count) {
 					t.Errorf("%s missing current inventory count %q", path, count)

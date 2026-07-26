@@ -117,7 +117,7 @@ func applicationPatternsContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = applicationPatternSection("01", "app-shell", "App Shell", "Give every task a stable place to start.", appShellPreview(), appShellContract()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternSection("01", "app-shell", "App Shell", "Give every task a stable place to start.", applicationPatternAppShellPreview(), applicationPatternAppShellContract()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -547,7 +547,7 @@ func applicationPatternList(items []string) templ.Component {
 	})
 }
 
-func appShellPreview() templ.Component {
+func applicationPatternAppShellPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -573,13 +573,13 @@ func appShellPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = navbar.Navbar(navbar.Config{
-			Brand: appShellBrand(),
+			Brand: applicationPatternAppShellBrand(),
 			Links: []navbar.NavLink{
 				{Label: "Operations", Href: "#app-shell", Active: true},
 				{Label: "Runbooks", Href: "#app-shell"},
 			},
 			Actions: []navbar.ActionItem{
-				{Content: appShellCreateAction(), Position: navbar.ActionRight},
+				{Content: applicationPatternAppShellCreateAction(), Position: navbar.ActionRight},
 			},
 			User: &navbar.UserProfile{Name: "Sam Rivera", Email: "sam@example.com"},
 			UserMenu: []navbar.UserMenuItem{
@@ -630,15 +630,15 @@ func appShellPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = appShellTask("payments-api", "Ready for approval", badge.ToneWarning).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternAppShellTask("payments-api", "Ready for approval", badge.ToneWarning).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = appShellTask("identity-worker", "Deploying", badge.ToneInfo).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternAppShellTask("identity-worker", "Deploying", badge.ToneInfo).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = appShellTask("docs-site", "Healthy", badge.ToneSuccess).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternAppShellTask("docs-site", "Healthy", badge.ToneSuccess).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -650,7 +650,7 @@ func appShellPreview() templ.Component {
 	})
 }
 
-func appShellBrand() templ.Component {
+func applicationPatternAppShellBrand() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -679,7 +679,7 @@ func appShellBrand() templ.Component {
 	})
 }
 
-func appShellCreateAction() templ.Component {
+func applicationPatternAppShellCreateAction() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -726,7 +726,7 @@ func appShellCreateAction() templ.Component {
 	})
 }
 
-func appShellTask(name, state string, tone badge.Tone) templ.Component {
+func applicationPatternAppShellTask(name, state string, tone badge.Tone) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1383,7 +1383,7 @@ func multiStepWorkflowPreview() templ.Component {
 	})
 }
 
-func appShellContract() applicationPatternContract {
+func applicationPatternAppShellContract() applicationPatternContract {
 	return applicationPatternContract{
 		Problem: "Repeated page chrome drifts quickly. The shell must own global navigation, responsive positioning, identity, and page framing while each route supplies only its task content.",
 		Components: []applicationPatternComponent{
