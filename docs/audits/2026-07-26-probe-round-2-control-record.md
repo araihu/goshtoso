@@ -2,7 +2,7 @@
 
 Date: 2026-07-26
 
-Status: builds and dual assessment complete; remediation pending
+Status: complete — 37/40 PASS, zero P0/P1/P2
 
 This file is the durable control-plane and evidence record for a second blind
 consumer round. It intentionally tests whether the current public Goshtoso
@@ -658,3 +658,14 @@ Decision Queue, Interruption-safe Workflow and Content-first Review patterns
 are already published in `/docs/application-patterns`, while the new visual
 lessons are distilled into the public skill. This keeps the documentation
 focused on reusable contracts instead of preserving another large demo.
+
+The final independent gate found that the earlier in-app Browser keypress
+attempt had not proven the required keyboard path. A dedicated external
+Playwright-Go regression then completed the task using keyboard input only:
+Tab focused the skip link with visible focus, Enter activated `#main-content`,
+Tab traversed page/state/queue links to the textarea, typing entered a valid
+note, Tab and Shift+Tab proved form focus order, and Enter on the approve button
+rendered success and cleared the confirmed draft. The test passed in `1.418s`;
+its code and report live under
+`/tmp/goshtoso-probes/round2/confirmation-keyboard-e2e`. Port 18473 was closed
+after the run.
