@@ -2,7 +2,8 @@
 
 Date: 2026-07-26
 
-Status: builds complete; independent assessment pending
+Status: builds complete; Assessment A complete with degraded independence;
+detector assessment pending
 
 This file is the durable control-plane and evidence record for a second blind
 consumer round. It intentionally tests whether the current public Goshtoso
@@ -161,7 +162,8 @@ For every probe:
 | approvals | `/root/probe_approvals` | yes | done with concerns | 10 minutes | yes | evidence accepted |
 | receiving | `/root/probe_receiving` | yes | done with concerns | 10 minutes | yes | evidence accepted |
 | editorial | `/root/probe_editorial` | yes | done with concerns | 10 minutes | yes | evidence accepted |
-| design review A | `/root/probe_design_review` | yes | acknowledged and running | 12 minutes | no | pending |
+| design review A | `/root/probe_design_review` | yes | blocked: Browser backend unavailable | 12 minutes | yes | clean fallback accepted |
+| parent visual fallback | parent | n/a | complete before detector | n/a | n/a | evidence frozen |
 
 ### Control-plane snag: late persistence of Assessment A dispatch
 
@@ -262,3 +264,27 @@ Full external report at the time of synthesis:
 
 Full external report at the time of synthesis:
 `/tmp/goshtoso-probes/round2/receiving/PROBE_REPORT.md`.
+
+## Visual Assessment A
+
+The delegated reviewer correctly returned `BLOCKED` rather than fabricating
+browser evidence because its runtime had no Browser backend. It had already
+smoke-tested all three apps at HTTP 200, then stopped their servers and
+confirmed the ports closed. The parent performed a sequential fallback before
+running any deterministic detector. This degrades reviewer independence because
+the parent knew the builder reports, but preserves detector independence and
+provides real comparable browser evidence.
+
+The complete fallback report is
+`/tmp/goshtoso-probes/round2/design-review/PARENT_ASSESSMENT_A.md`.
+
+| App | Nielsen total | Direct evidence summary |
+|---|---:|---|
+| Ledgerline approvals | 34/40 | polished master-detail and complete request-information flow; one P2 internal horizontal overflow clips the dark error alert |
+| Dockline receiving | 37/40 | strongest task flow, safe defaults, review/submit and effective mobile sticky actions; P3 preview/progress polish only |
+| Larkspur editorial | 34/40 | distinct editorial voice and successful inline status workflow; one P2 nested mobile queue scroller |
+
+Across 1440x900 and 390x844, Goshtoso light and Minimal dark, the three apps had
+zero document-level horizontal overflow, one `h1`, one skip link, usable primary
+journeys, and no console errors or warnings. No P0 or P1 visual/usability issue
+was found. Assessment A did not use or claim axe/detector output.
