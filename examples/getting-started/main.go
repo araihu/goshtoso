@@ -171,7 +171,7 @@ func appMux() *http.ServeMux {
 		totalPages := max(1, (len(dogs)+perPage-1)/perPage)
 		pageRows := dogsToRows(dogs[:min(perPage, len(dogs))])
 
-		Page(table.Config{
+		if err := Page(table.Config{
 			ID:         "breeds",
 			HTMX:       &table.HTMXConfig{Endpoint: "/api/breeds"},
 			Columns:    columns(),
@@ -180,7 +180,9 @@ func appMux() *http.ServeMux {
 			SortDir:    table.SortAsc,
 			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: totalPages, PerPage: perPage},
 			Filters:    filters(),
-		}).Render(r.Context(), w)
+		}).Render(r.Context(), w); err != nil {
+			log.Printf("render page: %v", err)
+		}
 	})
 
 	// HTMX endpoint — returns filtered/sorted/paginated table rows
@@ -231,15 +233,27 @@ func appMux() *http.ServeMux {
 
 		// Render table rows
 		for _, row := range cfg.Rows {
-			table.TableRow(cfg, row).Render(r.Context(), w)
+			if err := table.TableRow(cfg, row).Render(r.Context(), w); err != nil {
+				log.Printf("render table row: %v", err)
+				return
+			}
 		}
 
 		// OOB: always update pagination controls so filtered one-page results
 		// clear any stale paginator from the previous unfiltered table state.
-		fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-gray-200 px-4 py-3">`, cfg.PaginationID())
-		fmt.Fprintf(w, `<div class="text-sm text-gray-500">Page %d of %d</div>`, page, totalPages)
-		table.TablePaginationNav(cfg).Render(r.Context(), w)
-		fmt.Fprintf(w, `</div>`)
+		if _, err := fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-gray-200 px-4 py-3">`, cfg.PaginationID()); err != nil {
+			return
+		}
+		if _, err := fmt.Fprintf(w, `<div class="text-sm text-gray-500">Page %d of %d</div>`, page, totalPages); err != nil {
+			return
+		}
+		if err := table.TablePaginationNav(cfg).Render(r.Context(), w); err != nil {
+			log.Printf("render pagination: %v", err)
+			return
+		}
+		if _, err := fmt.Fprint(w, `</div>`); err != nil {
+			return
+		}
 	})
 
 	return mux
