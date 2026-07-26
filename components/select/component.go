@@ -12,7 +12,9 @@ type Instance struct {
 	cfg Config
 }
 
-// Select returns a renderable select component.
+// Select returns a renderable select component. The hidden submission input
+// uses cfg.ID; external draft restoration can set that input's value and
+// dispatch a bubbling input or change event to synchronize the visible option.
 func Select(cfg Config) Instance {
 	return Instance{cfg: cfg}
 }

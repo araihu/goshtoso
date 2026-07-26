@@ -184,6 +184,7 @@ func TestRenderSelect_AlpineModelInitWatcher(t *testing.T) {
 
 	browserHTML := html.UnescapeString(out)
 	assert.Contains(t, browserHTML, "this.$watch('selectedOption'")
+	assert.Contains(t, browserHTML, "form.country = opt ? opt.value : ''")
 	assert.Contains(t, browserHTML, "form.country")
 }
 

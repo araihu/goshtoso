@@ -2,10 +2,63 @@ package selectfield
 
 import (
 	"html"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestSelect_RenderedARIAContract(t *testing.T) {
+	rendered := renderSelect(t, Config{
+		ID:    "choice",
+		Label: "Choice",
+		Options: []Option{
+			{Value: "a", Label: "A"},
+			{Value: "b", Label: "B", Selected: true},
+		},
+	}, nil)
+	browserHTML := html.UnescapeString(rendered)
+
+	assert.Contains(t, browserHTML, `id="choice-trigger"`)
+	assert.Contains(t, browserHTML, `aria-controls="choice-listbox"`)
+	assert.Contains(t, browserHTML, `<ul id="choice-listbox"`)
+	assert.Equal(t, 1, strings.Count(browserHTML, `role="listbox"`), "a listbox must not contain another listbox")
+	assert.Contains(t, browserHTML, `role="option"`)
+	assert.Contains(t, browserHTML, `x-bind:aria-selected="selectedOption && selectedOption.value === item.value"`)
+}
+
+func TestSelect_ShellRenderedARIAContract(t *testing.T) {
+	rendered := renderSelect(t, Config{
+		ID:        "custom-choice",
+		Label:     "Custom choice",
+		Shell:     true,
+		ValueExpr: "choice",
+	}, nil)
+	browserHTML := html.UnescapeString(rendered)
+
+	assert.Contains(t, browserHTML, `aria-controls="custom-choice-listbox"`)
+	assert.Contains(t, browserHTML, `id="custom-choice-listbox"`)
+	assert.Equal(t, 1, strings.Count(browserHTML, `role="listbox"`))
+}
+
+func TestSelect_RenderedKeyboardAndExternalSyncContract(t *testing.T) {
+	rendered := renderSelect(t, Config{
+		ID:      "choice",
+		Options: []Option{{Value: "a", Label: "A"}},
+	}, nil)
+	browserHTML := html.UnescapeString(rendered)
+
+	assert.Contains(t, browserHTML, `x-ref="trigger"`)
+	assert.Contains(t, browserHTML, `x-on:keydown.down.prevent="openFromTrigger(1)"`)
+	assert.Contains(t, browserHTML, `x-on:keydown.up.prevent="openFromTrigger(-1)"`)
+	assert.Contains(t, browserHTML, `x-on:keydown.down.prevent="moveActiveOption($el, 1)"`)
+	assert.Contains(t, browserHTML, `x-on:keydown.up.prevent="moveActiveOption($el, -1)"`)
+	assert.Contains(t, browserHTML, `x-on:input="if ($event.target === $refs.hiddenInput) syncFromInput($event.target.value)"`)
+	assert.Contains(t, browserHTML, `x-on:change="if ($event.target === $refs.hiddenInput) syncFromInput($event.target.value)"`)
+	assert.Contains(t, browserHTML, "openFromTrigger(direction)")
+	assert.Contains(t, browserHTML, "moveActiveOption(current, direction)")
+	assert.Contains(t, browserHTML, "syncFromInput(value)")
+}
 
 func TestSelectData_EscapesOptionAndPlaceholderStrings(t *testing.T) {
 	cfg := Config{

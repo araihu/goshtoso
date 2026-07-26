@@ -1351,7 +1351,7 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 | `RootClass` | `string` | RootClass allows additional CSS classes on the wrapper. |
 | `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
 | `Readonly` | `bool` | Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits |
-| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the hidden submission input. |
+| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the hidden submission input. To restore a draft from external JavaScript, set this input's value and dispatch a bubbling input or change event; Select synchronizes its visible value and live option state from either standard event. |
 | `TriggerAttrs` | `templ.Attributes` | TriggerAttrs appends non-conflicting HTML attributes to the focusable combobox trigger. Use it for ARIA relationships and event hooks. |
 | `Shell` | `bool` | Shell enables "shell mode": the Select renders its trigger + dropdown chrome but hosts arbitrary templ children as the dropdown body instead of an option list. Used to wrap custom pickers (e.g. a color palette). |
 | `TriggerLeading` | `templ.Component` | TriggerLeading is optional content rendered at the start of the trigger. |

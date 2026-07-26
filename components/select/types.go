@@ -80,6 +80,9 @@ type Config struct {
 	// Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits
 	Readonly bool
 	// InputAttrs allows arbitrary HTML attributes on the hidden submission input.
+	// To restore a draft from external JavaScript, set this input's value and
+	// dispatch a bubbling input or change event; Select synchronizes its visible
+	// value and live option state from either standard event.
 	InputAttrs templ.Attributes
 	// TriggerAttrs appends non-conflicting HTML attributes to the focusable
 	// combobox trigger. Use it for ARIA relationships and event hooks.
