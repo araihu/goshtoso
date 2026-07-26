@@ -30,7 +30,7 @@ func exampleSourceURL(source string) string {
 	return "https://github.com/araihu/goshtoso/blob/main/site/internal/pages/demo/examples/" + source
 }
 
-// exampleEntry is one extractable app in the editorial examples index.
+// exampleEntry is one runnable site demo in the editorial examples index.
 templ exampleEntry(index int, recipe exampleRecipe) {
 	<article data-example-recipe class="grid gap-6 border-t border-outline py-8 first:pt-0 dark:border-outline-dark md:grid-cols-[minmax(0,2fr)_minmax(18rem,3fr)] md:items-start md:gap-10">
 		<a href={ templ.SafeURL(recipe.Href) } hx-get={ recipe.Href } hx-target="#main-content" hx-push-url="true" class="group block overflow-hidden rounded-radius border border-outline bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-primary-dark">
@@ -57,7 +57,7 @@ templ exampleEntry(index int, recipe exampleRecipe) {
 			</dl>
 			<div class="mt-6 flex flex-wrap items-center gap-4 text-sm font-medium">
 				<a href={ templ.SafeURL(recipe.Href) } hx-get={ recipe.Href } hx-target="#main-content" hx-push-url="true" class="text-primary hover:underline dark:text-primary-dark">Run example</a>
-				<a href={ templ.SafeURL(exampleSourceURL(recipe.Source)) } target="_blank" rel="noopener" class="text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong">View source</a>
+				<a href={ templ.SafeURL(exampleSourceURL(recipe.Source)) } target="_blank" rel="noopener" class="text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong">View page template</a>
 			</div>
 		</div>
 	</article>
@@ -69,8 +69,13 @@ templ IndexContent() {
 		<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Application recipes</p>
 		<h1 class="mt-2 text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Examples</h1>
 		<p class="mt-2 max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">
-			Seven runnable apps ordered from bounded CRUD and workflows through richer operational and realtime surfaces. Every entry names its component inventory, state coverage, and source entrypoint.
+			Seven runnable demo-site apps ordered from bounded CRUD and workflows through richer operational and realtime surfaces. Every entry names its component inventory, state coverage, and page template; some also depend on server and domain packages inside the site module.
 		</p>
+		<section class="mt-8 border-y border-outline py-5 dark:border-outline-dark" aria-labelledby="standalone-recipe-title">
+			<h2 id="standalone-recipe-title" class="font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Need a standalone consumer recipe?</h2>
+			<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The application-patterns module contains its complete handlers, domain fixtures, templ views, CSS, tests, and module boundary. It imports only public Goshtoso packages; its README explains how to replace the in-repository development pin with a reviewed release after copying.</p>
+			<a href="https://github.com/araihu/goshtoso/tree/main/examples/application-patterns" target="_blank" rel="noopener" class="mt-3 inline-block text-sm font-medium text-primary underline underline-offset-2 dark:text-primary-dark">Open the standalone recipe</a>
+		</section>
 		<div class="mt-10">
 			for index, recipe := range exampleRecipes() {
 				@exampleEntry(index, recipe)

@@ -74,6 +74,9 @@
     --color-on-secondary: var(--color-white);
     --color-outline: var(--color-neutral-300);
     --color-outline-strong: var(--color-neutral-800);
+    /* Control boundaries stay perceivable even when a theme deliberately removes
+       passive structural outlines. */
+    --color-control-outline: var(--color-outline);
 
     /* Dark Theme */
     --color-surface-dark: var(--color-neutral-800);
@@ -87,6 +90,7 @@
     --color-on-secondary-dark: var(--color-black);
     --color-outline-dark: var(--color-neutral-700);
     --color-outline-dark-strong: var(--color-neutral-300);
+    --color-control-outline-dark: var(--color-outline-dark);
 
     /* Shared Colors */
     --color-info: var(--color-cyan-500);
@@ -97,6 +101,38 @@
     --color-on-warning: var(--color-black);
     --color-danger: var(--color-pink-500);
     --color-on-danger: var(--color-black);
+
+    /* Status colors carry tone in fills, borders, and icons. Text variants mix
+       a small amount of that tone into the theme's strongest readable
+       foreground so labels remain AA-safe on both surface levels. */
+    --color-info-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-info) 15%);
+    --color-success-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-success) 15%);
+    --color-warning-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-warning) 15%);
+    --color-danger-text: color-mix(in srgb, var(--color-on-surface-strong) 85%, var(--color-danger) 15%);
+    --color-info-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-info) 15%);
+    --color-success-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-success) 15%);
+    --color-warning-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-warning) 15%);
+    --color-danger-text-dark: color-mix(in srgb, var(--color-on-surface-dark-strong) 85%, var(--color-danger) 15%);
+
+    /* Filled status actions need a foreground/background pair, not a raw status
+       hue plus a guessed foreground. These stay close to the status hue while
+       inheriting the contrast direction of each theme surface. */
+    --color-info-action: color-mix(in srgb, var(--color-info) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-info-action: var(--color-surface);
+    --color-success-action: color-mix(in srgb, var(--color-success) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-success-action: var(--color-surface);
+    --color-warning-action: color-mix(in srgb, var(--color-warning) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-warning-action: var(--color-surface);
+    --color-danger-action: color-mix(in srgb, var(--color-danger) 60%, var(--color-on-surface-strong) 40%);
+    --color-on-danger-action: var(--color-surface);
+    --color-info-action-dark: color-mix(in srgb, var(--color-info) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-info-action-dark: var(--color-surface-dark);
+    --color-success-action-dark: color-mix(in srgb, var(--color-success) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-success-action-dark: var(--color-surface-dark);
+    --color-warning-action-dark: color-mix(in srgb, var(--color-warning) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-warning-action-dark: var(--color-surface-dark);
+    --color-danger-action-dark: color-mix(in srgb, var(--color-danger) 60%, var(--color-on-surface-dark-strong) 40%);
+    --color-on-danger-action-dark: var(--color-surface-dark);
 
     /* Border Radius */
     --radius-radius: var(--radius-xl);
@@ -154,6 +190,7 @@
         --color-on-secondary: var(--color-white);
         --color-outline: transparent;
         --color-outline-strong: var(--color-neutral-800);
+        --color-control-outline: var(--color-neutral-500);
         --color-surface-dark: var(--color-neutral-950);
         --color-surface-dark-alt: var(--color-neutral-800);
         /* neutral-400 is only 4.38:1 on the Minimal dark alt surface at 14px. */
@@ -165,6 +202,7 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-neutral-700);
         --color-outline-dark-strong: var(--color-neutral-300);
+        --color-control-outline-dark: var(--color-neutral-500);
         --color-info: var(--color-sky-500);
         --color-on-info: var(--color-white);
         --color-success: var(--color-green-300);
@@ -601,12 +639,13 @@
         --color-surface-alt: #eaf4fb;            /* yale-blue-50 */
         --color-on-surface: #3a4b5f;             /* blue-slate-700 */
         --color-on-surface-strong: #081d2b;      /* yale-blue-900 */
-        --color-primary: #2276aa;                /* yale-blue-600 */
+        --color-primary: #2172a3;                /* link-safe Yale blue */
         --color-on-primary: #ffffff;
         --color-secondary: #4b7d1c;              /* forest-moss-700 */
         --color-on-secondary: #ffffff;
         --color-outline: #c0cbd8;                /* blue-slate-200 */
         --color-outline-strong: #3a4b5f;         /* blue-slate-700 */
+        --color-control-outline: #7a8796;         /* 3.66:1 on the control surface */
         /* Dark */
         --color-surface-dark: #131920;           /* blue-slate-900 */
         --color-surface-dark-alt: #263847;       /* raised blue-slate */
@@ -618,6 +657,7 @@
         --color-on-secondary-dark: #131920;      /* blue-slate-900 */
         --color-outline-dark: #3a4b5f;           /* blue-slate-700 */
         --color-outline-dark-strong: #a0b1c5;    /* blue-slate-300 */
+        --color-control-outline-dark: #718397;    /* 4.54:1 on the dark control surface */
         /* Status */
         --color-info: #0f766e;                   /* teal */
         --color-on-info: #f5fcff;
@@ -830,6 +870,24 @@
 /* Font families (not theme-dependent) */
 @theme {
   --font-body: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Button loading labels work whether the request lives on the Button or on an
+   ancestor form. HTMX applies .htmx-request to the requesting element. */
+@layer components {
+  .goshtoso-loading-label {
+    display: none;
+  }
+
+  .htmx-request .goshtoso-loading-content,
+  .htmx-request.goshtoso-loading-content {
+    display: none;
+  }
+
+  .htmx-request .goshtoso-loading-label,
+  .htmx-request.goshtoso-loading-label {
+    display: inline;
+  }
 }
 
 /* ============================================

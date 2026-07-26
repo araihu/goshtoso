@@ -38,16 +38,16 @@ The operations state matrix is available with `?state=loading`, `empty`,
   and component scripts.
 - `appshell`, `navbar`, and `sidebar` provide the responsive frame, one skip
   link, desktop navigation, and the mobile drawer.
-- `pageheader`, `card`, `badge`, `link`, and `button` provide hierarchy,
-  status, native navigation, arbitrary Card body content, and multi-action
-  form submits through `button.WithAttrs`.
+- `pageheader`, `panel`, `card`, `badge`, `link`, and `button` provide hierarchy,
+  neutral full-width work surfaces, card-like overview content, status, native
+  navigation, and multi-action form submits through `button.WithAttrs`.
 - `table` provides the success-state operations list and full-row navigation.
 - `toolbar` groups the state controls; `skeleton`, `emptystate`, and `alert`
   represent loading, empty, and error outcomes.
 - `breadcrumbs` structures the detail workspace; `select` and `textinput`
   provide the workflow fields; `steps` represents workflow progress.
 
-The custom `app.css` is deliberately application-owned: its 398 lines define
+The custom `app.css` is deliberately application-owned: its 418 lines define
 Atlas-specific editorial layouts and branding while the public composition
 components own the shell, page hierarchy, navigation, links, and fields. The
 tests cap it at 500 lines; the pre-composition baseline was 728. It is embedded
@@ -58,7 +58,9 @@ storage is required.
 
 ## Commands
 
-Run all commands from this directory:
+Inside the Goshtoso repository, run all commands from this directory. The
+module's zero pseudo-version plus local `replace` deliberately verifies the
+unreleased candidate in `../..`:
 
 ```bash
 templ generate
@@ -79,3 +81,20 @@ Then open <http://localhost:3000>. The tests also prove that:
 - empty and error states include useful next actions;
 - unsupported HTTP methods return `405 Method Not Allowed`;
 - the module has no `github.com/araihu/goshtoso/site` import.
+
+## Copy into another repository
+
+After copying this directory, replace the repository-local development pin with
+a released Goshtoso version before running it:
+
+```bash
+go mod edit -dropreplace=github.com/araihu/goshtoso
+go get github.com/araihu/goshtoso@latest
+go mod tidy
+templ generate
+go test ./...
+```
+
+For reproducible applications, replace `@latest` with the exact reviewed
+release. The source reference is
+<https://github.com/araihu/goshtoso/tree/main/examples/application-patterns>.

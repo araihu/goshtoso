@@ -58,7 +58,7 @@ func TestTextInput_GoshtosoComponent(t *testing.T) {
 		classAttr, err := input.GetAttribute("class")
 		require.NoError(t, err)
 		require.Contains(t, classAttr, "rounded-radius")
-		require.Contains(t, classAttr, "border-outline")
+		require.Contains(t, classAttr, "border-control-outline")
 
 		t.Logf("Default input renders correctly")
 	})
@@ -87,7 +87,7 @@ func TestTextInput_GoshtosoComponent(t *testing.T) {
 		require.Equal(t, 1, count, "error label should have an SVG icon")
 
 		// Check helper text
-		helperText := page.Locator("small.text-danger")
+		helperText := page.Locator("small.text-danger-text")
 		count, err = helperText.Count()
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, count, 1, "should have error helper text")

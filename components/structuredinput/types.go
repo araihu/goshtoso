@@ -3,6 +3,8 @@ package structuredinput
 import (
 	"encoding/json"
 	"strconv"
+
+	"github.com/a-h/templ"
 )
 
 // ColumnType is the rendered control kind for a structured input column.
@@ -42,6 +44,8 @@ type Config struct {
 	AddActionLabel string
 	Disabled       bool
 	RootClass      string
+	// RootAttrs appends non-conflicting HTML attributes to the structured-input group.
+	RootAttrs templ.Attributes
 }
 
 // NormalizedColumns returns usable columns with stable defaults.

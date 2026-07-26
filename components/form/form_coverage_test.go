@@ -9,6 +9,7 @@ import (
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/fileinput"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
@@ -128,14 +129,14 @@ func TestCoverageFormFooter(t *testing.T) {
 		"Cancel",
 		`href="/back"`,
 		`x-bind:disabled="!valid"`,
-		"sticky bottom-0",
+		"sm:sticky sm:bottom-0",
 	)
 }
 
 func TestCoverageFormFooterNoSticky(t *testing.T) {
 	html := render(t, Form(Config{Footer: &FooterConfig{SubmitLabel: "Save"}}))
 	mustContain(t, html, "Save", `type="submit"`)
-	mustNotContain(t, html, "sticky bottom-0")
+	mustNotContain(t, html, "sm:sticky sm:bottom-0")
 	// no cancel label => no anchor
 	mustNotContain(t, html, "<a")
 }
@@ -288,9 +289,9 @@ func TestCoverageFieldGroupRequiredWithInput(t *testing.T) {
 		Input:    &textinput.Config{ID: "email", Name: "email"},
 	}))
 	mustContain(t, html,
-		`for="email"`,
+		`for="email-input"`,
 		"Email",
-		`class="text-danger dark:text-danger-dark">*`,
+		`class="text-danger-text dark:text-danger-text-dark">*`,
 		"is required",
 		"we never share it",
 	)
@@ -349,6 +350,7 @@ func TestCoverageFieldGroupBuiltinTypes(t *testing.T) {
 		want string
 	}{
 		{"combobox", FieldGroupConfig{Combobox: &combobox.Config{ID: "cb", Name: "cb"}}, `cb`},
+		{"select", FieldGroupConfig{Select: &selectfield.Config{ID: "sel", Name: "sel"}}, `sel-trigger`},
 		{"textarea", FieldGroupConfig{Textarea: &textarea.Config{ID: "ta", Name: "ta"}}, `<textarea`},
 		{"toggle", FieldGroupConfig{Toggle: &toggle.Config{ID: "tg", Label: "Tg"}}, `Tg`},
 		{"checkbox", FieldGroupConfig{Checkbox: &checkbox.Config{ID: "ck", Label: "Ck"}}, `Ck`},
@@ -478,7 +480,7 @@ func TestCoverageFooterClasses(t *testing.T) {
 		t.Fatalf("plain footer should not be sticky: %q", plain)
 	}
 	sticky := (FooterConfig{Sticky: true}).footerClasses()
-	if !strings.Contains(sticky, "sticky bottom-0") {
+	if !strings.Contains(sticky, "sm:sticky sm:bottom-0") {
 		t.Fatalf("sticky footer missing sticky class: %q", sticky)
 	}
 }

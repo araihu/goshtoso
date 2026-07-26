@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-48 component packages. Each is imported by its directory path; note the
+49 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -441,6 +441,7 @@ import "github.com/araihu/goshtoso/components/checkbox"  // package checkbox
 | `Animation` | `Animation` | Animation sets the animation style |
 | `HelperText` | `string` | HelperText adds helper text below the label |
 | `HelperTextID` | `string` | HelperTextID is the ID for the helper text element (for aria-describedby) |
+| `InputAttrs` | `templ.Attributes` | InputAttrs appends non-conflicting HTML attributes to the checkbox input. |
 | `Container` | `bool` | Container wraps the checkbox in a bordered container with label on the left |
 
 **GroupConfig**
@@ -497,6 +498,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `OptionsEndpoint` | `string` |  |
 | `ClearEndpoint` | `string` |  |
 | `RootClass` | `string` |  |
+| `TriggerAttrs` | `templ.Attributes` | TriggerAttrs appends non-conflicting HTML attributes to the combobox trigger. |
 | `Disabled` | `bool` |  |
 
 **Option**
@@ -672,21 +674,23 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `RootClass` | `string` | RootClass allows additional CSS classes on the form element. |
 | `HTMX` | `*HTMXConfig` | HTMX enables HTMX-based submission (alternative to native Action) |
 | `PreventEnterSubmit` | `*bool` | PreventEnterSubmit prevents Enter key from submitting the form. Default true — set to false to allow Enter submission. |
-| `Footer` | `*FooterConfig` | Footer renders Cancel + Submit buttons at the bottom. Nil = no footer (useful for modal forms where the modal provides buttons). |
+| `Footer` | `*FooterConfig` | Footer renders responsive Cancel + Submit actions at the bottom. Actions stack at full width on narrow screens and return to an inline row at sm. Nil = no footer (useful for modal forms where the modal provides buttons). |
 
 **FieldGroupConfig**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `ID` | `string` | ID is the field ID (used for label's "for" attribute) |
+| `ID` | `string` | ID preserves the historical field-wrapper ID used by CSS, HTMX, and OOB targets. Built-in controls derive a collision-free ID when their own ID is empty. Use FocusTargetID after construction or validation binding when an error summary needs the real focusable control ID. |
+| `RootID` | `string` | RootID overrides the wrapper ID used for HTMX targeting. When empty, FieldGroup preserves ID as the historical wrapper target or derives a wrapper from an explicitly identified built-in control. |
 | `Label` | `string` | Label is the field label text |
-| `Required` | `bool` | Required shows a red asterisk next to the label |
+| `Required` | `bool` | Required marks the field visually and exposes accessible required state. Native required validation is also enabled where the built-in control supports it; composite collection controls still require server validation. |
 | `Errors` | `[]string` | Errors are validation error messages displayed below the field |
 | `Hints` | `[]string` | Hints are helper text messages displayed below errors |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the wrapper. |
 | `Validation` | `*ValidationConfig` | Validation enables HTMX-based field validation |
 | `Input` | `*textinput.Config` | Built-in Goshtoso field types (mutually exclusive — first non-nil wins). If none are set, FieldGroup renders { children... } instead. |
 | `Combobox` | `*combobox.Config` |  |
+| `Select` | `*selectfield.Config` |  |
 | `Textarea` | `*textarea.Config` |  |
 | `Toggle` | `*toggle.Config` |  |
 | `Checkbox` | `*checkbox.Config` |  |
@@ -721,7 +725,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `CancelHref` | `string` | CancelHref is the cancel link URL (plain navigation) |
 | `CancelHTMX` | `*CancelHTMXConfig` | CancelHTMX enables HTMX-powered cancel (SPA navigation). Overrides CancelHref when set. |
 | `SubmitDisabled` | `string` | SubmitDisabled is an Alpine.js expression for x-bind:disabled on submit |
-| `Sticky` | `bool` | Sticky makes the footer stick to the bottom of the viewport while scrolling (default: false) |
+| `Sticky` | `bool` | Sticky keeps the compact single-row footer at the bottom of its nearest scrolling ancestor from the sm breakpoint upward (default: false). The stacked mobile footer remains in normal flow so it cannot cover fields. The action surface is opaque, layered above content, and safe-area aware. |
 
 **FormErrorItem**
 
@@ -729,6 +733,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 |-------|------|-------------|
 | `Path` | `string` | Path is an optional JSONPath or field name that anchors the error. |
 | `Message` | `string` | Message is the human-readable error text. |
+| `TargetID` | `string` | TargetID is the ID of the invalid focus target. When set, the summary renders a fragment link so keyboard and screen-reader users can return to it. For FieldGroup built-ins, use FieldGroupConfig.FocusTargetID(). |
 
 **FormErrorsConfig**
 
@@ -1055,6 +1060,38 @@ import "github.com/araihu/goshtoso/components/palette"  // package palette
 | `RootClass` | `string` | RootClass appends classes to the wrapper. |
 | `LazyWhen` | `string` | LazyWhen is an Alpine expression; when non-empty, the swatch grid is generated inside &lt;template x-if=...&gt; only when the expression is truthy (e.g. inside a Select dropdown, pass the dropdown's open expression). This keeps both the initial DOM and the initial HTML payload light. |
 
+## panel
+
+```go
+import "github.com/araihu/goshtoso/components/panel"  // package panel
+```
+
+**Entry points:** `Panel(cfg Config)`
+
+- **Appearance** — AppearanceOutlined = "", AppearanceSubtle = "subtle", AppearancePlain = "plain"
+- **Density** — DensityDefault = "", DensityCompact = "compact", DensityRelaxed = "relaxed"
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Appearance` | `Appearance` | Appearance controls background and border treatment. |
+| `Density` | `Density` | Density controls padding in header, body, and footer regions. |
+| `Header` | `templ.Component` | Header renders arbitrary heading or context content. |
+| `Actions` | `templ.Component` | Actions renders controls aligned opposite Header. |
+| `Body` | `templ.Component` | Body renders the primary content. When nil, Panel renders templ children. |
+| `Footer` | `templ.Component` | Footer renders supporting content or secondary actions below the body. |
+| `RootClass` | `string` | RootClass appends CSS classes to the neutral root div. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the neutral root div. |
+| `HeaderClass` | `string` | HeaderClass appends CSS classes to the header region. |
+| `HeaderAttrs` | `templ.Attributes` | HeaderAttrs appends arbitrary HTML attributes to the header region. |
+| `ActionsClass` | `string` | ActionsClass appends CSS classes to the actions region. |
+| `ActionsAttrs` | `templ.Attributes` | ActionsAttrs appends arbitrary HTML attributes to the actions region. |
+| `BodyClass` | `string` | BodyClass appends CSS classes to the body region. |
+| `BodyAttrs` | `templ.Attributes` | BodyAttrs appends arbitrary HTML attributes to the body region. |
+| `FooterClass` | `string` | FooterClass appends CSS classes to the footer region. |
+| `FooterAttrs` | `templ.Attributes` | FooterAttrs appends arbitrary HTML attributes to the footer region. |
+
 ## radio
 
 ```go
@@ -1308,12 +1345,14 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 | `Options` | `[]Option` | Options is the list of available options |
 | `State` | `State` | State is the validation state (error, success, or default) |
 | `HelperText` | `string` | HelperText is shown below the select (e.g., error or success message) |
+| `Required` | `bool` | Required exposes accessible required state on the composite trigger. Enforce selection in server validation because the submitted value is represented by a hidden text control. |
 | `Disabled` | `bool` | Disabled disables the select |
 | `Autocomplete` | `string` | Autocomplete sets the autocomplete attribute |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the wrapper. |
 | `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
 | `Readonly` | `bool` | Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits |
-| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the &lt;select&gt; element (e.g., hx-post, hx-indicator). |
+| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the hidden submission input. To restore a draft from external JavaScript, set this input's value and dispatch a bubbling input or change event; Select synchronizes its visible value and live option state from either standard event. |
+| `TriggerAttrs` | `templ.Attributes` | TriggerAttrs appends non-conflicting HTML attributes to the focusable combobox trigger. Use it for ARIA relationships and event hooks. |
 | `Shell` | `bool` | Shell enables "shell mode": the Select renders its trigger + dropdown chrome but hosts arbitrary templ children as the dropdown body instead of an option list. Used to wrap custom pickers (e.g. a color palette). |
 | `TriggerLeading` | `templ.Component` | TriggerLeading is optional content rendered at the start of the trigger. |
 | `ValueExpr` | `string` | ValueExpr is an Alpine expression (x-text) for the trigger's value text in shell mode. Resolves against the host page's x-data scope. |
@@ -1507,6 +1546,7 @@ import "github.com/araihu/goshtoso/components/structuredinput"  // package struc
 | `AddActionLabel` | `string` |  |
 | `Disabled` | `bool` |  |
 | `RootClass` | `string` |  |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends non-conflicting HTML attributes to the structured-input group. |
 
 **Option**
 
@@ -1720,6 +1760,7 @@ import "github.com/araihu/goshtoso/components/tagslist"  // package tagslist
 | `AddActionLabel` | `string` | AddActionLabel is the add button text (default: "Add") |
 | `Disabled` | `bool` | Disabled renders chips only (no remove buttons, no input row) |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the outer container. |
+| `InputAttrs` | `templ.Attributes` | InputAttrs appends non-conflicting HTML attributes to the add-tag input. |
 
 ## textarea
 

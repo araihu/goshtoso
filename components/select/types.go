@@ -1,6 +1,11 @@
 package selectfield
 
-import "github.com/a-h/templ"
+import (
+	"maps"
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // State represents the validation state of the select
 type State string
@@ -61,6 +66,10 @@ type Config struct {
 	State State
 	// HelperText is shown below the select (e.g., error or success message)
 	HelperText string
+	// Required exposes accessible required state on the composite trigger.
+	// Enforce selection in server validation because the submitted value is
+	// represented by a hidden text control.
+	Required bool
 	// Disabled disables the select
 	Disabled bool
 	// Autocomplete sets the autocomplete attribute
@@ -71,8 +80,14 @@ type Config struct {
 	Alpine *AlpineConfig
 	// Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits
 	Readonly bool
-	// InputAttrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator).
+	// InputAttrs allows arbitrary HTML attributes on the hidden submission input.
+	// To restore a draft from external JavaScript, set this input's value and
+	// dispatch a bubbling input or change event; Select synchronizes its visible
+	// value and live option state from either standard event.
 	InputAttrs templ.Attributes
+	// TriggerAttrs appends non-conflicting HTML attributes to the focusable
+	// combobox trigger. Use it for ARIA relationships and event hooks.
+	TriggerAttrs templ.Attributes
 	// Shell enables "shell mode": the Select renders its trigger + dropdown
 	// chrome but hosts arbitrary templ children as the dropdown body instead
 	// of an option list. Used to wrap custom pickers (e.g. a color palette).
@@ -114,7 +129,7 @@ func (cfg Config) selectClasses() string {
 
 // TriggerClasses returns CSS classes for the custom dropdown trigger button
 func (cfg Config) triggerClasses() string {
-	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
+	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:contrast-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:contrast-100"
 
 	if cfg.isEffectivelyDisabled() {
 		return base + " border-outline bg-surface-alt text-on-surface-muted opacity-50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted"
@@ -136,9 +151,9 @@ func (cfg Config) labelClasses() string {
 
 	switch cfg.State {
 	case StateError:
-		return "flex w-fit gap-1 pl-0.5 text-sm text-danger"
+		return "flex w-fit gap-1 pl-0.5 text-sm text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "flex w-fit gap-1 pl-0.5 text-sm text-success"
+		return "flex w-fit gap-1 pl-0.5 text-sm text-success-text dark:text-success-text-dark"
 	default:
 		return base
 	}
@@ -165,6 +180,38 @@ func (cfg Config) selectedValue() string {
 // IsEffectivelyDisabled returns true if the select should render as disabled (Disabled or Readonly)
 func (cfg Config) isEffectivelyDisabled() bool {
 	return cfg.Disabled || cfg.Readonly
+}
+
+func (cfg Config) triggerAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.TriggerAttrs)+2)
+	maps.Copy(attrs, cfg.TriggerAttrs)
+	if cfg.HelperText != "" && cfg.ID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeAttributeTokens(existing, cfg.ID+"-helper")
+	}
+	if cfg.State == StateError {
+		attrs["aria-invalid"] = "true"
+	}
+	if cfg.Required {
+		if _, exists := attrs["aria-required"]; !exists {
+			attrs["aria-required"] = "true"
+		}
+	}
+	return attrs
+}
+
+func mergeAttributeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for token := range strings.FieldsSeq(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
 }
 
 // shellData returns the slim Alpine x-data for shell mode: only open state,

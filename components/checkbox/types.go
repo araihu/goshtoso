@@ -1,5 +1,12 @@
 package checkbox
 
+import (
+	"maps"
+	"strings"
+
+	"github.com/a-h/templ"
+)
+
 // Tone represents checkbox color variants
 type Tone string
 
@@ -56,6 +63,8 @@ type Config struct {
 	HelperText string
 	// HelperTextID is the ID for the helper text element (for aria-describedby)
 	HelperTextID string
+	// InputAttrs appends non-conflicting HTML attributes to the checkbox input.
+	InputAttrs templ.Attributes
 	// Container wraps the checkbox in a bordered container with label on the left
 	Container bool
 }
@@ -66,6 +75,30 @@ type GroupConfig struct {
 	Title string
 	// Items are the checkboxes in the group
 	Items []Config
+}
+
+func (cfg Config) inputAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.InputAttrs)+1)
+	maps.Copy(attrs, cfg.InputAttrs)
+	if cfg.HelperText != "" && cfg.HelperTextID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeTokens(existing, cfg.HelperTextID)
+	}
+	return attrs
+}
+
+func mergeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for token := range strings.FieldsSeq(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
 }
 
 // iconPath returns the SVG path data for the configured icon

@@ -158,7 +158,9 @@ func WithAlpine(alpine *AlpineConfig) Option {
 	})
 }
 
-// WithLoadingText sets text shown during an HTMX request.
+// WithLoadingText sets text shown while this button or an ancestor HTMX form is
+// requesting. When the button owns the HTMX request it is disabled automatically;
+// ancestor forms should set hx-disabled-elt="find button[type='submit']".
 func WithLoadingText(text string) Option {
 	return optionFunc(func(cfg *config) {
 		cfg.loadingText = text
@@ -191,13 +193,13 @@ func toneClasses(tone Tone) string {
 	case ToneInverse:
 		return "bg-surface-dark text-on-surface-dark border-surface-dark dark:bg-surface dark:text-on-surface dark:border-surface"
 	case ToneInfo:
-		return "bg-info text-on-info border-info dark:bg-info-dark dark:text-on-info-dark dark:border-info-dark"
+		return "bg-info-action text-on-info-action border-info-action dark:bg-info-action-dark dark:text-on-info-action-dark dark:border-info-action-dark"
 	case ToneDanger:
-		return "bg-danger text-on-danger border-danger dark:bg-danger-dark dark:text-on-danger-dark dark:border-danger-dark"
+		return "bg-danger-action text-on-danger-action border-danger-action dark:bg-danger-action-dark dark:text-on-danger-action-dark dark:border-danger-action-dark"
 	case ToneWarning:
-		return "bg-warning text-on-warning border-warning dark:bg-warning-dark dark:text-on-warning-dark dark:border-warning-dark"
+		return "bg-warning-action text-on-warning-action border-warning-action dark:bg-warning-action-dark dark:text-on-warning-action-dark dark:border-warning-action-dark"
 	case ToneSuccess:
-		return "bg-success text-on-success border-success dark:bg-success-dark dark:text-on-success-dark dark:border-success-dark"
+		return "bg-success-action text-on-success-action border-success-action dark:bg-success-action-dark dark:text-on-success-action-dark dark:border-success-action-dark"
 	default:
 		return "bg-primary text-on-primary border-primary"
 	}
@@ -217,7 +219,26 @@ func sizeClasses(size Size) string {
 }
 
 func buttonClasses(cfg config) string {
-	base := "whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border"
-	outline := "focus-visible:outline-" + string(cfg.tone)
+	base := "min-h-11 min-w-11 whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:contrast-125 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:contrast-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border"
+	outline := focusOutlineClasses(cfg.tone)
 	return base + " " + toneClasses(cfg.tone) + " " + sizeClasses(cfg.size) + " " + outline + " " + cfg.rootClass
+}
+
+func focusOutlineClasses(tone Tone) string {
+	switch tone {
+	case ToneSecondary:
+		return "focus-visible:outline-secondary dark:focus-visible:outline-secondary-dark"
+	case ToneAlternate, ToneInverse:
+		return "focus-visible:outline-on-surface-strong dark:focus-visible:outline-on-surface-dark-strong"
+	case ToneInfo:
+		return "focus-visible:outline-info-action dark:focus-visible:outline-info-action-dark"
+	case ToneDanger:
+		return "focus-visible:outline-danger-action dark:focus-visible:outline-danger-action-dark"
+	case ToneWarning:
+		return "focus-visible:outline-warning-action dark:focus-visible:outline-warning-action-dark"
+	case ToneSuccess:
+		return "focus-visible:outline-success-action dark:focus-visible:outline-success-action-dark"
+	default:
+		return "focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
+	}
 }

@@ -60,6 +60,24 @@
   --font-body: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+/* Button loading labels work whether the request lives on the Button or on an
+   ancestor form. HTMX applies .htmx-request to the requesting element. */
+@layer components {
+  .goshtoso-loading-label {
+    display: none;
+  }
+
+  .htmx-request .goshtoso-loading-content,
+  .htmx-request.goshtoso-loading-content {
+    display: none;
+  }
+
+  .htmx-request .goshtoso-loading-label,
+  .htmx-request.goshtoso-loading-label {
+    display: inline;
+  }
+}
+
 /* ============================================
    BASE STYLES
    ============================================ */

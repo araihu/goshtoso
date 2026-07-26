@@ -1,6 +1,11 @@
 package fileinput
 
-import "github.com/a-h/templ"
+import (
+	"maps"
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // Appearance controls the visual treatment of the file input.
 type Appearance string
@@ -34,6 +39,30 @@ type Config struct {
 	RootClass string
 	// InputAttrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change).
 	InputAttrs templ.Attributes
+}
+
+func (cfg Config) inputAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.InputAttrs)+1)
+	maps.Copy(attrs, cfg.InputAttrs)
+	if cfg.HelperText != "" && cfg.ID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeAttributeTokens(existing, cfg.ID+"-helper")
+	}
+	return attrs
+}
+
+func mergeAttributeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for token := range strings.FieldsSeq(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
 }
 
 // ContainerClasses returns CSS classes for the outermost wrapper div
@@ -103,5 +132,5 @@ func (cfg Config) uploadButtonClasses() string {
 
 // HelperTextClasses returns classes for helper text below the field.
 func (cfg Config) helperTextClasses() string {
-	return "pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+	return "pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 }

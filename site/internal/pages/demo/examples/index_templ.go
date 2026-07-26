@@ -38,7 +38,7 @@ func exampleSourceURL(source string) string {
 	return "https://github.com/araihu/goshtoso/blob/main/site/internal/pages/demo/examples/" + source
 }
 
-// exampleEntry is one extractable app in the editorial examples index.
+// exampleEntry is one runnable site demo in the editorial examples index.
 func exampleEntry(index int, recipe exampleRecipe) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -255,7 +255,7 @@ func exampleEntry(index int, recipe exampleRecipe) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" target=\"_blank\" rel=\"noopener\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong\">View source</a></div></div></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" target=\"_blank\" rel=\"noopener\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong\">View page template</a></div></div></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -285,7 +285,7 @@ func IndexContent() templ.Component {
 			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"examples-fragment\" class=\"mx-auto max-w-7xl\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Application recipes</p><h1 class=\"mt-2 text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Examples</h1><p class=\"mt-2 max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Seven runnable apps ordered from bounded CRUD and workflows through richer operational and realtime surfaces. Every entry names its component inventory, state coverage, and source entrypoint.</p><div class=\"mt-10\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"examples-fragment\" class=\"mx-auto max-w-7xl\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Application recipes</p><h1 class=\"mt-2 text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Examples</h1><p class=\"mt-2 max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Seven runnable demo-site apps ordered from bounded CRUD and workflows through richer operational and realtime surfaces. Every entry names its component inventory, state coverage, and page template; some also depend on server and domain packages inside the site module.</p><section class=\"mt-8 border-y border-outline py-5 dark:border-outline-dark\" aria-labelledby=\"standalone-recipe-title\"><h2 id=\"standalone-recipe-title\" class=\"font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Need a standalone consumer recipe?</h2><p class=\"mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">The application-patterns module contains its complete handlers, domain fixtures, templ views, CSS, tests, and module boundary. It imports only public Goshtoso packages; its README explains how to replace the in-repository development pin with a reviewed release after copying.</p><a href=\"https://github.com/araihu/goshtoso/tree/main/examples/application-patterns\" target=\"_blank\" rel=\"noopener\" class=\"mt-3 inline-block text-sm font-medium text-primary underline underline-offset-2 dark:text-primary-dark\">Open the standalone recipe</a></section><div class=\"mt-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

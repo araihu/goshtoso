@@ -1,6 +1,6 @@
 ---
 name: using-goshtoso
-description: Use when integrating or updating Goshtoso in an external Go/templ application, including installing github.com/araihu/goshtoso, serving bundled assets, wiring head.Dependencies, importing components, choosing a Tailwind CSS strategy, or debugging missing Goshtoso styles, Alpine.js, HTMX, combobox behavior, or component config fields.
+description: Use when building, designing, redesigning, integrating, or updating an external Go/templ application with Goshtoso, including application shells, dashboards, operations lists, detail pages, settings, onboarding, workflows, public content, component selection, visual direction, state design, installing github.com/araihu/goshtoso, serving bundled assets, wiring head.Dependencies, Tailwind CSS strategy, or debugging Goshtoso styles, Alpine.js, HTMX, and component APIs.
 ---
 
 # Using Goshtoso
@@ -65,6 +65,15 @@ templ Layout() {
 and focus plugins, HTMX, and first-party component scripts such as
 `combobox.js`.
 
+If the consumer sets Content Security Policy, test the rendered application
+under that exact policy. The bundled standard Alpine runtime requires dynamic
+function evaluation, and Alpine/component state writes inline style
+attributes. A policy that allows only `script-src 'self'` can load every local
+file and still leave Alpine behavior dead. Allow the required local-runtime
+behavior (`'unsafe-eval'` for scripts and inline style mutation), or deliberately
+replace the default head/runtime wiring with a CSP-compatible stack and verify
+every Alpine-backed component. Do not weaken unrelated CSP directives.
+
 ## Rendering Components
 
 Import from `github.com/araihu/goshtoso/components/<name>` and call the exported
@@ -95,21 +104,41 @@ Kind identity, and rendered defaults.
 
 ## From First Component to Application
 
-Do not invent the page around isolated components. Choose the closest task
-pattern and read `references/application-patterns.md` before composing it:
+Do not invent the page around isolated components. For any build or redesign,
+read `references/design-intelligence.md` first. Write its compact surface brief,
+use the existing identity when present, route by the user's task archetype, and
+choose a deliberate visual direction before selecting components. Do not ask
+for an aesthetic preference when a reversible, context-backed choice is
+available.
+
+Then choose the closest task pattern and read
+`references/application-patterns.md` before composing it:
 
 - **App Shell** starts with `appshell.AppShell`, then supplies navigation,
   sidebar, global search, and route content.
 - **Operations List** combines `pageheader.PageHeader`, `toolbar.Toolbar`,
   `table.Table`, `skeleton.Skeleton`, and `emptystate.EmptyState`.
 - **Detail Workspace** combines `pageheader.PageHeader`, identity, status,
-  tabs, actions, and a secondary detail rail.
+  route-local views, actions, neutral panels, and a secondary detail rail.
 - **Multi-step Workflow** combines `pageheader.PageHeader`, Steps, Form,
   server validation, review, and safe submission.
 
 Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
+
+Before implementing a consequential action, stale-data recovery, or
+interruptible workflow, read `references/adversarial-acceptance.md`. Copy its
+invariant ledger into the consumer repository and derive the HTTP and browser
+tests from every state/action row. A rendered state gallery or builder-authored
+happy-path harness is not sufficient evidence.
+
+Use `panel.Panel` for neutral full-width application regions and `card.Card`
+only for genuinely card-like content. For invalid forms, give controls stable
+IDs, set `FormErrorItem.TargetID` from `FieldGroupConfig.FocusTargetID()` after
+validation binding, and let `FieldGroup` connect field errors, hints, and
+accessible required state to built-in controls. Composite values still need
+server validation.
 
 Before declaring the surface finished, apply
 `references/visual-acceptance.md`. It requires 390 px and 1440 px checks,
@@ -153,10 +182,52 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 - Alpine plugins must load before Alpine core. Avoid manual tags unless the app
   has a strong reason.
 - HTMX handlers should return rendered HTML fragments, not JSON.
+- `button.WithLoadingText` follows either a Button-owned request or an ancestor
+  HTMX form. For a form-owned mutation, add
+  `hx-disabled-elt="find button[type='submit']"` to the form so pending copy and
+  duplicate prevention are both real; hold the request in a browser test and
+  assert the label, disabled state, and final response.
 - HTMX does not swap 4xx/5xx responses by default. For expected validation or
   recovery fragments, either return a swappable 2xx response while preserving
   application status in a header, or deliberately opt in from
   `htmx:beforeSwap`. Do not let a correct server fragment fail silently.
+- Move focus after a fragment is settled, not merely swapped. Use
+  `htmx:afterSettle` to focus `[data-autofocus]`, `FormErrors`, or the next
+  task target only when the response deliberately marks one; filter and search
+  swaps must keep focus and caret in the initiating control. Never install a
+  global fallback that focuses the page title after every swap.
+- A queue/detail swap must leave one selected identity everywhere. After settle,
+  assert that the URL, rendered detail key, focused target, visual selected row,
+  and collection semantics (`aria-current` or `aria-selected`) all name the same
+  record. Prefer rerendering the collection from server truth; if the collection
+  stays outside the swap, update every one of those representations explicitly.
+- Render exactly one primary mobile navigation trigger. Navbar right actions can
+  create a Navbar mobile menu; do not place that hamburger beside a Sidebar
+  overlay trigger unless the two controls expose clearly different destinations.
+  Exercise Escape and assert the trigger name and `aria-expanded` after closing.
+  Keep the overlay viewport-owned (`fixed top-16 bottom-0`, adjusted to the real
+  header height), not `absolute top-full` inside a header child; after opening at
+  390 px, assert the panel intersects the viewport and has positive height.
+- Before implementing a consequential POST, write its allowed state-transition
+  table. Terminal decisions stay terminal unless the product explicitly models
+  reversal; stale or partial evidence must have an explicit action policy; and
+  conflict/retry UI must not bypass idempotency or reapply a side effect. Test
+  the recovery action itself with two stale tabs and a repeated final request.
+- Treat `references/adversarial-acceptance.md` as the executable contract for
+  those transitions. Test forged or hidden actions against server truth, real
+  transport failure, retained drafts, loading deduplication, final URL or
+  receipt identity, focus, and the exact side-effect count. No consequential
+  ledger row may remain untested.
+- Keep native constraint attributes (`required`, `min`, `max`, `pattern`) on
+  app-owned native controls when the rule is known, while retaining identical
+  server validation. Composite controls still require server validation.
+- Render recovery inside the application shell for unknown IDs and routes.
+  Preserve selected record, filters, theme, and color mode across error,
+  conflict, retry, and success links.
+- After PRG, Back/Forward must not present stale authoritative status from the
+  browser cache. Compare the restored revision/status with a fresh server read;
+  use `Cache-Control: no-store` for sensitive task pages or a `pageshow` refresh
+  when a persisted document cannot be trusted.
 - Use `link.Link(..., link.WithAppearance(link.AppearanceButton))` for GET
   navigation that should look like a button. Keep `button.Button` for form
   submission and mutations; visual appearance must not erase native semantics.

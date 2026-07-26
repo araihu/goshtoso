@@ -25,6 +25,7 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `.agents/skills/using-goshtoso/references/components-reference.md`
   - `.agents/skills/using-goshtoso/references/application-patterns.md`
   - `.agents/skills/using-goshtoso/references/visual-acceptance.md`
+  - `.agents/skills/using-goshtoso/references/adversarial-acceptance.md`
 - Update `VERSIONS.md` when the release uses a new Goshtoso tag or Tailwind
   version.
 - Review `README.md`, `docs/USAGE.md`, and `ROADMAP.md` for stale version,

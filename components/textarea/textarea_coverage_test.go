@@ -55,12 +55,32 @@ func TestCoverageRenderFullDefaultStateTextarea(t *testing.T) {
 		">hello</textarea>",
 		"<small",
 		"Optional helper",
-		"mt-4",               // RootClass routed through containerClasses
-		"text-on-surface/60", // default helperTextClasses branch
-		"border-outline",     // default textareaClasses branch
+		"mt-4",                   // RootClass routed through containerClasses
+		"text-on-surface-muted",  // default helperTextClasses branch
+		"border-control-outline", // default textareaClasses branch
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("full default render missing %q in %s", want, html)
+		}
+	}
+}
+
+func TestTextareaAssociatesHelperAndInvalidStateWithControl(t *testing.T) {
+	html := render(t, Textarea(Config{
+		ID:         "review-note",
+		Name:       "review_note",
+		State:      StateError,
+		HelperText: "Explain the decision",
+		InputAttrs: templ.Attributes{"aria-describedby": "review-policy"},
+	}))
+
+	for _, want := range []string{
+		`id="review-note-helper"`,
+		`aria-describedby="review-policy review-note-helper"`,
+		`aria-invalid="true"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("rendered textarea missing %q in %s", want, html)
 		}
 	}
 }
@@ -198,7 +218,7 @@ func TestCoverageLabelClasses(t *testing.T) {
 
 func TestCoverageHelperTextClasses(t *testing.T) {
 	cases := map[State]string{
-		StateDefault: "text-on-surface/60",
+		StateDefault: "text-on-surface-muted",
 		StateError:   "text-danger",
 		StateSuccess: "text-success",
 	}

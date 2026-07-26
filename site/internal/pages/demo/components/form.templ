@@ -4,6 +4,7 @@ import (
 	gocombobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/form"
 	"github.com/araihu/goshtoso/components/modal"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
@@ -53,6 +54,25 @@ templ formDemoContent() {
 			},
 			formValidationDemoPreview(),
 			formValidationDemoCode,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Responsive Sticky Footer",
+				Description: "Sticky form actions stack at narrow widths, keep long labels inside the viewport, use an opaque safe-area-aware surface, and retain their normal-flow footprint so the last control remains reachable.",
+			},
+			formResponsiveFooterPreview(),
+			`@form.Form(form.Config{
+    ID: "responsive-footer-form",
+    Footer: &form.FooterConfig{
+        Sticky:      true,
+        CancelLabel: "Save this handoff as a draft",
+        CancelHref:  "#",
+        SubmitLabel: "Review exact handoff details before submitting",
+    },
+}) {
+    // Fields and sections...
+}`,
 		)
 
 		@demo.DemoSection(
@@ -142,20 +162,24 @@ func validateDemoField(ctx validation.ValidationContext, name string, fg *form.F
     }
 }`
 
-var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, Toggle, etc. directly
+var formDemoCode = `// Built-in field types — set Input, Select, Combobox, Textarea, etc. directly.
+// FieldGroup.ID remains the wrapper/HTMX target; omit the nested ID to let
+// FieldGroup derive a unique focus target.
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "name", Label: "Name", Required: true,
-    Input: &textinput.Config{ID: "name", Name: "name"},
+    Input: &textinput.Config{Name: "name"},
 })
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "provider", Label: "Provider",
-    Combobox: &gocombobox.Config{ID: "provider", Name: "provider", Source: gocombobox.Source{Static: opts}},
+    Select: &selectfield.Config{Name: "provider", Options: providerOptions},
 })
 
-// Custom component — use { children... } for anything not built-in
-@form.FieldGroup(form.FieldGroupConfig{ID: "tags", Label: "Tags"}) {
-    @myCustomTagsInput(tags)  // any templ.Component
-}
+// Link a summary to the actual focus target without guessing suffixes.
+field := form.FieldGroupConfig{ID: "provider", Select: &selectfield.Config{Name: "provider"}}
+item := form.FormErrorItem{Message: "Choose a provider", TargetID: field.FocusTargetID()}
+
+// Custom component — use { children... } only when no built-in matches and
+// wire its label, required state, errors, and hints explicitly.
 
 // Flip Section — read-only front, editable back
 @form.FlipSection(form.FlipSectionConfig{
@@ -224,16 +248,14 @@ templ formCompletePreview() {
 					@form.FieldGroup(form.FieldGroupConfig{
 						ID:    "provider",
 						Label: "Provider",
-						Combobox: &gocombobox.Config{
-							ID:   "provider",
+						Select: &selectfield.Config{
 							Name: "provider",
-							Source: gocombobox.Source{Static: []gocombobox.Option{
+							Options: []selectfield.Option{
 								{Value: "aws", Label: "AWS"},
 								{Value: "azure", Label: "Azure"},
 								{Value: "gcp", Label: "GCP"},
-								{Value: "maas", Label: "MAAS"},
-							}},
-							Selected: []string{"maas"},
+								{Value: "maas", Label: "MAAS", Selected: true},
+							},
 						},
 					})
 					@form.FieldGroup(form.FieldGroupConfig{
@@ -246,19 +268,16 @@ templ formCompletePreview() {
 							Rows:        3,
 						},
 					})
-					<!-- Custom component via children (not a built-in type) -->
 					@form.FieldGroup(form.FieldGroupConfig{
 						ID:    "tags",
 						Label: "Environment Tags",
-						Hints: []string{"Custom component — any templ.Component works as children"},
-					}) {
-						@tagslist.TagsList(tagslist.Config{
-							ID:          "tags",
+						Hints: []string{"TagsList is a built-in FieldGroup control"},
+						TagsList: &tagslist.Config{
 							Name:        "tags",
 							Values:      []string{"production", "gpu"},
 							Placeholder: "Add a tag...",
-						})
-					}
+						},
+					})
 				}
 				<!-- Flip Section (read/edit pattern) -->
 				@form.FlipSection(form.FlipSectionConfig{
@@ -476,5 +495,40 @@ templ networkReadView() {
 			<span class="text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider">Service Subnet CIDR</span>
 			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">10.96.0.0/12</span>
 		</div>
+	</div>
+}
+
+templ formResponsiveFooterPreview() {
+	<div id="responsive-footer-preview" class="h-96 w-full overflow-y-auto rounded-radius border border-outline bg-surface px-4 dark:border-outline-dark dark:bg-surface-dark sm:px-6">
+		@form.Form(form.Config{
+			ID: "responsive-footer-form",
+			Footer: &form.FooterConfig{
+				Sticky:      true,
+				CancelLabel: "Save this handoff as a draft",
+				CancelHref:  "#",
+				SubmitLabel: "Review exact handoff details before submitting",
+			},
+		}) {
+			@form.Section(form.SectionConfig{Title: "Transfer context", Columns: "1"}) {
+				@form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-location",
+					Label: "Receiving location",
+					Input: &textinput.Config{Name: "location", Value: "Headwaters field station"},
+				})
+				@form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-owner",
+					Label: "Custody owner",
+					Input: &textinput.Config{Name: "owner", Value: "Ana Rivera"},
+				})
+			}
+			@form.Section(form.SectionConfig{Title: "Final check", Columns: "1"}) {
+				@form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-last-control",
+					Label: "Handoff note",
+					Hints: []string{"This remains fully reachable above the sticky actions."},
+					Input: &textinput.Config{Name: "handoff_note", Value: "Seal checked at the receiving bench"},
+				})
+			}
+		}
 	</div>
 }

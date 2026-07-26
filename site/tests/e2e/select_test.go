@@ -29,7 +29,7 @@ func TestSelect_DefaultRendering(t *testing.T) {
 
 	t.Run("Default_Select_Has_Label_And_Options", func(t *testing.T) {
 		// Check label exists
-		label := page.Locator("label[for='os']")
+		label := page.Locator("label[for='os-trigger']")
 		labelText, err := label.TextContent()
 		require.NoError(t, err)
 		assert.Contains(t, labelText, "Operating System")
@@ -96,7 +96,7 @@ func TestSelect_ValidationStates(t *testing.T) {
 	})
 
 	t.Run("Error_State_Has_Helper_Text", func(t *testing.T) {
-		helperText := page.Locator("label[for='os-error'] ~ div + small")
+		helperText := page.Locator("#os-error-helper")
 		text, err := helperText.TextContent()
 		require.NoError(t, err)
 		assert.Contains(t, text, "Error: Please select an operating system")
@@ -105,7 +105,7 @@ func TestSelect_ValidationStates(t *testing.T) {
 	})
 
 	t.Run("Error_State_Label_Has_Icon", func(t *testing.T) {
-		label := page.Locator("label[for='os-error']")
+		label := page.Locator("label[for='os-error-trigger']")
 		svg := label.Locator("svg")
 		count, err := svg.Count()
 		require.NoError(t, err)

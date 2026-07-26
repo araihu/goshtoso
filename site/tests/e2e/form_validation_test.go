@@ -90,25 +90,36 @@ func TestFormValidation_SubmitEmpty(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	navigateToFormValidation(t, page)
 
-	// Submit without filling any fields
+	// Bypass native constraint validation so this test exercises the server's
+	// invalid-submit response rather than the browser's required-field popover.
+	_, err := page.Locator("#demo-validation").Evaluate("form => { form.noValidate = true; }", nil)
+	require.NoError(t, err)
+
+	// Submit without filling any fields.
 	require.NoError(t, page.Locator("#demo-validation button[type='submit']").Click())
 	time.Sleep(800 * time.Millisecond)
 
 	// Check for error messages on all 3 required fields
-	nameErrors := page.Locator("#goshtoso-field-name > .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text")
 	nameErrCount, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, nameErrCount, 1, "name field should have error messages")
 
-	slugErrors := page.Locator("#goshtoso-field-slug > .text-danger")
+	slugErrors := page.Locator("#goshtoso-field-slug [id$='-errors'] .text-danger-text")
 	slugErrCount, err := slugErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, slugErrCount, 1, "slug field should have error messages")
 
-	emailErrors := page.Locator("#goshtoso-field-email > .text-danger")
+	emailErrors := page.Locator("#goshtoso-field-email [id$='-errors'] .text-danger-text")
 	emailErrCount, err := emailErrors.Count()
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, emailErrCount, 1, "email field should have error messages")
+
+	for _, fieldName := range []string{"name", "slug", "email"} {
+		control := page.Locator("input[name='" + fieldName + "']")
+		assert.Equal(t, "true", mustAttribute(t, control, "aria-invalid"))
+		assert.Contains(t, mustAttribute(t, control, "aria-describedby"), "-errors")
+	}
 }
 
 func TestFormValidation_SubmitValid(t *testing.T) {
@@ -175,7 +186,7 @@ func TestFormValidation_FieldChange_NameValid(t *testing.T) {
 	assert.Contains(t, classes, "border-success", "name input should have border-success class")
 
 	// Check no error text in name field
-	nameErrors := page.Locator("#goshtoso-field-name > .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text")
 	count, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, count, "name field should have no error messages")
@@ -281,7 +292,7 @@ func TestFormValidation_ErrorClearing(t *testing.T) {
 	assert.NotContains(t, classes, "border-danger", "name input should not have border-danger after correction")
 
 	// No error messages
-	nameErrors := page.Locator("#goshtoso-field-name > .text-danger")
+	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text")
 	count, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, count, "name field should have no error messages after correction")

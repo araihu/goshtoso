@@ -33,23 +33,39 @@ func TestButtonLoadingTextRendersAsText(t *testing.T) {
 	}
 }
 
-func TestButtonLoadingTextIgnoredWithoutHTMX(t *testing.T) {
+func TestButtonLoadingTextSupportsAncestorHTMXForm(t *testing.T) {
 	html := renderButton(t, "Save", WithLoadingText("Saving..."))
 
-	if strings.Contains(html, "Saving...") {
-		t.Fatalf("LoadingText rendered without HTMX config:\n%s", html)
-	}
-	if !strings.Contains(html, "Save") {
-		t.Fatalf("button child content missing:\n%s", html)
+	for _, want := range []string{
+		`data-goshtoso-loading`,
+		`class="goshtoso-loading-content"`,
+		`class="goshtoso-loading-label"`,
+		`>Saving...<`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("loading contract missing %q:\n%s", want, html)
+		}
 	}
 }
 
 func TestButtonNilIntegrationOptionsKeepHTMXAndAlpineDisabled(t *testing.T) {
 	html := renderButton(t, "Save", WithHTMX(nil), WithAlpine(nil), WithLoadingText("Saving..."))
 
-	for _, unwanted := range []string{"Saving...", "hx-", "x-data", "x-on:"} {
+	for _, unwanted := range []string{"hx-", "x-data", "x-on:"} {
 		if strings.Contains(html, unwanted) {
 			t.Fatalf("nil integration options rendered %q:\n%s", unwanted, html)
+		}
+	}
+	if !strings.Contains(html, "Saving...") {
+		t.Fatalf("loading text should support an ancestor HTMX form:\n%s", html)
+	}
+}
+
+func TestButtonDefaultsToTouchSafeTarget(t *testing.T) {
+	for _, size := range []Size{SizeSmall, SizeMedium, SizeLarge, SizeXLarge} {
+		classes := buttonClasses(newConfig([]Option{WithSize(size)}))
+		if !strings.Contains(classes, "min-h-11") || !strings.Contains(classes, "min-w-11") {
+			t.Fatalf("button size %q lacks a 44px minimum target: %s", size, classes)
 		}
 	}
 }
@@ -70,14 +86,25 @@ func TestButtonOptionsApplyOverDefaults(t *testing.T) {
 	if !strings.Contains(html, `id="delete"`) {
 		t.Fatalf("button option did not set ID:\n%s", html)
 	}
-	if !strings.Contains(html, "bg-danger") {
+	if !strings.Contains(html, "bg-danger-action") {
 		t.Fatalf("button option did not set danger tone:\n%s", html)
+	}
+	if strings.Contains(html, "danger-dark") {
+		t.Fatalf("button must not depend on undefined status-dark tokens:\n%s", html)
 	}
 	if !strings.Contains(html, "text-xs") {
 		t.Fatalf("button option did not set small size:\n%s", html)
 	}
 	if !strings.Contains(html, `type="button"`) {
 		t.Fatalf("button default type is not button:\n%s", html)
+	}
+}
+
+func TestButtonHoverDoesNotReduceWholeControlOpacity(t *testing.T) {
+	html := renderButton(t, "Save")
+
+	if strings.Contains(html, "hover:opacity-75") {
+		t.Fatalf("button hover must not blend text and background toward the page surface:\n%s", html)
 	}
 }
 

@@ -44,13 +44,58 @@ func TestTextarea_GoshtosoComponent(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, classAttr, "w-full")
 		assert.Contains(t, classAttr, "rounded-radius")
-		assert.Contains(t, classAttr, "border-outline")
+		assert.Contains(t, classAttr, "border-control-outline")
 
 		placeholder, err := ta.GetAttribute("placeholder")
 		require.NoError(t, err)
 		assert.Equal(t, "We'd love to hear from you...", placeholder)
 
 		t.Log("✓ Default textarea renders with correct classes and placeholder")
+	})
+
+	t.Run("Minimal_Light_Textarea_Has_A_Visible_Boundary", func(t *testing.T) {
+		contrast, err := page.Locator("textarea#demo-default").Evaluate(`element => {
+			document.documentElement.dataset.theme = 'minimal'
+			document.documentElement.classList.remove('dark')
+			const canvas = document.createElement('canvas')
+			canvas.width = 1
+			canvas.height = 1
+			const ctx = canvas.getContext('2d', { willReadFrequently: true })
+			const pixel = color => {
+				ctx.clearRect(0, 0, 1, 1)
+				ctx.fillStyle = color
+				ctx.fillRect(0, 0, 1, 1)
+				return [...ctx.getImageData(0, 0, 1, 1).data]
+			}
+			const luminance = rgb => {
+				const linear = rgb.map(value => {
+					const channel = value / 255
+					return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4)
+				})
+				return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+			}
+			const style = getComputedStyle(element)
+			const surfacePixel = pixel(style.backgroundColor)
+			const borderPixel = pixel(style.borderTopColor)
+			const alpha = borderPixel[3] / 255
+			const renderedBorder = borderPixel.slice(0, 3).map((channel, index) =>
+				channel * alpha + surfacePixel[index] * (1 - alpha)
+			)
+			const border = luminance(renderedBorder)
+			const surface = luminance(surfacePixel.slice(0, 3))
+			return (Math.max(border, surface) + 0.05) / (Math.min(border, surface) + 0.05)
+		}`, nil)
+		require.NoError(t, err)
+		var ratio float64
+		switch value := contrast.(type) {
+		case float64:
+			ratio = value
+		case int:
+			ratio = float64(value)
+		default:
+			require.Failf(t, "unexpected contrast ratio", "%T", contrast)
+		}
+		require.GreaterOrEqual(t, ratio, 3.0, "Minimal light control boundary must meet WCAG non-text contrast")
 	})
 
 	t.Run("Default_Textarea_Has_Label", func(t *testing.T) {

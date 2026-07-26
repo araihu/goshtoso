@@ -44,6 +44,9 @@ func TestLinkButtonStyle(t *testing.T) {
 	if !strings.Contains(html, "bg-primary") || !strings.Contains(html, "text-base") {
 		t.Fatalf("expected button classes: %s", html)
 	}
+	if strings.Contains(html, "hover:opacity-75") {
+		t.Fatalf("button-like link hover must not reduce whole-control opacity: %s", html)
+	}
 }
 
 func TestLinkButtonAppearanceDefaultsToMediumSize(t *testing.T) {

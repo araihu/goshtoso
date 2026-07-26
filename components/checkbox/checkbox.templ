@@ -47,31 +47,22 @@ templ checkboxWithContainer(cfg Config) {
 // checkboxInput renders the actual input + SVG icon
 templ checkboxInput(cfg Config) {
 	<span class="relative flex items-center">
-		if cfg.HelperText != "" {
-			if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } aria-describedby={ cfg.HelperTextID } checked/>
-			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } aria-describedby={ cfg.HelperTextID } disabled/>
-			} else {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } aria-describedby={ cfg.HelperTextID }/>
+		<input
+			id={ cfg.ID }
+			type="checkbox"
+			class={ cfg.inputClasses() }
+			if cfg.Value != "" {
+				name={ cfg.Name }
+				value={ cfg.Value }
 			}
-		} else if cfg.Value != "" {
 			if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } name={ cfg.Name } value={ cfg.Value } checked/>
-			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } name={ cfg.Name } value={ cfg.Value } disabled/>
-			} else {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } name={ cfg.Name } value={ cfg.Value }/>
+				checked
 			}
-		} else {
-			if cfg.Checked {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } checked/>
-			} else if cfg.Disabled {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() } disabled/>
-			} else {
-				<input id={ cfg.ID } type="checkbox" class={ cfg.inputClasses() }/>
+			if cfg.Disabled {
+				disabled
 			}
-		}
+			{ cfg.inputAttributes()... }
+		/>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class={ cfg.svgClasses() }>
 			<path stroke-linecap="round" stroke-linejoin="round" d={ cfg.iconPath() }/>
 		</svg>

@@ -5,14 +5,18 @@ renders correctly. It turns component choices into four common product
 surfaces. Start with the closest pattern, keep domain decisions in the app, and
 use `visual-acceptance.md` before calling the result complete.
 
+For dashboards, settings, onboarding, content/marketing, or an ambiguous brief,
+start with `design-intelligence.md`. It routes those archetypes into the task
+patterns below without inventing category widgets or an aesthetic preset.
+
 ## Choose a pattern
 
 | User task | Start here | Primary Goshtoso packages |
 |---|---|---|
 | Navigate an authenticated product | App Shell | `appshell`, `navbar`, `sidebar`, `search` |
-| Find and act on many resources | Operations List | `pageheader`, `toolbar`, `table`, `emptystate`, `skeleton` |
-| Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `badge`, `tabs`, `button` |
-| Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `form`, `alert`, `button` |
+| Find and act on many resources | Operations List | `pageheader`, `toolbar`, `panel`, `table`, `emptystate`, `skeleton` |
+| Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `panel`, `badge`, `tabs`, `button` |
+| Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `panel`, `form`, `alert`, `button` |
 
 For every pattern, model `loading`, `empty`, `error`, and `success` before
 polishing the happy path. Add permission-denied, stale, partial, and destructive
@@ -64,7 +68,9 @@ skip navigation.
 ### Responsive contract
 
 - At 390 px, keep the top bar visible, place the sidebar in a drawer below it,
-  and preserve a full-width content column.
+  and preserve a full-width content column. Use viewport-owned geometry such as
+  `fixed top-16 bottom-0`, adjusted to the actual top-bar height; `absolute
+  top-full` inside a header child can open the panel below the viewport.
 - At 1440 px, keep the sidebar visible and fixed-width while the content region
   receives the remaining width.
 - The shell owns responsive positioning. The sidebar component owns its
@@ -75,6 +81,11 @@ skip navigation.
 - Label the primary navigation and every icon-only action.
 - Keep the active route structural with `aria-current="page"`.
 - Open mobile navigation with a real button and return focus to its trigger.
+- Give the shell one primary mobile navigation trigger. A Navbar right action
+  may create a second Navbar menu; do not place it beside a Sidebar overlay
+  hamburger unless their names and destinations are intentionally distinct.
+- Escape closes every mobile navigation surface, restores a truthful trigger
+  name, and leaves `aria-expanded="false"`.
 - Global search must work with keyboard navigation and Escape.
 
 ### What stays application-specific
@@ -88,6 +99,9 @@ domain, account actions, telemetry, and persistence policy.
 - Browser back/forward restores URL, title, focus, and a usable state.
 - Only one vertical content region scrolls at desktop width.
 - The mobile drawer starts below the top bar and never obscures focused content.
+- Opening the drawer at 390 px yields a panel that intersects the viewport and
+  has positive width and height; `display: block` and `aria-expanded=true` alone
+  do not prove the navigation is reachable.
 
 ## Operations List
 
@@ -192,6 +206,10 @@ views, and perform safe actions without losing identity or context.
 5. A narrow rail contains ownership, timestamps, links, and secondary facts.
 6. Destructive actions stay visually separated from routine actions.
 
+Use `panel.Panel` for the main decision surface and secondary rail when they
+need a neutral frame. Supply their headings explicitly; Panel deliberately does
+not choose a heading level or landmark role.
+
 ### State matrix
 
 - `loading`: preserve the identity strip if it is already known and skeleton the
@@ -214,6 +232,8 @@ views, and perform safe actions without losing identity or context.
   changes the route.
 - Status is text, not color alone.
 - Mutation feedback moves focus only when the user's next action requires it.
+- Collection search/filter swaps preserve focus and caret in the initiating
+  control; only a response with an explicit focus target may move it.
 - Destructive confirmation names the resource and the irreversible effect.
 
 ### What stays application-specific
@@ -225,6 +245,8 @@ permissions, refresh model, and destructive policy.
 
 - A copied detail URL opens the same active view.
 - Status and action availability never contradict each other.
+- Stale or partial evidence has an explicit mutation policy; irreversible
+  actions are disabled when the available evidence cannot support them.
 - The rail follows the main content on small screens.
 - Partial failure does not replace the entire workspace unnecessarily.
 
@@ -245,6 +267,10 @@ preserving progress and making the final submission reviewable.
 5. A stable action footer contains Back and the single forward action.
 6. The final step reviews the exact submission and provides Change links back
    to each group.
+
+`panel.Panel` is appropriate around the step body or final review when the form
+needs a stable full-width surface. Keep the actual form and action semantics in
+`form.Form`, `FieldGroup`, `FormErrors`, links, and buttons.
 
 ### State matrix
 
@@ -278,9 +304,19 @@ effects, retry semantics, and success destination.
 ### Completion checks
 
 - Refresh and Back behavior are explicitly chosen and tested.
+- Successful native POSTs use Post/Redirect/Get when the receipt or completed
+  workflow is a durable route; Back must not land on a resubmission error page.
+- Compare a Back-restored task document with current server revision and status.
+  Use `Cache-Control: no-store` on sensitive task pages or refresh persisted
+  history entries on `pageshow`; stale-write rejection alone does not prevent a
+  misleading Available, pending, or Completed view.
 - Invalid submission preserves every valid value.
 - Review shows the exact payload in language the user understands.
 - Double submission cannot create duplicate work.
+- Draft restoration keeps each composite control's visible label, submitted
+  value, status text, and dependent UI in agreement. When restoring client-side,
+  set the public input value and dispatch its documented `input` or `change`
+  event; otherwise rerender the selected config from the server.
 
 ## CSS boundary
 
@@ -304,12 +340,22 @@ instead of copying theme colors into a second palette. Start with
 `--color-surface`, `--color-surface-alt`, `--color-on-surface`,
 `--color-on-surface-strong`, `--color-on-surface-muted`, `--color-outline`, and
 `--color-primary`; use `--color-info`, `--color-success`, `--color-warning`, and
-`--color-danger` for states. Dark tokens follow their semantic group:
+`--color-danger` for status fills, borders, and icons. Small status text on a
+surface uses the contrast-safe derived pairs such as
+`text-danger-text dark:text-danger-text-dark` and
+`text-success-text dark:text-success-text-dark`; do not assume a single fill
+color also contrasts as text in both modes. Dark tokens follow their semantic group:
 `--color-surface-dark-alt`, `--color-on-surface-dark-strong`,
 `--color-outline-dark-strong`, and `--color-primary-dark` are representative
-names. Status tokens are shared across light and dark modes and have no dark
-variants. Alias these into product-named variables when that makes app CSS
-clearer. See `docs/THEMING.md` for the complete contract.
+names. Base status tokens are shared across modes; their derived `*-text-dark`
+variants follow the dark surface foreground. Alias these into product-named
+variables when that makes app CSS clearer. See `docs/THEMING.md` for the
+complete contract.
+
+For a filled semantic action, use `button.WithTone` rather than composing raw
+status utilities. Button's derived `*-action` pairs guarantee a matching
+foreground in both modes and keep hover contrast without lowering the whole
+control's opacity.
 
 ## Field-proven compositions
 
@@ -325,13 +371,33 @@ structural, separate destructive actions, use a real form for mutations, and
 stack the selected record after the queue at 390 px. An error may replace only
 the detail region when the queue can remain useful.
 
+If detail navigation swaps only the workspace, synchronize the collection after
+settle: URL, detail key, focus target, selected-row styling, and
+`aria-current`/`aria-selected` must identify the same record. A stale highlight
+is a state-integrity defect even when the correct detail is visible. Prefer a
+server-rendered collection update; otherwise update all representations in one
+small navigation handler and test them together.
+
+Treat the decision lifecycle as a state machine. Test a second terminal action,
+two stale tabs, the exact conflict-resolution control, and a repeated request
+with the same idempotency identity. Stale evidence must refresh to new evidence
+or block the decision; reloading the same stale fixture is not recovery.
+
+Hold each real mutation in flight and assert pending copy plus a disabled or
+otherwise deduplicated submitter. `button.WithLoadingText` follows an ancestor
+HTMX form; put `hx-disabled-elt="find button[type='submit']"` on that form. A
+fixture labeled “Loading” is not evidence that the mutation path announces or
+deduplicates work.
+
 ### Interruption-safe Workflow
 
 Extend the Multi-step Workflow for dock, field, or tablet use. Default every
 line to the common case, ask the user to edit exceptions only, persist a bounded
 draft, review the exact changes before submission, and make retries idempotent.
 A sticky footer may keep Back/Review visible, but it must leave room for focused
-fields and the last error at 390 px.
+fields and the last error at 390 px. Exercise every step at 390 px: long action
+labels stack or wrap inside the viewport, and scrolling the final field into
+view leaves it completely above the footer.
 
 ### Content-first Review
 
@@ -341,3 +407,15 @@ rhythm should belong to the publication or domain, while Goshtoso supplies
 status, form, feedback, and responsive primitives. Keep author, deadline,
 channel, current status, and the handoff note adjacent to the decision. Avoid
 turning prose into equal dashboard cards.
+
+## Verified standalone recipe
+
+[`examples/application-patterns`](https://github.com/araihu/goshtoso/tree/main/examples/application-patterns)
+is the repository's standalone consumer module. Its file map includes handlers,
+domain fixtures, templ views, app CSS, tests, and module boundaries; it imports
+public Goshtoso packages only. In the repository, its `replace` directive tests
+the local candidate. To copy it into another workspace, follow its README:
+remove the local replace, pin a released Goshtoso version, run `go mod tidy`,
+then regenerate and test. The interactive examples under `site/` are demo-site
+applications and may depend on `site/internal` packages, so do not describe
+them as copyable standalone apps.

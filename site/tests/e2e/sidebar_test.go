@@ -23,7 +23,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 	page := newPage(t, browser)
 
 	componentPages := catalog.ComponentPages()
-	require.Len(t, componentPages, 47)
+	require.Len(t, componentPages, 48)
 
 	_, err := page.Goto(baseURL+componentPages[0].Path, playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
@@ -178,6 +178,17 @@ func TestSidebarComponentDemoVariants(t *testing.T) {
 	visible, err := panel.IsVisible()
 	require.NoError(t, err)
 	assert.False(t, visible)
+
+	require.NoError(t, overlay.Locator("button[aria-label='Open sidebar']").Click())
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateHidden,
+		Timeout: playwright.Float(3000),
+	}))
 
 	require.NoError(t, overlay.Locator("button[aria-label='Open sidebar']").Click())
 	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{

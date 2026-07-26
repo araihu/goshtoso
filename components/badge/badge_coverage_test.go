@@ -80,12 +80,12 @@ func TestSoftToneClasses_AllArms(t *testing.T) {
 	wantText := map[Tone]string{
 		ToneDefault:   "text-on-surface",
 		ToneInverse:   "text-on-surface",
-		TonePrimary:   "text-primary",
-		ToneSecondary: "text-secondary",
-		ToneInfo:      "text-info",
-		ToneSuccess:   "text-success",
-		ToneWarning:   "text-warning",
-		ToneDanger:    "text-danger",
+		TonePrimary:   "text-on-surface-strong",
+		ToneSecondary: "text-on-surface-strong",
+		ToneInfo:      "text-on-surface-strong",
+		ToneSuccess:   "text-on-surface-strong",
+		ToneWarning:   "text-on-surface-strong",
+		ToneDanger:    "text-on-surface-strong",
 	}
 	for _, v := range allVariants {
 		got := Config{Tone: v}.softToneClasses()
@@ -160,9 +160,9 @@ func TestBadge_SimplePath(t *testing.T) {
 func TestBadge_SoftPath(t *testing.T) {
 	html := renderComponent(t, Badge(Config{Label: "Active", Tone: ToneSuccess, Appearance: AppearanceSoft, RootClass: "mr-1"}))
 	assert.Contains(t, html, "Active")
-	assert.Contains(t, html, "inline-flex")   // badgeWithInner container
-	assert.Contains(t, html, "text-success")  // soft variant text color
-	assert.Contains(t, html, "bg-success/10") // soft inner bg
+	assert.Contains(t, html, "inline-flex")            // badgeWithInner container
+	assert.Contains(t, html, "text-on-surface-strong") // soft variant accessible text color
+	assert.Contains(t, html, "bg-success/10")          // soft inner bg
 	assert.Contains(t, html, "mr-1")
 }
 

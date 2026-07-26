@@ -1,6 +1,11 @@
 package textarea
 
-import "github.com/a-h/templ"
+import (
+	"maps"
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // State represents textarea validation state
 type State string
@@ -41,6 +46,40 @@ type Config struct {
 	InputAttrs templ.Attributes
 }
 
+func (cfg Config) helperTextID() string {
+	if cfg.ID == "" || cfg.HelperText == "" {
+		return ""
+	}
+	return cfg.ID + "-helper"
+}
+
+func (cfg Config) inputAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.InputAttrs)+2)
+	maps.Copy(attrs, cfg.InputAttrs)
+	if helperID := cfg.helperTextID(); helperID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeTokens(existing, helperID)
+	}
+	if cfg.State == StateError {
+		attrs["aria-invalid"] = "true"
+	}
+	return attrs
+}
+
+func mergeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for token := range strings.FieldsSeq(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
+}
+
 // ContainerClasses returns CSS classes for the outer container.
 // Width is determined by the parent layout — no max-width is imposed.
 func (cfg Config) containerClasses() string {
@@ -55,9 +94,9 @@ func (cfg Config) containerClasses() string {
 func (cfg Config) labelClasses() string {
 	switch cfg.State {
 	case StateError:
-		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-danger"
+		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-success"
+		return "flex w-fit items-center gap-1 pl-0.5 text-sm text-success-text dark:text-success-text-dark"
 	default:
 		return "w-fit pl-0.5 text-sm"
 	}
@@ -73,7 +112,7 @@ func (cfg Config) textareaClasses() string {
 	case StateSuccess:
 		return base + " border-success dark:border-success"
 	default:
-		return base + " border-outline dark:border-outline-dark"
+		return base + " border-control-outline dark:border-control-outline-dark"
 	}
 }
 
@@ -81,11 +120,11 @@ func (cfg Config) textareaClasses() string {
 func (cfg Config) helperTextClasses() string {
 	switch cfg.State {
 	case StateError:
-		return "pl-0.5 text-xs text-danger"
+		return "pl-0.5 text-xs text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "pl-0.5 text-xs text-success"
+		return "pl-0.5 text-xs text-success-text dark:text-success-text-dark"
 	default:
-		return "pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+		return "pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 	}
 }
 

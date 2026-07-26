@@ -125,6 +125,151 @@ func TestSelectKeyboardOpenClose(t *testing.T) {
 	require.NoError(t, err)
 }
 
+// TestSelectKeyboardMovesActiveOption proves both trigger directions and
+// in-list movement use the rendered option set instead of depending on focus
+// plugin traversal order.
+func TestSelectKeyboardMovesActiveOption(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page, errs := gotoSelectDemo(t)
+	trigger := page.Locator("#os-trigger")
+	require.NoError(t, trigger.Focus())
+
+	require.NoError(t, trigger.Press("ArrowUp"))
+	_, err := page.WaitForFunction(
+		"() => document.activeElement?.id === 'os-option-2'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "ArrowUp should open on the last option when no value is selected")
+
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	_, err = page.WaitForFunction(
+		"() => document.activeElement?.id === 'os-option-0'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "ArrowDown should wrap to the first option")
+
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	_, err = page.WaitForFunction(
+		"() => document.activeElement?.id === 'os-option-1'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "ArrowDown should move to the next option")
+
+	require.NoError(t, page.Keyboard().Press("ArrowUp"))
+	_, err = page.WaitForFunction(
+		"() => document.activeElement?.id === 'os-option-0'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "ArrowUp should move to the previous option")
+
+	pageErrs, consoleErrs := errs()
+	assert.Empty(t, filterIgnorable(pageErrs), "unexpected page errors")
+	assert.Empty(t, filterIgnorable(consoleErrs), "unexpected console errors")
+}
+
+// TestSelectKeyboardAdvancesFromSelectedValue guards the consumer workflow
+// contract: ArrowDown on a closed Select advances from the current value,
+// Enter commits it, and focus returns to the trigger.
+func TestSelectKeyboardAdvancesFromSelectedValue(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page, errs := gotoSelectDemo(t)
+	trigger := page.Locator("#os-success-trigger")
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, trigger.Press("ArrowDown"))
+
+	_, err := page.WaitForFunction(
+		"() => document.activeElement?.id === 'os-success-option-1'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "ArrowDown should advance from selected Mac to Windows")
+
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	_, err = page.WaitForFunction(
+		"() => document.querySelector('#os-success').value === 'windows' && document.activeElement?.id === 'os-success-trigger'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	if err != nil {
+		state, stateErr := page.Evaluate(`() => ({
+			value: document.querySelector('#os-success')?.value,
+			focus: document.activeElement?.id,
+			label: document.querySelector('#os-success-trigger span')?.textContent?.trim(),
+			expanded: document.querySelector('#os-success-trigger')?.getAttribute('aria-expanded'),
+		})`, nil)
+		require.NoError(t, stateErr)
+		require.NoErrorf(t, err, "Enter should commit the active option and return focus to the trigger: state=%v", state)
+	}
+
+	pageErrs, consoleErrs := errs()
+	assert.Empty(t, filterIgnorable(pageErrs), "unexpected page errors")
+	assert.Empty(t, filterIgnorable(consoleErrs), "unexpected console errors")
+}
+
+// TestSelectExternalDraftRestoration exercises the public DOM synchronization
+// contract: external code sets the hidden submission input and dispatches a
+// bubbling standard event. The visible value and live ARIA selection follow.
+func TestSelectExternalDraftRestoration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page, errs := gotoSelectDemo(t)
+	trigger := page.Locator("#os-trigger")
+
+	controls, err := trigger.GetAttribute("aria-controls")
+	require.NoError(t, err)
+	assert.Equal(t, "os-listbox", controls)
+
+	_, err = page.Evaluate(`() => {
+		const input = document.querySelector('#os');
+		input.value = 'windows';
+		input.dispatchEvent(new Event('change', { bubbles: true }));
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(
+		"() => document.querySelector('#os-trigger span').textContent.trim() === 'Windows'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err)
+	value, err := page.Locator("#os").InputValue()
+	require.NoError(t, err)
+	assert.Equal(t, "windows", value)
+
+	_, err = page.Evaluate(`() => {
+		const input = document.querySelector('#os');
+		input.value = 'linux';
+		input.dispatchEvent(new Event('input', { bubbles: true }));
+	}`, nil)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(
+		"() => document.querySelector('#os-trigger span').textContent.trim() === 'Linux'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err)
+
+	require.NoError(t, trigger.Click())
+	require.NoError(t, page.Locator("#os-option-2").WaitFor())
+	selected, err := page.Locator("#os-option-2").GetAttribute("aria-selected")
+	require.NoError(t, err)
+	assert.Equal(t, "true", selected)
+	notSelected, err := page.Locator("#os-option-1").GetAttribute("aria-selected")
+	require.NoError(t, err)
+	assert.Equal(t, "false", notSelected)
+
+	restoreButton := page.Locator("#restore-linux-draft")
+	require.NoError(t, restoreButton.ScrollIntoViewIfNeeded())
+	require.NoError(t, restoreButton.Click())
+	_, err = page.WaitForFunction(
+		"() => document.querySelector('#draft-os-trigger span').textContent.trim() === 'Linux'",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "the documented draft restoration control should synchronize Select")
+	draftValue, err := page.Locator("#draft-os").InputValue()
+	require.NoError(t, err)
+	assert.Equal(t, "linux", draftValue)
+
+	pageErrs, consoleErrs := errs()
+	assert.Empty(t, filterIgnorable(pageErrs), "unexpected page errors")
+	assert.Empty(t, filterIgnorable(consoleErrs), "unexpected console errors")
+}
+
 // TestSelectDependentBinding covers the Alpine Model + BindDisabled wiring: the
 // second select stays disabled until the first has a value, then enables once a
 // model is chosen.

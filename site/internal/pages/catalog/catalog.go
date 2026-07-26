@@ -75,13 +75,23 @@ var componentPages = []Entry{
 		Kinds:       []components.Kind{components.KindToolbar},
 	},
 	{
+		Key:         "components/panel",
+		Path:        "/components/panel",
+		Title:       "Panel",
+		Active:      "panel",
+		Description: "Frame neutral full-width application regions with arbitrary header, actions, body, and footer content without imposing heading or article semantics.",
+		Section:     "Composition",
+		Order:       3,
+		Kinds:       []components.Kind{components.KindPanel},
+	},
+	{
 		Key:         "components/empty-state",
 		Path:        "/components/empty-state",
 		Title:       "Empty State",
 		Active:      "empty-state",
 		Description: "Explain absent content and offer a clear next action with an instructional empty-state component.",
 		Section:     "Composition",
-		Order:       3,
+		Order:       4,
 		Kinds:       []components.Kind{components.KindEmptyState},
 	},
 	{
@@ -91,7 +101,7 @@ var componentPages = []Entry{
 		Active:      "skeleton",
 		Description: "Render accessible text, rectangle, and circle loading placeholders with reduced-motion support.",
 		Section:     "Composition",
-		Order:       4,
+		Order:       5,
 		Kinds:       []components.Kind{components.KindSkeleton},
 	},
 	{
@@ -101,7 +111,7 @@ var componentPages = []Entry{
 		Active:      "accordion",
 		Description: "Build accessible accordion interfaces in Go with server-rendered templ markup, HTMX-friendly content, and Alpine.js disclosure behavior.",
 		Section:     "Display",
-		Order:       5,
+		Order:       6,
 		Kinds:       []components.Kind{components.KindAccordion},
 	},
 	{
@@ -111,7 +121,7 @@ var componentPages = []Entry{
 		Active:      "avatar",
 		Description: "Render Go avatar components with images, initials, placeholders, status indicators, borders, and stacked group layouts.",
 		Section:     "Display",
-		Order:       6,
+		Order:       7,
 		Kinds:       []components.Kind{components.KindAvatar, components.KindAvatarStack},
 	},
 	{
@@ -121,7 +131,7 @@ var componentPages = []Entry{
 		Active:      "badge",
 		Description: "Use Goshtoso badge components for statuses, counts, semantic colors, icon labels, and notification dots in Go applications.",
 		Section:     "Display",
-		Order:       7,
+		Order:       8,
 		Kinds: []components.Kind{
 			components.KindBadge,
 			components.KindNotificationBadge,
@@ -136,7 +146,7 @@ var componentPages = []Entry{
 		Active:      "banner",
 		Description: "Create inline announcement and alert banners with tones, icons, actions, and dismiss patterns for server-rendered Go UIs.",
 		Section:     "Display",
-		Order:       8,
+		Order:       9,
 		Kinds:       []components.Kind{components.KindBanner, components.KindCookieBanner},
 	},
 	{
@@ -146,7 +156,7 @@ var componentPages = []Entry{
 		Active:      "card",
 		Description: "Compose structured card layouts in Go with media, headings, body content, actions, and responsive horizontal or vertical layouts.",
 		Section:     "Display",
-		Order:       9,
+		Order:       10,
 		Kinds:       []components.Kind{components.KindCard},
 	},
 	{
@@ -156,7 +166,7 @@ var componentPages = []Entry{
 		Active:      "carousel",
 		Description: "Render carousel content rails for images, feature panels, and card-framed slides with Goshtoso, templ, and Alpine.js.",
 		Section:     "Display",
-		Order:       10,
+		Order:       11,
 		Kinds:       []components.Kind{components.KindCarousel, components.KindCardCarousel},
 	},
 	{
@@ -166,7 +176,7 @@ var componentPages = []Entry{
 		Active:      "chatbubble",
 		Description: "Create conversation message bubbles with alignment, avatars, metadata, and grouped thread layouts for Go chat interfaces.",
 		Section:     "Display",
-		Order:       11,
+		Order:       12,
 		Kinds:       []components.Kind{components.KindChatBubble, components.KindTypingIndicator},
 	},
 	{
@@ -176,7 +186,7 @@ var componentPages = []Entry{
 		Active:      "codeblock",
 		Description: "Show copy-pasteable code snippets with semantic pre and code markup, labels, scroll bounds, copy actions, and themes.",
 		Section:     "Display",
-		Order:       12,
+		Order:       13,
 		Kinds:       []components.Kind{components.KindCodeBlock},
 	},
 	{
@@ -186,7 +196,7 @@ var componentPages = []Entry{
 		Active:      "dependencies",
 		Description: "Load Goshtoso's local CSS, Alpine.js, HTMX, and runtime helpers from embedded assets without CDN dependencies.",
 		Section:     "Display",
-		Order:       13,
+		Order:       14,
 		Kinds:       []components.Kind{components.KindDependencies, components.KindDependenciesMinimal},
 		Package:     "head",
 	},
@@ -197,7 +207,7 @@ var componentPages = []Entry{
 		Active:      "kbd",
 		Description: "Display semantic keyboard shortcut hints for command palettes, forms, and toolbar controls in Go documentation.",
 		Section:     "Display",
-		Order:       14,
+		Order:       15,
 		Kinds:       []components.Kind{components.KindKbd},
 	},
 	{
@@ -207,7 +217,7 @@ var componentPages = []Entry{
 		Active:      "table",
 		Description: "Build sortable, paginated, filterable Go data tables with HTMX loading, rich cells, and server-rendered rows.",
 		Section:     "Display",
-		Order:       15,
+		Order:       16,
 		Kinds: []components.Kind{
 			components.KindTable,
 			components.KindTableHeadContent,
@@ -224,7 +234,7 @@ var componentPages = []Entry{
 		Active:      "button",
 		Description: "Build Go button components with variants, sizes, icons, loading states, and HTMX request integrations.",
 		Section:     "Input",
-		Order:       16,
+		Order:       17,
 		Kinds:       []components.Kind{components.KindButton},
 	},
 	{
@@ -234,7 +244,7 @@ var componentPages = []Entry{
 		Active:      "checkbox",
 		Description: "Build checkbox fields and groups with accessible labels, helper text, disabled states, and validation in Go.",
 		Section:     "Input",
-		Order:       17,
+		Order:       18,
 		Kinds:       []components.Kind{components.KindCheckbox, components.KindCheckboxGroup},
 	},
 	{
@@ -244,7 +254,7 @@ var componentPages = []Entry{
 		Active:      "combobox",
 		Description: "Add searchable single and multi-select combobox controls with keyboard navigation to server-rendered Go forms.",
 		Section:     "Input",
-		Order:       18,
+		Order:       19,
 		Kinds:       []components.Kind{components.KindCombobox},
 	},
 	{
@@ -254,7 +264,7 @@ var componentPages = []Entry{
 		Active:      "fileinput",
 		Description: "Create file upload controls with labels, helper text, selected-file display, native accept hints, and drop-zone or upload-button appearances in Goshtoso.",
 		Section:     "Input",
-		Order:       19,
+		Order:       20,
 		Kinds:       []components.Kind{components.KindFileInput},
 	},
 	{
@@ -264,7 +274,7 @@ var componentPages = []Entry{
 		Active:      "form",
 		Description: "Build form layout patterns, field groups, server validation messages, and HTMX submit behavior with Go and templ.",
 		Section:     "Input",
-		Order:       20,
+		Order:       21,
 		Kinds: []components.Kind{
 			components.KindForm,
 			components.KindFormSection,
@@ -282,7 +292,7 @@ var componentPages = []Entry{
 		Active:      "radio",
 		Description: "Build radio groups and segmented controls with accessible labels, helper copy, and validation states in Go.",
 		Section:     "Input",
-		Order:       21,
+		Order:       22,
 		Kinds:       []components.Kind{components.KindRadio, components.KindRadioBar, components.KindRadioGroup},
 	},
 	{
@@ -292,7 +302,7 @@ var componentPages = []Entry{
 		Active:      "range",
 		Description: "Create range sliders with labels, helper text, live value output, generated or custom ticks, and accessible input behavior for Go forms.",
 		Section:     "Input",
-		Order:       22,
+		Order:       23,
 		Kinds:       []components.Kind{components.KindRange},
 	},
 	{
@@ -302,7 +312,7 @@ var componentPages = []Entry{
 		Active:      "rating",
 		Description: "Render rating inputs and display patterns with stars, labels, accessible values, and form integration in Goshtoso.",
 		Section:     "Input",
-		Order:       23,
+		Order:       24,
 		Kinds:       []components.Kind{components.KindRating, components.KindRatingDisplay},
 	},
 	{
@@ -312,7 +322,7 @@ var componentPages = []Entry{
 		Active:      "palette",
 		Description: "Render color picking surfaces with swatches, hex entry, token labels, and theme integration in Goshtoso.",
 		Section:     "Input",
-		Order:       24,
+		Order:       25,
 		Kinds:       []components.Kind{components.KindPalette},
 	},
 	{
@@ -322,7 +332,7 @@ var componentPages = []Entry{
 		Active:      "search",
 		Description: "Add command-palette search with a sidebar trigger, global modal, filtering, highlighting, and docs navigation.",
 		Section:     "Input",
-		Order:       25,
+		Order:       26,
 		Kinds:       []components.Kind{components.KindSearch, components.KindSearchField, components.KindSearchModal},
 	},
 	{
@@ -332,7 +342,7 @@ var componentPages = []Entry{
 		Active:      "select",
 		Description: "Build native-feeling select menus with trigger content, grouped options, and keyboard support in Go.",
 		Section:     "Input",
-		Order:       26,
+		Order:       27,
 		Kinds:       []components.Kind{components.KindSelect},
 	},
 	{
@@ -342,7 +352,7 @@ var componentPages = []Entry{
 		Active:      "schema-form",
 		Description: "Generate complete form sections from JSON Schema defaults, submitted values, and allow-list rules in server-rendered Go interfaces.",
 		Section:     "Input",
-		Order:       27,
+		Order:       28,
 		Kinds:       []components.Kind{components.KindSchemaFormFields},
 	},
 	{
@@ -352,7 +362,7 @@ var componentPages = []Entry{
 		Active:      "structured-input",
 		Description: "Build repeatable structured form rows with typed columns for text and select controls, nested submitted names, defaults, and add/remove actions in Go.",
 		Section:     "Input",
-		Order:       28,
+		Order:       29,
 		Kinds:       []components.Kind{components.KindStructuredInput},
 	},
 	{
@@ -362,7 +372,7 @@ var componentPages = []Entry{
 		Active:      "tags-list",
 		Description: "Manage editable tag collections with add, remove, duplicate-preserving values, and keyboard flows in Goshtoso.",
 		Section:     "Input",
-		Order:       29,
+		Order:       30,
 		Kinds:       []components.Kind{components.KindTagsList},
 	},
 	{
@@ -372,7 +382,7 @@ var componentPages = []Entry{
 		Active:      "text-input",
 		Description: "Render text fields with icons, search affordances, masks, validation, and password controls for Go forms.",
 		Section:     "Input",
-		Order:       30,
+		Order:       31,
 		Kinds:       []components.Kind{components.KindTextInput},
 	},
 	{
@@ -382,7 +392,7 @@ var componentPages = []Entry{
 		Active:      "textarea",
 		Description: "Build multi-line text entry with resize behavior, helper text, row defaults, and validation states in server-rendered Go UIs.",
 		Section:     "Input",
-		Order:       31,
+		Order:       32,
 		Kinds:       []components.Kind{components.KindTextarea, components.KindTextareaWithActions},
 	},
 	{
@@ -392,7 +402,7 @@ var componentPages = []Entry{
 		Active:      "toggle",
 		Description: "Render binary switches for settings, feature flags, and compact on-off choices in Go applications.",
 		Section:     "Input",
-		Order:       32,
+		Order:       33,
 		Kinds:       []components.Kind{components.KindToggle},
 	},
 	{
@@ -402,7 +412,7 @@ var componentPages = []Entry{
 		Active:      "alert",
 		Description: "Alert documentation for building interactive server-rendered Go interfaces with Goshtoso, templ, HTMX, Alpine.js, and Tailwind CSS.",
 		Section:     "Feedback",
-		Order:       33,
+		Order:       34,
 		Kinds:       []components.Kind{components.KindAlert},
 	},
 	{
@@ -412,7 +422,7 @@ var componentPages = []Entry{
 		Active:      "toast",
 		Description: "Create transient notifications with timing, actions, semantic tones, sender messages, and HTMX out-of-band toasts.",
 		Section:     "Feedback",
-		Order:       34,
+		Order:       35,
 		Kinds: []components.Kind{
 			components.KindToastContainer,
 			components.KindToast,
@@ -428,7 +438,7 @@ var componentPages = []Entry{
 		Active:      "modal",
 		Description: "Create modal dialogs with focus management, actions, dismissal, and scroll handling using Goshtoso and Alpine.js.",
 		Section:     "Feedback",
-		Order:       35,
+		Order:       36,
 		Kinds:       []components.Kind{components.KindModal, components.KindAlertDialog},
 	},
 	{
@@ -438,7 +448,7 @@ var componentPages = []Entry{
 		Active:      "drawer",
 		Description: "Create slide-over panels for details, filters, and HTMX workflows with Alpine.js state and focus trapping.",
 		Section:     "Feedback",
-		Order:       36,
+		Order:       37,
 		Kinds:       []components.Kind{components.KindDrawer},
 	},
 	{
@@ -448,7 +458,7 @@ var componentPages = []Entry{
 		Active:      "spinner",
 		Description: "Render decorative animated loading glyphs with semantic tones and sizes for Go and HTMX interfaces.",
 		Section:     "Feedback",
-		Order:       37,
+		Order:       38,
 		Kinds:       []components.Kind{components.KindSpinner},
 	},
 	{
@@ -458,7 +468,7 @@ var componentPages = []Entry{
 		Active:      "steps",
 		Description: "Render progress indicators for wizards, onboarding, and multi-step workflows in server-rendered Go applications.",
 		Section:     "Feedback",
-		Order:       38,
+		Order:       39,
 		Kinds:       []components.Kind{components.KindSteps},
 	},
 	{
@@ -468,7 +478,7 @@ var componentPages = []Entry{
 		Active:      "tooltip",
 		Description: "Add contextual hints for icons, controls, and abbreviated UI labels with hover, focus, or click triggers.",
 		Section:     "Feedback",
-		Order:       39,
+		Order:       40,
 		Kinds:       []components.Kind{components.KindTooltip},
 	},
 	{
@@ -478,7 +488,7 @@ var componentPages = []Entry{
 		Active:      "breadcrumbs",
 		Description: "Add hierarchical breadcrumb navigation to Go documentation routes, nested pages, and HTMX-enhanced server-rendered apps.",
 		Section:     "Navigation",
-		Order:       40,
+		Order:       41,
 		Kinds:       []components.Kind{components.KindBreadcrumbs},
 	},
 	{
@@ -488,7 +498,7 @@ var componentPages = []Entry{
 		Active:      "dropdown",
 		Description: "Render dropdown menus with grouped actions, icons, alignment, and keyboard-friendly behavior for Go UI workflows.",
 		Section:     "Navigation",
-		Order:       41,
+		Order:       42,
 		Kinds:       []components.Kind{components.KindDropdown},
 	},
 	{
@@ -498,7 +508,7 @@ var componentPages = []Entry{
 		Active:      "link",
 		Description: "Render accessible link components for inline navigation, external links, icon links, and disabled states in Go UIs.",
 		Section:     "Navigation",
-		Order:       42,
+		Order:       43,
 		Kinds:       []components.Kind{components.KindLink},
 	},
 	{
@@ -508,7 +518,7 @@ var componentPages = []Entry{
 		Active:      "navbar",
 		Description: "Build top navigation bars with links, actions, responsive menus, and brand areas for server-rendered Go sites.",
 		Section:     "Navigation",
-		Order:       43,
+		Order:       44,
 		Kinds:       []components.Kind{components.KindNavbar},
 	},
 	{
@@ -518,7 +528,7 @@ var componentPages = []Entry{
 		Active:      "pagination",
 		Description: "Add pagination controls for tables, lists, and HTMX-powered result sets in Go applications.",
 		Section:     "Navigation",
-		Order:       44,
+		Order:       45,
 		Kinds:       []components.Kind{components.KindPagination},
 	},
 	{
@@ -528,7 +538,7 @@ var componentPages = []Entry{
 		Active:      "sidebar",
 		Description: "Create persistent or overlay side navigation with sections, search slots, active states, and responsive behavior.",
 		Section:     "Navigation",
-		Order:       45,
+		Order:       46,
 		Kinds:       []components.Kind{components.KindSidebar, components.KindSidebarOverlay},
 	},
 	{
@@ -538,7 +548,7 @@ var componentPages = []Entry{
 		Active:      "tabs",
 		Description: "Create segmented content navigation with keyboard support, panels, active states, and HTMX-loaded tab content.",
 		Section:     "Navigation",
-		Order:       46,
+		Order:       47,
 		Kinds:       []components.Kind{components.KindTabs},
 	},
 }

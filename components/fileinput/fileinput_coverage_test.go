@@ -188,6 +188,13 @@ func TestCoverageClassHelpers(t *testing.T) {
 			t.Fatalf("%s returned empty", name)
 		}
 	}
+	if !strings.Contains(cfg.helperTextClasses(), "text-on-surface-muted") ||
+		!strings.Contains(cfg.helperTextClasses(), "dark:text-on-surface-dark-muted") {
+		t.Fatalf("helper text must use semantic muted tokens: %q", cfg.helperTextClasses())
+	}
+	if strings.Contains(cfg.helperTextClasses(), "text-on-surface/60") {
+		t.Fatalf("helper text retained opacity hierarchy: %q", cfg.helperTextClasses())
+	}
 
 	if !strings.Contains(cfg.dropZoneClasses(), "border-dashed") {
 		t.Fatal("enabled dropZoneClasses missing border-dashed")

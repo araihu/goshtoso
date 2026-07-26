@@ -12,8 +12,8 @@ import (
 // --- Pure helper coverage ---
 
 func TestHelperTextClasses_AllStates(t *testing.T) {
-	assert.Equal(t, "pl-0.5 text-danger", helperTextClasses(StateError))
-	assert.Equal(t, "pl-0.5 text-success", helperTextClasses(StateSuccess))
+	assert.Equal(t, "pl-0.5 text-danger-text dark:text-danger-text-dark", helperTextClasses(StateError))
+	assert.Equal(t, "pl-0.5 text-success-text dark:text-success-text-dark", helperTextClasses(StateSuccess))
 	assert.Equal(t, "pl-0.5 text-on-surface-muted dark:text-on-surface-dark-muted", helperTextClasses(StateDefault))
 }
 
@@ -73,8 +73,8 @@ func TestSelectedValue_NoneSelected(t *testing.T) {
 }
 
 func TestLabelClasses_AllStates(t *testing.T) {
-	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-danger", Config{State: StateError}.labelClasses())
-	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-success", Config{State: StateSuccess}.labelClasses())
+	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-danger-text dark:text-danger-text-dark", Config{State: StateError}.labelClasses())
+	assert.Equal(t, "flex w-fit gap-1 pl-0.5 text-sm text-success-text dark:text-success-text-dark", Config{State: StateSuccess}.labelClasses())
 	assert.Equal(t, "w-fit pl-0.5 text-sm", Config{}.labelClasses())
 }
 
@@ -133,7 +133,7 @@ func TestRenderSelect_LabelWithErrorIconAndHelperText(t *testing.T) {
 		Options:    []Option{{Value: "us", Label: "US"}},
 	}, nil)
 
-	assert.Contains(t, out, `<label for="country"`)
+	assert.Contains(t, out, `<label for="country-trigger"`)
 	assert.Contains(t, out, "Country")
 	// error icon path fragment
 	assert.Contains(t, out, "M5.28 4.22a.75.75")
@@ -184,6 +184,7 @@ func TestRenderSelect_AlpineModelInitWatcher(t *testing.T) {
 
 	browserHTML := html.UnescapeString(out)
 	assert.Contains(t, browserHTML, "this.$watch('selectedOption'")
+	assert.Contains(t, browserHTML, "form.country = opt ? opt.value : ''")
 	assert.Contains(t, browserHTML, "form.country")
 }
 

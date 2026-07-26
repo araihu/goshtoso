@@ -23,8 +23,18 @@ Also inspect loading, empty, error, and success. Add permission-denied, stale,
 partial, destructive confirmation, and filtered-empty when the domain supports
 them.
 
+For consequential actions, complete `adversarial-acceptance.md` first. The
+required state list becomes a state/action invariant ledger, and every ledger
+row must have HTTP plus rendered-browser evidence.
+
+The matrix applies to every distinct responsive composition, not only the first
+route. In a workflow, visit every step plus validation/review/success at 390 px;
+in a queue/detail app, visit collection, detail, conflict, and completed states.
+
 ## Hierarchy and composition
 
+- The rendered surface still matches the task, register, information priority,
+  density, and visual direction recorded in `design-intelligence.md`.
 - The page has one obvious primary task and one `h1`.
 - Primary, secondary, and destructive actions do not compete visually.
 - Dense work surfaces use stable rows, columns, and alignment instead of equal
@@ -38,9 +48,15 @@ them.
 
 - No horizontal page scroll at 390 px. A data table may own horizontal overflow.
 - Drawers begin below a sticky top bar and do not trap content behind overlays.
+- For each mobile drawer, measure its open bounding box: it intersects the
+  viewport with positive width and height, and its first/last controls are
+  reachable. An expanded trigger with a zero-height offscreen panel is a fail.
 - Toolbars stack or collapse without changing control order unexpectedly.
 - Detail rails follow main content on small screens.
 - Sticky actions do not cover focused inputs, errors, or the last result row.
+- At every workflow step, document width remains within 390 px and the longest
+  action label is fully visible. Do not infer later-step safety from the first
+  screenshot.
 - Inspect internal overflow containers, not only document width. A clipped
   alert inside a sidebar can pass a document-level horizontal-scroll check.
 
@@ -50,6 +66,12 @@ them.
   contrast personality change.
 - Light and dark modes expose readable text, outlines, hover, focus, selected,
   disabled, loading, error, warning, success, and info states.
+- Measure normal-size text contrast in semantic badges and the non-text boundary
+  of empty form controls; do not assume a named token is accessible in every
+  theme.
+- Measure helper text and default, hover, and focus action contrast. Whole-control
+  opacity on hover can make an otherwise valid foreground/background pair fail
+  after it blends with the page surface.
 - Status never depends on color alone.
 - Primary color marks actions and selection, not decoration.
 - Typography belongs to the product. Do not reflexively choose Inter, Geist,
@@ -61,19 +83,48 @@ them.
 - Avoid the generated “ghost card” formula: a border plus a broad diffuse
   shadow on every surface. Use borders for structure and reserve elevation for
   a real layering relationship such as a dialog, popover, or dragged item.
+- Reject decorative gradient text, glass effects, side stripes, category-coded
+  palettes, and excessive pill/rounded containers unless the surface brief
+  records a product-specific reason for them.
 
 ## Keyboard and focus
 
 - Use Tab and Shift+Tab through the complete task.
+- Focus the skip link and assert its box intersects the viewport immediately.
 - Activate every control with the expected keyboard command.
 - Escape closes overlays and returns focus to the trigger.
-- HTMX navigation and validation move focus deliberately.
+- At mobile width, expose one primary navigation trigger, then verify its name,
+  `aria-expanded`, Escape behavior, and destination before accepting any second
+  menu control.
+- Search and filter swaps preserve the initiating control and caret. Validation,
+  navigation, and mutation move focus only to an explicit response target after
+  settle; a global page-title fallback is a failure.
 - Focus is always visible and never hidden under sticky UI.
 
 ## Automated checks
 
 - Build and unit/render tests pass in a fresh consumer module.
 - Browser tests exercise direct navigation, HTMX navigation, Back, and refresh.
+- Hold each real mutation request in flight and assert visible pending copy plus
+  a disabled or otherwise deduplicated submitter; a fixture labeled “Loading”
+  is not evidence.
+- On collection/detail navigation, assert the URL, rendered detail identity,
+  active element, visual selected row, and `aria-current`/`aria-selected` agree
+  after every direct load, HTMX swap, Back, and Forward transition.
+- Exercise unknown IDs/routes and confirm an in-shell recovery path.
+- For consequential mutations, test two stale tabs, the offered conflict action,
+  a repeated terminal action, and idempotent request replay. Assert both status
+  and side-effect count.
+- After PRG, compare the DOM restored by Back with a fresh authoritative read;
+  fail if revision, terminality, availability, or offered actions are stale.
+- Attempt every consequential action from every ledger state, including forged
+  actions that are hidden or disabled in the normal UI. Assert server truth,
+  retained input, focus, and success destination identity.
+- Simulate a real transport failure in addition to a server-rendered 503. The
+  initiating surface must expose a visible, retryable error and prevent
+  duplicate submission while loading.
+- For restored drafts, assert visible composite label, hidden/submitted value,
+  status copy, and dependent fields agree.
 - Capture JavaScript console errors and fail on unexpected messages.
 - Run axe or an equivalent accessibility scanner and resolve every P1 issue.
 - Assert that every utility required by the recipe exists in the delivered CSS.

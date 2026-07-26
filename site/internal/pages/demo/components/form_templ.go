@@ -12,6 +12,7 @@ import (
 	gocombobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/form"
 	"github.com/araihu/goshtoso/components/modal"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
@@ -119,6 +120,27 @@ func formDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Responsive Sticky Footer",
+				Description: "Sticky form actions stack at narrow widths, keep long labels inside the viewport, use an opaque safe-area-aware surface, and retain their normal-flow footprint so the last control remains reachable.",
+			},
+			formResponsiveFooterPreview(),
+			`@form.Form(form.Config{
+    ID: "responsive-footer-form",
+    Footer: &form.FooterConfig{
+        Sticky:      true,
+        CancelLabel: "Save this handoff as a draft",
+        CancelHref:  "#",
+        SubmitLabel: "Review exact handoff details before submitting",
+    },
+}) {
+    // Fields and sections...
+}`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "External Submit (Modal Pattern)",
 				Description: "Render the form with no Footer; a button outside the form uses the form=\"...\" attribute to submit it — the typical modal pattern.",
 			},
@@ -212,20 +234,24 @@ func validateDemoField(ctx validation.ValidationContext, name string, fg *form.F
     }
 }`
 
-var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, Toggle, etc. directly
+var formDemoCode = `// Built-in field types — set Input, Select, Combobox, Textarea, etc. directly.
+// FieldGroup.ID remains the wrapper/HTMX target; omit the nested ID to let
+// FieldGroup derive a unique focus target.
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "name", Label: "Name", Required: true,
-    Input: &textinput.Config{ID: "name", Name: "name"},
+    Input: &textinput.Config{Name: "name"},
 })
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "provider", Label: "Provider",
-    Combobox: &gocombobox.Config{ID: "provider", Name: "provider", Source: gocombobox.Source{Static: opts}},
+    Select: &selectfield.Config{Name: "provider", Options: providerOptions},
 })
 
-// Custom component — use { children... } for anything not built-in
-@form.FieldGroup(form.FieldGroupConfig{ID: "tags", Label: "Tags"}) {
-    @myCustomTagsInput(tags)  // any templ.Component
-}
+// Link a summary to the actual focus target without guessing suffixes.
+field := form.FieldGroupConfig{ID: "provider", Select: &selectfield.Config{Name: "provider"}}
+item := form.FormErrorItem{Message: "Choose a provider", TargetID: field.FocusTargetID()}
+
+// Custom component — use { children... } only when no built-in matches and
+// wire its label, required state, errors, and hints explicitly.
 
 // Flip Section — read-only front, editable back
 @form.FlipSection(form.FlipSectionConfig{
@@ -348,16 +374,14 @@ func formCompletePreview() templ.Component {
 				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
 					ID:    "provider",
 					Label: "Provider",
-					Combobox: &gocombobox.Config{
-						ID:   "provider",
+					Select: &selectfield.Config{
 						Name: "provider",
-						Source: gocombobox.Source{Static: []gocombobox.Option{
+						Options: []selectfield.Option{
 							{Value: "aws", Label: "AWS"},
 							{Value: "azure", Label: "Azure"},
 							{Value: "gcp", Label: "GCP"},
-							{Value: "maas", Label: "MAAS"},
-						}},
-						Selected: []string{"maas"},
+							{Value: "maas", Label: "MAAS", Selected: true},
+						},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -380,38 +404,20 @@ func formCompletePreview() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " <!-- Custom component via children (not a built-in type) --> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-					if !templ_7745c5c3_IsBuffer {
-						defer func() {
-							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-							if templ_7745c5c3_Err == nil {
-								templ_7745c5c3_Err = templ_7745c5c3_BufErr
-							}
-						}()
-					}
-					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = tagslist.TagsList(tagslist.Config{
-						ID:          "tags",
-						Name:        "tags",
-						Values:      []string{"production", "gpu"},
-						Placeholder: "Add a tag...",
-					}).Render(ctx, templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					return nil
-				})
 				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
 					ID:    "tags",
 					Label: "Environment Tags",
-					Hints: []string{"Custom component — any templ.Component works as children"},
-				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+					Hints: []string{"TagsList is a built-in FieldGroup control"},
+					TagsList: &tagslist.Config{
+						Name:        "tags",
+						Values:      []string{"production", "gpu"},
+						Placeholder: "Add a tag...",
+					},
+				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -425,7 +431,7 @@ func formCompletePreview() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -471,7 +477,7 @@ func formCompletePreview() templ.Component {
 			})
 			templ_7745c5c3_Err = form.FlipSection(form.FlipSectionConfig{
 				SectionConfig: form.SectionConfig{ID: "network", Title: "Network"},
-			}, networkReadView()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+			}, networkReadView()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -479,7 +485,7 @@ func formCompletePreview() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -532,7 +538,7 @@ func formCompletePreview() templ.Component {
 				SectionConfig: form.SectionConfig{ID: "advanced", Title: "Advanced Settings"},
 				Collapsed:     true,
 				Summary:       "Using defaults",
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -540,7 +546,7 @@ func formCompletePreview() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -552,7 +558,7 @@ func formCompletePreview() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 					if !templ_7745c5c3_IsBuffer {
@@ -599,7 +605,7 @@ func formCompletePreview() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = form.SubSection(form.SubSectionConfig{ID: "cp-nodes", Title: "Control Plane"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.SubSection(form.SubSectionConfig{ID: "cp-nodes", Title: "Control Plane"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -607,7 +613,7 @@ func formCompletePreview() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 					if !templ_7745c5c3_IsBuffer {
@@ -654,13 +660,13 @@ func formCompletePreview() templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = form.SubSection(form.SubSectionConfig{ID: "worker-nodes", Title: "Workers"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.SubSection(form.SubSectionConfig{ID: "worker-nodes", Title: "Workers"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.Section(form.SectionConfig{ID: "nodes", Title: "Node Pools", Columns: "1"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.Section(form.SectionConfig{ID: "nodes", Title: "Node Pools", Columns: "1"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -703,16 +709,16 @@ func formValidationPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div id=\"form-validation-states\" class=\"w-full max-w-2xl mx-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -776,7 +782,7 @@ func formValidationPreview() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Validation Examples"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Validation Examples"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -805,16 +811,16 @@ func formExternalPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var14 == nil {
-			templ_7745c5c3_Var14 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div id=\"form-external\" class=\"w-full max-w-2xl mx-auto\"><div class=\"flex flex-col gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var15 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -826,7 +832,7 @@ func formExternalPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Var16 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var15 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -857,7 +863,7 @@ func formExternalPreview() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Upgrade"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Upgrade"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -869,7 +875,7 @@ func formExternalPreview() templ.Component {
 				Post: "/api/components/form/external-submit",
 				Swap: "none",
 			},
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -924,12 +930,140 @@ func networkReadView() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Pod Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.244.0.0/16</span></div><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Service Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.96.0.0/12</span></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func formResponsiveFooterPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
 		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var17 == nil {
 			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Pod Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.244.0.0/16</span></div><div class=\"flex flex-col gap-1\"><span class=\"text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider\">Service Subnet CIDR</span> <span class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10.96.0.0/12</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<div id=\"responsive-footer-preview\" class=\"h-96 w-full overflow-y-auto rounded-radius border border-outline bg-surface px-4 dark:border-outline-dark dark:bg-surface-dark sm:px-6\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var18 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Var19 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-location",
+					Label: "Receiving location",
+					Input: &textinput.Config{Name: "location", Value: "Headwaters field station"},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-owner",
+					Label: "Custody owner",
+					Input: &textinput.Config{Name: "owner", Value: "Ana Rivera"},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Transfer context", Columns: "1"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var19), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var20 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-last-control",
+					Label: "Handoff note",
+					Hints: []string{"This remains fully reachable above the sticky actions."},
+					Input: &textinput.Config{Name: "handoff_note", Value: "Seal checked at the receiving bench"},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = form.Section(form.SectionConfig{Title: "Final check", Columns: "1"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var20), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = form.Form(form.Config{
+			ID: "responsive-footer-form",
+			Footer: &form.FooterConfig{
+				Sticky:      true,
+				CancelLabel: "Save this handoff as a draft",
+				CancelHref:  "#",
+				SubmitLabel: "Review exact handoff details before submitting",
+			},
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

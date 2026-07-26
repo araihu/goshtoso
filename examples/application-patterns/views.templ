@@ -14,6 +14,7 @@ import (
 	"github.com/araihu/goshtoso/components/link"
 	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/components/pageheader"
+	"github.com/araihu/goshtoso/components/panel"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/components/skeleton"
@@ -353,22 +354,28 @@ templ operationDetailPage(meta pageMeta, op operation) {
 				Actions: badge.Badge(statusBadge(op.Status)),
 			})
 			<div class="detail-grid">
-				@card.Card(card.Config{
-					Tag:       "Evidence",
-					Title:     "Live decision context",
+				@panel.Panel(panel.Config{
+					Header:    applicationPanelHeader("Evidence", "Live decision context"),
 					Body:      detailEvidence(op),
-					RootClass: "app-wide-card detail-primary",
+					RootClass: "detail-primary",
+					BodyClass: "detail-primary-body",
 				})
-				@card.Card(card.Config{
-					Tag:       "Operation context",
-					Title:     "Run metadata",
+				@panel.Panel(panel.Config{
+					Header:    applicationPanelHeader("Operation context", "Run metadata"),
 					Body:      operationMetadata(op),
 					Footer:    primaryLink(routeURL("/workflows/deploy", meta.Appearance), "Run another deployment"),
-					RootClass: "app-wide-card detail-rail",
+					RootClass: "detail-rail",
 				})
 			</div>
 		</section>
 	}
+}
+
+templ applicationPanelHeader(kicker, title string) {
+	<div class="application-panel-heading">
+		<span>{ kicker }</span>
+		<h2>{ title }</h2>
+	</div>
 }
 
 templ detailEvidence(op operation) {
@@ -401,11 +408,11 @@ templ workflowPage(meta pageMeta, view workflowView) {
 				Description: "Each response is server-rendered; validation keeps the user on the step that needs attention.",
 				Breadcrumbs: patternBadge("Controlled change"),
 			})
-			@card.Card(card.Config{
-				Tag:       "Deployment plan",
-				Title:     "Review and submit",
+			@panel.Panel(panel.Config{
+				Header:    applicationPanelHeader("Deployment plan", "Review and submit"),
 				Body:      workflowBody(meta, view),
-				RootClass: "app-wide-card workflow-panel",
+				RootClass: "workflow-panel",
+				BodyClass: "workflow-panel-body",
 			})
 		</section>
 	}

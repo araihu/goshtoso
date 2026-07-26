@@ -96,7 +96,7 @@ type ThemeInfo struct {
 
 func getThemeInfos() []ThemeInfo {
 	classes := map[string][2]string{
-		"goshtoso":       {"bg-[#2276aa]", "bg-[#4b7d1c]"},
+		"goshtoso":       {"bg-[#2172a3]", "bg-[#4b7d1c]"},
 		"arctic":         {"bg-blue-700", "bg-indigo-700"},
 		"high-contrast":  {"bg-sky-900", "bg-indigo-900"},
 		"minimal":        {"bg-black", "bg-neutral-800"},
@@ -307,6 +307,7 @@ func getThemeCSSBlocks() map[string]string {
     --color-on-secondary: var(--color-white);
     --color-outline: transparent;
     --color-outline-strong: var(--color-neutral-800);
+    --color-control-outline: var(--color-neutral-500);
     --color-surface-dark: var(--color-neutral-950);
     --color-surface-dark-alt: var(--color-neutral-800);
     --color-on-surface-dark: var(--color-neutral-300);
@@ -317,6 +318,7 @@ func getThemeCSSBlocks() map[string]string {
     --color-on-secondary-dark: var(--color-black);
     --color-outline-dark: var(--color-neutral-700);
     --color-outline-dark-strong: var(--color-neutral-300);
+    --color-control-outline-dark: var(--color-neutral-500);
     --color-info: var(--color-sky-500);
     --color-on-info: var(--color-white);
     --color-success: var(--color-green-300);
@@ -730,12 +732,13 @@ func getThemeCSSBlocks() map[string]string {
     --color-surface-alt: #eaf4fb;
     --color-on-surface: #3a4b5f;
     --color-on-surface-strong: #081d2b;
-    --color-primary: #2276aa;
+    --color-primary: #2172a3;
     --color-on-primary: #ffffff;
     --color-secondary: #4b7d1c;
     --color-on-secondary: #ffffff;
     --color-outline: #c0cbd8;
     --color-outline-strong: #3a4b5f;
+    --color-control-outline: #7a8796;
     --color-surface-dark: #131920;
     --color-surface-dark-alt: #263847;
     --color-on-surface-dark: #c0cbd8;
@@ -746,6 +749,7 @@ func getThemeCSSBlocks() map[string]string {
     --color-on-secondary-dark: #131920;
     --color-outline-dark: #3a4b5f;
     --color-outline-dark-strong: #a0b1c5;
+    --color-control-outline-dark: #718397;
     --color-info: #0f766e;
     --color-on-info: #f5fcff;
     --color-success: #047857;

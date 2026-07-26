@@ -24,6 +24,21 @@ func TestTextareaClassesUseActiveSurfaceVocabulary(t *testing.T) {
 	}
 }
 
+func TestTextareaHelperUsesSemanticMutedToken(t *testing.T) {
+	classes := (Config{}).helperTextClasses()
+
+	for _, want := range []string{"text-on-surface-muted", "dark:text-on-surface-dark-muted"} {
+		if !strings.Contains(classes, want) {
+			t.Fatalf("helperTextClasses() missing %q in %q", want, classes)
+		}
+	}
+	for _, obsolete := range []string{"text-on-surface/60", "text-on-surface-dark/60"} {
+		if strings.Contains(classes, obsolete) {
+			t.Fatalf("helperTextClasses() retained opacity hierarchy %q in %q", obsolete, classes)
+		}
+	}
+}
+
 func TestTextareaEscapesUserControlledText(t *testing.T) {
 	payload := `<img src=x onerror=alert(1)>`
 	var buf bytes.Buffer

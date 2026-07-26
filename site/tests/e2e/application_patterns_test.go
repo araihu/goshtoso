@@ -73,6 +73,9 @@ func TestApplicationPatternsPageAndResponsiveRecipes(t *testing.T) {
 	assert.False(t, visible, "mobile workflow progress should be hidden at 1440 px")
 
 	require.NoError(t, page.SetViewportSize(390, 844))
+	documentFitsViewport, err := page.Evaluate("document.body.scrollWidth === document.body.clientWidth")
+	require.NoError(t, err)
+	assert.Equal(t, true, documentFitsViewport, "the shared documentation layout should not overflow at 390 px")
 
 	visible, err = page.Locator("#app-shell-desktop-sidebar").IsVisible()
 	require.NoError(t, err)

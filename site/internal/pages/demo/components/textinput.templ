@@ -272,9 +272,9 @@ templ textInputPatternPreview() {
 		})
 		<small
 			id="patternInput-feedback"
-			class="mt-1 block pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+			class="mt-1 block pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 			x-text="message()"
-			x-bind:class="touched ? (valid ? 'text-success' : 'text-danger') : 'text-on-surface/60 dark:text-on-surface-dark/60'"
+			x-bind:class="touched ? (valid ? 'text-success' : 'text-danger') : 'text-on-surface-muted dark:text-on-surface-dark-muted'"
 			aria-live="polite"
 		></small>
 	</div>

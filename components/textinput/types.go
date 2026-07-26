@@ -1,7 +1,9 @@
 package textinput
 
 import (
+	"maps"
 	"strconv"
+	"strings"
 
 	"github.com/a-h/templ"
 )
@@ -68,6 +70,40 @@ type Config struct {
 	InputAttrs templ.Attributes
 }
 
+func (cfg Config) helperTextID() string {
+	if cfg.ID == "" || cfg.HelperText == "" {
+		return ""
+	}
+	return cfg.ID + "-helper"
+}
+
+func (cfg Config) inputAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.InputAttrs)+2)
+	maps.Copy(attrs, cfg.InputAttrs)
+	if helperID := cfg.helperTextID(); helperID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeTokens(existing, helperID)
+	}
+	if cfg.State == StateError {
+		attrs["aria-invalid"] = "true"
+	}
+	return attrs
+}
+
+func mergeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for token := range strings.FieldsSeq(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
+}
+
 // GetType returns the input type, defaulting to "text"
 func (cfg Config) getType() InputType {
 	if cfg.Type != "" {
@@ -86,7 +122,7 @@ func (cfg Config) inputClasses() string {
 	case StateSuccess:
 		return base + " border-success"
 	default:
-		return base + " border-outline dark:border-outline-dark"
+		return base + " border-control-outline dark:border-control-outline-dark"
 	}
 }
 
@@ -96,9 +132,9 @@ func (cfg Config) labelClasses() string {
 
 	switch cfg.State {
 	case StateError:
-		return "flex " + base + " items-center gap-1 text-danger"
+		return "flex " + base + " items-center gap-1 text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "flex " + base + " items-center gap-1 text-success"
+		return "flex " + base + " items-center gap-1 text-success-text dark:text-success-text-dark"
 	default:
 		return base
 	}
@@ -108,11 +144,11 @@ func (cfg Config) labelClasses() string {
 func (cfg Config) helperTextClasses() string {
 	switch cfg.State {
 	case StateError:
-		return "pl-0.5 text-xs text-danger"
+		return "pl-0.5 text-xs text-danger-text dark:text-danger-text-dark"
 	case StateSuccess:
-		return "pl-0.5 text-xs text-success"
+		return "pl-0.5 text-xs text-success-text dark:text-success-text-dark"
 	default:
-		return "pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+		return "pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 	}
 }
 

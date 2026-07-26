@@ -106,7 +106,7 @@ func TestNavbar_MobileMenu(t *testing.T) {
 	assert.True(t, isHidden, "desktop menu should be hidden on mobile viewport")
 
 	// Find and click hamburger button
-	hamburger := firstNav.Locator("button[aria-label='mobile menu']")
+	hamburger := firstNav.Locator(":scope > button.sm\\:hidden")
 	require.NoError(t, hamburger.WaitFor(playwright.LocatorWaitForOptions{
 		State: playwright.WaitForSelectorStateVisible,
 	}))
@@ -123,4 +123,12 @@ func TestNavbar_MobileMenu(t *testing.T) {
 	mobileLinkVisible, err := mobileLink.IsVisible()
 	require.NoError(t, err)
 	assert.True(t, mobileLinkVisible, "mobile menu should show nav links")
+
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, mobileLink.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateHidden,
+	}))
+	label, err := hamburger.GetAttribute("aria-label")
+	require.NoError(t, err)
+	require.Equal(t, "Open mobile menu", label)
 }

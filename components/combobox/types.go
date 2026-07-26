@@ -3,8 +3,11 @@ package combobox
 import (
 	"context"
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
+
+	"github.com/a-h/templ"
 )
 
 // Mode selects single- or multi-select behavior.
@@ -45,7 +48,20 @@ type Config struct {
 	OptionsEndpoint string
 	ClearEndpoint   string
 	RootClass       string
-	Disabled        bool
+	// TriggerAttrs appends non-conflicting HTML attributes to the combobox trigger.
+	TriggerAttrs templ.Attributes
+	Disabled     bool
+}
+
+func (c Config) triggerAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(c.TriggerAttrs)+1)
+	maps.Copy(attrs, c.TriggerAttrs)
+	if c.Required {
+		if _, exists := attrs["aria-required"]; !exists {
+			attrs["aria-required"] = "true"
+		}
+	}
+	return attrs
 }
 
 // State is the per-request render state.

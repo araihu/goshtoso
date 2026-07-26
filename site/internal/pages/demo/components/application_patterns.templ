@@ -48,6 +48,7 @@ templ applicationPatternsContent() {
 				Four server-rendered recipes show how Goshtoso components become durable application structure. Each recipe separates reusable UI from the routing, policy, queries, and domain state that belong to your app.
 			</p>
 		</header>
+		@applicationSurfaceBrief()
 		<nav aria-label="Application recipe index" class="grid border-y border-outline dark:border-outline-dark sm:grid-cols-2 lg:grid-cols-4">
 			@applicationPatternIndexLink("01", "App Shell", "#app-shell")
 			@applicationPatternIndexLink("02", "Operations List", "#operations-list")
@@ -61,6 +62,46 @@ templ applicationPatternsContent() {
 			@applicationPatternSection("04", "multi-step-workflow", "Multi-step Workflow", "Make progress, validation, review, and recovery explicit.", multiStepWorkflowPreview(), multiStepWorkflowContract())
 		</div>
 		@fieldProvenApplicationPatterns()
+	</div>
+}
+
+templ applicationSurfaceBrief() {
+	<section id="surface-brief" class="mb-14 border-y border-outline py-8 dark:border-outline-dark" aria-labelledby="surface-brief-title">
+		<div class="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]">
+			<header class="space-y-2">
+				<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Before components</p>
+				<h2 id="surface-brief-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Write the surface brief</h2>
+				<p class="text-sm leading-6 text-on-surface dark:text-on-surface-dark">Use product context and task truth to make a strong reversible first pass. Do not turn the domain name into a palette, font, or layout preset.</p>
+			</header>
+			<dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+				@applicationBriefItem("Task and scene", "Name the primary user, outcome, environment, constraints, and information priority.")
+				@applicationBriefItem("Register and archetype", "Choose product or brand; then operations, dashboard, detail, workflow, settings, onboarding, or content/marketing.")
+				@applicationBriefItem("State and navigation", "Name direct or HTMX navigation and every consequential loading, empty, error, permission, interruption, and success state.")
+				@applicationBriefItem("Visual direction", "Record density, hierarchy, geometry, type roles, semantic color, and motion—never only “clean” or “modern.”")
+			</dl>
+		</div>
+		<p class="mt-6 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">The installable skill includes the complete design-intelligence brief, anti-reflex critique, primitive mapping, and evidence contract.</p>
+		@applicationWorkedDashboardBrief()
+	</section>
+}
+
+templ applicationWorkedDashboardBrief() {
+	<div class="mt-8 border-t border-outline pt-6 dark:border-outline-dark">
+		<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Completed route</p>
+		<h3 class="mt-2 font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Reliability dashboard → actionable incident queue</h3>
+		<dl class="mt-4 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2">
+			@applicationBriefItem("Task and priority", "A reliability lead scans in under 30 seconds. Active incidents outrank degraded services; stable trends are context, not the page grid.")
+			@applicationBriefItem("Pattern and primitives", "App Shell + Operations List with PageHeader, Toolbar, Alert, Table, Badge, Panel, EmptyState, and Skeleton.")
+			@applicationBriefItem("States and direction", "Compact density; stale, partial, permission, empty, retry, and success states; restrained dividers and semantic state color without elevation.")
+			@applicationBriefItem("No-match decision", "A compact trend strip remains application-owned because Goshtoso has no public chart primitive; it needs a labeled range and textual equivalent.")
+		</dl>
+	</div>
+}
+
+templ applicationBriefItem(term, description string) {
+	<div>
+		<dt class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ term }</dt>
+		<dd class="mt-1 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">{ description }</dd>
 	</div>
 }
 
@@ -319,9 +360,7 @@ templ operationsListPreview() {
 				}
 			</div>
 		</div>
-		<div class="overflow-x-auto">
-			<div class="min-w-[48rem]">
-				@table.Table(table.Config{
+		@table.Table(table.Config{
 					ID:           "operations-pattern-table",
 					Caption:      "Deployments awaiting operational review",
 					ShowCheckbox: true,
@@ -333,9 +372,7 @@ templ operationsListPreview() {
 						{Key: "owner", Label: "Owner", Width: "min-w-32"},
 					},
 					Rows: operationsPatternRows(),
-				})
-			</div>
-		</div>
+		})
 		<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Showing 3 of 18 deployments. Selection remains stable while filters update from the server.</p>
 	</div>
 }

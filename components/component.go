@@ -93,6 +93,7 @@ const (
 	KindAppShell               Kind = "app-shell"
 	KindPageHeader             Kind = "page-header"
 	KindToolbar                Kind = "toolbar"
+	KindPanel                  Kind = "panel"
 	KindEmptyState             Kind = "empty-state"
 	KindSkeleton               Kind = "skeleton"
 )
@@ -175,6 +176,7 @@ var allKinds = []Kind{
 	KindAppShell,
 	KindPageHeader,
 	KindToolbar,
+	KindPanel,
 	KindEmptyState,
 	KindSkeleton,
 }

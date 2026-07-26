@@ -28,8 +28,8 @@ copy-paste snippets.
 
 ## Highlights
 
-- **48 public component packages** documented across **47 documentation pages**,
-  exposing **79 renderable primitives** for composition, forms, navigation, overlays, data
+- **49 public component packages** documented across **48 documentation pages**,
+  exposing **80 renderable primitives** for composition, forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
   instant local interaction makes sense.
@@ -119,8 +119,10 @@ upgrading from `v0.0.11` should follow the
 Goshtoso ships an installable skill for AI coding agents that need to use the
 library inside consumer applications. It teaches agents how to install the Go
 module, serve bundled assets, wire `head.Dependencies()`, import components,
-choose a CSS strategy, and progress from the first component to App Shell,
-Operations List, Detail Workspace, and Multi-step Workflow patterns.
+choose a CSS strategy, write a low-interaction surface brief, route the real
+task into supported application patterns, reject generic design reflexes, and
+verify the result in the browser. The composition contracts remain App Shell,
+Operations List, Detail Workspace, and Multi-step Workflow.
 
 Install the skill into a project or agent workspace:
 
@@ -143,7 +145,8 @@ npx skills use araihu/goshtoso --skill using-goshtoso
 The skill is intentionally consumer-focused. It does not cover maintaining
 Goshtoso itself, editing component internals, or running releases. The public
 docs site includes an AI Agents page at `/docs/agents`. The installed skill also
-ships an [application patterns reference](.agents/skills/using-goshtoso/references/application-patterns.md)
+ships a [design-intelligence reference](.agents/skills/using-goshtoso/references/design-intelligence.md),
+an [application patterns reference](.agents/skills/using-goshtoso/references/application-patterns.md),
 and a [visual acceptance checklist](.agents/skills/using-goshtoso/references/visual-acceptance.md).
 
 ## Component Catalog
@@ -161,7 +164,8 @@ accordion        alert       appshell     avatar       badge        banner
 breadcrumbs      button      card         carousel     chatbubble   checkbox
 codeblock        combobox    drawer       dropdown     emptystate   fileinput
 form             head        kbd          link         modal        navbar
-pageheader       pagination  palette      radio        range        rating
+pageheader       pagination  palette      panel        radio        range
+rating
 schemaform       search      select       sidebar      skeleton     spinner
 steps            structuredinput         table        tabs         tagslist
 textarea         textinput   toast        toolbar      toggle       tooltip
