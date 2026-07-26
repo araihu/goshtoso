@@ -328,6 +328,7 @@
     --color-on-secondary: var(--color-white);
     --color-outline: var(--color-neutral-300);
     --color-outline-strong: var(--color-neutral-800);
+    --color-control-outline: var(--color-outline);
     --color-surface-dark: var(--color-neutral-800);
     --color-surface-dark-alt: var(--color-neutral-900);
     --color-on-surface-dark: var(--color-neutral-300);
@@ -342,6 +343,7 @@
     --color-on-secondary-dark: var(--color-black);
     --color-outline-dark: var(--color-neutral-700);
     --color-outline-dark-strong: var(--color-neutral-300);
+    --color-control-outline-dark: var(--color-outline-dark);
     --color-info: var(--color-cyan-500);
     --color-on-info: var(--color-black);
     --color-success: var(--color-teal-400);
@@ -1807,6 +1809,9 @@
   }
   .\!border-transparent {
     border-color: transparent !important;
+  }
+  .border-control-outline {
+    border-color: var(--color-control-outline);
   }
   .border-danger {
     border-color: var(--color-danger);
@@ -6146,6 +6151,11 @@
       }
     }
   }
+  .dark\:border-control-outline-dark {
+    &:where(.dark, .dark *) {
+      border-color: var(--color-control-outline-dark);
+    }
+  }
   .dark\:border-danger {
     &:where(.dark, .dark *) {
       border-color: var(--color-danger);
@@ -6570,11 +6580,6 @@
       color: var(--color-green-300);
     }
   }
-  .dark\:text-info {
-    &:where(.dark, .dark *) {
-      color: var(--color-info);
-    }
-  }
   .dark\:text-on-primary-dark {
     &:where(.dark, .dark *) {
       color: var(--color-on-primary-dark);
@@ -6700,11 +6705,6 @@
   .dark\:text-success {
     &:where(.dark, .dark *) {
       color: var(--color-success);
-    }
-  }
-  .dark\:text-warning {
-    &:where(.dark, .dark *) {
-      color: var(--color-warning);
     }
   }
   .dark\:accent-primary-dark {
@@ -7926,6 +7926,7 @@
     --color-on-secondary: var(--color-white);
     --color-outline: transparent;
     --color-outline-strong: var(--color-neutral-800);
+    --color-control-outline: var(--color-neutral-500);
     --color-surface-dark: var(--color-neutral-950);
     --color-surface-dark-alt: var(--color-neutral-800);
     --color-on-surface-dark: var(--color-neutral-300);

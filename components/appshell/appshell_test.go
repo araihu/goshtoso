@@ -24,6 +24,10 @@ func TestAppShellRendersAccessibleSingleScrollLayoutByDefault(t *testing.T) {
 
 	require.Contains(t, html, `href="#main-content"`)
 	require.Contains(t, html, `>Skip to main content</a>`)
+	require.Contains(t, html, "-translate-y-20")
+	require.Contains(t, html, "focus:translate-y-0")
+	require.NotContains(t, html, "transition-transform")
+	require.NotContains(t, html, "duration-200")
 	require.Contains(t, html, `<main id="main-content"`)
 	require.Contains(t, html, `tabindex="-1"`)
 	require.Contains(t, html, "min-h-screen")

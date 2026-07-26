@@ -289,7 +289,7 @@ func textareaWithActionsTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var16 = []any{fmt.Sprintf("flex w-full max-w-md flex-col overflow-hidden rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark%s", condClass(cfg.RootClass))}
+		var templ_7745c5c3_Var16 = []any{fmt.Sprintf("flex w-full max-w-md flex-col overflow-hidden rounded-radius border border-control-outline text-on-surface dark:border-control-outline-dark dark:text-on-surface-dark%s", condClass(cfg.RootClass))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -414,7 +414,7 @@ func textareaWithActionsTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</textarea></div><!-- Footer Container --><div class=\"flex w-full items-center justify-between border-t border-outline bg-surface-alt px-2.5 py-2 dark:border-outline-dark dark:bg-surface-dark-alt\"><!-- Action Buttons --><div class=\"flex items-center gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</textarea></div><!-- Footer Container --><div class=\"flex w-full items-center justify-between border-t border-control-outline bg-surface-alt px-2.5 py-2 dark:border-control-outline-dark dark:bg-surface-dark-alt\"><!-- Action Buttons --><div class=\"flex items-center gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -70,7 +70,7 @@ func appShellTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"absolute left-4 top-4 z-50 -translate-y-20 rounded-radius bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition-transform duration-200 ease-out focus:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"absolute left-4 top-4 z-50 -translate-y-20 rounded-radius bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

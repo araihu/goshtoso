@@ -55,9 +55,9 @@ func TestCoverageRenderFullDefaultStateTextarea(t *testing.T) {
 		">hello</textarea>",
 		"<small",
 		"Optional helper",
-		"mt-4",               // RootClass routed through containerClasses
-		"text-on-surface/60", // default helperTextClasses branch
-		"border-outline",     // default textareaClasses branch
+		"mt-4",                   // RootClass routed through containerClasses
+		"text-on-surface/60",     // default helperTextClasses branch
+		"border-control-outline", // default textareaClasses branch
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("full default render missing %q in %s", want, html)

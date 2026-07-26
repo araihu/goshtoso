@@ -63,6 +63,25 @@ func requireAppShellSkipLinkStartsClipped(t *testing.T, page playwright.Page) {
 	}`, nil)
 	require.NoError(t, err)
 	require.Equal(t, true, clipped)
+
+	skipLink := page.Locator("#app-shell-default a[href='#app-shell-default-main']")
+	require.NoError(t, skipLink.Focus())
+	visibleImmediately, err := page.Locator("#app-shell-default").Evaluate(`frame => {
+		const link = frame.querySelector('a[href="#app-shell-default-main"]')
+		if (!link) return false
+		const frameBounds = frame.getBoundingClientRect()
+		const linkBounds = link.getBoundingClientRect()
+		const style = getComputedStyle(link)
+		return linkBounds.top >= frameBounds.top &&
+			linkBounds.bottom <= frameBounds.bottom &&
+			style.transitionDuration === '0s'
+	}`, nil)
+	require.NoError(t, err)
+	require.Equal(t, true, visibleImmediately, "skip link must be fully visible on the first focused frame")
+	require.NoError(t, skipLink.Press("Enter"))
+	activeID, err := page.Evaluate("() => document.activeElement?.id", nil)
+	require.NoError(t, err)
+	require.Equal(t, "app-shell-default-main", activeID)
 	require.Equal(t, "-1", mustAttribute(t, page.Locator("#app-shell-default main"), "tabindex"))
 }
 

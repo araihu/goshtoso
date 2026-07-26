@@ -106,17 +106,17 @@ func (cfg Config) softToneClasses() string {
 	case ToneInverse:
 		return "border border-outline-dark bg-surface text-on-surface dark:border-outline dark:bg-surface-dark dark:text-on-surface-dark"
 	case TonePrimary:
-		return "border border-primary bg-surface text-primary dark:border-primary-dark dark:bg-surface-dark dark:text-primary-dark"
+		return "border border-primary bg-surface text-on-surface-strong dark:border-primary-dark dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	case ToneSecondary:
-		return "border border-secondary bg-surface text-secondary dark:border-secondary-dark dark:bg-surface-dark dark:text-secondary-dark"
+		return "border border-secondary bg-surface text-on-surface-strong dark:border-secondary-dark dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	case ToneInfo:
-		return "border border-info bg-surface text-info dark:border-info dark:bg-surface-dark dark:text-info"
+		return "border border-info bg-surface text-on-surface-strong dark:border-info dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	case ToneSuccess:
-		return "border border-success bg-surface text-success dark:border-success dark:bg-surface-dark dark:text-success"
+		return "border border-success bg-surface text-on-surface-strong dark:border-success dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	case ToneWarning:
-		return "border border-warning bg-surface text-warning dark:border-warning dark:bg-surface-dark dark:text-warning"
+		return "border border-warning bg-surface text-on-surface-strong dark:border-warning dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	case ToneDanger:
-		return "border border-danger bg-surface text-danger dark:border-danger dark:bg-surface-dark dark:text-danger"
+		return "border border-danger bg-surface text-on-surface-strong dark:border-danger dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	default:
 		return "border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 	}

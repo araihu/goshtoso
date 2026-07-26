@@ -113,7 +113,7 @@ func (cfg Config) textareaClasses() string {
 	case StateSuccess:
 		return base + " border-success dark:border-success"
 	default:
-		return base + " border-outline dark:border-outline-dark"
+		return base + " border-control-outline dark:border-control-outline-dark"
 	}
 }
 

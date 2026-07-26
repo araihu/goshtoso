@@ -23,6 +23,9 @@
     --color-on-secondary: var(--color-white);
     --color-outline: var(--color-neutral-300);
     --color-outline-strong: var(--color-neutral-800);
+    /* Control boundaries stay perceivable even when a theme deliberately removes
+       passive structural outlines. */
+    --color-control-outline: var(--color-outline);
 
     /* Dark Theme */
     --color-surface-dark: var(--color-neutral-800);
@@ -36,6 +39,7 @@
     --color-on-secondary-dark: var(--color-black);
     --color-outline-dark: var(--color-neutral-700);
     --color-outline-dark-strong: var(--color-neutral-300);
+    --color-control-outline-dark: var(--color-outline-dark);
 
     /* Shared Colors */
     --color-info: var(--color-cyan-500);
@@ -103,6 +107,7 @@
         --color-on-secondary: var(--color-white);
         --color-outline: transparent;
         --color-outline-strong: var(--color-neutral-800);
+        --color-control-outline: var(--color-neutral-500);
         --color-surface-dark: var(--color-neutral-950);
         --color-surface-dark-alt: var(--color-neutral-800);
         /* neutral-400 is only 4.38:1 on the Minimal dark alt surface at 14px. */
