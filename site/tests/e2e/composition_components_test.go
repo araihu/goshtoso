@@ -58,6 +58,7 @@ func requireAppShellSkipLinkStartsClipped(t *testing.T, page playwright.Page) {
 	}`, nil)
 	require.NoError(t, err)
 	require.Equal(t, true, clipped)
+	require.Equal(t, "-1", mustAttribute(t, page.Locator("#app-shell-default main"), "tabindex"))
 }
 
 func TestCardBodyDemoRendersBetweenDescriptionAndFooter(t *testing.T) {

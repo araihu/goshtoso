@@ -32,8 +32,9 @@ updates, and overlays. Feature pages own their content and local tools.
 2. A compact top bar contains product identity, global search, theme controls,
    and account actions.
 3. A sidebar contains stable sections and the current-page state.
-4. Exactly one main region scrolls. Give it `id="main-content"` and
-   `tabindex="-1"` so navigation can restore focus.
+4. Exactly one main region scrolls. `appshell.AppShell` defaults it to
+   `id="main-content"` and `tabindex="-1"` so navigation can restore focus;
+   override those values only when the application has an equivalent target.
 5. Breadcrumbs and the page title live immediately above feature content.
 6. Drawers, search results, and toasts render outside the scroll region so
    clipping does not hide them.

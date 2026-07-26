@@ -25,11 +25,39 @@ func TestAppShellRendersAccessibleSingleScrollLayoutByDefault(t *testing.T) {
 	require.Contains(t, html, `href="#main-content"`)
 	require.Contains(t, html, `>Skip to main content</a>`)
 	require.Contains(t, html, `<main id="main-content"`)
+	require.Contains(t, html, `tabindex="-1"`)
 	require.Contains(t, html, "min-h-screen")
 	require.Contains(t, html, "relative")
 	require.Contains(t, html, "overflow-hidden")
 	require.Contains(t, html, "overflow-y-auto")
 	require.Equal(t, components.KindAppShell, AppShell(Config{}).Kind())
+}
+
+func TestAppShellMainFocusTargetCanBeOverriddenWithoutMutatingAttrs(t *testing.T) {
+	attrs := templ.Attributes{
+		"data-region": "main",
+		"tabindex":    "0",
+	}
+
+	html := renderHTML(t, AppShell(Config{MainAttrs: attrs}))
+
+	require.Contains(t, html, `data-region="main"`)
+	require.Contains(t, html, `tabindex="0"`)
+	require.NotContains(t, html, `tabindex="-1"`)
+	require.Equal(t, 1, strings.Count(html, "tabindex="))
+	require.Equal(t, templ.Attributes{
+		"data-region": "main",
+		"tabindex":    "0",
+	}, attrs)
+}
+
+func TestAppShellMainFocusTargetDefaultDoesNotMutateAttrs(t *testing.T) {
+	attrs := templ.Attributes{"data-region": "main"}
+
+	html := renderHTML(t, AppShell(Config{MainAttrs: attrs}))
+
+	require.Contains(t, html, `tabindex="-1"`)
+	require.NotContains(t, attrs, "tabindex")
 }
 
 func TestAppShellRendersSlotsAndTargetHooks(t *testing.T) {

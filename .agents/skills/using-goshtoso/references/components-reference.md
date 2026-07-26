@@ -116,7 +116,7 @@ import "github.com/araihu/goshtoso/components/appshell"  // package appshell
 | `SidebarClass` | `string` | SidebarClass appends CSS classes to the sidebar wrapper. |
 | `SidebarAttrs` | `templ.Attributes` | SidebarAttrs appends arbitrary HTML attributes to the sidebar wrapper. |
 | `MainClass` | `string` | MainClass appends CSS classes to the main region. |
-| `MainAttrs` | `templ.Attributes` | MainAttrs appends arbitrary HTML attributes to the main region. |
+| `MainAttrs` | `templ.Attributes` | MainAttrs appends arbitrary HTML attributes to the main region. AppShell |
 
 ## avatar
 

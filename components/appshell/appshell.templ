@@ -21,7 +21,7 @@ templ appShellTemplate(cfg Config) {
 					@cfg.Sidebar
 				</aside>
 			}
-			<main id={ cfg.mainID() } class={ cfg.mainClasses() } { cfg.MainAttrs... }>
+			<main id={ cfg.mainID() } class={ cfg.mainClasses() } { cfg.mainAttrs()... }>
 				if cfg.Content != nil {
 					@cfg.Content
 				}

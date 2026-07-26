@@ -32,7 +32,9 @@ type Config struct {
 	SidebarAttrs templ.Attributes
 	// MainClass appends CSS classes to the main region.
 	MainClass string
-	// MainAttrs appends arbitrary HTML attributes to the main region.
+	// MainAttrs appends arbitrary HTML attributes to the main region. AppShell
+	// supplies tabindex="-1" by default so the skip-link target can receive
+	// programmatic focus; set tabindex here to override that default.
 	MainAttrs templ.Attributes
 }
 
@@ -76,6 +78,17 @@ func (cfg Config) mainClasses() string {
 		"min-w-0 flex-1 overflow-y-auto bg-surface p-4 sm:p-6 lg:p-8 dark:bg-surface-dark",
 		cfg.MainClass,
 	)
+}
+
+func (cfg Config) mainAttrs() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.MainAttrs)+1)
+	for key, value := range cfg.MainAttrs {
+		attrs[key] = value
+	}
+	if _, overridden := attrs["tabindex"]; !overridden {
+		attrs["tabindex"] = "-1"
+	}
+	return attrs
 }
 
 func appendClass(base, extra string) string {
