@@ -4,7 +4,7 @@ Data da auditoria: 2026-07-25
 
 Base auditada: `origin/main` em `bd8edd1c3d9baa188654b93e7f049dd94d414c69`
 
-Status: implementação das melhorias em andamento em `codex/agent-quality-improvements`
+Status: implementação e validação concluídas em `codex/agent-quality-improvements`
 
 Este documento é o checkpoint permanente da investigação sobre por que agentes
 conseguem integrar Goshtoso, mas nem sempre produzem aplicações bonitas e úteis
@@ -32,6 +32,13 @@ A jornada de adoção recebeu **26/40, Aceitável**. A meta do benchmark após a
 melhorias é pelo menos **30/40**, sem source-dives nem utilities que falhem
 silenciosamente.
 
+A reavaliação final atingiu **36/40, +10 pontos**, por meio de um app externo
+novo construído apenas com a superfície pública permitida. O resultado superou
+a meta sem source-dive direto, sem asset remoto, sem erro de console e sem
+overflow de página na matriz visual. A pureza de contexto é qualificada porque
+o harness injetou memórias de trabalhos anteriores; essa contaminação foi
+declarada e nenhum source ou artefato citado por ela foi aberto ou reutilizado.
+
 ## Método e fontes
 
 A auditoria combinou cinco linhas independentes de evidência:
@@ -44,11 +51,11 @@ A auditoria combinou cinco linhas independentes de evidência:
 - inspeção de consumidores reais: Manja e a subtree `tks-console` de
   `guilycst/totvs-work`.
 
-Limite conhecido: não havia backend de navegador disponível durante a auditoria
-original. As verificações visuais em 390 px e 1440 px fazem parte dos critérios
-de encerramento desta implementação.
+Limite original: não havia backend de navegador disponível durante a auditoria
+inicial. A implementação encerrou essa lacuna com inspeção real em 390 px e
+1440 px, Goshtoso/Minimal, light/dark e loading/empty/error/success.
 
-## Design Health Score
+## Design Health Score — baseline
 
 | # | Heurística | Nota | Questão principal |
 |---|---|---:|---|
@@ -63,6 +70,32 @@ de encerramento desta implementação.
 | 9 | Diagnóstico e recuperação | 3/4 | Troubleshooting técnico é bom; classes ausentes e composição fraca não têm diagnóstico equivalente. |
 | 10 | Ajuda e documentação | 3/4 | Cobertura ampla no nível de API, pouca orientação para aplicações completas. |
 | **Total** |  | **26/40** | **Fundação sólida, transferência insuficiente.** |
+
+## Reavaliação final — 36/40
+
+A sonda externa Control Room aplicou a mesma família de dez heurísticas. O
+relatório completo preserva fontes, comandos, screenshots temporários, gates e
+ressalvas em `docs/audits/2026-07-25-blind-agent-probe.md`.
+
+| # | Heurística | Baseline | Final | Evidência de mudança |
+|---|---|---:|---:|---|
+| 1 | Visibilidade do status | 3/4 | 4/4 | State matrix, Skeleton, badges, live region e progresso do workflow. |
+| 2 | Correspondência com tarefas reais | 3/4 | 4/4 | Recipes e app operacional usam serviços, owners, SLO, canary e rollback. |
+| 3 | Controle e liberdade | 3/4 | 3/4 | Retry, Back/Continue por POST e histórico funcionam; navegação global mobile continua app-owned. |
+| 4 | Consistência e padrões | 2/4 | 4/4 | Inventários centralizados, method routes, landmarks e componentes de composição. |
+| 5 | Prevenção de erros | 3/4 | 3/4 | Atributos nativos e defaults seguros melhoraram; a sonda não exigia ciclo completo de validação. |
+| 6 | Reconhecimento, não lembrança | 2/4 | 4/4 | Skill progressiva, quatro recipes e referências geradas mantêm contratos visíveis. |
+| 7 | Flexibilidade e eficiência | 2/4 | 3/4 | Slots, attrs e URLs diretas funcionam; uma UI branded ainda exige CSS próprio relevante. |
+| 8 | Design estético e minimalista | 2/4 | 4/4 | Superfície dominante, hierarquia contida, índice editorial e ausência de card soup. |
+| 9 | Diagnóstico e recuperação | 3/4 | 4/4 | Empty/error acionáveis, retry, preservação de contexto e matriz visual explícita. |
+| 10 | Ajuda e documentação | 3/4 | 3/4 | A orientação foi suficiente sem source; restam sharp edges P2 documentados abaixo. |
+| **Total** |  | **26/40** | **36/40** | **Meta de 30/40 superada por 6 pontos.** |
+
+O score final não afirma perfeição. A sonda precisou de 570 linhas de CSS
+app-owned para sua identidade, descobriu que `table.Row.Link` combinado com uma
+ação Button pode gerar controles interativos aninhados e precisou passar
+`MainAttrs` para tornar o alvo do skip link focável. Esses pontos permanecem
+como backlog P2, não como falhas ocultas.
 
 ## O que já funciona
 
@@ -272,9 +305,10 @@ não apenas arquivos presentes.
 | Drift de temas/TOTVS/package | feito | 15 opções contra CSS, TOTVS removido e Dependencies → `head` |
 | Índice extraível com sete apps | feito | sequência editorial com imagens, Wizard, complexity, components, states e source links testados |
 | Quatro recipes canônicas | feito | `/docs/application-patterns` com previews, contratos 390/1440, source maps, SEO, busca e E2E |
-| Benchmark externo | em validação | módulo integrado; build/testes verdes e revisão visual do control plane aplicada; matriz final ainda pendente |
+| Benchmark externo | feito | módulo integrado; build/testes verdes; matriz 390/1440, temas, modos e quatro estados sem overflow ou erros de console |
 | Componentes promovidos | feito | AppShell, PageHeader, Toolbar, EmptyState, Skeleton e Card Body; APIs, demos, catálogo, skillgen e E2E completo |
-| Reavaliação final | pendente | novo score e comparação com 26/40 |
+| Sonda cega final | feito | Control Room externo, zero source-dive direto, gates verdes e 36/40; qualificação de memória declarada |
+| Reavaliação final | feito | 36/40 contra 26/40; aumento de 10 pontos com a mesma régua |
 
 ## Tarefas paralelas sob o control plane
 
@@ -284,9 +318,10 @@ regeneração, testes finais e autoria do resultado consolidado.
 
 | Tarefa | Thread | Escopo | Estado |
 |---|---|---|---|
-| Benchmark externo | `019f9b9b-334f-7430-a575-b5e926c7566c` | `examples/application-patterns` autocontido | integrado e revisado |
-| Recipes públicas | `019f9b9b-3351-7180-bba6-4ab77609fcb1` | `/docs/application-patterns`, preview, SEO e testes | integrado e revisado |
-| Kit de composição | `019f9b9b-3351-7180-bba6-4ad8292435a0` | AppShell, PageHeader, Toolbar, EmptyState, Skeleton e Card Body | integrado e revisado |
+| Benchmark externo | `019f9b9b-334f-7430-a575-b5e926c7566c` | `examples/application-patterns` autocontido | integrado, revisado e arquivado |
+| Recipes públicas | `019f9b9b-3351-7180-bba6-4ab77609fcb1` | `/docs/application-patterns`, preview, SEO e testes | integrado, revisado e arquivado |
+| Kit de composição | `019f9b9b-3351-7180-bba6-4ad8292435a0` | AppShell, PageHeader, Toolbar, EmptyState, Skeleton e Card Body | integrado, revisado e arquivado |
+| Sonda cega Control Room | `019f9bc4-aefb-7692-9747-cc2789f81fcf` | app temporário externo e relatório de aceitação | integrado, revisado e arquivado |
 
 ## Snags já registrados
 
@@ -317,10 +352,37 @@ regeneração, testes finais e autoria do resultado consolidado.
   privado `appShellCreateAction`. Os helpers da recipe receberam prefixo
   `applicationPattern` e o build integrado ganhou uma regressão real que os
   slices isolados não podiam detectar.
+- A matriz final em 390 px encontrou overflow de página tanto na tabela de
+  success quanto no skeleton de loading do benchmark. Grid e flex ancestors
+  passaram a usar `min-width: 0`, a track usa `minmax(0, 1fr)` e o loading
+  empilha no breakpoint mobile; o teste de assets protege a contenção.
+- A sonda final mostrou que `table.Row.Link` com `table.Row.Actions` pode
+  produzir controles interativos aninhados. Até haver prevenção no componente
+  ou orientação específica, apps devem escolher linha clicável ou ação Button,
+  não ambas.
+- `AppShell` permite tornar o alvo do skip link focável via `MainAttrs`, mas não
+  aplica `tabindex="-1"` automaticamente. Alinhar o default ao contrato público
+  é uma oportunidade P2.
+- O harness obrigou a sonda a receber memórias de resultados anteriores. Ela
+  manteve zero source-dive direto e não reutilizou artefatos, mas o relatório
+  qualifica corretamente a alegação de cegueira absoluta.
 
 ## Decisão de encerramento
 
-O trabalho só termina quando o benchmark externo satisfizer os critérios acima,
-o ledger estiver atualizado e as quality gates relevantes passarem. Entregar
-apenas documentação, apenas componentes ou apenas um novo exemplo não resolve o
-problema completo identificado pela auditoria.
+O trabalho está encerrado porque o benchmark externo satisfez os critérios, a
+sonda independente superou a meta, o ledger foi atualizado e os gates finais
+passaram:
+
+- `templ generate`, `just css` e `go run ./cmd/skillgen` sem drift;
+- `go fix ./...` nos dois módulos sem alterações;
+- root e site com `golangci-lint run`: zero issues;
+- build do site e build/vet/lint do benchmark externo;
+- testes de root, site, starter e benchmark;
+- E2E completo: `ok github.com/araihu/goshtoso/site/tests/e2e` em 308,731 s;
+- inspeção real de recipes, componentes e benchmark, sem erros de console;
+- sonda cega final: 36/40 e zero source-dive direto.
+
+Os três follow-ups P2 preservados são reduzir o CSS app-owned necessário para
+branding, prevenir/documentar linha clicável com ação interativa e considerar
+`tabindex="-1"` como default do alvo principal de AppShell. Nenhum deles reabre
+os P1s que motivaram esta auditoria.
