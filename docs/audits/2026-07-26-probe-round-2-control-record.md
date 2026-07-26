@@ -634,3 +634,27 @@ Pre-snapshot verification is green: stable templ generation, CSS generation,
 root and site unit suites, root and site lint, `go fix` in both modules, site
 build, focused contrast E2E and full E2E in `319.452s`. A new immutable snapshot
 and final Browser replay remain before the round can close.
+
+## Round closure
+
+Commit `5c801ac15f7d3cf92f3cfc59d9dafa34f22c812e` became detached immutable
+snapshot `/tmp/goshtoso-probes/round2/confirmation-library-v3`. The external
+consumer points at v3 and passes two stable generations, test, vet, build, page
+and asset smokes, 422, 503, created success and same-key replay.
+
+The root Browser repeated 390 Goshtoso-light default/empty, 390 Minimal-dark,
+1440 Minimal-dark and 1440 Goshtoso-light. All cells have zero document and
+internal horizontal overflow. The empty route has no no-op header action, both
+desktop themes retain a border with `box-shadow: none`, and Minimal-dark small
+copy measures 7.431:1 instead of 4.383:1.
+
+The final live HTMX replay preserved notes across 422 and 503, exposed one safe
+retry control, reached success and then cleared the draft. Console output is
+empty. Browser and server cleanup completed, including closed port 18473.
+
+The round closes at **37/40 PASS with zero P0/P1/P2**. The consumer app remains
+external evidence rather than being copied wholesale into the docs site; its
+Decision Queue, Interruption-safe Workflow and Content-first Review patterns
+are already published in `/docs/application-patterns`, while the new visual
+lessons are distilled into the public skill. This keeps the documentation
+focused on reusable contracts instead of preserving another large demo.
