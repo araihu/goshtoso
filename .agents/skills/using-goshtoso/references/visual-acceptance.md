@@ -25,6 +25,8 @@ them.
 
 ## Hierarchy and composition
 
+- The rendered surface still matches the task, register, information priority,
+  density, and visual direction recorded in `design-intelligence.md`.
 - The page has one obvious primary task and one `h1`.
 - Primary, secondary, and destructive actions do not compete visually.
 - Dense work surfaces use stable rows, columns, and alignment instead of equal
@@ -61,6 +63,9 @@ them.
 - Avoid the generated “ghost card” formula: a border plus a broad diffuse
   shadow on every surface. Use borders for structure and reserve elevation for
   a real layering relationship such as a dialog, popover, or dragged item.
+- Reject decorative gradient text, glass effects, side stripes, category-coded
+  palettes, and excessive pill/rounded containers unless the surface brief
+  records a product-specific reason for them.
 
 ## Keyboard and focus
 

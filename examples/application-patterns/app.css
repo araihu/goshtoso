@@ -171,8 +171,8 @@ body {
 .app-contract-grid div {
 	display: grid;
 	gap: 0.35rem;
-	padding: 1rem;
-	border-left: 3px solid var(--app-primary);
+	padding: 1rem 0;
+	border-top: 1px solid var(--app-border);
 	background: var(--app-bg);
 }
 
@@ -241,8 +241,28 @@ body {
 	align-items: start;
 }
 
-.detail-primary > div {
+.detail-primary-body {
+	display: grid;
 	gap: 1.25rem;
+}
+
+.application-panel-heading {
+	display: grid;
+	gap: 0.25rem;
+}
+
+.application-panel-heading span {
+	color: var(--app-primary);
+	font-size: 0.68rem;
+	font-weight: 750;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.application-panel-heading h2 {
+	margin: 0;
+	color: var(--app-strong);
+	font-size: 1.05rem;
 }
 
 .evidence-list {
@@ -304,7 +324,7 @@ body {
 	margin: 0 auto;
 }
 
-.workflow-panel > div,
+.workflow-panel-body,
 .workflow-form,
 .workflow-success {
 	display: grid;

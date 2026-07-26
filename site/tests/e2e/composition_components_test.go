@@ -20,6 +20,7 @@ func TestCompositionComponentDemosRenderPublicContracts(t *testing.T) {
 		{path: "/components/app-shell", selector: "#app-shell-default main", text: "Operations"},
 		{path: "/components/page-header", selector: "#page-header-default h1", text: "Operations"},
 		{path: "/components/toolbar", selector: "#toolbar-default [role='toolbar']", text: "Create incident"},
+		{path: "/components/panel", selector: "#panel-outlined > div", text: "Database failover"},
 		{path: "/components/empty-state", selector: "#empty-state-default section", text: "No incidents found"},
 		{path: "/components/skeleton", selector: "#skeleton-default [role='status']", text: "Loading incidents"},
 	}
@@ -36,6 +37,10 @@ func TestCompositionComponentDemosRenderPublicContracts(t *testing.T) {
 			require.NoError(t, preview.WaitFor())
 			if test.path == "/components/app-shell" {
 				requireAppShellSkipLinkStartsClipped(t, page)
+			}
+			if test.path == "/components/panel" {
+				require.Equal(t, "change-panel-title", mustAttribute(t, preview, "aria-labelledby"))
+				require.Equal(t, 0, mustCount(t, preview.Locator("article, section, h3")))
 			}
 			if test.path == "/components/skeleton" {
 				require.Equal(t, test.text, mustAttribute(t, preview, "aria-label"))

@@ -67,7 +67,7 @@ func TestFormDemoCollapsibleComboboxEscapesAccordionClip(t *testing.T) {
 	require.NoError(t, page.Locator("#advanced").ScrollIntoViewIfNeeded())
 	require.NoError(t, page.Locator("#advanced > button").Click())
 	require.NoError(t, page.Locator("#advanced-content").WaitFor())
-	require.NoError(t, page.Locator("#log-level-trigger").Click())
+	require.NoError(t, page.Locator(`#log-level [role="combobox"]`).Click())
 	require.NoError(t, page.Locator(`#log-level [data-combobox-option][data-value="debug"]`).WaitFor())
 
 	hitDebugOption, err := page.Evaluate(`() => {

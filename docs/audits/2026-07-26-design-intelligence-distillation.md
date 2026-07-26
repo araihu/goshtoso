@@ -1,0 +1,397 @@
+# Design Intelligence Distillation Audit
+
+Status: in progress
+
+This audit preserves the evidence, decisions, implementation map, and blind-probe
+results for distilling UI UX Pro Max and Impeccable into Goshtoso's public
+agent-facing surface. It is intentionally versioned early so work survives
+context compaction and can be reviewed independently of the implementation.
+
+## Frozen inputs
+
+- Goshtoso: `origin/main` at `5d2e74e4c693ffb17a7443b8b77ed195f815cd05`
+- UI UX Pro Max: `nextlevelbuilder/ui-ux-pro-max-skill` at
+  `1307d97a72e6c1cda572cb65471ae5ce82995218`
+- Impeccable: the ignored repository-local installation under
+  `/Users/guilhermecastro/repos/araihu/goshtoso/.agents/skills/impeccable/`.
+  Because it is not part of the Goshtoso commit, the consulted files are frozen
+  by SHA-256 instead: `SKILL.md` `881f679f4c96b4cb38b6b9a4bfb8d78275fd2b54860c60c313ee094cb7b1a76a`,
+  `brand.md` `01296e660b59d6ca91fceb5f5a05af648319707d873c0d3186d5c5ae0dc7f086`,
+  `product.md` `9ea8cc99ec208f4c1addc66369980ec6ee2a0ae7732aa8f14672aeed3418b6aa`,
+  and `distill.md` `14e45d26cc64a8c6794de0cb2c2e23fcad4850cbd0ef075d848184f101fb6c52`
+- Prior Goshtoso agent-quality audits under `docs/audits/`, including the
+  37/40 confirmation result and round-two control record
+
+## Objective
+
+Improve the probability that a blind agent produces a coherent, attractive,
+accessible Goshtoso application on its first attempt, using only the public
+consumer skill and documentation, without needing source dives or repeated
+user correction.
+
+The target is not a larger catalog of aesthetic presets. The target is a small,
+opinionated decision system that helps an agent choose a product register,
+compose the right application pattern, use supported primitives, reject common
+AI reflexes, and verify the result before handoff.
+
+## Control record
+
+```yaml
+control_record:
+  parent_thread_id: 019f9b57-a227-7f63-9797-7e14c9426bf5
+  capabilities:
+    durable_sessions: {create: available, list: available, read: available, send: available, wait: available, interrupt: unavailable, archive: available}
+    subagents: {create: available, send: available, wait: available, interrupt: available}
+    native_parallel: {fan_out: available for bounded tool calls, aggregate: parent, max_concurrency: 4}
+  dag_ownership_gate:
+    - {node: external-mechanism-audit, depends_on: frozen-inputs, exclusive_paths: [], parent_owned_paths: [all repository paths], acceptance: evidence-backed transfer/reject matrix, placement: subagent, merge_order: 1}
+    - {node: goshtoso-gap-audit, depends_on: frozen-inputs, exclusive_paths: [], parent_owned_paths: [all repository paths], acceptance: evidence-backed primitive/guidance gap map, placement: subagent, merge_order: 1}
+    - {node: blind-probe-contract, depends_on: frozen-inputs, exclusive_paths: [], parent_owned_paths: [all repository paths], acceptance: repeatable first-pass probe rubric, placement: subagent, merge_order: 1}
+    - {node: synthesis-and-implementation, depends_on: [external-mechanism-audit, goshtoso-gap-audit, blind-probe-contract], exclusive_paths: [repository], parent_owned_paths: [repository], acceptance: generated artifacts and focused/full gates, placement: local_sequential, merge_order: 2}
+  placement_decisions:
+    - {node: external-mechanism-audit, primitive: subagent, rationale: bounded read-only source analysis with no durable mutation, capability_requirements: [isolated reasoning, terminal result], lifecycle_owner: parent, fallback: local_sequential, promotion_trigger: any repository mutation}
+    - {node: goshtoso-gap-audit, primitive: subagent, rationale: bounded read-only inventory independent of external corpus mechanics, capability_requirements: [isolated reasoning, terminal result], lifecycle_owner: parent, fallback: local_sequential, promotion_trigger: any repository mutation}
+    - {node: blind-probe-contract, primitive: subagent, rationale: bounded read-only experimental-design task with frozen prior audits, capability_requirements: [isolated reasoning, terminal result], lifecycle_owner: parent, fallback: local_sequential, promotion_trigger: any repository mutation}
+    - {node: synthesis-and-implementation, primitive: local_sequential, rationale: shared docs, skill, generated references, components, and site registries require one writer, capability_requirements: [worktree isolation], lifecycle_owner: parent, fallback: none, promotion_trigger: none}
+  dispatch_inputs:
+    - external-mechanism-audit prompt with immutable source SHAs and read-only paths
+    - goshtoso-gap-audit prompt with immutable source SHA and read-only paths
+    - blind-probe-contract prompt with immutable source SHA and prior audit paths
+  monitor_registry: []
+  completion_protocols:
+    persistent_session: callback envelope plus cursor recovery
+    subagent: parent-collected terminal result with status, evidence, concerns, and recommended action
+    native_parallel: deterministic aggregate of frozen input identities
+  acknowledgement_owner: parent
+  integration_order: [external-mechanism-audit, goshtoso-gap-audit, blind-probe-contract, synthesis-and-implementation]
+  combined_gates: [templ generate, just css, go run ./cmd/skillgen, root and site tests, lints, build, relevant E2E, blind probes]
+  cleanup_owner: parent
+  lifecycle_ledger: /Users/guilhermecastro/.codex/state/orchestrating-control-planes/lifecycle.json
+```
+
+## Initial hypothesis
+
+UI UX Pro Max contributes breadth and retrieval: structured datasets for product
+types, interface archetypes, typography, color, motion, charts, UX rules, and
+stack-specific advice. Impeccable contributes judgment: product/brand registers,
+context preservation, anti-reflex constraints, visual acceptance, and refusal of
+generic AI scaffolding. Goshtoso already contributes implementation truth: typed
+templ components, semantic theme tokens, server-rendered patterns, HTMX/Alpine
+contracts, and a verified acceptance matrix.
+
+The likely missing layer is a compact decision path joining those strengths:
+
+1. infer the interface archetype and user task;
+2. pick one composition pattern and information hierarchy;
+3. choose a deliberate visual direction without category-default aesthetics;
+4. map the composition to real Goshtoso primitives;
+5. cover responsive, interaction, data, error, empty, and loading states;
+6. run a deterministic quality pass before handoff.
+
+## Evidence ledger
+
+### Upstream corpus and first recommendations
+
+The UI UX Pro Max checkout validates successfully and contains 4,232 CSV rows:
+192 product records, 192 color records, 84 style records, 74 typography pairs,
+98 web UX rules, 161 category reasoning rules, 34 landing patterns, 29 native
+app-interface rules, 25 chart types, 104 icon records, 16 motion records, a
+1,923-font lookup, and 22 stack-specific files. Its MIT license permits reuse
+with the license notice when substantial source is copied.
+
+Three unmodified design-system queries demonstrate why Goshtoso should reuse
+the retrieval shape but not accept its aesthetic result as authority:
+
+| Query | Upstream result | Conflict or miss |
+|---|---|---|
+| self-hosted monitoring/operations | dark-only OLED, Fira Code headings, glow | Converts a work context into a category costume, drops required light parity, and uses mono as a technical shorthand. |
+| API documentation portal | FAQ landing, vibrant block style, dark status palette | Misclassifies the primary task and combines unrelated pattern/style/color matches. |
+| coastal Italian restaurant booking | warm amber background, Playfair Display SC, vibrant blocks | Reproduces the hospitality/category reflex that Impeccable explicitly rejects. |
+
+The useful mechanism is structured multi-domain retrieval followed by one
+compact decision output. The unsafe mechanism is allowing category similarity
+to decide aesthetic identity. Goshtoso's distilled layer must therefore make
+task archetype and implementation contracts deterministic while treating
+visual direction as a contextual decision with explicit anti-reflex checks.
+
+No upstream dataset, search engine, or generated recommendation is currently
+selected for vendoring. The expected first implementation is smaller: a
+consumer-facing surface brief, Goshtoso-specific pattern/component mappings,
+and executable acceptance checks. If later work copies substantial upstream
+source rather than independently expressing the mechanism, its MIT notice must
+ship with that copy.
+
+### External mechanism audit
+
+The independent read-only audit reached the same conclusion and added four
+material facts:
+
+1. Loading the canonical corpus wholesale would cost roughly 385k tokens. A
+   targeted query is fast and compact, so progressive retrieval is worth
+   preserving, but only over Goshtoso-native records.
+2. Sixty-six of 161 `ui-reasoning.csv` rows contain duplicate JSON keys. The
+   upstream validator accepts them while Python parsing silently discards the
+   earlier value. Schema validation without semantic golden tests is
+   insufficient.
+3. A gibberish query still returns Glassmorphism, Inter, SaaS colors, and a
+   hero/features/CTA layout because the generator falls back to generic
+   defaults. A Goshtoso query must preserve an explicit no-match result rather
+   than invent confidence.
+4. Goshtoso's generated component reference is already about 95 KB of the
+   roughly 120 KB installed skill. A small exact-query index can reduce context,
+   but it should be generated from the real Go API and tested with golden
+   semantic queries instead of importing the upstream style/font corpus.
+
+| Upstream mechanism | Distilled decision |
+|---|---|
+| Local top-k retrieval | Adopt only for Goshtoso component/pattern records, with at most three results and explicit source/confidence. |
+| Product/category style, palette, and font maps | Reject. They encode the category reflex Impeccable is meant to prevent. |
+| Context intake | Adopt: task, users, usage scene, density, existing identity, consequential states, and navigation model. |
+| Master plus route overrides | Defer; if added, persist consumer-owned decisions only, never generated identity. |
+| Variance, motion, and density dials | Retain density and motion as explicit brief axes; reject automatic variance/style selection. |
+| Browser delivery loop | Adopt and specialize to the existing Goshtoso theme/mode/state matrix. |
+| Generic browser audit | Adapt only as supporting evidence; approximate contrast or sampled focus is not a WCAG verdict. |
+| Multi-platform installer and duplicated corpus | Reject; retain `.agents` plus `npx skills` as the neutral distribution path. |
+
+The source audit recommended a generated compact component index plus a
+stdlib-only query helper. This remains a candidate, not yet an implementation
+commitment; blind-probe value and added maintenance cost will decide it after
+the Goshtoso gap audit.
+
+### Goshtoso gap audit
+
+The independent public-surface audit found no P0 issue and four P1 gaps. Two
+are API gaps rather than documentation gaps:
+
+1. **Form recovery is not implementable from the current public contract.**
+   `FieldGroup` applies `cfg.ID` to its wrapper while the built-in control can
+   receive the same ID, producing duplicate IDs. Labels can therefore target a
+   wrapper instead of the real control. Built-in text controls do not derive
+   `aria-invalid` or `aria-describedby`, and `FormErrorItem` cannot link a
+   summary entry back to a field.
+2. **There is no neutral, full-width content surface.** `Card` deliberately
+   owns article/title semantics, an `h3`, and content widths. Operational
+   panels, settings sections, and detail rails repeatedly reconstruct a flat
+   bordered surface with raw classes. The appropriate missing primitive is a
+   small `Panel`/`Surface`, not a generic dashboard widget.
+3. **The agent route starts too late.** It exposes four implementation patterns
+   but does not first distinguish product register, primary task, application
+   archetype, deliberate visual direction, and consequential states.
+4. **The example contract overstates portability.** Several site examples
+   import `site/internal` packages and cannot be extracted by consumers. Only
+   `examples/application-patterns` currently passes as a standalone external
+   module.
+
+The next tier contains promising but less-proven additions: semantic
+description/metric displays, native route-local navigation, a more complete
+layout-token contract, and stricter generated-reference documentation checks.
+Timeline, icons, and charts remain probe-before-API candidates. Generic
+`Stack`/`Grid`, category widgets, chart components, and style/font catalogs are
+explicitly deferred.
+
+### Impeccable distillation
+
+Impeccable supplies the judgment layer the upstream recommender lacks:
+
+- preserve an existing product's identity before proposing a new direction;
+- distinguish product UI from brand/marketing register;
+- use the task, hierarchy, content, and operating context as visual inputs;
+- reject category costumes, generic Inter/Geist/Roboto defaults, technical
+  monospace reflexes, card soup, ghost cards, excessive rounding, decorative
+  side stripes, gradient text, and cream/parchment AI defaults;
+- keep one primary goal visible and use progressive disclosure for supporting
+  information;
+- verify hierarchy, measure, type, responsive behavior, states, keyboard use,
+  and theme parity in the rendered product.
+
+The combined rule precedence is therefore:
+
+1. existing consumer identity and semantic tokens;
+2. real user task, content, environment, and state model;
+3. Goshtoso application patterns and exported component contracts;
+4. a deliberate visual direction plus anti-reflex critique;
+5. browser evidence across the Goshtoso acceptance matrix.
+
+The external corpus is neither a design authority nor a dependency. Its
+useful contribution is the shape of a compact intake, exact retrieval, source
+accounting, no-match behavior, and a build-see-review loop.
+
+## Implementation decision
+
+This slice will implement the smallest set with direct P1 evidence:
+
+1. repair form identity, description, invalid-state, and linked-summary
+   semantics with rendered-output tests written before the implementation;
+2. add a neutral `Panel` primitive only if its minimal contract can replace
+   repeated raw surfaces without owning heading rank, width, or card semantics;
+3. add a compact design-intelligence reference and route the public skill
+   through task/register/archetype/state/visual-direction preflight;
+4. make portable-example claims exact and point consumers to the verified
+   standalone application-patterns module;
+5. update the docs site so the same contract is discoverable without installing
+   the skill;
+6. regenerate the component reference and verify the public install artifact;
+7. run a fresh public-only blind-probe suite before calling the distillation
+   successful.
+
+The generated component-query index is deferred in this slice. The main blind
+failure mode is currently decision quality and incomplete contracts, not lookup
+latency. A compact index becomes justified only if fresh probes exceed ten
+public lookups, need more than two API-recovery cycles, or source-dive because
+the generated reference is too large to use.
+
+## Blind-probe contract
+
+The new protocol uses three fresh, memory-naive builders in empty standalone
+consumer modules. They receive an immutable public-only bundle and may inspect
+exported APIs through `go doc`, but not Goshtoso implementation, `site/`,
+examples, tests, audits, Git history, other consumers, memory, the internet, or
+prior probe artifacts. Post-dispatch product/API/design hints are forbidden;
+contamination invalidates rather than qualifies a result.
+
+The three frozen briefs are:
+
+- **Northstar maintenance-change review**, the stable comparison anchor;
+- **Library Holds Desk**, a novel operational list/detail domain;
+- **Watershed Sample Handoff**, a novel interruption-safe mobile workflow.
+
+Each builder records public lookups, compile/runtime recoveries, authored CSS,
+snags, and all verification output. A reviewer who has not read the builder's
+report freezes the visual critique before an independent evidence checker runs
+DOM, accessibility, console, overflow, contrast, keyboard, state, and theme
+checks.
+
+Scoring is 40 observable points: four each for visibility, real-world match,
+control/freedom, consistency, error prevention, recognition, efficiency,
+minimalist hierarchy, recovery, and help/documentation. Hard gates include
+stable generation, tests/vet/build/HTTP checks, local assets, native route and
+mutation semantics, unique IDs, linked validation, keyboard completion, zero
+critical/serious accessibility findings, no accidental overflow, the full
+390/1440 by Goshtoso/Minimal by light/dark matrix, and no unresolved P0-P2.
+
+The round passes only when the Northstar result is at least its historical
+37/40 vector, every novel probe is at least 35/40, the median is at least
+37/40, no heuristic is below three, and all hard gates pass. A strong pass
+requires all three at 37 or higher and a median of at least 38.
+
+## Implementation checkpoint
+
+The P1 implementation now includes:
+
+- a new public `panel.Panel` primitive with outlined, subtle, and plain
+  appearances; compact, standard, and relaxed density; arbitrary header,
+  actions, body, and footer slots; and target-specific class/attribute hooks;
+- no implicit article/section role, heading level, maximum width, shadow, or
+  title string in Panel's contract;
+- a catalog page with three variants and public Kind/inventory integration;
+- form wrapper/control identity separation with backward compatibility for the
+  validation package's established distinct wrapper/control IDs;
+- `aria-invalid` and merged `aria-describedby` propagation through built-in
+  FieldGroup controls, plus standalone TextInput/Textarea helper association;
+- focusable, auto-focused `FormErrors` summaries and `TargetID` fragment links
+  back to invalid controls;
+- target hooks added only where FieldGroup needed to reach real public controls:
+  Combobox `TriggerAttrs`, Checkbox/TagsList `InputAttrs`, and StructuredInput
+  `RootAttrs`;
+- a public `design-intelligence.md` reference with authority order, a compact
+  low-interaction surface brief, seven-archetype routing, deliberate direction,
+  anti-reflex critique, primitive mapping, state/recovery contract, and evidence
+  handoff;
+- a broader skill trigger so build/design/redesign requests activate the
+  consumer skill, not only dependency-integration requests;
+- docs-site copies of the surface-brief route and exact links to design
+  intelligence, patterns, and visual acceptance;
+- corrected example claims: `site/` applications are runnable demo-site apps;
+  `examples/application-patterns` is the verified standalone consumer recipe;
+- migration of the standalone recipe's detail main surface, detail rail, and
+  workflow body from semantic Card misuse to Panel.
+
+The standalone recipe remains below its 500-line application-CSS budget at 418
+lines. Twenty new lines name application-owned panel heading roles; the earlier
+398-line value remains the historical pre-Panel checkpoint. A decorative
+three-pixel side stripe found by the combined critique was replaced by a
+structural one-pixel divider.
+
+### Tests written against the missing contracts
+
+The form tests first failed to compile because `TargetID` did not exist, and the
+Panel tests first failed because the package and API did not exist. They now
+render the real components and assert:
+
+- globally unique wrapper/control IDs for every built-in FieldGroup type;
+- labels target the real input, textarea, combobox trigger, toggle, checkbox,
+  tags input, or file input, while StructuredInput receives group labeling;
+- errors/hints reach controls through `aria-invalid` and `aria-describedby`;
+- summaries are programmatically focusable and link to field targets;
+- Panel renders arbitrary regions and templ children without owning document
+  semantics, widths, or headings;
+- Panel appearances and densities remain bounded.
+
+The root component packages, site non-E2E packages, and standalone external
+module pass. The first full root run exposed only the expected inventory-count
+guard (`49` packages, `48` docs pages, `80` renderables versus the old
+`48/47/79` constants); the guard and README have been advanced with the new
+catalog.
+
+### Snag: module mode during in-repo site validation
+
+Running `site/` with `GOWORK=off` resolves the released version pinned in
+`site/go.mod`, so it cannot see a newly added in-repo package and was also behind
+several existing composition packages. In-repo site gates use the worktree
+workspace; `GOWORK=off` portability is exercised in the true standalone example
+module, whose local replace points at the candidate root.
+
+### Snag: native validation hid the server response
+
+The first updated empty-submit E2E reported zero server-rendered errors even
+though a direct POST returned linked error and hint nodes. The new FieldGroup
+contract correctly propagates `Required` to the real control, so Chromium's
+native constraint validation stopped the empty submit before HTMX issued a
+request. The server-response test now sets `form.noValidate` only for that
+scenario; normal rendering retains native required semantics. All form
+validation E2Es then passed, including field swaps, dependency updates, value
+preservation, error clearing, and the full invalid-submit accessibility checks.
+
+## Independent review checkpoint
+
+Two read-only reviewers inspected the frozen candidate. Panel's public API was
+clean, but the first form contract still had three P1 gaps: `FieldGroup.ID`
+would have moved an established wrapper/HTMX target to a control, public prose
+promised built-in Select without exporting it, and composite required state plus
+error-summary focus targets were not reliable. They also found P2 truth gaps in
+FileInput description merging, standalone-recipe externalization, dashboard
+routing, and Panel landmark wording.
+
+The candidate now:
+
+- preserves `FieldGroup.ID` as the historical wrapper target while deriving
+  collision-free built-in IDs; equal wrapper/component IDs are normalized
+  without duplicate DOM IDs;
+- exposes `FieldGroupConfig.FocusTargetID()` so error summaries do not guess
+  Combobox, Select, TagsList, or StructuredInput suffixes;
+- adds Select as a first-class FieldGroup built-in with trigger attribute hooks,
+  linked helper/error state, accessible required state, and a correctly targeted
+  label;
+- gives Combobox required state to its real trigger and gives all FieldGroup
+  built-ins accessible required state, plus native validation where supported;
+- merges FileInput component helper IDs with FieldGroup errors and hints instead
+  of emitting competing `aria-describedby` attributes;
+- replaces the old form demo's false custom-TagsList example with built-in
+  Select and TagsList examples and a `FocusTargetID` recipe;
+- adds completed dashboard and public-evidence briefs, an exact named-region
+  Panel recipe, a GitHub source link, and copy-out commands that replace the
+  repository-local development pin with a reviewed release.
+
+The first full E2E run otherwise completed and exposed only two inventory guards
+still fixed at 47 component pages. Both now assert the 48-page catalog, and the
+fragment-navigation/sidebar tests pass with Panel included.
+
+### Candidate gate result
+
+After the review remediations, generation remained byte-stable across
+`templ generate`, `just css`, and `go run ./cmd/skillgen`. Root tests, site
+non-E2E tests, the standalone module with `GOWORK=off`, root/site golangci-lint,
+`go vet`, the demo-server build, and `git diff --check` all passed. The final
+full browser suite passed in 309.353 seconds. Its preceding run found only
+outdated Select E2E selectors that still targeted the hidden submission input;
+the tests now assert the public label-to-trigger and helper-ID contract.

@@ -1,0 +1,35 @@
+package panel
+
+// Panel renders a neutral full-width application surface. It deliberately
+// owns no heading rank, maximum width, shadow, article role, or section role.
+// Supply semantics through Header content and RootAttrs.
+templ panelTemplate(cfg Config) {
+	<div class={ cfg.rootClasses() } { cfg.RootAttrs... }>
+		if cfg.Header != nil || cfg.Actions != nil {
+			<div class={ cfg.headerClasses() } { cfg.HeaderAttrs... }>
+				if cfg.Header != nil {
+					<div class="min-w-0 flex-1">
+						@cfg.Header
+					</div>
+				}
+				if cfg.Actions != nil {
+					<div class={ cfg.actionsClasses() } { cfg.ActionsAttrs... }>
+						@cfg.Actions
+					</div>
+				}
+			</div>
+		}
+		<div class={ cfg.bodyClasses() } { cfg.BodyAttrs... }>
+			if cfg.Body != nil {
+				@cfg.Body
+			} else {
+				{ children... }
+			}
+		</div>
+		if cfg.Footer != nil {
+			<div class={ cfg.footerClasses() } { cfg.FooterAttrs... }>
+				@cfg.Footer
+			</div>
+		}
+	</div>
+}

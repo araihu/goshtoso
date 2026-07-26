@@ -30,6 +30,20 @@ func TestTextInput_RenderTargets(t *testing.T) {
 	assert.Contains(t, html, `data-test="input"`)
 }
 
+func TestTextInputAssociatesHelperAndInvalidStateWithControl(t *testing.T) {
+	html := renderTextInput(t, Config{
+		ID:         "email",
+		Name:       "email",
+		State:      StateError,
+		HelperText: "Enter a valid email",
+		InputAttrs: templ.Attributes{"aria-describedby": "email-policy"},
+	})
+
+	assert.Contains(t, html, `id="email-helper"`)
+	assert.Contains(t, html, `aria-describedby="email-policy email-helper"`)
+	assert.Contains(t, html, `aria-invalid="true"`)
+}
+
 func TestTextInputEscapesUserControlledText(t *testing.T) {
 	payload := `<img src=x onerror=alert(1)>`
 	html := renderTextInput(t, Config{

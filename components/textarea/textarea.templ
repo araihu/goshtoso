@@ -46,10 +46,10 @@ templ textareaTemplate(cfg Config) {
 			if cfg.Required {
 				required
 			}
-			{ cfg.InputAttrs... }
+			{ cfg.inputAttributes()... }
 		>{ cfg.Value }</textarea>
 		if cfg.HelperText != "" {
-			<small class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
+			<small id={ cfg.helperTextID() } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 		}
 	</div>
 }
@@ -78,7 +78,7 @@ templ textareaWithActionsTemplate(cfg Config) {
 				if cfg.Required {
 					required
 				}
-				{ cfg.InputAttrs... }
+				{ cfg.inputAttributes()... }
 			>{ cfg.Value }</textarea>
 		</div>
 		<!-- Footer Container -->

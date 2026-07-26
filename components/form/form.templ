@@ -4,6 +4,7 @@ import (
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/fileinput"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/structuredinput"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
@@ -239,10 +240,20 @@ templ subSectionTemplate(cfg SubSectionConfig) {
 // a Goshtoso component automatically. If none are set, renders { children... } instead.
 templ fieldGroupTemplate(cfg FieldGroupConfig) {
 	<div
-		if cfg.ID != "" {
-			id={ cfg.ID }
+		if cfg.rootID() != "" {
+			id={ cfg.rootID() }
 		}
 		class={ "flex flex-col gap-2 " + cfg.RootClass }
+		if cfg.StructuredInput != nil && cfg.labelID() != "" {
+			role="group"
+			aria-labelledby={ cfg.labelID() }
+		}
+		if cfg.StructuredInput != nil && cfg.describedBy() != "" {
+			aria-describedby={ cfg.describedBy() }
+		}
+		if cfg.StructuredInput != nil && len(cfg.Errors) > 0 {
+			aria-invalid="true"
+		}
 		if cfg.OOB {
 			hx-swap-oob="true"
 		}
@@ -272,61 +283,93 @@ templ fieldGroupTemplate(cfg FieldGroupConfig) {
 		}
 	>
 		if cfg.Label != "" {
-			<label
-				if cfg.ID != "" {
-					for={ cfg.ID }
-				}
-				class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong"
-			>
-				{ cfg.Label }
-				if cfg.Required {
-					<span class="text-danger dark:text-danger-dark">*</span>
-				}
-			</label>
+			if cfg.labelTargetID() != "" {
+				<label
+					for={ cfg.labelTargetID() }
+					class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong"
+				>
+					{ cfg.Label }
+					if cfg.Required {
+						<span class="text-danger dark:text-danger-dark">*</span>
+					}
+				</label>
+			} else {
+				<span
+					if cfg.labelID() != "" {
+						id={ cfg.labelID() }
+					}
+					class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong"
+				>
+					{ cfg.Label }
+					if cfg.Required {
+						<span class="text-danger dark:text-danger-dark">*</span>
+					}
+				</span>
+			}
 		}
 		if cfg.Input != nil {
-			@textinput.TextInput(*cfg.Input)
+			@textinput.TextInput(cfg.inputConfig())
 		} else if cfg.Combobox != nil {
-			@combobox.Combobox(*cfg.Combobox, cfg.Combobox.InitialState())
+			@combobox.Combobox(cfg.comboboxConfig(), cfg.comboboxConfig().InitialState())
+		} else if cfg.Select != nil {
+			@selectfield.Select(cfg.selectConfig())
 		} else if cfg.Textarea != nil {
-			@textarea.Textarea(*cfg.Textarea)
+			@textarea.Textarea(cfg.textareaConfig())
 		} else if cfg.Toggle != nil {
-			@toggle.Toggle(*cfg.Toggle)
+			@toggle.Toggle(cfg.toggleConfig())
 		} else if cfg.Checkbox != nil {
-			@checkbox.Checkbox(*cfg.Checkbox)
+			@checkbox.Checkbox(cfg.checkboxConfig())
 		} else if cfg.TagsList != nil {
-			@tagslist.TagsList(*cfg.TagsList)
+			@tagslist.TagsList(cfg.tagsListConfig())
 		} else if cfg.StructuredInput != nil {
-			@structuredinput.StructuredInput(*cfg.StructuredInput)
+			@structuredinput.StructuredInput(cfg.structuredInputConfig())
 		} else if cfg.FileInput != nil {
-			@fileinput.FileInput(*cfg.FileInput)
+			@fileinput.FileInput(cfg.fileInputConfig())
 		} else {
 			{ children... }
 		}
-		@fieldErrors(cfg.Errors)
-		@fieldHints(cfg.Hints)
+		@fieldErrors(cfg.errorsID(), cfg.Errors)
+		@fieldHints(cfg.hintsID(), cfg.Hints)
 	</div>
 }
 
-templ fieldErrors(errors []string) {
-	for _, err := range errors {
-		<span class="flex items-center gap-1.5 text-xs text-danger dark:text-danger-dark">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true">
-				<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
-			</svg>
-			{ err }
-		</span>
+templ fieldErrors(id string, errors []string) {
+	if len(errors) > 0 {
+		<div
+			if id != "" {
+				id={ id }
+			}
+			class="flex flex-col gap-1"
+		>
+			for _, err := range errors {
+				<span class="flex items-center gap-1.5 text-xs text-danger dark:text-danger-dark">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true">
+						<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
+					</svg>
+					{ err }
+				</span>
+			}
+		</div>
 	}
 }
 
-templ fieldHints(hints []string) {
-	for _, hint := range hints {
-		<span class="flex items-center gap-1.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true">
-				<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"></path>
-			</svg>
-			{ hint }
-		</span>
+templ fieldHints(id string, hints []string) {
+	if len(hints) > 0 {
+		<div
+			if id != "" {
+				id={ id }
+			}
+			class="flex flex-col gap-1"
+		>
+			for _, hint := range hints {
+				<span class="flex items-center gap-1.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true">
+						<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"></path>
+					</svg>
+					{ hint }
+				</span>
+			}
+		</div>
 	}
 }
 

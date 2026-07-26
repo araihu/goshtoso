@@ -124,7 +124,7 @@ When renaming public fields:
 1. Update `components/<name>/types.go`.
 2. Update the `.templ` source and demo pages.
 3. Regenerate templ output with `templ generate`.
-4. Run `go run ./scripts/skillgen` if a component `types.go` or entry point
+4. Run `go run ./cmd/skillgen` if a component `types.go` or entry point
    changed.
 5. Update exported Go doc comments and demo examples; the demo layout links to
    the exact versioned pkg.go.dev reference generated from those declarations.

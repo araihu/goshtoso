@@ -1,6 +1,10 @@
 package selectfield
 
-import "github.com/a-h/templ"
+import (
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // State represents the validation state of the select
 type State string
@@ -61,6 +65,10 @@ type Config struct {
 	State State
 	// HelperText is shown below the select (e.g., error or success message)
 	HelperText string
+	// Required exposes accessible required state on the composite trigger.
+	// Enforce selection in server validation because the submitted value is
+	// represented by a hidden text control.
+	Required bool
 	// Disabled disables the select
 	Disabled bool
 	// Autocomplete sets the autocomplete attribute
@@ -71,8 +79,11 @@ type Config struct {
 	Alpine *AlpineConfig
 	// Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits
 	Readonly bool
-	// InputAttrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator).
+	// InputAttrs allows arbitrary HTML attributes on the hidden submission input.
 	InputAttrs templ.Attributes
+	// TriggerAttrs appends non-conflicting HTML attributes to the focusable
+	// combobox trigger. Use it for ARIA relationships and event hooks.
+	TriggerAttrs templ.Attributes
 	// Shell enables "shell mode": the Select renders its trigger + dropdown
 	// chrome but hosts arbitrary templ children as the dropdown body instead
 	// of an option list. Used to wrap custom pickers (e.g. a color palette).
@@ -165,6 +176,40 @@ func (cfg Config) selectedValue() string {
 // IsEffectivelyDisabled returns true if the select should render as disabled (Disabled or Readonly)
 func (cfg Config) isEffectivelyDisabled() bool {
 	return cfg.Disabled || cfg.Readonly
+}
+
+func (cfg Config) triggerAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.TriggerAttrs)+2)
+	for key, value := range cfg.TriggerAttrs {
+		attrs[key] = value
+	}
+	if cfg.HelperText != "" && cfg.ID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeAttributeTokens(existing, cfg.ID+"-helper")
+	}
+	if cfg.State == StateError {
+		attrs["aria-invalid"] = "true"
+	}
+	if cfg.Required {
+		if _, exists := attrs["aria-required"]; !exists {
+			attrs["aria-required"] = "true"
+		}
+	}
+	return attrs
+}
+
+func mergeAttributeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for _, token := range strings.Fields(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
 }
 
 // shellData returns the slim Alpine x-data for shell mode: only open state,

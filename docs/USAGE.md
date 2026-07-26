@@ -190,8 +190,12 @@ inventing a page from isolated demos:
 | Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `badge`, `tabs`, `button` |
 | Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `form`, `alert`, `button` |
 
-The installable skill includes two progressive references:
+The installable skill includes three progressive references:
 
+- [design intelligence](../.agents/skills/using-goshtoso/references/design-intelligence.md)
+  turns the task, operating context, register, archetype, identity, states,
+  density, and visual direction into a compact surface brief without using
+  category-to-style presets;
 - [application patterns](../.agents/skills/using-goshtoso/references/application-patterns.md)
   defines anatomy, state matrices, responsive behavior, accessibility, app
   boundaries, and completion checks for all four patterns;
@@ -212,7 +216,7 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The catalog has 48 public component packages, 47 documentation pages, and 79 renderable primitives.
+The catalog has 49 public component packages, 48 documentation pages, and 80 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -227,7 +231,7 @@ configuration previews, and API tables.
 | `banner` | `components/banner` | Full-width notifications and consent dialogs as separate `Banner` and `CookieBanner` primitives |
 | `breadcrumbs` | `components/breadcrumbs` | Navigation breadcrumb trail with custom separators |
 | `button` | `components/button` | Buttons with tone and size options plus HTMX and Alpine.js integration |
-| `card` | `components/card` | Content cards with image, rating, price, and multiple layouts |
+| `card` | `components/card` | Article-like content cards with image, title, description, arbitrary body/footer content, and vertical or horizontal layout |
 | `carousel` | `components/carousel` | Image carousel with autoplay, navigation, and HTMX lazy loading |
 | `chatbubble` | `components/chatbubble` | Chat/message bubbles with sender alignment and avatar support |
 | `checkbox` | `components/checkbox` | Checkboxes with semantic tones, group layout, and indeterminate state |
@@ -243,6 +247,7 @@ configuration previews, and API tables.
 | `modal` | `components/modal` | General and confirmation dialogs as separate `Modal` and `AlertDialog` primitives; `Tone` belongs to `AlertDialog` |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
 | `pageheader` | `components/pageheader` | Page identity, breadcrumbs, description, and task-level actions |
+| `panel` | `components/panel` | Neutral full-width application surface with arbitrary header, actions, body, and footer regions |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
 | `palette` | `components/palette` | Color palette and swatch utilities for theme demos and pickers |
 | `radio` | `components/radio` | Radio inputs and groups with validation and semantic tones |
@@ -333,16 +338,13 @@ Create separate templ components for accordion content to keep code clean:
 
 ```go
 templ SettingsContent() {
-    <div class="space-y-4">
-        <div>
-            <label class="block text-sm font-medium">Name</label>
-            <input type="text" class="mt-1 block w-full" />
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Email</label>
-            <input type="email" class="mt-1 block w-full" />
-        </div>
-    </div>
+	@textinput.TextInput(textinput.Config{
+		ID: "settings-name", Name: "name", Label: "Name",
+	})
+	@textinput.TextInput(textinput.Config{
+		ID: "settings-email", Name: "email", Label: "Email",
+		Type: textinput.TypeEmail,
+	})
 }
 
 // Use it

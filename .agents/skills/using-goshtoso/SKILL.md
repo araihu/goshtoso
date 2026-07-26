@@ -1,6 +1,6 @@
 ---
 name: using-goshtoso
-description: Use when integrating or updating Goshtoso in an external Go/templ application, including installing github.com/araihu/goshtoso, serving bundled assets, wiring head.Dependencies, importing components, choosing a Tailwind CSS strategy, or debugging missing Goshtoso styles, Alpine.js, HTMX, combobox behavior, or component config fields.
+description: Use when building, designing, redesigning, integrating, or updating an external Go/templ application with Goshtoso, including application shells, dashboards, operations lists, detail pages, settings, onboarding, workflows, public content, component selection, visual direction, state design, installing github.com/araihu/goshtoso, serving bundled assets, wiring head.Dependencies, Tailwind CSS strategy, or debugging Goshtoso styles, Alpine.js, HTMX, and component APIs.
 ---
 
 # Using Goshtoso
@@ -95,21 +95,35 @@ Kind identity, and rendered defaults.
 
 ## From First Component to Application
 
-Do not invent the page around isolated components. Choose the closest task
-pattern and read `references/application-patterns.md` before composing it:
+Do not invent the page around isolated components. For any build or redesign,
+read `references/design-intelligence.md` first. Write its compact surface brief,
+use the existing identity when present, route by the user's task archetype, and
+choose a deliberate visual direction before selecting components. Do not ask
+for an aesthetic preference when a reversible, context-backed choice is
+available.
+
+Then choose the closest task pattern and read
+`references/application-patterns.md` before composing it:
 
 - **App Shell** starts with `appshell.AppShell`, then supplies navigation,
   sidebar, global search, and route content.
 - **Operations List** combines `pageheader.PageHeader`, `toolbar.Toolbar`,
   `table.Table`, `skeleton.Skeleton`, and `emptystate.EmptyState`.
 - **Detail Workspace** combines `pageheader.PageHeader`, identity, status,
-  tabs, actions, and a secondary detail rail.
+  route-local views, actions, neutral panels, and a secondary detail rail.
 - **Multi-step Workflow** combines `pageheader.PageHeader`, Steps, Form,
   server validation, review, and safe submission.
 
 Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
+
+Use `panel.Panel` for neutral full-width application regions and `card.Card`
+only for genuinely card-like content. For invalid forms, give controls stable
+IDs, set `FormErrorItem.TargetID` from `FieldGroupConfig.FocusTargetID()` after
+validation binding, and let `FieldGroup` connect field errors, hints, and
+accessible required state to built-in controls. Composite values still need
+server validation.
 
 Before declaring the surface finished, apply
 `references/visual-acceptance.md`. It requires 390 px and 1440 px checks,

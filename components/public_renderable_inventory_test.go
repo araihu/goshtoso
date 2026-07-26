@@ -18,7 +18,7 @@ import (
 )
 
 func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
-	got := make([]components.Kind, 0, 79)
+	got := make([]components.Kind, 0, 80)
 	for _, inventory := range publicRenderableInventories() {
 		for want, value := range inventory {
 			require.Equal(t, want, value.Kind())
@@ -27,7 +27,7 @@ func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
 	}
 
 	require.ElementsMatch(t, components.AllKinds(), got)
-	require.Len(t, got, 79)
+	require.Len(t, got, 80)
 	require.Len(t, got, len(components.AllKinds()))
 }
 
@@ -76,6 +76,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"modal.AlertDialog":               {},
 		"navbar.Navbar":                   {},
 		"pagination.Pagination":           {},
+		"panel.Panel":                     {},
 		"pageheader.PageHeader":           {},
 		"palette.Palette":                 {},
 		"radio.Radio":                     {},
@@ -166,6 +167,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"combobox.Config.Validate":               {},
 		"combobox.Config.InitialState":           {},
 		"combobox.comboHandler.ServeHTTP":        {},
+		"form.FieldGroupConfig.FocusTargetID":    {},
 		"pagination.Config.HasPrevious":          {},
 		"pagination.Config.HasNext":              {},
 		"pagination.Config.PreviousPage":         {},
@@ -341,7 +343,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 
 	const componentPackagePrefix = "github.com/araihu/goshtoso/components/"
 
-	methods := make(map[string]struct{}, 158)
+	methods := make(map[string]struct{}, 160)
 	for _, inventory := range publicRenderableInventories() {
 		for _, value := range inventory {
 			valueType := reflect.TypeOf(value)
@@ -358,7 +360,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 			methods[receiver+".Render"] = struct{}{}
 		}
 	}
-	require.Len(t, methods, 158)
+	require.Len(t, methods, 160)
 	return methods
 }
 

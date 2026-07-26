@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+
+	"github.com/a-h/templ"
 )
 
 // Mode selects single- or multi-select behavior.
@@ -45,7 +47,22 @@ type Config struct {
 	OptionsEndpoint string
 	ClearEndpoint   string
 	RootClass       string
-	Disabled        bool
+	// TriggerAttrs appends non-conflicting HTML attributes to the combobox trigger.
+	TriggerAttrs templ.Attributes
+	Disabled     bool
+}
+
+func (c Config) triggerAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(c.TriggerAttrs)+1)
+	for key, value := range c.TriggerAttrs {
+		attrs[key] = value
+	}
+	if c.Required {
+		if _, exists := attrs["aria-required"]; !exists {
+			attrs["aria-required"] = "true"
+		}
+	}
+	return attrs
 }
 
 // State is the per-request render state.

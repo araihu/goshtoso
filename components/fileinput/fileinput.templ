@@ -54,10 +54,7 @@ templ dropZoneInput(cfg Config) {
 						if cfg.Disabled {
 							disabled
 						}
-						if cfg.HelperText != "" {
-							aria-describedby={ cfg.ID + "-helper" }
-						}
-						{ cfg.InputAttrs... }
+						{ cfg.inputAttributes()... }
 					/>
 					Browse
 				</label>
@@ -97,10 +94,7 @@ templ uploadInput(cfg Config) {
 				if cfg.Disabled {
 					disabled
 				}
-				if cfg.HelperText != "" {
-					aria-describedby={ cfg.ID + "-helper" }
-				}
-				{ cfg.InputAttrs... }
+				{ cfg.inputAttributes()... }
 			/>
 			<span class={ cfg.uploadFileNameClasses() }>
 				<span class="truncate" x-text="fileName || 'No file selected'">No file selected</span>

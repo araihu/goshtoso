@@ -1,6 +1,10 @@
 package fileinput
 
-import "github.com/a-h/templ"
+import (
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // Appearance controls the visual treatment of the file input.
 type Appearance string
@@ -34,6 +38,32 @@ type Config struct {
 	RootClass string
 	// InputAttrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change).
 	InputAttrs templ.Attributes
+}
+
+func (cfg Config) inputAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.InputAttrs)+1)
+	for key, value := range cfg.InputAttrs {
+		attrs[key] = value
+	}
+	if cfg.HelperText != "" && cfg.ID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeAttributeTokens(existing, cfg.ID+"-helper")
+	}
+	return attrs
+}
+
+func mergeAttributeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for _, token := range strings.Fields(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
 }
 
 // ContainerClasses returns CSS classes for the outermost wrapper div

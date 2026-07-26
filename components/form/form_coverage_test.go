@@ -9,6 +9,7 @@ import (
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/fileinput"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/components/textinput"
@@ -288,7 +289,7 @@ func TestCoverageFieldGroupRequiredWithInput(t *testing.T) {
 		Input:    &textinput.Config{ID: "email", Name: "email"},
 	}))
 	mustContain(t, html,
-		`for="email"`,
+		`for="email-input"`,
 		"Email",
 		`class="text-danger dark:text-danger-dark">*`,
 		"is required",
@@ -349,6 +350,7 @@ func TestCoverageFieldGroupBuiltinTypes(t *testing.T) {
 		want string
 	}{
 		{"combobox", FieldGroupConfig{Combobox: &combobox.Config{ID: "cb", Name: "cb"}}, `cb`},
+		{"select", FieldGroupConfig{Select: &selectfield.Config{ID: "sel", Name: "sel"}}, `sel-trigger`},
 		{"textarea", FieldGroupConfig{Textarea: &textarea.Config{ID: "ta", Name: "ta"}}, `<textarea`},
 		{"toggle", FieldGroupConfig{Toggle: &toggle.Config{ID: "tg", Label: "Tg"}}, `Tg`},
 		{"checkbox", FieldGroupConfig{Checkbox: &checkbox.Config{ID: "ck", Label: "Ck"}}, `Ck`},

@@ -1,6 +1,10 @@
 package tagslist
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // Config holds configuration for the TagsList component.
 // TagsList renders a list of removable tag chips plus an input + Add button
@@ -20,6 +24,8 @@ type Config struct {
 	Disabled bool
 	// RootClass allows additional CSS classes on the outer container.
 	RootClass string
+	// InputAttrs appends non-conflicting HTML attributes to the add-tag input.
+	InputAttrs templ.Attributes
 }
 
 // GetAddLabel returns the add button label with default

@@ -6,6 +6,21 @@ type FormErrorItem struct {
 	Path string
 	// Message is the human-readable error text.
 	Message string
+	// TargetID is the ID of the invalid focus target. When set, the summary
+	// renders a fragment link so keyboard and screen-reader users can return to
+	// it. For FieldGroup built-ins, use FieldGroupConfig.FocusTargetID().
+	TargetID string
+}
+
+func (item FormErrorItem) linkLabel() string {
+	if item.Path != "" {
+		return item.Path
+	}
+	return item.Message
+}
+
+func (item FormErrorItem) targetHref() templ.SafeURL {
+	return templ.SafeURL("#" + item.TargetID)
 }
 
 // FormErrorsConfig configures a form-level error summary banner.
@@ -61,6 +76,8 @@ templ formErrorsTemplate(cfg FormErrorsConfig) {
 			id={ cfg.getID() }
 			role="alert"
 			aria-live="polite"
+			tabindex="-1"
+			x-init="$el.focus()"
 			class={ "flex flex-col gap-2 rounded-radius border border-danger bg-danger/10 px-4 py-3 text-on-surface dark:border-danger dark:bg-danger/15 dark:text-on-surface-dark " + cfg.RootClass }
 		>
 			<div class="flex items-start gap-2">
@@ -74,16 +91,20 @@ templ formErrorsTemplate(cfg FormErrorsConfig) {
 					}
 				</div>
 			</div>
-			if len(cfg.Items) == 1 && cfg.Items[0].Path == "" {
+			if len(cfg.Items) == 1 && cfg.Items[0].Path == "" && cfg.Items[0].TargetID == "" {
 				<p class="text-sm text-on-surface dark:text-on-surface-dark pl-7">{ cfg.Items[0].Message }</p>
 			} else {
 				<ul class="flex flex-col gap-1 pl-7 text-sm">
 					for _, item := range cfg.Items {
 						<li class="flex flex-wrap items-baseline gap-x-2 text-on-surface dark:text-on-surface-dark">
-							if item.Path != "" {
+							if item.TargetID != "" {
+								<a class="font-medium text-danger underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark" href={ item.targetHref() }>{ item.linkLabel() }</a>
+							} else if item.Path != "" {
 								<code class="font-mono text-xs text-danger">{ item.Path }</code>
 							}
-							<span>{ item.Message }</span>
+							if item.Path != "" || item.TargetID == "" {
+								<span>{ item.Message }</span>
+							}
 						</li>
 					}
 				</ul>

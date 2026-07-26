@@ -133,7 +133,7 @@ func TestRenderSelect_LabelWithErrorIconAndHelperText(t *testing.T) {
 		Options:    []Option{{Value: "us", Label: "US"}},
 	}, nil)
 
-	assert.Contains(t, out, `<label for="country"`)
+	assert.Contains(t, out, `<label for="country-trigger"`)
 	assert.Contains(t, out, "Country")
 	// error icon path fragment
 	assert.Contains(t, out, "M5.28 4.22a.75.75")

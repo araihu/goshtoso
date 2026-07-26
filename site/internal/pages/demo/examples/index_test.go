@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestExamplesIndexPublishesEveryRegisteredAppAsExtractableRecipe(t *testing.T) {
+func TestExamplesIndexDistinguishesSiteDemosFromStandaloneRecipe(t *testing.T) {
 	var rendered strings.Builder
 	require.NoError(t, IndexContent().Render(context.Background(), &rendered))
 	body := rendered.String()
@@ -29,10 +29,13 @@ func TestExamplesIndexPublishesEveryRegisteredAppAsExtractableRecipe(t *testing.
 		require.Contains(t, body, "site/internal/pages/demo/examples/"+example.source)
 	}
 
-	for _, label := range []string{"Components", "States", "Complexity", "View source"} {
+	for _, label := range []string{"Components", "States", "Complexity", "View page template"} {
 		require.Contains(t, body, label)
 	}
 	require.Equal(t, 7, strings.Count(body, `data-example-recipe`))
 	require.Equal(t, 7, strings.Count(body, `/assets/images/homepage/examples/`))
 	require.Contains(t, body, "Run example")
+	require.Contains(t, body, "demo-site apps")
+	require.Contains(t, body, "examples/application-patterns")
+	require.Contains(t, body, "replace the in-repository development pin")
 }

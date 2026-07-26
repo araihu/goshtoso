@@ -58,7 +58,8 @@ func TestComplexInputDocumentedBehaviorMatchesRendering(t *testing.T) {
 	staticConfig.Required = true
 	var requiredCombobox strings.Builder
 	require.NoError(t, combobox.Combobox(staticConfig, staticConfig.InitialState()).Render(context.Background(), &requiredCombobox))
-	require.Equal(t, optionalCombobox.String(), requiredCombobox.String(), "Config.Required currently has no rendered effect")
+	require.NotContains(t, optionalCombobox.String(), `aria-required="true"`)
+	require.Contains(t, requiredCombobox.String(), `aria-required="true"`)
 
 	lazyConfig := combobox.Config{
 		ID:              "lazy-audit",

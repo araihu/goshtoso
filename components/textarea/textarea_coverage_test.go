@@ -65,6 +65,26 @@ func TestCoverageRenderFullDefaultStateTextarea(t *testing.T) {
 	}
 }
 
+func TestTextareaAssociatesHelperAndInvalidStateWithControl(t *testing.T) {
+	html := render(t, Textarea(Config{
+		ID:         "review-note",
+		Name:       "review_note",
+		State:      StateError,
+		HelperText: "Explain the decision",
+		InputAttrs: templ.Attributes{"aria-describedby": "review-policy"},
+	}))
+
+	for _, want := range []string{
+		`id="review-note-helper"`,
+		`aria-describedby="review-policy review-note-helper"`,
+		`aria-invalid="true"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("rendered textarea missing %q in %s", want, html)
+		}
+	}
+}
+
 func TestCoverageRenderDisabledReadOnly(t *testing.T) {
 	html := render(t, Textarea(Config{ID: "x", Disabled: true, ReadOnly: true}))
 	if !strings.Contains(html, "disabled") {

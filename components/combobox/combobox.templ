@@ -206,6 +206,7 @@ templ comboboxTemplate(cfg Config, state State) {
 			role="combobox"
 			disabled?={ cfg.Disabled }
 			class={ "inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state) }
+			{ cfg.triggerAttributes()... }
 			x-on:click="isOpen = !isOpen"
 			x-on:keydown.down.prevent="openedWithKeyboard = true; isOpen = true"
 			x-on:keydown.enter.prevent="openedWithKeyboard = true; isOpen = true"

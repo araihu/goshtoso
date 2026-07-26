@@ -5,14 +5,18 @@ renders correctly. It turns component choices into four common product
 surfaces. Start with the closest pattern, keep domain decisions in the app, and
 use `visual-acceptance.md` before calling the result complete.
 
+For dashboards, settings, onboarding, content/marketing, or an ambiguous brief,
+start with `design-intelligence.md`. It routes those archetypes into the task
+patterns below without inventing category widgets or an aesthetic preset.
+
 ## Choose a pattern
 
 | User task | Start here | Primary Goshtoso packages |
 |---|---|---|
 | Navigate an authenticated product | App Shell | `appshell`, `navbar`, `sidebar`, `search` |
-| Find and act on many resources | Operations List | `pageheader`, `toolbar`, `table`, `emptystate`, `skeleton` |
-| Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `badge`, `tabs`, `button` |
-| Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `form`, `alert`, `button` |
+| Find and act on many resources | Operations List | `pageheader`, `toolbar`, `panel`, `table`, `emptystate`, `skeleton` |
+| Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `panel`, `badge`, `tabs`, `button` |
+| Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `panel`, `form`, `alert`, `button` |
 
 For every pattern, model `loading`, `empty`, `error`, and `success` before
 polishing the happy path. Add permission-denied, stale, partial, and destructive
@@ -192,6 +196,10 @@ views, and perform safe actions without losing identity or context.
 5. A narrow rail contains ownership, timestamps, links, and secondary facts.
 6. Destructive actions stay visually separated from routine actions.
 
+Use `panel.Panel` for the main decision surface and secondary rail when they
+need a neutral frame. Supply their headings explicitly; Panel deliberately does
+not choose a heading level or landmark role.
+
 ### State matrix
 
 - `loading`: preserve the identity strip if it is already known and skeleton the
@@ -245,6 +253,10 @@ preserving progress and making the final submission reviewable.
 5. A stable action footer contains Back and the single forward action.
 6. The final step reviews the exact submission and provides Change links back
    to each group.
+
+`panel.Panel` is appropriate around the step body or final review when the form
+needs a stable full-width surface. Keep the actual form and action semantics in
+`form.Form`, `FieldGroup`, `FormErrors`, links, and buttons.
 
 ### State matrix
 
@@ -341,3 +353,15 @@ rhythm should belong to the publication or domain, while Goshtoso supplies
 status, form, feedback, and responsive primitives. Keep author, deadline,
 channel, current status, and the handoff note adjacent to the decision. Avoid
 turning prose into equal dashboard cards.
+
+## Verified standalone recipe
+
+[`examples/application-patterns`](https://github.com/araihu/goshtoso/tree/main/examples/application-patterns)
+is the repository's standalone consumer module. Its file map includes handlers,
+domain fixtures, templ views, app CSS, tests, and module boundaries; it imports
+public Goshtoso packages only. In the repository, its `replace` directive tests
+the local candidate. To copy it into another workspace, follow its README:
+remove the local replace, pin a released Goshtoso version, run `go mod tidy`,
+then regenerate and test. The interactive examples under `site/` are demo-site
+applications and may depend on `site/internal` packages, so do not describe
+them as copyable standalone apps.

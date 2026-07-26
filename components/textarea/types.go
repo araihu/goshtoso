@@ -1,6 +1,10 @@
 package textarea
 
-import "github.com/a-h/templ"
+import (
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // State represents textarea validation state
 type State string
@@ -39,6 +43,42 @@ type Config struct {
 	RootClass string
 	// InputAttrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*).
 	InputAttrs templ.Attributes
+}
+
+func (cfg Config) helperTextID() string {
+	if cfg.ID == "" || cfg.HelperText == "" {
+		return ""
+	}
+	return cfg.ID + "-helper"
+}
+
+func (cfg Config) inputAttributes() templ.Attributes {
+	attrs := make(templ.Attributes, len(cfg.InputAttrs)+2)
+	for key, value := range cfg.InputAttrs {
+		attrs[key] = value
+	}
+	if helperID := cfg.helperTextID(); helperID != "" {
+		existing, _ := attrs["aria-describedby"].(string)
+		attrs["aria-describedby"] = mergeTokens(existing, helperID)
+	}
+	if cfg.State == StateError {
+		attrs["aria-invalid"] = "true"
+	}
+	return attrs
+}
+
+func mergeTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for _, token := range strings.Fields(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
 }
 
 // ContainerClasses returns CSS classes for the outer container.

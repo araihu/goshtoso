@@ -2,10 +2,13 @@ package form
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/checkbox"
 	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/fileinput"
+	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/structuredinput"
 	"github.com/araihu/goshtoso/components/tagslist"
 	"github.com/araihu/goshtoso/components/textarea"
@@ -188,11 +191,20 @@ func (c SubSectionConfig) gridClasses() string {
 // Set one of the built-in field types (Input, Select, Combobox, etc.) to render
 // a Goshtoso component automatically. If none are set, uses { children... }.
 type FieldGroupConfig struct {
-	// ID is the field ID (used for label's "for" attribute)
+	// ID preserves the historical field-wrapper ID used by CSS, HTMX, and OOB
+	// targets. Built-in controls derive a collision-free ID when their own ID is
+	// empty. Use FocusTargetID after construction or validation binding when an
+	// error summary needs the real focusable control ID.
 	ID string
+	// RootID overrides the wrapper ID used for HTMX targeting. When empty,
+	// FieldGroup preserves ID as the historical wrapper target or derives a
+	// wrapper from an explicitly identified built-in control.
+	RootID string
 	// Label is the field label text
 	Label string
-	// Required shows a red asterisk next to the label
+	// Required marks the field visually and exposes accessible required state.
+	// Native required validation is also enabled where the built-in control
+	// supports it; composite collection controls still require server validation.
 	Required bool
 	// Errors are validation error messages displayed below the field
 	Errors []string
@@ -207,6 +219,7 @@ type FieldGroupConfig struct {
 	// If none are set, FieldGroup renders { children... } instead.
 	Input           *textinput.Config
 	Combobox        *combobox.Config
+	Select          *selectfield.Config
 	Textarea        *textarea.Config
 	Toggle          *toggle.Config
 	Checkbox        *checkbox.Config
@@ -240,6 +253,282 @@ type ValidationConfig struct {
 	Target string
 	// Trigger is the hx-trigger event (default: "change")
 	Trigger string
+}
+
+func (c FieldGroupConfig) controlID() string {
+	if id := c.explicitControlID(); id != "" {
+		if c.RootID == "" && c.ID != "" && id == c.ID {
+			return c.derivedControlID()
+		}
+		return id
+	}
+	if c.ID != "" && c.hasBuiltIn() {
+		return c.derivedControlID()
+	}
+	return c.ID
+}
+
+func (c FieldGroupConfig) derivedControlID() string {
+	if c.Combobox != nil || c.TagsList != nil || c.StructuredInput != nil {
+		return c.ID + "-control"
+	}
+	return c.ID + "-input"
+}
+
+func (c FieldGroupConfig) explicitControlID() string {
+	switch {
+	case c.Input != nil && c.Input.ID != "":
+		return c.Input.ID
+	case c.Combobox != nil && c.Combobox.ID != "":
+		return c.Combobox.ID
+	case c.Select != nil && c.Select.ID != "":
+		return c.Select.ID
+	case c.Textarea != nil && c.Textarea.ID != "":
+		return c.Textarea.ID
+	case c.Toggle != nil && c.Toggle.ID != "":
+		return c.Toggle.ID
+	case c.Checkbox != nil && c.Checkbox.ID != "":
+		return c.Checkbox.ID
+	case c.TagsList != nil && c.TagsList.ID != "":
+		return c.TagsList.ID
+	case c.StructuredInput != nil && c.StructuredInput.ID != "":
+		return c.StructuredInput.ID
+	case c.FileInput != nil && c.FileInput.ID != "":
+		return c.FileInput.ID
+	default:
+		return ""
+	}
+}
+
+func (c FieldGroupConfig) hasBuiltIn() bool {
+	return c.Input != nil || c.Combobox != nil || c.Select != nil || c.Textarea != nil ||
+		c.Toggle != nil || c.Checkbox != nil || c.TagsList != nil ||
+		c.StructuredInput != nil || c.FileInput != nil
+}
+
+func (c FieldGroupConfig) rootID() string {
+	if c.RootID != "" {
+		return c.RootID
+	}
+	// ID has historically named the swappable field wrapper. Keep that contract
+	// for CSS, HTMX, OOB, and validation consumers.
+	if c.ID != "" {
+		return c.ID
+	}
+	if id := c.controlID(); id != "" {
+		return id + "-field"
+	}
+	return ""
+}
+
+func (c FieldGroupConfig) labelTargetID() string {
+	id := c.controlID()
+	if id == "" || c.StructuredInput != nil {
+		return ""
+	}
+	if c.Combobox != nil || c.Select != nil {
+		return id + "-trigger"
+	}
+	if c.TagsList != nil {
+		return id + "-input"
+	}
+	return id
+}
+
+// FocusTargetID returns the actual focus target for labels and linked form
+// error summaries. It accounts for composite controls whose public ID names a
+// component root rather than its trigger or text entry. An empty result means
+// the caller must provide a target for custom children.
+func (c FieldGroupConfig) FocusTargetID() string {
+	if c.StructuredInput != nil {
+		return c.controlID()
+	}
+	return c.labelTargetID()
+}
+
+func (c FieldGroupConfig) labelID() string {
+	if id := c.controlID(); id != "" {
+		return id + "-label"
+	}
+	return ""
+}
+
+func (c FieldGroupConfig) errorsID() string {
+	if len(c.Errors) == 0 || c.controlID() == "" {
+		return ""
+	}
+	return c.controlID() + "-errors"
+}
+
+func (c FieldGroupConfig) hintsID() string {
+	if len(c.Hints) == 0 || c.controlID() == "" {
+		return ""
+	}
+	return c.controlID() + "-hints"
+}
+
+func (c FieldGroupConfig) describedBy() string {
+	return strings.Join(nonEmpty(c.errorsID(), c.hintsID()), " ")
+}
+
+func (c FieldGroupConfig) fieldAttrs(existing templ.Attributes) templ.Attributes {
+	attrs := cloneAttributes(existing)
+	if describedBy := c.describedBy(); describedBy != "" {
+		attrs["aria-describedby"] = joinTokens(attributeString(attrs["aria-describedby"]), describedBy)
+	}
+	if len(c.Errors) > 0 {
+		attrs["aria-invalid"] = "true"
+	}
+	if c.Required {
+		attrs["aria-required"] = "true"
+	}
+	return attrs
+}
+
+func (c FieldGroupConfig) nativeFieldAttrs(existing templ.Attributes) templ.Attributes {
+	attrs := c.fieldAttrs(existing)
+	if c.Required {
+		attrs["required"] = true
+	}
+	return attrs
+}
+
+func (c FieldGroupConfig) inputConfig() textinput.Config {
+	cfg := *c.Input
+	cfg.ID = c.controlID()
+	if c.Label != "" {
+		cfg.Label = ""
+	}
+	cfg.Required = cfg.Required || c.Required
+	if len(c.Errors) > 0 {
+		cfg.State = textinput.StateError
+	}
+	cfg.InputAttrs = c.fieldAttrs(cfg.InputAttrs)
+	return cfg
+}
+
+func (c FieldGroupConfig) textareaConfig() textarea.Config {
+	cfg := *c.Textarea
+	cfg.ID = c.controlID()
+	if c.Label != "" {
+		cfg.Label = ""
+	}
+	cfg.Required = cfg.Required || c.Required
+	if len(c.Errors) > 0 {
+		cfg.State = textarea.StateError
+	}
+	cfg.InputAttrs = c.fieldAttrs(cfg.InputAttrs)
+	return cfg
+}
+
+func (c FieldGroupConfig) comboboxConfig() combobox.Config {
+	cfg := *c.Combobox
+	cfg.ID = c.controlID()
+	if c.Label != "" {
+		cfg.Label = ""
+	}
+	cfg.Required = cfg.Required || c.Required
+	cfg.TriggerAttrs = c.fieldAttrs(cfg.TriggerAttrs)
+	return cfg
+}
+
+func (c FieldGroupConfig) selectConfig() selectfield.Config {
+	cfg := *c.Select
+	cfg.ID = c.controlID()
+	if c.Label != "" {
+		cfg.Label = ""
+	}
+	cfg.Required = cfg.Required || c.Required
+	if len(c.Errors) > 0 {
+		cfg.State = selectfield.StateError
+	}
+	cfg.TriggerAttrs = c.fieldAttrs(cfg.TriggerAttrs)
+	return cfg
+}
+
+func (c FieldGroupConfig) toggleConfig() toggle.Config {
+	cfg := *c.Toggle
+	cfg.ID = c.controlID()
+	if c.Label != "" {
+		cfg.Label = ""
+	}
+	cfg.InputAttrs = c.nativeFieldAttrs(cfg.InputAttrs)
+	return cfg
+}
+
+func (c FieldGroupConfig) checkboxConfig() checkbox.Config {
+	cfg := *c.Checkbox
+	cfg.ID = c.controlID()
+	if c.Label != "" {
+		cfg.Label = ""
+	}
+	cfg.InputAttrs = c.nativeFieldAttrs(cfg.InputAttrs)
+	return cfg
+}
+
+func (c FieldGroupConfig) tagsListConfig() tagslist.Config {
+	cfg := *c.TagsList
+	cfg.ID = c.controlID()
+	cfg.InputAttrs = c.fieldAttrs(cfg.InputAttrs)
+	return cfg
+}
+
+func (c FieldGroupConfig) structuredInputConfig() structuredinput.Config {
+	cfg := *c.StructuredInput
+	cfg.ID = c.controlID()
+	cfg.RootAttrs = c.fieldAttrs(cfg.RootAttrs)
+	if _, ok := cfg.RootAttrs["tabindex"]; !ok {
+		cfg.RootAttrs["tabindex"] = "-1"
+	}
+	return cfg
+}
+
+func (c FieldGroupConfig) fileInputConfig() fileinput.Config {
+	cfg := *c.FileInput
+	cfg.ID = c.controlID()
+	if c.Label != "" {
+		cfg.Label = ""
+	}
+	cfg.Required = cfg.Required || c.Required
+	cfg.InputAttrs = c.fieldAttrs(cfg.InputAttrs)
+	return cfg
+}
+
+func cloneAttributes(existing templ.Attributes) templ.Attributes {
+	attrs := make(templ.Attributes, len(existing)+2)
+	for key, value := range existing {
+		attrs[key] = value
+	}
+	return attrs
+}
+
+func attributeString(value any) string {
+	valueString, _ := value.(string)
+	return valueString
+}
+
+func joinTokens(values ...string) string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		for _, token := range strings.Fields(value) {
+			if !seen[token] {
+				seen[token] = true
+				result = append(result, token)
+			}
+		}
+	}
+	return strings.Join(result, " ")
+}
+
+func nonEmpty(values ...string) []string {
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		if value != "" {
+			result = append(result, value)
+		}
+	}
+	return result
 }
 
 // getTrigger returns the validation trigger with default

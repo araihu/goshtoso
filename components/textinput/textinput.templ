@@ -74,7 +74,7 @@ templ defaultInput(cfg Config) {
 				if cfg.hasMaxLength() {
 					maxlength={ cfg.maxLengthStr() }
 				}
-				{ cfg.InputAttrs... }
+				{ cfg.inputAttributes()... }
 			/>
 		} else {
 			<input
@@ -102,11 +102,11 @@ templ defaultInput(cfg Config) {
 				if cfg.hasMaxLength() {
 					maxlength={ cfg.maxLengthStr() }
 				}
-				{ cfg.InputAttrs... }
+				{ cfg.inputAttributes()... }
 			/>
 		}
 		if cfg.HelperText != "" {
-			<small class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
+			<small id={ cfg.helperTextID() } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 		}
 	</div>
 }
@@ -143,7 +143,7 @@ templ passwordInput(cfg Config) {
 				if cfg.hasMaxLength() {
 					maxlength={ cfg.maxLengthStr() }
 				}
-				{ cfg.InputAttrs... }
+				{ cfg.inputAttributes()... }
 			/>
 			<button
 				type="button"
@@ -161,7 +161,7 @@ templ passwordInput(cfg Config) {
 			</button>
 		</div>
 		if cfg.HelperText != "" {
-			<small class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
+			<small id={ cfg.helperTextID() } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
 		}
 	</div>
 }
@@ -194,7 +194,7 @@ templ searchInput(cfg Config) {
 				maxlength={ cfg.maxLengthStr() }
 			}
 			aria-label="search"
-			{ cfg.InputAttrs... }
+			{ cfg.inputAttributes()... }
 		/>
 	</div>
 }

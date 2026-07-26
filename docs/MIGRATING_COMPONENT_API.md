@@ -544,17 +544,20 @@ The documentation contract now records effective rendered behavior rather than
 pretending every Go zero value is literal output. In particular, verify these
 current contracts in downstream code:
 
-- `select.Config.InputAttrs` is exported but the custom Select renderer does
-  not currently place it on a DOM element.
-- `combobox.Config.Required` is not rendered as `required` or
-  `aria-required`; `Source.LazyEndpoint` selects server mode, while
+- `select.Config.InputAttrs` applies to the hidden submission control;
+  `TriggerAttrs` applies ARIA relationships and event hooks to the focusable
+  combobox trigger. Select required state is accessible, while the server still
+  enforces a non-empty selection.
+- `combobox.Config.Required` renders accessible required state on its composite
+  trigger; `Source.LazyEndpoint` selects server mode, while
   `OptionsEndpoint` is the URL used for search/retry requests; `State.Deps` is
   handler state and is not read by the renderer.
 - `schemaform.Field.Name` is populated by transforms, while rendering derives
   native names and IDs from `Field.Path`.
 - `form.FooterConfig.CancelHTMX` adds HTMX attributes but does not remove a
-  simultaneous `CancelHref`. `FieldGroupConfig` has no built-in Select field;
-  its first non-nil supported built-in field wins.
+  simultaneous `CancelHref`. `FieldGroupConfig` supports Select and its first
+  non-nil built-in field wins. `FieldGroupConfig.ID` remains the wrapper target;
+  call `FocusTargetID()` instead of guessing a composite control suffix.
 - Checkbox checked/disabled and helper-text branches are conditional. Do not
   assume every combination emits every `Name`, `Value`, `checked`, and
   `disabled` attribute.

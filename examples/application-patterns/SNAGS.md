@@ -112,3 +112,27 @@ an anchor with `href` and native link keyboard behavior. Appearance is now
 visual-only by default; `WithRole` remains available when a consumer has an
 explicit semantic contract. Component and benchmark tests prevent the implicit
 button role from returning.
+
+## 2026-07-26 design-intelligence pass
+
+### Card was carrying neutral application surfaces
+
+The detail main region, detail rail, and workflow body used `card.Card` only
+because the public library lacked a full-width neutral surface. That forced
+article/title semantics and the `app-wide-card` override into work regions that
+were not cards. The new `panel.Panel` owns only bounded surface treatment,
+density, and arbitrary header/actions/body/footer regions. Migrating those
+three regions keeps their headings application-owned and removes the semantic
+misuse without introducing Stack/Grid. The explicit application heading roles
+add 20 lines, so the current stylesheet is 418 lines and remains below the
+500-line regression budget; the earlier 398-line measurement remains the
+pre-Panel historical checkpoint.
+
+### In-repo site checks require the workspace for unreleased packages
+
+Running the site module with `GOWORK=off` during this change resolved the
+released Goshtoso version pinned in `site/go.mod`, which cannot contain the new
+Panel package (and was also behind existing composition packages). In-repo
+site validation therefore uses the worktree's `go.work`; true `GOWORK=off`
+portability is proven by the standalone `examples/application-patterns` module
+after the candidate library revision is available through its local replace.

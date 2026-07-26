@@ -15,6 +15,7 @@ templ structuredInputTemplate(cfg Config) {
 		data-name={ cfg.Name }
 		data-entries={ cfg.entriesJSON() }
 		data-new-row={ cfg.newRowJSON() }
+		{ cfg.RootAttrs... }
 	>
 		<template x-for="(entry, index) in entries" x-bind:key="index">
 			<div class="flex gap-2 items-center flex-wrap">
