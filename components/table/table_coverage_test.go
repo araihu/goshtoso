@@ -159,6 +159,20 @@ func TestRowClickableRoleAndActionable(t *testing.T) {
 	if r := (Row{Link: "/x"}); r.clickableRole() != "link" || !r.isActionable() {
 		t.Fatal("link row should be link/actionable")
 	}
+	linkedActions := Row{Link: "/x", Actions: templ.Raw("a")}
+	if linkedActions.clickableRole() != "" || !linkedActions.usesPrimaryCellLink() {
+		t.Fatal("linked row with actions should move navigation into the primary cell")
+	}
+	linkedActionsWithIgnoredFallbacks := Row{
+		Link:       "/x",
+		Actions:    templ.Raw("a"),
+		OnClick:    "go()",
+		HTMX:       &RowHTMXConfig{Get: "/ignored"},
+		Expandable: true,
+	}
+	if linkedActionsWithIgnoredFallbacks.clickableRole() != "" || linkedActionsWithIgnoredFallbacks.hasRowInteraction() {
+		t.Fatal("Link precedence must not leave a demoted linked row keyboard-interactive")
+	}
 	if r := (Row{OnClick: "go()"}); r.clickableRole() != "button" || !r.isActionable() {
 		t.Fatal("onclick row should be button/actionable")
 	}
@@ -471,6 +485,39 @@ func TestRenderRowWithActionsColumn(t *testing.T) {
 	cfg := Config{Columns: []Column{{Key: "name", Label: "N"}}, Rows: []Row{row}}
 	html := renderT(t, TableRow(cfg, row))
 	mustContainAll(t, html, "<button>Edit</button>", "justify-end")
+}
+
+func TestRenderLinkedRowWithActionsUsesPrimaryCellLink(t *testing.T) {
+	row := Row{
+		ID:      "1",
+		Link:    "/people/1",
+		Actions: templ.Raw(`<button type="button">Edit</button>`),
+		Cells:   map[string]Cell{"name": {Text: "Ada"}},
+	}
+	cfg := Config{Columns: []Column{{Key: "name", Label: "Name"}}, Rows: []Row{row}}
+	html := renderT(t, TableRow(cfg, row))
+
+	rowTagEnd := strings.Index(html, ">")
+	if rowTagEnd < 0 {
+		t.Fatalf("missing row start tag in %s", html)
+	}
+	rowTag := html[:rowTagEnd+1]
+	mustNotContain(t, rowTag, `role="link"`, `tabindex="0"`, `hx-get=`, "cursor-pointer")
+
+	linkStart := strings.Index(html, `<a href="/people/1"`)
+	linkEnd := strings.Index(html, `</a>`)
+	buttonStart := strings.Index(html, `<button type="button">Edit</button>`)
+	if linkStart < 0 || linkEnd < linkStart || buttonStart < linkEnd {
+		t.Fatalf("primary link must close before the action button:\n%s", html)
+	}
+	linkMarkup := html[linkStart : linkEnd+len(`</a>`)]
+	mustContainAll(t, linkMarkup,
+		`href="/people/1"`,
+		`hx-get="/people/1"`,
+		`hx-target="#main-content-area"`,
+		`hx-push-url="true"`,
+		">Ada</a>",
+	)
 }
 
 func TestRenderLazyLoadTbody(t *testing.T) {

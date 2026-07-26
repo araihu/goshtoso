@@ -196,6 +196,11 @@ domain vocabulary, information priority, authorization, and workflow rules in
 the application. Goshtoso supplies a consistent component vocabulary, not the
 product decisions.
 
+For operation tables, `Row.Link` and `Row.Actions` are safe to combine: the
+link moves into the first data cell and the row retains native table semantics,
+so trailing buttons are never nested inside a clickable row. Avoid adding
+`OnClick` or row-level `HTMX` as competing navigation paths when `Link` is set.
+
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.

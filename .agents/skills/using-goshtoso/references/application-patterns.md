@@ -124,6 +124,12 @@ table.Row{
 destination depends on a fresh document or complex Alpine state; use
 `LinkBoost` only when HTMX navigation preserves the destination contract.
 
+When a row needs both primary navigation and trailing controls, set `Link` and
+`Actions` together. Goshtoso keeps the `<tr>` non-interactive, renders the link
+inside the first data cell, and leaves the action buttons as independent
+keyboard targets. Do not add row-level click handlers as a second navigation
+path.
+
 ### State matrix
 
 | State | Required response |

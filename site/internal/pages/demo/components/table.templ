@@ -34,7 +34,6 @@ templ tableDemoContent() {
     Rows: rows,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Striped Table",
@@ -47,7 +46,6 @@ templ tableDemoContent() {
     Rows:    rows,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Table with Action",
@@ -66,7 +64,28 @@ templ tableDemoContent() {
     },
 })`,
 		)
-
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Linked Rows with Actions",
+				Description: "When a row has both Link and Actions, Goshtoso keeps the row non-interactive and renders the Link in the first data cell. The primary navigation and trailing buttons remain separate keyboard controls.",
+			},
+			tableLinkedActionsPreview(),
+			`@table.Table(table.Config{
+    Columns: columns,
+    Rows: []table.Row{
+        {
+            ID:       "2335",
+            Link:     "/customers/2335",
+            LinkMode: table.LinkFull,
+            Cells: map[string]table.Cell{
+                "id":   {Text: "2335"},
+                "name": {Text: "Alice Brown"},
+            },
+            Actions: customerActions("2335"),
+        },
+    },
+})`,
+		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Selectable Rows",
@@ -79,7 +98,6 @@ templ tableDemoContent() {
     Rows:         rows,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Users Table",
@@ -105,7 +123,6 @@ templ tableEditButton() {
     }
 }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Sortable Table (HTMX)",
@@ -126,7 +143,6 @@ templ tableEditButton() {
     Rows: rows,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Lazy-Loaded Table",
@@ -141,7 +157,6 @@ templ tableEditButton() {
     Columns:      columns,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Paginated Table",
@@ -156,7 +171,6 @@ templ tableEditButton() {
     Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Filtered Table",
@@ -179,7 +193,6 @@ templ tableEditButton() {
     },
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Inline Filter Appearance",
@@ -194,7 +207,6 @@ templ tableEditButton() {
     },
 }`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Infinite Scroll Table",
@@ -234,8 +246,8 @@ templ tableStripedPreview() {
 	<div id="table-striped" class="w-full">
 		@table.Table(table.Config{
 			Appearance: table.AppearanceStriped,
-			Columns: defaultColumns(),
-			Rows:    stripedRows(),
+			Columns:    defaultColumns(),
+			Rows:       stripedRows(),
 		})
 	</div>
 }
@@ -246,6 +258,17 @@ templ tableActionPreview() {
 		@table.Table(table.Config{
 			Columns: actionColumns(),
 			Rows:    actionRows(),
+		})
+	</div>
+}
+
+// tableLinkedActionsPreview proves that primary navigation and trailing
+// controls remain separate interactive surfaces.
+templ tableLinkedActionsPreview() {
+	<div id="table-linked-actions" class="w-full">
+		@table.Table(table.Config{
+			Columns: defaultColumns(),
+			Rows:    linkedActionRows(),
 		})
 	</div>
 }
@@ -275,12 +298,12 @@ templ tableUsersPreview() {
 templ tableSortablePreview() {
 	<div id="table-sortable" class="w-full">
 		@table.Table(table.Config{
-			ID:           "sortable-table",
-			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
-			SortBy:       "id",
-			SortDir:      table.SortAsc,
-			Columns:      sortableColumns(),
-			Rows:         stripedRows(),
+			ID:      "sortable-table",
+			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			SortBy:  "id",
+			SortDir: table.SortAsc,
+			Columns: sortableColumns(),
+			Rows:    stripedRows(),
 		})
 	</div>
 }
@@ -297,11 +320,11 @@ templ tableLazyPreview() {
 			}
 		</div>
 		@table.Table(table.Config{
-			ID:           "lazy-table",
-			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
-			LazyLoad:     true,
-			LazyTrigger:  "click from:#load-lazy-table",
-			Columns:      defaultColumns(),
+			ID:          "lazy-table",
+			HTMX:        &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
+			LazyLoad:    true,
+			LazyTrigger: "click from:#load-lazy-table",
+			Columns:     defaultColumns(),
 		})
 	</div>
 }
@@ -310,11 +333,11 @@ templ tableLazyPreview() {
 templ tablePaginatedPreview() {
 	<div id="table-paginated" class="w-full">
 		@table.Table(table.Config{
-			ID:           "paginated-table",
-			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
-			Columns:      defaultColumns(),
-			Rows:         paginatedRows(1),
-			Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
+			ID:         "paginated-table",
+			HTMX:       &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			Columns:    defaultColumns(),
+			Rows:       paginatedRows(1),
+			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 		})
 	</div>
 }
@@ -323,7 +346,7 @@ templ tablePaginatedPreview() {
 templ tableFilteredPreview() {
 	<div id="table-filtered" class="w-full">
 		@table.Table(table.Config{
-			ID:           "filtered-table",
+			ID:   "filtered-table",
 			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID", Sortable: true},
@@ -363,7 +386,7 @@ templ tableFilteredPreview() {
 templ tableInlineFilteredPreview() {
 	<div id="table-inline-filtered" class="w-full">
 		@table.Table(table.Config{
-			ID:           "inline-filtered-table",
+			ID:   "inline-filtered-table",
 			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID"},
@@ -400,10 +423,10 @@ templ tableInlineFilteredPreview() {
 templ tableInfinitePreview() {
 	<div id="table-infinite" class="w-full">
 		@table.Table(table.Config{
-			ID:           "infinite-table",
-			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=infinite"},
-			Columns:      defaultColumns(),
-			Rows:         infiniteScrollInitialRows(),
+			ID:      "infinite-table",
+			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=infinite"},
+			Columns: defaultColumns(),
+			Rows:    infiniteScrollInitialRows(),
 			Pagination: &table.PaginationConfig{
 				Mode:            table.PaginationInfiniteScroll,
 				CurrentPage:     1,
@@ -546,6 +569,16 @@ func actionRows() []table.Row {
 			"action": {Component: tableEditButton()},
 		}},
 	}
+}
+
+func linkedActionRows() []table.Row {
+	rows := defaultRows()
+	for index := range rows {
+		rows[index].Link = "/components/table#table-linked-actions"
+		rows[index].LinkMode = table.LinkFull
+		rows[index].Actions = tableEditButton()
+	}
+	return rows
 }
 
 func checkboxRows() []table.Row {

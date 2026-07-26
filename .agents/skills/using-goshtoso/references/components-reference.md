@@ -1641,14 +1641,14 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `ID` | `string` | ID is a unique identifier for the row (used for checkbox IDs) |
 | `Cells` | `map[string]Cell` | Cells maps column keys to cell content |
-| `Link` | `string` | Link makes the row clickable — navigates when clicked. |
+| `Link` | `string` | Link makes the row clickable — navigates when clicked. When Actions is |
 | `LinkMode` | `LinkMode` | LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area. |
 | `OnClick` | `string` | OnClick is a JS/Alpine expression executed on row click. |
 | `HTMX` | `*RowHTMXConfig` | HTMX configures row-level HTMX click behavior. |
 | `AlpineAttrs` | `map[string]string` | AlpineAttrs is a pass-through for per-row Alpine directives (e.g. |
 | `Expandable` | `bool` | Expandable shows a chevron toggle and an expandable detail section below the row |
 | `Detail` | `templ.Component` | Detail is rendered in the expanded panel below the row when Expandable is true |
-| `Actions` | `templ.Component` | Actions is rendered in a trailing actions column (e.g., edit/delete buttons) |
+| `Actions` | `templ.Component` | Actions is rendered in a trailing actions column (e.g., edit/delete buttons). |
 
 **RowHTMXConfig**
 
