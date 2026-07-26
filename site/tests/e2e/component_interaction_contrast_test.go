@@ -38,8 +38,16 @@ func setThemeMode(t *testing.T, page playwright.Page, theme string, dark bool) {
 }
 
 func measureRenderedContrast(t *testing.T, locator playwright.Locator) renderedContrast {
+	return measureRenderedPropertyContrast(t, locator, "color")
+}
+
+func measureRenderedBorderContrast(t *testing.T, locator playwright.Locator) renderedContrast {
+	return measureRenderedPropertyContrast(t, locator, "borderTopColor")
+}
+
+func measureRenderedPropertyContrast(t *testing.T, locator playwright.Locator, property string) renderedContrast {
 	t.Helper()
-	result, err := locator.Evaluate(`el => {
+	result, err := locator.Evaluate(`(el, property) => {
 		const rgba = value => {
 			const canvas = document.createElement('canvas');
 			canvas.width = 1;
@@ -82,18 +90,18 @@ func measureRenderedContrast(t *testing.T, locator playwright.Locator) renderedC
 		};
 		const style = getComputedStyle(el);
 		const bg = background(el);
-		const fg = composite(rgba(style.color), bg);
+		const fg = composite(rgba(style[property]), bg);
 		const foregroundLuminance = luminance(fg);
 		const backgroundLuminance = luminance(bg);
 		return {
-			color: style.color,
+			color: style[property],
 			background: 'rgb(' + bg.slice(0, 3).map(Math.round).join(', ') + ')',
 			ratio: (Math.max(foregroundLuminance, backgroundLuminance) + 0.05) /
 				(Math.min(foregroundLuminance, backgroundLuminance) + 0.05),
 			opacity: style.opacity,
 			filter: style.filter,
 		};
-	}`, nil)
+	}`, property)
 	require.NoError(t, err)
 
 	values, ok := result.(map[string]any)
@@ -129,6 +137,8 @@ func TestCoreActionAndHelperContrastAcrossAcceptanceThemes(t *testing.T) {
 		path     string
 		selector string
 		hover    bool
+		border   bool
+		minimum  float64
 	}{
 		{name: "button", path: "/components/button", selector: "#button-fragment button", hover: true},
 		{name: "danger button", path: "/components/button", selector: "#button-fragment button.bg-danger-action", hover: true},
@@ -136,6 +146,7 @@ func TestCoreActionAndHelperContrastAcrossAcceptanceThemes(t *testing.T) {
 		{name: "textarea helper", path: "/components/textarea", selector: "#textarea-required small"},
 		{name: "text input feedback", path: "/components/text-input", selector: "#patternInput-feedback"},
 		{name: "file input helper", path: "/components/fileinput", selector: "#fileinput-default small"},
+		{name: "text input boundary", path: "/components/text-input", selector: "#textinput-default input", border: true, minimum: 3},
 		{name: "required marker", path: "/components/form", selector: "#form-complete label > span"},
 		{name: "alert status title", path: "/components/alert", selector: "#alert-default h3.text-success-text"},
 	}
@@ -151,7 +162,14 @@ func TestCoreActionAndHelperContrastAcrossAcceptanceThemes(t *testing.T) {
 					require.NoError(t, locator.WaitFor())
 
 					base := measureRenderedContrast(t, locator)
-					require.GreaterOrEqualf(t, base.Ratio, 4.5, "%s must meet AA: %+v", tc.name, base)
+					minimum := tc.minimum
+					if minimum == 0 {
+						minimum = 4.5
+					}
+					if tc.border {
+						base = measureRenderedBorderContrast(t, locator)
+					}
+					require.GreaterOrEqualf(t, base.Ratio, minimum, "%s must meet its contrast target: %+v", tc.name, base)
 
 					if tc.hover {
 						require.NoError(t, locator.Hover())

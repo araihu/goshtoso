@@ -58,7 +58,7 @@ func TestTextInput_GoshtosoComponent(t *testing.T) {
 		classAttr, err := input.GetAttribute("class")
 		require.NoError(t, err)
 		require.Contains(t, classAttr, "rounded-radius")
-		require.Contains(t, classAttr, "border-outline")
+		require.Contains(t, classAttr, "border-control-outline")
 
 		t.Logf("Default input renders correctly")
 	})

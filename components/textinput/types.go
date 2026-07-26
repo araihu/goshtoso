@@ -122,7 +122,7 @@ func (cfg Config) inputClasses() string {
 	case StateSuccess:
 		return base + " border-success"
 	default:
-		return base + " border-outline dark:border-outline-dark"
+		return base + " border-control-outline dark:border-control-outline-dark"
 	}
 }
 

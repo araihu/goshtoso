@@ -53,6 +53,19 @@ func TestTextInputHelperUsesSemanticMutedToken(t *testing.T) {
 	assert.NotContains(t, classes, "text-on-surface-dark/60")
 }
 
+func TestTextInputDefaultUsesControlOutlineToken(t *testing.T) {
+	for _, cfg := range []Config{
+		{Name: "name"},
+		{Name: "query", Type: TypeSearch},
+	} {
+		html := renderTextInput(t, cfg)
+
+		assert.Contains(t, html, "border-control-outline")
+		assert.Contains(t, html, "dark:border-control-outline-dark")
+		assert.NotContains(t, html, "border-outline dark:border-outline-dark")
+	}
+}
+
 func TestTextInputEscapesUserControlledText(t *testing.T) {
 	payload := `<img src=x onerror=alert(1)>`
 	html := renderTextInput(t, Config{

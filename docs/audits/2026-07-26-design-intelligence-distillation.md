@@ -590,3 +590,20 @@ start from the new invariant ledger and prove server authorization, actual
 loading/transport failures, retained recovery, mobile selected-detail focus or
 scroll, status-action contrast, and refresh idempotency rather than presentation
 fixtures.
+
+### Final-confirmation snag and upstream correction
+
+The fresh blind confirmation started from immutable candidate `b274a5c` and,
+before source inspection, measured the empty TextInput boundary at 1.64:1 in
+Goshtoso light mode. The public guidance successfully made the consumer detect
+and temporarily compensate for the defect, but a basic application should not
+need application CSS to perceive a form control.
+
+The upstream correction makes TextInput and its search variant consume the
+existing semantic `control-outline` pair, gives Goshtoso light/dark and Minimal
+dark explicit control boundaries above 3:1, and extends the rendered browser
+matrix to assert the TextInput border itself at the non-text contrast threshold.
+This is retained as a library snag rather than hidden by the consumer override.
+The independent confirmation score remains tied to `b274a5c`; the corrected
+candidate must rerun its focused contrast gate and the full repository gates
+before merge.

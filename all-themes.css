@@ -151,6 +151,7 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-neutral-700);
         --color-outline-dark-strong: var(--color-neutral-300);
+        --color-control-outline-dark: var(--color-neutral-500);
         --color-info: var(--color-sky-500);
         --color-on-info: var(--color-white);
         --color-success: var(--color-green-300);
@@ -593,6 +594,7 @@
         --color-on-secondary: #ffffff;
         --color-outline: #c0cbd8;                /* blue-slate-200 */
         --color-outline-strong: #3a4b5f;         /* blue-slate-700 */
+        --color-control-outline: #7a8796;         /* 3.66:1 on the control surface */
         /* Dark */
         --color-surface-dark: #131920;           /* blue-slate-900 */
         --color-surface-dark-alt: #263847;       /* raised blue-slate */
@@ -604,6 +606,7 @@
         --color-on-secondary-dark: #131920;      /* blue-slate-900 */
         --color-outline-dark: #3a4b5f;           /* blue-slate-700 */
         --color-outline-dark-strong: #a0b1c5;    /* blue-slate-300 */
+        --color-control-outline-dark: #718397;    /* 4.54:1 on the dark control surface */
         /* Status */
         --color-info: #0f766e;                   /* teal */
         --color-on-info: #f5fcff;
