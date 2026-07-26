@@ -184,6 +184,17 @@ func TestSidebarComponentDemoVariants(t *testing.T) {
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(3000),
 	}))
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateHidden,
+		Timeout: playwright.Float(3000),
+	}))
+
+	require.NoError(t, overlay.Locator("button[aria-label='Open sidebar']").Click())
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
 
 	require.NoError(t, overlay.Locator("div[aria-hidden='true']").Click())
 	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{

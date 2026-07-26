@@ -64,7 +64,7 @@ func TestNavbarCoverageDemo(t *testing.T) {
 	assert.Contains(t, signOutClass, "text-danger")
 
 	require.NoError(t, page.SetViewportSize(390, 844))
-	mobileMenuButton := page.Locator("#navbar-simple button[aria-label='mobile menu']")
+	mobileMenuButton := page.Locator("#navbar-simple > nav > button.sm\\:hidden")
 	require.NoError(t, mobileMenuButton.ScrollIntoViewIfNeeded())
 	require.NoError(t, mobileMenuButton.WaitFor())
 

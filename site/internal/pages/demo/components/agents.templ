@@ -72,6 +72,10 @@ templ agentsContent() {
 			<ul class="list-disc space-y-2 pl-5 text-on-surface dark:text-on-surface-dark">
 				<li>A strict CSP can load every local file and still block the bundled standard Alpine runtime. Test the real policy; the default runtime needs dynamic evaluation and inline style mutation.</li>
 				<li>After an HTMX validation or mutation swap, restore focus on <code class="font-mono">htmx:afterSettle</code> to an explicit autofocus target or the FormErrors summary, then assert <code class="font-mono">document.activeElement</code>.</li>
+				<li>For queue/detail swaps, assert one selected identity across the URL, rendered detail, focus, visible row styling, and <code class="font-mono">aria-current</code> or <code class="font-mono">aria-selected</code>. A correct detail with a stale queue highlight is a state-integrity failure.</li>
+				<li>Hold real mutation requests in flight. For a form-owned request, pair <code class="font-mono">button.WithLoadingText</code> with form-level <code class="font-mono">hx-disabled-elt</code>, then assert pending copy and duplicate prevention.</li>
+				<li>Expose one primary mobile navigation trigger, close it with Escape, and keep its name and <code class="font-mono">aria-expanded</code> truthful. After PRG, compare Back-restored status with a fresh server read.</li>
+				<li>Keep mobile drawers viewport-owned (typically <code class="font-mono">fixed top-16 bottom-0</code>). At 390 px, open the panel and assert its bounding box intersects the viewport with positive height.</li>
 				<li>For consequential mutations, test the transition table with two stale tabs, the offered conflict action, a repeated terminal action, and the actual side-effect count.</li>
 				<li>Turn every consequential state/action pair into an invariant-ledger row. Attempt hidden and forged actions against server truth; verify retained input, focus, receipt identity, and effect count.</li>
 				<li>Exercise a real transport failure and loading deduplication. A visible simulated 503 does not prove that an offline request has recovery.</li>

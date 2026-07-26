@@ -212,9 +212,7 @@ func TestHTMXEmptyOmitsAttributes(t *testing.T) {
 	}
 }
 
-// TestLoadingTextRendersIndicatorSpans covers the LoadingText + HTMX branch
-// that wraps children in an htmx-indicator-content span and adds a hidden
-// indicator span with the loading text.
+// TestLoadingTextRendersIndicatorSpans covers the LoadingText + HTMX branch.
 func TestLoadingTextRendersIndicatorSpans(t *testing.T) {
 	html := render(t, "Save",
 		WithHTMX(&HTMXConfig{Post: "/save"}),
@@ -222,8 +220,10 @@ func TestLoadingTextRendersIndicatorSpans(t *testing.T) {
 	)
 
 	for _, want := range []string{
-		`<span class="htmx-indicator-content">Save</span>`,
-		`<span class="htmx-indicator hidden">Saving...</span>`,
+		`data-goshtoso-loading`,
+		`hx-disabled-elt="this"`,
+		`<span class="goshtoso-loading-content">Save</span>`,
+		`<span class="goshtoso-loading-label" aria-live="polite">Saving...</span>`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("loading text render missing %q:\n%s", want, html)

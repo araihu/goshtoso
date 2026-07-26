@@ -182,6 +182,11 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 - Alpine plugins must load before Alpine core. Avoid manual tags unless the app
   has a strong reason.
 - HTMX handlers should return rendered HTML fragments, not JSON.
+- `button.WithLoadingText` follows either a Button-owned request or an ancestor
+  HTMX form. For a form-owned mutation, add
+  `hx-disabled-elt="find button[type='submit']"` to the form so pending copy and
+  duplicate prevention are both real; hold the request in a browser test and
+  assert the label, disabled state, and final response.
 - HTMX does not swap 4xx/5xx responses by default. For expected validation or
   recovery fragments, either return a swappable 2xx response while preserving
   application status in a header, or deliberately opt in from
@@ -191,6 +196,18 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
   task target only when the response deliberately marks one; filter and search
   swaps must keep focus and caret in the initiating control. Never install a
   global fallback that focuses the page title after every swap.
+- A queue/detail swap must leave one selected identity everywhere. After settle,
+  assert that the URL, rendered detail key, focused target, visual selected row,
+  and collection semantics (`aria-current` or `aria-selected`) all name the same
+  record. Prefer rerendering the collection from server truth; if the collection
+  stays outside the swap, update every one of those representations explicitly.
+- Render exactly one primary mobile navigation trigger. Navbar right actions can
+  create a Navbar mobile menu; do not place that hamburger beside a Sidebar
+  overlay trigger unless the two controls expose clearly different destinations.
+  Exercise Escape and assert the trigger name and `aria-expanded` after closing.
+  Keep the overlay viewport-owned (`fixed top-16 bottom-0`, adjusted to the real
+  header height), not `absolute top-full` inside a header child; after opening at
+  390 px, assert the panel intersects the viewport and has positive height.
 - Before implementing a consequential POST, write its allowed state-transition
   table. Terminal decisions stay terminal unless the product explicitly models
   reversal; stale or partial evidence must have an explicit action policy; and
@@ -207,6 +224,10 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 - Render recovery inside the application shell for unknown IDs and routes.
   Preserve selected record, filters, theme, and color mode across error,
   conflict, retry, and success links.
+- After PRG, Back/Forward must not present stale authoritative status from the
+  browser cache. Compare the restored revision/status with a fresh server read;
+  use `Cache-Control: no-store` for sensitive task pages or a `pageshow` refresh
+  when a persisted document cannot be trusted.
 - Use `link.Link(..., link.WithAppearance(link.AppearanceButton))` for GET
   navigation that should look like a button. Keep `button.Button` for form
   submission and mutations; visual appearance must not erase native semantics.

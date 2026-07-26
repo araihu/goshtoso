@@ -158,7 +158,9 @@ func WithAlpine(alpine *AlpineConfig) Option {
 	})
 }
 
-// WithLoadingText sets text shown during an HTMX request.
+// WithLoadingText sets text shown while this button or an ancestor HTMX form is
+// requesting. When the button owns the HTMX request it is disabled automatically;
+// ancestor forms should set hx-disabled-elt="find button[type='submit']".
 func WithLoadingText(text string) Option {
 	return optionFunc(func(cfg *config) {
 		cfg.loadingText = text
@@ -217,7 +219,7 @@ func sizeClasses(size Size) string {
 }
 
 func buttonClasses(cfg config) string {
-	base := "whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:contrast-125 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:contrast-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border"
+	base := "min-h-11 min-w-11 whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:contrast-125 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:contrast-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border"
 	outline := focusOutlineClasses(cfg.tone)
 	return base + " " + toneClasses(cfg.tone) + " " + sizeClasses(cfg.size) + " " + outline + " " + cfg.rootClass
 }

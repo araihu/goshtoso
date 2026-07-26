@@ -88,7 +88,8 @@ func TestCoverageRenderFullNavbarBranches(t *testing.T) {
 		`ada@example.test`,
 		`Sign out`,
 		`text-danger`,
-		`aria-label="mobile menu"`,
+		`x-on:keydown.escape.window="mobileMenuIsOpen = false"`,
+		`x-bind:aria-label="mobileMenuIsOpen ? 'Close mobile menu' : 'Open mobile menu'"`,
 		`x-show="mobileMenuIsOpen"`,
 	} {
 		assert.Contains(t, html, want)
@@ -105,6 +106,6 @@ func TestCoverageRenderDefaultsAndSuppressesEmptyOptionalRegions(t *testing.T) {
 	})
 
 	assert.Contains(t, html, `href="/"`)
-	assert.NotContains(t, html, `aria-label="mobile menu"`)
+	assert.NotContains(t, html, `x-bind:aria-label="mobileMenuIsOpen`)
 	assert.NotContains(t, html, `aria-label="user menu"`)
 }

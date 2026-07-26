@@ -16,6 +16,9 @@ templ buttonTemplate(options ...Option) {
 		if cfg.disabled {
 			disabled
 		}
+		if cfg.loadingText != "" {
+			data-goshtoso-loading
+		}
 		
 		if hasAlpine {
 			if cfg.alpine.OnClick != "" {
@@ -36,6 +39,9 @@ templ buttonTemplate(options ...Option) {
 		}
 		
 		if hasHTMX {
+			if cfg.loadingText != "" {
+				hx-disabled-elt="this"
+			}
 			if cfg.htmx.Get != "" {
 				hx-get={ cfg.htmx.Get }
 			}
@@ -75,9 +81,9 @@ templ buttonTemplate(options ...Option) {
 		}
 		{ cfg.attrs... }
 		>
-			if cfg.loadingText != "" && hasHTMX {
-				<span class="htmx-indicator-content">{ children... }</span>
-				<span class="htmx-indicator hidden">{ cfg.loadingText }</span>
+			if cfg.loadingText != "" {
+				<span class="goshtoso-loading-content">{ children... }</span>
+				<span class="goshtoso-loading-label" aria-live="polite">{ cfg.loadingText }</span>
 			} else {
 				{ children... }
 			}

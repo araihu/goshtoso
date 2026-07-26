@@ -607,3 +607,47 @@ This is retained as a library snag rather than hidden by the consumer override.
 The independent confirmation score remains tied to `b274a5c`; the corrected
 candidate must rerun its focused contrast gate and the full repository gates
 before merge.
+
+The first independent confirmation review then froze `33/40`
+`[3,4,3,2,3,4,3,3,4,4]`, with zero P0, one P1, and four P2 findings. The P1 was
+selection-state divergence: HTMX changed URL, detail, and focus from drill to
+saw or sander while the drill row retained `is-selected` and
+`aria-current="page"`. P2 findings covered mutation Buttons whose pending text
+was inert under a form-owned HTMX request, two ambiguous mobile menu triggers
+without Escape behavior, a Back-restored stale pre-checkout document, and
+34–38-pixel action targets plus native-validation localization polish. The
+scorecard was written before the reviewer read source or builder evidence and is
+retained under `/tmp/gs-confirmation-probe/evidence/reviewer/`.
+
+The selection bug is consumer-owned, but the public contract now makes the
+invariant explicit across skill, adversarial ledger, application patterns,
+visual acceptance, usage docs, and `/docs/agents`: URL, detail identity, focus,
+selected styling, and `aria-current`/`aria-selected` must agree after direct,
+HTMX, Back, and Forward navigation. The application correction is being sent to
+a second blind reviewer; the original score remains immutable.
+
+The review also exposed two useful library defaults. Button now guarantees a
+44-pixel minimum target at every named size, and `WithLoadingText` renders for a
+Button-owned request or an ancestor HTMX form. Form-owned mutations pair it with
+form-level `hx-disabled-elt`; a runnable docs example and E2E hold a real request
+and assert pending copy plus a disabled submitter. Navbar and Sidebar mobile
+surfaces close on Escape, and Navbar's trigger name follows its expanded state.
+Guidance additionally rejects adjacent ambiguous hamburger controls and requires
+Back-restored authoritative state to be compared with a fresh server read.
+
+The second independent reviewer froze `38/40`
+`[4,4,3,4,4,4,3,4,4,4]`. Selection synchronization, live mutation loading,
+stale/partial recovery, server authority, conflict handling, transport recovery,
+PRG, replay, unknown routes, keyboard focus, and the eight-cell appearance
+matrix passed. The hard gate still failed because one P1 remained: at 390×844
+the only mobile navigation trigger expanded truthfully but its panel rendered at
+`y=845` with zero height, outside the viewport. A P2 retained 36–38-pixel
+consumer-owned input/menu targets. The immutable scorecard lives under
+`/tmp/gs-confirmation-probe/evidence/reviewer2/`.
+
+Public guidance now names the concrete geometry failure: keep the overlay
+viewport-owned (`fixed top-16 bottom-0`, adjusted to the header), never
+`absolute top-full` inside a nested header child, and measure an open panel's
+positive bounding box intersection at 390 px. The corrected consumer is gated
+on a third blind review; `38/40` remains a failed historical result rather than
+being promoted after source-level reasoning.

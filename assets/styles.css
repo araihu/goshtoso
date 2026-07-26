@@ -1357,6 +1357,9 @@
   .min-w-10 {
     min-width: calc(var(--spacing) * 10);
   }
+  .min-w-11 {
+    min-width: calc(var(--spacing) * 11);
+  }
   .min-w-24 {
     min-width: calc(var(--spacing) * 24);
   }
@@ -8745,6 +8748,17 @@
   color: color-mix(in srgb, oklch(87% 0 0) 70%, transparent);
   @supports (color: color-mix(in lab, red, red)) {
     color: color-mix(in srgb, var(--color-on-surface-dark) 70%, transparent);
+  }
+}
+@layer components {
+  .goshtoso-loading-label {
+    display: none;
+  }
+  .htmx-request .goshtoso-loading-content, .htmx-request.goshtoso-loading-content {
+    display: none;
+  }
+  .htmx-request .goshtoso-loading-label, .htmx-request.goshtoso-loading-label {
+    display: inline;
   }
 }
 @layer base {

@@ -226,6 +226,25 @@ domain vocabulary, information priority, authorization, and workflow rules in
 the application. Goshtoso supplies a consistent component vocabulary, not the
 product decisions.
 
+For queue/detail fragments, treat selection as one invariant rather than a CSS
+highlight: after each swap, the URL, detail identity, focus, selected-row style,
+and `aria-current` or `aria-selected` must all name the same record. Rerender the
+collection from server truth when practical; otherwise synchronize every
+representation together on `htmx:afterSettle` and test Back/Forward as well.
+
+`button.WithLoadingText` works when HTMX lives on the Button or on an ancestor
+form. For form-owned mutations, also set
+`hx-disabled-elt="find button[type='submit']"` on the form and prove the pending
+label and disabled state by holding a real request. After PRG, compare the DOM
+restored by Back with current server truth; use `Cache-Control: no-store` or a
+`pageshow` refresh when a persisted task document may be stale.
+
+Mobile Sidebar overlays should be viewport-owned, typically with
+`PanelPositionClass: "fixed top-16 bottom-0 left-0"` and matching backdrop
+geometry. Do not use `absolute top-full` inside a nested header container. At
+390 px, open the drawer and assert its bounding box intersects the viewport with
+positive height; `aria-expanded=true` is not sufficient visual evidence.
+
 For operation tables, `Row.Link` and `Row.Actions` are safe to combine: the
 link moves into the first data cell and the row retains native table semantics,
 so trailing buttons are never nested inside a clickable row. Avoid adding

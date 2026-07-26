@@ -68,7 +68,9 @@ skip navigation.
 ### Responsive contract
 
 - At 390 px, keep the top bar visible, place the sidebar in a drawer below it,
-  and preserve a full-width content column.
+  and preserve a full-width content column. Use viewport-owned geometry such as
+  `fixed top-16 bottom-0`, adjusted to the actual top-bar height; `absolute
+  top-full` inside a header child can open the panel below the viewport.
 - At 1440 px, keep the sidebar visible and fixed-width while the content region
   receives the remaining width.
 - The shell owns responsive positioning. The sidebar component owns its
@@ -79,6 +81,11 @@ skip navigation.
 - Label the primary navigation and every icon-only action.
 - Keep the active route structural with `aria-current="page"`.
 - Open mobile navigation with a real button and return focus to its trigger.
+- Give the shell one primary mobile navigation trigger. A Navbar right action
+  may create a second Navbar menu; do not place it beside a Sidebar overlay
+  hamburger unless their names and destinations are intentionally distinct.
+- Escape closes every mobile navigation surface, restores a truthful trigger
+  name, and leaves `aria-expanded="false"`.
 - Global search must work with keyboard navigation and Escape.
 
 ### What stays application-specific
@@ -92,6 +99,9 @@ domain, account actions, telemetry, and persistence policy.
 - Browser back/forward restores URL, title, focus, and a usable state.
 - Only one vertical content region scrolls at desktop width.
 - The mobile drawer starts below the top bar and never obscures focused content.
+- Opening the drawer at 390 px yields a panel that intersects the viewport and
+  has positive width and height; `display: block` and `aria-expanded=true` alone
+  do not prove the navigation is reachable.
 
 ## Operations List
 
@@ -296,6 +306,10 @@ effects, retry semantics, and success destination.
 - Refresh and Back behavior are explicitly chosen and tested.
 - Successful native POSTs use Post/Redirect/Get when the receipt or completed
   workflow is a durable route; Back must not land on a resubmission error page.
+- Compare a Back-restored task document with current server revision and status.
+  Use `Cache-Control: no-store` on sensitive task pages or refresh persisted
+  history entries on `pageshow`; stale-write rejection alone does not prevent a
+  misleading Available, pending, or Completed view.
 - Invalid submission preserves every valid value.
 - Review shows the exact payload in language the user understands.
 - Double submission cannot create duplicate work.
@@ -357,10 +371,23 @@ structural, separate destructive actions, use a real form for mutations, and
 stack the selected record after the queue at 390 px. An error may replace only
 the detail region when the queue can remain useful.
 
+If detail navigation swaps only the workspace, synchronize the collection after
+settle: URL, detail key, focus target, selected-row styling, and
+`aria-current`/`aria-selected` must identify the same record. A stale highlight
+is a state-integrity defect even when the correct detail is visible. Prefer a
+server-rendered collection update; otherwise update all representations in one
+small navigation handler and test them together.
+
 Treat the decision lifecycle as a state machine. Test a second terminal action,
 two stale tabs, the exact conflict-resolution control, and a repeated request
 with the same idempotency identity. Stale evidence must refresh to new evidence
 or block the decision; reloading the same stale fixture is not recovery.
+
+Hold each real mutation in flight and assert pending copy plus a disabled or
+otherwise deduplicated submitter. `button.WithLoadingText` follows an ancestor
+HTMX form; put `hx-disabled-elt="find button[type='submit']"` on that form. A
+fixture labeled “Loading” is not evidence that the mutation path announces or
+deduplicates work.
 
 ### Interruption-safe Workflow
 

@@ -48,6 +48,9 @@ in a queue/detail app, visit collection, detail, conflict, and completed states.
 
 - No horizontal page scroll at 390 px. A data table may own horizontal overflow.
 - Drawers begin below a sticky top bar and do not trap content behind overlays.
+- For each mobile drawer, measure its open bounding box: it intersects the
+  viewport with positive width and height, and its first/last controls are
+  reachable. An expanded trigger with a zero-height offscreen panel is a fail.
 - Toolbars stack or collapse without changing control order unexpectedly.
 - Detail rails follow main content on small screens.
 - Sticky actions do not cover focused inputs, errors, or the last result row.
@@ -90,6 +93,9 @@ in a queue/detail app, visit collection, detail, conflict, and completed states.
 - Focus the skip link and assert its box intersects the viewport immediately.
 - Activate every control with the expected keyboard command.
 - Escape closes overlays and returns focus to the trigger.
+- At mobile width, expose one primary navigation trigger, then verify its name,
+  `aria-expanded`, Escape behavior, and destination before accepting any second
+  menu control.
 - Search and filter swaps preserve the initiating control and caret. Validation,
   navigation, and mutation move focus only to an explicit response target after
   settle; a global page-title fallback is a failure.
@@ -99,10 +105,18 @@ in a queue/detail app, visit collection, detail, conflict, and completed states.
 
 - Build and unit/render tests pass in a fresh consumer module.
 - Browser tests exercise direct navigation, HTMX navigation, Back, and refresh.
+- Hold each real mutation request in flight and assert visible pending copy plus
+  a disabled or otherwise deduplicated submitter; a fixture labeled “Loading”
+  is not evidence.
+- On collection/detail navigation, assert the URL, rendered detail identity,
+  active element, visual selected row, and `aria-current`/`aria-selected` agree
+  after every direct load, HTMX swap, Back, and Forward transition.
 - Exercise unknown IDs/routes and confirm an in-shell recovery path.
 - For consequential mutations, test two stale tabs, the offered conflict action,
   a repeated terminal action, and idempotent request replay. Assert both status
   and side-effect count.
+- After PRG, compare the DOM restored by Back with a fresh authoritative read;
+  fail if revision, terminality, availability, or offered actions are stale.
 - Attempt every consequential action from every ledger state, including forged
   actions that are hidden or disabled in the normal UI. Assert server truth,
   retained input, focus, and success destination identity.

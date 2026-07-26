@@ -86,7 +86,43 @@ templ buttonDemoContent() {
     button.WithHTMX(&button.HTMXConfig{Delete: "/api/hello", Confirm: "Are you sure?", Target: "#htmx-result-delete", Swap: "innerHTML"}),
 ) { Delete }`,
 		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Form-owned HTMX loading",
+				Description: "LoadingText also follows an ancestor form request. Disable the submitter from the form so repeated activation cannot queue a duplicate mutation.",
+			},
+			buttonFormLoadingPreview(),
+			`<form
+    hx-post="/save"
+    hx-target="#save-result"
+    hx-disabled-elt="find button[type='submit']">
+    @button.Button(
+        button.WithType("submit"),
+        button.WithLoadingText("Saving…"),
+    ) { Save }
+</form>`,
+		)
 	</div>
+}
+
+templ buttonFormLoadingPreview() {
+	<form
+		id="button-form-loading"
+		class="mx-auto flex w-full max-w-3xl flex-col gap-3 sm:flex-row sm:items-center"
+		hx-post="/api/hello?delay_ms=400"
+		hx-target="#button-form-loading-result"
+		hx-swap="innerHTML"
+		hx-disabled-elt="find button[type='submit']"
+	>
+		@button.Button(
+			button.WithType("submit"),
+			button.WithRootClass("w-full justify-center sm:w-44"),
+			button.WithLoadingText("Saving…"),
+		) {
+			Save
+		}
+		@buttonHTMXResult("button-form-loading-result")
+	</form>
 }
 
 templ buttonFormActionsPreview() {

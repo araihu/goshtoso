@@ -444,6 +444,7 @@ func TestSidebarOverlayRendersNativeOffCanvasShell(t *testing.T) {
 
 	assertContainsAll(t, html,
 		`x-data="{ docsNavOpen: false }"`,
+		`x-on:keydown.escape.window="docsNavOpen = false"`,
 		`class="lg:hidden"`,
 		`type="button"`,
 		`aria-label="Open API navigation"`,

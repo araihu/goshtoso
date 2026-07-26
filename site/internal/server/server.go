@@ -281,6 +281,9 @@ func htmlEscape(s string) string {
 }
 
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
+	if delay, err := strconv.Atoi(r.URL.Query().Get("delay_ms")); err == nil && delay > 0 && delay <= 2_000 {
+		time.Sleep(time.Duration(delay) * time.Millisecond)
+	}
 	w.Header().Set("Content-Type", "text/html")
 	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
 }

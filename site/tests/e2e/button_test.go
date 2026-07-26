@@ -1,7 +1,9 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
@@ -67,5 +69,24 @@ func TestButton_GoshtosoComponent(t *testing.T) {
 		require.Contains(t, classAttr, "bg-danger", "should have bg-danger class")
 
 		t.Logf("✓ Danger button exists with correct styling")
+	})
+
+	t.Run("AncestorFormOwnsLoadingAndDisablesSubmitter", func(t *testing.T) {
+		form := page.Locator("#button-form-loading")
+		submit := form.Locator("button[type=submit]")
+		loading := submit.Locator(".goshtoso-loading-label")
+
+		require.NoError(t, submit.Click())
+		require.NoError(t, loading.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+		disabled, err := submit.IsDisabled()
+		require.NoError(t, err)
+		require.True(t, disabled, "form-owned HTMX request must disable its submitter")
+
+		result := page.Locator("#button-form-loading-result")
+		require.NoError(t, result.WaitFor())
+		require.Eventually(t, func() bool {
+			text, textErr := result.TextContent()
+			return textErr == nil && strings.Contains(text, "Hello from HTMX")
+		}, 3*time.Second, 20*time.Millisecond)
 	})
 }

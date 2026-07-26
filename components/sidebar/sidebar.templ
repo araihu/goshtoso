@@ -100,6 +100,7 @@ templ overlayTemplate(cfg OverlayConfig) {
 	{{ panelID := cfg.panelID() }}
 	<div
 		x-data={ fmt.Sprintf("{ %s: false }", state) }
+		x-on:keydown.escape.window={ fmt.Sprintf("%s = false", state) }
 		class={ cfg.rootClasses() }
 	>
 		<button
