@@ -2,7 +2,7 @@
 
 Date: 2026-07-26
 
-Status: probes running
+Status: builds complete; independent assessment pending
 
 This file is the durable control-plane and evidence record for a second blind
 consumer round. It intentionally tests whether the current public Goshtoso
@@ -158,9 +158,9 @@ For every probe:
 
 | Probe | Child id | ID acknowledged | Last event | Expected heartbeat | Callback received | Parent acknowledgement |
 |---|---|---|---|---|---|---|
-| approvals | `/root/probe_approvals` | yes | acknowledged and running | 10 minutes | no | pending |
-| receiving | `/root/probe_receiving` | yes | acknowledged and running | 10 minutes | no | pending |
-| editorial | `/root/probe_editorial` | yes | acknowledged and running | 10 minutes | no | pending |
+| approvals | `/root/probe_approvals` | yes | done with concerns | 10 minutes | yes | evidence accepted |
+| receiving | `/root/probe_receiving` | yes | done with concerns | 10 minutes | yes | evidence accepted |
+| editorial | `/root/probe_editorial` | yes | done with concerns | 10 minutes | yes | evidence accepted |
 
 ## Combined gates after remediation
 
@@ -171,3 +171,74 @@ For every probe:
 - visual: 390 and 1440, Goshtoso light and Minimal dark, no document overflow,
   one `h1`, one skip link, keyboard path, state matrix, and no console errors;
 - durable synthesis appended to this file before declaring convergence.
+
+## Probe outcomes
+
+### Editorial planning (`/root/probe_editorial`)
+
+- status: `DONE_WITH_CONCERNS`, callback received and acknowledged;
+- duration: 10m04s;
+- authored surface: 332 templ, 297 Go including tests, 265 CSS lines;
+- public lookups: six allowed files and 13 logged `go doc` queries;
+- source dives: zero; injected memory context declared but not searched or used;
+- parent recheck: `templ generate` no drift, test/vet/build pass;
+- journey: queue states plus inline HTMX status edit, validation and success;
+- feedback:
+  - `textarea.Config` has no typed `Required`, unlike TextInput;
+  - `pageheader.Config` has no title-class hook, forcing two scoped
+    `!important` declarations for an editorial heading;
+  - AppShell already owns the `<header>` landmark, but this slot boundary was
+    easy to duplicate in consumer markup;
+  - first setup failed because `go mod tidy` ran before templ generation and
+    removed templ; the documented command order should be explicit.
+- remaining evidence: parent visual, keyboard, console and accessibility pass.
+
+Full external report at the time of synthesis:
+`/tmp/goshtoso-probes/round2/editorial/PROBE_REPORT.md`.
+
+### Vendor invoice approvals (`/root/probe_approvals`)
+
+- status: `DONE_WITH_CONCERNS`, callback received and acknowledged;
+- duration: 14m46s;
+- authored surface: 384 templ, 667 Go including tests, 343 CSS lines;
+- public lookups: six allowed files/ranges and seven logged `go doc` queries;
+- source dives: zero; injected memory context declared but not searched or used;
+- parent recheck: `templ generate` no drift, test/vet/build pass;
+- journey: queue/detail plus approve, reject and request-information
+  confirmations, validation, PRG success and filtered-empty;
+- feedback:
+  - public docs disagree on 47 versus 48 packages and 13 versus 15 themes;
+  - the Go 1.26.5 floor surfaced only during module resolution;
+  - a button-looking no-JS navigation action needs a semantic GET form because
+    Button has no href; Link may cover the visual need but this was not obvious;
+  - the documented CSS boundary was clear, but a polished work surface still
+    needed 343 app-owned lines.
+- remaining evidence: parent visual, keyboard, console and accessibility pass.
+
+Full external report at the time of synthesis:
+`/tmp/goshtoso-probes/round2/approvals/PROBE_REPORT.md`.
+
+### Warehouse receiving (`/root/probe_receiving`)
+
+- status: `DONE_WITH_CONCERNS`, callback received and acknowledged;
+- duration: 13m52s;
+- authored surface: 404 templ, 747 Go including tests, 262 CSS lines;
+- public lookups: six allowed files/ranges and 12 logged `go doc` queries;
+- source dives: zero; injected memory context declared but not searched or used;
+- parent recheck: `templ generate` no drift, test/vet/build pass;
+- journey: purchase-order lookup, dense line discrepancies, review, submit,
+  edit/discard, cookie interruption recovery and idempotent retry;
+- feedback:
+  - Go 1.26.5 was again discovered only during module resolution;
+  - adjacent templ text after a component call became unrendered child content
+    until wrapped in an explicit element;
+  - HTMX did not swap intentional 422/503 fragments, so the app mapped expected
+    HTMX failures to transport 200 plus `X-Receiving-Status`;
+  - 262 lines of CSS repeated semantic application colors because the public
+    guidance names utility classes but not the stable theme custom properties;
+  - dense editable rows are an application composition problem, not a reason
+    to force the display Table component into a form.
+- remaining evidence: parent visual, keyboard, console and accessibility pass.
+
+Full external report at the time of synthesis:
+`/tmp/goshtoso-probes/round2/receiving/PROBE_REPORT.md`.
