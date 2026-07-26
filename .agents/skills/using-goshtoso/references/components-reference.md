@@ -674,7 +674,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `RootClass` | `string` | RootClass allows additional CSS classes on the form element. |
 | `HTMX` | `*HTMXConfig` | HTMX enables HTMX-based submission (alternative to native Action) |
 | `PreventEnterSubmit` | `*bool` | PreventEnterSubmit prevents Enter key from submitting the form. Default true — set to false to allow Enter submission. |
-| `Footer` | `*FooterConfig` | Footer renders Cancel + Submit buttons at the bottom. Nil = no footer (useful for modal forms where the modal provides buttons). |
+| `Footer` | `*FooterConfig` | Footer renders responsive Cancel + Submit actions at the bottom. Actions stack at full width on narrow screens and return to an inline row at sm. Nil = no footer (useful for modal forms where the modal provides buttons). |
 
 **FieldGroupConfig**
 
@@ -725,7 +725,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `CancelHref` | `string` | CancelHref is the cancel link URL (plain navigation) |
 | `CancelHTMX` | `*CancelHTMXConfig` | CancelHTMX enables HTMX-powered cancel (SPA navigation). Overrides CancelHref when set. |
 | `SubmitDisabled` | `string` | SubmitDisabled is an Alpine.js expression for x-bind:disabled on submit |
-| `Sticky` | `bool` | Sticky makes the footer stick to the bottom of the viewport while scrolling (default: false) |
+| `Sticky` | `bool` | Sticky keeps the footer at the bottom of its nearest scrolling ancestor while preserving its normal-flow footprint (default: false). The action surface is opaque, layered above content, and safe-area aware. |
 
 **FormErrorItem**
 

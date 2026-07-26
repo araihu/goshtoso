@@ -3133,6 +3133,9 @@
   .pb-10 {
     padding-bottom: calc(var(--spacing) * 10);
   }
+  .pb-\[max\(0\.5rem\,env\(safe-area-inset-bottom\)\)\] {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
   .pl-0\.5 {
     padding-left: calc(var(--spacing) * 0.5);
   }
@@ -3311,6 +3314,9 @@
   }
   .break-all {
     word-break: break-all;
+  }
+  .whitespace-normal {
+    white-space: normal;
   }
   .whitespace-nowrap {
     white-space: nowrap;

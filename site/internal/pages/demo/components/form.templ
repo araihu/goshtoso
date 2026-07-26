@@ -58,6 +58,25 @@ templ formDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Responsive Sticky Footer",
+				Description: "Sticky form actions stack at narrow widths, keep long labels inside the viewport, use an opaque safe-area-aware surface, and retain their normal-flow footprint so the last control remains reachable.",
+			},
+			formResponsiveFooterPreview(),
+			`@form.Form(form.Config{
+    ID: "responsive-footer-form",
+    Footer: &form.FooterConfig{
+        Sticky:      true,
+        CancelLabel: "Save this handoff as a draft",
+        CancelHref:  "#",
+        SubmitLabel: "Review exact handoff details before submitting",
+    },
+}) {
+    // Fields and sections...
+}`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "External Submit (Modal Pattern)",
 				Description: "Render the form with no Footer; a button outside the form uses the form=\"...\" attribute to submit it — the typical modal pattern.",
 			},
@@ -476,5 +495,40 @@ templ networkReadView() {
 			<span class="text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider">Service Subnet CIDR</span>
 			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">10.96.0.0/12</span>
 		</div>
+	</div>
+}
+
+templ formResponsiveFooterPreview() {
+	<div id="responsive-footer-preview" class="h-96 w-full overflow-y-auto rounded-radius border border-outline bg-surface px-4 dark:border-outline-dark dark:bg-surface-dark sm:px-6">
+		@form.Form(form.Config{
+			ID: "responsive-footer-form",
+			Footer: &form.FooterConfig{
+				Sticky:      true,
+				CancelLabel: "Save this handoff as a draft",
+				CancelHref:  "#",
+				SubmitLabel: "Review exact handoff details before submitting",
+			},
+		}) {
+			@form.Section(form.SectionConfig{Title: "Transfer context", Columns: "1"}) {
+				@form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-location",
+					Label: "Receiving location",
+					Input: &textinput.Config{Name: "location", Value: "Headwaters field station"},
+				})
+				@form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-owner",
+					Label: "Custody owner",
+					Input: &textinput.Config{Name: "owner", Value: "Ana Rivera"},
+				})
+			}
+			@form.Section(form.SectionConfig{Title: "Final check", Columns: "1"}) {
+				@form.FieldGroup(form.FieldGroupConfig{
+					ID:    "responsive-footer-last-control",
+					Label: "Handoff note",
+					Hints: []string{"This remains fully reachable above the sticky actions."},
+					Input: &textinput.Config{Name: "handoff_note", Value: "Seal checked at the receiving bench"},
+				})
+			}
+		}
 	</div>
 }

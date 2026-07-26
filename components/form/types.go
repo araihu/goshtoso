@@ -31,7 +31,8 @@ type Config struct {
 	// PreventEnterSubmit prevents Enter key from submitting the form.
 	// Default true — set to false to allow Enter submission.
 	PreventEnterSubmit *bool
-	// Footer renders Cancel + Submit buttons at the bottom.
+	// Footer renders responsive Cancel + Submit actions at the bottom. Actions
+	// stack at full width on narrow screens and return to an inline row at sm.
 	// Nil = no footer (useful for modal forms where the modal provides buttons).
 	Footer *FooterConfig
 }
@@ -75,7 +76,9 @@ type FooterConfig struct {
 	CancelHTMX *CancelHTMXConfig
 	// SubmitDisabled is an Alpine.js expression for x-bind:disabled on submit
 	SubmitDisabled string
-	// Sticky makes the footer stick to the bottom of the viewport while scrolling (default: false)
+	// Sticky keeps the footer at the bottom of its nearest scrolling ancestor
+	// while preserving its normal-flow footprint (default: false). The action
+	// surface is opaque, layered above content, and safe-area aware.
 	Sticky bool
 }
 
@@ -89,9 +92,9 @@ type CancelHTMXConfig struct {
 
 // footerClasses returns the CSS classes for the footer container
 func (c FooterConfig) footerClasses() string {
-	base := "flex justify-end gap-3 mt-6 pt-4 border-t border-outline dark:border-outline-dark"
+	base := "flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 mt-6 pt-4 border-t border-outline dark:border-outline-dark"
 	if c.Sticky {
-		base += " sticky bottom-0 bg-surface dark:bg-surface-dark pb-2"
+		base += " sticky bottom-0 z-20 bg-surface dark:bg-surface-dark pb-[max(0.5rem,env(safe-area-inset-bottom))]"
 	}
 	return base
 }
