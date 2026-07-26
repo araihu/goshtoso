@@ -61,18 +61,37 @@ templ Layout() {
 }
 ```
 
-`head.Dependencies()` emits Goshtoso CSS, Alpine.js plus the bundled collapse
-and focus plugins, HTMX, and first-party component scripts such as
-`combobox.js`.
+`head.Dependencies()` emits Goshtoso CSS and an ordered loader for Alpine.js,
+its collapse/focus/mask plugins, HTMX, and first-party scripts such as
+`combobox.js`. It tries version-pinned CDN URLs first and creates a fresh script
+for the exact embedded version when a CDN download fails. Keep
+`assets.Handler()` mounted even when the CDN normally succeeds.
+
+Choose deliberately:
+
+- Use `head.Dependencies()` for the resilient CDN-first default.
+- Use `head.Dependencies(head.WithLocalRuntime())` when the app must make no
+  runtime CDN requests, such as an offline PWA, desktop/mobile WebView,
+  air-gapped deployment, or explicit network policy. Do not select it merely to
+  make a probe easier; exercise the default fallback contract.
+- Override one pair with `WithDependencyCDNURL` and
+  `WithDependencyLocalURL`, plus `WithDependencyIntegrity` when the bytes
+  change; do not hand-roll the rest of the dependency stack.
+- Use `WithoutLocalFallback()` only when failure is preferable to local retry.
+- Await `window.goshtosoDependencies.ready` before application JavaScript that
+  requires every dynamically loaded dependency.
 
 If the consumer sets Content Security Policy, test the rendered application
 under that exact policy. The bundled standard Alpine runtime requires dynamic
 function evaluation, and Alpine/component state writes inline style
 attributes. A policy that allows only `script-src 'self'` can load every local
-file and still leave Alpine behavior dead. Allow the required local-runtime
-behavior (`'unsafe-eval'` for scripts and inline style mutation), or deliberately
-replace the default head/runtime wiring with a CSP-compatible stack and verify
-every Alpine-backed component. Do not weaken unrelated CSP directives.
+file and still leave Alpine behavior dead. Allow the configured CDN origin or
+use `WithLocalRuntime()`, plus the required Alpine behavior (`'unsafe-eval'` for
+scripts and inline style mutation). `templ.WithNonce` is propagated to the
+loader and its child scripts for nonce/`strict-dynamic` policies. Otherwise,
+deliberately replace the default head/runtime wiring with a CSP-compatible stack
+and verify every Alpine-backed component. Do not weaken unrelated CSP
+directives.
 
 ## Rendering Components
 
@@ -178,7 +197,9 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 - Missing styling usually means `/assets/styles.css` is not served or
   `head.Dependencies()` is absent.
 - Dead combobox keyboard navigation usually means `/assets/js/combobox.js` is
-  missing; prefer `head.Dependencies()` instead of hand-written script tags.
+  missing. An unformatted `x-mask` input means the Mask plugin or an Alpine
+  `x-data` root is missing. Prefer `head.Dependencies()` instead of hand-written
+  script tags.
 - Alpine plugins must load before Alpine core. Avoid manual tags unless the app
   has a strong reason.
 - HTMX handlers should return rendered HTML fragments, not JSON.

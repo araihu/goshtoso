@@ -19,8 +19,8 @@ set of importable components with bundled CSS and JavaScript assets.
 
 The project began as a hard fork of [PenguinUI](https://www.penguinui.com) and
 has grown into a Go-first component system for applications that prefer rendered
-HTML, small client-side sprinkles, and deterministic local assets over CDN-bound
-copy-paste snippets.
+HTML, small client-side sprinkles, and versioned dependency ownership instead
+of floating copy-paste snippets.
 
 > Goshtoso is actively evolving. The components are usable, but the API surface
 > is still being refined as the library moves toward a stable public release.
@@ -85,6 +85,21 @@ templ Layout() {
     </html>
 }
 ```
+
+`head.Dependencies()` uses version-pinned unpkg URLs first and automatically
+retries the matching embedded JavaScript when a CDN download fails. The CSS,
+loader, first-party helpers, and fallback files still come from
+`assets.Handler()`; third-party bytes are protected by generated SHA-384 SRI.
+For an offline PWA or desktop/mobile WebView, an air-gapped
+deployment, or another application that must never request a CDN, use:
+
+```templ
+@head.Dependencies(head.WithLocalRuntime())
+```
+
+Functional options can replace the CDN and local URL of each dependency,
+disable fallback, omit an application-owned runtime, or move the stylesheet,
+loader, and combobox helper. See [docs/USAGE.md](docs/USAGE.md#dependency-loading-options).
 
 Render components from their packages:
 
@@ -198,8 +213,10 @@ mux.Handle("GET /assets/", assets.Handler())
 ```
 
 and let `@head.Dependencies()` emit the matching stylesheet and script tags.
-This serves the compiled component CSS, theme tokens, Alpine.js, HTMX, and
-first-party component scripts from versioned local paths.
+The default loader tries version-pinned CDN URLs for Alpine.js and HTMX, then
+falls back to the same versions under `/assets/js/runtime/`. Use
+`head.WithLocalRuntime()` when an offline application such as a PWA or native
+WebView must be fully local.
 
 If you maintain a custom Tailwind build, Goshtoso also ships a CLI that extracts
 the compiled CSS or theme source:

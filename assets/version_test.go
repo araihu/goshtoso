@@ -53,9 +53,11 @@ func TestVendorFilesEmbedded(t *testing.T) {
 		"js/runtime/alpinejs/3.14.9/alpine.min.js",
 		"js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js",
 		"js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js",
+		"js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js",
 		"js/runtime/htmx.org/2.0.8/htmx.min.js",
 		"js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js",
 		"js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js",
+		"js/dependency-loader.js",
 	} {
 		if _, err := files.ReadFile(p); err != nil {
 			t.Errorf("embedded file missing: %s: %v", p, err)

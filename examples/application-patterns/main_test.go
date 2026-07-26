@@ -16,6 +16,7 @@ import (
 	"testing"
 
 	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/assets"
 )
 
 func TestApplicationRoutesRenderTheirPatterns(t *testing.T) {
@@ -150,9 +151,15 @@ func TestAssetsAndAppearanceAreLocal(t *testing.T) {
 	if count := strings.Count(pageHTML, `role="button"`); count != 0 {
 		t.Fatalf("page renders %d button roles on native navigation links; want zero", count)
 	}
-	for _, remote := range []string{"cdn.", "fonts.googleapis.com", "unpkg.com", "jsdelivr.net"} {
-		if strings.Contains(pageHTML, remote) {
-			t.Fatalf("page contains remote runtime reference %q", remote)
+	for _, runtimeURL := range []string{
+		assets.AlpineJSCDNURL,
+		assets.AlpineJSURL,
+		assets.HTMXCDNURL,
+		assets.HTMXURL,
+		"/assets/js/dependency-loader.js",
+	} {
+		if !strings.Contains(pageHTML, runtimeURL) {
+			t.Errorf("page is missing resilient runtime reference %q", runtimeURL)
 		}
 	}
 }

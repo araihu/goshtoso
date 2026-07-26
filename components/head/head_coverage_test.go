@@ -126,18 +126,19 @@ func renderString(t *testing.T, c component) string {
 	return sb.String()
 }
 
-// TestDependenciesEmitsAllRuntimeAssets locks the exact set of script/link tags
-// each entry point emits, including the difference between the full and minimal
-// variants (collapse + focus plugins only in the full set).
+// TestDependenciesEmitsAllRuntimeAssets locks the asset set and the difference
+// between the full and minimal variants. The default uses the ordered loader;
+// local mode retains direct script tags for deterministic offline operation.
 func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 	full := renderString(t, Dependencies())
 	minimal := renderString(t, DependenciesMinimal())
 
 	shared := []string{
 		`<link rel="stylesheet" href="/assets/styles.css">`,
+		`<script defer src="/assets/js/dependency-loader.js"`,
 		"/assets/js/runtime/alpinejs/",
 		"/assets/js/runtime/htmx.org/",
-		`<script defer src="/assets/js/combobox.js"></script>`,
+		"/assets/js/combobox.js",
 	}
 	for _, want := range shared {
 		if !strings.Contains(full, want) {
@@ -148,10 +149,11 @@ func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 		}
 	}
 
-	// Collapse + focus plugins are full-only.
+	// Collapse + focus + mask plugins are full-only.
 	for _, fullOnly := range []string{
 		"/assets/js/runtime/alpinejs-collapse/",
 		"/assets/js/runtime/alpinejs-focus/",
+		"/assets/js/runtime/alpinejs-mask/",
 	} {
 		if !strings.Contains(full, fullOnly) {
 			t.Errorf("Dependencies() missing full-only asset %q", fullOnly)
@@ -161,12 +163,11 @@ func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 		}
 	}
 
-	// HTMX must load synchronously (no defer) so hx-* attributes bind on first
-	// paint; Alpine core loads deferred.
-	if !strings.Contains(full, `<script src="/assets/js/runtime/htmx.org/`) {
-		t.Errorf("Dependencies() must load HTMX without defer")
+	local := renderString(t, Dependencies(WithLocalRuntime()))
+	if !strings.Contains(local, `<script src="/assets/js/runtime/htmx.org/`) {
+		t.Errorf("WithLocalRuntime() must load HTMX without defer")
 	}
-	if !strings.Contains(full, `<script defer src="/assets/js/runtime/alpinejs/`) {
-		t.Errorf("Dependencies() must defer Alpine core")
+	if !strings.Contains(local, `<script defer src="/assets/js/runtime/alpinejs/`) {
+		t.Errorf("WithLocalRuntime() must defer Alpine core")
 	}
 }

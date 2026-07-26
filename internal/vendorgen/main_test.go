@@ -16,7 +16,7 @@ func TestURLPath(t *testing.T) {
 func TestConstNameMapComplete(t *testing.T) {
 	// Every module in the canonical list must have a Go constant name.
 	for _, k := range []string{
-		"alpinejs", "alpinejs-collapse", "alpinejs-focus",
+		"alpinejs", "alpinejs-collapse", "alpinejs-focus", "alpinejs-mask",
 		"htmx.org", "htmx-ext-sse", "htmx-ext-ws",
 	} {
 		if constName[k] == "" {
@@ -38,6 +38,35 @@ func TestRenderDeterministic(t *testing.T) {
 	// Constants emitted in sorted-by-Go-name order: AlpineJSURL before HTMXURL.
 	if ai, hi := indexOf(a, "AlpineJSURL"), indexOf(a, "HTMXURL"); ai < 0 || hi < 0 || ai > hi {
 		t.Fatalf("ordering wrong: AlpineJSURL@%d HTMXURL@%d", ai, hi)
+	}
+}
+
+func TestRenderIncludesExpandedCDNURLs(t *testing.T) {
+	got := render(map[string]dep{
+		"alpinejs": {
+			Version:   "3.14.9",
+			File:      "alpine.min.js",
+			URL:       "https://unpkg.com/alpinejs@{v}/dist/cdn.min.js",
+			Integrity: "sha384-example",
+		},
+	})
+
+	for _, want := range []string{
+		`AlpineJSURL       = "/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"`,
+		`AlpineJSCDNURL    = "https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"`,
+		`AlpineJSIntegrity = "sha384-example"`,
+	} {
+		if indexOf(got, want) < 0 {
+			t.Fatalf("generated constants missing %q:\n%s", want, got)
+		}
+	}
+}
+
+func TestIntegrityForBytesUsesSHA384SRIFormat(t *testing.T) {
+	got := integrityForBytes([]byte("abc"))
+	want := "sha384-ywB1P0WjXou1oD1pmsZQBycsMqsO3tFjGotgWkP/W+2AhgcroefMI1i67KE0yCWn"
+	if got != want {
+		t.Fatalf("integrityForBytes = %q, want %q", got, want)
 	}
 }
 

@@ -2,6 +2,42 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.0.13] - 2026-07-26
+
+### Resilient dependency loading
+
+- Refactored `head.Dependencies` and `head.DependenciesMinimal` to accept typed
+  functional options while preserving zero-argument and zero-value use.
+- Made exact-version unpkg URLs the default third-party sources, with ordered
+  automatic fallback to the matching embedded assets when a browser cannot
+  download a primary resource.
+- Added generated SHA-384 Subresource Integrity for CDN and local runtime bytes,
+  CSP nonce propagation, a public readiness promise, and fallback/ready/error
+  browser events.
+- Added Alpine Mask to the full runtime set so public components that emit
+  `x-mask` work with the default head helper.
+- Added `WithLocalRuntime` for offline PWAs, desktop/mobile WebViews, air-gapped
+  deployments, and explicit no-network policies. Per-dependency URL, integrity,
+  omission, fallback, stylesheet, loader, and combobox controls remain
+  available for application-owned infrastructure.
+
+### Documentation and verification
+
+- Updated the consumer guide, README, component demo, installable agent skill,
+  and generated component reference with the dependency modes and migration
+  guidance.
+- Added a durable head dependency audit and a real-browser fixture that forces
+  every primary request to fail, then verifies Alpine Collapse, Focus, Mask,
+  HTMX, and combobox behavior through the embedded fallbacks.
+
+### Upgrade note
+
+The default now makes version-pinned CDN requests before using local fallback.
+Applications that must make no external runtime request should pass
+`head.WithLocalRuntime()`. Custom runtime bytes should supply matching CDN and
+local URLs plus `head.WithDependencyIntegrity`; an empty integrity string
+explicitly disables SRI for that dependency.
+
 ## [v0.0.12] - 2026-07-25
 
 ### Breaking component API changes

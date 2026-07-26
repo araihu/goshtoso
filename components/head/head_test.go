@@ -2,20 +2,70 @@ package head
 
 import (
 	"context"
+	"encoding/json"
+	"html"
 	"io"
+	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/assets"
 )
+
+type testLoaderEntry struct {
+	Name                string `json:"name"`
+	PrimaryURL          string `json:"primary_url"`
+	FallbackURL         string `json:"fallback_url,omitempty"`
+	Integrity           string `json:"integrity,omitempty"`
+	WaitForWindowLoaded bool   `json:"wait_for_window_loaded,omitempty"`
+}
+
+type testLoaderConfig struct {
+	Dependencies []testLoaderEntry `json:"dependencies"`
+}
+
+var loaderConfigPattern = regexp.MustCompile(`data-goshtoso-dependencies="([^"]+)"`)
 
 func render(t *testing.T, c interface {
 	Render(context.Context, io.Writer) error
 }) string {
+	return renderWithContext(t, context.Background(), c)
+}
+
+func renderWithContext(t *testing.T, ctx context.Context, c interface {
+	Render(context.Context, io.Writer) error
+}) string {
 	t.Helper()
 	var sb strings.Builder
-	if err := c.Render(context.Background(), &sb); err != nil {
+	if err := c.Render(ctx, &sb); err != nil {
 		t.Fatalf("render: %v", err)
 	}
 	return sb.String()
+}
+
+func parseLoaderConfig(t *testing.T, output string) testLoaderConfig {
+	t.Helper()
+	match := loaderConfigPattern.FindStringSubmatch(output)
+	if len(match) != 2 {
+		t.Fatalf("rendered dependencies missing loader configuration\n%s", output)
+	}
+	var cfg testLoaderConfig
+	if err := json.Unmarshal([]byte(html.UnescapeString(match[1])), &cfg); err != nil {
+		t.Fatalf("decode loader configuration: %v\n%s", err, output)
+	}
+	return cfg
+}
+
+func loaderEntry(t *testing.T, cfg testLoaderConfig, name string) testLoaderEntry {
+	t.Helper()
+	for _, entry := range cfg.Dependencies {
+		if entry.Name == name {
+			return entry
+		}
+	}
+	t.Fatalf("loader configuration missing %q: %#v", name, cfg.Dependencies)
+	return testLoaderEntry{}
 }
 
 func TestDependenciesUsesVersionedPaths(t *testing.T) {
@@ -50,5 +100,166 @@ func TestDependenciesMinimalUsesVersionedPaths(t *testing.T) {
 	}
 	if strings.Contains(out, "/assets/js/vendor/") {
 		t.Errorf("DependenciesMinimal() must avoid /vendor/ paths: %s", out)
+	}
+}
+
+func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
+	out := render(t, Dependencies())
+
+	if !strings.Contains(out, `defer src="/assets/js/dependency-loader.js"`) {
+		t.Fatalf("Dependencies() must use the ordered dependency loader\n%s", out)
+	}
+	cfg := parseLoaderConfig(t, out)
+	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx", "combobox"}
+	if len(cfg.Dependencies) != len(wantOrder) {
+		t.Fatalf("loader dependencies = %#v, want %v", cfg.Dependencies, wantOrder)
+	}
+	for i, want := range wantOrder {
+		if cfg.Dependencies[i].Name != want {
+			t.Errorf("loader dependency %d = %q, want %q", i, cfg.Dependencies[i].Name, want)
+		}
+	}
+
+	for _, tc := range []struct {
+		name, primary, fallback string
+	}{
+		{"alpine-collapse", assets.AlpineCollapseCDNURL, assets.AlpineCollapseURL},
+		{"alpine-focus", assets.AlpineFocusCDNURL, assets.AlpineFocusURL},
+		{"alpine-mask", assets.AlpineMaskCDNURL, assets.AlpineMaskURL},
+		{"alpine", assets.AlpineJSCDNURL, assets.AlpineJSURL},
+		{"htmx", assets.HTMXCDNURL, assets.HTMXURL},
+		{"combobox", "/assets/js/combobox.js", ""},
+	} {
+		entry := loaderEntry(t, cfg, tc.name)
+		if entry.PrimaryURL != tc.primary || entry.FallbackURL != tc.fallback {
+			t.Errorf("%s source = (%q, %q), want (%q, %q)", tc.name, entry.PrimaryURL, entry.FallbackURL, tc.primary, tc.fallback)
+		}
+		if tc.name != "combobox" && !strings.HasPrefix(entry.Integrity, "sha384-") {
+			t.Errorf("%s missing SHA-384 subresource integrity: %#v", tc.name, entry)
+		}
+	}
+	if !loaderEntry(t, cfg, "htmx").WaitForWindowLoaded {
+		t.Error("HTMX must wait for window load when inserted dynamically so its bootstrap cannot miss DOMContentLoaded")
+	}
+}
+
+func TestDependenciesFunctionalOptionsOverrideIndividualSources(t *testing.T) {
+	out := render(t, Dependencies(
+		WithDependencyCDNURL(DependencyHTMX, "https://cdn.example.test/htmx-2.0.8.js"),
+		WithDependencyLocalURL(DependencyHTMX, "/static/vendor/htmx-2.0.8.js"),
+		WithDependencyIntegrity(DependencyHTMX, "sha384-custom"),
+		WithStylesheetURL("/static/goshtoso.css"),
+		WithComboboxURL("/static/combobox.js"),
+		WithLoaderURL("/static/dependency-loader.js"),
+	))
+
+	if !strings.Contains(out, `href="/static/goshtoso.css"`) {
+		t.Errorf("custom Dependencies() missing stylesheet override\n%s", out)
+	}
+	if !strings.Contains(out, `src="/static/dependency-loader.js"`) {
+		t.Errorf("custom Dependencies() missing loader override\n%s", out)
+	}
+	cfg := parseLoaderConfig(t, out)
+	htmx := loaderEntry(t, cfg, "htmx")
+	if htmx.PrimaryURL != "https://cdn.example.test/htmx-2.0.8.js" || htmx.FallbackURL != "/static/vendor/htmx-2.0.8.js" || htmx.Integrity != "sha384-custom" {
+		t.Errorf("HTMX override not applied: %#v", htmx)
+	}
+	if combobox := loaderEntry(t, cfg, "combobox"); combobox.PrimaryURL != "/static/combobox.js" {
+		t.Errorf("combobox override not applied: %#v", combobox)
+	}
+}
+
+func TestDependenciesCanDisableIntegrityForCustomSource(t *testing.T) {
+	out := render(t, Dependencies(WithDependencyIntegrity(DependencyHTMX, "")))
+	if htmx := loaderEntry(t, parseLoaderConfig(t, out), "htmx"); htmx.Integrity != "" {
+		t.Fatalf("empty integrity override must disable SRI for a custom source: %#v", htmx)
+	}
+}
+
+func TestDependenciesCanDisableLocalFallback(t *testing.T) {
+	out := render(t, Dependencies(WithoutLocalFallback()))
+
+	cfg := parseLoaderConfig(t, out)
+	for _, entry := range cfg.Dependencies {
+		if entry.FallbackURL != "" {
+			t.Errorf("WithoutLocalFallback() retained fallback for %s: %#v", entry.Name, entry)
+		}
+	}
+	if loaderEntry(t, cfg, "alpine").PrimaryURL != assets.AlpineJSCDNURL || loaderEntry(t, cfg, "htmx").PrimaryURL != assets.HTMXCDNURL {
+		t.Fatalf("WithoutLocalFallback() must keep CDN primaries: %#v", cfg.Dependencies)
+	}
+}
+
+func TestDependenciesCanUseLocalRuntimeAsPrimary(t *testing.T) {
+	out := render(t, Dependencies(WithLocalRuntime()))
+
+	for _, want := range []string{
+		assets.AlpineCollapseURL,
+		assets.AlpineFocusURL,
+		assets.AlpineMaskURL,
+		assets.AlpineJSURL,
+		assets.HTMXURL,
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("WithLocalRuntime() missing %q\n%s", want, out)
+		}
+	}
+	if strings.Contains(out, "https://unpkg.com/") || strings.Contains(out, "dependency-loader.js") {
+		t.Fatalf("WithLocalRuntime() must not request the CDN or fallback loader\n%s", out)
+	}
+}
+
+func TestDependenciesCanOmitAnOwnedDependency(t *testing.T) {
+	out := render(t, Dependencies(WithoutDependency(DependencyAlpineMask)))
+
+	cfg := parseLoaderConfig(t, out)
+	for _, entry := range cfg.Dependencies {
+		if entry.Name == "alpine-mask" {
+			t.Fatalf("WithoutDependency(DependencyAlpineMask) retained mask: %#v", cfg.Dependencies)
+		}
+	}
+	if loaderEntry(t, cfg, "alpine").PrimaryURL != assets.AlpineJSCDNURL {
+		t.Fatalf("omitting one dependency must keep the rest of the defaults: %#v", cfg.Dependencies)
+	}
+}
+
+func TestDependenciesMinimalAcceptsTheSameOptions(t *testing.T) {
+	out := render(t, DependenciesMinimal(
+		WithDependencyCDNURL(DependencyAlpineJS, "https://cdn.example.test/alpine.js"),
+		WithoutLocalFallback(),
+	))
+
+	cfg := parseLoaderConfig(t, out)
+	if loaderEntry(t, cfg, "alpine").PrimaryURL != "https://cdn.example.test/alpine.js" {
+		t.Fatalf("DependenciesMinimal() must apply functional options: %#v", cfg.Dependencies)
+	}
+	for _, entry := range cfg.Dependencies {
+		if entry.Name == "alpine-collapse" || entry.Name == "alpine-focus" || entry.Name == "alpine-mask" {
+			t.Fatalf("DependenciesMinimal() must stay minimal: %#v", cfg.Dependencies)
+		}
+	}
+}
+
+func TestDependenciesZeroValueKeepsStrongDefaults(t *testing.T) {
+	var instance Instance
+	cfg := parseLoaderConfig(t, render(t, instance))
+	if loaderEntry(t, cfg, "alpine-mask").FallbackURL != assets.AlpineMaskURL {
+		t.Fatalf("zero-value Instance lost default runtime: %#v", cfg.Dependencies)
+	}
+}
+
+func TestDependenciesPropagatesTemplNonceToLoader(t *testing.T) {
+	ctx := templ.WithNonce(context.Background(), "test-nonce-123")
+	out := renderWithContext(t, ctx, Dependencies())
+	if !strings.Contains(out, `nonce="test-nonce-123"`) {
+		t.Fatalf("Dependencies() must propagate templ CSP nonce to the loader\n%s", out)
+	}
+}
+
+func TestDependenciesPropagatesTemplNonceToEveryLocalScript(t *testing.T) {
+	ctx := templ.WithNonce(context.Background(), "offline-nonce-456")
+	out := renderWithContext(t, ctx, Dependencies(WithLocalRuntime()))
+	if got, want := strings.Count(out, `nonce="offline-nonce-456"`), 6; got != want {
+		t.Fatalf("WithLocalRuntime() nonce count = %d, want %d\n%s", got, want, out)
 	}
 }
