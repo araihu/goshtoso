@@ -116,6 +116,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"button.Disabled":        {},
 		"button.WithID":          {},
 		"button.WithRootClass":   {},
+		"button.WithAttrs":       {},
 		"button.WithHTMX":        {},
 		"button.WithAlpine":      {},
 		"button.WithLoadingText": {},

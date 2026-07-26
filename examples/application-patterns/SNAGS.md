@@ -61,6 +61,7 @@ issues were fixed before accepting the slice:
   `table.LinkMode`, exact theme selectors, and templ's injected import. Those
   additions remove four source lookups from the next blind build.
 
-The remaining button attribute gap is intentionally still open here. It will be
-closed in the consolidated branch and the workflow will then exercise the new
-public API with real Back and Continue submit actions.
+The button attribute gap was closed in the consolidated branch with
+`button.WithAttrs(templ.Attributes)`. The workflow now exercises it with real
+Back and Continue submit actions, and the handler tests Back without validating
+the step being left. This converts the original snag into a public API contract.

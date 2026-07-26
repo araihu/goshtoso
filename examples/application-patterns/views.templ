@@ -401,11 +401,22 @@ templ workflowPage(meta pageMeta, view workflowView) {
 								</div>
 						}
 						<div class="workflow-actions">
-							<a href={ templ.URL(workflowBackURL(meta.Appearance, view)) }>Back</a>
+							if view.Step > 1 {
+								@button.Button(
+									button.WithType("submit"),
+									button.WithTone(button.ToneAlternate),
+									button.WithAttrs(templ.Attributes{"name": "action", "value": "back"}),
+								) {
+									Back
+								}
+							} else {
+								<a href={ templ.URL(workflowBackURL(meta.Appearance, view)) }>Cancel</a>
+							}
 							@button.Button(
 								button.WithType("submit"),
 								button.WithTone(button.TonePrimary),
 								button.WithLoadingText("Submitting…"),
+								button.WithAttrs(templ.Attributes{"name": "action", "value": "continue"}),
 							) {
 								{ workflowButtonLabel(view) }
 							}

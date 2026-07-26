@@ -243,7 +243,7 @@ import "github.com/araihu/goshtoso/components/button"  // package button
 
 **Entry points:** `Button(options ...Option)`
 
-**Options:** `Disabled()` · `WithAlpine(alpine *AlpineConfig)` · `WithHTMX(htmx *HTMXConfig)` · `WithID(id string)` · `WithLoadingText(text string)` · `WithRootClass(class string)` · `WithSize(size Size)` · `WithTone(tone Tone)` · `WithType(buttonType string)`
+**Options:** `Disabled()` · `WithAlpine(alpine *AlpineConfig)` · `WithAttrs(attrs templ.Attributes)` · `WithHTMX(htmx *HTMXConfig)` · `WithID(id string)` · `WithLoadingText(text string)` · `WithRootClass(class string)` · `WithSize(size Size)` · `WithTone(tone Tone)` · `WithType(buttonType string)`
 
 - **Size** — SizeSmall = "sm", SizeMedium = "md", SizeLarge = "lg", SizeXLarge = "xl"
 - **Tone** — TonePrimary = "primary", ToneSecondary = "secondary", ToneAlternate = "alternate", ToneInverse = "inverse", ToneInfo = "info", ToneDanger = "danger", ToneWarning = "warning", ToneSuccess = "success"

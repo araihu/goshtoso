@@ -80,3 +80,26 @@ func TestButtonOptionsApplyOverDefaults(t *testing.T) {
 		t.Fatalf("button default type is not button:\n%s", html)
 	}
 }
+
+func TestButtonWithAttrsRendersNativeFormAndDataAttributes(t *testing.T) {
+	html := renderButton(t, "Continue",
+		WithType("submit"),
+		WithAttrs(templ.Attributes{
+			"name":        "action",
+			"value":       "continue",
+			"formaction":  "/deployments/continue",
+			"data-intent": "advance",
+		}),
+	)
+
+	for _, attribute := range []string{
+		`name="action"`,
+		`value="continue"`,
+		`formaction="/deployments/continue"`,
+		`data-intent="advance"`,
+	} {
+		if !strings.Contains(html, attribute) {
+			t.Fatalf("button attribute %s missing:\n%s", attribute, html)
+		}
+	}
+}

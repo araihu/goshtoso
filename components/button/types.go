@@ -1,5 +1,7 @@
 package button
 
+import "github.com/a-h/templ"
+
 // Tone controls the semantic color treatment of a button.
 type Tone string
 
@@ -76,6 +78,7 @@ type config struct {
 	htmx        *HTMXConfig
 	alpine      *AlpineConfig
 	loadingText string
+	attrs       templ.Attributes
 }
 
 // Option configures a Button.
@@ -128,6 +131,16 @@ func WithID(id string) Option {
 func WithRootClass(class string) Option {
 	return optionFunc(func(cfg *config) {
 		cfg.rootClass = class
+	})
+}
+
+// WithAttrs adds arbitrary attributes to the native button element.
+//
+// Use this escape hatch for standard form attributes such as name, value, and
+// formaction, or for data-* and aria-* attributes not covered by other options.
+func WithAttrs(attrs templ.Attributes) Option {
+	return optionFunc(func(cfg *config) {
+		cfg.attrs = attrs
 	})
 }
 

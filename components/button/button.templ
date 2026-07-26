@@ -73,6 +73,7 @@ templ buttonTemplate(options ...Option) {
 				hx-vals={ cfg.htmx.Vals }
 			}
 		}
+		{ cfg.attrs... }
 		>
 			if cfg.loadingText != "" && hasHTMX {
 				<span class="htmx-indicator-content">{ children... }</span>

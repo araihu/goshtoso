@@ -154,6 +154,19 @@ func TestWorkflowTransitionsAndValidation(t *testing.T) {
 		t.Fatalf("step two status = %d, want 200\n%s", stepTwo.Code, stepTwo.Body.String())
 	}
 	assertContains(t, stepTwo.Body.String(), `data-step="2"`, `data-theme="minimal"`, `class="dark"`, "Release version")
+	assertContains(t, stepTwo.Body.String(), `name="action"`, `value="back"`, `value="continue"`)
+
+	backToStepOne := serveForm(t, "/workflows/deploy", url.Values{
+		"action":      {"back"},
+		"step":        {"2"},
+		"environment": {"production"},
+		"theme":       {"minimal"},
+		"mode":        {"dark"},
+	})
+	if backToStepOne.Code != http.StatusOK {
+		t.Fatalf("back status = %d, want 200\n%s", backToStepOne.Code, backToStepOne.Body.String())
+	}
+	assertContains(t, backToStepOne.Body.String(), `data-step="1"`, `data-theme="minimal"`, `class="dark"`)
 
 	stepThree := serveForm(t, "/workflows/deploy", url.Values{
 		"step":        {"2"},

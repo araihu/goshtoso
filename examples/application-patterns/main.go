@@ -215,6 +215,13 @@ func (a *application) advanceWorkflow(w http.ResponseWriter, r *http.Request) {
 		Environment: strings.TrimSpace(r.FormValue("environment")),
 		Version:     strings.TrimSpace(r.FormValue("version")),
 	}
+	if r.FormValue("action") == "back" {
+		if view.Step > 1 {
+			view.Step--
+		}
+		a.renderWorkflow(w, r, http.StatusOK, prefs, view)
+		return
+	}
 
 	switch view.Step {
 	case 1:

@@ -306,8 +306,9 @@ regeneração, testes finais e autoria do resultado consolidado.
 - O benchmark externo precisou abrir o source para confirmar
   `table.Cell.Component`, `table.LinkMode`, seletores de tema e a importação
   injetada pelo templ. A referência pública agora contém os quatro contratos.
-- `button.Button` não aceita `name`/`value` nativos, o que impediu um formulário
-  multi-ação idiomático. O fechamento dessa lacuna faz parte da consolidação.
+- `button.Button` não aceitava `name`/`value` nativos, o que impedia um
+  formulário multi-ação idiomático. `button.WithAttrs` agora cobre atributos
+  nativos e o benchmark prova Back/Continue com POSTs reais.
 - Na recipe pública, `tabs.Config.ID` identificava os painéis ARIA, não um root
   de DOM contratual; o E2E passou a escopar pelo preview, sem acoplar-se a uma
   estrutura privada. A tabela também precisou de largura mínima explícita para
