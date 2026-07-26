@@ -2,12 +2,18 @@ package e2e
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"html"
 	"net/http"
+	"net/http/httptest"
 	"regexp"
 	"sort"
 	"strings"
+	"sync/atomic"
 	"testing"
 
+	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -15,19 +21,96 @@ import (
 )
 
 var headAssetRefRe = regexp.MustCompile(`(?:src|href)="(/assets/[^"]+)"`)
+var headLoaderConfigRe = regexp.MustCompile(`data-goshtoso-dependencies="([^"]+)"`)
 
-func matchAssetURLs(html string) []string {
+func matchAssetURLs(t *testing.T, output string) []string {
+	t.Helper()
 	seen := map[string]struct{}{}
 	var urls []string
-	for _, m := range headAssetRefRe.FindAllStringSubmatch(html, -1) {
-		if _, ok := seen[m[1]]; ok {
-			continue
+	add := func(url string) {
+		if !strings.HasPrefix(url, "/assets/") {
+			return
 		}
-		seen[m[1]] = struct{}{}
-		urls = append(urls, m[1])
+		if _, ok := seen[url]; ok {
+			return
+		}
+		seen[url] = struct{}{}
+		urls = append(urls, url)
+	}
+	for _, match := range headAssetRefRe.FindAllStringSubmatch(output, -1) {
+		add(match[1])
+	}
+	if match := headLoaderConfigRe.FindStringSubmatch(output); len(match) == 2 {
+		var config struct {
+			Dependencies []struct {
+				PrimaryURL  string `json:"primary_url"`
+				FallbackURL string `json:"fallback_url"`
+			} `json:"dependencies"`
+		}
+		require.NoError(t, json.Unmarshal([]byte(html.UnescapeString(match[1])), &config))
+		for _, dependency := range config.Dependencies {
+			add(dependency.PrimaryURL)
+			add(dependency.FallbackURL)
+		}
 	}
 	sort.Strings(urls)
 	return urls
+}
+
+func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
+	t.Helper()
+
+	broken := func(name string) string { return "/cdn-unavailable/" + name + ".js" }
+	var dependencyHead strings.Builder
+	require.NoError(t, head.Dependencies(
+		head.WithDependencyCDNURL(head.DependencyAlpineCollapse, broken("alpine-collapse")),
+		head.WithDependencyCDNURL(head.DependencyAlpineFocus, broken("alpine-focus")),
+		head.WithDependencyCDNURL(head.DependencyAlpineMask, broken("alpine-mask")),
+		head.WithDependencyCDNURL(head.DependencyAlpineJS, broken("alpine")),
+		head.WithDependencyCDNURL(head.DependencyHTMX, broken("htmx")),
+	).Render(context.Background(), &dependencyHead))
+
+	var failedRequests atomic.Int32
+	mux := http.NewServeMux()
+	mux.Handle("/assets/", assets.Handler())
+	mux.HandleFunc("/cdn-unavailable/", func(w http.ResponseWriter, _ *http.Request) {
+		failedRequests.Add(1)
+		http.Error(w, "simulated CDN outage", http.StatusServiceUnavailable)
+	})
+	mux.HandleFunc("/fragment", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = fmt.Fprint(w, `<strong id="htmx-result">HTMX fallback works</strong>`)
+	})
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_, _ = fmt.Fprintf(w, `<!doctype html>
+<html><head><meta charset="utf-8">%s</head><body>
+  <div id="alpine-fixture" x-data="{ open: false }">
+    <button id="alpine-toggle" x-on:click="open = !open">Toggle</button>
+    <div id="collapse-panel" x-show="open" x-collapse>Alpine collapse works</div>
+  </div>
+  <div x-data>
+    <label for="mask-input">Masked value</label>
+    <input id="mask-input" x-mask="999-999">
+  </div>
+  <div x-data="{ trapped: false }">
+    <button id="trap-toggle" x-on:click="trapped = true">Trap focus</button>
+    <div x-show="trapped" x-trap="trapped">
+      <input id="trapped-input">
+      <button id="trap-close" x-on:click="trapped = false">Close trap</button>
+    </div>
+  </div>
+  <button id="htmx-trigger" hx-get="/fragment" hx-target="#htmx-target">Load fragment</button>
+  <div id="htmx-target"></div>
+  <div id="combobox" data-combobox tabindex="0">
+    <button id="combobox-first" role="option" tabindex="-1">First</button>
+    <button id="combobox-second" role="option" tabindex="-1">Second</button>
+  </div>
+</body></html>`, dependencyHead.String())
+	})
+
+	server := httptest.NewServer(mux)
+	t.Cleanup(server.Close)
+	return server, &failedRequests
 }
 
 // TestHeadAssetContractServed renders head.Dependencies and DependenciesMinimal,
@@ -48,8 +131,8 @@ func TestHeadAssetContractServed(t *testing.T) {
 	require.NoError(t, head.Dependencies().Render(context.Background(), &full))
 	require.NoError(t, head.DependenciesMinimal().Render(context.Background(), &minimal))
 
-	fullURLs := matchAssetURLs(full.String())
-	minimalURLs := matchAssetURLs(minimal.String())
+	fullURLs := matchAssetURLs(t, full.String())
+	minimalURLs := matchAssetURLs(t, minimal.String())
 
 	require.NotEmpty(t, fullURLs, "Dependencies() should reference asset URLs")
 	require.NotEmpty(t, minimalURLs, "DependenciesMinimal() should reference asset URLs")
@@ -102,4 +185,75 @@ func TestDependenciesPageNoConsoleErrors(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, title, "Dependencies")
 	assert.Empty(t, consoleErrors, "page should load without console errors")
+}
+
+// TestDependenciesCDNFailureLoadsOrderedLocalFallback is the browser-level
+// contract for the default mode. Every configured CDN request fails, yet all
+// runtime-backed behaviors initialise from the exact embedded versions.
+func TestDependenciesCDNFailureLoadsOrderedLocalFallback(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	server, failedRequests := dependencyFallbackFixture(t)
+	page := newPage(t, sharedBrowser)
+	require.NoError(t, page.AddInitScript(playwright.Script{
+		Content: new(`window.__goshtosoFallbacks = [];
+window.addEventListener("goshtoso:dependency-fallback", event => {
+  window.__goshtosoFallbacks.push(event.detail.dependency);
+});`),
+	}))
+
+	var pageErrors []string
+	page.On("pageerror", func(err string) { pageErrors = append(pageErrors, err) })
+	_, err := page.Goto(server.URL, playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	_, err = page.Evaluate(`async () => await window.goshtosoDependencies.ready`, nil)
+	require.NoError(t, err)
+	require.Equal(t, int32(5), failedRequests.Load(), "every third-party CDN primary should be attempted")
+
+	sourcesValue, err := page.Evaluate(`() => window.goshtosoDependencies.sources`, nil)
+	require.NoError(t, err)
+	sources, ok := sourcesValue.(map[string]any)
+	require.True(t, ok, "dependency source ledger should be an object: %#v", sourcesValue)
+	for _, name := range []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx"} {
+		assert.Equal(t, "fallback", sources[name], "%s should use its local fallback", name)
+	}
+	assert.Equal(t, "primary", sources["combobox"], "the local first-party primary should load without a fallback")
+
+	require.NoError(t, page.Locator("#alpine-toggle").Click())
+	require.NoError(t, page.Locator("#collapse-panel").WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	require.NoError(t, page.Locator("#mask-input").PressSequentially("123456"))
+	assert.Equal(t, "123-456", requireInputValue(t, page, "#mask-input"))
+
+	require.NoError(t, page.Locator("#trap-toggle").Click())
+	_, err = page.WaitForFunction(`() => document.activeElement && document.activeElement.id === "trapped-input"`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("#trap-close").Click())
+
+	require.NoError(t, page.Locator("#htmx-trigger").Click())
+	require.NoError(t, page.Locator("#htmx-result").WaitFor())
+
+	require.NoError(t, page.Locator("#combobox").Focus())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	activeID, err := page.Evaluate(`() => document.activeElement && document.activeElement.id`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, "combobox-first", activeID)
+
+	fallbacks, err := page.Evaluate(`() => window.__goshtosoFallbacks`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx"}, fallbacks)
+	assert.Empty(t, pageErrors, "fallback must not cause uncaught JavaScript errors")
+}
+
+func requireInputValue(t *testing.T, page playwright.Page, selector string) string {
+	t.Helper()
+	value, err := page.Locator(selector).InputValue()
+	require.NoError(t, err)
+	return value
 }

@@ -33,10 +33,12 @@ Create at least one consumer `.templ` file before generation. Generate before
 tidying: without generated Go imports, `go mod tidy` can correctly remove the
 templ runtime that the next step needs.
 
-### 2. Serve the bundled assets (recommended)
+### 2. Serve the bundled assets (required)
 
-The fastest, deterministic path: serve Goshtoso's embedded assets and let
-`head.Dependencies()` link them. No CDN, no Tailwind build, no extraction.
+Serve Goshtoso's embedded assets and let `head.Dependencies()` link them. The
+handler supplies the compiled theme CSS, the dependency loader, first-party
+helpers, and version-matched local fallbacks. No Tailwind build or extraction
+is required.
 
 ```go
 // main.go
@@ -48,14 +50,14 @@ mux.Handle("GET /assets/", assets.Handler()) // styles.css + js/ + fonts/ + imag
 ```
 
 ```go
-// page.templ — emits the matching /assets/* <link>/<script> tags
+// page.templ — pinned CDN first, matching /assets/* fallback
 import "github.com/araihu/goshtoso/components/head"
 
 templ Layout() {
     <html>
         <head>
-            @head.Dependencies()        // CSS + Alpine + collapse/focus + HTMX + combobox nav
-            // or @head.DependenciesMinimal() — CSS + Alpine core + HTMX + combobox nav (no collapse/focus plugins)
+            @head.Dependencies()        // CSS + Alpine + collapse/focus/mask + HTMX + combobox nav
+            // or @head.DependenciesMinimal() — CSS + Alpine core + HTMX + combobox nav (no Alpine plugins)
         </head>
         ...
     </html>
@@ -65,6 +67,46 @@ templ Layout() {
 The served `styles.css` already carries every component style + the theme system
 (15 themes). **Stock CDN Tailwind will not work** — the theme tokens
 (`bg-primary`, `text-on-surface`, …) live only in this compiled CSS.
+
+The default loader tries exact-version unpkg URLs in dependency order. If a
+download fails, it creates a new script element for the matching embedded file;
+it does not mutate and retry a script the browser has already abandoned. Await
+`window.goshtosoDependencies.ready` when application code must run only after
+every dependency is available. The loader also emits
+`goshtoso:dependency-fallback`, `goshtoso:dependencies-ready`, and
+`goshtoso:dependency-error` events on `window`.
+
+#### Dependency loading options
+
+Use local-only mode when an offline PWA, desktop/mobile WebView, air-gapped
+deployment, or explicit network policy must forbid runtime CDN requests:
+
+```templ
+@head.Dependencies(head.WithLocalRuntime())
+```
+
+Override one CDN and its matching fallback without taking ownership of the
+rest of the stack:
+
+```templ
+@head.Dependencies(
+    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/htmx-2.0.8.min.js"),
+    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/vendor/htmx-2.0.8.min.js"),
+    head.WithDependencyIntegrity(head.DependencyHTMX, "sha384-..."),
+)
+```
+
+Other controls are `WithoutLocalFallback()`, `WithoutDependency(...)`,
+`WithStylesheetURL(...)`, `WithComboboxURL(...)`, and `WithLoaderURL(...)`.
+`WithoutLocalFallback()` keeps the configured CDN primaries but turns a failed
+download into `goshtoso:dependency-error`. `WithoutDependency(...)` is for an
+application that deliberately loads that runtime itself. Empty override URLs
+leave the strong default unchanged.
+
+Default third-party scripts carry SHA-384 Subresource Integrity generated from
+the embedded bytes. When a custom CDN or local URL changes the bytes, pass its
+matching hash with `WithDependencyIntegrity`; pass an empty hash only when the
+application deliberately disables SRI for that dependency.
 
 Skip the rest of this section unless you maintain your own Tailwind build.
 
@@ -110,6 +152,7 @@ Alpine core):
 <link rel="stylesheet" href="/assets/styles.css"/>
 <script defer src="/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
 <script defer src="/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
+<script defer src="/assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js"></script>
 <script defer src="/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"></script>
 <script src="/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"></script>
 <script defer src="/assets/js/combobox.js"></script>
@@ -126,11 +169,14 @@ without it) — it is first-party, so it stays unversioned at `/assets/js/`.
 Local assets do not automatically make a strict CSP compatible. Goshtoso's
 bundled standard Alpine runtime uses dynamic function evaluation, and
 Alpine-backed components update inline style attributes. With the default
-runtime, permit `'unsafe-eval'` in `script-src` and the required inline style
-mutation while keeping sources local and retaining restrictive `default-src`,
-`connect-src`, `base-uri`, `form-action`, and `frame-ancestors` directives.
+runtime, allow the configured CDN origin (unpkg by default) or select
+`WithLocalRuntime()`, permit `'unsafe-eval'` in `script-src`, and permit the
+required inline style mutation while retaining restrictive `default-src`,
+`connect-src`, `base-uri`, `form-action`, and `frame-ancestors` directives. A
+nonce set with `templ.WithNonce` is propagated to the loader and every script it
+creates, which supports nonce-based policies and `strict-dynamic`.
 
-If the application cannot permit those two runtime capabilities, do not use
+If the application cannot permit those runtime capabilities, do not use
 `head.Dependencies()` unchanged. Supply and test a CSP-compatible Alpine stack
 with the required plugins and component scripts. Verify behavior in the browser:
 a self-hosted file may return 200 while CSP still prevents Alpine from starting.

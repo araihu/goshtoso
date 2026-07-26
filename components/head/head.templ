@@ -1,14 +1,12 @@
 package head
 
-import "github.com/araihu/goshtoso/assets"
-
-// Dependencies renders the local <script>/<link> tags for every Goshtoso runtime
+// Dependencies renders the <script>/<link> tags for every Goshtoso runtime
 // asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
-// text-on-primary, etc.), Alpine core + collapse/focus plugins, HTMX, and the
+// text-on-primary, etc.), Alpine core + collapse/focus/mask plugins, HTMX, and the
 // combobox keyboard-nav script.
 //
-// Everything loads from /assets/*, which you MUST serve by mounting the embedded
-// asset handler — the tags 404 (unstyled page) without it:
+// Support assets load from /assets/*, which you MUST serve by mounting the
+// embedded asset handler — CSS and local fallback fail without it:
 //
 //	import "github.com/araihu/goshtoso/assets"
 //
@@ -20,30 +18,45 @@ import "github.com/araihu/goshtoso/assets"
 //	    @head.Dependencies()
 //	</head>
 //
-// Assets are bundled with the module (no runtime CDN), so page loads are
-// deterministic. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
+// Third-party JavaScript uses pinned CDN URLs first and automatically retries
+// the matching embedded asset on download failure. WithLocalRuntime disables
+// CDN requests. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
 // tokens, which only exist in the compiled styles.css.
-templ dependenciesTemplate() {
-	<link rel="stylesheet" href="/assets/styles.css"/>
-	<!-- Alpine.js Collapse Plugin (must load before Alpine core) -->
-	<script defer src={ assets.AlpineCollapseURL }></script>
-	<!-- Alpine.js Focus Plugin -->
-	<script defer src={ assets.AlpineFocusURL }></script>
-	<!-- Alpine.js Core -->
-	<script defer src={ assets.AlpineJSURL }></script>
-	<!-- HTMX -->
-	<script src={ assets.HTMXURL }></script>
-	<!-- Combobox keyboard nav -->
-	<script defer src="/assets/js/combobox.js"></script>
+templ dependenciesTemplate(cfg config) {
+	<link rel="stylesheet" href={ cfg.stylesheetURL }/>
+	if cfg.localRuntime {
+		@localDependencyScripts(cfg, false)
+	} else {
+		<script defer src={ cfg.loaderURL } { cfg.loaderAttributes(false)... }></script>
+	}
 }
 
 // DependenciesMinimal renders just the CSS, Alpine core, HTMX, and combobox nav
-// (no collapse/focus plugins). Use it when your page needs neither the accordion
-// nor a focus trap. Same /assets/ mount requirement as Dependencies.
-templ dependenciesMinimalTemplate() {
-	<link rel="stylesheet" href="/assets/styles.css"/>
-	<script defer src={ assets.AlpineJSURL }></script>
-	<script src={ assets.HTMXURL }></script>
-	<!-- Combobox keyboard nav -->
-	<script defer src="/assets/js/combobox.js"></script>
+// (no Alpine plugins). Use it when your page needs no plugin-backed components.
+// Same /assets/ mount requirement as Dependencies.
+templ dependenciesMinimalTemplate(cfg config) {
+	<link rel="stylesheet" href={ cfg.stylesheetURL }/>
+	if cfg.localRuntime {
+		@localDependencyScripts(cfg, true)
+	} else {
+		<script defer src={ cfg.loaderURL } { cfg.loaderAttributes(true)... }></script>
+	}
+}
+
+templ localDependencyScripts(cfg config, minimal bool) {
+	if !minimal {
+		<!-- Alpine.js plugins must load before Alpine core. -->
+		@localDependencyScript(cfg, cfg.alpineCollapse, true)
+		@localDependencyScript(cfg, cfg.alpineFocus, true)
+		@localDependencyScript(cfg, cfg.alpineMask, true)
+	}
+	@localDependencyScript(cfg, cfg.alpineJS, true)
+	@localDependencyScript(cfg, cfg.htmx, false)
+	<script defer src={ cfg.comboboxURL } { cfg.nonceAttributes()... }></script>
+}
+
+templ localDependencyScript(cfg config, source dependencySource, deferred bool) {
+	if source.enabled {
+		<script defer?={ deferred } src={ source.localURL } { cfg.scriptAttributes(source)... }></script>
+	}
 }

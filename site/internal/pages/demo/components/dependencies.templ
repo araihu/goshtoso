@@ -14,7 +14,7 @@ templ dependenciesDemoContent() {
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Dependencies",
-				Description: "Render the local CSS and JavaScript tags Goshtoso components need: compiled theme CSS, Alpine.js, HTMX, and component runtime helpers.",
+				Description: "Render compiled theme CSS plus an ordered CDN-first loader with exact-version local fallback for Alpine.js, HTMX, and component runtime helpers.",
 			},
 			dependenciesFullPreview(),
 			`<head>
@@ -34,13 +34,29 @@ templ dependenciesDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Asset Mount Contract",
-				Description: "Both helpers assume the embedded asset handler is mounted at /assets/ so pages load without a CDN.",
+				Description: "Both helpers require the embedded asset handler at /assets/ for CSS, the loader, first-party helpers, and local fallback.",
 			},
 			dependenciesAssetContractPreview(),
 			`import "github.com/araihu/goshtoso/assets"
 
 mux := http.NewServeMux()
 mux.Handle("GET /assets/", assets.Handler())`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Local-only and custom sources",
+				Description: "Use functional options to make the runtime fully local, replace one dependency's CDN/fallback pair, omit an application-owned dependency, or disable fallback.",
+			},
+			dependenciesOptionsPreview(),
+			`// Choose one mode for the page:
+@head.Dependencies(head.WithLocalRuntime())
+
+// Or customize the resilient mode:
+@head.Dependencies(
+    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/htmx-2.0.8.min.js"),
+    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/htmx-2.0.8.min.js"),
+    head.WithDependencyIntegrity(head.DependencyHTMX, "sha384-..."),
+)`,
 		)
 	</div>
 }
@@ -49,7 +65,16 @@ templ dependenciesFullPreview() {
 	<div id="dependencies-full" class="w-full max-w-2xl mx-auto">
 		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
 			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Full runtime helper</p>
-			<pre class="mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"><code>{ "@head.Dependencies()\n\n/assets/styles.css\n/assets/js/runtime/alpinejs\n/assets/js/runtime/htmx\n/assets/js/combobox.js" }</code></pre>
+			<pre class="mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"><code>{ "@head.Dependencies()\n\nCDN: pinned Alpine + HTMX\nFallback: /assets/js/runtime/*\nLoader: /assets/js/dependency-loader.js" }</code></pre>
+		</div>
+	</div>
+}
+
+templ dependenciesOptionsPreview() {
+	<div id="dependencies-options" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
+			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Strong defaults, explicit escape hatches</p>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">The default falls back to embedded assets with SHA-384 integrity. Local-only mode supports offline PWAs and WebViews; per-dependency options keep version ownership visible.</p>
 		</div>
 	</div>
 }
