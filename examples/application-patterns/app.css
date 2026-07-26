@@ -246,7 +246,13 @@ html.dark {
 
 .app-stack {
 	display: grid;
+	min-width: 0;
+	grid-template-columns: minmax(0, 1fr);
 	gap: 1.5rem;
+}
+
+.app-stack > * {
+	min-width: 0;
 }
 
 .app-hero {
@@ -432,6 +438,10 @@ html.dark {
 	background: var(--app-raised);
 }
 
+.state-card > * {
+	min-width: 0;
+}
+
 .state-card p {
 	margin: 0;
 	color: var(--app-muted);
@@ -449,7 +459,8 @@ html.dark {
 }
 
 .state-skeleton {
-	min-width: min(100%, 36rem);
+	min-width: 0;
+	flex: 1 1 20rem;
 }
 
 .state-skeleton-row {
@@ -706,6 +717,11 @@ dd {
 	}
 
 	.state-actions {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.state-card {
 		align-items: stretch;
 		flex-direction: column;
 	}

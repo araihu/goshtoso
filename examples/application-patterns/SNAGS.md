@@ -72,3 +72,14 @@ and empty alert with `toolbar.Toolbar`, `skeleton.Skeleton`, and
 promoted from repeated consumer composition after the original benchmark, so
 they are recorded as remediation rather than hidden in the initial source-dive
 measurement.
+
+### Final mobile matrix exposed min-content overflow
+
+The 390 px checks found that the success table and loading skeleton could
+expand their grid/flex ancestors and create document-level horizontal
+scrolling. The table already owned an `overflow-x-auto` viewport; the missing
+contract was on its ancestors. `.app-stack` now uses `min-width: 0` and an
+explicit `minmax(0, 1fr)` track, direct children opt out of intrinsic minimums,
+and the loading card stacks at the mobile breakpoint. Wide data remains locally
+scrollable without moving the application shell. The asset test protects the
+containment rules.

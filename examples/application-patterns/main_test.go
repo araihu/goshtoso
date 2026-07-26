@@ -120,7 +120,7 @@ func TestAssetsAndAppearanceAreLocal(t *testing.T) {
 	if appStyles.Code != http.StatusOK {
 		t.Fatalf("app CSS status = %d, want 200", appStyles.Code)
 	}
-	assertContains(t, appStyles.Body.String(), ".app-shell", "var(--color-surface-dark)")
+	assertContains(t, appStyles.Body.String(), ".app-shell", "var(--color-surface-dark)", "grid-template-columns: minmax(0, 1fr)", ".app-stack > *", ".state-card > *")
 
 	page := serve(t, http.MethodGet, "/operations?theme=minimal&mode=dark", nil, nil)
 	assertContains(t, page.Body.String(), `data-theme="minimal"`, `class="dark"`, `href="/assets/styles.css"`, `href="/app.css"`)
