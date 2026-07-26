@@ -28,7 +28,7 @@ copy-paste snippets.
 
 ## Highlights
 
-- **47 component packages** documented across **47 documentation pages**,
+- **48 public component packages** documented across **47 documentation pages**,
   exposing **79 renderable primitives** for composition, forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
@@ -42,6 +42,8 @@ copy-paste snippets.
   E2E coverage.
 
 ## Quick Start
+
+Goshtoso requires **Go 1.26.5 or newer**.
 
 Install the library:
 

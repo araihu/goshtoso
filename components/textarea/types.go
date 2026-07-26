@@ -29,6 +29,8 @@ type Config struct {
 	Disabled bool
 	// ReadOnly makes the textarea read-only
 	ReadOnly bool
+	// Required marks the textarea as required for native form validation.
+	Required bool
 	// State is the validation state (default/error/success)
 	State State
 	// HelperText is the helper or error text below the textarea

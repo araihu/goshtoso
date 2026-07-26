@@ -28,7 +28,7 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 | Field | Type | Description |
 |-------|------|-------------|
 | `Items` | `[]AccordionItem` | Items are the accordion sections |
-| `AllowMultiple` | `bool` | AllowMultiple allows multiple items to be open simultaneously |
+| `AllowMultiple` | `bool` | AllowMultiple allows multiple items to be open simultaneously If false (default), only one item can be open at a time |
 | `Appearance` | `Appearance` | Appearance determines the visual treatment. |
 | `ID` | `string` | ID is the root element ID only; it does not namespace item controls or regions. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the accordion root. |
@@ -104,9 +104,9 @@ import "github.com/araihu/goshtoso/components/appshell"  // package appshell
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Header` | `templ.Component` | Header renders the persistent top region; nil omits the header wrapper. |
+| `Header` | `templ.Component` | Header renders inside AppShell's persistent &lt;header&gt; landmark; supply content, not another &lt;header&gt;; nil omits the wrapper. |
 | `Sidebar` | `templ.Component` | Sidebar renders desktop navigation; nil omits the sidebar wrapper. |
-| `Content` | `templ.Component` | Content renders inside the shell's single scrollable main region. When |
+| `Content` | `templ.Component` | Content renders inside the shell's single scrollable main region. When nil, AppShell renders its templ children as the content slot. |
 | `MainID` | `string` | MainID identifies the main region and skip-link target; default is "main-content". |
 | `SkipLinkLabel` | `string` | SkipLinkLabel is the visible keyboard-focus label; default is "Skip to main content". |
 | `RootClass` | `string` | RootClass appends CSS classes to the outer shell element. |
@@ -116,7 +116,7 @@ import "github.com/araihu/goshtoso/components/appshell"  // package appshell
 | `SidebarClass` | `string` | SidebarClass appends CSS classes to the sidebar wrapper. |
 | `SidebarAttrs` | `templ.Attributes` | SidebarAttrs appends arbitrary HTML attributes to the sidebar wrapper. |
 | `MainClass` | `string` | MainClass appends CSS classes to the main region. |
-| `MainAttrs` | `templ.Attributes` | MainAttrs appends arbitrary HTML attributes to the main region. AppShell |
+| `MainAttrs` | `templ.Attributes` | MainAttrs appends arbitrary HTML attributes to the main region. AppShell supplies tabindex="-1" by default so the skip-link target can receive programmatic focus; set tabindex here to override that default. |
 
 ## avatar
 
@@ -138,8 +138,8 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 |-------|------|-------------|
 | `Src` | `string` | Src is the image URL. When set, the image and loading layers are rendered. |
 | `Alt` | `string` | Alt is the alt text for accessibility |
-| `Name` | `string` | Name is used to auto-derive initials via GetInitials(Name, ""). |
-| `Initials` | `string` | Initials are displayed as the base fallback (e.g., "JS"). |
+| `Name` | `string` | Name is used to auto-derive initials via GetInitials(Name, ""). Ignored if Initials is set explicitly. |
+| `Initials` | `string` | Initials are displayed as the base fallback (e.g., "JS"). If empty, derived from Name via GetInitials. |
 | `Size` | `Size` | Size of the avatar |
 | `Tone` | `Tone` | Tone determines the color scheme (for initials/icon placeholders) |
 | `Shape` | `Shape` | Shape of the avatar (circle or square) |
@@ -149,9 +149,9 @@ import "github.com/araihu/goshtoso/components/avatar"  // package avatar
 | `Status` | `Status` | Status adds a status indicator dot |
 | `Icon` | `templ.Component` | Icon is an optional icon component (replaces initials in the base layer) |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the avatar root. |
-| `SrcExpr` | `string` | SrcExpr is an Alpine expression evaluated in the parent scope that yields |
-| `Reactive` | `bool` | Reactive defers the size + status-indicator size classes to the parent |
-| `ReactiveRadius` | `bool` | ReactiveRadius defers square-avatar radius classes to the parent Alpine |
+| `SrcExpr` | `string` | SrcExpr is an Alpine expression evaluated in the parent scope that yields the image src at runtime (e.g. "avatarSrc"). When set, the image layer is always rendered and binds x-bind:src to this expression; the initials layer shows whenever the expression is falsy. Use for client-set sources (object URLs, late-loaded images) where no static Src exists at render. SrcExpr is a trusted developer-authored Alpine expression — never interpolate untrusted/user input into it (it is evaluated as JavaScript on the client). |
+| `Reactive` | `bool` | Reactive defers the size + status-indicator size classes to the parent Alpine scope. When true, the avatar root and status dot read their size class from `avatarSizeClass` and `avatarStatusSizeClass` respectively (via x-bind:class). This lets a demo page or container drive multiple avatars from a single Alpine state — e.g. an interactive size selector. The outer Alpine scope must define both expressions, for example: x-data="{ selected: 'md', sizeMap: { xs:'size-8 text-xs', md:'size-14 text-2xl', ... }, statusSizeMap: { xs:'size-2', md:'size-4', ... }, get avatarSizeClass() { return this.sizeMap[this.selected]; }, get avatarStatusSizeClass() { return this.statusSizeMap[this.selected]; }, }" |
+| `ReactiveRadius` | `bool` | ReactiveRadius defers square-avatar radius classes to the parent Alpine scope via `avatarRadiusClass`. Use with ShapeSquare for live radius demos. |
 
 **StackConfig**
 
@@ -248,8 +248,8 @@ import "github.com/araihu/goshtoso/components/breadcrumbs"  // package breadcrum
 | `Items` | `[]Item` | Items are the intermediate breadcrumb links (not the current page) |
 | `Current` | `string` | Current is the label for the current page (rendered as bold text, no link) |
 | `Separator` | `SeparatorStyle` | Separator controls the separator style (default: Chevron) |
-| `NavClass` | `string` | NavClass allows additional CSS classes on the outer <nav>. |
-| `NavAttrs` | `templ.Attributes` | NavAttrs are extra HTML attributes on the <nav> element |
+| `NavClass` | `string` | NavClass allows additional CSS classes on the outer &lt;nav&gt;. |
+| `NavAttrs` | `templ.Attributes` | NavAttrs are extra HTML attributes on the &lt;nav&gt; element |
 
 **Item**
 
@@ -259,7 +259,7 @@ import "github.com/araihu/goshtoso/components/breadcrumbs"  // package breadcrum
 | `Href` | `string` | Href is the link URL |
 | `Icon` | `templ.Component` | Icon is an optional icon rendered before the label |
 | `Tooltip` | `string` | Tooltip is an optional tooltip on the icon |
-| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes on the <a> tag |
+| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes on the &lt;a&gt; tag |
 
 ## button
 
@@ -462,7 +462,7 @@ import "github.com/araihu/goshtoso/components/codeblock"  // package codeblock
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Language` | `string` | Language selects the Chroma lexer (e.g. "go", "bash", "html", "css"). |
+| `Language` | `string` | Language selects the Chroma lexer (e.g. "go", "bash", "html", "css"). "templ" aliases to the Go lexer. Unknown values fall back to plain text. |
 | `Code` | `string` | Code is the source code to display |
 | `Label` | `string` | Label is the header text (defaults to Language if empty) |
 | `MaxHeight` | `string` | MaxHeight is an optional CSS max-height for scrollable long code (e.g. "400px") |
@@ -538,11 +538,11 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `ID` | `string` | ID uniquely identifies the drawer. Required. Used for the Alpine state |
+| `ID` | `string` | ID uniquely identifies the drawer. Required. Used for the Alpine state var name (`{ID}IsOpen`) and for the aria-labelledby target (`{ID}Title`). |
 | `Title` | `string` | Title is the drawer heading. Required for accessibility. |
 | `Side` | `Side` | Side the drawer slides in from. Default: SideRight. |
 | `Width` | `Width` | Width preset. Default: WidthMD. |
-| `BodyID` | `string` | BodyID is the id attribute of the inner content container. Exposed so |
+| `BodyID` | `string` | BodyID is the id attribute of the inner content container. Exposed so HTMX targets can swap content directly: hx-target="#{BodyID}". Default: "{ID}-body". |
 | `Persistent` | `bool` | Persistent disables click-backdrop and Esc-to-close. Default: false. |
 | `PanelClass` | `string` | PanelClass allows extra CSS classes on the panel (not the overlay). |
 
@@ -565,23 +565,23 @@ import "github.com/araihu/goshtoso/components/dropdown"  // package dropdown
 | `Label` | `string` | Label is the text shown on the trigger button |
 | `TriggerMode` | `TriggerMode` | TriggerMode determines how the dropdown opens (click, hover, context) |
 | `Sections` | `[]Section` | Sections groups items with dividers between sections |
-| `TriggerIcon` | `templ.Component` | TriggerIcon is an optional custom trigger icon. |
-| `TriggerIconOnly` | `bool` | TriggerIconOnly, in click or hover mode, renders TriggerIcon alone |
-| `MenuAlign` | `MenuAlign` | MenuAlign controls which edge of the trigger the menu anchors to. |
+| `TriggerIcon` | `templ.Component` | TriggerIcon is an optional custom trigger icon. Context mode always shows an icon (defaults to horizontal dots). Click and hover modes ignore it unless TriggerIconOnly is true. |
+| `TriggerIconOnly` | `bool` | TriggerIconOnly, in click or hover mode, renders TriggerIcon alone inside a square button — no label, no chevron. Use this for icon-only overflow triggers (e.g., a vertical-dots "…" affordance) without inheriting TriggerContext's &lt;li&gt; item semantics. |
+| `MenuAlign` | `MenuAlign` | MenuAlign controls which edge of the trigger the menu anchors to. Defaults to AlignStart (panel opens rightward). Use AlignEnd for triggers at the right edge of the viewport. |
 
 **Item**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `Label` | `string` | Label is the display text for the menu item |
-| `Href` | `string` | Href is the link URL (use "#" for non-navigating items). |
+| `Href` | `string` | Href is the link URL (use "#" for non-navigating items). Ignored when OnClick or Disabled is set. |
 | `Icon` | `templ.Component` | Icon is an optional icon component rendered before the label |
 | `Shortcut` | `string` | Shortcut is an optional keyboard shortcut label (e.g., "Z", "X") |
 | `ShortcutIcon` | `templ.Component` | ShortcutIcon is an optional icon for the shortcut modifier key |
-| `OnClick` | `string` | OnClick is an Alpine.js expression invoked on click (e.g., "open = true"). |
-| `Disabled` | `bool` | Disabled renders the item as a disabled <button> with muted styling. |
-| `Danger` | `bool` | Danger applies destructive styling (red text, red hover) — for actions |
-| `Tooltip` | `string` | Tooltip sets a native title attribute on the item. Useful when Disabled |
+| `OnClick` | `string` | OnClick is an Alpine.js expression invoked on click (e.g., "open = true"). Setting this renders the item as a &lt;button&gt; instead of an anchor. |
+| `Disabled` | `bool` | Disabled renders the item as a disabled &lt;button&gt; with muted styling. Clicks are suppressed. |
+| `Danger` | `bool` | Danger applies destructive styling (red text, red hover) — for actions like "Delete" or "Remove". |
+| `Tooltip` | `string` | Tooltip sets a native title attribute on the item. Useful when Disabled to explain why the action isn't available. |
 | `ID` | `string` | ID sets the element id — optional, for htmx/Alpine targeting. |
 
 **Section**
@@ -636,7 +636,7 @@ import "github.com/araihu/goshtoso/components/fileinput"  // package fileinput
 | `Required` | `bool` | Required marks the input as required |
 | `Disabled` | `bool` | Disabled disables the input |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the outer container. |
-| `InputAttrs` | `templ.Attributes` | InputAttrs are extra attributes applied to the <input> element (e.g. hx-post, x-on:change). |
+| `InputAttrs` | `templ.Attributes` | InputAttrs are extra attributes applied to the &lt;input&gt; element (e.g. hx-post, x-on:change). |
 
 ## form
 
@@ -671,8 +671,8 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `Method` | `string` | Method is the HTTP method ("post" default, "get", "dialog") |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the form element. |
 | `HTMX` | `*HTMXConfig` | HTMX enables HTMX-based submission (alternative to native Action) |
-| `PreventEnterSubmit` | `*bool` | PreventEnterSubmit prevents Enter key from submitting the form. |
-| `Footer` | `*FooterConfig` | Footer renders Cancel + Submit buttons at the bottom. |
+| `PreventEnterSubmit` | `*bool` | PreventEnterSubmit prevents Enter key from submitting the form. Default true — set to false to allow Enter submission. |
+| `Footer` | `*FooterConfig` | Footer renders Cancel + Submit buttons at the bottom. Nil = no footer (useful for modal forms where the modal provides buttons). |
 
 **FieldGroupConfig**
 
@@ -685,7 +685,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `Hints` | `[]string` | Hints are helper text messages displayed below errors |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the wrapper. |
 | `Validation` | `*ValidationConfig` | Validation enables HTMX-based field validation |
-| `Input` | `*textinput.Config` | Built-in Goshtoso field types (mutually exclusive — first non-nil wins). |
+| `Input` | `*textinput.Config` | Built-in Goshtoso field types (mutually exclusive — first non-nil wins). If none are set, FieldGroup renders { children... } instead. |
 | `Combobox` | `*combobox.Config` |  |
 | `Textarea` | `*textarea.Config` |  |
 | `Toggle` | `*toggle.Config` |  |
@@ -694,14 +694,14 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `StructuredInput` | `*structuredinput.Config` |  |
 | `FileInput` | `*fileinput.Config` |  |
 | `OOB` | `bool` | OOB enables hx-swap-oob="true" on the wrapper div for out-of-band HTMX updates. |
-| `Meta` | `*FieldMeta` | Meta holds validation metadata rendered as data-* attributes. |
+| `Meta` | `*FieldMeta` | Meta holds validation metadata rendered as data-* attributes. Set by validation.FormDef.Bind(); do not set directly. |
 
 **FieldMeta**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `FormID` | `string` | FormID identifies which FormDef to use for reconstruction. |
-| `FieldName` | `string` | FieldName is the canonical field name (matches the <input name="...">). |
+| `FieldName` | `string` | FieldName is the canonical field name (matches the &lt;input name="..."&gt;). |
 | `DependsOn` | `string` | DependsOn is a comma-separated list of field names this field depends on. |
 
 **FlipSectionConfig**
@@ -734,10 +734,10 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `ID` | `string` | ID identifies the errors container (useful as an HTMX OOB target). |
+| `ID` | `string` | ID identifies the errors container (useful as an HTMX OOB target). Default: "form-errors". |
 | `Title` | `string` | Title is the summary heading. Default: "Validation failed". |
 | `Items` | `[]FormErrorItem` | Items is the list of errors to render. |
-| `Hint` | `string` | Hint is an optional short explanation under the title |
+| `Hint` | `string` | Hint is an optional short explanation under the title (e.g. "Fix the fields marked in red and try again"). |
 | `RootClass` | `string` | RootClass allows extra CSS classes on the wrapper. |
 
 **HTMXConfig**
@@ -923,7 +923,7 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | Field | Type | Description |
 |-------|------|-------------|
 | `Content` | `templ.Component` | Content is the component to render |
-| `Position` | `ActionPosition` | Position controls placement: "left" (after brand) or "right" (before avatar). |
+| `Position` | `ActionPosition` | Position controls placement: "left" (after brand) or "right" (before avatar). Default: "left" |
 
 **Config**
 
@@ -932,11 +932,11 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Brand` | `templ.Component` | Brand is the logo/brand component (left side) |
 | `BrandHref` | `string` | BrandHref is the link for the brand (default: "/") |
 | `Links` | `[]NavLink` | Links are the desktop navigation links |
-| `Actions` | `[]ActionItem` | Actions are custom components (e.g., dark mode toggle, theme selector) |
+| `Actions` | `[]ActionItem` | Actions are custom components (e.g., dark mode toggle, theme selector) rendered at configurable positions. Default position is left (after brand). |
 | `User` | `*UserProfile` | User holds user profile data for the avatar dropdown (nil = no avatar) |
 | `UserMenu` | `[]UserMenuItem` | UserMenu contains dropdown items under the avatar |
-| `NavClass` | `string` | NavClass allows additional CSS classes on the outer <nav>. |
-| `NavAttrs` | `templ.Attributes` | NavAttrs are extra HTML attributes on the <nav> element |
+| `NavClass` | `string` | NavClass allows additional CSS classes on the outer &lt;nav&gt;. |
+| `NavAttrs` | `templ.Attributes` | NavAttrs are extra HTML attributes on the &lt;nav&gt; element |
 
 **NavLink**
 
@@ -945,7 +945,7 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Label` | `string` | Label is the display text |
 | `Href` | `string` | Href is the link URL |
 | `Active` | `bool` | Active marks this link as the current page |
-| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes on the <a> tag |
+| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes on the &lt;a&gt; tag |
 
 **UserMenuItem**
 
@@ -954,7 +954,7 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Label` | `string` | Label is the display text |
 | `Href` | `string` | Href is the link URL |
 | `Icon` | `templ.Component` | Icon is an optional icon rendered before the label |
-| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes on the <a> tag |
+| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes on the &lt;a&gt; tag |
 | `Danger` | `bool` | Danger renders the item in danger color (e.g., sign out) |
 
 **UserProfile**
@@ -963,7 +963,7 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 |-------|------|-------------|
 | `Name` | `string` | Name is the user's display name |
 | `Email` | `string` | Email is the user's email address |
-| `Avatar` | `templ.Component` | Avatar is an optional component rendered as the avatar trigger button content. |
+| `Avatar` | `templ.Component` | Avatar is an optional component rendered as the avatar trigger button content. When nil, a default user icon is rendered. |
 
 ## pageheader
 
@@ -985,6 +985,8 @@ import "github.com/araihu/goshtoso/components/pageheader"  // package pageheader
 | `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the header root. |
 | `BreadcrumbsClass` | `string` | BreadcrumbsClass appends CSS classes to the breadcrumbs wrapper. |
 | `BreadcrumbsAttrs` | `templ.Attributes` | BreadcrumbsAttrs appends arbitrary HTML attributes to the breadcrumbs wrapper. |
+| `TitleClass` | `string` | TitleClass appends CSS classes to the h1 heading. |
+| `TitleAttrs` | `templ.Attributes` | TitleAttrs appends arbitrary HTML attributes to the h1 heading. |
 | `ActionsClass` | `string` | ActionsClass appends CSS classes to the actions wrapper. |
 | `ActionsAttrs` | `templ.Attributes` | ActionsAttrs appends arbitrary HTML attributes to the actions wrapper. |
 
@@ -1051,7 +1053,7 @@ import "github.com/araihu/goshtoso/components/palette"  // package palette
 | `HideReset` | `bool` | HideReset hides the Reset action (shown by default). |
 | `ShowHex` | `bool` | ShowHex adds a native color input + hex text field (off by default). |
 | `RootClass` | `string` | RootClass appends classes to the wrapper. |
-| `LazyWhen` | `string` | LazyWhen is an Alpine expression; when non-empty, the swatch grid is |
+| `LazyWhen` | `string` | LazyWhen is an Alpine expression; when non-empty, the swatch grid is generated inside &lt;template x-if=...&gt; only when the expression is truthy (e.g. inside a Select dropdown, pass the dropdown's open expression). This keeps both the initial DOM and the initial HTML payload light. |
 
 ## radio
 
@@ -1088,9 +1090,9 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 | `Size` | `Size` | Size sets the input box size (default: SizeMD) |
 | `HelperText` | `string` | HelperText adds helper text below the label |
 | `HelperTextID` | `string` | HelperTextID is the id for the helper text element (for aria-describedby) |
-| `BadgeColor` | `string` | BadgeColor wraps the label in a semi-solid badge. |
-| `Container` | `bool` | Container wraps the radio in a bordered container, showing the radio |
-| `Segmented` | `bool` | Segmented renders a true segmented-control pill: the input is a transparent |
+| `BadgeColor` | `string` | BadgeColor wraps the label in a semi-solid badge. Accepts: "success", "danger", "warning", "info", "neutral", "primary", "secondary" |
+| `Container` | `bool` | Container wraps the radio in a bordered container, showing the radio bullet next to a label (still a discrete option visually). |
+| `Segmented` | `bool` | Segmented renders a true segmented-control pill: the input is a transparent full-segment overlay and the label carries visual state via `has-checked:`. Designed to be grouped inside a `RadioBar` wrapper (or any flex container with `divide-x` for connected segments). When set, Container is ignored. |
 | `RootClass` | `string` | RootClass is appended to the label root element. |
 | `HTMX` | `*HTMXConfig` | HTMX wires server interactions on change. |
 | `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
@@ -1216,13 +1218,13 @@ import "github.com/araihu/goshtoso/components/schemaform"  // package schemaform
 |-------|------|-------------|
 | `Path` | `string` | Path is a dotted JSONPath from the root of the values object (e.g. "auth.password"). |
 | `Name` | `string` | Name is the input name attribute; usually Path. |
-| `Label` | `string` | Label is the human-readable field label. For unwrapped 1-child objects |
+| `Label` | `string` | Label is the human-readable field label. For unwrapped 1-child objects it includes the parent label (e.g. "Crds › Enabled") so the rendered context is preserved without a wrapping section. |
 | `HelperText` | `string` | HelperText is an optional helper text. |
 | `Kind` | `Kind` | Kind determines rendering. |
 | `Required` | `bool` | Required marks the field with an asterisk. |
-| `Managed` | `bool` | Managed means the allow_list marks this path as platform-controlled — |
+| `Managed` | `bool` | Managed means the allow_list marks this path as platform-controlled — rendered read-only with a lock. |
 | `Default` | `string` | Default is the JSON-serialized default value (quoted scalars preserved). |
-| `ArrayDefault` | `[]string` | ArrayDefault is the element list when Kind == KindArray. Populated in |
+| `ArrayDefault` | `[]string` | ArrayDefault is the element list when Kind == KindArray. Populated in parallel with Default so the renderer can feed it straight to the tagslist component without re-splitting the CSV representation. |
 | `Value` | `string` | Value is the current form value (JSON-serialized). |
 | `Enum` | `[]string` | Enum lists valid options when Kind == KindEnum. |
 | `Children` | `[]Field` | Children are nested fields when Kind == KindObject. |
@@ -1233,7 +1235,7 @@ import "github.com/araihu/goshtoso/components/schemaform"  // package schemaform
 | Field | Type | Description |
 |-------|------|-------------|
 | `Fields` | `[]Field` | Fields is the ordered form control list produced by Walk / FallbackFromDefaults. |
-| `NamePrefix` | `string` | NamePrefix prefixes every input name (so the server sees `values.<path>`). |
+| `NamePrefix` | `string` | NamePrefix prefixes every input name (so the server sees `values.&lt;path&gt;`). Default: "values". |
 
 ## search
 
@@ -1254,7 +1256,7 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `GlobalShortcut` | `bool` | GlobalShortcut enables Cmd/Ctrl+K window handling for this instance. |
 | `EscapeText` | `string` | EscapeText is rendered in the dialog close KBD hint. Defaults to "Esc". |
 | `Items` | `[]Item` | Items are the caller-provided result records. |
-| `ItemsURL` | `string` | ItemsURL is an optional JSON endpoint for client-side result records. |
+| `ItemsURL` | `string` | ItemsURL is an optional JSON endpoint for client-side result records. When set, results are fetched and rendered in the browser instead of pre-rendering every Item as a hidden DOM node. |
 | `MaxResults` | `int` | MaxResults limits the visible matches. Defaults to 4. |
 | `DescriptionMaxLength` | `int` | DescriptionMaxLength truncates result descriptions. Defaults to 120. |
 | `EmptyText` | `string` | EmptyText appears when no result matches the query. |
@@ -1311,11 +1313,11 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 | `RootClass` | `string` | RootClass allows additional CSS classes on the wrapper. |
 | `Alpine` | `*AlpineConfig` | Alpine wires client-side state. |
 | `Readonly` | `bool` | Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits |
-| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator). |
-| `Shell` | `bool` | Shell enables "shell mode": the Select renders its trigger + dropdown |
+| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the &lt;select&gt; element (e.g., hx-post, hx-indicator). |
+| `Shell` | `bool` | Shell enables "shell mode": the Select renders its trigger + dropdown chrome but hosts arbitrary templ children as the dropdown body instead of an option list. Used to wrap custom pickers (e.g. a color palette). |
 | `TriggerLeading` | `templ.Component` | TriggerLeading is optional content rendered at the start of the trigger. |
-| `ValueExpr` | `string` | ValueExpr is an Alpine expression (x-text) for the trigger's value text |
-| `TriggerLabel` | `string` | TriggerLabel is optional static text shown left-aligned in the trigger |
+| `ValueExpr` | `string` | ValueExpr is an Alpine expression (x-text) for the trigger's value text in shell mode. Resolves against the host page's x-data scope. |
+| `TriggerLabel` | `string` | TriggerLabel is optional static text shown left-aligned in the trigger in shell mode (e.g. a token/role name). When set, the ValueExpr value is pushed to the right and rendered muted, matching a "Name … Value" row. |
 
 **Option**
 
@@ -1346,9 +1348,9 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `ShowSearch` | `bool` | ShowSearch enables the search input |
 | `SearchPlaceholder` | `string` | SearchPlaceholder is the placeholder text for search |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the sidebar root. |
-| `SearchSlot` | `templ.Component` | SearchSlot replaces the default search input with a custom component. |
+| `SearchSlot` | `templ.Component` | SearchSlot replaces the default search input with a custom component. When set, ShowSearch is ignored. |
 | `FooterSlot` | `templ.Component` | FooterSlot renders content at the bottom of the sidebar (e.g., profile menu). |
-| `DisableSkipLink` | `bool` | DisableSkipLink omits Sidebar's internal skip link when a containing |
+| `DisableSkipLink` | `bool` | DisableSkipLink omits Sidebar's internal skip link when a containing application frame, such as AppShell, already owns page-level skip navigation. |
 
 **Item**
 
@@ -1365,10 +1367,10 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `Items` | `[]Item` | Items contains child items for nested navigation |
 | `Collapsible` | `bool` | Collapsible renders child items behind a disclosure control. |
 | `Open` | `bool` | Open controls the initial disclosure state for collapsible child items. |
-| `Title` | `string` | Title overrides the generated browser tooltip text for sidebar links. |
+| `Title` | `string` | Title overrides the generated browser tooltip text for sidebar links. When empty, sidebar links default to Item.Label unless DisableAutoTitle is true or LinkAttrs already contains a title. |
 | `DisableAutoTitle` | `bool` | DisableAutoTitle prevents the sidebar from adding a title attribute from Label. |
-| `AriaLabel` | `string` | AriaLabel optionally overrides the accessible name on sidebar links. |
-| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes spread onto the <a> element. |
+| `AriaLabel` | `string` | AriaLabel optionally overrides the accessible name on sidebar links. This is not generated by default because aria-label replaces the link's descendant text, including badges and active state markers. |
+| `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes spread onto the &lt;a&gt; element. Use for HTMX, Alpine.js, or other consumer-specific attributes. |
 
 **OverlayConfig**
 
@@ -1377,13 +1379,13 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `ID` | `string` | ID identifies the overlay panel and derives the Alpine open state. |
 | `Sidebar` | `Config` | Sidebar is the sidebar configuration rendered inside the overlay panel. |
 | `Trigger` | `templ.Component` | Trigger replaces the default menu icon inside the trigger button. |
-| `TriggerLabel` | `string` | TriggerLabel is the accessible label for the trigger button. |
+| `TriggerLabel` | `string` | TriggerLabel is the accessible label for the trigger button. Default: "Open sidebar". |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the overlay root. |
 | `TriggerClass` | `string` | TriggerClass allows additional CSS classes on the trigger button. |
-| `BackdropPositionClass` | `string` | BackdropPositionClass controls backdrop positioning. |
+| `BackdropPositionClass` | `string` | BackdropPositionClass controls backdrop positioning. Default: "fixed inset-0". |
 | `BackdropClass` | `string` | BackdropClass allows additional CSS classes on the backdrop. |
-| `PanelPositionClass` | `string` | PanelPositionClass controls panel positioning. |
-| `PanelWidthClass` | `string` | PanelWidthClass controls the panel width. |
+| `PanelPositionClass` | `string` | PanelPositionClass controls panel positioning. Default: "fixed inset-y-0 left-0". |
+| `PanelWidthClass` | `string` | PanelWidthClass controls the panel width. Default: "w-72". |
 | `PanelClass` | `string` | PanelClass allows additional CSS classes on the off-canvas panel wrapper. |
 
 **Section**
@@ -1392,7 +1394,7 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 |-------|------|-------------|
 | `Title` | `string` | Title is the section header |
 | `Items` | `[]Item` | Items are the navigation items in this section |
-| `Collapsible` | `bool` | Collapsible renders direct child groups behind independent disclosure controls. |
+| `Collapsible` | `bool` | Collapsible renders direct child groups behind independent disclosure controls. Each group starts closed unless the parent Item sets Open. |
 | `IndentItems` | `bool` | IndentItems offsets the section item group from the title. |
 
 ## skeleton
@@ -1468,7 +1470,7 @@ import "github.com/araihu/goshtoso/components/steps"  // package steps
 | `ID` | `string` | ID sets stable element id for the list item. |
 | `Label` | `string` | Label is visible text next to step when labels are enabled. |
 | `AriaLabel` | `string` | AriaLabel overrides accessible label on the list item. |
-| `Number` | `int` | Number overrides displayed step number for non-completed states. |
+| `Number` | `int` | Number overrides displayed step number for non-completed states. Defaults to 1-based index when zero. |
 | `Status` | `Status` | Status controls visual styling. |
 | `StepAttrs` | `templ.Attributes` | StepAttrs appends arbitrary attributes to the list item. |
 
@@ -1553,21 +1555,21 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | Field | Type | Description |
 |-------|------|-------------|
 | `ID` | `string` | ID is the table element ID |
-| `Caption` | `string` | Caption is a screen-reader-only description of the table (rendered as <caption class="sr-only">). |
+| `Caption` | `string` | Caption is a screen-reader-only description of the table (rendered as &lt;caption class="sr-only"&gt;). |
 | `Columns` | `[]Column` | Columns defines the table headers |
 | `Rows` | `[]Row` | Rows holds the table data |
 | `Appearance` | `Appearance` | Appearance determines the table's visual treatment. |
 | `ShowCheckbox` | `bool` | ShowCheckbox adds a select-all checkbox column |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
-| `SortBy` | `string` | --- Sorting --- |
+| `SortBy` | `string` | --- Sorting --- SortBy is the currently sorted column key |
 | `SortDir` | `SortDir` | SortDir is the current sort direction ("asc" or "desc") |
-| `HTMX` | `*HTMXConfig` | --- HTMX Integration --- |
-| `LazyLoad` | `bool` | --- Lazy Loading --- |
-| `LazyTrigger` | `string` | LazyTrigger is the htmx trigger for LazyLoad. Defaults to "load". |
-| `Pagination` | `*PaginationConfig` | --- Pagination --- |
-| `InfiniteScroll` | `*InfiniteScrollConfig` | --- Infinite Scroll --- |
-| `Filters` | `*FilterConfig` | --- Filters --- |
-| `ExtraQueryParams` | `string` | --- Extra Query Params --- |
+| `HTMX` | `*HTMXConfig` | --- HTMX Integration --- HTMX configures server-side table updates. |
+| `LazyLoad` | `bool` | --- Lazy Loading --- LazyLoad loads the table body via HTMX. |
+| `LazyTrigger` | `string` | LazyTrigger is the htmx trigger for LazyLoad. Defaults to "load". Use values like "click from:#load-table" for explicit user-triggered loading. |
+| `Pagination` | `*PaginationConfig` | --- Pagination --- Pagination enables traditional pagination below the table |
+| `InfiniteScroll` | `*InfiniteScrollConfig` | --- Infinite Scroll --- InfiniteScroll enables loading more rows on scroll |
+| `Filters` | `*FilterConfig` | --- Filters --- Filters enables a filter bar above the table |
+| `ExtraQueryParams` | `string` | --- Extra Query Params --- ExtraQueryParams are appended to all auto-generated HTMX URLs (sort, pagination, infinite scroll). Use for filter state that must persist across requests. Format: "&key=value&key2=value2" |
 
 **Filter**
 
@@ -1586,8 +1588,8 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | Field | Type | Description |
 |-------|------|-------------|
 | `Filters` | `[]Filter` | Filters is the list of filter controls |
-| `Collapsible` | `bool` | Collapsible enables a toggle to show/hide the filter bar. |
-| `InitiallyExpanded` | `bool` | InitiallyExpanded starts a collapsible bar open; zero starts it closed. |
+| `Collapsible` | `bool` | Collapsible enables a toggle to show/hide the filter bar. Ignored when Appearance is FilterAppearanceInline. |
+| `InitiallyExpanded` | `bool` | InitiallyExpanded starts a collapsible bar open; zero starts it closed. Non-collapsible and inline filters are always visible. |
 | `Appearance` | `FilterAppearance` | Appearance selects the layout (bar vs inline). See FilterAppearance. |
 | `HTMX` | `*FilterHTMXConfig` | HTMX configures filter request behavior. |
 
@@ -1595,8 +1597,8 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Target` | `string` | Target overrides the CSS selector that filter changes swap into. |
-| `Swap` | `string` | Swap overrides the htmx swap strategy used when filters apply. |
+| `Target` | `string` | Target overrides the CSS selector that filter changes swap into. Default (empty) resolves to "#{tbody-id}". Use when the table sits inside a larger fragment that should be re-rendered as a unit — for example, a modal body that includes both the table and surrounding header text, or a cluster-picker card that needs pager state reset. |
+| `Swap` | `string` | Swap overrides the htmx swap strategy used when filters apply. Default (empty) resolves to "innerHTML". Use "outerHTML" when the Target is itself the wrapper that the server re-renders (e.g. a catalog grid whose empty-state lives on the wrapper element). |
 
 **FilterOption**
 
@@ -1634,7 +1636,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `TotalPages` | `int` | TotalPages controls traditional pagination; infinite scroll ignores it. |
 | `PerPage` | `int` | PerPage is the number of items per page |
 | `HasMore` | `bool` | HasMore indicates if more rows are available (used by infinite scroll) |
-| `ContainerHeight` | `string` | ContainerHeight opts into Pattern A for infinite scroll: the table wraps |
+| `ContainerHeight` | `string` | ContainerHeight opts into Pattern A for infinite scroll: the table wraps itself in a max-height + overflow-y-auto container and scrolls internally. Leave empty (the default) for Pattern B, where the sentinel row reveals against the nearest ancestor scroller. Values are raw CSS (e.g. "400px", "60vh"). Only consulted when Mode is PaginationInfiniteScroll. |
 
 **Row**
 
@@ -1642,14 +1644,14 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `ID` | `string` | ID is a unique identifier for the row (used for checkbox IDs) |
 | `Cells` | `map[string]Cell` | Cells maps column keys to cell content |
-| `Link` | `string` | Link makes the row clickable — navigates when clicked. When Actions is |
-| `LinkMode` | `LinkMode` | LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area. |
-| `OnClick` | `string` | OnClick is a JS/Alpine expression executed on row click. |
-| `HTMX` | `*RowHTMXConfig` | HTMX configures row-level HTMX click behavior. |
-| `AlpineAttrs` | `map[string]string` | AlpineAttrs is a pass-through for per-row Alpine directives (e.g. |
+| `Link` | `string` | Link makes the row clickable — navigates when clicked. When Actions is also set, Goshtoso renders Link as a native anchor in the first data cell instead of making the row interactive, avoiding nested controls. The navigation strategy is controlled by LinkMode. |
+| `LinkMode` | `LinkMode` | LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area. Use LinkBoost for full-body swap, or LinkFull for plain navigation. |
+| `OnClick` | `string` | OnClick is a JS/Alpine expression executed on row click. Use for opening modals, toggling state, etc. Ignored when Link is set (Link takes precedence). |
+| `HTMX` | `*RowHTMXConfig` | HTMX configures row-level HTMX click behavior. Ignored when Link or OnClick is set. |
+| `AlpineAttrs` | `map[string]string` | AlpineAttrs is a pass-through for per-row Alpine directives (e.g. `x-show`, `x-data`, `x-bind:class`). Keys become HTML attribute names verbatim; values go through templ's attribute escaping. Use for client-side row filters (x-show) that sit on top of a gotable. |
 | `Expandable` | `bool` | Expandable shows a chevron toggle and an expandable detail section below the row |
 | `Detail` | `templ.Component` | Detail is rendered in the expanded panel below the row when Expandable is true |
-| `Actions` | `templ.Component` | Actions is rendered in a trailing actions column (e.g., edit/delete buttons). |
+| `Actions` | `templ.Component` | Actions is rendered in a trailing actions column (e.g., edit/delete buttons). When combined with Link, the first data cell becomes the accessible link and the row itself remains non-interactive. |
 
 **RowHTMXConfig**
 
@@ -1677,7 +1679,7 @@ import "github.com/araihu/goshtoso/components/tabs"  // package tabs
 | `Tabs` | `[]Tab` | Tabs is the list of tabs to render |
 | `DefaultTab` | `string` | DefaultTab is the ID of the initially selected tab (defaults to first tab) |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
-| `SyncHash` | `bool` | SyncHash syncs the active tab with the URL fragment (hash). |
+| `SyncHash` | `bool` | SyncHash syncs the active tab with the URL fragment (hash). When true: reads hash on init to select tab, updates hash on tab change. Invalid hash values fall back to DefaultTab. |
 
 **Tab**
 
@@ -1689,7 +1691,7 @@ import "github.com/araihu/goshtoso/components/tabs"  // package tabs
 | `Icon` | `templ.Component` | Icon is an optional icon component rendered before the label |
 | `Badge` | `string` | Badge is an optional badge text (e.g., count) shown after the label |
 | `Content` | `templ.Component` | Content is the tab panel content (used for static/inline content) |
-| `HTMX` | `*TabHTMX` | HTMX enables lazy loading of tab content via an HTMX request. |
+| `HTMX` | `*TabHTMX` | HTMX enables lazy loading of tab content via an HTMX request. When set, the panel issues an hx-get on first activation instead of rendering Content inline. |
 
 **TabHTMX**
 
@@ -1741,10 +1743,11 @@ import "github.com/araihu/goshtoso/components/textarea"  // package textarea
 | `Rows` | `int` | Rows is the number of visible text rows (default: 3) |
 | `Disabled` | `bool` | Disabled disables the textarea |
 | `ReadOnly` | `bool` | ReadOnly makes the textarea read-only |
+| `Required` | `bool` | Required marks the textarea as required for native form validation. |
 | `State` | `State` | State is the validation state (default/error/success) |
 | `HelperText` | `string` | HelperText is the helper or error text below the textarea |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
-| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the <textarea> element (e.g. onkeydown, hx-*). |
+| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the &lt;textarea&gt; element (e.g. onkeydown, hx-*). |
 
 ## textinput
 
@@ -1777,7 +1780,7 @@ import "github.com/araihu/goshtoso/components/textinput"  // package textinput
 | `MaxLength` | `int` | MaxLength limits the number of characters (0 = no limit) |
 | `Readonly` | `bool` | Readonly makes the input non-editable but still submittable |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
-| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the <input> element (e.g., hx-post, hx-indicator). |
+| `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the &lt;input&gt; element (e.g., hx-post, hx-indicator). |
 
 ## toast
 
@@ -1856,9 +1859,9 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 | `Checked` | `bool` | Checked sets the initial checked state |
 | `Disabled` | `bool` | Disabled disables the toggle |
 | `Name` | `string` | Name is the form field name |
-| `Value` | `string` | Value makes the checkbox submit this value when checked, turning the toggle into a real form control. |
+| `Value` | `string` | Value makes the checkbox submit this value when checked, turning the toggle into a real form control. Requires Name; when set, the always-off hidden input is omitted. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the label. |
-| `InputAttrs` | `templ.Attributes` | InputAttrs are extra attributes applied to the <input> element. |
+| `InputAttrs` | `templ.Attributes` | InputAttrs are extra attributes applied to the &lt;input&gt; element. (e.g. x-on:change, x-bind:checked for Alpine binding). Note: "checked" and "disabled" are already set from Config — use x-bind:checked / x-bind:disabled in InputAttrs for dynamic control rather than passing raw checked/disabled keys. |
 
 ## toolbar
 

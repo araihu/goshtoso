@@ -41,6 +41,8 @@ them.
 - Toolbars stack or collapse without changing control order unexpectedly.
 - Detail rails follow main content on small screens.
 - Sticky actions do not cover focused inputs, errors, or the last result row.
+- Inspect internal overflow containers, not only document width. A clipped
+  alert inside a sidebar can pass a document-level horizontal-scroll check.
 
 ## Themes and color
 
@@ -50,6 +52,9 @@ them.
   disabled, loading, error, warning, success, and info states.
 - Status never depends on color alone.
 - Primary color marks actions and selection, not decoration.
+- Typography belongs to the product. Do not reflexively choose Inter, Geist,
+  Roboto, or another fashionable default across unrelated domains; use the
+  system stack or make a deliberate, tested type choice.
 
 ## Keyboard and focus
 

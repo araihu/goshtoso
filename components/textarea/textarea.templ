@@ -43,6 +43,9 @@ templ textareaTemplate(cfg Config) {
 			if cfg.ReadOnly {
 				readonly
 			}
+			if cfg.Required {
+				required
+			}
 			{ cfg.InputAttrs... }
 		>{ cfg.Value }</textarea>
 		if cfg.HelperText != "" {
@@ -71,6 +74,9 @@ templ textareaWithActionsTemplate(cfg Config) {
 				}
 				if cfg.ReadOnly {
 					readonly
+				}
+				if cfg.Required {
+					required
 				}
 				{ cfg.InputAttrs... }
 			>{ cfg.Value }</textarea>

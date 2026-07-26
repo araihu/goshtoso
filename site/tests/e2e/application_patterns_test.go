@@ -49,6 +49,14 @@ func TestApplicationPatternsPageAndResponsiveRecipes(t *testing.T) {
 		assert.Equal(t, 4, count, marker)
 	}
 
+	proofs := page.Locator("[data-field-proven-pattern]")
+	count, err = proofs.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 3, count)
+	for _, title := range []string{"Decision Queue", "Interruption-safe Workflow", "Content-first Review"} {
+		require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: title}).WaitFor())
+	}
+
 	require.NoError(t, page.Locator("a[href='/docs/application-patterns'][aria-current='page']").WaitFor())
 	require.NoError(t, page.Locator("#operations-pattern-table").WaitFor())
 	require.NoError(t, page.Locator("#detail-workspace-preview [role='tablist']").WaitFor())

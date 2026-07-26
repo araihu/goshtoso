@@ -5465,6 +5465,11 @@
       grid-template-columns: 9rem minmax(0,1fr);
     }
   }
+  .sm\:grid-cols-\[12rem_minmax\(0\,1fr\)\] {
+    @media (width >= 40rem) {
+      grid-template-columns: 12rem minmax(0,1fr);
+    }
+  }
   .sm\:flex-row {
     @media (width >= 40rem) {
       flex-direction: row;
@@ -5899,6 +5904,11 @@
   .lg\:grid-cols-\[12rem_minmax\(0\,1fr\)\] {
     @media (width >= 64rem) {
       grid-template-columns: 12rem minmax(0,1fr);
+    }
+  }
+  .lg\:grid-cols-\[minmax\(0\,0\.8fr\)_minmax\(0\,1\.7fr\)\] {
+    @media (width >= 64rem) {
+      grid-template-columns: minmax(0,0.8fr) minmax(0,1.7fr);
     }
   }
   .lg\:grid-cols-\[minmax\(0\,1\.05fr\)_minmax\(22rem\,0\.95fr\)\] {

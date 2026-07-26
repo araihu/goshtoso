@@ -136,3 +136,44 @@ func TestGeneratedEmbeddedCSSContainsAuditedApplicationSelectors(t *testing.T) {
 		}
 	}
 }
+
+func TestRoundTwoConsumerGuidancePublishesRecoveredContracts(t *testing.T) {
+	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
+	for _, want := range []string{
+		"Go 1.26.5 or newer",
+		"go mod tidy",
+		"link.AppearanceButton",
+		"htmx:beforeSwap",
+		"adjacent text",
+	} {
+		if !strings.Contains(skill, want) {
+			t.Errorf("agent skill missing recovered contract %q", want)
+		}
+	}
+	if strings.Index(skill, "templ generate") > strings.Index(skill, "go mod tidy") {
+		t.Error("agent skill must generate consumer templ before dependency tidying")
+	}
+
+	patterns := readDoc(t, "../.agents/skills/using-goshtoso/references/application-patterns.md")
+	for _, want := range []string{
+		"AppShell renders the `<header>` landmark",
+		"--color-surface",
+		"--color-surface-dark-alt",
+		"Status tokens are shared across light and dark modes",
+		"no dark",
+		"Decision Queue",
+		"Interruption-safe Workflow",
+		"Content-first Review",
+	} {
+		if !strings.Contains(patterns, want) {
+			t.Errorf("application patterns missing recovered contract %q", want)
+		}
+	}
+
+	acceptance := readDoc(t, "../.agents/skills/using-goshtoso/references/visual-acceptance.md")
+	for _, want := range []string{"Inter", "Geist", "Roboto", "internal overflow"} {
+		if !strings.Contains(acceptance, want) {
+			t.Errorf("visual acceptance missing convergence check %q", want)
+		}
+	}
+}

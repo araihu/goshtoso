@@ -42,6 +42,30 @@ templ pageHeaderDemoContent() {
     Actions:     clusterActions(),
 })`,
 		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Custom title voice",
+				Description: "TitleClass and TitleAttrs customize the h1 without replacing PageHeader's hierarchy and action layout.",
+			},
+			pageHeaderCustomTitlePreview(),
+			`@pageheader.PageHeader(pageheader.Config{
+    Title:       "Autumn journal",
+    Description: "Editorial decisions for Issue 14.",
+    TitleClass:  "font-mono tracking-tight",
+    TitleAttrs:  templ.Attributes{"data-heading-voice": "editorial"},
+})`,
+		)
+	</div>
+}
+
+templ pageHeaderCustomTitlePreview() {
+	<div id="page-header-custom-title" class="w-full rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark">
+		@pageheader.PageHeader(pageheader.Config{
+			Title:       "Autumn journal",
+			Description: "Editorial decisions for Issue 14.",
+			TitleClass:  "font-mono tracking-tight",
+			TitleAttrs:  templ.Attributes{"data-heading-voice": "editorial"},
+		})
 	</div>
 }
 

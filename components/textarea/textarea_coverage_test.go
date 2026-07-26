@@ -75,6 +75,20 @@ func TestCoverageRenderDisabledReadOnly(t *testing.T) {
 	}
 }
 
+func TestCoverageRenderRequiredForBothTextareaPrimitives(t *testing.T) {
+	for name, component := range map[string]templ.Component{
+		"textarea":              Textarea(Config{ID: "required", Required: true}),
+		"textarea with actions": TextareaWithActions(Config{ID: "required-actions", Required: true}),
+	} {
+		t.Run(name, func(t *testing.T) {
+			html := render(t, component)
+			if !strings.Contains(html, " required") {
+				t.Fatalf("required config did not render native attribute: %s", html)
+			}
+		})
+	}
+}
+
 func TestCoverageRenderErrorState(t *testing.T) {
 	html := render(t, Textarea(Config{
 		ID:         "e",

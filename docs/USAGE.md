@@ -10,6 +10,9 @@ identity, constructor styles, and rendered defaults.
 
 ## Installation
 
+Goshtoso requires **Go 1.26.5 or newer**. Use the same or a newer Go toolchain
+for the consumer module so module resolution does not fail late in setup.
+
 ### 1. Add the dependency
 
 ```bash
@@ -23,7 +26,12 @@ against the library. But your *own* `.templ` pages do need the templ toolchain:
 go get github.com/a-h/templ                       # runtime (your generated code imports it)
 go install github.com/a-h/templ/cmd/templ@latest  # the CLI, if not already installed
 templ generate                                    # YOUR .templ → _templ.go
+go mod tidy                                       # run after generation sees templ imports
 ```
+
+Create at least one consumer `.templ` file before generation. Generate before
+tidying: without generated Go imports, `go mod tidy` can correctly remove the
+templ runtime that the next step needs.
 
 ### 2. Serve the bundled assets (recommended)
 
@@ -204,7 +212,7 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The catalog has 47 component packages, 47 documentation pages, and 79 renderable primitives.
+The catalog has 48 public component packages, 47 documentation pages, and 79 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -292,7 +300,7 @@ points generally use target-specific names such as `RootClass`, `InputAttrs`,
 
 ### Available Themes
 
-Goshtoso ships 13 built-in themes. The default theme is `goshtoso`; the Minimal
+Goshtoso ships 15 built-in themes. The default theme is `goshtoso`; the Minimal
 theme is useful for checking no-radius edge cases.
 
 ### Switching Themes

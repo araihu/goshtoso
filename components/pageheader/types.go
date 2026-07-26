@@ -24,6 +24,10 @@ type Config struct {
 	BreadcrumbsClass string
 	// BreadcrumbsAttrs appends arbitrary HTML attributes to the breadcrumbs wrapper.
 	BreadcrumbsAttrs templ.Attributes
+	// TitleClass appends CSS classes to the h1 heading.
+	TitleClass string
+	// TitleAttrs appends arbitrary HTML attributes to the h1 heading.
+	TitleAttrs templ.Attributes
 	// ActionsClass appends CSS classes to the actions wrapper.
 	ActionsClass string
 	// ActionsAttrs appends arbitrary HTML attributes to the actions wrapper.
@@ -45,6 +49,13 @@ func (cfg Config) actionsClasses() string {
 	return appendClass(
 		"flex shrink-0 flex-wrap items-center gap-2 sm:justify-end",
 		cfg.ActionsClass,
+	)
+}
+
+func (cfg Config) titleClasses() string {
+	return appendClass(
+		"text-2xl font-bold leading-tight text-on-surface-strong sm:text-3xl dark:text-on-surface-dark-strong",
+		cfg.TitleClass,
 	)
 }
 

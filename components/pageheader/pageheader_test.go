@@ -62,3 +62,17 @@ func TestPageHeaderRendersBreadcrumbsBeforeTitleAndActionsAfterDescription(t *te
 	require.Greater(t, descriptionIndex, titleIndex)
 	require.Greater(t, actionsIndex, descriptionIndex)
 }
+
+func TestPageHeaderRoutesTitleHooksToHeading(t *testing.T) {
+	html := renderHTML(t, PageHeader(Config{
+		Title:      "Field report",
+		TitleClass: "font-editorial tracking-tight",
+		TitleAttrs: templ.Attributes{
+			"data-heading-voice": "editorial",
+		},
+	}))
+
+	require.Contains(t, html, "font-editorial tracking-tight")
+	require.Contains(t, html, `data-heading-voice="editorial"`)
+	require.NotContains(t, html, `<header data-heading-voice="editorial"`)
+}

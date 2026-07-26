@@ -39,7 +39,9 @@ updates, and overlays. Feature pages own their content and local tools.
 6. Drawers, search results, and toasts render outside the scroll region so
    clipping does not hide them.
 
-Start with `appshell.AppShell` for the frame. Supply `navbar.Navbar` or another
+Start with `appshell.AppShell` for the frame. AppShell renders the `<header>` landmark,
+so supply the top region's contents rather than nesting another `<header>`.
+Supply `navbar.Navbar` or another
 header component, `sidebar.Sidebar` for desktop navigation, and the route's
 content either as templ children or `Config.Content`. Templ children are the
 shortest path for page-local markup; `Config.Content` remains useful when the
@@ -296,3 +298,46 @@ matching selector exists in the embedded CSS.
 Built-in themes are selected with `data-theme="goshtoso"` or
 `data-theme="minimal"` on `<html>`. Dark mode uses the `dark` class on the same
 element. Apply these markers before first paint when the app persists a choice.
+
+Application-owned CSS may consume Goshtoso's stable semantic custom properties
+instead of copying theme colors into a second palette. Start with
+`--color-surface`, `--color-surface-alt`, `--color-on-surface`,
+`--color-on-surface-strong`, `--color-on-surface-muted`, `--color-outline`, and
+`--color-primary`; use `--color-info`, `--color-success`, `--color-warning`, and
+`--color-danger` for states. Dark tokens follow their semantic group:
+`--color-surface-dark-alt`, `--color-on-surface-dark-strong`,
+`--color-outline-dark-strong`, and `--color-primary-dark` are representative
+names. Status tokens are shared across light and dark modes and have no dark
+variants. Alias these into product-named variables when that makes app CSS
+clearer. See `docs/THEMING.md` for the complete contract.
+
+## Field-proven compositions
+
+These deeper compositions were recovered from independent consumer builds. Use
+them as extensions of the four base patterns, not as screens to copy literally.
+
+### Decision Queue
+
+Combine an Operations List with a Detail Workspace when a reviewer must keep a
+queue, amount or risk summary, selected record, policy context, and audit trail
+visible while choosing an outcome. Keep the selected row and decision state
+structural, separate destructive actions, use a real form for mutations, and
+stack the selected record after the queue at 390 px. An error may replace only
+the detail region when the queue can remain useful.
+
+### Interruption-safe Workflow
+
+Extend the Multi-step Workflow for dock, field, or tablet use. Default every
+line to the common case, ask the user to edit exceptions only, persist a bounded
+draft, review the exact changes before submission, and make retries idempotent.
+A sticky footer may keep Back/Review visible, but it must leave room for focused
+fields and the last error at 390 px.
+
+### Content-first Review
+
+Combine a compact queue with a reading surface and a narrow decision rail when
+the user's primary work is judgment over long-form content. Typography and
+rhythm should belong to the publication or domain, while Goshtoso supplies
+status, form, feedback, and responsive primitives. Keep author, deadline,
+channel, current status, and the handoff note adjacent to the decision. Avoid
+turning prose into equal dashboard cards.

@@ -60,7 +60,35 @@ templ applicationPatternsContent() {
 			@applicationPatternSection("03", "detail-workspace", "Detail Workspace", "Keep identity, status, actions, and deeper context in one navigable workspace.", detailWorkspacePreview(), detailWorkspaceContract())
 			@applicationPatternSection("04", "multi-step-workflow", "Multi-step Workflow", "Make progress, validation, review, and recovery explicit.", multiStepWorkflowPreview(), multiStepWorkflowContract())
 		</div>
+		@fieldProvenApplicationPatterns()
 	</div>
+}
+
+templ fieldProvenApplicationPatterns() {
+	<section class="border-t border-outline py-14 dark:border-outline-dark sm:py-20" aria-labelledby="field-proven-title">
+		<div class="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]">
+			<header class="space-y-3">
+				<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Field-proven extensions</p>
+				<h2 id="field-proven-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Patterns recovered from independent apps</h2>
+				<p class="text-on-surface dark:text-on-surface-dark">Three blind consumer builds pushed the four base recipes into finance, warehouse, and editorial work. Reuse the decision structure; keep the domain voice.</p>
+			</header>
+			<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
+				@fieldProvenPattern("Decision Queue", "Operations List + Detail Workspace", "Keep the queue, selected record, risk or policy context, decision form, and audit history visible together. Stack the selected record after the queue at 390 px.")
+				@fieldProvenPattern("Interruption-safe Workflow", "Multi-step Workflow + bounded draft", "Default the common case, edit exceptions only, review exact changes, preserve a short-lived draft, and make retries idempotent. Sticky actions must not cover focused fields.")
+				@fieldProvenPattern("Content-first Review", "Queue + reading surface + decision rail", "Let typography and rhythm belong to the publication. Keep author, deadline, channel, status, and handoff note next to the decision instead of converting prose into dashboard cards.")
+			</div>
+		</div>
+	</section>
+}
+
+templ fieldProvenPattern(title, composition, guidance string) {
+	<article data-field-proven-pattern class="grid gap-3 py-6 sm:grid-cols-[12rem_minmax(0,1fr)]">
+		<div>
+			<h3 class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h3>
+			<p class="mt-1 text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">{ composition }</p>
+		</div>
+		<p class="text-sm leading-6 text-on-surface dark:text-on-surface-dark">{ guidance }</p>
+	</article>
 }
 
 templ applicationPatternIndexLink(number, label, href string) {

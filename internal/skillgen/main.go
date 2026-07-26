@@ -517,7 +517,7 @@ func collectStructs(fset *token.FileSet, d *ast.GenDecl, api *pkgAPI) {
 				s.fields = append(s.fields, field{
 					name: n.Name,
 					typ:  exprString(fset, f.Type),
-					doc:  firstLine(docOf(f)),
+					doc:  markdownTableText(docOf(f)),
 				})
 			}
 		}
@@ -537,12 +537,13 @@ func docOf(f *ast.Field) string {
 	return ""
 }
 
-func firstLine(s string) string {
-	s = strings.TrimSpace(s)
-	if i := strings.IndexByte(s, '\n'); i >= 0 {
-		s = s[:i]
-	}
-	return strings.ReplaceAll(s, "|", `\|`)
+func markdownTableText(s string) string {
+	s = strings.Join(strings.Fields(s), " ")
+	return strings.NewReplacer(
+		"|", `\|`,
+		"<", "&lt;",
+		">", "&gt;",
+	).Replace(s)
 }
 
 func exprString(fset *token.FileSet, e ast.Expr) string {

@@ -9,7 +9,8 @@ import (
 
 // Config holds the application-shell regions and target-specific HTML hooks.
 type Config struct {
-	// Header renders the persistent top region; nil omits the header wrapper.
+	// Header renders inside AppShell's persistent <header> landmark; supply
+	// content, not another <header>; nil omits the wrapper.
 	Header templ.Component
 	// Sidebar renders desktop navigation; nil omits the sidebar wrapper.
 	Sidebar templ.Component

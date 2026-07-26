@@ -32,6 +32,20 @@ templ textareaDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Required",
+				Description: "Required: true emits the native required attribute for browser validation.",
+			},
+			textareaRequiredPreview(),
+			`@textarea.Textarea(textarea.Config{
+    ID:       "review-note",
+    Name:     "review_note",
+    Label:    "Review note",
+    Required: true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "Error State",
 				Description: "State: textarea.StateError recolors the border and HelperText for validation errors.",
 			},
@@ -89,6 +103,19 @@ templ textareaDemoContent() {
     Rows:        6,
 })`,
 		)
+	</div>
+}
+
+// textareaRequiredPreview renders a natively required textarea.
+templ textareaRequiredPreview() {
+	<div id="textarea-required" class="w-full max-w-md mx-auto">
+		@textarea.Textarea(textarea.Config{
+			ID:         "demo-required",
+			Name:       "review_note",
+			Label:      "Review note",
+			HelperText: "Required before this review can be submitted.",
+			Required:   true,
+		})
 	</div>
 }
 
