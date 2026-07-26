@@ -296,6 +296,38 @@ func TestTable_WithAction(t *testing.T) {
 
 		t.Log("✓ Action table has correctly styled Edit buttons")
 	})
+
+	t.Run("Linked_Row_Actions_Remain_Separate", func(t *testing.T) {
+		section := page.Locator("#table-linked-actions")
+		rows := section.Locator("tbody tr")
+
+		rowCount, err := rows.Count()
+		require.NoError(t, err)
+		assert.Equal(t, 3, rowCount, "linked-actions example should render three rows")
+
+		primaryLinks := section.Locator("tbody td:first-child a[href='/components/table#table-linked-actions']")
+		linkCount, err := primaryLinks.Count()
+		require.NoError(t, err)
+		assert.Equal(t, 3, linkCount, "each row should expose one primary-cell link")
+
+		actionButtons := section.Locator("tbody td:last-child button:has-text('Edit')")
+		buttonCount, err := actionButtons.Count()
+		require.NoError(t, err)
+		assert.Equal(t, 3, buttonCount, "each row should keep its action button separate")
+
+		invalidNesting, err := section.Locator("a button, tr[role='link'] button, tr[tabindex] button").Count()
+		require.NoError(t, err)
+		assert.Zero(t, invalidNesting, "rows must not nest action buttons in an interactive row or link")
+
+		role, err := rows.First().GetAttribute("role")
+		require.NoError(t, err)
+		assert.Empty(t, role, "the row itself should keep native table semantics")
+		tabindex, err := rows.First().GetAttribute("tabindex")
+		require.NoError(t, err)
+		assert.Empty(t, tabindex, "only the link and action button should enter the tab order")
+
+		t.Log("✓ Linked rows keep primary navigation and actions as separate controls")
+	})
 }
 
 // TestTable_UsersTable tests the users table with avatars and status badges

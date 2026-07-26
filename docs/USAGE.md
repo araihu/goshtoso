@@ -10,6 +10,9 @@ identity, constructor styles, and rendered defaults.
 
 ## Installation
 
+Goshtoso requires **Go 1.26.5 or newer**. Use the same or a newer Go toolchain
+for the consumer module so module resolution does not fail late in setup.
+
 ### 1. Add the dependency
 
 ```bash
@@ -23,7 +26,12 @@ against the library. But your *own* `.templ` pages do need the templ toolchain:
 go get github.com/a-h/templ                       # runtime (your generated code imports it)
 go install github.com/a-h/templ/cmd/templ@latest  # the CLI, if not already installed
 templ generate                                    # YOUR .templ → _templ.go
+go mod tidy                                       # run after generation sees templ imports
 ```
+
+Create at least one consumer `.templ` file before generation. Generate before
+tidying: without generated Go imports, `go mod tidy` can correctly remove the
+templ runtime that the next step needs.
 
 ### 2. Serve the bundled assets (recommended)
 
@@ -34,8 +42,9 @@ The fastest, deterministic path: serve Goshtoso's embedded assets and let
 // main.go
 import "github.com/araihu/goshtoso/assets"
 
-http.Handle("/assets/", assets.Handler()) // serves styles.css + js/ + fonts/ + images/
-                                          // NOTE: self-strips /assets/ — don't wrap in StripPrefix
+mux := http.NewServeMux()
+mux.Handle("GET /assets/", assets.Handler()) // styles.css + js/ + fonts/ + images/
+                                             // self-strips /assets/; do not use StripPrefix
 ```
 
 ```go
@@ -133,6 +142,17 @@ No recompiling Goshtoso.
 @theme { --color-brand: oklch(0.7 0.15 250); }
 ```
 
+The embedded stylesheet is a contract for Goshtoso components and the official
+application recipes, not a general Tailwind compiler for consumer markup.
+`RootClass` and attribute hooks accept arbitrary class names, but a valid
+Tailwind utility can fail silently if its selector was not emitted.
+
+The recipe contract explicitly guarantees these audited layout utilities:
+`max-w-7xl`, `xl:grid-cols-4`, `lg:col-span-2`, `min-h-64`, `sm:text-4xl`,
+`first:pt-0`, `last:pb-0`, `min-w-[220px]`, and `sm:col-span-2`. Give the
+application its own Tailwind build for any broader utility vocabulary and load
+its stylesheet after `/assets/styles.css`.
+
 ### Path B — unified build (one tree-shaken stylesheet)
 
 Compile Goshtoso's theme source together with your own. Requires your Tailwind
@@ -158,10 +178,41 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 Goshtoso's fonts/images are still served by `assets.Handler()` at `/assets/`,
 so mount it regardless of which path you choose.
 
+## From a component to an application
+
+After the first component renders, choose a task-oriented pattern instead of
+inventing a page from isolated demos:
+
+| Task | Pattern | Main packages |
+|---|---|---|
+| Persistent product navigation | App Shell | `appshell`, `navbar`, `sidebar`, `search` |
+| Search, filter, compare, act | Operations List | `pageheader`, `toolbar`, `table`, `emptystate`, `skeleton` |
+| Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `badge`, `tabs`, `button` |
+| Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `form`, `alert`, `button` |
+
+The installable skill includes two progressive references:
+
+- [application patterns](../.agents/skills/using-goshtoso/references/application-patterns.md)
+  defines anatomy, state matrices, responsive behavior, accessibility, app
+  boundaries, and completion checks for all four patterns;
+- [visual acceptance](../.agents/skills/using-goshtoso/references/visual-acceptance.md)
+  requires 390 px and 1440 px, Goshtoso and Minimal, light and dark, keyboard,
+  console, accessibility, and screenshot checks.
+
+Model loading, empty, error, and success before polishing the happy path. Keep
+domain vocabulary, information priority, authorization, and workflow rules in
+the application. Goshtoso supplies a consistent component vocabulary, not the
+product decisions.
+
+For operation tables, `Row.Link` and `Row.Actions` are safe to combine: the
+link moves into the first data cell and the row retains native table semantics,
+so trailing buttons are never nested inside a clickable row. Avoid adding
+`OnClick` or row-level `HTMX` as competing navigation paths when `Link` is set.
+
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The catalog has 42 component packages, 42 documentation pages, and 74 renderable primitives.
+The catalog has 48 public component packages, 47 documentation pages, and 79 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -170,6 +221,7 @@ configuration previews, and API tables.
 |-----------|--------|-------------|
 | `accordion` | `components/accordion` | Collapsible sections with default, plain, and split appearances |
 | `alert` | `components/alert` | Dismissable alert banners with info, success, warning, and danger tones |
+| `appshell` | `components/appshell` | Application frame with skip link, persistent regions, and one scrollable main surface |
 | `avatar` | `components/avatar` | User avatar with image, initials fallback, status indicator |
 | `badge` | `components/badge` | Inline status badges with independent tone, appearance, and size dimensions |
 | `banner` | `components/banner` | Full-width notifications and consent dialogs as separate `Banner` and `CookieBanner` primitives |
@@ -183,12 +235,14 @@ configuration previews, and API tables.
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
 | `drawer` | `components/drawer` | Slide-over drawers for navigation and contextual panels |
 | `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |
+| `emptystate` | `components/emptystate` | Instructive empty surfaces with optional icon and next action |
 | `fileinput` | `components/fileinput` | File input controls with labels, helper text, and validation states |
 | `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
 | `kbd` | `components/kbd` | Semantic keyboard shortcut and user input hints |
 | `link` | `components/link` | Styled link primitives with external-link and navigation affordances |
 | `modal` | `components/modal` | General and confirmation dialogs as separate `Modal` and `AlertDialog` primitives; `Tone` belongs to `AlertDialog` |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
+| `pageheader` | `components/pageheader` | Page identity, breadcrumbs, description, and task-level actions |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
 | `palette` | `components/palette` | Color palette and swatch utilities for theme demos and pickers |
 | `radio` | `components/radio` | Radio inputs and groups with validation and semantic tones |
@@ -198,6 +252,7 @@ configuration previews, and API tables.
 | `search` | `components/search` | Search input and command-palette style result lists |
 | `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
+| `skeleton` | `components/skeleton` | Accessible loading placeholders for text, rectangles, and circles |
 | `spinner` | `components/spinner` | Loading spinner with independent size and tone dimensions |
 | `steps` | `components/steps` | Stepper/progress navigation for multi-step flows |
 | `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |
@@ -207,6 +262,7 @@ configuration previews, and API tables.
 | `textarea` | `components/textarea` | Multi-line text input with validation states |
 | `textinput` | `components/textinput` | Text input with types (text, email, password, number), validation |
 | `toast` | `components/toast` | Notifications as separate `Toast` and `MessageToast` primitives; sender and avatar content belongs to `MessageToast` |
+| `toolbar` | `components/toolbar` | Accessible search, filter, and action regions with responsive wrapping |
 | `toggle` | `components/toggle` | Toggle switch with semantic tones |
 | `tooltip` | `components/tooltip` | Hover tooltips with position options, rich content support |
 
@@ -244,7 +300,7 @@ points generally use target-specific names such as `RootClass`, `InputAttrs`,
 
 ### Available Themes
 
-Goshtoso ships 13 built-in themes. The default theme is `goshtoso`; the Minimal
+Goshtoso ships 15 built-in themes. The default theme is `goshtoso`; the Minimal
 theme is useful for checking no-radius edge cases.
 
 ### Switching Themes

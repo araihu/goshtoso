@@ -1,0 +1,73 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/emptystate"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// EmptyStateDemoPage renders the EmptyState component demo.
+templ EmptyStateDemoPage() {
+	@demo.Layout("Empty State", "empty-state", emptyStateDemoContent())
+}
+
+templ emptyStateDemoContent() {
+	<div id="empty-state-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Empty State",
+				Description: "Explain why content is absent and give the user a useful next action.",
+			},
+			emptyStateDefaultPreview(),
+			`@emptystate.EmptyState(emptystate.Config{
+    Title:       "No incidents found",
+    Description: "Adjust the filters or create the first incident.",
+    Icon:        incidentIcon(),
+    Action:      createIncidentAction(),
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Informational",
+				Description: "Omit Action when the user only needs to understand when content will appear.",
+			},
+			emptyStateInformationalPreview(),
+			`@emptystate.EmptyState(emptystate.Config{
+    Title:       "No recent activity",
+    Description: "Deployments and configuration changes will appear here.",
+})`,
+		)
+	</div>
+}
+
+templ emptyStateDefaultPreview() {
+	<div id="empty-state-default" class="w-full">
+		@emptystate.EmptyState(emptystate.Config{
+			Title:       "No incidents found",
+			Description: "Adjust the filters or create the first incident.",
+			Icon:        emptyStateIncidentIcon(),
+			Action:      emptyStateCreateAction(),
+		})
+	</div>
+}
+
+templ emptyStateInformationalPreview() {
+	<div id="empty-state-informational" class="w-full">
+		@emptystate.EmptyState(emptystate.Config{
+			Title:       "No recent activity",
+			Description: "Deployments and configuration changes will appear here.",
+		})
+	</div>
+}
+
+templ emptyStateCreateAction() {
+	@button.Button() {
+		Create incident
+	}
+}
+
+templ emptyStateIncidentIcon() {
+	<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.8 2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.8a2 2 0 0 0-3.4 0Z"></path>
+	</svg>
+}

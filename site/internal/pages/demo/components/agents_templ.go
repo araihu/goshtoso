@@ -9,6 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
+
 	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -79,51 +81,56 @@ func agentsContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</section><section id=\"what-it-teaches\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">What the Skill Teaches</h2><div class=\"grid gap-3 sm:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</section><section id=\"what-it-teaches\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">A Progressive Path</h2><ol class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, item := range agentSkillTopics() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		for index, item := range agentSkillTopics() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<li class=\"flex gap-4 py-4\"><span class=\"flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-alt text-sm font-semibold text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(item.Title)
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", index+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/agents.templ`, Line: 43, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/agents.templ`, Line: 45, Col: 228}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(item.Body)
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(item.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/agents.templ`, Line: 44, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/agents.templ`, Line: 47, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(item.Body)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/agents.templ`, Line: 48, Col: 96}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></div></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><section id=\"scope\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Scope</h2><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">This skill is for consumer agents.</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">It does not teach agents how to maintain Goshtoso itself, edit component internals, run the release process, or operate an MCP server. Those workflows are intentionally separate so consumer agents get a compact, trustworthy integration guide.</p></div></section><section id=\"verify-distribution\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Verify Distribution</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Release maintainers can verify that the public skill remains discoverable and that supporting reference files are downloaded with it.</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: agentsVerifyCode()}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</ol></section><section id=\"build-applications\" class=\"space-y-4\"><div class=\"space-y-2\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">From First Component to Application</h2><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">The installed skill routes agents to four task-oriented patterns: App Shell, Operations List, Detail Workspace, and Multi-step Workflow. Each reference includes a state matrix, responsive behavior, accessibility, CSS boundaries, and completion checks.</p></div><div class=\"flex flex-wrap gap-3 text-sm font-medium\"><a href=\"https://github.com/araihu/goshtoso/blob/main/.agents/skills/using-goshtoso/references/application-patterns.md\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Read application patterns</a> <a href=\"https://github.com/araihu/goshtoso/blob/main/.agents/skills/using-goshtoso/references/visual-acceptance.md\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Use the visual checklist</a></div></section><section id=\"scope\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Scope</h2><div class=\"rounded-radius border border-outline bg-surface p-4 dark:border-outline-dark dark:bg-surface-dark\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">This skill is for consumer agents.</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">It does not teach agents how to maintain Goshtoso itself, edit component internals, run the release process, or operate an MCP server. Those workflows are intentionally separate so consumer agents get a compact, trustworthy integration guide.</p></div></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,12 +145,12 @@ type agentSkillTopic struct {
 
 func agentSkillTopics() []agentSkillTopic {
 	return []agentSkillTopic{
-		{Title: "Install Goshtoso", Body: "Add the Go module and templ toolchain without generating code inside the Goshtoso dependency."},
-		{Title: "Serve assets", Body: "Mount assets.Handler() directly at /assets/ and avoid the double StripPrefix 404 trap."},
-		{Title: "Wire the page head", Body: "Use head.Dependencies() so CSS, Alpine.js, HTMX, and component scripts stay in sync."},
-		{Title: "Render components", Body: "Import component packages, use typed Config values, and consult the generated component reference."},
-		{Title: "Choose CSS strategy", Body: "Prefer the embedded stylesheet, or extract theme/source paths only for custom Tailwind builds."},
-		{Title: "Debug common misses", Body: "Check missing styles, combobox keyboard behavior, Alpine plugin order, and HTML-fragment HTMX handlers."},
+		{Title: "Integrate deterministically", Body: "Add the Go module, mount assets.Handler(), and use head.Dependencies() so styles and runtime scripts stay version-aligned."},
+		{Title: "Render typed components", Body: "Use public packages and the generated component reference without generating code inside the dependency or importing site/."},
+		{Title: "Choose the application pattern", Body: "Start from App Shell, Operations List, Detail Workspace, or Multi-step Workflow based on the user's task."},
+		{Title: "Model the state matrix", Body: "Design loading, empty, error, and success before polishing the happy path; add domain states when they can occur."},
+		{Title: "Own the CSS boundary", Body: "Use the embedded contract for official recipes and give the app a Tailwind build when it needs a broader utility vocabulary."},
+		{Title: "Validate the complete surface", Body: "Check viewports, themes, light and dark, keyboard behavior, browser console, accessibility, and recovery flows."},
 	}
 }
 
@@ -160,11 +167,6 @@ npx skills add araihu/goshtoso --skill using-goshtoso --agent codex -g`
 
 func agentsUseCode() string {
 	return `npx skills use araihu/goshtoso --skill using-goshtoso`
-}
-
-func agentsVerifyCode() string {
-	return `npx --yes skills add araihu/goshtoso --list
-npx --yes skills use araihu/goshtoso --skill using-goshtoso`
 }
 
 var _ = templruntime.GeneratedTemplate

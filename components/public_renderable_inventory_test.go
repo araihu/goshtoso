@@ -18,7 +18,7 @@ import (
 )
 
 func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
-	got := make([]components.Kind, 0, 74)
+	got := make([]components.Kind, 0, 79)
 	for _, inventory := range publicRenderableInventories() {
 		for want, value := range inventory {
 			require.Equal(t, want, value.Kind())
@@ -27,7 +27,7 @@ func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
 	}
 
 	require.ElementsMatch(t, components.AllKinds(), got)
-	require.Len(t, got, 74)
+	require.Len(t, got, 79)
 	require.Len(t, got, len(components.AllKinds()))
 }
 
@@ -37,6 +37,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 
 		"accordion.Accordion":             {},
 		"alert.Alert":                     {},
+		"appshell.AppShell":               {},
 		"avatar.Avatar":                   {},
 		"avatar.AvatarStack":              {},
 		"badge.Badge":                     {},
@@ -58,6 +59,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"combobox.Combobox":               {},
 		"drawer.Drawer":                   {},
 		"dropdown.Dropdown":               {},
+		"emptystate.EmptyState":           {},
 		"fileinput.FileInput":             {},
 		"form.Form":                       {},
 		"form.Section":                    {},
@@ -74,6 +76,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"modal.AlertDialog":               {},
 		"navbar.Navbar":                   {},
 		"pagination.Pagination":           {},
+		"pageheader.PageHeader":           {},
 		"palette.Palette":                 {},
 		"radio.Radio":                     {},
 		"radio.RadioBar":                  {},
@@ -88,6 +91,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"select.Select":                   {},
 		"sidebar.Sidebar":                 {},
 		"sidebar.Overlay":                 {},
+		"skeleton.Skeleton":               {},
 		"spinner.Spinner":                 {},
 		"steps.Steps":                     {},
 		"structuredinput.StructuredInput": {},
@@ -108,6 +112,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"toast.OOBToast":                  {},
 		"toast.OOBMessageToast":           {},
 		"toggle.Toggle":                   {},
+		"toolbar.Toolbar":                 {},
 		"tooltip.Tooltip":                 {},
 
 		"button.WithTone":        {},
@@ -116,6 +121,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"button.Disabled":        {},
 		"button.WithID":          {},
 		"button.WithRootClass":   {},
+		"button.WithAttrs":       {},
 		"button.WithHTMX":        {},
 		"button.WithAlpine":      {},
 		"button.WithLoadingText": {},
@@ -174,6 +180,9 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"table.Config.SortURL":                   {},
 		"table.Config.PageURL":                   {},
 		"table.Config.NextPageURL":               {},
+		"table.Config.TbodyID":                   {},
+		"table.Config.TheadID":                   {},
+		"table.Config.PaginationID":              {},
 		"form/validation.FormDef.Bind":           {},
 		"form/validation.FormDef.Dependents":     {},
 		"form/validation.FormDef.PopulateValues": {},
@@ -319,6 +328,7 @@ func unexpectedPublicSurface(
 
 func publicRenderableInventories() []map[components.Kind]components.Component {
 	return []map[components.Kind]components.Component{
+		compositionRenderables(),
 		displayRenderables(),
 		inputRenderables(),
 		feedbackRenderables(),
@@ -331,7 +341,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 
 	const componentPackagePrefix = "github.com/araihu/goshtoso/components/"
 
-	methods := make(map[string]struct{}, 148)
+	methods := make(map[string]struct{}, 158)
 	for _, inventory := range publicRenderableInventories() {
 		for _, value := range inventory {
 			valueType := reflect.TypeOf(value)
@@ -348,7 +358,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 			methods[receiver+".Render"] = struct{}{}
 		}
 	}
-	require.Len(t, methods, 148)
+	require.Len(t, methods, 158)
 	return methods
 }
 

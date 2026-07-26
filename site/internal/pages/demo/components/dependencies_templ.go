@@ -101,7 +101,8 @@ func dependenciesDemoContent() templ.Component {
 			dependenciesAssetContractPreview(),
 			`import "github.com/araihu/goshtoso/assets"
 
-http.Handle("/assets/", assets.Handler())`,
+mux := http.NewServeMux()
+mux.Handle("GET /assets/", assets.Handler())`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -142,7 +143,7 @@ func dependenciesFullPreview() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("@head.Dependencies()\n\n/assets/styles.css\n/assets/js/runtime/alpinejs\n/assets/js/runtime/htmx\n/assets/js/combobox.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/dependencies.templ`, Line: 51, Col: 268}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/dependencies.templ`, Line: 52, Col: 268}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -206,7 +207,7 @@ func dependenciesAssetContractPreview() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"dependencies-asset-contract\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Serve bundled assets</p><pre class=\"mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\"><code>http.Handle(\"/assets/\", assets.Handler())</code></pre></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"dependencies-asset-contract\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Serve bundled assets</p><pre class=\"mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\"><code>mux.Handle(\"GET /assets/\", assets.Handler())</code></pre></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

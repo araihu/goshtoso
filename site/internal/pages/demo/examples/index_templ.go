@@ -8,8 +8,38 @@ package examples
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// exampleCard is one entry in the examples gallery.
-func exampleCard(href, title, desc string) templ.Component {
+import "fmt"
+
+type exampleRecipe struct {
+	Href       string
+	Title      string
+	Desc       string
+	Complexity string
+	Components string
+	States     string
+	Source     string
+	Image      string
+	ImageAlt   string
+}
+
+func exampleRecipes() []exampleRecipe {
+	return []exampleRecipe{
+		{Href: "/examples/todo", Title: "Todo List", Desc: "Cookie-backed task operations with filters, reorder, inline edit, undo, and HTMX fragments.", Complexity: "Intermediate", Components: "Badge, Button, Radio, Select, Text Input, Toast", States: "Empty, filtered, success, undo", Source: "todo.templ", Image: "/assets/images/homepage/examples/todo.webp", ImageAlt: "Abstract checklist cards with a large checkmark"},
+		{Href: "/examples/wizard", Title: "Onboarding Wizard", Desc: "Server-validated multi-step onboarding with persisted progress, review, confirmation, and reset.", Complexity: "Advanced", Components: "Badge, Button, Select, Steps, Text Input, Toast", States: "Editing, invalid, review, success", Source: "wizard.templ", Image: "/assets/images/homepage/examples/wizard.webp", ImageAlt: "Abstract connected onboarding steps leading to a flag"},
+		{Href: "/examples/expense", Title: "Expense Tracker", Desc: "Spend operations with search, category filters, pagination, confirm-to-clear, and a live total.", Complexity: "Advanced", Components: "Badge, Button, Combobox, Modal, Pagination, Radio, Text Input, Toast", States: "Empty, filtered, success, destructive confirm", Source: "expense.templ", Image: "/assets/images/homepage/examples/expense.webp", ImageAlt: "Abstract receipts, coins, and a pie chart"},
+		{Href: "/examples/profile", Title: "Profile", Desc: "Settings workspace with identity, uploads, validation, theme controls, and local persistence.", Complexity: "Advanced", Components: "Avatar, Badge, File Input, Modal, Tabs, inputs, Toast, Toggle", States: "Editing, invalid, saved, destructive confirm", Source: "profile.templ", Image: "/assets/images/homepage/examples/profile.webp", ImageAlt: "Abstract profile badge with toggles and color swatches"},
+		{Href: "/examples/ticker", Title: "Live Ticker", Desc: "Streaming market watchlist with a sortable table, focused rows, and live SSE updates.", Complexity: "Intermediate", Components: "Badge, Card, Spinner, Table, Toggle", States: "Loading, streaming, filtered, disconnected", Source: "ticker.templ", Image: "/assets/images/homepage/examples/ticker.webp", ImageAlt: "Abstract upward data line with rounded nodes"},
+		{Href: "/examples/chat", Title: "Chat", Desc: "Realtime full-duplex chat over HTMX WebSockets with presence, rename, and an ELIZA bot.", Complexity: "Advanced", Components: "Avatar, Badge, Button, Chat Bubble, Textarea, Text Input, Toggle", States: "Connecting, connected, message, presence", Source: "chat.templ", Image: "/assets/images/homepage/examples/chat.webp", ImageAlt: "Abstract overlapping chat bubbles with a signal ripple"},
+		{Href: "/examples/logs", Title: "Live Log Feed", Desc: "SSE log viewer with append swaps, local filtering, pause, connection status, and bounded history.", Complexity: "Advanced", Components: "Badge, Button, Select, Spinner, Toggle, Tooltip", States: "Connecting, streaming, paused, filtered", Source: "logs.templ", Image: "/assets/images/homepage/examples/logs.webp", ImageAlt: "Abstract streaming log rows with colored status dots"},
+	}
+}
+
+func exampleSourceURL(source string) string {
+	return "https://github.com/araihu/goshtoso/blob/main/site/internal/pages/demo/examples/" + source
+}
+
+// exampleEntry is one extractable app in the editorial examples index.
+func exampleEntry(index int, recipe exampleRecipe) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -30,14 +60,14 @@ func exampleCard(href, title, desc string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article data-example-recipe class=\"grid gap-6 border-t border-outline py-8 first:pt-0 dark:border-outline-dark md:grid-cols-[minmax(0,2fr)_minmax(18rem,3fr)] md:items-start md:gap-10\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 templ.SafeURL
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(recipe.Href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 6, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 36, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -48,41 +78,184 @@ func exampleCard(href, title, desc string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(href)
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(recipe.Href)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 7, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 36, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#main-content\" hx-push-url=\"true\" class=\"block rounded-radius border border-outline bg-surface p-5 transition hover:border-primary dark:border-outline-dark dark:bg-surface-dark dark:hover:border-primary-dark\"><h3 class=\"mb-1 text-lg font-semibold text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#main-content\" hx-push-url=\"true\" class=\"group block overflow-hidden rounded-radius border border-outline bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-primary-dark\"><img src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(recipe.Image)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 12, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 37, Col: 26}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</h3><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" alt=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(desc)
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(recipe.ImageAlt)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 13, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 37, Col: 50}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p></a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"aspect-[16/10] w-full object-cover transition duration-200 group-hover:scale-[1.02] motion-reduce:transition-none\" loading=\"lazy\"></a><div class=\"min-w-0\"><div class=\"flex items-baseline gap-3\"><span class=\"font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%02d", index+1))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 41, Col: 120}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span><p class=\"text-xs font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Complexity: ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(recipe.Complexity)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 42, Col: 128}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></div><h2 class=\"mt-2 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\"><a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 templ.SafeURL
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(recipe.Href))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 45, Col: 40}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(recipe.Href)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 45, Col: 63}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-target=\"#main-content\" hx-push-url=\"true\" class=\"hover:text-primary dark:hover:text-primary-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(recipe.Title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 45, Col: 181}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</a></h2><p class=\"mt-3 max-w-2xl text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(recipe.Desc)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 47, Col: 96}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p><dl class=\"mt-5 grid gap-4 text-sm sm:grid-cols-2\"><div><dt class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Components</dt><dd class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(recipe.Components)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 51, Col: 95}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</dd></div><div><dt class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">States</dt><dd class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(recipe.States)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 55, Col: 91}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</dd></div></dl><div class=\"mt-6 flex flex-wrap items-center gap-4 text-sm font-medium\"><a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 templ.SafeURL
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(recipe.Href))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 59, Col: 40}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(recipe.Href)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 59, Col: 63}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" hx-target=\"#main-content\" hx-push-url=\"true\" class=\"text-primary hover:underline dark:text-primary-dark\">Run example</a> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 templ.SafeURL
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(exampleSourceURL(recipe.Source)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/index.templ`, Line: 60, Col: 60}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" target=\"_blank\" rel=\"noopener\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong\">View source</a></div></div></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -107,40 +280,22 @@ func IndexContent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"examples-fragment\" class=\"mx-auto max-w-4xl\"><h1 class=\"mb-2 text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Examples</h1><p class=\"mb-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Small, real apps built from Goshtoso components.</p><div class=\"grid gap-4 sm:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"examples-fragment\" class=\"mx-auto max-w-7xl\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Application recipes</p><h1 class=\"mt-2 text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Examples</h1><p class=\"mt-2 max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Seven runnable apps ordered from bounded CRUD and workflows through richer operational and realtime surfaces. Every entry names its component inventory, state coverage, and source entrypoint.</p><div class=\"mt-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = exampleCard("/examples/todo", "Todo List", "Cookie-backed, HTMX-driven task list with priorities, filters, and drag reorder.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		for index, recipe := range exampleRecipes() {
+			templ_7745c5c3_Err = exampleEntry(index, recipe).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		templ_7745c5c3_Err = exampleCard("/examples/expense", "Expense Tracker", "Cookie-backed spend log with search, category filters, pagination, a confirm-to-clear dialog, and a live running total.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = exampleCard("/examples/chat", "Chat", "Realtime full-duplex chat over htmx websockets with an ELIZA bot, presence, and live rename.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = exampleCard("/examples/logs", "Live Log Feed", "Streaming log viewer over Server-Sent Events: htmx appends rows, Alpine filters, pauses, and tracks connection status.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = exampleCard("/examples/profile", "Profile", "Avatar & cover upload to IndexedDB, cookie-backed name & bio, live theme and dark-mode customization.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = exampleCard("/examples/ticker", "Live Ticker", "A streaming stock-market watchlist powered by Server-Sent Events.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -38,8 +38,8 @@ func TestLinkBlankTargetAddsSafeRel(t *testing.T) {
 
 func TestLinkButtonStyle(t *testing.T) {
 	html := render(t, "#", WithAppearance(AppearanceButton), WithSize(SizeLarge))
-	if !strings.Contains(html, `role="button"`) {
-		t.Fatalf("expected button role: %s", html)
+	if strings.Contains(html, `role="button"`) {
+		t.Fatalf("button appearance must preserve native link semantics: %s", html)
 	}
 	if !strings.Contains(html, "bg-primary") || !strings.Contains(html, "text-base") {
 		t.Fatalf("expected button classes: %s", html)

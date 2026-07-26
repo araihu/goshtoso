@@ -36,11 +36,19 @@
 @source inline("md:translate-x-0");
 @source inline("md:w-64");
 
+/* Guaranteed application-layout contract used by the public recipes.
+   The embedded stylesheet is not a general Tailwind build for consumer markup;
+   keep this list explicit and covered by docs/application_guidance_contract_test.go. */
+@source inline("max-w-7xl min-h-64 min-w-[220px] first:pt-0 last:pb-0");
+@source inline("sm:text-4xl sm:col-span-2");
+@source inline("lg:col-span-2");
+@source inline("xl:grid-cols-4");
+
 /* ============================================
    THEME SYSTEM
    Imported from all-themes.css which provides:
    - @theme block with var() references (default theme tokens)
-   - @layer base with [data-theme=X] overrides for 13 themes
+   - @layer base with [data-theme=X] overrides for 15 themes
    ============================================ */
 @import "../all-themes.css";
 

@@ -1,0 +1,26 @@
+package emptystate
+
+// EmptyState renders guidance and an optional next action when a collection or
+// workspace has no content.
+templ emptyStateTemplate(cfg Config) {
+	<section class={ cfg.rootClasses() } { cfg.RootAttrs... }>
+		if cfg.Icon != nil {
+			<div class={ cfg.iconClasses() } aria-hidden="true" { cfg.IconAttrs... }>
+				@cfg.Icon
+			</div>
+		}
+		<div class="max-w-md">
+			<h2 class="text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
+				{ cfg.title() }
+			</h2>
+			<p class="mt-1 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">
+				{ cfg.description() }
+			</p>
+		</div>
+		if cfg.Action != nil {
+			<div class={ cfg.actionClasses() } { cfg.ActionAttrs... }>
+				@cfg.Action
+			</div>
+		}
+	</section>
+}

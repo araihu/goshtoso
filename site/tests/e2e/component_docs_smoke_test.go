@@ -14,6 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const componentDocsHeadingSelector = "#main-content h1[data-toc-heading]"
+
 func TestAllComponentDocsDirectLoad(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -30,7 +32,7 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 			require.NotNil(t, response)
 			require.Equal(t, http.StatusOK, response.Status())
 
-			heading, err := page.Locator("main h1").TextContent()
+			heading, err := page.Locator(componentDocsHeadingSelector).TextContent()
 			require.NoError(t, err)
 			require.Equal(t, entry.Title, strings.TrimSpace(heading))
 
@@ -62,7 +64,7 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 	}
 
 	entries := catalog.ComponentPages()
-	require.Len(t, entries, 42)
+	require.Len(t, entries, 47)
 
 	page := newPage(t, sharedBrowser)
 	failures := watchPageFailures(page)
@@ -177,8 +179,9 @@ func componentDocsHTMXSentinelSurvived(page playwright.Page, sentinel string) (b
 func componentDocsDestinationReady(entry catalog.Entry) string {
 	return fmt.Sprintf(
 		`() => window.location.pathname === %q &&
-			document.querySelector("main h1")?.textContent.trim() === %q`,
+			document.querySelector(%q)?.textContent.trim() === %q`,
 		entry.Path,
+		componentDocsHeadingSelector,
 		entry.Title,
 	)
 }
@@ -198,9 +201,10 @@ func requireComponentDocsDestination(
 	_, err := page.WaitForFunction(
 		fmt.Sprintf(
 			`() => window.location.pathname === %q &&
-				document.querySelector("main h1")?.textContent.trim() === %q &&
+				document.querySelector(%q)?.textContent.trim() === %q &&
 				document.querySelector(%q) !== null`,
 			entry.Path,
+			componentDocsHeadingSelector,
 			entry.Title,
 			activeSelector,
 		),
@@ -213,7 +217,7 @@ func requireComponentDocsDestination(
 	require.NoError(t, err)
 	require.Equal(t, entry.Path, path)
 
-	heading, err := page.Locator("main h1").TextContent()
+	heading, err := page.Locator(componentDocsHeadingSelector).TextContent()
 	require.NoError(t, err)
 	require.Equal(t, entry.Title, strings.TrimSpace(heading))
 

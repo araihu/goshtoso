@@ -14,6 +14,7 @@ import (
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/site/internal/examples/profile"
+	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
 // profileImagesScript returns the JS that registers the `profileImages` Alpine
@@ -98,20 +99,14 @@ templ profileScript() {
 	@templ.Raw("<script>" + profileImagesScript() + "</script>")
 }
 
-// themeOptions builds the theme <select> options, marking `current` selected.
-// Keep this list in sync with layout.templ getThemeOptions — package demo
-// imports examples (not the reverse), so the list can't be shared without an
-// import cycle; it is duplicated here intentionally.
+// themeOptions builds the non-default theme options, marking current selected.
 func themeOptions(current string) []selectfield.Option {
-	pairs := []struct{ Key, Label string }{
-		{"minimal", "Minimal"}, {"modern", "Modern"}, {"arctic", "Arctic"}, {"high-contrast", "High Contrast"},
-		{"neo-brutalism", "Neo Brutalism"}, {"news", "News"}, {"industrial", "Industrial"}, {"90s", "90s"},
-		{"pastel", "Pastel"}, {"christmas", "Christmas"}, {"halloween", "Halloween"}, {"zombie", "Halloween II"},
-		{"prototype", "Prototype"}, {"dracula", "Dracula"},
-	}
-	out := make([]selectfield.Option, 0, len(pairs))
-	for _, p := range pairs {
-		out = append(out, selectfield.Option{Value: p.Key, Label: p.Label, Selected: p.Key == current})
+	out := make([]selectfield.Option, 0, themes.Count()-1)
+	for _, theme := range themes.All() {
+		if theme.Key == "goshtoso" {
+			continue
+		}
+		out = append(out, selectfield.Option{Value: theme.Key, Label: theme.Label, Selected: theme.Key == current})
 	}
 	return out
 }

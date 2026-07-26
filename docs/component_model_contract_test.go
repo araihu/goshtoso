@@ -1,10 +1,14 @@
 package docs_test
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/araihu/goshtoso/components"
 )
 
 func TestConsumerButtonExamplesUseFunctionalOptions(t *testing.T) {
@@ -89,6 +93,24 @@ func TestConsumerChannelsAvoidObsoleteVariantVocabulary(t *testing.T) {
 }
 
 func TestConsumerDocsPublishCurrentInventoryCounts(t *testing.T) {
+	packageCount := countPublicComponentPackages(t)
+	documentationPageCount := strings.Count(
+		readDoc(t, "../site/internal/pages/catalog/catalog.go"),
+		`Key:         "components/`,
+	)
+	primitiveCount := len(components.AllKinds())
+	themeCount := strings.Count(readDoc(t, "../site/internal/themes/catalog.go"), "{Key:")
+
+	if packageCount != 48 || documentationPageCount != 47 || primitiveCount != 79 || themeCount != 15 {
+		t.Fatalf(
+			"unexpected source inventory: packages=%d pages=%d primitives=%d themes=%d",
+			packageCount,
+			documentationPageCount,
+			primitiveCount,
+			themeCount,
+		)
+	}
+
 	channels := map[string]string{
 		"README":      "../README.md",
 		"usage guide": "USAGE.md",
@@ -97,26 +119,60 @@ func TestConsumerDocsPublishCurrentInventoryCounts(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			content := readDoc(t, path)
 			for _, count := range []string{
-				"42 component packages",
-				"42 documentation pages",
-				"74 renderable primitives",
+				fmt.Sprintf("%d public component packages", packageCount),
+				fmt.Sprintf("%d documentation pages", documentationPageCount),
+				fmt.Sprintf("%d renderable primitives", primitiveCount),
 			} {
 				if !strings.Contains(content, count) {
 					t.Errorf("%s missing current inventory count %q", path, count)
 				}
 			}
-			if strings.Contains(content, "13 themes") {
-				t.Errorf("%s contains the stale 13-theme count", path)
+			if regexp.MustCompile(`\b(?:13|14)(?: built-in)? themes\b`).MatchString(content) {
+				t.Errorf("%s contains a stale theme count", path)
 			}
 		})
 	}
 
-	if content := readDoc(t, "../README.md"); !strings.Contains(content, "15 built-in themes") {
-		t.Error("../README.md missing the current 15 built-in themes count")
+	currentThemeCount := fmt.Sprintf("%d built-in themes", themeCount)
+	if content := readDoc(t, "../README.md"); !strings.Contains(content, currentThemeCount) {
+		t.Errorf("../README.md missing the current theme count %q", currentThemeCount)
 	}
-	if count := strings.Count(readDoc(t, "USAGE.md"), "15 themes"); count != 2 {
+	if count := strings.Count(readDoc(t, "USAGE.md"), fmt.Sprintf("%d themes", themeCount)); count != 2 {
 		t.Errorf("USAGE.md current theme count occurrences = %d, want 2", count)
 	}
+
+	generated := readDoc(t, "../.agents/skills/using-goshtoso/references/components-reference.md")
+	if !strings.Contains(generated, fmt.Sprintf("%d component packages", packageCount)) {
+		t.Errorf("generated component reference does not match %d source packages", packageCount)
+	}
+}
+
+func countPublicComponentPackages(t *testing.T) int {
+	t.Helper()
+	count := 0
+	err := filepath.WalkDir("../components", func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if !entry.IsDir() || path == "../components" {
+			return nil
+		}
+		files, err := os.ReadDir(path)
+		if err != nil {
+			return err
+		}
+		for _, file := range files {
+			if !file.IsDir() && strings.HasSuffix(file.Name(), ".go") && !strings.HasSuffix(file.Name(), "_test.go") {
+				count++
+				break
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("count component packages: %v", err)
+	}
+	return count
 }
 
 func TestGeneratedComponentReferenceKeepsCompleteToastActionLabelComment(t *testing.T) {
@@ -131,6 +187,25 @@ func TestGeneratedComponentReferenceKeepsCompleteToastActionLabelComment(t *test
 		}
 		if strings.Contains(content, "ActionLabel, when set, renders an inline action button in the toast (e.g. |") {
 			t.Errorf("%s contains the truncated Toast Config.ActionLabel description", path)
+		}
+	}
+}
+
+func TestGeneratedComponentReferenceKeepsCompleteAppShellHeaderComment(t *testing.T) {
+	complete := []string{
+		"Header renders inside AppShell's persistent &lt;header&gt; landmark; supply content, not another &lt;header&gt;; nil omits the wrapper.",
+		"Content renders inside the shell's single scrollable main region. When nil, AppShell renders its templ children as the content slot.",
+		`MainAttrs appends arbitrary HTML attributes to the main region. AppShell supplies tabindex="-1" by default so the skip-link target can receive programmatic focus; set tabindex here to override that default.`,
+	}
+	for _, path := range []string{
+		"../.agents/skills/using-goshtoso/references/components-reference.md",
+		"../.claude/skills/using-goshtoso/components-reference.md",
+	} {
+		content := readDoc(t, path)
+		for _, want := range complete {
+			if !strings.Contains(content, want) {
+				t.Errorf("%s missing complete Markdown-safe AppShell description %q", path, want)
+			}
 		}
 	}
 }

@@ -28,6 +28,11 @@ type DemoEntry struct {
 // "components/button", "docs/theme", "getting-started". Server handlers
 // translate their URL into a registry key.
 var Demos = map[string]DemoEntry{
+	"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
+	"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
+	"components/toolbar":          {Title: "Toolbar", Active: "toolbar", Content: toolbarDemoContent},
+	"components/empty-state":      {Title: "Empty State", Active: "empty-state", Content: emptyStateDemoContent},
+	"components/skeleton":         {Title: "Skeleton", Active: "skeleton", Content: skeletonDemoContent},
 	"components/accordion":        {Title: "Accordion", Active: "accordion", Content: accordionDemoContent},
 	"components/alert":            {Title: "Alert", Active: "alert", Content: alertDemoContent},
 	"components/avatar":           {Title: "Avatar", Active: "avatar", Content: avatarDemoContent},
@@ -71,6 +76,7 @@ var Demos = map[string]DemoEntry{
 	"components/structured-input": {Title: "Structured Input", Active: "structured-input", Content: structuredInputDemoContent},
 	"components/tooltip":          {Title: "Tooltip", Active: "tooltip", Content: tooltipDemoContent},
 	"docs/agents":                 {Title: "AI Agents", Active: "agents", Content: agentsContent},
+	"docs/application-patterns":   {Title: "Application Patterns", Active: "application-patterns", Content: applicationPatternsContent},
 	"docs/component-model":        {Title: "Component Model", Active: "component-model", Content: componentModelContent},
 	"docs/theme":                  {Title: "Theme", Active: "theme", Content: themeDemoContent},
 	"getting-started":             {Title: "Getting Started", Content: gettingStartedContent},
@@ -119,6 +125,8 @@ func DemoMeta(key string, entry DemoEntry) demo.PageMeta {
 		title = "Getting Started with Goshtoso Go UI Components"
 	case key == "docs/agents":
 		title = "Using Goshtoso With AI Agents"
+	case key == "docs/application-patterns":
+		title = "Application Patterns for Goshtoso"
 	case key == "docs/component-model":
 		title = "Goshtoso Component Model"
 	case key == "docs/theme":
@@ -160,21 +168,22 @@ func demoDescription(key string, entry DemoEntry) string {
 	}
 
 	descriptions := map[string]string{
-		"docs/agents":          "Install the Goshtoso consumer agent skill for AI coding tools and verify npx skills distribution.",
-		"docs/component-model": "Understand Goshtoso's common component interface, concrete return values, constructor styles, stable Kind identity, and rendered defaults.",
-		"docs/theme":           "Customize Goshtoso themes with Tailwind CSS tokens, dark mode, live previews, and server-rendered component examples.",
-		"getting-started":      "Start a Go HTMX app with Goshtoso, templ, Tailwind CSS, local runtime assets, and copy-pasteable setup code.",
-		"attributions":         "Review third-party licenses and asset attributions for the Goshtoso documentation site and component library.",
-		"license":              "Read the Goshtoso license terms for using the Go UI component library in personal and commercial projects.",
-		"privacy":              "Understand how the Goshtoso demo site uses browser storage for preferences and local example state without analytics.",
-		"examples":             "Explore full runnable Go apps built with Goshtoso components, HTMX fragments, Alpine.js state, and server-rendered templ pages.",
-		"examples/todo":        "Run a cookie-backed HTMX todo list example built with Goshtoso Go components and server-rendered fragments.",
-		"examples/expense":     "Track expenses in a cookie-backed HTMX example with search, category filters, pagination, a running total, and Goshtoso combobox, modal, and toast components.",
-		"examples/logs":        "Explore a live log feed example using Go, SSE, htmx-ext-sse, filters, and Goshtoso interface components.",
-		"examples/profile":     "Edit a profile settings screen composed from Goshtoso form, avatar, modal, toggle, and validation components.",
-		"examples/ticker":      "Watch a live ticker table update with Go server-sent events, HTMX row swaps, and Goshtoso table components.",
-		"examples/chat":        "Try a real-time Go chat interface with WebSockets, server-rendered message bubbles, and Goshtoso components.",
-		"examples/wizard":      "Step through a cookie-backed onboarding wizard with per-step server-side validation, HTMX fragment swaps, and Goshtoso steps, form, and toast components.",
+		"docs/agents":               "Install the Goshtoso consumer agent skill for AI coding tools and verify npx skills distribution.",
+		"docs/application-patterns": "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces from server-rendered Goshtoso components.",
+		"docs/component-model":      "Understand Goshtoso's common component interface, concrete return values, constructor styles, stable Kind identity, and rendered defaults.",
+		"docs/theme":                "Customize Goshtoso themes with Tailwind CSS tokens, dark mode, live previews, and server-rendered component examples.",
+		"getting-started":           "Start a Go HTMX app with Goshtoso, templ, Tailwind CSS, local runtime assets, and copy-pasteable setup code.",
+		"attributions":              "Review third-party licenses and asset attributions for the Goshtoso documentation site and component library.",
+		"license":                   "Read the Goshtoso license terms for using the Go UI component library in personal and commercial projects.",
+		"privacy":                   "Understand how the Goshtoso demo site uses browser storage for preferences and local example state without analytics.",
+		"examples":                  "Explore full runnable Go apps built with Goshtoso components, HTMX fragments, Alpine.js state, and server-rendered templ pages.",
+		"examples/todo":             "Run a cookie-backed HTMX todo list example built with Goshtoso Go components and server-rendered fragments.",
+		"examples/expense":          "Track expenses in a cookie-backed HTMX example with search, category filters, pagination, a running total, and Goshtoso combobox, modal, and toast components.",
+		"examples/logs":             "Explore a live log feed example using Go, SSE, htmx-ext-sse, filters, and Goshtoso interface components.",
+		"examples/profile":          "Edit a profile settings screen composed from Goshtoso form, avatar, modal, toggle, and validation components.",
+		"examples/ticker":           "Watch a live ticker table update with Go server-sent events, HTMX row swaps, and Goshtoso table components.",
+		"examples/chat":             "Try a real-time Go chat interface with WebSockets, server-rendered message bubbles, and Goshtoso components.",
+		"examples/wizard":           "Step through a cookie-backed onboarding wizard with per-step server-side validation, HTMX fragment swaps, and Goshtoso steps, form, and toast components.",
 	}
 	if description, ok := descriptions[key]; ok {
 		return description

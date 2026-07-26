@@ -72,9 +72,8 @@ func TestRelOmittedWithoutBlankTarget(t *testing.T) {
 }
 
 func TestRoleExplicitOverride(t *testing.T) {
-	// Explicit Role wins over the AppearanceButton default.
-	html := renderCfg(t, "#", WithAppearance(AppearanceButton), WithRole("link"))
-	if !strings.Contains(html, `role="link"`) {
+	html := renderCfg(t, "#", WithAppearance(AppearanceButton), WithRole("button"))
+	if !strings.Contains(html, `role="button"`) {
 		t.Fatalf("expected explicit role override: %s", html)
 	}
 }

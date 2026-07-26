@@ -49,7 +49,7 @@ templ linkDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Button Link",
-				Description: "Use AppearanceButton when navigation should visually match a primary action.",
+				Description: "Use AppearanceButton when navigation should visually match a primary action. It remains a native link unless you set a role explicitly.",
 			},
 			linkButtonPreview(),
 			`@link.Link("#", link.WithAppearance(link.AppearanceButton)) {

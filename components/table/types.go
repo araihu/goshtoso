@@ -75,7 +75,9 @@ type Row struct {
 	ID string
 	// Cells maps column keys to cell content
 	Cells map[string]Cell
-	// Link makes the row clickable — navigates when clicked.
+	// Link makes the row clickable — navigates when clicked. When Actions is
+	// also set, Goshtoso renders Link as a native anchor in the first data cell
+	// instead of making the row interactive, avoiding nested controls.
 	// The navigation strategy is controlled by LinkMode.
 	Link string
 	// LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area.
@@ -97,7 +99,9 @@ type Row struct {
 	Expandable bool
 	// Detail is rendered in the expanded panel below the row when Expandable is true
 	Detail templ.Component
-	// Actions is rendered in a trailing actions column (e.g., edit/delete buttons)
+	// Actions is rendered in a trailing actions column (e.g., edit/delete buttons).
+	// When combined with Link, the first data cell becomes the accessible link
+	// and the row itself remains non-interactive.
 	Actions templ.Component
 }
 
@@ -121,6 +125,21 @@ func (r Row) isActionable() bool {
 	return r.Link != "" || r.OnClick != "" || r.hasHTMXAction() || r.Expandable || r.Actions != nil
 }
 
+func (r Row) usesPrimaryCellLink() bool {
+	return r.Link != "" && r.Actions != nil
+}
+
+func (r Row) hasRowLink() bool {
+	return r.Link != "" && !r.usesPrimaryCellLink()
+}
+
+func (r Row) hasRowInteraction() bool {
+	if r.Link != "" {
+		return r.hasRowLink()
+	}
+	return r.OnClick != "" || r.hasHTMXAction() || r.Expandable
+}
+
 // HasHTMXAction reports whether the row has a row-level HTMX verb.
 func (r Row) hasHTMXAction() bool {
 	return r.HTMX != nil && (r.HTMX.Get != "" || r.HTMX.Post != "")
@@ -133,7 +152,10 @@ func (r Row) hasHTMXAction() bool {
 // focus. See table.templ for the tabindex/onkeydown pairing.
 func (r Row) clickableRole() string {
 	if r.Link != "" {
-		return "link"
+		if r.hasRowLink() {
+			return "link"
+		}
+		return ""
 	}
 	if r.OnClick != "" || r.hasHTMXAction() {
 		return "button"
@@ -451,9 +473,14 @@ func (cfg Config) getID() string {
 	return "table"
 }
 
-// TbodyID returns the ID for the tbody element
-func (cfg Config) tbodyID() string {
+// TbodyID returns the ID for the tbody element so consumer HTMX handlers can
+// target the same fragment contract as Table.
+func (cfg Config) TbodyID() string {
 	return cfg.getID() + "-tbody"
+}
+
+func (cfg Config) tbodyID() string {
+	return cfg.TbodyID()
 }
 
 // LazyLoadTrigger returns the htmx trigger used by lazy-loaded tbody requests.
@@ -464,14 +491,24 @@ func (cfg Config) lazyLoadTrigger() string {
 	return "load"
 }
 
-// TheadID returns the ID for the thead element
-func (cfg Config) theadID() string {
+// TheadID returns the ID for the table head element so consumer HTMX handlers
+// can replace sorting state out of band.
+func (cfg Config) TheadID() string {
 	return cfg.getID() + "-thead"
 }
 
-// PaginationID returns the ID for the pagination container
-func (cfg Config) paginationID() string {
+func (cfg Config) theadID() string {
+	return cfg.TheadID()
+}
+
+// PaginationID returns the ID for the pagination container so consumer HTMX
+// handlers can replace its controls out of band.
+func (cfg Config) PaginationID() string {
 	return cfg.getID() + "-pagination"
+}
+
+func (cfg Config) paginationID() string {
+	return cfg.PaginationID()
 }
 
 // PaginationBaseURL returns the base URL for pagination links with per_page and sort params

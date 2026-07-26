@@ -17,6 +17,7 @@ import (
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
 type exampleApp struct {
@@ -113,7 +114,7 @@ func LandingPage() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineJSURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 80, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 81, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -126,7 +127,7 @@ func LandingPage() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 81, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 82, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -180,7 +181,7 @@ func landingContent() templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(componentCount())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 125, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 126, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -277,29 +278,20 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><a href=\"/docs/theme\" class=\"text-xs font-medium text-primary underline underline-offset-2 dark:text-primary-dark\">Explore all 16 themes</a></div></div><div class=\"space-y-6 p-4 sm:p-6\"><div class=\"flex flex-wrap items-center gap-3 border-b border-outline pb-6 dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><a href=\"/docs/theme\" class=\"text-xs font-medium text-primary underline underline-offset-2 dark:text-primary-dark\">Explore all ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Primary")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(themes.Count())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 216, Col: 150}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " themes</a></div></div><div class=\"space-y-6 p-4 sm:p-6\"><div class=\"flex flex-wrap items-center gap-3 border-b border-outline pb-6 dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -315,13 +307,35 @@ func landingContent() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Secondary")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Primary")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneSecondary)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Secondary")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneSecondary)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -337,7 +351,7 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div class=\"overflow-x-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div><div class=\"overflow-x-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -355,25 +369,25 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div></div></section><!-- How it works --><section id=\"how-it-works\" class=\"mb-20 sm:mb-24\"><div class=\"mb-8 max-w-2xl\"><h2 class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">A short path from handler to interface.</h2><p class=\"mt-4 text-base leading-7 text-on-surface dark:text-on-surface-dark\">Use the Go tools you already know. Goshtoso adds the UI layer without moving your application into a client runtime.</p></div><div class=\"grid grid-cols-1 overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark md:grid-cols-3\"><div class=\"p-6 md:p-8\"><code class=\"mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark\">component.templ</code><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Compose typed templates</h3><p class=\"mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Write typed <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">.templ</code> components that compile directly to Go.</p></div><div class=\"border-y border-outline bg-surface-alt/40 p-6 dark:border-outline-dark dark:bg-surface-dark-alt/40 md:border-x md:border-y-0 md:p-8\"><code class=\"mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark\">hx-target=\"#main\"</code><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Return HTML fragments</h3><p class=\"mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Return rendered fragments from handlers and let HTMX swap plain HTML.</p></div><div class=\"p-6 md:p-8\"><code class=\"mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark\">go build ./...</code><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Ship one Go binary</h3><p class=\"mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Bundle runtime assets with no <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">node_modules</code>, CDN dependency, or client router.</p></div></div></section><!-- Example apps gallery --><section id=\"examples\" class=\"mb-28 sm:mb-32\"><div class=\"mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between\"><div><h2 class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Built with Goshtoso</h2><p class=\"mt-3 max-w-2xl text-on-surface dark:text-on-surface-dark\">Full applications that show components working together across forms, live data, streaming, and multi-step flows.</p></div><a href=\"/examples\" class=\"inline-flex shrink-0 items-center gap-2 text-sm font-bold text-primary underline-offset-4 hover:underline dark:text-primary-dark\">Explore every example <span aria-hidden=\"true\">→</span></a></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div></section><!-- How it works --><section id=\"how-it-works\" class=\"mb-20 sm:mb-24\"><div class=\"mb-8 max-w-2xl\"><h2 class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">A short path from handler to interface.</h2><p class=\"mt-4 text-base leading-7 text-on-surface dark:text-on-surface-dark\">Use the Go tools you already know. Goshtoso adds the UI layer without moving your application into a client runtime.</p></div><div class=\"grid grid-cols-1 overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark md:grid-cols-3\"><div class=\"p-6 md:p-8\"><code class=\"mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark\">component.templ</code><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Compose typed templates</h3><p class=\"mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Write typed <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">.templ</code> components that compile directly to Go.</p></div><div class=\"border-y border-outline bg-surface-alt/40 p-6 dark:border-outline-dark dark:bg-surface-dark-alt/40 md:border-x md:border-y-0 md:p-8\"><code class=\"mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark\">hx-target=\"#main\"</code><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Return HTML fragments</h3><p class=\"mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Return rendered fragments from handlers and let HTMX swap plain HTML.</p></div><div class=\"p-6 md:p-8\"><code class=\"mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark\">go build ./...</code><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Ship one Go binary</h3><p class=\"mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Bundle runtime assets with no <code class=\"font-mono text-on-surface-strong dark:text-on-surface-dark-strong\">node_modules</code>, CDN dependency, or client router.</p></div></div></section><!-- Example apps gallery --><section id=\"examples\" class=\"mb-28 sm:mb-32\"><div class=\"mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between\"><div><h2 class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Built with Goshtoso</h2><p class=\"mt-3 max-w-2xl text-on-surface dark:text-on-surface-dark\">Full applications that show components working together across forms, live data, streaming, and multi-step flows.</p></div><a href=\"/examples\" class=\"inline-flex shrink-0 items-center gap-2 text-sm font-bold text-primary underline-offset-4 hover:underline dark:text-primary-dark\">Explore every example <span aria-hidden=\"true\">→</span></a></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		featured := getFeaturedExampleApp()
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"space-y-6\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"space-y-6\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 templ.SafeURL
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(featured.URL))
+		var templ_7745c5c3_Var11 templ.SafeURL
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(featured.URL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 281, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 282, Col: 42}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" data-example-card data-featured-example-card class=\"group mx-auto block w-full max-w-sm rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark sm:max-w-none\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" data-example-card data-featured-example-card class=\"group mx-auto block w-full max-w-sm rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark sm:max-w-none\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -390,7 +404,7 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</a><div class=\"grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3\" role=\"region\" aria-label=\"Example applications\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</a><div class=\"grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3\" role=\"region\" aria-label=\"Example applications\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -399,42 +413,42 @@ func landingContent() templ.Component {
 			if i >= 2 {
 				supportingClass += " max-[479px]:hidden"
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var11 = []any{supportingClass}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
+			var templ_7745c5c3_Var12 = []any{supportingClass}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 templ.SafeURL
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.URL))
+			var templ_7745c5c3_Var13 templ.SafeURL
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.URL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 299, Col: 37}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 300, Col: 37}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" data-example-card data-supporting-example-card class=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var11).String())
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" data-example-card data-supporting-example-card class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var12).String())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -450,25 +464,38 @@ func landingContent() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></div></section><!-- Stack strip --><section id=\"stack-strip\" class=\"mb-16 rounded-radius border border-outline bg-surface-alt/60 px-6 py-8 text-center dark:border-outline-dark dark:bg-surface-dark-alt/60\"><p class=\"mb-4 text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">The stack stays yours</p><div class=\"flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm\"><a href=\"https://go.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Go</a> <a href=\"https://templ.guide/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Templ</a> <a href=\"https://tailwindcss.com/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Tailwind CSS</a> <a href=\"https://alpinejs.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Alpine.js</a> <a href=\"https://htmx.org/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">HTMX</a></div></section><!-- Footer --><footer class=\"flex flex-col gap-6 border-t border-outline pt-8 text-sm dark:border-outline-dark sm:flex-row sm:items-center sm:justify-between\"><div class=\"flex items-center gap-3\"><img src=\"/assets/images/goshtoso-icon.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-9 rounded-radius\"><p class=\"text-on-surface dark:text-on-surface-dark\"><span class=\"font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Goshtoso</span><br><span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div></section><!-- Stack strip --><section id=\"stack-strip\" class=\"mb-16 rounded-radius border border-outline bg-surface-alt/60 px-6 py-8 text-center dark:border-outline-dark dark:bg-surface-dark-alt/60\"><p class=\"mb-4 text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">The stack stays yours</p><div class=\"flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm\"><a href=\"https://go.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Go</a> <a href=\"https://templ.guide/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Templ</a> <a href=\"https://tailwindcss.com/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Tailwind CSS</a> <a href=\"https://alpinejs.dev/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Alpine.js</a> <a href=\"https://htmx.org/\" target=\"_blank\" rel=\"noopener\" class=\"font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">HTMX</a></div></section><!-- Footer --><footer class=\"flex flex-col gap-6 border-t border-outline pt-8 text-sm dark:border-outline-dark sm:flex-row sm:items-center sm:justify-between\"><div class=\"flex items-center gap-3\"><img src=\"/assets/images/goshtoso-icon.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-9 rounded-radius\"><p class=\"text-on-surface dark:text-on-surface-dark\"><span class=\"font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Goshtoso</span><br><span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(componentCount())
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(componentCount())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 329, Col: 263}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 330, Col: 263}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " components · 16 themes · local assets</span></p></div><div class=\"flex flex-wrap gap-x-5 gap-y-2\"><a href=\"/getting-started\" class=\"text-primary underline-offset-4 hover:underline dark:text-primary-dark\">Get started</a> <a href=\"/privacy\" class=\"text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark\">Privacy</a> <a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" rel=\"noopener\" class=\"text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark\">GitHub</a></div></footer></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " components · ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(themes.Count())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 330, Col: 296}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, " themes · local assets</span></p></div><div class=\"flex flex-wrap gap-x-5 gap-y-2\"><a href=\"/getting-started\" class=\"text-primary underline-offset-4 hover:underline dark:text-primary-dark\">Get started</a> <a href=\"/privacy\" class=\"text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark\">Privacy</a> <a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" rel=\"noopener\" class=\"text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark\">GitHub</a></div></footer></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -492,12 +519,12 @@ func exampleCardAction() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<span class=\"inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:gap-2 dark:text-primary-dark\">View app <span aria-hidden=\"true\">→</span></span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<span class=\"inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:gap-2 dark:text-primary-dark\">View app <span aria-hidden=\"true\">→</span></span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -523,12 +550,12 @@ func cookieConsent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var16 == nil {
-			templ_7745c5c3_Var16 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div x-data=\"{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }\" x-show=\"show\" x-cloak x-transition class=\"fixed inset-x-3 bottom-3 z-50 mx-auto max-w-xl rounded-radius border border-outline bg-surface/95 text-on-surface shadow-xl backdrop-blur dark:border-outline-dark dark:bg-surface-dark/95 dark:text-on-surface-dark sm:inset-x-auto sm:bottom-6 sm:right-6 sm:mx-0\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex flex-col gap-3 p-3 sm:gap-4 sm:p-5\"><h3 id=\"landing-cookie-title\" class=\"sr-only\">Browser storage</h3><p class=\"text-xs leading-5 text-on-surface dark:text-on-surface-dark sm:text-sm\">Store themes and demo preferences on this device. No analytics or tracking. <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"grid grid-cols-2 gap-2 sm:flex sm:justify-end\"><button @click=\"deny()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div x-data=\"{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }\" x-show=\"show\" x-cloak x-transition class=\"fixed inset-x-3 bottom-3 z-50 mx-auto max-w-xl rounded-radius border border-outline bg-surface/95 text-on-surface shadow-xl backdrop-blur dark:border-outline-dark dark:bg-surface-dark/95 dark:text-on-surface-dark sm:inset-x-auto sm:bottom-6 sm:right-6 sm:mx-0\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex flex-col gap-3 p-3 sm:gap-4 sm:p-5\"><h3 id=\"landing-cookie-title\" class=\"sr-only\">Browser storage</h3><p class=\"text-xs leading-5 text-on-surface dark:text-on-surface-dark sm:text-sm\">Store themes and demo preferences on this device. No analytics or tracking. <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"grid grid-cols-2 gap-2 sm:flex sm:justify-end\"><button @click=\"deny()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -552,9 +579,9 @@ func storageConsentScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templ.Raw(`<script>(function(){if(window.goshtosoStorageConsent)return;var pref='gt_storage';var maxAge=15552000;var demoCookies=['gt_todo','gt_profile','gt_chat'];var localKeys=['theme','darkMode','themeOverrides','themeTitleFont','themeBodyFont','themeRadius','themeCssMode','themeCssFilter','cookieConsent'];function cookieValue(name){var parts=document.cookie?document.cookie.split('; '):[];for(var i=0;i<parts.length;i++){var p=parts[i];var eq=p.indexOf('=');var key=eq>=0?p.slice(0,eq):p;if(key===name)return eq>=0?decodeURIComponent(p.slice(eq+1)):'';}return '';}function setCookie(name,value,age){document.cookie=name+'='+encodeURIComponent(value)+'; Path=/; Max-Age='+age+'; SameSite=Lax';}function expireCookie(name){setCookie(name,'',0);}function clearLocalStorage(){try{localKeys.forEach(function(key){localStorage.removeItem(key);});}catch(e){}}function clearIndexedDB(){try{if(window.indexedDB&&indexedDB.deleteDatabase)indexedDB.deleteDatabase('gt_profile');}catch(e){}}window.goshtosoStorageConsent={shouldShow:function(){var v=cookieValue(pref);return v!=='allowed'&&v!=='denied';},allowed:function(){return cookieValue(pref)==='allowed';},allow:function(){setCookie(pref,'allowed',maxAge);try{localStorage.setItem('cookieConsent','v2');}catch(e){}},deny:function(){setCookie(pref,'denied',maxAge);demoCookies.forEach(expireCookie);clearLocalStorage();clearIndexedDB();}};if(cookieValue(pref)!=='allowed'){clearLocalStorage();clearIndexedDB();}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)

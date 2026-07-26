@@ -303,7 +303,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 	t.Run("FooterThemeCount", func(t *testing.T) {
 		body, err := page.Locator("body").InnerText()
 		require.NoError(t, err)
-		require.Contains(t, body, "16 themes", "homepage footer should match the theme picker count")
+		require.Contains(t, body, "15 themes", "homepage footer should match the theme picker count")
 	})
 }
 

@@ -11,13 +11,13 @@ func TestComponentSidebarAndNavigationFollowCatalogOrder(t *testing.T) {
 	pages := catalog.ComponentPages()
 	sections := getSidebarSections("button")
 
-	require.Len(t, sections, 5)
-	require.Equal(t, "Example Apps", sections[4].Title)
-	require.Len(t, sections[4].Items, 7)
+	require.Len(t, sections, 6)
+	require.Equal(t, "Example Apps", sections[5].Title)
+	require.Len(t, sections[5].Items, 7)
 
 	var componentItems int
 	pageIndex := 0
-	for _, section := range sections[:4] {
+	for _, section := range sections[:5] {
 		for _, item := range section.Items {
 			page := pages[pageIndex]
 			require.Equal(t, page.Section, section.Title)

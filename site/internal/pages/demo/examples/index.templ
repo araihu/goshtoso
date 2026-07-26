@@ -1,33 +1,80 @@
 package examples
 
-// exampleCard is one entry in the examples gallery.
-templ exampleCard(href, title, desc string) {
-	<a
-		href={ templ.SafeURL(href) }
-		hx-get={ href }
-		hx-target="#main-content"
-		hx-push-url="true"
-		class="block rounded-radius border border-outline bg-surface p-5 transition hover:border-primary dark:border-outline-dark dark:bg-surface-dark dark:hover:border-primary-dark"
-	>
-		<h3 class="mb-1 text-lg font-semibold text-on-surface dark:text-on-surface-dark">{ title }</h3>
-		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ desc }</p>
-	</a>
+import "fmt"
+
+type exampleRecipe struct {
+	Href       string
+	Title      string
+	Desc       string
+	Complexity string
+	Components string
+	States     string
+	Source     string
+	Image      string
+	ImageAlt   string
+}
+
+func exampleRecipes() []exampleRecipe {
+	return []exampleRecipe{
+		{Href: "/examples/todo", Title: "Todo List", Desc: "Cookie-backed task operations with filters, reorder, inline edit, undo, and HTMX fragments.", Complexity: "Intermediate", Components: "Badge, Button, Radio, Select, Text Input, Toast", States: "Empty, filtered, success, undo", Source: "todo.templ", Image: "/assets/images/homepage/examples/todo.webp", ImageAlt: "Abstract checklist cards with a large checkmark"},
+		{Href: "/examples/wizard", Title: "Onboarding Wizard", Desc: "Server-validated multi-step onboarding with persisted progress, review, confirmation, and reset.", Complexity: "Advanced", Components: "Badge, Button, Select, Steps, Text Input, Toast", States: "Editing, invalid, review, success", Source: "wizard.templ", Image: "/assets/images/homepage/examples/wizard.webp", ImageAlt: "Abstract connected onboarding steps leading to a flag"},
+		{Href: "/examples/expense", Title: "Expense Tracker", Desc: "Spend operations with search, category filters, pagination, confirm-to-clear, and a live total.", Complexity: "Advanced", Components: "Badge, Button, Combobox, Modal, Pagination, Radio, Text Input, Toast", States: "Empty, filtered, success, destructive confirm", Source: "expense.templ", Image: "/assets/images/homepage/examples/expense.webp", ImageAlt: "Abstract receipts, coins, and a pie chart"},
+		{Href: "/examples/profile", Title: "Profile", Desc: "Settings workspace with identity, uploads, validation, theme controls, and local persistence.", Complexity: "Advanced", Components: "Avatar, Badge, File Input, Modal, Tabs, inputs, Toast, Toggle", States: "Editing, invalid, saved, destructive confirm", Source: "profile.templ", Image: "/assets/images/homepage/examples/profile.webp", ImageAlt: "Abstract profile badge with toggles and color swatches"},
+		{Href: "/examples/ticker", Title: "Live Ticker", Desc: "Streaming market watchlist with a sortable table, focused rows, and live SSE updates.", Complexity: "Intermediate", Components: "Badge, Card, Spinner, Table, Toggle", States: "Loading, streaming, filtered, disconnected", Source: "ticker.templ", Image: "/assets/images/homepage/examples/ticker.webp", ImageAlt: "Abstract upward data line with rounded nodes"},
+		{Href: "/examples/chat", Title: "Chat", Desc: "Realtime full-duplex chat over HTMX WebSockets with presence, rename, and an ELIZA bot.", Complexity: "Advanced", Components: "Avatar, Badge, Button, Chat Bubble, Textarea, Text Input, Toggle", States: "Connecting, connected, message, presence", Source: "chat.templ", Image: "/assets/images/homepage/examples/chat.webp", ImageAlt: "Abstract overlapping chat bubbles with a signal ripple"},
+		{Href: "/examples/logs", Title: "Live Log Feed", Desc: "SSE log viewer with append swaps, local filtering, pause, connection status, and bounded history.", Complexity: "Advanced", Components: "Badge, Button, Select, Spinner, Toggle, Tooltip", States: "Connecting, streaming, paused, filtered", Source: "logs.templ", Image: "/assets/images/homepage/examples/logs.webp", ImageAlt: "Abstract streaming log rows with colored status dots"},
+	}
+}
+
+func exampleSourceURL(source string) string {
+	return "https://github.com/araihu/goshtoso/blob/main/site/internal/pages/demo/examples/" + source
+}
+
+// exampleEntry is one extractable app in the editorial examples index.
+templ exampleEntry(index int, recipe exampleRecipe) {
+	<article data-example-recipe class="grid gap-6 border-t border-outline py-8 first:pt-0 dark:border-outline-dark md:grid-cols-[minmax(0,2fr)_minmax(18rem,3fr)] md:items-start md:gap-10">
+		<a href={ templ.SafeURL(recipe.Href) } hx-get={ recipe.Href } hx-target="#main-content" hx-push-url="true" class="group block overflow-hidden rounded-radius border border-outline bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-primary-dark">
+			<img src={ recipe.Image } alt={ recipe.ImageAlt } class="aspect-[16/10] w-full object-cover transition duration-200 group-hover:scale-[1.02] motion-reduce:transition-none" loading="lazy"/>
+		</a>
+		<div class="min-w-0">
+			<div class="flex items-baseline gap-3">
+				<span class="font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ fmt.Sprintf("%02d", index+1) }</span>
+				<p class="text-xs font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Complexity: { recipe.Complexity }</p>
+			</div>
+			<h2 class="mt-2 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
+				<a href={ templ.SafeURL(recipe.Href) } hx-get={ recipe.Href } hx-target="#main-content" hx-push-url="true" class="hover:text-primary dark:hover:text-primary-dark">{ recipe.Title }</a>
+			</h2>
+			<p class="mt-3 max-w-2xl text-on-surface-muted dark:text-on-surface-dark-muted">{ recipe.Desc }</p>
+			<dl class="mt-5 grid gap-4 text-sm sm:grid-cols-2">
+				<div>
+					<dt class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Components</dt>
+					<dd class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">{ recipe.Components }</dd>
+				</div>
+				<div>
+					<dt class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">States</dt>
+					<dd class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">{ recipe.States }</dd>
+				</div>
+			</dl>
+			<div class="mt-6 flex flex-wrap items-center gap-4 text-sm font-medium">
+				<a href={ templ.SafeURL(recipe.Href) } hx-get={ recipe.Href } hx-target="#main-content" hx-push-url="true" class="text-primary hover:underline dark:text-primary-dark">Run example</a>
+				<a href={ templ.SafeURL(exampleSourceURL(recipe.Source)) } target="_blank" rel="noopener" class="text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong">View source</a>
+			</div>
+		</div>
+	</article>
 }
 
 // IndexContent is the /examples landing page: a gallery of example apps.
 templ IndexContent() {
-	<div id="examples-fragment" class="mx-auto max-w-4xl">
-		<h1 class="mb-2 text-2xl font-bold text-on-surface dark:text-on-surface-dark">Examples</h1>
-		<p class="mb-6 text-on-surface-muted dark:text-on-surface-dark-muted">
-			Small, real apps built from Goshtoso components.
+	<div id="examples-fragment" class="mx-auto max-w-7xl">
+		<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Application recipes</p>
+		<h1 class="mt-2 text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Examples</h1>
+		<p class="mt-2 max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">
+			Seven runnable apps ordered from bounded CRUD and workflows through richer operational and realtime surfaces. Every entry names its component inventory, state coverage, and source entrypoint.
 		</p>
-		<div class="grid gap-4 sm:grid-cols-2">
-			@exampleCard("/examples/todo", "Todo List", "Cookie-backed, HTMX-driven task list with priorities, filters, and drag reorder.")
-			@exampleCard("/examples/expense", "Expense Tracker", "Cookie-backed spend log with search, category filters, pagination, a confirm-to-clear dialog, and a live running total.")
-			@exampleCard("/examples/chat", "Chat", "Realtime full-duplex chat over htmx websockets with an ELIZA bot, presence, and live rename.")
-			@exampleCard("/examples/logs", "Live Log Feed", "Streaming log viewer over Server-Sent Events: htmx appends rows, Alpine filters, pauses, and tracks connection status.")
-			@exampleCard("/examples/profile", "Profile", "Avatar & cover upload to IndexedDB, cookie-backed name & bio, live theme and dark-mode customization.")
-			@exampleCard("/examples/ticker", "Live Ticker", "A streaming stock-market watchlist powered by Server-Sent Events.")
+		<div class="mt-10">
+			for index, recipe := range exampleRecipes() {
+				@exampleEntry(index, recipe)
+			}
 		</div>
 	</div>
 }

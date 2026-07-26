@@ -48,6 +48,23 @@ templ buttonDemoContent() {
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Native form actions",
+				Description: "Use WithAttrs for native name, value, formaction, data-*, or aria-* attributes not covered by a dedicated option.",
+			},
+			buttonFormActionsPreview(),
+			`@button.Button(
+    button.WithType("submit"),
+    button.WithTone(button.ToneAlternate),
+    button.WithAttrs(templ.Attributes{"name": "action", "value": "back"}),
+) { Back }
+
+@button.Button(
+    button.WithType("submit"),
+    button.WithAttrs(templ.Attributes{"name": "action", "value": "continue"}),
+) { Continue }`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "HTMX Interactions",
 				Description: "Attach an HTMX config to fire a request on click. Supports Get/Post/Delete, a Confirm prompt, a loading Indicator, and LoadingText.",
 			},
@@ -70,6 +87,24 @@ templ buttonDemoContent() {
 ) { Delete }`,
 		)
 	</div>
+}
+
+templ buttonFormActionsPreview() {
+	<form id="button-form-actions" class="flex flex-col gap-3 sm:flex-row" action="/components/button" method="get">
+		@button.Button(
+			button.WithType("submit"),
+			button.WithTone(button.ToneAlternate),
+			button.WithAttrs(templ.Attributes{"name": "action", "value": "back"}),
+		) {
+			Back
+		}
+		@button.Button(
+			button.WithType("submit"),
+			button.WithAttrs(templ.Attributes{"name": "action", "value": "continue"}),
+		) {
+			Continue
+		}
+	</form>
 }
 
 // buttonVariantsPreview renders the eight color variants (the ButtonFragment grid).

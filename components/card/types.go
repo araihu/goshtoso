@@ -30,6 +30,8 @@ type Config struct {
 	Title string
 	// Description is the card body text
 	Description string
+	// Body renders arbitrary content between Description and Footer.
+	Body templ.Component
 	// Footer is optional footer content (buttons, links, etc.)
 	Footer templ.Component
 	// Appearance determines the card's visual treatment.

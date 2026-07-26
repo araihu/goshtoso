@@ -41,6 +41,39 @@ func Alert(config Config) templ.Component { return nil }
 	}
 }
 
+func TestRunPreservesMultilineFieldDocsAndEscapesHTML(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "appshell", "types.go"), `package appshell
+
+import "github.com/a-h/templ"
+
+type Config struct {
+	// Header renders inside the persistent <header> landmark.
+	Header templ.Component
+	// Content renders inside the main region. When
+	// nil, templ children become the content slot.
+	Content templ.Component
+}
+
+func AppShell(config Config) templ.Component { return nil }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	for _, want := range []string{
+		"Header renders inside the persistent &lt;header&gt; landmark.",
+		"Content renders inside the main region. When nil, templ children become the content slot.",
+	} {
+		if !strings.Contains(reference, want) {
+			t.Errorf("generated reference missing complete Markdown-safe field doc %q:\n%s", want, reference)
+		}
+	}
+}
+
 func TestRunIntroducesTheComponentModel(t *testing.T) {
 	t.Chdir(t.TempDir())
 

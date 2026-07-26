@@ -8,6 +8,7 @@ import (
 	palettecomp "github.com/araihu/goshtoso/components/palette"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
 // fontSelectOptions builds Select options from the font list (value = label).
@@ -94,23 +95,30 @@ type ThemeInfo struct {
 }
 
 func getThemeInfos() []ThemeInfo {
-	return []ThemeInfo{
-		{Key: "goshtoso", Label: "Goshtoso", PrimaryClass: "bg-[#2276aa]", SecondaryClass: "bg-[#4b7d1c]"},
-		{Key: "arctic", Label: "Arctic", PrimaryClass: "bg-blue-700", SecondaryClass: "bg-indigo-700"},
-		{Key: "high-contrast", Label: "High Contrast", PrimaryClass: "bg-sky-900", SecondaryClass: "bg-indigo-900"},
-		{Key: "minimal", Label: "Minimal", PrimaryClass: "bg-black", SecondaryClass: "bg-neutral-800"},
-		{Key: "modern", Label: "Modern", PrimaryClass: "bg-black", SecondaryClass: "bg-neutral-800"},
-		{Key: "neo-brutalism", Label: "Neo Brutalism", PrimaryClass: "bg-violet-500", SecondaryClass: "bg-lime-400"},
-		{Key: "halloween", Label: "Halloween", PrimaryClass: "bg-orange-400", SecondaryClass: "bg-purple-600"},
-		{Key: "zombie", Label: "Halloween II", PrimaryClass: "bg-orange-400", SecondaryClass: "bg-purple-600"},
-		{Key: "pastel", Label: "Pastel", PrimaryClass: "bg-rose-400", SecondaryClass: "bg-orange-200"},
-		{Key: "90s", Label: "90s", PrimaryClass: "bg-purple-500", SecondaryClass: "bg-sky-500"},
-		{Key: "christmas", Label: "Christmas", PrimaryClass: "bg-red-600", SecondaryClass: "bg-emerald-700"},
-		{Key: "prototype", Label: "Prototype", PrimaryClass: "bg-black", SecondaryClass: "bg-neutral-700"},
-		{Key: "news", Label: "News", PrimaryClass: "bg-sky-700", SecondaryClass: "bg-black"},
-		{Key: "industrial", Label: "Industrial", PrimaryClass: "bg-amber-500", SecondaryClass: "bg-stone-900"},
-		{Key: "dracula", Label: "Dracula", PrimaryClass: "bg-purple-400", SecondaryClass: "bg-pink-400"},
+	classes := map[string][2]string{
+		"goshtoso":       {"bg-[#2276aa]", "bg-[#4b7d1c]"},
+		"arctic":         {"bg-blue-700", "bg-indigo-700"},
+		"high-contrast":  {"bg-sky-900", "bg-indigo-900"},
+		"minimal":        {"bg-black", "bg-neutral-800"},
+		"modern":         {"bg-black", "bg-neutral-800"},
+		"neo-brutalism":  {"bg-violet-500", "bg-lime-400"},
+		"halloween":      {"bg-orange-400", "bg-purple-600"},
+		"zombie":         {"bg-orange-400", "bg-purple-600"},
+		"pastel":         {"bg-rose-400", "bg-orange-200"},
+		"90s":            {"bg-purple-500", "bg-sky-500"},
+		"christmas":      {"bg-red-600", "bg-emerald-700"},
+		"prototype":      {"bg-black", "bg-neutral-700"},
+		"news":           {"bg-sky-700", "bg-black"},
+		"industrial":     {"bg-amber-500", "bg-stone-900"},
+		"dracula":        {"bg-purple-400", "bg-pink-400"},
 	}
+	all := themes.All()
+	infos := make([]ThemeInfo, 0, len(all))
+	for _, theme := range all {
+		style := classes[theme.Key]
+		infos = append(infos, ThemeInfo{Key: theme.Key, Label: theme.Label, PrimaryClass: style[0], SecondaryClass: style[1]})
+	}
+	return infos
 }
 
 // FontOption is one entry in the typography font picker dropdowns.
@@ -277,11 +285,11 @@ func getThemeCSSBlocks() map[string]string {
     --color-outline-dark: var(--color-slate-700);
     --color-outline-dark-strong: var(--color-slate-300);
     --color-info: var(--color-sky-600);
-    --color-on-info: var(--color-white);
+    --color-on-info: var(--color-black);
     --color-success: var(--color-green-600);
-    --color-on-success: var(--color-white);
+    --color-on-success: var(--color-black);
     --color-warning: var(--color-amber-500);
-    --color-on-warning: var(--color-white);
+    --color-on-warning: var(--color-black);
     --color-danger: var(--color-red-600);
     --color-on-danger: var(--color-white);
     --radius-radius: var(--radius-lg);
@@ -297,11 +305,11 @@ func getThemeCSSBlocks() map[string]string {
     --color-on-primary: var(--color-neutral-100);
     --color-secondary: var(--color-neutral-800);
     --color-on-secondary: var(--color-white);
-    --color-outline: var(--color-neutral-300);
+    --color-outline: transparent;
     --color-outline-strong: var(--color-neutral-800);
     --color-surface-dark: var(--color-neutral-950);
     --color-surface-dark-alt: var(--color-neutral-800);
-    --color-on-surface-dark: var(--color-neutral-400);
+    --color-on-surface-dark: var(--color-neutral-300);
     --color-on-surface-dark-strong: var(--color-neutral-100);
     --color-primary-dark: var(--color-white);
     --color-on-primary-dark: var(--color-black);

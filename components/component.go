@@ -90,6 +90,11 @@ const (
 	KindOOBMessageToast        Kind = "oob-message-toast"
 	KindToggle                 Kind = "toggle"
 	KindTooltip                Kind = "tooltip"
+	KindAppShell               Kind = "app-shell"
+	KindPageHeader             Kind = "page-header"
+	KindToolbar                Kind = "toolbar"
+	KindEmptyState             Kind = "empty-state"
+	KindSkeleton               Kind = "skeleton"
 )
 
 var allKinds = []Kind{
@@ -167,6 +172,11 @@ var allKinds = []Kind{
 	KindOOBMessageToast,
 	KindToggle,
 	KindTooltip,
+	KindAppShell,
+	KindPageHeader,
+	KindToolbar,
+	KindEmptyState,
+	KindSkeleton,
 }
 
 // AllKinds returns every supported component kind in stable order.

@@ -16,6 +16,11 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		path    string
 		section string
 	}{
+		{"/components/app-shell", "Composition"},
+		{"/components/page-header", "Composition"},
+		{"/components/toolbar", "Composition"},
+		{"/components/empty-state", "Composition"},
+		{"/components/skeleton", "Composition"},
 		{"/components/accordion", "Display"},
 		{"/components/avatar", "Display"},
 		{"/components/badge", "Display"},
@@ -61,7 +66,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 	}
 
 	pages := catalog.ComponentPages()
-	require.Len(t, pages, 42)
+	require.Len(t, pages, 47)
 	require.Len(t, pages, len(expected))
 
 	seen := map[string]bool{}
@@ -74,21 +79,32 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		require.NotEmpty(t, page.Title)
 		require.NotEmpty(t, page.Active)
 		require.NotEmpty(t, page.Description)
-		require.Equal(
-			t,
-			"github.com/araihu/goshtoso/"+strings.ReplaceAll(page.Key, "-", ""),
-			page.GoPackagePath(),
-		)
+		expectedPackagePath := "github.com/araihu/goshtoso/" + strings.ReplaceAll(page.Key, "-", "")
+		if page.Key == "components/dependencies" {
+			expectedPackagePath = "github.com/araihu/goshtoso/components/head"
+		}
+		require.Equal(t, expectedPackagePath, page.GoPackagePath())
 		activeEntry, ok := catalog.LookupActive(page.Active)
 		require.True(t, ok)
 		require.Equal(t, page.Key, activeEntry.Key)
-		require.Equal(
-			t,
-			"https://pkg.go.dev/github.com/araihu/goshtoso@v0.0.12/"+strings.ReplaceAll(page.Key, "-", ""),
-			page.GoDocsURL("v0.0.12"),
-		)
+		expectedDocsURL := "https://pkg.go.dev/github.com/araihu/goshtoso@v0.0.12/" + strings.ReplaceAll(page.Key, "-", "")
+		if page.Key == "components/dependencies" {
+			expectedDocsURL = "https://pkg.go.dev/github.com/araihu/goshtoso@v0.0.12/components/head"
+		}
+		require.Equal(t, expectedDocsURL, page.GoDocsURL("v0.0.12"))
 		seen[page.Path] = true
 	}
+}
+
+func TestDependenciesDocumentationMapsToHeadPackage(t *testing.T) {
+	entry, ok := catalog.Lookup("components/dependencies")
+	require.True(t, ok)
+	require.Equal(t, "github.com/araihu/goshtoso/components/head", entry.GoPackagePath())
+	require.Equal(
+		t,
+		"https://pkg.go.dev/github.com/araihu/goshtoso@v0.0.12/components/head",
+		entry.GoDocsURL("v0.0.12"),
+	)
 }
 
 func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {
@@ -102,7 +118,7 @@ func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {
 		}
 	}
 
-	require.Len(t, got, 74)
+	require.Len(t, got, 79)
 	want := components.AllKinds()
 	slices.Sort(got)
 	slices.Sort(want)
@@ -130,7 +146,7 @@ func TestComponentCatalogPathsMatchDemoRegistryExactly(t *testing.T) {
 
 	slices.Sort(catalogKeys)
 	slices.Sort(registryKeys)
-	require.Len(t, catalogKeys, 42)
+	require.Len(t, catalogKeys, 47)
 	require.Equal(t, catalogKeys, registryKeys)
 }
 

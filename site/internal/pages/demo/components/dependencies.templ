@@ -39,7 +39,8 @@ templ dependenciesDemoContent() {
 			dependenciesAssetContractPreview(),
 			`import "github.com/araihu/goshtoso/assets"
 
-http.Handle("/assets/", assets.Handler())`,
+mux := http.NewServeMux()
+mux.Handle("GET /assets/", assets.Handler())`,
 		)
 	</div>
 }
@@ -66,7 +67,7 @@ templ dependenciesAssetContractPreview() {
 	<div id="dependencies-asset-contract" class="w-full max-w-2xl mx-auto">
 		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
 			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Serve bundled assets</p>
-			<pre class="mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"><code>http.Handle("/assets/", assets.Handler())</code></pre>
+			<pre class="mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"><code>mux.Handle("GET /assets/", assets.Handler())</code></pre>
 		</div>
 	</div>
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
 type exampleApp struct {
@@ -212,7 +213,7 @@ templ landingContent() {
 									}
 								}
 							</div>
-							<a href="/docs/theme" class="text-xs font-medium text-primary underline underline-offset-2 dark:text-primary-dark">Explore all 16 themes</a>
+							<a href="/docs/theme" class="text-xs font-medium text-primary underline underline-offset-2 dark:text-primary-dark">Explore all { themes.Count() } themes</a>
 						</div>
 					</div>
 					<div class="space-y-6 p-4 sm:p-6">
@@ -326,7 +327,7 @@ templ landingContent() {
 			<footer class="flex flex-col gap-6 border-t border-outline pt-8 text-sm dark:border-outline-dark sm:flex-row sm:items-center sm:justify-between">
 				<div class="flex items-center gap-3">
 					<img src="/assets/images/goshtoso-icon.svg" alt="" aria-hidden="true" class="size-9 rounded-radius"/>
-					<p class="text-on-surface dark:text-on-surface-dark"><span class="font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso</span><br/><span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ componentCount() } components · 16 themes · local assets</span></p>
+					<p class="text-on-surface dark:text-on-surface-dark"><span class="font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso</span><br/><span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ componentCount() } components · { themes.Count() } themes · local assets</span></p>
 				</div>
 				<div class="flex flex-wrap gap-x-5 gap-y-2">
 					<a href="/getting-started" class="text-primary underline-offset-4 hover:underline dark:text-primary-dark">Get started</a>

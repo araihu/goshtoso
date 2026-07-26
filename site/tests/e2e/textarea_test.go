@@ -130,6 +130,13 @@ func TestTextarea_GoshtosoComponent(t *testing.T) {
 		t.Log("✓ Disabled textarea renders correctly")
 	})
 
+	t.Run("Required_Textarea_Renders_Native_Constraint", func(t *testing.T) {
+		ta := page.Locator("textarea#demo-required")
+		required, err := ta.GetAttribute("required")
+		require.NoError(t, err)
+		assert.Equal(t, "", required)
+	})
+
 	t.Run("Actions_Textarea_Renders", func(t *testing.T) {
 		ta := page.Locator("textarea#demo-actions")
 		visible, err := ta.IsVisible()

@@ -67,11 +67,22 @@ func TestButtonCoverageDemo(t *testing.T) {
 			"#button-variants",
 			"#button-sizes",
 			"#button-disabled",
+			"#button-form-actions",
 			"#button-htmx",
 		} {
 			visible, err := page.Locator(id).IsVisible()
 			require.NoError(t, err)
 			require.True(t, visible, "container %s should be visible", id)
+		}
+	})
+
+	t.Run("NativeFormActionsRender", func(t *testing.T) {
+		back := page.Locator(`#button-form-actions button[name="action"][value="back"]`)
+		advance := page.Locator(`#button-form-actions button[name="action"][value="continue"]`)
+		for _, action := range []playwright.Locator{back, advance} {
+			visible, err := action.IsVisible()
+			require.NoError(t, err)
+			require.True(t, visible)
 		}
 	})
 

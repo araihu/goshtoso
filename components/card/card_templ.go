@@ -304,6 +304,12 @@ func cardTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
+		if cfg.Body != nil {
+			templ_7745c5c3_Err = cfg.Body.Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
 		if cfg.Footer != nil {
 			templ_7745c5c3_Err = cfg.Footer.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

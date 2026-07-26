@@ -16,20 +16,30 @@ modifying the Goshtoso component library or demo site itself.
 ## Default Integration
 
 Use this path unless the app deliberately owns a custom Tailwind build.
+Goshtoso requires **Go 1.26.5 or newer**.
 
 ```bash
 go get github.com/araihu/goshtoso@latest
 go get github.com/a-h/templ
 go install github.com/a-h/templ/cmd/templ@latest
 templ generate
+go mod tidy
+go test ./...
 ```
 
-Mount Goshtoso assets directly at `/assets/`:
+Create the consumer's `.templ` file before `templ generate`. Run
+`templ generate` before `go mod tidy`: generated Go is what makes the templ
+runtime import visible, while tidying an empty pre-generation module can remove
+the dependency you are about to need.
+
+Mount Goshtoso assets directly at `/assets/` with a method-qualified Go
+`ServeMux` pattern:
 
 ```go
 import "github.com/araihu/goshtoso/assets"
 
-http.Handle("/assets/", assets.Handler())
+mux := http.NewServeMux()
+mux.Handle("GET /assets/", assets.Handler())
 ```
 
 Do not wrap `assets.Handler()` in `http.StripPrefix`; it already strips
@@ -83,10 +93,40 @@ before choosing between constructors or configuration fields. It documents the
 common component interface, concrete return values, constructor styles, stable
 Kind identity, and rendered defaults.
 
+## From First Component to Application
+
+Do not invent the page around isolated components. Choose the closest task
+pattern and read `references/application-patterns.md` before composing it:
+
+- **App Shell** starts with `appshell.AppShell`, then supplies navigation,
+  sidebar, global search, and route content.
+- **Operations List** combines `pageheader.PageHeader`, `toolbar.Toolbar`,
+  `table.Table`, `skeleton.Skeleton`, and `emptystate.EmptyState`.
+- **Detail Workspace** combines `pageheader.PageHeader`, identity, status,
+  tabs, actions, and a secondary detail rail.
+- **Multi-step Workflow** combines `pageheader.PageHeader`, Steps, Form,
+  server validation, review, and safe submission.
+
+Keep domain vocabulary, authorization, data priority, and workflow rules in the
+application. Goshtoso supplies the component vocabulary and supported layout
+contract, not the product decisions.
+
+Before declaring the surface finished, apply
+`references/visual-acceptance.md`. It requires 390 px and 1440 px checks,
+Goshtoso and Minimal themes, light and dark modes, the full state matrix,
+keyboard use, console checks, and accessibility scanning.
+
 ## CSS Strategy
 
-Prefer the embedded stylesheet served by `assets.Handler()`. Stock CDN Tailwind
-does not include Goshtoso's theme tokens or component classes.
+Prefer the embedded stylesheet served by `assets.Handler()` for components and
+official recipes. Stock CDN Tailwind does not include Goshtoso's theme tokens or
+component classes.
+
+The embedded stylesheet is not a general Tailwind compiler for consumer markup.
+Hooks such as `RootClass` accept class names, but an arbitrary Tailwind utility
+can fail silently when that selector was not emitted. The official application
+patterns list the small guaranteed layout set. If the app needs other Tailwind
+utilities, build an app stylesheet and load it after `/assets/styles.css`.
 
 For apps with their own Tailwind build, keep Goshtoso CSS as a separate
 stylesheet unless a unified build is truly needed:
@@ -113,6 +153,19 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 - Alpine plugins must load before Alpine core. Avoid manual tags unless the app
   has a strong reason.
 - HTMX handlers should return rendered HTML fragments, not JSON.
+- HTMX does not swap 4xx/5xx responses by default. For expected validation or
+  recovery fragments, either return a swappable 2xx response while preserving
+  application status in a header, or deliberately opt in from
+  `htmx:beforeSwap`. Do not let a correct server fragment fail silently.
+- Use `link.Link(..., link.WithAppearance(link.AppearanceButton))` for GET
+  navigation that should look like a button. Keep `button.Button` for form
+  submission and mutations; visual appearance must not erase native semantics.
 - Goshtoso's own components are pre-generated. Do not run `templ generate`
   against the module cache or vendor copy; run it for the consumer app's files.
+- `.templ` files can use `templ.URL`, `templ.KV`, and other templ helpers without
+  explicitly importing `github.com/a-h/templ`; the generator injects that import
+  and an explicit duplicate can fail generation.
+- Templ component calls can consume adjacent text as child content. After
+  `@Component()`, wrap intended sibling or adjacent text in an explicit element
+  such as `<span>` so it cannot disappear into the component's child slot.
 - Do not import `site/`; it is the Goshtoso demo app, not public library API.

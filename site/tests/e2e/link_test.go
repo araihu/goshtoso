@@ -53,12 +53,12 @@ func TestLinkComponentDemo(t *testing.T) {
 		assert.Contains(t, className, "gap-1.5")
 	})
 
-	t.Run("button link exposes button role and primary action styling", func(t *testing.T) {
+	t.Run("button appearance preserves link semantics and primary action styling", func(t *testing.T) {
 		buttonLink := page.Locator("#link-button a").First()
 		require.NoError(t, buttonLink.GetByText("I'm a link", playwright.LocatorGetByTextOptions{
 			Exact: new(true),
 		}).WaitFor())
-		assert.Equal(t, "button", mustAttribute(t, buttonLink, "role"))
+		assert.Empty(t, mustAttribute(t, buttonLink, "role"))
 
 		buttonClass := mustAttribute(t, buttonLink, "class")
 		assert.Contains(t, buttonClass, "bg-primary")

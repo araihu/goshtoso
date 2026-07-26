@@ -8,7 +8,7 @@ import (
 
 func TestAllKindsAreStableAndUnique(t *testing.T) {
 	kinds := AllKinds()
-	require.Len(t, kinds, 74)
+	require.Len(t, kinds, 79)
 
 	seen := map[Kind]struct{}{}
 	for _, kind := range kinds {
@@ -17,6 +17,14 @@ func TestAllKindsAreStableAndUnique(t *testing.T) {
 		require.Falsef(t, duplicate, "duplicate Kind %q", kind)
 		seen[kind] = struct{}{}
 	}
+
+	require.Subset(t, kinds, []Kind{
+		KindAppShell,
+		KindPageHeader,
+		KindToolbar,
+		KindEmptyState,
+		KindSkeleton,
+	})
 }
 
 func TestAllKindsReturnsCopy(t *testing.T) {

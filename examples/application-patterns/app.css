@@ -1,0 +1,398 @@
+:root {
+	color-scheme: light;
+	--app-bg: var(--color-surface);
+	--app-raised: var(--color-surface-alt);
+	--app-text: var(--color-on-surface);
+	--app-strong: var(--color-on-surface-strong);
+	--app-muted: var(--color-on-surface-muted);
+	--app-primary: var(--color-primary);
+	--app-on-primary: var(--color-on-primary);
+	--app-border: color-mix(in srgb, var(--color-outline-strong) 22%, transparent);
+}
+
+html.dark {
+	color-scheme: dark;
+	--app-bg: var(--color-surface-dark);
+	--app-raised: var(--color-surface-dark-alt);
+	--app-text: var(--color-on-surface-dark);
+	--app-strong: var(--color-on-surface-dark-strong);
+	--app-muted: var(--color-on-surface-dark-muted);
+	--app-primary: var(--color-primary-dark);
+	--app-on-primary: var(--color-on-primary-dark);
+	--app-border: color-mix(in srgb, var(--color-outline-dark-strong) 26%, transparent);
+}
+
+body {
+	min-width: 320px;
+}
+
+.benchmark-shell {
+	height: 100dvh;
+	min-height: 100dvh;
+}
+
+.benchmark-navbar {
+	min-height: 4rem;
+	position: relative;
+}
+
+.benchmark-navbar > div:first-child {
+	min-width: 0;
+	flex: 1;
+	flex-wrap: wrap;
+}
+
+.appearance-form {
+	display: flex;
+	align-items: end;
+	gap: 0.6rem;
+	margin-left: auto;
+}
+
+.appearance-form label {
+	display: grid;
+	gap: 0.25rem;
+	color: var(--app-muted);
+	font-size: 0.68rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.appearance-form select,
+.appearance-form button {
+	min-height: 2.35rem;
+	border: 1px solid var(--app-border);
+	border-radius: var(--radius-radius);
+	font: inherit;
+}
+
+.appearance-form select {
+	padding: 0.5rem 0.7rem;
+	background: var(--app-bg);
+	color: var(--app-strong);
+}
+
+.appearance-form button {
+	padding: 0.5rem 0.8rem;
+	background: var(--app-primary);
+	color: var(--app-on-primary);
+	cursor: pointer;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.app-mobile-nav {
+	display: block;
+}
+
+.app-mobile-backdrop {
+	position: absolute;
+	top: calc(100% + 2px);
+	left: 0;
+	width: 100vw;
+	height: calc(100dvh - 100% - 2px);
+}
+
+.app-mobile-panel {
+	position: absolute;
+	top: calc(100% + 2px);
+	left: 0;
+	height: calc(100dvh - 100% - 2px);
+}
+
+.runtime-note {
+	display: grid;
+	gap: 0.35rem;
+	margin: 1rem;
+	padding: 0.9rem;
+	border: 1px solid var(--app-border);
+	border-radius: var(--radius-radius);
+	background: var(--app-raised);
+	font-size: 0.75rem;
+	line-height: 1.5;
+}
+
+.runtime-note strong {
+	color: var(--app-strong);
+}
+
+.runtime-note span {
+	color: var(--app-muted);
+}
+
+.benchmark-main {
+	width: 100%;
+	max-width: 90rem;
+	margin: 0 auto;
+}
+
+.app-stack {
+	display: grid;
+	min-width: 0;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 1.5rem;
+}
+
+.app-stack > * {
+	min-width: 0;
+}
+
+.app-card-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+}
+
+.app-card-grid > :first-child {
+	grid-column: 1 / -1;
+}
+
+.app-pattern-card,
+.app-wide-card {
+	width: 100%;
+	max-width: none;
+}
+
+.app-pattern-signals {
+	display: grid;
+	gap: 0.35rem;
+	margin: 0;
+	padding-left: 1rem;
+	color: var(--app-muted);
+	font-size: 0.78rem;
+}
+
+.app-contract-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1rem;
+}
+
+.app-contract-grid div {
+	display: grid;
+	gap: 0.35rem;
+	padding: 1rem;
+	border-left: 3px solid var(--app-primary);
+	background: var(--app-bg);
+}
+
+.app-contract-grid strong {
+	color: var(--app-strong);
+}
+
+.app-contract-grid span {
+	color: var(--app-muted);
+	font-size: 0.82rem;
+	line-height: 1.5;
+}
+
+.operations-state {
+	min-height: 9rem;
+}
+
+.state-card {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	min-height: 10rem;
+	padding: 1.5rem;
+	border: 1px dashed var(--app-border);
+	border-radius: var(--radius-radius);
+	background: var(--app-raised);
+}
+
+.state-card > * {
+	min-width: 0;
+}
+
+.state-card h2 {
+	margin: 0.3rem 0;
+	color: var(--app-strong);
+	font-family: var(--font-title), ui-sans-serif, system-ui, sans-serif;
+	font-size: 1.35rem;
+}
+
+.state-card p {
+	margin: 0;
+	color: var(--app-muted);
+}
+
+.state-skeleton {
+	min-width: 0;
+	flex: 1 1 20rem;
+}
+
+.state-skeleton-row {
+	height: 3.25rem;
+}
+
+.action-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.detail-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.6fr) minmax(17rem, 0.7fr);
+	gap: 1rem;
+	align-items: start;
+}
+
+.detail-primary > div {
+	gap: 1.25rem;
+}
+
+.evidence-list {
+	display: grid;
+	gap: 0.7rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.evidence-list li {
+	display: flex;
+	gap: 0.7rem;
+	padding: 0.85rem;
+	border: 1px solid var(--app-border);
+	border-radius: var(--radius-radius);
+	background: var(--app-bg);
+}
+
+.evidence-list li span {
+	color: var(--color-success);
+	font-weight: 800;
+}
+
+.detail-rail {
+	position: sticky;
+	top: 1rem;
+}
+
+.metadata-list {
+	display: grid;
+	gap: 0;
+	margin: 0;
+}
+
+.metadata-list div {
+	display: grid;
+	grid-template-columns: 7rem minmax(0, 1fr);
+	gap: 0.75rem;
+	padding: 0.75rem 0;
+	border-bottom: 1px solid var(--app-border);
+}
+
+.metadata-list dt {
+	color: var(--app-muted);
+	font-size: 0.75rem;
+}
+
+.metadata-list dd {
+	margin: 0;
+	overflow-wrap: anywhere;
+	color: var(--app-strong);
+	font-size: 0.82rem;
+	font-weight: 650;
+}
+
+.workflow-wrap {
+	max-width: 58rem;
+	margin: 0 auto;
+}
+
+.workflow-panel > div,
+.workflow-form,
+.workflow-success {
+	display: grid;
+	gap: 1.25rem;
+}
+
+.review-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.review-grid div {
+	display: grid;
+	gap: 0.35rem;
+	padding: 1rem;
+	border: 1px solid var(--app-border);
+	border-radius: var(--radius-radius);
+	background: var(--app-bg);
+}
+
+.review-grid span {
+	color: var(--app-muted);
+	font-size: 0.72rem;
+	text-transform: uppercase;
+}
+
+.review-grid strong {
+	color: var(--app-strong);
+	font-size: 0.9rem;
+}
+
+.workflow-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-top: 0.5rem;
+	border-top: 1px solid var(--app-border);
+}
+
+@media (min-width: 1024px) {
+	.app-mobile-nav {
+		display: none;
+	}
+}
+
+@media (max-width: 900px) {
+	.app-card-grid,
+	.detail-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.detail-rail {
+		position: static;
+	}
+}
+
+@media (max-width: 640px) {
+	.benchmark-navbar {
+		padding: 0.75rem 1rem;
+	}
+
+	.appearance-form {
+		display: grid;
+		width: 100%;
+		grid-template-columns: 1fr 1fr auto;
+		margin-left: 0;
+	}
+
+	.appearance-form label,
+	.appearance-form select {
+		min-width: 0;
+		width: 100%;
+	}
+
+	.app-contract-grid,
+	.review-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.state-card {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.workflow-actions {
+		align-items: stretch;
+		flex-direction: column-reverse;
+	}
+}

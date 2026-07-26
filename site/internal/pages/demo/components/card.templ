@@ -53,6 +53,20 @@ templ bookNowButton() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Arbitrary Body",
+				Description: "Pass a templ.Component as Body for lists, activity, metadata, or any application-owned content between Description and Footer.",
+			},
+			cardBodyPreview(),
+			`@card.Card(card.Config{
+    Title:       "Recent activity",
+    Description: "Changes from the last 24 hours.",
+    Body:        activityList(),
+    Footer:      activityFooter(),
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "Horizontal Layout",
 				Description: "Set Layout: card.LayoutHorizontal to place the image beside the content instead of above it.",
 			},
@@ -144,6 +158,39 @@ templ cardButtonPreview() {
 			Description: "Relax under the sun, savor delicious cuisine, and create memories that last a lifetime. Book your getaway now.",
 			Footer:      bookNowButton(),
 		})
+	</div>
+}
+
+// cardBodyPreview renders application-owned body content before the footer.
+templ cardBodyPreview() {
+	<div id="card-body" class="w-full max-w-lg mx-auto">
+		@card.Card(card.Config{
+			Title:       "Recent activity",
+			Description: "Changes from the last 24 hours.",
+			Body:        cardActivityBody(),
+			Footer:      cardActivityFooter(),
+		})
+	</div>
+}
+
+templ cardActivityBody() {
+	<ul data-card-body class="divide-y divide-outline text-sm dark:divide-outline-dark">
+		<li class="flex items-center justify-between gap-4 py-3">
+			<span class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Server-rendered activity</span>
+			<span class="text-on-surface-muted dark:text-on-surface-dark-muted">2m ago</span>
+		</li>
+		<li class="flex items-center justify-between gap-4 py-3">
+			<span class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Policy updated</span>
+			<span class="text-on-surface-muted dark:text-on-surface-dark-muted">18m ago</span>
+		</li>
+	</ul>
+}
+
+templ cardActivityFooter() {
+	<div data-card-footer>
+		@button.Button(button.WithTone(button.ToneAlternate)) {
+			View all activity
+		}
 	</div>
 }
 
