@@ -332,3 +332,21 @@ recurring or contract-level findings that can improve a new blind consumer:
 The two visual P2s belong to the frozen probe applications, not the library's
 base components, so they remain evidence rather than speculative component
 changes.
+
+## Independent remediation review dispatch
+
+The completed approvals worker is reused as a read-only reviewer while the
+parent owns all implementation and integration.
+
+```yaml
+child_thread_id: /root/probe_approvals
+goal: Review the complete uncommitted round-2 remediation diff for correctness, regression risk, public API coherence, documentation accuracy, and generated/test coverage.
+worktree: /tmp/gs-agent-quality-improvements
+allowed_reads: [git diff, changed source/templates/generated files, public docs/skill references, focused tests]
+forbidden_actions: [editing files, generating files, committing, staging, pushing, reading memory]
+acceptance: [validate textarea.Required on both primitives, PageHeader title hooks and routing, AppShell landmark wording, dynamic inventory tests, HTMX/navigation/templ/CSS/font guidance, field-proven site section, demo/E2E coverage; report only actionable P0-P3 findings with file anchors]
+callback: Send one completion message to /root with status, commands run, findings, and recommendation before the final response.
+```
+
+The parent continues generation, tests, lint and browser verification in
+parallel. The review is evidence only and owns no mutable path.
