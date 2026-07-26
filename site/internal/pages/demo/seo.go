@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	SiteName    = "Goshtoso"
-	SiteBaseURL = "https://goshtoso.araihu.com"
-	OGImagePath = "/assets/images/goshtoso-art.png"
+	SiteName        = "Goshtoso"
+	SiteBaseURL     = "https://goshtoso.araihu.com"
+	OGImagePath     = "/assets/images/goshtoso-art.png"
+	HomeOGImagePath = "/assets/images/goshtoso-social-card.png"
 )
 
 // PageMeta describes crawler and social-preview metadata for one public page.
@@ -18,6 +19,7 @@ type PageMeta struct {
 	Description string
 	Path        string
 	Type        string
+	ImagePath   string
 }
 
 func DefaultMeta(title string) PageMeta {
@@ -35,6 +37,7 @@ func HomeMeta() PageMeta {
 		Description: "Build interactive, server-rendered Go UIs with templ, HTMX, Alpine.js, Tailwind CSS, and copy-pasteable Goshtoso components.",
 		Path:        "/",
 		Type:        "SoftwareApplication",
+		ImagePath:   HomeOGImagePath,
 	}
 }
 
@@ -61,7 +64,11 @@ func (m PageMeta) CanonicalURL() string {
 }
 
 func (m PageMeta) OGImageURL() string {
-	return SiteBaseURL + OGImagePath
+	imagePath := strings.TrimSpace(m.ImagePath)
+	if imagePath == "" {
+		imagePath = OGImagePath
+	}
+	return SiteBaseURL + imagePath
 }
 
 func (m PageMeta) SchemaType() string {
