@@ -12,7 +12,8 @@ type Config struct {
 	Header templ.Component
 	// Sidebar renders desktop navigation; nil omits the sidebar wrapper.
 	Sidebar templ.Component
-	// Content renders inside the shell's single scrollable main region.
+	// Content renders inside the shell's single scrollable main region. When
+	// nil, AppShell renders its templ children as the content slot.
 	Content templ.Component
 	// MainID identifies the main region and skip-link target; default is "main-content".
 	MainID string

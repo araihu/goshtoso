@@ -111,7 +111,7 @@ func linkDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Button Link",
-				Description: "Use AppearanceButton when navigation should visually match a primary action.",
+				Description: "Use AppearanceButton when navigation should visually match a primary action. It remains a native link unless you set a role explicitly.",
 			},
 			linkButtonPreview(),
 			`@link.Link("#", link.WithAppearance(link.AppearanceButton)) {

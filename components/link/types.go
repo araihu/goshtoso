@@ -67,7 +67,8 @@ func WithRel(rel string) Option {
 	})
 }
 
-// WithRole sets the anchor role.
+// WithRole sets an explicit ARIA role on the anchor. Appearance changes remain
+// visual-only and preserve native link semantics unless this option is used.
 func WithRole(role string) Option {
 	return optionFunc(func(cfg *config) {
 		cfg.role = role
@@ -153,13 +154,7 @@ func (cfg config) effectiveRel() string {
 }
 
 func (cfg config) effectiveRole() string {
-	if cfg.role != "" {
-		return cfg.role
-	}
-	if cfg.appearance == AppearanceButton {
-		return "button"
-	}
-	return ""
+	return cfg.role
 }
 
 func (cfg config) classes() string {

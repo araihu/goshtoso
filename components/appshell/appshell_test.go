@@ -95,3 +95,22 @@ func TestAppShellRendersSlotsAndTargetHooks(t *testing.T) {
 	require.Greater(t, sidebarIndex, headerIndex)
 	require.Greater(t, contentIndex, sidebarIndex)
 }
+
+func TestAppShellUsesChildrenAsContentFallback(t *testing.T) {
+	ctx := templ.WithChildren(context.Background(), templ.Raw(`<p data-slot="children">Children</p>`))
+	var output bytes.Buffer
+
+	require.NoError(t, AppShell(Config{}).Render(ctx, &output))
+	require.Contains(t, output.String(), `<p data-slot="children">Children</p>`)
+}
+
+func TestAppShellContentConfigTakesPrecedenceOverChildren(t *testing.T) {
+	ctx := templ.WithChildren(context.Background(), templ.Raw(`<p data-slot="children">Children</p>`))
+	var output bytes.Buffer
+
+	require.NoError(t, AppShell(Config{
+		Content: templ.Raw(`<p data-slot="content">Content</p>`),
+	}).Render(ctx, &output))
+	require.Contains(t, output.String(), `<p data-slot="content">Content</p>`)
+	require.NotContains(t, output.String(), `data-slot="children"`)
+}

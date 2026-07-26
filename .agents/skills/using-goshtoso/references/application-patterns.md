@@ -41,9 +41,13 @@ updates, and overlays. Feature pages own their content and local tools.
 
 Start with `appshell.AppShell` for the frame. Supply `navbar.Navbar` or another
 header component, `sidebar.Sidebar` for desktop navigation, and the route's
-content as `Config.Content`. Its defaults include the skip link and one
-scrollable `main`; app code still owns the mobile navigation trigger and route
-state.
+content either as templ children or `Config.Content`. Templ children are the
+shortest path for page-local markup; `Config.Content` remains useful when the
+content is already a component value. Its defaults include the skip link and
+one scrollable `main`; app code still owns the mobile navigation trigger and
+route state. When `sidebar.Sidebar` is nested inside AppShell, set
+`DisableSkipLink: true` so the shell remains the single owner of page-level
+skip navigation.
 
 ### HTMX contract
 

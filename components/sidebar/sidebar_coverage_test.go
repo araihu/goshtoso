@@ -132,6 +132,18 @@ func TestActiveSidebarLinksExposeCurrentPageSemantics(t *testing.T) {
 	}
 }
 
+func TestSidebarSkipLinkCanBeOwnedByContainingAppShell(t *testing.T) {
+	defaultHTML := renderSidebar(t, Config{})
+	if !strings.Contains(defaultHTML, `href="#main-content"`) {
+		t.Fatalf("sidebar should preserve its standalone skip link by default: %s", defaultHTML)
+	}
+
+	containedHTML := renderSidebar(t, Config{DisableSkipLink: true})
+	if strings.Contains(containedHTML, `href="#main-content"`) {
+		t.Fatalf("contained sidebar should not duplicate the app shell skip link: %s", containedHTML)
+	}
+}
+
 func TestSidebarLinksExposeFullLabelTitleByDefault(t *testing.T) {
 	html := renderSidebar(t, Config{
 		Sections: []Section{{

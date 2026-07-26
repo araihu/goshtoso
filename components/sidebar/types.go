@@ -72,6 +72,9 @@ type Config struct {
 	SearchSlot templ.Component
 	// FooterSlot renders content at the bottom of the sidebar (e.g., profile menu).
 	FooterSlot templ.Component
+	// DisableSkipLink omits Sidebar's internal skip link when a containing
+	// application frame, such as AppShell, already owns page-level skip navigation.
+	DisableSkipLink bool
 }
 
 // OverlayConfig wraps a Sidebar in an Alpine-controlled off-canvas panel.

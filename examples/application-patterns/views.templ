@@ -4,15 +4,22 @@ import (
 	"strconv"
 
 	"github.com/araihu/goshtoso/components/alert"
+	"github.com/araihu/goshtoso/components/appshell"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/breadcrumbs"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
 	"github.com/araihu/goshtoso/components/emptystate"
 	"github.com/araihu/goshtoso/components/head"
+	"github.com/araihu/goshtoso/components/link"
+	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/pageheader"
+	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/components/skeleton"
 	"github.com/araihu/goshtoso/components/steps"
 	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/components/toolbar"
 )
 
@@ -29,112 +36,117 @@ templ layout(meta pageMeta) {
 			<meta name="color-scheme" content="light dark"/>
 			<title>{ meta.Title } · Goshtoso Application Patterns</title>
 			@head.Dependencies()
-			<link rel="stylesheet" href="/app.css"/>
+			<link rel="stylesheet" href="/app.css?v=composition-kit"/>
 		</head>
-		<body class="app-body">
-			<a class="skip-link" href="#main-content">Skip to main content</a>
-			<div class="app-shell">
-				<aside class="app-sidebar" aria-label="Application">
-					<a class="app-brand" href={ templ.URL(routeURL("/", meta.Appearance)) }>
-						<span class="app-brand-mark" aria-hidden="true">G</span>
-						<span>
-							<strong>Atlas Ops</strong>
-							<small>Application benchmark</small>
-						</span>
-					</a>
-					<nav class="app-nav" aria-label="Patterns">
-						<a
-							href={ templ.URL(routeURL("/", meta.Appearance)) }
-							class={ templ.KV("is-active", meta.Pattern == "App Shell") }
-							aria-current={ navCurrent(meta.Pattern == "App Shell") }
-						>
-							<span>01</span> App Shell
-						</a>
-						<a
-							href={ templ.URL(routeURL("/operations", meta.Appearance)) }
-							class={ templ.KV("is-active", meta.Pattern == "Operations List" || meta.Pattern == "Detail Workspace") }
-							aria-current={ navCurrent(meta.Pattern == "Operations List" || meta.Pattern == "Detail Workspace") }
-						>
-							<span>02</span> Operations
-						</a>
-						<a
-							href={ templ.URL(routeURL("/workflows/deploy", meta.Appearance)) }
-							class={ templ.KV("is-active", meta.Pattern == "Multi-step Workflow") }
-							aria-current={ navCurrent(meta.Pattern == "Multi-step Workflow") }
-						>
-							<span>03</span> Deployment
-						</a>
-					</nav>
-					<div class="app-sidebar-note">
-						<strong>Local runtime</strong>
-						<span>Goshtoso CSS, Alpine.js, and HTMX are served from the embedded asset handler.</span>
-					</div>
-				</aside>
-				<div class="app-main">
-					<header class="app-topbar">
-						<div>
-							<span class="app-eyebrow">{ meta.Pattern }</span>
-							<h1>{ meta.Title }</h1>
-						</div>
-						<form class="appearance-form" method="get" action={ templ.URL(meta.CurrentPath) }>
-							if meta.State != "" {
-								<input type="hidden" name="state" value={ string(meta.State) }/>
-							}
-							if meta.Step > 0 {
-								<input type="hidden" name="step" value={ strconv.Itoa(meta.Step) }/>
-							}
-							<label>
-								<span>Theme</span>
-								<select name="theme">
-									<option value="goshtoso" selected?={ meta.Appearance.Theme == "goshtoso" }>Goshtoso</option>
-									<option value="minimal" selected?={ meta.Appearance.Theme == "minimal" }>Minimal</option>
-								</select>
-							</label>
-							<label>
-								<span>Mode</span>
-								<select name="mode">
-									<option value="light" selected?={ meta.Appearance.Mode == "light" }>Light</option>
-									<option value="dark" selected?={ meta.Appearance.Mode == "dark" }>Dark</option>
-								</select>
-							</label>
-							<button type="submit">Apply</button>
-						</form>
-					</header>
-					<main id="main-content" class="app-content" data-scroll-region="main" tabindex="-1">
-						{ children... }
-					</main>
-				</div>
-			</div>
+		<body>
+			@appshell.AppShell(appshell.Config{
+				Header:    benchmarkHeader(meta),
+				Sidebar:   benchmarkSidebar(meta),
+				RootClass: "benchmark-shell",
+				MainClass: "benchmark-main",
+				MainAttrs: templ.Attributes{"data-scroll-region": "main"},
+			}) {
+				{ children... }
+			}
 		</body>
 	</html>
 }
 
-func navCurrent(active bool) string {
-	if active {
-		return "page"
+templ benchmarkHeader(meta pageMeta) {
+	@navbar.Navbar(navbar.Config{
+		Brand:     benchmarkBrand(),
+		BrandHref: routeURL("/", meta.Appearance),
+		Actions: []navbar.ActionItem{
+			{Content: benchmarkMobileSidebar(meta)},
+			{Content: appearanceForm(meta)},
+		},
+		NavClass: "benchmark-navbar",
+	})
+}
+
+templ benchmarkBrand() {
+	<span>Atlas Ops</span>
+}
+
+templ benchmarkMobileSidebar(meta pageMeta) {
+	@sidebar.Overlay(sidebar.OverlayConfig{
+		ID:                    "benchmark-navigation",
+		Sidebar:               benchmarkSidebarConfig(meta),
+		TriggerLabel:          "Open pattern navigation",
+		RootClass:             "app-mobile-nav",
+		BackdropPositionClass: "app-mobile-backdrop",
+		PanelPositionClass:    "app-mobile-panel",
+	})
+}
+
+templ benchmarkSidebar(meta pageMeta) {
+	@sidebar.Sidebar(benchmarkSidebarConfig(meta))
+}
+
+func benchmarkSidebarConfig(meta pageMeta) sidebar.Config {
+	return sidebar.Config{
+		Items: []sidebar.Item{
+			{ID: "app-shell", Label: "App Shell", Href: routeURL("/", meta.Appearance), Active: meta.Pattern == "App Shell"},
+			{ID: "operations", Label: "Operations", Href: routeURL("/operations", meta.Appearance), Active: meta.Pattern == "Operations List" || meta.Pattern == "Detail Workspace"},
+			{ID: "deployment", Label: "Deployment", Href: routeURL("/workflows/deploy", meta.Appearance), Active: meta.Pattern == "Multi-step Workflow"},
+		},
+		SectionsTitle:   "Patterns",
+		FooterSlot:      benchmarkRuntimeNote(),
+		DisableSkipLink: true,
 	}
-	return ""
+}
+
+templ benchmarkRuntimeNote() {
+	<div class="runtime-note">
+		<strong>Local runtime</strong>
+		<span>CSS, Alpine.js, and HTMX come from Goshtoso's embedded assets.</span>
+	</div>
+}
+
+templ appearanceForm(meta pageMeta) {
+	<form class="appearance-form" method="get" action={ templ.URL(meta.CurrentPath) }>
+		if meta.State != "" {
+			<input type="hidden" name="state" value={ string(meta.State) }/>
+		}
+		if meta.Step > 0 {
+			<input type="hidden" name="step" value={ strconv.Itoa(meta.Step) }/>
+		}
+		<label>
+			<span>Theme</span>
+			<select name="theme">
+				<option value="goshtoso" selected?={ meta.Appearance.Theme == "goshtoso" }>Goshtoso</option>
+				<option value="minimal" selected?={ meta.Appearance.Theme == "minimal" }>Minimal</option>
+			</select>
+		</label>
+		<label>
+			<span>Mode</span>
+			<select name="mode">
+				<option value="light" selected?={ meta.Appearance.Mode == "light" }>Light</option>
+				<option value="dark" selected?={ meta.Appearance.Mode == "dark" }>Dark</option>
+			</select>
+		</label>
+		<button type="submit">Apply</button>
+	</form>
 }
 
 templ appShellPage(meta pageMeta, operations []operation) {
 	@layout(meta) {
 		<section data-pattern="app-shell" class="app-stack">
-			<div class="app-hero">
-				<div>
-					@badge.Badge(badge.Config{
-						Label:      "All systems observable",
-						Tone:       badge.ToneSuccess,
-						Appearance: badge.AppearanceSoft,
-						Indicator:  true,
-					})
-					<h2>Operate the platform without losing context.</h2>
-					<p>This shell keeps navigation, system status, appearance controls, and the current task in one predictable frame.</p>
-				</div>
-				<div class="app-metric" aria-label="Active operations">
-					<strong>{ len(operations) }</strong>
-					<span>tracked operations</span>
-				</div>
-			</div>
+			@pageheader.PageHeader(pageheader.Config{
+				Title:       "Operate the platform without losing context.",
+				Description: "This shell keeps navigation, system status, appearance controls, and the current task in one predictable frame.",
+				Breadcrumbs: badge.Badge(badge.Config{
+					Label:      "All systems observable",
+					Tone:       badge.ToneSuccess,
+					Appearance: badge.AppearanceSoft,
+					Indicator:  true,
+				}),
+				Actions: badge.Badge(badge.Config{
+					Label:      strconv.Itoa(len(operations)) + " tracked operations",
+					Tone:       badge.ToneInfo,
+					Appearance: badge.AppearanceSoft,
+				}),
+			})
 			<div class="app-card-grid">
 				@card.Card(card.Config{
 					Tag:         "Pattern 02",
@@ -159,21 +171,22 @@ templ appShellPage(meta pageMeta, operations []operation) {
 					RootClass:   "app-pattern-card",
 				})
 			</div>
-			<section class="app-panel" aria-labelledby="shell-contract-title">
-				<div class="app-section-heading">
-					<div>
-						<span class="app-kicker">Shell contract</span>
-						<h2 id="shell-contract-title">Stable frame, task-specific center</h2>
-					</div>
-				</div>
-				<div class="app-contract-grid">
-					<div><strong>Navigation</strong><span>Four benchmark patterns stay one click away.</span></div>
-					<div><strong>Appearance</strong><span>Goshtoso and Minimal work in light and dark.</span></div>
-					<div><strong>Runtime</strong><span>No CDN or remote font request is required.</span></div>
-				</div>
-			</section>
+			@card.Card(card.Config{
+				Tag:       "Shell contract",
+				Title:     "Stable frame, task-specific center",
+				Body:      shellContract(),
+				RootClass: "app-wide-card",
+			})
 		</section>
 	}
+}
+
+templ shellContract() {
+	<div class="app-contract-grid">
+		<div><strong>Navigation</strong><span>Four benchmark patterns stay one click away.</span></div>
+		<div><strong>Appearance</strong><span>Goshtoso and Minimal work in light and dark.</span></div>
+		<div><strong>Runtime</strong><span>No CDN or remote font request is required.</span></div>
+	</div>
 }
 
 templ patternSignals(items ...string) {
@@ -185,24 +198,23 @@ templ patternSignals(items ...string) {
 }
 
 templ patternLink(href string, label string) {
-	<a class="app-card-link" href={ templ.URL(href) }>{ label } <span aria-hidden="true">→</span></a>
+	@link.Link(href) {
+		{ label } <span aria-hidden="true">→</span>
+	}
 }
 
 templ operationsPage(meta pageMeta, view operationsView) {
 	@layout(meta) {
 		<section data-pattern="operations-list" class="app-stack">
-			<div class="app-section-heading">
-				<div>
-					<span class="app-kicker">Shared operational queue</span>
-					<h2>Current changes and interventions</h2>
-					<p>Switch the state matrix in place; direct URLs remain useful for testing and progressive enhancement.</p>
-				</div>
-				<a class="app-primary-link" href={ templ.URL(routeURL("/workflows/deploy", meta.Appearance)) }>New deployment</a>
-			</div>
+			@pageheader.PageHeader(pageheader.Config{
+				Title:       "Current changes and interventions",
+				Description: "Switch the state matrix in place; direct URLs remain useful for testing and progressive enhancement.",
+				Breadcrumbs: patternBadge("Shared operational queue"),
+				Actions:     primaryLink(routeURL("/workflows/deploy", meta.Appearance), "New deployment"),
+			})
 			@toolbar.Toolbar(toolbar.Config{
-				Label:     "Operations state matrix",
-				Actions:   operationsStateButtons(meta),
-				RootClass: "state-toolbar",
+				Label:   "Operations state matrix",
+				Actions: operationsStateButtons(meta),
 			})
 			@operationsStatePanel(view)
 		</section>
@@ -277,181 +289,215 @@ templ operationsStatePanel(view operationsView) {
 					Tone:        alert.ToneDanger,
 					ListItems:   []string{"No mutation was attempted", "Last known state remains authoritative"},
 				})
-				<div class="state-actions">
-					<a class="app-primary-link" href={ templ.URL(routeURLWith("/operations", view.Appearance, "state", "success")) }>Retry operations</a>
+				<div class="action-row">
+					@primaryLink(routeURLWith("/operations", view.Appearance, "state", "success"), "Retry operations")
 				</div>
 			default:
-				<div class="app-panel">
-					<div class="state-success-heading">
-						<div>
-							<span class="app-kicker">Success state</span>
-							<h2>Operations loaded</h2>
-						</div>
-						@badge.Badge(badge.Config{
-							Label:      "Live",
-							Tone:       operationStateTone(view.State),
-							Appearance: badge.AppearanceSoft,
-							Indicator:  true,
-						})
-					</div>
-					@table.Table(view.Table)
-				</div>
+				@card.Card(card.Config{
+					Tag:         "Success state",
+					Title:       "Operations loaded",
+					Description: "Live operational data is ready for review.",
+					Body:        operationsTableBody(view),
+					RootClass:   "app-wide-card",
+				})
 		}
 	</section>
 }
 
+templ operationsTableBody(view operationsView) {
+	@badge.Badge(badge.Config{
+		Label:      "Live",
+		Tone:       operationStateTone(view.State),
+		Appearance: badge.AppearanceSoft,
+		Indicator:  true,
+	})
+	@table.Table(view.Table)
+}
+
 templ operationsEmptyActions(prefs appearance) {
-	<div class="state-actions">
-		<a class="app-primary-link" href={ templ.URL(routeURL("/workflows/deploy", prefs)) }>Start a deployment</a>
-		<a href={ templ.URL(routeURLWith("/operations", prefs, "state", "success")) }>Show all operations</a>
+	<div class="action-row">
+		@primaryLink(routeURL("/workflows/deploy", prefs), "Start a deployment")
+		@link.Link(routeURLWith("/operations", prefs, "state", "success")) {
+			Show all operations
+		}
 	</div>
+}
+
+templ patternBadge(label string) {
+	@badge.Badge(badge.Config{
+		Label:      label,
+		Tone:       badge.ToneInfo,
+		Appearance: badge.AppearanceSoft,
+	})
+}
+
+templ primaryLink(href string, label string) {
+	@link.Link(href, link.WithAppearance(link.AppearanceButton)) {
+		{ label }
+	}
 }
 
 templ operationDetailPage(meta pageMeta, op operation) {
 	@layout(meta) {
-		<article data-pattern="detail-workspace" class="app-stack">
-			@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
-				Items: []breadcrumbs.Item{
-					{Label: "Control room", Href: routeURL("/", meta.Appearance)},
-					{Label: "Operations", Href: routeURL("/operations", meta.Appearance)},
-				},
-				Current: op.ID,
+		<section data-pattern="detail-workspace" class="app-stack">
+			@pageheader.PageHeader(pageheader.Config{
+				Title:       op.Summary,
+				Description: op.ID + " · " + op.Environment + " · " + op.Service + " · Owned by " + op.Owner,
+				Breadcrumbs: breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+					Items: []breadcrumbs.Item{
+						{Label: "Control room", Href: routeURL("/", meta.Appearance)},
+						{Label: "Operations", Href: routeURL("/operations", meta.Appearance)},
+					},
+					Current: op.ID,
+				}),
+				Actions: badge.Badge(statusBadge(op.Status)),
 			})
-			<div class="detail-heading">
-				<div>
-					<span class="app-kicker">{ op.ID } · { op.Environment }</span>
-					<h2>{ op.Summary }</h2>
-					<p>{ op.Service } · Owned by { op.Owner }</p>
-				</div>
-				@badge.Badge(statusBadge(op.Status))
-			</div>
 			<div class="detail-grid">
-				<section class="app-panel detail-primary" aria-labelledby="evidence-title">
-					<div class="app-section-heading">
-						<div>
-							<span class="app-kicker">Evidence</span>
-							<h2 id="evidence-title">Live decision context</h2>
-						</div>
-					</div>
-					<ul class="evidence-list">
-						for _, item := range op.Evidence {
-							<li><span aria-hidden="true">✓</span>{ item }</li>
-						}
-					</ul>
-					@alert.Alert(alert.Config{
-						Title:       "Guardrail",
-						Description: "Pause the rollout if error rate exceeds 0.5% for two consecutive windows.",
-						Tone:        alert.ToneWarning,
-					})
-				</section>
-				<aside class="app-panel detail-rail" aria-labelledby="context-title">
-					<span class="app-kicker">Operation context</span>
-					<h2 id="context-title">Run metadata</h2>
-					<dl>
-						<div><dt>Service</dt><dd>{ op.Service }</dd></div>
-						<div><dt>Owner</dt><dd>{ op.Owner }</dd></div>
-						<div><dt>Started</dt><dd>{ op.Started }</dd></div>
-						<div><dt>Change</dt><dd><code>{ op.Change }</code></dd></div>
-					</dl>
-					<a class="app-primary-link app-full-link" href={ templ.URL(routeURL("/workflows/deploy", meta.Appearance)) }>Run another deployment</a>
-				</aside>
+				@card.Card(card.Config{
+					Tag:       "Evidence",
+					Title:     "Live decision context",
+					Body:      detailEvidence(op),
+					RootClass: "app-wide-card detail-primary",
+				})
+				@card.Card(card.Config{
+					Tag:       "Operation context",
+					Title:     "Run metadata",
+					Body:      operationMetadata(op),
+					Footer:    primaryLink(routeURL("/workflows/deploy", meta.Appearance), "Run another deployment"),
+					RootClass: "app-wide-card detail-rail",
+				})
 			</div>
-		</article>
+		</section>
 	}
+}
+
+templ detailEvidence(op operation) {
+	<ul class="evidence-list">
+		for _, item := range op.Evidence {
+			<li><span aria-hidden="true">✓</span>{ item }</li>
+		}
+	</ul>
+	@alert.Alert(alert.Config{
+		Title:       "Guardrail",
+		Description: "Pause the rollout if error rate exceeds 0.5% for two consecutive windows.",
+		Tone:        alert.ToneWarning,
+	})
+}
+
+templ operationMetadata(op operation) {
+	<dl class="metadata-list">
+		<div><dt>Service</dt><dd>{ op.Service }</dd></div>
+		<div><dt>Owner</dt><dd>{ op.Owner }</dd></div>
+		<div><dt>Started</dt><dd>{ op.Started }</dd></div>
+		<div><dt>Change</dt><dd><code>{ op.Change }</code></dd></div>
+	</dl>
 }
 
 templ workflowPage(meta pageMeta, view workflowView) {
 	@layout(meta) {
-		<section data-pattern="multi-step-workflow" class="workflow-wrap" data-step={ strconv.Itoa(view.Step) } data-state={ workflowState(view) }>
-			<div class="app-panel workflow-panel">
-				<div class="app-section-heading">
-					<div>
-						<span class="app-kicker">Controlled change</span>
-						<h2>Deploy a release</h2>
-						<p>Each response is server-rendered; validation keeps the user on the step that needs attention.</p>
-					</div>
-				</div>
-				@steps.Steps(workflowSteps(view.Step, view.Success))
-				if view.Error != "" {
-					@alert.Alert(alert.Config{
-						Title:       "Check this step",
-						Description: view.Error,
-						Tone:        alert.ToneDanger,
+		<section data-pattern="multi-step-workflow" class="workflow-wrap app-stack" data-step={ strconv.Itoa(view.Step) } data-state={ workflowState(view) }>
+			@pageheader.PageHeader(pageheader.Config{
+				Title:       "Deploy a release",
+				Description: "Each response is server-rendered; validation keeps the user on the step that needs attention.",
+				Breadcrumbs: patternBadge("Controlled change"),
+			})
+			@card.Card(card.Config{
+				Tag:       "Deployment plan",
+				Title:     "Review and submit",
+				Body:      workflowBody(meta, view),
+				RootClass: "app-wide-card workflow-panel",
+			})
+		</section>
+	}
+}
+
+templ workflowBody(meta pageMeta, view workflowView) {
+	@steps.Steps(workflowSteps(view.Step, view.Success))
+	if view.Error != "" {
+		@alert.Alert(alert.Config{
+			Title:       "Check this step",
+			Description: view.Error,
+			Tone:        alert.ToneDanger,
+		})
+	}
+	if view.Success {
+		<div class="workflow-success">
+			@alert.Alert(alert.Config{
+				Title:       "Deployment queued",
+				Description: "The release passed review and entered the production rollout queue.",
+				Tone:        alert.ToneSuccess,
+			})
+			<dl class="metadata-list">
+				<div><dt>Environment</dt><dd>{ view.Environment }</dd></div>
+				<div><dt>Version</dt><dd>{ view.Version }</dd></div>
+				<div><dt>Next checkpoint</dt><dd>5% canary health review</dd></div>
+			</dl>
+		</div>
+	} else {
+		<form class="workflow-form" method="post" action="/workflows/deploy">
+			<input type="hidden" name="step" value={ strconv.Itoa(view.Step) }/>
+			<input type="hidden" name="theme" value={ meta.Appearance.Theme }/>
+			<input type="hidden" name="mode" value={ meta.Appearance.Mode }/>
+			if view.Step > 1 {
+				<input type="hidden" name="environment" value={ view.Environment }/>
+			}
+			if view.Step > 2 {
+				<input type="hidden" name="version" value={ view.Version }/>
+			}
+			switch view.Step {
+				case 1:
+					@selectfield.Select(selectfield.Config{
+						ID:          "environment",
+						Name:        "environment",
+						Label:       "Environment",
+						Placeholder: "Choose an environment",
+						HelperText:  "Production requires the same explicit review as staging in this benchmark.",
+						Options: []selectfield.Option{
+							{Value: "staging", Label: "Staging", Selected: view.Environment == "staging"},
+							{Value: "production", Label: "Production", Selected: view.Environment == "production"},
+						},
 					})
-				}
-				if view.Success {
-					<div class="workflow-success">
-						@alert.Alert(alert.Config{
-							Title:       "Deployment queued",
-							Description: "The release passed review and entered the production rollout queue.",
-							Tone:        alert.ToneSuccess,
-						})
-						<dl>
-							<div><dt>Environment</dt><dd>{ view.Environment }</dd></div>
-							<div><dt>Version</dt><dd>{ view.Version }</dd></div>
-							<div><dt>Next checkpoint</dt><dd>5% canary health review</dd></div>
-						</dl>
+				case 2:
+					@textinput.TextInput(textinput.Config{
+						ID:           "version",
+						Name:         "version",
+						Label:        "Release version",
+						Value:        view.Version,
+						Placeholder:  "v1.18.0",
+						Autocomplete: "off",
+						HelperText:   "Use the immutable version prepared by the release pipeline.",
+					})
+				default:
+					<div class="review-grid">
+						<div><span>Environment</span><strong>{ view.Environment }</strong></div>
+						<div><span>Version</span><strong>{ view.Version }</strong></div>
+						<div><span>Strategy</span><strong>5% canary, then regional</strong></div>
 					</div>
+			}
+			<div class="workflow-actions">
+				if view.Step > 1 {
+					@button.Button(
+						button.WithType("submit"),
+						button.WithTone(button.ToneAlternate),
+						button.WithAttrs(templ.Attributes{"name": "action", "value": "back"}),
+					) {
+						Back
+					}
 				} else {
-					<form class="workflow-form" method="post" action="/workflows/deploy">
-						<input type="hidden" name="step" value={ strconv.Itoa(view.Step) }/>
-						<input type="hidden" name="theme" value={ meta.Appearance.Theme }/>
-						<input type="hidden" name="mode" value={ meta.Appearance.Mode }/>
-						if view.Step > 1 {
-							<input type="hidden" name="environment" value={ view.Environment }/>
-						}
-						if view.Step > 2 {
-							<input type="hidden" name="version" value={ view.Version }/>
-						}
-						switch view.Step {
-							case 1:
-								<label class="field">
-									<span>Environment</span>
-									<select name="environment" aria-describedby="environment-help">
-										<option value="">Choose an environment</option>
-										<option value="staging" selected?={ view.Environment == "staging" }>Staging</option>
-										<option value="production" selected?={ view.Environment == "production" }>Production</option>
-									</select>
-									<small id="environment-help">Production requires the same explicit review as staging in this benchmark.</small>
-								</label>
-							case 2:
-								<label class="field">
-									<span>Release version</span>
-									<input name="version" value={ view.Version } placeholder="v1.18.0" autocomplete="off"/>
-									<small>Use the immutable version prepared by the release pipeline.</small>
-								</label>
-							default:
-								<div class="review-grid">
-									<div><span>Environment</span><strong>{ view.Environment }</strong></div>
-									<div><span>Version</span><strong>{ view.Version }</strong></div>
-									<div><span>Strategy</span><strong>5% canary, then regional</strong></div>
-								</div>
-						}
-						<div class="workflow-actions">
-							if view.Step > 1 {
-								@button.Button(
-									button.WithType("submit"),
-									button.WithTone(button.ToneAlternate),
-									button.WithAttrs(templ.Attributes{"name": "action", "value": "back"}),
-								) {
-									Back
-								}
-							} else {
-								<a href={ templ.URL(workflowBackURL(meta.Appearance, view)) }>Cancel</a>
-							}
-							@button.Button(
-								button.WithType("submit"),
-								button.WithTone(button.TonePrimary),
-								button.WithLoadingText("Submitting…"),
-								button.WithAttrs(templ.Attributes{"name": "action", "value": "continue"}),
-							) {
-								{ workflowButtonLabel(view) }
-							}
-						</div>
-					</form>
+					@link.Link(workflowBackURL(meta.Appearance, view)) {
+						Cancel
+					}
+				}
+				@button.Button(
+					button.WithType("submit"),
+					button.WithTone(button.TonePrimary),
+					button.WithLoadingText("Submitting…"),
+					button.WithAttrs(templ.Attributes{"name": "action", "value": "continue"}),
+				) {
+					{ workflowButtonLabel(view) }
 				}
 			</div>
-		</section>
+		</form>
 	}
 }
 

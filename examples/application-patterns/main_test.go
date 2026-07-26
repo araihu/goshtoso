@@ -120,12 +120,39 @@ func TestAssetsAndAppearanceAreLocal(t *testing.T) {
 	if appStyles.Code != http.StatusOK {
 		t.Fatalf("app CSS status = %d, want 200", appStyles.Code)
 	}
-	assertContains(t, appStyles.Body.String(), ".app-shell", "var(--color-surface-dark)", "grid-template-columns: minmax(0, 1fr)", ".app-stack > *", ".state-card > *")
+	if cacheControl := appStyles.Header().Get("Cache-Control"); cacheControl != "no-cache" {
+		t.Fatalf("app CSS Cache-Control = %q, want no-cache for local revalidation", cacheControl)
+	}
+	appCSS := appStyles.Body.String()
+	assertContains(t, appCSS, ".benchmark-main", ".app-mobile-panel", "var(--color-surface-dark)", "grid-template-columns: minmax(0, 1fr)", ".app-stack > *", ".state-card > *")
+	if lines := strings.Count(appCSS, "\n") + 1; lines > 500 {
+		t.Fatalf("application-owned CSS grew to %d lines; composition benchmark budget is 500", lines)
+	}
 
 	page := serve(t, http.MethodGet, "/operations?theme=minimal&mode=dark", nil, nil)
-	assertContains(t, page.Body.String(), `data-theme="minimal"`, `class="dark"`, `href="/assets/styles.css"`, `href="/app.css"`)
+	pageHTML := page.Body.String()
+	assertContains(t, pageHTML,
+		`data-theme="minimal"`,
+		`class="dark"`,
+		`href="/assets/styles.css"`,
+		`href="/app.css?v=composition-kit"`,
+		`aria-label="sidebar navigation"`,
+		`aria-label="Open pattern navigation"`,
+		`benchmark-shell`,
+		`data-scroll-region="main"`,
+		`tabindex="-1"`,
+	)
+	if count := strings.Count(pageHTML, `href="#main-content"`); count != 1 {
+		t.Fatalf("page renders %d main-content skip links; want exactly one", count)
+	}
+	if count := strings.Count(pageHTML, "<h1"); count != 1 {
+		t.Fatalf("page renders %d h1 elements; want exactly one", count)
+	}
+	if count := strings.Count(pageHTML, `role="button"`); count != 0 {
+		t.Fatalf("page renders %d button roles on native navigation links; want zero", count)
+	}
 	for _, remote := range []string{"cdn.", "fonts.googleapis.com", "unpkg.com", "jsdelivr.net"} {
-		if strings.Contains(page.Body.String(), remote) {
+		if strings.Contains(pageHTML, remote) {
 			t.Fatalf("page contains remote runtime reference %q", remote)
 		}
 	}

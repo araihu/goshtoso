@@ -14,14 +14,17 @@ import "fmt"
 //	})
 templ sidebarTemplate(cfg Config) {
 	{{ logoHref := cfg.LogoHref }}
-	{{ if logoHref == "" { logoHref = "/" } }}
-	
+	{{ if logoHref == "" {
+	logoHref = "/"
+} }}
 	<nav
 		class={ cfg.containerClasses() + " " + cfg.RootClass }
 		aria-label="sidebar navigation"
 	>
-		<!-- Skip to main content link for accessibility -->
-		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-on-primary">skip to the main content</a>
+		if !cfg.DisableSkipLink {
+			<!-- Skip to main content link for accessibility -->
+			<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-on-primary">skip to the main content</a>
+		}
 		<!-- Logo Section (only rendered when Logo or LogoText is provided) -->
 		if cfg.Logo != nil || cfg.LogoText != "" {
 			<div class="shrink-0 border-b border-outline dark:border-outline-dark p-4">
@@ -34,7 +37,6 @@ templ sidebarTemplate(cfg Config) {
 				</a>
 			</div>
 		}
-		
 		<!-- Search Section -->
 		if cfg.SearchSlot != nil {
 			@cfg.SearchSlot
@@ -42,7 +44,7 @@ templ sidebarTemplate(cfg Config) {
 			<div class="shrink-0 px-4 py-3">
 				<div class="relative">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted" aria-hidden="true">
-						<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+						<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
 					</svg>
 					<input
 						type="search"
@@ -54,7 +56,6 @@ templ sidebarTemplate(cfg Config) {
 				</div>
 			</div>
 		}
-		
 		<!-- Navigation -->
 		<div class={ cfg.navClasses() }>
 			<!-- Top-level items (icon links) -->
@@ -65,7 +66,6 @@ templ sidebarTemplate(cfg Config) {
 					}
 				</div>
 			}
-
 			<!-- Sections (grouped with titles + left-border items) -->
 			if len(cfg.Sections) > 0 {
 				if len(cfg.Items) > 0 {
@@ -180,7 +180,6 @@ templ sidebarItem(item Item) {
 			}
 		</a>
 	}
-	
 	<!-- Render child items if any -->
 	if len(item.Items) > 0 {
 		<div class="ml-4 mt-1 flex flex-col gap-1">
@@ -257,7 +256,6 @@ templ sidebarSectionItem(item Item, collapseChildGroups bool) {
 			}
 		</a>
 	}
-
 	if len(item.Items) > 0 && !item.Collapsible && !collapseChildGroups {
 		<div class="ml-4 flex flex-col">
 			for _, child := range item.Items {

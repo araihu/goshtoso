@@ -25,8 +25,9 @@ templ appShellDemoContent() {
 			`@appshell.AppShell(appshell.Config{
     Header:  shellHeader(),
     Sidebar: shellSidebar(),
-    Content: operationsWorkspace(),
-})`,
+}) {
+    @operationsWorkspace()
+}`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -52,11 +53,12 @@ templ appShellDefaultPreview() {
 		@appshell.AppShell(appshell.Config{
 			Header:    appShellHeader(),
 			Sidebar:   appShellSidebar(),
-			Content:   appShellWorkspace(),
-			MainID:   "app-shell-default-main",
+			MainID:    "app-shell-default-main",
 			RootClass: "min-h-full",
 			MainClass: "p-4 sm:p-5",
-		})
+		}) {
+			@appShellWorkspace()
+		}
 	</div>
 }
 
@@ -66,7 +68,7 @@ templ appShellHooksPreview() {
 			Header:        appShellHeader(),
 			Sidebar:       appShellSidebar(),
 			Content:       appShellWorkspace(),
-			MainID:       "app-shell-workspace",
+			MainID:        "app-shell-workspace",
 			SkipLinkLabel: "Skip to workspace",
 			RootClass:     "min-h-full",
 			RootAttrs:     templ.Attributes{"data-app": "operations"},

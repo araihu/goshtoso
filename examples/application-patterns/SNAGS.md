@@ -83,3 +83,32 @@ explicit `minmax(0, 1fr)` track, direct children opt out of intrinsic minimums,
 and the loading card stacks at the mobile breakpoint. Wide data remains locally
 scrollable without moving the application shell. The asset test protects the
 containment rules.
+
+### The benchmark outlived its own composition baseline
+
+After AppShell, PageHeader, Link, Toolbar, EmptyState, and Skeleton were
+promoted, this benchmark still hand-built the shell, responsive navigation,
+page headings, action links, and workflow fields. That left 728 lines of
+application CSS and understated the value of the new public kit. Migrating the
+fixture to `appshell`, `navbar`, `sidebar`, `pageheader`, `link`, `select`, and
+`textinput` reduced the application-owned stylesheet to 398 lines (45.3%)
+without introducing a public Stack/Grid CSS vocabulary.
+
+The migration exposed one real composition snag: `AppShell` and `Sidebar`
+both emitted a skip link. `sidebar.Config.DisableSkipLink` now lets the
+containing shell own page-level skip navigation while preserving Sidebar's
+standalone default. AppShell also accepts templ children as its content slot,
+so a basic page no longer has to manufacture `Config.Content`.
+
+The first browser pass then served a stale pre-migration stylesheet because the
+standalone fixture cached `/app.css` for one hour. The benchmark now revalidates
+that app-owned asset (`Cache-Control: no-cache`). It also gives AppShell an
+application-specific `100dvh` root so content scrolls in `main` instead of
+growing the document; both behaviors are covered by the live 1440 px checks.
+
+The same browser pass exposed an accessibility mismatch in `Link`: choosing
+`AppearanceButton` emitted `role="button"` even though the component remained
+an anchor with `href` and native link keyboard behavior. Appearance is now
+visual-only by default; `WithRole` remains available when a consumer has an
+explicit semantic contract. Component and benchmark tests prevent the implicit
+button role from returning.

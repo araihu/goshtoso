@@ -24,6 +24,8 @@ templ appShellTemplate(cfg Config) {
 			<main id={ cfg.mainID() } class={ cfg.mainClasses() } { cfg.mainAttrs()... }>
 				if cfg.Content != nil {
 					@cfg.Content
+				} else {
+					{ children... }
 				}
 			</main>
 		</div>

@@ -27,7 +27,7 @@ The operations state matrix is available with `?state=loading`, `empty`,
 | `main.go` | Domain fixtures, method-qualified `http.ServeMux`, handlers, view models, and component configs |
 | `views.templ` | The four server-rendered patterns and state matrix |
 | `views_templ.go` | Generated templ output; never edit manually |
-| `app.css` | Application layout CSS embedded into the binary |
+| `app.css` | Product-specific CSS embedded into the binary, with a 500-line regression budget |
 | `main_test.go` | Render, HTTP, asset, method, workflow, theme, and import-boundary tests |
 | `SNAGS.md` | Source-dives and consumer friction encountered during the benchmark |
 | `go.mod`, `go.sum` | Isolated consumer module with a local replace to the repository root |
@@ -36,19 +36,23 @@ The operations state matrix is available with `?state=loading`, `empty`,
 
 - `head.Dependencies` and `assets.Handler` provide local CSS, Alpine.js, HTMX,
   and component scripts.
-- `card`, `badge`, and `button` provide shell navigation, status controls,
-  arbitrary Card body content, and native multi-action form submits through
-  `button.WithAttrs`.
+- `appshell`, `navbar`, and `sidebar` provide the responsive frame, one skip
+  link, desktop navigation, and the mobile drawer.
+- `pageheader`, `card`, `badge`, `link`, and `button` provide hierarchy,
+  status, native navigation, arbitrary Card body content, and multi-action
+  form submits through `button.WithAttrs`.
 - `table` provides the success-state operations list and full-row navigation.
 - `toolbar` groups the state controls; `skeleton`, `emptystate`, and `alert`
   represent loading, empty, and error outcomes.
-- `breadcrumbs` structures the detail workspace.
-- `steps` represents workflow progress.
+- `breadcrumbs` structures the detail workspace; `select` and `textinput`
+  provide the workflow fields; `steps` represents workflow progress.
 
-The custom `app.css` is deliberately application-owned: it defines product
-layout while consuming Goshtoso theme tokens. It is embedded with the binary
-and loaded after `/assets/styles.css`, so this fixture needs neither a CDN nor
-an application-specific Tailwind build. Theme selection is applied with
+The custom `app.css` is deliberately application-owned: its 398 lines define
+Atlas-specific editorial layouts and branding while the public composition
+components own the shell, page hierarchy, navigation, links, and fields. The
+tests cap it at 500 lines; the pre-composition baseline was 728. It is embedded
+with the binary and loaded after `/assets/styles.css`, so this fixture needs
+neither a CDN nor an application-specific Tailwind build. Theme selection is applied with
 `data-theme="goshtoso|minimal"` and dark mode with the `.dark` class; no browser
 storage is required.
 
@@ -68,8 +72,10 @@ Then open <http://localhost:3000>. The tests also prove that:
 - the operations state matrix renders as both a full document and an HTMX
   fragment;
 - Goshtoso and application CSS are served locally;
+- application-owned CSS stays within the 500-line composition budget;
 - Minimal/Goshtoso and light/dark appearance markers are emitted;
-- the shell exposes a skip link and one desktop main scroll region;
+- the shell exposes exactly one skip link, one `h1`, and one desktop main
+  scroll region;
 - empty and error states include useful next actions;
 - unsupported HTTP methods return `405 Method Not Allowed`;
 - the module has no `github.com/araihu/goshtoso/site` import.

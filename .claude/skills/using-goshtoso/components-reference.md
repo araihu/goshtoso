@@ -106,7 +106,7 @@ import "github.com/araihu/goshtoso/components/appshell"  // package appshell
 |-------|------|-------------|
 | `Header` | `templ.Component` | Header renders the persistent top region; nil omits the header wrapper. |
 | `Sidebar` | `templ.Component` | Sidebar renders desktop navigation; nil omits the sidebar wrapper. |
-| `Content` | `templ.Component` | Content renders inside the shell's single scrollable main region. |
+| `Content` | `templ.Component` | Content renders inside the shell's single scrollable main region. When |
 | `MainID` | `string` | MainID identifies the main region and skip-link target; default is "main-content". |
 | `SkipLinkLabel` | `string` | SkipLinkLabel is the visible keyboard-focus label; default is "Skip to main content". |
 | `RootClass` | `string` | RootClass appends CSS classes to the outer shell element. |
@@ -1348,6 +1348,7 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `RootClass` | `string` | RootClass allows additional CSS classes on the sidebar root. |
 | `SearchSlot` | `templ.Component` | SearchSlot replaces the default search input with a custom component. |
 | `FooterSlot` | `templ.Component` | FooterSlot renders content at the bottom of the sidebar (e.g., profile menu). |
+| `DisableSkipLink` | `bool` | DisableSkipLink omits Sidebar's internal skip link when a containing |
 
 **Item**
 
