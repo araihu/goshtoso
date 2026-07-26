@@ -55,6 +55,12 @@ them.
 - Typography belongs to the product. Do not reflexively choose Inter, Geist,
   Roboto, or another fashionable default across unrelated domains; use the
   system stack or make a deliberate, tested type choice.
+- Do not replace that monoculture with a reflexive Georgia/Times editorial
+  stack. Type should express this product's domain, not merely look different
+  from the fashionable sans-serif default.
+- Avoid the generated “ghost card” formula: a border plus a broad diffuse
+  shadow on every surface. Use borders for structure and reserve elevation for
+  a real layering relationship such as a dialog, popover, or dragged item.
 
 ## Keyboard and focus
 

@@ -7925,7 +7925,7 @@
     --color-outline-strong: var(--color-neutral-800);
     --color-surface-dark: var(--color-neutral-950);
     --color-surface-dark-alt: var(--color-neutral-800);
-    --color-on-surface-dark: var(--color-neutral-400);
+    --color-on-surface-dark: var(--color-neutral-300);
     --color-on-surface-dark-strong: var(--color-neutral-100);
     --color-primary-dark: var(--color-white);
     --color-on-primary-dark: var(--color-black);

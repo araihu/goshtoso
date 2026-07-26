@@ -592,3 +592,45 @@ The five-evaluation summary recommends a control-plane skill review because an
 unrelated earlier high-severity incident exists in the rolling window; there is
 no repeated current failure code, so this task does not auto-edit the shared
 orchestration skill.
+
+## Root visual confirmation resumed
+
+The root task retained an active Browser binding and completed the previously
+blocked matrix itself. The frozen Assessment A is
+`/tmp/goshtoso-probes/round2/confirmation/ROOT_VISUAL_ASSESSMENT_A.md`; the
+combined persisted critique is
+`docs/audits/2026-07-26-confirmation-visual-critique.md`.
+
+The 1440 Goshtoso-light journeys covered default, empty, live 422, live 503,
+safe retry and success with zero console errors or warnings. Desktop Minimal
+dark also retained its hierarchy. At 390 px, both themes exposed two stacked
+internal horizontal scrollers. Computed Minimal-dark small-copy contrast was
+4.383:1, and the empty route retained a no-op page action. The result is
+36/40, `PASS WITH P2 REMEDIATION`, with no P0/P1 and three P2s.
+
+Assessment B was rerun only after the human report was frozen. Static detection
+against `page.templ` returned `[]`; no rendered detector result is claimed
+because Puppeteer is unavailable. Remediation is dispatched with disjoint
+mutable paths: the child owns only the external confirmation app, while the
+root owns the Goshtoso worktree and final integration.
+
+## Root visual remediation checkpoint
+
+The external-app child corrected the two mobile scrollers, empty-state no-op
+action and broad content shadow with three red-to-green regressions. Consumer
+generation, test, vet and build gates pass; the child did not touch the
+Goshtoso worktree or the immutable v2 snapshot.
+
+The root raised Minimal dark body text from `neutral-400` to `neutral-300`,
+added a browser contrast floor against both dark surfaces, and distilled the
+font-monoculture and ghost-card lessons into the public visual-acceptance
+reference. The read-only source-review child then found a hidden documentation
+dependency: `theme.templ` manually duplicates built-in theme blocks outside the
+asset drift gate. Arctic and Minimal exports had already diverged from
+`all-themes.css`. Those values are now aligned, and an all-theme contract test
+protects future exports.
+
+Pre-snapshot verification is green: stable templ generation, CSS generation,
+root and site unit suites, root and site lint, `go fix` in both modules, site
+build, focused contrast E2E and full E2E in `319.452s`. A new immutable snapshot
+and final Browser replay remain before the round can close.

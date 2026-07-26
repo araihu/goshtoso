@@ -175,7 +175,15 @@ func TestRoundTwoConsumerGuidancePublishesRecoveredContracts(t *testing.T) {
 	}
 
 	acceptance := readDoc(t, "../.agents/skills/using-goshtoso/references/visual-acceptance.md")
-	for _, want := range []string{"Inter", "Geist", "Roboto", "internal overflow"} {
+	for _, want := range []string{
+		"Inter",
+		"Geist",
+		"Roboto",
+		"Georgia/Times",
+		"ghost card",
+		"broad diffuse",
+		"internal overflow",
+	} {
 		if !strings.Contains(acceptance, want) {
 			t.Errorf("visual acceptance missing convergence check %q", want)
 		}
