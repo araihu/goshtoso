@@ -129,3 +129,15 @@ Resultados finais antes do release:
 - os cinco recursos CDN default foram baixados e comparados byte a byte com os
   arquivos embedded usados para gerar SRI;
 - revisão independente final: nenhum achado restante ou bloqueador de release.
+
+## Resultado do release
+
+- PR [#187](https://github.com/araihu/goshtoso/pull/187) integrado em `main`;
+- commit de merge e alvo da tag: `6e1b94a473d3e6903347c75955b126b980abde32`;
+- tag anotada `v0.0.13` publicada e resolvida para o mesmo commit;
+- workflow de release concluído com sucesso e release público criado;
+- `styles.css` e `goshtoso-theme.css` publicados como assets do release;
+- descoberta remota confirmou as cinco skills, incluindo a versão atualizada de
+  `using-goshtoso`;
+- follow-up pós-tag fixa o módulo do site em `v0.0.13` e habilita o link de
+  comparação do changelog, que retornava 404 antes da tag existir.
