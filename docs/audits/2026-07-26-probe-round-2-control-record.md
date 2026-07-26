@@ -515,3 +515,31 @@ forbidden_actions: [editing Goshtoso, reading new non-public surfaces, branch or
 acceptance: [clean CSS parse surface, stable generation, all gates and smokes pass, badge example uses Label, report identifies latest snapshot]
 callback: Send the revised result to /root before visual assessment dispatch.
 ```
+
+The follow-up returned `PASS` against v2. The app CSS is now 96 lines and
+contains no residual trailer; a regression assertion covers it. Two stable
+generation runs, test, vet, build, the full HTTP/state matrix and idempotent
+replay pass. The report records 628 authored lines, ten public lookups, zero
+forbidden source dives, and the badge snag as resolved in v2.
+
+## Confirmation visual assessment dispatch
+
+Visual judgment is delegated to a fresh read-only reviewer with no builder
+conversation. The builder report is frozen before this dispatch and no detector
+has run on the confirmation app.
+
+```yaml
+child_thread_id: /root/confirmation_visual
+goal: Independently judge the Northstar confirmation app's usability and visual quality in a real browser before deterministic detector output exists.
+app: /tmp/goshtoso-probes/round2/confirmation
+run: PORT=18473 GOTOOLCHAIN=go1.26.5 go run .
+target: http://127.0.0.1:18473/review
+allowed_reads: [rendered UI, browser DOM, console, app run command only]
+forbidden_reads: [builder report, app source, Goshtoso source, prior visual reports, detector output, memory]
+matrix: [1440x900 Goshtoso light, 1440x900 Minimal dark, 390x844 Goshtoso light, 390x844 Minimal dark]
+journeys: [default review, empty state, validation 422 swap, interrupted 503 swap and safe retry, success]
+checks: [hierarchy, composition, product voice, one h1, skip link, document and internal overflow, sticky/focus safety, keyboard landmarks, console errors, state clarity, Nielsen 1-5 scores]
+deliverable: /tmp/goshtoso-probes/round2/confirmation/VISUAL_ASSESSMENT.md with screenshots or exact DOM evidence, P0-P3 findings, total score and PASS/FAIL
+forbidden_actions: [editing any file, running detector, publishing, memory writes]
+callback: Send one completion envelope to /root and confirm port 18473 is closed.
+```
