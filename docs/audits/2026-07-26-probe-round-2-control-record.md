@@ -576,3 +576,19 @@ Browser at the four required viewport/theme cells, freeze that assessment, and
 only then decide whether the confirmation app is canonical enough to publish.
 Until that pass, the docs site keeps the distilled field-proven patterns rather
 than copying the entire app.
+
+## Control-plane checkpoint
+
+Evaluation `353694ab-2683-4cbe-9739-33c2f55fceaf` recorded this orchestration as
+`partial`, medium severity, with failure code `browser-backend-unavailable`.
+The measured slice used six children, zero callback misses, zero path
+collisions, zero integration failures and zero user interventions. Rework count
+is two: the serial lint rerun plus the confirmation CSS/doc iteration. One
+hidden dependency is the child Browser backend unavailable after the parent had
+already finalized its Browser session. One confirmation follow-up dispatch was
+also written to this record after dispatch and remains disclosed above.
+
+The five-evaluation summary recommends a control-plane skill review because an
+unrelated earlier high-severity incident exists in the rolling window; there is
+no repeated current failure code, so this task does not auto-edit the shared
+orchestration skill.
