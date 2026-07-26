@@ -1,6 +1,7 @@
 package appshell
 
 import (
+	"maps"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -83,9 +84,7 @@ func (cfg Config) mainClasses() string {
 
 func (cfg Config) mainAttrs() templ.Attributes {
 	attrs := make(templ.Attributes, len(cfg.MainAttrs)+1)
-	for key, value := range cfg.MainAttrs {
-		attrs[key] = value
-	}
+	maps.Copy(attrs, cfg.MainAttrs)
 	if _, overridden := attrs["tabindex"]; !overridden {
 		attrs["tabindex"] = "-1"
 	}

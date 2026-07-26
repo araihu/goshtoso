@@ -91,7 +91,6 @@ func TestOperationsStateMatrixSupportsFullAndHTMXRequests(t *testing.T) {
 	t.Parallel()
 
 	for _, state := range []viewState{stateLoading, stateEmpty, stateError, stateSuccess} {
-		state := state
 		t.Run(string(state), func(t *testing.T) {
 			t.Parallel()
 			path := "/operations?state=" + string(state)

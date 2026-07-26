@@ -217,10 +217,7 @@ func appMux() *http.ServeMux {
 			start = 0
 			page = 1
 		}
-		end := start + pp
-		if end > len(dogs) {
-			end = len(dogs)
-		}
+		end := min(start+pp, len(dogs))
 
 		cfg := table.Config{
 			ID:         "breeds",
