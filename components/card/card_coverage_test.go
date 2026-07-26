@@ -171,6 +171,24 @@ func TestCardRenderFooter(t *testing.T) {
 	}
 }
 
+func TestCardRenderBodyBetweenDescriptionAndFooter(t *testing.T) {
+	body := templ.Raw(`<ul data-card-body><li>First detail</li></ul>`)
+	footer := templ.Raw(`<button data-card-footer>Continue</button>`)
+	html := render(t, Card(Config{
+		Title:       "T",
+		Description: "Summary",
+		Body:        body,
+		Footer:      footer,
+	}))
+
+	descriptionIndex := strings.Index(html, "Summary")
+	bodyIndex := strings.Index(html, "data-card-body")
+	footerIndex := strings.Index(html, "data-card-footer")
+	if descriptionIndex < 0 || bodyIndex <= descriptionIndex || footerIndex <= bodyIndex {
+		t.Fatalf("card content order = description:%d body:%d footer:%d, html: %s", descriptionIndex, bodyIndex, footerIndex, html)
+	}
+}
+
 func TestCardRenderEscaping(t *testing.T) {
 	html := render(t, Card(Config{Title: "<script>", Description: `"quote"`}))
 	if strings.Contains(html, "<script>") {

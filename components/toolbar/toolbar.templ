@@ -1,0 +1,28 @@
+package toolbar
+
+// Toolbar renders search, filter, and action regions as an accessible control
+// group that wraps on narrow screens.
+templ toolbarTemplate(cfg Config) {
+	<div
+		class={ cfg.rootClasses() }
+		role="toolbar"
+		aria-label={ cfg.label() }
+		{ cfg.RootAttrs... }
+	>
+		if cfg.Search != nil {
+			<div class={ cfg.searchClasses() } { cfg.SearchAttrs... }>
+				@cfg.Search
+			</div>
+		}
+		if cfg.Filters != nil {
+			<div class={ cfg.filtersClasses() } { cfg.FiltersAttrs... }>
+				@cfg.Filters
+			</div>
+		}
+		if cfg.Actions != nil {
+			<div class={ cfg.actionsClasses() } { cfg.ActionsAttrs... }>
+				@cfg.Actions
+			</div>
+		}
+	</div>
+}

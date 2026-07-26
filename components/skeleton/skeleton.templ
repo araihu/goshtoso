@@ -1,0 +1,25 @@
+package skeleton
+
+// Skeleton renders an accessible loading placeholder with motion reduced when
+// requested by the operating system.
+templ skeletonTemplate(cfg Config) {
+	<div
+		class={ cfg.rootClasses() }
+		role="status"
+		aria-live="polite"
+		aria-busy="true"
+		aria-label={ cfg.label() }
+		data-shape={ cfg.shapeName() }
+		{ cfg.RootAttrs... }
+	>
+		for index := 0; index < cfg.count(); index++ {
+			<span
+				class={ cfg.itemClasses(index) }
+				data-skeleton-item
+				data-shape={ cfg.shapeName() }
+				aria-hidden="true"
+				{ cfg.ItemAttrs... }
+			></span>
+		}
+	</div>
+}

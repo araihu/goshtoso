@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-43 component packages. Each is imported by its directory path; note the
+48 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -91,6 +91,32 @@ import "github.com/araihu/goshtoso/components/alert"  // package alert
 |-------|------|-------------|
 | `Label` | `string` | Label is the link label |
 | `Href` | `string` | Href is the link URL |
+
+## appshell
+
+```go
+import "github.com/araihu/goshtoso/components/appshell"  // package appshell
+```
+
+**Entry points:** `AppShell(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Header` | `templ.Component` | Header renders the persistent top region; nil omits the header wrapper. |
+| `Sidebar` | `templ.Component` | Sidebar renders desktop navigation; nil omits the sidebar wrapper. |
+| `Content` | `templ.Component` | Content renders inside the shell's single scrollable main region. |
+| `MainID` | `string` | MainID identifies the main region and skip-link target; default is "main-content". |
+| `SkipLinkLabel` | `string` | SkipLinkLabel is the visible keyboard-focus label; default is "Skip to main content". |
+| `RootClass` | `string` | RootClass appends CSS classes to the outer shell element. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the outer shell element. |
+| `HeaderClass` | `string` | HeaderClass appends CSS classes to the header wrapper. |
+| `HeaderAttrs` | `templ.Attributes` | HeaderAttrs appends arbitrary HTML attributes to the header wrapper. |
+| `SidebarClass` | `string` | SidebarClass appends CSS classes to the sidebar wrapper. |
+| `SidebarAttrs` | `templ.Attributes` | SidebarAttrs appends arbitrary HTML attributes to the sidebar wrapper. |
+| `MainClass` | `string` | MainClass appends CSS classes to the main region. |
+| `MainAttrs` | `templ.Attributes` | MainAttrs appends arbitrary HTML attributes to the main region. |
 
 ## avatar
 
@@ -295,6 +321,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `Tag` | `string` | Tag is an optional category/tag (shown above title) |
 | `Title` | `string` | Title is the card title |
 | `Description` | `string` | Description is the card body text |
+| `Body` | `templ.Component` | Body renders arbitrary content between Description and Footer. |
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |
 | `Appearance` | `Appearance` | Appearance determines the card's visual treatment. |
 | `Layout` | `Layout` | Layout determines vertical or horizontal layout |
@@ -562,6 +589,29 @@ import "github.com/araihu/goshtoso/components/dropdown"  // package dropdown
 | Field | Type | Description |
 |-------|------|-------------|
 | `Items` | `[]Item` | Items is the list of items in this section. |
+
+## emptystate
+
+```go
+import "github.com/araihu/goshtoso/components/emptystate"  // package emptystate
+```
+
+**Entry points:** `EmptyState(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Title` | `string` | Title names the empty state; default is "Nothing here yet". |
+| `Description` | `string` | Description explains what appears here or how to proceed. |
+| `Icon` | `templ.Component` | Icon renders an optional decorative visual above the title. |
+| `Action` | `templ.Component` | Action renders an optional recovery or creation control. |
+| `RootClass` | `string` | RootClass appends CSS classes to the empty-state root. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the empty-state root. |
+| `IconClass` | `string` | IconClass appends CSS classes to the icon wrapper. |
+| `IconAttrs` | `templ.Attributes` | IconAttrs appends arbitrary HTML attributes to the icon wrapper. |
+| `ActionClass` | `string` | ActionClass appends CSS classes to the action wrapper. |
+| `ActionAttrs` | `templ.Attributes` | ActionAttrs appends arbitrary HTML attributes to the action wrapper. |
 
 ## fileinput
 
@@ -914,6 +964,29 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Name` | `string` | Name is the user's display name |
 | `Email` | `string` | Email is the user's email address |
 | `Avatar` | `templ.Component` | Avatar is an optional component rendered as the avatar trigger button content. |
+
+## pageheader
+
+```go
+import "github.com/araihu/goshtoso/components/pageheader"  // package pageheader
+```
+
+**Entry points:** `PageHeader(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Title` | `string` | Title is the page's primary heading. |
+| `Description` | `string` | Description is optional supporting copy below the title. |
+| `Breadcrumbs` | `templ.Component` | Breadcrumbs renders navigation context above the title. |
+| `Actions` | `templ.Component` | Actions renders page-level controls beside the title group. |
+| `RootClass` | `string` | RootClass appends CSS classes to the header root. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the header root. |
+| `BreadcrumbsClass` | `string` | BreadcrumbsClass appends CSS classes to the breadcrumbs wrapper. |
+| `BreadcrumbsAttrs` | `templ.Attributes` | BreadcrumbsAttrs appends arbitrary HTML attributes to the breadcrumbs wrapper. |
+| `ActionsClass` | `string` | ActionsClass appends CSS classes to the actions wrapper. |
+| `ActionsAttrs` | `templ.Attributes` | ActionsAttrs appends arbitrary HTML attributes to the actions wrapper. |
 
 ## pagination
 
@@ -1320,6 +1393,29 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 | `Items` | `[]Item` | Items are the navigation items in this section |
 | `Collapsible` | `bool` | Collapsible renders direct child groups behind independent disclosure controls. |
 | `IndentItems` | `bool` | IndentItems offsets the section item group from the title. |
+
+## skeleton
+
+```go
+import "github.com/araihu/goshtoso/components/skeleton"  // package skeleton
+```
+
+**Entry points:** `Skeleton(cfg Config)`
+
+- **Shape** — ShapeText = "", ShapeRectangle = "rectangle", ShapeCircle = "circle"
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Shape` | `Shape` | Shape selects text, rectangle, or circle placeholders; default is text. |
+| `Count` | `int` | Count controls placeholder count; default is three for text and one otherwise. |
+| `Label` | `string` | Label describes the loading state for assistive technology; default is "Loading content". |
+| `Static` | `bool` | Static disables pulse animation while preserving the loading semantics. |
+| `RootClass` | `string` | RootClass appends CSS classes to the skeleton root. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the skeleton root. |
+| `ItemClass` | `string` | ItemClass appends CSS classes to every placeholder item. |
+| `ItemAttrs` | `templ.Attributes` | ItemAttrs appends arbitrary HTML attributes to every placeholder item. |
 
 ## spinner
 
@@ -1762,6 +1858,32 @@ import "github.com/araihu/goshtoso/components/toggle"  // package toggle
 | `Value` | `string` | Value makes the checkbox submit this value when checked, turning the toggle into a real form control. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the label. |
 | `InputAttrs` | `templ.Attributes` | InputAttrs are extra attributes applied to the <input> element. |
+
+## toolbar
+
+```go
+import "github.com/araihu/goshtoso/components/toolbar"  // package toolbar
+```
+
+**Entry points:** `Toolbar(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Label` | `string` | Label is the toolbar's accessible name; default is "Page tools". |
+| `Search` | `templ.Component` | Search renders the primary search control. |
+| `Filters` | `templ.Component` | Filters renders filter and view controls. |
+| `Actions` | `templ.Component` | Actions renders page or collection actions. |
+| `Sticky` | `bool` | Sticky keeps the toolbar visible at the top of its scroll container. |
+| `RootClass` | `string` | RootClass appends CSS classes to the toolbar root. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the toolbar root. |
+| `SearchClass` | `string` | SearchClass appends CSS classes to the search wrapper. |
+| `SearchAttrs` | `templ.Attributes` | SearchAttrs appends arbitrary HTML attributes to the search wrapper. |
+| `FiltersClass` | `string` | FiltersClass appends CSS classes to the filters wrapper. |
+| `FiltersAttrs` | `templ.Attributes` | FiltersAttrs appends arbitrary HTML attributes to the filters wrapper. |
+| `ActionsClass` | `string` | ActionsClass appends CSS classes to the actions wrapper. |
+| `ActionsAttrs` | `templ.Attributes` | ActionsAttrs appends arbitrary HTML attributes to the actions wrapper. |
 
 ## tooltip
 

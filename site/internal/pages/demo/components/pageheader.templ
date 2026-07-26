@@ -1,0 +1,85 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/breadcrumbs"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/pageheader"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// PageHeaderDemoPage renders the PageHeader component demo.
+templ PageHeaderDemoPage() {
+	@demo.Layout("Page Header", "page-header", pageHeaderDemoContent())
+}
+
+templ pageHeaderDemoContent() {
+	<div id="page-header-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Page Header",
+				Description: "Give a workspace one clear title, concise context, and a stable region for page-level actions.",
+			},
+			pageHeaderDefaultPreview(),
+			`@pageheader.PageHeader(pageheader.Config{
+    Title:       "Operations",
+    Description: "Review and act on current incidents.",
+    Actions:     createIncidentAction(),
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With breadcrumbs",
+				Description: "Add hierarchical context above the title without changing the primary heading or action placement.",
+			},
+			pageHeaderBreadcrumbsPreview(),
+			`@pageheader.PageHeader(pageheader.Config{
+    Breadcrumbs: breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+        Items:   []breadcrumbs.Item{{Label: "Clusters", Href: "/clusters"}},
+        Current: "prod-us-east",
+    }),
+    Title:       "prod-us-east",
+    Description: "12 services across three availability zones.",
+    Actions:     clusterActions(),
+})`,
+		)
+	</div>
+}
+
+templ pageHeaderDefaultPreview() {
+	<div id="page-header-default" class="w-full rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark">
+		@pageheader.PageHeader(pageheader.Config{
+			Title:       "Operations",
+			Description: "Review and act on current incidents.",
+			Actions:     pageHeaderCreateAction(),
+		})
+	</div>
+}
+
+templ pageHeaderBreadcrumbsPreview() {
+	<div id="page-header-breadcrumbs" class="w-full rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark">
+		@pageheader.PageHeader(pageheader.Config{
+			Breadcrumbs: breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+				Items:   []breadcrumbs.Item{{Label: "Clusters", Href: "#clusters"}},
+				Current: "prod-us-east",
+			}),
+			Title:       "prod-us-east",
+			Description: "12 services across three availability zones.",
+			Actions:     pageHeaderClusterActions(),
+		})
+	</div>
+}
+
+templ pageHeaderCreateAction() {
+	@button.Button() {
+		Create incident
+	}
+}
+
+templ pageHeaderClusterActions() {
+	@button.Button(button.WithTone(button.ToneAlternate)) {
+		View logs
+	}
+	@button.Button() {
+		Deploy
+	}
+}

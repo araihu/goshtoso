@@ -28,6 +28,11 @@ type DemoEntry struct {
 // "components/button", "docs/theme", "getting-started". Server handlers
 // translate their URL into a registry key.
 var Demos = map[string]DemoEntry{
+	"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
+	"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
+	"components/toolbar":          {Title: "Toolbar", Active: "toolbar", Content: toolbarDemoContent},
+	"components/empty-state":      {Title: "Empty State", Active: "empty-state", Content: emptyStateDemoContent},
+	"components/skeleton":         {Title: "Skeleton", Active: "skeleton", Content: skeletonDemoContent},
 	"components/accordion":        {Title: "Accordion", Active: "accordion", Content: accordionDemoContent},
 	"components/alert":            {Title: "Alert", Active: "alert", Content: alertDemoContent},
 	"components/avatar":           {Title: "Avatar", Active: "avatar", Content: avatarDemoContent},

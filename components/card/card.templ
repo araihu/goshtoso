@@ -39,6 +39,9 @@ templ cardTemplate(cfg Config) {
 			if cfg.Description != "" {
 				<p id={ cfg.Title + "-desc" } class={ cfg.descriptionClasses() }>{ cfg.Description }</p>
 			}
+			if cfg.Body != nil {
+				@cfg.Body
+			}
 			if cfg.Footer != nil {
 				@cfg.Footer
 			}

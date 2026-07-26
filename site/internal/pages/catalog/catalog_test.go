@@ -16,6 +16,11 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		path    string
 		section string
 	}{
+		{"/components/app-shell", "Composition"},
+		{"/components/page-header", "Composition"},
+		{"/components/toolbar", "Composition"},
+		{"/components/empty-state", "Composition"},
+		{"/components/skeleton", "Composition"},
 		{"/components/accordion", "Display"},
 		{"/components/avatar", "Display"},
 		{"/components/badge", "Display"},
@@ -61,7 +66,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 	}
 
 	pages := catalog.ComponentPages()
-	require.Len(t, pages, 42)
+	require.Len(t, pages, 47)
 	require.Len(t, pages, len(expected))
 
 	seen := map[string]bool{}
@@ -113,7 +118,7 @@ func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {
 		}
 	}
 
-	require.Len(t, got, 74)
+	require.Len(t, got, 79)
 	want := components.AllKinds()
 	slices.Sort(got)
 	slices.Sort(want)
@@ -141,7 +146,7 @@ func TestComponentCatalogPathsMatchDemoRegistryExactly(t *testing.T) {
 
 	slices.Sort(catalogKeys)
 	slices.Sort(registryKeys)
-	require.Len(t, catalogKeys, 42)
+	require.Len(t, catalogKeys, 47)
 	require.Equal(t, catalogKeys, registryKeys)
 }
 

@@ -1,0 +1,129 @@
+package components
+
+import (
+	"github.com/araihu/goshtoso/components/appshell"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/emptystate"
+	"github.com/araihu/goshtoso/components/pageheader"
+	"github.com/araihu/goshtoso/components/toolbar"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// AppShellDemoPage renders the AppShell component demo.
+templ AppShellDemoPage() {
+	@demo.Layout("App Shell", "app-shell", appShellDemoContent())
+}
+
+templ appShellDemoContent() {
+	<div id="app-shell-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "App Shell",
+				Description: "Frame product UI with a skip link, persistent header, desktop sidebar, and one scrollable main region.",
+			},
+			appShellDefaultPreview(),
+			`@appshell.AppShell(appshell.Config{
+    Header:  shellHeader(),
+    Sidebar: shellSidebar(),
+    Content: operationsWorkspace(),
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Target-specific hooks",
+				Description: "Use MainID plus root, header, sidebar, and main hooks for application-owned IDs, HTMX attributes, and layout adjustments.",
+			},
+			appShellHooksPreview(),
+			`@appshell.AppShell(appshell.Config{
+    MainID:        "workspace",
+    SkipLinkLabel: "Skip to workspace",
+    Header:        shellHeader(),
+    Sidebar:       shellSidebar(),
+    Content:       operationsWorkspace(),
+    RootAttrs:     templ.Attributes{"data-app": "operations"},
+    MainAttrs:     templ.Attributes{"data-region": "workspace"},
+})`,
+		)
+	</div>
+}
+
+templ appShellDefaultPreview() {
+	<div id="app-shell-default" class="h-[32rem] w-full overflow-hidden rounded-radius border border-outline dark:border-outline-dark">
+		@appshell.AppShell(appshell.Config{
+			Header:    appShellHeader(),
+			Sidebar:   appShellSidebar(),
+			Content:   appShellWorkspace(),
+			MainID:   "app-shell-default-main",
+			RootClass: "min-h-full",
+			MainClass: "p-4 sm:p-5",
+		})
+	</div>
+}
+
+templ appShellHooksPreview() {
+	<div id="app-shell-hooks" class="h-96 w-full overflow-hidden rounded-radius border border-outline dark:border-outline-dark">
+		@appshell.AppShell(appshell.Config{
+			Header:        appShellHeader(),
+			Sidebar:       appShellSidebar(),
+			Content:       appShellWorkspace(),
+			MainID:       "app-shell-workspace",
+			SkipLinkLabel: "Skip to workspace",
+			RootClass:     "min-h-full",
+			RootAttrs:     templ.Attributes{"data-app": "operations"},
+			HeaderAttrs:   templ.Attributes{"data-region": "topbar"},
+			SidebarAttrs:  templ.Attributes{"data-region": "navigation"},
+			MainClass:     "p-4 sm:p-5",
+			MainAttrs:     templ.Attributes{"data-region": "workspace"},
+		})
+	</div>
+}
+
+templ appShellHeader() {
+	<div class="flex h-14 items-center justify-between px-4">
+		<div>
+			<p class="text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Signal Ops</p>
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Production</p>
+		</div>
+		<span class="rounded-radius bg-success/15 px-2 py-1 text-xs font-medium text-success">All systems normal</span>
+	</div>
+}
+
+templ appShellSidebar() {
+	<nav aria-label="Workspace">
+		<ul class="space-y-1 p-3 text-sm">
+			<li><a class="block rounded-radius bg-primary/10 px-3 py-2 font-medium text-primary dark:bg-primary-dark/10 dark:text-primary-dark" href="#operations">Operations</a></li>
+			<li><a class="block rounded-radius px-3 py-2 text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt" href="#services">Services</a></li>
+			<li><a class="block rounded-radius px-3 py-2 text-on-surface-muted hover:bg-surface-alt dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt" href="#activity">Activity</a></li>
+		</ul>
+	</nav>
+}
+
+templ appShellWorkspace() {
+	<div class="space-y-4">
+		@pageheader.PageHeader(pageheader.Config{
+			Title:       "Operations",
+			Description: "Review active incidents and keep service owners moving.",
+			Actions:     appShellCreateAction(),
+		})
+		@toolbar.Toolbar(toolbar.Config{
+			Label:   "Operation tools",
+			Filters: appShellFilter(),
+		})
+		@emptystate.EmptyState(emptystate.Config{
+			Title:       "No active incidents",
+			Description: "The production workspace is clear. New incidents will appear here.",
+		})
+	</div>
+}
+
+templ appShellCreateAction() {
+	@button.Button(button.WithSize(button.SizeSmall)) {
+		Create incident
+	}
+}
+
+templ appShellFilter() {
+	<button type="button" class="rounded-radius border border-outline bg-surface px-3 py-2 text-sm dark:border-outline-dark dark:bg-surface-dark">
+		All severities
+	</button>
+}
