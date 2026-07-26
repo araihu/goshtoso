@@ -456,3 +456,62 @@ Confirmation acceptance requires zero forbidden source dives, passing build
 gates, no recurrence of the remediated setup/API/guidance defects, no P0/P1,
 and browser usability at 1440x900 and 390x844 in Goshtoso light and Minimal
 dark. The detector remains sequenced after the parent's visual assessment.
+
+## Final branch gates before confirmation integration
+
+After the reviewed documentation fixes, the parent reran generation and the
+complete non-browser quality surface:
+
+- `templ generate`: zero updates;
+- `go run ./cmd/skillgen`: both reference mirrors reproduced;
+- `just css`: theme and Tailwind assets rebuilt;
+- `go test ./... -count=1`: pass;
+- site non-E2E tests: pass;
+- root and site `golangci-lint run`: `0 issues` in both modules;
+- `go fix ./...` in both modules: clean;
+- demo server build: pass;
+- full `go test ./site/tests/e2e/... -count=1 -timeout 15m`: pass in
+  315.465 seconds;
+- `git diff --check`: clean.
+
+## Confirmation result and iteration
+
+The fresh worker returned an initial `PASS` after about 18 minutes. It authored
+626 non-generated lines (97 CSS), read eight allowed public files, made zero
+forbidden source dives, and passed stable generation, test, vet, build, page,
+asset, 422, 503, created-success and idempotent-replay smokes. The report is
+`/tmp/goshtoso-probes/round2/confirmation/CONFIRMATION_REPORT.md`.
+
+All required recovered contracts were discovered and exercised. The host's Go
+1.26.1 was below the documented floor, so the worker selected 1.26.5 before
+setup. The resulting Northstar app used Content-first Review, AppShell without
+a nested header, PageHeader title hooks, native required Textarea, semantic GET
+Link appearance, an explicit `htmx:beforeSwap` policy, wrapped adjacent text,
+semantic theme tokens, Georgia/Times product typography, and bounded
+interruption recovery.
+
+The worker disclosed one metadata-only isolation snag: a recovery `find`
+enumerated unrelated `/tmp` filenames after the assigned directory did not yet
+exist. No unrelated content was opened; the source-dive count remains zero.
+
+The parent did not accept the first result blindly. Direct artifact inspection
+found a literal residual ```)``` line at the end of the app-owned CSS, and the
+report found a genuine public-doc inconsistency: an application-pattern example
+used obsolete `badge.Config.Text` while the generated API correctly documents
+`Label`. The CSS cleanup follow-up was sent immediately and this control record
+was updated afterward, a low-severity late-recording event retained for the
+orchestration self-evaluation.
+
+The public badge example and an executable no-regression assertion were fixed
+in `fb1755e52f15cdb6700004d10aba6437f4913903`. The latest immutable snapshot is
+`/tmp/goshtoso-probes/round2/confirmation-library-v2`.
+
+```yaml
+child_thread_id: /root/probe_confirmation
+followup_goal: Remove the trailing CSS artifact, point the unchanged consumer app at confirmation-library-v2, rerun generation/test/vet/build and complete HTTP smokes, and update the report.
+mutable_path: /tmp/goshtoso-probes/round2/confirmation
+library_snapshot: /tmp/goshtoso-probes/round2/confirmation-library-v2@fb1755e52f15cdb6700004d10aba6437f4913903
+forbidden_actions: [editing Goshtoso, reading new non-public surfaces, branch or commit creation, memory writes]
+acceptance: [clean CSS parse surface, stable generation, all gates and smokes pass, badge example uses Label, report identifies latest snapshot]
+callback: Send the revised result to /root before visual assessment dispatch.
+```
