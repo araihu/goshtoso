@@ -4,7 +4,8 @@ Data da auditoria: 2026-07-25
 
 Base auditada: `origin/main` em `bd8edd1c3d9baa188654b93e7f049dd94d414c69`
 
-Status: implementação e validação concluídas em `codex/agent-quality-improvements`
+Status: implementação, follow-ups P2 e validação concluídos em
+`codex/agent-quality-improvements`
 
 Este documento é o checkpoint permanente da investigação sobre por que agentes
 conseguem integrar Goshtoso, mas nem sempre produzem aplicações bonitas e úteis
@@ -88,14 +89,45 @@ ressalvas em `docs/audits/2026-07-25-blind-agent-probe.md`.
 | 7 | Flexibilidade e eficiência | 2/4 | 3/4 | Slots, attrs e URLs diretas funcionam; uma UI branded ainda exige CSS próprio relevante. |
 | 8 | Design estético e minimalista | 2/4 | 4/4 | Superfície dominante, hierarquia contida, índice editorial e ausência de card soup. |
 | 9 | Diagnóstico e recuperação | 3/4 | 4/4 | Empty/error acionáveis, retry, preservação de contexto e matriz visual explícita. |
-| 10 | Ajuda e documentação | 3/4 | 3/4 | A orientação foi suficiente sem source; restam sharp edges P2 documentados abaixo. |
+| 10 | Ajuda e documentação | 3/4 | 3/4 | A orientação foi suficiente sem source; a sonda registrou sharp edges P2 fechados no follow-up abaixo. |
 | **Total** |  | **26/40** | **36/40** | **Meta de 30/40 superada por 6 pontos.** |
 
-O score final não afirma perfeição. A sonda precisou de 570 linhas de CSS
-app-owned para sua identidade, descobriu que `table.Row.Link` combinado com uma
-ação Button pode gerar controles interativos aninhados e precisou passar
-`MainAttrs` para tornar o alvo do skip link focável. Esses pontos permanecem
-como backlog P2, não como falhas ocultas.
+O score final não afirma perfeição e permanece em 36/40 porque não houve uma
+segunda sonda cega depois do fechamento estrutural. A primeira sonda precisou
+de 570 linhas de CSS app-owned para sua identidade, descobriu que
+`table.Row.Link` combinado com uma ação Button podia gerar controles
+interativos aninhados e precisou passar `MainAttrs` para tornar o alvo do skip
+link focável. Os três achados foram corrigidos no follow-up abaixo; o score
+histórico não foi recalculado sem repetir o experimento independente.
+
+## Fechamento dos follow-ups P2
+
+Os três sharp edges preservados pela sonda foram implementados e verificados:
+
+1. **CSS app-owned:** o benchmark canônico migrou seu shell, navegação,
+   cabeçalhos, links de ação e campos para `AppShell`, `Navbar`,
+   `Sidebar`/`Overlay`, `PageHeader`, `Link`, `Select` e `TextInput`. Seu
+   `app.css` caiu de 728 para 398 linhas (**-45,3%**) e possui budget de
+   regressão de 500 linhas. Não foi criada uma API prematura de Stack/Grid.
+2. **Table Link + Actions:** quando ambos são configurados, a linha permanece
+   nativa e não interativa, a navegação primária vira um link na primeira
+   célula de dados e as ações mantêm controles independentes. `Link` tem
+   precedência sobre hooks conflitantes de linha nesse modo.
+3. **Foco do AppShell:** `main` agora recebe `tabindex="-1"` por default, com
+   override explícito via `MainAttrs`, tornando o destino do skip link focável
+   sem configuração extra.
+
+A composição expôs e fechou duas arestas adicionais: `AppShell` aceita templ
+children como fallback do slot Content, e `Sidebar.DisableSkipLink` permite que
+o shell externo seja o único dono da navegação de salto. A prova no navegador
+também encontrou `role="button"` implícito em links com aparência de botão;
+`AppearanceButton` agora é somente visual e preserva a semântica nativa de
+âncora, salvo `WithRole` explícito.
+
+A aceitação real cobriu 390 px e 1440 px, Goshtoso light e Minimal dark,
+drawer mobile, tabela larga com overflow local, loading e workflow completo até
+success. O documento permaneceu sem overflow horizontal, com exatamente um
+`h1`, um skip link, zero `a[role="button"]` e zero warnings/errors de console.
 
 ## O que já funciona
 
@@ -309,6 +341,7 @@ não apenas arquivos presentes.
 | Componentes promovidos | feito | AppShell, PageHeader, Toolbar, EmptyState, Skeleton e Card Body; APIs, demos, catálogo, skillgen e E2E completo |
 | Sonda cega final | feito | Control Room externo, zero source-dive direto, gates verdes e 36/40; qualificação de memória declarada |
 | Reavaliação final | feito | 36/40 contra 26/40; aumento de 10 pontos com a mesma régua |
+| Follow-ups P2 | feito | CSS 728 → 398; Table Link+Actions sem nesting; AppShell focável por default; Link preserva semântica nativa |
 
 ## Tarefas paralelas sob o control plane
 
@@ -356,13 +389,27 @@ regeneração, testes finais e autoria do resultado consolidado.
   success quanto no skeleton de loading do benchmark. Grid e flex ancestors
   passaram a usar `min-width: 0`, a track usa `minmax(0, 1fr)` e o loading
   empilha no breakpoint mobile; o teste de assets protege a contenção.
-- A sonda final mostrou que `table.Row.Link` com `table.Row.Actions` pode
-  produzir controles interativos aninhados. Até haver prevenção no componente
-  ou orientação específica, apps devem escolher linha clicável ou ação Button,
-  não ambas.
-- `AppShell` permite tornar o alvo do skip link focável via `MainAttrs`, mas não
-  aplica `tabindex="-1"` automaticamente. Alinhar o default ao contrato público
-  é uma oportunidade P2.
+- A sonda final mostrou que `table.Row.Link` com `table.Row.Actions` produzia
+  controles interativos aninhados. O componente agora rebaixa a linha para
+  markup nativo, ancora a primeira célula de dados e mantém as ações separadas;
+  unitários, demo e E2E cobrem a combinação.
+- `AppShell` exigia `MainAttrs` para tornar o alvo do skip link focável. O
+  default agora inclui `tabindex="-1"`, preservando overrides explícitos.
+- Compor `AppShell` e `Sidebar` gerava dois skip links. O shell passa conteúdo
+  via templ children e `Sidebar.DisableSkipLink` delega a propriedade do skip
+  link ao contêiner sem alterar o default standalone do Sidebar.
+- `Link.AppearanceButton` emitia `role="button"` em uma âncora com `href`. A
+  aparência passou a ser apenas visual por default; um role diferente exige
+  `WithRole` explícito e os testes de componente, benchmark e E2E protegem o
+  contrato.
+- `site/` fixa uma release e não consegue executar `go fix` com `GOWORK=off`
+  enquanto consome componentes novos ainda não publicados. O gate de edição
+  usa o workspace local; verificações standalone continuam usando
+  `GOWORK=off` nos exemplos que possuem replace próprio.
+- O lint adicional do starter encontrou seis retornos de Render/Fprintf
+  ignorados, apesar de o gate histórico só exigir seus testes. Os handlers
+  agora encerram writes quebrados e registram falhas de render; o starter
+  também passa lint, vet e build standalone.
 - O harness obrigou a sonda a receber memórias de resultados anteriores. Ela
   manteve zero source-dive direto e não reutilizou artefatos, mas o relatório
   qualifica corretamente a alegação de cegueira absoluta.
@@ -374,15 +421,15 @@ sonda independente superou a meta, o ledger foi atualizado e os gates finais
 passaram:
 
 - `templ generate`, `just css` e `go run ./cmd/skillgen` sem drift;
-- `go fix ./...` nos dois módulos sem alterações;
-- root e site com `golangci-lint run`: zero issues;
-- build do site e build/vet/lint do benchmark externo;
+- `go fix ./...` na raiz, site, benchmark e starter sem drift após o commit;
+- root, site, benchmark e starter com `golangci-lint run`: zero issues;
+- build do site e build/vet do benchmark externo e starter;
 - testes de root, site, starter e benchmark;
-- E2E completo: `ok github.com/araihu/goshtoso/site/tests/e2e` em 308,731 s;
-- inspeção real de recipes, componentes e benchmark, sem erros de console;
+- E2E completo: `ok github.com/araihu/goshtoso/site/tests/e2e` em 313,599 s;
+- inspeção real do benchmark em desktop/mobile, temas e estados, sem overflow
+  de página, roles conflitantes nem erros de console;
 - sonda cega final: 36/40 e zero source-dive direto.
 
-Os três follow-ups P2 preservados são reduzir o CSS app-owned necessário para
-branding, prevenir/documentar linha clicável com ação interativa e considerar
-`tabindex="-1"` como default do alvo principal de AppShell. Nenhum deles reabre
-os P1s que motivaram esta auditoria.
+Os três follow-ups P2 preservados foram encerrados com contratos públicos,
+testes e prova visual. Não resta pendência conhecida da auditoria; trabalho
+futuro deve nascer de nova evidência de consumidor, e não de backlog implícito.
