@@ -1264,6 +1264,9 @@
   .w-\[78\%\] {
     width: 78%;
   }
+  .w-auto {
+    width: auto;
+  }
   .w-fit {
     width: fit-content;
   }
@@ -1293,6 +1296,9 @@
   }
   .max-w-7xl {
     max-width: var(--container-7xl);
+  }
+  .max-w-48 {
+    max-width: calc(var(--spacing) * 48);
   }
   .max-w-\[80\%\] {
     max-width: 80%;
