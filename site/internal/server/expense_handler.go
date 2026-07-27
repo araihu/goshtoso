@@ -54,10 +54,10 @@ func (s *Server) renderExpensePage(w http.ResponseWriter, r *http.Request) {
 	content := examples.ExpenseApp(st)
 	meta := components.MetaForKey("examples/expense")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.FragmentWithMeta(meta, "expense", content).Render(r.Context(), w)
+		_ = demo.ComponentDocsFragment(meta, "expense", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
-	_ = demo.LayoutWithMeta(meta, "expense", content).Render(r.Context(), w)
+	_ = demo.ComponentDocsLayout(meta, "expense", content, storageAllowed(r)).Render(r.Context(), w)
 }
 
 func (s *Server) handleExpenseAdd(w http.ResponseWriter, r *http.Request) {

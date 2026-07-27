@@ -63,10 +63,10 @@ func (s *Server) renderChatPage(w http.ResponseWriter, r *http.Request) {
 	content := examples.ChatApp(me)
 	meta := components.MetaForKey("examples/chat")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.FragmentWithMeta(meta, "chat", content).Render(r.Context(), w)
+		_ = demo.ComponentDocsFragment(meta, "chat", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
-	_ = demo.LayoutWithMeta(meta, "chat", content).Render(r.Context(), w)
+	_ = demo.ComponentDocsLayout(meta, "chat", content, storageAllowed(r)).Render(r.Context(), w)
 }
 
 // setChatCookie persists the visitor identity in the gt_chat cookie. HttpOnly is

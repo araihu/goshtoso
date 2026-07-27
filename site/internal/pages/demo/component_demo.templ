@@ -3,6 +3,7 @@ package demo
 import (
 	"strings"
 
+	"github.com/araihu/goshtoso-app-shells/componentpage"
 	"github.com/araihu/goshtoso/components/codeblock"
 )
 
@@ -48,48 +49,18 @@ type DemoSectionProps struct {
 }
 
 templ ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeExample string) {
-	<div data-demo-section>
-		<!-- Header Section -->
-		<div class="mb-6">
-			<h1 id={ slugify(props.Title) } data-toc-heading class="scroll-mt-8 text-3xl font-bold font-title mb-2">{ props.Title }</h1>
-			<p data-component-description class="text-lg text-on-surface-muted dark:text-on-surface-dark-muted max-w-3xl">
-				{ props.Description }
-			</p>
-		</div>
-
-		<!-- Demo Section -->
-		<div class="space-y-4">
-			if props.AbovePreview != nil {
-				@props.AbovePreview
-			}
-			<!-- Preview -->
-			<div data-demo-preview class="relative border border-transparent rounded-radius after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark">
-				<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius">
-					<div class="flex gap-1.5">
-						<div class="rounded-full w-3 h-3 bg-red-500"></div>
-						<div class="rounded-full w-3 h-3 bg-yellow-500"></div>
-						<div class="rounded-full w-3 h-3 bg-green-500"></div>
-					</div>
-				</div>
-				<div class="bg-pattern flex justify-center dark:bg-surface-dark bg-surface rounded-b-radius">
-					<div class="relative w-full bg-surface dark:bg-surface-dark border-none p-8">
-						@demoContent
-					</div>
-				</div>
-			</div>
-
-			<!-- Code Example -->
-			<div data-demo-code>
-				@codeblock.CodeBlock(codeblock.Config{
-					Language:  "go",
-					Label:     "Usage Example",
-					Code:      codeExample,
-					MaxHeight: "400px",
-					ID:        "code-example",
-				})
-			</div>
-		</div>
-	</div>
+	@componentpage.Page(componentpage.Config{
+		Title:       props.Title,
+		Description: props.Description,
+		RootAttrs: templ.Attributes{
+			"data-demo-section": true,
+		},
+		Primary: componentpage.Example{
+			AbovePreview: props.AbovePreview,
+			Preview:      demoContent,
+			Code:         codeExample,
+		},
+	})
 }
 
 // DemoSection renders an additional demo section with its own preview and code block.
