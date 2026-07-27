@@ -1360,6 +1360,9 @@
   .min-w-11 {
     min-width: calc(var(--spacing) * 11);
   }
+  .min-w-20 {
+    min-width: calc(var(--spacing) * 20);
+  }
   .min-w-24 {
     min-width: calc(var(--spacing) * 24);
   }
@@ -3058,6 +3061,9 @@
   .\!p-0\.5 {
     padding: calc(var(--spacing) * 0.5) !important;
   }
+  .\!p-1 {
+    padding: calc(var(--spacing) * 1) !important;
+  }
   .p-0 {
     padding: calc(var(--spacing) * 0);
   }
@@ -3897,6 +3903,14 @@
       }
     }
   }
+  .group-hover\:contrast-125 {
+    &:is(:where(.group):hover *) {
+      @media (hover: hover) {
+        --tw-contrast: contrast(125%);
+        filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+      }
+    }
+  }
   .group-hover\/rating-option\:scale-110 {
     &:is(:where(.group\/rating-option):hover *) {
       @media (hover: hover) {
@@ -4429,6 +4443,12 @@
       margin-top: calc(var(--spacing) * 2);
     }
   }
+  .first\:border-t-0 {
+    &:first-child {
+      border-top-style: var(--tw-border-style);
+      border-top-width: 0px;
+    }
+  }
   .first\:pt-0 {
     &:first-child {
       padding-top: calc(var(--spacing) * 0);
@@ -4887,6 +4907,14 @@
     &:hover {
       @media (hover: hover) {
         --tw-ring-color: var(--color-primary);
+      }
+    }
+  }
+  .hover\:\!contrast-100 {
+    &:hover {
+      @media (hover: hover) {
+        --tw-contrast: contrast(100%) !important;
+        filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,) !important;
       }
     }
   }
@@ -6341,6 +6369,11 @@
       }
     }
   }
+  .dark\:\!border-transparent {
+    &:where(.dark, .dark *) {
+      border-color: transparent !important;
+    }
+  }
   .dark\:border-control-outline-dark {
     &:where(.dark, .dark *) {
       border-color: var(--color-control-outline-dark);
@@ -6464,6 +6497,11 @@
   .dark\:border-warning-action-dark {
     &:where(.dark, .dark *) {
       border-color: var(--color-warning-action-dark);
+    }
+  }
+  .dark\:\!bg-transparent {
+    &:where(.dark, .dark *) {
+      background-color: transparent !important;
     }
   }
   .dark\:bg-black\/60 {

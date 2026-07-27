@@ -178,7 +178,7 @@ func applicationSurfaceBrief() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<section id=\"surface-brief\" class=\"mb-14 border-y border-outline py-8 dark:border-outline-dark\" aria-labelledby=\"surface-brief-title\"><div class=\"grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]\"><header class=\"space-y-2\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Before components</p><h2 id=\"surface-brief-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Write the surface brief</h2><p class=\"text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Use product context and task truth to make a strong reversible first pass. Do not turn the domain name into a palette, font, or layout preset.</p></header><dl class=\"grid gap-x-8 gap-y-5 sm:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<section id=\"surface-brief\" class=\"mb-14 border-y border-outline py-8 dark:border-outline-dark\" aria-labelledby=\"surface-brief-title\"><div class=\"grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]\"><header class=\"space-y-2\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Before components</p><h2 id=\"surface-brief-title\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Write the surface brief</h2><p class=\"text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Use product context and task truth to make a strong reversible first pass. Do not turn the domain name into a palette, font, or layout preset.</p></header><dl class=\"grid gap-x-8 gap-y-5 sm:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -339,7 +339,7 @@ func fieldProvenApplicationPatterns() templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<section class=\"border-t border-outline py-14 dark:border-outline-dark sm:py-20\" aria-labelledby=\"field-proven-title\"><div class=\"grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]\"><header class=\"space-y-3\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Field-proven extensions</p><h2 id=\"field-proven-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Patterns recovered from independent apps</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Three blind consumer builds pushed the four base recipes into finance, warehouse, and editorial work. Reuse the decision structure; keep the domain voice.</p></header><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<section class=\"border-t border-outline py-14 dark:border-outline-dark sm:py-20\" aria-labelledby=\"field-proven-title\"><div class=\"grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]\"><header class=\"space-y-3\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Field-proven extensions</p><h2 id=\"field-proven-title\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Patterns recovered from independent apps</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Three blind consumer builds pushed the four base recipes into finance, warehouse, and editorial work. Reuse the decision structure; keep the domain voice.</p></header><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -630,7 +630,7 @@ func applicationPatternContractDetails(contract applicationPatternContract) temp
 			templ_7745c5c3_Var23 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"mt-8 border-y border-outline dark:border-outline-dark\"><div data-pattern-problem class=\"grid gap-2 py-6 md:grid-cols-[11rem_minmax(0,1fr)]\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Problem</h3><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div data-pattern-contract class=\"mt-8 border-t border-outline dark:border-outline-dark\"><div data-pattern-problem class=\"grid gap-2 py-6 md:grid-cols-[11rem_minmax(0,1fr)]\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Problem</h3><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1002,13 +1002,13 @@ func applicationPatternAppShellCreateAction() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "New change")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<span class=\"inline-flex h-8 items-center rounded-radius border border-primary bg-primary px-3 text-on-primary transition group-hover:contrast-125 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark\">New change</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall), button.WithRootClass("hidden sm:inline-flex")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall), button.WithRootClass("group hidden !border-transparent !bg-transparent !p-1 hover:!contrast-100 dark:!border-transparent dark:!bg-transparent sm:inline-flex")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1179,11 +1179,11 @@ func operationsListPreview() templ.Component {
 			Caption:      "Deployments awaiting operational review",
 			ShowCheckbox: true,
 			Columns: []table.Column{
-				{Key: "service", Label: "Service", Width: "min-w-48"},
-				{Key: "release", Label: "Release", Width: "min-w-28"},
-				{Key: "environment", Label: "Environment", Width: "min-w-32"},
+				{Key: "service", Label: "Service", Width: "min-w-36"},
+				{Key: "release", Label: "Release", Width: "min-w-20"},
+				{Key: "environment", Label: "Environment", Width: "min-w-28"},
 				{Key: "status", Label: "Status", Width: "min-w-36"},
-				{Key: "owner", Label: "Owner", Width: "min-w-32"},
+				{Key: "owner", Label: "Owner", Width: "min-w-28"},
 			},
 			Rows: operationsPatternRows(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
