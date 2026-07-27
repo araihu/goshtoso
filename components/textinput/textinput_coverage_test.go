@@ -161,6 +161,15 @@ func TestCoverageSearchInputNoID(t *testing.T) {
 
 	assert.NotContains(t, html, "id=")
 	assert.Contains(t, html, `aria-label="search"`)
+
+	labeledHTML := renderTextInput(t, Config{
+		Name:  "q",
+		Label: "Search services",
+		Type:  TypeSearch,
+	})
+
+	assert.NotContains(t, labeledHTML, "id=")
+	assert.Contains(t, labeledHTML, `aria-label="Search services"`)
 }
 
 // TestCoverageLabelStateIcons covers the error/success icon branches in

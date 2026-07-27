@@ -207,6 +207,8 @@ templ searchInput(cfg Config) {
 				}
 				if cfg.Label == "" {
 					aria-label="search"
+				} else if cfg.ID == "" {
+					aria-label={ cfg.Label }
 				}
 				{ cfg.inputAttributes()... }
 			/>
