@@ -33,6 +33,24 @@ type Item struct {
 	Attrs templ.Attributes
 }
 
+// RemoteSource configures per-query server-backed search. The endpoint receives
+// QueryParam (default "q") and, when Limit is positive, a "limit" parameter.
+// It must return either a JSON array of Item-shaped values or an object with an
+// "items" array. Results stay in server order; the server owns authorization,
+// ranking, and filtering.
+type RemoteSource struct {
+	// Endpoint is the JSON search endpoint. An empty endpoint disables remote mode.
+	Endpoint string
+	// QueryParam is the query-string key. Defaults to "q".
+	QueryParam string
+	// MinChars is the minimum trimmed query length before a request. Defaults to 2.
+	MinChars int
+	// Debounce is the wait in milliseconds before each query request. Defaults to 150.
+	Debounce int
+	// Limit is sent as the "limit" query parameter when positive.
+	Limit int
+}
+
 // JSString escapes a value for use inside a single-quoted Alpine expression.
 func jsString(value string) string {
 	value = strings.ReplaceAll(value, `\`, `\\`)
@@ -60,6 +78,9 @@ type Config struct {
 	// When set, results are fetched and rendered in the browser instead of
 	// pre-rendering every Item as a hidden DOM node.
 	ItemsURL string
+	// RemoteSource optionally enables per-query server-backed results. It takes
+	// precedence over ItemsURL while leaving Items and ItemsURL behavior intact.
+	RemoteSource *RemoteSource
 	// MaxResults limits the visible matches. Defaults to 4.
 	MaxResults int
 	// DescriptionMaxLength truncates result descriptions. Defaults to 120.
@@ -74,6 +95,27 @@ type Config struct {
 	DialogClass string
 	// InputAttrs allows extra attributes on the search input.
 	InputAttrs templ.Attributes
+}
+
+func (source RemoteSource) queryParam() string {
+	if strings.TrimSpace(source.QueryParam) != "" {
+		return source.QueryParam
+	}
+	return "q"
+}
+
+func (source RemoteSource) minChars() int {
+	if source.MinChars > 0 {
+		return source.MinChars
+	}
+	return 2
+}
+
+func (source RemoteSource) debounce() int {
+	if source.Debounce > 0 {
+		return source.Debounce
+	}
+	return 150
 }
 
 // GetID returns a stable ID.

@@ -80,7 +80,7 @@ func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 	for _, want := range []string{
 		`data-search-source-url="/search.json"`,
 		`<template x-for="(item, index) in visibleResults()"`,
-		`x-bind:id="item.id || null"`,
+		`x-bind:id="item.optionID"`,
 		`x-bind:data-search-kind="item.kind || null"`,
 		`x-bind:data-search-method="item.method || null"`,
 		`x-bind:data-search-path="item.path || null"`,
@@ -106,6 +106,44 @@ func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 	}
 	if strings.Contains(html, "Static result that should not render") || strings.Contains(html, `id="static-result"`) {
 		t.Fatalf("ItemsURL mode should not pre-render result records:\n%s", html)
+	}
+}
+
+func TestSearchModalRendersRemoteSourceContract(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{
+		ID: "remote-search",
+		RemoteSource: &RemoteSource{
+			Endpoint:   "/api/search/resources",
+			QueryParam: "term",
+			MinChars:   3,
+			Debounce:   275,
+			Limit:      8,
+		},
+	}))
+
+	for _, want := range []string{
+		`data-search-remote-endpoint="/api/search/resources"`,
+		`data-search-remote-query-param="term"`,
+		`data-search-remote-min-chars="3"`,
+		`data-search-remote-debounce="275"`,
+		`data-search-remote-limit="8"`,
+		`onQueryInput()`,
+		`retryRemote()`,
+		`AbortController`,
+		`requestID !== this.remoteSequence`,
+		`x-bind:aria-activedescendant="activeDescendant()"`,
+		`x-bind:aria-selected="isActiveIndex(index)"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal remote source missing %q in\n%s", want, html)
+		}
+	}
+}
+
+func TestRemoteSourceDefaults(t *testing.T) {
+	source := RemoteSource{}
+	if source.queryParam() != "q" || source.minChars() != 2 || source.debounce() != 150 {
+		t.Fatalf("remote source defaults = query %q, min %d, debounce %d", source.queryParam(), source.minChars(), source.debounce())
 	}
 }
 

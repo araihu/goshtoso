@@ -110,15 +110,20 @@ func searchDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Remote Results",
-				Description: "Load result records from a JSON endpoint, then filter and navigate in the browser.",
+				Title:       "Server-backed Results",
+				Description: "Send each eligible query to the server. The server keeps authorization, ranking, and result order; the dialog handles debounce, cancellation, and recovery.",
 			},
 			searchRemotePreview(),
 			`@search.Search(search.Config{
-    ID:          "remote-search",
-    Label:       "Remote search",
-    Placeholder: "Search fetched results",
-    ItemsURL:    "/api/components/search/items",
+    ID: "remote-search",
+    Label: "Search resources",
+    RemoteSource: &search.RemoteSource{
+        Endpoint:   "/api/components/search/remote",
+        QueryParam: "q",
+        MinChars:   2,
+        Debounce:   150,
+        Limit:      4,
+    },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -207,9 +212,15 @@ func searchRemotePreview() templ.Component {
 		}
 		templ_7745c5c3_Err = search.Search(search.Config{
 			ID:          "remote-search",
-			Label:       "Remote search",
-			Placeholder: "Search fetched results",
-			ItemsURL:    "/api/components/search/items",
+			Label:       "Search resources",
+			Placeholder: "Type at least 2 characters",
+			RemoteSource: &search.RemoteSource{
+				Endpoint:   "/api/components/search/remote",
+				QueryParam: "q",
+				MinChars:   2,
+				Debounce:   150,
+				Limit:      4,
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

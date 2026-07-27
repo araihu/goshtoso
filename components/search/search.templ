@@ -30,9 +30,10 @@ templ searchFieldTemplate(cfg Config) {
 			x-on:keydown.window="handleWindowKey($event)"
 		}
 		x-on:goshtoso-search-open.window="if ($event.detail.id === searchId) open = true"
-		x-on:goshtoso-search-close.window="if ($event.detail.id === searchId) open = false"
+		x-on:goshtoso-search-close.window="if ($event.detail.id === searchId) { open = false; $nextTick(() => $refs.trigger && $refs.trigger.focus()) }"
 	>
 		<button
+			x-ref="trigger"
 			type="button"
 			class={ cfg.triggerClasses() }
 			x-on:click="openSearch()"
@@ -68,6 +69,15 @@ templ searchModalTemplate(cfg Config) {
 		if cfg.ItemsURL != "" {
 			data-search-source-url={ cfg.ItemsURL }
 		}
+		if cfg.RemoteSource != nil && cfg.RemoteSource.Endpoint != "" {
+			data-search-remote-endpoint={ cfg.RemoteSource.Endpoint }
+			data-search-remote-query-param={ cfg.RemoteSource.queryParam() }
+			data-search-remote-min-chars={ fmt.Sprint(cfg.RemoteSource.minChars()) }
+			data-search-remote-debounce={ fmt.Sprint(cfg.RemoteSource.debounce()) }
+			if cfg.RemoteSource.Limit > 0 {
+				data-search-remote-limit={ fmt.Sprint(cfg.RemoteSource.Limit) }
+			}
+		}
 	>
 		<div
 			class={ cfg.dialogClasses() }
@@ -85,7 +95,7 @@ templ searchModalTemplate(cfg Config) {
 				<input
 					x-ref="input"
 					x-model="query"
-					x-on:input="activeIndex = 0"
+					x-on:input="activeIndex = 0; onQueryInput()"
 					x-on:keydown.down.prevent="move(1)"
 					x-on:keydown.up.prevent="move(-1)"
 					x-on:keydown.enter.prevent="choose()"
@@ -96,6 +106,7 @@ templ searchModalTemplate(cfg Config) {
 					placeholder={ cfg.getPlaceholder() }
 					autocomplete="off"
 					spellcheck="false"
+					x-bind:aria-activedescendant="activeDescendant()"
 					{ cfg.InputAttrs... }
 				/>
 				@kbd.Kbd(cfg.getEscapeText(), kbd.WithSize(kbd.SizeSM), kbd.WithRootClass("text-on-surface-muted dark:text-on-surface-dark-muted"))
@@ -104,17 +115,28 @@ templ searchModalTemplate(cfg Config) {
 				x-show="query.trim().length > 0"
 				class="flex max-h-[min(28rem,calc(100vh-12rem))] flex-col divide-y divide-outline overflow-hidden overflow-y-auto rounded-b-radius border border-outline bg-surface text-sm font-light dark:divide-outline-dark dark:border-outline-dark dark:bg-surface-dark-alt"
 				role="listbox"
+				x-bind:aria-busy="isRemoteLoading()"
 				aria-label={ cfg.getLabel() + " results" }
 			>
-				if cfg.ItemsURL != "" {
+				if cfg.ItemsURL != "" || (cfg.RemoteSource != nil && cfg.RemoteSource.Endpoint != "") {
 					@clientResultItems()
 				} else {
 					for i, item := range cfg.Items {
 						@resultItem(item, i)
 					}
 				}
+				<p x-show="isRemoteBelowMinimum()" class="px-4 py-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted" aria-live="polite">
+					<span x-text="remoteMinimumText()"></span>
+				</p>
+				<p x-show="isRemoteLoading()" class="px-4 py-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted" role="status" aria-live="polite">
+					Searching…
+				</p>
+				<div x-show="remoteError" class="flex items-center justify-between gap-3 px-4 py-4 text-sm text-danger" role="alert">
+					<span>Search failed. Try again.</span>
+					<button type="button" class="rounded-radius border border-outline px-3 py-1.5 font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark" x-on:click="retryRemote()">Retry</button>
+				</div>
 				<p
-					x-show="query.trim().length > 0 && visibleResults().length === 0"
+					x-show="showEmptyState()"
 					class="px-4 py-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
 				>
 					{ cfg.getEmptyText() }
@@ -151,6 +173,7 @@ templ resultItem(item Item, index int) {
 		data-search-text={ item.SearchText() }
 		data-result-index={ fmt.Sprint(index) }
 		x-bind:hidden="!isResultVisible($el)"
+		x-bind:aria-selected="isActive($el)"
 		x-bind:style="'order: ' + resultOrder($el)"
 		x-bind:class="isActive($el) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'"
 		x-on:mouseenter="setActive($el)"
@@ -196,7 +219,7 @@ templ clientResultItems() {
 		<button
 			type="button"
 			data-search-result
-			x-bind:id="item.id || null"
+			x-bind:id="item.optionID"
 			x-bind:data-search-title="item.title"
 			x-bind:data-search-description="item.description"
 			x-bind:data-search-kind="item.kind || null"
@@ -206,6 +229,7 @@ templ clientResultItems() {
 			x-bind:data-search-href="item.href || null"
 			x-bind:data-search-text="item.searchText"
 			x-bind:data-result-index="item.index"
+			x-bind:aria-selected="isActiveIndex(index)"
 			x-bind:class="isActiveIndex(index) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'"
 			x-on:mouseenter="setActiveIndex(index)"
 			x-on:click="selectResult(item)"
@@ -287,6 +311,12 @@ templ searchScript() {
 			clientItemsLoading: false,
 			cachedClientTerm: null,
 			cachedClientResults: [],
+			remoteItems: [],
+			remoteLoading: false,
+			remoteError: false,
+			remoteTimer: null,
+			remoteController: null,
+			remoteSequence: 0,
 			openSearch: function () {
 				this.open = true;
 				this.activeIndex = 0;
@@ -297,6 +327,7 @@ templ searchScript() {
 				});
 			},
 			closeSearch: function () {
+				this.cancelRemote();
 				this.open = false;
 				this.query = '';
 				this.activeIndex = 0;
@@ -317,7 +348,39 @@ templ searchScript() {
 				return (this.$root && this.$root.dataset.searchSourceUrl) || '';
 			},
 			usesClientSource: function () {
-				return this.sourceURL() !== '';
+				return !this.usesRemoteSource() && this.sourceURL() !== '';
+			},
+			remoteEndpoint: function () {
+				return (this.$root && this.$root.dataset.searchRemoteEndpoint) || '';
+			},
+			usesRemoteSource: function () {
+				return this.remoteEndpoint() !== '';
+			},
+			remoteMinChars: function () {
+				var value = Number((this.$root && this.$root.dataset.searchRemoteMinChars) || 2);
+				return value > 0 ? value : 2;
+			},
+			remoteDebounce: function () {
+				var value = Number((this.$root && this.$root.dataset.searchRemoteDebounce) || 150);
+				return value > 0 ? value : 150;
+			},
+			remoteLimit: function () {
+				var value = Number((this.$root && this.$root.dataset.searchRemoteLimit) || 0);
+				return value > 0 ? value : 0;
+			},
+			isRemoteBelowMinimum: function () {
+				return this.usesRemoteSource() && this.query.trim().length > 0 && this.query.trim().length < this.remoteMinChars();
+			},
+			remoteMinimumText: function () {
+				return 'Type at least ' + this.remoteMinChars() + ' characters.';
+			},
+			isRemoteLoading: function () {
+				return this.usesRemoteSource() && this.remoteLoading;
+			},
+			showEmptyState: function () {
+				if (!this.query.trim()) return false;
+				if (!this.usesRemoteSource()) return this.visibleResults().length === 0;
+				return !this.isRemoteBelowMinimum() && !this.remoteLoading && !this.remoteError && this.remoteItems.length === 0;
 			},
 			resetClientCache: function () {
 				this.cachedClientTerm = null;
@@ -381,6 +444,7 @@ templ searchScript() {
 						keywords: keywords.map(function (keyword) { return self.stringValue(keyword); }),
 						index: index
 					};
+					item.optionID = item.id || self.searchId + '-option-' + index;
 					item.key = item.id || item.href || item.title || String(index);
 					item.searchText = self.searchTextForItem(item);
 					return item;
@@ -405,7 +469,71 @@ templ searchScript() {
 						this.resetClientCache();
 					})
 					.finally(() => {
-						this.clientItemsLoading = false;
+					this.clientItemsLoading = false;
+					});
+			},
+			cancelRemote: function () {
+				if (this.remoteTimer) window.clearTimeout(this.remoteTimer);
+				this.remoteTimer = null;
+				if (this.remoteController) this.remoteController.abort();
+				this.remoteController = null;
+				this.remoteLoading = false;
+			},
+			onQueryInput: function () {
+				if (!this.usesRemoteSource()) return;
+				this.cancelRemote();
+				this.remoteError = false;
+				this.remoteItems = [];
+				var term = this.query.trim();
+				if (term.length < this.remoteMinChars()) return;
+				this.remoteLoading = true;
+				this.remoteTimer = window.setTimeout(() => this.requestRemote(term), this.remoteDebounce());
+			},
+			retryRemote: function () {
+				if (!this.usesRemoteSource()) return;
+				this.cancelRemote();
+				this.remoteError = false;
+				var term = this.query.trim();
+				if (term.length >= this.remoteMinChars()) this.requestRemote(term);
+			},
+			requestRemote: function (term) {
+				if (!this.usesRemoteSource() || term !== this.query.trim()) return;
+				this.cancelRemote();
+				var requestID = ++this.remoteSequence;
+				var controller = new AbortController();
+				this.remoteController = controller;
+				this.remoteLoading = true;
+				this.remoteError = false;
+				var endpoint;
+				try {
+					endpoint = new URL(this.remoteEndpoint(), window.location.href);
+					endpoint.searchParams.set((this.$root.dataset.searchRemoteQueryParam || 'q'), term);
+					if (this.remoteLimit()) endpoint.searchParams.set('limit', String(this.remoteLimit()));
+				} catch (error) {
+					this.remoteLoading = false;
+					this.remoteError = true;
+					return;
+				}
+				fetch(endpoint.toString(), { headers: { 'Accept': 'application/json' }, signal: controller.signal })
+					.then(function (response) {
+						if (!response.ok) throw new Error('Search request failed');
+						return response.json();
+					})
+					.then((payload) => {
+						if (requestID !== this.remoteSequence || term !== this.query.trim()) return;
+						var values = this.normalizeItems(payload);
+						this.remoteItems = this.remoteLimit() ? values.slice(0, this.remoteLimit()) : values;
+						this.activeIndex = 0;
+					})
+					.catch((error) => {
+						if (error && error.name === 'AbortError') return;
+						if (requestID === this.remoteSequence && term === this.query.trim()) this.remoteError = true;
+					})
+					.finally(() => {
+						if (requestID === this.remoteSequence) {
+							this.remoteLoading = false;
+							this.remoteController = null;
+						}
 					});
 			},
 			allResults: function () {
@@ -447,11 +575,18 @@ templ searchScript() {
 				return this.cachedClientResults;
 			},
 			matchedResults: function () {
+				if (this.usesRemoteSource()) return this.remoteItems;
 				if (this.usesClientSource()) return this.matchedClientResults();
 				return this.matchedDOMResults();
 			},
 			visibleResults: function () {
 				return this.matchedResults();
+			},
+			activeDescendant: function () {
+				var result = this.visibleResults()[this.activeIndex];
+				if (!result) return null;
+				if (result.dataset) return result.id || null;
+				return result.optionID || null;
 			},
 			isResultVisible: function (el) {
 				return this.matchedResults().indexOf(el) !== -1;
@@ -465,7 +600,7 @@ templ searchScript() {
 				if (!results.length) return;
 				this.activeIndex = (this.activeIndex + delta + results.length) % results.length;
 				this.$nextTick(() => {
-					var el = this.usesClientSource() ? this.$root.querySelectorAll('[data-search-result]')[this.activeIndex] : results[this.activeIndex];
+					var el = (this.usesClientSource() || this.usesRemoteSource()) ? this.$root.querySelectorAll('[data-search-result]')[this.activeIndex] : results[this.activeIndex];
 					if (el) el.scrollIntoView({ block: 'nearest' });
 				});
 			},
@@ -486,7 +621,7 @@ templ searchScript() {
 			choose: function () {
 				var results = this.visibleResults();
 				if (!results.length) return;
-				if (this.usesClientSource()) this.selectResult(results[this.activeIndex]);
+				if (this.usesClientSource() || this.usesRemoteSource()) this.selectResult(results[this.activeIndex]);
 				else results[this.activeIndex].click();
 			},
 			selectResult: function (result) {

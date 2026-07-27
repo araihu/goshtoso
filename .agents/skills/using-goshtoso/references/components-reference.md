@@ -1298,6 +1298,7 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `EscapeText` | `string` | EscapeText is rendered in the dialog close KBD hint. Defaults to "Esc". |
 | `Items` | `[]Item` | Items are the caller-provided result records. |
 | `ItemsURL` | `string` | ItemsURL is an optional JSON endpoint for client-side result records. When set, results are fetched and rendered in the browser instead of pre-rendering every Item as a hidden DOM node. |
+| `RemoteSource` | `*RemoteSource` | RemoteSource optionally enables per-query server-backed results. It takes precedence over ItemsURL while leaving Items and ItemsURL behavior intact. |
 | `MaxResults` | `int` | MaxResults limits the visible matches. Defaults to 4. |
 | `DescriptionMaxLength` | `int` | DescriptionMaxLength truncates result descriptions. Defaults to 120. |
 | `EmptyText` | `string` | EmptyText appears when no result matches the query. |
@@ -1320,6 +1321,16 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `Section` | `string` | Section is optional grouping or eyebrow text. |
 | `Keywords` | `[]string` | Keywords are extra terms included in client-side filtering. |
 | `Attrs` | `templ.Attributes` | Attrs are extra button attributes; use Href for navigation because reserved data-search-href values are revalidated before use. |
+
+**RemoteSource**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Endpoint` | `string` | Endpoint is the JSON search endpoint. An empty endpoint disables remote mode. |
+| `QueryParam` | `string` | QueryParam is the query-string key. Defaults to "q". |
+| `MinChars` | `int` | MinChars is the minimum trimmed query length before a request. Defaults to 2. |
+| `Debounce` | `int` | Debounce is the wait in milliseconds before each query request. Defaults to 150. |
+| `Limit` | `int` | Limit is sent as the "limit" query parameter when positive. |
 
 ## select
 

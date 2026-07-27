@@ -50,15 +50,20 @@ templ searchDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Remote Results",
-				Description: "Load result records from a JSON endpoint, then filter and navigate in the browser.",
+				Title:       "Server-backed Results",
+				Description: "Send each eligible query to the server. The server keeps authorization, ranking, and result order; the dialog handles debounce, cancellation, and recovery.",
 			},
 			searchRemotePreview(),
 			`@search.Search(search.Config{
-    ID:          "remote-search",
-    Label:       "Remote search",
-    Placeholder: "Search fetched results",
-    ItemsURL:    "/api/components/search/items",
+    ID: "remote-search",
+    Label: "Search resources",
+    RemoteSource: &search.RemoteSource{
+        Endpoint:   "/api/components/search/remote",
+        QueryParam: "q",
+        MinChars:   2,
+        Debounce:   150,
+        Limit:      4,
+    },
 })`,
 		)
 	</div>
@@ -85,9 +90,15 @@ templ searchRemotePreview() {
 	<div id="search-remote" class="mx-auto w-full max-w-sm">
 		@search.Search(search.Config{
 			ID:          "remote-search",
-			Label:       "Remote search",
-			Placeholder: "Search fetched results",
-			ItemsURL:    "/api/components/search/items",
+			Label:       "Search resources",
+			Placeholder: "Type at least 2 characters",
+			RemoteSource: &search.RemoteSource{
+				Endpoint:   "/api/components/search/remote",
+				QueryParam: "q",
+				MinChars:   2,
+				Debounce:   150,
+				Limit:      4,
+			},
 		})
 	</div>
 }

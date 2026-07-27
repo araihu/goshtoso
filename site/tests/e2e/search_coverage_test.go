@@ -3,6 +3,7 @@ package e2e
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -25,6 +26,15 @@ func openComponentSearch(t *testing.T, page playwright.Page) playwright.Locator 
 	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{
 		State: playwright.WaitForSelectorStateVisible,
 	}))
+	return input
+}
+
+func openRemoteSearch(t *testing.T, page playwright.Page) playwright.Locator {
+	t.Helper()
+	trigger := page.Locator("#remote-search button[aria-haspopup='dialog']")
+	require.NoError(t, trigger.Click())
+	input := page.Locator("#remote-search-input")
+	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
 	return input
 }
 
@@ -197,4 +207,76 @@ func TestSearchCoverageClickOutsideCloses(t *testing.T) {
 	// Still on the search page; backdrop click must not navigate.
 	assert.Contains(t, page.URL(), "/components/search")
 	assert.Empty(t, consoleErrors, "no console errors")
+}
+
+func TestSearchRemoteSourceQueryKeyboardAndFocus(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	page := newIsolatedPage(t)
+	var remoteURLs []string
+	page.On("request", func(request playwright.Request) {
+		if strings.Contains(request.URL(), "/api/components/search/remote") {
+			remoteURLs = append(remoteURLs, request.URL())
+		}
+	})
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+	input := openRemoteSearch(t, page)
+
+	// Minimum characters blocks network work, then debounce emits one bounded request.
+	require.NoError(t, input.Fill("f"))
+	time.Sleep(220 * time.Millisecond)
+	require.Empty(t, remoteURLs)
+	require.NoError(t, input.Fill("fast"))
+	require.NoError(t, page.Locator("#search-remote-fast:visible").WaitFor())
+	require.Len(t, remoteURLs, 1)
+	assert.Contains(t, remoteURLs[0], "q=fast")
+	assert.Contains(t, remoteURLs[0], "limit=4")
+
+	// The active option is exposed to assistive technology and follows arrows.
+	assert.Equal(t, "search-remote-fast", searchAttribute(t, input, "aria-activedescendant"))
+	assert.Equal(t, "true", searchAttribute(t, page.Locator("#search-remote-fast"), "aria-selected"))
+	require.NoError(t, input.Press("ArrowDown"))
+	assert.Equal(t, "search-remote-fast", searchAttribute(t, input, "aria-activedescendant"))
+
+	// Escape restores focus to the opener instead of leaving it in a hidden dialog.
+	require.NoError(t, input.Press("Escape"))
+	require.NoError(t, page.Locator("#remote-search-dialog").WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	focused, err := page.Evaluate("() => document.activeElement === document.querySelector('#remote-search button')", nil)
+	require.NoError(t, err)
+	assert.Equal(t, true, focused)
+}
+
+func TestSearchRemoteSourceCancelsStaleAndRetriesErrors(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	page := newIsolatedPage(t)
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+	input := openRemoteSearch(t, page)
+
+	require.NoError(t, input.Fill("slow"))
+	time.Sleep(220 * time.Millisecond) // debounce elapsed; delayed request is in flight.
+	require.NoError(t, input.Fill("fast"))
+	require.NoError(t, page.Locator("#search-remote-fast:visible").WaitFor())
+	time.Sleep(500 * time.Millisecond)
+	count, err := page.Locator("#search-remote-slow:visible").Count()
+	require.NoError(t, err)
+	assert.Zero(t, count, "stale delayed response must not replace newer results")
+
+	require.NoError(t, input.Fill("error"))
+	require.NoError(t, page.Locator("#remote-search-dialog [role='alert']:visible").WaitFor())
+	require.NoError(t, page.Locator("#remote-search-dialog button", playwright.PageLocatorOptions{HasText: "Retry"}).Click())
+	require.NoError(t, page.Locator("#remote-search-dialog [role='alert']:visible").WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+}
+
+func searchAttribute(t *testing.T, locator playwright.Locator, name string) string {
+	t.Helper()
+	value, err := locator.GetAttribute(name)
+	require.NoError(t, err)
+	return value
 }

@@ -2,6 +2,19 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## Unreleased
+
+### Server-backed search
+
+- Added `search.RemoteSource` for per-query JSON search. It sends a configurable
+  query parameter plus optional bounded `limit`, preserves server ordering, and
+  leaves authorization, filtering, and ranking with the application.
+- Remote search debounces eligible queries, cancels in-flight requests, ignores
+  stale responses, and renders loading, empty, failure, and retry states with
+  keyboard and focus-return behavior.
+- Existing `search.Config.Items` and `ItemsURL` remain client-first and
+  unchanged. Migrate only when the application needs server-owned search.
+
 ## [v0.0.13] - 2026-07-26
 
 ### Resilient dependency loading
