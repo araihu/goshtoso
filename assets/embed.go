@@ -1,5 +1,7 @@
-// Package assets provides embedded static files (CSS, JS, images) for Goshtoso components.
-// Use Handler() to serve them at /assets/ in your HTTP server.
+// Package assets provides embedded static files and their public runtime
+// contract for Goshtoso components. Use Handler to serve them at /assets/,
+// DefaultRuntimeManifest to inspect the ordered dependency/fallback set, and
+// GoshtosoVersion to identify the exact library module linked into a consumer.
 //
 // Usage:
 //
@@ -91,7 +93,7 @@ func vendorVersion(module string) string {
 }
 
 // AlpineVersion returns the Alpine.js version Goshtoso vendors (core, collapse,
-// and focus share this version). Pinned in js/runtime/versions.json.
+// focus, and mask share this version). Pinned in js/runtime/versions.json.
 func AlpineVersion() string { return vendorVersion("alpinejs") }
 
 // HTMXVersion returns the vendored HTMX version (js/runtime/versions.json).

@@ -23,27 +23,15 @@ const (
 	DependencyHTMX Dependency = "htmx"
 )
 
-type dependencySource struct {
-	cdnURL    string
-	localURL  string
-	integrity string
-	enabled   bool
+type config struct {
+	initialized   bool
+	manifest      assets.RuntimeManifest
+	nonce         string
+	localFallback bool
+	localRuntime  bool
 }
 
-type config struct {
-	initialized    bool
-	stylesheetURL  string
-	comboboxURL    string
-	loaderURL      string
-	nonce          string
-	localFallback  bool
-	localRuntime   bool
-	alpineJS       dependencySource
-	alpineCollapse dependencySource
-	alpineFocus    dependencySource
-	alpineMask     dependencySource
-	htmx           dependencySource
-}
+type runtimeAsset = assets.RuntimeAsset
 
 // Option configures the dependency set emitted by Dependencies or
 // DependenciesMinimal.
@@ -66,7 +54,7 @@ func WithDependencyCDNURL(dependency Dependency, url string) Option {
 			return
 		}
 		if source := cfg.source(dependency); source != nil {
-			source.cdnURL = url
+			source.PrimaryURL = url
 		}
 	})
 }
@@ -79,7 +67,7 @@ func WithDependencyLocalURL(dependency Dependency, url string) Option {
 			return
 		}
 		if source := cfg.source(dependency); source != nil {
-			source.localURL = url
+			source.LocalURL = url
 		}
 	})
 }
@@ -89,7 +77,7 @@ func WithDependencyLocalURL(dependency Dependency, url string) Option {
 func WithDependencyIntegrity(dependency Dependency, integrity string) Option {
 	return optionFunc(func(cfg *config) {
 		if source := cfg.source(dependency); source != nil {
-			source.integrity = integrity
+			source.Integrity = integrity
 		}
 	})
 }
@@ -114,7 +102,7 @@ func WithLocalRuntime() Option {
 func WithoutDependency(dependency Dependency) Option {
 	return optionFunc(func(cfg *config) {
 		if source := cfg.source(dependency); source != nil {
-			source.enabled = false
+			source.Enabled = false
 		}
 	})
 }
@@ -123,7 +111,8 @@ func WithoutDependency(dependency Dependency) Option {
 func WithStylesheetURL(url string) Option {
 	return optionFunc(func(cfg *config) {
 		if url != "" {
-			cfg.stylesheetURL = url
+			cfg.manifest.Stylesheet.PrimaryURL = url
+			cfg.manifest.Stylesheet.LocalURL = url
 		}
 	})
 }
@@ -132,7 +121,10 @@ func WithStylesheetURL(url string) Option {
 func WithComboboxURL(url string) Option {
 	return optionFunc(func(cfg *config) {
 		if url != "" {
-			cfg.comboboxURL = url
+			if source := cfg.asset(assets.RuntimeRoleCombobox); source != nil {
+				source.PrimaryURL = url
+				source.LocalURL = url
+			}
 		}
 	})
 }
@@ -142,48 +134,22 @@ func WithComboboxURL(url string) Option {
 func WithLoaderURL(url string) Option {
 	return optionFunc(func(cfg *config) {
 		if url != "" {
-			cfg.loaderURL = url
+			cfg.manifest.Loader.PrimaryURL = url
+			cfg.manifest.Loader.LocalURL = url
 		}
 	})
 }
 
 func newConfig(options []Option) config {
+	return newConfigFromManifest(assets.DefaultRuntimeManifest(), options)
+}
+
+func newConfigFromManifest(manifest assets.RuntimeManifest, options []Option) config {
+	manifest.Dependencies = append([]assets.RuntimeAsset(nil), manifest.Dependencies...)
 	cfg := config{
 		initialized:   true,
-		stylesheetURL: "/assets/styles.css",
-		comboboxURL:   "/assets/js/combobox.js",
-		loaderURL:     "/assets/js/dependency-loader.js",
+		manifest:      manifest,
 		localFallback: true,
-		alpineJS: dependencySource{
-			cdnURL:    assets.AlpineJSCDNURL,
-			localURL:  assets.AlpineJSURL,
-			integrity: assets.AlpineJSIntegrity,
-			enabled:   true,
-		},
-		alpineCollapse: dependencySource{
-			cdnURL:    assets.AlpineCollapseCDNURL,
-			localURL:  assets.AlpineCollapseURL,
-			integrity: assets.AlpineCollapseIntegrity,
-			enabled:   true,
-		},
-		alpineFocus: dependencySource{
-			cdnURL:    assets.AlpineFocusCDNURL,
-			localURL:  assets.AlpineFocusURL,
-			integrity: assets.AlpineFocusIntegrity,
-			enabled:   true,
-		},
-		alpineMask: dependencySource{
-			cdnURL:    assets.AlpineMaskCDNURL,
-			localURL:  assets.AlpineMaskURL,
-			integrity: assets.AlpineMaskIntegrity,
-			enabled:   true,
-		},
-		htmx: dependencySource{
-			cdnURL:    assets.HTMXCDNURL,
-			localURL:  assets.HTMXURL,
-			integrity: assets.HTMXIntegrity,
-			enabled:   true,
-		},
 	}
 	for _, option := range options {
 		if option != nil {
@@ -191,39 +157,43 @@ func newConfig(options []Option) config {
 		}
 	}
 	if cfg.localRuntime {
-		for _, source := range cfg.sources() {
-			source.cdnURL = source.localURL
+		cfg.manifest.Stylesheet.PrimaryURL = cfg.manifest.Stylesheet.LocalURL
+		cfg.manifest.Loader.PrimaryURL = cfg.manifest.Loader.LocalURL
+		for index := range cfg.manifest.Dependencies {
+			source := &cfg.manifest.Dependencies[index]
+			source.PrimaryURL = source.LocalURL
 		}
 		cfg.localFallback = false
 	}
 	return cfg
 }
 
-func (cfg *config) source(dependency Dependency) *dependencySource {
+func (cfg *config) source(dependency Dependency) *assets.RuntimeAsset {
+	var role assets.RuntimeAssetRole
 	switch dependency {
 	case DependencyAlpineJS:
-		return &cfg.alpineJS
+		role = assets.RuntimeRoleAlpineJS
 	case DependencyAlpineCollapse:
-		return &cfg.alpineCollapse
+		role = assets.RuntimeRoleAlpineCollapse
 	case DependencyAlpineFocus:
-		return &cfg.alpineFocus
+		role = assets.RuntimeRoleAlpineFocus
 	case DependencyAlpineMask:
-		return &cfg.alpineMask
+		role = assets.RuntimeRoleAlpineMask
 	case DependencyHTMX:
-		return &cfg.htmx
+		role = assets.RuntimeRoleHTMX
 	default:
 		return nil
 	}
+	return cfg.asset(role)
 }
 
-func (cfg *config) sources() []*dependencySource {
-	return []*dependencySource{
-		&cfg.alpineCollapse,
-		&cfg.alpineFocus,
-		&cfg.alpineMask,
-		&cfg.alpineJS,
-		&cfg.htmx,
+func (cfg *config) asset(role assets.RuntimeAssetRole) *assets.RuntimeAsset {
+	for index := range cfg.manifest.Dependencies {
+		if cfg.manifest.Dependencies[index].Role == role {
+			return &cfg.manifest.Dependencies[index]
+		}
 	}
+	return nil
 }
 
 type loaderDependency struct {
@@ -240,33 +210,21 @@ type loaderConfig struct {
 
 func (cfg config) loaderAttributes(minimal bool) templ.Attributes {
 	dependencies := make([]loaderDependency, 0, 6)
-	appendSource := func(name string, source dependencySource, waitForWindowLoaded bool) {
-		if !source.enabled {
-			return
+	for _, source := range cfg.manifest.Dependencies {
+		if !source.Enabled || minimal && !source.IncludeInMinimal {
+			continue
 		}
 		entry := loaderDependency{
-			Name:                name,
-			PrimaryURL:          source.cdnURL,
-			Integrity:           source.integrity,
-			WaitForWindowLoaded: waitForWindowLoaded,
+			Name:                string(source.Role),
+			PrimaryURL:          source.PrimaryURL,
+			Integrity:           source.Integrity,
+			WaitForWindowLoaded: source.WaitForWindowLoaded,
 		}
-		if cfg.localFallback && source.cdnURL != source.localURL {
-			entry.FallbackURL = source.localURL
+		if cfg.localFallback && source.PrimaryURL != source.LocalURL {
+			entry.FallbackURL = source.LocalURL
 		}
 		dependencies = append(dependencies, entry)
 	}
-
-	if !minimal {
-		appendSource("alpine-collapse", cfg.alpineCollapse, false)
-		appendSource("alpine-focus", cfg.alpineFocus, false)
-		appendSource("alpine-mask", cfg.alpineMask, false)
-	}
-	appendSource("alpine", cfg.alpineJS, false)
-	appendSource("htmx", cfg.htmx, true)
-	dependencies = append(dependencies, loaderDependency{
-		Name:       "combobox",
-		PrimaryURL: cfg.comboboxURL,
-	})
 
 	payload, err := json.Marshal(loaderConfig{Dependencies: dependencies})
 	if err != nil {
@@ -279,21 +237,24 @@ func (cfg config) loaderAttributes(minimal bool) templ.Attributes {
 	return attrs
 }
 
-func (cfg config) scriptAttributes(source dependencySource) templ.Attributes {
+func (cfg config) localDependencies(minimal bool) []runtimeAsset {
+	dependencies := make([]runtimeAsset, 0, len(cfg.manifest.Dependencies))
+	for _, source := range cfg.manifest.Dependencies {
+		if source.Enabled && (!minimal || source.IncludeInMinimal) {
+			dependencies = append(dependencies, source)
+		}
+	}
+	return dependencies
+}
+
+func (cfg config) scriptAttributes(source runtimeAsset) templ.Attributes {
 	attrs := templ.Attributes{}
-	if source.integrity != "" {
+	if source.Integrity != "" {
 		attrs["crossorigin"] = "anonymous"
-		attrs["integrity"] = source.integrity
+		attrs["integrity"] = source.Integrity
 	}
 	if cfg.nonce != "" {
 		attrs["nonce"] = cfg.nonce
 	}
 	return attrs
-}
-
-func (cfg config) nonceAttributes() templ.Attributes {
-	if cfg.nonce == "" {
-		return nil
-	}
-	return templ.Attributes{"nonce": cfg.nonce}
 }
