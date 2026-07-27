@@ -60,7 +60,7 @@ func exampleEntry(index int, recipe exampleRecipe) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article data-example-recipe class=\"grid gap-6 border-t border-outline py-8 first:pt-0 dark:border-outline-dark md:grid-cols-[minmax(0,2fr)_minmax(18rem,3fr)] md:items-start md:gap-10\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article data-example-recipe class=\"grid gap-6 border-t border-outline py-8 first:border-t-0 first:pt-0 dark:border-outline-dark md:grid-cols-[minmax(0,2fr)_minmax(18rem,3fr)] md:items-start md:gap-10\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

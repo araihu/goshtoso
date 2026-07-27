@@ -115,24 +115,35 @@ func TestCoveragePasswordInput(t *testing.T) {
 // the search-specific class helper.
 func TestCoverageSearchInput(t *testing.T) {
 	html := renderTextInput(t, Config{
-		ID:         "q",
-		Name:       "q",
-		Type:       TypeSearch,
-		Disabled:   true,
-		Readonly:   true,
-		Pattern:    "[a-z]+",
-		MaxLength:  10,
-		InputAttrs: templ.Attributes{"hx-get": "/search"},
+		ID:           "q",
+		Name:         "q",
+		Label:        "Search services",
+		Type:         TypeSearch,
+		HelperText:   "Filter by service name",
+		Disabled:     true,
+		Required:     true,
+		Readonly:     true,
+		Autocomplete: "off",
+		Pattern:      "[a-z]+",
+		MaxLength:    10,
+		InputAttrs:   templ.Attributes{"hx-get": "/search"},
 	})
 
 	for _, want := range []string{
 		`type="search"`,
-		`aria-label="search"`,
 		`id="q"`,
+		`for="q"`,
+		`Search services`,
+		`id="q-helper"`,
+		`aria-describedby="q-helper"`,
+		`Filter by service name`,
+		`autocomplete="off"`,
 		"pl-10",
+		"inset-y-0",
 		`pattern="[a-z]+"`,
 		`maxlength="10"`,
 		"disabled",
+		"required",
 		"readonly",
 		`hx-get="/search"`,
 	} {
@@ -149,6 +160,7 @@ func TestCoverageSearchInputNoID(t *testing.T) {
 	})
 
 	assert.NotContains(t, html, "id=")
+	assert.Contains(t, html, `aria-label="search"`)
 }
 
 // TestCoverageLabelStateIcons covers the error/success icon branches in

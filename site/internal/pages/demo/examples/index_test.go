@@ -38,4 +38,5 @@ func TestExamplesIndexDistinguishesSiteDemosFromStandaloneRecipe(t *testing.T) {
 	require.Contains(t, body, "demo-site apps")
 	require.Contains(t, body, "examples/application-patterns")
 	require.Contains(t, body, "replace the in-repository development pin")
+	require.Equal(t, 7, strings.Count(body, "first:border-t-0"))
 }

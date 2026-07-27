@@ -168,34 +168,52 @@ templ passwordInput(cfg Config) {
 
 // searchInput renders a search input with search icon
 templ searchInput(cfg Config) {
-	<div class={ "relative " + cfg.containerClasses() }>
-		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute left-2.5 top-1/2 size-5 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted">
-			<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
-		</svg>
-		<input
-			type="search"
-			class={ searchInputClasses(cfg) }
-			name={ cfg.Name }
-			placeholder={ cfg.Placeholder }
-			value={ cfg.Value }
-			if cfg.ID != "" {
-				id={ cfg.ID }
-			}
-			if cfg.Disabled {
-				disabled
-			}
-			if cfg.Readonly {
-				readonly
-			}
-			if cfg.hasPattern() {
-				pattern={ cfg.Pattern }
-			}
-			if cfg.hasMaxLength() {
-				maxlength={ cfg.maxLengthStr() }
-			}
-			aria-label="search"
-			{ cfg.inputAttributes()... }
-		/>
+	<div class={ cfg.containerClasses() }>
+		if cfg.Label != "" {
+			@inputLabel(cfg)
+		}
+		<div class="relative">
+			<span class="pointer-events-none absolute inset-y-0 left-2.5 flex items-center text-on-surface-muted dark:text-on-surface-dark-muted">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="size-5">
+					<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+				</svg>
+			</span>
+			<input
+				type="search"
+				class={ searchInputClasses(cfg) }
+				name={ cfg.Name }
+				placeholder={ cfg.Placeholder }
+				value={ cfg.Value }
+				if cfg.ID != "" {
+					id={ cfg.ID }
+				}
+				if cfg.Disabled {
+					disabled
+				}
+				if cfg.Required {
+					required
+				}
+				if cfg.Readonly {
+					readonly
+				}
+				if cfg.Autocomplete != "" {
+					autocomplete={ cfg.Autocomplete }
+				}
+				if cfg.hasPattern() {
+					pattern={ cfg.Pattern }
+				}
+				if cfg.hasMaxLength() {
+					maxlength={ cfg.maxLengthStr() }
+				}
+				if cfg.Label == "" {
+					aria-label="search"
+				}
+				{ cfg.inputAttributes()... }
+			/>
+		</div>
+		if cfg.HelperText != "" {
+			<small id={ cfg.helperTextID() } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
+		}
 	</div>
 }
 
