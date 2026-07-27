@@ -164,6 +164,12 @@ ships a [design-intelligence reference](.agents/skills/using-goshtoso/references
 an [application patterns reference](.agents/skills/using-goshtoso/references/application-patterns.md),
 and a [visual acceptance checklist](.agents/skills/using-goshtoso/references/visual-acceptance.md).
 
+For a public organization, product, or publication site, start with the
+copyable [`examples/brand-site`](examples/brand-site) fixture rather than an
+application shell. It generates static HTML and makes the product-owned
+typography, art direction, and content hierarchy explicit. Create a fresh copy
+with `go run github.com/araihu/goshtoso/cmd/goshtoso@latest -init-brand-site=./my-site`.
+
 ## Component Catalog
 
 All components are imported from:
