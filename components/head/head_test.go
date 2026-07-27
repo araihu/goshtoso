@@ -3,8 +3,10 @@ package head
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"html"
 	"io"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -141,6 +143,101 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 	if !loaderEntry(t, cfg, "htmx").WaitForWindowLoaded {
 		t.Error("HTMX must wait for window load when inserted dynamically so its bootstrap cannot miss DOMContentLoaded")
 	}
+}
+
+func TestDependenciesRenderFromPublicManifestCopy(t *testing.T) {
+	manifest := customRuntimeManifest()
+	cfg := newConfigFromManifest(manifest, []Option{
+		WithDependencyCDNURL(DependencyHTMX, "https://override.example/htmx.js"),
+		WithDependencyIntegrity(DependencyHTMX, "sha384-override"),
+	})
+
+	manifest.Stylesheet.PrimaryURL = "/mutated/styles.css"
+	manifest.Loader.PrimaryURL = "/mutated/loader.js"
+	manifest.Dependencies[0].PrimaryURL = "/mutated/collapse.js"
+
+	out := render(t, dependenciesTemplate(cfg))
+	if !strings.Contains(out, `href="/contract/styles.css"`) {
+		t.Fatalf("stylesheet did not come from copied manifest\n%s", out)
+	}
+	if !strings.Contains(out, `src="/contract/loader.js"`) {
+		t.Fatalf("loader did not come from copied manifest\n%s", out)
+	}
+
+	loader := parseLoaderConfig(t, out)
+	if got := loaderEntry(t, loader, "alpine-collapse"); got.PrimaryURL != "https://primary.example/alpine-collapse.js" || got.FallbackURL != "/contract/alpine-collapse.js" {
+		t.Fatalf("collapse entry = %#v", got)
+	}
+	if got := loaderEntry(t, loader, "htmx"); got.PrimaryURL != "https://override.example/htmx.js" || got.FallbackURL != "/contract/htmx.js" || got.Integrity != "sha384-override" || !got.WaitForWindowLoaded {
+		t.Fatalf("option-adjusted HTMX entry = %#v", got)
+	}
+}
+
+func TestDependenciesMinimalFiltersPublicManifestOrder(t *testing.T) {
+	manifest := customRuntimeManifest()
+	manifest.Dependencies[0].IncludeInMinimal = true
+	manifest.Dependencies[3].IncludeInMinimal = false
+	cfg := newConfigFromManifest(manifest, nil)
+	loader := parseLoaderConfig(t, render(t, dependenciesMinimalTemplate(cfg)))
+
+	want := []string{"alpine-collapse", "htmx", "combobox"}
+	got := make([]string, 0, len(loader.Dependencies))
+	for _, dependency := range loader.Dependencies {
+		got = append(got, dependency.Name)
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("minimal order = %v, want %v", got, want)
+	}
+}
+
+func TestDependenciesLocalRuntimeUsesPublicManifestOrderAndDefer(t *testing.T) {
+	manifest := customRuntimeManifest()
+	manifest.Stylesheet.PrimaryURL = "https://primary.example/styles.css"
+	manifest.Loader.PrimaryURL = "https://primary.example/loader.js"
+	cfg := newConfigFromManifest(manifest, []Option{WithLocalRuntime()})
+	out := render(t, dependenciesTemplate(cfg))
+
+	if !strings.Contains(out, `href="/contract/styles.css"`) || strings.Contains(out, manifest.Stylesheet.PrimaryURL) {
+		t.Fatalf("local runtime must use manifest stylesheet local URL\n%s", out)
+	}
+	previous := -1
+	for _, dependency := range manifest.Dependencies {
+		index := strings.Index(out, `src="`+dependency.LocalURL+`"`)
+		if index < 0 {
+			t.Fatalf("local rendering missing %s at %s\n%s", dependency.Role, dependency.LocalURL, out)
+		}
+		if index <= previous {
+			t.Fatalf("local rendering order changed at %s\n%s", dependency.Role, out)
+		}
+		previous = index
+	}
+	if strings.Contains(out, manifest.Loader.LocalURL) {
+		t.Fatalf("local runtime must not execute bootstrap loader\n%s", out)
+	}
+	if !strings.Contains(out, `<script src="/contract/htmx.js"`) {
+		t.Fatalf("HTMX must preserve non-deferred direct tag semantics\n%s", out)
+	}
+	if !strings.Contains(out, `<script defer src="/contract/alpine.js"`) {
+		t.Fatalf("Alpine must preserve deferred direct tag semantics\n%s", out)
+	}
+}
+
+func customRuntimeManifest() assets.RuntimeManifest {
+	manifest := assets.DefaultRuntimeManifest()
+	manifest.Stylesheet.PrimaryURL = "/contract/styles.css"
+	manifest.Stylesheet.LocalURL = "/contract/styles.css"
+	manifest.Loader.PrimaryURL = "/contract/loader.js"
+	manifest.Loader.LocalURL = "/contract/loader.js"
+	for index := range manifest.Dependencies {
+		dependency := &manifest.Dependencies[index]
+		dependency.PrimaryURL = fmt.Sprintf("https://primary.example/%s.js", dependency.Role)
+		dependency.LocalURL = fmt.Sprintf("/contract/%s.js", dependency.Role)
+		dependency.Integrity = fmt.Sprintf("sha384-%s", dependency.Role)
+	}
+	manifest.Dependencies[len(manifest.Dependencies)-1].PrimaryURL = assets.ComboboxURL
+	manifest.Dependencies[len(manifest.Dependencies)-1].LocalURL = assets.ComboboxURL
+	manifest.Dependencies[len(manifest.Dependencies)-1].Integrity = ""
+	return manifest
 }
 
 func TestDependenciesFunctionalOptionsOverrideIndividualSources(t *testing.T) {

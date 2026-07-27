@@ -81,6 +81,19 @@ Choose deliberately:
 - Await `window.goshtosoDependencies.ready` before application JavaScript that
   requires every dynamically loaded dependency.
 
+For offline inventories or build descriptors, use
+`assets.DefaultRuntimeManifest()` instead of copying versioned paths from
+generated files or the module cache. Its caller-owned dependency slice is in
+execution order and includes roles, CDN primary, Handler-served local URL, SRI,
+enabled, minimal-set membership, defer, and loader-readiness semantics. Cache
+the separate stylesheet and bootstrap loader local URLs too; do not execute the
+loader and the direct local dependency scripts together.
+
+Bind same-version caches only when `assets.GoshtosoVersion().Status` is
+`assets.VersionExact`. Development, replaced, and unavailable builds leave the
+exact `Version` empty. Replacement request/target metadata is diagnostic only:
+the requested release version does not identify replacement bytes.
+
 If the consumer sets Content Security Policy, test the rendered application
 under that exact policy. The bundled standard Alpine runtime requires dynamic
 function evaluation, and Alpine/component state writes inline style
