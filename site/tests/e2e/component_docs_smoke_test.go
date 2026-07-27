@@ -58,6 +58,34 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 	}
 }
 
+func TestComponentDocsPreserveApplicationHeadAndRuntimeContracts(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	response, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, response.Status())
+
+	for selector, want := range map[string]int{
+		"head title": 1,
+		`head link[rel="manifest"][href="/site.webmanifest"]`: 1,
+		`head link[rel="apple-touch-icon"]`:                   1,
+		`head link[rel="shortcut icon"][href="/favicon.ico"]`: 1,
+		`head script[src*="htmx-ext-ws"]`:                     1,
+		`head script[src*="htmx-ext-sse"]`:                    1,
+	} {
+		count, countErr := page.Locator(selector).Count()
+		require.NoError(t, countErr)
+		require.Equal(t, want, count, selector)
+	}
+	require.Equal(t, 1, mustLocatorCount(t, page.Locator("#docs-search")))
+	require.Equal(t, 1, mustLocatorCount(t, page.Locator("#docs-search-dialog")))
+}
+
 func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -323,12 +351,12 @@ func TestComponentDocsComponentPageSpacing(t *testing.T) {
 	primary := page.Locator("[data-component-page] [data-component-example-body] > *").Nth(1)
 	primaryGap, err := primary.Evaluate("element => parseFloat(getComputedStyle(element).marginTop)", nil)
 	require.NoError(t, err)
-	require.Equal(t, float64(16), primaryGap)
+	require.EqualValues(t, 16, primaryGap)
 
 	variant := page.Locator("section[data-component-example]").First()
 	variantMargin, err := variant.Evaluate("element => parseFloat(getComputedStyle(element).marginTop)", nil)
 	require.NoError(t, err)
-	require.Equal(t, float64(40), variantMargin)
+	require.EqualValues(t, 40, variantMargin)
 }
 
 func replaceComponentDocsLinkWithOrdinaryHref(

@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/araihu/goshtoso-app-shells/componentpage"
-	"github.com/araihu/goshtoso/components/codeblock"
 )
 
 // slugify turns a section title into a stable, URL-fragment-safe id used both
@@ -119,83 +118,14 @@ func DemoSection(props DemoSectionProps, preview templ.Component, code string) t
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-demo-section class=\"mt-10\"><h2 id=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(slugify(props.Title))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 70, Col: 31}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-toc-heading class=\"scroll-mt-8 text-lg font-semibold font-title mb-1\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 70, Col: 122}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h2>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if props.Description != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.Description)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 72, Col: 99}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if props.AbovePreview != nil {
-			templ_7745c5c3_Err = props.AbovePreview.Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<!-- Preview --><div data-demo-preview class=\"relative border border-transparent rounded-radius mb-4 after:pointer-events-none after:absolute after:inset-0 after:rounded-radius after:border after:border-outline after:content-[''] dark:after:border-outline-dark\"><div class=\"bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark rounded-t-radius\"><div class=\"flex gap-1.5\"><div class=\"rounded-full w-3 h-3 bg-red-500\"></div><div class=\"rounded-full w-3 h-3 bg-yellow-500\"></div><div class=\"rounded-full w-3 h-3 bg-green-500\"></div></div></div><div class=\"bg-pattern flex justify-center dark:bg-surface-dark bg-surface rounded-b-radius\"><div class=\"relative w-full bg-surface dark:bg-surface-dark border-none p-8\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = preview.Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div><!-- Code --><div data-demo-code>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
-			Language:  "go",
-			Label:     props.Title,
-			Code:      code,
-			MaxHeight: "300px",
+		templ_7745c5c3_Err = componentpage.Section(componentpage.Example{
+			Title:        props.Title,
+			Description:  props.Description,
+			RootAttrs:    templ.Attributes{"data-demo-section": true},
+			AbovePreview: props.AbovePreview,
+			Preview:      preview,
+			Code:         code,
 		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

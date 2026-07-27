@@ -315,6 +315,22 @@ The installable skill includes four progressive references:
   requires 390 px and 1440 px, Goshtoso and Minimal, light and dark, keyboard,
   console, accessibility, and screenshot checks.
 
+## Reusable documentation shells
+
+Documentation applications can reuse
+[`componentdocshell`](https://github.com/araihu/goshtoso-app-shells/tree/main/componentdocshell)
+for the Goshtoso demo frame: brand header, search-first fixed navigation,
+responsive drawer, appearance controls, optional table of contents, and HTMX
+main-content swaps. Its config structs let the application choose the default
+theme, available themes, dark-mode integration, control visibility, IDs, slots,
+and navigation/search data while keeping product metadata and content local.
+
+Use
+[`componentpage`](https://github.com/araihu/goshtoso-app-shells/tree/main/componentpage)
+for the semantic sections and preview/code examples repeated inside component
+reference pages. It is content structure, not the outer site shell. Catalog
+surfaces remain a separate application-shell pattern.
+
 Model loading, empty, error, and success before polishing the happy path. Keep
 domain vocabulary, information priority, authorization, and workflow rules in
 the application. Goshtoso supplies a consistent component vocabulary, not the

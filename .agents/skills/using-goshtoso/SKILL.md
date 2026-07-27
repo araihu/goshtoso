@@ -173,6 +173,28 @@ Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
 
+### Reusable documentation shells
+
+For a documentation site that should follow the Goshtoso demo frame, use the
+public `github.com/araihu/goshtoso-app-shells/componentdocshell` module instead
+of copying the demo site's layout. It owns the full-width brand header,
+search-first fixed desktop sidebar and mobile drawer, theme and dark-mode
+controls, optional table of contents, and HTMX main-content navigation. The
+consumer still supplies brand assets, navigation/search data, page content,
+runtime slots, and application-specific metadata.
+
+Configure the shell through `componentdocshell.Config` and its nested config
+structs. Set the default theme, available theme list, theme selector ID,
+dark-mode binding, TOC hooks, and whether appearance controls render. The shell
+includes all Goshtoso themes by default and can run with one fixed theme and no
+selector when a product requires that behavior.
+
+Use `github.com/araihu/goshtoso-app-shells/componentpage` for the repeated
+structure inside component reference pages, including semantic sections and
+preview/code examples. It does not own the site frame; the catalog shell is a
+separate pattern. Do not treat a catalog grid and a component documentation
+page as the same shell.
+
 Before implementing a consequential action, stale-data recovery, or
 interruptible workflow, read `references/adversarial-acceptance.md`. Copy its
 invariant ledger into the consumer repository and derive the HTTP and browser
