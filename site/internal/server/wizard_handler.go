@@ -36,10 +36,10 @@ func (s *Server) renderWizardPage(w http.ResponseWriter, r *http.Request) {
 	content := examples.WizardApp(st, nil)
 	meta := components.MetaForKey("examples/wizard")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.FragmentWithMeta(meta, "wizard", content).Render(r.Context(), w)
+		_ = demo.ComponentDocsFragment(meta, "wizard", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
-	_ = demo.LayoutWithMeta(meta, "wizard", content).Render(r.Context(), w)
+	_ = demo.ComponentDocsLayout(meta, "wizard", content, storageAllowed(r)).Render(r.Context(), w)
 }
 
 // applyStepInput parses the posted form for the current step and stores it on st.
