@@ -162,7 +162,7 @@ func dependenciesFullPreview() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("@head.Dependencies()\n\nCDN: pinned Alpine + HTMX\nFallback: /assets/js/runtime/*\nLoader: /assets/js/dependency-loader.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/dependencies.templ`, Line: 68, Col: 270}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/dependencies.templ`, Line: 68, Col: 270}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

@@ -186,7 +186,7 @@ func tickerCardPrice(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue("ticker-card-" + sym.Ticker)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/ticker.templ`, Line: 73, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/ticker.templ`, Line: 73, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -199,7 +199,7 @@ func tickerCardPrice(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(sym.Ticker)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/ticker.templ`, Line: 73, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/ticker.templ`, Line: 73, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func TickerCell(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue("ticker-cell-" + sym.Ticker)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/ticker.templ`, Line: 83, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/ticker.templ`, Line: 83, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -265,7 +265,7 @@ func TickerCell(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(sym.Ticker)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/ticker.templ`, Line: 83, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/ticker.templ`, Line: 83, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -317,7 +317,7 @@ func TickerCellInner(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(tickerPrice(sym))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/examples/ticker.templ`, Line: 92, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examples/ticker.templ`, Line: 92, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {

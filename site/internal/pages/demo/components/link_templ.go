@@ -212,7 +212,7 @@ func linkInlinePreview() templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("Follow us on ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/link.templ`, Line: 73, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 73, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -243,7 +243,7 @@ func linkInlinePreview() templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(" and become our virtual BFF. We promise to send only the useful updates.")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/link.templ`, Line: 77, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 77, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -285,7 +285,7 @@ func linkIconPreview() templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("Find out more ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/link.templ`, Line: 85, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/link.templ`, Line: 85, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
