@@ -17,10 +17,45 @@ patterns below without inventing category widgets or an aesthetic preset.
 | Find and act on many resources | Operations List | `pageheader`, `toolbar`, `panel`, `table`, `emptystate`, `skeleton` |
 | Inspect and change one resource | Detail Workspace | `pageheader`, `breadcrumbs`, `panel`, `badge`, `tabs`, `button` |
 | Complete a long or risky task | Multi-step Workflow | `pageheader`, `steps`, `panel`, `form`, `alert`, `button` |
+| Publish a static public presence | Static Brand Site | tokens plus product-owned templ/CSS |
 
 For every pattern, model `loading`, `empty`, `error`, and `success` before
 polishing the happy path. Add permission-denied, stale, partial, and destructive
 confirmation states when the domain can produce them.
+
+## Static Brand Site
+
+### Problem
+
+Publish an organization, product, portfolio, or publication without inventing
+an application dashboard or coupling basic content to a server runtime.
+
+### Start here
+
+Copy `examples/brand-site` with `goshtoso -init-brand-site=./my-site`. Its Go
+binary writes `public/index.html`, Goshtoso's compiled stylesheet, and a
+product-owned brand stylesheet. The output is deployable on any static host.
+
+### Contract
+
+- The product owns identity, art direction, imagery, copy, typography, and
+  content rhythm in its templ and CSS.
+- Goshtoso owns its semantic token vocabulary and any added controls, forms,
+  feedback, or navigation primitives.
+- Use ordinary document landmarks, native links, and one clear heading
+  hierarchy. Do not add an App Shell, sidebar, dashboard metrics, or generic
+  hero/features/testimonials/CTA sequence without a real product reason.
+- Keep custom CSS deliberately scoped to the product; it is not a component
+  workaround and must not leak into Goshtoso's base themes.
+
+### Completion checks
+
+- Static build produces HTML and every referenced stylesheet.
+- At 390 px and 1440 px, navigation, content measure, and all primary links
+  remain usable.
+- Light/dark behavior is intentional when the brand theme supports both;
+  otherwise set the declared color scheme and verify contrast.
+- Honor `prefers-reduced-motion` for brand animation.
 
 ## App Shell
 

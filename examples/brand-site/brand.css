@@ -1,0 +1,41 @@
+@layer base {
+  [data-theme="brand"] {
+    --font-body: ui-sans-serif, system-ui, sans-serif;
+    --font-title: ui-sans-serif, system-ui, sans-serif;
+    --color-surface: #f4f1ea;
+    --color-surface-alt: #e9e3d9;
+    --color-on-surface: #2d2a28;
+    --color-on-surface-strong: #11100f;
+    --color-primary: #ca4d22;
+    --color-on-primary: #ffffff;
+    --color-secondary: #435d55;
+    --color-on-secondary: #ffffff;
+    --color-outline: #b9b1a6;
+    --color-outline-strong: #5e5953;
+    --color-control-outline: #756e66;
+    --radius-radius: 0;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--color-surface); color: var(--color-on-surface); font-family: var(--font-body); }
+a { color: inherit; }
+.site-frame { width: min(100% - 3rem, 76rem); margin-inline: auto; }
+.site-nav, .footer { align-items: center; display: flex; justify-content: space-between; padding-block: 1.35rem; }
+.site-nav { border-bottom: 1px solid var(--color-outline); }
+.site-nav nav { display: flex; gap: 1.25rem; font-size: .9rem; }
+.wordmark { font-weight: 800; letter-spacing: -.05em; text-decoration: none; }
+.hero { border-bottom: 1px solid var(--color-outline); padding: clamp(7rem, 16vw, 14rem) 0 clamp(5rem, 10vw, 9rem); }
+.eyebrow { color: var(--color-primary); font-size: .76rem; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+h1, h2 { color: var(--color-on-surface-strong); letter-spacing: -.065em; line-height: .91; }
+h1 { font-size: clamp(4rem, 10vw, 9rem); margin: 1.5rem 0; max-width: 12ch; }
+h2 { font-size: clamp(2.8rem, 5vw, 5rem); margin: 1rem 0 4rem; }
+.lede { font-size: clamp(1.1rem, 2vw, 1.4rem); line-height: 1.6; max-width: 42rem; }
+.action { display: inline-flex; gap: .75rem; margin-top: 2rem; text-underline-offset: .4rem; }
+.work { padding-block: clamp(4rem, 9vw, 8rem); }
+.work-row { align-items: baseline; border-top: 1px solid var(--color-outline); display: grid; gap: 1rem; grid-template-columns: 3rem 1fr auto; padding: 1.5rem 0; text-decoration: none; }
+.work-row:last-child { border-bottom: 1px solid var(--color-outline); }
+.work-row span, .work-row em { color: var(--color-secondary); font-size: .78rem; font-style: normal; }
+.work-row strong { font-size: clamp(1.25rem, 2.4vw, 2rem); letter-spacing: -.04em; }
+.footer { border-top: 1px solid var(--color-outline); font-size: .86rem; }
+@media (max-width: 640px) { .work-row { grid-template-columns: 2rem 1fr; } .work-row em { grid-column: 2; } }

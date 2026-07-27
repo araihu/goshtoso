@@ -130,6 +130,20 @@ choose a deliberate visual direction before selecting components. Do not ask
 for an aesthetic preference when a reversible, context-backed choice is
 available.
 
+For a public organization, product, portfolio, or publication with static
+content, begin with `examples/brand-site`, not App Shell. It is a complete,
+copyable Go/templ static generator and explicitly separates Goshtoso tokens
+from product-owned visual direction. Create it in an empty target with:
+
+```bash
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -init-brand-site=./my-site
+```
+
+Then replace its placeholder content and `brand.css`; do not turn the starter
+into generic hero/features/testimonials/CTA sections. Add Goshtoso controls
+only when the site has real navigation, feedback, or form behavior needing
+them.
+
 Then choose the closest task pattern and read
 `references/application-patterns.md` before composing it:
 
