@@ -71,12 +71,10 @@ func TestApplicationPatternsPageAndResponsiveRecipes(t *testing.T) {
 
 	for _, target := range []string{"#surface-brief-title", "#field-proven-title"} {
 		require.NoError(t, page.Locator("#toc-list a[href='"+target+"']").Click())
-		clearsStickyHeader, evaluateErr := page.Locator(target).Evaluate(`el => {
-			const header = document.querySelector('header[data-boot-anim="header"]')
-			return Boolean(header) && el.getBoundingClientRect().top >= header.getBoundingClientRect().bottom
-		}`, nil)
-		require.NoError(t, evaluateErr)
-		assert.Equal(t, true, clearsStickyHeader, "%s should remain visible below the sticky header", target)
+		_, err = page.WaitForFunction("() => { const el = document.querySelector('"+target+"'); const header = document.querySelector('.component-doc-shell__header'); return Boolean(el && header) && el.getBoundingClientRect().top >= header.getBoundingClientRect().bottom; }", nil, playwright.PageWaitForFunctionOptions{
+			Timeout: playwright.Float(2000),
+		})
+		require.NoError(t, err, "%s should remain visible below the sticky header", target)
 	}
 
 	visible, err := page.Locator("#app-shell-desktop-sidebar").IsVisible()
