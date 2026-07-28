@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	shellassets "github.com/araihu/goshtoso-app-shells/componentdocshell/assets"
 	"github.com/araihu/goshtoso/components/carousel"
 	combobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/toast"
@@ -57,6 +58,7 @@ func (s *Server) setupRoutes() {
 	assetsDir := filepath.Join(s.projectRoot, "assets")
 	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
 	s.mux.Handle("/assets/", assetsHandler)
+	s.mux.Handle("/componentdocshell/assets/", shellassets.Handler())
 
 	// Favicons are referenced at root paths from <head>, so they are served from
 	// the root mux, but the files live alongside the other assets on disk.
@@ -250,10 +252,10 @@ func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) 
 	content := entry.Content()
 	meta := components.DemoMeta(key, entry)
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.FragmentWithMeta(meta, entry.Active, content).Render(r.Context(), w)
+		_ = demo.ComponentDocsFragment(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
-	_ = demo.LayoutWithMeta(meta, entry.Active, content).Render(r.Context(), w)
+	_ = demo.ComponentDocsLayout(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
 }
 
 // handleRadioEcho returns a small HTML fragment for the radio demo's HTMX showcase.

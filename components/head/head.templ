@@ -23,11 +23,11 @@ package head
 // CDN requests. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
 // tokens, which only exist in the compiled styles.css.
 templ dependenciesTemplate(cfg config) {
-	<link rel="stylesheet" href={ cfg.stylesheetURL }/>
+	<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL }/>
 	if cfg.localRuntime {
 		@localDependencyScripts(cfg, false)
 	} else {
-		<script defer src={ cfg.loaderURL } { cfg.loaderAttributes(false)... }></script>
+		<script defer src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes(false)... }></script>
 	}
 }
 
@@ -35,28 +35,21 @@ templ dependenciesTemplate(cfg config) {
 // (no Alpine plugins). Use it when your page needs no plugin-backed components.
 // Same /assets/ mount requirement as Dependencies.
 templ dependenciesMinimalTemplate(cfg config) {
-	<link rel="stylesheet" href={ cfg.stylesheetURL }/>
+	<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL }/>
 	if cfg.localRuntime {
 		@localDependencyScripts(cfg, true)
 	} else {
-		<script defer src={ cfg.loaderURL } { cfg.loaderAttributes(true)... }></script>
+		<script defer src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes(true)... }></script>
 	}
 }
 
 templ localDependencyScripts(cfg config, minimal bool) {
-	if !minimal {
-		<!-- Alpine.js plugins must load before Alpine core. -->
-		@localDependencyScript(cfg, cfg.alpineCollapse, true)
-		@localDependencyScript(cfg, cfg.alpineFocus, true)
-		@localDependencyScript(cfg, cfg.alpineMask, true)
+	<!-- Alpine.js plugins must load before Alpine core. -->
+	for _, source := range cfg.localDependencies(minimal) {
+		@localDependencyScript(cfg, source)
 	}
-	@localDependencyScript(cfg, cfg.alpineJS, true)
-	@localDependencyScript(cfg, cfg.htmx, false)
-	<script defer src={ cfg.comboboxURL } { cfg.nonceAttributes()... }></script>
 }
 
-templ localDependencyScript(cfg config, source dependencySource, deferred bool) {
-	if source.enabled {
-		<script defer?={ deferred } src={ source.localURL } { cfg.scriptAttributes(source)... }></script>
-	}
+templ localDependencyScript(cfg config, source runtimeAsset) {
+	<script defer?={ source.Defer } src={ source.LocalURL } { cfg.scriptAttributes(source)... }></script>
 }

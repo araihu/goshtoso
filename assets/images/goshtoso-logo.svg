@@ -1,21 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="860" height="200" viewBox="0 0 860 200" role="img" aria-labelledby="title desc">
-  <title id="title">Goshtoso logo</title>
-  <desc id="desc">Goshtoso wordmark paired with a Rio de Janeiro sidewalk wave icon.</desc>
-  <defs>
-    <clipPath id="goshtoso-logo-tile">
-      <rect width="144" height="144" rx="34"/>
-    </clipPath>
-  </defs>
-  <g transform="translate(28 28)">
-    <rect width="144" height="144" rx="34" fill="#081d2b"/>
-    <g clip-path="url(#goshtoso-logo-tile)">
-      <path d="M-11.25 47.25c18-20.25 36-20.25 54 0s36 20.25 54 0 36-20.25 54 0" fill="none" stroke="#3bcef7" stroke-width="24.75" stroke-linecap="round"/>
-      <path d="M-11.25 96.75c18-20.25 36-20.25 54 0s36 20.25 54 0 36-20.25 54 0" fill="none" stroke="#d3d75b" stroke-width="24.75" stroke-linecap="round"/>
-      <path d="M-11.25 72c18-20.25 36-20.25 54 0s36 20.25 54 0 36-20.25 54 0" fill="none" stroke="#f7fbff" stroke-width="12.375" stroke-linecap="round"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 192" role="img" aria-labelledby="title desc">
+  <metadata>Wordmark outlines reused from Instrument Sans SemiCondensed Bold under SIL OFL 1.1; see LICENSES/instrument-sans-OFL.txt.</metadata>
+  <title id="title">Goshtoso outlined logo</title>
+  <desc id="desc">Two overlapping rendered component panels joined by one live module.</desc>
+  <g transform="translate(32 32)">
+    <rect x="10" y="20" width="72" height="62" rx="18" fill="none" stroke="#07111f" stroke-width="14" stroke-linejoin="round" />
+    <rect x="46" y="46" width="72" height="62" rx="18" fill="none" stroke="#31588f" stroke-width="14" stroke-linejoin="round" />
+    <rect x="52" y="52" width="24" height="24" rx="7" fill="#c7ff4a" stroke="#07111f" stroke-width="6" />
   </g>
-  <g transform="translate(208 55)">
-    <text x="0" y="66" fill="#081d2b" font-family="Montserrat, Instrument Sans, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="72" font-weight="800" letter-spacing="0">Goshtoso</text>
-    <text x="5" y="104" fill="#3a4b5f" font-family="Instrument Sans, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="24" font-weight="650" letter-spacing="0">Go UI components for server-rendered apps</text>
+  <g transform="translate(198 123) scale(0.078000 -0.078000)" fill="#07111f">
+    <path d="M341 -10Q192 -10 111.0 85.0Q30 180 30 355Q30 471 67.0 555.0Q104 639 172.0 684.5Q240 730 333 730Q412 730 470.5 699.0Q529 668 563.0 610.5Q597 553 601 475H454Q449 543 416.5 578.0Q384 613 332 613Q260 613 220.0 549.5Q180 486 180 360Q180 228 222.0 167.0Q264 106 350 106Q423 106 457 140V280H339V394H605V99Q562 47 495.5 18.5Q429 -10 341 -10Z" />
+    <path d="M912 -10Q839 -10 783.5 23.5Q728 57 696.5 117.0Q665 177 665 257Q665 337 696.0 396.0Q727 455 782.5 487.5Q838 520 912 520Q987 520 1042.5 487.5Q1098 455 1128.5 396.0Q1159 337 1159 257Q1159 177 1128.0 117.0Q1097 57 1041.5 23.5Q986 -10 912 -10ZM912 103Q954 103 982.0 140.5Q1010 178 1010 258Q1010 335 982.5 371.0Q955 407 912 407Q870 407 842.5 370.5Q815 334 815 258Q815 178 843.0 140.5Q871 103 912 103Z" />
+    <path d="M1411 -10Q1315 -10 1259.5 34.5Q1204 79 1199 159H1322Q1330 90 1412 90Q1479 90 1479 136Q1479 154 1468.0 166.0Q1457 178 1424 190L1353 216Q1220 259 1220 369Q1220 438 1269.5 479.0Q1319 520 1403 520Q1491 520 1541.5 479.5Q1592 439 1597 367H1474Q1468 420 1405 420Q1345 420 1345 379Q1345 362 1358.0 350.0Q1371 338 1403 327L1483 298Q1542 279 1573.0 238.0Q1604 197 1604 143Q1604 72 1553.5 31.0Q1503 -10 1411 -10Z" />
+    <path d="M1671 0V720H1816V435Q1840 475 1878.5 497.5Q1917 520 1970 520Q2039 520 2077.0 479.0Q2115 438 2115 367V0H1971V337Q1971 405 1907 405Q1865 405 1840.5 376.5Q1816 348 1816 305V0Z" />
+    <path d="M2417 -11Q2329 -11 2286.5 31.5Q2244 74 2244 162V399H2163V510H2244V617L2388 675V510H2496V399H2388V160Q2388 103 2453 103Q2465 103 2476.0 105.5Q2487 108 2498 112V3Q2486 -4 2465.0 -7.5Q2444 -11 2417 -11Z" />
+    <path d="M2774 -10Q2701 -10 2645.5 23.5Q2590 57 2558.5 117.0Q2527 177 2527 257Q2527 337 2558.0 396.0Q2589 455 2644.5 487.5Q2700 520 2774 520Q2849 520 2904.5 487.5Q2960 455 2990.5 396.0Q3021 337 3021 257Q3021 177 2990.0 117.0Q2959 57 2903.5 23.5Q2848 -10 2774 -10ZM2774 103Q2816 103 2844.0 140.5Q2872 178 2872 258Q2872 335 2844.5 371.0Q2817 407 2774 407Q2732 407 2704.5 370.5Q2677 334 2677 258Q2677 178 2705.0 140.5Q2733 103 2774 103Z" />
+    <path d="M3273 -10Q3177 -10 3121.5 34.5Q3066 79 3061 159H3184Q3192 90 3274 90Q3341 90 3341 136Q3341 154 3330.0 166.0Q3319 178 3286 190L3215 216Q3082 259 3082 369Q3082 438 3131.5 479.0Q3181 520 3265 520Q3353 520 3403.5 479.5Q3454 439 3459 367H3336Q3330 420 3267 420Q3207 420 3207 379Q3207 362 3220.0 350.0Q3233 338 3265 327L3345 298Q3404 279 3435.0 238.0Q3466 197 3466 143Q3466 72 3415.5 31.0Q3365 -10 3273 -10Z" />
+    <path d="M3758 -10Q3685 -10 3629.5 23.5Q3574 57 3542.5 117.0Q3511 177 3511 257Q3511 337 3542.0 396.0Q3573 455 3628.5 487.5Q3684 520 3758 520Q3833 520 3888.5 487.5Q3944 455 3974.5 396.0Q4005 337 4005 257Q4005 177 3974.0 117.0Q3943 57 3887.5 23.5Q3832 -10 3758 -10ZM3758 103Q3800 103 3828.0 140.5Q3856 178 3856 258Q3856 335 3828.5 371.0Q3801 407 3758 407Q3716 407 3688.5 370.5Q3661 334 3661 258Q3661 178 3689.0 140.5Q3717 103 3758 103Z" />
   </g>
 </svg>

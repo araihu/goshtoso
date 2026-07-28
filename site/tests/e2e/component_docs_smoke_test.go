@@ -40,11 +40,11 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, 1, descriptionCount)
 
-			previewCount, err := page.Locator("[data-demo-preview]").Count()
+			previewCount, err := page.Locator("[data-component-preview]").Count()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, previewCount, 1)
 
-			codeCount, err := page.Locator("[data-demo-code]").Count()
+			codeCount, err := page.Locator("[data-component-code]").Count()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, codeCount, 1)
 
@@ -56,6 +56,34 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 			failures.RequireEmpty(t)
 		})
 	}
+}
+
+func TestComponentDocsPreserveApplicationHeadAndRuntimeContracts(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	response, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, response.Status())
+
+	for selector, want := range map[string]int{
+		"head title": 1,
+		`head link[rel="manifest"][href="/site.webmanifest"]`: 1,
+		`head link[rel="apple-touch-icon"]`:                   1,
+		`head link[rel="shortcut icon"][href="/favicon.ico"]`: 1,
+		`head script[src*="htmx-ext-ws"]`:                     1,
+		`head script[src*="htmx-ext-sse"]`:                    1,
+	} {
+		count, countErr := page.Locator(selector).Count()
+		require.NoError(t, countErr)
+		require.Equal(t, want, count, selector)
+	}
+	require.Equal(t, 1, mustLocatorCount(t, page.Locator("#docs-search")))
+	require.Equal(t, 1, mustLocatorCount(t, page.Locator("#docs-search-dialog")))
 }
 
 func TestAllComponentDocsFragmentNavigation(t *testing.T) {
@@ -80,7 +108,7 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 	mainContentSwapCount := 0
 	for _, entry := range entries[1:] {
 		link := page.Locator(fmt.Sprintf(
-			`#sidebar-nav-content a[href=%q]`,
+			`#componentdocshell-sidebar-content a[href=%q]`,
 			entry.Path,
 		))
 		require.NoError(t, link.ScrollIntoViewIfNeeded())
@@ -195,7 +223,7 @@ func requireComponentDocsDestination(
 	t.Helper()
 
 	activeSelector := fmt.Sprintf(
-		`#sidebar-nav-content a[href=%q][aria-current="page"]`,
+		`#componentdocshell-sidebar-content a[href=%q][aria-current="page"]`,
 		entry.Path,
 	)
 	_, err := page.WaitForFunction(
@@ -226,12 +254,12 @@ func requireComponentDocsDestination(
 	require.Equal(t, 1, apiCount)
 	requireComponentGoAPILink(t, page, entry)
 
-	previewCount, err := page.Locator("[data-demo-preview]").Count()
+	previewCount, err := page.Locator("[data-component-preview]").Count()
 	require.NoError(t, err)
 	require.GreaterOrEqual(t, previewCount, 1)
 
 	activeLink := page.Locator(fmt.Sprintf(
-		`#sidebar-nav-content a[href=%q]`,
+		`#componentdocshell-sidebar-content a[href=%q]`,
 		entry.Path,
 	))
 	current, err := activeLink.GetAttribute("aria-current")
@@ -292,7 +320,7 @@ func TestComponentDocsHTMXProofRejectsFullPageReload(t *testing.T) {
 
 	sentinel := installComponentDocsHTMXProof(t, page)
 	destination := entries[1]
-	linkSelector := fmt.Sprintf(`#sidebar-nav-content a[href=%q]`, destination.Path)
+	linkSelector := fmt.Sprintf(`#componentdocshell-sidebar-content a[href=%q]`, destination.Path)
 	replaceComponentDocsLinkWithOrdinaryHref(t, page, destination.Path)
 
 	require.NoError(t, page.Locator(linkSelector).Click())
@@ -308,6 +336,29 @@ func TestComponentDocsHTMXProofRejectsFullPageReload(t *testing.T) {
 	)
 }
 
+func TestComponentDocsComponentPageSpacing(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	response, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, response.Status())
+
+	primary := page.Locator("[data-component-page] [data-component-example-body] > *").Nth(1)
+	primaryGap, err := primary.Evaluate("element => parseFloat(getComputedStyle(element).marginTop)", nil)
+	require.NoError(t, err)
+	require.EqualValues(t, 16, primaryGap)
+
+	variant := page.Locator("section[data-component-example]").First()
+	variantMargin, err := variant.Evaluate("element => parseFloat(getComputedStyle(element).marginTop)", nil)
+	require.NoError(t, err)
+	require.EqualValues(t, 40, variantMargin)
+}
+
 func replaceComponentDocsLinkWithOrdinaryHref(
 	t *testing.T,
 	page playwright.Page,
@@ -315,7 +366,7 @@ func replaceComponentDocsLinkWithOrdinaryHref(
 ) {
 	t.Helper()
 
-	link := page.Locator(fmt.Sprintf(`#sidebar-nav-content a[href=%q]`, path))
+	link := page.Locator(fmt.Sprintf(`#componentdocshell-sidebar-content a[href=%q]`, path))
 	_, err := link.Evaluate(
 		`link => {
 			const ordinaryLink = link.cloneNode(true);
@@ -382,7 +433,7 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, state.dark, hasClass(className, "dark"))
 
-				preview := page.Locator("[data-demo-preview]").First()
+				preview := page.Locator("[data-component-preview]").First()
 				visible, err := preview.IsVisible()
 				require.NoError(t, err)
 				require.True(t, visible)

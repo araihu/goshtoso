@@ -32,10 +32,10 @@ func (s *Server) renderProfilePage(w http.ResponseWriter, r *http.Request) {
 	content := examples.ProfileApp(st)
 	meta := components.MetaForKey("examples/profile")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		_ = demo.FragmentWithMeta(meta, "profile", content).Render(r.Context(), w)
+		_ = demo.ComponentDocsFragment(meta, "profile", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
-	_ = demo.LayoutWithMeta(meta, "profile", content).Render(r.Context(), w)
+	_ = demo.ComponentDocsLayout(meta, "profile", content, storageAllowed(r)).Render(r.Context(), w)
 }
 
 // handleProfileIdentity saves name + bio to the cookie and re-renders the

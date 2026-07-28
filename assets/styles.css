@@ -1264,6 +1264,9 @@
   .w-\[78\%\] {
     width: 78%;
   }
+  .w-auto {
+    width: auto;
+  }
   .w-fit {
     width: fit-content;
   }
@@ -1293,6 +1296,9 @@
   }
   .max-w-7xl {
     max-width: var(--container-7xl);
+  }
+  .max-w-48 {
+    max-width: calc(var(--spacing) * 48);
   }
   .max-w-\[80\%\] {
     max-width: 80%;
@@ -4221,22 +4227,10 @@
       content: var(--tw-content);
     }
   }
-  .after\:pointer-events-none {
-    &::after {
-      content: var(--tw-content);
-      pointer-events: none;
-    }
-  }
   .after\:absolute {
     &::after {
       content: var(--tw-content);
       position: absolute;
-    }
-  }
-  .after\:inset-0 {
-    &::after {
-      content: var(--tw-content);
-      inset: calc(var(--spacing) * 0);
     }
   }
   .after\:top-0 {
@@ -4318,23 +4312,11 @@
       border-radius: calc(infinity * 1px);
     }
   }
-  .after\:rounded-radius {
-    &::after {
-      content: var(--tw-content);
-      border-radius: var(--radius-radius);
-    }
-  }
   .after\:border {
     &::after {
       content: var(--tw-content);
       border-style: var(--tw-border-style);
       border-width: 1px;
-    }
-  }
-  .after\:border-outline {
-    &::after {
-      content: var(--tw-content);
-      border-color: var(--color-outline);
     }
   }
   .after\:border-outline\/20 {
@@ -7217,14 +7199,6 @@
         @supports (color: color-mix(in lab, red, red)) {
           color: color-mix(in oklab, var(--color-on-surface-dark) 40%, transparent);
         }
-      }
-    }
-  }
-  .dark\:after\:border-outline-dark {
-    &:where(.dark, .dark *) {
-      &::after {
-        content: var(--tw-content);
-        border-color: var(--color-outline-dark);
       }
     }
   }

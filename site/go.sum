@@ -8,6 +8,8 @@ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/araihu/goshtoso v0.0.13 h1:In7mqr8LX/nG+85Fz5xcGre7znyCiaUBGltKJUEnGaI=
 github.com/araihu/goshtoso v0.0.13/go.mod h1:SWdh/AlXnVGgW881NzTAKWk7paNsTlKMH/EGujAJoXY=
+github.com/araihu/goshtoso-app-shells v0.0.0-20260728002904-3ca565d36c2d h1:tJJEGCMFbHOU9/yoNI/sYwCiQGjVDJ/HgyDoX+5rjwU=
+github.com/araihu/goshtoso-app-shells v0.0.0-20260728002904-3ca565d36c2d/go.mod h1:Nw6QAzP/ufjO4roQqTW2MePEG7annlRmlt7FQHA3ka0=
 github.com/coder/websocket v1.8.14 h1:9L0p0iKiNOibykf283eHkKUHHrpG7f65OE3BhhO7v9g=
 github.com/coder/websocket v1.8.14/go.mod h1:NX3SzP+inril6yawo5CQXx8+fk145lPDC6pumgx0mVg=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=

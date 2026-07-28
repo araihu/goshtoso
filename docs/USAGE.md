@@ -108,6 +108,54 @@ the embedded bytes. When a custom CDN or local URL changes the bytes, pass its
 matching hash with `WithDependencyIntegrity`; pass an empty hash only when the
 application deliberately disables SRI for that dependency.
 
+#### Runtime manifest and exact library identity
+
+Consumers that cache Goshtoso for offline use, publish an asset inventory, or
+need to validate their rendered shell can use the public assets contract instead
+of copying paths from generated files or the Go module cache:
+
+```go
+import (
+    "fmt"
+
+    "github.com/araihu/goshtoso/assets"
+)
+
+identity := assets.GoshtosoVersion()
+if identity.Status != assets.VersionExact {
+    // Fail closed: development, replaced, and unavailable builds do not expose
+    // identity.Version as if it were the bytes of a released dependency.
+    return fmt.Errorf("goshtoso identity is %s", identity.Status)
+}
+
+runtime := assets.DefaultRuntimeManifest()
+// runtime.Stylesheet.LocalURL and runtime.Loader.LocalURL are served by Handler.
+// runtime.Dependencies is caller-owned and ordered for execution.
+for _, dependency := range runtime.Dependencies {
+    cache(dependency.Role, dependency.LocalURL, dependency.Integrity)
+}
+```
+
+`RuntimeManifest.Stylesheet` is the compiled CSS. `Loader` is the external
+bootstrap rendered by the CDN-first default. `Dependencies` contains Alpine
+Collapse, Alpine Focus, Alpine Mask, Alpine core, HTMX, and combobox in exact
+execution order, with explicit roles, primary and local URLs, SRI, enabled,
+minimal-set membership, direct-tag defer, and loader-readiness semantics.
+Direct local rendering uses the dependency slice and does not execute the
+loader again.
+
+Each `DefaultRuntimeManifest` call owns its value and dependency slice; caller
+mutation cannot change later results or `head.Dependencies()` rendering. Every
+declared local URL uses the `/assets/` mount and is served by `assets.Handler()`.
+
+`GoshtosoVersion` reads Go build information. `VersionExact` covers an
+unreplaced versioned module, including immutable pseudo-versions. A local or
+module replacement reports `VersionReplaced`; its requested and replacement
+records remain available as metadata, but `VersionInfo.Version` stays empty so
+the requested release cannot be mistaken for replacement bytes. Unversioned
+main-module builds report `VersionDevelopment`; missing build metadata reports
+`VersionUnavailable`.
+
 Skip the rest of this section unless you maintain your own Tailwind build.
 
 ### 2b. Extract Goshtoso CSS (only for a custom Tailwind build)
@@ -266,6 +314,22 @@ The installable skill includes four progressive references:
 - [visual acceptance](../.agents/skills/using-goshtoso/references/visual-acceptance.md)
   requires 390 px and 1440 px, Goshtoso and Minimal, light and dark, keyboard,
   console, accessibility, and screenshot checks.
+
+## Reusable documentation shells
+
+Documentation applications can reuse
+[`componentdocshell`](https://github.com/araihu/goshtoso-app-shells/tree/main/componentdocshell)
+for the Goshtoso demo frame: brand header, search-first fixed navigation,
+responsive drawer, appearance controls, optional table of contents, and HTMX
+main-content swaps. Its config structs let the application choose the default
+theme, available themes, dark-mode integration, control visibility, IDs, slots,
+and navigation/search data while keeping product metadata and content local.
+
+Use
+[`componentpage`](https://github.com/araihu/goshtoso-app-shells/tree/main/componentpage)
+for the semantic sections and preview/code examples repeated inside component
+reference pages. It is content structure, not the outer site shell. Catalog
+surfaces remain a separate application-shell pattern.
 
 Model loading, empty, error, and success before polishing the happy path. Keep
 domain vocabulary, information priority, authorization, and workflow rules in

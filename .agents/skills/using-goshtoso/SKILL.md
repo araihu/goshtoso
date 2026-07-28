@@ -81,6 +81,19 @@ Choose deliberately:
 - Await `window.goshtosoDependencies.ready` before application JavaScript that
   requires every dynamically loaded dependency.
 
+For offline inventories or build descriptors, use
+`assets.DefaultRuntimeManifest()` instead of copying versioned paths from
+generated files or the module cache. Its caller-owned dependency slice is in
+execution order and includes roles, CDN primary, Handler-served local URL, SRI,
+enabled, minimal-set membership, defer, and loader-readiness semantics. Cache
+the separate stylesheet and bootstrap loader local URLs too; do not execute the
+loader and the direct local dependency scripts together.
+
+Bind same-version caches only when `assets.GoshtosoVersion().Status` is
+`assets.VersionExact`. Development, replaced, and unavailable builds leave the
+exact `Version` empty. Replacement request/target metadata is diagnostic only:
+the requested release version does not identify replacement bytes.
+
 If the consumer sets Content Security Policy, test the rendered application
 under that exact policy. The bundled standard Alpine runtime requires dynamic
 function evaluation, and Alpine/component state writes inline style
@@ -130,6 +143,20 @@ choose a deliberate visual direction before selecting components. Do not ask
 for an aesthetic preference when a reversible, context-backed choice is
 available.
 
+For a public organization, product, portfolio, or publication with static
+content, begin with `examples/brand-site`, not App Shell. It is a complete,
+copyable Go/templ static generator and explicitly separates Goshtoso tokens
+from product-owned visual direction. Create it in an empty target with:
+
+```bash
+go run github.com/araihu/goshtoso/cmd/goshtoso@latest -init-brand-site=./my-site
+```
+
+Then replace its placeholder content and `brand.css`; do not turn the starter
+into generic hero/features/testimonials/CTA sections. Add Goshtoso controls
+only when the site has real navigation, feedback, or form behavior needing
+them.
+
 Then choose the closest task pattern and read
 `references/application-patterns.md` before composing it:
 
@@ -145,6 +172,28 @@ Then choose the closest task pattern and read
 Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
+
+### Reusable documentation shells
+
+For a documentation site that should follow the Goshtoso demo frame, use the
+public `github.com/araihu/goshtoso-app-shells/componentdocshell` module instead
+of copying the demo site's layout. It owns the full-width brand header,
+search-first fixed desktop sidebar and mobile drawer, theme and dark-mode
+controls, optional table of contents, and HTMX main-content navigation. The
+consumer still supplies brand assets, navigation/search data, page content,
+runtime slots, and application-specific metadata.
+
+Configure the shell through `componentdocshell.Config` and its nested config
+structs. Set the default theme, available theme list, theme selector ID,
+dark-mode binding, TOC hooks, and whether appearance controls render. The shell
+includes all Goshtoso themes by default and can run with one fixed theme and no
+selector when a product requires that behavior.
+
+Use `github.com/araihu/goshtoso-app-shells/componentpage` for the repeated
+structure inside component reference pages, including semantic sections and
+preview/code examples. It does not own the site frame; the catalog shell is a
+separate pattern. Do not treat a catalog grid and a component documentation
+page as the same shell.
 
 Before implementing a consequential action, stale-data recovery, or
 interruptible workflow, read `references/adversarial-acceptance.md`. Copy its

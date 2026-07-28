@@ -31,11 +31,25 @@ func TestBadgeComponentDemo(t *testing.T) {
 		}
 	})
 
-	t.Run("preview frame paints non-clipping border overlay", func(t *testing.T) {
-		shell := page.Locator("#badge-solid").Locator("xpath=ancestor::div[contains(@class, 'border-outline') and contains(@class, 'rounded-radius')][1]")
+	t.Run("preview frame paints a non-clipping border", func(t *testing.T) {
+		shell := page.Locator("#badge-solid").Locator("xpath=ancestor::div[contains(@class, 'component-page__preview')][1]")
 		className, err := shell.GetAttribute("class")
 		require.NoError(t, err)
-		assert.Contains(t, className, "after:border-outline")
+		assert.Contains(t, className, "border-transparent")
+
+		borderVisible, err := shell.Evaluate(`el => {
+			const frame = getComputedStyle(el)
+			const outline = getComputedStyle(el, "::after")
+			return outline.position === "absolute" &&
+				outline.inset === "0px" &&
+				outline.pointerEvents === "none" &&
+				outline.borderTopWidth === "1px" &&
+				outline.borderTopStyle === "solid" &&
+				outline.borderTopColor !== "rgba(0, 0, 0, 0)" &&
+				outline.borderTopLeftRadius === frame.borderTopLeftRadius
+		}`, nil)
+		require.NoError(t, err)
+		assert.Equal(t, true, borderVisible)
 
 		overflow, err := shell.Evaluate("el => getComputedStyle(el).overflow", nil)
 		require.NoError(t, err)

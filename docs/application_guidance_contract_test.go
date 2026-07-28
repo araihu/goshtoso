@@ -22,6 +22,33 @@ func TestAgentSkillRoutesFromIntegrationToApplicationPatterns(t *testing.T) {
 	}
 }
 
+func TestReusableDocumentationShellGuidanceDistinguishesFrameFromPage(t *testing.T) {
+	for path, wants := range map[string][]string{
+		"../.agents/skills/using-goshtoso/SKILL.md": {
+			"github.com/araihu/goshtoso-app-shells/componentdocshell",
+			"github.com/araihu/goshtoso-app-shells/componentpage",
+			"the catalog shell is a",
+			"separate pattern",
+		},
+		"USAGE.md": {
+			"Reusable documentation shells",
+			"componentdocshell",
+			"componentpage",
+		},
+		"../site/internal/pages/demo/components/agents.templ": {
+			"Reusable documentation shells",
+			"goshtoso-app-shells",
+		},
+	} {
+		content := readDoc(t, path)
+		for _, want := range wants {
+			if !strings.Contains(content, want) {
+				t.Errorf("%s missing reusable shell guidance %q", path, want)
+			}
+		}
+	}
+}
+
 func TestReadmeMakesApplicationGuidanceDiscoverable(t *testing.T) {
 	readme := readDoc(t, "../README.md")
 	for _, want := range []string{
