@@ -62,6 +62,21 @@ func TestApplicationPatternsPageAndResponsiveRecipes(t *testing.T) {
 	require.NoError(t, page.Locator("#detail-workspace-preview [role='tablist']").WaitFor())
 	require.NoError(t, page.Locator("#workflow-steps-desktop").WaitFor())
 
+	desktopTableFits, err := page.Locator("#operations-list-preview .overflow-x-auto").Evaluate(
+		"el => el.scrollWidth <= el.clientWidth",
+		nil,
+	)
+	require.NoError(t, err)
+	assert.Equal(t, true, desktopTableFits, "operations table actions should remain visible at 1440 px")
+
+	for _, target := range []string{"#surface-brief-title", "#field-proven-title"} {
+		require.NoError(t, page.Locator("#toc-list a[href='"+target+"']").Click())
+		_, err = page.WaitForFunction("() => { const el = document.querySelector('"+target+"'); const header = document.querySelector('.component-doc-shell__header'); return Boolean(el && header) && el.getBoundingClientRect().top >= header.getBoundingClientRect().bottom; }", nil, playwright.PageWaitForFunctionOptions{
+			Timeout: playwright.Float(2000),
+		})
+		require.NoError(t, err, "%s should remain visible below the sticky header", target)
+	}
+
 	visible, err := page.Locator("#app-shell-desktop-sidebar").IsVisible()
 	require.NoError(t, err)
 	assert.True(t, visible, "desktop app-shell navigation should be visible at 1440 px")

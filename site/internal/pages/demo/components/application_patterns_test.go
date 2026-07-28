@@ -54,6 +54,14 @@ func TestApplicationPatternsRenderCompleteRecipeContracts(t *testing.T) {
 	} {
 		require.Contains(t, html, evidence)
 	}
+
+	require.Equal(t, 6, strings.Count(html, `data-toc-heading class="scroll-mt-20`))
+	require.Equal(t, 4, strings.Count(html, `data-pattern-contract class="mt-8 border-t border-outline`))
+	require.NotContains(t, html, `class="mt-8 border-y border-outline`)
+	require.Contains(t, html, `for="operations-list-search"`)
+	require.Contains(t, html, `>Search deployments</label>`)
+	require.Contains(t, html, `!bg-transparent`)
+	require.Contains(t, html, `inline-flex h-8 items-center`)
 }
 
 func TestApplicationPatternsRouteIsRegistered(t *testing.T) {
