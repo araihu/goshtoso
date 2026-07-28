@@ -35,7 +35,7 @@ func componentDocsConfig(persist bool) componentdocshell.Config {
 		Navigation: componentdocshell.Navigation{Items: getSidebarTopItems(""), SectionsTitle: "Components", Sections: sections, SearchPlaceholder: "Search", SearchSlot: sidebarSearchSlot()},
 		Appearance: componentdocshell.AppearanceConfig{
 			Themes:             getThemeOptions(),
-			DefaultTheme:       "goshtoso",
+			DefaultTheme:       "araihu",
 			ThemeSelectorID:    "site-theme",
 			PersistPreferences: persist,
 			DarkModeBinding: &componentdocshell.DarkModeBinding{

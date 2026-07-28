@@ -52,6 +52,9 @@ const perPage = 5
 //go:embed assets/dogs/*.webp
 var dogImageFiles embed.FS
 
+//go:embed araihu.css
+var araiHuTheme []byte
+
 // columns defines the table headers
 func columns() []table.Column {
 	return []table.Column{
@@ -154,6 +157,10 @@ func appMux() *http.ServeMux {
 
 	// Serve embedded Goshtoso assets (CSS with themes, Alpine.js, HTMX, fonts)
 	mux.Handle("GET /assets/", assets.Handler())
+	mux.HandleFunc("GET /araihu.css", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+		_, _ = w.Write(araiHuTheme)
+	})
 
 	dogImages, err := fs.Sub(dogImageFiles, "assets/dogs")
 	if err != nil {

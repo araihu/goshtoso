@@ -1,0 +1,63 @@
+/*
+ * Arai Hû for Goshtoso
+ *
+ * Load after Goshtoso's stylesheet, then set `data-theme="araihu"` on <html>.
+ * This is an organization theme, deliberately kept outside Goshtoso's base
+ * theme catalogue.
+ */
+@layer base {
+  [data-theme="araihu"] {
+    color-scheme: light;
+    --font-body: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-title: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+
+    /* V11 inline SVG contract. External SVGs use their embedded scheme fallback. */
+    --araihu-logo-surface: var(--color-surface);
+    --araihu-logo-ink: var(--color-on-surface-strong);
+    --araihu-logo-signal: #c7ff4a;
+
+    /* Daylight after rain: paper, deep blue, and a restrained acid-green signal. */
+    --color-surface: #f3f2e9;
+    --color-surface-alt: #e4e8eb;
+    --color-on-surface: #243348;
+    --color-on-surface-strong: #07111f;
+    --color-primary: #173b72;
+    --color-on-primary: #ffffff;
+    --color-secondary: #31588f;
+    --color-on-secondary: #ffffff;
+    --color-outline: #a3b0bf;
+    --color-outline-strong: #34465d;
+    --color-control-outline: #64748b;
+
+    /* Arai hû: black cloud, cobalt depth, lime horizon. */
+    --color-surface-dark: #07111f;
+    --color-surface-dark-alt: #10233d;
+    --color-on-surface-dark: #d5ddeb;
+    --color-on-surface-dark-strong: #f7f8f3;
+    --color-primary-dark: #c7ff4a;
+    --color-on-primary-dark: #07111f;
+    --color-secondary-dark: #7aa4df;
+    --color-on-secondary-dark: #07111f;
+    --color-outline-dark: #526981;
+    --color-outline-dark-strong: #c8d5e3;
+    --color-control-outline-dark: #718397;
+
+    --color-info: #1476b8;
+    --color-on-info: #ffffff;
+    --color-success: #258256;
+    --color-on-success: #ffffff;
+    --color-warning: #a85e00;
+    --color-on-warning: #ffffff;
+    --color-danger: #b42c46;
+    --color-on-danger: #ffffff;
+    --radius-radius: var(--radius-lg);
+  }
+
+  [data-theme="araihu"].dark,
+  .dark [data-theme="araihu"] {
+    color-scheme: dark;
+    --araihu-logo-surface: var(--color-surface-dark);
+    --araihu-logo-ink: var(--color-on-surface-dark-strong);
+    --araihu-logo-signal: var(--color-primary-dark);
+  }
+}

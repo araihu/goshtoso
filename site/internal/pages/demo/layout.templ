@@ -37,7 +37,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en" x-data="{
-		theme: (window.goshtosoStorageConsent && !window.goshtosoStorageConsent.allowed()) ? 'goshtoso' : (localStorage.getItem('theme') || 'goshtoso'),
+		theme: (window.goshtosoStorageConsent && !window.goshtosoStorageConsent.allowed()) ? 'araihu' : (localStorage.getItem('theme') || 'araihu'),
 		sidebarOpen: false,
 		showThemeDropdown: false,
 		setTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }
@@ -62,8 +62,9 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 			<link rel="manifest" href="/site.webmanifest"/>
 			@storageConsentScript()
-			@templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!c||c.allowed();var t=canStore?(localStorage.getItem('theme')||'goshtoso'):'goshtoso';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
+			@templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!c||c.allowed();var t=canStore?(localStorage.getItem('theme')||'araihu'):'araihu';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
 			<link rel="stylesheet" href="/assets/styles.css"/>
+			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -701,7 +702,8 @@ templ siteFooter() {
 
 func getThemeOptions() []selectfield.Option {
 	all := themes.All()
-	options := make([]selectfield.Option, 0, len(all))
+	options := make([]selectfield.Option, 0, len(all)+1)
+	options = append(options, selectfield.Option{Value: "araihu", Label: "Arai Hû"})
 	for _, theme := range all {
 		options = append(options, selectfield.Option{Value: theme.Key, Label: theme.Label})
 	}

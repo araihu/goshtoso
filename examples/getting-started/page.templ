@@ -13,8 +13,8 @@ import (
 // assets.Handler() — no CDN needed, works fully offline.
 templ Page(cfg table.Config) {
 	<!DOCTYPE html>
-	<html lang="en" x-data x-init="
-		const t = localStorage.getItem('theme') || 'goshtoso';
+	<html lang="en" data-theme="araihu" x-data x-init="
+		const t = localStorage.getItem('theme') || 'araihu';
 		document.documentElement.setAttribute('data-theme', t);
 		if (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');
 	">
@@ -25,6 +25,7 @@ templ Page(cfg table.Config) {
 			<!-- Goshtoso runtime assets: CSS (themes) + Alpine + collapse/focus + HTMX.
 			     Served from /assets/ by assets.Handler() (mounted in main.go) — no CDN. -->
 			@head.Dependencies()
+			<link rel="stylesheet" href="/araihu.css"/>
 			<!-- darkmode.js drives the theme/dark toggle; not part of Dependencies(). -->
 			<script src="/assets/js/darkmode.js"></script>
 			<style>[x-cloak] { display: none !important; }</style>
