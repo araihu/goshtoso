@@ -7,6 +7,23 @@
 /* Dark mode variant - enables dark mode with .dark class */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Arai Hu v11 brand assets consume these semantic values. The SVGs use the
+   embedding document's color scheme, so .dark must set color-scheme as well
+   as the Tailwind variant. */
+:root {
+	color-scheme: light;
+	--araihu-logo-surface: var(--color-surface);
+	--araihu-logo-ink: var(--color-on-surface-strong);
+	--araihu-logo-signal: var(--color-primary);
+}
+
+:root.dark {
+	color-scheme: dark;
+	--araihu-logo-surface: var(--color-surface-dark);
+	--araihu-logo-ink: var(--color-on-surface-dark-strong);
+	--araihu-logo-signal: var(--color-primary-dark);
+}
+
 /* ============================================
    TAILWIND IMPORT
    ============================================ */
