@@ -89,19 +89,39 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.True(t, visible, "Browse components CTA should be visible")
 	})
 
-	t.Run("HeroUsesV10GoshtosoLockup", func(t *testing.T) {
+	t.Run("HeroUsesV11GoshtosoLockup", func(t *testing.T) {
 		lockup := page.Locator("#hero [data-brand-lockup]")
 		visible, err := lockup.IsVisible()
 		require.NoError(t, err)
-		require.True(t, visible, "homepage should render the Goshtoso V10 brand lockup")
+		require.True(t, visible, "homepage should render the Goshtoso V11 brand lockup")
 
 		src, err := lockup.Locator("img").GetAttribute("src")
 		require.NoError(t, err)
-		require.Contains(t, src, "goshtoso-logo.svg", "homepage should use the canonical V10 logo asset")
+		require.Contains(t, src, "goshtoso-logo.svg", "homepage should use the canonical V11 logo asset")
 
 		txt, err := lockup.InnerText()
 		require.NoError(t, err)
 		require.Contains(t, txt, "Server-rendered Go UI")
+	})
+
+	t.Run("BrandFollowsDarkMode", func(t *testing.T) {
+		hadDark, err := page.Evaluate("() => document.documentElement.classList.contains('dark')", nil)
+		require.NoError(t, err)
+		_, err = page.Evaluate("() => document.documentElement.classList.remove('dark')", nil)
+		require.NoError(t, err)
+		colorScheme, err := page.Evaluate("() => getComputedStyle(document.documentElement).colorScheme", nil)
+		require.NoError(t, err)
+		require.Equal(t, "light", colorScheme)
+
+		_, err = page.Evaluate("() => document.documentElement.classList.add('dark')", nil)
+		require.NoError(t, err)
+		t.Cleanup(func() {
+			_, cleanupErr := page.Evaluate("dark => document.documentElement.classList.toggle('dark', dark)", hadDark)
+			require.NoError(t, cleanupErr)
+		})
+		colorScheme, err = page.Evaluate("() => getComputedStyle(document.documentElement).colorScheme", nil)
+		require.NoError(t, err)
+		require.Equal(t, "dark", colorScheme, "v11 brand SVGs inherit the .dark color scheme")
 	})
 
 	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {
