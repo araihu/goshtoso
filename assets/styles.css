@@ -1,5 +1,17 @@
 /*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
 @layer properties;
+:root {
+  color-scheme: light;
+  --araihu-logo-surface: var(--color-surface);
+  --araihu-logo-ink: var(--color-on-surface-strong);
+  --araihu-logo-signal: var(--color-primary);
+}
+:root.dark {
+  color-scheme: dark;
+  --araihu-logo-surface: var(--color-surface-dark);
+  --araihu-logo-ink: var(--color-on-surface-dark-strong);
+  --araihu-logo-signal: var(--color-primary-dark);
+}
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
