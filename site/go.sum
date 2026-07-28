@@ -10,6 +10,8 @@ github.com/araihu/goshtoso v0.0.13 h1:In7mqr8LX/nG+85Fz5xcGre7znyCiaUBGltKJUEnGa
 github.com/araihu/goshtoso v0.0.13/go.mod h1:SWdh/AlXnVGgW881NzTAKWk7paNsTlKMH/EGujAJoXY=
 github.com/araihu/goshtoso-app-shells v0.0.0-20260727225437-d51e9ebd333b h1:lYAQdycLLgIJrQXb9Q5pmE2GtWXH3nCZhSjTtrAZNxE=
 github.com/araihu/goshtoso-app-shells v0.0.0-20260727225437-d51e9ebd333b/go.mod h1:Nw6QAzP/ufjO4roQqTW2MePEG7annlRmlt7FQHA3ka0=
+github.com/araihu/goshtoso-app-shells v0.0.0-20260728002057-fc2eeedf8da5 h1:emj4GWZdzbwqwEdhRQQlGi+u3QzyMR/J4peJMLxkbTs=
+github.com/araihu/goshtoso-app-shells v0.0.0-20260728002057-fc2eeedf8da5/go.mod h1:Nw6QAzP/ufjO4roQqTW2MePEG7annlRmlt7FQHA3ka0=
 github.com/coder/websocket v1.8.14 h1:9L0p0iKiNOibykf283eHkKUHHrpG7f65OE3BhhO7v9g=
 github.com/coder/websocket v1.8.14/go.mod h1:NX3SzP+inril6yawo5CQXx8+fk145lPDC6pumgx0mVg=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=

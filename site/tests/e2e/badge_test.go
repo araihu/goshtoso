@@ -31,11 +31,20 @@ func TestBadgeComponentDemo(t *testing.T) {
 		}
 	})
 
-	t.Run("preview frame paints non-clipping border overlay", func(t *testing.T) {
+	t.Run("preview frame paints a non-clipping border", func(t *testing.T) {
 		shell := page.Locator("#badge-solid").Locator("xpath=ancestor::div[contains(@class, 'border-outline') and contains(@class, 'rounded-radius')][1]")
 		className, err := shell.GetAttribute("class")
 		require.NoError(t, err)
-		assert.Contains(t, className, "after:border-outline")
+		assert.Contains(t, className, "border-outline")
+
+		borderVisible, err := shell.Evaluate(`el => {
+			const style = getComputedStyle(el)
+			return style.borderTopWidth === "1px" &&
+				style.borderTopStyle === "solid" &&
+				style.borderTopColor !== "rgba(0, 0, 0, 0)"
+		}`, nil)
+		require.NoError(t, err)
+		assert.Equal(t, true, borderVisible)
 
 		overflow, err := shell.Evaluate("el => getComputedStyle(el).overflow", nil)
 		require.NoError(t, err)
