@@ -1,0 +1,81 @@
+package actiongroup
+
+import (
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/dropdown"
+	"github.com/araihu/goshtoso/components/link"
+)
+
+// ActionGroup renders a primary action plus ordered secondary actions. The
+// primary action remains visible. A small first-party runtime moves trailing
+// secondary actions into one flat overflow Dropdown when width is constrained.
+templ actionGroupTemplate(cfg Config) {
+	{{ sections, counts := overflowSections(cfg.Secondary) }}
+	<div
+		data-goshtoso-action-group
+		data-action-group-overflow-counts={ overflowCountsValue(counts) }
+		class={ cfg.rootClasses() }
+		role="group"
+		aria-label={ cfg.label() }
+		{ cfg.RootAttrs... }
+	>
+		<div data-action-group-primary class="shrink-0">
+			@renderAction(cfg.Primary, true)
+		</div>
+		for _, action := range cfg.Secondary {
+			<div data-action-group-secondary class="shrink-0">
+				if action.isGroup() {
+					@dropdown.Dropdown(dropdown.Config{
+						ID:       action.ID,
+						Label:    action.Label,
+						Sections: action.dropdownSections(),
+					})
+				} else {
+					@renderAction(action, false)
+				}
+			</div>
+		}
+		if len(cfg.Secondary) > 0 {
+			<div data-action-group-overflow class="shrink-0" hidden>
+				@dropdown.Dropdown(dropdown.Config{
+					Label:           cfg.overflowLabel(),
+					TriggerIcon:     overflowIcon(),
+					TriggerIconOnly: true,
+					MenuAlign:       dropdown.AlignEnd,
+					Sections:        sections,
+				})
+			</div>
+		}
+	</div>
+}
+
+templ renderAction(action Action, primary bool) {
+	if action.Href != "" && action.OnClick == "" && !action.Disabled {
+		@link.Link(
+			action.Href,
+			link.WithAppearance(link.AppearanceButton),
+			link.WithSize(link.SizeSmall),
+			link.WithIcon(action.Icon),
+			link.WithIconPosition(link.IconLeading),
+			link.WithID(action.ID),
+			link.WithAttrs(actionAttrs(action)),
+		) {
+			{ action.Label }
+		}
+	} else {
+		@button.Button(actionButtonOptions(action, primary)...) {
+			<span class="inline-flex items-center gap-1.5">
+				if action.Icon != nil {
+					@action.Icon
+				}
+				<span>{ action.Label }</span>
+			</span>
+		}
+	}
+}
+
+templ overflowIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-5">
+		<path fill-rule="evenodd" d="M12 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" clip-rule="evenodd"></path>
+	</svg>
+}

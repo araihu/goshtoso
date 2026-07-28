@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 // Dependencies renders the <script>/<link> tags for every Goshtoso runtime
 // asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
 // text-on-primary, etc.), Alpine core + collapse/focus/mask plugins, HTMX, and the
-// combobox keyboard-nav script.
+// combobox keyboard-nav and ActionGroup measurement scripts.
 //
 // Support assets load from /assets/*, which you MUST serve by mounting the
 // embedded asset handler — CSS and local fallback fail without it:

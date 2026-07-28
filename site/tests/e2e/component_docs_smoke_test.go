@@ -92,7 +92,7 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 	}
 
 	entries := catalog.ComponentPages()
-	require.Len(t, entries, 48)
+	require.Len(t, entries, 49)
 
 	page := newPage(t, sharedBrowser)
 	failures := watchPageFailures(page)

@@ -39,6 +39,7 @@ const (
 	KindCombobox               Kind = "combobox"
 	KindDrawer                 Kind = "drawer"
 	KindDropdown               Kind = "dropdown"
+	KindActionGroup            Kind = "action-group"
 	KindFileInput              Kind = "file-input"
 	KindForm                   Kind = "form"
 	KindFormSection            Kind = "form-section"
@@ -122,6 +123,7 @@ var allKinds = []Kind{
 	KindCombobox,
 	KindDrawer,
 	KindDropdown,
+	KindActionGroup,
 	KindFileInput,
 	KindForm,
 	KindFormSection,

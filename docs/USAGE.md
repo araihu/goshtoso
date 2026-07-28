@@ -56,8 +56,8 @@ import "github.com/araihu/goshtoso/components/head"
 templ Layout() {
     <html>
         <head>
-            @head.Dependencies()        // CSS + Alpine + collapse/focus/mask + HTMX + combobox nav
-            // or @head.DependenciesMinimal() — CSS + Alpine core + HTMX + combobox nav (no Alpine plugins)
+            @head.Dependencies()        // CSS + Alpine + plugins + HTMX + first-party helpers
+            // or @head.DependenciesMinimal() — no Alpine plugins
         </head>
         ...
     </html>
@@ -97,7 +97,8 @@ rest of the stack:
 ```
 
 Other controls are `WithoutLocalFallback()`, `WithoutDependency(...)`,
-`WithStylesheetURL(...)`, `WithComboboxURL(...)`, and `WithLoaderURL(...)`.
+`WithStylesheetURL(...)`, `WithComboboxURL(...)`,
+`WithActionGroupURL(...)`, and `WithLoaderURL(...)`.
 `WithoutLocalFallback()` keeps the configured CDN primaries but turns a failed
 download into `goshtoso:dependency-error`. `WithoutDependency(...)` is for an
 application that deliberately loads that runtime itself. Empty override URLs
@@ -204,13 +205,15 @@ Alpine core):
 <script defer src="/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"></script>
 <script src="/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"></script>
 <script defer src="/assets/js/combobox.js"></script>
+<script defer src="/assets/js/action-group.js"></script>
 ```
 
 These are the vendored files `assets.Handler()` serves — the version is in the
 path, so there is no floating CDN tag to drift. **These versioned paths change
 when you upgrade a dep; prefer `@head.Dependencies()` so you never hardcode
-them.** Don't forget `combobox.js` (the combobox component's keyboard nav is dead
-without it) — it is first-party, so it stays unversioned at `/assets/js/`.
+them.** Don't forget `combobox.js` or `action-group.js`: they provide combobox
+keyboard navigation and ActionGroup container measurement. Both are first-party,
+so they stay unversioned under `/assets/js/`.
 
 ### Content Security Policy
 
@@ -363,7 +366,7 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The catalog has 49 public component packages, 48 documentation pages, and 80 renderable primitives.
+The catalog has 50 public component packages, 49 documentation pages, and 81 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -371,6 +374,7 @@ configuration previews, and API tables.
 | Component | Import | Description |
 |-----------|--------|-------------|
 | `accordion` | `components/accordion` | Collapsible sections with default, plain, and split appearances |
+| `actiongroup` | `components/actiongroup` | Responsive primary, secondary, stacked, and flat overflow actions |
 | `alert` | `components/alert` | Dismissable alert banners with info, success, warning, and danger tones |
 | `appshell` | `components/appshell` | Application frame with skip link, persistent regions, and one scrollable main surface |
 | `avatar` | `components/avatar` | User avatar with image, initials fallback, status indicator |

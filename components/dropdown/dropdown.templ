@@ -35,7 +35,7 @@ templ dropdownTemplate(cfg Config) {
 templ clickDropdown(cfg Config) {
 	<div
 		x-data="{ isOpen: false, openedWithKeyboard: false }"
-		x-on:keydown.esc.window="isOpen = false, openedWithKeyboard = false"
+		x-on:keydown.esc.window="if (isOpen || openedWithKeyboard) { isOpen = false; openedWithKeyboard = false; $refs.trigger.focus() }"
 		class="relative w-fit"
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -52,7 +52,7 @@ templ hoverDropdown(cfg Config) {
 		x-data="{ isOpen: false, openedWithKeyboard: false, leaveTimeout: null }"
 		x-on:mouseleave.prevent="leaveTimeout = setTimeout(() => { isOpen = false }, 250)"
 		x-on:mouseenter="leaveTimeout ? clearTimeout(leaveTimeout) : true"
-		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false"
+		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false; $refs.trigger.focus()"
 		x-on:click.outside="isOpen = false, openedWithKeyboard = false"
 		class="relative w-fit"
 		if cfg.ID != "" {
@@ -68,7 +68,7 @@ templ hoverDropdown(cfg Config) {
 templ contextDropdown(cfg Config) {
 	<div
 		x-data="{ isOpen: false, openedWithKeyboard: false }"
-		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false"
+		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false; $refs.trigger.focus()"
 		class="relative w-fit"
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -82,6 +82,7 @@ templ contextDropdown(cfg Config) {
 // triggerButton renders the click trigger button
 templ triggerButton(cfg Config) {
 	<button
+		x-ref="trigger"
 		type="button"
 		x-on:click="isOpen = ! isOpen"
 		class={ cfg.buttonClasses() }
@@ -89,9 +90,9 @@ templ triggerButton(cfg Config) {
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
 		}
-		x-on:keydown.space.prevent="openedWithKeyboard = true"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true"
-		x-on:keydown.down.prevent="openedWithKeyboard = true"
+		x-on:keydown.space.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.enter.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.down.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 	>
@@ -107,11 +108,12 @@ templ triggerButton(cfg Config) {
 // hoverTriggerButton renders the hover trigger button
 templ hoverTriggerButton(cfg Config) {
 	<button
+		x-ref="trigger"
 		type="button"
 		x-on:mouseover="isOpen = true"
-		x-on:keydown.space.prevent="openedWithKeyboard = true"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true"
-		x-on:keydown.down.prevent="openedWithKeyboard = true"
+		x-on:keydown.space.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.enter.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.down.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
 		class={ cfg.buttonClasses() }
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
@@ -132,13 +134,14 @@ templ hoverTriggerButton(cfg Config) {
 // contextTriggerButton renders the context menu trigger button
 templ contextTriggerButton(cfg Config) {
 	<button
+		x-ref="trigger"
 		type="button"
 		aria-label="context menu"
 		x-on:click="isOpen = ! isOpen"
 		x-on:contextmenu.prevent="isOpen = true"
-		x-on:keydown.space.prevent="openedWithKeyboard = true"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true"
-		x-on:keydown.down.prevent="openedWithKeyboard = true"
+		x-on:keydown.space.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.enter.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.down.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
 		class={ cfg.buttonClasses() }
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
@@ -155,6 +158,7 @@ templ contextTriggerButton(cfg Config) {
 // dropdownMenu renders the dropdown menu panel (for click and hover)
 templ dropdownMenu(cfg Config) {
 	<div
+		x-ref="menu"
 		x-cloak
 		x-show="isOpen || openedWithKeyboard"
 		x-transition
@@ -186,6 +190,7 @@ templ dropdownMenu(cfg Config) {
 // contextDropdownMenu renders the dropdown menu panel for context menus (uses ul/li)
 templ contextDropdownMenu(cfg Config) {
 	<div
+		x-ref="menu"
 		x-cloak
 		x-show="isOpen || openedWithKeyboard"
 		x-transition

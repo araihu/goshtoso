@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-49 component packages. Each is imported by its directory path; note the
+50 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -43,6 +43,39 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 | `Icon` | `templ.Component` | Icon is an optional leading icon (templ.Component) |
 | `Disabled` | `bool` | Disabled prevents interaction with this item |
 | `InitiallyExpanded` | `bool` | InitiallyExpanded sets the initial state |
+
+## actiongroup
+
+```go
+import "github.com/araihu/goshtoso/components/actiongroup"  // package actiongroup
+```
+
+**Entry points:** `ActionGroup(cfg Config)`
+
+**Action**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Label` | `string` | Label is the visible action label or grouped-action trigger label. |
+| `Href` | `string` | Href renders a native link when OnClick is empty and Disabled is false. |
+| `Icon` | `templ.Component` | Icon renders before Label. |
+| `OnClick` | `string` | OnClick is an Alpine.js expression for button actions. |
+| `Disabled` | `bool` | Disabled renders an inert native button. |
+| `Danger` | `bool` | Danger applies the destructive action treatment to buttons and Dropdown items. Links retain Link's navigation treatment. |
+| `Tooltip` | `string` | Tooltip sets a native title attribute. |
+| `ID` | `string` | ID sets the native action or grouped Dropdown root ID. Flattened overflow copies append "-overflow" so the rendered document keeps IDs unique. |
+| `Items` | `[]Action` | Items turns this action into a stacked group backed by Dropdown. |
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Label` | `string` | Label is the ActionGroup's accessible name. Default is "Actions". |
+| `Primary` | `Action` | Primary is required, always rendered, and never moved into overflow. |
+| `Secondary` | `[]Action` | Secondary is ordered from highest to lowest priority. Lower-priority actions at the end move into overflow first. |
+| `OverflowLabel` | `string` | OverflowLabel is the accessible label for the ellipsis trigger. Default is "More actions". |
+| `RootClass` | `string` | RootClass appends CSS classes to the ActionGroup root. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the ActionGroup root. |
 
 ## alert
 
@@ -834,7 +867,7 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 
 **Entry points:** `Dependencies(options ...Option)` · `DependenciesMinimal(options ...Option)`
 
-**Options:** `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
+**Options:** `WithActionGroupURL(url string)` · `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
 
 - **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx"
 

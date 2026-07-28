@@ -42,6 +42,7 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 		RuntimeRoleAlpineJS,
 		RuntimeRoleHTMX,
 		RuntimeRoleCombobox,
+		RuntimeRoleActionGroup,
 	}
 	gotRoles := make([]RuntimeAssetRole, 0, len(manifest.Dependencies))
 	for _, dependency := range manifest.Dependencies {
@@ -59,7 +60,7 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	if !reflect.DeepEqual(gotRoles, wantRoles) {
 		t.Fatalf("dependency roles = %v, want %v", gotRoles, wantRoles)
 	}
-	wantMinimal := []bool{false, false, false, true, true, true}
+	wantMinimal := []bool{false, false, false, true, true, true, true}
 	for index, dependency := range manifest.Dependencies {
 		if dependency.IncludeInMinimal != wantMinimal[index] {
 			t.Errorf("%s IncludeInMinimal = %t, want %t", dependency.Role, dependency.IncludeInMinimal, wantMinimal[index])
@@ -72,6 +73,7 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	assertRuntimeAsset(t, manifest.Dependencies[3], AlpineJSCDNURL, AlpineJSURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[4], HTMXCDNURL, HTMXURL, false, true)
 	assertRuntimeAsset(t, manifest.Dependencies[5], ComboboxURL, ComboboxURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[6], ActionGroupURL, ActionGroupURL, true, false)
 }
 
 func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
@@ -91,8 +93,8 @@ func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
 	if fresh.Dependencies[0].LocalURL != AlpineCollapseURL {
 		t.Fatalf("fresh collapse URL = %q", fresh.Dependencies[0].LocalURL)
 	}
-	if len(fresh.Dependencies) != 6 {
-		t.Fatalf("fresh dependency count = %d, want 6", len(fresh.Dependencies))
+	if len(fresh.Dependencies) != 7 {
+		t.Fatalf("fresh dependency count = %d, want 7", len(fresh.Dependencies))
 	}
 }
 

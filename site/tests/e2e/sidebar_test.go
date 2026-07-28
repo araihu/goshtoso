@@ -23,7 +23,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 	page := newPage(t, browser)
 
 	componentPages := catalog.ComponentPages()
-	require.Len(t, componentPages, 48)
+	require.Len(t, componentPages, 49)
 
 	_, err := page.Goto(baseURL+componentPages[0].Path, playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,

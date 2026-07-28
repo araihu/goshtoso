@@ -31,6 +31,7 @@ var Demos = map[string]DemoEntry{
 	"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
 	"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
 	"components/toolbar":          {Title: "Toolbar", Active: "toolbar", Content: toolbarDemoContent},
+	"components/action-group":     {Title: "Action Group", Active: "action-group", Content: actionGroupDemoContent},
 	"components/panel":            {Title: "Panel", Active: "panel", Content: panelDemoContent},
 	"components/empty-state":      {Title: "Empty State", Active: "empty-state", Content: emptyStateDemoContent},
 	"components/skeleton":         {Title: "Skeleton", Active: "skeleton", Content: skeletonDemoContent},

@@ -139,6 +139,7 @@ func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 		"/assets/js/runtime/alpinejs/",
 		"/assets/js/runtime/htmx.org/",
 		"/assets/js/combobox.js",
+		"/assets/js/action-group.js",
 	}
 	for _, want := range shared {
 		if !strings.Contains(full, want) {
