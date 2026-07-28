@@ -124,10 +124,17 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.Equal(t, "dark", colorScheme, "v11 brand SVGs inherit the .dark color scheme")
 	})
 
-	t.Run("DefaultsToGoshtosoTheme", func(t *testing.T) {
+	t.Run("DefaultsToAraiHuTheme", func(t *testing.T) {
 		got, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
-		require.Equal(t, "goshtoso", got, "homepage should default to the Goshtoso theme")
+		require.Equal(t, "araihu", got, "homepage should default to the Arai Hû theme")
+	})
+
+	t.Run("AraiHuThemeSegmentAvailable", func(t *testing.T) {
+		segment := page.Locator("#home-theme-picker label:has(input[data-theme-key='araihu'])")
+		visible, err := segment.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "Arai Hû should be available in the homepage theme picker")
 	})
 
 	t.Run("GoshtosoThemeSegmentAvailable", func(t *testing.T) {

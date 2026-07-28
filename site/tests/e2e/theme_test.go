@@ -204,12 +204,11 @@ func TestTheme_Switching(t *testing.T) {
 	themes := []struct {
 		key   string
 		label string
-		index int
 	}{
-		{"arctic", "Arctic", 3},
-		{"neo-brutalism", "Neo Brutalism", 5},
-		{"90s", "90s", 8},
-		{"minimal", "Minimal", 1},
+		{"arctic", "Arctic"},
+		{"neo-brutalism", "Neo Brutalism"},
+		{"90s", "90s"},
+		{"minimal", "Minimal"},
 	}
 
 	for _, theme := range themes {
@@ -218,27 +217,16 @@ func TestTheme_Switching(t *testing.T) {
 			trigger := page.Locator("#site-theme-trigger")
 			clickUntil(t, page, trigger, `() => document.getElementById('site-theme-trigger')?.getAttribute('aria-expanded') === 'true'`)
 
-			// Click the theme option rendered by the Select component.
-			themeOptionID := fmt.Sprintf("site-theme-option-%d", theme.index)
-			themeOption := page.Locator("#" + themeOptionID)
+			// Select by label so adding or reordering themes cannot change the target.
+			themeOption := page.Locator("#site-theme-listbox [role='option']").Filter(playwright.LocatorFilterOptions{
+				HasText: theme.label,
+			})
 			err := themeOption.WaitFor(playwright.LocatorWaitForOptions{
 				State:   playwright.WaitForSelectorStateAttached,
 				Timeout: playwright.Float(2000),
 			})
 			require.NoError(t, err)
-
-			clicked, err := page.Evaluate(
-				`(id) => {
-					const el = document.getElementById(id);
-					if (!el) return false;
-					el.scrollIntoView({ block: 'nearest' });
-					el.click();
-					return true;
-				}`,
-				themeOptionID,
-			)
-			require.NoError(t, err)
-			require.Equal(t, true, clicked)
+			require.NoError(t, themeOption.Click())
 
 			// Verify data-theme attribute changed
 			_, err = page.WaitForFunction(

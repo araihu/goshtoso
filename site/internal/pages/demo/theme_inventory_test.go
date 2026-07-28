@@ -20,9 +20,13 @@ func TestThemeOptionsMatchCompiledThemeSelectors(t *testing.T) {
 	}
 
 	options := getThemeOptions()
-	require.Len(t, options, 15)
-	require.Len(t, cssThemes, len(options))
+	require.Len(t, options, 16)
+	require.Equal(t, "araihu", options[0].Value)
+	require.Len(t, cssThemes, len(options)-1)
 	for _, option := range options {
+		if option.Value == "araihu" {
+			continue
+		}
 		require.Truef(t, cssThemes[option.Value], "theme option %q has no CSS selector", option.Value)
 	}
 	require.False(t, cssThemes["totvs"])
