@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+	cat >&2 <<'EOF'
+usage: scripts/check-site-module <current-source|pinned-dependency>
+
+current-source      Test the site against the root library in this checkout.
+pinned-dependency   Test the standalone site module with GOWORK=off.
+EOF
+}
+
+mode="${1:-}"
+case "$mode" in
+	current-source)
+		contract="current-source integration"
+		;;
+	pinned-dependency)
+		contract="pinned-dependency deployability"
+		;;
+	*)
+		usage
+		exit 2
+		;;
+esac
+
+repo_root="${GOSHTOSO_CONTRACT_ROOT:-$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
+site_dir="${GOSHTOSO_CONTRACT_SITE:-$repo_root/site}"
+dependency_module="${GOSHTOSO_CONTRACT_DEPENDENCY:-github.com/araihu/goshtoso}"
+server_package="${GOSHTOSO_CONTRACT_SERVER_PACKAGE:-./cmd/server}"
+
+if [[ ! -f "$repo_root/go.mod" ]]; then
+	echo "site $contract failed: root go.mod not found at $repo_root" >&2
+	exit 1
+fi
+if [[ ! -f "$site_dir/go.mod" ]]; then
+	echo "site $contract failed: site go.mod not found at $site_dir" >&2
+	exit 1
+fi
+
+tmp_base="${TMPDIR:-/tmp}"
+tmp_base="${tmp_base%/}"
+tmp_dir="$(mktemp -d "$tmp_base/goshtoso-site-contract.XXXXXX")"
+cleanup() {
+	case "$tmp_dir" in
+		"$tmp_base"/goshtoso-site-contract.*) rm -rf -- "$tmp_dir" ;;
+		*) echo "refusing to remove unexpected temporary path: $tmp_dir" >&2 ;;
+	esac
+}
+trap cleanup EXIT
+
+fail() {
+	local stage="$1"
+	local message="site $contract failed during $stage"
+	echo "$message" >&2
+	if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+		echo "::error title=Site module contract failed::$message"
+	fi
+	if [[ "$mode" == "pinned-dependency" ]]; then
+		echo "site/go.mod must pin a public Goshtoso version containing every API imported by site/." >&2
+		echo "Do not mask this contract with go.work or a replace directive; publish or merge root changes first, then pin a reachable tag or pseudo-version." >&2
+	fi
+	exit 1
+}
+
+if [[ "$mode" == "current-source" ]]; then
+	workspace="$tmp_dir/go.work"
+	if ! (cd "$tmp_dir" && GOWORK="$workspace" go work init "$repo_root" "$site_dir"); then
+		fail "temporary workspace creation"
+	fi
+	echo "site current-source integration: root library at $repo_root"
+else
+	workspace="off"
+	replacement="$(cd "$site_dir" && GOWORK=off go list -m -f '{{with .Replace}}{{.Path}} {{.Dir}}{{end}}' "$dependency_module")" \
+		|| fail "dependency resolution"
+	if [[ -n "$replacement" ]]; then
+		echo "pinned dependency resolved through replace: $replacement" >&2
+		fail "dependency resolution (replace directives are forbidden)"
+	fi
+	version="$(cd "$site_dir" && GOWORK=off go list -m -f '{{.Version}}' "$dependency_module")" \
+		|| fail "dependency resolution"
+	if [[ -z "$version" ]]; then
+		fail "dependency resolution (missing module version)"
+	fi
+	echo "site pinned-dependency deployability: $dependency_module@$version (GOWORK=off)"
+fi
+
+packages_file="$tmp_dir/packages.txt"
+if ! (cd "$site_dir" && GOWORK="$workspace" go list ./... > "$packages_file"); then
+	fail "package discovery"
+fi
+
+site_packages=()
+while IFS= read -r package; do
+	case "$package" in
+		*/tests/e2e | */tests/e2e/*) ;;
+		*) site_packages+=("$package") ;;
+	esac
+done < "$packages_file"
+
+if [[ "${#site_packages[@]}" -eq 0 ]]; then
+	fail "package discovery (no non-E2E packages found)"
+fi
+
+if ! (cd "$site_dir" && GOWORK="$workspace" go test "${site_packages[@]}" -count=1); then
+	fail "non-E2E tests"
+fi
+
+if ! (cd "$site_dir" && GOWORK="$workspace" go build -o "$tmp_dir/server" "$server_package"); then
+	fail "server build"
+fi
+
+echo "site $contract: PASS (${#site_packages[@]} non-E2E packages; server built)"
