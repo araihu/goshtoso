@@ -161,7 +161,7 @@ func identifier(prefix, namespace, canonicalName string) (string, error) {
 			wordStart = true
 			continue
 		}
-		if !('a' <= r && r <= 'z' || 'A' <= r && r <= 'Z' || '0' <= r && r <= '9') {
+		if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') && (r < '0' || r > '9') {
 			return "", fmt.Errorf("canonicalName %q cannot form a Go identifier", canonicalName)
 		}
 		if wordStart {

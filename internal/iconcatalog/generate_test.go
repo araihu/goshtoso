@@ -45,6 +45,7 @@ func TestGenerateRejectsInvalidSelectedAssets(t *testing.T) {
 		{"non-SVG", func(a *Asset) { a.Format = "png" }, "format"},
 		{"missing sprite", func(a *Asset) { a.SpriteSymbol = "" }, "spriteSymbol"},
 		{"incompatible color", func(a *Asset) { a.ColorBehavior = "protected" }, "colorBehavior"},
+		{"invalid identifier rune", func(a *Asset) { a.CanonicalName = "ui-hi-16-solid-check_circle" }, "cannot form a Go identifier"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

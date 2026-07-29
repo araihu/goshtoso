@@ -2,6 +2,37 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.0] - 2026-07-29
+
+### Accessible sprite icons and typed catalog
+
+- Added `components/icon`, a brand-neutral accessible SVG sprite component with
+  safe same-origin external references, inline-document mode, fixed sizes, and
+  explicit labelled versus decorative rendering.
+- Bundled the immutable 67-symbol Heroicons v2.2.0 UI sprite, MIT notice,
+  typed `heroicons.Icon...` constants, enumerable glyph metadata, and the
+  default same-origin `heroicons.SpriteURL` of `/assets/icons/heroicons.svg`.
+- Added `iconcatalog`, a schema-v1 catalog generator for project-local typed
+  bindings. It validates catalog structure, selected SVG sprite assets,
+  monochrome/tintable color behavior, duplicate symbols, and Go identifier
+  collisions before generating formatted source.
+- Added the responsive icon showcase, configuration modal, copyable Go example,
+  asset serving checks, generated-file drift checks, and real-browser coverage
+  for every bundled symbol.
+
+### Release-candidate compatibility evidence
+
+- Prepared against Arai Hû Assets P1 source `246cb28`, integrated release
+  candidate `80d43a3`; catalog schema is `1`.
+- Recorded immutable input hashes: catalog
+  `d83be964fa411e87c61b49f0a0b6a2a1465f33ad43bea7cd93b2e434b59266af` and
+  UI sprite
+  `6b312ee2cf9f0e91c4621bd4eec348ecaf39cfdc0a00c8ddefdf4d7f8e9f32a5`.
+- Generated bundled bindings with
+  `go run ./cmd/iconcatalog -catalog internal/iconcatalog/testdata/heroicons-catalog.json -namespace ui -product heroicons -sprite-url /assets/icons/heroicons.svg -package heroicons -const-prefix Icon -out components/icon/heroicons/names_gen.go`.
+- Release evidence covers approved Goshtoso functional head `ab05821`; tagging
+  and downstream dependency pins remain deliberately deferred.
+
 ## [v0.0.13] - 2026-07-26
 
 ### Resilient dependency loading
@@ -99,5 +130,6 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.1.0]: https://github.com/araihu/goshtoso/compare/v0.0.13...v0.1.0
 [v0.0.13]: https://github.com/araihu/goshtoso/compare/v0.0.12...v0.0.13
 [v0.0.12]: https://github.com/araihu/goshtoso/compare/v0.0.11...v0.0.12

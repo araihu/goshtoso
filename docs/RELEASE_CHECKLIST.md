@@ -56,6 +56,37 @@ many of these steps, but the checklist keeps the public release story coherent.
 - Confirm `npx skills add araihu/goshtoso --list` discovers the released
   consumer-agent skill.
 
+## Pending v0.1.0 icon catalog evidence
+
+This is release-candidate evidence only. It does not authorize a tag, push,
+deployment, or a `site/go.mod` dependency update.
+
+- Assets release candidate: P1 source `246cb28`, integrated `80d43a3`.
+- Assets catalog: schema `1`, SHA-256
+  `d83be964fa411e87c61b49f0a0b6a2a1465f33ad43bea7cd93b2e434b59266af`.
+- Assets UI sprite: SHA-256
+  `6b312ee2cf9f0e91c4621bd4eec348ecaf39cfdc0a00c8ddefdf4d7f8e9f32a5`.
+- Goshtoso approved functional head: `ab05821`; bundled default sprite path:
+  `/assets/icons/heroicons.svg`.
+- Bundled binding command:
+
+  ```bash
+  go run ./cmd/iconcatalog -catalog internal/iconcatalog/testdata/heroicons-catalog.json -namespace ui -product heroicons -sprite-url /assets/icons/heroicons.svg -package heroicons -const-prefix Icon -out components/icon/heroicons/names_gen.go
+  ```
+
+- Current-source site integration and full icon E2E pass. Pinned-dependency
+  deployability is intentionally deferred: `site/go.mod` pins public
+  `github.com/araihu/goshtoso@v0.0.14-0.20260729070831-8863d6b7d0e8`, which
+  does not provide `github.com/araihu/goshtoso/components/icon` or
+  `github.com/araihu/goshtoso/components/icon/heroicons`. The standalone
+  command fails with `internal/pages/demo/components/icon_templ.go:12:2: no
+  required module provides package github.com/araihu/goshtoso/components/icon`
+  and the corresponding Heroicons import at `:13:2`.
+- Do not hide this with build tags, duplicated component code, a `replace`, or
+  a local workspace. After approval: tag the root release, update the site pin
+  in its follow-up pull request, then rerun pinned-dependency deployability
+  before merge or deployment.
+
 ## Support Notes
 
 During alpha, only the latest `v0.0.x` tag receives fixes. Older tags remain
