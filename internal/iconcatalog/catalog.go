@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -295,7 +296,15 @@ func validateCatalogAsset(asset Asset) error {
 }
 
 func validText(value string) bool {
-	return strings.TrimSpace(value) == value && value != "" && !strings.ContainsAny(value, "\r\n\t")
+	if strings.TrimSpace(value) != value || value == "" {
+		return false
+	}
+	for _, r := range value {
+		if unicode.IsControl(r) {
+			return false
+		}
+	}
+	return true
 }
 
 func validatePath(path, format string) error {

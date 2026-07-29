@@ -200,3 +200,27 @@ func TestLoadRejectsInvalidProvenanceLabels(t *testing.T) {
 		})
 	}
 }
+
+func TestValidTextRejectsEveryControlClassAndAcceptsUnicode(t *testing.T) {
+	tests := []struct {
+		name  string
+		value string
+	}{
+		{"NUL", "source\x00label"},
+		{"vertical tab", "source\x0blabel"},
+		{"form feed", "source\x0clabel"},
+		{"escape", "source\x1blabel"},
+		{"C1 next line", "source\u0085label"},
+		{"C1 application program command", "source\u009flabel"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if validText(tt.value) {
+				t.Fatalf("validText(%q) = true, want control rejected", tt.value)
+			}
+		})
+	}
+	if value := "Licença Heroicons — 日本語"; !validText(value) {
+		t.Fatalf("validText(%q) = false, want valid Unicode label accepted", value)
+	}
+}
