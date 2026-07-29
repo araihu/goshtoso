@@ -115,7 +115,8 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
       <div role="menu"><button role="menuitem">Secondary</button></div>
     </div>
   </div>
-</body></html>`, dependencyHead.String())
+  %s
+</body></html>`, dependencyHead.String(), firstPaintProviderFixtures())
 	})
 
 	server := httptest.NewServer(mux)
@@ -261,6 +262,7 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 	assert.Equal(t, "combobox-first", activeID)
 	_, err = page.WaitForFunction(`() => document.querySelector("#action-group").dataset.actionGroupInitialized === "true"`, nil)
 	require.NoError(t, err)
+	assertFirstPaintProviders(t, page)
 
 	fallbacks, err := page.Evaluate(`() => window.__goshtosoFallbacks`, nil)
 	require.NoError(t, err)
@@ -283,12 +285,14 @@ func TestDependenciesLocalRuntimeBootsCombinedFirstPartyBundle(t *testing.T) {
 <div id="local-action-group" data-goshtoso-action-group data-action-group-overflow-counts="1">
 <div data-action-group-primary><button>Primary</button></div><div data-action-group-secondary><button>Secondary</button></div>
 <div data-action-group-overflow><button aria-haspopup="true" aria-expanded="false">More</button><div role="menu"><button role="menuitem">Secondary</button></div></div>
-</div></body></html>`, dependencyHead.String())
+</div>%s</body></html>`, dependencyHead.String(), firstPaintProviderFixtures())
 	})
 	server := httptest.NewServer(mux)
 	t.Cleanup(server.Close)
 
 	page := newPage(t, sharedBrowser)
+	var pageErrors []string
+	page.On("pageerror", func(err string) { pageErrors = append(pageErrors, err) })
 	_, err := page.Goto(server.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateLoad})
 	require.NoError(t, err)
 	_, err = page.WaitForFunction(`() => typeof Alpine !== "undefined" && typeof htmx !== "undefined" && document.querySelector("#local-action-group").dataset.actionGroupInitialized === "true"`, nil)
@@ -298,6 +302,41 @@ func TestDependenciesLocalRuntimeBootsCombinedFirstPartyBundle(t *testing.T) {
 	activeID, err := page.Evaluate(`() => document.activeElement.id`, nil)
 	require.NoError(t, err)
 	assert.Equal(t, "local-option", activeID)
+	assertFirstPaintProviders(t, page)
+	assert.Empty(t, pageErrors, "local runtime must initialise extracted providers without page errors")
+}
+
+func firstPaintProviderFixtures() string {
+	return `<script>
+document.addEventListener("alpine:init", function () {
+  window.__goshtosoGlobalsBeforeAlpine =
+    typeof window.structuredInput === "function" &&
+    typeof window.goshtosoInitTooltipTrigger === "function";
+});
+</script>
+<div id="structured-provider" x-data="structuredInput($el)" data-name="labels" data-entries='[["alpha"]]' data-new-row='[""]'>
+  <span id="structured-provider-value" x-text="entries[0][0]"></span>
+</div>
+<span id="tooltip-provider" x-data data-tooltip-content-id="tooltip-provider-content" x-init="goshtosoInitTooltipTrigger($el)">
+  <button id="tooltip-provider-button">Help</button>
+</span>
+<div id="tooltip-provider-content" role="tooltip">Help text</div>
+<div id="action-group-provider" x-data="actionGroupDemo"><span x-text="lastAction"></span></div>
+<div id="avatar-provider" x-data="avatarShowcase"><span x-text="selected"></span></div>
+<div id="log-feed-provider" x-data="logFeed"><div x-ref="feedWrap"></div><span x-text="statusText"></span></div>`
+}
+
+func assertFirstPaintProviders(t *testing.T, page playwright.Page) {
+	t.Helper()
+
+	_, err := page.WaitForFunction(`() =>
+window.__goshtosoGlobalsBeforeAlpine === true &&
+document.querySelector("#structured-provider-value").textContent === "alpha" &&
+document.querySelector("#tooltip-provider-button").getAttribute("aria-describedby") === "tooltip-provider-content" &&
+document.querySelector("#action-group-provider span").textContent === "none" &&
+document.querySelector("#avatar-provider span").textContent === "md" &&
+document.querySelector("#log-feed-provider span").textContent === "Connecting"`, nil)
+	require.NoError(t, err, "extracted globals and Alpine.data providers must exist before Alpine scans first-paint nodes")
 }
 
 func requireInputValue(t *testing.T, page playwright.Page, selector string) string {

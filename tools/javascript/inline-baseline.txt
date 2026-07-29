@@ -17,7 +17,6 @@ components/search/search.templ|event-expression|2eaece2e6ae06753
 components/search/search.templ|event-expression|351085a4acb9e37d
 components/search/search.templ|templ-raw-script|ca1198a65915c4d0
 components/select/select.templ|js-builder|88d1e817d3ec1765
-components/structuredinput/structuredinput.templ|templ-raw-script|65e4d2ecc9f60215
 components/table/table.templ|js-builder|f29ef8be3489812e
 components/table/table.templ|templ-raw-script|87b6fb44877212cb
 components/table/table.templ|templ-raw-script|cdf6afacccb66f4a
@@ -28,11 +27,8 @@ components/toast/toast.templ|event-expression|b1b4ac6efe9dd727
 components/toast/toast.templ|event-expression|b1b4ac6efe9dd727
 components/toast/toast.templ|event-expression|d657c2053ecb57df
 components/toast/toast.templ|event-expression|d657c2053ecb57df
-components/tooltip/tooltip.templ|templ-raw-script|6c10ff2fc51a9694
 examples/getting-started/page.templ|event-expression|0db719502bbfc5f3
 site/internal/pages/demo/componentdocshell.templ|event-expression|61382fcafd07c7a0
-site/internal/pages/demo/components/actiongroup.templ|templ-raw-script|26dfe156f248b51f
-site/internal/pages/demo/components/avatar.templ|templ-raw-script|80623d0e1f01456f
 site/internal/pages/demo/components/landing.templ|event-expression|c20a7e14bf778eda
 site/internal/pages/demo/components/landing.templ|templ-raw-script|06fb400a099a1cad
 site/internal/pages/demo/components/landing.templ|templ-raw-script|f69d24104d9e8527
@@ -51,7 +47,6 @@ site/internal/pages/demo/components/toast.templ|event-expression|a7ee44938849e81
 site/internal/pages/demo/components/toast.templ|event-expression|b53afbbf16d1c10c
 site/internal/pages/demo/components/toast.templ|event-expression|ff8eb0a081fae29e
 site/internal/pages/demo/examples/chat.templ|templ-raw-script|bd1640b7fb165044
-site/internal/pages/demo/examples/logs.templ|templ-raw-script|7589208d76f06659
 site/internal/pages/demo/examples/profile.templ|templ-raw-script|39890676f674aae3
 site/internal/pages/demo/examples/ticker.templ|templ-raw-script|a114541e1a1d493b
 site/internal/pages/demo/layout.templ|event-expression|4759ecff7d447d7c

@@ -94,13 +94,22 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		t.Fatal(err)
 	}
 	sources := map[string]string{
-		"combobox.js":          `(() => { window.comboboxFixture = true })();`,
-		"action-group.js":      `(() => { window.actionGroupFixture = true })();`,
-		"darkmode.js":          `document.addEventListener("alpine:init", () => window.darkFixture = true);`,
-		"dependency-loader.js": `(() => { window.loaderFixture = Promise.resolve(true) })();`,
+		"combobox.js":                    `(() => { window.comboboxFixture = true })();`,
+		"action-group.js":                `(() => { window.actionGroupFixture = true })();`,
+		"components/structured-input.js": `(() => { window.structuredInputFixture = true })();`,
+		"components/tooltip.js":          `(() => { window.tooltipFixture = true })();`,
+		"demo/action-group.js":           `(() => { window.actionGroupDemoFixture = true })();`,
+		"demo/avatar-showcase.js":        `(() => { window.avatarShowcaseFixture = true })();`,
+		"demo/log-feed.js":               `(() => { window.logFeedFixture = true })();`,
+		"darkmode.js":                    `document.addEventListener("alpine:init", () => window.darkFixture = true);`,
+		"dependency-loader.js":           `(() => { window.loaderFixture = Promise.resolve(true) })();`,
 	}
 	for name, content := range sources {
-		if err := os.WriteFile(filepath.Join(sourceDir, name), []byte(content), 0o644); err != nil {
+		path := filepath.Join(sourceDir, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -119,7 +128,20 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	if !strings.HasPrefix(string(bundle), generatedHeader) {
 		t.Fatalf("bundle missing generated header: %q", bundle)
 	}
-	if !strings.Contains(string(bundle), "comboboxFixture") || !strings.Contains(string(bundle), "actionGroupFixture") {
+	for _, fixture := range []string{
+		"comboboxFixture",
+		"actionGroupFixture",
+		"structuredInputFixture",
+		"tooltipFixture",
+		"actionGroupDemoFixture",
+		"avatarShowcaseFixture",
+		"logFeedFixture",
+	} {
+		if !strings.Contains(string(bundle), fixture) {
+			t.Fatalf("bundle missing %s: %s", fixture, bundle)
+		}
+	}
+	if strings.Index(string(bundle), "structuredInputFixture") > strings.Index(string(bundle), "tooltipFixture") {
 		t.Fatalf("bundle missing ordered sources: %s", bundle)
 	}
 	if strings.Contains(string(bundle), "\n  ") {

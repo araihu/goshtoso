@@ -19,14 +19,19 @@ go run ./cmd/jslint -inventory
 
 `just js` generates:
 
-- `assets/js/goshtoso.min.js` from `src/combobox.js` then
-  `src/action-group.js`, in that fixed order;
+- `assets/js/goshtoso.min.js` from `src/combobox.js`, `src/action-group.js`,
+  component globals (`structured-input`, `tooltip`), then demo Alpine providers
+  (`action-group`, `avatar-showcase`, `log-feed`), in that fixed order;
 - compatibility builds at `assets/js/combobox.js` and
   `assets/js/action-group.js`;
 - standalone `assets/js/darkmode.js` and bootstrap
   `assets/js/dependency-loader.js`.
 
 `head.Dependencies()` and `head.DependenciesMinimal()` load the combined bundle.
+Runtime order is Alpine plugins, first-party bundle, Alpine core, then HTMX.
+Component globals therefore exist before Alpine's first DOM scan, while demo
+providers register during `alpine:init`. None of those initializers needs HTMX;
+the log-feed provider consults `htmx.process` only on a later resume action.
 The dependency loader remains standalone because it owns ordered third-party
 loading, exact-version local fallback, readiness events and promise state, and
 CSP nonce propagation to every child script. Passing `WithComboboxURL` or

@@ -119,6 +119,14 @@ func DefaultRuntimeManifest() RuntimeManifest {
 				PrimaryURL: AlpineMaskCDNURL, LocalURL: AlpineMaskURL,
 				Integrity: AlpineMaskIntegrity, Enabled: true, Defer: true,
 			},
+			// First-party globals must exist before Alpine scans x-data/x-init nodes.
+			// Alpine.data providers register on alpine:init; their initializers do not
+			// require HTMX, which keeps the established Alpine-before-HTMX order.
+			{
+				Role: RuntimeRoleFirstParty, Kind: RuntimeAssetScript,
+				PrimaryURL: FirstPartyBundleURL, LocalURL: FirstPartyBundleURL,
+				Enabled: true, IncludeInMinimal: true, Defer: true,
+			},
 			{
 				Role: RuntimeRoleAlpineJS, Kind: RuntimeAssetScript,
 				PrimaryURL: AlpineJSCDNURL, LocalURL: AlpineJSURL,
@@ -128,11 +136,6 @@ func DefaultRuntimeManifest() RuntimeManifest {
 				Role: RuntimeRoleHTMX, Kind: RuntimeAssetScript,
 				PrimaryURL: HTMXCDNURL, LocalURL: HTMXURL,
 				Integrity: HTMXIntegrity, Enabled: true, IncludeInMinimal: true, WaitForWindowLoaded: true,
-			},
-			{
-				Role: RuntimeRoleFirstParty, Kind: RuntimeAssetScript,
-				PrimaryURL: FirstPartyBundleURL, LocalURL: FirstPartyBundleURL,
-				Enabled: true, IncludeInMinimal: true, Defer: true,
 			},
 			{
 				Role: RuntimeRoleCombobox, Kind: RuntimeAssetScript,

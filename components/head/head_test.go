@@ -112,7 +112,7 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 		t.Fatalf("Dependencies() must use the ordered dependency loader\n%s", out)
 	}
 	cfg := parseLoaderConfig(t, out)
-	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx", "first-party"}
+	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "alpine", "htmx"}
 	if len(cfg.Dependencies) != len(wantOrder) {
 		t.Fatalf("loader dependencies = %#v, want %v", cfg.Dependencies, wantOrder)
 	}
@@ -180,7 +180,7 @@ func TestDependenciesMinimalFiltersPublicManifestOrder(t *testing.T) {
 	cfg := newConfigFromManifest(manifest, nil)
 	loader := parseLoaderConfig(t, render(t, dependenciesMinimalTemplate(cfg)))
 
-	want := []string{"alpine-collapse", "htmx", "first-party"}
+	want := []string{"alpine-collapse", "alpine", "htmx"}
 	got := make([]string, 0, len(loader.Dependencies))
 	for _, dependency := range loader.Dependencies {
 		got = append(got, dependency.Name)

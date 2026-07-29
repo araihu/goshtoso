@@ -35,6 +35,11 @@ var defaultArtifacts = []artifact{
 		inputs: []string{
 			"assets/js/src/combobox.js",
 			"assets/js/src/action-group.js",
+			"assets/js/src/components/structured-input.js",
+			"assets/js/src/components/tooltip.js",
+			"assets/js/src/demo/action-group.js",
+			"assets/js/src/demo/avatar-showcase.js",
+			"assets/js/src/demo/log-feed.js",
 		},
 	},
 }

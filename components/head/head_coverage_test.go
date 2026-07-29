@@ -172,6 +172,6 @@ func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 		t.Errorf("WithLocalRuntime() must defer Alpine core")
 	}
 	if !strings.Contains(local, `<script defer src="`+assets.FirstPartyBundleURL+`"`) {
-		t.Errorf("WithLocalRuntime() must defer first-party bundle")
+		t.Errorf("WithLocalRuntime() must defer first-party bundle before deferred Alpine")
 	}
 }

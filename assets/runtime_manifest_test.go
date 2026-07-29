@@ -38,9 +38,9 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 		RuntimeRoleAlpineCollapse,
 		RuntimeRoleAlpineFocus,
 		RuntimeRoleAlpineMask,
+		RuntimeRoleFirstParty,
 		RuntimeRoleAlpineJS,
 		RuntimeRoleHTMX,
-		RuntimeRoleFirstParty,
 		RuntimeRoleCombobox,
 		RuntimeRoleActionGroup,
 	}
@@ -71,9 +71,9 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	assertRuntimeAsset(t, manifest.Dependencies[0], AlpineCollapseCDNURL, AlpineCollapseURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[1], AlpineFocusCDNURL, AlpineFocusURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[2], AlpineMaskCDNURL, AlpineMaskURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[3], AlpineJSCDNURL, AlpineJSURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[4], HTMXCDNURL, HTMXURL, false, true)
-	assertRuntimeAsset(t, manifest.Dependencies[5], FirstPartyBundleURL, FirstPartyBundleURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[3], FirstPartyBundleURL, FirstPartyBundleURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[4], AlpineJSCDNURL, AlpineJSURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[5], HTMXCDNURL, HTMXURL, false, true)
 	assertRuntimeAsset(t, manifest.Dependencies[6], ComboboxURL, ComboboxURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[7], ActionGroupURL, ActionGroupURL, true, false)
 }
