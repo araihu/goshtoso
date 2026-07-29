@@ -33,6 +33,17 @@ type Item struct {
 	Attrs templ.Attributes
 }
 
+// MatchMode controls how Search ranks client-side result matches.
+type MatchMode string
+
+const (
+	// MatchModeSubstring ranks title substring matches before other substring matches.
+	// It is the default mode.
+	MatchModeSubstring MatchMode = "substring"
+	// MatchModeFuzzy also ranks compact subsequence matches after substring matches.
+	MatchModeFuzzy MatchMode = "fuzzy"
+)
+
 // Config holds configuration for the search component.
 type Config struct {
 	// ID is a unique identifier used for ARIA relationships.
@@ -53,6 +64,8 @@ type Config struct {
 	// When set, results are fetched and rendered in the browser instead of
 	// pre-rendering every Item as a hidden DOM node.
 	ItemsURL string
+	// MatchMode controls client-side matching and ranking. Defaults to MatchModeSubstring.
+	MatchMode MatchMode
 	// MaxResults limits the visible matches. Defaults to 4.
 	MaxResults int
 	// DescriptionMaxLength truncates result descriptions. Defaults to 120.
@@ -131,6 +144,13 @@ func (cfg Config) getDescriptionMaxLength() int {
 		return cfg.DescriptionMaxLength
 	}
 	return 120
+}
+
+func (cfg Config) getMatchMode() MatchMode {
+	if cfg.MatchMode == MatchModeFuzzy {
+		return MatchModeFuzzy
+	}
+	return MatchModeSubstring
 }
 
 // RootClasses returns classes for the component root.

@@ -40,6 +40,7 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 		`x-data="goshtosoSearchField($el)"`,
 		`data-search-max-results="4"`,
 		`data-search-description-max-length="120"`,
+		`data-search-match-mode="substring"`,
 		`x-data="goshtosoSearchModal($el)"`,
 		`aria-haspopup="dialog"`,
 		`<kbd`,
@@ -67,6 +68,13 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 	}
 	if strings.Contains(html, `<script`) {
 		t.Fatalf("Search should use the bundled component runtime, not inline scripts: %s", html)
+	}
+}
+
+func TestSearchModalRendersFuzzyMatchMode(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{MatchMode: MatchModeFuzzy}))
+	if !strings.Contains(html, `data-search-match-mode="fuzzy"`) {
+		t.Fatalf("SearchModal fuzzy match mode missing from %s", html)
 	}
 }
 

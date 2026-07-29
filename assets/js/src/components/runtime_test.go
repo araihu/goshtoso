@@ -37,6 +37,9 @@ func TestAuthoredComponentRuntimePreservesLifecycleAndDataContracts(t *testing.T
 	for _, want := range []string{
 		"root.dataset.searchId",
 		"root.dataset.searchMaxResults",
+		"root.dataset.searchMatchMode",
+		"fuzzyScore: function",
+		"rankedMatches: function",
 		"destroy: function ()",
 		"this.requestController.abort()",
 	} {

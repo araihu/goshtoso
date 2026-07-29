@@ -99,6 +99,41 @@ func TestSearch_ItemsURLFetchesAndFilters(t *testing.T) {
 	path, err := result.GetAttribute("data-search-path")
 	require.NoError(t, err)
 	assert.Equal(t, "/teams", path)
+
+	// "rc" is not a substring of "Remote combobox". Fuzzy mode must rank it
+	// from the same normalized client-side records used by ItemsURL.
+	require.NoError(t, input.Fill("rc"))
+	require.NoError(t, page.Locator("#search-remote-combobox:visible").WaitFor())
+	visible, err = page.Locator("#remote-search-dialog [data-search-result]:visible").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 2, visible)
+	firstID, err := page.Locator("#remote-search-dialog [data-search-result]:visible").First().GetAttribute("id")
+	require.NoError(t, err)
+	assert.Equal(t, "search-remote-combobox", firstID)
+}
+
+func TestSearch_FuzzyModeFiltersDOMItems(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+
+	trigger := page.Locator("#fuzzy-search button[aria-haspopup='dialog']")
+	require.NoError(t, trigger.Click())
+	input := page.Locator("#fuzzy-search-input")
+	require.NoError(t, input.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+
+	// "srm" is a compact subsequence, not a literal substring.
+	require.NoError(t, input.Fill("srm"))
+	require.NoError(t, page.Locator("#search-fuzzy-result:visible").WaitFor())
 }
 
 func TestSidebarSearch_UsesKbdAndNavigates(t *testing.T) {

@@ -1319,6 +1319,8 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 
 **Entry points:** `Search(cfg Config)` · `SearchField(cfg Config)` · `SearchModal(cfg Config)`
 
+- **MatchMode** — MatchModeSubstring = "substring", MatchModeFuzzy = "fuzzy"
+
 **Config**
 
 | Field | Type | Description |
@@ -1331,6 +1333,7 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `EscapeText` | `string` | EscapeText is rendered in the dialog close KBD hint. Defaults to "Esc". |
 | `Items` | `[]Item` | Items are the caller-provided result records. |
 | `ItemsURL` | `string` | ItemsURL is an optional JSON endpoint for client-side result records. When set, results are fetched and rendered in the browser instead of pre-rendering every Item as a hidden DOM node. |
+| `MatchMode` | `MatchMode` | MatchMode controls client-side matching and ranking. Defaults to MatchModeSubstring. |
 | `MaxResults` | `int` | MaxResults limits the visible matches. Defaults to 4. |
 | `DescriptionMaxLength` | `int` | DescriptionMaxLength truncates result descriptions. Defaults to 120. |
 | `EmptyText` | `string` | EmptyText appears when no result matches the query. |
