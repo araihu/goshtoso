@@ -250,6 +250,7 @@ templ menuItemButton(cfg Config, item Item) {
 		if item.OnClick != "" && !item.Disabled {
 			x-on:click={ item.OnClick }
 		}
+		if item.HTMX != nil && !item.Disabled { { item.HTMX.attrs()... } }
 		if item.Disabled {
 			disabled
 		}
@@ -313,9 +314,10 @@ templ contextMenuItemButton(cfg Config, item Item) {
 	<li role="none" class="contents">
 		<button
 			type="button"
-			if item.OnClick != "" && !item.Disabled {
-				x-on:click={ item.OnClick }
-			}
+		if item.OnClick != "" && !item.Disabled {
+			x-on:click={ item.OnClick }
+		}
+		if item.HTMX != nil && !item.Disabled { { item.HTMX.attrs()... } }
 			if item.Disabled {
 				disabled
 			}
@@ -346,6 +348,7 @@ templ contextMenuItemButton(cfg Config, item Item) {
 		</button>
 	</li>
 }
+
 
 // menuClasses returns the appropriate menu classes based on config
 func menuClasses(cfg Config) string {

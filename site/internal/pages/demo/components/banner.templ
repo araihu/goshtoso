@@ -41,14 +41,20 @@ templ bannerDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With CTA Button",
-				Description: "Attach a CTA config for an inline call-to-action (Href for a link, OnClick for an action).",
+				Description: "Use Href for native navigation or HTMX for a server action, with optional OnClick for local enhancement.",
 			},
 			bannerCTAPreview(),
 			`@banner.Banner(banner.Config{
     Description: "Get Fit Anywhere, Anytime 💪",
     CTA: &banner.CTAConfig{
         ActionLabel: "Start free trial",
-        Href: "/signup",
+		HTMX: &banner.HTMXConfig{
+			Post:   "/api/components/banner/action",
+			Target: "#banner-cta-result",
+			Swap:   "innerHTML",
+		},
+		// Optional local enhancement after HTMX begins.
+		OnClick: "trackTrialStart()",
     },
 })`,
 		)
@@ -74,8 +80,8 @@ templ bannerDemoContent() {
     Description:  "We use cookies to improve your experience.",
     AcceptLabel:  "Accept All",
     RejectLabel:  "Decline",
-    AcceptAction: "acceptCookies()",
-    RejectAction: "show = false",
+	AcceptAction: "show = false",
+	RejectAction: "show = false",
 })`,
 		)
 	</div>
@@ -107,9 +113,14 @@ templ bannerCTAPreview() {
 			Description: "Get Fit Anywhere, Anytime 💪",
 			CTA: &banner.CTAConfig{
 				ActionLabel:    "Start free trial",
-				OnClick: "alert('Starting free trial...')",
+				HTMX: &banner.HTMXConfig{
+					Post:   "/api/components/banner/action",
+					Target: "#banner-cta-result",
+					Swap:   "innerHTML",
+				},
 			},
 		})
+		<div id="banner-cta-result" aria-live="polite"></div>
 	</div>
 }
 

@@ -34,6 +34,9 @@ type Config struct {
 	Persistent bool
 	// DismissAction is the Alpine.js action when dismissed
 	DismissAction string
+	// DismissHTMX configures a declarative server action for dismiss. It may be
+	// combined with DismissAction, which keeps its existing local behavior.
+	DismissHTMX *HTMXConfig
 	// CTA is the call-to-action button config (optional)
 	CTA *CTAConfig
 	// RootClass allows additional CSS classes on the banner root.
@@ -48,6 +51,57 @@ type CTAConfig struct {
 	Href string
 	// OnClick is the Alpine.js click action
 	OnClick string
+	// HTMX configures a declarative server action. When present, Href is ignored
+	// and the CTA renders as a button. It may be combined with OnClick.
+	HTMX *HTMXConfig
+}
+
+// HTMXConfig holds declarative HTMX attributes for banner actions. Set one
+// request method. When both Get and Post are set, Post takes precedence so
+// rendering emits one unambiguous request method.
+type HTMXConfig struct {
+	// Get is the URL for an HTMX GET request.
+	Get string
+	// Post is the URL for an HTMX POST request.
+	Post string
+	// Target is the CSS selector receiving the response.
+	Target string
+	// Swap is the HTMX swap strategy.
+	Swap string
+	// Trigger overrides HTMX's default click trigger.
+	Trigger string
+	// Vals is additional request values as an HTMX JSON expression.
+	Vals string
+	// Confirm is the confirmation message shown before the request.
+	Confirm string
+}
+
+func (cfg *HTMXConfig) attrs() templ.Attributes {
+	if cfg == nil {
+		return nil
+	}
+	attrs := templ.Attributes{}
+	if cfg.Post != "" {
+		attrs["hx-post"] = cfg.Post
+	} else if cfg.Get != "" {
+		attrs["hx-get"] = cfg.Get
+	}
+	if cfg.Target != "" {
+		attrs["hx-target"] = cfg.Target
+	}
+	if cfg.Swap != "" {
+		attrs["hx-swap"] = cfg.Swap
+	}
+	if cfg.Trigger != "" {
+		attrs["hx-trigger"] = cfg.Trigger
+	}
+	if cfg.Vals != "" {
+		attrs["hx-vals"] = cfg.Vals
+	}
+	if cfg.Confirm != "" {
+		attrs["hx-confirm"] = cfg.Confirm
+	}
+	return attrs
 }
 
 // CookieBannerConfig holds cookie banner specific configuration
@@ -64,8 +118,12 @@ type CookieBannerConfig struct {
 	RejectLabel string
 	// AcceptAction is the Alpine.js action for accept
 	AcceptAction string
+	// AcceptHTMX configures a declarative server action for accept.
+	AcceptHTMX *HTMXConfig
 	// RejectAction is the Alpine.js action for reject
 	RejectAction string
+	// RejectHTMX configures a declarative server action for reject.
+	RejectHTMX *HTMXConfig
 	// RootClass allows additional CSS classes on the dialog root.
 	RootClass string
 }

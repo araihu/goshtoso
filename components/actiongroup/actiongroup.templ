@@ -50,7 +50,7 @@ templ actionGroupTemplate(cfg Config) {
 }
 
 templ renderAction(action Action, primary bool) {
-	if action.Href != "" && action.OnClick == "" && !action.Disabled {
+	if action.Href != "" && action.OnClick == "" && action.HTMX == nil && !action.Disabled {
 		@link.Link(
 			action.Href,
 			link.WithAppearance(link.AppearanceButton),

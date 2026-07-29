@@ -159,8 +159,8 @@ func dropdownDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Action Items (onclick / disabled / danger)",
-				Description: "Items can run OnClick handlers, be Disabled (with a Tooltip), or be styled Danger. Pair with an icon-only trigger via TriggerIcon + TriggerIconOnly.",
+				Title:       "Action Items (Href / HTMX / optional OnClick)",
+				Description: "Items use Href for native navigation, HTMX for server actions, and optional OnClick for local enhancement. Disabled and Danger remain supported.",
 			},
 			dropdownActionsPreview(),
 			`@dropdown.Dropdown(dropdown.Config{
@@ -169,8 +169,11 @@ func dropdownDemoContent() templ.Component {
     TriggerIconOnly: true,
     Sections: []dropdown.Section{
         {Items: []dropdown.Item{
+            {Label: "View", Href: "/projects/current"},
+            {Label: "Archive", HTMX: &dropdown.HTMXConfig{Post: "/projects/archive", Target: "#project-result", Swap: "innerHTML"}},
+            // Optional local enhancement.
             {Label: "Edit", Icon: settingsIcon(), OnClick: "editOpen = true"},
-            {Label: "Archive", Disabled: true, Tooltip: "Not available"},
+            {Label: "Locked", Disabled: true, Tooltip: "Not available"},
         }},
         {Items: []dropdown.Item{{Label: "Delete", Danger: true, OnClick: "deleteOpen = true"}}},
     },
@@ -484,17 +487,31 @@ func dropdownActionsPreview() templ.Component {
 			Sections: []dropdown.Section{
 				{Items: []dropdown.Item{
 					{
+						Label: "View",
+						Href:  "/components/dropdown",
+						ID:    "dropdown-actions-view",
+					},
+					{
 						Label:   "Edit",
 						Icon:    ddSettingsIcon(),
 						OnClick: "editOpen = true; editCount++",
 						ID:      "dropdown-actions-edit",
 					},
 					{
-						Label:    "Archive",
-						Icon:     ddFavoritesIcon(),
+						Label: "Archive",
+						Icon:  ddFavoritesIcon(),
+						HTMX: &dropdown.HTMXConfig{
+							Post:   "/api/components/dropdown/action",
+							Target: "#dropdown-actions-result",
+							Swap:   "innerHTML",
+						},
+						ID: "dropdown-actions-archive",
+					},
+					{
+						Label:    "Locked",
 						Disabled: true,
-						Tooltip:  "Archive not available in this state",
-						ID:       "dropdown-actions-archive",
+						Tooltip:  "Not available",
+						ID:       "dropdown-actions-locked",
 					},
 				}},
 				{Items: []dropdown.Item{
@@ -511,7 +528,7 @@ func dropdownActionsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" id=\"dropdown-actions-state\">editOpen=<span x-text=\"editOpen\"></span> · deleteOpen=<span x-text=\"deleteOpen\"></span> · editCount=<span x-text=\"editCount\"></span></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" id=\"dropdown-actions-state\">editOpen=<span x-text=\"editOpen\"></span> · deleteOpen=<span x-text=\"deleteOpen\"></span> · editCount=<span x-text=\"editCount\"></span></div><div id=\"dropdown-actions-result\" class=\"text-xs\" aria-live=\"polite\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

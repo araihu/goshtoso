@@ -34,6 +34,7 @@
       activeIndex: 0,
       maxResults: Number(root.dataset.searchMaxResults) || 4,
       descriptionMaxLength: Number(root.dataset.searchDescriptionMaxLength) || 120,
+		matchMode: root.dataset.searchMatchMode === "fuzzy" ? "fuzzy" : "substring",
       cachedAllResults: null,
       cachedDOMTerm: null,
       cachedDOMResults: [],
@@ -72,11 +73,56 @@
           this.closeSearch();
         }
       },
-      matches: function (element) {
-        var term = this.query.trim().toLowerCase();
-        if (!term) return false;
-        return (element.dataset.searchText || "").toLowerCase().indexOf(term) !== -1;
-      },
+		compactSearchValue: function (value) {
+			return this.stringValue(value).toLowerCase().replace(/[^a-z0-9]+/g, "");
+		},
+		fuzzyScore: function (query, value) {
+			var needle = this.compactSearchValue(query);
+			var haystack = this.compactSearchValue(value);
+			if (!needle || !haystack) return -1;
+			var direct = haystack.indexOf(needle);
+			if (direct >= 0) return direct;
+			var cursor = 0;
+			var first = -1;
+			var last = -1;
+			var gaps = 0;
+			for (var i = 0; i < haystack.length && cursor < needle.length; i++) {
+				if (haystack[i] !== needle[cursor]) continue;
+				if (first < 0) first = i;
+				if (last >= 0) gaps += i - last - 1;
+				last = i;
+				cursor++;
+			}
+			if (cursor !== needle.length) return -1;
+			return 20 + first + gaps + Math.max(0, haystack.length - needle.length) / 10;
+		},
+		resultScore: function (query, title, text) {
+			var term = this.stringValue(query).trim().toLowerCase();
+			title = this.stringValue(title);
+			text = this.stringValue(text);
+			if (!term) return null;
+			if (title.toLowerCase().indexOf(term) !== -1) return [0, 0];
+			if (text.toLowerCase().indexOf(term) !== -1) return [1, 0];
+			if (this.matchMode !== "fuzzy") return null;
+			var titleScore = this.fuzzyScore(term, title);
+			if (titleScore >= 0) return [2, titleScore];
+			var textScore = this.fuzzyScore(term, text);
+			if (textScore >= 0) return [3, textScore];
+			return null;
+		},
+		rankedMatches: function (values, scoreFor) {
+			var matches = [];
+			values.forEach(function (value, index) {
+				var score = scoreFor(value);
+				if (score !== null) matches.push({ value: value, index: index, score: score });
+			});
+			matches.sort(function (left, right) {
+				if (left.score[0] !== right.score[0]) return left.score[0] - right.score[0];
+				if (left.score[1] !== right.score[1]) return left.score[1] - right.score[1];
+				return left.index - right.index;
+			});
+			return matches.map(function (match) { return match.value; });
+		},
       sourceURL: function () {
         return root.dataset.searchSourceUrl || "";
       },
@@ -197,32 +243,20 @@
         var term = this.query.trim().toLowerCase();
         if (!term) return [];
         if (term === this.cachedDOMTerm) return this.cachedDOMResults;
-        var titleMatches = [];
-        var nonTitleMatches = [];
-        this.allResults().forEach(function (element) {
-          var title = (element.dataset.searchTitle || "").toLowerCase();
-          var text = (element.dataset.searchText || "").toLowerCase();
-          if (title.indexOf(term) !== -1) titleMatches.push(element);
-          else if (text.indexOf(term) !== -1) nonTitleMatches.push(element);
-        });
-        this.cachedDOMTerm = term;
-        this.cachedDOMResults = titleMatches.concat(nonTitleMatches).slice(0, this.maxResults);
+		this.cachedDOMTerm = term;
+		this.cachedDOMResults = this.rankedMatches(this.allResults(), function (element) {
+			return this.resultScore(term, element.dataset.searchTitle, element.dataset.searchText);
+		}.bind(this)).slice(0, this.maxResults);
         return this.cachedDOMResults;
       },
       matchedClientResults: function () {
         var term = this.query.trim().toLowerCase();
         if (!term) return [];
         if (term === this.cachedClientTerm) return this.cachedClientResults;
-        var titleMatches = [];
-        var nonTitleMatches = [];
-        this.clientItems.forEach(function (item) {
-          var title = (item.title || "").toLowerCase();
-          var text = (item.searchText || "").toLowerCase();
-          if (title.indexOf(term) !== -1) titleMatches.push(item);
-          else if (text.indexOf(term) !== -1) nonTitleMatches.push(item);
-        });
-        this.cachedClientTerm = term;
-        this.cachedClientResults = titleMatches.concat(nonTitleMatches).slice(0, this.maxResults);
+		this.cachedClientTerm = term;
+		this.cachedClientResults = this.rankedMatches(this.clientItems, function (item) {
+			return this.resultScore(term, item.title, item.searchText);
+		}.bind(this)).slice(0, this.maxResults);
         return this.cachedClientResults;
       },
       matchedResults: function () {

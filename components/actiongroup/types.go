@@ -20,12 +20,15 @@ import (
 type Action struct {
 	// Label is the visible action label or grouped-action trigger label.
 	Label string
-	// Href renders a native link when OnClick is empty and Disabled is false.
+	// Href renders a native link when OnClick and HTMX are empty and Disabled is false.
 	Href string
 	// Icon renders before Label.
 	Icon templ.Component
 	// OnClick is an Alpine.js expression for button actions.
 	OnClick string
+	// HTMX configures a declarative server action. It may be combined with
+	// OnClick. Href is ignored when HTMX is set.
+	HTMX *dropdown.HTMXConfig
 	// Disabled renders an inert native button.
 	Disabled bool
 	// Danger applies the destructive action treatment to buttons and Dropdown
@@ -104,6 +107,7 @@ func (action Action) dropdownItem(overflow bool) dropdown.Item {
 		Href:     action.Href,
 		Icon:     action.Icon,
 		OnClick:  action.OnClick,
+		HTMX:     action.HTMX,
 		Disabled: action.Disabled,
 		Danger:   action.Danger,
 		Tooltip:  action.Tooltip,

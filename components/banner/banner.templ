@@ -48,7 +48,7 @@ templ simpleBanner(cfg Config) {
 		if cfg.CTA != nil {
 			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
 				<p class={ cfg.textClasses() }>{ cfg.Description }</p>
-				if cfg.CTA.Href != "" {
+				if cfg.CTA.Href != "" && cfg.CTA.OnClick == "" && cfg.CTA.HTMX == nil {
 					<a href={ templ.URL(cfg.CTA.Href) } class={ cfg.ctaClasses() }>
 						{ cfg.CTA.ActionLabel }
 					</a>
@@ -56,7 +56,10 @@ templ simpleBanner(cfg Config) {
 					<button 
 						type="button"
 						class={ cfg.ctaClasses() }
-						@click={ cfg.CTA.OnClick }
+						if cfg.CTA.OnClick != "" {
+							@click={ cfg.CTA.OnClick }
+						}
+						if cfg.CTA.HTMX != nil { { cfg.CTA.HTMX.attrs()... } }
 					>
 						{ cfg.CTA.ActionLabel }
 					</button>
@@ -69,8 +72,9 @@ templ simpleBanner(cfg Config) {
 		if !cfg.Persistent {
 			<button 
 				class="absolute top-1/2 -translate-y-1/2 right-4 p-1 hover:opacity-70 transition-opacity"
-				aria-label="dismiss banner"
-				@click={ dismissAction }
+			aria-label="dismiss banner"
+			@click={ dismissAction }
+			if cfg.DismissHTMX != nil { { cfg.DismissHTMX.attrs()... } }
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2.5" class="size-4 shrink-0">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -112,14 +116,20 @@ templ cookieBanner(cfg CookieBannerConfig) {
 			<button 
 				type="button"
 				class="cursor-pointer whitespace-nowrap p-2 text-center text-xs font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius"
-				@click={ cfg.RejectAction }
+				if cfg.RejectAction != "" {
+					@click={ cfg.RejectAction }
+				}
+				if cfg.RejectHTMX != nil { { cfg.RejectHTMX.attrs()... } }
 			>
 				{ cfg.effectiveRejectLabel() }
 			</button>
 			<button 
 				type="button"
 				class="cursor-pointer whitespace-nowrap bg-primary px-4 py-2 border border-primary text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:border-primary-dark dark:focus-visible:outline-primary-dark rounded-radius"
-				@click={ cfg.AcceptAction }
+				if cfg.AcceptAction != "" {
+					@click={ cfg.AcceptAction }
+				}
+				if cfg.AcceptHTMX != nil { { cfg.AcceptHTMX.attrs()... } }
 			>
 				{ cfg.effectiveAcceptLabel() }
 			</button>

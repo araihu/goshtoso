@@ -50,8 +50,23 @@ templ searchDemoContent() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Fuzzy Results",
+				Description: "Set MatchModeFuzzy to rank deterministic compact subsequence matches after exact substring matches.",
+			},
+			searchFuzzyPreview(),
+			`@search.Search(search.Config{
+    ID:        "fuzzy-search",
+    MatchMode: search.MatchModeFuzzy,
+    Items: []search.Item{
+        {Title: "Search result map", Href: "/components/search"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "Remote Results",
-				Description: "Load result records from a JSON endpoint, then filter and navigate in the browser.",
+				Description: "Load result records from a JSON endpoint, then fuzzy-rank and navigate in the browser.",
 			},
 			searchRemotePreview(),
 			`@search.Search(search.Config{
@@ -59,6 +74,7 @@ templ searchDemoContent() {
     Label:       "Remote search",
     Placeholder: "Search fetched results",
     ItemsURL:    "/api/components/search/items",
+	MatchMode:    search.MatchModeFuzzy,
 })`,
 		)
 	</div>
@@ -88,6 +104,21 @@ templ searchRemotePreview() {
 			Label:       "Remote search",
 			Placeholder: "Search fetched results",
 			ItemsURL:    "/api/components/search/items",
+			MatchMode:   search.MatchModeFuzzy,
+		})
+	</div>
+}
+
+templ searchFuzzyPreview() {
+	<div id="search-fuzzy" class="mx-auto w-full max-w-sm">
+		@search.Search(search.Config{
+			ID:          "fuzzy-search",
+			Label:       "Fuzzy search",
+			Placeholder: "Try srm",
+			MatchMode:   search.MatchModeFuzzy,
+			Items: []search.Item{
+				{ID: "search-fuzzy-result", Title: "Search result map", Description: "A compact subsequence can match across words.", Href: "/components/search", Section: "Fuzzy"},
+			},
 		})
 	</div>
 }

@@ -2,6 +2,56 @@ package dropdown
 
 import "github.com/a-h/templ"
 
+// HTMXConfig holds declarative HTMX attributes for an item action.
+//
+// Set one request method. When both Get and Post are set, Post takes
+// precedence so rendering emits one unambiguous request method. When HTMX is
+// set, Item renders as a button and Href is ignored.
+type HTMXConfig struct {
+	// Get is the URL for an HTMX GET request.
+	Get string
+	// Post is the URL for an HTMX POST request.
+	Post string
+	// Target is the CSS selector receiving the response.
+	Target string
+	// Swap is the HTMX swap strategy.
+	Swap string
+	// Trigger overrides HTMX's default click trigger.
+	Trigger string
+	// Vals is additional request values as an HTMX JSON expression.
+	Vals string
+	// Confirm is the confirmation message shown before the request.
+	Confirm string
+}
+
+func (cfg *HTMXConfig) attrs() templ.Attributes {
+	if cfg == nil {
+		return nil
+	}
+	attrs := templ.Attributes{}
+	if cfg.Post != "" {
+		attrs["hx-post"] = cfg.Post
+	} else if cfg.Get != "" {
+		attrs["hx-get"] = cfg.Get
+	}
+	if cfg.Target != "" {
+		attrs["hx-target"] = cfg.Target
+	}
+	if cfg.Swap != "" {
+		attrs["hx-swap"] = cfg.Swap
+	}
+	if cfg.Trigger != "" {
+		attrs["hx-trigger"] = cfg.Trigger
+	}
+	if cfg.Vals != "" {
+		attrs["hx-vals"] = cfg.Vals
+	}
+	if cfg.Confirm != "" {
+		attrs["hx-confirm"] = cfg.Confirm
+	}
+	return attrs
+}
+
 // TriggerMode determines how the dropdown is activated
 type TriggerMode string
 
@@ -26,13 +76,13 @@ const (
 // Item represents a single menu item in the dropdown.
 //
 // An Item renders as either an anchor (default) or a button. It renders as a
-// button when OnClick or Disabled is set — links cannot carry click handlers
-// or a disabled state cleanly, so these fields force the button renderer.
+// button when OnClick, HTMX, or Disabled is set. Href is then ignored so links
+// remain a native navigation fallback only when no action is configured.
 type Item struct {
 	// Label is the display text for the menu item
 	Label string
 	// Href is the link URL (use "#" for non-navigating items).
-	// Ignored when OnClick or Disabled is set.
+	// Ignored when OnClick, HTMX, or Disabled is set.
 	Href string
 	// Icon is an optional icon component rendered before the label
 	Icon templ.Component
@@ -44,6 +94,9 @@ type Item struct {
 	// OnClick is an Alpine.js expression invoked on click (e.g., "open = true").
 	// Setting this renders the item as a <button> instead of an anchor.
 	OnClick string
+	// HTMX configures a declarative server action. It may be combined with
+	// OnClick; both attributes render on the same button.
+	HTMX *HTMXConfig
 	// Disabled renders the item as a disabled <button> with muted styling.
 	// Clicks are suppressed.
 	Disabled bool
@@ -60,7 +113,7 @@ type Item struct {
 // IsButton reports whether the item should render as a <button> rather than
 // an anchor. Buttons are required for click handlers and disabled state.
 func (i Item) isButton() bool {
-	return i.OnClick != "" || i.Disabled
+	return i.OnClick != "" || i.HTMX != nil || i.Disabled
 }
 
 // Section groups items with an optional heading.

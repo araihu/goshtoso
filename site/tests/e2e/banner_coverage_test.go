@@ -4,7 +4,6 @@ import (
 	"strings"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
@@ -29,12 +28,6 @@ func TestBannerCoverageDemo(t *testing.T) {
 			consoleErrors = append(consoleErrors, msg.Text())
 			mu.Unlock()
 		}
-	})
-
-	alerts := make(chan string, 1)
-	page.On("dialog", func(dialog playwright.Dialog) {
-		alerts <- dialog.Message()
-		_ = dialog.Accept()
 	})
 
 	_, err := page.Goto(baseURL+"/components/banner", playwright.PageGotoOptions{
@@ -75,12 +68,8 @@ func TestBannerCoverageDemo(t *testing.T) {
 	})
 	require.NoError(t, ctaButton.ScrollIntoViewIfNeeded())
 	require.NoError(t, ctaButton.Click())
-	select {
-	case msg := <-alerts:
-		require.Equal(t, "Starting free trial...", msg)
-	case <-time.After(2 * time.Second):
-		t.Fatal("expected CTA button to open its alert dialog")
-	}
+	_, err = page.WaitForFunction(`() => document.querySelector("#banner-cta-result")?.textContent.includes("Banner action received")`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err)
 
 	_, err = page.Evaluate(`() => {
 		document.documentElement.setAttribute('data-theme', 'minimal')

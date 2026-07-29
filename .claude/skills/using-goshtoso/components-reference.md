@@ -57,9 +57,10 @@ import "github.com/araihu/goshtoso/components/actiongroup"  // package actiongro
 | Field | Type | Description |
 |-------|------|-------------|
 | `Label` | `string` | Label is the visible action label or grouped-action trigger label. |
-| `Href` | `string` | Href renders a native link when OnClick is empty and Disabled is false. |
+| `Href` | `string` | Href renders a native link when OnClick and HTMX are empty and Disabled is false. |
 | `Icon` | `templ.Component` | Icon renders before Label. |
 | `OnClick` | `string` | OnClick is an Alpine.js expression for button actions. |
+| `HTMX` | `*dropdown.HTMXConfig` | HTMX configures a declarative server action. It may be combined with OnClick. Href is ignored when HTMX is set. |
 | `Disabled` | `bool` | Disabled renders an inert native button. |
 | `Danger` | `bool` | Danger applies the destructive action treatment to buttons and Dropdown items. Links retain Link's navigation treatment. |
 | `Tooltip` | `string` | Tooltip sets a native title attribute. |
@@ -238,6 +239,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | `ActionLabel` | `string` | ActionLabel is the button label |
 | `Href` | `string` | Href is the link URL (if set, renders as anchor) |
 | `OnClick` | `string` | OnClick is the Alpine.js click action |
+| `HTMX` | `*HTMXConfig` | HTMX configures a declarative server action. When present, Href is ignored and the CTA renders as a button. It may be combined with OnClick. |
 
 **Config**
 
@@ -248,6 +250,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | `Position` | `Position` | Position determines if banner is fixed or relative |
 | `Persistent` | `bool` | Persistent disables the dismiss button (default: banners are dismissible) |
 | `DismissAction` | `string` | DismissAction is the Alpine.js action when dismissed |
+| `DismissHTMX` | `*HTMXConfig` | DismissHTMX configures a declarative server action for dismiss. It may be combined with DismissAction, which keeps its existing local behavior. |
 | `CTA` | `*CTAConfig` | CTA is the call-to-action button config (optional) |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the banner root. |
 
@@ -261,8 +264,22 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | `AcceptLabel` | `string` | AcceptLabel is the accept button label |
 | `RejectLabel` | `string` | RejectLabel is the reject button label |
 | `AcceptAction` | `string` | AcceptAction is the Alpine.js action for accept |
+| `AcceptHTMX` | `*HTMXConfig` | AcceptHTMX configures a declarative server action for accept. |
 | `RejectAction` | `string` | RejectAction is the Alpine.js action for reject |
+| `RejectHTMX` | `*HTMXConfig` | RejectHTMX configures a declarative server action for reject. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the dialog root. |
+
+**HTMXConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Get` | `string` | Get is the URL for an HTMX GET request. |
+| `Post` | `string` | Post is the URL for an HTMX POST request. |
+| `Target` | `string` | Target is the CSS selector receiving the response. |
+| `Swap` | `string` | Swap is the HTMX swap strategy. |
+| `Trigger` | `string` | Trigger overrides HTMX's default click trigger. |
+| `Vals` | `string` | Vals is additional request values as an HTMX JSON expression. |
+| `Confirm` | `string` | Confirm is the confirmation message shown before the request. |
 
 ## breadcrumbs
 
@@ -604,16 +621,29 @@ import "github.com/araihu/goshtoso/components/dropdown"  // package dropdown
 | `TriggerIconOnly` | `bool` | TriggerIconOnly, in click or hover mode, renders TriggerIcon alone inside a square button — no label, no chevron. Use this for icon-only overflow triggers (e.g., a vertical-dots "…" affordance) without inheriting TriggerContext's &lt;li&gt; item semantics. |
 | `MenuAlign` | `MenuAlign` | MenuAlign controls which edge of the trigger the menu anchors to. Defaults to AlignStart (panel opens rightward). Use AlignEnd for triggers at the right edge of the viewport. |
 
+**HTMXConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Get` | `string` | Get is the URL for an HTMX GET request. |
+| `Post` | `string` | Post is the URL for an HTMX POST request. |
+| `Target` | `string` | Target is the CSS selector receiving the response. |
+| `Swap` | `string` | Swap is the HTMX swap strategy. |
+| `Trigger` | `string` | Trigger overrides HTMX's default click trigger. |
+| `Vals` | `string` | Vals is additional request values as an HTMX JSON expression. |
+| `Confirm` | `string` | Confirm is the confirmation message shown before the request. |
+
 **Item**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `Label` | `string` | Label is the display text for the menu item |
-| `Href` | `string` | Href is the link URL (use "#" for non-navigating items). Ignored when OnClick or Disabled is set. |
+| `Href` | `string` | Href is the link URL (use "#" for non-navigating items). Ignored when OnClick, HTMX, or Disabled is set. |
 | `Icon` | `templ.Component` | Icon is an optional icon component rendered before the label |
 | `Shortcut` | `string` | Shortcut is an optional keyboard shortcut label (e.g., "Z", "X") |
 | `ShortcutIcon` | `templ.Component` | ShortcutIcon is an optional icon for the shortcut modifier key |
 | `OnClick` | `string` | OnClick is an Alpine.js expression invoked on click (e.g., "open = true"). Setting this renders the item as a &lt;button&gt; instead of an anchor. |
+| `HTMX` | `*HTMXConfig` | HTMX configures a declarative server action. It may be combined with OnClick; both attributes render on the same button. |
 | `Disabled` | `bool` | Disabled renders the item as a disabled &lt;button&gt; with muted styling. Clicks are suppressed. |
 | `Danger` | `bool` | Danger applies destructive styling (red text, red hover) — for actions like "Delete" or "Remove". |
 | `Tooltip` | `string` | Tooltip sets a native title attribute on the item. Useful when Disabled to explain why the action isn't available. |
@@ -1319,6 +1349,8 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 
 **Entry points:** `Search(cfg Config)` · `SearchField(cfg Config)` · `SearchModal(cfg Config)`
 
+- **MatchMode** — MatchModeSubstring = "substring", MatchModeFuzzy = "fuzzy"
+
 **Config**
 
 | Field | Type | Description |
@@ -1331,6 +1363,7 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `EscapeText` | `string` | EscapeText is rendered in the dialog close KBD hint. Defaults to "Esc". |
 | `Items` | `[]Item` | Items are the caller-provided result records. |
 | `ItemsURL` | `string` | ItemsURL is an optional JSON endpoint for client-side result records. When set, results are fetched and rendered in the browser instead of pre-rendering every Item as a hidden DOM node. |
+| `MatchMode` | `MatchMode` | MatchMode controls client-side matching and ranking. Defaults to MatchModeSubstring. |
 | `MaxResults` | `int` | MaxResults limits the visible matches. Defaults to 4. |
 | `DescriptionMaxLength` | `int` | DescriptionMaxLength truncates result descriptions. Defaults to 120. |
 | `EmptyText` | `string` | EmptyText appears when no result matches the query. |

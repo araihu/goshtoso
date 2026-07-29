@@ -76,10 +76,12 @@ func actionGroupDemoContent() templ.Component {
 			actionGroupResponsivePreview(),
 			`@actiongroup.ActionGroup(actiongroup.Config{
     Label:   "Release actions",
-    Primary: actiongroup.Action{Label: "Publish", OnClick: "publish()"},
+    Primary: actiongroup.Action{Label: "Publish", Href: "/releases/publish"},
     Secondary: []actiongroup.Action{
         {Label: "Preview", Href: "/preview"},
-        {Label: "Schedule", OnClick: "schedule()"},
+        {Label: "Schedule", HTMX: &dropdown.HTMXConfig{Post: "/releases/schedule", Target: "#release-result", Swap: "innerHTML"}},
+        // Optional local enhancement remains available after declarative action setup.
+        {Label: "Notify", OnClick: "notify()"},
         {Label: "Archive", Disabled: true, Tooltip: "Published releases cannot be archived"},
     },
 })`,
@@ -95,12 +97,12 @@ func actionGroupDemoContent() templ.Component {
 			actionGroupStackedPreview(),
 			`@actiongroup.ActionGroup(actiongroup.Config{
     Label:   "Chart actions",
-    Primary: actiongroup.Action{Label: "Refresh", OnClick: "refreshChart()"},
+    Primary: actiongroup.Action{Label: "Refresh", Href: "/charts/current"},
     Secondary: []actiongroup.Action{
         {
             Label: "Export",
             Items: []actiongroup.Action{
-                {Label: "PNG", Icon: imageIcon(), OnClick: "exportPNG()"},
+                {Label: "PNG", Icon: imageIcon(), HTMX: &dropdown.HTMXConfig{Get: "/charts/export.png", Target: "#export-result", Swap: "innerHTML"}},
                 {Label: "CSV", Icon: tableIcon(), OnClick: "exportCSV()"},
             },
         },

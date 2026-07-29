@@ -7,6 +7,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components"
+	"github.com/araihu/goshtoso/components/dropdown"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,6 +16,47 @@ func renderHTML(t *testing.T, component templ.Component) string {
 	var output strings.Builder
 	require.NoError(t, component.Render(context.Background(), &output))
 	return output.String()
+}
+
+func TestActionGroupHTMXActionsRenderDirectGroupedAndOverflowCopies(t *testing.T) {
+	htmx := &dropdown.HTMXConfig{
+		Post:    "/actions/archive",
+		Target:  "#action-result",
+		Swap:    "innerHTML",
+		Trigger: "click",
+		Vals:    `{"source":"action-group"}`,
+		Confirm: "Archive this item?",
+	}
+	html := renderHTML(t, ActionGroup(Config{
+		Primary: Action{Label: "Publish", HTMX: htmx, ID: "publish"},
+		Secondary: []Action{{
+			Label: "Export",
+			Items: []Action{{Label: "Archive", HTMX: htmx, ID: "archive"}},
+		}},
+	}))
+
+	for _, want := range []string{
+		`hx-post="/actions/archive"`,
+		`hx-target="#action-result"`,
+		`hx-swap="innerHTML"`,
+		`hx-trigger="click"`,
+		`hx-vals="{&#34;source&#34;:&#34;action-group&#34;}"`,
+		`hx-confirm="Archive this item?"`,
+		`id="archive"`,
+		`id="archive-overflow"`,
+	} {
+		require.Contains(t, html, want)
+	}
+	require.Equal(t, 3, strings.Count(html, `hx-post="/actions/archive"`))
+}
+
+func TestActionGroupHTMXPostTakesPrecedenceOverGet(t *testing.T) {
+	html := renderHTML(t, ActionGroup(Config{
+		Primary: Action{Label: "Save", HTMX: &dropdown.HTMXConfig{Get: "/preview", Post: "/save"}},
+	}))
+
+	require.Contains(t, html, `hx-post="/save"`)
+	require.NotContains(t, html, `hx-get="/preview"`)
 }
 
 func TestActionGroupIdentity(t *testing.T) {

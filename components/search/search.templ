@@ -58,6 +58,7 @@ templ searchModalTemplate(cfg Config) {
 		data-search-id={ id }
 		data-search-max-results={ fmt.Sprint(cfg.getMaxResults()) }
 		data-search-description-max-length={ fmt.Sprint(cfg.getDescriptionMaxLength()) }
+		data-search-match-mode={ string(cfg.getMatchMode()) }
 		x-data="goshtosoSearchModal($el)"
 		x-on:goshtoso-search-open.window="if ($event.detail.id === searchId) openSearch()"
 		x-show="open"

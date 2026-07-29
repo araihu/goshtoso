@@ -176,3 +176,49 @@ func TestCoverageRenderCookieBannerDefaultsAndCustomActions(t *testing.T) {
 	}
 	assert.False(t, strings.Contains(customHTML, "Cookie Consent"), "custom config should replace the default title")
 }
+
+func TestBannerHTMXActionsPreferButtonsAndKeepLegacyAlpine(t *testing.T) {
+	dismiss := renderBanner(t, Config{
+		Description: "Maintenance", DismissAction: "show = false",
+		DismissHTMX: &HTMXConfig{Post: "/api/banner/dismiss", Target: "#notice", Swap: "outerHTML"},
+	})
+	assert.Contains(t, dismiss, `@click="show = false"`)
+	assert.Contains(t, dismiss, `hx-post="/api/banner/dismiss"`)
+	assert.Contains(t, dismiss, `hx-target="#notice"`)
+
+	cta := renderBanner(t, Config{
+		Description: "Deploy ready",
+		CTA: &CTAConfig{ActionLabel: "Deploy", Href: "/deploy", OnClick: "trackDeploy()", HTMX: &HTMXConfig{
+			Post: "/api/deploy", Target: "#deploy-result", Swap: "innerHTML", Trigger: "click", Vals: `{"release":"v1"}`, Confirm: "Deploy?",
+		}},
+	})
+	for _, want := range []string{
+		`<button type="button"`, `@click="trackDeploy()"`, `hx-post="/api/deploy"`,
+		`hx-target="#deploy-result"`, `hx-swap="innerHTML"`, `hx-trigger="click"`,
+		`hx-vals="{&#34;release&#34;:&#34;v1&#34;}"`, `hx-confirm="Deploy?"`,
+	} {
+		assert.Contains(t, cta, want)
+	}
+	assert.NotContains(t, cta, `href="/deploy"`)
+
+	cookies := renderStructuralBanner(t, CookieBanner(CookieBannerConfig{
+		Description: "Cookies", AcceptAction: "show = false",
+		AcceptHTMX: &HTMXConfig{Post: "/api/consent", Target: "#consent", Swap: "outerHTML"},
+		RejectHTMX: &HTMXConfig{Post: "/api/consent/reject", Confirm: "Reject optional cookies?"},
+	}))
+	assert.Contains(t, cookies, `@click="show = false"`)
+	assert.Contains(t, cookies, `hx-post="/api/consent"`)
+	assert.Contains(t, cookies, `hx-target="#consent"`)
+	assert.Contains(t, cookies, `hx-post="/api/consent/reject"`)
+	assert.Contains(t, cookies, `hx-confirm="Reject optional cookies?"`)
+}
+
+func TestBannerHTMXPostTakesPrecedenceOverGet(t *testing.T) {
+	rendered := renderBanner(t, Config{
+		Description: "Deploy ready",
+		CTA:         &CTAConfig{ActionLabel: "Deploy", HTMX: &HTMXConfig{Get: "/preview", Post: "/deploy"}},
+	})
+
+	assert.Contains(t, rendered, `hx-post="/deploy"`)
+	assert.NotContains(t, rendered, `hx-get="/preview"`)
+}
