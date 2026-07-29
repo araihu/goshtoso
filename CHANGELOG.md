@@ -135,6 +135,6 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
-[v0.1.0]: https://github.com/araihu/goshtoso/compare/v0.0.13...feat/icon-catalog
+[v0.1.0]: https://github.com/araihu/goshtoso/compare/v0.0.13...61c3af2
 [v0.0.13]: https://github.com/araihu/goshtoso/compare/v0.0.12...v0.0.13
 [v0.0.12]: https://github.com/araihu/goshtoso/compare/v0.0.11...v0.0.12
