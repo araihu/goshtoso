@@ -28,7 +28,7 @@ type glyph struct {
 }
 
 // Generate returns formatted Go source for the namespace and product selected
-// by opts. Generated bindings accept sprite assets that can inherit color.
+// by opts. Only assets that declare a sprite symbol are eligible bindings.
 func Generate(catalog Catalog, opts Options) ([]byte, error) {
 	if err := validateOptions(opts); err != nil {
 		return nil, err
@@ -39,6 +39,9 @@ func Generate(catalog Catalog, opts Options) ([]byte, error) {
 	seenSymbols := make(map[string]string)
 	for _, asset := range catalog.Assets {
 		if asset.Namespace != opts.Namespace || asset.Product != opts.Product {
+			continue
+		}
+		if asset.SpriteSymbol == "" {
 			continue
 		}
 		if err := validateAsset(asset); err != nil {
@@ -59,7 +62,7 @@ func Generate(catalog Catalog, opts Options) ([]byte, error) {
 		selected = append(selected, glyph{goName: goName, Asset: asset})
 	}
 	if len(selected) == 0 {
-		return nil, fmt.Errorf("no assets for namespace %q and product %q", opts.Namespace, opts.Product)
+		return nil, fmt.Errorf("no sprite assets for namespace %q and product %q", opts.Namespace, opts.Product)
 	}
 
 	sort.Slice(selected, func(i, j int) bool {
@@ -138,10 +141,7 @@ func validateAsset(asset Asset) error {
 	if asset.Format != "svg" {
 		return fmt.Errorf("asset %q has unsupported format %q", asset.CanonicalName, asset.Format)
 	}
-	if asset.SpriteSymbol == "" {
-		return fmt.Errorf("asset %q has empty spriteSymbol", asset.CanonicalName)
-	}
-	if asset.ColorBehavior != "monochrome" && asset.ColorBehavior != "tintable" {
+	if asset.ColorBehavior != "monochrome" && asset.ColorBehavior != "tintable" && asset.ColorBehavior != "protected" {
 		return fmt.Errorf("asset %q has incompatible colorBehavior %q", asset.CanonicalName, asset.ColorBehavior)
 	}
 	return nil

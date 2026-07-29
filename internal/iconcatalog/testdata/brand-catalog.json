@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "release": "v0.1.0",
+  "identityRevision": 11,
+  "assets": [
+    {
+      "canonicalName": "araihu-icon-adaptive-plate-launcher",
+      "namespace": "brand",
+      "path": "icons/brand/araihu-icon-adaptive-plate-launcher.svg",
+      "product": "araihu",
+      "artwork": "icon",
+      "appearance": "adaptive",
+      "surface": "plate",
+      "framing": "launcher",
+      "format": "svg",
+      "dimensions": {"viewBox": "201.734422 202.409422 620.455156 620.455156"},
+      "spriteSymbol": "",
+      "colorBehavior": "protected",
+      "license": "Arai Hu Brand Terms",
+      "source": "source/brand/original/araihu-icon-background.svg#sha256=552075f7c264ebfa97d1c000e9bfe6a7507a928cc548b50ee7f83fffca27c08f",
+      "sha256": "97da1639ca75483b2515c41077edcbaf09d533e484c9d124992a19cfefd196fd"
+    },
+    {
+      "canonicalName": "araihu-icon-dark-plate-optical",
+      "namespace": "brand",
+      "path": "icons/brand/araihu-icon-dark-plate-optical.svg",
+      "product": "araihu",
+      "artwork": "icon",
+      "appearance": "dark",
+      "surface": "plate",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {"viewBox": "0 0 1024 1024"},
+      "spriteSymbol": "araihu-icon-dark-plate-optical",
+      "colorBehavior": "protected",
+      "license": "Arai Hu Brand Terms",
+      "source": "source/brand/original/araihu-icon-background.svg#sha256=552075f7c264ebfa97d1c000e9bfe6a7507a928cc548b50ee7f83fffca27c08f",
+      "sha256": "4e1cfda89dc19371647b5bb884ee03ca9ba9584292d9eac29be28939c5a83cd2"
+    },
+    {
+      "canonicalName": "platform-android-araihu-res-drawable-xxxhdpi-ic-launcher-foreground-png",
+      "namespace": "brand",
+      "path": "platform/android/araihu/res/drawable-xxxhdpi/ic_launcher_foreground.png",
+      "product": "araihu",
+      "artwork": "icon",
+      "appearance": "light",
+      "surface": "transparent",
+      "framing": "launcher",
+      "format": "png",
+      "dimensions": {"width": 432, "height": 432},
+      "spriteSymbol": "",
+      "colorBehavior": "protected",
+      "license": "Arai Hu Brand Terms",
+      "source": "platform generator v0.1.0",
+      "sha256": "be7351e87230c7f4badfd23c2b4645765f3cf7aa8ba512cc18b47ac7c877631d"
+    }
+  ]
+}

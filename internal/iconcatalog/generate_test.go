@@ -43,8 +43,7 @@ func TestGenerateRejectsInvalidSelectedAssets(t *testing.T) {
 		want string
 	}{
 		{"non-SVG", func(a *Asset) { a.Format = "png" }, "format"},
-		{"missing sprite", func(a *Asset) { a.SpriteSymbol = "" }, "spriteSymbol"},
-		{"incompatible color", func(a *Asset) { a.ColorBehavior = "protected" }, "colorBehavior"},
+		{"invalid color", func(a *Asset) { a.ColorBehavior = "unknown" }, "colorBehavior"},
 		{"invalid identifier rune", func(a *Asset) { a.CanonicalName = "ui-hi-16-solid-check_circle" }, "cannot form a Go identifier"},
 	}
 	for _, tt := range tests {
@@ -59,12 +58,62 @@ func TestGenerateRejectsInvalidSelectedAssets(t *testing.T) {
 	}
 }
 
-func TestGenerateAcceptsTintableSelectedAsset(t *testing.T) {
-	catalog := fixture(t)
-	catalog.Assets[0].ColorBehavior = "tintable"
-	if _, err := Generate(catalog, fixtureOptions); err != nil {
-		t.Fatalf("Generate() error = %v, want tintable asset accepted", err)
+func TestGenerateAcceptsCatalogColorBehaviors(t *testing.T) {
+	for _, colorBehavior := range []string{"monochrome", "tintable", "protected"} {
+		t.Run(colorBehavior, func(t *testing.T) {
+			catalog := fixture(t)
+			catalog.Assets[0].ColorBehavior = colorBehavior
+			if _, err := Generate(catalog, fixtureOptions); err != nil {
+				t.Fatalf("Generate() error = %v, want %s asset accepted", err, colorBehavior)
+			}
+		})
 	}
+}
+
+func TestGenerateSelectsOnlySpriteAssetsForBrand(t *testing.T) {
+	opts := fixtureOptions
+	opts.Package = "araihu"
+	opts.Namespace = "brand"
+	opts.Product = "araihu"
+	opts.ConstPrefix = "Brand"
+	opts.SpriteURL = "/assets/icons/brand.svg"
+
+	got, err := Generate(loadFixture(t, "brand-catalog.json"), opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Contains(got, []byte(`BrandAraihuIconDarkPlateOptical icon.Symbol = "araihu-icon-dark-plate-optical"`)) {
+		t.Fatalf("generated source does not contain protected sprite binding:\n%s", got)
+	}
+	if bytes.Contains(got, []byte("AdaptivePlateLauncher")) || bytes.Contains(got, []byte("LauncherForeground")) {
+		t.Fatalf("generated source contains non-sprite asset:\n%s", got)
+	}
+}
+
+func TestGenerateReturnsNoSpriteAssetsWhenMatchesHaveNoSymbol(t *testing.T) {
+	catalog := fixture(t)
+	for i := range catalog.Assets {
+		catalog.Assets[i].SpriteSymbol = ""
+	}
+
+	_, err := Generate(catalog, fixtureOptions)
+	if err == nil || !strings.Contains(err.Error(), `no sprite assets for namespace "ui" and product "heroicons"`) {
+		t.Fatalf("Generate() error = %v, want clear no sprite assets error", err)
+	}
+}
+
+func loadFixture(t *testing.T, name string) Catalog {
+	t.Helper()
+	f, err := os.Open(filepath.Join("testdata", name))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	catalog, err := Load(f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return catalog
 }
 
 func TestGenerateRejectsGoKeywords(t *testing.T) {

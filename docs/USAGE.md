@@ -295,10 +295,14 @@ go run github.com/araihu/goshtoso/cmd/iconcatalog@latest \
   -out ./internal/appicons/names_gen.go
 ```
 
-Run the same command with `-check` in CI. The generator rejects unsupported
-schema versions, malformed or duplicate canonical names and sprite symbols,
-identifier collisions, non-SVG/non-sprite assets, and incompatible color
-behavior rather than emitting unsafe or ambiguous bindings.
+Run the same command with `-check` in CI. The generator selects matching records
+that declare a sprite symbol and ignores other matching release artifacts. It
+validates every selected symbol, rejecting unsupported schema versions,
+malformed or duplicate canonical names and sprite symbols, identifier
+collisions, non-SVG assets, and invalid color behavior rather than emitting
+unsafe or ambiguous bindings. `monochrome` and `tintable` symbols can inherit
+`currentColor`; `protected` brand symbols keep their intrinsic fills and should
+not be presented as recolorable by an icon component.
 
 ## Using your own Tailwind build
 
