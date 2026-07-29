@@ -28,7 +28,7 @@ of floating copy-paste snippets.
 
 ## Highlights
 
-- **51 public component packages** documented across **50 documentation pages**,
+- **52 public component packages** documented across **50 documentation pages**,
 	  exposing **82 renderable primitives** for composition, forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where

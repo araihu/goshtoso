@@ -110,6 +110,16 @@ jobs:
           go run ./cmd/vendorgen -check \
             || { echo "::error::assets/vendor_gen.go is stale — run 'go run ./cmd/vendorgen' and commit"; exit 1; }
 
+      - name: Heroicons bindings drift check
+        run: |
+          go run ./cmd/iconcatalog \
+            -catalog internal/iconcatalog/testdata/heroicons-catalog.json \
+            -namespace ui -product heroicons \
+            -sprite-url /assets/icons/heroicons.svg \
+            -package heroicons -const-prefix Icon \
+            -out components/icon/heroicons/names_gen.go -check \
+            || { echo "::error::Heroicons bindings are stale — run iconcatalog and commit names_gen.go"; exit 1; }
+
       - name: First-party JavaScript lint + drift check
         run: |
           go run ./cmd/jslint
