@@ -51,7 +51,13 @@ func TestDropdownKeyboardOpenFocusesFirstEnabledItemAndEscapeReturnsToTrigger(t 
 
 	assert.Contains(t, rendered, `x-ref="trigger"`)
 	assert.Contains(t, rendered, `x-ref="menu"`)
-	assert.Contains(t, rendered, `$refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus()`)
+	assert.Contains(t, rendered, `[role=menuitem]:not([disabled]):not([hidden])`)
+	assert.Contains(t, rendered, `item.getClientRects().length &gt; 0`)
+	assert.Contains(t, rendered, `focusFirstItem()`)
+	assert.Contains(t, rendered, `focusAdjacentItem(1)`)
+	assert.Contains(t, rendered, `focusAdjacentItem(-1)`)
+	assert.NotContains(t, rendered, `$focus.wrap()`)
+	assert.Contains(t, rendered, `x-trap.noreturn="openedWithKeyboard"`)
 	assert.Contains(t, rendered, `$refs.trigger.focus()`)
 	assert.Equal(t, 1, strings.Count(rendered, `role="menu"`))
 }

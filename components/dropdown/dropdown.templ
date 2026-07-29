@@ -34,8 +34,8 @@ templ dropdownTemplate(cfg Config) {
 // clickDropdown renders a click-activated dropdown
 templ clickDropdown(cfg Config) {
 	<div
-		x-data="{ isOpen: false, openedWithKeyboard: false }"
-		x-on:keydown.esc.window="if (isOpen || openedWithKeyboard) { isOpen = false; openedWithKeyboard = false; $refs.trigger.focus() }"
+		x-data={ dropdownData("isOpen: false, openedWithKeyboard: false") }
+		x-on:keydown.esc.window="if (isOpen || openedWithKeyboard) { isOpen = false; openedWithKeyboard = false; $nextTick(() => $refs.trigger.focus()) }"
 		class="relative w-fit"
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -49,10 +49,10 @@ templ clickDropdown(cfg Config) {
 // hoverDropdown renders a hover-activated dropdown with delay
 templ hoverDropdown(cfg Config) {
 	<div
-		x-data="{ isOpen: false, openedWithKeyboard: false, leaveTimeout: null }"
+		x-data={ dropdownData("isOpen: false, openedWithKeyboard: false, leaveTimeout: null") }
 		x-on:mouseleave.prevent="leaveTimeout = setTimeout(() => { isOpen = false }, 250)"
 		x-on:mouseenter="leaveTimeout ? clearTimeout(leaveTimeout) : true"
-		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false; $refs.trigger.focus()"
+		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false; $nextTick(() => $refs.trigger.focus())"
 		x-on:click.outside="isOpen = false, openedWithKeyboard = false"
 		class="relative w-fit"
 		if cfg.ID != "" {
@@ -67,8 +67,8 @@ templ hoverDropdown(cfg Config) {
 // contextDropdown renders a context-menu style dropdown
 templ contextDropdown(cfg Config) {
 	<div
-		x-data="{ isOpen: false, openedWithKeyboard: false }"
-		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false; $refs.trigger.focus()"
+		x-data={ dropdownData("isOpen: false, openedWithKeyboard: false") }
+		x-on:keydown.esc.prevent="isOpen = false, openedWithKeyboard = false; $nextTick(() => $refs.trigger.focus())"
 		class="relative w-fit"
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -90,9 +90,9 @@ templ triggerButton(cfg Config) {
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
 		}
-		x-on:keydown.space.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
-		x-on:keydown.down.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.space.prevent="openedWithKeyboard = true; focusFirstItem()"
+		x-on:keydown.enter.prevent="openedWithKeyboard = true; focusFirstItem()"
+		x-on:keydown.down.prevent="openedWithKeyboard = true; focusFirstItem()"
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 	>
@@ -111,9 +111,9 @@ templ hoverTriggerButton(cfg Config) {
 		x-ref="trigger"
 		type="button"
 		x-on:mouseover="isOpen = true"
-		x-on:keydown.space.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
-		x-on:keydown.down.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.space.prevent="openedWithKeyboard = true; focusFirstItem()"
+		x-on:keydown.enter.prevent="openedWithKeyboard = true; focusFirstItem()"
+		x-on:keydown.down.prevent="openedWithKeyboard = true; focusFirstItem()"
 		class={ cfg.buttonClasses() }
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
@@ -139,9 +139,9 @@ templ contextTriggerButton(cfg Config) {
 		aria-label="context menu"
 		x-on:click="isOpen = ! isOpen"
 		x-on:contextmenu.prevent="isOpen = true"
-		x-on:keydown.space.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
-		x-on:keydown.down.prevent="openedWithKeyboard = true; $nextTick(() => $refs.menu.querySelector('[role=menuitem]:not([disabled])')?.focus())"
+		x-on:keydown.space.prevent="openedWithKeyboard = true; focusFirstItem()"
+		x-on:keydown.enter.prevent="openedWithKeyboard = true; focusFirstItem()"
+		x-on:keydown.down.prevent="openedWithKeyboard = true; focusFirstItem()"
 		class={ cfg.buttonClasses() }
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
@@ -162,10 +162,10 @@ templ dropdownMenu(cfg Config) {
 		x-cloak
 		x-show="isOpen || openedWithKeyboard"
 		x-transition
-		x-trap="openedWithKeyboard"
+		x-trap.noreturn="openedWithKeyboard"
 		x-on:click.outside="isOpen = false, openedWithKeyboard = false"
-		x-on:keydown.down.prevent="$focus.wrap().next()"
-		x-on:keydown.up.prevent="$focus.wrap().previous()"
+		x-on:keydown.down.prevent="focusAdjacentItem(1)"
+		x-on:keydown.up.prevent="focusAdjacentItem(-1)"
 		class={ menuClasses(cfg) }
 		role="menu"
 	>
@@ -194,10 +194,10 @@ templ contextDropdownMenu(cfg Config) {
 		x-cloak
 		x-show="isOpen || openedWithKeyboard"
 		x-transition
-		x-trap="openedWithKeyboard"
+		x-trap.noreturn="openedWithKeyboard"
 		x-on:click.outside="isOpen = false, openedWithKeyboard = false"
-		x-on:keydown.down.prevent="$focus.wrap().next()"
-		x-on:keydown.up.prevent="$focus.wrap().previous()"
+		x-on:keydown.down.prevent="focusAdjacentItem(1)"
+		x-on:keydown.up.prevent="focusAdjacentItem(-1)"
 		class={ menuClasses(cfg) }
 		role="menu"
 	>
@@ -376,6 +376,30 @@ func triggerAriaLabel(cfg Config) string {
 		return cfg.Label
 	}
 	return "open menu"
+}
+
+// dropdownData keeps keyboard focus within enabled, rendered menu items. The
+// explicit rendered check matters for consumers such as ActionGroup that
+// progressively hide only some items in a shared Dropdown.
+func dropdownData(state string) string {
+	return `{ ` + state + `,
+		menuItems() {
+			return Array.from(this.$refs.menu.querySelectorAll('[role=menuitem]:not([disabled]):not([hidden])'))
+				.filter(item => item.getClientRects().length > 0 && getComputedStyle(item).visibility !== 'hidden')
+		},
+		focusFirstItem() {
+			this.$nextTick(() => this.menuItems()[0]?.focus())
+		},
+		focusAdjacentItem(step) {
+			const items = this.menuItems()
+			if (items.length === 0) return
+			const current = items.indexOf(document.activeElement)
+			const next = current < 0
+				? (step > 0 ? 0 : items.length - 1)
+				: (current + step + items.length) % items.length
+			items[next].focus()
+		}
+	}`
 }
 
 // chevronIcon renders the dropdown chevron SVG

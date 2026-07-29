@@ -72,6 +72,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		_, err = page.WaitForFunction(`() => document.activeElement && document.activeElement.textContent.trim() === "CSV"`, nil)
 		require.NoError(t, err)
 
+		waitForActionGroupFocusTrap(t, page)
 		require.NoError(t, page.Keyboard().Press("Escape"))
 		_, err = page.WaitForFunction(`() => document.querySelector("#action-group-export button").getAttribute("aria-expanded") === "false"`, nil)
 		require.NoError(t, err)
@@ -142,6 +143,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 			return trigger.getAttribute("aria-expanded") === "false";
 		}`, nil)
 		require.NoError(t, err)
+		waitForActionGroupFocusTrap(t, page)
 	})
 
 	t.Run("source order remains priority order", func(t *testing.T) {
@@ -187,24 +189,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, collapsedCount, actionGroupMustCount(t, priorityOverflow.Locator(`[role="menuitem"]:visible`)))
 		require.NoError(t, page.Keyboard().Press("Escape"))
-	})
-
-	t.Run("expanding restores focus from overflow to first inline secondary", func(t *testing.T) {
-		_, err := stacked.Evaluate("el => { el.style.width = '220px' }", nil)
-		require.NoError(t, err)
-		waitForActionGroupLayout(t, page, "#action-group-stacked", true)
-		require.NoError(t, overflow.Locator("button").First().Focus())
-
-		_, err = stacked.Evaluate("el => { el.style.width = '760px' }", nil)
-		require.NoError(t, err)
-		waitForActionGroupLayout(t, page, "#action-group-stacked", false)
-		restored, err := page.Evaluate(`() =>
-			document.activeElement &&
-			document.activeElement.closest("[data-action-group-secondary]") ===
-				document.querySelector("#action-group-stacked [data-action-group-secondary]")
-		`, nil)
-		require.NoError(t, err)
-		require.Equal(t, true, restored)
+		waitForActionGroupTriggerFocus(t, page)
 	})
 
 	t.Run("viewport theme and color-mode matrix has no page overflow", func(t *testing.T) {
@@ -252,6 +237,100 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 	require.Equal(t, "Chart actions", actionGroupMustAttribute(t, root, "aria-label"))
 	waitForPageSettled(t, page)
 	failures.RequireEmpty(t)
+}
+
+func TestActionGroupPartialCollapseKeyboardNavigation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
+		Viewport: &playwright.Size{Width: 1440, Height: 1000},
+	})
+	failures := watchPageFailures(page)
+	_, err := page.Goto(baseURL+"/components/action-group", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() =>
+		document.querySelector("#action-group-priority [data-goshtoso-action-group]")?.dataset.actionGroupInitialized === "true"
+	`, nil)
+	require.NoError(t, err)
+
+	stacked := page.Locator("#action-group-stacked")
+	stackedOverflow := stacked.Locator("[data-action-group-overflow]")
+	_, err = stacked.Evaluate("el => { el.style.width = '220px' }", nil)
+	require.NoError(t, err)
+	waitForActionGroupLayout(t, page, "#action-group-stacked", true)
+	require.NoError(t, stackedOverflow.Locator("button").First().Focus())
+	_, err = page.WaitForFunction(`() =>
+		document.activeElement === document.querySelector("#action-group-stacked [data-action-group-overflow] button")
+	`, nil)
+	require.NoError(t, err)
+	_, err = stacked.Evaluate("el => { el.style.width = '760px' }", nil)
+	require.NoError(t, err)
+	waitForActionGroupLayout(t, page, "#action-group-stacked", false)
+	_, err = page.WaitForFunction(`() =>
+		document.activeElement?.closest("[data-action-group-secondary]") ===
+			document.querySelector("#action-group-stacked [data-action-group-secondary]")
+	`, nil)
+	require.NoError(t, err)
+
+	priority := page.Locator("#action-group-priority")
+	_, err = priority.Evaluate("el => { el.style.width = '180px' }", nil)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const root = document.querySelector("#action-group-priority [data-goshtoso-action-group]")
+		return root && !root.querySelector("[data-action-group-overflow]").hidden
+	}`, nil)
+	require.NoError(t, err)
+
+	hidden, err := priority.Locator("[data-action-group-secondary]").EvaluateAll(`els => els.map(el => el.hidden)`)
+	require.NoError(t, err)
+	require.Equal(t, []any{false, true, true}, hidden.([]any), "fixture must keep Edit inline before Share and Delete collapse")
+
+	overflow := priority.Locator("[data-action-group-overflow]")
+	trigger := overflow.Locator("button").First()
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	_, err = page.WaitForFunction(`() => document.activeElement?.textContent.trim() === "Share"`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	require.Equal(t, "Delete", actionGroupMustText(t, overflow.Locator(`[role="menuitem"]:focus`)))
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	require.Equal(t, "Share", actionGroupMustText(t, overflow.Locator(`[role="menuitem"]:focus`)))
+	require.NoError(t, page.Keyboard().Press("ArrowUp"))
+	require.Equal(t, "Delete", actionGroupMustText(t, overflow.Locator(`[role="menuitem"]:focus`)))
+
+	waitForActionGroupFocusTrap(t, page)
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	waitForActionGroupTriggerFocus(t, page)
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	_, err = page.WaitForFunction(`() => document.activeElement?.textContent.trim() === "Share"`, nil)
+	require.NoError(t, err)
+	waitForActionGroupFocusTrap(t, page)
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	waitForActionGroupTriggerFocus(t, page)
+
+	waitForPageSettled(t, page)
+	failures.RequireEmpty(t)
+}
+
+func waitForActionGroupTriggerFocus(t *testing.T, page playwright.Page) {
+	t.Helper()
+	_, err := page.WaitForFunction(`() =>
+		document.activeElement === document.querySelector("#action-group-priority [data-action-group-overflow] button")
+	`, nil)
+	require.NoError(t, err)
+}
+
+func waitForActionGroupFocusTrap(t *testing.T, page playwright.Page) {
+	t.Helper()
+	_, err := page.Evaluate(`() => new Promise(resolve =>
+		requestAnimationFrame(() => requestAnimationFrame(resolve))
+	)`, nil)
+	require.NoError(t, err)
 }
 
 func waitForActionGroupLayout(t *testing.T, page playwright.Page, selector string, overflowVisible bool) {
