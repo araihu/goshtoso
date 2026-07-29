@@ -3,6 +3,7 @@ package icon
 import (
 	"bytes"
 	"context"
+	"regexp"
 	"testing"
 
 	"github.com/a-h/templ"
@@ -65,6 +66,12 @@ func TestIconAccessibilityMatrix(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			html := render(t, Icon(test.cfg))
+			if test.name == "labeled icon is an image" {
+				require.Regexp(t, regexp.MustCompile(`<svg[^>]*role="img"[^>]*aria-label="Approved"[^>]*>`), html)
+			}
+			if test.name == "decorative flag wins over label" {
+				require.Regexp(t, regexp.MustCompile(`<svg[^>]*aria-hidden="true"[^>]*>`), html)
+			}
 			for _, want := range test.contains {
 				require.Contains(t, html, want)
 			}
