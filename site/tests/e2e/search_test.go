@@ -134,6 +134,21 @@ func TestSearch_FuzzyModeFiltersDOMItems(t *testing.T) {
 	// "srm" is a compact subsequence, not a literal substring.
 	require.NoError(t, input.Fill("srm"))
 	require.NoError(t, page.Locator("#search-fuzzy-result:visible").WaitFor())
+
+	// Explicit score tiers keep even a sparse title match ahead of a compact
+	// text match; the secondary fuzzy score must never cross priority bands.
+	ranked, err := page.Evaluate(`() => {
+		const root = document.createElement("div");
+		root.dataset.searchMatchMode = "fuzzy";
+		const modal = window.goshtosoSearchModal(root);
+		const values = [
+			{ id: "text", title: "none", text: "a-b-c" },
+			{ id: "title", title: "a" + "x".repeat(500) + "b" + "x".repeat(500) + "c", text: "none" },
+		];
+		return modal.rankedMatches(values, (value) => modal.resultScore("abc", value.title, value.text)).map((value) => value.id);
+	}`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, []any{"title", "text"}, ranked)
 }
 
 func TestSidebarSearch_UsesKbdAndNavigates(t *testing.T) {

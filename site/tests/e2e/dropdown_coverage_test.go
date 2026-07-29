@@ -81,12 +81,16 @@ func TestDropdownCoverageDemo(t *testing.T) {
 	require.NoError(t, err)
 
 	archiveItem := page.Locator("#dropdown-actions-archive")
-	disabled, err := archiveItem.Evaluate("el => el.hasAttribute('disabled')", nil)
+	require.NoError(t, archiveItem.Click())
+	require.NoError(t, page.Locator("#dropdown-actions-result", playwright.PageLocatorOptions{HasText: "Dropdown action received"}).WaitFor())
+
+	lockedItem := page.Locator("#dropdown-actions-locked")
+	disabled, err := lockedItem.Evaluate("el => el.hasAttribute('disabled')", nil)
 	require.NoError(t, err)
 	assert.Equal(t, true, disabled)
-	archiveClass, err := archiveItem.GetAttribute("class")
+	lockedClass, err := lockedItem.GetAttribute("class")
 	require.NoError(t, err)
-	assert.Contains(t, archiveClass, "pointer-events-none")
+	assert.Contains(t, lockedClass, "pointer-events-none")
 
 	deleteClass, err := page.Locator("#dropdown-actions-delete").GetAttribute("class")
 	require.NoError(t, err)

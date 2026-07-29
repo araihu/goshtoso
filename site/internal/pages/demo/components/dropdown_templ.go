@@ -487,17 +487,31 @@ func dropdownActionsPreview() templ.Component {
 			Sections: []dropdown.Section{
 				{Items: []dropdown.Item{
 					{
+						Label: "View",
+						Href:  "/components/dropdown",
+						ID:    "dropdown-actions-view",
+					},
+					{
 						Label:   "Edit",
 						Icon:    ddSettingsIcon(),
 						OnClick: "editOpen = true; editCount++",
 						ID:      "dropdown-actions-edit",
 					},
 					{
-						Label:    "Archive",
-						Icon:     ddFavoritesIcon(),
+						Label: "Archive",
+						Icon:  ddFavoritesIcon(),
+						HTMX: &dropdown.HTMXConfig{
+							Post:   "/api/components/dropdown/action",
+							Target: "#dropdown-actions-result",
+							Swap:   "innerHTML",
+						},
+						ID: "dropdown-actions-archive",
+					},
+					{
+						Label:    "Locked",
 						Disabled: true,
-						Tooltip:  "Archive not available in this state",
-						ID:       "dropdown-actions-archive",
+						Tooltip:  "Not available",
+						ID:       "dropdown-actions-locked",
 					},
 				}},
 				{Items: []dropdown.Item{
@@ -514,7 +528,7 @@ func dropdownActionsPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" id=\"dropdown-actions-state\">editOpen=<span x-text=\"editOpen\"></span> · deleteOpen=<span x-text=\"deleteOpen\"></span> · editCount=<span x-text=\"editCount\"></span></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" id=\"dropdown-actions-state\">editOpen=<span x-text=\"editOpen\"></span> · deleteOpen=<span x-text=\"deleteOpen\"></span> · editCount=<span x-text=\"editCount\"></span></div><div id=\"dropdown-actions-result\" class=\"text-xs\" aria-live=\"polite\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -107,6 +107,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/steps/demo", s.handleStepsDemo)
 	s.mux.HandleFunc("/api/components/radio/echo", s.handleRadioEcho)
 	s.mux.HandleFunc("/api/components/banner/action", s.handleBannerAction)
+	s.mux.HandleFunc("/api/components/dropdown/action", s.handleDropdownAction)
 	s.mux.HandleFunc("/api/components/search/items", s.handleSearchItems)
 	s.registerGettingStartedRoutes()
 
@@ -300,6 +301,15 @@ func (s *Server) handleBannerAction(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_, _ = fmt.Fprint(w, `<p class="text-sm font-medium text-success">Banner action received</p>`)
+}
+
+func (s *Server) handleDropdownAction(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, _ = fmt.Fprint(w, `<p class="font-medium text-success">Dropdown action received</p>`)
 }
 
 func (s *Server) handleFormExternalSubmit(w http.ResponseWriter, r *http.Request) {

@@ -25,7 +25,7 @@ templ actionGroupDemoContent() {
         {Label: "Preview", Href: "/preview"},
         {Label: "Schedule", HTMX: &dropdown.HTMXConfig{Post: "/releases/schedule", Target: "#release-result", Swap: "innerHTML"}},
         // Optional local enhancement remains available after declarative action setup.
-        {Label: "Notify", OnClick: "schedule()"},
+        {Label: "Notify", OnClick: "notify()"},
         {Label: "Archive", Disabled: true, Tooltip: "Published releases cannot be archived"},
     },
 })`,

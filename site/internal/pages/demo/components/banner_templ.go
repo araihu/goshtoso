@@ -101,14 +101,13 @@ func bannerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With CTA Button",
-				Description: "Use Href for native navigation, HTMX for a server action, then optional OnClick for local enhancement.",
+				Description: "Use Href for native navigation or HTMX for a server action, with optional OnClick for local enhancement.",
 			},
 			bannerCTAPreview(),
 			`@banner.Banner(banner.Config{
     Description: "Get Fit Anywhere, Anytime 💪",
     CTA: &banner.CTAConfig{
         ActionLabel: "Start free trial",
-        Href: "/signup",
 		HTMX: &banner.HTMXConfig{
 			Post:   "/api/components/banner/action",
 			Target: "#banner-cta-result",
@@ -145,9 +144,7 @@ func bannerDemoContent() templ.Component {
     Description:  "We use cookies to improve your experience.",
     AcceptLabel:  "Accept All",
     RejectLabel:  "Decline",
-	AcceptHTMX: &banner.HTMXConfig{Post: "/consent/accept", Target: "#consent", Swap: "outerHTML"},
-	RejectHTMX: &banner.HTMXConfig{Post: "/consent/reject", Target: "#consent", Swap: "outerHTML"},
-	// Optional local behavior remains supported.
+	AcceptAction: "show = false",
 	RejectAction: "show = false",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)

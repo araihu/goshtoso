@@ -73,13 +73,6 @@
           this.closeSearch();
         }
       },
-      matches: function (element) {
-		return this.resultScore(
-			this.query,
-			element && element.dataset && element.dataset.searchTitle,
-			element && element.dataset && element.dataset.searchText,
-		) >= 0;
-      },
 		compactSearchValue: function (value) {
 			return this.stringValue(value).toLowerCase().replace(/[^a-z0-9]+/g, "");
 		},
@@ -107,24 +100,25 @@
 			var term = this.stringValue(query).trim().toLowerCase();
 			title = this.stringValue(title);
 			text = this.stringValue(text);
-			if (!term) return -1;
-			if (title.toLowerCase().indexOf(term) !== -1) return 0;
-			if (text.toLowerCase().indexOf(term) !== -1) return 100;
-			if (this.matchMode !== "fuzzy") return -1;
+			if (!term) return null;
+			if (title.toLowerCase().indexOf(term) !== -1) return [0, 0];
+			if (text.toLowerCase().indexOf(term) !== -1) return [1, 0];
+			if (this.matchMode !== "fuzzy") return null;
 			var titleScore = this.fuzzyScore(term, title);
-			if (titleScore >= 0) return 200 + titleScore;
+			if (titleScore >= 0) return [2, titleScore];
 			var textScore = this.fuzzyScore(term, text);
-			if (textScore >= 0) return 400 + textScore;
-			return -1;
+			if (textScore >= 0) return [3, textScore];
+			return null;
 		},
 		rankedMatches: function (values, scoreFor) {
 			var matches = [];
 			values.forEach(function (value, index) {
 				var score = scoreFor(value);
-				if (score >= 0) matches.push({ value: value, index: index, score: score });
+				if (score !== null) matches.push({ value: value, index: index, score: score });
 			});
 			matches.sort(function (left, right) {
-				if (left.score !== right.score) return left.score - right.score;
+				if (left.score[0] !== right.score[0]) return left.score[0] - right.score[0];
+				if (left.score[1] !== right.score[1]) return left.score[1] - right.score[1];
 				return left.index - right.index;
 			});
 			return matches.map(function (match) { return match.value; });

@@ -413,7 +413,7 @@ func TestDropdown_ActionsMenu(t *testing.T) {
 	t.Run("Disabled_Button_Item_Is_Inert", func(t *testing.T) {
 		openMenu(t)
 
-		archive := page.Locator("#dropdown-actions-archive")
+		archive := page.Locator("#dropdown-actions-locked")
 
 		disabled, err := archive.Evaluate("el => el.hasAttribute('disabled')", nil)
 		require.NoError(t, err)
@@ -427,7 +427,7 @@ func TestDropdown_ActionsMenu(t *testing.T) {
 
 		title, err := archive.GetAttribute("title")
 		require.NoError(t, err)
-		assert.Equal(t, "Archive not available in this state", title, "Tooltip should render as native title attr")
+		assert.Equal(t, "Not available", title, "Tooltip should render as native title attr")
 	})
 
 	t.Run("Danger_Item_Has_Danger_Classes", func(t *testing.T) {
