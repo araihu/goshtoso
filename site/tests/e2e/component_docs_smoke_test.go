@@ -406,7 +406,7 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 	for _, path := range pages {
 		for _, state := range states {
 			t.Run(strings.TrimPrefix(path, "/components/")+"/"+state.name, func(t *testing.T) {
-				page := newIsolatedPage(t)
+				page := newPage(t, sharedBrowser)
 				failures := watchPageFailures(page)
 				script := fmt.Sprintf(`
     document.cookie = "gt_storage=allowed; Path=/; SameSite=Lax";
