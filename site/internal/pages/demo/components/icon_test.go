@@ -27,6 +27,7 @@ func TestIconShowcaseRendersEveryGlyphInResponsiveGrid(t *testing.T) {
 	require.Len(t, heroicons.Glyphs, 67)
 	require.Equal(t, len(heroicons.Glyphs), strings.Count(html, `data-icon-card=`))
 	require.Contains(t, html, `grid-cols-1 sm:grid-cols-3 xl:grid-cols-6`)
+	require.Contains(t, html, "copy a standalone Go program")
 }
 
 func TestIconCodeEncoderReflectsMeaningfulSelectedOptions(t *testing.T) {

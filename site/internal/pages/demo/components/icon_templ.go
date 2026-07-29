@@ -66,7 +66,7 @@ func iconDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"icon-fragment\" x-data=\"iconCatalog\"><div class=\"mb-8 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Sprite icons</p><h1 id=\"icon\" data-toc-heading class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Heroicons, ready for Go</h1><p class=\"mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Browse bundled, typed symbols. Pick one to tune its exact <code class=\"font-mono text-sm\">icon.Config</code> and copy a Go fragment you can compile.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"icon-fragment\" x-data=\"iconCatalog\"><div class=\"mb-8 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Sprite icons</p><h1 id=\"icon\" data-toc-heading class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Heroicons, ready for Go</h1><p class=\"mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Browse bundled, typed symbols. Pick one to tune its exact <code class=\"font-mono text-sm\">icon.Config</code> and copy a standalone Go program.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
