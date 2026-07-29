@@ -32,7 +32,7 @@ import (
 	"strings"
 )
 
-//go:embed styles.css goshtoso-theme.css tailwind.version js/*.js js/runtime images
+//go:embed styles.css goshtoso-theme.css tailwind.version js/*.js js/runtime images icons
 var files embed.FS
 
 // Handler returns an http.Handler that serves the embedded Goshtoso assets
@@ -44,7 +44,13 @@ var files embed.FS
 //	http.Handle("/assets/", assets.Handler())             // correct
 //	http.Handle("/assets/", http.StripPrefix("/assets/", assets.Handler())) // WRONG: double-strip → 404
 func Handler() http.Handler {
-	return http.StripPrefix("/assets/", http.FileServer(http.FS(files)))
+	fileServer := http.FileServer(http.FS(files))
+	return http.StripPrefix("/assets/", http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if strings.HasPrefix(request.URL.Path, "icons/") {
+			writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		}
+		fileServer.ServeHTTP(writer, request)
+	}))
 }
 
 // StylesCSS returns the compiled Goshtoso Tailwind CSS.

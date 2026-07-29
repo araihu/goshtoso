@@ -18,6 +18,7 @@ concurrency:
 
 env:
   GO_VERSION: '1.26.5'
+  NODE_VERSION: '24'
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.5700.1'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
@@ -59,6 +60,10 @@ jobs:
           # same tree to the GHA cache backend on every go.sum change — a ~9min
           # post-job step that buys nothing here. Disable it.
           cache: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Verify ARC persistent caches
         run: |
@@ -102,13 +107,25 @@ jobs:
       - name: using-goshtoso skill reference drift check
         run: |
           go run ./cmd/skillgen
-          git diff --exit-code -- .claude/skills/using-goshtoso/components-reference.md \
+          git diff --exit-code -- \
+            .agents/skills/using-goshtoso/references/components-reference.md \
+            .claude/skills/using-goshtoso/components-reference.md \
             || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./cmd/skillgen' and commit"; exit 1; }
 
       - name: vendor JS constants drift check
         run: |
           go run ./cmd/vendorgen -check \
             || { echo "::error::assets/vendor_gen.go is stale — run 'go run ./cmd/vendorgen' and commit"; exit 1; }
+
+      - name: Heroicons bindings drift check
+        run: |
+          go run ./cmd/iconcatalog \
+            -catalog internal/iconcatalog/testdata/heroicons-catalog.json \
+            -namespace ui -product heroicons \
+            -sprite-url /assets/icons/heroicons.svg \
+            -package heroicons -const-prefix Icon \
+            -out components/icon/heroicons/names_gen.go -check \
+            || { echo "::error::Heroicons bindings are stale — run iconcatalog and commit names_gen.go"; exit 1; }
 
       - name: First-party JavaScript lint + drift check
         run: |
@@ -197,6 +214,10 @@ jobs:
           # same tree to the GHA cache backend on every go.sum change — a ~9min
           # post-job step that buys nothing here. Disable it.
           cache: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Verify ARC persistent caches
         run: |

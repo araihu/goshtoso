@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-50 component packages. Each is imported by its directory path; note the
+52 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -900,6 +900,45 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 **Options:** `WithActionGroupURL(url string)` · `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
 
 - **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx"
+
+## icon
+
+```go
+import "github.com/araihu/goshtoso/components/icon"  // package icon
+```
+
+**Entry points:** `Icon(cfg Config)`
+
+- **Mode** — ModeExternal = "", ModeInline = "inline"
+- **Size** — SizeXS = "xs", SizeSM = "sm", SizeMD = "md", SizeLG = "lg", SizeXL = "xl"
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `SpriteURL` | `string` | SpriteURL identifies the external sprite when Mode is ModeExternal. Prefer a relative same-origin URL. Cross-origin external &lt;use&gt; references depend on browser and CORS compatibility. HTTPS pages cannot reliably load HTTP sprite URLs because browsers may block mixed content. |
+| `Symbol` | `Symbol` | Symbol identifies the sprite symbol to render. |
+| `Size` | `Size` | Size controls the root SVG dimensions. |
+| `Label` | `string` | Label gives the icon an accessible image name. |
+| `Decorative` | `bool` | Decorative hides the icon from assistive technology, even when Label is set. |
+| `RootClass` | `string` | RootClass appends CSS classes to the root SVG. |
+| `Mode` | `Mode` | Mode selects external sprite or document-local symbol resolution. |
+
+## icon/heroicons
+
+```go
+import "github.com/araihu/goshtoso/components/icon/heroicons"  // package heroicons
+```
+
+- **icon.Symbol** — Icon16SolidArrowDown = "hi-16-solid-arrow-down", Icon16SolidArrowDownTray = "hi-16-solid-arrow-down-tray", Icon16SolidArrowPath = "hi-16-solid-arrow-path", Icon16SolidArrowTopRightOnSquare = "hi-16-solid-arrow-top-right-on-square", Icon16SolidArrowUp = "hi-16-solid-arrow-up", Icon16SolidArrowUturnLeft = "hi-16-solid-arrow-uturn-left", Icon16SolidArrowsUpDown = "hi-16-solid-arrows-up-down", Icon16SolidBars3 = "hi-16-solid-bars-3", Icon16SolidBell = "hi-16-solid-bell", Icon16SolidBookOpen = "hi-16-solid-book-open", Icon16SolidChartBar = "hi-16-solid-chart-bar", Icon16SolidCheck = "hi-16-solid-check", Icon16SolidCheckCircle = "hi-16-solid-check-circle", Icon16SolidChevronDown = "hi-16-solid-chevron-down", Icon16SolidChevronLeft = "hi-16-solid-chevron-left", Icon16SolidChevronRight = "hi-16-solid-chevron-right", Icon16SolidClipboard = "hi-16-solid-clipboard", Icon16SolidClipboardDocumentList = "hi-16-solid-clipboard-document-list", Icon16SolidClock = "hi-16-solid-clock", Icon16SolidCloudArrowUp = "hi-16-solid-cloud-arrow-up", Icon16SolidCodeBracket = "hi-16-solid-code-bracket", Icon16SolidCog6Tooth = "hi-16-solid-cog-6-tooth", Icon16SolidCube = "hi-16-solid-cube", Icon16SolidDocumentDuplicate = "hi-16-solid-document-duplicate", Icon16SolidDocumentText = "hi-16-solid-document-text", Icon16SolidEllipsisHorizontal = "hi-16-solid-ellipsis-horizontal", Icon16SolidEllipsisVertical = "hi-16-solid-ellipsis-vertical", Icon16SolidExclamationCircle = "hi-16-solid-exclamation-circle", Icon16SolidEye = "hi-16-solid-eye", Icon16SolidEyeSlash = "hi-16-solid-eye-slash", Icon16SolidFaceSmile = "hi-16-solid-face-smile", Icon16SolidFolder = "hi-16-solid-folder", Icon16SolidFunnel = "hi-16-solid-funnel", Icon16SolidHeart = "hi-16-solid-heart", Icon16SolidHome = "hi-16-solid-home", Icon16SolidIdentification = "hi-16-solid-identification", Icon16SolidInbox = "hi-16-solid-inbox", Icon16SolidInformationCircle = "hi-16-solid-information-circle", Icon16SolidLanguage = "hi-16-solid-language", Icon16SolidLink = "hi-16-solid-link", Icon16SolidLockClosed = "hi-16-solid-lock-closed", Icon16SolidMagnifyingGlass = "hi-16-solid-magnifying-glass", Icon16SolidMicrophone = "hi-16-solid-microphone", Icon16SolidMoon = "hi-16-solid-moon", Icon16SolidPaintBrush = "hi-16-solid-paint-brush", Icon16SolidPaperClip = "hi-16-solid-paper-clip", Icon16SolidPause = "hi-16-solid-pause", Icon16SolidPencilSquare = "hi-16-solid-pencil-square", Icon16SolidPlay = "hi-16-solid-play", Icon16SolidPlus = "hi-16-solid-plus", Icon16SolidPrinter = "hi-16-solid-printer", Icon16SolidQueueList = "hi-16-solid-queue-list", Icon16SolidRectangleGroup = "hi-16-solid-rectangle-group", Icon16SolidScissors = "hi-16-solid-scissors", Icon16SolidShieldCheck = "hi-16-solid-shield-check", Icon16SolidSparkles = "hi-16-solid-sparkles", Icon16SolidSquares2x2 = "hi-16-solid-squares-2x2", Icon16SolidStar = "hi-16-solid-star", Icon16SolidSun = "hi-16-solid-sun", Icon16SolidTableCells = "hi-16-solid-table-cells", Icon16SolidTrash = "hi-16-solid-trash", Icon16SolidUser = "hi-16-solid-user", Icon16SolidUserCircle = "hi-16-solid-user-circle", Icon16SolidUsers = "hi-16-solid-users", Icon16SolidWindow = "hi-16-solid-window", Icon16SolidXCircle = "hi-16-solid-x-circle", Icon16SolidXMark = "hi-16-solid-x-mark"
+
+**Glyph**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `GoName` | `string` |  |
+| `CanonicalName` | `string` |  |
+| `Symbol` | `icon.Symbol` |  |
 
 ## kbd
 

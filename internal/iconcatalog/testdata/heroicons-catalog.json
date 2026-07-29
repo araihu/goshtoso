@@ -1,0 +1,1280 @@
+{
+  "schemaVersion": 1,
+  "release": "v0.1.0",
+  "identityRevision": 11,
+  "assets": [
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-down",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-down.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-arrow-down",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "d211c881861313937a6189cdb711f04e4c8c68518b6e26979811d0e863844a3e"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-down-tray",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-down-tray.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-arrow-down-tray",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "99e18f3cc67359f6e79edd7bec2d65c6c2e9be481cc0e36c60e0dfb5c0f42f6e"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-path",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-path.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-arrow-path",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "8a4b799cc0e800ec8b3a1f06e58d0ac30bd8654757436ef52aae419fee247e00"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-top-right-on-square",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-top-right-on-square.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-arrow-top-right-on-square",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "449fef91543458cffa10005b4abe52ce35293c06365347a611354e6eae60f105"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-up",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-up.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-arrow-up",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "471eef699d5490a1522e6dbd2a2acbe3db4e0a46c4028e957a015acc20e6ba38"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-uturn-left",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-uturn-left.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-arrow-uturn-left",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "2d8ab47ee40f8d78eb8559fd35a9968cb986f083d93cf5d9e2698e8d759c3f6d"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrows-up-down",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrows-up-down.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-arrows-up-down",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "2b2a30bb67081424363425272554eb53b9ae8d4fdea0c8fadf037d957e4e596f"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-bars-3",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-bars-3.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-bars-3",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "77192500b0acc183b48449f5069731d1e6f818487126ae3d40d29a52a09df07a"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-bell",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-bell.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-bell",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "df245faf1740798e1fc07902d2ec3949b70ba29a5e0e7723ecdd3b809c13d0a0"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-book-open",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-book-open.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-book-open",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "9540376ebe4bfd1f65c0b3a1ef7caaef80186e55372c9a9dfcc20136339c0253"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-chart-bar",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-chart-bar.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-chart-bar",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "f59fd3cdbb020a731a892d88ba5e7eb99da3e2baddbf40c10833f1f4615f9c09"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-check",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-check.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-check",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "d5753d26eb7ed3d7979e8dd6b8eb9661f0db74452b6c274cf8d2c32dc29def5d"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-check-circle",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-check-circle.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-check-circle",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "85fd5731b1043ccd9a924e7294ec82d0ba49c740feb1e7abbbba752218fc97c9"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-chevron-down",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-chevron-down.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-chevron-down",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "fc65585422d3404641a2bf3a9caece74e28fae974107c3f57da547857f4996a5"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-chevron-left",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-chevron-left.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-chevron-left",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "007343edbbc86fbfcb1715cff947ef1da70bacf3a1172f600ed26f0271940e0f"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-chevron-right",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-chevron-right.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-chevron-right",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "4bcffd92f5afd4c905097fd2d630e45135918afa215cbbc63547a89ea3d5e828"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-clipboard",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-clipboard.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-clipboard",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "955acdf8f78ca01a9f03fba1113a14e9c45a5e6bc43749c5054008efb7f0c4dd"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-clipboard-document-list",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-clipboard-document-list.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-clipboard-document-list",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "64c4cf581cd5525b3067d31eb5f31207ea49ffd9112e5afc3bb1af4ccf2750e9"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-clock",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-clock.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-clock",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "a80c607c13e7a78902f7cfe39831c32518239f89eeb00a9f28a54a2b6dc6a1c7"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-cloud-arrow-up",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-cloud-arrow-up.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-cloud-arrow-up",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "e7f66e308ecb494a15a5d81a68a9b839c4b82c340f301e391e19ffccf31e2a8f"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-code-bracket",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-code-bracket.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-code-bracket",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "43f1c8c3ebec18b17c27259b6e9a77129af7e49b4cd34f5efd1bb1f94ad9edcf"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-cog-6-tooth",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-cog-6-tooth.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-cog-6-tooth",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "cfd861449197ab9eedb6b6f2e710abd0fcdb3ada0ba76d9ca2e2b84b96601d50"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-cube",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-cube.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-cube",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "bca456b95a31319ef2e149a24b5143ebf0e4bec016cb3e383b624fadbe853301"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-document-duplicate",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-document-duplicate.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-document-duplicate",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "4211268be9ddb43d08e6de446ce6108e44d5864881f3b657e74ee705f832428b"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-document-text",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-document-text.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-document-text",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "98de4feb8ffc1736f7813d208f24a64c5c2def5261fbe1969f7d8dc145f33607"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-ellipsis-horizontal",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-ellipsis-horizontal.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-ellipsis-horizontal",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "5c0e433be1d01e8bc3b6f88d3ddfeabc8675459c201276dddf9f3a35f5a053e8"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-ellipsis-vertical",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-ellipsis-vertical.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-ellipsis-vertical",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "0ade679275dc514d8cfb1e7791cd9fdb4d5a156aecef6c5487451743ff89a5d9"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-exclamation-circle",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-exclamation-circle.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-exclamation-circle",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "3227699bbc2ffe65147ae2d3a89f58cb45143d1618eedf368ce2a6dba81a61ad"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-eye",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-eye.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-eye",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "878a61e666f6326623e8b2aa0dec840843e227d55bbc02bffba6e1a5727ed543"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-eye-slash",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-eye-slash.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-eye-slash",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "5c540409ea5f7f390fb83bb377cc06e0da52711f35b8eadad43729d04f6f8114"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-face-smile",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-face-smile.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-face-smile",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "b62f62c029a053d2717ffaf0fb73c20a5765ea7af7bfb3ba91833711095ca1e2"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-folder",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-folder.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-folder",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "0cec203a63631443a63850cf049991fecb4b25a55c80ae3ee61d6152033bc160"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-funnel",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-funnel.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-funnel",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "f74c33d3b22d2d9f67563a6b80db3a5da6ad77775a7a45f768ac37ae777bddf7"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-heart",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-heart.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-heart",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "06ccbcb2411388eb2412bb2e0c7bbd9bf3da3d6730a61e276f8f211baf2d6b92"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-home",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-home.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-home",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "2f1f676625674a023a1787a0a0230cc855df25b57b6dc1376e2a3906e165c066"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-identification",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-identification.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-identification",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "2d8447b45ce5ffd0777beeae10dfbdc4b5d10ede61d513e6411927140c31d3c3"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-inbox",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-inbox.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-inbox",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "97022c2a40c4f385fb001506b750c4cd3bd04e678c45c6951bb9bc8c3d33f394"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-information-circle",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-information-circle.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-information-circle",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "e0c03cd8a5cdbc37ec0a075a351d1dd83e9a96e76a206d2130321b0e36359e2a"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-language",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-language.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-language",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "8c534dc0f9144a49a99fac4df0ebf85f51f2d6ddef993c217d31cb88186b823c"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-link",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-link.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-link",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "d3e90aee401d90646079842fa9cf7851ce1279880f040175bf02e74230fb61db"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-lock-closed",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-lock-closed.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-lock-closed",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "f8c948638290421f24ba1ede754e2b382bd30d70c764c96863796959e869f4f5"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-magnifying-glass",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-magnifying-glass.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-magnifying-glass",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "f36d5ac3f133022a9c18e99ae2fae6693baa6d1f9056fd3aa6866ca36d6e8e73"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-microphone",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-microphone.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-microphone",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "478980143a6691e9b255e36ce19094e64dcd5cfaf2855115b00aacccc68ab209"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-moon",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-moon.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-moon",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "e46e8a091e548e5338c476b24c7158dcee1b8287370b95077e2e74be8db1426a"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-paint-brush",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-paint-brush.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-paint-brush",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "676c891bf15da40ced86dcb2e111c8cbf061bbdbf3e5886bdf6d25b846f5ae10"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-paper-clip",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-paper-clip.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-paper-clip",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "9a81c06bcd020eb7295ef65d9fe06b78c344bc8faf3b3e17e6989c3a08ca0329"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-pause",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-pause.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-pause",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "54d45ac8cf2760cd475817870284f5f201b7e8f91984148e09b6b07d05c4b493"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-pencil-square",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-pencil-square.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-pencil-square",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "35c224ed5ebe9728a5939544e3429ad6e94f4ff108b30808392fe9b008d8456d"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-play",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-play.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-play",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "21efdcd7891fce9d8f15a8a52bd445b04b68530df400f773720ac0b29928cb8d"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-plus",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-plus.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-plus",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "643b5eebf3417bb3552b5a39c47b48857bc6eff2368d0c9f6dff93afd7f12f03"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-printer",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-printer.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-printer",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "39b994f7aabd0f48cc43d52d3516a5bebe1589951675f968c310b6a97acc75af"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-queue-list",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-queue-list.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-queue-list",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "d2dc9142ba920dc19f1319b10615725808946f113767d590de2fa7d76d62ca90"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-rectangle-group",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-rectangle-group.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-rectangle-group",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "5d2c71fb9cb78f8d75ec35071a5698a080ef2ec41e0921166b4ee2eb4b40fb18"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-scissors",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-scissors.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-scissors",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "fe668ad45aed742e61022518923d9a418ca9891c31c210597b85c3095ef9db35"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-shield-check",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-shield-check.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-shield-check",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "b4a05fe51b18f0b7f72d08e2a1257a9f2faf20b71118dbaab545a2e0ec96fc36"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-sparkles",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-sparkles.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-sparkles",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "5ceaa9edd0b23b2cb0c0d0c8bad40b786d5ac69d321e23ac9b0c42e08bacc757"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-squares-2x2",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-squares-2x2.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-squares-2x2",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "d3fffd69f7cc3d4a553dcf1f7c856349b9b6367a4385b83b3dfc66a5a8487a84"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-star",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-star.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-star",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "1f9294e8f97650f67976c7a634a9e64f8a757be4075e5ab3dc28620b0bffe156"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-sun",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-sun.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-sun",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "0e180c764b629cf5cbdef8ef52927f2b47a704bd95c4de8b18e0fd5db4e34590"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-table-cells",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-table-cells.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-table-cells",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "4007457eb5cc9a9af885b9e1c6e4a8bac9919db73305d203ba08ee239f1d0788"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-trash",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-trash.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-trash",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "d6bee02415196125da5d47c8e9e5389e5b68a151679619dbe916037b8fbf2f63"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-user",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-user.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-user",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "36cbbd7afffa8642af2ba9b61bfab4e2ea5a03623218fb4c7b858635d7ff6aa8"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-user-circle",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-user-circle.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-user-circle",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "b5b0d333e5d5f86ae7a72626d0f95d97215a8d255506ab3758f95923343e77b6"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-users",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-users.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-users",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "ea21ae84ffb2bc44ceed5e2b316c8f7883364433823a504183b5a5a767caff77"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-window",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-window.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-window",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "248caebfb689ac652722dc34730076662b24c400c22c3a54d9e07f88a6dca959"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-x-circle",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-x-circle.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-x-circle",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "0ef35fd7972f7d49753b1bd8556bf8d80e7928469449b86feef247631f3cc665"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-x-mark",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-x-mark.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {
+        "viewBox": "0 0 16 16"
+      },
+      "spriteSymbol": "hi-16-solid-x-mark",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "ff6c5b131ff8a6d7db5c49d810129b5b758ac04f5c40916eb46841e724daea8e"
+    }
+  ]
+}

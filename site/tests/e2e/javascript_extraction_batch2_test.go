@@ -210,14 +210,20 @@ func TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources(t *testing.T) {
 	_, err := page.Goto(baseURL + "/getting-started")
 	require.NoError(t, err)
 	_, err = page.WaitForFunction(
-		"() => window.__gtChatInit === true && window.__batch2Lifecycle.chatAdds === 2", nil)
+		"() => typeof window.htmx !== 'undefined' && window.__gtChatInit === true && window.__batch2Lifecycle.chatAdds === 2", nil)
 	require.NoError(t, err, "chat document hooks should install exactly once")
+	navigateFragment := func(path string) {
+		t.Helper()
+		_, navigateErr := page.Evaluate(
+			`path => window.htmx.ajax('GET', path, {target: '#main-content', swap: 'innerHTML'})`, path)
+		require.NoError(t, navigateErr)
+	}
 	_, err = page.Evaluate(`() => localStorage.setItem('themeOverrides', JSON.stringify({
 		primary: 'blue-700', danger: 17, unknown: 'red-500'
 	}))`, nil)
 	require.NoError(t, err)
 
-	require.NoError(t, page.Locator("a[href='/docs/theme']").First().Click())
+	navigateFragment("/docs/theme")
 	_, err = page.WaitForFunction(
 		`() => {
 			const root = document.querySelector('[x-data=themePage]');
@@ -227,7 +233,7 @@ func TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources(t *testing.T) {
 		}`, nil)
 	require.NoError(t, err, "theme provider should own one active observer")
 
-	require.NoError(t, page.Locator("a[href='/examples/ticker']").First().Click())
+	navigateFragment("/examples/ticker")
 	_, err = page.WaitForFunction(`() => {
 		const stats = window.__batch2Lifecycle;
 		return document.querySelector('#ticker-fragment')?._x_dataStack &&
@@ -235,7 +241,7 @@ func TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources(t *testing.T) {
 	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err, "theme observer should disconnect and ticker listeners should attach")
 
-	require.NoError(t, page.Locator("a[href='/examples/profile']").First().Click())
+	navigateFragment("/examples/profile")
 	_, err = page.WaitForFunction(`() => {
 		const stats = window.__batch2Lifecycle;
 		return document.querySelector('#profile-fragment')?._x_dataStack && stats.tickerRemoves >= 2;
@@ -248,7 +254,7 @@ func TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources(t *testing.T) {
 	_, err = page.WaitForFunction("() => window.__batch2Lifecycle.urlsCreated >= 1", nil)
 	require.NoError(t, err)
 
-	require.NoError(t, page.Locator("a[href='/getting-started']").First().Click())
+	navigateFragment("/getting-started")
 	_, err = page.WaitForFunction(
 		"() => !document.querySelector('#profile-fragment') && window.__batch2Lifecycle.urlsRevoked >= 1", nil)
 	require.NoError(t, err, "profile provider should revoke owned object URLs on teardown")

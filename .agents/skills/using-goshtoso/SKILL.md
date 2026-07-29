@@ -137,6 +137,51 @@ before choosing between constructors or configuration fields. It documents the
 common component interface, concrete return values, constructor styles, stable
 Kind identity, and rendered defaults.
 
+## Sprite Icons
+
+Use `components/icon` for accessible SVG sprite symbols. External mode is the
+zero-value default: give it a relative, same-origin `SpriteURL` whenever
+possible. The bundled Heroicons package supplies that URL and typed constants:
+
+```templ
+import (
+    "github.com/araihu/goshtoso/components/icon"
+    "github.com/araihu/goshtoso/components/icon/heroicons"
+)
+
+templ StatusMark() {
+    @icon.Icon(icon.Config{
+        SpriteURL: heroicons.SpriteURL,
+        Symbol:    heroicons.Icon16SolidCheck,
+        Label:     "Saved",
+    })
+}
+```
+
+Use a nonblank `Label` for a labelled image. Empty label or `Decorative: true`
+means decorative; do not present a label and decorative intent as separate
+meanings. `RootClass` can use `text-*` utilities because compatible sprites
+inherit `currentColor`; do not add root fill or stroke overrides.
+
+Use `Mode: icon.ModeInline` with no `SpriteURL` only when the `<symbol>` already
+exists in the current document. Cross-origin external `<use>` references vary
+by browser and CORS policy; an HTTPS page may block an HTTP sprite. Keep
+same-origin relative sprite paths as the normal deployment choice.
+
+Generate project-local typed bindings for a schema-v1 catalog instead of
+putting project-specific names in Goshtoso:
+
+```bash
+go run github.com/araihu/goshtoso/cmd/iconcatalog@latest \
+  -catalog ./assets/icons/catalog.json \
+  -namespace ui -product application -sprite-url /assets/icons/app.svg \
+  -package appicons -const-prefix Icon -out ./internal/appicons/names_gen.go
+```
+
+Run it with `-check` in CI. The generator rejects unsupported schemas,
+duplicate or malformed names/symbols, identifier collisions, non-sprite SVG
+inputs, and incompatible color behavior.
+
 ## From First Component to Application
 
 Do not invent the page around isolated components. For any build or redesign,

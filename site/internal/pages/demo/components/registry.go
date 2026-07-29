@@ -95,6 +95,12 @@ var Demos = map[string]DemoEntry{
 	"examples/wizard":             {Title: "Onboarding Wizard", Active: "wizard", Content: examples.WizardContent},
 }
 
+func init() {
+	if _, ok := catalog.Lookup("components/icon"); ok {
+		Demos["components/icon"] = DemoEntry{Title: "Icon", Active: "icon", Content: iconDemoContent}
+	}
+}
+
 // LookupDemo returns the entry for a given canonical key (no leading slash).
 func LookupDemo(key string) (DemoEntry, bool) {
 	e, ok := Demos[key]

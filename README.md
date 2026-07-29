@@ -28,8 +28,8 @@ of floating copy-paste snippets.
 
 ## Highlights
 
-- **50 public component packages** documented across **49 documentation pages**,
-  exposing **81 renderable primitives** for composition, forms, navigation, overlays, data
+- **52 public component packages** documented across **50 documentation pages**,
+	  exposing **82 renderable primitives** for composition, forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
   instant local interaction makes sense.
@@ -234,6 +234,34 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -out=css/goshtoso-base.css
 See [docs/USAGE.md](docs/USAGE.md) for the full asset strategy.
 Release maintainers should also use
 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) before tagging.
+
+## Sprite Icons
+
+`components/icon` renders accessible SVG `<use>` references. The bundled
+`components/icon/heroicons` package provides typed symbols and a same-origin
+default sprite URL:
+
+```templ
+import (
+    "github.com/araihu/goshtoso/components/icon"
+    "github.com/araihu/goshtoso/components/icon/heroicons"
+)
+
+templ SaveIcon() {
+    @icon.Icon(icon.Config{
+        SpriteURL: heroicons.SpriteURL,
+        Symbol:    heroicons.Icon16SolidCheck,
+        Label:     "Saved",
+    })
+}
+```
+
+Use a relative, same-origin sprite URL by default. `ModeInline` resolves an
+already-present symbol from the current document; cross-origin external sprites
+depend on browser support and CORS, and HTTPS pages should not reference an HTTP
+sprite. A blank label and `Decorative: true` both produce a decorative icon.
+See [docs/USAGE.md](docs/USAGE.md#sprite-icons) for generator and deployment
+details.
 
 ## Repository Layout
 

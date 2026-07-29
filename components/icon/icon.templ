@@ -1,0 +1,14 @@
+package icon
+
+// iconTemplate renders a safe SVG sprite reference.
+templ iconTemplate(cfg Config) {
+	<svg xmlns="http://www.w3.org/2000/svg" class={ cfg.classes() }
+		if cfg.decorative() {
+			aria-hidden="true"
+		} else {
+			role="img" aria-label={ cfg.label() }
+		}
+	>
+		<use href={ cfg.href() }></use>
+	</svg>
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "release": "v0.1.0",
+  "identityRevision": 11,
+  "assets": [
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-down",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-down.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {"viewBox": "0 0 16 16"},
+      "spriteSymbol": "hi-16-solid-arrow-down",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "d211c881861313937a6189cdb711f04e4c8c68518b6e26979811d0e863844a3e"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-down-tray",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-down-tray.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {"viewBox": "0 0 16 16"},
+      "spriteSymbol": "hi-16-solid-arrow-down-tray",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "99e18f3cc67359f6e79edd7bec2d65c6c2e9be481cc0e36c60e0dfb5c0f42f6e"
+    },
+    {
+      "canonicalName": "ui-hi-16-solid-arrow-path",
+      "namespace": "ui",
+      "path": "icons/ui/heroicons/16-solid-arrow-path.svg",
+      "product": "heroicons",
+      "artwork": "icon",
+      "appearance": "default",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg",
+      "dimensions": {"viewBox": "0 0 16 16"},
+      "spriteSymbol": "hi-16-solid-arrow-path",
+      "colorBehavior": "monochrome",
+      "license": "MIT",
+      "source": "heroicons@v2.2.0",
+      "sha256": "8a4b799cc0e800ec8b3a1f06e58d0ac30bd8654757436ef52aae419fee247e00"
+    }
+  ]
+}
