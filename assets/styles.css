@@ -885,6 +885,9 @@
   .mb-8 {
     margin-bottom: calc(var(--spacing) * 8);
   }
+  .mb-10 {
+    margin-bottom: calc(var(--spacing) * 10);
+  }
   .mb-14 {
     margin-bottom: calc(var(--spacing) * 14);
   }
@@ -998,6 +1001,10 @@
   .size-10 {
     width: calc(var(--spacing) * 10);
     height: calc(var(--spacing) * 10);
+  }
+  .size-11 {
+    width: calc(var(--spacing) * 11);
+    height: calc(var(--spacing) * 11);
   }
   .size-12 {
     width: calc(var(--spacing) * 12);
@@ -1129,6 +1136,9 @@
   .max-h-\[min\(28rem\,calc\(100vh-12rem\)\)\] {
     max-height: min(28rem, calc(100vh - 12rem));
   }
+  .max-h-full {
+    max-height: 100%;
+  }
   .max-h-svh {
     max-height: 100svh;
   }
@@ -1152,6 +1162,12 @@
   }
   .min-h-11 {
     min-height: calc(var(--spacing) * 11);
+  }
+  .min-h-36 {
+    min-height: calc(var(--spacing) * 36);
+  }
+  .min-h-44 {
+    min-height: calc(var(--spacing) * 44);
   }
   .min-h-48 {
     min-height: calc(var(--spacing) * 48);
@@ -1802,6 +1818,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .overflow-auto {
+    overflow: auto;
+  }
   .overflow-clip {
     overflow: clip;
   }
@@ -1998,6 +2017,12 @@
   }
   .border-warning-action {
     border-color: var(--color-warning-action);
+  }
+  .border-white\/10 {
+    border-color: color-mix(in srgb, #fff 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+    }
   }
   .border-white\/20 {
     border-color: color-mix(in srgb, #fff 20%, transparent);
@@ -4818,6 +4843,16 @@
       }
     }
   }
+  .hover\:bg-white\/10 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in srgb, #fff 10%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+        }
+      }
+    }
+  }
   .hover\:text-danger {
     &:hover {
       @media (hover: hover) {
@@ -5271,6 +5306,11 @@
   .focus-visible\:outline-warning-action {
     &:focus-visible {
       outline-color: var(--color-warning-action);
+    }
+  }
+  .focus-visible\:outline-white {
+    &:focus-visible {
+      outline-color: var(--color-white);
     }
   }
   .focus-visible\:outline-none {
@@ -5977,6 +6017,11 @@
       grid-template-columns: minmax(0,1fr) 12rem auto;
     }
   }
+  .md\:grid-cols-\[minmax\(0\,1fr\)_18rem\] {
+    @media (width >= 48rem) {
+      grid-template-columns: minmax(0,1fr) 18rem;
+    }
+  }
   .md\:grid-cols-\[minmax\(0\,2fr\)_minmax\(18rem\,3fr\)\] {
     @media (width >= 48rem) {
       grid-template-columns: minmax(0,2fr) minmax(18rem,3fr);
@@ -6162,6 +6207,11 @@
       flex-direction: row;
     }
   }
+  .lg\:items-center {
+    @media (width >= 64rem) {
+      align-items: center;
+    }
+  }
   .lg\:items-end {
     @media (width >= 64rem) {
       align-items: flex-end;
@@ -6333,6 +6383,11 @@
   .xl\:grid-cols-4 {
     @media (width >= 80rem) {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .xl\:grid-cols-6 {
+    @media (width >= 80rem) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
   .xl\:grid-cols-\[minmax\(0\,1fr\)_16rem\] {
@@ -6622,6 +6677,14 @@
       }
     }
   }
+  .dark\:bg-primary-dark\/15 {
+    &:where(.dark, .dark *) {
+      background-color: color-mix(in srgb, oklch(71.4% 0.203 305.504) 15%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-primary-dark) 15%, transparent);
+      }
+    }
+  }
   .dark\:bg-primary-dark\/20 {
     &:where(.dark, .dark *) {
       background-color: color-mix(in srgb, oklch(71.4% 0.203 305.504) 20%, transparent);
@@ -6753,6 +6816,14 @@
       background-color: color-mix(in srgb, oklch(26.9% 0 0) 20%, transparent);
       @supports (color: color-mix(in lab, red, red)) {
         background-color: color-mix(in oklab, var(--color-surface-dark) 20%, transparent);
+      }
+    }
+  }
+  .dark\:bg-surface-dark\/30 {
+    &:where(.dark, .dark *) {
+      background-color: color-mix(in srgb, oklch(26.9% 0 0) 30%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-surface-dark) 30%, transparent);
       }
     }
   }

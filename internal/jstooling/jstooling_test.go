@@ -160,6 +160,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"site/assets/js/src/tab-view.js":               `(() => { window.tabViewFixture = true })();`,
 		"site/assets/js/src/action-group.js":           `(() => { window.actionGroupDemoFixture = true })();`,
 		"site/assets/js/src/avatar-showcase.js":        `(() => { window.avatarShowcaseFixture = true })();`,
+		"site/assets/js/src/icon-catalog.js":           `(() => { window.iconCatalogFixture = true })();`,
 		"site/assets/js/src/log-feed.js":               `(() => { window.logFeedFixture = true })();`,
 		"site/assets/js/src/chat.js":                   `(() => { window.chatFixture = true })();`,
 		"site/assets/js/src/profile-images.js":         `(() => { window.profileImagesFixture = true })();`,
@@ -244,7 +245,7 @@ func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte)
 	}
 	demoFixtures := []string{
 		"siteBootstrapFixture", "demoLayoutFixture", "selectDemoFixture", "tabViewFixture",
-		"actionGroupDemoFixture", "avatarShowcaseFixture", "logFeedFixture",
+		"actionGroupDemoFixture", "avatarShowcaseFixture", "iconCatalogFixture", "logFeedFixture",
 		"chatFixture", "profileImagesFixture", "tickerPaneFixture", "themePageFixture",
 	}
 	assertBundleContainsOnly(t, "component bundle", componentBundle, componentFixtures, demoFixtures)

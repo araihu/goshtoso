@@ -120,14 +120,14 @@ func TestDependenciesDocumentationMapsToHeadPackage(t *testing.T) {
 
 func TestIconCatalogEntryMapsToPublicPackage(t *testing.T) {
 	entry, ok := catalog.Lookup("components/icon")
-	if !slices.Contains(components.AllKinds(), components.Kind("icon")) {
+	if !slices.Contains(components.AllKinds(), components.KindIcon) {
 		require.False(t, ok)
 		return
 	}
 	require.True(t, ok)
 	require.Equal(t, "Display", entry.Section)
 	require.Equal(t, "github.com/araihu/goshtoso/components/icon", entry.GoPackagePath())
-	require.Equal(t, []components.Kind{components.Kind("icon")}, entry.Kinds)
+	require.Equal(t, []components.Kind{components.KindIcon}, entry.Kinds)
 }
 
 func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {

@@ -218,7 +218,7 @@ var componentPages = availableComponentPages([]Entry{
 		Description: "Render accessible SVG sprite symbols from a relative same-origin sprite or the current document without forcing fill or stroke styles.",
 		Section:     "Display",
 		Order:       16,
-		Kinds:       []components.Kind{components.Kind("icon")},
+		Kinds:       []components.Kind{components.KindIcon},
 	},
 	{
 		Key:         "components/kbd",
@@ -574,7 +574,7 @@ var componentPages = availableComponentPages([]Entry{
 })
 
 func availableComponentPages(pages []Entry) []Entry {
-	if slices.Contains(components.AllKinds(), components.Kind("icon")) {
+	if slices.Contains(components.AllKinds(), components.KindIcon) {
 		return pages
 	}
 	pages = slices.DeleteFunc(pages, func(entry Entry) bool {

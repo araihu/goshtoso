@@ -235,6 +235,71 @@ If the application cannot permit those runtime capabilities, do not use
 with the required plugins and component scripts. Verify behavior in the browser:
 a self-hosted file may return 200 while CSP still prevents Alpine from starting.
 
+## Sprite icons
+
+`icon.Icon` renders one accessible SVG sprite symbol. Prefer a relative,
+same-origin `SpriteURL`: it works with the same asset handler and deployment
+origin as the rest of the application. The bundled Heroicons defaults require
+no custom sprite hosting when `/assets/` is mounted:
+
+```templ
+import (
+    "github.com/araihu/goshtoso/components/icon"
+    "github.com/araihu/goshtoso/components/icon/heroicons"
+)
+
+templ StatusIcon() {
+    @icon.Icon(icon.Config{
+        SpriteURL: heroicons.SpriteURL,
+        Symbol:    heroicons.Icon16SolidCheckCircle,
+        Label:     "Approved",
+        Size:      icon.SizeLG,
+        RootClass: "text-success",
+    })
+}
+```
+
+Use a nonblank `Label` for an image announced to assistive technology. An empty
+label is decorative; `Decorative: true` also makes the icon decorative and wins
+even if a label was provided. Do not set both in a way that suggests two
+meanings. `RootClass` can set `text-*` color utilities because compatible sprite
+paths inherit `currentColor`; Goshtoso does not force root `fill` or `stroke`.
+
+For a symbol already embedded in the same document, omit `SpriteURL` and use
+inline mode:
+
+```templ
+@icon.Icon(icon.Config{
+    Mode:   icon.ModeInline,
+    Symbol: "app-mark",
+    Label:  "Application mark",
+})
+```
+
+Cross-origin external `<use>` references remain browser- and CORS-dependent.
+Do not rely on an HTTP sprite from an HTTPS page: mixed-content protections can
+block it. Keep same-origin relative URLs as the deployment default.
+
+### Generate project-local typed bindings
+
+`iconcatalog` generates an enumerable `Glyphs` list and typed `icon.Symbol`
+constants from a schema-v1 asset catalog. Keep the catalog and generated Go file
+in the consuming project; the generic Goshtoso package contains no project or
+brand-specific names.
+
+```bash
+go run github.com/araihu/goshtoso/cmd/iconcatalog@latest \
+  -catalog ./assets/icons/catalog.json \
+  -namespace ui -product application -sprite-url /assets/icons/app.svg \
+  -package appicons -const-prefix Icon \
+  -out ./internal/appicons/names_gen.go
+```
+
+Run the same command with `-check` in CI. The generator rejects unsupported
+schema versions, malformed or duplicate canonical names and sprite symbols,
+identifier collisions, non-SVG/non-sprite assets, and incompatible color
+behavior rather than emitting unsafe or ambiguous bindings.
+
 ## Using your own Tailwind build
 
 `goshtoso -version` prints the Tailwind version Goshtoso's CSS was built with

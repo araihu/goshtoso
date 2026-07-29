@@ -235,6 +235,34 @@ See [docs/USAGE.md](docs/USAGE.md) for the full asset strategy.
 Release maintainers should also use
 [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) before tagging.
 
+## Sprite Icons
+
+`components/icon` renders accessible SVG `<use>` references. The bundled
+`components/icon/heroicons` package provides typed symbols and a same-origin
+default sprite URL:
+
+```templ
+import (
+    "github.com/araihu/goshtoso/components/icon"
+    "github.com/araihu/goshtoso/components/icon/heroicons"
+)
+
+templ SaveIcon() {
+    @icon.Icon(icon.Config{
+        SpriteURL: heroicons.SpriteURL,
+        Symbol:    heroicons.Icon16SolidCheck,
+        Label:     "Saved",
+    })
+}
+```
+
+Use a relative, same-origin sprite URL by default. `ModeInline` resolves an
+already-present symbol from the current document; cross-origin external sprites
+depend on browser support and CORS, and HTTPS pages should not reference an HTTP
+sprite. A blank label and `Decorative: true` both produce a decorative icon.
+See [docs/USAGE.md](docs/USAGE.md#sprite-icons) for generator and deployment
+details.
+
 ## Repository Layout
 
 ```text
