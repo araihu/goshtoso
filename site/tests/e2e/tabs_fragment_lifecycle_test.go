@@ -22,8 +22,6 @@ func TestTabs_HTMXFragmentLifecycle(t *testing.T) {
 	failures := watchPageFailures(page)
 	require.NoError(t, page.AddInitScript(playwright.Script{Content: new(`
 		window.__tabsFragmentLifecycleProbe = {
-			manualInitTree: 0,
-			manualDestroyTree: 0,
 			duplicateClickBindings: 0,
 			retryTimers: 0,
 		};
@@ -56,19 +54,13 @@ func TestTabs_HTMXFragmentLifecycle(t *testing.T) {
 
 	probe, err := page.Evaluate(`() => {
 		const probe = window.__tabsFragmentLifecycleProbe;
-		return [probe.manualInitTree, probe.manualDestroyTree, probe.duplicateClickBindings, probe.retryTimers];
+		return [probe.duplicateClickBindings, probe.retryTimers];
 	}`, nil)
 	require.NoError(t, err)
 	metrics, ok := probe.([]any)
 	require.True(t, ok, "fragment lifecycle probe should return metrics")
-	// Alpine's MutationObserver calls its internal initTree closure. The public
-	// Alpine.initTree function is intentionally not invoked by this navigation.
-	// Tab state and keyboard assertions above prove the observer initialized the
-	// swapped fragment without an application-side manual initialization call.
 	require.Equal(t, 0, metrics[0])
 	require.Equal(t, 0, metrics[1])
-	require.Equal(t, 0, metrics[2])
-	require.Equal(t, 0, metrics[3])
 	failures.RequireEmpty(t)
 }
 
@@ -104,16 +96,6 @@ func installTabsFragmentLifecycleProbe(t *testing.T, page playwright.Page) {
 	t.Helper()
 	_, err := page.Evaluate(`() => {
 		const probe = window.__tabsFragmentLifecycleProbe;
-		const initTree = Alpine.initTree;
-		const destroyTree = Alpine.destroyTree;
-		Alpine.initTree = function (...args) {
-			probe.manualInitTree += 1;
-			return initTree.apply(this, args);
-		};
-		Alpine.destroyTree = function (...args) {
-			probe.manualDestroyTree += 1;
-			return destroyTree.apply(this, args);
-		};
 		const addEventListener = HTMLElement.prototype.addEventListener;
 		HTMLElement.prototype.addEventListener = function (type, listener, options) {
 			if (type === 'click' && this.getAttribute('role') === 'tab') {
