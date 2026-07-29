@@ -108,7 +108,10 @@ func TestSearchModalCustomValues(t *testing.T) {
 	}))
 
 	for _, want := range []string{
-		`goshtosoSearchModal(&#39;modal-search&#39;, 7, 80)`,
+		`x-data="goshtosoSearchModal($el)"`,
+		`data-search-id="modal-search"`,
+		`data-search-max-results="7"`,
+		`data-search-description-max-length="80"`,
 		`id="modal-search-dialog"`,
 		`aria-labelledby="modal-search-label"`,
 		`aria-label="Docs lookup results"`,
@@ -197,7 +200,9 @@ func TestSearchFieldCustomLabelAndShortcut(t *testing.T) {
 	}))
 
 	for _, want := range []string{
-		`goshtosoSearchField(&#39;field-search&#39;, false)`,
+		`x-data="goshtosoSearchField($el)"`,
+		`data-search-id="field-search"`,
+		`data-search-global-shortcut="false"`,
 		`aria-controls="field-search-dialog"`,
 		`Quick find`,
 		`F3`,
@@ -223,8 +228,9 @@ func TestSearchComposesFieldAndModal(t *testing.T) {
 	}))
 
 	for _, want := range []string{
-		`goshtosoSearchField(&#39;combo-search&#39;, false)`,
-		`goshtosoSearchModal(&#39;combo-search&#39;, 4, 120)`,
+		`x-data="goshtosoSearchField($el)"`,
+		`x-data="goshtosoSearchModal($el)"`,
+		`data-search-id="combo-search"`,
 		`id="combo-search-dialog"`,
 		`Try another term.`,
 	} {
@@ -234,22 +240,28 @@ func TestSearchComposesFieldAndModal(t *testing.T) {
 	}
 }
 
-// TestJSStringEscaping covers backslash and single-quote escaping used to make
-// the Alpine x-data expression safe.
-func TestJSStringEscaping(t *testing.T) {
-	cases := []struct {
-		in   string
-		want string
-	}{
-		{`plain`, `plain`},
-		{`it's`, `it\'s`},
-		{`a\b`, `a\\b`},
-		{`both'\`, `both\'\\`},
-	}
-	for _, tc := range cases {
-		if got := jsString(tc.in); got != tc.want {
-			t.Errorf("jsString(%q) = %q, want %q", tc.in, got, tc.want)
+func TestSearchDynamicConfigUsesInertDataAttributes(t *testing.T) {
+	html := renderHTML(t, Search(Config{
+		ID:                   `docs'); alert(1); //`,
+		GlobalShortcut:       true,
+		MaxResults:           7,
+		DescriptionMaxLength: 80,
+	}))
+
+	for _, want := range []string{
+		`data-search-id="docs&#39;); alert(1); //"`,
+		`data-search-global-shortcut="true"`,
+		`data-search-max-results="7"`,
+		`data-search-description-max-length="80"`,
+		`x-data="goshtosoSearchField($el)"`,
+		`x-data="goshtosoSearchModal($el)"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("Search inert config missing %q in\n%s", want, html)
 		}
+	}
+	if strings.Contains(html, `goshtosoSearchField(&#39;docs`) || strings.Contains(html, `<script`) {
+		t.Fatalf("Search embedded instance data into executable JavaScript:\n%s", html)
 	}
 }
 

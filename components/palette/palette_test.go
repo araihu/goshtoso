@@ -19,6 +19,9 @@ func render(t *testing.T, cfg Config) string {
 
 func TestPalette_GridAndStaticDispatch(t *testing.T) {
 	html := render(t, Config{ID: "palette-surface"})
+	assert.Contains(t, html, `x-data="goshtosoPalette($el)"`)
+	assert.Contains(t, html, `data-palette-swatches="`)
+	assert.NotContains(t, html, "<script")
 	want := len(defaultHues) * len(defaultShades)
 	assert.Equal(t, want, strings.Count(html, `style="background-color: var(--color-`), "one grid button per hue×shade")
 	assert.Contains(t, html, `data-cls="blue-700"`)

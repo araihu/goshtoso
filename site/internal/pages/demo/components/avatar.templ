@@ -12,64 +12,12 @@ templ AvatarDemoPage() {
 	@demo.Layout("Avatar", "avatar", avatarDemoContent())
 }
 
-// avatarShowcaseScript registers an Alpine data component the demo preview
-// uses to drive every avatar's size class from a single selector. Using
-// <script>+Alpine.data() instead of inline x-data avoids the templ escape
-// trap with quoted JS object literals.
-templ avatarShowcaseScript() {
-	@templ.Raw(`<script>
-(function () {
-  var factory = () => ({
-    selected: 'md',
-    radius: 'md',
-    sizes: ['xs','sm','md','lg','xl','2xl'],
-    radii: ['none','xs','sm','md','lg'],
-    sizeMap: {
-      xs:  'size-8 text-xs',
-      sm:  'size-10 text-sm',
-      md:  'size-14 text-2xl',
-      lg:  'size-20 text-3xl',
-      xl:  'size-24 text-4xl',
-      '2xl': 'size-32 text-5xl'
-    },
-    radiusMap: {
-      none: 'rounded-none',
-      xs: 'rounded-xs',
-      sm: 'rounded-sm',
-      md: 'rounded-md',
-      lg: 'rounded-lg'
-    },
-    statusSizeMap: {
-      xs: 'size-2', sm: 'size-2.5', md: 'size-4',
-      lg: 'size-5', xl: 'size-6', '2xl': 'size-7'
-    },
-    get avatarSizeClass()       { return this.sizeMap[this.selected]; },
-    get avatarRadiusClass()     { return this.radiusMap[this.radius]; },
-    get avatarStatusSizeClass() { return this.statusSizeMap[this.selected]; }
-  });
-  // Full page load: Alpine isn't running yet, so defer to alpine:init.
-  // htmx fragment nav: Alpine is already running and alpine:init never
-  // re-fires, so register immediately and re-init any x-data="avatarShowcase"
-  // the layout's htmx:afterSwap initTree may have walked before this script ran.
-  if (window.Alpine && window.Alpine.version) {
-    Alpine.data('avatarShowcase', factory);
-    document.querySelectorAll('[x-data="avatarShowcase"]').forEach((el) => {
-      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);
-    });
-  } else {
-    document.addEventListener('alpine:init', () => Alpine.data('avatarShowcase', factory));
-  }
-})();
-</script>`)
-}
-
 // avatarDemoContent renders the actual content inside the layout.
 // The page follows PenguinUI's avatar sections closely: default image, square
 // with radius control, icon placeholder, initials placeholder, border, status,
 // and stacked avatars. The whole page stays inside one Alpine scope so the
 // size selector drives every Reactive avatar in lockstep.
 templ avatarDemoContent() {
-	@avatarShowcaseScript()
 	<div x-data="avatarShowcase">
 		<div id="avatar-fragment">
 			@demo.ComponentDemo(

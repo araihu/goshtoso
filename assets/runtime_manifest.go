@@ -5,10 +5,12 @@ const (
 	StylesURL = "/assets/styles.css"
 	// DependencyLoaderURL is the assets.Handler URL for the ordered CDN/fallback loader.
 	DependencyLoaderURL = "/assets/js/dependency-loader.js"
-	// ComboboxURL is the assets.Handler URL for Goshtoso's combobox keyboard helper.
+	// ComboboxURL is the assets.Handler URL for Goshtoso's standalone Combobox runtime.
 	ComboboxURL = "/assets/js/combobox.js"
 	// ActionGroupURL is the assets.Handler URL for responsive ActionGroup measurement.
 	ActionGroupURL = "/assets/js/action-group.js"
+	// FirstPartyBundleURL is the minified reusable Goshtoso component-runtime bundle.
+	FirstPartyBundleURL = "/assets/js/goshtoso.min.js"
 )
 
 // RuntimeAssetKind describes how a runtime manifest asset is included in HTML.
@@ -40,10 +42,12 @@ const (
 	RuntimeRoleAlpineJS RuntimeAssetRole = "alpine"
 	// RuntimeRoleHTMX identifies HTMX core.
 	RuntimeRoleHTMX RuntimeAssetRole = "htmx"
-	// RuntimeRoleCombobox identifies Goshtoso's combobox keyboard helper.
+	// RuntimeRoleCombobox identifies Goshtoso's standalone Combobox runtime.
 	RuntimeRoleCombobox RuntimeAssetRole = "combobox"
 	// RuntimeRoleActionGroup identifies responsive ActionGroup measurement.
 	RuntimeRoleActionGroup RuntimeAssetRole = "action-group"
+	// RuntimeRoleFirstParty identifies the reusable Goshtoso component-runtime bundle.
+	RuntimeRoleFirstParty RuntimeAssetRole = "first-party"
 )
 
 // RuntimeAsset describes one stylesheet or script in Goshtoso's default head
@@ -66,9 +70,10 @@ type RuntimeAsset struct {
 }
 
 // RuntimeManifest is Goshtoso's complete default embedded runtime/fallback
-// contract. Dependencies are in execution order. Loader is separate because
-// CDN-first rendering executes it to load Dependencies, while direct local
-// rendering executes Dependencies and must not execute the loader as well.
+// contract. Dependencies are in execution order. Disabled dependencies are
+// published compatibility assets, not part of the default execution set.
+// Loader is separate because CDN-first rendering executes it to load enabled
+// Dependencies, while direct local rendering must not execute the loader.
 type RuntimeManifest struct {
 	Stylesheet   RuntimeAsset
 	Loader       RuntimeAsset
@@ -114,6 +119,14 @@ func DefaultRuntimeManifest() RuntimeManifest {
 				PrimaryURL: AlpineMaskCDNURL, LocalURL: AlpineMaskURL,
 				Integrity: AlpineMaskIntegrity, Enabled: true, Defer: true,
 			},
+			// First-party globals must exist before Alpine scans x-data/x-init nodes.
+			// Alpine.data providers register on alpine:init; their initializers do not
+			// require HTMX, which keeps the established Alpine-before-HTMX order.
+			{
+				Role: RuntimeRoleFirstParty, Kind: RuntimeAssetScript,
+				PrimaryURL: FirstPartyBundleURL, LocalURL: FirstPartyBundleURL,
+				Enabled: true, IncludeInMinimal: true, Defer: true,
+			},
 			{
 				Role: RuntimeRoleAlpineJS, Kind: RuntimeAssetScript,
 				PrimaryURL: AlpineJSCDNURL, LocalURL: AlpineJSURL,
@@ -126,13 +139,11 @@ func DefaultRuntimeManifest() RuntimeManifest {
 			},
 			{
 				Role: RuntimeRoleCombobox, Kind: RuntimeAssetScript,
-				PrimaryURL: ComboboxURL, LocalURL: ComboboxURL,
-				Enabled: true, IncludeInMinimal: true, Defer: true,
+				PrimaryURL: ComboboxURL, LocalURL: ComboboxURL, IncludeInMinimal: true, Defer: true,
 			},
 			{
 				Role: RuntimeRoleActionGroup, Kind: RuntimeAssetScript,
-				PrimaryURL: ActionGroupURL, LocalURL: ActionGroupURL,
-				Enabled: true, IncludeInMinimal: true, Defer: true,
+				PrimaryURL: ActionGroupURL, LocalURL: ActionGroupURL, IncludeInMinimal: true, Defer: true,
 			},
 		},
 	}

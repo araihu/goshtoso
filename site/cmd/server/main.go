@@ -119,12 +119,13 @@ func resolveProjectRoot() string {
 	return filepath.Join(filepath.Dir(filename), "..", "..")
 }
 
-// findAssetsRoot walks up from startDir until it finds a directory containing
-// an assets/ subdirectory, returning (dir, true) on success.
+// findAssetsRoot walks up from startDir until it finds the library asset root.
+// Requiring styles.css avoids mistaking the site module's separate site/assets
+// package for the repository root.
 func findAssetsRoot(startDir string) (string, bool) {
 	dir := startDir
 	for {
-		if _, err := os.Stat(filepath.Join(dir, "assets")); err == nil {
+		if info, err := os.Stat(filepath.Join(dir, "assets", "styles.css")); err == nil && !info.IsDir() {
 			return dir, true
 		}
 		parent := filepath.Dir(dir)

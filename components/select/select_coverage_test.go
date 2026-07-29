@@ -113,12 +113,11 @@ func TestIsEffectivelyDisabled(t *testing.T) {
 	assert.True(t, Config{Readonly: true}.isEffectivelyDisabled())
 }
 
-func TestOptionsToJS_EmptyAndPopulated(t *testing.T) {
-	assert.Equal(t, "[]", optionsToJS(nil))
-	assert.Equal(t, "[]", optionsToJS([]Option{}))
-	assert.Equal(t,
-		"[{value:'a',label:'A'},{value:'b',label:'B'}]",
-		optionsToJS([]Option{{Value: "a", Label: "A"}, {Value: "b", Label: "B"}}),
+func TestFactoryDataJSON_EmptyAndPopulated(t *testing.T) {
+	assert.Contains(t, Config{}.factoryDataJSON(), `"options":[]`)
+	assert.Contains(t,
+		Config{Options: []Option{{Value: "a", Label: "A"}, {Value: "b", Label: "B"}}}.factoryDataJSON(),
+		`"options":[{"value":"a","label":"A","selected":false},{"value":"b","label":"B","selected":false}]`,
 	)
 }
 
@@ -183,9 +182,12 @@ func TestRenderSelect_AlpineModelInitWatcher(t *testing.T) {
 	}, nil)
 
 	browserHTML := html.UnescapeString(out)
-	assert.Contains(t, browserHTML, "this.$watch('selectedOption'")
-	assert.Contains(t, browserHTML, "form.country = opt ? opt.value : ''")
-	assert.Contains(t, browserHTML, "form.country")
+	assert.Contains(t, browserHTML, `x-data="goshtosoSelect($el)"`)
+	assert.Contains(t, browserHTML, `data-select-config="`+Config{
+		ID:      "country",
+		Alpine:  &AlpineConfig{Model: "form.country"},
+		Options: []Option{{Value: "us", Label: "US", Selected: true}},
+	}.factoryData()+`"`)
 }
 
 func TestRenderSelect_ShellModeWithTriggerLabel(t *testing.T) {

@@ -23,7 +23,7 @@ templ toastDemoContent() {
 				Description: "Stacking toast and message-toast notifications with auto-dismiss and hover pause. Trigger client-side via Alpine.js $dispatch('notify', ...) or server-side via HTMX out-of-band swaps. Place @toast.ToastContainer once in your layout.",
 			},
 			toastAlpinePreview(),
-			`// 1. Place the container once in your layout
+			demo.DisplayCode(`// 1. Place the container once in your layout
 @toast.ToastContainer(toast.ContainerConfig{})
 
 // 2. Trigger toasts from Alpine.js
@@ -39,7 +39,7 @@ templ toastDemoContent() {
     kind: 'message-toast',
     sender: { name: 'Jane', avatar: '/avatar.jpg' },
     message: 'Hey, check this out!',
-})">Send</button>`,
+	})">Send</button>`),
 		)
 
 		@demo.DemoSection(

@@ -28,7 +28,6 @@ templ cardCarouselTemplate(cfg CardConfig) {
 
 // staticCarousel renders the full Alpine.js carousel with slides from Go config
 templ staticCarousel(cfg Config) {
-	{{ alpineData := generateAlpineData(cfg) }}
 	{{ transitionAttr := transitionAttr(cfg) }}
 	{{ xInit := "" }}
 	{{ if cfg.Autoplay != nil { xInit = "autoplay" } }}
@@ -36,7 +35,14 @@ templ staticCarousel(cfg Config) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		x-data={ alpineData }
+		x-data="goshtosoCarousel($el)"
+		data-carousel-slides={ slidesData(cfg.Slides) }
+		if cfg.Autoplay != nil {
+			data-carousel-autoplay-interval={ fmt.Sprint(autoplayInterval(cfg)) }
+		}
+		if cfg.Touch {
+			data-carousel-touch="true"
+		}
 		if xInit != "" {
 			x-init={ xInit }
 		}
@@ -86,12 +92,15 @@ templ staticCarousel(cfg Config) {
 templ cardCarousel(cfg CardConfig) {
 	{{ cardCfg := Config{ID: cfg.ID, Slides: cfg.Slides, Touch: cfg.Touch, Height: cfg.Height} }}
 	{{ if cardCfg.Height == "" { cardCfg.Height = "h-48 lg:h-64" } }}
-	{{ alpineData := generateAlpineData(cardCfg) }}
 	<article
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		x-data={ alpineData }
+		x-data="goshtosoCarousel($el)"
+		data-carousel-slides={ slidesData(cardCfg.Slides) }
+		if cardCfg.Touch {
+			data-carousel-touch="true"
+		}
 		class={ cardContainerClasses(cfg.RootClass) }
 		style="-webkit-mask-image: -webkit-radial-gradient(white, black)"
 	>

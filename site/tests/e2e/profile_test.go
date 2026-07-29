@@ -25,6 +25,10 @@ func gotoProfile(t *testing.T, page playwright.Page, query string) {
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(3000),
 	}))
+	_, err = page.WaitForFunction(
+		"() => { const el = document.querySelector('#profile-fragment'); return Alpine.__profileImagesRegistered === true && !!(el && el._x_dataStack); }",
+		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "external profileImages provider should initialize on first paint")
 }
 
 // activateAppearanceTab clicks the "Appearance" tab button (the theme/dark

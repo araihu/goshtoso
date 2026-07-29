@@ -2,7 +2,6 @@ package table
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/pagination"
@@ -54,8 +53,16 @@ import (
 //	})
 templ tableTemplate(cfg Config) {
 	if cfg.hasFilters() {
-		@filterScript(cfg)
-		<div x-data={ filterAlpineInit(cfg) }>
+		<div
+			data-table-filters
+			data-table-filter-endpoint={ cfg.htmxEndpointValue() }
+			data-table-filter-per-page={ filterPerPage(cfg) }
+			data-table-filter-extra-query={ cfg.ExtraQueryParams }
+			data-table-filter-target={ cfg.Filters.resolvedHXTarget(cfg) }
+			data-table-filter-swap={ cfg.Filters.resolvedHXSwap() }
+			data-table-filters-expanded={ fmt.Sprint(filtersInitiallyExpanded(cfg)) }
+			x-data="goshtosoTableFilters($el)"
+		>
 			@filterBar(cfg)
 			@tableContainer(cfg)
 			if showTraditionalPagination(cfg) {
@@ -194,12 +201,6 @@ templ filterControl(cfg Config, filter Filter) {
 	</div>
 }
 
-// filterScript renders a script tag with Alpine.data registration
-// Uses templ.Raw to avoid HTML escaping of JS code inside script tags
-templ filterScript(cfg Config) {
-	@templ.Raw("<script type=\"text/javascript\">" + filterScriptData(cfg) + "</script>")
-}
-
 // filterSearchInput renders a search text input.
 //
 // hx-preserve + stable id keep the input element (and its focus + caret
@@ -215,9 +216,11 @@ templ filterSearchInput(cfg Config, filter Filter) {
 		</svg>
 		<input
 			id={ filterControlID(cfg, filter) }
+			data-table-filter-key={ filter.Key }
+			data-table-filter-default={ filter.DefaultValue }
 			hx-preserve="true"
 			type="search"
-			x-model={ filterModelExpr(filter) }
+			x-model="filters[$el.dataset.tableFilterKey]"
 			@input.debounce.300ms="applyFilters()"
 			placeholder={ filter.Placeholder }
 			class="w-full min-w-[200px] rounded-radius border border-outline bg-surface py-2 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:placeholder:text-on-surface-dark-muted dark:focus-visible:outline-primary-dark"
@@ -229,8 +232,10 @@ templ filterSearchInput(cfg Config, filter Filter) {
 templ filterSelectInput(cfg Config, filter Filter) {
 	<select
 		id={ filterControlID(cfg, filter) }
+		data-table-filter-key={ filter.Key }
+		data-table-filter-default={ filter.DefaultValue }
 		hx-preserve="true"
-		x-model={ filterModelExpr(filter) }
+		x-model="filters[$el.dataset.tableFilterKey]"
 		@change="applyFilters()"
 		class="rounded-radius border border-outline bg-surface py-2 pl-3 pr-8 text-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
 		if filter.OptionsHTMX != nil && filter.OptionsHTMX.Get != "" {
@@ -254,9 +259,11 @@ templ filterToggleInput(cfg Config, filter Filter) {
 	<label class="inline-flex cursor-pointer items-center gap-2">
 		<input
 			id={ filterControlID(cfg, filter) }
+			data-table-filter-key={ filter.Key }
+			data-table-filter-default={ filter.DefaultValue }
 			hx-preserve="true"
 			type="checkbox"
-			x-model={ filterModelExpr(filter) }
+			x-model="filters[$el.dataset.tableFilterKey]"
 			@change="applyFilters()"
 			class="peer sr-only"
 		/>
@@ -468,22 +475,19 @@ templ cellContent(cell Cell) {
 // Behavior depends on Row.LinkMode:
 //   - LinkSPA (default): swaps #main-content-area via HTMX
 //   - LinkBoost: swaps full <body> via HTMX (like hx-boost, avoids white flash)
-//   - LinkFull: plain JS navigation (window.location.href), no HTMX
+//   - LinkFull: component-runtime navigation, no HTMX
 func rowLinkAttrs(row Row) templ.Attributes {
-	link := jsStringSingle(row.Link)
-	auxclick := fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", link)
-
 	if row.LinkMode == LinkFull {
 		return templ.Attributes{
-			"onclick":    fmt.Sprintf("window.location.href='%s'", link),
-			"onauxclick": auxclick,
+			"data-table-row-link":      row.Link,
+			"data-table-row-link-mode": "full",
 		}
 	}
 
 	attrs := templ.Attributes{
-		"hx-get":      row.Link,
-		"hx-push-url": "true",
-		"onauxclick":  auxclick,
+		"data-table-row-link": row.Link,
+		"hx-get":              row.Link,
+		"hx-push-url":         "true",
 	}
 	if row.LinkMode == LinkBoost {
 		attrs["hx-target"] = "body"
@@ -515,29 +519,6 @@ func primaryCellLinkAttrs(row Row) templ.Attributes {
 		attrs["hx-swap"] = "innerHTML"
 	}
 	return attrs
-}
-
-func jsStringSingle(s string) string {
-	var b strings.Builder
-	for _, r := range s {
-		switch r {
-		case '\\':
-			b.WriteString(`\\`)
-		case '\'':
-			b.WriteString(`\'`)
-		case '\n':
-			b.WriteString(`\n`)
-		case '\r':
-			b.WriteString(`\r`)
-		case '\u2028':
-			b.WriteString(`\u2028`)
-		case '\u2029':
-			b.WriteString(`\u2029`)
-		default:
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
 }
 
 func interactiveRowClasses(row Row) string {
@@ -663,12 +644,12 @@ templ sortIcon(cfg Config, key string) {
 templ scrollSentinel(cfg Config) {
 	<tr
 		id={ cfg.getID() + "-sentinel" }
+		data-table-scroll-sentinel
 		data-hx-get={ cfg.NextPageURL() }
 		aria-hidden="true"
 	>
 		<td colspan={ fmt.Sprintf("%d", cfg.colCount()) } class="p-4 text-center">
 			@loadingIndicator()
-			@templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var url=el.getAttribute('data-hx-get');if(!url)return;var fire=function(){htmx.ajax('GET',url,{source:el,target:el,swap:'outerHTML settle:200ms'})};if(typeof IntersectionObserver==='undefined'){fire();return}var root=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]')||null;var fired=false;var io=new IntersectionObserver(function(entries){if(fired)return;for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting){fired=true;io.disconnect();fire();return}}},{root:root,rootMargin:'400px 0px'});io.observe(el)})()</script>`, cfg.getID()))
 		</td>
 	</tr>
 }

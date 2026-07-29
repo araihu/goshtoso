@@ -299,22 +299,6 @@ func TestRowAndSortableHeaderClasses(t *testing.T) {
 	mustContainAll(t, (Config{}).headerCellClasses(), "p-4")
 }
 
-func TestHyphenToCamel(t *testing.T) {
-	cases := map[string]string{
-		"filtered-table": "filteredTable",
-		"a-b-c":          "aBC",
-		"plain":          "plain",
-		"-leading":       "Leading",
-		"trailing-":      "trailing",
-		"with-9digit":    "with9digit",
-	}
-	for in, want := range cases {
-		if got := hyphenToCamel(in); got != want {
-			t.Fatalf("hyphenToCamel(%q) = %q; want %q", in, got, want)
-		}
-	}
-}
-
 // --- Render coverage for exported templ entry points ------------------------
 
 func TestRenderDefaultTable(t *testing.T) {
@@ -423,8 +407,8 @@ func TestRenderRowLinkModes(t *testing.T) {
 	mustContainAll(t, boost, `hx-select="body"`, `hx-target="body"`)
 
 	full := renderT(t, TableRow(Config{Columns: cols}, Row{ID: "3", Link: "/p/3", LinkMode: LinkFull, Cells: cell}))
-	mustContainAll(t, full, "window.location.href=", "onauxclick")
-	mustNotContain(t, full, "hx-get=")
+	mustContainAll(t, full, `data-table-row-link="/p/3"`, `data-table-row-link-mode="full"`)
+	mustNotContain(t, full, "hx-get=", "onclick=", "onauxclick=")
 }
 
 func TestRenderRowActionAttrs(t *testing.T) {
@@ -549,10 +533,11 @@ func TestRenderInfiniteScrollSentinel(t *testing.T) {
 	body := renderT(t, tableBody(cfg))
 	mustContainAll(t, body,
 		`id="table-sentinel"`,
+		`data-table-scroll-sentinel`,
 		"data-hx-get=",
-		"IntersectionObserver",
 		"variant=infinite",
 	)
+	mustNotContain(t, body, "<script", "IntersectionObserver")
 	// TableRows (append response) also emits the sentinel without a tbody.
 	rows := renderT(t, TableRows(cfg))
 	mustContainAll(t, rows, `id="table-sentinel"`)
@@ -664,8 +649,9 @@ func TestRenderFilterBarVariants(t *testing.T) {
 	}
 	html := renderT(t, Table(cfg))
 	mustContainAll(t, html,
-		"<script", "filteredFilters", // filterScript + Alpine.data name
-		`x-data="filteredFilters"`,   // wrapper
+		`data-table-filters`,
+		`x-data="goshtosoTableFilters($el)"`,
+		`data-table-filter-endpoint="/api/components/table/rows"`,
 		`id="filtered-filters"`,      // filter bar id
 		`@click="filtersExpanded`,    // collapsible toggle
 		`type="search"`,              // search input
@@ -676,6 +662,7 @@ func TestRenderFilterBarVariants(t *testing.T) {
 		"Active only",                       // toggle label
 		`hx-get="/api/teams"`, "Loading...", // dynamic select options
 	)
+	mustNotContain(t, html, "<script")
 }
 
 func TestRenderInlineFilterAppearance(t *testing.T) {

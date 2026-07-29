@@ -10,24 +10,7 @@ templ ActionGroupDemoPage() {
 	@demo.Layout("Action Group", "action-group", actionGroupDemoContent())
 }
 
-templ actionGroupDemoScript() {
-	@templ.Raw(`<script>
-(function () {
-  var factory = () => ({ lastAction: 'none' });
-  if (window.Alpine && window.Alpine.version) {
-    Alpine.data('actionGroupDemo', factory);
-    document.querySelectorAll('[x-data="actionGroupDemo"]').forEach((el) => {
-      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);
-    });
-  } else {
-    document.addEventListener('alpine:init', () => Alpine.data('actionGroupDemo', factory));
-  }
-})();
-</script>`)
-}
-
 templ actionGroupDemoContent() {
-	@actionGroupDemoScript()
 	<div id="action-group-fragment">
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{

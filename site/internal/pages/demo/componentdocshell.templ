@@ -21,7 +21,6 @@ templ componentDocsHead(meta PageMeta) {
 	<link rel="shortcut icon" href="/favicon.ico"/>
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 	<link rel="manifest" href="/site.webmanifest"/>
-	@storageConsentScript()
 	<link rel="preconnect" href="https://fonts.googleapis.com"/>
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 	<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -35,7 +34,7 @@ templ componentDocsBodyEnd() {
 
 templ componentDocsStorageConsent() {
 	<div
-		x-data="{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }"
+		x-data="demoStorageConsent"
 		x-show="show"
 		x-cloak
 		x-transition

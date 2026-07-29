@@ -5,7 +5,6 @@ package structuredinput
 // Submitted hidden inputs use name[index][columnKey]=value.
 templ structuredInputTemplate(cfg Config) {
 	{{ columns := cfg.normalizedColumns() }}
-	@structuredInputScript()
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -101,28 +100,4 @@ templ selectColumn(col Column, columnIndex int, disabled bool) {
 			</svg>
 		</div>
 	</div>
-}
-
-templ structuredInputScript() {
-	@templ.Raw(`<script>
-(function () {
-	if (window.structuredInput) return;
-	window.structuredInput = function (root) {
-		function parseJSON(value, fallback) {
-			try { return JSON.parse(value || ""); } catch (e) { return fallback; }
-		}
-		return {
-			name: root.dataset.name || "",
-			entries: parseJSON(root.dataset.entries, []),
-			newRow: parseJSON(root.dataset.newRow, []),
-			addRow: function () {
-				this.entries.push(this.newRow.slice());
-			},
-			inputName: function (index, key) {
-				return this.name + "[" + index + "][" + key + "]";
-			}
-		};
-	};
-})();
-</script>`)
 }

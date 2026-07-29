@@ -1,7 +1,6 @@
 package table
 
 import (
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -797,146 +796,15 @@ func filterControlID(cfg Config, filter Filter) string {
 	return cfg.filterBarID() + "-" + filter.Key
 }
 
-func filterModelExpr(filter Filter) string {
-	return "filters['" + jsEscape(filter.Key) + "']"
+func filtersInitiallyExpanded(cfg Config) bool {
+	return !cfg.Filters.Collapsible || cfg.Filters.InitiallyExpanded
 }
 
-// filterAlpineInit generates a name for the Alpine.data registration.
-// Converts hyphens to camelCase since Alpine evaluates x-data as JS expressions.
-func filterAlpineInit(cfg Config) string {
-	return hyphenToCamel(cfg.getID()) + "Filters"
-}
-
-// hyphenToCamel converts a hyphenated string to camelCase (e.g. "filtered-table" → "filteredTable").
-func hyphenToCamel(s string) string {
-	result := make([]byte, 0, len(s))
-	upper := false
-	for i := 0; i < len(s); i++ {
-		if s[i] == '-' {
-			upper = true
-			continue
-		}
-		if upper {
-			if s[i] >= 'a' && s[i] <= 'z' {
-				result = append(result, s[i]-32)
-			} else {
-				result = append(result, s[i])
-			}
-			upper = false
-		} else {
-			result = append(result, s[i])
-		}
+func filterPerPage(cfg Config) string {
+	if cfg.Pagination == nil || cfg.Pagination.PerPage <= 0 {
+		return ""
 	}
-	return string(result)
-}
-
-// filterScriptData generates a JS script block that registers an Alpine.data component.
-// This avoids templ's HTML attribute escaping that breaks & and quotes.
-func filterScriptData(cfg Config) string {
-	var filters strings.Builder
-	filters.WriteString("{")
-	for i, f := range cfg.Filters.Filters {
-		if i > 0 {
-			filters.WriteString(", ")
-		}
-		filters.WriteString("'" + jsEscape(f.Key) + "': '" + jsEscape(f.DefaultValue) + "'")
-	}
-	filters.WriteString("}")
-
-	expanded := "true"
-	if cfg.Filters.Collapsible && !cfg.Filters.InitiallyExpanded {
-		expanded = "false"
-	}
-
-	endpoint := cfg.htmxEndpointValue()
-	perPage := ""
-	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
-		perPage = "&per_page=" + itoa(cfg.Pagination.PerPage)
-	}
-	// ExtraQueryParams already starts with '&' (or is empty) — appended raw
-	// after the auto `?_filter=1` marker so static query state (modal context
-	// like ?addon_name=X) survives every filter request.
-	extra := cfg.ExtraQueryParams
-	hxTarget := cfg.Filters.resolvedHXTarget(cfg)
-	hxSwap := cfg.Filters.resolvedHXSwap()
-	name := filterAlpineInit(cfg)
-
-	// Register eagerly when Alpine is already up (modal-swapped table); fall
-	// back to alpine:init for the initial page load. The alpine:init listener
-	// only fires ONCE per page; HTMX-swapped scripts arrive after init and
-	// would otherwise never register, leaving x-data="<name>Filters" silent.
-	//
-	// After late registration we MUST re-initialize the wrapper subtree —
-	// Alpine resolves x-data="<name>" at mount time, so a div that mounted
-	// before the script ran is bound to an empty {} until we tell Alpine to
-	// rebind. initTree(wrapper) is idempotent for already-bound trees.
-	return fmt.Sprintf(`(() => {
-		const name = '%s';
-		const register = () => {
-			Alpine.data(name, () => ({
-				filtersExpanded: %s,
-				filters: %s,
-				buildFilterURL() {
-					let url = '%s?_filter=1%s%s';
-					for (const [k, v] of Object.entries(this.filters)) {
-						if (v !== '' && v !== 'false') {
-							url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
-						}
-					}
-					return url;
-				},
-				applyFilters() {
-					htmx.ajax('GET', this.buildFilterURL(), {target: '%s', swap: '%s'});
-				}
-			}));
-			document.querySelectorAll('[x-data="' + name + '"]').forEach((el) => {
-				if (typeof Alpine.initTree === 'function') Alpine.initTree(el);
-			});
-		};
-		if (window.Alpine && window.Alpine.version) {
-			register();
-		} else {
-			document.addEventListener('alpine:init', register);
-		}
-	})();
-	// Intercept all HTMX requests from this table to append filter params
-	document.addEventListener('htmx:configRequest', (evt) => {
-		var el = evt.detail.elt;
-		var wrapper = el.closest('[x-data="%s"]');
-		if (!wrapper) return;
-		var comp = Alpine.$data(wrapper);
-		if (!comp || !comp.filters) return;
-		for (const [k, v] of Object.entries(comp.filters)) {
-			if (v !== '' && v !== 'false') {
-				evt.detail.parameters[k] = v;
-			}
-		}
-		});`, jsEscape(name), expanded, filters.String(), jsEscape(endpoint), jsEscape(perPage), jsEscape(extra), jsEscape(hxTarget), jsEscape(hxSwap), jsEscape(name))
-}
-
-// jsEscape escapes a string for safe embedding in single-quoted JS literals
-func jsEscape(s string) string {
-	var result strings.Builder
-	result.Grow(len(s))
-	for _, r := range s {
-		switch r {
-		case '\'':
-			result.WriteString(`\'`)
-		case '\\':
-			result.WriteString(`\\`)
-		case '\n':
-			result.WriteString(`\n`)
-		case '\r':
-			result.WriteString(`\r`)
-		case '\u2028':
-			result.WriteString(`\u2028`)
-		case '\u2029':
-			result.WriteString(`\u2029`)
-		default:
-			result.WriteRune(r)
-		}
-	}
-	return result.String()
+	return itoa(cfg.Pagination.PerPage)
 }
 
 // itoa converts an int to string without importing strconv

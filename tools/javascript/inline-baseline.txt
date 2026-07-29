@@ -1,0 +1,20 @@
+# Existing extraction candidates. Regenerate only after reviewing inventory.
+components/avatar/avatar.templ|event-expression|8a85653c1363b0b9
+components/fileinput/fileinput.templ|event-expression|ca25f8a406e12c43
+components/form/form.templ|event-expression|6ad5a088d755bd72
+components/form/form.templ|event-expression|c728cb7f067efd92
+components/search/search.templ|event-expression|2eaece2e6ae06753
+components/search/search.templ|event-expression|351085a4acb9e37d
+components/toast/toast.templ|event-expression|5347d7307405c3a4
+components/toast/toast.templ|event-expression|b1b4ac6efe9dd727
+components/toast/toast.templ|event-expression|b1b4ac6efe9dd727
+components/toast/toast.templ|event-expression|d657c2053ecb57df
+components/toast/toast.templ|event-expression|d657c2053ecb57df
+site/internal/pages/demo/components/palette.templ|event-expression|4610ee3cfbaef170
+site/internal/pages/demo/components/textinput.templ|event-expression|55be7c5433db1a25
+site/internal/pages/demo/components/textinput.templ|event-expression|a9bf6f6009aee14d
+site/internal/pages/demo/components/toast.templ|event-expression|608e6b7834a0aff6
+site/internal/pages/demo/components/toast.templ|event-expression|826b5604fac8c61f
+site/internal/pages/demo/components/toast.templ|event-expression|a559531648cb28f2
+site/internal/pages/demo/components/toast.templ|event-expression|b53afbbf16d1c10c
+site/internal/pages/demo/components/toast.templ|event-expression|ff8eb0a081fae29e

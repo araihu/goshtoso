@@ -116,6 +116,9 @@ func TestRenderWithoutIDOmitsIDAttribute(t *testing.T) {
 	if !strings.Contains(html, `x-data="structuredInput($el)"`) {
 		t.Fatalf("render missing x-data root:\n%s", html)
 	}
+	if strings.Contains(html, "<script") {
+		t.Fatalf("render must use global structured-input runtime, not inline script:\n%s", html)
+	}
 }
 
 // TestSelectOptionLabelFallbackRenders ensures an option without an explicit

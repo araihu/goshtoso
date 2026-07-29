@@ -18,7 +18,8 @@ templ tabsTemplate(cfg Config) {
 	{{ containerID := cfg.ID }}
 	{{ if containerID == "" { containerID = "tabs" } }}
 	<div
-		x-data={ tabsData(cfg) }
+		x-data="goshtosoTabs($el)"
+		data-tabs-config={ tabsData(cfg) }
 		class={ "w-full " + cfg.RootClass }
 	>
 		<!-- Tab List -->

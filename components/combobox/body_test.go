@@ -309,7 +309,7 @@ func TestCombobox_ServerMode_HasHXPost(t *testing.T) {
 	assert.Contains(t, html, `hx-post="/t/toggle"`)
 }
 
-func TestCombobox_ClientMode_EmitsScript(t *testing.T) {
+func TestCombobox_ClientMode_UsesBundledRuntime(t *testing.T) {
 	cfg := Config{
 		ID: "status", Name: "status", Mode: ModeMultiple,
 		Source: Source{Static: []Option{{Value: "a", Label: "A"}}},
@@ -317,7 +317,8 @@ func TestCombobox_ClientMode_EmitsScript(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, Combobox(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
 	html := buf.String()
-	assert.Contains(t, html, `__goshtosoComboboxInit`, "listener script inlined")
+	assert.Contains(t, html, `data-combobox-mode="client"`)
+	assert.NotContains(t, html, `<script`, "component runtime must come from the shared bundle")
 }
 
 func TestCombobox_ServerMode_NoScript(t *testing.T) {
@@ -328,7 +329,7 @@ func TestCombobox_ServerMode_NoScript(t *testing.T) {
 	}
 	var buf bytes.Buffer
 	require.NoError(t, Combobox(cfg, State{Options: []Option{{Value: "red"}}}).Render(context.Background(), &buf))
-	assert.NotContains(t, buf.String(), `__goshtosoComboboxInit`)
+	assert.NotContains(t, buf.String(), `<script`)
 }
 
 func TestOptionsList_DisabledOption_OmitsHXPost(t *testing.T) {

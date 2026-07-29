@@ -22,6 +22,18 @@ func tickerCellText(t *testing.T, page playwright.Page, symbol string) string {
 	return txt
 }
 
+func TestTicker_ProviderBootstrapsFirstPaint(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL + "/examples/ticker")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const root = document.querySelector('#ticker-fragment');
+		return typeof Alpine !== 'undefined' && Alpine.__tickerPaneRegistered === true &&
+			root && root._x_dataStack && typeof Alpine.$data(root).connect === 'function';
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "external tickerPane provider should initialize on first paint")
+}
+
 // TestTicker_StreamUpdatesCells loads the page and asserts a table price cell
 // changes as ticks stream in.
 func TestTicker_StreamUpdatesCells(t *testing.T) {

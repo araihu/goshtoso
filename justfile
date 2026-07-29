@@ -37,6 +37,16 @@ css:
 vendor-js:
     go run ./cmd/vendorgen -download
 
+# Build tracked library and demo-site JavaScript from their owned source roots.
+js:
+    go run ./cmd/jsbuild
+
+# Parse authored JavaScript, report structural similarity, enforce the inline
+# extraction baseline, and verify generated artifacts have no drift.
+js-check:
+    go run ./cmd/jslint
+    go run ./cmd/jsbuild -check
+
 # Run root unit tests, site unit tests, and E2E tests, then merge component
 # coverage data into .coverage/coverage.out and .coverage/coverage.html.
 coverage:

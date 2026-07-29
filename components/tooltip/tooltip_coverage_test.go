@@ -169,6 +169,9 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			html := renderTooltip(t, tt.id, tt.label, tt.options...)
+			if strings.Contains(html, "<script") {
+				t.Fatalf("Tooltip render must use global tooltip runtime, not inline script:\n%s", html)
+			}
 			for _, want := range tt.want {
 				if !strings.Contains(html, want) {
 					t.Fatalf("Tooltip render missing %q in %s", want, html)

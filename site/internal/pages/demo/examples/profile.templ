@@ -17,88 +17,6 @@ import (
 	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
-// profileImagesScript returns the JS that registers the `profileImages` Alpine
-// component. Avatar/banner image bytes live entirely client-side in IndexedDB —
-// the server never sees them. The script is emitted via templ.Raw inside a
-// <script> tag (see profileScript) so templ's attribute escaping never touches
-// it, and the component registers eagerly when Alpine is already running (the
-// fragment-nav case) or on alpine:init for a cold page load — mirroring the
-// table's filterScriptData registration pattern.
-//
-// _toast dispatches the real `notify` window CustomEvent that toast.ToastContainer
-// listens for (x-on:notify.window="addNotification(...)"). This is the same
-// client-side toast API the toast demo page uses via $dispatch('notify', ...).
-func profileImagesScript() string {
-	return `(() => {
-  const DB = 'gt_profile', STORE = 'images', MAX = 1024 * 1024;
-  const OK_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
-  function open() {
-    return new Promise((res, rej) => {
-      const r = indexedDB.open(DB, 1);
-      r.onupgradeneeded = () => r.result.createObjectStore(STORE);
-      r.onsuccess = () => res(r.result);
-      r.onerror = () => rej(r.error);
-    });
-  }
-  function tx(mode, fn) {
-    return open().then(db => new Promise((res, rej) => {
-      const t = db.transaction(STORE, mode);
-      const req = fn(t.objectStore(STORE));
-      t.oncomplete = () => res(req && req.result);
-      t.onerror = () => rej(t.error);
-    }));
-  }
-  const idbGet = k => tx('readonly', s => s.get(k));
-  const idbPut = (k, v) => tx('readwrite', s => s.put(v, k));
-  const idbDel = k => tx('readwrite', s => s.delete(k));
-  const register = () => {
-    Alpine.data('profileImages', () => ({
-      avatarSrc: '', bannerSrc: '', _supported: typeof indexedDB !== 'undefined',
-      init() {
-        if (!this._supported) return;
-        ['avatar','banner'].forEach(kind => {
-          idbGet(kind).then(blob => { if (blob) this[kind+'Src'] = URL.createObjectURL(blob); }).catch(()=>{});
-        });
-      },
-      pick(kind) { const el = document.getElementById('profile-'+kind+'-input'); if (el) el.click(); },
-      onFile(kind, ev) {
-        const file = ev.target.files && ev.target.files[0];
-        if (!file) return;
-        if (!OK_TYPES.includes(file.type)) { this._toast('danger','Unsupported type','Use PNG, JPG, WebP, or GIF.'); ev.target.value=''; return; }
-        if (file.size > MAX) { this._toast('danger','Too large','Images must be 1 MB or smaller.'); ev.target.value=''; return; }
-        const old = this[kind+'Src']; if (old) URL.revokeObjectURL(old);
-        this[kind+'Src'] = URL.createObjectURL(file);
-        if (this._supported) { idbPut(kind, file).catch(()=> this._toast('warning',"Won't persist",'Saved for this session only.')); }
-        else { this._toast('warning',"Won't persist",'IndexedDB unavailable in this browser.'); }
-        ev.target.value='';
-      },
-      remove(kind) { const old=this[kind+'Src']; if (old) URL.revokeObjectURL(old); this[kind+'Src']=''; if (this._supported) idbDel(kind).catch(()=>{}); },
-      destroy() {
-        if (this.avatarSrc) URL.revokeObjectURL(this.avatarSrc);
-        if (this.bannerSrc) URL.revokeObjectURL(this.bannerSrc);
-      },
-      _toast(tone, title, message) {
-        try {
-          window.dispatchEvent(new CustomEvent('notify', { detail: { kind: 'toast', tone: tone, title: title, message: message } }));
-        } catch (e) {
-          console.warn('[profileImages] toast unavailable:', title, '-', message);
-        }
-      },
-    }));
-  };
-  if (window.Alpine && window.Alpine.version) register();
-  else document.addEventListener('alpine:init', register);
-})();`
-}
-
-// profileScript emits the IndexedDB Alpine component as a raw <script>. Using
-// templ.Raw keeps templ's HTML-attribute escaping away from the JS, so the
-// single quotes / function bodies survive intact (the classic templ+Alpine
-// escaping bug only bites x-data VALUES rendered as attributes).
-templ profileScript() {
-	@templ.Raw("<script>" + profileImagesScript() + "</script>")
-}
-
 // themeOptions builds the non-default theme options, marking current selected.
 func themeOptions(current string) []selectfield.Option {
 	out := make([]selectfield.Option, 0, themes.Count()-1)
@@ -140,7 +58,6 @@ templ IdentityFields(s profile.State) {
 // `profileImages` Alpine component (IndexedDB-backed avatar/banner) and reuses
 // the app's existing theme engine (root x-data `theme` + $store.darkMode).
 templ ProfileApp(s profile.State) {
-	@profileScript()
 	<div id="profile-fragment" class="mx-auto max-w-3xl" x-data="profileImages">
 		<header class="mb-6">
 			<h1 class="text-2xl font-bold text-on-surface dark:text-on-surface-dark">Profile</h1>

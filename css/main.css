@@ -34,8 +34,10 @@
    ============================================ */
 @source "../components/**/*.templ";
 @source "../components/**/*.go";
+@source "../assets/js/src/**/*.js";
 @source "../site/internal/**/*.templ";
 @source "../site/internal/**/*.go";
+@source "../site/assets/js/src/**/*.js";
 
 /* Safelist the full Tailwind palette so the theme page palette popover
    can render every swatch via `var(--color-{hue}-{shade})`. Without this

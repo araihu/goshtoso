@@ -81,6 +81,12 @@ jobs:
           go run ./cmd/vendorgen -check \
             || { echo "::error::assets/vendor_gen.go is stale — run 'go run ./cmd/vendorgen' and commit"; exit 1; }
 
+      - name: First-party JavaScript lint + drift check
+        run: |
+          go run ./cmd/jslint
+          go run ./cmd/jsbuild -check \
+            || { echo "::error::first-party JavaScript is stale — run 'go run ./cmd/jsbuild' and commit"; exit 1; }
+
       - name: go mod tidy drift check
         run: |
           go mod tidy

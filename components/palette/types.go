@@ -11,8 +11,8 @@
 package palette
 
 import (
-	"strconv"
-	"strings"
+	"encoding/base64"
+	"encoding/json"
 
 	"github.com/a-h/templ"
 )
@@ -99,151 +99,19 @@ func (c Config) modelAssignExpr() string {
 	return c.Alpine.Model + " = $event.detail"
 }
 
-func (c Config) alpineData() string {
-	var sb strings.Builder
-	sb.WriteString(`{
-			hovered: '',
-			selectedHex: '#000000',
-			hexInput: '',
-			hexInvalid: false,
-			swatchHues: `)
-	sb.WriteString(jsStringArray(c.hues()))
-	sb.WriteString(`,
-			swatchShades: `)
-	sb.WriteString(jsStringArray(c.shades()))
-	sb.WriteString(`,
-			hideNeutral: `)
-	if c.HideNeutral {
-		sb.WriteString("true")
-	} else {
-		sb.WriteString("false")
+func (c Config) swatchesJSON() string {
+	data := struct {
+		Hues        []string `json:"hues"`
+		Shades      []string `json:"shades"`
+		HideNeutral bool     `json:"hideNeutral"`
+	}{c.hues(), c.shades(), c.HideNeutral}
+	encoded, err := json.Marshal(data)
+	if err != nil {
+		return `{"hues":[],"shades":[],"hideNeutral":false}`
 	}
-	sb.WriteString(`,
-			pick(value, el) {
-				this.syncHex(value, el)
-				this.$dispatch('select-close', value)
-			},
-			commitHex(value) {
-				const hex = this.normalizeHex(value)
-				if (!hex) {
-					this.hexInvalid = true
-					return
-				}
-				this.hexInvalid = false
-				this.selectedHex = hex
-				this.hexInput = hex
-				this.$dispatch('select-close', hex)
-			},
-			previewHex(value) {
-				this.hexInput = value
-				const hex = this.normalizeHex(value)
-				this.hexInvalid = this.hexInput !== '' && !hex
-				if (hex) {
-					this.selectedHex = hex
-					this.hexInput = hex
-					this.$dispatch('select-close', hex)
-				}
-			},
-			syncHex(value, el) {
-				this.hexInvalid = false
-				if (!value) {
-					this.selectedHex = '#000000'
-					this.hexInput = ''
-					return
-				}
-				if (value[0] === '#') {
-					const hex = this.normalizeHex(value)
-					if (hex) {
-						this.selectedHex = hex
-						this.hexInput = hex
-					}
-					return
-				}
-				if (value === 'white') {
-					this.selectedHex = '#ffffff'
-					this.hexInput = '#ffffff'
-					return
-				}
-				if (value === 'black') {
-					this.selectedHex = '#000000'
-					this.hexInput = '#000000'
-					return
-				}
-				if (el) {
-					const hex = this.colorToHex(getComputedStyle(el).backgroundColor)
-					this.selectedHex = hex
-					this.hexInput = hex
-				}
-			},
-			normalizeHex(value) {
-				const raw = (value || '').trim()
-				const short = raw.match(/^#([0-9a-fA-F]{3})$/)
-				if (short) {
-					return '#' + short[1].split('').map(ch => ch + ch).join('').toLowerCase()
-				}
-				const full = raw.match(/^#([0-9a-fA-F]{6})$/)
-				return full ? '#' + full[1].toLowerCase() : ''
-			},
-			colorToHex(color) {
-				if (!this._ctx) {
-					const canvas = document.createElement('canvas')
-					canvas.width = 1
-					canvas.height = 1
-					this._ctx = canvas.getContext('2d', { willReadFrequently: true })
-				}
-				const ctx = this._ctx
-				ctx.clearRect(0, 0, 1, 1)
-				ctx.fillStyle = '#000000'
-				ctx.fillStyle = color
-				ctx.fillRect(0, 0, 1, 1)
-				const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
-				return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')
-			},
-			escapeAttr(value) {
-				return String(value)
-					.replace(/&/g, '&amp;')
-					.replace(/"/g, '&quot;')
-					.replace(/</g, '&lt;')
-					.replace(/>/g, '&gt;')
-			},
-			swatchButton(cls, classes, style) {
-				const safeCls = this.escapeAttr(cls)
-				const styleAttr = style ? ' style="' + this.escapeAttr(style) + '"' : ''
-				return '<button type="button" data-cls="' + safeCls + '" class="' + classes + '"' + styleAttr + ' title="' + safeCls + '"></button>'
-			},
-			swatchGridHTML() {
-				const standard = 'h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark'
-				const neutral = 'h-5 w-full rounded-sm border border-outline/60 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark'
-				let html = ''
-				if (!this.hideNeutral) {
-					html += this.swatchButton('white', neutral + ' bg-white', '')
-					html += this.swatchButton('black', neutral + ' bg-black', '')
-				}
-				this.swatchHues.forEach(hue => {
-					this.swatchShades.forEach(shade => {
-						const cls = hue + '-' + shade
-						html += this.swatchButton(cls, standard, 'background-color: var(--color-' + cls + ')')
-					})
-				})
-				return html
-			},
-			handleSwatchEvent(event, action) {
-				const button = event.target.closest('button[data-cls]')
-				if (!button || !event.currentTarget.contains(button)) return
-				if (action === 'pick') {
-					this.pick(button.dataset.cls, button)
-					return
-				}
-				this.hovered = button.dataset.cls
-			},
-		}`)
-	return sb.String()
+	return string(encoded)
 }
 
-func jsStringArray(values []string) string {
-	quoted := make([]string, len(values))
-	for i, value := range values {
-		quoted[i] = strconv.Quote(value)
-	}
-	return "[" + strings.Join(quoted, ",") + "]"
+func (c Config) swatchesData() string {
+	return base64.StdEncoding.EncodeToString([]byte(c.swatchesJSON()))
 }

@@ -13,6 +13,7 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/playwright-community/playwright-go"
@@ -62,13 +63,14 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
 
 	broken := func(name string) string { return "/cdn-unavailable/" + name + ".js" }
 	var dependencyHead strings.Builder
+	ctx := templ.WithNonce(context.Background(), "fallback-nonce")
 	require.NoError(t, head.Dependencies(
 		head.WithDependencyCDNURL(head.DependencyAlpineCollapse, broken("alpine-collapse")),
 		head.WithDependencyCDNURL(head.DependencyAlpineFocus, broken("alpine-focus")),
 		head.WithDependencyCDNURL(head.DependencyAlpineMask, broken("alpine-mask")),
 		head.WithDependencyCDNURL(head.DependencyAlpineJS, broken("alpine")),
 		head.WithDependencyCDNURL(head.DependencyHTMX, broken("htmx")),
-	).Render(context.Background(), &dependencyHead))
+	).Render(ctx, &dependencyHead))
 
 	var failedRequests atomic.Int32
 	mux := http.NewServeMux()
@@ -105,7 +107,16 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
     <button id="combobox-first" role="option" tabindex="-1">First</button>
     <button id="combobox-second" role="option" tabindex="-1">Second</button>
   </div>
-</body></html>`, dependencyHead.String())
+  <div id="action-group" data-goshtoso-action-group data-action-group-overflow-counts="1">
+    <div data-action-group-primary><button>Primary</button></div>
+    <div data-action-group-secondary><button>Secondary</button></div>
+    <div data-action-group-overflow>
+      <button aria-haspopup="true" aria-expanded="false">More</button>
+      <div role="menu"><button role="menuitem">Secondary</button></div>
+    </div>
+  </div>
+  %s
+	</body></html>`, dependencyHead.String(), firstPaintComponentFixtures())
 	})
 
 	server := httptest.NewServer(mux)
@@ -205,7 +216,7 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 	}))
 
 	var pageErrors []string
-	page.On("pageerror", func(err string) { pageErrors = append(pageErrors, err) })
+	page.On("pageerror", func(err error) { pageErrors = append(pageErrors, err.Error()) })
 	_, err := page.Goto(server.URL, playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
@@ -222,7 +233,12 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 	for _, name := range []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx"} {
 		assert.Equal(t, "fallback", sources[name], "%s should use its local fallback", name)
 	}
-	assert.Equal(t, "primary", sources["combobox"], "the local first-party primary should load without a fallback")
+	assert.Equal(t, "primary", sources["first-party"], "the local first-party bundle should load without a fallback")
+	nonces, err := page.Evaluate(`() => Array.from(document.querySelectorAll('script[data-goshtoso-dependency]'), script => script.nonce)`, nil)
+	require.NoError(t, err)
+	for _, nonce := range nonces.([]any) {
+		assert.Equal(t, "fallback-nonce", nonce, "loader must propagate its nonce to every child script")
+	}
 
 	require.NoError(t, page.Locator("#alpine-toggle").Click())
 	require.NoError(t, page.Locator("#collapse-panel").WaitFor(playwright.LocatorWaitForOptions{
@@ -244,11 +260,80 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 	activeID, err := page.Evaluate(`() => document.activeElement && document.activeElement.id`, nil)
 	require.NoError(t, err)
 	assert.Equal(t, "combobox-first", activeID)
+	_, err = page.WaitForFunction(`() => document.querySelector("#action-group").dataset.actionGroupInitialized === "true"`, nil)
+	require.NoError(t, err)
+	assertFirstPaintComponents(t, page)
 
 	fallbacks, err := page.Evaluate(`() => window.__goshtosoFallbacks`, nil)
 	require.NoError(t, err)
 	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx"}, fallbacks)
 	assert.Empty(t, pageErrors, "fallback must not cause uncaught JavaScript errors")
+}
+
+func TestDependenciesLocalRuntimeBootsReusableComponentBundle(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	var dependencyHead strings.Builder
+	require.NoError(t, head.Dependencies(head.WithLocalRuntime()).Render(context.Background(), &dependencyHead))
+	mux := http.NewServeMux()
+	mux.Handle("/assets/", assets.Handler())
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = fmt.Fprintf(w, `<!doctype html><html><head>%s</head><body>
+<div id="local-combobox" data-combobox tabindex="0"><button id="local-option" role="option">Option</button></div>
+<div id="local-action-group" data-goshtoso-action-group data-action-group-overflow-counts="1">
+<div data-action-group-primary><button>Primary</button></div><div data-action-group-secondary><button>Secondary</button></div>
+<div data-action-group-overflow><button aria-haspopup="true" aria-expanded="false">More</button><div role="menu"><button role="menuitem">Secondary</button></div></div>
+	</div>%s</body></html>`, dependencyHead.String(), firstPaintComponentFixtures())
+	})
+	server := httptest.NewServer(mux)
+	t.Cleanup(server.Close)
+
+	page := newPage(t, sharedBrowser)
+	var pageErrors []string
+	page.On("pageerror", func(err error) { pageErrors = append(pageErrors, err.Error()) })
+	_, err := page.Goto(server.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateLoad})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => typeof Alpine !== "undefined" && typeof htmx !== "undefined" && document.querySelector("#local-action-group").dataset.actionGroupInitialized === "true"`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("#local-combobox").Focus())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	activeID, err := page.Evaluate(`() => document.activeElement.id`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, "local-option", activeID)
+	assertFirstPaintComponents(t, page)
+	assert.Empty(t, pageErrors, "local runtime must initialise reusable component behavior without page errors")
+}
+
+func firstPaintComponentFixtures() string {
+	return `<script>
+document.addEventListener("alpine:init", function () {
+  window.__goshtosoGlobalsBeforeAlpine =
+    typeof window.structuredInput === "function" &&
+    typeof window.goshtosoInitTooltipTrigger === "function";
+});
+</script>
+<div id="structured-provider" x-data="structuredInput($el)" data-name="labels" data-entries='[["alpha"]]' data-new-row='[""]'>
+  <span id="structured-provider-value" x-text="entries[0][0]"></span>
+</div>
+<span id="tooltip-provider" x-data data-tooltip-content-id="tooltip-provider-content" x-init="goshtosoInitTooltipTrigger($el)">
+  <button id="tooltip-provider-button">Help</button>
+</span>
+<div id="tooltip-provider-content" role="tooltip">Help text</div>`
+}
+
+func assertFirstPaintComponents(t *testing.T, page playwright.Page) {
+	t.Helper()
+
+	_, err := page.WaitForFunction(`() =>
+window.__goshtosoGlobalsBeforeAlpine === true &&
+document.querySelector("#structured-provider-value").textContent === "alpha" &&
+document.querySelector("#tooltip-provider-button").getAttribute("aria-describedby") === "tooltip-provider-content" &&
+Alpine.__actionGroupDemoRegistered === undefined &&
+Alpine.__avatarShowcaseRegistered === undefined &&
+Alpine.__logFeedRegistered === undefined`, nil)
+	require.NoError(t, err, "reusable component globals must exist before Alpine and demo providers must remain absent")
 }
 
 func requireInputValue(t *testing.T, page playwright.Page, selector string) string {

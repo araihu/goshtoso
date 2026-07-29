@@ -35,14 +35,15 @@ jobs:
         run: |
           templ generate
           go run ./cmd/themegen
+          go run ./cmd/jsbuild
           tailwindcss -i css/main.css -o assets/styles.css
 
       - name: Verify committed assets match a pinned rebuild
         run: |
           git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null \
             || { echo "::error::release assets are not committed at this tag — run 'just css' and commit them"; exit 1; }
-          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css '*_templ.go' \
-            || { echo "::error::tag has stale assets/generated code — run 'templ generate' + 'just css' and re-tag"; exit 1; }
+          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css assets/js/*.js '*_templ.go' \
+            || { echo "::error::tag has stale assets/generated code — run 'templ generate' + 'just css' + 'just js' and re-tag"; exit 1; }
 
       - name: Release notes
         run: |

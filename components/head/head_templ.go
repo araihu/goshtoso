@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 // Dependencies renders the <script>/<link> tags for every Goshtoso runtime
 // asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
 // text-on-primary, etc.), Alpine core + collapse/focus/mask plugins, HTMX, and the
-// combobox keyboard-nav and ActionGroup measurement scripts.
+// minified first-party bundle containing reusable component behavior.
 //
 // Support assets load from /assets/*, which you MUST serve by mounting the
 // embedded asset handler — CSS and local fallback fail without it:
@@ -104,8 +104,8 @@ func dependenciesTemplate(cfg config) templ.Component {
 	})
 }
 
-// DependenciesMinimal renders just the CSS, Alpine core, HTMX, combobox nav,
-// and ActionGroup measurement runtime (no Alpine plugins). Use it when your
+// DependenciesMinimal renders just the CSS, Alpine core, HTMX, and Goshtoso's
+// minified first-party runtime (no Alpine plugins). Use it when your
 // page needs no plugin-backed components. Same /assets/ mount requirement as
 // Dependencies.
 func dependenciesMinimalTemplate(cfg config) templ.Component {

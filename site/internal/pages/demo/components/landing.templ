@@ -8,6 +8,7 @@ import (
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
+	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/araihu/goshtoso/site/internal/themes"
 )
@@ -61,7 +62,7 @@ func getThemeChips() []themeChip {
 
 templ LandingPage() {
 	<!DOCTYPE html>
-	<html lang="en" x-data>
+	<html lang="en" x-data data-demo-storage-policy="strict" data-demo-theme-bootstrap>
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -76,8 +77,7 @@ templ LandingPage() {
 			// Doing this here (not in Alpine x-init) keeps the homepage's theme in
 			// lock-step with the rest of the site and avoids a flash of the default
 			// theme on navigation. Shares localStorage key 'theme' / 'darkMode'.
-			@storageConsentScript()
-			@templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!!(c&&c.allowed());var t=canStore?(localStorage.getItem('theme')||'araihu'):'araihu';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
+			<script src={ siteassets.DemoBundleURL }></script>
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
 			<script defer src={ assets.AlpineJSURL }></script>
@@ -351,7 +351,7 @@ templ exampleCardAction() {
 // demo layout's banner.
 templ cookieConsent() {
 	<div
-		x-data="{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }"
+		x-data="demoStorageConsent"
 		x-show="show"
 		x-cloak
 		x-transition
@@ -382,8 +382,4 @@ templ cookieConsent() {
 			</div>
 		</div>
 	</div>
-}
-
-templ storageConsentScript() {
-	@templ.Raw(`<script>(function(){if(window.goshtosoStorageConsent)return;var pref='gt_storage';var maxAge=15552000;var demoCookies=['gt_todo','gt_profile','gt_chat'];var localKeys=['theme','darkMode','themeOverrides','themeTitleFont','themeBodyFont','themeRadius','themeCssMode','themeCssFilter','cookieConsent'];function cookieValue(name){var parts=document.cookie?document.cookie.split('; '):[];for(var i=0;i<parts.length;i++){var p=parts[i];var eq=p.indexOf('=');var key=eq>=0?p.slice(0,eq):p;if(key===name)return eq>=0?decodeURIComponent(p.slice(eq+1)):'';}return '';}function setCookie(name,value,age){document.cookie=name+'='+encodeURIComponent(value)+'; Path=/; Max-Age='+age+'; SameSite=Lax';}function expireCookie(name){setCookie(name,'',0);}function clearLocalStorage(){try{localKeys.forEach(function(key){localStorage.removeItem(key);});}catch(e){}}function clearIndexedDB(){try{if(window.indexedDB&&indexedDB.deleteDatabase)indexedDB.deleteDatabase('gt_profile');}catch(e){}}window.goshtosoStorageConsent={shouldShow:function(){var v=cookieValue(pref);return v!=='allowed'&&v!=='denied';},allowed:function(){return cookieValue(pref)==='allowed';},allow:function(){setCookie(pref,'allowed',maxAge);try{localStorage.setItem('cookieConsent','v2');}catch(e){}},deny:function(){setCookie(pref,'denied',maxAge);demoCookies.forEach(expireCookie);clearLocalStorage();clearIndexedDB();}};if(cookieValue(pref)!=='allowed'){clearLocalStorage();clearIndexedDB();}})();</script>`)
 }

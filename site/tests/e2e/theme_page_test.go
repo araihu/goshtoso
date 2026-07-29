@@ -47,7 +47,9 @@ func gotoThemePage(t *testing.T, page playwright.Page) {
 	// before it's wired don't trigger watchers.
 	_, err = page.WaitForFunction(`() => {
 		const el = document.querySelector('[x-data="themePage"]');
-		return el && Alpine && typeof Alpine.$data === 'function' && Alpine.$data(el) && typeof Alpine.$data(el).applyFont === 'function';
+		const data = el && Alpine && typeof Alpine.$data === 'function' && Alpine.$data(el);
+		return Alpine.__themePageRegistered === true && document.querySelector('#theme-page-data[type="application/json"]') &&
+			data && typeof data.applyFont === 'function' && data.allTokens.length > 10;
 	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err)
 }
@@ -81,6 +83,38 @@ func TestThemePage_Loads(t *testing.T) {
 		require.NoError(t, err)
 		assert.Greater(t, count, 0, "missing section heading %q", heading)
 	}
+}
+
+func TestThemePage_FragmentNavBootstrapsData(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	dismissCookieBanner(t, page)
+
+	var jsErrors []string
+	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })
+	page.On("console", func(message playwright.ConsoleMessage) {
+		if message.Type() == "error" {
+			jsErrors = append(jsErrors, message.Text())
+		}
+	})
+
+	_, err := page.Goto(baseURL + "/getting-started")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("a[href='/docs/theme']").First().Click())
+	_, err = page.WaitForFunction(`() => {
+		const root = document.querySelector('[x-data="themePage"]');
+		const data = root && Alpine.$data(root);
+		return root && root._x_dataStack && data && data.allThemes.length === 15 &&
+			data.blocks.goshtoso && data.radiusMap['2xl'] === '1rem';
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "theme provider should parse inert data after fragment navigation")
+
+	require.NoError(t, page.Locator("button[data-radius='2xl']").First().Click())
+	_, err = page.WaitForFunction(
+		"() => document.documentElement.style.getPropertyValue('--radius-radius') === '1rem'", nil)
+	require.NoError(t, err, "fragment-loaded theme data should drive static behavior")
+	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav theme page: %v", jsErrors)
 }
 
 func TestThemePage_ThemeGrid_SwitchesTheme(t *testing.T) {

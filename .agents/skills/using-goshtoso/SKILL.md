@@ -62,8 +62,8 @@ templ Layout() {
 ```
 
 `head.Dependencies()` emits Goshtoso CSS and an ordered loader for Alpine.js,
-its collapse/focus/mask plugins, HTMX, and first-party `/assets/` scripts such
-as `combobox.js` and `action-group.js`. Third-party dependencies try
+its collapse/focus/mask plugins, HTMX, and the first-party
+`/assets/js/goshtoso.min.js` bundle. Third-party dependencies try
 version-pinned CDN URLs first and create a fresh script for the exact embedded
 version when a CDN download fails. Keep `assets.Handler()` mounted even when
 the third-party CDN normally succeeds.
@@ -87,8 +87,10 @@ For offline inventories or build descriptors, use
 generated files or the module cache. Its caller-owned dependency slice is in
 execution order and includes roles, CDN primary, Handler-served local URL, SRI,
 enabled, minimal-set membership, defer, and loader-readiness semantics. Cache
-the separate stylesheet and bootstrap loader local URLs too; do not execute the
-loader and the direct local dependency scripts together.
+the separate stylesheet and bootstrap loader local URLs too; execute only
+enabled dependencies. The combined first-party bundle is enabled by default;
+disabled Combobox and ActionGroup entries preserve standalone URL inventory for
+legacy overrides. Do not execute the loader and direct local scripts together.
 
 Bind same-version caches only when `assets.GoshtosoVersion().Status` is
 `assets.VersionExact`. Development, replaced, and unavailable builds leave the
@@ -246,7 +248,7 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 
 - Missing styling usually means `/assets/styles.css` is not served or
   `head.Dependencies()` is absent.
-- Dead combobox keyboard navigation usually means `/assets/js/combobox.js` is
+- Dead combobox keyboard navigation usually means `/assets/js/goshtoso.min.js` is
   missing. An unformatted `x-mask` input means the Mask plugin or an Alpine
   `x-data` root is missing. Prefer `head.Dependencies()` instead of hand-written
   script tags.
