@@ -6643,6 +6643,14 @@
       }
     }
   }
+  .dark\:bg-secondary-dark\/15 {
+    &:where(.dark, .dark *) {
+      background-color: color-mix(in srgb, oklch(70.7% 0.165 254.624) 15%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-secondary-dark) 15%, transparent);
+      }
+    }
+  }
   .dark\:bg-success-action-dark {
     &:where(.dark, .dark *) {
       background-color: var(--color-success-action-dark);

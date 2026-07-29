@@ -262,26 +262,26 @@ func (cfg Config) factoryData() string {
 }
 
 func jsEscapeSingle(s string) string {
-	result := ""
+	var result strings.Builder
 	for _, c := range s {
 		switch c {
 		case '\'':
-			result += `\'`
+			result.WriteString(`\'`)
 		case '\\':
-			result += `\\`
+			result.WriteString(`\\`)
 		case '\n':
-			result += `\n`
+			result.WriteString(`\n`)
 		case '\r':
-			result += `\r`
+			result.WriteString(`\r`)
 		case '\t':
-			result += `\t`
+			result.WriteString(`\t`)
 		case '\u2028':
-			result += `\u2028`
+			result.WriteString(`\u2028`)
 		case '\u2029':
-			result += `\u2029`
+			result.WriteString(`\u2029`)
 		default:
-			result += string(c)
+			result.WriteString(string(c))
 		}
 	}
-	return result
+	return result.String()
 }

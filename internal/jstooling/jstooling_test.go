@@ -7,6 +7,23 @@ import (
 	"testing"
 )
 
+func TestTailwindScansAuthoredJavaScriptSourceRoots(t *testing.T) {
+	t.Parallel()
+
+	mainCSS, err := os.ReadFile("../../css/main.css")
+	if err != nil {
+		t.Fatalf("read css/main.css: %v", err)
+	}
+	for _, source := range []string{
+		`@source "../assets/js/src/**/*.js";`,
+		`@source "../site/assets/js/src/**/*.js";`,
+	} {
+		if !strings.Contains(string(mainCSS), source) {
+			t.Errorf("css/main.css missing authored JavaScript source %q", source)
+		}
+	}
+}
+
 func TestDetectInlineJavaScriptFindsExtractionCandidates(t *testing.T) {
 	t.Parallel()
 

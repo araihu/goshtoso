@@ -105,6 +105,6 @@ func addLaneFSource(t *testing.T, page playwright.Page, path string) {
 	t.Helper()
 	source, err := os.ReadFile(path)
 	require.NoError(t, err)
-	_, err = page.AddScriptTag(playwright.PageAddScriptTagOptions{Content: playwright.String(string(source))})
+	_, err = page.AddScriptTag(playwright.PageAddScriptTagOptions{Content: new(string(source))})
 	require.NoError(t, err)
 }
