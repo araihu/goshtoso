@@ -1,8 +1,10 @@
 # First-party JavaScript contract
 
-Authored browser code lives only under `assets/js/src/`. Files next to that
-directory are tracked generated output and must not be hand-edited. The embedded
-asset handler deliberately does not publish `assets/js/src/`.
+Reusable library browser code lives under `assets/js/src/`. Demo-site providers
+live under `site/assets/js/src/`; they are site-owned and are not published by
+the library asset handler. Files next to those source directories are tracked
+generated output and must not be hand-edited. Neither embedded asset handler
+publishes an authored `src/` directory.
 
 The toolchain uses the Go API from exactly pinned `github.com/evanw/esbuild`
 module version in `go.mod`; it does not require Node.js or a package manager.
@@ -20,28 +22,38 @@ go run ./cmd/jslint -inventory
 `just js` generates:
 
 - `assets/js/goshtoso.min.js` from `src/combobox.js`, `src/action-group.js`,
-  component globals (`structured-input`, `tooltip`), then demo Alpine providers
-  (`action-group`, `avatar-showcase`, `log-feed`), in that fixed order;
+  component globals (`structured-input`, `tooltip`), shared component data
+  decoding, then component factories (`carousel`, `dropdown`, `palette`,
+  `select`, `tabs`), in that fixed order;
+- `site/assets/js/goshtoso-demo.min.js` from the site providers
+  `action-group`, `avatar-showcase`, `log-feed`, `chat`, `profile-images`,
+  `ticker-pane`, and `theme-page`, in that fixed order;
 - compatibility builds at `assets/js/combobox.js` and
   `assets/js/action-group.js`;
 - standalone `assets/js/darkmode.js` and bootstrap
   `assets/js/dependency-loader.js`.
 
-`head.Dependencies()` and `head.DependenciesMinimal()` load the combined bundle.
-Runtime order is Alpine plugins, first-party bundle, Alpine core, then HTMX.
-Component globals therefore exist before Alpine's first DOM scan, while demo
-providers register during `alpine:init`. None of those initializers needs HTMX;
-the log-feed provider consults `htmx.process` only on a later resume action.
+`head.Dependencies()` and `head.DependenciesMinimal()` load only the reusable
+component bundle. Runtime order is Alpine plugins, component bundle, Alpine
+core, then HTMX. The Goshtoso demo site's layouts separately load
+`/site-assets/js/goshtoso-demo.min.js`; that URL is embedded and served by the
+site module and never enters the public runtime manifest. The legacy site layout
+uses deferred component-bundle, demo-bundle, Alpine order. Componentdocshell
+emits the site bundle as a synchronous site runtime after its deferred dependency
+tags, so the providers subscribe to `alpine:init` before Alpine executes. None
+of those initializers needs HTMX; the log-feed provider consults `htmx.process`
+only on a later resume action.
 The dependency loader remains standalone because it owns ordered third-party
 loading, exact-version local fallback, readiness events and promise state, and
 CSP nonce propagation to every child script. Passing `WithComboboxURL` or
 `WithActionGroupURL` switches head rendering to both standalone compatibility
 entries so either legacy override keeps its original behavior.
 
-`assets.DefaultRuntimeManifest().Dependencies` remains the public inventory:
-the bundle entry is enabled by default, while the standalone Combobox and
-ActionGroup entries remain present with `Enabled == false` for compatibility.
-Consumers should execute or cache enabled entries only.
+`assets.DefaultRuntimeManifest().Dependencies` remains the public library
+inventory: the component bundle entry is enabled by default, while the
+standalone Combobox and ActionGroup entries remain present with
+`Enabled == false` for compatibility. Consumers should execute or cache enabled
+entries only. The site bundle is deliberately absent.
 
 ## Inline extraction formula
 

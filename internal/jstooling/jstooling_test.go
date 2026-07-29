@@ -89,23 +89,29 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	t.Parallel()
 
 	root := t.TempDir()
-	sourceDir := filepath.Join(root, "assets", "js", "src")
-	if err := os.MkdirAll(sourceDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
 	sources := map[string]string{
-		"combobox.js":                    `(() => { window.comboboxFixture = true })();`,
-		"action-group.js":                `(() => { window.actionGroupFixture = true })();`,
-		"components/structured-input.js": `(() => { window.structuredInputFixture = true })();`,
-		"components/tooltip.js":          `(() => { window.tooltipFixture = true })();`,
-		"demo/action-group.js":           `(() => { window.actionGroupDemoFixture = true })();`,
-		"demo/avatar-showcase.js":        `(() => { window.avatarShowcaseFixture = true })();`,
-		"demo/log-feed.js":               `(() => { window.logFeedFixture = true })();`,
-		"darkmode.js":                    `document.addEventListener("alpine:init", () => window.darkFixture = true);`,
-		"dependency-loader.js":           `(() => { window.loaderFixture = Promise.resolve(true) })();`,
+		"assets/js/src/combobox.js":                    `(() => { window.comboboxFixture = true })();`,
+		"assets/js/src/action-group.js":                `(() => { window.actionGroupFixture = true })();`,
+		"assets/js/src/components/structured-input.js": `(() => { window.structuredInputFixture = true })();`,
+		"assets/js/src/components/tooltip.js":          `(() => { window.tooltipFixture = true })();`,
+		"assets/js/src/components/data.js":             `(() => { window.dataFixture = true })();`,
+		"assets/js/src/components/carousel.js":         `(() => { window.carouselFixture = true })();`,
+		"assets/js/src/components/dropdown.js":         `(() => { window.dropdownFixture = true })();`,
+		"assets/js/src/components/palette.js":          `(() => { window.paletteFixture = true })();`,
+		"assets/js/src/components/select.js":           `(() => { window.selectFixture = true })();`,
+		"assets/js/src/components/tabs.js":             `(() => { window.tabsFixture = true })();`,
+		"site/assets/js/src/action-group.js":           `(() => { window.actionGroupDemoFixture = true })();`,
+		"site/assets/js/src/avatar-showcase.js":        `(() => { window.avatarShowcaseFixture = true })();`,
+		"site/assets/js/src/log-feed.js":               `(() => { window.logFeedFixture = true })();`,
+		"site/assets/js/src/chat.js":                   `(() => { window.chatFixture = true })();`,
+		"site/assets/js/src/profile-images.js":         `(() => { window.profileImagesFixture = true })();`,
+		"site/assets/js/src/ticker-pane.js":            `(() => { window.tickerPaneFixture = true })();`,
+		"site/assets/js/src/theme-page.js":             `(() => { window.themePageFixture = true })();`,
+		"assets/js/src/darkmode.js":                    `document.addEventListener("alpine:init", () => window.darkFixture = true);`,
+		"assets/js/src/dependency-loader.js":           `(() => { window.loaderFixture = Promise.resolve(true) })();`,
 	}
 	for name, content := range sources {
-		path := filepath.Join(sourceDir, filepath.FromSlash(name))
+		path := filepath.Join(root, filepath.FromSlash(name))
 		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -118,8 +124,8 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	if err != nil {
 		t.Fatalf("Build: %v", err)
 	}
-	if len(results) != 5 {
-		t.Fatalf("artifact count = %d, want 5", len(results))
+	if len(results) != 6 {
+		t.Fatalf("artifact count = %d, want 6", len(results))
 	}
 	bundle, err := os.ReadFile(filepath.Join(root, "assets", "js", "goshtoso.min.js"))
 	if err != nil {
@@ -128,24 +134,16 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	if !strings.HasPrefix(string(bundle), generatedHeader) {
 		t.Fatalf("bundle missing generated header: %q", bundle)
 	}
-	for _, fixture := range []string{
-		"comboboxFixture",
-		"actionGroupFixture",
-		"structuredInputFixture",
-		"tooltipFixture",
-		"actionGroupDemoFixture",
-		"avatarShowcaseFixture",
-		"logFeedFixture",
-	} {
-		if !strings.Contains(string(bundle), fixture) {
-			t.Fatalf("bundle missing %s: %s", fixture, bundle)
-		}
+	siteBundle, err := os.ReadFile(filepath.Join(root, "site", "assets", "js", "goshtoso-demo.min.js"))
+	if err != nil {
+		t.Fatal(err)
 	}
-	if strings.Index(string(bundle), "structuredInputFixture") > strings.Index(string(bundle), "tooltipFixture") {
-		t.Fatalf("bundle missing ordered sources: %s", bundle)
+	if !strings.HasPrefix(string(siteBundle), generatedHeader) {
+		t.Fatalf("site bundle missing generated header: %q", siteBundle)
 	}
-	if strings.Contains(string(bundle), "\n  ") {
-		t.Fatalf("bundle was not minified: %s", bundle)
+	assertSplitBundleContents(t, bundle, siteBundle)
+	if strings.Contains(string(bundle), "\n  ") || strings.Contains(string(siteBundle), "\n  ") {
+		t.Fatalf("bundles were not minified: component=%s site=%s", bundle, siteBundle)
 	}
 	if _, err := Build(root, true); err != nil {
 		t.Fatalf("clean check: %v", err)
@@ -153,7 +151,54 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	if err := os.WriteFile(filepath.Join(root, "assets", "js", "goshtoso.min.js"), []byte("drift"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Build(root, true); err == nil || !strings.Contains(err.Error(), "goshtoso.min.js") {
-		t.Fatalf("drift check error = %v", err)
+	if err := os.WriteFile(filepath.Join(root, "site", "assets", "js", "goshtoso-demo.min.js"), []byte("drift"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Build(root, true); err == nil ||
+		!strings.Contains(err.Error(), "assets/js/goshtoso.min.js") ||
+		!strings.Contains(err.Error(), "site/assets/js/goshtoso-demo.min.js") {
+		t.Fatalf("split-bundle drift check error = %v", err)
+	}
+}
+
+func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte) {
+	t.Helper()
+
+	componentFixtures := []string{
+		"comboboxFixture", "actionGroupFixture", "structuredInputFixture", "tooltipFixture",
+		"dataFixture", "carouselFixture", "dropdownFixture", "paletteFixture", "selectFixture", "tabsFixture",
+	}
+	demoFixtures := []string{
+		"actionGroupDemoFixture", "avatarShowcaseFixture", "logFeedFixture",
+		"chatFixture", "profileImagesFixture", "tickerPaneFixture", "themePageFixture",
+	}
+	assertBundleContainsOnly(t, "component bundle", componentBundle, componentFixtures, demoFixtures)
+	assertBundleContainsOnly(t, "site bundle", siteBundle, demoFixtures, componentFixtures)
+	assertBundleOrder(t, "component bundle", componentBundle, componentFixtures)
+	assertBundleOrder(t, "site bundle", siteBundle, demoFixtures)
+}
+
+func assertBundleContainsOnly(t *testing.T, label string, bundle []byte, required, forbidden []string) {
+	t.Helper()
+
+	for _, fixture := range required {
+		if !strings.Contains(string(bundle), fixture) {
+			t.Fatalf("%s missing %s: %s", label, fixture, bundle)
+		}
+	}
+	for _, fixture := range forbidden {
+		if strings.Contains(string(bundle), fixture) {
+			t.Fatalf("%s contains forbidden %s: %s", label, fixture, bundle)
+		}
+	}
+}
+
+func assertBundleOrder(t *testing.T, label string, bundle []byte, fixtures []string) {
+	t.Helper()
+
+	for index := 1; index < len(fixtures); index++ {
+		if strings.Index(string(bundle), fixtures[index-1]) > strings.Index(string(bundle), fixtures[index]) {
+			t.Fatalf("%s sources out of order at %s then %s: %s", label, fixtures[index-1], fixtures[index], bundle)
+		}
 	}
 }

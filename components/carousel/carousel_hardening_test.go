@@ -1,13 +1,13 @@
 package carousel
 
 import (
-	"strings"
+	"encoding/json"
 	"testing"
 )
 
-func TestSlidesToJSONEscapesControlCharactersInAlpineStrings(t *testing.T) {
+func TestSlidesJSONPreservesControlCharactersAsData(t *testing.T) {
 	payload := "value'\n\r\t\\\u2028\u2029</script>"
-	out := slidesToJSON([]Slide{{
+	out := slidesJSON([]Slide{{
 		ImgSrc:      payload,
 		ImgAlt:      payload,
 		Title:       payload,
@@ -16,29 +16,28 @@ func TestSlidesToJSONEscapesControlCharactersInAlpineStrings(t *testing.T) {
 		CTALabel:    payload,
 	}})
 
-	want := `value\'\n\r\t\\\u2028\u2029</script>`
-	for _, field := range []string{"imgSrc", "imgAlt", "title", "description", "ctaUrl", "ctaText"} {
-		if !strings.Contains(out, field+":'"+want+"'") {
-			t.Fatalf("slidesToJSON missing escaped %s payload in:\n%s", field, out)
-		}
+	var data []slideData
+	if err := json.Unmarshal([]byte(out), &data); err != nil {
+		t.Fatalf("slidesJSON must return valid data JSON: %v", err)
 	}
-	if strings.Contains(out, "value'\n") || strings.Contains(out, "\r") || strings.Contains(out, "\u2028") || strings.Contains(out, "\u2029") {
-		t.Fatalf("slidesToJSON emitted raw JS line terminator:\n%s", out)
+	if len(data) != 1 || data[0].ImgSrc != payload || data[0].CTAURL != payload {
+		t.Fatalf("slidesJSON changed configured data: %#v", data)
 	}
 }
 
-func TestSlidesToJSONSanitizesExecutableCTAHref(t *testing.T) {
-	out := slidesToJSON([]Slide{{
+func TestSlidesJSONSanitizesExecutableCTAHref(t *testing.T) {
+	out := slidesJSON([]Slide{{
 		ImgSrc:   "/safe.webp",
 		ImgAlt:   "Safe",
 		CTAHref:  "javascript:alert(1)",
 		CTALabel: "Open",
 	}})
 
-	if strings.Contains(out, "javascript:alert(1)") {
-		t.Fatalf("slidesToJSON emitted executable CTA href:\n%s", out)
+	var data []slideData
+	if err := json.Unmarshal([]byte(out), &data); err != nil {
+		t.Fatal(err)
 	}
-	if !strings.Contains(out, "ctaUrl:'about:invalid#TemplFailedSanitizationURL'") {
-		t.Fatalf("slidesToJSON missing inert CTA fallback:\n%s", out)
+	if data[0].CTAURL != "about:invalid#TemplFailedSanitizationURL" {
+		t.Fatalf("slidesJSON missing inert CTA fallback: %#v", data)
 	}
 }

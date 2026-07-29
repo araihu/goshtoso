@@ -9,7 +9,7 @@ const (
 	ComboboxURL = "/assets/js/combobox.js"
 	// ActionGroupURL is the assets.Handler URL for responsive ActionGroup measurement.
 	ActionGroupURL = "/assets/js/action-group.js"
-	// FirstPartyBundleURL is the minified default bundle for Goshtoso-authored browser behavior.
+	// FirstPartyBundleURL is the minified reusable Goshtoso component-runtime bundle.
 	FirstPartyBundleURL = "/assets/js/goshtoso.min.js"
 )
 
@@ -46,7 +46,7 @@ const (
 	RuntimeRoleCombobox RuntimeAssetRole = "combobox"
 	// RuntimeRoleActionGroup identifies responsive ActionGroup measurement.
 	RuntimeRoleActionGroup RuntimeAssetRole = "action-group"
-	// RuntimeRoleFirstParty identifies the combined Goshtoso-authored browser bundle.
+	// RuntimeRoleFirstParty identifies the reusable Goshtoso component-runtime bundle.
 	RuntimeRoleFirstParty RuntimeAssetRole = "first-party"
 )
 

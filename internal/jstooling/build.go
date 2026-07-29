@@ -37,9 +37,24 @@ var defaultArtifacts = []artifact{
 			"assets/js/src/action-group.js",
 			"assets/js/src/components/structured-input.js",
 			"assets/js/src/components/tooltip.js",
-			"assets/js/src/demo/action-group.js",
-			"assets/js/src/demo/avatar-showcase.js",
-			"assets/js/src/demo/log-feed.js",
+			"assets/js/src/components/data.js",
+			"assets/js/src/components/carousel.js",
+			"assets/js/src/components/dropdown.js",
+			"assets/js/src/components/palette.js",
+			"assets/js/src/components/select.js",
+			"assets/js/src/components/tabs.js",
+		},
+	},
+	{
+		output: "site/assets/js/goshtoso-demo.min.js",
+		inputs: []string{
+			"site/assets/js/src/action-group.js",
+			"site/assets/js/src/avatar-showcase.js",
+			"site/assets/js/src/log-feed.js",
+			"site/assets/js/src/chat.js",
+			"site/assets/js/src/profile-images.js",
+			"site/assets/js/src/ticker-pane.js",
+			"site/assets/js/src/theme-page.js",
 		},
 	},
 }
@@ -119,20 +134,22 @@ func buildArtifact(root string, spec artifact) ([]byte, error) {
 
 // SourceFiles returns authored first-party JavaScript in stable path order.
 func SourceFiles(root string) (map[string][]byte, error) {
-	base := filepath.Join(root, "assets", "js", "src")
 	paths := make([]string, 0)
-	err := filepath.WalkDir(base, func(path string, entry os.DirEntry, walkErr error) error {
-		if walkErr != nil {
-			return walkErr
-		}
-		if entry.IsDir() || filepath.Ext(path) != ".js" {
+	for _, relativeBase := range []string{"assets/js/src", "site/assets/js/src"} {
+		base := filepath.Join(root, filepath.FromSlash(relativeBase))
+		err := filepath.WalkDir(base, func(path string, entry os.DirEntry, walkErr error) error {
+			if walkErr != nil {
+				return walkErr
+			}
+			if entry.IsDir() || filepath.Ext(path) != ".js" {
+				return nil
+			}
+			paths = append(paths, path)
 			return nil
+		})
+		if err != nil {
+			return nil, err
 		}
-		paths = append(paths, path)
-		return nil
-	})
-	if err != nil {
-		return nil, err
 	}
 	sort.Strings(paths)
 	sources := make(map[string][]byte, len(paths))

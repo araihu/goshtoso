@@ -27,10 +27,10 @@ func TestTabsData_EscapesDefaultAndSyncHashTabIDs(t *testing.T) {
 		},
 	}
 
-	data := tabsData(cfg)
+	data := tabIDsJSON(cfg)
 
-	assert.Contains(t, data, `selectedTab:'billing\'\\x\n\r\t\u2028\u2029'`)
-	assert.Contains(t, data, `var v=['billing\'\\x\n\r\t\u2028\u2029','usage\'\\x\n\r\t\u2028\u2029'];`)
+	assert.Contains(t, defaultTab(cfg), "billing'\\x\n\r\t\u2028\u2029")
+	assert.Contains(t, data, `"billing'\\x\n\r\t\u2028\u2029"`)
 	assert.NotContains(t, data, "billing'\\x\n")
 	assert.NotContains(t, data, "\r")
 	assert.NotContains(t, data, "\u2028")

@@ -1,6 +1,8 @@
 package selectfield
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"maps"
 	"strings"
 
@@ -214,8 +216,72 @@ func mergeAttributeTokens(values ...string) string {
 	return strings.Join(result, " ")
 }
 
-// shellData returns the slim Alpine x-data for shell mode: only open state,
-// since the hosted content owns the value.
-func shellData() string {
-	return `{ isOpen: false, openedWithKeyboard: false }`
+type factoryData struct {
+	Placeholder    string          `json:"placeholder"`
+	Options        []factoryOption `json:"options"`
+	SelectedValues []string        `json:"selectedValues"`
+	ActiveIndex    int             `json:"activeIndex"`
+	AlpineModel    string          `json:"alpineModel,omitempty"`
+}
+
+type factoryOption struct {
+	Value    string `json:"value"`
+	Label    string `json:"label"`
+	Selected bool   `json:"selected"`
+}
+
+// factoryDataJSON serializes Select's non-executable state for its factory.
+func (cfg Config) factoryDataJSON() string {
+	data := factoryData{
+		Placeholder:    cfg.getPlaceholder(),
+		Options:        []factoryOption{},
+		SelectedValues: []string{},
+	}
+	for _, option := range cfg.Options {
+		data.Options = append(data.Options, factoryOption(option))
+	}
+	for index, option := range cfg.Options {
+		if option.Selected {
+			data.SelectedValues = []string{option.Value}
+			data.ActiveIndex = index
+			break
+		}
+	}
+	if cfg.Alpine != nil {
+		data.AlpineModel = cfg.Alpine.Model
+	}
+	encoded, err := json.Marshal(data)
+	if err != nil {
+		return `{"placeholder":"Please Select","options":[],"selectedValues":[],"activeIndex":0}`
+	}
+	return string(encoded)
+}
+
+func (cfg Config) factoryData() string {
+	return base64.StdEncoding.EncodeToString([]byte(cfg.factoryDataJSON()))
+}
+
+func jsEscapeSingle(s string) string {
+	result := ""
+	for _, c := range s {
+		switch c {
+		case '\'':
+			result += `\'`
+		case '\\':
+			result += `\\`
+		case '\n':
+			result += `\n`
+		case '\r':
+			result += `\r`
+		case '\t':
+			result += `\t`
+		case '\u2028':
+			result += `\u2028`
+		case '\u2029':
+			result += `\u2029`
+		default:
+			result += string(c)
+		}
+	}
+	return result
 }

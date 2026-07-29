@@ -8,6 +8,7 @@ import (
 	"github.com/araihu/goshtoso-app-shells/componentdocshell"
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/sidebar"
+	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 )
 
@@ -44,9 +45,16 @@ func componentDocsConfig(persist bool) componentdocshell.Config {
 				ToggleExpression: "$store.darkMode.toggle()",
 			},
 		},
-		Interactions: componentdocshell.InteractionConfig{EnableHTMX: true, LocalRuntime: true, RuntimeScripts: []string{assets.HTMXExtWSURL, assets.HTMXExtSSEURL}},
-		TOC:          componentdocshell.TOCConfig{RailID: "toc-rail", ListID: "toc-list"},
-		BodyEnd:      componentDocsBodyEnd(), RepositoryURL: "https://github.com/araihu/goshtoso", AssetPrefix: "/componentdocshell/assets/",
+		Interactions: componentdocshell.InteractionConfig{
+			EnableHTMX:   true,
+			LocalRuntime: true,
+			// componentdocshell renders RuntimeScripts synchronously after its deferred
+			// Goshtoso/Alpine tags. The site providers therefore subscribe to
+			// alpine:init before Alpine executes, without entering head.Dependencies.
+			RuntimeScripts: []string{siteassets.DemoBundleURL, assets.HTMXExtWSURL, assets.HTMXExtSSEURL},
+		},
+		TOC:     componentdocshell.TOCConfig{RailID: "toc-rail", ListID: "toc-list"},
+		BodyEnd: componentDocsBodyEnd(), RepositoryURL: "https://github.com/araihu/goshtoso", AssetPrefix: "/componentdocshell/assets/",
 	}
 }
 

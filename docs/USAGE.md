@@ -203,19 +203,20 @@ Alpine core):
 <script defer src="/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
 <script defer src="/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
 <script defer src="/assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js"></script>
+<script defer src="/assets/js/goshtoso.min.js"></script>
 <script defer src="/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"></script>
 <script src="/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"></script>
-<script defer src="/assets/js/goshtoso.min.js"></script>
 ```
 
 These are the vendored files `assets.Handler()` serves — the version is in the
 path, so there is no floating CDN tag to drift. **These versioned paths change
 when you upgrade a dep; prefer `@head.Dependencies()` so you never hardcode
-them.** Don't forget `goshtoso.min.js`: it provides combobox keyboard navigation
-and ActionGroup container measurement. The legacy `/assets/js/combobox.js` and
-`/assets/js/action-group.js` URLs remain available for consumers using
-`WithComboboxURL` or `WithActionGroupURL`, but new integrations should load the
-bundle once.
+them.** Don't forget `goshtoso.min.js`: it contains only reusable component
+behavior, including combobox/ActionGroup helpers and Alpine factories. Demo-site
+providers are not part of this consumer contract. The legacy
+`/assets/js/combobox.js` and `/assets/js/action-group.js` URLs remain available
+for consumers using `WithComboboxURL` or `WithActionGroupURL`, but new
+integrations should load the bundle once.
 
 ### Content Security Policy
 

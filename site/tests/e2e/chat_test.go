@@ -23,6 +23,8 @@ func gotoChat(t *testing.T, page playwright.Page) {
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => !!document.querySelector('#chat-log')", nil)
 	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => window.__gtChatInit === true", nil)
+	require.NoError(t, err, "external chat hooks should bootstrap before first interaction")
 	waitWSOpen(t, page)
 }
 

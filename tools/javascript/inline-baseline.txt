@@ -1,27 +1,16 @@
 # Existing extraction candidates. Regenerate only after reviewing inventory.
 components/avatar/avatar.templ|event-expression|8a85653c1363b0b9
-components/carousel/types.go|js-builder|93ba60941f6fb058
 components/combobox/combobox.templ|templ-raw-script|cd9d2b5af2e0f1e5
-components/dropdown/dropdown.templ|event-expression|19303131d1fe9527
-components/dropdown/dropdown.templ|event-expression|19303131d1fe9527
-components/dropdown/dropdown.templ|event-expression|19303131d1fe9527
-components/dropdown/dropdown.templ|event-expression|23c6638fe7312817
-components/dropdown/dropdown.templ|event-expression|23c6638fe7312817
-components/dropdown/dropdown.templ|event-expression|8d28a0042fa2836f
-components/dropdown/dropdown.templ|js-builder|8ab0ebc8a046d3b3
 components/fileinput/fileinput.templ|event-expression|ca25f8a406e12c43
 components/form/form.templ|event-expression|6ad5a088d755bd72
 components/form/form.templ|event-expression|c728cb7f067efd92
-components/palette/types.go|js-builder|3947274145b75482
 components/search/search.templ|event-expression|2eaece2e6ae06753
 components/search/search.templ|event-expression|351085a4acb9e37d
 components/search/search.templ|templ-raw-script|ca1198a65915c4d0
-components/select/select.templ|js-builder|88d1e817d3ec1765
 components/table/table.templ|js-builder|f29ef8be3489812e
 components/table/table.templ|templ-raw-script|87b6fb44877212cb
 components/table/table.templ|templ-raw-script|cdf6afacccb66f4a
 components/table/types.go|js-builder|9bcca4e343df9724
-components/tabs/types.go|js-builder|682f16f616b9fe1a
 components/toast/toast.templ|event-expression|5347d7307405c3a4
 components/toast/toast.templ|event-expression|b1b4ac6efe9dd727
 components/toast/toast.templ|event-expression|b1b4ac6efe9dd727
@@ -37,8 +26,6 @@ site/internal/pages/demo/components/select.templ|event-expression|cc43568a6b482e
 site/internal/pages/demo/components/select.templ|event-expression|cc43568a6b482e3c
 site/internal/pages/demo/components/textinput.templ|event-expression|55be7c5433db1a25
 site/internal/pages/demo/components/textinput.templ|event-expression|a9bf6f6009aee14d
-site/internal/pages/demo/components/theme.templ|js-builder|655b76c3509f0187
-site/internal/pages/demo/components/theme.templ|templ-raw-script|0c8212d71c0bb8c8
 site/internal/pages/demo/components/toast.templ|event-expression|5090ea0739623da6
 site/internal/pages/demo/components/toast.templ|event-expression|608e6b7834a0aff6
 site/internal/pages/demo/components/toast.templ|event-expression|826b5604fac8c61f
@@ -46,9 +33,6 @@ site/internal/pages/demo/components/toast.templ|event-expression|a559531648cb28f
 site/internal/pages/demo/components/toast.templ|event-expression|a7ee44938849e818
 site/internal/pages/demo/components/toast.templ|event-expression|b53afbbf16d1c10c
 site/internal/pages/demo/components/toast.templ|event-expression|ff8eb0a081fae29e
-site/internal/pages/demo/examples/chat.templ|templ-raw-script|bd1640b7fb165044
-site/internal/pages/demo/examples/profile.templ|templ-raw-script|39890676f674aae3
-site/internal/pages/demo/examples/ticker.templ|templ-raw-script|a114541e1a1d493b
 site/internal/pages/demo/layout.templ|event-expression|4759ecff7d447d7c
 site/internal/pages/demo/layout.templ|event-expression|aa7b8ea54dd0a8e4
 site/internal/pages/demo/layout.templ|event-expression|aace94584e99325f

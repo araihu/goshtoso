@@ -2,8 +2,9 @@ package palette
 
 templ paletteTemplate(cfg Config) {
 	<div
-		x-data={ cfg.alpineData() }
+		x-data="goshtosoPalette($el)"
 		data-palette
+		data-palette-swatches={ cfg.swatchesData() }
 		id={ cfg.ID }
 		class={ cfg.containerClasses() }
 		if cfg.modelAssignExpr() != "" {

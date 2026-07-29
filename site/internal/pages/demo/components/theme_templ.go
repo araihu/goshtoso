@@ -780,363 +780,67 @@ func sortedThemeKeys() []string {
 	return keys
 }
 
-// themePageScript builds the single Alpine component backing the entire page.
-// Lives in a <script> tag rather than inline x-data to escape templ's
-// attribute encoder (see AGENTS.md "Frontend Rules").
-func themePageScript() string {
-	blocks := getThemeCSSBlocks()
-	infos := getThemeInfos()
-	fonts := getFontOptions()
-	radii := getRadiusOptions()
-
-	var sb strings.Builder
-	// Two registration paths so the page works on both initial load and an
-	// HTMX fragment swap:
-	//   * First load: Alpine hasn't run yet. Register the factory inside an
-	//     alpine:init listener and let Alpine's own DOM traversal bind both
-	//     the parent <html> x-data and our x-data="themePage" subtree. Don't
-	//     manually initTree here — running it before Alpine has bound the
-	//     parent leaves child expressions like `theme === 'arctic'` evaluated
-	//     against an empty scope chain, so :class never fires.
-	//   * HTMX swap: alpine:init already fired, so re-listening would never
-	//     resolve. Register the factory immediately and manually initTree
-	//     just the swapped-in subtree (parent <html> is already bound).
-	sb.WriteString("(() => {\n")
-	sb.WriteString("  const factory = () => ({\n")
-	// state
-	sb.WriteString("    titleFont: localStorage.getItem('themeTitleFont') || '',\n")
-	sb.WriteString("    bodyFont: localStorage.getItem('themeBodyFont') || '',\n")
-	sb.WriteString("    radius: localStorage.getItem('themeRadius') || '',\n")
-	sb.WriteString("    overrides: JSON.parse(localStorage.getItem('themeOverrides') || '{}'),\n")
-	sb.WriteString("    resolved: {},\n")
-	sb.WriteString("    cssMode: localStorage.getItem('themeCssMode') || 'single',\n")
-	sb.WriteString("    cssFilter: localStorage.getItem('themeCssFilter') || 'current',\n")
-	sb.WriteString("    contrastTab: 'colors',\n")
-	sb.WriteString("    contrastBase: 'primary',\n")
-	sb.WriteString("    contrastCustomFg: '#0f172a',\n")
-	sb.WriteString("    contrastCustomBg: '#ffffff',\n")
-	sb.WriteString("    copied: false,\n")
-	sb.WriteString("    confirmingReset: false,\n")
-	sb.WriteString("    resetDone: false,\n")
-
-	// lookup tables, written from Go so we don't risk template-escape surprises
-	sb.WriteString("    radiusMap: {")
-	for i, r := range radii {
-		if i > 0 {
-			sb.WriteString(",")
-		}
-		sb.WriteString(fmt.Sprintf("'%s':'%s'", r.Key, r.CSS))
-	}
-	sb.WriteString("},\n")
-
-	sb.WriteString("    googleFontMap: {")
-	first := true
-	for _, f := range fonts {
-		if f.Google == "" {
-			continue
-		}
-		if !first {
-			sb.WriteString(",")
-		}
-		first = false
-		sb.WriteString(fmt.Sprintf("'%s':'%s'", f.Label, f.Google))
-	}
-	sb.WriteString("},\n")
-
-	// theme keys list
-	sb.WriteString("    allThemes: [")
-	for i, info := range infos {
-		if i > 0 {
-			sb.WriteString(",")
-		}
-		sb.WriteString(fmt.Sprintf("'%s'", info.Key))
-	}
-	sb.WriteString("],\n")
-
-	sb.WriteString("    themeLabels: {")
-	for i, info := range infos {
-		if i > 0 {
-			sb.WriteString(",")
-		}
-		sb.WriteString(fmt.Sprintf("'%s':'%s'", info.Key, info.Label))
-	}
-	sb.WriteString("},\n")
-
-	// themeClassMap: nested object themeKey -> token -> tailwind class.
-	// Used by the palette UI to show the "default" class for the active
-	// theme when the user has not overridden a token.
-	sb.WriteString("    themeClassMap: {\n")
-	tcMap := themeClassMap()
-	tcKeys := make([]string, 0, len(tcMap))
-	for k := range tcMap {
-		tcKeys = append(tcKeys, k)
-	}
-	sort.Strings(tcKeys)
-	for _, tk := range tcKeys {
-		sb.WriteString(fmt.Sprintf("      '%s': {", tk))
-		inner := tcMap[tk]
-		innerKeys := make([]string, 0, len(inner))
-		for k := range inner {
-			innerKeys = append(innerKeys, k)
-		}
-		sort.Strings(innerKeys)
-		for i, ik := range innerKeys {
-			if i > 0 {
-				sb.WriteString(",")
-			}
-			sb.WriteString(fmt.Sprintf("'%s':'%s'", ik, inner[ik]))
-		}
-		sb.WriteString("},\n")
-	}
-	sb.WriteString("    },\n")
-
-	// theme css blocks (used by CSS code section)
-	sb.WriteString("    blocks: {\n")
-	for key, css := range blocks {
-		sb.WriteString(fmt.Sprintf("        '%s': `%s`,\n", key, css))
-	}
-	sb.WriteString("    },\n")
-
-	// lifecycle
-	sb.WriteString(`    init() {
-      try { this.applyAll(); } catch (e) { console.error('themePage applyAll', e); }
-      try { this.refreshResolved(); } catch (e) { console.error('themePage refreshResolved', e); }
-      this.$watch('titleFont', v => { localStorage.setItem('themeTitleFont', v); this.applyFont('--font-title', v); });
-      this.$watch('bodyFont', v => { localStorage.setItem('themeBodyFont', v); this.applyFont('--font-body', v); });
-      this.$watch('radius', v => { localStorage.setItem('themeRadius', v); this.applyRadius(v); });
-      this.$watch('overrides', v => { localStorage.setItem('themeOverrides', JSON.stringify(v)); this.applyColors(); }, { deep: true });
-      this.$watch('cssMode', v => localStorage.setItem('themeCssMode', v));
-      this.$watch('cssFilter', v => localStorage.setItem('themeCssFilter', v));
-      // Theme + dark-mode changes are picked up via a MutationObserver on
-      // <html>; using $watch('theme', ...) here would try to subscribe to a
-      // property on a parent x-data scope and fail silently in some Alpine
-      // versions, taking the rest of init() down with it.
-      new MutationObserver(() => { this.applyAll(); this.refreshResolved(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['class','data-theme'] });
-    },
-    applyAll() {
-      this.applyFont('--font-title', this.titleFont);
-      this.applyFont('--font-body', this.bodyFont);
-      this.applyRadius(this.radius);
-      this.applyColors();
-    },
-    applyFont(varName, label) {
-      if (!label) { document.documentElement.style.removeProperty(varName); return; }
-      const gf = this.googleFontMap[label];
-      if (gf) this.loadGoogleFont(label, gf);
-      document.documentElement.style.setProperty(varName, "'" + label + "', sans-serif");
-    },
-    applyRadius(key) {
-      if (!key) { document.documentElement.style.removeProperty('--radius-radius'); return; }
-      const v = this.radiusMap[key];
-      if (v != null) document.documentElement.style.setProperty('--radius-radius', v);
-    },
-    applyColors() {
-      Object.entries(this.overrides).forEach(([k, v]) => {
-        if (!v) { document.documentElement.style.removeProperty('--color-' + k); return; }
-        const value = v.startsWith('#') ? v : ('var(--color-' + v + ')');
-        document.documentElement.style.setProperty('--color-' + k, value);
-      });
-    },
-    setColor(token, value) {
-      const next = Object.assign({}, this.overrides);
-      next[token] = value;
-      this.overrides = next;
-    },
-    pickColor(token, cls) {
-      if (!cls) { this.clearColor(token); }
-      else { this.setColor(token, cls); }
-      requestAnimationFrame(() => this.refreshResolved());
-    },
-    currentClass(token) {
-      const ov = this.overrides[token];
-      if (ov && !ov.startsWith('#')) return ov;
-      if (ov) return ov; // hex string falls through to display
-      const themeKey = this.theme || 'goshtoso';
-      return (this.themeClassMap[themeKey] || {})[token] || '';
-    },
-    classLabel(token) {
-      const cls = this.currentClass(token);
-      if (!cls) return '—';
-      if (cls.startsWith('#')) return cls;
-      // "blue-700" -> "Blue-700", "white" -> "White"
-      const idx = cls.indexOf('-');
-      if (idx === -1) return cls.charAt(0).toUpperCase() + cls.slice(1);
-      return cls.charAt(0).toUpperCase() + cls.slice(1, idx) + cls.slice(idx);
-    },
-    clearColor(token) {
-      // applyColors() only sets vars for tokens still present in overrides; it
-      // never clears a removed one, so drop the inline var here (mirrors
-      // resetAll) or the stale override sticks and the swatch won't reset.
-      document.documentElement.style.removeProperty('--color-' + token);
-      const next = Object.assign({}, this.overrides);
-      delete next[token];
-      this.overrides = next;
-    },
-    resetAll() {
-      this.titleFont = '';
-      this.bodyFont = '';
-      this.radius = '';
-      Object.keys(this.overrides).forEach(k => document.documentElement.style.removeProperty('--color-' + k));
-      this.overrides = {};
-      requestAnimationFrame(() => this.refreshResolved());
-      this.confirmingReset = false;
-      this.resetDone = true;
-      setTimeout(() => this.resetDone = false, 2500);
-    },
-    loadGoogleFont(label, query) {
-      const id = 'gfont-' + label.replace(/\s+/g, '-');
-      if (document.getElementById(id)) return;
-      const link = document.createElement('link');
-      link.id = id;
-      link.rel = 'stylesheet';
-      link.href = 'https://fonts.googleapis.com/css2?family=' + query + ':wght@400;500;600;700&display=swap';
-      document.head.appendChild(link);
-    },
-    refreshResolved() {
-      const cs = getComputedStyle(document.documentElement);
-      const next = {};
-      this.allTokens.forEach(t => {
-        const raw = cs.getPropertyValue('--color-' + t).trim();
-        next[t] = this.normalizeColor(raw);
-      });
-      this.resolved = next;
-    },
-    normalizeColor(raw) {
-      if (!raw) return '#000000';
-      if (raw.startsWith('#')) return raw.length === 4 ? '#' + raw.slice(1).split('').map(c => c+c).join('') : raw;
-      // Resolve any color string (rgb/oklch/color-mix) to hex by painting it and
-      // reading back the rendered pixel bytes. getImageData always yields integer
-      // RGBA — unlike ctx.fillStyle / getComputedStyle, which echo oklch() verbatim
-      // under CSS Color 4 and silently broke the parse (everything fell back to black).
-      if (!this._ctx) {
-        const cnv = document.createElement('canvas');
-        cnv.width = 1; cnv.height = 1;
-        this._ctx = cnv.getContext('2d', { willReadFrequently: true });
-      }
-      const ctx = this._ctx;
-      ctx.clearRect(0, 0, 1, 1);
-      ctx.fillStyle = '#000000';
-      ctx.fillStyle = raw;        // left black if the browser cannot parse it
-      ctx.fillRect(0, 0, 1, 1);
-      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-      return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
-    },
-    relLum(hex) {
-      const r = parseInt(hex.slice(1,3), 16) / 255;
-      const g = parseInt(hex.slice(3,5), 16) / 255;
-      const b = parseInt(hex.slice(5,7), 16) / 255;
-      const f = c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-      return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
-    },
-    ratio(a, b) {
-      const la = this.relLum(a);
-      const lb = this.relLum(b);
-      const [hi, lo] = la > lb ? [la, lb] : [lb, la];
-      return (hi + 0.05) / (lo + 0.05);
-    },
-    grade(r) {
-      if (r >= 7) return 'AAA';
-      if (r >= 4.5) return 'AA';
-      if (r >= 3) return 'AA Large';
-      return 'Fail';
-    },
-    gradeClass(r) {
-      if (r >= 4.5) return 'bg-green-500/15 text-green-700 dark:text-green-300';
-      if (r >= 3) return 'bg-amber-500/15 text-amber-700 dark:text-amber-300';
-      return 'bg-red-500/15 text-red-700 dark:text-red-300';
-    },
-    cssCode() {
-      const order = ['goshtoso','arctic','high-contrast','minimal','modern','neo-brutalism','halloween','zombie','pastel','90s','christmas','prototype','news','industrial','dracula'];
-      const filterKey = this.cssFilter === 'current' ? (this.theme || 'goshtoso') : this.cssFilter;
-      if (this.cssMode === 'single') {
-        return this.blocks[filterKey] || ('/* theme ' + filterKey + ' not found */');
-      }
-      const keys = (filterKey === 'all') ? order : [filterKey];
-      const inner = keys.map(k => '    ' + (this.blocks[k] || '').split('\n').join('\n    ')).join('\n\n');
-      return '@layer base {\n' + inner + '\n}\n';
-    },
-    cssExportLabel() {
-      const filterKey = this.cssFilter === 'current' ? (this.theme || 'goshtoso') : this.cssFilter;
-      const label = filterKey === 'all' ? 'All themes' : (this.themeLabels[filterKey] || filterKey);
-      return label + (this.cssMode === 'single' ? ' — single' : ' — @layer base');
-    },
-    copyCSS() {
-      navigator.clipboard.writeText(this.cssCode()).then(() => {
-        this.copied = true;
-        setTimeout(() => this.copied = false, 2000);
-      });
-    },
-    contrastPairs() {
-      const base = this.resolved[this.contrastBase];
-      if (!base) return [];
-      return this.allTokens
-        .filter(t => t !== this.contrastBase)
-        .map(t => {
-          const c = this.resolved[t];
-          if (!c) return null;
-          const r = this.ratio(base, c);
-          return { token: t, color: c, ratio: r, grade: this.grade(r) };
-        })
-        .filter(Boolean)
-        .sort((a, b) => b.ratio - a.ratio);
-    },
-    base() {
-      return this.resolved[this.contrastBase] || '#000000';
-    },
-    contrastMatrix() {
-      const baseColor = this.resolved[this.contrastBase];
-      if (!baseColor) return [];
-      return this.allTokens
-        .filter(t => t !== this.contrastBase)
-        .map(t => {
-          const c = this.resolved[t];
-          if (!c) return null;
-          const r = this.ratio(baseColor, c);
-          return { token: t, label: (this.tokenLabels[t] || t), color: c, ratio: r };
-        })
-        .filter(Boolean);
-    },
-    customContrast() {
-      const r = this.ratio(this.contrastCustomFg, this.contrastCustomBg);
-      return { ratio: r, grade: this.grade(r) };
-    },
-`)
-
-	// allTokens list (light + dark + shared)
-	sb.WriteString("    allTokens: [")
-	tokens := allEditableTokens()
-	for i, t := range tokens {
-		if i > 0 {
-			sb.WriteString(",")
-		}
-		sb.WriteString(fmt.Sprintf("'%s'", t.Key))
-	}
-	sb.WriteString("],\n")
-
-	// tokenLabels: short labels used by the contrast matrix column headers
-	sb.WriteString("    tokenLabels: {")
-	for i, t := range tokens {
-		if i > 0 {
-			sb.WriteString(",")
-		}
-		sb.WriteString(fmt.Sprintf("'%s':'%s'", t.Key, t.Label))
-	}
-	sb.WriteString("},\n")
-
-	sb.WriteString("  });\n")
-	sb.WriteString("  if (window.Alpine && window.Alpine.version) {\n")
-	sb.WriteString("    Alpine.data('themePage', factory);\n")
-	sb.WriteString("    document.querySelectorAll('[x-data=\"themePage\"]').forEach((el) => {\n")
-	sb.WriteString("      if (typeof Alpine.initTree === 'function') Alpine.initTree(el);\n")
-	sb.WriteString("    });\n")
-	sb.WriteString("  } else {\n")
-	sb.WriteString("    document.addEventListener('alpine:init', () => Alpine.data('themePage', factory));\n")
-	sb.WriteString("  }\n")
-	sb.WriteString("})();\n")
-	return sb.String()
+// themePageBootstrap is serialized as inert JSON beside the Alpine root. Static
+// executable behavior lives in assets/js/src/demo/theme-page.js.
+type themePageBootstrap struct {
+	RadiusMap     map[string]string            `json:"radiusMap"`
+	GoogleFontMap map[string]string            `json:"googleFontMap"`
+	AllThemes     []string                     `json:"allThemes"`
+	ThemeLabels   map[string]string            `json:"themeLabels"`
+	ThemeClassMap map[string]map[string]string `json:"themeClassMap"`
+	Blocks        map[string]string            `json:"blocks"`
+	CSSOrder      []string                     `json:"cssOrder"`
+	AllTokens     []string                     `json:"allTokens"`
+	TokenLabels   map[string]string            `json:"tokenLabels"`
 }
 
-func themePageScriptTag() templ.Component {
+func themePageBootstrapData() themePageBootstrap {
+	infos := getThemeInfos()
+	allThemes := make([]string, 0, len(infos))
+	themeLabels := make(map[string]string, len(infos))
+	for _, info := range infos {
+		allThemes = append(allThemes, info.Key)
+		themeLabels[info.Key] = info.Label
+	}
+
+	radiusMap := make(map[string]string)
+	for _, radius := range getRadiusOptions() {
+		radiusMap[radius.Key] = radius.CSS
+	}
+
+	googleFontMap := make(map[string]string)
+	for _, font := range getFontOptions() {
+		if font.Google != "" {
+			googleFontMap[font.Label] = font.Google
+		}
+	}
+
+	tokens := allEditableTokens()
+	allTokens := make([]string, 0, len(tokens))
+	tokenLabels := make(map[string]string, len(tokens))
+	for _, token := range tokens {
+		allTokens = append(allTokens, token.Key)
+		tokenLabels[token.Key] = token.Label
+	}
+
+	return themePageBootstrap{
+		RadiusMap:     radiusMap,
+		GoogleFontMap: googleFontMap,
+		AllThemes:     allThemes,
+		ThemeLabels:   themeLabels,
+		ThemeClassMap: themeClassMap(),
+		Blocks:        getThemeCSSBlocks(),
+		CSSOrder: []string{
+			"goshtoso", "arctic", "high-contrast", "minimal", "modern",
+			"neo-brutalism", "halloween", "zombie", "pastel", "90s",
+			"christmas", "prototype", "news", "industrial", "dracula",
+		},
+		AllTokens:   allTokens,
+		TokenLabels: tokenLabels,
+	}
+}
+
+func themePageDataScript() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -1157,7 +861,7 @@ func themePageScriptTag() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.Raw("<script>"+themePageScript()+"</script>").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.JSONScript("theme-page-data", themePageBootstrapData()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1215,11 +919,11 @@ func themeDemoContent() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = themePageScriptTag().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"themePage\" class=\"space-y-12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"themePage\" class=\"space-y-12\">")
+		templ_7745c5c3_Err = themePageDataScript().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1337,7 +1041,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1202, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 906, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -1350,7 +1054,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1205, Col: 165}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 909, Col: 165}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -1363,7 +1067,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1211, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 915, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
@@ -1376,7 +1080,7 @@ func themeGridSection() templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1214, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 918, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -1564,7 +1268,7 @@ func radiusIcon(key string) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(radiusIconPath(key))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1284, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 988, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 		if templ_7745c5c3_Err != nil {
@@ -1619,7 +1323,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(r.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1301, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1005, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 			if templ_7745c5c3_Err != nil {
@@ -1632,7 +1336,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("radius === '%s' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark hover:bg-surface dark:hover:bg-surface-dark'", r.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1304, Col: 221}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1008, Col: 221}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 			if templ_7745c5c3_Err != nil {
@@ -1645,7 +1349,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue("Radius " + r.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1305, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1009, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 			if templ_7745c5c3_Err != nil {
@@ -1666,7 +1370,7 @@ func themeBorderSection() templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(r.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1308, Col: 342}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1012, Col: 342}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -1769,7 +1473,7 @@ func modeColorGroup(title string, tokens []colorToken, isLight bool) templ.Compo
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1339, Col: 100}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1043, Col: 100}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -1836,7 +1540,7 @@ func colorGroup(title string, tokens []colorToken) templ.Component {
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1363, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1067, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -1888,7 +1592,7 @@ func colorSwatch(token string) templ.Component {
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue("'background-color:' + (resolved['" + token + "'] || '#888')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1375, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1079, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 		if templ_7745c5c3_Err != nil {
@@ -1975,7 +1679,7 @@ func colorRow(t colorToken) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1425, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1129, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
 		if templ_7745c5c3_Err != nil {
@@ -1988,7 +1692,7 @@ func colorRow(t colorToken) templ.Component {
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(tokenHint(t.Key))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1425, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1129, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
 		if templ_7745c5c3_Err != nil {
@@ -2391,7 +2095,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		var templ_7745c5c3_Var45 string
 		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%d", i))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1549, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1253, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 		if templ_7745c5c3_Err != nil {
@@ -2404,7 +2108,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		var templ_7745c5c3_Var46 string
 		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("s[%d] ? '%s' : 'bg-outline dark:bg-outline-dark'", i, onClass))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1552, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1256, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 		if templ_7745c5c3_Err != nil {
@@ -2417,7 +2121,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		var templ_7745c5c3_Var47 string
 		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("s[%d] ? 'translate-x-6' : 'translate-x-1'", i))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1557, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1261, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
 		if templ_7745c5c3_Err != nil {
@@ -2534,7 +2238,7 @@ func ringAvatar(label, classes string) templ.Component {
 		var templ_7745c5c3_Var52 string
 		templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1579, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1283, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 		if templ_7745c5c3_Err != nil {
@@ -2610,7 +2314,7 @@ func themeContrastSection() templ.Component {
 			var templ_7745c5c3_Var55 string
 			templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1634, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1338, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 			if templ_7745c5c3_Err != nil {
@@ -2623,7 +2327,7 @@ func themeContrastSection() templ.Component {
 			var templ_7745c5c3_Var56 string
 			templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1634, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1338, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var56))
 			if templ_7745c5c3_Err != nil {
@@ -2670,7 +2374,7 @@ func themeCSSSection() templ.Component {
 		var templ_7745c5c3_Var58 string
 		templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs("@layer base")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1767, Col: 166}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/theme.templ`, Line: 1471, Col: 166}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 		if templ_7745c5c3_Err != nil {

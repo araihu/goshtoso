@@ -37,7 +37,7 @@ css:
 vendor-js:
     go run ./cmd/vendorgen -download
 
-# Build tracked minified first-party JavaScript from assets/js/src/.
+# Build tracked library and demo-site JavaScript from their owned source roots.
 js:
     go run ./cmd/jsbuild
 

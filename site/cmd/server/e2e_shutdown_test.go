@@ -3,10 +3,27 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
+
+func TestFindAssetsRootSkipsNestedSiteAssetsPackage(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	start := filepath.Join(root, "site", "tests", "e2e")
+	require.NoError(t, os.MkdirAll(filepath.Join(root, "assets"), 0o755))
+	require.NoError(t, os.MkdirAll(filepath.Join(root, "site", "assets"), 0o755))
+	require.NoError(t, os.MkdirAll(start, 0o755))
+	require.NoError(t, os.WriteFile(filepath.Join(root, "assets", "styles.css"), []byte("fixture"), 0o644))
+
+	got, ok := findAssetsRoot(start)
+	require.True(t, ok)
+	require.Equal(t, root, got)
+}
 
 func TestE2EShutdownWrapperDisabledWithoutToken(t *testing.T) {
 	called := false
