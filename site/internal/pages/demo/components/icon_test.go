@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/araihu/goshtoso/components/icon/heroicons"
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -28,6 +29,23 @@ func TestIconShowcaseRendersEveryGlyphInResponsiveGrid(t *testing.T) {
 	require.Equal(t, len(heroicons.Glyphs), strings.Count(html, `data-icon-card=`))
 	require.Contains(t, html, `grid-cols-1 sm:grid-cols-3 xl:grid-cols-6`)
 	require.Contains(t, html, "copy a standalone Go program")
+}
+
+func TestIconShowcaseUsesCanonicalCatalogHeading(t *testing.T) {
+	entry, ok := catalog.Lookup("components/icon")
+	require.True(t, ok)
+
+	html := renderIconShowcase(t)
+	require.Truef(t, strings.Contains(html, `>`+entry.Title+`</h1>`), "icon H1 must match catalog title %q", entry.Title)
+}
+
+func TestIconShowcaseParticipatesInComponentDocsContract(t *testing.T) {
+	html := renderIconShowcase(t)
+
+	require.Equal(t, 1, strings.Count(html, `data-component-page`))
+	require.Equal(t, 1, strings.Count(html, `data-component-description`))
+	require.GreaterOrEqual(t, strings.Count(html, `data-component-preview`), 1)
+	require.GreaterOrEqual(t, strings.Count(html, `data-component-code`), 1)
 }
 
 func TestIconCodeEncoderReflectsMeaningfulSelectedOptions(t *testing.T) {

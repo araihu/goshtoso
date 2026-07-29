@@ -146,7 +146,9 @@ func TestFormValidation_SubmitValid(t *testing.T) {
 
 	// Verify success message
 	successMsg := page.Locator("#form-result")
-	require.NoError(t, successMsg.WaitFor())
+	require.NoError(t, successMsg.GetByText("Form submitted successfully!", playwright.LocatorGetByTextOptions{
+		Exact: new(true),
+	}).WaitFor())
 	text, err := successMsg.InnerText()
 	require.NoError(t, err)
 	assert.Contains(t, text, "Form submitted successfully!")

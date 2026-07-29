@@ -13,11 +13,11 @@ templ IconDemoPage() {
 }
 
 templ iconDemoContent() {
-	<div id="icon-fragment" x-data="iconCatalog">
+	<div id="icon-fragment" x-data="iconCatalog" data-component-page>
 		<div class="mb-8 max-w-3xl">
 			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Sprite icons</p>
-			<h1 id="icon" data-toc-heading class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Heroicons, ready for Go</h1>
-			<p class="mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted">
+			<h1 id="icon" data-toc-heading class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Icon</h1>
+			<p data-component-description class="mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted">
 				Browse bundled, typed symbols. Pick one to tune its exact <code class="font-mono text-sm">icon.Config</code> and copy a standalone Go program.
 			</p>
 		</div>
@@ -29,7 +29,7 @@ templ iconDemoContent() {
 }
 
 templ iconUsageBasics() {
-	<section class="mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40" aria-labelledby="icon-basics-title">
+	<section data-component-preview class="mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40" aria-labelledby="icon-basics-title">
 		<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 			<div>
 				<h2 id="icon-basics-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Accessible defaults, visible behavior</h2>
@@ -125,7 +125,7 @@ templ iconPickerModal() {
 						<svg data-testid="icon-live-preview" xmlns="http://www.w3.org/2000/svg" x-bind:class="previewClass" x-bind:aria-hidden="isDecorative" x-bind:role="isDecorative ? null : 'img'" x-bind:aria-label="isDecorative ? null : label" viewBox="0 0 24 24"><use x-bind:href="spriteHref"></use></svg>
 					</div>
 					<p class="mt-3 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted" x-text="selected.symbol"></p>
-					<div class="mt-4 overflow-hidden rounded-radius border border-outline bg-slate-950 text-slate-50 dark:border-outline-dark">
+					<div data-component-code class="mt-4 overflow-hidden rounded-radius border border-outline bg-slate-950 text-slate-50 dark:border-outline-dark">
 						<div class="flex items-center justify-between border-b border-white/10 px-3 py-2"><span class="text-xs font-medium">Standalone Go</span><button type="button" @click="copyCode()" class="rounded-radius px-2 py-1 text-xs font-medium text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><span x-text="copied ? 'Copied Go source' : 'Copy compilable Go'"></span></button></div>
 						<pre class="overflow-x-auto p-3 text-xs leading-5"><code x-text="code"></code></pre>
 					</div>

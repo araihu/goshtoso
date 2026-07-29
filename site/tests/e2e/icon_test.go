@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/araihu/goshtoso/components/icon/heroicons"
+	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -45,8 +46,10 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 
 	t.Run("route renders every generated glyph and symbol reference", func(t *testing.T) {
 		page := openIconCatalogPage(t)
+		entry, ok := catalog.Lookup("components/icon")
+		require.True(t, ok)
 		require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-			Name: "Heroicons, ready for Go",
+			Name: entry.Title,
 		}).WaitFor())
 
 		cards := page.Locator("[data-icon-card]")
