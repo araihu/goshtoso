@@ -108,7 +108,11 @@ func loadFixture(t *testing.T, name string) Catalog {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	t.Cleanup(func() {
+		if err := f.Close(); err != nil {
+			t.Errorf("close fixture %q: %v", name, err)
+		}
+	})
 	catalog, err := Load(f)
 	if err != nil {
 		t.Fatal(err)
