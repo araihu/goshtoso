@@ -58,6 +58,16 @@ go test ./site/tests/e2e/... -count=1 -timeout 5m -run TestDropdown
 fresh clones; CI creates a temporary workspace so it builds against the in-repo
 library at the current commit.
 
+Both module contracts are required:
+
+- `just site-current-source-integration` tests the site against this checkout
+  through a throwaway workspace.
+- `just site-pinned-dependency-deployability` forces `GOWORK=off` and tests the
+  standalone site against the public version pinned in `site/go.mod`.
+
+See [`docs/SITE_MODULE_CONTRACTS.md`](docs/SITE_MODULE_CONTRACTS.md) for the
+two-phase sequencing required when the site adopts an unreleased root API.
+
 ## Worktree Isolation (required)
 
 Every unit of work — a feature, an example app, a bugfix, a coverage pass — MUST
