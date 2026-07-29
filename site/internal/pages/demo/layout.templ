@@ -37,22 +37,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 // selector, and page-specific SEO metadata.
 templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Component) {
 	<!DOCTYPE html>
-	<html lang="en" x-data="{
-		theme: (window.goshtosoStorageConsent && !window.goshtosoStorageConsent.allowed()) ? 'araihu' : (localStorage.getItem('theme') || 'araihu'),
-		sidebarOpen: false,
-		showThemeDropdown: false,
-		setTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }
-	}" 
-	x-init="
-		$watch('theme', value => {
-			if (!window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed()) {
-				localStorage.setItem('theme', value);
-			} else {
-				localStorage.removeItem('theme');
-			}
-			document.documentElement.setAttribute('data-theme', value);
-		});
-	">
+	<html lang="en" x-data="demoLayout" data-demo-storage-policy="permissive" data-demo-theme-bootstrap>
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -62,8 +47,6 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			<link rel="shortcut icon" href="/favicon.ico"/>
 			<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 			<link rel="manifest" href="/site.webmanifest"/>
-			@storageConsentScript()
-			@templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!c||c.allowed();var t=canStore?(localStorage.getItem('theme')||'araihu'):'araihu';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`)
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -79,47 +62,6 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			<script src={ assets.HTMXURL }></script>
 			<script src={ assets.HTMXExtWSURL }></script>
 			<script src={ assets.HTMXExtSSEURL }></script>
-			<script>
-				// Alpine nav store + htmx integration for fragment-swap sidebar navigation.
-				// The store's `path` field is read inside the sidebar wrapper's x-effect so
-				// the search filter re-applies after an OOB sidebar swap.
-				document.addEventListener('alpine:init', () => {
-					Alpine.store('nav', { path: window.location.pathname });
-				});
-				document.addEventListener('htmx:pushedIntoHistory', () => {
-					if (window.Alpine && Alpine.store('nav')) {
-						Alpine.store('nav').path = window.location.pathname;
-					}
-				});
-				// Sidebar OOB swap rebuilds the .sidebar-scroll element, so its scrollTop
-				// resets. Capture before each swap and restore right after.
-				var __sidebarScrollTop = 0;
-				document.addEventListener('htmx:beforeSwap', () => {
-					var el = document.querySelector('.sidebar-scroll');
-					if (el) __sidebarScrollTop = el.scrollTop;
-				});
-				document.addEventListener('htmx:afterSwap', (e) => {
-					if (e && e.detail && e.detail.target && window.Alpine && Alpine.initTree) {
-						Alpine.initTree(e.detail.target);
-					}
-					// Sidebar scroll-restore and main scroll-reset apply ONLY to full
-					// page-nav swaps (target = #main-content), where the sidebar OOB-rebuilds.
-					// In-page swaps (accordions, tabs, table rows, the SSE log feed) must not
-					// touch sidebar/main scroll — an ungated sidebar restore here reset the
-					// nav to the top on every SSE log append.
-					var tgt = e && e.detail && e.detail.target;
-					if (tgt && tgt.id === 'main-content') {
-						var sidebarContent = document.getElementById('sidebar-nav-content');
-						if (sidebarContent && window.Alpine && Alpine.initTree) Alpine.initTree(sidebarContent);
-						if (sidebarContent && window.htmx && htmx.process) htmx.process(sidebarContent);
-						var sb = document.querySelector('.sidebar-scroll');
-						if (sb) sb.scrollTop = __sidebarScrollTop;
-						var pageScroll = document.getElementById('page-scroll');
-						if (pageScroll) pageScroll.scrollTo({ top: 0 });
-						if (window.buildTOC) window.buildTOC();
-					}
-				});
-			</script>
 			<style>
 				[x-cloak] { display: none !important; }
 				/* Hide scrollbar for sidebar */
@@ -269,7 +211,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			     storage via the gt_storage preference cookie. Keep in lock-step with
 			     landing.templ's cookieConsent(). -->
 			<div
-				x-data="{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }"
+				x-data="demoStorageConsent"
 				x-show="show"
 				x-cloak
 				x-transition
@@ -304,68 +246,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				</div>
 			</div>
 			<!-- Right-rail "On this page" TOC: built from #main-content [data-toc-heading].
-			     Rebuilt on every main-content HTMX swap via window.buildTOC (see head script). -->
-			<script>
-				(function () {
-					var spy = null;
-					function clearActive(nav) {
-						nav.querySelectorAll('[data-toc-link]').forEach(function (a) {
-							a.classList.remove('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');
-							a.classList.add('border-transparent');
-						});
-					}
-					function setActive(nav, id) {
-						var a = nav.querySelector('[data-toc-link="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
-						if (!a) return;
-						clearActive(nav);
-						a.classList.remove('border-transparent');
-						a.classList.add('border-primary', 'dark:border-primary-dark', 'text-on-surface-strong', 'dark:text-on-surface-dark-strong', 'font-medium');
-					}
-					window.buildTOC = function () {
-						var rail = document.getElementById('toc-rail');
-						var nav = document.getElementById('toc-list');
-						var pageScroll = document.getElementById('page-scroll');
-						var content = document.getElementById('main-content');
-						if (!rail || !nav || !pageScroll || !content) return;
-						if (spy) { spy.disconnect(); spy = null; }
-						var heads = Array.prototype.slice.call(content.querySelectorAll('[data-toc-heading]'));
-						nav.innerHTML = '';
-						// One heading (just the page title) isn't worth a rail — hide it.
-						if (heads.length < 2) { rail.style.display = 'none'; return; }
-						rail.style.display = '';
-						heads.forEach(function (h) {
-							if (!h.id) return;
-							var a = document.createElement('a');
-							a.href = '#' + h.id;
-							a.textContent = (h.textContent || '').trim();
-							a.setAttribute('data-toc-link', h.id);
-							a.className = 'block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong';
-							a.addEventListener('click', function (ev) {
-								ev.preventDefault();
-								h.scrollIntoView({ behavior: 'smooth', block: 'start' });
-								history.replaceState(null, '', '#' + h.id);
-								setActive(nav, h.id);
-							});
-							nav.appendChild(a);
-						});
-						// Scroll-spy: main is the scroll container, so it's the observer root.
-						spy = new IntersectionObserver(function (entries) {
-							entries.forEach(function (en) {
-								if (en.isIntersecting) setActive(nav, en.target.id);
-							});
-						}, { root: pageScroll, rootMargin: '0px 0px -75% 0px', threshold: 0 });
-						heads.forEach(function (h) { if (h.id) spy.observe(h); });
-						var hashId = decodeURIComponent((window.location.hash || '').replace(/^#/, ''));
-						var active = heads.find(function (h) { return h.id === hashId; }) || heads[0];
-						setActive(nav, active.id);
-					};
-					if (document.readyState === 'loading') {
-						document.addEventListener('DOMContentLoaded', window.buildTOC);
-					} else {
-						window.buildTOC();
-					}
-				})();
-			</script>
+			     Rebuilt on every main-content HTMX swap by the site demo bundle. -->
 		</body>
 	</html>
 }
@@ -663,10 +544,6 @@ templ componentNavFooter(activeComponent string) {
 			}
 		</div>
 	}
-}
-
-templ storageConsentScript() {
-	@templ.Raw(`<script>(function(){if(window.goshtosoStorageConsent)return;var pref='gt_storage';var maxAge=15552000;var demoCookies=['gt_todo','gt_profile','gt_chat'];var localKeys=['theme','darkMode','themeOverrides','themeTitleFont','themeBodyFont','themeRadius','themeCssMode','themeCssFilter','cookieConsent'];function cookieValue(name){var parts=document.cookie?document.cookie.split('; '):[];for(var i=0;i<parts.length;i++){var p=parts[i];var eq=p.indexOf('=');var key=eq>=0?p.slice(0,eq):p;if(key===name)return eq>=0?decodeURIComponent(p.slice(eq+1)):'';}return '';}function setCookie(name,value,age){document.cookie=name+'='+encodeURIComponent(value)+'; Path=/; Max-Age='+age+'; SameSite=Lax';}function expireCookie(name){setCookie(name,'',0);}function clearLocalStorage(){try{localKeys.forEach(function(key){localStorage.removeItem(key);});}catch(e){}}function clearIndexedDB(){try{if(window.indexedDB&&indexedDB.deleteDatabase)indexedDB.deleteDatabase('gt_profile');}catch(e){}}window.goshtosoStorageConsent={shouldShow:function(){var v=cookieValue(pref);return v!=='allowed'&&v!=='denied';},allowed:function(){return cookieValue(pref)!=='denied';},allow:function(){setCookie(pref,'allowed',maxAge);try{localStorage.setItem('cookieConsent','v2');}catch(e){}},deny:function(){setCookie(pref,'denied',maxAge);demoCookies.forEach(expireCookie);clearLocalStorage();clearIndexedDB();}};if(cookieValue(pref)==='denied'){clearLocalStorage();clearIndexedDB();}})();</script>`)
 }
 
 // siteFooter renders the global footer shown beneath every page's content

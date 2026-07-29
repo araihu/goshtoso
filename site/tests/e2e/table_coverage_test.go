@@ -72,7 +72,7 @@ func TestTableCoverageDemo(t *testing.T) {
 	t.Run("select filter swaps rows via HTMX", func(t *testing.T) {
 		// The filtered demo table carries a membership select filter. Changing it
 		// fires applyFilters() -> htmx.ajax targeting the tbody, exercising
-		// filterScriptData's configRequest hook end to end. The membership column
+		// the bundled filter runtime's configRequest hook end to end. The membership column
 		// is the 4th cell (id, name, email, membership).
 		membership := page.Locator("#filtered-table-filters select")
 		require.NoError(t, membership.WaitFor())

@@ -11,8 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 // Dependencies renders the <script>/<link> tags for every Goshtoso runtime
 // asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
 // text-on-primary, etc.), Alpine core + collapse/focus/mask plugins, HTMX, and the
-// minified first-party bundle containing combobox keyboard navigation and
-// ActionGroup measurement.
+// minified first-party bundle containing reusable component behavior.
 //
 // Support assets load from /assets/*, which you MUST serve by mounting the
 // embedded asset handler — CSS and local fallback fail without it:
@@ -59,7 +58,7 @@ func dependenciesTemplate(cfg config) templ.Component {
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(cfg.manifest.Stylesheet.PrimaryURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 27, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 26, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -82,7 +81,7 @@ func dependenciesTemplate(cfg config) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.manifest.Loader.PrimaryURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 31, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 30, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -137,7 +136,7 @@ func dependenciesMinimalTemplate(cfg config) templ.Component {
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(cfg.manifest.Stylesheet.PrimaryURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 40, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 39, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -160,7 +159,7 @@ func dependenciesMinimalTemplate(cfg config) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.manifest.Loader.PrimaryURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 44, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 43, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -256,7 +255,7 @@ func localDependencyScript(cfg config, source runtimeAsset) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(source.LocalURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 56, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 55, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {

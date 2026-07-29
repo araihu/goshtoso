@@ -31,7 +31,8 @@ func TestTableFilter_InlineVariant(t *testing.T) {
 	require.NoError(t, err, "Alpine.js should be available")
 
 	_, err = page.WaitForFunction(`() => {
-		var el = document.querySelector('[x-data="inlineFilteredTableFilters"]');
+		var bar = document.getElementById('inline-filtered-table-filters');
+		var el = bar && bar.closest('[data-table-filters]');
 		if (!el) return false;
 		try { return !!Alpine.$data(el); } catch(e) { return false; }
 	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})

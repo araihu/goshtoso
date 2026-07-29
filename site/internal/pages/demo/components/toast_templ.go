@@ -81,7 +81,7 @@ func toastDemoContent() templ.Component {
 				Description: "Stacking toast and message-toast notifications with auto-dismiss and hover pause. Trigger client-side via Alpine.js $dispatch('notify', ...) or server-side via HTMX out-of-band swaps. Place @toast.ToastContainer once in your layout.",
 			},
 			toastAlpinePreview(),
-			`// 1. Place the container once in your layout
+			demo.DisplayCode(`// 1. Place the container once in your layout
 @toast.ToastContainer(toast.ContainerConfig{})
 
 // 2. Trigger toasts from Alpine.js
@@ -97,7 +97,7 @@ func toastDemoContent() templ.Component {
     kind: 'message-toast',
     sender: { name: 'Jane', avatar: '/avatar.jpg' },
     message: 'Hey, check this out!',
-})">Send</button>`,
+	})">Send</button>`),
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -21,15 +21,17 @@ go run ./cmd/jslint -inventory
 
 `just js` generates:
 
-- `assets/js/goshtoso.min.js` from `src/combobox.js`, `src/action-group.js`,
-  component globals (`structured-input`, `tooltip`), shared component data
-  decoding, then component factories (`carousel`, `dropdown`, `palette`,
+- `assets/js/goshtoso.min.js` from `src/combobox.js`, client-mode Combobox,
+  `src/action-group.js`, component globals (`structured-input`, `tooltip`),
+  shared component data decoding, shared navigation validation, Search and
+  Table runtimes, then component factories (`carousel`, `dropdown`, `palette`,
   `select`, `tabs`), in that fixed order;
-- `site/assets/js/goshtoso-demo.min.js` from the site providers
-  `action-group`, `avatar-showcase`, `log-feed`, `chat`, `profile-images`,
-  `ticker-pane`, and `theme-page`, in that fixed order;
-- compatibility builds at `assets/js/combobox.js` and
-  `assets/js/action-group.js`;
+- `site/assets/js/goshtoso-demo.min.js` from the site bootstrap and providers
+  `site-bootstrap`, `demo-layout`, `select-demo`, `tab-view`, `action-group`,
+  `avatar-showcase`, `log-feed`, `chat`, `profile-images`, `ticker-pane`, and
+  `theme-page`, in that fixed order;
+- compatibility builds at `assets/js/combobox.js` (keyboard plus client-mode
+  selection) and `assets/js/action-group.js`;
 - standalone `assets/js/darkmode.js` and bootstrap
   `assets/js/dependency-loader.js`.
 

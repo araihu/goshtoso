@@ -64,6 +64,39 @@ templ fixture() {
 	}
 }
 
+func TestDetectInlineJavaScriptIgnoresExplicitDisplayedCode(t *testing.T) {
+	t.Parallel()
+
+	source := "package fixture\n\n" +
+		"templ fixture() {\n" +
+		"\t@demo.ComponentDemo(props, preview, demo.DisplayCode(`<button x-on:click=\"\n" +
+		"\t\twindow.displayOnly = true\n" +
+		"\t\">Example</button>`))\n" +
+		"\t<button x-on:click=\"\n" +
+		"\t\twindow.executableOnly = true\n" +
+		"\t\">Run</button>\n" +
+		"\t<script>\n\t\twindow.executableScript = true\n\t</script>\n" +
+		"\t@templ.Raw(demo.DisplayCode(`<script>window.wrappedExecutable = true</script>`))\n" +
+		"\t@templ.Raw(\n\t\tdemo.DisplayCode(`<script>window.multilineWrappedExecutable = true</script>`),\n\t)\n" +
+		"}\n"
+
+	findings := DetectInlineJavaScript("fixture.templ", []byte(source))
+	if len(findings) != 4 {
+		t.Fatalf("findings = %#v, want executable attribute and all scripts only", findings)
+	}
+	for _, finding := range findings {
+		if strings.Contains(finding.Summary, "displayOnly") {
+			t.Fatalf("displayed code must not be classified as executable: %#v", finding)
+		}
+	}
+	if !strings.Contains(findings[0].Summary+findings[1].Summary, "executableOnly") ||
+		!strings.Contains(findings[0].Summary+findings[1].Summary+findings[2].Summary+findings[3].Summary, "executableScript") ||
+		!strings.Contains(findings[0].Summary+findings[1].Summary+findings[2].Summary+findings[3].Summary, "wrappedExecutable") ||
+		!strings.Contains(findings[0].Summary+findings[1].Summary+findings[2].Summary+findings[3].Summary, "multilineWrappedExecutable") {
+		t.Fatalf("executable markup was hidden: %#v", findings)
+	}
+}
+
 func TestSimilarityReportFindsStructurallySimilarFunctions(t *testing.T) {
 	t.Parallel()
 
@@ -91,15 +124,23 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	root := t.TempDir()
 	sources := map[string]string{
 		"assets/js/src/combobox.js":                    `(() => { window.comboboxFixture = true })();`,
+		"assets/js/src/components/combobox-client.js":  `(() => { window.comboboxClientFixture = true })();`,
 		"assets/js/src/action-group.js":                `(() => { window.actionGroupFixture = true })();`,
 		"assets/js/src/components/structured-input.js": `(() => { window.structuredInputFixture = true })();`,
 		"assets/js/src/components/tooltip.js":          `(() => { window.tooltipFixture = true })();`,
 		"assets/js/src/components/data.js":             `(() => { window.dataFixture = true })();`,
+		"assets/js/src/components/navigation.js":       `(() => { window.navigationFixture = true })();`,
+		"assets/js/src/components/search.js":           `(() => { window.searchFixture = true })();`,
+		"assets/js/src/components/table.js":            `(() => { window.tableFixture = true })();`,
 		"assets/js/src/components/carousel.js":         `(() => { window.carouselFixture = true })();`,
 		"assets/js/src/components/dropdown.js":         `(() => { window.dropdownFixture = true })();`,
 		"assets/js/src/components/palette.js":          `(() => { window.paletteFixture = true })();`,
 		"assets/js/src/components/select.js":           `(() => { window.selectFixture = true })();`,
 		"assets/js/src/components/tabs.js":             `(() => { window.tabsFixture = true })();`,
+		"site/assets/js/src/site-bootstrap.js":         `(() => { window.siteBootstrapFixture = true })();`,
+		"site/assets/js/src/demo-layout.js":            `(() => { window.demoLayoutFixture = true })();`,
+		"site/assets/js/src/select-demo.js":            `(() => { window.selectDemoFixture = true })();`,
+		"site/assets/js/src/tab-view.js":               `(() => { window.tabViewFixture = true })();`,
 		"site/assets/js/src/action-group.js":           `(() => { window.actionGroupDemoFixture = true })();`,
 		"site/assets/js/src/avatar-showcase.js":        `(() => { window.avatarShowcaseFixture = true })();`,
 		"site/assets/js/src/log-feed.js":               `(() => { window.logFeedFixture = true })();`,
@@ -134,6 +175,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	if !strings.HasPrefix(string(bundle), generatedHeader) {
 		t.Fatalf("bundle missing generated header: %q", bundle)
 	}
+	assertStandaloneComboboxCompatibility(t, root)
 	siteBundle, err := os.ReadFile(filepath.Join(root, "site", "assets", "js", "goshtoso-demo.min.js"))
 	if err != nil {
 		t.Fatal(err)
@@ -161,14 +203,30 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	}
 }
 
+func assertStandaloneComboboxCompatibility(t *testing.T, root string) {
+	t.Helper()
+
+	bundle, err := os.ReadFile(filepath.Join(root, "assets", "js", "combobox.js"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, fixture := range []string{"comboboxFixture", "comboboxClientFixture"} {
+		if !strings.Contains(string(bundle), fixture) {
+			t.Fatalf("standalone combobox compatibility build missing %s: %s", fixture, bundle)
+		}
+	}
+}
+
 func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte) {
 	t.Helper()
 
 	componentFixtures := []string{
-		"comboboxFixture", "actionGroupFixture", "structuredInputFixture", "tooltipFixture",
-		"dataFixture", "carouselFixture", "dropdownFixture", "paletteFixture", "selectFixture", "tabsFixture",
+		"comboboxFixture", "comboboxClientFixture", "actionGroupFixture", "structuredInputFixture", "tooltipFixture",
+		"dataFixture", "navigationFixture", "searchFixture", "tableFixture", "carouselFixture", "dropdownFixture",
+		"paletteFixture", "selectFixture", "tabsFixture",
 	}
 	demoFixtures := []string{
+		"siteBootstrapFixture", "demoLayoutFixture", "selectDemoFixture", "tabViewFixture",
 		"actionGroupDemoFixture", "avatarShowcaseFixture", "logFeedFixture",
 		"chatFixture", "profileImagesFixture", "tickerPaneFixture", "themePageFixture",
 	}

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"html"
 	"io"
+	"os"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strings"
@@ -102,6 +104,43 @@ func TestDependenciesMinimalUsesVersionedPaths(t *testing.T) {
 	}
 	if strings.Contains(out, "/assets/js/vendor/") {
 		t.Errorf("DependenciesMinimal() must avoid /vendor/ paths: %s", out)
+	}
+}
+
+func TestPublicDependenciesAndBundleExcludeDemoSiteProviders(t *testing.T) {
+	t.Parallel()
+
+	for _, component := range []templ.Component{
+		Dependencies(),
+		DependenciesMinimal(),
+		Dependencies(WithLocalRuntime()),
+		DependenciesMinimal(WithLocalRuntime()),
+	} {
+		output := render(t, component)
+		if strings.Contains(output, "/site-assets/") {
+			t.Fatalf("public head dependencies loaded site-owned JavaScript:\n%s", output)
+		}
+	}
+
+	bundle, err := os.ReadFile(filepath.Join("..", "..", "assets", "js", "goshtoso.min.js"))
+	if err != nil {
+		t.Fatalf("read public component bundle: %v", err)
+	}
+	for _, required := range []string{"goshtosoSearchField", "goshtosoTableFilters", "goshtosoSafeNavigationTarget"} {
+		if !strings.Contains(string(bundle), required) {
+			t.Fatalf("public component bundle missing reusable provider %q", required)
+		}
+	}
+	for _, forbidden := range []string{
+		"goshtosoStorageConsent",
+		"demoLayout",
+		"demoStorageConsent",
+		"goshtosoRestoreSelectDraft",
+		"demoTabView",
+	} {
+		if strings.Contains(string(bundle), forbidden) {
+			t.Fatalf("public component bundle contains site provider %q", forbidden)
+		}
 	}
 }
 

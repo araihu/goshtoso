@@ -36,14 +36,14 @@ func TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML str
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ \n\t\tactiveTab: 'gottha',\n\t\tsize: 'md', \n\t\tdisabled: false,\n\t\tcopiedCode: false,\n\t\tcopyToClipboard(text) {\n\t\t\tnavigator.clipboard.writeText(text).then(() => {\n\t\t\t\tthis.copiedCode = true;\n\t\t\t\tsetTimeout(() => this.copiedCode = false, 2000);\n\t\t\t});\n\t\t}\n\t}\"><!-- Header Section --><div class=\"mb-6\"><h1 class=\"text-3xl font-bold font-title mb-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"demoTabView\"><!-- Header Section --><div class=\"mb-6\"><h1 class=\"text-3xl font-bold font-title mb-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 25, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 14, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -56,7 +56,7 @@ func TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML str
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 27, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 16, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -77,7 +77,7 @@ func TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML str
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templCode)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 157, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 146, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -98,7 +98,7 @@ func TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML str
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(originalHTML)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 206, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/tab_view.templ`, Line: 195, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

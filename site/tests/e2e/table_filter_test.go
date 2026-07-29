@@ -24,7 +24,8 @@ func fillSearchInput(t *testing.T, page playwright.Page, value string) {
 func ensureFiltersExpanded(t *testing.T, page playwright.Page) {
 	t.Helper()
 	_, _ = page.Evaluate(`() => {
-		var el = document.querySelector('[x-data="filteredTableFilters"]');
+		var bar = document.getElementById('filtered-table-filters');
+		var el = bar && bar.closest('[data-table-filters]');
 		if (el) { Alpine.$data(el).filtersExpanded = true; }
 	}`, nil)
 	// Wait for the search input to be visible
@@ -57,7 +58,8 @@ func TestTableFilter(t *testing.T) {
 
 	// Wait for Alpine to process the filter component
 	_, err = page.WaitForFunction(`() => {
-		var el = document.querySelector('[x-data="filteredTableFilters"]');
+		var bar = document.getElementById('filtered-table-filters');
+		var el = bar && bar.closest('[data-table-filters]');
 		if (!el) return false;
 		try { return !!Alpine.$data(el); } catch(e) { return false; }
 	}`, nil, playwright.PageWaitForFunctionOptions{

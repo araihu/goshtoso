@@ -1,41 +1,39 @@
 package table
 
-import (
-	"strings"
-	"testing"
-)
+import "testing"
 
-func TestJSStringSingleEscapesRowLinks(t *testing.T) {
-	got := jsStringSingle("/people/o'connor?x=1&next=\\home")
-	want := `/people/o\'connor?x=1&next=\\home`
-	if got != want {
-		t.Fatalf("jsStringSingle = %q; want %q", got, want)
-	}
-}
-
-func TestRowLinkAttrsEscapesFullNavigationURL(t *testing.T) {
+func TestRowLinkAttrsUseInertFullNavigationData(t *testing.T) {
+	link := "/people/o'connor?x=1&next=\\home"
 	attrs := rowLinkAttrs(Row{
-		Link:     "/people/o'connor?x=1&next=\\home",
+		Link:     link,
 		LinkMode: LinkFull,
 	})
 
-	onclick, _ := attrs["onclick"].(string)
-	if strings.Contains(onclick, "o'connor") {
-		t.Fatalf("onclick contains raw single quote: %q", onclick)
+	if got := attrs["data-table-row-link"]; got != link {
+		t.Fatalf("data-table-row-link = %#v; want %q", got, link)
 	}
-	if !strings.Contains(onclick, `o\'connor`) {
-		t.Fatalf("onclick missing escaped URL: %q", onclick)
+	if got := attrs["data-table-row-link-mode"]; got != "full" {
+		t.Fatalf("data-table-row-link-mode = %#v; want full", got)
+	}
+	if _, ok := attrs["onclick"]; ok {
+		t.Fatalf("full row link still emits executable onclick: %#v", attrs)
+	}
+	if _, ok := attrs["onauxclick"]; ok {
+		t.Fatalf("full row link still emits executable onauxclick: %#v", attrs)
 	}
 }
 
-func TestRowLinkAttrsEscapesAuxClickURL(t *testing.T) {
-	attrs := rowLinkAttrs(Row{Link: "/people/o'connor"})
+func TestRowLinkAttrsKeepHTMXContractWithInertAuxiliaryTarget(t *testing.T) {
+	link := "/people/o'connor"
+	attrs := rowLinkAttrs(Row{Link: link})
 
-	auxclick, _ := attrs["onauxclick"].(string)
-	if strings.Contains(auxclick, "o'connor") {
-		t.Fatalf("onauxclick contains raw single quote: %q", auxclick)
+	if got := attrs["data-table-row-link"]; got != link {
+		t.Fatalf("data-table-row-link = %#v; want %q", got, link)
 	}
-	if !strings.Contains(auxclick, `o\'connor`) {
-		t.Fatalf("onauxclick missing escaped URL: %q", auxclick)
+	if got := attrs["hx-get"]; got != link {
+		t.Fatalf("hx-get = %#v; want %q", got, link)
+	}
+	if _, ok := attrs["onauxclick"]; ok {
+		t.Fatalf("HTMX row link still emits executable onauxclick: %#v", attrs)
 	}
 }

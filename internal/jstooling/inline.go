@@ -23,6 +23,7 @@ var (
 	doubleAttributePattern = regexp.MustCompile(`(?is)(x-(?:data|init|effect|show|model|bind(?::[[:alnum:]_.:-]+)?|on:[[:alnum:]_.:-]+)|@[[:alnum:]_.:-]+|on(?:click|change|input|load|submit|keydown|keyup))\s*=\s*"([^"]*)"`)
 	singleAttributePattern = regexp.MustCompile(`(?is)(x-(?:data|init|effect|show|model|bind(?::[[:alnum:]_.:-]+)?|on:[[:alnum:]_.:-]+)|@[[:alnum:]_.:-]+|on(?:click|change|input|load|submit|keydown|keyup))\s*=\s*'([^']*)'`)
 	functionPattern        = regexp.MustCompile(`\bfunc\s+(?:\([^)]*\)\s*)?([[:alnum:]_]+)\s*\(`)
+	displayedCodePattern   = regexp.MustCompile("(?s)(?:demo\\.)?DisplayCode\\s*\\(\\s*(`[^`]*`|\"(?:\\\\.|[^\"\\\\])*\")\\s*\\)")
 )
 
 // Finding identifies JavaScript that should move from Go/templ markup into an
@@ -64,7 +65,7 @@ func DetectInlineJavaScript(path string, source []byte) []Finding {
 
 func detectScriptBodies(path string, source []byte) []Finding {
 	var findings []Finding
-	searchable := maskSourceComments(source)
+	searchable := maskDisplayedCode(maskSourceComments(source))
 	for _, match := range scriptPattern.FindAllSubmatchIndex(searchable, -1) {
 		attributes := ""
 		if match[2] >= 0 {
@@ -93,7 +94,7 @@ func detectScriptBodies(path string, source []byte) []Finding {
 
 func detectAttributes(path string, source []byte, pattern *regexp.Regexp) []Finding {
 	var findings []Finding
-	searchable := maskSourceComments(source)
+	searchable := maskDisplayedCode(maskSourceComments(source))
 	for _, match := range pattern.FindAllSubmatchIndex(searchable, -1) {
 		value := string(source[match[4]:match[5]])
 		trimmed := strings.TrimSpace(value)
@@ -106,6 +107,43 @@ func detectAttributes(path string, source []byte, pattern *regexp.Regexp) []Find
 		})
 	}
 	return findings
+}
+
+// maskDisplayedCode removes explicitly marked, escaped demo snippets from the
+// executable-markup scan. templ.Raw remains executable even if a caller wraps
+// its direct argument in DisplayCode, so the marker cannot suppress an emitted
+// script.
+func maskDisplayedCode(source []byte) []byte {
+	masked := append([]byte(nil), source...)
+	for _, match := range displayedCodePattern.FindAllSubmatchIndex(source, -1) {
+		literalStart, literalEnd := match[2], match[3]
+		if directTemplRawArgument(source, match[0]) {
+			continue
+		}
+		for index := literalStart; index < literalEnd; index++ {
+			if masked[index] != '\n' && masked[index] != '\r' {
+				masked[index] = ' '
+			}
+		}
+	}
+	return masked
+}
+
+func directTemplRawArgument(source []byte, callStart int) bool {
+	index := callStart - 1
+	for index >= 0 && (source[index] == ' ' || source[index] == '\t' || source[index] == '\n' || source[index] == '\r') {
+		index--
+	}
+	if index < 0 || source[index] != '(' {
+		return false
+	}
+	index--
+	for index >= 0 && (source[index] == ' ' || source[index] == '\t' || source[index] == '\n' || source[index] == '\r') {
+		index--
+	}
+	const rawName = "templ.Raw"
+	start := index - len(rawName) + 1
+	return start >= 0 && string(source[start:index+1]) == rawName
 }
 
 func detectBuilders(path string, source []byte) []Finding {

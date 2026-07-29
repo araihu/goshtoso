@@ -5,7 +5,7 @@ const (
 	StylesURL = "/assets/styles.css"
 	// DependencyLoaderURL is the assets.Handler URL for the ordered CDN/fallback loader.
 	DependencyLoaderURL = "/assets/js/dependency-loader.js"
-	// ComboboxURL is the assets.Handler URL for Goshtoso's combobox keyboard helper.
+	// ComboboxURL is the assets.Handler URL for Goshtoso's standalone Combobox runtime.
 	ComboboxURL = "/assets/js/combobox.js"
 	// ActionGroupURL is the assets.Handler URL for responsive ActionGroup measurement.
 	ActionGroupURL = "/assets/js/action-group.js"
@@ -42,7 +42,7 @@ const (
 	RuntimeRoleAlpineJS RuntimeAssetRole = "alpine"
 	// RuntimeRoleHTMX identifies HTMX core.
 	RuntimeRoleHTMX RuntimeAssetRole = "htmx"
-	// RuntimeRoleCombobox identifies Goshtoso's combobox keyboard helper.
+	// RuntimeRoleCombobox identifies Goshtoso's standalone Combobox runtime.
 	RuntimeRoleCombobox RuntimeAssetRole = "combobox"
 	// RuntimeRoleActionGroup identifies responsive ActionGroup measurement.
 	RuntimeRoleActionGroup RuntimeAssetRole = "action-group"

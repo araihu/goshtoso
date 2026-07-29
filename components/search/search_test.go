@@ -3,9 +3,20 @@ package search
 import (
 	"bytes"
 	"context"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
+
+func searchRuntimeSource(t *testing.T) string {
+	t.Helper()
+	content, err := os.ReadFile(filepath.Join("..", "..", "assets", "js", "src", "components", "search.js"))
+	if err != nil {
+		t.Fatalf("read search runtime: %v", err)
+	}
+	return string(content)
+}
 
 func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 	var buf bytes.Buffer
@@ -24,8 +35,12 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 	html := buf.String()
 	for _, want := range []string{
 		`id="docs-search"`,
-		`x-data="goshtosoSearchField(&#39;docs-search&#39;, false)"`,
-		`x-data="goshtosoSearchModal(&#39;docs-search&#39;, 4, 120)"`,
+		`data-search-id="docs-search"`,
+		`data-search-global-shortcut="false"`,
+		`x-data="goshtosoSearchField($el)"`,
+		`data-search-max-results="4"`,
+		`data-search-description-max-length="120"`,
+		`x-data="goshtosoSearchModal($el)"`,
 		`aria-haspopup="dialog"`,
 		`<kbd`,
 		`⌘ K`,
@@ -49,6 +64,9 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 
 	if strings.Contains(html, `x-on:keydown.window`) {
 		t.Fatalf("Search should not bind a global shortcut unless GlobalShortcut is true: %s", html)
+	}
+	if strings.Contains(html, `<script`) {
+		t.Fatalf("Search should use the bundled component runtime, not inline scripts: %s", html)
 	}
 }
 
@@ -93,15 +111,16 @@ func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 			t.Fatalf("SearchModal with ItemsURL missing %q in\n%s", want, html)
 		}
 	}
+	runtime := searchRuntimeSource(t)
 	for _, want := range []string{
-		`kind: self.stringValue(raw.kind !== undefined ? raw.kind : raw.Kind)`,
-		`method: self.stringValue(raw.method !== undefined ? raw.method : raw.Method).trim().toUpperCase()`,
-		`path: self.stringValue(raw.path !== undefined ? raw.path : raw.Path)`,
+		`kind: state.stringValue(raw.kind !== undefined ? raw.kind : raw.Kind)`,
+		`raw.method !== undefined ? raw.method : raw.Method`,
+		`raw.path !== undefined ? raw.path : raw.Path`,
 		`item.method`,
 		`item.path`,
 	} {
-		if !strings.Contains(html, want) {
-			t.Fatalf("SearchModal client normalizer missing %q in\n%s", want, html)
+		if !strings.Contains(runtime, want) {
+			t.Fatalf("Search runtime client normalizer missing %q in\n%s", want, runtime)
 		}
 	}
 	if strings.Contains(html, "Static result that should not render") || strings.Contains(html, `id="static-result"`) {
@@ -110,7 +129,7 @@ func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 }
 
 func TestSearchScriptCachesDOMResultMatches(t *testing.T) {
-	html := renderHTML(t, SearchModal(Config{ID: "docs-search"}))
+	runtime := searchRuntimeSource(t)
 
 	for _, want := range []string{
 		`cachedDOMTerm: null`,
@@ -118,8 +137,8 @@ func TestSearchScriptCachesDOMResultMatches(t *testing.T) {
 		`if (term === this.cachedDOMTerm) return this.cachedDOMResults;`,
 		`cachedAllResults`,
 	} {
-		if !strings.Contains(html, want) {
-			t.Fatalf("SearchModal script missing DOM match cache %q in\n%s", want, html)
+		if !strings.Contains(runtime, want) {
+			t.Fatalf("Search runtime missing DOM match cache %q in\n%s", want, runtime)
 		}
 	}
 }
@@ -209,23 +228,23 @@ func TestSearchSafeHrefFiltersExecutableNavigationTargets(t *testing.T) {
 }
 
 func TestSearchSelectResultRevalidatesEveryNavigationSink(t *testing.T) {
-	html := renderHTML(t, SearchModal(Config{ID: "docs-search"}))
+	runtime := searchRuntimeSource(t)
 
 	for _, unsafeAssignment := range []string{
 		`window.location.href = result.dataset.searchHref`,
 		`window.location.href = result.href`,
 	} {
-		if strings.Contains(html, unsafeAssignment) {
-			t.Fatalf("SearchModal assigns an unvalidated result href through %q:\n%s", unsafeAssignment, html)
+		if strings.Contains(runtime, unsafeAssignment) {
+			t.Fatalf("Search runtime assigns an unvalidated result href through %q:\n%s", unsafeAssignment, runtime)
 		}
 	}
 	for _, want := range []string{
-		`var href = this.safeHref(result.dataset.searchHref);`,
-		`var href = this.safeHref(result.href);`,
-		`if (href) window.location.href = href;`,
+		`var elementHref = this.safeHref(result.dataset.searchHref);`,
+		`var itemHref = this.safeHref(result.href);`,
+		`window.goshtosoSafeNavigationTarget`,
 	} {
-		if !strings.Contains(html, want) {
-			t.Fatalf("SearchModal selectResult missing validated navigation sink %q:\n%s", want, html)
+		if !strings.Contains(runtime, want) {
+			t.Fatalf("Search runtime selectResult missing validated navigation sink %q:\n%s", want, runtime)
 		}
 	}
 }

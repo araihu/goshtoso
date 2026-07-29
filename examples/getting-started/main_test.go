@@ -48,10 +48,13 @@ func TestBreedsPageRendersRoundDogPhotos(t *testing.T) {
 	appMux().ServeHTTP(rec, req)
 
 	body := rec.Body.String()
-	for _, want := range []string{`data-theme="araihu"`, `href="/araihu.css"`, `localStorage.getItem('theme') || 'araihu'`} {
+	for _, want := range []string{`data-theme="araihu"`, `href="/araihu.css"`, `x-init="document.documentElement.dataset.theme=localStorage.theme||'araihu'"`} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("page missing Arai Hû default theme contract %q:\n%s", want, body)
 		}
+	}
+	if strings.Contains(body, "x-init=\"\n") {
+		t.Fatalf("page must not render physically multiline executable JavaScript:\n%s", body)
 	}
 	if !strings.Contains(body, `/dog-images/australian-shepherd.webp`) {
 		t.Fatalf("page must render dog image cells:\n%s", body)

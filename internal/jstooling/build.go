@@ -26,7 +26,13 @@ type ArtifactResult struct {
 }
 
 var defaultArtifacts = []artifact{
-	{output: "assets/js/combobox.js", inputs: []string{"assets/js/src/combobox.js"}},
+	{
+		output: "assets/js/combobox.js",
+		inputs: []string{
+			"assets/js/src/combobox.js",
+			"assets/js/src/components/combobox-client.js",
+		},
+	},
 	{output: "assets/js/action-group.js", inputs: []string{"assets/js/src/action-group.js"}},
 	{output: "assets/js/darkmode.js", inputs: []string{"assets/js/src/darkmode.js"}},
 	{output: "assets/js/dependency-loader.js", inputs: []string{"assets/js/src/dependency-loader.js"}},
@@ -34,10 +40,14 @@ var defaultArtifacts = []artifact{
 		output: "assets/js/goshtoso.min.js",
 		inputs: []string{
 			"assets/js/src/combobox.js",
+			"assets/js/src/components/combobox-client.js",
 			"assets/js/src/action-group.js",
 			"assets/js/src/components/structured-input.js",
 			"assets/js/src/components/tooltip.js",
 			"assets/js/src/components/data.js",
+			"assets/js/src/components/navigation.js",
+			"assets/js/src/components/search.js",
+			"assets/js/src/components/table.js",
 			"assets/js/src/components/carousel.js",
 			"assets/js/src/components/dropdown.js",
 			"assets/js/src/components/palette.js",
@@ -48,6 +58,10 @@ var defaultArtifacts = []artifact{
 	{
 		output: "site/assets/js/goshtoso-demo.min.js",
 		inputs: []string{
+			"site/assets/js/src/site-bootstrap.js",
+			"site/assets/js/src/demo-layout.js",
+			"site/assets/js/src/select-demo.js",
+			"site/assets/js/src/tab-view.js",
 			"site/assets/js/src/action-group.js",
 			"site/assets/js/src/avatar-showcase.js",
 			"site/assets/js/src/log-feed.js",

@@ -8,18 +8,7 @@ type TabViewProps struct {
 
 // TabView renders a tabbed interface with Goshtoso (first) and Original (second) tabs
 templ TabView(props TabViewProps, goTTHAContent templ.Component, originalHTML string, templCode string) {
-	<div x-data="{ 
-		activeTab: 'gottha',
-		size: 'md', 
-		disabled: false,
-		copiedCode: false,
-		copyToClipboard(text) {
-			navigator.clipboard.writeText(text).then(() => {
-				this.copiedCode = true;
-				setTimeout(() => this.copiedCode = false, 2000);
-			});
-		}
-	}">
+	<div x-data="demoTabView">
 		<!-- Header Section -->
 		<div class="mb-6">
 			<h1 class="text-3xl font-bold font-title mb-2">{ props.Title }</h1>
