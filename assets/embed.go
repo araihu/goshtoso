@@ -17,6 +17,8 @@
 //   - /assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js — Alpine focus plugin
 //   - /assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js — Alpine mask plugin
 //   - /assets/js/dependency-loader.js — ordered CDN loader with local fallback
+//   - /assets/js/goshtoso.min.js — minified first-party browser behavior
+//   - /assets/js/combobox.js — standalone compatibility build
 //   - /assets/js/action-group.js — responsive ActionGroup measurement
 //   - vendored JS versions are pinned in js/runtime/versions.json (see AlpineVersion()/HTMXVersion())
 //   - /assets/js/darkmode.js — Alpine dark mode store
@@ -30,11 +32,11 @@ import (
 	"strings"
 )
 
-//go:embed styles.css goshtoso-theme.css tailwind.version js images
+//go:embed styles.css goshtoso-theme.css tailwind.version js/*.js js/runtime images
 var files embed.FS
 
 // Handler returns an http.Handler that serves the embedded Goshtoso assets
-// (styles.css, js/, images/) — the files head.Dependencies() links.
+// (styles.css, js/, images/) — the generated files head.Dependencies() links.
 //
 // Mount it at /assets/ WITHOUT wrapping it in your own StripPrefix — the
 // handler already strips the /assets/ prefix internally:

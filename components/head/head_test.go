@@ -112,7 +112,7 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 		t.Fatalf("Dependencies() must use the ordered dependency loader\n%s", out)
 	}
 	cfg := parseLoaderConfig(t, out)
-	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx", "combobox", "action-group"}
+	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx", "first-party"}
 	if len(cfg.Dependencies) != len(wantOrder) {
 		t.Fatalf("loader dependencies = %#v, want %v", cfg.Dependencies, wantOrder)
 	}
@@ -130,14 +130,13 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 		{"alpine-mask", assets.AlpineMaskCDNURL, assets.AlpineMaskURL},
 		{"alpine", assets.AlpineJSCDNURL, assets.AlpineJSURL},
 		{"htmx", assets.HTMXCDNURL, assets.HTMXURL},
-		{"combobox", "/assets/js/combobox.js", ""},
-		{"action-group", "/assets/js/action-group.js", ""},
+		{"first-party", assets.FirstPartyBundleURL, ""},
 	} {
 		entry := loaderEntry(t, cfg, tc.name)
 		if entry.PrimaryURL != tc.primary || entry.FallbackURL != tc.fallback {
 			t.Errorf("%s source = (%q, %q), want (%q, %q)", tc.name, entry.PrimaryURL, entry.FallbackURL, tc.primary, tc.fallback)
 		}
-		if tc.name != "combobox" && tc.name != "action-group" && !strings.HasPrefix(entry.Integrity, "sha384-") {
+		if tc.name != "first-party" && !strings.HasPrefix(entry.Integrity, "sha384-") {
 			t.Errorf("%s missing SHA-384 subresource integrity: %#v", tc.name, entry)
 		}
 	}
@@ -181,7 +180,7 @@ func TestDependenciesMinimalFiltersPublicManifestOrder(t *testing.T) {
 	cfg := newConfigFromManifest(manifest, nil)
 	loader := parseLoaderConfig(t, render(t, dependenciesMinimalTemplate(cfg)))
 
-	want := []string{"alpine-collapse", "htmx", "combobox", "action-group"}
+	want := []string{"alpine-collapse", "htmx", "first-party"}
 	got := make([]string, 0, len(loader.Dependencies))
 	for _, dependency := range loader.Dependencies {
 		got = append(got, dependency.Name)
@@ -203,6 +202,9 @@ func TestDependenciesLocalRuntimeUsesPublicManifestOrderAndDefer(t *testing.T) {
 	}
 	previous := -1
 	for _, dependency := range manifest.Dependencies {
+		if !dependency.Enabled {
+			continue
+		}
 		index := strings.Index(out, `src="`+dependency.LocalURL+`"`)
 		if index < 0 {
 			t.Fatalf("local rendering missing %s at %s\n%s", dependency.Role, dependency.LocalURL, out)
@@ -278,6 +280,38 @@ func TestDependenciesFunctionalOptionsOverrideIndividualSources(t *testing.T) {
 	}
 	if actionGroup := loaderEntry(t, cfg, "action-group"); actionGroup.PrimaryURL != "/static/action-group.js" {
 		t.Errorf("action-group override not applied: %#v", actionGroup)
+	}
+	for _, entry := range cfg.Dependencies {
+		if entry.Name == "first-party" {
+			t.Fatalf("standalone override must replace bundled helper: %#v", cfg.Dependencies)
+		}
+	}
+}
+
+func TestEitherStandaloneOverridePreservesBothLegacyHelpers(t *testing.T) {
+	tests := []struct {
+		name   string
+		option Option
+		role   string
+		url    string
+	}{
+		{name: "combobox", option: WithComboboxURL("/custom/combobox.js"), role: "combobox", url: "/custom/combobox.js"},
+		{name: "action group", option: WithActionGroupURL("/custom/action-group.js"), role: "action-group", url: "/custom/action-group.js"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			cfg := parseLoaderConfig(t, render(t, Dependencies(test.option)))
+			if loaderEntry(t, cfg, test.role).PrimaryURL != test.url {
+				t.Fatalf("%s override missing: %#v", test.role, cfg.Dependencies)
+			}
+			loaderEntry(t, cfg, "combobox")
+			loaderEntry(t, cfg, "action-group")
+			for _, entry := range cfg.Dependencies {
+				if entry.Name == "first-party" {
+					t.Fatalf("standalone override retained bundle: %#v", cfg.Dependencies)
+				}
+			}
+		})
 	}
 }
 
@@ -371,7 +405,7 @@ func TestDependenciesPropagatesTemplNonceToLoader(t *testing.T) {
 func TestDependenciesPropagatesTemplNonceToEveryLocalScript(t *testing.T) {
 	ctx := templ.WithNonce(context.Background(), "offline-nonce-456")
 	out := renderWithContext(t, ctx, Dependencies(WithLocalRuntime()))
-	if got, want := strings.Count(out, `nonce="offline-nonce-456"`), 7; got != want {
+	if got, want := strings.Count(out, `nonce="offline-nonce-456"`), 6; got != want {
 		t.Fatalf("WithLocalRuntime() nonce count = %d, want %d\n%s", got, want, out)
 	}
 }

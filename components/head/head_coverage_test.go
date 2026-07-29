@@ -9,6 +9,7 @@ import (
 
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
+	"github.com/araihu/goshtoso/assets"
 )
 
 // component is the small surface every exported head entry point satisfies.
@@ -138,8 +139,7 @@ func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 		`<script defer src="/assets/js/dependency-loader.js"`,
 		"/assets/js/runtime/alpinejs/",
 		"/assets/js/runtime/htmx.org/",
-		"/assets/js/combobox.js",
-		"/assets/js/action-group.js",
+		assets.FirstPartyBundleURL,
 	}
 	for _, want := range shared {
 		if !strings.Contains(full, want) {
@@ -170,5 +170,8 @@ func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 	}
 	if !strings.Contains(local, `<script defer src="/assets/js/runtime/alpinejs/`) {
 		t.Errorf("WithLocalRuntime() must defer Alpine core")
+	}
+	if !strings.Contains(local, `<script defer src="`+assets.FirstPartyBundleURL+`"`) {
+		t.Errorf("WithLocalRuntime() must defer first-party bundle")
 	}
 }

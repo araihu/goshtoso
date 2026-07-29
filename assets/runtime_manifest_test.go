@@ -34,13 +34,13 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	}) {
 		t.Fatalf("loader = %#v", manifest.Loader)
 	}
-
 	wantRoles := []RuntimeAssetRole{
 		RuntimeRoleAlpineCollapse,
 		RuntimeRoleAlpineFocus,
 		RuntimeRoleAlpineMask,
 		RuntimeRoleAlpineJS,
 		RuntimeRoleHTMX,
+		RuntimeRoleFirstParty,
 		RuntimeRoleCombobox,
 		RuntimeRoleActionGroup,
 	}
@@ -50,9 +50,6 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 		if dependency.Kind != RuntimeAssetScript {
 			t.Errorf("%s kind = %q, want %q", dependency.Role, dependency.Kind, RuntimeAssetScript)
 		}
-		if !dependency.Enabled {
-			t.Errorf("%s must be enabled", dependency.Role)
-		}
 		if dependency.LocalURL == "" {
 			t.Errorf("%s local URL is empty", dependency.Role)
 		}
@@ -60,10 +57,14 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	if !reflect.DeepEqual(gotRoles, wantRoles) {
 		t.Fatalf("dependency roles = %v, want %v", gotRoles, wantRoles)
 	}
-	wantMinimal := []bool{false, false, false, true, true, true, true}
+	wantMinimal := []bool{false, false, false, true, true, true, true, true}
+	wantEnabled := []bool{true, true, true, true, true, true, false, false}
 	for index, dependency := range manifest.Dependencies {
 		if dependency.IncludeInMinimal != wantMinimal[index] {
 			t.Errorf("%s IncludeInMinimal = %t, want %t", dependency.Role, dependency.IncludeInMinimal, wantMinimal[index])
+		}
+		if dependency.Enabled != wantEnabled[index] {
+			t.Errorf("%s Enabled = %t, want %t", dependency.Role, dependency.Enabled, wantEnabled[index])
 		}
 	}
 
@@ -72,8 +73,9 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	assertRuntimeAsset(t, manifest.Dependencies[2], AlpineMaskCDNURL, AlpineMaskURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[3], AlpineJSCDNURL, AlpineJSURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[4], HTMXCDNURL, HTMXURL, false, true)
-	assertRuntimeAsset(t, manifest.Dependencies[5], ComboboxURL, ComboboxURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[6], ActionGroupURL, ActionGroupURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[5], FirstPartyBundleURL, FirstPartyBundleURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[6], ComboboxURL, ComboboxURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[7], ActionGroupURL, ActionGroupURL, true, false)
 }
 
 func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
@@ -93,8 +95,8 @@ func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
 	if fresh.Dependencies[0].LocalURL != AlpineCollapseURL {
 		t.Fatalf("fresh collapse URL = %q", fresh.Dependencies[0].LocalURL)
 	}
-	if len(fresh.Dependencies) != 7 {
-		t.Fatalf("fresh dependency count = %d, want 7", len(fresh.Dependencies))
+	if len(fresh.Dependencies) != 8 {
+		t.Fatalf("fresh dependency count = %d, want 8", len(fresh.Dependencies))
 	}
 }
 
@@ -130,6 +132,15 @@ func TestDefaultRuntimeManifestLocalURLsMatchHandlerBytesAndSRI(t *testing.T) {
 	}
 	if integrityCount != 5 {
 		t.Fatalf("manifest SRI count = %d, want 5 version-matched third-party dependencies", integrityCount)
+	}
+}
+
+func TestHandlerDoesNotPublishAuthoredJavaScriptSources(t *testing.T) {
+	request := httptest.NewRequest(http.MethodGet, "/assets/js/src/combobox.js", nil)
+	recorder := httptest.NewRecorder()
+	Handler().ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusNotFound {
+		t.Fatalf("authored source status = %d, want 404", recorder.Code)
 	}
 }
 

@@ -58,7 +58,10 @@ func TestVendorFilesEmbedded(t *testing.T) {
 		"js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js",
 		"js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js",
 		"js/dependency-loader.js",
+		"js/goshtoso.min.js",
+		"js/combobox.js",
 		"js/action-group.js",
+		"js/darkmode.js",
 	} {
 		if _, err := files.ReadFile(p); err != nil {
 			t.Errorf("embedded file missing: %s: %v", p, err)
