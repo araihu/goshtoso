@@ -61,7 +61,8 @@ many of these steps, but the checklist keeps the public release story coherent.
 This is release-candidate evidence only. It does not authorize a tag, push,
 deployment, or a `site/go.mod` dependency update.
 
-- Assets release candidate: P1 source `246cb28`, integrated `80d43a3`.
+- Assets release candidate: P1 source `246cb28`, integrated `80d43a3`; UI
+  sprite correction `613335f`.
 - Upstream immutable Assets `dist/catalog.json`: 302 records, schema `1`,
   SHA-256 `d83be964fa411e87c61b49f0a0b6a2a1465f33ad43bea7cd93b2e434b59266af`.
 - Local exact Heroicons generator subset:
@@ -69,8 +70,8 @@ deployment, or a `site/go.mod` dependency update.
   as namespace `ui` and product `heroicons`; every selected record is the exact
   upstream object. SHA-256
   `0a420ad65e2fe7db3e2cc5dbb6c87167fcd6e85f64a3ebc409e2a58c9bd111ef`.
-- Assets UI sprite: SHA-256
-  `6b312ee2cf9f0e91c4621bd4eec348ecaf39cfdc0a00c8ddefdf4d7f8e9f32a5`.
+- Assets UI sprite correction `613335f`: SHA-256
+  `75e282de7a19efba9cf0285b44af0641c1527361f921b7d7f8020efc1f1f0fb7`.
 - Goshtoso approved functional head: `ab05821`; bundled default sprite path:
   `/assets/icons/heroicons.svg`.
 - Bundled binding command:
