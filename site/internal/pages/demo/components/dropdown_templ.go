@@ -159,8 +159,8 @@ func dropdownDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Action Items (onclick / disabled / danger)",
-				Description: "Items can run OnClick handlers, be Disabled (with a Tooltip), or be styled Danger. Pair with an icon-only trigger via TriggerIcon + TriggerIconOnly.",
+				Title:       "Action Items (Href / HTMX / optional OnClick)",
+				Description: "Items use Href for native navigation, HTMX for server actions, and optional OnClick for local enhancement. Disabled and Danger remain supported.",
 			},
 			dropdownActionsPreview(),
 			`@dropdown.Dropdown(dropdown.Config{
@@ -169,8 +169,11 @@ func dropdownDemoContent() templ.Component {
     TriggerIconOnly: true,
     Sections: []dropdown.Section{
         {Items: []dropdown.Item{
+            {Label: "View", Href: "/projects/current"},
+            {Label: "Archive", HTMX: &dropdown.HTMXConfig{Post: "/projects/archive", Target: "#project-result", Swap: "innerHTML"}},
+            // Optional local enhancement.
             {Label: "Edit", Icon: settingsIcon(), OnClick: "editOpen = true"},
-            {Label: "Archive", Disabled: true, Tooltip: "Not available"},
+            {Label: "Locked", Disabled: true, Tooltip: "Not available"},
         }},
         {Items: []dropdown.Item{{Label: "Delete", Danger: true, OnClick: "deleteOpen = true"}}},
     },

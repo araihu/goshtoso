@@ -17,6 +17,17 @@ func actionButtonOptions(action Action, primary bool) []button.Option {
 	if action.Disabled {
 		options = append(options, button.Disabled())
 	}
+	if action.HTMX != nil && !action.Disabled {
+		options = append(options, button.WithHTMX(&button.HTMXConfig{
+			Get:     action.HTMX.Get,
+			Post:    action.HTMX.Post,
+			Target:  action.HTMX.Target,
+			Swap:    action.HTMX.Swap,
+			Trigger: action.HTMX.Trigger,
+			Vals:    action.HTMX.Vals,
+			Confirm: action.HTMX.Confirm,
+		}))
+	}
 	attrs := actionAttrs(action)
 	if len(attrs) > 0 {
 		options = append(options, button.WithAttrs(attrs))

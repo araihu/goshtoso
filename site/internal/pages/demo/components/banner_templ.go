@@ -101,7 +101,7 @@ func bannerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With CTA Button",
-				Description: "Attach a CTA config for an inline call-to-action (Href for a link, OnClick for an action).",
+				Description: "Use Href for native navigation, HTMX for a server action, then optional OnClick for local enhancement.",
 			},
 			bannerCTAPreview(),
 			`@banner.Banner(banner.Config{
@@ -109,6 +109,13 @@ func bannerDemoContent() templ.Component {
     CTA: &banner.CTAConfig{
         ActionLabel: "Start free trial",
         Href: "/signup",
+		HTMX: &banner.HTMXConfig{
+			Post:   "/api/components/banner/action",
+			Target: "#banner-cta-result",
+			Swap:   "innerHTML",
+		},
+		// Optional local enhancement after HTMX begins.
+		OnClick: "trackTrialStart()",
     },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -138,8 +145,10 @@ func bannerDemoContent() templ.Component {
     Description:  "We use cookies to improve your experience.",
     AcceptLabel:  "Accept All",
     RejectLabel:  "Decline",
-    AcceptAction: "acceptCookies()",
-    RejectAction: "show = false",
+	AcceptHTMX: &banner.HTMXConfig{Post: "/consent/accept", Target: "#consent", Swap: "outerHTML"},
+	RejectHTMX: &banner.HTMXConfig{Post: "/consent/reject", Target: "#consent", Swap: "outerHTML"},
+	// Optional local behavior remains supported.
+	RejectAction: "show = false",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -264,13 +273,17 @@ func bannerCTAPreview() templ.Component {
 			Description: "Get Fit Anywhere, Anytime 💪",
 			CTA: &banner.CTAConfig{
 				ActionLabel: "Start free trial",
-				OnClick:     "alert('Starting free trial...')",
+				HTMX: &banner.HTMXConfig{
+					Post:   "/api/components/banner/action",
+					Target: "#banner-cta-result",
+					Swap:   "innerHTML",
+				},
 			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div id=\"banner-cta-result\" aria-live=\"polite\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

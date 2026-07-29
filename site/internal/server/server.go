@@ -106,6 +106,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
 	s.mux.HandleFunc("/api/components/steps/demo", s.handleStepsDemo)
 	s.mux.HandleFunc("/api/components/radio/echo", s.handleRadioEcho)
+	s.mux.HandleFunc("/api/components/banner/action", s.handleBannerAction)
 	s.mux.HandleFunc("/api/components/search/items", s.handleSearchItems)
 	s.registerGettingStartedRoutes()
 
@@ -290,6 +291,15 @@ func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html")
 	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+}
+
+func (s *Server) handleBannerAction(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, _ = fmt.Fprint(w, `<p class="text-sm font-medium text-success">Banner action received</p>`)
 }
 
 func (s *Server) handleFormExternalSubmit(w http.ResponseWriter, r *http.Request) {

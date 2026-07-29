@@ -40,6 +40,26 @@ func TestDropdownLink_PreservesRelativeHref(t *testing.T) {
 	assert.Contains(t, rendered, `href="/docs?tab=api"`)
 }
 
+func TestDropdownHTMXItemUsesButtonAndSuppressesConflictingHrefWhenDisabled(t *testing.T) {
+	rendered := renderDropdown(t, Config{Sections: []Section{{Items: []Item{
+		{
+			Label: "Archive", Href: "/archive", ID: "archive",
+			HTMX: &HTMXConfig{Post: "/api/archive", Target: "#result", Swap: "outerHTML", Trigger: "click", Vals: `{"id":42}`, Confirm: "Archive?"},
+		},
+		{Label: "Locked", HTMX: &HTMXConfig{Post: "/api/locked"}, Disabled: true},
+	}}}})
+
+	for _, want := range []string{
+		`<button type="button"`, `id="archive"`, `hx-post="/api/archive"`,
+		`hx-target="#result"`, `hx-swap="outerHTML"`, `hx-trigger="click"`,
+		`hx-vals="{&#34;id&#34;:42}"`, `hx-confirm="Archive?"`,
+	} {
+		assert.Contains(t, rendered, want)
+	}
+	assert.NotContains(t, rendered, `href="/archive"`)
+	assert.NotContains(t, rendered, `hx-post="/api/locked"`)
+}
+
 func TestDropdownKeyboardOpenFocusesFirstEnabledItemAndEscapeReturnsToTrigger(t *testing.T) {
 	rendered := renderDropdown(t, Config{
 		Label: "Actions",
