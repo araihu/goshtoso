@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-50 component packages. Each is imported by its directory path; note the
+51 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -900,6 +900,29 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 **Options:** `WithActionGroupURL(url string)` · `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
 
 - **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx"
+
+## icon
+
+```go
+import "github.com/araihu/goshtoso/components/icon"  // package icon
+```
+
+**Entry points:** `Icon(cfg Config)`
+
+- **Mode** — ModeExternal = "", ModeInline = "inline"
+- **Size** — SizeXS = "xs", SizeSM = "sm", SizeMD = "md", SizeLG = "lg", SizeXL = "xl"
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `SpriteURL` | `string` | SpriteURL identifies the external sprite when Mode is ModeExternal. |
+| `Symbol` | `Symbol` | Symbol identifies the sprite symbol to render. |
+| `Size` | `Size` | Size controls the root SVG dimensions. |
+| `Label` | `string` | Label gives the icon an accessible image name. |
+| `Decorative` | `bool` | Decorative hides the icon from assistive technology, even when Label is set. |
+| `RootClass` | `string` | RootClass appends CSS classes to the root SVG. |
+| `Mode` | `Mode` | Mode selects external sprite or document-local symbol resolution. |
 
 ## kbd
 

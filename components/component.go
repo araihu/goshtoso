@@ -97,6 +97,7 @@ const (
 	KindPanel                  Kind = "panel"
 	KindEmptyState             Kind = "empty-state"
 	KindSkeleton               Kind = "skeleton"
+	KindIcon                   Kind = "icon"
 )
 
 var allKinds = []Kind{
@@ -181,6 +182,7 @@ var allKinds = []Kind{
 	KindPanel,
 	KindEmptyState,
 	KindSkeleton,
+	KindIcon,
 }
 
 // AllKinds returns every supported component kind in stable order.
