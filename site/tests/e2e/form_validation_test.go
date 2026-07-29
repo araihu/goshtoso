@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -45,7 +44,8 @@ func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, val
 	t.Helper()
 
 	// Collect all current form values and override the target field
-	js := fmt.Sprintf(`() => {
+	fieldID := "goshtoso-field-" + fieldName
+	js := fmt.Sprintf(`() => new Promise(resolve => {
 		const form = document.querySelector('#demo-validation');
 		const fd = new FormData(form);
 		const vals = {};
@@ -57,21 +57,27 @@ func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, val
 		const input = document.querySelector('input[name=%q]');
 		if (input) input.value = %q;
 
-		const el = document.querySelector('#goshtoso-field-' + %q);
-		return htmx.ajax('POST', '/api/components/form-validation', {
+		const targetID = %q;
+		const onAfterSettle = event => {
+			if (event.detail?.target?.id === targetID) {
+				document.body.removeEventListener('htmx:afterSettle', onAfterSettle);
+				resolve();
+			}
+		};
+		document.body.addEventListener('htmx:afterSettle', onAfterSettle);
+		const el = document.getElementById(targetID);
+		htmx.ajax('POST', '/api/components/form-validation', {
 			source: el,
 			target: el,
 			swap: 'outerHTML',
 			values: vals,
 			headers: {'HX-Trigger-Name': %q}
 		});
-	}`, fieldName, value, fieldName, value, fieldName, fieldName)
+	})`, fieldName, value, fieldName, value, fieldID, fieldName)
 
 	_, err := page.Evaluate(js)
 	require.NoError(t, err)
 
-	// Wait for the HTMX swap to settle
-	time.Sleep(500 * time.Millisecond)
 }
 
 // fillWithoutValidation sets input value directly without triggering events.
@@ -97,7 +103,7 @@ func TestFormValidation_SubmitEmpty(t *testing.T) {
 
 	// Submit without filling any fields.
 	require.NoError(t, page.Locator("#demo-validation button[type='submit']").Click())
-	time.Sleep(800 * time.Millisecond)
+	require.NoError(t, page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text").First().WaitFor())
 
 	// Check for error messages on all 3 required fields
 	nameErrors := page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text")
@@ -137,10 +143,10 @@ func TestFormValidation_SubmitValid(t *testing.T) {
 
 	// Submit the form
 	require.NoError(t, page.Locator("#demo-validation button[type='submit']").Click())
-	time.Sleep(800 * time.Millisecond)
 
 	// Verify success message
 	successMsg := page.Locator("#form-result")
+	require.NoError(t, successMsg.WaitFor())
 	text, err := successMsg.InnerText()
 	require.NoError(t, err)
 	assert.Contains(t, text, "Form submitted successfully!")

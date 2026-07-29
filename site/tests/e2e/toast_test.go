@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"testing"
-	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
@@ -86,11 +85,16 @@ func TestToastStaticExamplesStayVisible(t *testing.T) {
 	cleanupServer := setupServer(t)
 	defer cleanupServer()
 
-	_, browser, cleanupPW := setupPlaywright(t)
-	defer cleanupPW()
-
-	page := newPage(t, browser)
-	_, err := page.Goto(baseURL+"/components/toast", playwright.PageGotoOptions{
+	_, browser, _ := setupPlaywright(t)
+	context, err := browser.NewContext()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = context.Close() })
+	page, err := context.NewPage()
+	require.NoError(t, err)
+	page.SetDefaultTimeout(2000)
+	page.SetDefaultNavigationTimeout(3000)
+	require.NoError(t, page.Clock().Install(playwright.ClockInstallOptions{Time: 0}))
+	_, err = page.Goto(baseURL+"/components/toast", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
@@ -100,7 +104,7 @@ func TestToastStaticExamplesStayVisible(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 5, count, "static docs preview should render all toast primitives")
 
-	time.Sleep(8500 * time.Millisecond)
+	require.NoError(t, page.Clock().RunFor(8500))
 
 	count, err = staticAlerts.Count()
 	require.NoError(t, err)
