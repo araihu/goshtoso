@@ -60,6 +60,15 @@ func TestDropdownHTMXItemUsesButtonAndSuppressesConflictingHrefWhenDisabled(t *t
 	assert.NotContains(t, rendered, `hx-post="/api/locked"`)
 }
 
+func TestDropdownHTMXPostTakesPrecedenceOverGet(t *testing.T) {
+	rendered := renderDropdown(t, Config{Sections: []Section{{Items: []Item{{
+		Label: "Save", HTMX: &HTMXConfig{Get: "/preview", Post: "/save"},
+	}}}}})
+
+	assert.Contains(t, rendered, `hx-post="/save"`)
+	assert.NotContains(t, rendered, `hx-get="/preview"`)
+}
+
 func TestDropdownKeyboardOpenFocusesFirstEnabledItemAndEscapeReturnsToTrigger(t *testing.T) {
 	rendered := renderDropdown(t, Config{
 		Label: "Actions",

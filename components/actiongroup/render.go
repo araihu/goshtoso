@@ -18,8 +18,12 @@ func actionButtonOptions(action Action, primary bool) []button.Option {
 		options = append(options, button.Disabled())
 	}
 	if action.HTMX != nil && !action.Disabled {
+		get := action.HTMX.Get
+		if action.HTMX.Post != "" {
+			get = ""
+		}
 		options = append(options, button.WithHTMX(&button.HTMXConfig{
-			Get:     action.HTMX.Get,
+			Get:     get,
 			Post:    action.HTMX.Post,
 			Target:  action.HTMX.Target,
 			Swap:    action.HTMX.Swap,

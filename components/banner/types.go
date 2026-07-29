@@ -56,7 +56,9 @@ type CTAConfig struct {
 	HTMX *HTMXConfig
 }
 
-// HTMXConfig holds declarative HTMX attributes for banner actions.
+// HTMXConfig holds declarative HTMX attributes for banner actions. Set one
+// request method. When both Get and Post are set, Post takes precedence so
+// rendering emits one unambiguous request method.
 type HTMXConfig struct {
 	// Get is the URL for an HTMX GET request.
 	Get string
@@ -79,11 +81,10 @@ func (cfg *HTMXConfig) attrs() templ.Attributes {
 		return nil
 	}
 	attrs := templ.Attributes{}
-	if cfg.Get != "" {
-		attrs["hx-get"] = cfg.Get
-	}
 	if cfg.Post != "" {
 		attrs["hx-post"] = cfg.Post
+	} else if cfg.Get != "" {
+		attrs["hx-get"] = cfg.Get
 	}
 	if cfg.Target != "" {
 		attrs["hx-target"] = cfg.Target

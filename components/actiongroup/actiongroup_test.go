@@ -50,6 +50,15 @@ func TestActionGroupHTMXActionsRenderDirectGroupedAndOverflowCopies(t *testing.T
 	require.Equal(t, 3, strings.Count(html, `hx-post="/actions/archive"`))
 }
 
+func TestActionGroupHTMXPostTakesPrecedenceOverGet(t *testing.T) {
+	html := renderHTML(t, ActionGroup(Config{
+		Primary: Action{Label: "Save", HTMX: &dropdown.HTMXConfig{Get: "/preview", Post: "/save"}},
+	}))
+
+	require.Contains(t, html, `hx-post="/save"`)
+	require.NotContains(t, html, `hx-get="/preview"`)
+}
+
 func TestActionGroupIdentity(t *testing.T) {
 	require.Equal(t, components.KindActionGroup, ActionGroup(Config{}).Kind())
 }

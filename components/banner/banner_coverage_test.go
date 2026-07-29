@@ -212,3 +212,13 @@ func TestBannerHTMXActionsPreferButtonsAndKeepLegacyAlpine(t *testing.T) {
 	assert.Contains(t, cookies, `hx-post="/api/consent/reject"`)
 	assert.Contains(t, cookies, `hx-confirm="Reject optional cookies?"`)
 }
+
+func TestBannerHTMXPostTakesPrecedenceOverGet(t *testing.T) {
+	rendered := renderBanner(t, Config{
+		Description: "Deploy ready",
+		CTA:         &CTAConfig{ActionLabel: "Deploy", HTMX: &HTMXConfig{Get: "/preview", Post: "/deploy"}},
+	})
+
+	assert.Contains(t, rendered, `hx-post="/deploy"`)
+	assert.NotContains(t, rendered, `hx-get="/preview"`)
+}
