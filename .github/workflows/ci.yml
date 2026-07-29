@@ -18,6 +18,7 @@ concurrency:
 
 env:
   GO_VERSION: '1.26.5'
+  NODE_VERSION: '24'
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.5700.1'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
@@ -59,6 +60,10 @@ jobs:
           # same tree to the GHA cache backend on every go.sum change — a ~9min
           # post-job step that buys nothing here. Disable it.
           cache: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Verify ARC persistent caches
         run: |
@@ -209,6 +214,10 @@ jobs:
           # same tree to the GHA cache backend on every go.sum change — a ~9min
           # post-job step that buys nothing here. Disable it.
           cache: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Verify ARC persistent caches
         run: |
