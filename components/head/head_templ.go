@@ -104,9 +104,10 @@ func dependenciesTemplate(cfg config) templ.Component {
 	})
 }
 
-// DependenciesMinimal renders just the CSS, Alpine core, HTMX, and combobox nav
-// (no Alpine plugins). Use it when your page needs no plugin-backed components.
-// Same /assets/ mount requirement as Dependencies.
+// DependenciesMinimal renders just the CSS, Alpine core, HTMX, combobox nav,
+// and ActionGroup measurement runtime (no Alpine plugins). Use it when your
+// page needs no plugin-backed components. Same /assets/ mount requirement as
+// Dependencies.
 func dependenciesMinimalTemplate(cfg config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -135,7 +136,7 @@ func dependenciesMinimalTemplate(cfg config) templ.Component {
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(cfg.manifest.Stylesheet.PrimaryURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 38, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 39, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -158,7 +159,7 @@ func dependenciesMinimalTemplate(cfg config) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.manifest.Loader.PrimaryURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 42, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 43, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -254,7 +255,7 @@ func localDependencyScript(cfg config, source runtimeAsset) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(source.LocalURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 54, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/head/head.templ`, Line: 55, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {

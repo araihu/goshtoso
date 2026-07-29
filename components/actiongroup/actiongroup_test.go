@@ -41,7 +41,7 @@ func TestActionGroupRendersSmallPrimaryAndProgressiveEnhancementFallback(t *test
 	require.Contains(t, html, `title="Locked"`)
 	require.Equal(t, 2, strings.Count(html, `data-action-group-secondary`))
 	require.Contains(t, html, `data-action-group-overflow`)
-	require.Contains(t, html, `hidden`)
+	require.Contains(t, html, `data-action-group-overflow class="shrink-0" hidden`)
 	require.Contains(t, html, `aria-label="More actions"`)
 }
 

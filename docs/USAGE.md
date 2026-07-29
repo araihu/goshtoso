@@ -139,9 +139,10 @@ for _, dependency := range runtime.Dependencies {
 
 `RuntimeManifest.Stylesheet` is the compiled CSS. `Loader` is the external
 bootstrap rendered by the CDN-first default. `Dependencies` contains Alpine
-Collapse, Alpine Focus, Alpine Mask, Alpine core, HTMX, and combobox in exact
-execution order, with explicit roles, primary and local URLs, SRI, enabled,
-minimal-set membership, direct-tag defer, and loader-readiness semantics.
+Collapse, Alpine Focus, Alpine Mask, Alpine core, HTMX, combobox, and
+ActionGroup in exact execution order, with explicit roles, primary and local
+URLs, SRI, enabled, minimal-set membership, direct-tag defer, and
+loader-readiness semantics.
 Direct local rendering uses the dependency slice and does not execute the
 loader again.
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
-	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
@@ -16,13 +16,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	cleanupServer := setupServer(t)
-	defer cleanupServer()
-
-	_, browser, cleanupPW := setupPlaywright(t)
-	defer cleanupPW()
-
-	page := newPage(t, browser, playwright.BrowserNewPageOptions{
+	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
 		Viewport: &playwright.Size{Width: 1440, Height: 1000},
 	})
 	failures := watchPageFailures(page)
@@ -72,7 +66,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		_, err = page.WaitForFunction(`() => document.activeElement && document.activeElement.textContent.trim() === "CSV"`, nil)
 		require.NoError(t, err)
 
-		waitForActionGroupFocusTrap(t, page)
+		waitForActionGroupFrames(t, page)
 		require.NoError(t, page.Keyboard().Press("Escape"))
 		_, err = page.WaitForFunction(`() => document.querySelector("#action-group-export button").getAttribute("aria-expanded") === "false"`, nil)
 		require.NoError(t, err)
@@ -143,7 +137,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 			return trigger.getAttribute("aria-expanded") === "false";
 		}`, nil)
 		require.NoError(t, err)
-		waitForActionGroupFocusTrap(t, page)
+		waitForActionGroupFrames(t, page)
 	})
 
 	t.Run("source order remains priority order", func(t *testing.T) {
@@ -202,12 +196,13 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 			for _, dark := range []bool{false, true} {
 				_, err := page.Evaluate(`([theme, dark]) => {
 					document.documentElement.dataset.theme = theme;
-					document.documentElement.classList.toggle("dark", dark);
+					const darkMode = Alpine.store('darkMode');
+					if (darkMode.on !== dark) darkMode.toggle();
 				}`, []any{theme, dark})
 				require.NoError(t, err)
 				for _, width := range []int{320, 390, 768, 1440} {
 					require.NoError(t, page.SetViewportSize(width, 1000))
-					time.Sleep(100 * time.Millisecond)
+					waitForActionGroupFrames(t, page)
 					overflows, err := page.Evaluate(`() => document.documentElement.scrollWidth > document.documentElement.clientWidth`, nil)
 					require.NoError(t, err)
 					require.Equalf(t, false, overflows, "theme %s dark=%t width=%d", theme, dark, width)
@@ -216,13 +211,20 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 					require.Truef(t, primaryVisible, "primary action theme %s dark=%t width=%d", theme, dark, width)
 					if os.Getenv("GOSHTOSO_CAPTURE_ACTIONGROUP") == "1" {
 						require.NoError(t, os.MkdirAll(screenshotDir, 0o755))
-						for _, variant := range []string{"responsive", "stacked"} {
-							_, err = page.Locator(
-								"#action-group-" + variant + " [data-goshtoso-action-group]",
-							).Screenshot(playwright.LocatorScreenshotOptions{
+						variants := []struct {
+							name     string
+							selector string
+						}{
+							{name: "fragment", selector: "#action-group-fragment"},
+							{name: "responsive", selector: "#action-group-responsive [data-goshtoso-action-group]"},
+							{name: "stacked", selector: "#action-group-stacked [data-goshtoso-action-group]"},
+							{name: "priority", selector: "#action-group-priority [data-goshtoso-action-group]"},
+						}
+						for _, variant := range variants {
+							_, err = page.Locator(variant.selector).Screenshot(playwright.LocatorScreenshotOptions{
 								Path: playwright.String(filepath.Join(
 									screenshotDir,
-									fmt.Sprintf("action-group-%s-%s-dark-%t-%d.png", variant, theme, dark, width),
+									fmt.Sprintf("action-group-%s-%s-dark-%t-%d.png", variant.name, theme, dark, width),
 								)),
 							})
 							require.NoError(t, err)
@@ -303,13 +305,13 @@ func TestActionGroupPartialCollapseKeyboardNavigation(t *testing.T) {
 	require.NoError(t, page.Keyboard().Press("ArrowUp"))
 	require.Equal(t, "Delete", actionGroupMustText(t, overflow.Locator(`[role="menuitem"]:focus`)))
 
-	waitForActionGroupFocusTrap(t, page)
+	waitForActionGroupFrames(t, page)
 	require.NoError(t, page.Keyboard().Press("Escape"))
 	waitForActionGroupTriggerFocus(t, page)
 	require.NoError(t, page.Keyboard().Press("Enter"))
 	_, err = page.WaitForFunction(`() => document.activeElement?.textContent.trim() === "Share"`, nil)
 	require.NoError(t, err)
-	waitForActionGroupFocusTrap(t, page)
+	waitForActionGroupFrames(t, page)
 	require.NoError(t, page.Keyboard().Press("Escape"))
 	waitForActionGroupTriggerFocus(t, page)
 
@@ -325,7 +327,7 @@ func waitForActionGroupTriggerFocus(t *testing.T, page playwright.Page) {
 	require.NoError(t, err)
 }
 
-func waitForActionGroupFocusTrap(t *testing.T, page playwright.Page) {
+func waitForActionGroupFrames(t *testing.T, page playwright.Page) {
 	t.Helper()
 	_, err := page.Evaluate(`() => new Promise(resolve =>
 		requestAnimationFrame(() => requestAnimationFrame(resolve))
@@ -364,5 +366,5 @@ func actionGroupMustText(t *testing.T, locator playwright.Locator) string {
 	t.Helper()
 	value, err := locator.TextContent()
 	require.NoError(t, err)
-	return value
+	return strings.TrimSpace(value)
 }

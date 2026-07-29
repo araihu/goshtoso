@@ -66,16 +66,16 @@
   function initialize(root) {
     if (root.dataset.actionGroupInitialized === "true") return;
     if (typeof window.ResizeObserver !== "function") return;
-    root.dataset.actionGroupInitialized = "true";
-    root.style.flexWrap = "nowrap";
 
-    var primary = root.querySelector("[data-action-group-primary]");
+    var primary = root.querySelector(":scope > [data-action-group-primary]");
     var secondary = Array.from(
       root.querySelectorAll(":scope > [data-action-group-secondary]"),
     );
     var overflow = root.querySelector(":scope > [data-action-group-overflow]");
     var counts = overflowCounts(root);
     if (!primary || !overflow || secondary.length === 0) return;
+    root.dataset.actionGroupInitialized = "true";
+    root.style.flexWrap = "nowrap";
 
     var queued = false;
     function measure() {

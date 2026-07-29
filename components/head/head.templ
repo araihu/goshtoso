@@ -31,9 +31,10 @@ templ dependenciesTemplate(cfg config) {
 	}
 }
 
-// DependenciesMinimal renders just the CSS, Alpine core, HTMX, and combobox nav
-// (no Alpine plugins). Use it when your page needs no plugin-backed components.
-// Same /assets/ mount requirement as Dependencies.
+// DependenciesMinimal renders just the CSS, Alpine core, HTMX, combobox nav,
+// and ActionGroup measurement runtime (no Alpine plugins). Use it when your
+// page needs no plugin-backed components. Same /assets/ mount requirement as
+// Dependencies.
 templ dependenciesMinimalTemplate(cfg config) {
 	<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL }/>
 	if cfg.localRuntime {

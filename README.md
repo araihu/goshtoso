@@ -181,16 +181,15 @@ github.com/araihu/goshtoso/components/<name>
 Current components:
 
 ```text
-accordion        actiongroup alert        appshell     avatar       badge
-banner
-breadcrumbs      button      card         carousel     chatbubble   checkbox
-codeblock        combobox    drawer       dropdown     emptystate   fileinput
-form             head        kbd          link         modal        navbar
-pageheader       pagination  palette      panel        radio        range
-rating
-schemaform       search      select       sidebar      skeleton     spinner
-steps            structuredinput         table        tabs         tagslist
-textarea         textinput   toast        toolbar      toggle       tooltip
+accordion        actiongroup  alert        appshell     avatar       badge
+banner           breadcrumbs  button       card         carousel     chatbubble
+checkbox         codeblock    combobox     drawer       dropdown     emptystate
+fileinput        form         head         kbd          link         modal
+navbar           pageheader   pagination   palette      panel        radio
+range            rating       schemaform   search       select       sidebar
+skeleton         spinner      steps        structuredinput table     tabs
+tagslist         textarea     textinput    toast        toolbar      toggle
+tooltip
 ```
 
 Run the demo site to explore component options, API tables, HTMX
