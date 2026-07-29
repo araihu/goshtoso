@@ -4270,6 +4270,12 @@
       content: var(--tw-content);
     }
   }
+  .before\:content-\[\'\\\\\'\] {
+    &::before {
+      --tw-content: '\\';
+      content: var(--tw-content);
+    }
+  }
   .after\:absolute {
     &::after {
       content: var(--tw-content);

@@ -1,5 +1,66 @@
 // icon-catalog.js — local state for the generated Heroicons workbench.
 (function () {
+  function goString(value) {
+    var output = '"';
+    for (var _i = 0, characters = Array.from(String(value || "")); _i < characters.length; _i += 1) {
+      var character = characters[_i];
+      switch (character) {
+        case "\\": output += "\\\\"; break;
+        case '"': output += '\\"'; break;
+        case "\n": output += "\\n"; break;
+        case "\r": output += "\\r"; break;
+        case "\t": output += "\\t"; break;
+        case "\b": output += "\\b"; break;
+        case "\f": output += "\\f"; break;
+        default: {
+          var codePoint = character.codePointAt(0);
+          output += codePoint < 32 || codePoint === 127
+            ? "\\x" + codePoint.toString(16).padStart(2, "0")
+            : character;
+        }
+      }
+    }
+    return output + '"';
+  }
+
+  // goshtosoIconCode is the one copy encoder. Alpine and tests call this exact
+  // function so the visible source cannot drift from the clipboard source.
+  window.goshtosoIconCode = function (input) {
+    var fields = [
+      "SpriteURL: heroicons.SpriteURL",
+      "Symbol:    heroicons." + input.glyph,
+    ];
+    var sizes = { xs: "SizeXS", sm: "SizeSM", lg: "SizeLG", xl: "SizeXL" };
+    var label = String(input.label || "").trim();
+    if (sizes[input.size]) fields.push("Size:      icon." + sizes[input.size]);
+    if (input.decorative) fields.push("Decorative: true");
+    else if (label) fields.push("Label:     " + goString(label));
+    var root = String(input.rootClass || "").trim();
+    if (root) fields.push("RootClass: " + goString(root));
+
+    return [
+      "package main",
+      "",
+      "import (",
+      '    "context"',
+      '    "log"',
+      '    "os"',
+      '',
+      '    "github.com/araihu/goshtoso/components/icon"',
+      '    "github.com/araihu/goshtoso/components/icon/heroicons"',
+      ")",
+      "",
+      "func main() {",
+      "    if err := icon.Icon(icon.Config{",
+    ].concat(fields.map(function (field) { return "        " + field + ","; }), [
+      "    }).Render(context.Background(), os.Stdout); err != nil {",
+      "        log.Fatal(err)",
+      "    }",
+      "}",
+      "",
+    ]).join("\n");
+  };
+
   function register() {
     if (!window.Alpine || Alpine.__iconCatalogRegistered) return;
     Alpine.__iconCatalogRegistered = true;
@@ -64,18 +125,13 @@
           return classes[this.size] + (root ? " " + root : "");
         },
         get code() {
-          var fields = [
-            "SpriteURL: heroicons.SpriteURL",
-            "Symbol:    heroicons." + this.selected.name,
-          ];
-          var sizes = { xs: "SizeXS", sm: "SizeSM", lg: "SizeLG", xl: "SizeXL" };
-          var label = String(this.label || "").trim();
-          if (sizes[this.size]) fields.push("Size:      icon." + sizes[this.size]);
-          if (this.decorative) fields.push("Decorative: true");
-          else if (label) fields.push("Label:     " + JSON.stringify(label));
-          var root = String(this.rootClass || "").trim();
-          if (root) fields.push("RootClass: " + JSON.stringify(root));
-          return "@icon.Icon(icon.Config{\n" + fields.map(function (field) { return "    " + field + ","; }).join("\n") + "\n})";
+          return window.goshtosoIconCode({
+            glyph: this.selected.name,
+            size: this.size,
+            label: this.label,
+            decorative: this.decorative,
+            rootClass: this.rootClass,
+          });
         },
         copyCode: function () {
           var component = this;
@@ -85,7 +141,7 @@
           }
           navigator.clipboard.writeText(this.code).then(function () {
             component.copied = true;
-            component.copyAnnouncement = "Go code copied to clipboard.";
+            component.copyAnnouncement = "Compilable Go source copied to clipboard.";
             if (component._copyTimer) window.clearTimeout(component._copyTimer);
             component._copyTimer = window.setTimeout(function () {
               component.copied = false;

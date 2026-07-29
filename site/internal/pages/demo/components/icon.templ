@@ -125,7 +125,7 @@ templ iconPickerModal() {
 					</div>
 					<p class="mt-3 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted" x-text="selected.symbol"></p>
 					<div class="mt-4 overflow-hidden rounded-radius border border-outline bg-slate-950 text-slate-50 dark:border-outline-dark">
-						<div class="flex items-center justify-between border-b border-white/10 px-3 py-2"><span class="text-xs font-medium">Go</span><button type="button" @click="copyCode()" class="rounded-radius px-2 py-1 text-xs font-medium text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><span x-text="copied ? 'Copied' : 'Copy Go code'"></span></button></div>
+						<div class="flex items-center justify-between border-b border-white/10 px-3 py-2"><span class="text-xs font-medium">Standalone Go</span><button type="button" @click="copyCode()" class="rounded-radius px-2 py-1 text-xs font-medium text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><span x-text="copied ? 'Copied Go source' : 'Copy compilable Go'"></span></button></div>
 						<pre class="overflow-x-auto p-3 text-xs leading-5"><code x-text="code"></code></pre>
 					</div>
 					<p class="sr-only" aria-live="polite" x-text="copyAnnouncement"></p>
