@@ -7,4 +7,8 @@ exclude = [
   '^http://localhost(:[0-9]+)?/',
   '^https://localhost(:[0-9]+)?/',
   '^http://127\\.0\\.0\\.1(:[0-9]+)?/',
+  # The release comparison becomes reachable only after this release PR is
+  # merged and v0.1.0 is tagged. Remove this bootstrap exclusion in the
+  # post-tag site-pin PR.
+  '^https://github\\.com/araihu/goshtoso/compare/v0\\.0\\.13\\.\\.\\.v0\\.1\\.0$',
 ]
