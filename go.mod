@@ -2,6 +2,8 @@ module github.com/araihu/goshtoso
 
 go 1.26.5
 
+toolchain go1.26.5
+
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/alecthomas/chroma/v2 v2.24.1
