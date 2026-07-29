@@ -61,7 +61,11 @@ func TestTabs_HTMXFragmentLifecycle(t *testing.T) {
 	require.NoError(t, err)
 	metrics, ok := probe.([]any)
 	require.True(t, ok, "fragment lifecycle probe should return metrics")
-	require.Greater(t, metrics[0].(int), 0, "Alpine MutationObserver should initialize swapped Tabs")
+	// Alpine's MutationObserver calls its internal initTree closure. The public
+	// Alpine.initTree function is intentionally not invoked by this navigation.
+	// Tab state and keyboard assertions above prove the observer initialized the
+	// swapped fragment without an application-side manual initialization call.
+	require.Equal(t, 0, metrics[0])
 	require.Equal(t, 0, metrics[1])
 	require.Equal(t, 0, metrics[2])
 	require.Equal(t, 0, metrics[3])
