@@ -113,6 +113,9 @@ func validateOptions(opts Options) error {
 			return fmt.Errorf("%s is required", field.name)
 		}
 	}
+	if opts.Package == "_" {
+		return fmt.Errorf("package %q is not a valid Go package name", opts.Package)
+	}
 	if !isIdentifier(opts.Package) {
 		if token.Lookup(opts.Package).IsKeyword() {
 			return fmt.Errorf("package %q is a Go keyword", opts.Package)

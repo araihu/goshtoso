@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	lowerKebabRE = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
+	lowerKebabRE = regexp.MustCompile(`^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$`)
 	semverRE     = regexp.MustCompile(`^v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$`)
 	sha256RE     = regexp.MustCompile(`^[0-9a-f]{64}$`)
 )
@@ -284,14 +284,18 @@ func validateCatalogAsset(asset Asset) error {
 	for _, field := range []struct {
 		name, value string
 	}{{"license", asset.License}, {"source", asset.Source}} {
-		if field.value == "" || strings.ContainsAny(field.value, "\r\n") {
-			return fmt.Errorf("%s must be a non-empty single-line label", field.name)
+		if !validText(field.value) {
+			return fmt.Errorf("%s is empty or invalid", field.name)
 		}
 	}
 	if !sha256RE.MatchString(asset.SHA256) {
 		return fmt.Errorf("invalid sha256 %q", asset.SHA256)
 	}
 	return nil
+}
+
+func validText(value string) bool {
+	return strings.TrimSpace(value) == value && value != "" && !strings.ContainsAny(value, "\r\n\t")
 }
 
 func validatePath(path, format string) error {

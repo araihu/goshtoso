@@ -135,7 +135,7 @@ func TestLoadValidatesSchemaV1Semantics(t *testing.T) {
 		{"canonical name", strings.Replace(valid, "ui-hi-16-solid-arrow-down", "UI-hi-16-solid-arrow-down", 1), "invalid canonicalName"},
 		{"path", strings.Replace(valid, "icons/ui/heroicons/16-solid-arrow-down.svg", "dist/icons/ui/heroicons/16-solid-arrow-down.svg", 1), "invalid path"},
 		{"checksum", strings.Replace(valid, "d211c881861313937a6189cdb711f04e4c8c68518b6e26979811d0e863844a3e", "D211c881861313937a6189cdb711f04e4c8c68518b6e26979811d0e863844a3e", 1), "invalid sha256"},
-		{"provenance", strings.Replace(valid, "heroicons@v2.2.0", "heroicons\\nsource", 1), "single-line"},
+		{"provenance", strings.Replace(valid, "heroicons@v2.2.0", "heroicons\\nsource", 1), "source is empty or invalid"},
 		{"viewBox", strings.Replace(valid, "0 0 16 16", "0 0 0 16", 1), "invalid viewBox"},
 		{"dimensions pair", strings.Replace(valid, "\"viewBox\": \"0 0 16 16\"", "\"width\": 16, \"viewBox\": \"0 0 16 16\"", 1), "width and height"},
 		{"png dimensions", strings.NewReplacer("\"format\": \"svg\"", "\"format\": \"png\"", "16-solid-arrow-down.svg", "16-solid-arrow-down.png").Replace(valid), "PNG requires width and height"},
@@ -145,6 +145,57 @@ func TestLoadValidatesSchemaV1Semantics(t *testing.T) {
 			_, err := Load(strings.NewReader(tt.json))
 			if err == nil || !strings.Contains(err.Error(), tt.want) {
 				t.Fatalf("Load() error = %v, want %q", err, tt.want)
+			}
+		})
+	}
+}
+
+func TestLoadRejectsLeadingDigitInLowerKebabFields(t *testing.T) {
+	valid := fixtureJSON(t)
+	tests := []struct {
+		name string
+		old  string
+		new  string
+		want string
+	}{
+		{"canonical name", "ui-hi-16-solid-arrow-down", "1ui-hi-16-solid-arrow-down", "invalid canonicalName"},
+		{"product", "\"product\": \"heroicons\"", "\"product\": \"1heroicons\"", "invalid product"},
+		{"artwork", "\"artwork\": \"icon\"", "\"artwork\": \"1icon\"", "invalid artwork"},
+		{"appearance", "\"appearance\": \"default\"", "\"appearance\": \"1default\"", "invalid appearance"},
+		{"surface", "\"surface\": \"transparent\"", "\"surface\": \"1transparent\"", "invalid surface"},
+		{"framing", "\"framing\": \"optical\"", "\"framing\": \"1optical\"", "invalid framing"},
+		{"sprite symbol", "\"spriteSymbol\": \"hi-16-solid-arrow-down\"", "\"spriteSymbol\": \"1hi-16-solid-arrow-down\"", "invalid spriteSymbol"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			input := strings.Replace(valid, tt.old, tt.new, 1)
+			_, err := Load(strings.NewReader(input))
+			if err == nil || !strings.Contains(err.Error(), tt.want) {
+				t.Fatalf("Load() error = %v, want %q", err, tt.want)
+			}
+		})
+	}
+}
+
+func TestLoadRejectsInvalidProvenanceLabels(t *testing.T) {
+	valid := fixtureJSON(t)
+	tests := []struct {
+		name string
+		old  string
+		new  string
+		want string
+	}{
+		{"license leading space", "\"license\": \"MIT\"", "\"license\": \" MIT\"", "license"},
+		{"license trailing space", "\"license\": \"MIT\"", "\"license\": \"MIT \"", "license"},
+		{"source tab", "heroicons@v2.2.0", "heroicons\\tsource", "source"},
+		{"source newline", "heroicons@v2.2.0", "heroicons\\nsource", "source"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			input := strings.Replace(valid, tt.old, tt.new, 1)
+			_, err := Load(strings.NewReader(input))
+			if err == nil || !strings.Contains(err.Error(), tt.want) {
+				t.Fatalf("Load() error = %v, want invalid %s", err, tt.want)
 			}
 		})
 	}

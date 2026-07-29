@@ -86,6 +86,15 @@ func TestGenerateRejectsGoKeywords(t *testing.T) {
 	}
 }
 
+func TestGenerateRejectsBlankIdentifierPackage(t *testing.T) {
+	opts := fixtureOptions
+	opts.Package = "_"
+	_, err := Generate(fixture(t), opts)
+	if err == nil || !strings.Contains(err.Error(), `package "_" is not a valid Go package name`) {
+		t.Fatalf("Generate() error = %v, want clear blank identifier package error", err)
+	}
+}
+
 func TestGenerateRejectsIdentifierCollision(t *testing.T) {
 	catalog := fixture(t)
 	catalog.Assets[0].CanonicalName = "ui-hi-16-solid-a-b"
