@@ -2,12 +2,17 @@ package e2e
 
 import (
 	"testing"
-	"time"
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func waitForPaginationPage(t *testing.T, page playwright.Page, pageNumber int) {
+	t.Helper()
+	_, err := page.WaitForFunction(`pageNumber => document.querySelector('#paginated-table-pagination')?.textContent.includes('Page ' + pageNumber + ' of 4')`, pageNumber)
+	require.NoError(t, err)
+}
 
 // TestTablePaginationNav tests that pagination controls and table rows update
 // correctly when navigating between pages via HTMX.
@@ -93,7 +98,7 @@ func TestTablePaginationNav(t *testing.T) {
 
 		err = page2Link.Click()
 		require.NoError(t, err)
-		time.Sleep(500 * time.Millisecond) // Wait for HTMX swap + OOB
+		waitForPaginationPage(t, page, 2)
 	})
 
 	t.Run("Page2_RowsChanged", func(t *testing.T) {
@@ -160,7 +165,7 @@ func TestTablePaginationNav(t *testing.T) {
 		page4Link := page.Locator("#paginated-table-pagination a[aria-label='page 4']")
 		err := page4Link.Click()
 		require.NoError(t, err)
-		time.Sleep(500 * time.Millisecond)
+		waitForPaginationPage(t, page, 4)
 	})
 
 	t.Run("Page4_RowsAreLastRecords", func(t *testing.T) {
@@ -202,19 +207,19 @@ func TestTablePaginationNav(t *testing.T) {
 		// Page 4 -> 3
 		err := prevLink.Click()
 		require.NoError(t, err)
-		time.Sleep(500 * time.Millisecond)
+		waitForPaginationPage(t, page, 3)
 
 		// Page 3 -> 2
 		prevLink = page.Locator("#paginated-table-pagination a[aria-label='previous page']")
 		err = prevLink.Click()
 		require.NoError(t, err)
-		time.Sleep(500 * time.Millisecond)
+		waitForPaginationPage(t, page, 2)
 
 		// Page 2 -> 1
 		prevLink = page.Locator("#paginated-table-pagination a[aria-label='previous page']")
 		err = prevLink.Click()
 		require.NoError(t, err)
-		time.Sleep(500 * time.Millisecond)
+		waitForPaginationPage(t, page, 1)
 	})
 
 	t.Run("BackOnPage1_StateRestored", func(t *testing.T) {
@@ -241,7 +246,7 @@ func TestTablePaginationNav(t *testing.T) {
 		nextLink := page.Locator("#paginated-table-pagination a[aria-label='next page']")
 		err := nextLink.Click()
 		require.NoError(t, err)
-		time.Sleep(500 * time.Millisecond)
+		waitForPaginationPage(t, page, 2)
 
 		pageInfo, err := page.Locator("#paginated-table-pagination").TextContent()
 		require.NoError(t, err)

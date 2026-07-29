@@ -21,8 +21,15 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
+	// Each case has an isolated page and only performs read-only assertions.
+	// Bound concurrency to avoid overloading the shared browser or demo server.
+	parallelPages := make(chan struct{}, 4)
 	for _, entry := range catalog.ComponentPages() {
 		t.Run(entry.Active, func(t *testing.T) {
+			t.Parallel()
+			parallelPages <- struct{}{}
+			defer func() { <-parallelPages }()
+
 			page := newPage(t, sharedBrowser)
 			failures := watchPageFailures(page)
 			response, err := page.Goto(baseURL+entry.Path, playwright.PageGotoOptions{
@@ -52,7 +59,7 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, 1, apiCount)
 			requireComponentGoAPILink(t, page, entry)
-			waitForPageSettled(t, page)
+			waitForPageFailureWindow(t, page)
 			failures.RequireEmpty(t)
 		})
 	}
@@ -272,7 +279,7 @@ func requireComponentDocsDestination(
 	require.NoError(t, err)
 	require.Equal(t, true, runtimesReady)
 
-	waitForPageSettled(t, page)
+	waitForPageFailureWindow(t, page)
 	failures.RequireEmpty(t)
 }
 
@@ -403,10 +410,17 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 		{name: "minimal-dark", theme: "minimal", dark: true},
 	}
 
+	parallelPages := make(chan struct{}, 4)
 	for _, path := range pages {
 		for _, state := range states {
+			path := path
+			state := state
 			t.Run(strings.TrimPrefix(path, "/components/")+"/"+state.name, func(t *testing.T) {
-				page := newPage(t, sharedBrowser)
+				t.Parallel()
+				parallelPages <- struct{}{}
+				defer func() { <-parallelPages }()
+
+				page := newIsolatedPage(t)
 				failures := watchPageFailures(page)
 				script := fmt.Sprintf(`
     document.cookie = "gt_storage=allowed; Path=/; SameSite=Lax";
@@ -451,7 +465,7 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 				require.True(t, ok)
 				require.NotEmpty(t, surfaceToken)
 
-				waitForPageSettled(t, page)
+				waitForPageFailureWindow(t, page)
 				failures.RequireEmpty(t)
 			})
 		}
