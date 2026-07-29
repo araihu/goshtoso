@@ -102,7 +102,9 @@ jobs:
       - name: using-goshtoso skill reference drift check
         run: |
           go run ./cmd/skillgen
-          git diff --exit-code -- .claude/skills/using-goshtoso/components-reference.md \
+          git diff --exit-code -- \
+            .agents/skills/using-goshtoso/references/components-reference.md \
+            .claude/skills/using-goshtoso/components-reference.md \
             || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./cmd/skillgen' and commit"; exit 1; }
 
       - name: vendor JS constants drift check
