@@ -1,8 +1,8 @@
 package tabs
 
 import (
-	"fmt"
-	"strings"
+	"encoding/base64"
+	"encoding/json"
 
 	"github.com/a-h/templ"
 )
@@ -53,40 +53,40 @@ type Config struct {
 	SyncHash bool
 }
 
-// tabsData generates the Alpine.js x-data object literal for the tab component.
-// Uses inline x-data matching the combobox v1 pattern — Go generates the JS
-// object literal, templ's HTML escaping (&#39; etc.) is transparent to Alpine.
-func tabsData(cfg Config) string {
+func defaultTab(cfg Config) string {
 	defaultTab := cfg.DefaultTab
 	if defaultTab == "" && len(cfg.Tabs) > 0 {
 		defaultTab = cfg.Tabs[0].ID
 	}
+	return defaultTab
+}
 
-	if !cfg.SyncHash {
-		return fmt.Sprintf(`{selectedTab:'%s',moveFocus:function(e,d){var t=Array.from(e.currentTarget.querySelectorAll('[role=tab]'));var i=t.indexOf(document.activeElement);if(i<0)i=t.indexOf(e.target);if(i<0||!t.length)return;t[(i+d+t.length)%%t.length].focus();}}`, jsEscapeSingle(defaultTab))
+func tabIDsJSON(cfg Config) string {
+	ids := make([]string, len(cfg.Tabs))
+	for i, tab := range cfg.Tabs {
+		ids[i] = tab.ID
 	}
+	encoded, err := json.Marshal(ids)
+	if err != nil {
+		return "[]"
+	}
+	return string(encoded)
+}
 
-	// Build JS array of valid tab IDs for hash validation
-	jsIDs := make([]string, len(cfg.Tabs))
-	for i, t := range cfg.Tabs {
-		jsIDs[i] = "'" + jsEscapeSingle(t.ID) + "'"
+func tabsData(cfg Config) string {
+	data := struct {
+		Default  string   `json:"default"`
+		IDs      []string `json:"ids"`
+		SyncHash bool     `json:"syncHash"`
+	}{defaultTab(cfg), make([]string, len(cfg.Tabs)), cfg.SyncHash}
+	for i, tab := range cfg.Tabs {
+		data.IDs[i] = tab.ID
 	}
-	var validArr strings.Builder
-	for i, id := range jsIDs {
-		if i > 0 {
-			validArr.WriteString(",")
-		}
-		validArr.WriteString(id)
+	encoded, err := json.Marshal(data)
+	if err != nil {
+		return base64.StdEncoding.EncodeToString([]byte(`{"default":"","ids":[],"syncHash":false}`))
 	}
-
-	return fmt.Sprintf(
-		`{selectedTab:'%s',init(){`+
-			`var h=window.location.hash.slice(1);`+
-			`var v=[%s];`+
-			`if(h&&v.includes(h))this.selectedTab=h;`+
-			`this.$watch('selectedTab',function(t){history.replaceState(null,'','#'+t)});`+
-			`},moveFocus:function(e,d){var t=Array.from(e.currentTarget.querySelectorAll('[role=tab]'));var i=t.indexOf(document.activeElement);if(i<0)i=t.indexOf(e.target);if(i<0||!t.length)return;t[(i+d+t.length)%%t.length].focus();}}`,
-		jsEscapeSingle(defaultTab), validArr.String())
+	return base64.StdEncoding.EncodeToString(encoded)
 }
 
 // ActiveClasses returns the CSS classes for the active tab button

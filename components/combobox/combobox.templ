@@ -173,12 +173,6 @@ templ optionCheckbox(selected bool) {
 	</div>
 }
 
-// clientScript emits the delegated client-side listener as an inline script.
-// The IIFE guard (window.__goshtosoComboboxInit) makes repeated renders safe.
-templ clientScript() {
-	@templ.Raw("<script>" + clientJS + "</script>")
-}
-
 // Combobox is the top-level component. Alpine lives here with ephemeral UI state
 // only (isOpen, openedWithKeyboard, focusIndex). Data state (options, selection,
 // search) lives server-side and in DOM.
@@ -227,9 +221,6 @@ templ comboboxTemplate(cfg Config, state State) {
 		>
 			@body(cfg, state)
 		</div>
-		if cfg.isClientMode() {
-			@clientScript()
-		}
 	</div>
 }
 

@@ -1,9 +1,9 @@
 package carousel
 
 import (
-	"fmt"
+	"encoding/base64"
+	"encoding/json"
 	"slices"
-	"strings"
 
 	"github.com/a-h/templ"
 )
@@ -158,76 +158,46 @@ func indicatorInactiveClasses(cfg Config) string {
 	return "bg-on-surface/50 dark:bg-on-surface-dark/50"
 }
 
-// generateAlpineData creates the Alpine.js x-data object from config
-func generateAlpineData(cfg Config) string {
-	var b strings.Builder
-	b.WriteString("{slides:")
-	b.WriteString(slidesToJSON(cfg.Slides))
-	b.WriteString(",currentSlideIndex:1,")
-
-	// Navigation methods
-	b.WriteString("previous:function(){if(this.currentSlideIndex>1){this.currentSlideIndex=this.currentSlideIndex-1}else{this.currentSlideIndex=this.slides.length}},")
-	b.WriteString("next:function(){if(this.currentSlideIndex<this.slides.length){this.currentSlideIndex=this.currentSlideIndex+1}else{this.currentSlideIndex=1}}")
-
-	// Autoplay state and methods
-	if cfg.Autoplay != nil {
-		interval := cfg.Autoplay.Interval
-		if interval <= 0 {
-			interval = 4000
-		}
-		fmt.Fprintf(&b, ",autoplayIntervalTime:%d,isPaused:false,autoplayInterval:null,", interval)
-		b.WriteString("autoplay:function(){this.autoplayInterval=setInterval(()=>{if(!this.isPaused){this.next()}},this.autoplayIntervalTime)},")
-		b.WriteString("setAutoplayInterval:function(t){clearInterval(this.autoplayInterval);this.autoplayIntervalTime=t;this.autoplay()}")
-	}
-
-	// Touch state and methods
-	if cfg.Touch {
-		b.WriteString(",touchStartX:null,touchEndX:null,swipeThreshold:50,")
-		b.WriteString("handleTouchStart:function(e){this.touchStartX=e.touches[0].clientX},")
-		b.WriteString("handleTouchMove:function(e){this.touchEndX=e.touches[0].clientX},")
-		b.WriteString("handleTouchEnd:function(){if(this.touchEndX){if(this.touchStartX-this.touchEndX>this.swipeThreshold){this.next()}if(this.touchStartX-this.touchEndX<-this.swipeThreshold){this.previous()}this.touchStartX=null;this.touchEndX=null}}")
-	}
-
-	b.WriteString("}")
-	return b.String()
+type slideData struct {
+	ImgSrc      string `json:"imgSrc"`
+	ImgAlt      string `json:"imgAlt"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	CTAURL      string `json:"ctaUrl,omitempty"`
+	CTAText     string `json:"ctaText,omitempty"`
 }
 
-// slidesToJSON serializes slides to a JavaScript array literal
-func slidesToJSON(slides []Slide) string {
-	var b strings.Builder
-	b.WriteString("[")
-	for i, s := range slides {
-		if i > 0 {
-			b.WriteString(",")
+// slidesJSON serializes non-executable carousel data for the external factory.
+func slidesJSON(slides []Slide) string {
+	data := make([]slideData, len(slides))
+	for i, slide := range slides {
+		data[i] = slideData{
+			ImgSrc:      slide.ImgSrc,
+			ImgAlt:      slide.ImgAlt,
+			Title:       slide.Title,
+			Description: slide.Description,
 		}
-		b.WriteString("{")
-		fmt.Fprintf(&b, "imgSrc:'%s',imgAlt:'%s'", jsEscape(s.ImgSrc), jsEscape(s.ImgAlt))
-		if s.Title != "" {
-			fmt.Fprintf(&b, ",title:'%s'", jsEscape(s.Title))
+		if slide.CTAHref != "" && slide.CTALabel != "" {
+			data[i].CTAURL = string(templ.URL(slide.CTAHref))
+			data[i].CTAText = slide.CTALabel
 		}
-		if s.Description != "" {
-			fmt.Fprintf(&b, ",description:'%s'", jsEscape(s.Description))
-		}
-		if s.CTAHref != "" && s.CTALabel != "" {
-			fmt.Fprintf(&b, ",ctaUrl:'%s'", jsEscape(string(templ.URL(s.CTAHref))))
-			fmt.Fprintf(&b, ",ctaText:'%s'", jsEscape(s.CTALabel))
-		}
-		b.WriteString("}")
 	}
-	b.WriteString("]")
-	return b.String()
+	encoded, err := json.Marshal(data)
+	if err != nil {
+		return "[]"
+	}
+	return string(encoded)
 }
 
-// jsEscape escapes a string for use inside JS single quotes
-func jsEscape(s string) string {
-	s = strings.ReplaceAll(s, `\`, `\\`)
-	s = strings.ReplaceAll(s, `'`, `\'`)
-	s = strings.ReplaceAll(s, "\n", `\n`)
-	s = strings.ReplaceAll(s, "\r", `\r`)
-	s = strings.ReplaceAll(s, "\t", `\t`)
-	s = strings.ReplaceAll(s, "\u2028", `\u2028`)
-	s = strings.ReplaceAll(s, "\u2029", `\u2029`)
-	return s
+func slidesData(slides []Slide) string {
+	return base64.StdEncoding.EncodeToString([]byte(slidesJSON(slides)))
+}
+
+func autoplayInterval(cfg Config) int {
+	if cfg.Autoplay == nil || cfg.Autoplay.Interval <= 0 {
+		return 4000
+	}
+	return cfg.Autoplay.Interval
 }
 
 // cardContainerClasses returns CSS for the card wrapper.

@@ -222,7 +222,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 						}
 						for _, variant := range variants {
 							_, err = page.Locator(variant.selector).Screenshot(playwright.LocatorScreenshotOptions{
-								Path: playwright.String(filepath.Join(
+								Path: new(filepath.Join(
 									screenshotDir,
 									fmt.Sprintf("action-group-%s-%s-dark-%t-%d.png", variant.name, theme, dark, width),
 								)),

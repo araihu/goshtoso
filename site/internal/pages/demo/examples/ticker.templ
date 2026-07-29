@@ -54,7 +54,6 @@ templ tickerPane(symbols []ticker.Symbol) {
 				@table.Table(tickerTableConfig(symbols))
 			</div>
 		</div>
-		@tickerPaneScript()
 	</div>
 }
 
@@ -97,12 +96,4 @@ templ TickerCellInner(sym ticker.Symbol) {
 			Label:    tickerChange(sym),
 		})
 	</span>
-}
-
-// tickerPaneScript registers the Alpine component. It uses templ.Raw + a
-// <script> block (not an x-data string) to avoid templ attribute-escaping, and
-// registers eagerly when Alpine is already running (fragment nav) — otherwise on
-// alpine:init. `connect` attaches the SSE listeners that drive connected/paused.
-templ tickerPaneScript() {
-	@templ.Raw("<script>" + tickerPaneJS + "</script>")
 }

@@ -1,6 +1,7 @@
 package selectfield
 
 import (
+	"encoding/json"
 	"html"
 	"strings"
 	"testing"
@@ -55,12 +56,12 @@ func TestSelect_RenderedKeyboardAndExternalSyncContract(t *testing.T) {
 	assert.Contains(t, browserHTML, `x-on:keydown.up.prevent="moveActiveOption($el, -1)"`)
 	assert.Contains(t, browserHTML, `x-on:input="if ($event.target === $refs.hiddenInput) syncFromInput($event.target.value)"`)
 	assert.Contains(t, browserHTML, `x-on:change="if ($event.target === $refs.hiddenInput) syncFromInput($event.target.value)"`)
-	assert.Contains(t, browserHTML, "openFromTrigger(direction)")
-	assert.Contains(t, browserHTML, "moveActiveOption(current, direction)")
-	assert.Contains(t, browserHTML, "syncFromInput(value)")
+	assert.Contains(t, browserHTML, `x-data="goshtosoSelect($el)"`)
+	assert.Contains(t, browserHTML, `data-select-config=`)
+	assert.NotContains(t, browserHTML, "<script")
 }
 
-func TestSelectData_EscapesOptionAndPlaceholderStrings(t *testing.T) {
+func TestSelectFactoryDataJSONPreservesOptionAndPlaceholderStrings(t *testing.T) {
 	cfg := Config{
 		Placeholder: `Pick Bob's \ region & team`,
 		Options: []Option{
@@ -69,17 +70,18 @@ func TestSelectData_EscapesOptionAndPlaceholderStrings(t *testing.T) {
 		},
 	}
 
-	data := selectData(cfg)
+	data := cfg.factoryDataJSON()
 
-	assert.Contains(t, data, `placeholder: 'Pick Bob\'s \\ region & team'`)
-	assert.Contains(t, data, `{value:'us\'east\\1',label:'Bob\'s \\ Team & Co.'}`)
-	assert.Contains(t, data, "selectedValues: []")
-	assert.NotContains(t, data, "selectedValues: null")
+	var decoded factoryData
+	assert.NoError(t, json.Unmarshal([]byte(data), &decoded))
+	assert.Equal(t, cfg.Placeholder, decoded.Placeholder)
+	assert.Equal(t, []factoryOption{{Value: `us'east\1`, Label: `Bob's \ Team & Co.`}, {Value: "eu-west", Label: "Europe"}}, decoded.Options)
+	assert.Empty(t, decoded.SelectedValues)
 }
 
-func TestSelectedValueJS_EmptySelectionIsArray(t *testing.T) {
-	assert.Equal(t, "[]", selectedValueJS(nil))
-	assert.Equal(t, "[]", selectedValueJS([]Option{{Value: "a", Label: "A"}}))
+func TestSelectFactoryDataJSON_EmptySelectionIsArray(t *testing.T) {
+	assert.Contains(t, Config{}.factoryDataJSON(), `"selectedValues":[]`)
+	assert.Contains(t, Config{Options: []Option{{Value: "a", Label: "A"}}}.factoryDataJSON(), `"selectedValues":[]`)
 }
 
 func TestSelect_RenderedOptionIDExpressionEscapesConfigID(t *testing.T) {
@@ -92,21 +94,20 @@ func TestSelect_RenderedOptionIDExpressionEscapesConfigID(t *testing.T) {
 	assert.Contains(t, browserHTML, `x-bind:id="'choice\'\\x-option-' + index"`)
 }
 
-func TestSelectOptionsEscapeNewlinesInAlpineStrings(t *testing.T) {
-	rendered := renderSelect(t, Config{
+func TestSelectOptionsWithNewlinesStayInEncodedFactoryData(t *testing.T) {
+	cfg := Config{
 		ID: "choice",
 		Options: []Option{{
 			Value: "safe",
 			Label: "first line\nalert(1)",
 		}},
-	}, nil)
-	browserHTML := html.UnescapeString(rendered)
-
-	assert.Contains(t, browserHTML, `label:'first line\nalert(1)'`)
-	assert.NotContains(t, browserHTML, "label:'first line\nalert(1)'")
+	}
+	rendered := renderSelect(t, cfg, nil)
+	assert.Contains(t, rendered, `data-select-config="`+cfg.factoryData()+`"`)
+	assert.NotContains(t, rendered, "first line\nalert(1)")
 }
 
-func TestSelectData_EscapesControlCharactersInAllAlpineStrings(t *testing.T) {
+func TestSelectFactoryDataJSONEscapesControlCharacters(t *testing.T) {
 	cfg := Config{
 		Placeholder: "pick\nregion\r\t\u2028\u2029",
 		Options: []Option{{
@@ -116,13 +117,11 @@ func TestSelectData_EscapesControlCharactersInAllAlpineStrings(t *testing.T) {
 		}},
 	}
 
-	data := selectData(cfg)
+	data := cfg.factoryDataJSON()
 
-	assert.Contains(t, data, `placeholder: 'pick\nregion\r\t\u2028\u2029'`)
-	assert.Contains(t, data, `{value:'value\'\n\r\t\\\u2028\u2029</script>',label:'label\'\n\r\t\\\u2028\u2029</script>'}`)
-	assert.Contains(t, data, `selectedValues: ['value\'\n\r\t\\\u2028\u2029</script>']`)
-	assert.NotContains(t, data, "value'\n")
-	assert.NotContains(t, data, "\r")
-	assert.NotContains(t, data, "\u2028")
-	assert.NotContains(t, data, "\u2029")
+	var decoded factoryData
+	assert.NoError(t, json.Unmarshal([]byte(data), &decoded))
+	assert.Equal(t, cfg.Placeholder, decoded.Placeholder)
+	assert.Equal(t, []factoryOption{{Value: cfg.Options[0].Value, Label: cfg.Options[0].Label, Selected: true}}, decoded.Options)
+	assert.Equal(t, []string{cfg.Options[0].Value}, decoded.SelectedValues)
 }

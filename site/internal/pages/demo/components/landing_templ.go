@@ -16,6 +16,7 @@ import (
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
+	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/araihu/goshtoso/site/internal/themes"
 )
@@ -88,7 +89,7 @@ func LandingPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data data-demo-storage-policy=\"strict\" data-demo-theme-bootstrap><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -96,28 +97,29 @@ func LandingPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = storageConsentScript().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templ.Raw(`<script>(function(){try{var c=window.goshtosoStorageConsent;var canStore=!!(c&&c.allowed());var t=canStore?(localStorage.getItem('theme')||'araihu'):'araihu';document.documentElement.setAttribute('data-theme',t);var d=canStore?localStorage.getItem('darkMode'):null;var on=d!==null?d==='true':window.matchMedia('(prefers-color-scheme: dark)').matches;if(on)document.documentElement.classList.add('dark');document.documentElement.classList.add('boot');addEventListener('DOMContentLoaded',function(){setTimeout(function(){document.documentElement.classList.remove('boot');},600);});}catch(e){}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"stylesheet\" href=\"/componentdocshell/assets/araihu.css\"><script defer src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\"><script src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineJSURL)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(siteassets.DemoBundleURL)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 80, Col: 41}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"></script><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"stylesheet\" href=\"/componentdocshell/assets/araihu.css\"><script defer src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.AlpineJSURL)
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 83, Col: 41}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -125,12 +127,12 @@ func LandingPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXURL)
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(assets.HTMXURL)
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 84, Col: 31}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -170,21 +172,21 @@ func landingContent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<a href=\"#hero-content\" class=\"sr-only fixed left-4 top-4 z-[60] rounded-radius bg-primary px-4 py-3 font-bold text-on-primary focus:not-sr-only dark:bg-primary-dark dark:text-on-primary-dark\">Skip to main content</a><main id=\"main-content\" class=\"min-h-screen overflow-hidden\"><!-- Hero --><section id=\"hero\" class=\"relative border-b border-outline/70 bg-surface-alt/40 dark:border-outline-dark/70 dark:bg-surface-dark-alt/30\"><div class=\"relative mx-auto max-w-6xl px-5 sm:px-8\"><header class=\"flex h-20 items-center justify-between border-b border-outline/60 dark:border-outline-dark/60\"><a href=\"/\" class=\"inline-flex min-w-0 items-center gap-3 rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-dark\" aria-label=\"Goshtoso home\" data-brand-lockup><img src=\"/assets/images/goshtoso-logo.svg\" alt=\"\" aria-hidden=\"true\" class=\"h-10 w-auto max-w-48 shrink-0\"> <span class=\"min-w-0\"><span class=\"hidden text-xs text-on-surface-muted dark:text-on-surface-dark-muted sm:block\">Server-rendered Go UI</span></span></a><nav aria-label=\"Primary navigation\" class=\"flex items-center gap-1 text-sm sm:gap-2\"><a href=\"/components/accordion\" class=\"hidden rounded-radius px-3 py-2 font-medium text-on-surface transition-colors hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark sm:inline-flex\">Components</a> <a href=\"/examples\" class=\"hidden rounded-radius px-3 py-2 font-medium text-on-surface transition-colors hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark md:inline-flex\">Examples</a> <a href=\"/getting-started\" class=\"rounded-radius border border-outline bg-surface px-3 py-2 font-medium text-on-surface-strong transition-colors hover:border-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:border-primary-dark sm:px-4\">Get started</a></nav></header><div id=\"hero-content\" tabindex=\"-1\" class=\"grid items-center gap-12 py-14 outline-none sm:py-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] lg:gap-16 lg:py-24\"><div class=\"landing-hero-copy max-w-2xl\"><div class=\"mb-6 inline-flex items-center gap-2 rounded-full border border-outline bg-surface px-3 py-1.5 text-xs font-bold text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"><span class=\"size-2 rounded-full bg-success dark:bg-success-dark\"></span> No JavaScript build step</div><h1 class=\"font-title text-4xl font-bold leading-[1.05] text-on-surface-strong dark:text-on-surface-dark-strong sm:text-6xl lg:text-7xl\">Build Go interfaces that feel alive.</h1><p class=\"mt-6 max-w-xl text-lg leading-8 text-on-surface dark:text-on-surface-dark sm:text-xl\">Typed templ components, HTMX-native behavior, and Alpine.js where it helps. Themeable, accessible, and bundled for one-binary deployments.</p><div class=\"mt-8 grid grid-cols-2 gap-3 sm:flex sm:flex-row sm:flex-wrap\"><a href=\"/components/accordion\" data-primary-cta class=\"col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-radius bg-primary px-6 py-3 text-sm font-bold text-on-primary transition-opacity hover:opacity-90 dark:bg-primary-dark dark:text-on-primary-dark sm:col-auto\">Browse ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(componentCount())
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(componentCount())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 127, Col: 33}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -216,7 +218,7 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -234,7 +236,7 @@ func landingContent() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -242,7 +244,7 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -275,7 +277,7 @@ func landingContent() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = radio.RadioBar().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = radio.RadioBar().Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -283,12 +285,12 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(themes.Count())
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(themes.Count())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 217, Col: 150}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -296,7 +298,7 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -314,11 +316,11 @@ func landingContent() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button().Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -336,7 +338,7 @@ func landingContent() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneSecondary)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneSecondary)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -379,12 +381,12 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 templ.SafeURL
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(featured.URL))
+		var templ_7745c5c3_Var12 templ.SafeURL
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(featured.URL))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 283, Col: 42}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -418,8 +420,8 @@ func landingContent() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 = []any{supportingClass}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
+			var templ_7745c5c3_Var13 = []any{supportingClass}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -427,12 +429,12 @@ func landingContent() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var13 templ.SafeURL
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.URL))
+			var templ_7745c5c3_Var14 templ.SafeURL
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.URL))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 301, Col: 37}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -440,12 +442,12 @@ func landingContent() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var12).String())
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var13).String())
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 1, Col: 0}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -474,12 +476,12 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(componentCount())
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(componentCount())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 331, Col: 263}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -487,12 +489,12 @@ func landingContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(themes.Count())
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(themes.Count())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/components/landing.templ`, Line: 331, Col: 296}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -520,9 +522,9 @@ func exampleCardAction() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<span class=\"inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:gap-2 dark:text-primary-dark\">View app <span aria-hidden=\"true\">→</span></span>")
@@ -551,41 +553,12 @@ func cookieConsent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var18 == nil {
-			templ_7745c5c3_Var18 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div x-data=\"{ show: !window.goshtosoStorageConsent || window.goshtosoStorageConsent.shouldShow(), allow() { window.goshtosoStorageConsent.allow(); this.show = false }, deny() { window.goshtosoStorageConsent.deny(); this.show = false } }\" x-show=\"show\" x-cloak x-transition class=\"fixed inset-x-3 bottom-3 z-50 mx-auto max-w-xl rounded-radius border border-outline bg-surface/95 text-on-surface shadow-xl backdrop-blur dark:border-outline-dark dark:bg-surface-dark/95 dark:text-on-surface-dark sm:inset-x-auto sm:bottom-6 sm:right-6 sm:mx-0\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex flex-col gap-3 p-3 sm:gap-4 sm:p-5\"><h3 id=\"landing-cookie-title\" class=\"sr-only\">Browser storage</h3><p class=\"text-xs leading-5 text-on-surface dark:text-on-surface-dark sm:text-sm\">Store themes and demo preferences on this device. No analytics or tracking. <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"grid grid-cols-2 gap-2 sm:flex sm:justify-end\"><button @click=\"deny()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func storageConsentScript() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
 		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var19 == nil {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.Raw(`<script>(function(){if(window.goshtosoStorageConsent)return;var pref='gt_storage';var maxAge=15552000;var demoCookies=['gt_todo','gt_profile','gt_chat'];var localKeys=['theme','darkMode','themeOverrides','themeTitleFont','themeBodyFont','themeRadius','themeCssMode','themeCssFilter','cookieConsent'];function cookieValue(name){var parts=document.cookie?document.cookie.split('; '):[];for(var i=0;i<parts.length;i++){var p=parts[i];var eq=p.indexOf('=');var key=eq>=0?p.slice(0,eq):p;if(key===name)return eq>=0?decodeURIComponent(p.slice(eq+1)):'';}return '';}function setCookie(name,value,age){document.cookie=name+'='+encodeURIComponent(value)+'; Path=/; Max-Age='+age+'; SameSite=Lax';}function expireCookie(name){setCookie(name,'',0);}function clearLocalStorage(){try{localKeys.forEach(function(key){localStorage.removeItem(key);});}catch(e){}}function clearIndexedDB(){try{if(window.indexedDB&&indexedDB.deleteDatabase)indexedDB.deleteDatabase('gt_profile');}catch(e){}}window.goshtosoStorageConsent={shouldShow:function(){var v=cookieValue(pref);return v!=='allowed'&&v!=='denied';},allowed:function(){return cookieValue(pref)==='allowed';},allow:function(){setCookie(pref,'allowed',maxAge);try{localStorage.setItem('cookieConsent','v2');}catch(e){}},deny:function(){setCookie(pref,'denied',maxAge);demoCookies.forEach(expireCookie);clearLocalStorage();clearIndexedDB();}};if(cookieValue(pref)!=='allowed'){clearLocalStorage();clearIndexedDB();}})();</script>`).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div x-data=\"demoStorageConsent\" x-show=\"show\" x-cloak x-transition class=\"fixed inset-x-3 bottom-3 z-50 mx-auto max-w-xl rounded-radius border border-outline bg-surface/95 text-on-surface shadow-xl backdrop-blur dark:border-outline-dark dark:bg-surface-dark/95 dark:text-on-surface-dark sm:inset-x-auto sm:bottom-6 sm:right-6 sm:mx-0\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"landing-cookie-title\"><div class=\"flex flex-col gap-3 p-3 sm:gap-4 sm:p-5\"><h3 id=\"landing-cookie-title\" class=\"sr-only\">Browser storage</h3><p class=\"text-xs leading-5 text-on-surface dark:text-on-surface-dark sm:text-sm\">Store themes and demo preferences on this device. No analytics or tracking. <a href=\"/privacy\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"grid grid-cols-2 gap-2 sm:flex sm:justify-end\"><button @click=\"deny()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"min-h-11 px-3 py-2 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

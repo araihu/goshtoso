@@ -15,6 +15,7 @@ import (
 	"github.com/araihu/goshtoso/components/carousel"
 	combobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/toast"
+	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
@@ -58,6 +59,7 @@ func (s *Server) setupRoutes() {
 	assetsDir := filepath.Join(s.projectRoot, "assets")
 	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
 	s.mux.Handle("/assets/", assetsHandler)
+	s.mux.Handle("/site-assets/", siteassets.Handler())
 	s.mux.Handle("/componentdocshell/assets/", shellassets.Handler())
 
 	// Favicons are referenced at root paths from <head>, so they are served from

@@ -33,13 +33,6 @@ type Item struct {
 	Attrs templ.Attributes
 }
 
-// JSString escapes a value for use inside a single-quoted Alpine expression.
-func jsString(value string) string {
-	value = strings.ReplaceAll(value, `\`, `\\`)
-	value = strings.ReplaceAll(value, `'`, `\'`)
-	return value
-}
-
 // Config holds configuration for the search component.
 type Config struct {
 	// ID is a unique identifier used for ARIA relationships.

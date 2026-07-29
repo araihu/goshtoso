@@ -37,8 +37,8 @@ templ OnlineBadge(count int, oob bool) {
 		}
 	>
 		@badge.Badge(badge.Config{
-			Label:    fmt.Sprintf("%d online", count),
-			Tone: badge.ToneSuccess,
+			Label:      fmt.Sprintf("%d online", count),
+			Tone:       badge.ToneSuccess,
 			Appearance: badge.AppearanceSoft,
 		})
 	</span>
@@ -60,12 +60,12 @@ templ MessageBubble(m Message) {
 		}
 	}}
 	@chatbubble.ChatBubble(chatbubble.Config{
-		Side:          side,
-		SenderName:    m.Nick,
-		Message:       m.Text,
-		Timestamp:     m.Time,
-		ShowAvatar:    true,
-		IsBot:         m.IsBot,
+		Side:       side,
+		SenderName: m.Nick,
+		Message:    m.Text,
+		Timestamp:  m.Time,
+		ShowAvatar: true,
+		IsBot:      m.IsBot,
 		AvatarTone: variant,
 	})
 }
@@ -94,36 +94,6 @@ templ SystemMessage(text string) {
 	<div class="my-3 flex justify-center">
 		<span class="rounded-full bg-surface-alt px-3 py-1 text-xs text-on-surface-muted dark:bg-surface-dark-alt dark:text-on-surface-dark-muted">{ text }</span>
 	</div>
-}
-
-// chatScript is the only client JS the chat needs: two small htmx event
-// listeners. Own-message alignment is decided SERVER-SIDE (the handler renders
-// each Event per connection, setting data-mine), so there is no mine-detection
-// and no MutationObserver here.
-//   - htmx:wsAfterSend — ws-send does not reset the form, so clear + refocus the
-//     composer textarea after a message is sent.
-//   - htmx:oobAfterSwap — when a bubble/system line is appended to #chat-log,
-//     pin the log to the bottom so it follows the conversation.
-// Guarded by window.__gtChatInit (the <script> re-runs on every fragment
-// swap-in), and built with plain string concatenation + templ.Raw so templ does
-// not escape the JS.
-const chatScript = "" +
-	"(function(){" +
-	"  if (window.__gtChatInit) return;" +
-	"  window.__gtChatInit = true;" +
-	"  document.body.addEventListener('htmx:wsAfterSend', function(){" +
-	"    var t = document.getElementById('chat-message');" +
-	"    if (t) { t.value = ''; t.focus(); }" +
-	"  });" +
-	"  document.body.addEventListener('htmx:oobAfterSwap', function(e){" +
-	"    var log = document.getElementById('chat-log');" +
-	"    if (log && e.detail && e.detail.target === log) { log.scrollTop = log.scrollHeight; }" +
-	"  });" +
-	"})();"
-
-// chatScripts emits the small composer-clear + scroll-to-bottom listeners.
-templ chatScripts() {
-	@templ.Raw("<script>" + chatScript + "</script>")
 }
 
 // ChatApp is the first-paint shell for /examples/chat. me carries the visitor
@@ -205,7 +175,6 @@ templ ChatApp(me chat.Identity) {
 				})
 			</form>
 		</div>
-		@chatScripts()
 	</div>
 }
 

@@ -1,4 +1,4 @@
-.PHONY: all build test test-e2e clean dev dev-watch dev-air install install-templ install-playwright css css-watch generate
+.PHONY: all build test test-e2e clean dev dev-watch dev-air install install-templ install-playwright css css-watch generate js js-check
 
 # Default target
 all: css build
@@ -70,6 +70,13 @@ install-playwright:
 generate:
 	templ generate
 
+js:
+	go run ./cmd/jsbuild
+
+js-check:
+	go run ./cmd/jslint
+	go run ./cmd/jsbuild -check
+
 # Clean build artifacts
 clean:
 	rm -rf bin/
@@ -101,6 +108,8 @@ help:
 	@echo "  make install        - Install all dependencies"
 	@echo "  make install-air    - Install Air live reload tool"
 	@echo "  make generate       - Generate templ files"
+	@echo "  make js             - Build minified first-party JavaScript"
+	@echo "  make js-check       - Lint JavaScript and verify generated drift"
 	@echo "  make clean          - Clean build artifacts"
 	@echo "  make fmt            - Format code"
 	@echo "  make lint           - Run linter"

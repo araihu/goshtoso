@@ -52,30 +52,26 @@ func TestCoverageCarouselConfigHelpers(t *testing.T) {
 	}
 }
 
-func TestCoverageGenerateAlpineDataIncludesOptionalBehavior(t *testing.T) {
-	data := generateAlpineData(Config{
+func TestCoverageFactoryDataIncludesOptionalBehavior(t *testing.T) {
+	data := slidesJSON([]Slide{{ImgSrc: "/one.webp", ImgAlt: "One"}})
+	if !strings.Contains(data, `"imgSrc":"/one.webp"`) || !strings.Contains(data, `"imgAlt":"One"`) {
+		t.Fatalf("factory JSON missing slide data: %s", data)
+	}
+	if got := autoplayInterval(Config{Autoplay: &AutoplayConfig{Interval: 0}}); got != 4000 {
+		t.Fatalf("default autoplay interval = %d, want 4000", got)
+	}
+	if got := autoplayInterval(Config{Autoplay: &AutoplayConfig{Interval: 2500}}); got != 2500 {
+		t.Fatalf("configured autoplay interval = %d, want 2500", got)
+	}
+	if got := slidesJSON(nil); got != "[]" {
+		t.Fatalf("empty carousel data = %s, want []", got)
+	}
+	_ = Config{
 		Slides: []Slide{{ImgSrc: "/one.webp", ImgAlt: "One"}},
 		Autoplay: &AutoplayConfig{
 			Interval: 0,
 		},
 		Touch: true,
-	})
-
-	for _, want := range []string{
-		"slides:[{imgSrc:'/one.webp',imgAlt:'One'}]",
-		"currentSlideIndex:1",
-		"previous:function()",
-		"next:function()",
-		"autoplayIntervalTime:4000",
-		"isPaused:false",
-		"setAutoplayInterval:function(t)",
-		"touchStartX:null",
-		"handleTouchStart:function(e)",
-		"handleTouchEnd:function()",
-	} {
-		if !strings.Contains(data, want) {
-			t.Fatalf("Alpine data missing %q in:\n%s", want, data)
-		}
 	}
 }
 
@@ -93,7 +89,8 @@ func TestCoverageRenderDefaultCarousel(t *testing.T) {
 
 	for _, want := range []string{
 		`id="coverage-default"`,
-		`x-data=`,
+		`x-data="goshtosoCarousel($el)"`,
+		`data-carousel-slides=`,
 		`coverage-root`,
 		`aspect-3/1 relative w-full`,
 		`x-on:touchstart="handleTouchStart($event)"`,
@@ -107,6 +104,9 @@ func TestCoverageRenderDefaultCarousel(t *testing.T) {
 		if !strings.Contains(html, want) {
 			t.Fatalf("default carousel render missing %q in:\n%s", want, html)
 		}
+	}
+	if strings.Contains(html, "<script") {
+		t.Fatalf("carousel must use its external factory, got inline script:\n%s", html)
 	}
 }
 
@@ -149,7 +149,7 @@ func TestCoverageRenderAutoplayCardAndHTMXCarousels(t *testing.T) {
 	for _, want := range []string{
 		`id="coverage-autoplay"`,
 		`x-init="autoplay"`,
-		`autoplayIntervalTime:2500`,
+		`data-carousel-autoplay-interval="2500"`,
 		`aria-label="pause carousel"`,
 		`x-bind:aria-pressed="isPaused"`,
 		`setAutoplayInterval(autoplayIntervalTime)`,

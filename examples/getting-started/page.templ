@@ -13,11 +13,7 @@ import (
 // assets.Handler() — no CDN needed, works fully offline.
 templ Page(cfg table.Config) {
 	<!DOCTYPE html>
-	<html lang="en" data-theme="araihu" x-data x-init="
-		const t = localStorage.getItem('theme') || 'araihu';
-		document.documentElement.setAttribute('data-theme', t);
-		if (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');
-	">
+	<html lang="en" data-theme="araihu" x-data x-init="document.documentElement.dataset.theme=localStorage.theme||'araihu'">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>

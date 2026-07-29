@@ -197,9 +197,7 @@ func TestCoverageMixedStaticAndHTMXPanels(t *testing.T) {
 	assert.Contains(t, browser, `id="tabpanelmixlazy"`)
 }
 
-// TestCoverageSyncHashInitExpression covers the SyncHash branch of tabsData,
-// including the valid-ID array and the hash watcher.
-func TestCoverageSyncHashInitExpression(t *testing.T) {
+func TestCoverageSyncHashFactoryData(t *testing.T) {
 	out := render(t, Config{
 		ID:       "hash",
 		SyncHash: true,
@@ -210,10 +208,13 @@ func TestCoverageSyncHashInitExpression(t *testing.T) {
 	})
 	browser := html.UnescapeString(out)
 
-	assert.Contains(t, browser, "init()")
-	assert.Contains(t, browser, "var v=['first','second'];")
-	assert.Contains(t, browser, "history.replaceState(null,'','#'+t)")
-	assert.Contains(t, browser, "selectedTab:'first'")
+	assert.Contains(t, browser, `x-data="goshtosoTabs($el)"`)
+	assert.Contains(t, browser, `data-tabs-config="`+tabsData(Config{
+		ID:       "hash",
+		SyncHash: true,
+		Tabs:     []Tab{{ID: "first", Label: "First"}, {ID: "second", Label: "Second"}},
+	})+`"`)
+	assert.NotContains(t, browser, "<script")
 }
 
 // TestCoverageDefaultTabSelection verifies DefaultTab seeds selectedTab when set
@@ -226,17 +227,13 @@ func TestCoverageDefaultTabSelection(t *testing.T) {
 			{ID: "second", Label: "Second"},
 		},
 	}
-	assert.Contains(t, tabsData(cfg), "selectedTab:'second'")
+	assert.Equal(t, "second", defaultTab(cfg))
 }
 
-// TestCoverageNoSyncHashOmitsInit confirms the non-SyncHash branch produces the
-// simpler x-data without an init() hook.
-func TestCoverageNoSyncHashOmitsInit(t *testing.T) {
-	data := tabsData(Config{Tabs: []Tab{{ID: "a", Label: "A"}}})
-	assert.Contains(t, data, "selectedTab:'a'")
-	assert.Contains(t, data, "moveFocus:function")
-	assert.NotContains(t, data, "init()")
-	assert.NotContains(t, data, "history.replaceState")
+func TestCoverageNoSyncHashKeepsFactoryDataStatic(t *testing.T) {
+	cfg := Config{Tabs: []Tab{{ID: "a", Label: "A"}}}
+	assert.Equal(t, "a", defaultTab(cfg))
+	assert.Equal(t, `["a"]`, tabIDsJSON(cfg))
 }
 
 // TestCoverageEmptyConfigRenders ensures a zero-value Config renders the shell

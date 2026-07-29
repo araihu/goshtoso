@@ -121,6 +121,7 @@ func WithStylesheetURL(url string) Option {
 func WithComboboxURL(url string) Option {
 	return optionFunc(func(cfg *config) {
 		if url != "" {
+			cfg.useStandaloneFirstParty()
 			if source := cfg.asset(assets.RuntimeRoleCombobox); source != nil {
 				source.PrimaryURL = url
 				source.LocalURL = url
@@ -133,6 +134,7 @@ func WithComboboxURL(url string) Option {
 func WithActionGroupURL(url string) Option {
 	return optionFunc(func(cfg *config) {
 		if url != "" {
+			cfg.useStandaloneFirstParty()
 			if source := cfg.asset(assets.RuntimeRoleActionGroup); source != nil {
 				source.PrimaryURL = url
 				source.LocalURL = url
@@ -206,6 +208,18 @@ func (cfg *config) asset(role assets.RuntimeAssetRole) *assets.RuntimeAsset {
 		}
 	}
 	return nil
+}
+
+func (cfg *config) useStandaloneFirstParty() {
+	if bundle := cfg.asset(assets.RuntimeRoleFirstParty); bundle != nil {
+		bundle.Enabled = false
+	}
+	if combobox := cfg.asset(assets.RuntimeRoleCombobox); combobox != nil {
+		combobox.Enabled = true
+	}
+	if actionGroup := cfg.asset(assets.RuntimeRoleActionGroup); actionGroup != nil {
+		actionGroup.Enabled = true
+	}
 }
 
 type loaderDependency struct {

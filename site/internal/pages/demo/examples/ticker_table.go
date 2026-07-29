@@ -76,30 +76,3 @@ func TickerTableConfig(symbols []ticker.Symbol) table.Config {
 func tickerTableConfig(symbols []ticker.Symbol) table.Config {
 	return TickerTableConfig(symbols)
 }
-
-// tickerPaneJS registers the Alpine component for the ticker pane. `connected`
-// hides the spinner once the first SSE message arrives; `paused` cancels swaps
-// via the cancelable htmx:sseBeforeMessage event so the connection stays open
-// while paused. NOTE: htmx-ext-sse@2.2.3 has NO htmx:sseOpen event, so we set
-// connected on the first sseBeforeMessage and clear it on sseError.
-const tickerPaneJS = `(() => {
-	const register = () => {
-		Alpine.data('tickerPane', () => ({
-			connected: false,
-			paused: false,
-			connect(el) {
-				if (!el) return;
-				el.addEventListener('htmx:sseBeforeMessage', (e) => {
-					this.connected = true;
-					if (this.paused) e.preventDefault();
-				});
-				el.addEventListener('htmx:sseError', () => { this.connected = false; });
-			},
-		}));
-	};
-	if (window.Alpine && window.Alpine.version) {
-		register();
-	} else {
-		document.addEventListener('alpine:init', register);
-	}
-})();`

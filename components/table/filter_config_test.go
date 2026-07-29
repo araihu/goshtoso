@@ -3,9 +3,22 @@ package table
 import (
 	"bytes"
 	"context"
+	"html"
 	"strings"
 	"testing"
 )
+
+func renderFilterContract(t *testing.T, cfg Config) string {
+	t.Helper()
+	if len(cfg.Columns) == 0 {
+		cfg.Columns = []Column{{Key: "name", Label: "Name"}}
+	}
+	var buf bytes.Buffer
+	if err := Table(cfg).Render(context.Background(), &buf); err != nil {
+		t.Fatalf("render table: %v", err)
+	}
+	return buf.String()
+}
 
 // TestFilterConfig_ResolvedHxTarget pins the override contract: explicit
 // HTMX.Target wins over the default "#{tbody-id}" resolution. The modal
@@ -41,12 +54,7 @@ func TestFilterConfig_ResolvedHxTarget(t *testing.T) {
 	}
 }
 
-// TestFilterScriptData_EmitsHxTarget guards against regressions in the
-// Alpine.data template: the emitted `applyFilters()` body must use the
-// resolved target string, not the raw ID. Without this, adding the
-// HTMX.Target override silently had no effect because the Sprintf still
-// referenced tbody.
-func TestFilterScriptData_EmitsHxTarget(t *testing.T) {
+func TestFilterRuntimeContractEmitsResolvedHXTarget(t *testing.T) {
 	cfg := Config{
 		ID:   "addon-picker",
 		HTMX: &HTMXConfig{Endpoint: "/console/clusters/cid/addons/install"},
@@ -57,38 +65,39 @@ func TestFilterScriptData_EmitsHxTarget(t *testing.T) {
 			},
 		},
 	}
-	out := filterScriptData(cfg)
-	if !strings.Contains(out, "target: '#install-modal-body'") {
-		t.Fatalf("filterScriptData missing explicit target; got:\n%s", out)
+	out := renderFilterContract(t, cfg)
+	if !strings.Contains(out, `data-table-filter-target="#install-modal-body"`) {
+		t.Fatalf("filter contract missing explicit target; got:\n%s", out)
 	}
-	// Make sure the default tbody selector does NOT leak into the same
-	// applyFilters call.
-	if strings.Contains(out, "target: '#addon-picker-tbody'") {
-		t.Fatalf("filterScriptData still emits default tbody target despite override; got:\n%s", out)
+	if strings.Contains(out, `data-table-filter-target="#addon-picker-tbody"`) {
+		t.Fatalf("filter contract still emits default tbody target despite override; got:\n%s", out)
 	}
 }
 
-func TestFilterScriptDataEscapesFilterKeys(t *testing.T) {
+func TestFilterRuntimeContractKeepsKeysInInertAttributes(t *testing.T) {
+	key := "q: '', injected: alert(1), q2"
 	cfg := Config{
 		ID:   "addons",
 		HTMX: &HTMXConfig{Endpoint: "/console/addons"},
 		Filters: &FilterConfig{
 			Filters: []Filter{
-				{Key: "q: '', injected: alert(1), q2", Type: FilterSearch},
+				{Key: key, Type: FilterSearch},
 			},
 		},
 	}
 
-	out := filterScriptData(cfg)
-	if strings.Contains(out, "filters: {q: '', injected: alert(1), q2: ''}") {
-		t.Fatalf("filter key escaped into executable Alpine data:\n%s", out)
+	out := renderFilterContract(t, cfg)
+	want := `data-table-filter-key="` + html.EscapeString(key) + `"`
+	if !strings.Contains(out, want) {
+		t.Fatalf("filter key missing inert attribute %q:\n%s", want, out)
 	}
-	if !strings.Contains(out, `filters: {'q: \'\', injected: alert(1), q2': ''}`) {
-		t.Fatalf("filter key was not quoted as inert Alpine data:\n%s", out)
+	if strings.Contains(out, `x-model="filters[&#39;q:`) || strings.Contains(out, "<script") {
+		t.Fatalf("filter key escaped into executable JavaScript:\n%s", out)
 	}
 }
 
-func TestFilterScriptDataEscapesFilterDefaultValues(t *testing.T) {
+func TestFilterRuntimeContractKeepsDefaultsInInertAttributes(t *testing.T) {
+	defaultValue := "O'Reilly\\docs\nline two\r</script>"
 	cfg := Config{
 		ID:   "addons",
 		HTMX: &HTMXConfig{Endpoint: "/console/addons"},
@@ -96,17 +105,18 @@ func TestFilterScriptDataEscapesFilterDefaultValues(t *testing.T) {
 			Filters: []Filter{{
 				Key:          "q",
 				Type:         FilterSearch,
-				DefaultValue: "O'Reilly\\docs\nline two\r</script>",
+				DefaultValue: defaultValue,
 			}},
 		},
 	}
 
-	out := filterScriptData(cfg)
-	if strings.Contains(out, "O'Reilly\\docs\nline two\r</script>") {
-		t.Fatalf("filter default value escaped into executable Alpine data:\n%s", out)
+	out := renderFilterContract(t, cfg)
+	want := `data-table-filter-default="` + html.EscapeString(defaultValue) + `"`
+	if !strings.Contains(out, want) {
+		t.Fatalf("filter default missing inert attribute %q:\n%s", want, out)
 	}
-	if !strings.Contains(out, `filters: {'q': 'O\'Reilly\\docs\nline two\r</script>'}`) {
-		t.Fatalf("filter default value was not emitted as an escaped inert string:\n%s", out)
+	if strings.Contains(out, "<script") {
+		t.Fatalf("filter default emitted executable script:\n%s", out)
 	}
 }
 
@@ -145,10 +155,7 @@ func TestFilterConfig_ResolvedHxSwap(t *testing.T) {
 	}
 }
 
-// TestFilterScriptData_EmitsHxSwap guards Sprintf positional arity for the
-// new swap arg. Without the test the loop ordering between hxTarget and
-// hxSwap could silently swap and produce target='innerHTML' / swap='#x'.
-func TestFilterScriptData_EmitsHxSwap(t *testing.T) {
+func TestFilterRuntimeContractEmitsHXSwap(t *testing.T) {
 	cfg := Config{
 		ID:   "addons-catalog-table",
 		HTMX: &HTMXConfig{Endpoint: "/console/addons"},
@@ -160,45 +167,44 @@ func TestFilterScriptData_EmitsHxSwap(t *testing.T) {
 			Filters: []Filter{{Key: "search", Type: FilterSearch}},
 		},
 	}
-	out := filterScriptData(cfg)
-	if !strings.Contains(out, "target: '#addons-catalog'") {
-		t.Fatalf("filterScriptData missing target; got:\n%s", out)
+	out := renderFilterContract(t, cfg)
+	if !strings.Contains(out, `data-table-filter-target="#addons-catalog"`) {
+		t.Fatalf("filter contract missing target; got:\n%s", out)
 	}
-	if !strings.Contains(out, "swap: 'outerHTML'") {
-		t.Fatalf("filterScriptData missing outerHTML swap; got:\n%s", out)
+	if !strings.Contains(out, `data-table-filter-swap="outerHTML"`) {
+		t.Fatalf("filter contract missing outerHTML swap; got:\n%s", out)
 	}
 }
 
-// TestFilterScriptData_DefaultSwap pins the default swap behavior so we don't
-// regress callers that omit HTMX.Swap.
-func TestFilterScriptData_DefaultSwap(t *testing.T) {
+func TestFilterRuntimeContractDefaultSwap(t *testing.T) {
 	cfg := Config{
 		ID:      "clusters",
 		HTMX:    &HTMXConfig{Endpoint: "/console/clusters"},
 		Filters: &FilterConfig{Filters: []Filter{{Key: "q", Type: FilterSearch}}},
 	}
-	out := filterScriptData(cfg)
-	if !strings.Contains(out, "swap: 'innerHTML'") {
-		t.Fatalf("filterScriptData missing default innerHTML swap; got:\n%s", out)
+	out := renderFilterContract(t, cfg)
+	if !strings.Contains(out, `data-table-filter-swap="innerHTML"`) {
+		t.Fatalf("filter contract missing default innerHTML swap; got:\n%s", out)
 	}
 }
 
-// TestFilterScriptData_PreservesExtraQueryParams locks the contract that
-// ExtraQueryParams (already prefixed with '&') is appended to the auto
-// `?_filter=1` marker so static query state survives every filter request.
-// Modal flows depend on this — the modal's `?addon_name=X` context must
-// follow filter swaps, otherwise the BFF can't resolve which addon's
-// clusters to filter.
-func TestFilterScriptData_PreservesExtraQueryParams(t *testing.T) {
+func TestFilterRuntimeContractPreservesExtraQueryParamsAndPerPage(t *testing.T) {
 	cfg := Config{
 		ID:               "cluster-picker-table",
 		HTMX:             &HTMXConfig{Endpoint: "/console/addons/install"},
 		ExtraQueryParams: "&addon_name=argo-cd",
 		Filters:          &FilterConfig{Filters: []Filter{{Key: "q", Type: FilterSearch}}},
+		Pagination:       &PaginationConfig{PerPage: 25},
 	}
-	out := filterScriptData(cfg)
-	if !strings.Contains(out, "?_filter=1&addon_name=argo-cd") {
-		t.Fatalf("filterScriptData lost ExtraQueryParams in filter URL; got:\n%s", out)
+	out := renderFilterContract(t, cfg)
+	for _, want := range []string{
+		`data-table-filter-endpoint="/console/addons/install"`,
+		`data-table-filter-extra-query="&amp;addon_name=argo-cd"`,
+		`data-table-filter-per-page="25"`,
+	} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("filter contract missing %q; got:\n%s", want, out)
+		}
 	}
 }
 

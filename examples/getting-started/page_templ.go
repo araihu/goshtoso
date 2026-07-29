@@ -40,7 +40,7 @@ func Page(cfg table.Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" data-theme=\"araihu\" x-data x-init=\"\n\t\tconst t = localStorage.getItem('theme') || 'araihu';\n\t\tdocument.documentElement.setAttribute('data-theme', t);\n\t\tif (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Dog Breeds — Goshtoso Getting Started</title><!-- Goshtoso runtime assets: CSS (themes) + Alpine + collapse/focus + HTMX.\n\t\t\t     Served from /assets/ by assets.Handler() (mounted in main.go) — no CDN. -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" data-theme=\"araihu\" x-data x-init=\"document.documentElement.dataset.theme=localStorage.theme||'araihu'\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Dog Breeds — Goshtoso Getting Started</title><!-- Goshtoso runtime assets: CSS (themes) + Alpine + collapse/focus + HTMX.\n\t\t\t     Served from /assets/ by assets.Handler() (mounted in main.go) — no CDN. -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

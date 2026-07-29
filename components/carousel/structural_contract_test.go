@@ -17,8 +17,7 @@ func TestCarouselInfersOverlayFromSlideContent(t *testing.T) {
 		CTAHref:  "/release",
 	}}}))
 
-	require.Contains(t, html, "Release")
-	require.Contains(t, html, "/release")
+	require.Contains(t, html, `data-carousel-slides=`)
 	require.Contains(t, html, `x-bind:href="slide.ctaUrl"`)
 }
 
@@ -30,7 +29,7 @@ func TestCardCarouselOwnsCardWrapper(t *testing.T) {
 
 	require.Contains(t, html, "<article")
 	require.Contains(t, html, `id="featured"`)
-	require.Contains(t, html, "Release")
+	require.Contains(t, html, `data-carousel-slides=`)
 }
 
 func renderStructuralCarousel(t *testing.T, component templ.Component) string {

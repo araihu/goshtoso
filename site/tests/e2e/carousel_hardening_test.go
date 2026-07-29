@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/araihu/goshtoso/components/carousel"
@@ -22,7 +23,7 @@ func TestCarouselRejectsExecutableCTAHref(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	html := renderInteractiveDocument(t, head.DependenciesMinimal(), carousel.Carousel(carousel.Config{
+	html := renderInteractiveDocument(t, head.DependenciesMinimal(head.WithLocalRuntime()), carousel.Carousel(carousel.Config{
 		ID: "security-carousel",
 		Slides: []carousel.Slide{
 			{
@@ -35,14 +36,26 @@ func TestCarouselRejectsExecutableCTAHref(t *testing.T) {
 			},
 		},
 	}))
+	// SetContent injects an already-complete document, where Chromium does not
+	// preserve parser-deferred ordering. Make this synthetic fixture blocking so
+	// the bundle retains its production order before Alpine's initial scan.
+	html = strings.ReplaceAll(html, "<script defer ", "<script ")
 	require.NoError(t, page.SetContent(html, playwright.PageSetContentOptions{
 		WaitUntil: playwright.WaitUntilStateLoad,
 	}))
 	_, err = page.WaitForFunction(`() => typeof Alpine !== 'undefined'`, nil)
 	require.NoError(t, err)
 
-	require.NoError(t, page.GetByRole("link", playwright.PageGetByRoleOptions{
+	link := page.GetByRole("link", playwright.PageGetByRoleOptions{
 		Name: "Open",
-	}).Click())
+	})
+	require.NoError(t, link.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateVisible,
+	}))
+	href, err := link.GetAttribute("href")
+	require.NoError(t, err)
+	require.Equal(t, "about:invalid#TemplFailedSanitizationURL", href)
+	_, err = link.Evaluate("element => element.click()", nil)
+	require.NoError(t, err)
 	requireNoDialog(t, dialogSeen, "carousel CTA executed javascript: href")
 }

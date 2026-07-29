@@ -30,7 +30,7 @@ func TestSelect_ShellMode_RendersValueExprAndChildren(t *testing.T) {
 		ValueExpr: "classLabel('surface')",
 	}, body)
 
-	assert.Contains(t, html, `x-data="{ isOpen: false, openedWithKeyboard: false }"`)
+	assert.Contains(t, html, `x-data="goshtosoSelectShell()"`)
 	assert.NotContains(t, html, "allOptions")
 	// templ HTML-escapes single quotes in dynamic { } attribute values; the
 	// browser decodes them before Alpine reads the attribute, so this works at
