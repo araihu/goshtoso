@@ -101,7 +101,7 @@ func TestConsumerDocsPublishCurrentInventoryCounts(t *testing.T) {
 	primitiveCount := len(components.AllKinds())
 	themeCount := strings.Count(readDoc(t, "../site/internal/themes/catalog.go"), "{Key:")
 
-	if packageCount != 51 || documentationPageCount != 49 || primitiveCount != 82 || themeCount != 15 {
+	if packageCount != 51 || documentationPageCount != 50 || primitiveCount != 82 || themeCount != 15 {
 		t.Fatalf(
 			"unexpected source inventory: packages=%d pages=%d primitives=%d themes=%d",
 			packageCount,
@@ -205,6 +205,25 @@ func TestGeneratedComponentReferenceKeepsCompleteAppShellHeaderComment(t *testin
 		for _, want := range complete {
 			if !strings.Contains(content, want) {
 				t.Errorf("%s missing complete Markdown-safe AppShell description %q", path, want)
+			}
+		}
+	}
+}
+
+func TestGeneratedIconSpriteURLGuidanceStatesDeploymentBoundaries(t *testing.T) {
+	wants := []string{
+		"Prefer a relative same-origin URL.",
+		"Cross-origin external &lt;use&gt; references depend on browser and CORS compatibility.",
+		"HTTPS pages cannot reliably load HTTP sprite URLs because browsers may block mixed content.",
+	}
+	for _, path := range []string{
+		"../.agents/skills/using-goshtoso/references/components-reference.md",
+		"../.claude/skills/using-goshtoso/components-reference.md",
+	} {
+		content := readDoc(t, path)
+		for _, want := range wants {
+			if !strings.Contains(content, want) {
+				t.Errorf("%s missing Icon Config.SpriteURL guidance %q", path, want)
 			}
 		}
 	}

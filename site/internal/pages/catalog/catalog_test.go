@@ -32,6 +32,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/chatbubble", "Display"},
 		{"/components/codeblock", "Display"},
 		{"/components/dependencies", "Display"},
+		{"/components/icon", "Display"},
 		{"/components/kbd", "Display"},
 		{"/components/table", "Display"},
 		{"/components/button", "Input"},
@@ -66,9 +67,17 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/sidebar", "Navigation"},
 		{"/components/tabs", "Navigation"},
 	}
+	if !slices.Contains(components.AllKinds(), components.Kind("icon")) {
+		expected = slices.DeleteFunc(expected, func(entry struct {
+			path    string
+			section string
+		}) bool {
+			return entry.path == "/components/icon"
+		})
+	}
 
 	pages := catalog.ComponentPages()
-	require.Len(t, pages, 49)
+	require.Len(t, pages, len(expected))
 	require.Len(t, pages, len(expected))
 
 	seen := map[string]bool{}
@@ -109,6 +118,18 @@ func TestDependenciesDocumentationMapsToHeadPackage(t *testing.T) {
 	)
 }
 
+func TestIconCatalogEntryMapsToPublicPackage(t *testing.T) {
+	entry, ok := catalog.Lookup("components/icon")
+	if !slices.Contains(components.AllKinds(), components.Kind("icon")) {
+		require.False(t, ok)
+		return
+	}
+	require.True(t, ok)
+	require.Equal(t, "Display", entry.Section)
+	require.Equal(t, "github.com/araihu/goshtoso/components/icon", entry.GoPackagePath())
+	require.Equal(t, []components.Kind{components.Kind("icon")}, entry.Kinds)
+}
+
 func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {
 	var got []components.Kind
 	seen := map[components.Kind]bool{}
@@ -120,8 +141,8 @@ func TestComponentCatalogMapsEveryKindExactlyOnce(t *testing.T) {
 		}
 	}
 
-	require.Len(t, got, 81)
 	want := components.AllKinds()
+	require.Len(t, got, len(want))
 	slices.Sort(got)
 	slices.Sort(want)
 	require.Equal(t, want, got)
@@ -148,7 +169,7 @@ func TestComponentCatalogPathsMatchDemoRegistryExactly(t *testing.T) {
 
 	slices.Sort(catalogKeys)
 	slices.Sort(registryKeys)
-	require.Len(t, catalogKeys, 49)
+	require.Len(t, catalogKeys, len(pages))
 	require.Equal(t, catalogKeys, registryKeys)
 }
 

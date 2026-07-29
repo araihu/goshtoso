@@ -916,7 +916,7 @@ import "github.com/araihu/goshtoso/components/icon"  // package icon
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `SpriteURL` | `string` | SpriteURL identifies the external sprite when Mode is ModeExternal. |
+| `SpriteURL` | `string` | SpriteURL identifies the external sprite when Mode is ModeExternal. Prefer a relative same-origin URL. Cross-origin external &lt;use&gt; references depend on browser and CORS compatibility. HTTPS pages cannot reliably load HTTP sprite URLs because browsers may block mixed content. |
 | `Symbol` | `Symbol` | Symbol identifies the sprite symbol to render. |
 | `Size` | `Size` | Size controls the root SVG dimensions. |
 | `Label` | `string` | Label gives the icon an accessible image name. |

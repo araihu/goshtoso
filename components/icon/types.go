@@ -37,7 +37,7 @@ const (
 
 // Config configures a sprite icon.
 type Config struct {
-	// SpriteURL identifies the external sprite when Mode is ModeExternal.
+	// SpriteURL identifies the external sprite when Mode is ModeExternal. Prefer a relative same-origin URL. Cross-origin external <use> references depend on browser and CORS compatibility. HTTPS pages cannot reliably load HTTP sprite URLs because browsers may block mixed content.
 	SpriteURL string
 	// Symbol identifies the sprite symbol to render.
 	Symbol Symbol
