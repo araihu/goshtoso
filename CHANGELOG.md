@@ -24,11 +24,16 @@ All notable changes to Goshtoso are documented in this file.
 
 - Prepared against Arai Hû Assets P1 source `246cb28`, integrated release
   candidate `80d43a3`; catalog schema is `1`.
-- Recorded immutable input hashes: catalog
-  `d83be964fa411e87c61b49f0a0b6a2a1465f33ad43bea7cd93b2e434b59266af` and
-  UI sprite
+- Recorded immutable upstream Arai Hû Assets `dist/catalog.json`: 302 records,
+  schema `1`, SHA-256
+  `d83be964fa411e87c61b49f0a0b6a2a1465f33ad43bea7cd93b2e434b59266af`.
+- Recorded exact local 67-record Heroicons generator subset: namespace `ui`,
+  product `heroicons`, and only objects from that immutable upstream catalog;
+  SHA-256
+  `0a420ad65e2fe7db3e2cc5dbb6c87167fcd6e85f64a3ebc409e2a58c9bd111ef`.
+- Recorded immutable UI sprite SHA-256
   `6b312ee2cf9f0e91c4621bd4eec348ecaf39cfdc0a00c8ddefdf4d7f8e9f32a5`.
-- Generated bundled bindings with
+- Generated bundled bindings from that local subset with
   `go run ./cmd/iconcatalog -catalog internal/iconcatalog/testdata/heroicons-catalog.json -namespace ui -product heroicons -sprite-url /assets/icons/heroicons.svg -package heroicons -const-prefix Icon -out components/icon/heroicons/names_gen.go`.
 - Release evidence covers approved Goshtoso functional head `ab05821`; tagging
   and downstream dependency pins remain deliberately deferred.
