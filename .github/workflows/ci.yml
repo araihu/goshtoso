@@ -112,9 +112,10 @@ jobs:
             | sh -s -- -b "$(go env GOPATH)/bin" "${GOLANGCI_LINT_VERSION}"
           "$(go env GOPATH)/bin/golangci-lint" run --timeout 5m
 
-      # The site module builds against the in-repo library at this commit via a
-      # throwaway workspace (go.work is gitignored — it never lands in the tree).
-      - name: Create dev workspace (root library + site)
+      # Current-source integration: the site builds against the root library at
+      # this commit through a throwaway workspace. The pinned-dependency
+      # deployability contract runs separately in Required CI with GOWORK=off.
+      - name: Current-source integration workspace (root library + site)
         run: go work init . ./site
 
       - name: go vet (site module)
@@ -123,7 +124,7 @@ jobs:
       - name: golangci-lint (site module)
         run: cd site && "$(go env GOPATH)/bin/golangci-lint" run --timeout 5m
 
-      - name: Build server
+      - name: Build server (current-source integration)
         run: |
           GOSHTOSO_DOCS_VERSION="$(cd site && GOWORK=off go list -m -f '{{.Version}}' github.com/araihu/goshtoso)"
           go build \

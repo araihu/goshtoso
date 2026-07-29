@@ -13,6 +13,8 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `go run ./cmd/vendorgen -check`
   - `npx --yes skills add . --list`
   - `npx --yes skills use . --skill using-goshtoso`
+  - `just site-current-source-integration`
+  - `just site-pinned-dependency-deployability`
   - `go test ./... -count=1`
   - `cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1`
   - `go test ./site/tests/e2e/... -count=1 -timeout 15m`

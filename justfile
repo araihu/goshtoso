@@ -47,6 +47,18 @@ js-check:
     go run ./cmd/jslint
     go run ./cmd/jsbuild -check
 
+# Test the nested site against the root library in this checkout through a
+# throwaway workspace. This is the current-source integration contract.
+site-current-source-integration:
+    ./scripts/check-site-module current-source
+
+# Test the nested site exactly as a standalone consumer of site/go.mod. This is
+# the pinned-dependency deployability contract and always forces GOWORK=off.
+site-pinned-dependency-deployability:
+    ./scripts/check-site-module pinned-dependency
+
+site-module-contracts: site-current-source-integration site-pinned-dependency-deployability
+
 # Run root unit tests, site unit tests, and E2E tests, then merge component
 # coverage data into .coverage/coverage.out and .coverage/coverage.html.
 coverage:
