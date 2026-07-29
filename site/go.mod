@@ -2,8 +2,6 @@ module github.com/araihu/goshtoso/site
 
 go 1.26.5
 
-toolchain go1.26.5
-
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/araihu/goshtoso v0.0.14-0.20260729070831-8863d6b7d0e8

@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 )
+
+var atomicRename = os.Rename
 
 // Run executes the icon catalog generator command.
 func Run(args []string, stdout, stderr io.Writer) error {
@@ -54,9 +57,42 @@ func Run(args []string, stdout, stderr io.Writer) error {
 		}
 		return nil
 	}
-	if err := os.WriteFile(opts.OutputPath, generated, 0o644); err != nil {
-		return fmt.Errorf("write output: %w", err)
+	if err := writeAtomic(opts.OutputPath, generated); err != nil {
+		return err
 	}
 	_, err = fmt.Fprintf(stdout, "iconcatalog: wrote %s (%d bytes)\n", opts.OutputPath, len(generated))
 	return err
+}
+
+func writeAtomic(path string, contents []byte) (err error) {
+	directory := filepath.Dir(path)
+	temporary, err := os.CreateTemp(directory, "."+filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return fmt.Errorf("create temporary output: %w", err)
+	}
+	temporaryPath := temporary.Name()
+	committed := false
+	defer func() {
+		if !committed {
+			_ = temporary.Close()
+			_ = os.Remove(temporaryPath)
+		}
+	}()
+	if err := temporary.Chmod(0o644); err != nil {
+		return fmt.Errorf("set temporary output permissions: %w", err)
+	}
+	if _, err := temporary.Write(contents); err != nil {
+		return fmt.Errorf("write temporary output: %w", err)
+	}
+	if err := temporary.Sync(); err != nil {
+		return fmt.Errorf("sync temporary output: %w", err)
+	}
+	if err := temporary.Close(); err != nil {
+		return fmt.Errorf("close temporary output: %w", err)
+	}
+	if err := atomicRename(temporaryPath, path); err != nil {
+		return fmt.Errorf("rename output: %w", err)
+	}
+	committed = true
+	return nil
 }

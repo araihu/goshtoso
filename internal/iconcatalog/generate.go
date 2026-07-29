@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"go/format"
+	"go/token"
 	"sort"
 	"strings"
 	"unicode"
@@ -27,8 +28,7 @@ type glyph struct {
 }
 
 // Generate returns formatted Go source for the namespace and product selected
-// by opts. It deliberately accepts only monochrome SVG sprite assets so the
-// generated bindings remain compatible with color-inheriting icon rendering.
+// by opts. Generated bindings accept sprite assets that can inherit color.
 func Generate(catalog Catalog, opts Options) ([]byte, error) {
 	if err := validateOptions(opts); err != nil {
 		return nil, err
@@ -114,9 +114,15 @@ func validateOptions(opts Options) error {
 		}
 	}
 	if !isIdentifier(opts.Package) {
+		if token.Lookup(opts.Package).IsKeyword() {
+			return fmt.Errorf("package %q is a Go keyword", opts.Package)
+		}
 		return fmt.Errorf("package %q is not a Go identifier", opts.Package)
 	}
 	if !isIdentifier(opts.ConstPrefix) {
+		if token.Lookup(opts.ConstPrefix).IsKeyword() {
+			return fmt.Errorf("const-prefix %q is a Go keyword", opts.ConstPrefix)
+		}
 		return fmt.Errorf("const-prefix %q is not a Go identifier", opts.ConstPrefix)
 	}
 	return nil
@@ -132,7 +138,7 @@ func validateAsset(asset Asset) error {
 	if asset.SpriteSymbol == "" {
 		return fmt.Errorf("asset %q has empty spriteSymbol", asset.CanonicalName)
 	}
-	if asset.ColorBehavior != "monochrome" {
+	if asset.ColorBehavior != "monochrome" && asset.ColorBehavior != "tintable" {
 		return fmt.Errorf("asset %q has incompatible colorBehavior %q", asset.CanonicalName, asset.ColorBehavior)
 	}
 	return nil
@@ -169,6 +175,9 @@ func identifier(prefix, namespace, canonicalName string) (string, error) {
 }
 
 func isIdentifier(value string) bool {
+	if token.Lookup(value).IsKeyword() {
+		return false
+	}
 	for i, r := range value {
 		if r == '_' || 'a' <= r && r <= 'z' || 'A' <= r && r <= 'Z' || i > 0 && '0' <= r && r <= '9' {
 			continue

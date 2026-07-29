@@ -2,6 +2,7 @@ package iconcatalog
 
 import (
 	"bytes"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -57,6 +58,34 @@ func TestGenerateRejectsInvalidSelectedAssets(t *testing.T) {
 	}
 }
 
+func TestGenerateAcceptsTintableSelectedAsset(t *testing.T) {
+	catalog := fixture(t)
+	catalog.Assets[0].ColorBehavior = "tintable"
+	if _, err := Generate(catalog, fixtureOptions); err != nil {
+		t.Fatalf("Generate() error = %v, want tintable asset accepted", err)
+	}
+}
+
+func TestGenerateRejectsGoKeywords(t *testing.T) {
+	tests := []struct {
+		name string
+		edit func(*Options)
+	}{
+		{"package", func(opts *Options) { opts.Package = "type" }},
+		{"const prefix", func(opts *Options) { opts.ConstPrefix = "type" }},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts := fixtureOptions
+			tt.edit(&opts)
+			_, err := Generate(fixture(t), opts)
+			if err == nil || !strings.Contains(err.Error(), "Go keyword") {
+				t.Fatalf("Generate() error = %v, want Go keyword rejection", err)
+			}
+		})
+	}
+}
+
 func TestGenerateRejectsIdentifierCollision(t *testing.T) {
 	catalog := fixture(t)
 	catalog.Assets[0].CanonicalName = "ui-hi-16-solid-a-b"
@@ -99,6 +128,65 @@ func TestRunWritesAndChecksGeneratedFile(t *testing.T) {
 	}
 	if err := Run(append(args, "-check"), &stdout, &stderr); err == nil || !strings.Contains(err.Error(), "stale") {
 		t.Fatalf("Run(-check) error = %v, want stale output", err)
+	}
+}
+
+func TestRunKeepsExistingOutputWhenAtomicRenameFails(t *testing.T) {
+	out := filepath.Join(t.TempDir(), "names_gen.go")
+	if err := os.WriteFile(out, []byte("old output\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	originalRename := atomicRename
+	atomicRename = func(string, string) error { return errors.New("rename failed") }
+	t.Cleanup(func() { atomicRename = originalRename })
+
+	err := Run([]string{
+		"-catalog", filepath.Join("testdata", "catalog.json"),
+		"-out", out,
+		"-package", fixtureOptions.Package,
+		"-namespace", fixtureOptions.Namespace,
+		"-product", fixtureOptions.Product,
+		"-sprite-url", fixtureOptions.SpriteURL,
+		"-const-prefix", fixtureOptions.ConstPrefix,
+	}, &bytes.Buffer{}, &bytes.Buffer{})
+	if err == nil || !strings.Contains(err.Error(), "rename output") {
+		t.Fatalf("Run() error = %v, want rename output failure", err)
+	}
+	got, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != "old output\n" {
+		t.Fatalf("output = %q, want existing bytes preserved", got)
+	}
+	entries, err := os.ReadDir(filepath.Dir(out))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), ".names_gen.go.tmp-") {
+			t.Fatalf("temporary output %q was not cleaned up", entry.Name())
+		}
+	}
+}
+
+func TestRunCheckDoesNotCreateOutput(t *testing.T) {
+	out := filepath.Join(t.TempDir(), "names_gen.go")
+	err := Run([]string{
+		"-catalog", filepath.Join("testdata", "catalog.json"),
+		"-out", out,
+		"-package", fixtureOptions.Package,
+		"-namespace", fixtureOptions.Namespace,
+		"-product", fixtureOptions.Product,
+		"-sprite-url", fixtureOptions.SpriteURL,
+		"-const-prefix", fixtureOptions.ConstPrefix,
+		"-check",
+	}, &bytes.Buffer{}, &bytes.Buffer{})
+	if err == nil || !strings.Contains(err.Error(), "stale") {
+		t.Fatalf("Run(-check) error = %v, want stale output", err)
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("output stat error = %v, want not exist", err)
 	}
 }
 
