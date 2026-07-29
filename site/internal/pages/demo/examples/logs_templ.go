@@ -135,96 +135,6 @@ func LogRow(line logs.LogLine) templ.Component {
 	})
 }
 
-// logFeedScript registers the Alpine component that owns everything htmx does
-// not: row cap, min-severity filter, auto-scroll, pause/resume, and status.
-// Registered immediately when Alpine is already running (fragment-nav), else on
-// alpine:init (full page load).
-func logFeedScript() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.Raw(`<script>
-	(function () {
-		function register() {
-			if (!window.Alpine || Alpine.__logFeedRegistered) return;
-			Alpine.__logFeedRegistered = true;
-			Alpine.data('logFeed', () => ({
-				cap: 100,
-				paused: false,
-				autoScroll: true,
-				connected: false,
-				minLevel: 'all',
-				init() {
-					this.handleAfterSwap = (e) => this.onSwap(e);
-					this.$root.addEventListener('htmx:afterSwap', this.handleAfterSwap);
-					this.$watch('minLevel', (v) => this.applyFilter(v));
-					this.applyFilter(this.minLevel);
-				},
-				destroy() {
-					if (this.handleAfterSwap) this.$root.removeEventListener('htmx:afterSwap', this.handleAfterSwap);
-				},
-				applyFilter(v) {
-					const wrap = this.$refs.feedWrap;
-					if (!wrap) return;
-					wrap.classList.remove('flt-all', 'flt-warn', 'flt-error');
-					wrap.classList.add('flt-' + v);
-				},
-				onSwap(e) {
-					const swapTarget = e.detail && e.detail.target;
-					const eventTarget = e.target instanceof Element ? e.target : null;
-					const affectedFeed = (swapTarget && swapTarget.id === 'log-feed') ||
-						(eventTarget && (eventTarget.id === 'log-feed' || eventTarget.closest('#log-feed')));
-					if (!affectedFeed) return;
-					const feed = document.getElementById('log-feed');
-					if (!feed) return;
-					while (feed.children.length > this.cap) feed.removeChild(feed.firstElementChild);
-					if (this.autoScroll) requestAnimationFrame(() => { feed.scrollTop = feed.scrollHeight; });
-				},
-				togglePause() {
-						this.paused = !this.paused;
-						if (this.paused) {
-							this.connected = false;
-						} else {
-							// x-if re-adds the SSE connector on next tick; tell htmx to
-							// process the new element so the SSE extension can reconnect.
-							this.$nextTick(() => {
-								const el = document.querySelector('#logs-fragment [sse-connect]');
-								if (el && window.htmx) htmx.process(el);
-							});
-						}
-					},
-				clearFeed() { const f = document.getElementById('log-feed'); if (f) f.replaceChildren(); },
-				get statusText() { return this.paused ? 'Paused' : (this.connected ? 'Connected' : 'Connecting'); },
-			}));
-		}
-		if (window.Alpine) register();
-		else document.addEventListener('alpine:init', register);
-	})();
-	</script>`).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
 // logFilterStyle scopes the pure-CSS min-severity filter. The feed wrapper
 // carries flt-all / flt-warn / flt-error; rows carry log-level-<level>.
 func logFilterStyle() templ.Component {
@@ -243,9 +153,9 @@ func logFilterStyle() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templ.Raw(`<style>
@@ -276,16 +186,12 @@ func LogsApp() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = logFilterStyle().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = logFeedScript().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -334,7 +240,7 @@ func LogsApp() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -356,7 +262,7 @@ func LogsApp() templ.Component {
 			button.WithTone(button.ToneSecondary),
 			button.WithSize(button.SizeSmall),
 			button.WithAlpine(&button.AlpineConfig{OnClick: "clearFeed()"}),
-		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -386,12 +292,12 @@ func pauseButton() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -413,7 +319,7 @@ func pauseButton() templ.Component {
 			button.WithTone(button.ToneSecondary),
 			button.WithSize(button.SizeSmall),
 			button.WithAlpine(&button.AlpineConfig{OnClick: "togglePause()"}),
-		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -438,9 +344,9 @@ func LogsContent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var13 == nil {
-			templ_7745c5c3_Var13 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = LogsApp().Render(ctx, templ_7745c5c3_Buffer)

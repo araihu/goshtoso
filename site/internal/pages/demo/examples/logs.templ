@@ -46,71 +46,6 @@ templ LogRow(line logs.LogLine) {
 	</div>
 }
 
-// logFeedScript registers the Alpine component that owns everything htmx does
-// not: row cap, min-severity filter, auto-scroll, pause/resume, and status.
-// Registered immediately when Alpine is already running (fragment-nav), else on
-// alpine:init (full page load).
-templ logFeedScript() {
-	@templ.Raw(`<script>
-	(function () {
-		function register() {
-			if (!window.Alpine || Alpine.__logFeedRegistered) return;
-			Alpine.__logFeedRegistered = true;
-			Alpine.data('logFeed', () => ({
-				cap: 100,
-				paused: false,
-				autoScroll: true,
-				connected: false,
-				minLevel: 'all',
-				init() {
-					this.handleAfterSwap = (e) => this.onSwap(e);
-					this.$root.addEventListener('htmx:afterSwap', this.handleAfterSwap);
-					this.$watch('minLevel', (v) => this.applyFilter(v));
-					this.applyFilter(this.minLevel);
-				},
-				destroy() {
-					if (this.handleAfterSwap) this.$root.removeEventListener('htmx:afterSwap', this.handleAfterSwap);
-				},
-				applyFilter(v) {
-					const wrap = this.$refs.feedWrap;
-					if (!wrap) return;
-					wrap.classList.remove('flt-all', 'flt-warn', 'flt-error');
-					wrap.classList.add('flt-' + v);
-				},
-				onSwap(e) {
-					const swapTarget = e.detail && e.detail.target;
-					const eventTarget = e.target instanceof Element ? e.target : null;
-					const affectedFeed = (swapTarget && swapTarget.id === 'log-feed') ||
-						(eventTarget && (eventTarget.id === 'log-feed' || eventTarget.closest('#log-feed')));
-					if (!affectedFeed) return;
-					const feed = document.getElementById('log-feed');
-					if (!feed) return;
-					while (feed.children.length > this.cap) feed.removeChild(feed.firstElementChild);
-					if (this.autoScroll) requestAnimationFrame(() => { feed.scrollTop = feed.scrollHeight; });
-				},
-				togglePause() {
-						this.paused = !this.paused;
-						if (this.paused) {
-							this.connected = false;
-						} else {
-							// x-if re-adds the SSE connector on next tick; tell htmx to
-							// process the new element so the SSE extension can reconnect.
-							this.$nextTick(() => {
-								const el = document.querySelector('#logs-fragment [sse-connect]');
-								if (el && window.htmx) htmx.process(el);
-							});
-						}
-					},
-				clearFeed() { const f = document.getElementById('log-feed'); if (f) f.replaceChildren(); },
-				get statusText() { return this.paused ? 'Paused' : (this.connected ? 'Connected' : 'Connecting'); },
-			}));
-		}
-		if (window.Alpine) register();
-		else document.addEventListener('alpine:init', register);
-	})();
-	</script>`)
-}
-
 // logFilterStyle scopes the pure-CSS min-severity filter. The feed wrapper
 // carries flt-all / flt-warn / flt-error; rows carry log-level-<level>.
 templ logFilterStyle() {
@@ -123,7 +58,6 @@ templ logFilterStyle() {
 // LogsApp is the example body, rendered both on first load and as the fragment.
 templ LogsApp() {
 	@logFilterStyle()
-	@logFeedScript()
 	<div
 		id="logs-fragment"
 		x-data="logFeed"
