@@ -112,7 +112,7 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 		t.Fatalf("Dependencies() must use the ordered dependency loader\n%s", out)
 	}
 	cfg := parseLoaderConfig(t, out)
-	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx", "combobox"}
+	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx", "combobox", "action-group"}
 	if len(cfg.Dependencies) != len(wantOrder) {
 		t.Fatalf("loader dependencies = %#v, want %v", cfg.Dependencies, wantOrder)
 	}
@@ -131,12 +131,13 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 		{"alpine", assets.AlpineJSCDNURL, assets.AlpineJSURL},
 		{"htmx", assets.HTMXCDNURL, assets.HTMXURL},
 		{"combobox", "/assets/js/combobox.js", ""},
+		{"action-group", "/assets/js/action-group.js", ""},
 	} {
 		entry := loaderEntry(t, cfg, tc.name)
 		if entry.PrimaryURL != tc.primary || entry.FallbackURL != tc.fallback {
 			t.Errorf("%s source = (%q, %q), want (%q, %q)", tc.name, entry.PrimaryURL, entry.FallbackURL, tc.primary, tc.fallback)
 		}
-		if tc.name != "combobox" && !strings.HasPrefix(entry.Integrity, "sha384-") {
+		if tc.name != "combobox" && tc.name != "action-group" && !strings.HasPrefix(entry.Integrity, "sha384-") {
 			t.Errorf("%s missing SHA-384 subresource integrity: %#v", tc.name, entry)
 		}
 	}
@@ -180,7 +181,7 @@ func TestDependenciesMinimalFiltersPublicManifestOrder(t *testing.T) {
 	cfg := newConfigFromManifest(manifest, nil)
 	loader := parseLoaderConfig(t, render(t, dependenciesMinimalTemplate(cfg)))
 
-	want := []string{"alpine-collapse", "htmx", "combobox"}
+	want := []string{"alpine-collapse", "htmx", "combobox", "action-group"}
 	got := make([]string, 0, len(loader.Dependencies))
 	for _, dependency := range loader.Dependencies {
 		got = append(got, dependency.Name)
@@ -234,9 +235,19 @@ func customRuntimeManifest() assets.RuntimeManifest {
 		dependency.LocalURL = fmt.Sprintf("/contract/%s.js", dependency.Role)
 		dependency.Integrity = fmt.Sprintf("sha384-%s", dependency.Role)
 	}
-	manifest.Dependencies[len(manifest.Dependencies)-1].PrimaryURL = assets.ComboboxURL
-	manifest.Dependencies[len(manifest.Dependencies)-1].LocalURL = assets.ComboboxURL
-	manifest.Dependencies[len(manifest.Dependencies)-1].Integrity = ""
+	for index := range manifest.Dependencies {
+		dependency := &manifest.Dependencies[index]
+		if dependency.Role == assets.RuntimeRoleCombobox {
+			dependency.PrimaryURL = assets.ComboboxURL
+			dependency.LocalURL = assets.ComboboxURL
+			dependency.Integrity = ""
+		}
+		if dependency.Role == assets.RuntimeRoleActionGroup {
+			dependency.PrimaryURL = assets.ActionGroupURL
+			dependency.LocalURL = assets.ActionGroupURL
+			dependency.Integrity = ""
+		}
+	}
 	return manifest
 }
 
@@ -247,6 +258,7 @@ func TestDependenciesFunctionalOptionsOverrideIndividualSources(t *testing.T) {
 		WithDependencyIntegrity(DependencyHTMX, "sha384-custom"),
 		WithStylesheetURL("/static/goshtoso.css"),
 		WithComboboxURL("/static/combobox.js"),
+		WithActionGroupURL("/static/action-group.js"),
 		WithLoaderURL("/static/dependency-loader.js"),
 	))
 
@@ -263,6 +275,9 @@ func TestDependenciesFunctionalOptionsOverrideIndividualSources(t *testing.T) {
 	}
 	if combobox := loaderEntry(t, cfg, "combobox"); combobox.PrimaryURL != "/static/combobox.js" {
 		t.Errorf("combobox override not applied: %#v", combobox)
+	}
+	if actionGroup := loaderEntry(t, cfg, "action-group"); actionGroup.PrimaryURL != "/static/action-group.js" {
+		t.Errorf("action-group override not applied: %#v", actionGroup)
 	}
 }
 
@@ -356,7 +371,7 @@ func TestDependenciesPropagatesTemplNonceToLoader(t *testing.T) {
 func TestDependenciesPropagatesTemplNonceToEveryLocalScript(t *testing.T) {
 	ctx := templ.WithNonce(context.Background(), "offline-nonce-456")
 	out := renderWithContext(t, ctx, Dependencies(WithLocalRuntime()))
-	if got, want := strings.Count(out, `nonce="offline-nonce-456"`), 6; got != want {
+	if got, want := strings.Count(out, `nonce="offline-nonce-456"`), 7; got != want {
 		t.Fatalf("WithLocalRuntime() nonce count = %d, want %d\n%s", got, want, out)
 	}
 }

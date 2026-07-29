@@ -62,10 +62,11 @@ templ Layout() {
 ```
 
 `head.Dependencies()` emits Goshtoso CSS and an ordered loader for Alpine.js,
-its collapse/focus/mask plugins, HTMX, and first-party scripts such as
-`combobox.js`. It tries version-pinned CDN URLs first and creates a fresh script
-for the exact embedded version when a CDN download fails. Keep
-`assets.Handler()` mounted even when the CDN normally succeeds.
+its collapse/focus/mask plugins, HTMX, and first-party `/assets/` scripts such
+as `combobox.js` and `action-group.js`. Third-party dependencies try
+version-pinned CDN URLs first and create a fresh script for the exact embedded
+version when a CDN download fails. Keep `assets.Handler()` mounted even when
+the third-party CDN normally succeeds.
 
 Choose deliberately:
 

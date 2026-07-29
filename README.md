@@ -28,8 +28,8 @@ of floating copy-paste snippets.
 
 ## Highlights
 
-- **49 public component packages** documented across **48 documentation pages**,
-  exposing **80 renderable primitives** for composition, forms, navigation, overlays, data
+- **50 public component packages** documented across **49 documentation pages**,
+  exposing **81 renderable primitives** for composition, forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
   instant local interaction makes sense.
@@ -181,15 +181,15 @@ github.com/araihu/goshtoso/components/<name>
 Current components:
 
 ```text
-accordion        alert       appshell     avatar       badge        banner
-breadcrumbs      button      card         carousel     chatbubble   checkbox
-codeblock        combobox    drawer       dropdown     emptystate   fileinput
-form             head        kbd          link         modal        navbar
-pageheader       pagination  palette      panel        radio        range
-rating
-schemaform       search      select       sidebar      skeleton     spinner
-steps            structuredinput         table        tabs         tagslist
-textarea         textinput   toast        toolbar      toggle       tooltip
+accordion        actiongroup  alert        appshell     avatar       badge
+banner           breadcrumbs  button       card         carousel     chatbubble
+checkbox         codeblock    combobox     drawer       dropdown     emptystate
+fileinput        form         head         kbd          link         modal
+navbar           pageheader   pagination   palette      panel        radio
+range            rating       schemaform   search       select       sidebar
+skeleton         spinner      steps        structuredinput table     tabs
+tagslist         textarea     textinput    toast        toolbar      toggle
+tooltip
 ```
 
 Run the demo site to explore component options, API tables, HTMX

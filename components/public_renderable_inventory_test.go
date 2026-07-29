@@ -27,7 +27,7 @@ func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
 	}
 
 	require.ElementsMatch(t, components.AllKinds(), got)
-	require.Len(t, got, 80)
+	require.Len(t, got, 81)
 	require.Len(t, got, len(components.AllKinds()))
 }
 
@@ -36,6 +36,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"components.AllKinds": {},
 
 		"accordion.Accordion":             {},
+		"actiongroup.ActionGroup":         {},
 		"alert.Alert":                     {},
 		"appshell.AppShell":               {},
 		"avatar.Avatar":                   {},
@@ -71,6 +72,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"head.Dependencies":               {},
 		"head.DependenciesMinimal":        {},
 		"head.WithComboboxURL":            {},
+		"head.WithActionGroupURL":         {},
 		"head.WithDependencyCDNURL":       {},
 		"head.WithDependencyIntegrity":    {},
 		"head.WithDependencyLocalURL":     {},
@@ -352,7 +354,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 
 	const componentPackagePrefix = "github.com/araihu/goshtoso/components/"
 
-	methods := make(map[string]struct{}, 160)
+	methods := make(map[string]struct{}, 162)
 	for _, inventory := range publicRenderableInventories() {
 		for _, value := range inventory {
 			valueType := reflect.TypeOf(value)
@@ -369,7 +371,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 			methods[receiver+".Render"] = struct{}{}
 		}
 	}
-	require.Len(t, methods, 160)
+	require.Len(t, methods, 162)
 	return methods
 }
 

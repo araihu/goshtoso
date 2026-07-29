@@ -7,6 +7,8 @@ const (
 	DependencyLoaderURL = "/assets/js/dependency-loader.js"
 	// ComboboxURL is the assets.Handler URL for Goshtoso's combobox keyboard helper.
 	ComboboxURL = "/assets/js/combobox.js"
+	// ActionGroupURL is the assets.Handler URL for responsive ActionGroup measurement.
+	ActionGroupURL = "/assets/js/action-group.js"
 )
 
 // RuntimeAssetKind describes how a runtime manifest asset is included in HTML.
@@ -40,6 +42,8 @@ const (
 	RuntimeRoleHTMX RuntimeAssetRole = "htmx"
 	// RuntimeRoleCombobox identifies Goshtoso's combobox keyboard helper.
 	RuntimeRoleCombobox RuntimeAssetRole = "combobox"
+	// RuntimeRoleActionGroup identifies responsive ActionGroup measurement.
+	RuntimeRoleActionGroup RuntimeAssetRole = "action-group"
 )
 
 // RuntimeAsset describes one stylesheet or script in Goshtoso's default head
@@ -123,6 +127,11 @@ func DefaultRuntimeManifest() RuntimeManifest {
 			{
 				Role: RuntimeRoleCombobox, Kind: RuntimeAssetScript,
 				PrimaryURL: ComboboxURL, LocalURL: ComboboxURL,
+				Enabled: true, IncludeInMinimal: true, Defer: true,
+			},
+			{
+				Role: RuntimeRoleActionGroup, Kind: RuntimeAssetScript,
+				PrimaryURL: ActionGroupURL, LocalURL: ActionGroupURL,
 				Enabled: true, IncludeInMinimal: true, Defer: true,
 			},
 		},

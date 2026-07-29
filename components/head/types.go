@@ -129,6 +129,18 @@ func WithComboboxURL(url string) Option {
 	})
 }
 
+// WithActionGroupURL replaces the first-party ActionGroup measurement helper URL.
+func WithActionGroupURL(url string) Option {
+	return optionFunc(func(cfg *config) {
+		if url != "" {
+			if source := cfg.asset(assets.RuntimeRoleActionGroup); source != nil {
+				source.PrimaryURL = url
+				source.LocalURL = url
+			}
+		}
+	})
+}
+
 // WithLoaderURL replaces the URL of Goshtoso's first-party dependency loader.
 // Use it when the embedded loader is mirrored or copied to another asset path.
 func WithLoaderURL(url string) Option {
