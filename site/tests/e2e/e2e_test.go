@@ -250,13 +250,6 @@ func waitForPageSettled(t *testing.T, page playwright.Page) {
 		State:   playwright.LoadStateNetworkidle,
 		Timeout: playwright.Float(3000),
 	}))
-	waitForPageFailureWindow(t, page)
-}
-
-// waitForPageFailureWindow gives asynchronous console and page-error handlers
-// one bounded turn without adding Playwright's network-idle quiet period.
-func waitForPageFailureWindow(t *testing.T, page playwright.Page) {
-	t.Helper()
 	// Network idle may already have been reached before the caller starts
 	// waiting. Give timers and Playwright's asynchronous event callbacks one
 	// bounded turn before pageFailures takes its final snapshot.

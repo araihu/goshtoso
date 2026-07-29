@@ -52,20 +52,3 @@ document.addEventListener("DOMContentLoaded", () => {
 	require.Contains(t, joined, "console error: delayed component failure")
 	require.Contains(t, joined, "[url=", "collector messages must include console source locations")
 }
-
-func TestWaitForPageFailureWindowCapturesDelayedConsoleError(t *testing.T) {
-	page := newPage(t, sharedBrowser)
-	failures := watchPageFailures(page)
-
-	require.NoError(t, page.SetContent(
-		`<script>setTimeout(() => console.error("delayed component failure"), 150)</script>`,
-		playwright.PageSetContentOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded},
-	))
-
-	waitForPageFailureWindow(t, page)
-
-	failures.mu.Lock()
-	messages := append([]string(nil), failures.messages...)
-	failures.mu.Unlock()
-	require.Contains(t, strings.Join(messages, "\n"), "console error: delayed component failure")
-}

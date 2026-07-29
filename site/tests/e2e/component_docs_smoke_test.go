@@ -52,7 +52,7 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, 1, apiCount)
 			requireComponentGoAPILink(t, page, entry)
-			waitForPageFailureWindow(t, page)
+			waitForPageSettled(t, page)
 			failures.RequireEmpty(t)
 		})
 	}
@@ -272,7 +272,7 @@ func requireComponentDocsDestination(
 	require.NoError(t, err)
 	require.Equal(t, true, runtimesReady)
 
-	waitForPageFailureWindow(t, page)
+	waitForPageSettled(t, page)
 	failures.RequireEmpty(t)
 }
 
@@ -451,7 +451,7 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 				require.True(t, ok)
 				require.NotEmpty(t, surfaceToken)
 
-				waitForPageFailureWindow(t, page)
+				waitForPageSettled(t, page)
 				failures.RequireEmpty(t)
 			})
 		}
