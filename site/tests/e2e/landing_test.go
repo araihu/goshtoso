@@ -24,6 +24,8 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
+	playground := page.FrameLocator("#theme-playground-frame")
+	charts := page.FrameLocator("#charts-showcase-frame-line-3d")
 
 	t.Run("HeroHeadline", func(t *testing.T) {
 		h1 := page.Locator("#hero h1")
@@ -57,6 +59,16 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		count, err := nav.Locator("a[href='/getting-started']").Count()
 		require.NoError(t, err)
 		require.Equal(t, 1, count)
+		github := nav.Locator("a[aria-label='GitHub repository'][href='https://github.com/araihu/goshtoso']")
+		visible, err = github.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "GitHub repository action should be visible in the topbar")
+		count, err = github.Locator("svg[aria-hidden='true']").Count()
+		require.NoError(t, err)
+		require.Equal(t, 1, count)
+		count, err = page.Locator("#hero-content a[href='https://github.com/araihu/goshtoso']").Count()
+		require.NoError(t, err)
+		require.Zero(t, count, "GitHub should not be duplicated in hero actions")
 	})
 
 	t.Run("MainLandmarkAndSkipLink", func(t *testing.T) {
@@ -87,6 +99,33 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		visible, err := cta.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "getting started CTA should be visible")
+	})
+
+	t.Run("InstallCommandCopiesPasteReadyCommand", func(t *testing.T) {
+		_, err := page.Evaluate(`() => {
+			window.__landingCopied = null;
+			Object.defineProperty(navigator, 'clipboard', {
+				configurable: true,
+				value: {
+					writeText: (text) => {
+						window.__landingCopied = text;
+						return Promise.resolve();
+					},
+				},
+			});
+		}`, nil)
+		require.NoError(t, err)
+
+		copyButton := page.Locator(`#hero-content button[aria-label='Copy Install Goshtoso code']`)
+		count, err := copyButton.Count()
+		require.NoError(t, err)
+		require.Equal(t, 1, count)
+		require.NoError(t, copyButton.Click())
+
+		copied, err := page.Evaluate(`() => window.__landingCopied`, nil)
+		require.NoError(t, err)
+		require.Equal(t, "go get github.com/araihu/goshtoso@latest", copied)
+		require.NoError(t, copyButton.Locator("text=Copied!").WaitFor())
 	})
 
 	t.Run("HeroUsesV11GoshtosoLockup", func(t *testing.T) {
@@ -131,134 +170,183 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 	})
 
 	t.Run("AraiHuThemeSegmentAvailable", func(t *testing.T) {
-		segment := page.Locator("#home-theme-picker label:has(input[data-theme-key='araihu'])")
+		segment := playground.Locator("#home-theme-picker label:has(input[data-theme-key='araihu'])")
 		visible, err := segment.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "Arai Hû should be available in the homepage theme picker")
 	})
 
+	t.Run("PlaygroundCopyStaysFocused", func(t *testing.T) {
+		body, err := page.Locator("body").InnerText()
+		require.NoError(t, err)
+		require.NotContains(t, body, "Every control below is a real Goshtoso component")
+
+		frameBody, err := playground.Locator("body").InnerText()
+		require.NoError(t, err)
+		require.Contains(t, frameBody, "Live theme preview")
+		require.NotContains(t, frameBody, "Customer workspace")
+		require.NotContains(t, frameBody, "Explore all")
+	})
+
+	t.Run("HowItWorksIncludesStaticSites", func(t *testing.T) {
+		text, err := page.Locator("#how-it-works").InnerText()
+		require.NoError(t, err)
+		require.Contains(t, text, "Publish static sites")
+		require.Contains(t, text, "serve them from any static host")
+	})
+
+	t.Run("ExtensionsExposeCharts", func(t *testing.T) {
+		extensions := page.Locator("#extensions")
+		text, err := extensions.InnerText()
+		require.NoError(t, err)
+		require.Contains(t, text, "Goshtoso Charts")
+		require.NotContains(t, text, "Goshtoso App Shells")
+		require.NotContains(t, text, "only with the preview below")
+		require.NoError(t, page.Locator("#charts-showcase-frame-line-3d").WaitFor())
+		require.Zero(t, mustCount(t, page.Locator("#charts-showcase-loader")), "HTMX load should replace the placeholder before scrolling")
+		require.Equal(t, 1, mustCount(t, extensions.Locator(`a[href="https://github.com/araihu/goshtoso-charts"]`)))
+		require.Equal(t, 1, mustCount(t, extensions.Locator(`a[href="https://charts.goshtoso.araihu.com"]`)))
+		require.Zero(t, mustCount(t, extensions.Locator(`a[href="/modules/app-shells"]`)))
+	})
+
+	t.Run("ChartsShowcaseRendersAndFits", func(t *testing.T) {
+		require.NoError(t, page.Locator("#charts-showcase-frame-line-3d").WaitFor())
+		require.Equal(t, "eager", mustAttribute(t, page.Locator("#charts-showcase-frame-line-3d"), "loading"))
+		require.Equal(t, "no", mustAttribute(t, page.Locator("#charts-showcase-frame-line-3d"), "scrolling"))
+		require.NoError(t, charts.Locator("canvas").First().WaitFor())
+		require.Equal(t, 1, mustCount(t, charts.Locator("[data-showcase-chart]")))
+		require.Equal(t, 1, mustCount(t, charts.Locator(`[data-showcase-component="line-3d"]`)))
+		require.Zero(t, mustCount(t, charts.Locator("[data-chart-carousel-slide]")))
+		require.GreaterOrEqual(t, mustCount(t, charts.Locator("canvas")), 1)
+		require.Equal(t, "Charts for every use case", mustText(t, charts.Locator("#charts-showcase-title")))
+		require.Zero(t, mustCount(t, charts.Locator("figcaption")))
+		require.Zero(t, mustCount(t, charts.GetByText("Typed Go configs, local runtime, theme-aware output.")))
+		hidden, err := charts.Locator("[data-chart-fallback]").IsHidden()
+		require.NoError(t, err)
+		require.True(t, hidden, "successful chart rendering should hide fallback")
+		fits, err := charts.Locator("html").Evaluate(`el => el.scrollWidth <= el.clientWidth && el.scrollHeight <= el.clientHeight`, nil)
+		require.NoError(t, err)
+		require.Equal(t, true, fits, "chart iframe should not create nested scrollbars")
+		animations := charts.Locator(`[data-goshtoso-charts-explicit-animation="false"]`)
+		require.Equal(t, 1, mustCount(t, animations), "showcase chart must disable initial animation")
+	})
+
+	t.Run("PlaygroundFitsWithoutNestedScroll", func(t *testing.T) {
+		_, err := page.WaitForFunction(`() => {
+			const frame = document.querySelector('#theme-playground-frame');
+			if (!frame || !frame.contentDocument || !frame.contentDocument.body) return false;
+			const contentHeight = Math.max(
+				frame.contentDocument.documentElement.scrollHeight,
+				frame.contentDocument.body.scrollHeight,
+			);
+			return frame.clientHeight >= contentHeight &&
+				getComputedStyle(frame.contentDocument.body).overflowY === 'hidden';
+		}`, nil)
+		require.NoError(t, err, "playground iframe should grow to its content without nested scrolling")
+	})
+
 	t.Run("GoshtosoThemeSegmentAvailable", func(t *testing.T) {
-		segment := page.Locator("#home-theme-picker label:has(input[data-theme-key='goshtoso'])")
+		segment := playground.Locator("#home-theme-picker label:has(input[data-theme-key='goshtoso'])")
 		visible, err := segment.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "Goshtoso should be available in the homepage theme picker")
 	})
 
 	t.Run("ThemeSegmentSwitchesTheme", func(t *testing.T) {
-		_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+		parentTheme, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
-		// click the Dracula segment
-		require.NoError(t, page.Locator("#home-theme-picker label:has(input[data-theme-key='dracula'])").Click())
-		got, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
+
+		require.NoError(t, playground.Locator("#home-theme-picker label:has(input[data-theme-key='dracula'])").Click())
+		got, err := playground.Locator("html").GetAttribute("data-theme")
 		require.NoError(t, err)
 		require.Equal(t, "dracula", got, "clicking a segment should set data-theme on <html>")
-		checked, err := page.Locator("#home-theme-picker input[data-theme-key='dracula']").IsChecked()
+		checked, err := playground.Locator("#home-theme-picker input[data-theme-key='dracula']").IsChecked()
 		require.NoError(t, err)
 		require.True(t, checked, "selected theme segment should be checked")
 
+		parentThemeAfter, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
+		require.NoError(t, err)
+		require.Equal(t, parentTheme, parentThemeAfter, "playground theme must not restyle homepage")
+
 		stored, err := page.Evaluate("() => localStorage.getItem('theme')", nil)
 		require.NoError(t, err)
-		require.Nil(t, stored, "theme choice must not persist before explicit storage consent")
+		require.Nil(t, stored, "playground theme must not persist into homepage storage")
 
 		require.NoError(t, page.Locator("button", playwright.PageLocatorOptions{HasText: "Allow browser storage"}).Click())
-		require.NoError(t, page.Locator("#home-theme-picker label:has(input[data-theme-key='minimal'])").Click())
+		require.NoError(t, playground.Locator("#home-theme-picker label:has(input[data-theme-key='minimal'])").Click())
 		stored, err = page.Evaluate("() => localStorage.getItem('theme')", nil)
 		require.NoError(t, err)
-		require.Equal(t, "minimal", stored, "theme choice should persist after explicit storage consent")
+		require.Nil(t, stored, "playground must remain non-persistent after storage consent")
 	})
 
 	t.Run("LiveTableLoadsRows", func(t *testing.T) {
 		// The table is intentionally lazy. Bring it into the viewport, then prove
 		// the HTMX response replaced the loading placeholder with real cells.
-		require.NoError(t, page.Locator("#home-table").ScrollIntoViewIfNeeded())
-		_, err := page.WaitForFunction(
-			"() => { const body = document.querySelector('#home-table tbody'); return body && body.querySelector('td') && !body.textContent.includes('Loading...'); }", nil,
-			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)},
-		)
-		require.NoError(t, err, "live HTMX table should populate rows")
-		text, err := page.Locator("#home-table tbody").InnerText()
+		require.NoError(t, playground.Locator("#home-table").ScrollIntoViewIfNeeded())
+		require.NoError(t, playground.Locator("#home-table tbody").Locator("text=Sarah Adams").WaitFor(), "live HTMX table should populate rows")
+		text, err := playground.Locator("#home-table tbody").InnerText()
 		require.NoError(t, err)
 		require.NotContains(t, text, "Loading...")
 		require.Contains(t, text, "Sarah Adams")
 	})
 
 	t.Run("PlaygroundOmitsServerEndpointCopy", func(t *testing.T) {
-		proofCount, err := page.Locator("#playground-server-proof").Count()
+		proofCount, err := playground.Locator("#playground-server-proof").Count()
 		require.NoError(t, err)
 		require.Zero(t, proofCount)
 
-		text, err := page.Locator("body").InnerText()
+		text, err := playground.Locator("body").InnerText()
 		require.NoError(t, err)
 		require.NotContains(t, text, "Table rows are lazy-loaded from Go through HTMX.")
 		require.NotContains(t, text, "/api/components/table/rows")
 	})
 
-	t.Run("ExampleGalleryLinks", func(t *testing.T) {
-		for _, route := range []string{
-			"/examples/todo", "/examples/chat", "/examples/logs",
-			"/examples/profile", "/examples/ticker", "/examples/expense", "/examples/wizard",
+	t.Run("ProductGalleryLinksToLiveAraiHuSites", func(t *testing.T) {
+		for _, productURL := range []string{
+			"https://manja.araihu.com/",
+			"https://x9.araihu.com/",
+			"https://paje.araihu.com/en/",
+			"https://araihu.com/",
 		} {
-			loc := page.Locator("#examples a[href='" + route + "']")
-			cnt, err := loc.Count()
+			product := page.Locator("#examples a[data-product-card][href='" + productURL + "']")
+			count, err := product.Count()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, cnt, 1, "gallery should link to "+route)
+			require.Equal(t, 1, count, "gallery should link once to "+productURL)
+			require.Equal(t, "_blank", mustAttribute(t, product, "target"))
+			require.Contains(t, mustAttribute(t, product, "rel"), "noopener")
 		}
+		require.Zero(t, mustCount(t, page.Locator("#examples a[href^='/examples/']")), "homepage gallery should not repeat built-in demos")
+		require.Zero(t, mustCount(t, page.Locator(`#examples a:has-text("Visit Arai Hû")`)), "the gallery heading should not repeat the Arai Hû product link")
+		require.Equal(t, 3, mustCount(t, page.Locator(`#examples >> text="Work in progress"`)))
+		examplesText, err := page.Locator("#examples").InnerText()
+		require.NoError(t, err)
+		require.Contains(t, examplesText, "agent-driven code changes")
+		require.NotContains(t, examplesText, "agent-piloted")
 	})
 
-	t.Run("ExampleGalleryCardsUseImages", func(t *testing.T) {
-		cards := page.Locator("#examples a[data-example-card]")
+	t.Run("ProductGalleryUsesCapturedSiteImages", func(t *testing.T) {
+		cards := page.Locator("#examples a[data-product-card]")
 		count, err := cards.Count()
 		require.NoError(t, err)
-		require.Equal(t, 7, count, "gallery should render one Goshtoso card per example app")
+		require.Equal(t, 4, count, "gallery should render one card per Arai Hû product site")
 
-		images := page.Locator("#examples a[data-example-card] img")
+		images := page.Locator("#examples a[data-product-card] img")
 		imageCount, err := images.Count()
 		require.NoError(t, err)
-		require.Equal(t, count, imageCount, "each example card should include a generated image")
-
+		require.Equal(t, count, imageCount)
 		for i := range imageCount {
 			img := images.Nth(i)
-			src, err := img.GetAttribute("src")
-			require.NoError(t, err)
-			require.Contains(t, src, "/assets/images/homepage/examples/", "example screenshot should be served from embedded assets")
-			alt, err := img.GetAttribute("alt")
-			require.NoError(t, err)
-			require.NotEmpty(t, alt, "example screenshot should have alt text")
-			require.NotContains(t, alt, "Abstract", "gallery should show the real example interfaces")
+			require.Contains(t, mustAttribute(t, img, "src"), "/assets/images/homepage/products/")
+			require.NotEmpty(t, mustAttribute(t, img, "alt"))
 		}
-	})
 
-	t.Run("ExampleGalleryFeaturesWizard", func(t *testing.T) {
-		featured := page.Locator("#examples a[data-featured-example-card][href='/examples/wizard']")
-		visible, err := featured.IsVisible()
-		require.NoError(t, err)
-		require.True(t, visible, "wizard should be the featured example card")
-
-		supporting := page.Locator("#examples a[data-supporting-example-card]")
-		count, err := supporting.Count()
-		require.NoError(t, err)
-		require.Equal(t, 6, count, "remaining examples should render as supporting cards")
-
-		actions := page.Locator("#examples a[data-example-card] >> text=View app")
+		actions := page.Locator("#examples a[data-product-card] >> text=Visit site")
 		actionCount, err := actions.Count()
 		require.NoError(t, err)
-		require.Equal(t, 7, actionCount, "each example card should expose an explicit View app affordance")
+		require.Equal(t, 4, actionCount)
 	})
 
-	t.Run("FeaturedExampleIsCompactLeadStrip", func(t *testing.T) {
-		featured := page.Locator("#examples a[data-featured-example-card]")
-		supporting := page.Locator("#examples a[data-supporting-example-card]").First()
-
-		featuredBox, err := featured.BoundingBox()
-		require.NoError(t, err)
-		supportingBox, err := supporting.BoundingBox()
-		require.NoError(t, err)
-
-		require.Greater(t, featuredBox.Width, supportingBox.Width*2, "featured example should read as a compact lead strip above the grid")
-		require.Less(t, featuredBox.Height, supportingBox.Height*0.9, "featured example should not become a massive billboard card")
-	})
-
-	t.Run("MobileKeepsHowItWorksBeforeSupportingGallery", func(t *testing.T) {
+	t.Run("MobileKeepsHowItWorksBeforeProductGallery", func(t *testing.T) {
 		mobile := newPage(t, browser, playwright.BrowserNewPageOptions{
 			Viewport: &playwright.Size{Width: 390, Height: 844},
 		})
@@ -274,24 +362,14 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 
 		howBox, err := how.BoundingBox()
 		require.NoError(t, err)
-		supporting := mobile.Locator("#examples a[data-supporting-example-card]").First()
-		supportingBox, err := supporting.BoundingBox()
+		product := mobile.Locator("#examples a[data-product-card]").First()
+		productBox, err := product.BoundingBox()
 		require.NoError(t, err)
-		require.Less(t, howBox.Y, supportingBox.Y, "mobile should teach the mental model before the long supporting gallery")
-
-		featuredArticleBox, err := mobile.Locator("#examples a[data-featured-example-card] article").BoundingBox()
-		require.NoError(t, err)
-		supportingArticleBox, err := supporting.Locator("article").BoundingBox()
-		require.NoError(t, err)
-		heightRatio := featuredArticleBox.Height / supportingArticleBox.Height
-		require.Greater(t, heightRatio, 0.8, "featured example should use regular card height on mobile")
-		require.Less(t, heightRatio, 1.25, "featured example should not become a billboard card on mobile")
-		widthRatio := featuredArticleBox.Width / supportingArticleBox.Width
-		require.Greater(t, widthRatio, 0.95, "featured example should use regular card width on mobile")
-		require.Less(t, widthRatio, 1.05, "featured example should not stay wider than supporting cards on mobile")
+		require.Less(t, howBox.Y, productBox.Y, "mobile should teach the mental model before the product gallery")
+		require.LessOrEqual(t, productBox.Width, 350.0, "product cards should fit the mobile content width")
 	})
 
-	t.Run("SmallScreensCenterExampleCards", func(t *testing.T) {
+	t.Run("SmallScreensCenterProductGrid", func(t *testing.T) {
 		small := newPage(t, browser, playwright.BrowserNewPageOptions{
 			Viewport: &playwright.Size{Width: 576, Height: 779},
 		})
@@ -302,35 +380,52 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 
 		examplesBox, err := small.Locator("#examples").BoundingBox()
 		require.NoError(t, err)
-		featuredBox, err := small.Locator("#examples a[data-featured-example-card] article").BoundingBox()
+		products := small.Locator("#examples a[data-product-card] article")
+		count, err := products.Count()
 		require.NoError(t, err)
-		supportingBox, err := small.Locator("#examples a[data-supporting-example-card] article").First().BoundingBox()
+		require.Equal(t, 4, count)
+		firstBox, err := products.Nth(0).BoundingBox()
+		require.NoError(t, err)
+		secondBox, err := products.Nth(1).BoundingBox()
 		require.NoError(t, err)
 
 		examplesCenter := examplesBox.X + examplesBox.Width/2
-		featuredCenter := featuredBox.X + featuredBox.Width/2
-		supportingCenter := supportingBox.X + supportingBox.Width/2
-		require.InDelta(t, examplesCenter, featuredCenter, 2.0, "featured example should be horizontally centered on small screens")
-		require.InDelta(t, examplesCenter, supportingCenter, 2.0, "supporting examples should be horizontally centered on small screens")
+		firstRowCenter := (firstBox.X + secondBox.X + secondBox.Width) / 2
+		require.InDelta(t, examplesCenter, firstRowCenter, 2.0, "product grid should be horizontally centered on small screens")
 	})
 
-	t.Run("StackStripCondensed", func(t *testing.T) {
-		strip := page.Locator("#stack-strip")
-		visible, err := strip.IsVisible()
-		require.NoError(t, err)
-		require.True(t, visible, "condensed stack strip should be present")
-		// it is a single strip, not six cards: at most a handful of links
-		links := page.Locator("#stack-strip a")
-		cnt, err := links.Count()
-		require.NoError(t, err)
-		require.LessOrEqual(t, cnt, 6, "stack strip should be condensed, not a card grid")
-	})
-
-	t.Run("FooterThemeCount", func(t *testing.T) {
+	t.Run("FooterProductAndOrganization", func(t *testing.T) {
+		require.Zero(t, mustCount(t, page.Locator("#stack-strip")), "stack strip should be removed")
 		body, err := page.Locator("body").InnerText()
 		require.NoError(t, err)
-		require.Contains(t, body, "15 themes", "homepage footer should match the theme picker count")
+		require.Contains(t, body, "16 themes", "homepage footer should match the theme picker count")
+		org := page.Locator("footer a[href='https://araihu.com']")
+		visible, err := org.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "footer should attribute Goshtoso to Arai Hû")
+		text, err := org.InnerText()
+		require.NoError(t, err)
+		require.Equal(t, "Arai Hû", text)
 	})
+}
+
+func TestChartsShowcase_MobileFits(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 390, Height: 592}})
+	_, err := page.Goto(baseURL+"/playground/extensions/charts?variant=line-3d", playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateCommit})
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("canvas").First().WaitFor(playwright.LocatorWaitForOptions{Timeout: playwright.Float(15000)}))
+	require.Zero(t, mustCount(t, page.Locator("[data-chart-carousel-slide]")))
+	fits, err := page.Locator("html").Evaluate(`el => el.scrollWidth <= el.clientWidth && el.scrollHeight <= el.clientHeight`, nil)
+	require.NoError(t, err)
+	require.Equal(t, true, fits, "mobile chart iframe should not create nested scrollbars")
 }
 
 // TestLanding_NoConsoleErrors loads the homepage and asserts no JS console or
@@ -355,11 +450,13 @@ func TestLanding_NoConsoleErrors(t *testing.T) {
 	})
 
 	_, err := page.Goto(baseURL+"/", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
+	require.NoError(t, page.Locator("#charts-showcase-frame-line-3d").WaitFor())
+	require.NoError(t, page.FrameLocator("#charts-showcase-frame-line-3d").Locator("canvas").First().WaitFor())
 
 	title, err := page.Title()
 	require.NoError(t, err)

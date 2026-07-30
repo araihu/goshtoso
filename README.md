@@ -34,7 +34,7 @@ dependencies and render most HTML on the server.
   instant local interaction makes sense.
 - **Bundled assets** for Tailwind CSS, Alpine.js, HTMX, htmx extensions, fonts,
   and images. No runtime CDN dependency is required.
-- **Theme system included** with light/dark support and 15 built-in themes.
+- **Theme system included** with light/dark support and 16 built-in themes.
 - **Two-module repository**: a slim publishable library at the repo root and a
   demo/test site under `site/`.
 - **Go-native examples and tests** using templ generation and Playwright-backed

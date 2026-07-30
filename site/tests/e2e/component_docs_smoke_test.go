@@ -91,8 +91,10 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	entries := catalog.ComponentPages()
-	require.Len(t, entries, 50)
+	entries := slices.DeleteFunc(catalog.ComponentPages(), func(entry catalog.Entry) bool {
+		return entry.Active == "app-shell"
+	})
+	require.Len(t, entries, 49)
 
 	page := newPage(t, sharedBrowser)
 	failures := watchPageFailures(page)
@@ -305,7 +307,9 @@ func TestComponentDocsHTMXProofRejectsFullPageReload(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	entries := catalog.ComponentPages()
+	entries := slices.DeleteFunc(catalog.ComponentPages(), func(entry catalog.Entry) bool {
+		return entry.Active == "app-shell"
+	})
 	require.GreaterOrEqual(t, len(entries), 2)
 
 	page := newPage(t, sharedBrowser)
@@ -393,14 +397,14 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 		"/components/toast",
 	}
 	states := []struct {
-		name  string
-		theme string
-		dark  bool
+		name        string
+		storedTheme string
+		dark        bool
 	}{
-		{name: "goshtoso-light", theme: "goshtoso", dark: false},
-		{name: "goshtoso-dark", theme: "goshtoso", dark: true},
-		{name: "minimal-light", theme: "minimal", dark: false},
-		{name: "minimal-dark", theme: "minimal", dark: true},
+		{name: "goshtoso-light", storedTheme: "goshtoso", dark: false},
+		{name: "goshtoso-dark", storedTheme: "goshtoso", dark: true},
+		{name: "minimal-light", storedTheme: "minimal", dark: false},
+		{name: "minimal-dark", storedTheme: "minimal", dark: true},
 	}
 
 	for _, path := range pages {
@@ -412,7 +416,7 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
     document.cookie = "gt_storage=allowed; Path=/; SameSite=Lax";
     localStorage.setItem("theme", %q);
     localStorage.setItem("darkMode", %q);
-`, state.theme, strconv.FormatBool(state.dark))
+`, state.storedTheme, strconv.FormatBool(state.dark))
 				require.NoError(t, page.AddInitScript(playwright.Script{
 					Content: &script,
 				}))
@@ -427,7 +431,7 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 				html := page.Locator("html")
 				theme, err := html.GetAttribute("data-theme")
 				require.NoError(t, err)
-				require.Equal(t, state.theme, theme)
+				require.Equal(t, "araihu", theme, "component docs should ignore legacy stored themes")
 
 				className, err := html.GetAttribute("class")
 				require.NoError(t, err)

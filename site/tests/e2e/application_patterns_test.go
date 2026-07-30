@@ -57,6 +57,8 @@ func TestApplicationPatternsPageAndResponsiveRecipes(t *testing.T) {
 		require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: title}).WaitFor())
 	}
 
+	require.NoError(t, page.Locator(`a[href="/modules/app-shells"]`).Last().WaitFor())
+
 	require.NoError(t, page.Locator("a[href='/docs/application-patterns'][aria-current='page']").WaitFor())
 	require.NoError(t, page.Locator("#operations-pattern-table").WaitFor())
 	require.NoError(t, page.Locator("#detail-workspace-preview [role='tablist']").WaitFor())

@@ -41,6 +41,19 @@ func TestLandingPageRendersSEOMetadata(t *testing.T) {
 	require.Contains(t, body, `"@type":"SoftwareApplication"`)
 }
 
+func TestLandingThemePlaygroundRouteRendersIsolatedDocument(t *testing.T) {
+	s := &Server{}
+	req := httptest.NewRequest(http.MethodGet, "/playground/theme", nil)
+	rec := httptest.NewRecorder()
+
+	s.handleLandingThemePlayground(rec, req)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Equal(t, "text/html; charset=utf-8", rec.Header().Get("Content-Type"))
+	require.Contains(t, rec.Body.String(), `<html lang="en" data-theme="araihu" data-landing-playground`)
+	require.Contains(t, rec.Body.String(), `id="home-theme-picker"`)
+}
+
 func TestAgentsPageRendersSkillInstallGuidance(t *testing.T) {
 	s := &Server{}
 	req := httptest.NewRequest(http.MethodGet, "/docs/agents", nil)

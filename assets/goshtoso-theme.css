@@ -64,7 +64,7 @@
    THEME SYSTEM
    Imported from all-themes.css which provides:
    - @theme block with var() references (default theme tokens)
-   - @layer base with [data-theme=X] overrides for 15 themes
+   - @layer base with [data-theme=X] overrides for 16 themes
    ============================================ */
 @theme {
     /* Fonts */
@@ -644,6 +644,55 @@
         --radius-radius: var(--radius-md);
     }
 
+    [data-theme=araihu] {
+        /* Arai Hû — Modern geometry with the organization palette. */
+        color-scheme: light;
+        --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
+        --font-title: 'Lato', ui-sans-serif, system-ui, sans-serif;
+        --araihu-logo-surface: var(--color-surface);
+        --araihu-logo-ink: var(--color-on-surface-strong);
+        --araihu-logo-signal: #c7ff4a;
+        --color-surface: #f3f2e9;
+        --color-surface-alt: #e4e8eb;
+        --color-on-surface: #243348;
+        --color-on-surface-strong: #07111f;
+        --color-primary: #173b72;
+        --color-on-primary: #ffffff;
+        --color-secondary: #31588f;
+        --color-on-secondary: #ffffff;
+        --color-outline: #a3b0bf;
+        --color-outline-strong: #34465d;
+        --color-control-outline: #64748b;
+        --color-surface-dark: #07111f;
+        --color-surface-dark-alt: #10233d;
+        --color-on-surface-dark: #d5ddeb;
+        --color-on-surface-dark-strong: #f7f8f3;
+        --color-primary-dark: #c7ff4a;
+        --color-on-primary-dark: #07111f;
+        --color-secondary-dark: #7aa4df;
+        --color-on-secondary-dark: #07111f;
+        --color-outline-dark: #526981;
+        --color-outline-dark-strong: #c8d5e3;
+        --color-control-outline-dark: #718397;
+        --color-info: #1476b8;
+        --color-on-info: #ffffff;
+        --color-success: #258256;
+        --color-on-success: #ffffff;
+        --color-warning: #a85e00;
+        --color-on-warning: #ffffff;
+        --color-danger: #b42c46;
+        --color-on-danger: #ffffff;
+        --radius-radius: var(--radius-sm);
+    }
+
+    [data-theme=araihu].dark,
+    .dark [data-theme=araihu] {
+        color-scheme: dark;
+        --araihu-logo-surface: var(--color-surface-dark);
+        --araihu-logo-ink: var(--color-on-surface-dark-strong);
+        --araihu-logo-signal: var(--color-primary-dark);
+    }
+
     [data-theme=goshtoso] {
         /* Goshtoso brand theme — palette pulled from the mascot art:
            Yale Blue (sky/sea) / Lime Moss + Forest Moss (palms, shirt) /
@@ -1029,6 +1078,10 @@
   .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-outline-dark-strong);
   }
+}
+
+.landing-product-card {
+  max-width: none;
 }
 
 @keyframes landing-rise {

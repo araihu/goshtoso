@@ -5,6 +5,7 @@ import (
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
+	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
@@ -13,35 +14,23 @@ import (
 	"github.com/araihu/goshtoso/site/internal/themes"
 )
 
-type exampleApp struct {
-	Title    string
-	Tag      string
-	Desc     string
-	URL      string
-	Image    string
-	ImageAlt string
+type showcaseApp struct {
+	Title          string
+	Tag            string
+	Desc           string
+	URL            string
+	Image          string
+	ImageAlt       string
+	WorkInProgress bool
 }
 
-func getExampleApps() []exampleApp {
-	return []exampleApp{
-		{Title: "Todo", Tag: "HTMX CRUD", Desc: "Cookie-backed, fully HTMX-driven CRUD with no server-side session state.", URL: "/examples/todo", Image: "/assets/images/homepage/examples/todo.webp", ImageAlt: "Todo app task form, filters, priorities, and task rows"},
-		{Title: "Expenses", Tag: "HTMX forms", Desc: "Cookie-backed spend log with search, category filters, pagination, and a live total.", URL: "/examples/expense", Image: "/assets/images/homepage/examples/expense.webp", ImageAlt: "Expense tracker form, category filters, and transaction rows"},
-		{Title: "Chat", Tag: "WebSocket", Desc: "Real-time messaging over a WebSocket, server-rendered bubbles.", URL: "/examples/chat", Image: "/assets/images/homepage/examples/chat.webp", ImageAlt: "Live chat app exchanging server-rendered messages with an ELIZA bot"},
-		{Title: "Logs", Tag: "Server-sent events", Desc: "Server-push log stream over SSE (htmx-ext-sse) with client-side filtering.", URL: "/examples/logs", Image: "/assets/images/homepage/examples/logs.webp", ImageAlt: "Streaming server log viewer with filters and connection controls"},
-		{Title: "Profile", Tag: "IndexedDB", Desc: "An account settings screen composed from form components.", URL: "/examples/profile", Image: "/assets/images/homepage/examples/profile.webp", ImageAlt: "Profile editor with local avatar storage and identity fields"},
-		{Title: "Ticker", Tag: "Live SSE", Desc: "A streaming price table that updates rows in place.", URL: "/examples/ticker", Image: "/assets/images/homepage/examples/ticker.webp", ImageAlt: "Live stock cards updating prices over server-sent events"},
-		{Title: "Wizard", Tag: "Server validation", Desc: "A multi-step setup flow with validation, progress, review, and cookie-backed state.", URL: "/examples/wizard", Image: "/assets/images/homepage/examples/wizard.webp", ImageAlt: "Onboarding wizard with server-validated account fields and progress steps"},
+func getShowcaseApps() []showcaseApp {
+	return []showcaseApp{
+		{Title: "Manja", Tag: "OpenAPI publishing", Desc: "Source-connected OpenAPI publishing that keeps public API documentation stable.", URL: "https://manja.araihu.com/", Image: "/assets/images/homepage/products/manja.webp", ImageAlt: "Manja product site showing source-connected OpenAPI publishing", WorkInProgress: true},
+		{Title: "X-9", Tag: "Infrastructure monitoring", Desc: "An external monitoring control plane for infrastructure across mixed failure domains.", URL: "https://x9.araihu.com/", Image: "/assets/images/homepage/products/x9.webp", ImageAlt: "X-9 product site showing its external monitoring control plane", WorkInProgress: true},
+		{Title: "Pajé", Tag: "Agent orchestration", Desc: "Durable orchestration for agent-driven code changes, with Codex as the first harness.", URL: "https://paje.araihu.com/en/", Image: "/assets/images/homepage/products/paje.webp", ImageAlt: "Pajé product site showing its durable code-change workflow", WorkInProgress: true},
+		{Title: "Arai Hû", Tag: "Independent software", Desc: "The organization behind Goshtoso and durable open software for work that matters.", URL: "https://araihu.com/", Image: "/assets/images/homepage/products/araihu.webp", ImageAlt: "Arai Hû organization site and its independent software mission"},
 	}
-}
-
-func getFeaturedExampleApp() exampleApp {
-	apps := getExampleApps()
-	return apps[len(apps)-1]
-}
-
-func getSupportingExampleApps() []exampleApp {
-	apps := getExampleApps()
-	return apps[:len(apps)-1]
 }
 
 type themeChip struct {
@@ -77,6 +66,7 @@ templ LandingPage() {
 			// Doing this here (not in Alpine x-init) keeps the homepage's theme in
 			// lock-step with the rest of the site and avoids a flash of the default
 			// theme on navigation. Shares localStorage key 'theme' / 'darkMode'.
+			<script src={ siteassets.LandingPlaygroundBundleURL }></script>
 			<script src={ siteassets.DemoBundleURL }></script>
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
@@ -89,6 +79,84 @@ templ LandingPage() {
 			@cookieConsent()
 		</body>
 	</html>
+}
+
+// LandingPlaygroundPage renders the interactive theme surface in an isolated
+// document so preview choices cannot restyle or persist into the homepage.
+templ LandingPlaygroundPage() {
+	<!DOCTYPE html>
+	<html lang="en" data-theme="araihu" data-landing-playground class="overflow-hidden">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="robots" content="noindex"/>
+			<title>Goshtoso theme playground</title>
+			<script src={ siteassets.LandingPlaygroundBundleURL }></script>
+			<link rel="stylesheet" href="/assets/styles.css"/>
+			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
+			<script defer src={ assets.AlpineJSURL }></script>
+			<script src={ assets.HTMXURL }></script>
+		</head>
+		<body class="m-0 overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
+			@landingPlaygroundSurface()
+		</body>
+	</html>
+}
+
+templ landingPlaygroundSurface() {
+	<div class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
+		<div class="flex flex-col gap-4 border-b border-outline bg-surface-alt/70 px-4 py-4 dark:border-outline-dark dark:bg-surface-dark-alt/70 sm:flex-row sm:items-center sm:justify-between sm:px-6" x-data="{ theme: document.documentElement.dataset.theme || 'araihu' }">
+			<p class="font-title text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Live theme preview</p>
+			<div class="flex max-w-full sm:items-end">
+				<div id="home-theme-picker" class="max-w-full overflow-x-auto pb-1" role="radiogroup" aria-label="Homepage theme">
+					@radio.RadioBar() {
+						for _, c := range getThemeChips() {
+							@radio.Radio(radio.Config{
+								ID:        "home-theme-" + c.Key,
+								Name:      "home-theme",
+								Value:     c.Key,
+								Label:     c.Label,
+								Checked:   c.Key == "araihu",
+								Segmented: true,
+								RootClass: "min-w-28 px-4",
+								Alpine: &radio.AlpineConfig{
+									BindChecked: "theme === $el.value",
+									OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme",
+								},
+								InputAttrs: templ.Attributes{"data-theme-key": c.Key},
+							})
+						}
+					}
+				</div>
+			</div>
+		</div>
+		<div class="space-y-6 p-4 sm:p-6">
+			<div class="flex flex-wrap items-center gap-3 border-b border-outline pb-6 dark:border-outline-dark">
+				@button.Button() {
+					Primary
+				}
+				@button.Button(button.WithTone(button.ToneSecondary)) {
+					Secondary
+				}
+				@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess})
+				@badge.Badge(badge.Config{Label: "Pending", Tone: badge.ToneWarning})
+				@toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true})
+			</div>
+			<div class="overflow-x-auto">
+				@table.Table(table.Config{
+					ID:       "home-table",
+					HTMX:     &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
+					LazyLoad: true,
+					Columns: []table.Column{
+						{Key: "id", Label: "Customer ID", Sortable: true},
+						{Key: "name", Label: "Name", Sortable: true},
+						{Key: "email", Label: "Email"},
+						{Key: "membership", Label: "Membership", Sortable: true},
+					},
+				})
+			</div>
+		</div>
+	</div>
 }
 
 templ landingContent() {
@@ -108,13 +176,18 @@ templ landingContent() {
 						<a href="/components/accordion" class="hidden rounded-radius px-3 py-2 font-medium text-on-surface transition-colors hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark sm:inline-flex">Components</a>
 						<a href="/examples" class="hidden rounded-radius px-3 py-2 font-medium text-on-surface transition-colors hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark md:inline-flex">Examples</a>
 						<a href="/getting-started" class="rounded-radius border border-outline bg-surface px-3 py-2 font-medium text-on-surface-strong transition-colors hover:border-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:border-primary-dark sm:px-4">Get started</a>
+						<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" aria-label="GitHub repository" class="inline-flex size-10 items-center justify-center rounded-radius text-on-surface transition-colors hover:bg-surface hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark">
+							<svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+								<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+							</svg>
+						</a>
 					</nav>
 				</header>
 				<div id="hero-content" tabindex="-1" class="grid items-center gap-12 py-14 outline-none sm:py-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] lg:gap-16 lg:py-24">
-					<div class="landing-hero-copy max-w-2xl">
+					<div class="landing-hero-copy min-w-0 max-w-2xl">
 						<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-outline bg-surface px-3 py-1.5 text-xs font-bold text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark">
 							<span class="size-2 rounded-full bg-success dark:bg-success-dark"></span>
-							No JavaScript build step
+							JavaScript build step optional
 						</div>
 						<h1 class="font-title text-4xl font-bold leading-[1.05] text-on-surface-strong dark:text-on-surface-dark-strong sm:text-6xl lg:text-7xl">
 							Build server-rendered Go interfaces with typed components.
@@ -129,13 +202,13 @@ templ landingContent() {
 							<a href="/components/accordion" class="inline-flex min-h-11 items-center justify-center rounded-radius border border-outline bg-surface px-4 py-3 text-sm font-bold text-on-surface-strong transition-colors hover:border-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:border-primary-dark sm:px-6">
 								Browse { componentCount() } components
 							</a>
-							<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center justify-center rounded-radius border border-outline px-4 py-3 text-sm font-medium text-on-surface underline-offset-4 hover:border-primary hover:underline dark:border-outline-dark dark:text-on-surface-dark dark:hover:border-primary-dark sm:border-0">
-								GitHub
-							</a>
 						</div>
-						<div class="mt-8 flex max-w-xl items-center gap-3 overflow-x-auto rounded-radius border border-outline bg-surface px-4 py-3 dark:border-outline-dark dark:bg-surface-dark" aria-label="Install Goshtoso">
-							<span class="font-mono text-xs font-bold text-primary dark:text-primary-dark" aria-hidden="true">$</span>
-							<code class="whitespace-nowrap font-mono text-[0.7rem] text-on-surface-strong dark:text-on-surface-dark-strong sm:text-xs">go get github.com/araihu/goshtoso@latest</code>
+						<div class="mt-8 w-full min-w-0 max-w-xl" aria-label="Install Goshtoso">
+							@codeblock.CodeBlock(codeblock.Config{
+								Language: "bash",
+								Label:    "Install Goshtoso",
+								Code:     "go get github.com/araihu/goshtoso@latest",
+							})
 						</div>
 					</div>
 					<div class="landing-hero-preview relative mx-auto w-full max-w-xl" data-hero-preview>
@@ -178,72 +251,18 @@ templ landingContent() {
 		<div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
 			<!-- Live playground -->
 			<section id="playground" class="mb-28 sm:mb-32">
-				<div class="mb-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)] lg:items-end">
-					<div>
-						<p class="mb-3 text-xs font-bold text-primary dark:text-primary-dark">LIVE PLAYGROUND</p>
-						<h2 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Change the theme. Keep the behavior.</h2>
-					</div>
-					<p class="max-w-xl text-base leading-7 text-on-surface dark:text-on-surface-dark lg:justify-self-end">
-						Every control below is a real Goshtoso component. Switch themes and the full surface updates instantly without a reload.
-					</p>
+				<div class="mb-8">
+					<p class="mb-3 text-xs font-bold text-primary dark:text-primary-dark">LIVE PLAYGROUND</p>
+					<h2 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Change the theme. Keep the behavior.</h2>
 				</div>
-				<div class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
-					<div class="flex flex-col gap-4 border-b border-outline bg-surface-alt/70 px-4 py-4 dark:border-outline-dark dark:bg-surface-dark-alt/70 sm:flex-row sm:items-center sm:justify-between sm:px-6" x-data="{ theme: document.documentElement.dataset.theme }">
-						<div>
-							<p class="font-title text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Customer workspace</p>
-							<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Live theme preview</p>
-						</div>
-						<div class="flex max-w-full flex-col gap-2 sm:items-end">
-							<div id="home-theme-picker" class="max-w-full overflow-x-auto pb-1" role="radiogroup" aria-label="Homepage theme">
-								@radio.RadioBar() {
-									for _, c := range getThemeChips() {
-										@radio.Radio(radio.Config{
-											ID:        "home-theme-" + c.Key,
-											Name:      "home-theme",
-											Value:     c.Key,
-											Label:     c.Label,
-											Checked:   c.Key == "goshtoso",
-											Segmented: true,
-											RootClass: "min-w-28 px-4",
-											Alpine: &radio.AlpineConfig{
-												BindChecked: "theme === $el.value",
-												OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme; if (window.goshtosoStorageConsent && window.goshtosoStorageConsent.allowed()) localStorage.theme = theme",
-											},
-											InputAttrs: templ.Attributes{"data-theme-key": c.Key},
-										})
-									}
-								}
-							</div>
-							<a href="/docs/theme" class="text-xs font-medium text-primary underline underline-offset-2 dark:text-primary-dark">Explore all { themes.Count() } themes</a>
-						</div>
-					</div>
-					<div class="space-y-6 p-4 sm:p-6">
-						<div class="flex flex-wrap items-center gap-3 border-b border-outline pb-6 dark:border-outline-dark">
-							@button.Button() {
-								Primary
-							}
-							@button.Button(button.WithTone(button.ToneSecondary)) {
-								Secondary
-							}
-							@badge.Badge(badge.Config{Label: "Active", Tone: badge.ToneSuccess})
-							@badge.Badge(badge.Config{Label: "Pending", Tone: badge.ToneWarning})
-							@toggle.Toggle(toggle.Config{ID: "homeToggle", Label: "Notifications", Checked: true})
-						</div>
-						<div class="overflow-x-auto">
-							@table.Table(table.Config{
-								ID:       "home-table",
-								HTMX:     &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=lazy"},
-								LazyLoad: true,
-								Columns: []table.Column{
-									{Key: "id", Label: "Customer ID", Sortable: true},
-									{Key: "name", Label: "Name", Sortable: true},
-									{Key: "email", Label: "Email"},
-									{Key: "membership", Label: "Membership", Sortable: true},
-								},
-							})
-						</div>
-					</div>
-				</div>
+				<iframe
+					id="theme-playground-frame"
+					title="Interactive Goshtoso theme playground"
+					src="/playground/theme"
+					loading="lazy"
+					scrolling="no"
+					class="block h-[34rem] w-full overflow-hidden rounded-radius bg-transparent sm:h-[28rem]"
+				></iframe>
 			</section>
 			<!-- How it works -->
 			<section id="how-it-works" class="mb-20 sm:mb-24">
@@ -251,84 +270,105 @@ templ landingContent() {
 					<h2 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">A short path from handler to interface.</h2>
 					<p class="mt-4 text-base leading-7 text-on-surface dark:text-on-surface-dark">Use the Go tools you already know. Goshtoso adds the UI layer without moving your application into a client runtime.</p>
 				</div>
-				<div class="grid grid-cols-1 overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark md:grid-cols-3">
+				<div class="grid grid-cols-1 overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark md:grid-cols-2 lg:grid-cols-4">
 					<div class="p-6 md:p-8">
 						<code class="mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark">component.templ</code>
 						<h3 class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Compose typed templates</h3>
 						<p class="mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark">Write typed <code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">.templ</code> components that compile directly to Go.</p>
 					</div>
-					<div class="border-y border-outline bg-surface-alt/40 p-6 dark:border-outline-dark dark:bg-surface-dark-alt/40 md:border-x md:border-y-0 md:p-8">
+					<div class="border-t border-outline bg-surface-alt/40 p-6 dark:border-outline-dark dark:bg-surface-dark-alt/40 md:border-l md:border-t-0 md:p-8">
 						<code class="mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark">hx-target="#main"</code>
 						<h3 class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Return HTML fragments</h3>
 						<p class="mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark">Return rendered fragments from handlers and let HTMX swap plain HTML.</p>
 					</div>
-					<div class="p-6 md:p-8">
+					<div class="border-t border-outline p-6 dark:border-outline-dark md:p-8 lg:border-l lg:border-t-0">
 						<code class="mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark">go build ./...</code>
 						<h3 class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Ship one Go binary</h3>
 						<p class="mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark">Bundle runtime assets with no <code class="font-mono text-on-surface-strong dark:text-on-surface-dark-strong">node_modules</code>, CDN dependency, or client router.</p>
 					</div>
+					<div class="border-t border-outline bg-surface-alt/40 p-6 dark:border-outline-dark dark:bg-surface-dark-alt/40 md:border-l md:p-8 lg:border-t-0">
+						<code class="mb-8 block font-mono text-xs font-bold text-primary dark:text-primary-dark">templ generate</code>
+						<h3 class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Publish static sites</h3>
+						<p class="mt-3 text-sm leading-6 text-on-surface dark:text-on-surface-dark">Render complete pages at build time and serve them from any static host.</p>
+					</div>
 				</div>
 			</section>
-			<!-- Example apps gallery -->
+			<!-- Optional extension modules -->
+			<section id="extensions" class="mb-20 sm:mb-24" aria-labelledby="extensions-title">
+				<div class="mb-8 max-w-3xl">
+					<p class="mb-3 text-xs font-bold uppercase text-primary dark:text-primary-dark">Optional modules</p>
+					<h2 id="extensions-title" class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Extend the system, keep the Go workflow.</h2>
+				<p class="mt-4 text-base leading-7 text-on-surface dark:text-on-surface-dark">Companion modules add specialized capabilities without expanding Goshtoso's core dependency surface.</p>
+			</div>
+			<div>
+				<article class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
+						<div class="flex flex-col gap-4 border-b border-outline p-5 dark:border-outline-dark sm:flex-row sm:items-end sm:justify-between sm:p-6">
+							<div>
+								<p class="text-xs font-bold uppercase text-primary dark:text-primary-dark">Interactive visualization</p>
+								<h3 class="mt-2 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso Charts</h3>
+								<p class="mt-2 max-w-2xl text-sm leading-6 text-on-surface dark:text-on-surface-dark">Typed static and interactive charts that inherit Goshtoso themes and keep their runtime assets local.</p>
+							</div>
+							<div class="flex shrink-0 flex-wrap gap-x-4 gap-y-2 text-sm font-bold">
+								<a href="https://charts.goshtoso.araihu.com" target="_blank" rel="noopener" class="text-primary underline-offset-4 hover:underline dark:text-primary-dark">View docs <span aria-hidden="true">↗</span></a>
+								<a href="https://github.com/araihu/goshtoso-charts" target="_blank" rel="noopener" class="text-on-surface underline-offset-4 hover:text-primary hover:underline dark:text-on-surface-dark dark:hover:text-primary-dark">GitHub <span aria-hidden="true">↗</span></a>
+							</div>
+						</div>
+						<div
+							id="charts-showcase-loader"
+							hx-get="/playground/extensions/charts/frame?variant=line-3d"
+							hx-trigger="load"
+							hx-swap="outerHTML"
+							class="flex h-[30rem] w-full items-center justify-center bg-surface-alt/40 p-6 dark:bg-surface-dark-alt/40"
+							role="status"
+							aria-live="polite"
+						>
+							<div class="w-full max-w-sm space-y-3" aria-hidden="true">
+								<div class="h-3 w-28 rounded-radius bg-outline/40 dark:bg-outline-dark/40"></div>
+								<div class="h-4 w-48 rounded-radius bg-outline/50 dark:bg-outline-dark/50"></div>
+								<div class="h-72 rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark"></div>
+							</div>
+							<span class="sr-only">Loading Goshtoso Charts preview</span>
+						</div>
+					</article>
+			</div>
+			</section>
+			<!-- Arai Hû product gallery -->
 			<section id="examples" class="mb-28 sm:mb-32">
-				<div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+			<div class="mb-8">
 					<div>
 						<h2 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Built with Goshtoso</h2>
-						<p class="mt-3 max-w-2xl text-on-surface dark:text-on-surface-dark">Full applications that show components working together across forms, live data, streaming, and multi-step flows.</p>
+						<p class="mt-3 max-w-2xl text-on-surface dark:text-on-surface-dark">Real Arai Hû products using Goshtoso across API publishing, monitoring, orchestration, and the organization site itself.</p>
 					</div>
-					<a href="/examples" class="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-primary underline-offset-4 hover:underline dark:text-primary-dark">Explore every example <span aria-hidden="true">→</span></a>
-				</div>
-				{{ featured := getFeaturedExampleApp() }}
-				<div class="space-y-6">
-					<a href={ templ.SafeURL(featured.URL) } data-example-card data-featured-example-card class="group mx-auto block w-full max-w-sm rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark sm:max-w-none">
-						@card.Card(card.Config{
-							Image:       featured.Image,
-							ImageAlt:    featured.ImageAlt,
-							Tag:         featured.Tag,
-							Title:       featured.Title,
-							Description: featured.Desc,
-							Footer:      exampleCardAction(),
-							Layout:      card.LayoutHorizontal,
-							RootClass:   "max-w-none bg-surface transition-colors hover:border-primary dark:bg-surface-dark dark:hover:border-primary-dark [&>div:first-child]:h-36 sm:[&>div:first-child]:h-40 md:[&>div:first-child]:h-auto [&>div:first-child>img]:h-full [&>div:first-child>img]:w-full [&>div:last-child]:gap-2 [&>div:last-child]:p-4 sm:[&>div:last-child]:gap-4 sm:[&>div:last-child]:p-6",
-						})
-					</a>
-				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3" role="region" aria-label="Example applications">
-						for i, a := range getSupportingExampleApps() {
-							{{ supportingClass := "group block h-full w-full max-w-sm rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark min-[480px]:mx-auto sm:max-w-none" }}
-							if i >= 2 {
-								{{ supportingClass += " max-[479px]:hidden" }}
-							}
-							<a href={ templ.SafeURL(a.URL) } data-example-card data-supporting-example-card class={ supportingClass }>
-								@card.Card(card.Config{
-									Image:       a.Image,
-									ImageAlt:    a.ImageAlt,
-									Tag:         a.Tag,
-									Title:       a.Title,
-									Description: a.Desc,
-									Footer:      exampleCardAction(),
-									RootClass:   "h-full max-w-none bg-surface transition-colors hover:border-primary dark:bg-surface-dark dark:hover:border-primary-dark [&>div:first-child]:h-32 sm:[&>div:first-child]:h-40 md:[&>div:first-child]:h-44 [&>div:first-child>img]:h-full [&>div:first-child>img]:w-full [&>div:last-child]:gap-2 [&>div:last-child]:p-4 sm:[&>div:last-child]:gap-4 sm:[&>div:last-child]:p-6",
-								})
-							</a>
-						}
-					</div>
-				</div>
-			</section>
-			<!-- Stack strip -->
-			<section id="stack-strip" class="mb-16 rounded-radius border border-outline bg-surface-alt/60 px-6 py-8 text-center dark:border-outline-dark dark:bg-surface-dark-alt/60">
-				<p class="mb-4 text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">The stack stays yours</p>
-				<div class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm">
-					<a href="https://go.dev/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">Go</a>
-					<a href="https://templ.guide/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">Templ</a>
-					<a href="https://tailwindcss.com/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">Tailwind CSS</a>
-					<a href="https://alpinejs.dev/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">Alpine.js</a>
-					<a href="https://htmx.org/" target="_blank" rel="noopener" class="font-medium text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark transition-colors">HTMX</a>
+			</div>
+				<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6" role="region" aria-label="Arai Hû products">
+					for _, app := range getShowcaseApps() {
+						<a href={ templ.SafeURL(app.URL) } target="_blank" rel="noopener" data-product-card class="group mx-auto block h-full w-full max-w-xl rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark sm:max-w-none">
+							@card.Card(card.Config{
+								Image:       app.Image,
+								ImageAlt:    app.ImageAlt,
+								Tag:         app.Tag,
+								Title:       app.Title,
+								Description: app.Desc,
+								Body:        productCardStatus(app),
+								Footer:      productCardAction(),
+								RootClass:   "landing-product-card h-full bg-surface transition-colors hover:border-primary dark:bg-surface-dark dark:hover:border-primary-dark [&>div:first-child]:aspect-[16/9] [&>div:first-child]:h-auto [&>div:first-child>img]:h-full [&>div:first-child>img]:w-full [&>div:last-child]:gap-3 [&>div:last-child]:p-5 sm:[&>div:last-child]:p-6",
+							})
+						</a>
+					}
 				</div>
 			</section>
 			<!-- Footer -->
 			<footer class="flex flex-col gap-6 border-t border-outline pt-8 text-sm dark:border-outline-dark sm:flex-row sm:items-center sm:justify-between">
 				<div class="flex items-center gap-3">
 					<img src="/assets/images/goshtoso-mark.svg" alt="" aria-hidden="true" class="size-9 rounded-radius"/>
-					<p class="text-on-surface dark:text-on-surface-dark"><span class="font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso</span><br/><span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ componentCount() } components · { themes.Count() } themes · local assets</span></p>
+					<p class="text-on-surface dark:text-on-surface-dark">
+						<span class="font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso</span><br/>
+						<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
+							{ componentCount() } components · { themes.Count() } themes · an
+							<a href="https://araihu.com" target="_blank" rel="noopener" class="font-medium underline underline-offset-2 transition-colors hover:text-primary dark:hover:text-primary-dark">Arai Hû</a>
+							project
+						</span>
+					</p>
 				</div>
 				<div class="flex flex-wrap gap-x-5 gap-y-2">
 					<a href="/getting-started" class="text-primary underline-offset-4 hover:underline dark:text-primary-dark">Get started</a>
@@ -340,11 +380,19 @@ templ landingContent() {
 	</main>
 }
 
-templ exampleCardAction() {
+templ productCardAction() {
 	<span class="inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:gap-2 dark:text-primary-dark">
-		View app
-		<span aria-hidden="true">→</span>
+		Visit site
+		<span aria-hidden="true">↗</span>
 	</span>
+}
+
+templ productCardStatus(app showcaseApp) {
+	if app.WorkInProgress {
+		<div>
+			@badge.Badge(badge.Config{Label: "Work in progress", Tone: badge.ToneWarning, Appearance: badge.AppearanceSoft, Size: badge.SizeSM})
+		</div>
+	}
 }
 
 // cookieConsent renders the browser-storage notice. Keep in lock-step with the

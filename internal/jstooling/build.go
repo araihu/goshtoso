@@ -72,6 +72,18 @@ var defaultArtifacts = []artifact{
 			"site/assets/js/src/theme-page.js",
 		},
 	},
+	{
+		output: "site/assets/js/landing-playground.min.js",
+		inputs: []string{
+			"site/assets/js/src/landing-playground.js",
+		},
+	},
+	{
+		output: "site/assets/js/charts-showcase.min.js",
+		inputs: []string{
+			"site/assets/js/src/charts-showcase.js",
+		},
+	},
 }
 
 // Build minifies first-party JavaScript into tracked generated artifacts. In
