@@ -35,8 +35,8 @@ func TestLandingPageRendersSEOMetadata(t *testing.T) {
 
 	require.NoError(t, err)
 	body := rec.Body.String()
-	require.Contains(t, body, "<title>Goshtoso - Go HTMX Component Library</title>")
-	require.Contains(t, body, `<meta name="description" content="Build interactive, server-rendered Go UIs`)
+	require.Contains(t, body, "<title>Go UI components for server-rendered apps | Goshtoso</title>")
+	require.Contains(t, body, `<meta name="description" content="Build server-rendered Go interfaces with pre-generated templ components`)
 	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/">`)
 	require.Contains(t, body, `"@type":"SoftwareApplication"`)
 }
