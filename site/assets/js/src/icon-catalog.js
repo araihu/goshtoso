@@ -24,7 +24,7 @@
   }
 
   // goshtosoIconCode is the one copy encoder. Alpine and tests call this exact
-  // function so the visible source cannot drift from the clipboard source.
+  // function so visible and copied .templ source stay in lockstep.
   window.goshtosoIconCode = function (input) {
     var fields = [
       "SpriteURL: heroicons.SpriteURL",
@@ -39,24 +39,9 @@
     if (root) fields.push("RootClass: " + goString(root));
 
     return [
-      "package main",
-      "",
-      "import (",
-      '    "context"',
-      '    "log"',
-      '    "os"',
-      '',
-      '    "github.com/araihu/goshtoso/components/icon"',
-      '    "github.com/araihu/goshtoso/components/icon/heroicons"',
-      ")",
-      "",
-      "func main() {",
-      "    if err := icon.Icon(icon.Config{",
-    ].concat(fields.map(function (field) { return "        " + field + ","; }), [
-      "    }).Render(context.Background(), os.Stdout); err != nil {",
-      "        log.Fatal(err)",
-      "    }",
-      "}",
+      "@icon.Icon(icon.Config{",
+    ].concat(fields.map(function (field) { return "    " + field + ","; }), [
+      "})",
       "",
     ]).join("\n");
   };
@@ -68,14 +53,11 @@
       return {
         open: false,
         selected: { name: "Icon16SolidCheck", symbol: "hi-16-solid-check" },
-        size: "",
+        size: "xl",
         label: "",
         decorative: false,
-        rootClass: "",
-        copied: false,
-        copyAnnouncement: "",
+        rootClass: "text-primary",
         lastTrigger: null,
-        _copyTimer: 0,
         _syncing: false,
         init: function () {
           var component = this;
@@ -98,11 +80,9 @@
             symbol: card.dataset.iconSymbol || "hi-16-solid-check",
           };
           this.lastTrigger = card;
-          this.copied = false;
-          this.copyAnnouncement = "";
           this.open = true;
           this.$nextTick(function () {
-            var control = document.getElementById("icon-size");
+            var control = document.getElementById("icon-size-xl");
             if (control) control.focus();
           });
         },
@@ -122,7 +102,14 @@
         get previewClass() {
           var classes = { xs: "size-3", sm: "size-4", "": "size-5", lg: "size-6", xl: "size-8" };
           var root = String(this.rootClass || "").trim();
-          return classes[this.size] + (root ? " " + root : "");
+          var darkClasses = {
+            "text-primary": "dark:text-primary-dark",
+            "text-secondary": "dark:text-secondary-dark",
+            "text-success": "dark:text-success-dark",
+            "text-warning": "dark:text-warning-dark",
+            "text-danger": "dark:text-danger-dark",
+          };
+          return classes[this.size] + (root ? " " + root : "") + (darkClasses[root] ? " " + darkClasses[root] : "");
         },
         get code() {
           return window.goshtosoIconCode({
@@ -132,28 +119,6 @@
             decorative: this.decorative,
             rootClass: this.rootClass,
           });
-        },
-        copyCode: function () {
-          var component = this;
-          if (!navigator.clipboard || !navigator.clipboard.writeText) {
-            this.copyAnnouncement = "Clipboard unavailable; select the code to copy it.";
-            return;
-          }
-          navigator.clipboard.writeText(this.code).then(function () {
-            component.copied = true;
-            component.copyAnnouncement = "Compilable Go source copied to clipboard.";
-            if (component._copyTimer) window.clearTimeout(component._copyTimer);
-            component._copyTimer = window.setTimeout(function () {
-              component.copied = false;
-              component._copyTimer = 0;
-            }, 2000);
-          }).catch(function () {
-            component.copyAnnouncement = "Could not copy code; select it manually.";
-          });
-        },
-        destroy: function () {
-          if (this._copyTimer) window.clearTimeout(this._copyTimer);
-          this._copyTimer = 0;
         },
       };
     });

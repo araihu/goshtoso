@@ -37,6 +37,9 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 	}))
 
 	for _, componentPage := range componentPages {
+		if componentPage.Active == "app-shell" {
+			continue
+		}
 		t.Run(componentPage.Title, func(t *testing.T) {
 			link := sidebar.Locator("a[href='" + componentPage.Path + "']").Filter(playwright.LocatorFilterOptions{
 				HasText: componentPage.Title,
@@ -50,6 +53,10 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 	legacyLinkCount, err := sidebar.Locator("a[href='/components/combobox-new']").Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, legacyLinkCount, "combobox-new must not be exposed after v2 becomes canonical")
+
+	appShellLinkCount, err := sidebar.Locator("a[href='/components/app-shell']").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, appShellLinkCount, "the legacy App Shell page remains routable but must not duplicate the App Shells module")
 }
 
 func TestSidebar_LinksNavigate(t *testing.T) {
@@ -116,12 +123,20 @@ func TestSidebar_ExamplesTopItemNavigatesToOverview(t *testing.T) {
 	examplesLink := sidebar.Locator("a[href='/examples']")
 	count, err := examplesLink.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 1, count, "Examples overview should have a single top-level sidebar link")
+	assert.Equal(t, 1, count, "Examples overview should have a single sidebar link")
 
-	oldOverviewItem := sidebar.Locator("a[href='/examples'][data-sidebar-item='Overview']")
-	count, err = oldOverviewItem.Count()
+	overviewItem := sidebar.Locator("a[href='/examples'][data-sidebar-item='Overview']")
+	count, err = overviewItem.Count()
 	require.NoError(t, err)
-	assert.Zero(t, count, "old Examples > Overview nav item should be gone")
+	assert.Equal(t, 1, count, "Examples should expose its overview after Modules")
+
+	moduleHeading := sidebar.GetByRole("heading", playwright.LocatorGetByRoleOptions{Name: "Modules", Exact: playwright.Bool(true)})
+	examplesHeading := sidebar.GetByRole("heading", playwright.LocatorGetByRoleOptions{Name: "Examples", Exact: playwright.Bool(true)})
+	moduleBox, err := moduleHeading.BoundingBox()
+	require.NoError(t, err)
+	examplesBox, err := examplesHeading.BoundingBox()
+	require.NoError(t, err)
+	assert.Less(t, moduleBox.Y, examplesBox.Y, "Modules should precede Examples")
 
 	require.NoError(t, examplesLink.Click())
 	require.NoError(t, page.WaitForURL("**/examples"))

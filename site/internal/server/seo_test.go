@@ -35,10 +35,23 @@ func TestLandingPageRendersSEOMetadata(t *testing.T) {
 
 	require.NoError(t, err)
 	body := rec.Body.String()
-	require.Contains(t, body, "<title>Goshtoso - Go HTMX Component Library</title>")
-	require.Contains(t, body, `<meta name="description" content="Build interactive, server-rendered Go UIs`)
+	require.Contains(t, body, "<title>Go UI components for server-rendered apps | Goshtoso</title>")
+	require.Contains(t, body, `<meta name="description" content="Build server-rendered Go interfaces with pre-generated templ components`)
 	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/">`)
 	require.Contains(t, body, `"@type":"SoftwareApplication"`)
+}
+
+func TestLandingThemePlaygroundRouteRendersIsolatedDocument(t *testing.T) {
+	s := &Server{}
+	req := httptest.NewRequest(http.MethodGet, "/playground/theme", nil)
+	rec := httptest.NewRecorder()
+
+	s.handleLandingThemePlayground(rec, req)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Equal(t, "text/html; charset=utf-8", rec.Header().Get("Content-Type"))
+	require.Contains(t, rec.Body.String(), `<html lang="en" data-theme="araihu" data-landing-playground`)
+	require.Contains(t, rec.Body.String(), `id="home-theme-picker"`)
 }
 
 func TestAgentsPageRendersSkillInstallGuidance(t *testing.T) {

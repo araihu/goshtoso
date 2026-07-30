@@ -30,11 +30,12 @@ func TestThemePageRendersInertBootstrapData(t *testing.T) {
 
 	var data themePageBootstrap
 	require.NoError(t, json.Unmarshal([]byte(html[start:start+end]), &data))
-	require.Len(t, data.AllThemes, 15)
-	require.Equal(t, "goshtoso", data.AllThemes[0])
+	require.Len(t, data.AllThemes, 16)
+	require.Equal(t, "araihu", data.AllThemes[0])
 	require.Equal(t, "1rem", data.RadiusMap["2xl"])
 	require.Equal(t, "Inter", data.GoogleFontMap["Inter"])
 	require.Contains(t, data.Blocks["goshtoso"], "[data-theme=goshtoso]")
+	require.Contains(t, data.Blocks["araihu"], "[data-theme=araihu]")
 	require.NotEmpty(t, data.ThemeClassMap["minimal"]["primary"])
 	require.Greater(t, len(data.AllTokens), 10)
 	require.Equal(t, "Primary", data.TokenLabels["primary"])

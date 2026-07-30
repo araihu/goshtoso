@@ -9,6 +9,7 @@ import (
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/sidebar"
 	siteassets "github.com/araihu/goshtoso/site/assets"
+	"github.com/araihu/goshtoso/site/internal/buildinfo"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 )
 
@@ -32,13 +33,13 @@ func componentDocsConfig(persist bool) componentdocshell.Config {
 		}
 	}
 	return componentdocshell.Config{
-		Brand:      componentdocshell.Brand{Name: SiteName, HomeURL: "/", Logo: templ.Raw(`<img src="/assets/images/goshtoso-mark.svg" alt="" aria-hidden="true" class="size-8 rounded-lg">`), FaviconURL: "/favicon.svg"},
+		Brand:      componentdocshell.Brand{Name: SiteName, HomeURL: "/", Logo: templ.Raw(`<img src="/assets/images/goshtoso-logo.svg" alt="" aria-hidden="true" class="h-12 w-auto">`), HideName: true, FaviconURL: "/favicon.svg", Badge: componentDocsBuildBadge(buildinfo.GoDocsVersion())},
 		Navigation: componentdocshell.Navigation{Items: getSidebarTopItems(""), SectionsTitle: "Components", Sections: sections, SearchPlaceholder: "Search", SearchSlot: sidebarSearchSlot()},
 		Appearance: componentdocshell.AppearanceConfig{
-			Themes:             getThemeOptions(),
-			DefaultTheme:       "araihu",
-			ThemeSelectorID:    "site-theme",
-			PersistPreferences: persist,
+			Themes:               getThemeOptions(),
+			DefaultTheme:         "araihu",
+			DisableThemeSelector: true,
+			PersistPreferences:   persist,
 			DarkModeBinding: &componentdocshell.DarkModeBinding{
 				ButtonID:         "darkModeToggleBtn",
 				StateExpression:  "$store.darkMode.on",
@@ -55,6 +56,20 @@ func componentDocsConfig(persist bool) componentdocshell.Config {
 		},
 		TOC:     componentdocshell.TOCConfig{RailID: "toc-rail", ListID: "toc-list"},
 		BodyEnd: componentDocsBodyEnd(), RepositoryURL: "https://github.com/araihu/goshtoso", AssetPrefix: "/componentdocshell/assets/",
+	}
+}
+
+func componentDocsBuildBadge(version string) *componentdocshell.BrandBadge {
+	if version == "development" {
+		return &componentdocshell.BrandBadge{Label: "dev", AriaLabel: "Development build"}
+	}
+	if !goModuleVersionPattern.MatchString(version) {
+		return nil
+	}
+	return &componentdocshell.BrandBadge{
+		Label:     version,
+		AriaLabel: "Goshtoso release " + version,
+		Href:      "https://github.com/araihu/goshtoso/releases/tag/" + version,
 	}
 }
 
@@ -84,6 +99,11 @@ func componentDocsItemsContain(items []sidebar.Item, active string) bool {
 }
 
 func componentDocsID(active string) string {
+	// Getting Started retains the legacy empty active key used by its registry
+	// entry, while the reusable shell needs the concrete navigation item ID.
+	if active == "" || active == "getting-started" {
+		return "home"
+	}
 	for _, p := range catalog.ComponentPages() {
 		if p.Active == active {
 			return "component-" + active

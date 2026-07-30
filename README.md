@@ -13,14 +13,13 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
 </p>
 
-**Goshtoso** is a Go UI component library for server-rendered web apps. It
-combines [templ](https://templ.guide/), Tailwind CSS, HTMX, and Alpine.js into a
-set of importable components with bundled CSS and JavaScript assets.
+**Goshtoso** is a Go UI component library for server-rendered web apps. Add
+pre-generated [templ](https://templ.guide/) components, serve the bundled
+assets, and use HTMX or Alpine.js only where the interface needs interaction.
 
-The project began as a hard fork of [PenguinUI](https://www.penguinui.com) and
-has grown into a Go-first component system for applications that prefer rendered
-HTML, small client-side sprinkles, and versioned dependency ownership instead
-of floating copy-paste snippets.
+The project began as a hard fork of [PenguinUI](https://www.penguinui.com). It
+now provides a Go-first component system for applications that own versioned
+dependencies and render most HTML on the server.
 
 > Goshtoso is actively evolving. The components are usable, but the API surface
 > is still being refined as the library moves toward a stable public release.
@@ -35,7 +34,7 @@ of floating copy-paste snippets.
   instant local interaction makes sense.
 - **Bundled assets** for Tailwind CSS, Alpine.js, HTMX, htmx extensions, fonts,
   and images. No runtime CDN dependency is required.
-- **Theme system included** with light/dark support and 15 built-in themes.
+- **Theme system included** with light/dark support and 16 built-in themes.
 - **Two-module repository**: a slim publishable library at the repo root and a
   demo/test site under `site/`.
 - **Go-native examples and tests** using templ generation and Playwright-backed
@@ -120,8 +119,8 @@ Goshtoso components ship pre-generated, so consumers do not run
 `templ generate` on the library itself. You still run `templ generate` for your
 own `.templ` files.
 
-For a complete integration guide, including custom Tailwind builds and manual
-asset wiring, see [docs/USAGE.md](docs/USAGE.md). The
+For a task-by-task integration guide, including your first component, custom
+Tailwind builds, and manual asset wiring, see [docs/USAGE.md](docs/USAGE.md). The
 [Goshtoso Component Model](docs/COMPONENT_MODEL.md) documents the common
 component interface, concrete return values, constructor styles, stable `Kind`
 identity, and rendered defaults.

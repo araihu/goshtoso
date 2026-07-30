@@ -176,14 +176,21 @@ func TestTheme_DarkMode_Toggle(t *testing.T) {
 	})
 }
 
-// TestTheme_Switching verifies the theme dropdown changes the data-theme attribute
-func TestTheme_Switching(t *testing.T) {
+// TestTheme_LockedToAraiHu verifies component docs ignore legacy persisted
+// themes now that the global selector has been removed.
+func TestTheme_LockedToAraiHu(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	_, browser, _ := setupPlaywright(t)
+	_, browser, cleanup := setupPlaywright(t)
+	defer cleanup()
 	page := newPage(t, browser)
+	script := `
+document.cookie = "gt_storage=allowed; Path=/; SameSite=Lax";
+localStorage.setItem("theme", "minimal");
+`
+	require.NoError(t, page.AddInitScript(playwright.Script{Content: &script}))
 
 	_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
@@ -196,50 +203,14 @@ func TestTheme_Switching(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	// Get initial theme
-	initialTheme, err := page.Evaluate(`() => document.documentElement.getAttribute('data-theme')`, nil)
+	lockedTheme, err := page.Evaluate(`() => document.documentElement.getAttribute('data-theme')`, nil)
 	require.NoError(t, err)
-	t.Logf("Initial theme: %v", initialTheme)
+	assert.Equal(t, "araihu", lockedTheme)
+	themeTriggerCount, err := page.Locator("#site-theme-trigger").Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, themeTriggerCount)
 
-	themes := []struct {
-		key   string
-		label string
-	}{
-		{"arctic", "Arctic"},
-		{"neo-brutalism", "Neo Brutalism"},
-		{"90s", "90s"},
-		{"minimal", "Minimal"},
-	}
-
-	for _, theme := range themes {
-		t.Run("SwitchTo_"+theme.label, func(t *testing.T) {
-			// Open the theme Select dropdown.
-			trigger := page.Locator("#site-theme-trigger")
-			clickUntil(t, page, trigger, `() => document.getElementById('site-theme-trigger')?.getAttribute('aria-expanded') === 'true'`)
-
-			// Select by label so adding or reordering themes cannot change the target.
-			themeOption := page.Locator("#site-theme-listbox [role='option']").Filter(playwright.LocatorFilterOptions{
-				HasText: theme.label,
-			})
-			err := themeOption.WaitFor(playwright.LocatorWaitForOptions{
-				State:   playwright.WaitForSelectorStateAttached,
-				Timeout: playwright.Float(2000),
-			})
-			require.NoError(t, err)
-			require.NoError(t, themeOption.Click())
-
-			// Verify data-theme attribute changed
-			_, err = page.WaitForFunction(
-				fmt.Sprintf(`() => document.documentElement.getAttribute('data-theme') === '%s'`, theme.key),
-				nil,
-				playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)},
-			)
-			require.NoError(t, err, "data-theme should be '%s'", theme.key)
-
-			// Verify localStorage was updated
-			storedTheme, err := page.Evaluate(`() => localStorage.getItem('theme')`, nil)
-			require.NoError(t, err)
-			assert.Equal(t, theme.key, storedTheme, "localStorage theme should match")
-		})
-	}
+	storedTheme, err := page.Evaluate(`() => localStorage.getItem('theme')`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, "minimal", storedTheme, "locked docs must not rewrite consumer storage")
 }

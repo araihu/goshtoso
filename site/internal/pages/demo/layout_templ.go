@@ -256,7 +256,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\"><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"stylesheet\" href=\"/componentdocshell/assets/araihu.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script><script defer src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\"><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"stylesheet\" href=\"/componentdocshell/assets/araihu.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script><script defer src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -373,7 +373,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\"></script><style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t\t/* First-paint entrance animations — masks layout shift on hard reload.\n\t\t\t\t   Gated by html.boot which is stripped ~600ms after DOMContentLoaded,\n\t\t\t\t   so HTMX partial swaps do not retrigger. */\n\t\t\t\t@keyframes goshFadeIn { from { opacity: 0; } to { opacity: 1; } }\n\t\t\t\t@keyframes goshSlideDown {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(0, -8px, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\t@keyframes goshSlideRight {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(-12px, 0, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\thtml.boot [data-boot-anim=\"header\"]  { animation: goshSlideDown 260ms ease-out both; }\n\t\t\t\thtml.boot [data-boot-anim=\"sidebar\"] { animation: goshSlideRight 320ms ease-out 60ms both; }\n\t\t\t\thtml.boot [data-boot-anim=\"main\"]    { animation: goshFadeIn 320ms ease-out 120ms both; }\n\t\t\t\t@media (prefers-reduced-motion: reduce) {\n\t\t\t\t\thtml.boot [data-boot-anim] { animation: none; }\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition\"><!-- Header --><header data-boot-anim=\"header\" class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\" aria-label=\"Goshtoso home\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-8 shrink-0 rounded-lg\"> <span class=\"hidden text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:inline\">Goshtoso</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector --><div class=\"w-36 sm:w-44\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\"></script><style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t\t/* Match the reference sidebar's 32px content gutters while retaining\n\t\t\t\t   the Sidebar component's established type scale and row rhythm. */\n\t\t\t\t.docs-sidebar .sidebar-scroll {\n\t\t\t\t\tpadding: 0.75rem 2rem 1rem;\n\t\t\t\t}\n\t\t\t\t.docs-sidebar .docs-sidebar-search {\n\t\t\t\t\tpadding: 0.75rem 2rem 0.5rem;\n\t\t\t\t}\n\t\t\t\t.docs-sidebar .docs-sidebar-search [data-search-field] button {\n\t\t\t\t\tmin-height: 2.5rem;\n\t\t\t\t\tpadding-inline: 1rem;\n\t\t\t\t\tfont-size: 1rem;\n\t\t\t\t\tfont-weight: 300;\n\t\t\t\t\tline-height: 1.5rem;\n\t\t\t\t}\n\t\t\t\t.docs-sidebar .docs-sidebar-search [data-search-field] button > svg {\n\t\t\t\t\twidth: 1.25rem;\n\t\t\t\t\theight: 1.25rem;\n\t\t\t\t}\n\t\t\t\t/* First-paint entrance animations — masks layout shift on hard reload.\n\t\t\t\t   Gated by html.boot which is stripped ~600ms after DOMContentLoaded,\n\t\t\t\t   so HTMX partial swaps do not retrigger. */\n\t\t\t\t@keyframes goshFadeIn { from { opacity: 0; } to { opacity: 1; } }\n\t\t\t\t@keyframes goshSlideDown {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(0, -8px, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\t@keyframes goshSlideRight {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(-12px, 0, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\thtml.boot [data-boot-anim=\"header\"]  { animation: goshSlideDown 260ms ease-out both; }\n\t\t\t\thtml.boot [data-boot-anim=\"sidebar\"] { animation: goshSlideRight 320ms ease-out 60ms both; }\n\t\t\t\thtml.boot [data-boot-anim=\"main\"]    { animation: goshFadeIn 320ms ease-out 120ms both; }\n\t\t\t\t@media (prefers-reduced-motion: reduce) {\n\t\t\t\t\thtml.boot [data-boot-anim] { animation: none; }\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition\"><!-- Header --><header data-boot-anim=\"header\" class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\" aria-label=\"Goshtoso home\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-8 shrink-0 rounded-lg\"> <span class=\"hidden text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:inline\">Goshtoso</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector --><div class=\"w-36 sm:w-44\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -395,6 +395,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 			Items:         getSidebarTopItems(activeComponent),
 			SectionsTitle: "Components",
 			Sections:      getSidebarSections(activeComponent),
+			RootClass:     "docs-sidebar",
 			SearchSlot:    sidebarSearchSlot(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -521,7 +522,6 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebarComponentModelIcon(), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebarApplicationPatternsIcon(), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
-		{ID: "examples", Label: "Examples", Href: "/examples", Icon: sidebarExamplesIcon(), Active: activeComponent == "examples", LinkAttrs: navHxAttrs("/examples", "")},
 		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: sidebarAgentsIcon(), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebarAttributionsIcon(), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
@@ -550,7 +550,7 @@ func sidebarSearchSlot() templ.Component {
 			templ_7745c5c3_Var28 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"shrink-0 px-4 py-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"docs-sidebar-search shrink-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -829,8 +829,13 @@ func getSearchItems() []searchfield.Item {
 		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},
 		{ID: "search-attributions", Title: "Attributions", Description: "Third-party notices and project credits.", Href: "/attributions", Section: "Docs", Attrs: navHxAttrs("/attributions", "")},
 		{ID: "search-license", Title: "License", Description: "License details for using Goshtoso.", Href: "/license", Section: "Docs", Attrs: navHxAttrs("/license", "")},
+		{ID: "search-module-charts", Title: "Charts", Description: "Static, interactive, and 3D charts from the Goshtoso Charts module.", Href: "/modules/charts", Section: "Modules", Keywords: []string{"visualization line 3d"}, Attrs: navHxAttrs("/modules/charts", "")},
+		{ID: "search-module-app-shells", Title: "App Shells", Description: "Reusable component documentation and console shells from Goshtoso App Shells.", Href: "/modules/app-shells", Section: "Modules", Keywords: []string{"layout docs console shell"}, Attrs: navHxAttrs("/modules/app-shells", "")},
 	}
 	for _, page := range catalog.ComponentPages() {
+		if page.Active == "app-shell" {
+			continue
+		}
 		items = append(items, searchfield.Item{
 			ID:          "search-" + page.Active,
 			Title:       page.Title,
@@ -842,7 +847,7 @@ func getSearchItems() []searchfield.Item {
 		})
 	}
 	for _, section := range getSidebarSections("") {
-		if section.Title == "Example Apps" {
+		if section.Title == "Examples" {
 			for _, item := range section.Items {
 				items = append(items, searchfield.Item{
 					ID:          "search-" + item.ID,
@@ -894,9 +899,18 @@ func getSearchSectionItems() []searchfield.Item {
 
 // getSidebarSections returns the component categories with left-border style items
 func getSidebarSections(activeComponent string) []sidebar.Section {
-	sections := make([]sidebar.Section, 0, 5)
+	sections := []sidebar.Section{{
+		Title: "Modules",
+		Items: []sidebar.Item{
+			sItem("module-charts", "Charts", "/modules/charts", activeComponent),
+			sItem("module-app-shells", "App Shells", "/modules/app-shells", activeComponent),
+		},
+	}}
 	sectionIndex := map[string]int{}
 	for _, page := range catalog.ComponentPages() {
+		if page.Active == "app-shell" {
+			continue
+		}
 		index, ok := sectionIndex[page.Section]
 		if !ok {
 			index = len(sections)
@@ -910,9 +924,10 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 	}
 
 	return append(sections, sidebar.Section{
-		Title:       "Example Apps",
+		Title:       "Examples",
 		Collapsible: true,
 		Items: []sidebar.Item{
+			sItem("examples", "Overview", "/examples", activeComponent),
 			sItem("todo", "Todo List", "/examples/todo", activeComponent),
 			sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
 			sItem("chat", "Chat", "/examples/chat", activeComponent),
@@ -931,7 +946,12 @@ type componentNavLink struct {
 }
 
 func getComponentNav(activeComponent string) (prev, next *componentNavLink) {
-	pages := catalog.ComponentPages()
+	pages := make([]catalog.Entry, 0, len(catalog.ComponentPages()))
+	for _, page := range catalog.ComponentPages() {
+		if page.Active != "app-shell" {
+			pages = append(pages, page)
+		}
+	}
 	for i, page := range pages {
 		if page.Active == activeComponent {
 			if i > 0 {
@@ -988,7 +1008,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var38 templ.SafeURL
 				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 518, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 557, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 				if templ_7745c5c3_Err != nil {
@@ -1009,7 +1029,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var39 string
 				templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 525, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 564, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 				if templ_7745c5c3_Err != nil {
@@ -1034,7 +1054,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var40 templ.SafeURL
 				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 533, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 572, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 				if templ_7745c5c3_Err != nil {
@@ -1055,7 +1075,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var41 string
 				templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 537, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 576, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 				if templ_7745c5c3_Err != nil {
@@ -1141,8 +1161,7 @@ func siteFooter() templ.Component {
 
 func getThemeOptions() []selectfield.Option {
 	all := themes.All()
-	options := make([]selectfield.Option, 0, len(all)+1)
-	options = append(options, selectfield.Option{Value: "araihu", Label: "Arai Hû"})
+	options := make([]selectfield.Option, 0, len(all))
 	for _, theme := range all {
 		options = append(options, selectfield.Option{Value: theme.Key, Label: theme.Label})
 	}

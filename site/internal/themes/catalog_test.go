@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCatalogHasFifteenUniqueBuiltInThemes(t *testing.T) {
+func TestCatalogHasSixteenUniqueBuiltInThemes(t *testing.T) {
 	all := All()
-	require.Len(t, all, 15)
+	require.Len(t, all, 16)
 	require.Equal(t, len(all), Count())
 
 	seen := make(map[string]bool, len(all))

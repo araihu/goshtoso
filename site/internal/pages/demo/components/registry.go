@@ -81,6 +81,8 @@ var Demos = map[string]DemoEntry{
 	"docs/application-patterns":   {Title: "Application Patterns", Active: "application-patterns", Content: applicationPatternsContent},
 	"docs/component-model":        {Title: "Component Model", Active: "component-model", Content: componentModelContent},
 	"docs/theme":                  {Title: "Theme", Active: "theme", Content: themeDemoContent},
+	"modules/charts":              {Title: "Charts", Active: "module-charts", Content: chartsModuleContent},
+	"modules/app-shells":          {Title: "App Shells", Active: "module-app-shells", Content: appShellsModuleContent},
 	"getting-started":             {Title: "Getting Started", Content: gettingStartedContent},
 	"attributions":                {Title: "Attributions", Active: "attributions", Content: attributionsContent},
 	"license":                     {Title: "License", Active: "license", Content: licenseContent},
@@ -139,6 +141,10 @@ func DemoMeta(key string, entry DemoEntry) demo.PageMeta {
 		title = "Goshtoso Component Model"
 	case key == "docs/theme":
 		title = "Themes - Goshtoso UI Library for Go"
+	case key == "modules/charts":
+		title = "Goshtoso Charts Module"
+	case key == "modules/app-shells":
+		title = "Goshtoso App Shells Module"
 	}
 	return demo.PageMeta{
 		Title:       title,
@@ -178,6 +184,8 @@ func demoDescription(key string, entry DemoEntry) string {
 	descriptions := map[string]string{
 		"docs/agents":               "Install the Goshtoso consumer agent skill for AI coding tools and verify npx skills distribution.",
 		"docs/application-patterns": "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces from server-rendered Goshtoso components.",
+		"modules/charts":            "Explore static, interactive, and interactive 3D chart components from the optional Goshtoso Charts module.",
+		"modules/app-shells":        "Explore reusable documentation and console application shells from the optional Goshtoso App Shells module.",
 		"docs/component-model":      "Understand Goshtoso's common component interface, concrete return values, constructor styles, stable Kind identity, and rendered defaults.",
 		"docs/theme":                "Customize Goshtoso themes with Tailwind CSS tokens, dark mode, live previews, and server-rendered component examples.",
 		"getting-started":           "Start a Go HTMX app with Goshtoso, templ, Tailwind CSS, local runtime assets, and copy-pasteable setup code.",

@@ -37,7 +37,7 @@ func cssFilterOptions() []selectfield.Option {
 // export so the multi-theme block reads top-down the same way the picker grid
 // does.
 var themeCSSOrder = []string{
-	"goshtoso", "arctic", "high-contrast", "minimal", "modern", "neo-brutalism",
+	"araihu", "goshtoso", "arctic", "high-contrast", "minimal", "modern", "neo-brutalism",
 	"halloween", "zombie", "pastel", "90s", "christmas",
 	"prototype", "news", "industrial", "dracula",
 }
@@ -92,31 +92,86 @@ type ThemeInfo struct {
 	Label          string
 	PrimaryClass   string
 	SecondaryClass string
+	SurfaceClass   string
+	PanelClass     string
+	InkClass       string
+	RadiusClass    string
 }
 
 func getThemeInfos() []ThemeInfo {
-	classes := map[string][2]string{
-		"goshtoso":       {"bg-[#2172a3]", "bg-[#4b7d1c]"},
-		"arctic":         {"bg-blue-700", "bg-indigo-700"},
-		"high-contrast":  {"bg-sky-900", "bg-indigo-900"},
-		"minimal":        {"bg-black", "bg-neutral-800"},
-		"modern":         {"bg-black", "bg-neutral-800"},
-		"neo-brutalism":  {"bg-violet-500", "bg-lime-400"},
-		"halloween":      {"bg-orange-400", "bg-purple-600"},
-		"zombie":         {"bg-orange-400", "bg-purple-600"},
-		"pastel":         {"bg-rose-400", "bg-orange-200"},
-		"90s":            {"bg-purple-500", "bg-sky-500"},
-		"christmas":      {"bg-red-600", "bg-emerald-700"},
-		"prototype":      {"bg-black", "bg-neutral-700"},
-		"news":           {"bg-sky-700", "bg-black"},
-		"industrial":     {"bg-amber-500", "bg-stone-900"},
-		"dracula":        {"bg-purple-400", "bg-pink-400"},
+	styles := map[string]ThemeInfo{
+		"araihu": {
+			PrimaryClass: "bg-[#173b72] dark:bg-[#c7ff4a]", SecondaryClass: "bg-[#31588f] dark:bg-[#7aa4df]",
+			SurfaceClass: "bg-[#f3f2e9] dark:bg-[#07111f]", PanelClass: "bg-[#e4e8eb] dark:bg-[#10233d]", InkClass: "bg-[#243348] dark:bg-[#d5ddeb]", RadiusClass: "rounded-sm",
+		},
+		"goshtoso": {
+			PrimaryClass: "bg-[#2172a3] dark:bg-[#3bcef7]", SecondaryClass: "bg-[#4b7d1c] dark:bg-[#d3d75b]",
+			SurfaceClass: "bg-white dark:bg-[#131920]", PanelClass: "bg-[#eaf4fb] dark:bg-[#263847]", InkClass: "bg-[#3a4b5f] dark:bg-[#c0cbd8]", RadiusClass: "rounded-lg",
+		},
+		"arctic": {
+			PrimaryClass: "bg-blue-700 dark:bg-blue-600", SecondaryClass: "bg-indigo-700 dark:bg-indigo-600",
+			SurfaceClass: "bg-white dark:bg-slate-900", PanelClass: "bg-slate-100 dark:bg-slate-800", InkClass: "bg-slate-700 dark:bg-slate-300", RadiusClass: "rounded-lg",
+		},
+		"high-contrast": {
+			PrimaryClass: "bg-sky-900 dark:bg-sky-400", SecondaryClass: "bg-indigo-900 dark:bg-indigo-400",
+			SurfaceClass: "bg-gray-50 dark:bg-gray-900", PanelClass: "bg-gray-200 dark:bg-gray-800", InkClass: "bg-gray-800 dark:bg-gray-300", RadiusClass: "rounded-sm",
+		},
+		"minimal": {
+			PrimaryClass: "bg-black dark:bg-white", SecondaryClass: "bg-neutral-800 dark:bg-neutral-300",
+			SurfaceClass: "bg-white dark:bg-neutral-950", PanelClass: "bg-neutral-100 dark:bg-neutral-800", InkClass: "bg-neutral-600 dark:bg-neutral-400", RadiusClass: "rounded-none",
+		},
+		"modern": {
+			PrimaryClass: "bg-black dark:bg-white", SecondaryClass: "bg-neutral-800 dark:bg-neutral-300",
+			SurfaceClass: "bg-white dark:bg-neutral-950", PanelClass: "bg-neutral-50 dark:bg-neutral-900", InkClass: "bg-neutral-600 dark:bg-neutral-300", RadiusClass: "rounded-sm",
+		},
+		"neo-brutalism": {
+			PrimaryClass: "bg-violet-500 dark:bg-violet-400", SecondaryClass: "bg-lime-400 dark:bg-lime-300",
+			SurfaceClass: "bg-white dark:bg-neutral-950", PanelClass: "bg-neutral-50 dark:bg-neutral-800", InkClass: "bg-black dark:bg-neutral-200", RadiusClass: "rounded-none",
+		},
+		"halloween": {
+			PrimaryClass: "bg-orange-400 dark:bg-lime-400", SecondaryClass: "bg-purple-600 dark:bg-fuchsia-600",
+			SurfaceClass: "bg-white dark:bg-black", PanelClass: "bg-gray-100 dark:bg-gray-900", InkClass: "bg-slate-600 dark:bg-violet-100", RadiusClass: "rounded-xl",
+		},
+		"zombie": {
+			PrimaryClass: "bg-orange-400 dark:bg-orange-600", SecondaryClass: "bg-purple-600 dark:bg-lime-500",
+			SurfaceClass: "bg-violet-50 dark:bg-indigo-950", PanelClass: "bg-violet-100 dark:bg-violet-950", InkClass: "bg-slate-600 dark:bg-violet-100", RadiusClass: "rounded-xl",
+		},
+		"pastel": {
+			PrimaryClass: "bg-rose-400 dark:bg-rose-400", SecondaryClass: "bg-orange-200 dark:bg-orange-200",
+			SurfaceClass: "bg-amber-50 dark:bg-neutral-900", PanelClass: "bg-amber-100 dark:bg-neutral-800", InkClass: "bg-neutral-500 dark:bg-violet-100", RadiusClass: "rounded-xl",
+		},
+		"90s": {
+			PrimaryClass: "bg-purple-500 dark:bg-purple-400", SecondaryClass: "bg-sky-500 dark:bg-blue-400",
+			SurfaceClass: "bg-neutral-100 dark:bg-neutral-800", PanelClass: "bg-neutral-200 dark:bg-neutral-900", InkClass: "bg-neutral-800 dark:bg-neutral-300", RadiusClass: "rounded-xl",
+		},
+		"christmas": {
+			PrimaryClass: "bg-red-600 dark:bg-red-600", SecondaryClass: "bg-emerald-700 dark:bg-emerald-600",
+			SurfaceClass: "bg-white dark:bg-emerald-950", PanelClass: "bg-emerald-50 dark:bg-emerald-800", InkClass: "bg-neutral-700 dark:bg-neutral-200", RadiusClass: "rounded-md",
+		},
+		"prototype": {
+			PrimaryClass: "bg-black dark:bg-white", SecondaryClass: "bg-neutral-700 dark:bg-neutral-300",
+			SurfaceClass: "bg-white dark:bg-black", PanelClass: "bg-neutral-100 dark:bg-neutral-900", InkClass: "bg-black dark:bg-white", RadiusClass: "rounded-none",
+		},
+		"news": {
+			PrimaryClass: "bg-sky-700 dark:bg-sky-600", SecondaryClass: "bg-black dark:bg-white",
+			SurfaceClass: "bg-zinc-50 dark:bg-zinc-900", PanelClass: "bg-zinc-100 dark:bg-zinc-800", InkClass: "bg-neutral-600 dark:bg-zinc-200", RadiusClass: "rounded-sm",
+		},
+		"industrial": {
+			PrimaryClass: "bg-amber-500 dark:bg-amber-400", SecondaryClass: "bg-stone-900 dark:bg-stone-700",
+			SurfaceClass: "bg-stone-50 dark:bg-stone-950", PanelClass: "bg-stone-200 dark:bg-stone-900", InkClass: "bg-stone-800 dark:bg-stone-300", RadiusClass: "rounded-none",
+		},
+		"dracula": {
+			PrimaryClass: "bg-purple-400 dark:bg-purple-400", SecondaryClass: "bg-pink-400 dark:bg-pink-400",
+			SurfaceClass: "bg-[#f8f8f2] dark:bg-[#282a36]", PanelClass: "bg-[#e8e8e2] dark:bg-[#44475a]", InkClass: "bg-[#6272a4] dark:bg-[#f8f8f2]", RadiusClass: "rounded-md",
+		},
 	}
 	all := themes.All()
 	infos := make([]ThemeInfo, 0, len(all))
 	for _, theme := range all {
-		style := classes[theme.Key]
-		infos = append(infos, ThemeInfo{Key: theme.Key, Label: theme.Label, PrimaryClass: style[0], SecondaryClass: style[1]})
+		style := styles[theme.Key]
+		style.Key = theme.Key
+		style.Label = theme.Label
+		infos = append(infos, style)
 	}
 	return infos
 }
@@ -261,6 +316,45 @@ func themeClassMap() map[string]map[string]string {
 
 func getThemeCSSBlocks() map[string]string {
 	return map[string]string{
+		"araihu": `[data-theme=araihu] {
+    color-scheme: light;
+    --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
+    --font-title: 'Lato', ui-sans-serif, system-ui, sans-serif;
+    --araihu-logo-surface: var(--color-surface);
+    --araihu-logo-ink: var(--color-on-surface-strong);
+    --araihu-logo-signal: #c7ff4a;
+    --color-surface: #f3f2e9;
+    --color-surface-alt: #e4e8eb;
+    --color-on-surface: #243348;
+    --color-on-surface-strong: #07111f;
+    --color-primary: #173b72;
+    --color-on-primary: #ffffff;
+    --color-secondary: #31588f;
+    --color-on-secondary: #ffffff;
+    --color-outline: #a3b0bf;
+    --color-outline-strong: #34465d;
+    --color-control-outline: #64748b;
+    --color-surface-dark: #07111f;
+    --color-surface-dark-alt: #10233d;
+    --color-on-surface-dark: #d5ddeb;
+    --color-on-surface-dark-strong: #f7f8f3;
+    --color-primary-dark: #c7ff4a;
+    --color-on-primary-dark: #07111f;
+    --color-secondary-dark: #7aa4df;
+    --color-on-secondary-dark: #07111f;
+    --color-outline-dark: #526981;
+    --color-outline-dark-strong: #c8d5e3;
+    --color-control-outline-dark: #718397;
+    --color-info: #1476b8;
+    --color-on-info: #ffffff;
+    --color-success: #258256;
+    --color-on-success: #ffffff;
+    --color-warning: #a85e00;
+    --color-on-warning: #ffffff;
+    --color-danger: #b42c46;
+    --color-on-danger: #ffffff;
+    --radius-radius: var(--radius-sm);
+}`,
 		"arctic": `[data-theme=arctic] {
     --font-body: 'Inter', sans-serif;
     --font-title: 'Inter', sans-serif;
@@ -900,36 +994,54 @@ templ themeHeader() {
 templ themeGridSection() {
 	<div>
 		<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Themes</h2>
-		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+		<div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
 			for _, t := range getThemeInfos() {
 				<button
+					type="button"
 					data-theme-key={ t.Key }
 					@click="setTheme($el.dataset.themeKey)"
-					class="relative rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark p-4 text-left transition-all cursor-pointer"
-					:class={ fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key) }
+					x-bind:aria-pressed={ fmt.Sprintf("theme === '%s'", t.Key) }
+					class="group overflow-hidden rounded-radius border bg-surface text-left transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark dark:focus-visible:outline-primary-dark"
+					:class={ fmt.Sprintf("theme === '%s' ? 'border-primary dark:border-primary-dark' : 'border-outline dark:border-outline-dark hover:border-outline-strong dark:hover:border-outline-dark-strong'", t.Key) }
 				>
-					<div class="flex items-center gap-2 mb-2">
-						<div class="size-4 rounded-full border-2 border-outline dark:border-outline-dark flex items-center justify-center">
-							<div
-								class="size-2 rounded-full bg-primary dark:bg-primary-dark"
-								:class={ fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key) }
-							></div>
+					<div class="flex items-center justify-between gap-2 p-2 transition-colors group-hover:bg-surface-alt dark:group-hover:bg-surface-dark-alt">
+						<div class="flex min-w-0 items-center gap-2">
+							<span
+								x-show={ fmt.Sprintf("theme !== '%s'", t.Key) }
+								class="size-5 shrink-0 rounded-full border border-outline bg-transparent dark:border-outline-dark"
+							></span>
+							<svg
+								data-theme-selected-icon
+								x-show={ fmt.Sprintf("theme === '%s'", t.Key) }
+								x-cloak
+								aria-hidden="true"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 20 20"
+								fill="currentColor"
+								class="size-5 shrink-0 text-on-surface dark:text-on-surface-dark"
+							>
+								<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
+							</svg>
+							<span class="truncate text-xs font-bold text-on-surface dark:text-on-surface-dark">{ t.Label }</span>
 						</div>
-						<span class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ t.Label }</span>
-					</div>
-					<div class="flex items-center gap-1.5 mb-1">
-						<span class={ t.PrimaryClass + " size-3 rounded-full" }></span>
-						<span class={ t.SecondaryClass + " size-3 rounded-full" }></span>
-					</div>
-					<div class="mt-3 flex gap-2">
-						<div class="flex-1 space-y-1.5">
-							<div class="h-2 w-3/4 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
-							<div class="h-2 w-full rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
-							<div class="h-2 w-2/3 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
+						<div class="flex shrink-0 items-center gap-2" aria-hidden="true">
+							<span class={ t.PrimaryClass + " size-3 rounded-full" }></span>
+							<span class={ t.SecondaryClass + " size-3 rounded-full" }></span>
 						</div>
-						<div class="flex-1 rounded bg-on-surface/5 dark:bg-on-surface-dark/5"></div>
 					</div>
-					<div class={ "mt-2 h-4 w-12 rounded " + t.PrimaryClass }></div>
+					<div class={ t.SurfaceClass + " h-24 border-t border-outline transition-colors dark:border-outline-dark" } aria-hidden="true">
+						<div class="flex h-full items-center justify-around gap-3 p-3">
+							<div class={ t.PanelClass + " " + t.RadiusClass + " flex h-full w-1/3 flex-col justify-between gap-2 p-2.5" }>
+								<div class="flex flex-col gap-1 transition-[gap] duration-300 group-hover:gap-1.5">
+									<span class={ t.InkClass + " h-1 w-full rounded-md opacity-20" }></span>
+									<span class={ t.InkClass + " h-1 w-full rounded-md opacity-20" }></span>
+									<span class={ t.InkClass + " h-1 w-full rounded-md opacity-20" }></span>
+								</div>
+								<span class={ t.PrimaryClass + " " + t.RadiusClass + " h-3 w-full" }></span>
+							</div>
+							<div class={ t.PanelClass + " " + t.RadiusClass + " h-full w-2/3" }></div>
+						</div>
+					</div>
 				</button>
 			}
 		</div>

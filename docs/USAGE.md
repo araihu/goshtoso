@@ -1,9 +1,10 @@
 # Goshtoso Consumer Integration Guide
 
-This guide explains how to use Goshtoso components in Go web applications built
-with templ, Tailwind CSS, HTMX, and Alpine.js.
+Use this guide to add Goshtoso to a Go web application and render a first
+component. Complete installation, asset, and head setup in order; then choose a
+CSS strategy and component API for the application you are building.
 
-Before choosing component constructors and options, read the
+For component constructors and options, read the
 [Goshtoso Component Model](COMPONENT_MODEL.md). It documents the common
 `components.Component` interface, concrete return values, stable `Kind`
 identity, constructor styles, and rendered defaults.
@@ -65,7 +66,7 @@ templ Layout() {
 ```
 
 The served `styles.css` already carries every component style + the theme system
-(15 themes). **Stock CDN Tailwind will not work** — the theme tokens
+(16 themes). **Stock CDN Tailwind will not work** — the theme tokens
 (`bg-primary`, `text-on-surface`, …) live only in this compiled CSS.
 
 The default loader tries exact-version unpkg URLs in dependency order. If a
@@ -75,6 +76,29 @@ it does not mutate and retry a script the browser has already abandoned. Await
 every dependency is available. The loader also emits
 `goshtoso:dependency-fallback`, `goshtoso:dependencies-ready`, and
 `goshtoso:dependency-error` events on `window`.
+
+### 3. Render a component
+
+Import a component into one of your own `.templ` files. Library components are
+already generated; run `templ generate` after changing your file so the
+application gets its generated Go code.
+
+```templ
+import "github.com/araihu/goshtoso/components/button"
+
+templ SaveAction() {
+	@button.Button(
+		button.WithTone(button.TonePrimary),
+		button.WithType("button"),
+	) {
+		Save changes
+	}
+}
+```
+
+Run `templ generate`, then build or test the application. Add HTMX attributes
+when the action needs a server-rendered fragment swap; use Alpine for local
+state or immediate client feedback.
 
 #### Dependency loading options
 
@@ -160,7 +184,7 @@ main-module builds report `VersionDevelopment`; missing build metadata reports
 
 Skip the rest of this section unless you maintain your own Tailwind build.
 
-### 2b. Extract Goshtoso CSS (only for a custom Tailwind build)
+### Optional: extract Goshtoso CSS for a custom Tailwind build
 
 Goshtoso ships a CLI that extracts the pre-built CSS from embedded assets. Register it as a Go tool for version-pinned reproducibility:
 
@@ -187,9 +211,9 @@ Then import it in your Tailwind entry point:
 @import "./goshtoso-base.css";
 ```
 
-The extracted CSS includes all Goshtoso component styles, the theme system (15 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
+The extracted CSS includes all Goshtoso component styles, the theme system (16 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
 
-### 3. Required JavaScript
+### 4. Required JavaScript
 
 If you use `@head.Dependencies()` (section 2), the JS is already wired — skip
 this. Only hand-roll the tags if you are not using the `head` package. In that
@@ -539,7 +563,7 @@ points generally use target-specific names such as `RootClass`, `InputAttrs`,
 
 ### Available Themes
 
-Goshtoso ships 15 built-in themes. The default theme is `goshtoso`; the Minimal
+Goshtoso ships 16 built-in themes. The default theme is `goshtoso`; the Minimal
 theme is useful for checking no-radius edge cases.
 
 ### Switching Themes

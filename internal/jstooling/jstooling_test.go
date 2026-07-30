@@ -155,6 +155,8 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"assets/js/src/components/select.js":           `(() => { window.selectFixture = true })();`,
 		"assets/js/src/components/tabs.js":             `(() => { window.tabsFixture = true })();`,
 		"site/assets/js/src/site-bootstrap.js":         `(() => { window.siteBootstrapFixture = true })();`,
+		"site/assets/js/src/landing-playground.js":     `(() => { window.landingPlaygroundFixture = true })();`,
+		"site/assets/js/src/charts-showcase.js":        `(() => { window.chartsShowcaseFixture = true })();`,
 		"site/assets/js/src/demo-layout.js":            `(() => { window.demoLayoutFixture = true })();`,
 		"site/assets/js/src/select-demo.js":            `(() => { window.selectDemoFixture = true })();`,
 		"site/assets/js/src/tab-view.js":               `(() => { window.tabViewFixture = true })();`,
@@ -183,8 +185,8 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	if err != nil {
 		t.Fatalf("Build: %v", err)
 	}
-	if len(results) != 6 {
-		t.Fatalf("artifact count = %d, want 6", len(results))
+	if len(results) != 8 {
+		t.Fatalf("artifact count = %d, want 8", len(results))
 	}
 	bundle, err := os.ReadFile(filepath.Join(root, "assets", "js", "goshtoso.min.js"))
 	if err != nil {

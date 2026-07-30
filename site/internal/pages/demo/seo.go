@@ -25,7 +25,7 @@ type PageMeta struct {
 func DefaultMeta(title string) PageMeta {
 	return PageMeta{
 		Title:       title,
-		Description: "Goshtoso is a server-rendered Go UI component library built with templ, HTMX, Alpine.js, and Tailwind CSS.",
+		Description: "Build server-rendered Go interfaces with typed templ components, bundled assets, HTMX, Alpine.js, and Tailwind CSS.",
 		Path:        "/",
 		Type:        "TechArticle",
 	}
@@ -33,8 +33,8 @@ func DefaultMeta(title string) PageMeta {
 
 func HomeMeta() PageMeta {
 	return PageMeta{
-		Title:       "Goshtoso - Go HTMX Component Library",
-		Description: "Build interactive, server-rendered Go UIs with templ, HTMX, Alpine.js, Tailwind CSS, and copy-pasteable Goshtoso components.",
+		Title:       "Go UI components for server-rendered apps | Goshtoso",
+		Description: "Build server-rendered Go interfaces with pre-generated templ components, bundled assets, HTMX, Alpine.js, and Tailwind CSS.",
 		Path:        "/",
 		Type:        "SoftwareApplication",
 		ImagePath:   HomeOGImagePath,

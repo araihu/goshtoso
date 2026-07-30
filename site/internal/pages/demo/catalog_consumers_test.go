@@ -8,16 +8,24 @@ import (
 )
 
 func TestComponentSidebarAndNavigationFollowCatalogOrder(t *testing.T) {
-	pages := catalog.ComponentPages()
+	pages := make([]catalog.Entry, 0, len(catalog.ComponentPages()))
+	for _, page := range catalog.ComponentPages() {
+		if page.Active != "app-shell" {
+			pages = append(pages, page)
+		}
+	}
 	sections := getSidebarSections("button")
 
-	require.Len(t, sections, 6)
-	require.Equal(t, "Example Apps", sections[5].Title)
-	require.Len(t, sections[5].Items, 7)
+	require.Len(t, sections, 7)
+	require.Equal(t, "Modules", sections[0].Title)
+	require.Equal(t, []string{"Charts", "App Shells"}, []string{sections[0].Items[0].Label, sections[0].Items[1].Label})
+	require.Equal(t, "Examples", sections[6].Title)
+	require.Equal(t, "Overview", sections[6].Items[0].Label)
+	require.Len(t, sections[6].Items, 8)
 
 	var componentItems int
 	pageIndex := 0
-	for _, section := range sections[:5] {
+	for _, section := range sections[1:6] {
 		for _, item := range section.Items {
 			page := pages[pageIndex]
 			require.Equal(t, page.Section, section.Title)
@@ -68,6 +76,11 @@ func TestComponentSearchEntriesUseCatalogDescriptions(t *testing.T) {
 	}
 
 	for _, page := range catalog.ComponentPages() {
+		if page.Active == "app-shell" {
+			_, exists := byHref[page.Path]
+			require.False(t, exists, "legacy App Shell page should not be discoverable beside the App Shells module")
+			continue
+		}
 		item, ok := byHref[page.Path]
 		require.Truef(t, ok, "missing search entry for %s", page.Path)
 		require.Equal(t, page.Title, item.title)
