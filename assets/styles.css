@@ -774,6 +774,9 @@
   .z-\[80\] {
     z-index: 80;
   }
+  .col-span-2 {
+    grid-column: span 2 / span 2;
+  }
   .col-span-3 {
     grid-column: span 3 / span 3;
   }
@@ -5636,6 +5639,11 @@
   .sm\:left-auto {
     @media (width >= 40rem) {
       left: auto;
+    }
+  }
+  .sm\:col-auto {
+    @media (width >= 40rem) {
+      grid-column: auto;
     }
   }
   .sm\:col-span-2 {
