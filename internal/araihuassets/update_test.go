@@ -4,8 +4,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -54,6 +57,122 @@ func TestUpdateCopiesAllowlistedCatalogAssetsInStableOrderAndIsIdempotent(t *tes
 	}
 	if len(second.Changed) != 0 {
 		t.Fatalf("second update changed %q, want clean", second.Changed)
+	}
+}
+
+func TestUpdateRollsBackEveryFileWhenReleaseUpgradeFailsMidApply(t *testing.T) {
+	repoRoot := t.TempDir()
+	releaseRoot := t.TempDir()
+	release := writeReleaseFixture(t, releaseRoot)
+	oldManifest := fixtureManifest(release)
+	oldManifest.AssetsRevision = strings.Repeat("1", 40)
+	oldManifest.Release = "v1.2.2"
+	oldManifest.ReleaseURL = "https://github.com/araihu/assets/releases/download/v1.2.2/araihu-assets-v1.2.2.tar.gz"
+	oldManifest.ReleaseSHA256 = strings.Repeat("2", 64)
+	oldManifest.ReleaseJSONSHA256 = strings.Repeat("3", 64)
+	writeJSON(t, filepath.Join(repoRoot, "araihu-assets.json"), oldManifest)
+	writeOldFallbacks(t, repoRoot, oldManifest.Mappings)
+
+	paths := []string{"araihu-assets.json"}
+	for _, mapping := range oldManifest.Mappings {
+		paths = append(paths, mapping.Destination)
+	}
+	before := snapshotFiles(t, repoRoot, paths)
+
+	newIdentity := fixtureManifest(release)
+	opts := Options{
+		RepoRoot:    repoRoot,
+		ReleaseRoot: releaseRoot,
+		Identity: &ReleaseIdentity{
+			AssetsRepository:  newIdentity.AssetsRepository,
+			AssetsRevision:    newIdentity.AssetsRevision,
+			Release:           newIdentity.Release,
+			ReleaseURL:        newIdentity.ReleaseURL,
+			ReleaseSHA256:     newIdentity.ReleaseSHA256,
+			ReleaseJSONSHA256: newIdentity.ReleaseJSONSHA256,
+		},
+		beforeReplace: func(index int, _ string) error {
+			if index == 2 {
+				return errors.New("injected replacement failure")
+			}
+			return nil
+		},
+	}
+	_, err := Update(opts)
+	var applyErr *ApplyError
+	if !errors.As(err, &applyErr) {
+		t.Fatalf("Update() error = %v, want *ApplyError", err)
+	}
+	if !applyErr.RollbackComplete() {
+		t.Fatalf("rollback errors = %v, want complete rollback", applyErr.RollbackErrors)
+	}
+	if applyErr.FailedPath == "" || len(applyErr.AppliedPaths) != 2 {
+		t.Fatalf("failure state = %#v, want failed path after two replacements", applyErr)
+	}
+	if slices.Contains(applyErr.AppliedPaths, "araihu-assets.json") {
+		t.Fatalf("manifest applied before fallback failure: %q", applyErr.AppliedPaths)
+	}
+	assertFilesMatch(t, repoRoot, paths, before)
+	opts.beforeReplace = nil
+	result, err := Update(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Changed) != len(paths) {
+		t.Fatalf("successful upgrade changed %q, want every fallback plus manifest", result.Changed)
+	}
+	if result.Changed[len(result.Changed)-1] != "araihu-assets.json" {
+		t.Fatalf("upgrade order = %q, want manifest last", result.Changed)
+	}
+	upgradedBytes, err := os.ReadFile(filepath.Join(repoRoot, "araihu-assets.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	upgraded, err := decodeManifest(upgradedBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if upgraded.Release != newIdentity.Release || upgraded.AssetsRevision != newIdentity.AssetsRevision {
+		t.Fatalf("upgraded identity = %s@%s, want %s@%s", upgraded.Release, upgraded.AssetsRevision, newIdentity.Release, newIdentity.AssetsRevision)
+	}
+}
+
+func writeOldFallbacks(t *testing.T, root string, mappings []Mapping) {
+	t.Helper()
+	for index, mapping := range mappings {
+		path := filepath.Join(root, filepath.FromSlash(mapping.Destination))
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(fmt.Sprintf("old-%d\n", index)), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+func snapshotFiles(t *testing.T, root string, paths []string) map[string][]byte {
+	t.Helper()
+	snapshot := make(map[string][]byte, len(paths))
+	for _, name := range paths {
+		contents, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(name)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		snapshot[name] = contents
+	}
+	return snapshot
+}
+
+func assertFilesMatch(t *testing.T, root string, paths []string, want map[string][]byte) {
+	t.Helper()
+	for _, name := range paths {
+		got, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(name)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if string(got) != string(want[name]) {
+			t.Fatalf("%s changed after rollback\ngot:  %q\nwant: %q", name, got, want[name])
+		}
 	}
 }
 

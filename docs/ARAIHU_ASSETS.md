@@ -37,6 +37,10 @@ Only stable `vX.Y.Z` tags and the exact `araihu/assets` release URL shape are
 accepted. Source and destination traversal, symlinks, duplicate destinations,
 unknown catalog collisions, and checksum mismatches fail before any copy. Run
 the same command twice; the second run must report that fallbacks are current.
+All changed outputs are staged before replacement. A mid-apply failure restores
+every already-replaced file, and the manifest is replaced last. Transaction
+errors report the failed path, paths applied before failure, and any incomplete
+rollback operations requiring manual recovery.
 
 Focused verification:
 
@@ -63,3 +67,12 @@ offline updater twice to prove idempotence, and opens or updates
 GitHub App secrets `ARAIHU_ASSETS_APP_ID` and
 `ARAIHU_ASSETS_APP_PRIVATE_KEY`. Existing `dependencies` and `assets` labels
 are applied when present. No label is created, and no PR is auto-merged.
+
+## Known hardening debt
+
+Archive SHA-256 verification makes the published archive immutable, and the
+workflow currently rejects traversal and link members before extraction. A
+future focused hardening slice should also reject duplicate member names,
+case-folded member collisions, and every non-regular archive member type before
+extraction. This does not change the offline updater's release inventory,
+catalog, checksum, path, symlink, or transactional replacement checks.

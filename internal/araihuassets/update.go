@@ -72,16 +72,40 @@ type ReleaseIdentity struct {
 // Options identifies the repository, extracted release, and optional new
 // release identity. Paths are local directories; Update has no network client.
 type Options struct {
-	RepoRoot     string
-	ReleaseRoot  string
-	ManifestPath string
-	Identity     *ReleaseIdentity
+	RepoRoot      string
+	ReleaseRoot   string
+	ManifestPath  string
+	Identity      *ReleaseIdentity
+	beforeReplace func(index int, path string) error
 }
 
 // Result reports repository-relative paths whose bytes changed.
 type Result struct {
 	Changed []string
 }
+
+// ApplyError reports a failed transaction and whether rollback restored every
+// path. AppliedPaths lists replacements attempted before failure;
+// RollbackErrors names any path whose original bytes could not be restored.
+type ApplyError struct {
+	FailedPath     string
+	AppliedPaths   []string
+	RollbackErrors []string
+	Cause          error
+}
+
+func (err *ApplyError) Error() string {
+	state := "rollback complete"
+	if len(err.RollbackErrors) != 0 {
+		state = fmt.Sprintf("rollback incomplete: %s", strings.Join(err.RollbackErrors, "; "))
+	}
+	return fmt.Sprintf("replace %q after %d applied paths: %v (%s)", err.FailedPath, len(err.AppliedPaths), err.Cause, state)
+}
+
+func (err *ApplyError) Unwrap() error { return err.Cause }
+
+// RollbackComplete reports whether no rollback operation failed.
+func (err *ApplyError) RollbackComplete() bool { return len(err.RollbackErrors) == 0 }
 
 type releaseDocument struct {
 	SchemaVersion    int           `json:"schemaVersion"`
@@ -101,8 +125,15 @@ type releaseFile struct {
 }
 
 type plannedWrite struct {
-	path string
-	data []byte
+	path     string
+	data     []byte
+	original []byte
+	existed  bool
+}
+
+type stagedWrite struct {
+	plannedWrite
+	temporary string
 }
 
 // Update verifies the pinned release metadata, catalog selections, file
@@ -142,8 +173,16 @@ func Update(opts Options) (Result, error) {
 	if changed {
 		writes = append(writes, manifestWrite)
 	}
-	sort.Slice(writes, func(i, j int) bool { return writes[i].path < writes[j].path })
-	return applyWrites(repo, writes)
+	sort.Slice(writes, func(i, j int) bool {
+		if writes[i].path == manifestPath {
+			return false
+		}
+		if writes[j].path == manifestPath {
+			return true
+		}
+		return writes[i].path < writes[j].path
+	})
+	return applyWrites(repo, writes, opts.beforeReplace)
 }
 
 func validateOptions(opts Options) (string, error) {
@@ -207,7 +246,10 @@ func planMappingWrites(repo, release *os.Root, mappings []Mapping, inventory map
 			return nil, fmt.Errorf("read destination %q: %w", mapping.Destination, err)
 		}
 		if !bytes.Equal(current, contents) {
-			writes = append(writes, plannedWrite{path: mapping.Destination, data: contents})
+			writes = append(writes, plannedWrite{
+				path: mapping.Destination, data: contents,
+				original: append([]byte(nil), current...), existed: err == nil,
+			})
 		}
 	}
 	return writes, nil
@@ -241,21 +283,89 @@ func planManifestWrite(manifestPath string, manifest Manifest, current []byte) (
 		return plannedWrite{}, false, fmt.Errorf("encode manifest: %w", err)
 	}
 	next = append(next, '\n')
-	return plannedWrite{path: manifestPath, data: next}, !bytes.Equal(current, next), nil
+	return plannedWrite{
+		path: manifestPath, data: next,
+		original: append([]byte(nil), current...), existed: true,
+	}, !bytes.Equal(current, next), nil
 }
 
-func applyWrites(repo *os.Root, writes []plannedWrite) (Result, error) {
-	result := Result{Changed: make([]string, 0, len(writes))}
+func applyWrites(repo *os.Root, writes []plannedWrite, beforeReplace func(int, string) error) (Result, error) {
+	staged, err := stageWrites(repo, writes)
+	if err != nil {
+		return Result{}, err
+	}
+	applied := make([]string, 0, len(staged))
+	for index := range staged {
+		if beforeReplace != nil {
+			if err := beforeReplace(index, staged[index].path); err != nil {
+				return Result{}, failedTransaction(repo, staged, index, applied, err)
+			}
+		}
+		if err := repo.Rename(staged[index].temporary, staged[index].path); err != nil {
+			return Result{}, failedTransaction(repo, staged, index, applied, err)
+		}
+		applied = append(applied, staged[index].path)
+	}
+	return Result{Changed: applied}, nil
+}
+
+func stageWrites(repo *os.Root, writes []plannedWrite) ([]stagedWrite, error) {
+	staged := make([]stagedWrite, 0, len(writes))
 	for _, write := range writes {
 		if err := repo.MkdirAll(path.Dir(write.path), 0o755); err != nil {
-			return Result{}, fmt.Errorf("create destination directory for %q: %w", write.path, err)
+			cleanupErrors := cleanupStages(repo, staged)
+			return nil, &ApplyError{FailedPath: write.path, RollbackErrors: cleanupErrors, Cause: fmt.Errorf("create destination directory: %w", err)}
 		}
-		if err := atomicWrite(repo, write.path, write.data); err != nil {
-			return Result{}, err
+		temporary, err := stageFile(repo, write.path, write.data)
+		if err != nil {
+			cleanupErrors := cleanupStages(repo, staged)
+			return nil, &ApplyError{FailedPath: write.path, RollbackErrors: cleanupErrors, Cause: err}
 		}
-		result.Changed = append(result.Changed, write.path)
+		staged = append(staged, stagedWrite{plannedWrite: write, temporary: temporary})
 	}
-	return result, nil
+	return staged, nil
+}
+
+func failedTransaction(repo *os.Root, staged []stagedWrite, failedIndex int, applied []string, cause error) *ApplyError {
+	rollbackErrors := rollbackApplied(repo, staged[:failedIndex])
+	rollbackErrors = append(rollbackErrors, cleanupStages(repo, staged[failedIndex:])...)
+	return &ApplyError{
+		FailedPath: staged[failedIndex].path, AppliedPaths: append([]string(nil), applied...),
+		RollbackErrors: rollbackErrors, Cause: cause,
+	}
+}
+
+func rollbackApplied(repo *os.Root, applied []stagedWrite) []string {
+	problems := []string{}
+	for index := len(applied) - 1; index >= 0; index-- {
+		write := applied[index]
+		if !write.existed {
+			if err := repo.Remove(write.path); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				problems = append(problems, fmt.Sprintf("remove new %q: %v", write.path, err))
+			}
+			continue
+		}
+		temporary, err := stageFile(repo, write.path, write.original)
+		if err != nil {
+			problems = append(problems, fmt.Sprintf("stage original %q: %v", write.path, err))
+			continue
+		}
+		if err := repo.Rename(temporary, write.path); err != nil {
+			problems = append(problems, fmt.Sprintf("restore %q: %v", write.path, err))
+			_ = repo.Remove(temporary)
+		}
+	}
+	return problems
+}
+
+func cleanupStages(repo *os.Root, staged []stagedWrite) []string {
+	problems := []string{}
+	for _, write := range staged {
+		if err := repo.Remove(write.temporary); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			problems = append(problems, fmt.Sprintf("remove staged %q: %v", write.temporary, err))
+		}
+	}
+	return problems
 }
 
 func decodeManifest(contents []byte) (Manifest, error) {
@@ -497,15 +607,15 @@ func requireRegularPath(root *os.Root, name string, allowMissing bool) error {
 	return nil
 }
 
-func atomicWrite(root *os.Root, name string, contents []byte) error {
+func stageFile(root *os.Root, name string, contents []byte) (string, error) {
 	random := make([]byte, 8)
 	if _, err := rand.Read(random); err != nil {
-		return fmt.Errorf("create temporary name for %q: %w", name, err)
+		return "", fmt.Errorf("create temporary name for %q: %w", name, err)
 	}
 	temporary := fmt.Sprintf("%s.araihu-assets-%x.tmp", name, random)
 	file, err := root.OpenFile(temporary, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if err != nil {
-		return fmt.Errorf("create temporary file for %q: %w", name, err)
+		return "", fmt.Errorf("create temporary file for %q: %w", name, err)
 	}
 	ok := false
 	defer func() {
@@ -515,19 +625,16 @@ func atomicWrite(root *os.Root, name string, contents []byte) error {
 		}
 	}()
 	if _, err := file.Write(contents); err != nil {
-		return fmt.Errorf("write temporary file for %q: %w", name, err)
+		return "", fmt.Errorf("write temporary file for %q: %w", name, err)
 	}
 	if err := file.Sync(); err != nil {
-		return fmt.Errorf("sync temporary file for %q: %w", name, err)
+		return "", fmt.Errorf("sync temporary file for %q: %w", name, err)
 	}
 	if err := file.Close(); err != nil {
-		return fmt.Errorf("close temporary file for %q: %w", name, err)
-	}
-	if err := root.Rename(temporary, name); err != nil {
-		return fmt.Errorf("replace %q: %w", name, err)
+		return "", fmt.Errorf("close temporary file for %q: %w", name, err)
 	}
 	ok = true
-	return nil
+	return temporary, nil
 }
 
 func requireJSONEOF(decoder *json.Decoder) error {
