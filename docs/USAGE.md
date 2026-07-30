@@ -309,9 +309,9 @@ not be presented as recolorable by an icon component.
 Goshtoso's bundled default sprite contains third-party
 [Heroicons v2.2.0](https://github.com/tailwindlabs/heroicons/tree/0435d4ca364a608cc75e2f8683d374e55abbae26)
 from upstream commit `0435d4ca364a608cc75e2f8683d374e55abbae26`, under the
-MIT license. The immutable
-[Arai Hu Assets v0.1.1 catalog](https://araihu.com/assets/releases/v0.1.1/catalog.json)
-records its names and symbols for generator compatibility; Arai Hu Assets does
+MIT license. The immutable Arai Hu Assets v0.1.1 catalog at
+`https://araihu.com/assets/releases/v0.1.1/catalog.json` records its names and
+symbols for generator compatibility; Arai Hu Assets does
 not author Heroicons. Goshtoso retains the bundled MIT notice at
 `/assets/icons/HEROICONS_LICENSE.txt`.
 
