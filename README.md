@@ -128,6 +128,8 @@ identity, and rendered defaults.
 Release changes are recorded in the [changelog](CHANGELOG.md); applications
 upgrading from `v0.0.11` should follow the
 [component API migration guide](docs/MIGRATING_COMPONENT_API.md).
+Maintainers updating repository-owned brand, theme, or UI-icon fallbacks should
+follow the [immutable Arai Hu asset update contract](docs/ARAIHU_ASSETS.md).
 
 ## AI Agent Skill
 

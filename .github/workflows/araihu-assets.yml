@@ -1,0 +1,199 @@
+name: Update Arai Hu fallback assets
+
+on:
+  repository_dispatch:
+    types: [araihu-assets-released]
+  workflow_dispatch:
+    inputs:
+      assets_repository:
+        description: Release repository
+        required: true
+        default: araihu/assets
+        type: string
+      assets_revision:
+        description: Full release commit SHA
+        required: true
+        type: string
+      release:
+        description: Stable release tag (vX.Y.Z)
+        required: true
+        type: string
+      release_url:
+        description: Immutable tar.gz release URL
+        required: true
+        type: string
+      release_sha256:
+        description: Release archive SHA-256
+        required: true
+        type: string
+      release_json_sha256:
+        description: release.json SHA-256
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: araihu-assets-${{ github.event.client_payload.release || inputs.release }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    env:
+      ASSETS_REPOSITORY: ${{ github.event.client_payload.assets_repository || inputs.assets_repository }}
+      ASSETS_REVISION: ${{ github.event.client_payload.assets_revision || inputs.assets_revision }}
+      RELEASE: ${{ github.event.client_payload.release || inputs.release }}
+      RELEASE_URL: ${{ github.event.client_payload.release_url || inputs.release_url }}
+      RELEASE_SHA256: ${{ github.event.client_payload.release_sha256 || inputs.release_sha256 }}
+      RELEASE_JSON_SHA256: ${{ github.event.client_payload.release_json_sha256 || inputs.release_json_sha256 }}
+    steps:
+      - name: Validate immutable release identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$ASSETS_REPOSITORY" = "araihu/assets"
+          [[ "$ASSETS_REVISION" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$RELEASE" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          [[ "$RELEASE_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$RELEASE_JSON_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          expected_url="https://github.com/araihu/assets/releases/download/${RELEASE}/araihu-assets-${RELEASE}.tar.gz"
+          test "$RELEASE_URL" = "$expected_url"
+
+      - name: Verify tag resolves to dispatched revision
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          object=$(gh api "repos/araihu/assets/git/ref/tags/${RELEASE}" \
+            --jq '.object.type + " " + .object.sha')
+          read -r object_type object_sha <<< "$object"
+          if test "$object_type" = tag; then
+            object=$(gh api "repos/araihu/assets/git/tags/${object_sha}" \
+              --jq '.object.type + " " + .object.sha')
+            read -r object_type object_sha <<< "$object"
+          fi
+          test "$object_type" = commit
+          test "$object_sha" = "$ASSETS_REVISION"
+
+      - name: Create selected-repository App token
+        id: app-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.ARAIHU_ASSETS_APP_ID }}
+          private-key: ${{ secrets.ARAIHU_ASSETS_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: goshtoso
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: read
+
+      - name: Check out Goshtoso
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: '1.26.5'
+          cache: true
+
+      - name: Download and verify release once
+        id: archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/araihu-assets-${RELEASE}.tar.gz"
+          extracted="$RUNNER_TEMP/araihu-assets-${RELEASE}"
+          curl --fail --location --silent --show-error --retry 3 \
+            --output "$archive" "$RELEASE_URL"
+          printf '%s  %s\n' "$RELEASE_SHA256" "$archive" \
+            | sha256sum --check --strict
+          while IFS= read -r member; do
+            case "$member" in
+              /*|../*|*/../*|*/..) echo "unsafe archive member: $member" >&2; exit 1 ;;
+            esac
+          done < <(tar --list --gzip --file "$archive")
+          if tar --list --verbose --gzip --file "$archive" | grep --extended-regexp --quiet '^[lh]'; then
+            echo "release archive contains a link" >&2
+            exit 1
+          fi
+          mkdir "$extracted"
+          tar --extract --gzip --file "$archive" --directory "$extracted" \
+            --no-same-owner --no-same-permissions
+          echo "release-dir=$extracted" >> "$GITHUB_OUTPUT"
+
+      - name: Update allowlisted fallback assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(
+            -release-dir "${{ steps.archive.outputs.release-dir }}"
+            -assets-repository "$ASSETS_REPOSITORY"
+            -assets-revision "$ASSETS_REVISION"
+            -release "$RELEASE"
+            -release-url "$RELEASE_URL"
+            -release-sha256 "$RELEASE_SHA256"
+            -release-json-sha256 "$RELEASE_JSON_SHA256"
+          )
+          go run ./cmd/araihu-assets-update "${args[@]}"
+          first_diff="$RUNNER_TEMP/first.diff"
+          second_diff="$RUNNER_TEMP/second.diff"
+          git diff --binary > "$first_diff"
+          go run ./cmd/araihu-assets-update "${args[@]}"
+          git diff --binary > "$second_diff"
+          cmp "$first_diff" "$second_diff"
+
+      - name: Run focused updater tests
+        run: go test ./internal/araihuassets ./cmd/araihu-assets-update -count=1
+
+      - name: Select existing labels only
+        id: labels
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          available=$(gh label list --repo "$GITHUB_REPOSITORY" --limit 1000 \
+            --json name --jq '.[].name')
+          selected=""
+          for label in dependencies assets; do
+            if grep --fixed-strings --line-regexp --quiet "$label" <<< "$available"; then
+              selected+="${selected:+$'\n'}$label"
+            fi
+          done
+          {
+            echo 'labels<<EOF'
+            printf '%s\n' "$selected"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create or update fallback asset PR
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          branch: automation/araihu-assets-${{ env.RELEASE }}
+          base: main
+          delete-branch: false
+          commit-message: 'build(assets): update Arai Hu fallbacks to ${{ env.RELEASE }}'
+          title: 'build(assets): update Arai Hu fallbacks to ${{ env.RELEASE }}'
+          body: |
+            Automated fallback refresh from immutable `araihu/assets` release `${{ env.RELEASE }}`.
+
+            - Revision: `${{ env.ASSETS_REVISION }}`
+            - Archive SHA-256: `${{ env.RELEASE_SHA256 }}`
+            - `release.json` SHA-256: `${{ env.RELEASE_JSON_SHA256 }}`
+
+            This workflow never auto-merges.
+          labels: ${{ steps.labels.outputs.labels }}
+          add-paths: |
+            araihu-assets.json
+            examples/getting-started/araihu.css
+            assets/icons/heroicons.svg
+            assets/favicon.svg
+            assets/images/goshtoso-logo.svg
+            assets/images/goshtoso-mark.svg
