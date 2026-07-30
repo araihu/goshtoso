@@ -2,6 +2,19 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.2] - 2026-07-30
+
+### Automated Arai Hû fallback assets
+
+- Added a transactional updater for the bundled Arai Hû theme, mark, wordmark,
+  favicon, and release manifest.
+- Added authenticated release-dispatch enrollment so new Assets releases can
+  propose verified fallback updates without personal access tokens.
+- Preserved local bundled files as the server-rendered and no-JavaScript
+  fallback while the optional presentation channel manages live branding.
+- Documented archive-extraction and crash-durability hardening as follow-up
+  technical debt.
+
 ## [v0.1.0] - 2026-07-29
 
 ### Accessible sprite icons and typed catalog
