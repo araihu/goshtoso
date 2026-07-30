@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "assetsRepository": "araihu/assets",
+  "assetsRevision": "74c36ed038ad127cab72d10ac6c5a8ca79646244",
+  "release": "v0.1.1",
+  "releaseUrl": "https://github.com/araihu/assets/releases/download/v0.1.1/araihu-assets-v0.1.1.tar.gz",
+  "releaseSha256": "4f9549a5975a284921fa7eb263cbd1a92c065d323ab395e82c3eac1d0a46886b",
+  "releaseJsonSha256": "eb2f556224ce1bcab979e3f1c8c8f05813dc0c3381b30ae757df32216027ebb9",
+  "mappings": [
+    {
+      "source": "themes/araihu.css",
+      "destination": "examples/getting-started/araihu.css"
+    },
+    {
+      "source": "icons/ui/sprite.svg",
+      "destination": "assets/icons/heroicons.svg"
+    },
+    {
+      "source": "brand/goshtoso/logo/adaptive-transparent-optical.svg",
+      "destination": "assets/images/goshtoso-logo.svg",
+      "canonicalName": "goshtoso-logo-adaptive-transparent-optical",
+      "namespace": "brand",
+      "product": "goshtoso",
+      "artwork": "logo",
+      "appearance": "adaptive",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg"
+    },
+    {
+      "source": "icons/brand/goshtoso-icon-adaptive-transparent-optical.svg",
+      "destination": "assets/images/goshtoso-mark.svg",
+      "canonicalName": "goshtoso-icon-adaptive-transparent-optical",
+      "namespace": "brand",
+      "product": "goshtoso",
+      "artwork": "icon",
+      "appearance": "adaptive",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg"
+    },
+    {
+      "source": "platform/web/goshtoso/favicon.svg",
+      "destination": "assets/favicon.svg",
+      "canonicalName": "platform-web-goshtoso-favicon-svg",
+      "namespace": "brand",
+      "product": "goshtoso",
+      "artwork": "icon",
+      "appearance": "adaptive",
+      "surface": "transparent",
+      "framing": "optical",
+      "format": "svg"
+    }
+  ]
+}
