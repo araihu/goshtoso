@@ -17,8 +17,21 @@ func fixture(t *testing.T) Catalog {
 }
 
 func fixtureJSON(t *testing.T) string {
+	return fixtureFile(t, "heroicons-catalog.json")
+}
+
+func releasedFixture(t *testing.T) Catalog {
 	t.Helper()
-	b, err := os.ReadFile(filepath.Join("testdata", "catalog.json"))
+	catalog, err := Load(strings.NewReader(fixtureFile(t, "catalog.json")))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return catalog
+}
+
+func fixtureFile(t *testing.T, name string) string {
+	t.Helper()
+	b, err := os.ReadFile(filepath.Join("testdata", name))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -147,6 +160,29 @@ func TestLoadValidatesSchemaV1Semantics(t *testing.T) {
 				t.Fatalf("Load() error = %v, want %q", err, tt.want)
 			}
 		})
+	}
+}
+
+func TestReleasedCatalogFixtureRemainsCompatible(t *testing.T) {
+	catalog := releasedFixture(t)
+	if catalog.Release != "v0.1.1" {
+		t.Fatalf("catalog release = %q, want v0.1.1", catalog.Release)
+	}
+	if catalog.Hash != "bca54f24af0529ebe988c901c6786110f2006a5bcedbab5928ba2795e1cf7d7c" {
+		t.Fatalf("catalog SHA-256 = %q, want released v0.1.1 catalog", catalog.Hash)
+	}
+	if len(catalog.Assets) != 302 {
+		t.Fatalf("catalog asset count = %d, want 302", len(catalog.Assets))
+	}
+
+	heroicons := 0
+	for _, asset := range catalog.Assets {
+		if asset.Namespace == "ui" && asset.Product == "heroicons" && asset.SpriteSymbol != "" {
+			heroicons++
+		}
+	}
+	if heroicons != 67 {
+		t.Fatalf("released Heroicons sprite asset count = %d, want 67", heroicons)
 	}
 }
 
