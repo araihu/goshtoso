@@ -108,105 +108,143 @@ type plannedWrite struct {
 // Update verifies the pinned release metadata, catalog selections, file
 // checksums, and path confinement before atomically replacing changed files.
 func Update(opts Options) (Result, error) {
+	manifestPath, err := validateOptions(opts)
+	if err != nil {
+		return Result{}, err
+	}
+	repo, err := os.OpenRoot(opts.RepoRoot)
+	if err != nil {
+		return Result{}, fmt.Errorf("open repo root: %w", err)
+	}
+	defer func() { _ = repo.Close() }()
+	release, err := os.OpenRoot(opts.ReleaseRoot)
+	if err != nil {
+		return Result{}, fmt.Errorf("open release root: %w", err)
+	}
+	defer func() { _ = release.Close() }()
+
+	manifest, manifestBytes, err := loadManifest(repo, manifestPath, opts.Identity)
+	if err != nil {
+		return Result{}, err
+	}
+	_, inventory, catalog, err := verifyRelease(release, manifest)
+	if err != nil {
+		return Result{}, err
+	}
+	writes, err := planMappingWrites(repo, release, manifest.Mappings, inventory, catalog)
+	if err != nil {
+		return Result{}, err
+	}
+	manifestWrite, changed, err := planManifestWrite(manifestPath, manifest, manifestBytes)
+	if err != nil {
+		return Result{}, err
+	}
+	if changed {
+		writes = append(writes, manifestWrite)
+	}
+	sort.Slice(writes, func(i, j int) bool { return writes[i].path < writes[j].path })
+	return applyWrites(repo, writes)
+}
+
+func validateOptions(opts Options) (string, error) {
 	if opts.RepoRoot == "" || opts.ReleaseRoot == "" {
-		return Result{}, errors.New("repo root and release root are required")
+		return "", errors.New("repo root and release root are required")
 	}
 	manifestPath := opts.ManifestPath
 	if manifestPath == "" {
 		manifestPath = DefaultManifestPath
 	}
 	if err := validateRelativePath(manifestPath, "manifest path"); err != nil {
-		return Result{}, err
+		return "", err
 	}
 	if err := rejectRootSymlink(opts.RepoRoot, "repo root"); err != nil {
-		return Result{}, err
+		return "", err
 	}
 	if err := rejectRootSymlink(opts.ReleaseRoot, "release root"); err != nil {
-		return Result{}, err
+		return "", err
 	}
+	return manifestPath, nil
+}
 
-	repo, err := os.OpenRoot(opts.RepoRoot)
-	if err != nil {
-		return Result{}, fmt.Errorf("open repo root: %w", err)
-	}
-	defer repo.Close()
-	release, err := os.OpenRoot(opts.ReleaseRoot)
-	if err != nil {
-		return Result{}, fmt.Errorf("open release root: %w", err)
-	}
-	defer release.Close()
-
+func loadManifest(repo *os.Root, manifestPath string, identity *ReleaseIdentity) (Manifest, []byte, error) {
 	if err := requireRegularPath(repo, manifestPath, false); err != nil {
-		return Result{}, fmt.Errorf("manifest: %w", err)
+		return Manifest{}, nil, fmt.Errorf("manifest: %w", err)
 	}
 	manifestBytes, err := repo.ReadFile(manifestPath)
 	if err != nil {
-		return Result{}, fmt.Errorf("read manifest: %w", err)
+		return Manifest{}, nil, fmt.Errorf("read manifest: %w", err)
 	}
 	manifest, err := decodeManifest(manifestBytes)
 	if err != nil {
-		return Result{}, err
+		return Manifest{}, nil, err
 	}
-	if opts.Identity != nil {
-		manifest.AssetsRepository = opts.Identity.AssetsRepository
-		manifest.AssetsRevision = opts.Identity.AssetsRevision
-		manifest.Release = opts.Identity.Release
-		manifest.ReleaseURL = opts.Identity.ReleaseURL
-		manifest.ReleaseSHA256 = opts.Identity.ReleaseSHA256
-		manifest.ReleaseJSONSHA256 = opts.Identity.ReleaseJSONSHA256
+	if identity != nil {
+		manifest.AssetsRepository = identity.AssetsRepository
+		manifest.AssetsRevision = identity.AssetsRevision
+		manifest.Release = identity.Release
+		manifest.ReleaseURL = identity.ReleaseURL
+		manifest.ReleaseSHA256 = identity.ReleaseSHA256
+		manifest.ReleaseJSONSHA256 = identity.ReleaseJSONSHA256
 	}
 	if err := validateManifest(manifest); err != nil {
-		return Result{}, err
+		return Manifest{}, nil, err
 	}
+	return manifest, manifestBytes, nil
+}
 
-	_, inventory, catalog, err := verifyRelease(release, manifest)
-	if err != nil {
-		return Result{}, err
-	}
-
-	writes := make([]plannedWrite, 0, len(manifest.Mappings)+1)
-	for _, mapping := range manifest.Mappings {
-		entry := inventory[mapping.Source]
-		if mapping.CanonicalName != "" {
-			if err := verifyCatalogSelection(catalog, mapping, entry); err != nil {
-				return Result{}, err
-			}
-		}
-		if err := requireRegularPath(release, mapping.Source, false); err != nil {
-			return Result{}, fmt.Errorf("source %q: %w", mapping.Source, err)
-		}
-		contents, err := release.ReadFile(mapping.Source)
+func planMappingWrites(repo, release *os.Root, mappings []Mapping, inventory map[string]releaseFile, catalog iconcatalog.Catalog) ([]plannedWrite, error) {
+	writes := make([]plannedWrite, 0, len(mappings))
+	for _, mapping := range mappings {
+		contents, err := verifiedMappingBytes(release, mapping, inventory[mapping.Source], catalog)
 		if err != nil {
-			return Result{}, fmt.Errorf("read source %q: %w", mapping.Source, err)
-		}
-		if int64(len(contents)) != entry.Size {
-			return Result{}, fmt.Errorf("source %q size = %d, want %d from release.json", mapping.Source, len(contents), entry.Size)
-		}
-		if got := digest(contents); got != entry.SHA256 {
-			return Result{}, fmt.Errorf("source %q SHA-256 = %s, want %s from release.json", mapping.Source, got, entry.SHA256)
+			return nil, err
 		}
 		if err := requireRegularPath(repo, mapping.Destination, true); err != nil {
-			return Result{}, fmt.Errorf("destination %q: %w", mapping.Destination, err)
+			return nil, fmt.Errorf("destination %q: %w", mapping.Destination, err)
 		}
 		current, err := repo.ReadFile(mapping.Destination)
 		if err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return Result{}, fmt.Errorf("read destination %q: %w", mapping.Destination, err)
+			return nil, fmt.Errorf("read destination %q: %w", mapping.Destination, err)
 		}
 		if !bytes.Equal(current, contents) {
 			writes = append(writes, plannedWrite{path: mapping.Destination, data: contents})
 		}
 	}
+	return writes, nil
+}
 
-	nextManifest, err := json.MarshalIndent(manifest, "", "  ")
+func verifiedMappingBytes(release *os.Root, mapping Mapping, entry releaseFile, catalog iconcatalog.Catalog) ([]byte, error) {
+	if mapping.CanonicalName != "" {
+		if err := verifyCatalogSelection(catalog, mapping, entry); err != nil {
+			return nil, err
+		}
+	}
+	if err := requireRegularPath(release, mapping.Source, false); err != nil {
+		return nil, fmt.Errorf("source %q: %w", mapping.Source, err)
+	}
+	contents, err := release.ReadFile(mapping.Source)
 	if err != nil {
-		return Result{}, fmt.Errorf("encode manifest: %w", err)
+		return nil, fmt.Errorf("read source %q: %w", mapping.Source, err)
 	}
-	nextManifest = append(nextManifest, '\n')
-	if !bytes.Equal(manifestBytes, nextManifest) {
-		writes = append(writes, plannedWrite{path: manifestPath, data: nextManifest})
+	if int64(len(contents)) != entry.Size {
+		return nil, fmt.Errorf("source %q size = %d, want %d from release.json", mapping.Source, len(contents), entry.Size)
 	}
-	sort.Slice(writes, func(i, j int) bool { return writes[i].path < writes[j].path })
+	if got := digest(contents); got != entry.SHA256 {
+		return nil, fmt.Errorf("source %q SHA-256 = %s, want %s from release.json", mapping.Source, got, entry.SHA256)
+	}
+	return contents, nil
+}
 
+func planManifestWrite(manifestPath string, manifest Manifest, current []byte) (plannedWrite, bool, error) {
+	next, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		return plannedWrite{}, false, fmt.Errorf("encode manifest: %w", err)
+	}
+	next = append(next, '\n')
+	return plannedWrite{path: manifestPath, data: next}, !bytes.Equal(current, next), nil
+}
+
+func applyWrites(repo *os.Root, writes []plannedWrite) (Result, error) {
 	result := Result{Changed: make([]string, 0, len(writes))}
 	for _, write := range writes {
 		if err := repo.MkdirAll(path.Dir(write.path), 0o755); err != nil {
@@ -291,70 +329,93 @@ func validateManifest(manifest Manifest) error {
 }
 
 func verifyRelease(root *os.Root, manifest Manifest) (releaseDocument, map[string]releaseFile, iconcatalog.Catalog, error) {
+	document, err := loadReleaseDocument(root, manifest)
+	if err != nil {
+		return releaseDocument{}, nil, iconcatalog.Catalog{}, err
+	}
+	inventory, err := buildInventory(document, manifest.Mappings)
+	if err != nil {
+		return releaseDocument{}, nil, iconcatalog.Catalog{}, err
+	}
+	catalog, err := loadReleaseCatalog(root, document, inventory, manifest.Release)
+	if err != nil {
+		return releaseDocument{}, nil, iconcatalog.Catalog{}, err
+	}
+	return document, inventory, catalog, nil
+}
+
+func loadReleaseDocument(root *os.Root, manifest Manifest) (releaseDocument, error) {
 	if err := requireRegularPath(root, "release.json", false); err != nil {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("release.json: %w", err)
+		return releaseDocument{}, fmt.Errorf("release.json: %w", err)
 	}
 	releaseBytes, err := root.ReadFile("release.json")
 	if err != nil {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("read release.json: %w", err)
+		return releaseDocument{}, fmt.Errorf("read release.json: %w", err)
 	}
 	if got := digest(releaseBytes); got != manifest.ReleaseJSONSHA256 {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("release.json SHA-256 = %s, want %s", got, manifest.ReleaseJSONSHA256)
+		return releaseDocument{}, fmt.Errorf("release.json SHA-256 = %s, want %s", got, manifest.ReleaseJSONSHA256)
 	}
 	var document releaseDocument
 	if err := json.Unmarshal(releaseBytes, &document); err != nil {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("decode release.json: %w", err)
+		return releaseDocument{}, fmt.Errorf("decode release.json: %w", err)
 	}
 	if document.SchemaVersion != 1 {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("release.json schemaVersion = %d, want 1", document.SchemaVersion)
+		return releaseDocument{}, fmt.Errorf("release.json schemaVersion = %d, want 1", document.SchemaVersion)
 	}
 	if document.Release != manifest.Release {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("release.json release = %q, want %q", document.Release, manifest.Release)
+		return releaseDocument{}, fmt.Errorf("release.json release = %q, want %q", document.Release, manifest.Release)
 	}
+	return document, nil
+}
+
+func buildInventory(document releaseDocument, mappings []Mapping) (map[string]releaseFile, error) {
 	inventory := make(map[string]releaseFile, len(document.Files))
 	for index, entry := range document.Files {
 		if err := validateRelativePath(entry.Path, "release.json file path"); err != nil {
-			return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("release.json file %d: %w", index, err)
+			return nil, fmt.Errorf("release.json file %d: %w", index, err)
 		}
 		if !sha256RE.MatchString(entry.SHA256) || entry.Size < 0 {
-			return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("release.json file %q has invalid identity", entry.Path)
+			return nil, fmt.Errorf("release.json file %q has invalid identity", entry.Path)
 		}
 		if _, exists := inventory[entry.Path]; exists {
-			return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("release.json file collision %q", entry.Path)
+			return nil, fmt.Errorf("release.json file collision %q", entry.Path)
 		}
 		inventory[entry.Path] = entry
 	}
-	for _, mapping := range manifest.Mappings {
+	for _, mapping := range mappings {
 		if _, exists := inventory[mapping.Source]; !exists {
-			return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("source %q missing from release.json", mapping.Source)
+			return nil, fmt.Errorf("source %q missing from release.json", mapping.Source)
 		}
 	}
+	return inventory, nil
+}
 
+func loadReleaseCatalog(root *os.Root, document releaseDocument, inventory map[string]releaseFile, release string) (iconcatalog.Catalog, error) {
 	catalogEntry, exists := inventory["catalog.json"]
 	if !exists {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, errors.New("catalog.json missing from release.json")
+		return iconcatalog.Catalog{}, errors.New("catalog.json missing from release.json")
 	}
 	if catalogEntry.SHA256 != document.CatalogSHA256 {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, errors.New("catalog.json identity disagrees with release.json catalogSha256")
+		return iconcatalog.Catalog{}, errors.New("catalog.json identity disagrees with release.json catalogSha256")
 	}
 	if err := requireRegularPath(root, "catalog.json", false); err != nil {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("catalog.json: %w", err)
+		return iconcatalog.Catalog{}, fmt.Errorf("catalog.json: %w", err)
 	}
 	catalogBytes, err := root.ReadFile("catalog.json")
 	if err != nil {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("read catalog.json: %w", err)
+		return iconcatalog.Catalog{}, fmt.Errorf("read catalog.json: %w", err)
 	}
 	if got := digest(catalogBytes); got != catalogEntry.SHA256 {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("catalog.json SHA-256 = %s, want %s", got, catalogEntry.SHA256)
+		return iconcatalog.Catalog{}, fmt.Errorf("catalog.json SHA-256 = %s, want %s", got, catalogEntry.SHA256)
 	}
 	catalog, err := iconcatalog.Load(bytes.NewReader(catalogBytes))
 	if err != nil {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("load catalog.json: %w", err)
+		return iconcatalog.Catalog{}, fmt.Errorf("load catalog.json: %w", err)
 	}
-	if catalog.Release != manifest.Release {
-		return releaseDocument{}, nil, iconcatalog.Catalog{}, fmt.Errorf("catalog release = %q, want %q", catalog.Release, manifest.Release)
+	if catalog.Release != release {
+		return iconcatalog.Catalog{}, fmt.Errorf("catalog release = %q, want %q", catalog.Release, release)
 	}
-	return document, inventory, catalog, nil
+	return catalog, nil
 }
 
 func verifyCatalogSelection(catalog iconcatalog.Catalog, mapping Mapping, inventory releaseFile) error {
@@ -448,9 +509,9 @@ func atomicWrite(root *os.Root, name string, contents []byte) error {
 	}
 	ok := false
 	defer func() {
-		file.Close()
+		_ = file.Close()
 		if !ok {
-			root.Remove(temporary)
+			_ = root.Remove(temporary)
 		}
 	}()
 	if _, err := file.Write(contents); err != nil {
