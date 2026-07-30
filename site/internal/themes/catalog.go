@@ -11,6 +11,7 @@ type Theme struct {
 }
 
 var catalog = []Theme{
+	{Key: "araihu", Label: "Arai Hû"},
 	{Key: "goshtoso", Label: "Goshtoso"},
 	{Key: "minimal", Label: "Minimal"},
 	{Key: "modern", Label: "Modern"},

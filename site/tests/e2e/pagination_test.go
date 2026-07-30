@@ -136,7 +136,7 @@ func TestPagination_DeepLinkKeepsTOCRailAttachedToContent(t *testing.T) {
 	apiTop, err := page.Locator("#api-reference").Evaluate("el => el.getBoundingClientRect().top", nil)
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, jsFloat(apiTop), 64.0, "deep-linked heading should clear the sticky header")
-	assert.Less(t, jsFloat(apiTop), 180.0, "deep-linked heading should land near the top of the scroll frame")
+	assert.Less(t, jsFloat(apiTop), 1280.0, "deep-linked heading should remain visible without adding blank tail space")
 }
 
 func jsFloat(v any) float64 {

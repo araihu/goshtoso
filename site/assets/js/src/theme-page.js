@@ -52,6 +52,7 @@
     Alpine.__themePageRegistered = true;
     Alpine.data("themePage", function () {
       return {
+        theme: readStoredValue("theme", "goshtoso"),
         titleFont: readStoredValue("themeTitleFont", ""),
         bodyFont: readStoredValue("themeBodyFont", ""),
         radius: readStoredValue("themeRadius", ""),
@@ -91,6 +92,8 @@
           this.allTokens = Array.isArray(data.allTokens) ? data.allTokens : [];
           this.tokenLabels = data.tokenLabels || {};
           this.overrides = sanitizeOverrides(this.overrides, this.allTokens);
+          if (!this.allThemes.includes(this.theme)) this.theme = "goshtoso";
+          document.documentElement.setAttribute("data-theme", this.theme);
 
           try {
             this.applyAll();
@@ -150,6 +153,11 @@
           this.applyFont("--font-body", this.bodyFont);
           this.applyRadius(this.radius);
           this.applyColors();
+        },
+        setTheme: function (name) {
+          if (!this.allThemes.includes(name)) return;
+          this.theme = name;
+          document.documentElement.setAttribute("data-theme", name);
         },
         applyFont: function (variableName, label) {
           if (!label) {

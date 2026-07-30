@@ -22,6 +22,19 @@ func TestThemeCSSExportRendersSingleDynamicOutput(t *testing.T) {
 	assert.Equal(t, 0, strings.Count(html, `<span class="ch-`))
 }
 
+func TestThemeGridRendersReferenceStylePreviewCards(t *testing.T) {
+	var buf bytes.Buffer
+	require.NoError(t, themeGridSection().Render(context.Background(), &buf))
+	html := buf.String()
+
+	assert.Equal(t, len(getThemeInfos()), strings.Count(html, `data-theme-key=`))
+	assert.Equal(t, len(getThemeInfos()), strings.Count(html, `x-bind:aria-pressed=`))
+	assert.Equal(t, len(getThemeInfos()), strings.Count(html, `data-theme-selected-icon`))
+	assert.Contains(t, html, `h-24 border-t`)
+	assert.Contains(t, html, `group-hover:gap-1.5`)
+	assert.Contains(t, html, `bg-[#f8f8f2] dark:bg-[#282a36]`)
+}
+
 func TestThemeCSSExportBlocksMatchThemeSource(t *testing.T) {
 	source, err := os.ReadFile("../../../../../all-themes.css")
 	require.NoError(t, err)

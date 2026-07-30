@@ -67,7 +67,7 @@
    THEME SYSTEM
    Imported from all-themes.css which provides:
    - @theme block with var() references (default theme tokens)
-   - @layer base with [data-theme=X] overrides for 15 themes
+   - @layer base with [data-theme=X] overrides for 16 themes
    ============================================ */
 @import "../all-themes.css";
 
@@ -219,6 +219,10 @@
   .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-outline-dark-strong);
   }
+}
+
+.landing-product-card {
+  max-width: none;
 }
 
 @keyframes landing-rise {

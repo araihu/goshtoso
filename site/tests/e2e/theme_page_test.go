@@ -105,8 +105,8 @@ func TestThemePage_FragmentNavBootstrapsData(t *testing.T) {
 	_, err = page.WaitForFunction(`() => {
 		const root = document.querySelector('[x-data="themePage"]');
 		const data = root && Alpine.$data(root);
-		return root && root._x_dataStack && data && data.allThemes.length === 15 &&
-			data.blocks.goshtoso && data.radiusMap['2xl'] === '1rem';
+		return root && root._x_dataStack && data && data.allThemes.length === 16 &&
+			data.blocks.araihu && data.blocks.goshtoso && data.radiusMap['2xl'] === '1rem';
 	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err, "theme provider should parse inert data after fragment navigation")
 
@@ -136,15 +136,11 @@ func TestThemePage_ThemeGrid_SwitchesTheme(t *testing.T) {
 				`() => document.documentElement.getAttribute('data-theme') === '%s'`, key), nil,
 				playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 			require.NoError(t, err)
-
-			stored, err := page.Evaluate(`() => localStorage.getItem('theme')`, nil)
-			require.NoError(t, err)
-			assert.Equal(t, key, stored)
 		})
 	}
 }
 
-func TestThemePage_ThemeGrid_OnlyOneActiveDot(t *testing.T) {
+func TestThemePage_ThemeGrid_OnlyOneSelectedCard(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -159,15 +155,16 @@ func TestThemePage_ThemeGrid_OnlyOneActiveDot(t *testing.T) {
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 	require.NoError(t, err)
 
-	// Count theme-grid inner dots that are visibly rendered (no `hidden` class).
-	visible, err := page.Evaluate(`() => {
-		const dots = document.querySelectorAll('h2 + .grid button[data-theme-key] .size-2.rounded-full');
-		let n = 0;
-		dots.forEach(d => { if (!d.classList.contains('hidden')) n++; });
-		return n;
+	selected, err := page.Evaluate(`() => {
+		const buttons = [...document.querySelectorAll('h2 + .grid button[data-theme-key]')];
+		const pressed = buttons.filter(button => button.getAttribute('aria-pressed') === 'true');
+		const visibleChecks = buttons.flatMap(button => [...button.querySelectorAll('[data-theme-selected-icon]')])
+			.filter(icon => getComputedStyle(icon).display !== 'none');
+		return { pressed: pressed.length, checks: visibleChecks.length, key: pressed[0]?.dataset.themeKey || '' };
 	}`, nil)
 	require.NoError(t, err)
-	assert.EqualValues(t, 1, visible, "exactly one theme card should show an active dot")
+	assert.Equal(t, map[string]any{"pressed": 1, "checks": 1, "key": "dracula"}, selected,
+		"exactly one theme card should expose selected state and check icon")
 }
 
 func TestThemePage_Typography_AppliesFontVar(t *testing.T) {

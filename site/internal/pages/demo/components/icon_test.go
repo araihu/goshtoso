@@ -3,7 +3,6 @@ package components
 import (
 	"context"
 	"encoding/json"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -28,7 +27,8 @@ func TestIconShowcaseRendersEveryGlyphInResponsiveGrid(t *testing.T) {
 	require.Len(t, heroicons.Glyphs, 67)
 	require.Equal(t, len(heroicons.Glyphs), strings.Count(html, `data-icon-card=`))
 	require.Contains(t, html, `grid-cols-1 sm:grid-cols-3 xl:grid-cols-6`)
-	require.Contains(t, html, "copy a standalone Go program")
+	require.Contains(t, html, "Paste into a")
+	require.Contains(t, html, "https://github.com/tailwindlabs/heroicons/blob/master/LICENSE")
 }
 
 func TestIconShowcaseUsesCanonicalCatalogHeading(t *testing.T) {
@@ -56,9 +56,10 @@ func TestIconCodeEncoderReflectsMeaningfulSelectedOptions(t *testing.T) {
 		RootClass: "text-accent",
 	})
 
-	require.Contains(t, got, "package main")
-	require.Contains(t, got, `"context"`)
-	require.Contains(t, got, `"os"`)
+	require.True(t, strings.HasPrefix(got, "@icon.Icon(icon.Config{"))
+	require.NotContains(t, got, "package main")
+	require.NotContains(t, got, "import (")
+	require.NotContains(t, got, "templ IconExample()")
 	require.Contains(t, got, "heroicons.SpriteURL")
 	require.Contains(t, got, "heroicons."+heroicons.Glyphs[0].GoName)
 	require.Contains(t, got, "Size:      icon.SizeLG")
@@ -68,7 +69,7 @@ func TestIconCodeEncoderReflectsMeaningfulSelectedOptions(t *testing.T) {
 	require.NotContains(t, got, "Mode:")
 }
 
-func TestIconCodeEncoderEscapesGoStringsAndCompiles(t *testing.T) {
+func TestIconCodeEncoderEscapesGoStrings(t *testing.T) {
 	source := encodeIconSource(t, iconCodeInput{
 		Glyph:      "Icon16SolidMagnifyingGlass",
 		Size:       "xl",
@@ -80,7 +81,22 @@ func TestIconCodeEncoderEscapesGoStringsAndCompiles(t *testing.T) {
 	require.Contains(t, source, `Label:     "Search \"now\"\nnext\\path"`)
 	require.Contains(t, source, `RootClass: "before:content-['\\']"`)
 	require.NotContains(t, source, `\\u`)
-	compileIconSource(t, source)
+}
+
+func TestIconCodeEncoderMatchesPasteReadyWorkbenchSnippet(t *testing.T) {
+	source := encodeIconSource(t, iconCodeInput{
+		Glyph:     "Icon16SolidArrowDown",
+		Size:      "xl",
+		RootClass: "text-danger",
+	})
+
+	require.Equal(t, `@icon.Icon(icon.Config{
+    SpriteURL: heroicons.SpriteURL,
+    Symbol:    heroicons.Icon16SolidArrowDown,
+    Size:      icon.SizeXL,
+    RootClass: "text-danger",
+})
+`, source)
 }
 
 func TestIconCodeEncoderMakesDecorativeIntentExplicit(t *testing.T) {
@@ -130,21 +146,6 @@ process.stdout.write(window.goshtosoIconCode(input));
 	return string(output)
 }
 
-func compileIconSource(t *testing.T, source string) {
-	t.Helper()
-	root := iconRepoRoot(t)
-	directory, err := os.MkdirTemp(root, "icon-catalog-example-*")
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, os.RemoveAll(directory)) })
-	require.NoError(t, os.WriteFile(filepath.Join(directory, "main.go"), []byte(source), 0o600))
-
-	command := exec.Command("go", "run", "./"+filepath.Base(directory))
-	command.Dir = root
-	output, err := command.CombinedOutput()
-	require.NoErrorf(t, err, "generated icon example did not compile: %s\n%s", err, output)
-	require.Contains(t, string(output), `href="/assets/icons/heroicons.svg#hi-16-solid-magnifying-glass"`)
-}
-
 func iconRepoRoot(t *testing.T) string {
 	t.Helper()
 	_, thisFile, _, ok := runtime.Caller(0)
@@ -159,8 +160,13 @@ func TestIconShowcaseUsesModalSemanticsAndAccessibleControls(t *testing.T) {
 	require.Contains(t, html, `aria-modal="true"`)
 	require.Contains(t, html, "x-trap.inert.noscroll")
 	require.Contains(t, html, "keydown.esc.window")
-	for _, control := range []string{"Size", "Label", "Decorative", "Root class", "Copy compilable Go"} {
+	for _, control := range []string{"Size", "Label", "Decorative", "Color", "Paste into a .templ file", "Copy Paste into a .templ file code"} {
 		require.Contains(t, html, control)
 	}
-	require.Contains(t, html, `aria-live="polite"`)
+	require.Contains(t, html, `id="icon-workbench-code"`)
+	require.Contains(t, html, `data-testid="icon-size-selector"`)
+	require.Contains(t, html, `role="combobox"`)
+	require.Contains(t, html, `id="icon-decorative"`)
+	require.NotContains(t, html, `<select`)
+	require.NotContains(t, html, `Inherit currentColor`)
 }

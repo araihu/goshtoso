@@ -12,6 +12,7 @@ import (
 	"time"
 
 	shellassets "github.com/araihu/goshtoso-app-shells/componentdocshell/assets"
+	chartassets "github.com/araihu/goshtoso-charts/assets"
 	"github.com/araihu/goshtoso/components/carousel"
 	combobox "github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/toast"
@@ -61,6 +62,7 @@ func (s *Server) setupRoutes() {
 	s.mux.Handle("/assets/", assetsHandler)
 	s.mux.Handle("/site-assets/", siteassets.Handler())
 	s.mux.Handle("/componentdocshell/assets/", shellassets.Handler())
+	s.mux.Handle("GET "+chartassets.Prefix, withImmutableCache(chartassets.Handler()))
 
 	// Favicons are referenced at root paths from <head>, so they are served from
 	// the root mux, but the files live alongside the other assets on disk.
@@ -126,12 +128,17 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/docs/application-patterns", s.handleApplicationPatternsPage)
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
+	s.mux.HandleFunc("/modules/charts", s.handleChartsModulePage)
+	s.mux.HandleFunc("/modules/app-shells", s.handleAppShellsModulePage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
 	s.mux.HandleFunc("/attributions", s.handleAttributions)
 	s.mux.HandleFunc("/license", s.handleLicense)
 	s.mux.HandleFunc("/privacy", s.handlePrivacy)
 
 	// Landing page
+	s.mux.HandleFunc("/playground/theme", s.handleLandingThemePlayground)
+	s.mux.HandleFunc("/playground/extensions/charts", s.handleChartsShowcase)
+	s.mux.HandleFunc("/playground/extensions/charts/frame", s.handleChartsShowcaseFrame)
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			_ = components.LandingPage().Render(r.Context(), w)
@@ -139,6 +146,30 @@ func (s *Server) setupRoutes() {
 		}
 		http.NotFound(w, r)
 	})
+}
+
+func (s *Server) handleChartsShowcase(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
+	_ = components.ChartsShowcasePageForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
+}
+
+func (s *Server) handleChartsShowcaseFrame(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
+	_ = components.ChartsShowcaseFrameForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
+}
+
+func withImmutableCache(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (s *Server) handleLandingThemePlayground(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_ = components.LandingPlaygroundPage().Render(r.Context(), w)
 }
 
 func (s *Server) handleRobots(w http.ResponseWriter, r *http.Request) {
@@ -453,6 +484,14 @@ func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request
 
 func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/theme")
+}
+
+func (s *Server) handleChartsModulePage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "modules/charts")
+}
+
+func (s *Server) handleAppShellsModulePage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "modules/app-shells")
 }
 
 func (s *Server) handleGettingStarted(w http.ResponseWriter, r *http.Request) {

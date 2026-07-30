@@ -51,7 +51,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+			<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 			<script src="/assets/js/darkmode.js"></script>
 			<script defer src={ assets.AlpineFocusURL }></script>
 			<script defer src={ assets.AlpineCollapseURL }></script>
@@ -71,6 +71,25 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				.sidebar-scroll {
 					-ms-overflow-style: none;
 					scrollbar-width: none;
+				}
+				/* Match the reference sidebar's 32px content gutters while retaining
+				   the Sidebar component's established type scale and row rhythm. */
+				.docs-sidebar .sidebar-scroll {
+					padding: 0.75rem 2rem 1rem;
+				}
+				.docs-sidebar .docs-sidebar-search {
+					padding: 0.75rem 2rem 0.5rem;
+				}
+				.docs-sidebar .docs-sidebar-search [data-search-field] button {
+					min-height: 2.5rem;
+					padding-inline: 1rem;
+					font-size: 1rem;
+					font-weight: 300;
+					line-height: 1.5rem;
+				}
+				.docs-sidebar .docs-sidebar-search [data-search-field] button > svg {
+					width: 1.25rem;
+					height: 1.25rem;
 				}
 				/* First-paint entrance animations — masks layout shift on hard reload.
 				   Gated by html.boot which is stripped ~600ms after DOMContentLoaded,
@@ -173,6 +192,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 							Items:             getSidebarTopItems(activeComponent),
 							SectionsTitle:     "Components",
 							Sections:          getSidebarSections(activeComponent),
+							RootClass:         "docs-sidebar",
 							SearchSlot:        sidebarSearchSlot(),
 						})
 					</div>
@@ -292,7 +312,6 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebarComponentModelIcon(), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebarApplicationPatternsIcon(), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
-		{ID: "examples", Label: "Examples", Href: "/examples", Icon: sidebarExamplesIcon(), Active: activeComponent == "examples", LinkAttrs: navHxAttrs("/examples", "")},
 		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: sidebarAgentsIcon(), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebarAttributionsIcon(), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
@@ -301,7 +320,7 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 }
 
 templ sidebarSearchSlot() {
-	<div class="shrink-0 px-4 py-3">
+	<div class="docs-sidebar-search shrink-0">
 		@searchfield.SearchField(docsSearchConfig())
 	</div>
 }
@@ -385,8 +404,13 @@ func getSearchItems() []searchfield.Item {
 		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},
 		{ID: "search-attributions", Title: "Attributions", Description: "Third-party notices and project credits.", Href: "/attributions", Section: "Docs", Attrs: navHxAttrs("/attributions", "")},
 		{ID: "search-license", Title: "License", Description: "License details for using Goshtoso.", Href: "/license", Section: "Docs", Attrs: navHxAttrs("/license", "")},
+		{ID: "search-module-charts", Title: "Charts", Description: "Static, interactive, and 3D charts from the Goshtoso Charts module.", Href: "/modules/charts", Section: "Modules", Keywords: []string{"visualization line 3d"}, Attrs: navHxAttrs("/modules/charts", "")},
+		{ID: "search-module-app-shells", Title: "App Shells", Description: "Reusable component documentation and console shells from Goshtoso App Shells.", Href: "/modules/app-shells", Section: "Modules", Keywords: []string{"layout docs console shell"}, Attrs: navHxAttrs("/modules/app-shells", "")},
 	}
 	for _, page := range catalog.ComponentPages() {
+		if page.Active == "app-shell" {
+			continue
+		}
 		items = append(items, searchfield.Item{
 			ID:          "search-" + page.Active,
 			Title:       page.Title,
@@ -398,7 +422,7 @@ func getSearchItems() []searchfield.Item {
 		})
 	}
 	for _, section := range getSidebarSections("") {
-		if section.Title == "Example Apps" {
+		if section.Title == "Examples" {
 			for _, item := range section.Items {
 				items = append(items, searchfield.Item{
 					ID:          "search-" + item.ID,
@@ -450,9 +474,18 @@ func getSearchSectionItems() []searchfield.Item {
 
 // getSidebarSections returns the component categories with left-border style items
 func getSidebarSections(activeComponent string) []sidebar.Section {
-	sections := make([]sidebar.Section, 0, 5)
+	sections := []sidebar.Section{{
+		Title: "Modules",
+		Items: []sidebar.Item{
+			sItem("module-charts", "Charts", "/modules/charts", activeComponent),
+			sItem("module-app-shells", "App Shells", "/modules/app-shells", activeComponent),
+		},
+	}}
 	sectionIndex := map[string]int{}
 	for _, page := range catalog.ComponentPages() {
+		if page.Active == "app-shell" {
+			continue
+		}
 		index, ok := sectionIndex[page.Section]
 		if !ok {
 			index = len(sections)
@@ -466,9 +499,10 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 	}
 
 	return append(sections, sidebar.Section{
-		Title:       "Example Apps",
+		Title:       "Examples",
 		Collapsible: true,
 		Items: []sidebar.Item{
+			sItem("examples", "Overview", "/examples", activeComponent),
 			sItem("todo", "Todo List", "/examples/todo", activeComponent),
 			sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
 			sItem("chat", "Chat", "/examples/chat", activeComponent),
@@ -487,7 +521,12 @@ type componentNavLink struct {
 }
 
 func getComponentNav(activeComponent string) (prev, next *componentNavLink) {
-	pages := catalog.ComponentPages()
+	pages := make([]catalog.Entry, 0, len(catalog.ComponentPages()))
+	for _, page := range catalog.ComponentPages() {
+		if page.Active != "app-shell" {
+			pages = append(pages, page)
+		}
+	}
 	for i, page := range pages {
 		if page.Active == activeComponent {
 			if i > 0 {
@@ -582,8 +621,7 @@ templ siteFooter() {
 
 func getThemeOptions() []selectfield.Option {
 	all := themes.All()
-	options := make([]selectfield.Option, 0, len(all)+1)
-	options = append(options, selectfield.Option{Value: "araihu", Label: "Arai Hû"})
+	options := make([]selectfield.Option, 0, len(all))
 	for _, theme := range all {
 		options = append(options, selectfield.Option{Value: theme.Key, Label: theme.Label})
 	}

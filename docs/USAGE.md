@@ -66,7 +66,7 @@ templ Layout() {
 ```
 
 The served `styles.css` already carries every component style + the theme system
-(15 themes). **Stock CDN Tailwind will not work** — the theme tokens
+(16 themes). **Stock CDN Tailwind will not work** — the theme tokens
 (`bg-primary`, `text-on-surface`, …) live only in this compiled CSS.
 
 The default loader tries exact-version unpkg URLs in dependency order. If a
@@ -211,7 +211,7 @@ Then import it in your Tailwind entry point:
 @import "./goshtoso-base.css";
 ```
 
-The extracted CSS includes all Goshtoso component styles, the theme system (15 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
+The extracted CSS includes all Goshtoso component styles, the theme system (16 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
 
 ### 4. Required JavaScript
 
@@ -563,7 +563,7 @@ points generally use target-specific names such as `RootClass`, `InputAttrs`,
 
 ### Available Themes
 
-Goshtoso ships 15 built-in themes. The default theme is `goshtoso`; the Minimal
+Goshtoso ships 16 built-in themes. The default theme is `goshtoso`; the Minimal
 theme is useful for checking no-radius edge cases.
 
 ### Switching Themes
