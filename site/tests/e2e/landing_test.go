@@ -29,7 +29,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		h1 := page.Locator("#hero h1")
 		txt, err := h1.InnerText()
 		require.NoError(t, err)
-		require.Equal(t, "Build Go interfaces that feel alive.", txt)
+		require.Equal(t, "Build server-rendered Go interfaces with typed components.", txt)
 		body, err := page.Locator("body").InnerText()
 		require.NoError(t, err)
 		require.NotContains(t, body, "Build interactive UIs in Go")
@@ -82,11 +82,11 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.Zero(t, count, "homepage typography should work without a third-party font request")
 	})
 
-	t.Run("BrowseComponentsCTA", func(t *testing.T) {
-		cta := page.Locator("#hero a[data-primary-cta][href='/components/accordion']")
+	t.Run("GettingStartedCTA", func(t *testing.T) {
+		cta := page.Locator("#hero a[data-primary-cta][href='/getting-started']")
 		visible, err := cta.IsVisible()
 		require.NoError(t, err)
-		require.True(t, visible, "Browse components CTA should be visible")
+		require.True(t, visible, "getting started CTA should be visible")
 	})
 
 	t.Run("HeroUsesV11GoshtosoLockup", func(t *testing.T) {
