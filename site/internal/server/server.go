@@ -19,6 +19,7 @@ import (
 	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	buttonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
 )
 
@@ -390,7 +391,7 @@ func (s *Server) handleButtonFragment(w http.ResponseWriter, r *http.Request) {
 	disabled := r.URL.Query().Get("disabled") == "true"
 
 	// Render just the button grid fragment
-	_ = components.ButtonFragment(disabled).Render(r.Context(), w)
+	_ = buttonpage.ButtonFragment(disabled).Render(r.Context(), w)
 }
 
 func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) {

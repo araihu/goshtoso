@@ -5,6 +5,8 @@ import (
 	"github.com/araihu/goshtoso/site/internal/examples/chat"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	actiongrouppage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/actiongroup"
+	buttonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
 	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
@@ -30,7 +32,7 @@ func legacyDemos() map[string]DemoEntry {
 		"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
 		"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
 		"components/toolbar":          {Title: "Toolbar", Active: "toolbar", Content: toolbarDemoContent},
-		"components/action-group":     {Title: "Action Group", Active: "action-group", Content: actionGroupDemoContent},
+		"components/action-group":     actiongrouppage.Definition,
 		"components/panel":            {Title: "Panel", Active: "panel", Content: panelDemoContent},
 		"components/empty-state":      {Title: "Empty State", Active: "empty-state", Content: emptyStateDemoContent},
 		"components/skeleton":         {Title: "Skeleton", Active: "skeleton", Content: skeletonDemoContent},
@@ -40,7 +42,7 @@ func legacyDemos() map[string]DemoEntry {
 		"components/badge":            {Title: "Badge", Active: "badge", Content: badgeDemoContent},
 		"components/banner":           {Title: "Banner", Active: "banner", Content: bannerDemoContent},
 		"components/breadcrumbs":      {Title: "Breadcrumbs", Active: "breadcrumbs", Content: breadcrumbsDemoContent},
-		"components/button":           {Title: "Buttons", Active: "button", Content: buttonDemoContent},
+		"components/button":           buttonpage.Definition,
 		"components/card":             {Title: "Card", Active: "card", Content: cardDemoContent},
 		"components/carousel":         {Title: "Carousel", Active: "carousel", Content: carouselDemoContent},
 		"components/chatbubble":       {Title: "Chat Bubble", Active: "chatbubble", Content: chatBubbleDemoContent},
