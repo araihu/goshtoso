@@ -1,24 +1,18 @@
 package components
 
 import (
-	"sort"
-	"strings"
-
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/site/internal/examples/chat"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
 // DemoEntry describes a single navigable demo page: its title for <title>
 // and the sidebar "active" key used by Layout/sidebar to highlight the
 // current entry.
-type DemoEntry struct {
-	Title   string
-	Active  string
-	Content func() templ.Component
-}
+type DemoEntry = demo.PageDefinition
 
 // Demos is the single registry of every page that can be loaded either
 // as a full document (initial load / direct nav / no-JS) or as an HTMX
@@ -27,86 +21,103 @@ type DemoEntry struct {
 // Keys are the canonical route path *without* a leading slash, e.g.
 // "components/button", "docs/theme", "getting-started". Server handlers
 // translate their URL into a registry key.
-var Demos = map[string]DemoEntry{
-	"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
-	"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
-	"components/toolbar":          {Title: "Toolbar", Active: "toolbar", Content: toolbarDemoContent},
-	"components/action-group":     {Title: "Action Group", Active: "action-group", Content: actionGroupDemoContent},
-	"components/panel":            {Title: "Panel", Active: "panel", Content: panelDemoContent},
-	"components/empty-state":      {Title: "Empty State", Active: "empty-state", Content: emptyStateDemoContent},
-	"components/skeleton":         {Title: "Skeleton", Active: "skeleton", Content: skeletonDemoContent},
-	"components/accordion":        {Title: "Accordion", Active: "accordion", Content: accordionDemoContent},
-	"components/alert":            {Title: "Alert", Active: "alert", Content: alertDemoContent},
-	"components/avatar":           {Title: "Avatar", Active: "avatar", Content: avatarDemoContent},
-	"components/badge":            {Title: "Badge", Active: "badge", Content: badgeDemoContent},
-	"components/banner":           {Title: "Banner", Active: "banner", Content: bannerDemoContent},
-	"components/breadcrumbs":      {Title: "Breadcrumbs", Active: "breadcrumbs", Content: breadcrumbsDemoContent},
-	"components/button":           {Title: "Buttons", Active: "button", Content: buttonDemoContent},
-	"components/card":             {Title: "Card", Active: "card", Content: cardDemoContent},
-	"components/carousel":         {Title: "Carousel", Active: "carousel", Content: carouselDemoContent},
-	"components/chatbubble":       {Title: "Chat Bubble", Active: "chatbubble", Content: chatBubbleDemoContent},
-	"components/checkbox":         {Title: "Checkbox", Active: "checkbox", Content: checkboxDemoContent},
-	"components/codeblock":        {Title: "Code Block", Active: "codeblock", Content: codeBlockDemoContent},
-	"components/combobox":         {Title: "Combobox", Active: "combobox", Content: comboboxDemoContent},
-	"components/dependencies":     {Title: "Dependencies", Active: "dependencies", Content: dependenciesDemoContent},
-	"components/drawer":           {Title: "Drawer", Active: "drawer", Content: drawerDemoContent},
-	"components/dropdown":         {Title: "Dropdown", Active: "dropdown", Content: dropdownDemoContent},
-	"components/fileinput":        {Title: "File Input", Active: "fileinput", Content: fileInputDemoContent},
-	"components/form":             {Title: "Form", Active: "form", Content: formDemoContent},
-	"components/kbd":              {Title: "KBD", Active: "kbd", Content: kbdDemoContent},
-	"components/link":             {Title: "Link", Active: "link", Content: linkDemoContent},
-	"components/modal":            {Title: "Modal", Active: "modal", Content: modalDemoContent},
-	"components/navbar":           {Title: "Navbar", Active: "navbar", Content: navbarDemoContent},
-	"components/pagination":       {Title: "Pagination", Active: "pagination", Content: paginationDemoContent},
-	"components/palette":          {Title: "Palette", Active: "palette", Content: paletteDemoContent},
-	"components/radio":            {Title: "Radio", Active: "radio", Content: radioDemoContent},
-	"components/range":            {Title: "Range", Active: "range", Content: rangeDemoContent},
-	"components/rating":           {Title: "Rating", Active: "rating", Content: ratingDemoContent},
-	"components/select":           {Title: "Select", Active: "select", Content: selectDemoContent},
-	"components/schema-form":      {Title: "Schema Form", Active: "schema-form", Content: schemaFormDemoContent},
-	"components/search":           {Title: "Search", Active: "search", Content: searchDemoContent},
-	"components/sidebar":          {Title: "Sidebar", Active: "sidebar", Content: sidebarDemoContent},
-	"components/spinner":          {Title: "Spinner", Active: "spinner", Content: spinnerDemoContent},
-	"components/steps":            {Title: "Steps", Active: "steps", Content: stepsDemoContent},
-	"components/table":            {Title: "Table", Active: "table", Content: tableDemoContent},
-	"components/tabs":             {Title: "Tabs", Active: "tabs", Content: tabsDemoContent},
-	"components/tags-list":        {Title: "Tags List", Active: "tags-list", Content: tagsListDemoContent},
-	"components/text-input":       {Title: "Text Input", Active: "text-input", Content: textInputDemoContent},
-	"components/textarea":         {Title: "Textarea", Active: "textarea", Content: textareaDemoContent},
-	"components/toast":            {Title: "Toast", Active: "toast", Content: toastDemoContent},
-	"components/toggle":           {Title: "Toggle", Active: "toggle", Content: toggleDemoContent},
-	"components/structured-input": {Title: "Structured Input", Active: "structured-input", Content: structuredInputDemoContent},
-	"components/tooltip":          {Title: "Tooltip", Active: "tooltip", Content: tooltipDemoContent},
-	"docs/agents":                 {Title: "AI Agents", Active: "agents", Content: agentsContent},
-	"docs/application-patterns":   {Title: "Application Patterns", Active: "application-patterns", Content: applicationPatternsContent},
-	"docs/component-model":        {Title: "Component Model", Active: "component-model", Content: componentModelContent},
-	"docs/theme":                  {Title: "Theme", Active: "theme", Content: themeDemoContent},
-	"modules/charts":              {Title: "Charts", Active: "module-charts", Content: chartsModuleContent},
-	"modules/app-shells":          {Title: "App Shells", Active: "module-app-shells", Content: appShellsModuleContent},
-	"getting-started":             {Title: "Getting Started", Content: gettingStartedContent},
-	"attributions":                {Title: "Attributions", Active: "attributions", Content: attributionsContent},
-	"license":                     {Title: "License", Active: "license", Content: licenseContent},
-	"privacy":                     {Title: "Privacy Policy", Active: "privacy", Content: privacyContent},
-	"examples":                    {Title: "Examples", Active: "examples", Content: examples.IndexContent},
-	"examples/todo":               {Title: "Todo List", Active: "todo", Content: examples.TodoContent},
-	"examples/expense":            {Title: "Expense Tracker", Active: "expense", Content: examples.ExpenseContent},
-	"examples/chat":               {Title: "Chat", Active: "chat", Content: func() templ.Component { return examples.ChatApp(chat.NewGuest(0)) }},
-	"examples/logs":               {Title: "Live Log Feed", Active: "logs", Content: examples.LogsContent},
-	"examples/profile":            {Title: "Profile", Active: "profile", Content: examples.ProfileContent},
-	"examples/ticker":             {Title: "Live Ticker", Active: "ticker", Content: examples.TickerContent},
-	"examples/wizard":             {Title: "Onboarding Wizard", Active: "wizard", Content: examples.WizardContent},
+var Demos = legacyDemos()
+
+var defaultRegistry = mustLegacyRegistry(Demos)
+
+func legacyDemos() map[string]DemoEntry {
+	demos := map[string]DemoEntry{
+		"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
+		"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
+		"components/toolbar":          {Title: "Toolbar", Active: "toolbar", Content: toolbarDemoContent},
+		"components/action-group":     {Title: "Action Group", Active: "action-group", Content: actionGroupDemoContent},
+		"components/panel":            {Title: "Panel", Active: "panel", Content: panelDemoContent},
+		"components/empty-state":      {Title: "Empty State", Active: "empty-state", Content: emptyStateDemoContent},
+		"components/skeleton":         {Title: "Skeleton", Active: "skeleton", Content: skeletonDemoContent},
+		"components/accordion":        {Title: "Accordion", Active: "accordion", Content: accordionDemoContent},
+		"components/alert":            {Title: "Alert", Active: "alert", Content: alertDemoContent},
+		"components/avatar":           {Title: "Avatar", Active: "avatar", Content: avatarDemoContent},
+		"components/badge":            {Title: "Badge", Active: "badge", Content: badgeDemoContent},
+		"components/banner":           {Title: "Banner", Active: "banner", Content: bannerDemoContent},
+		"components/breadcrumbs":      {Title: "Breadcrumbs", Active: "breadcrumbs", Content: breadcrumbsDemoContent},
+		"components/button":           {Title: "Buttons", Active: "button", Content: buttonDemoContent},
+		"components/card":             {Title: "Card", Active: "card", Content: cardDemoContent},
+		"components/carousel":         {Title: "Carousel", Active: "carousel", Content: carouselDemoContent},
+		"components/chatbubble":       {Title: "Chat Bubble", Active: "chatbubble", Content: chatBubbleDemoContent},
+		"components/checkbox":         {Title: "Checkbox", Active: "checkbox", Content: checkboxDemoContent},
+		"components/codeblock":        {Title: "Code Block", Active: "codeblock", Content: codeBlockDemoContent},
+		"components/combobox":         {Title: "Combobox", Active: "combobox", Content: comboboxDemoContent},
+		"components/dependencies":     {Title: "Dependencies", Active: "dependencies", Content: dependenciesDemoContent},
+		"components/drawer":           {Title: "Drawer", Active: "drawer", Content: drawerDemoContent},
+		"components/dropdown":         {Title: "Dropdown", Active: "dropdown", Content: dropdownDemoContent},
+		"components/fileinput":        {Title: "File Input", Active: "fileinput", Content: fileInputDemoContent},
+		"components/form":             {Title: "Form", Active: "form", Content: formDemoContent},
+		"components/kbd":              {Title: "KBD", Active: "kbd", Content: kbdDemoContent},
+		"components/link":             {Title: "Link", Active: "link", Content: linkDemoContent},
+		"components/modal":            {Title: "Modal", Active: "modal", Content: modalDemoContent},
+		"components/navbar":           {Title: "Navbar", Active: "navbar", Content: navbarDemoContent},
+		"components/pagination":       {Title: "Pagination", Active: "pagination", Content: paginationDemoContent},
+		"components/palette":          {Title: "Palette", Active: "palette", Content: paletteDemoContent},
+		"components/radio":            {Title: "Radio", Active: "radio", Content: radioDemoContent},
+		"components/range":            {Title: "Range", Active: "range", Content: rangeDemoContent},
+		"components/rating":           {Title: "Rating", Active: "rating", Content: ratingDemoContent},
+		"components/select":           {Title: "Select", Active: "select", Content: selectDemoContent},
+		"components/schema-form":      {Title: "Schema Form", Active: "schema-form", Content: schemaFormDemoContent},
+		"components/search":           {Title: "Search", Active: "search", Content: searchDemoContent},
+		"components/sidebar":          {Title: "Sidebar", Active: "sidebar", Content: sidebarDemoContent},
+		"components/spinner":          {Title: "Spinner", Active: "spinner", Content: spinnerDemoContent},
+		"components/steps":            {Title: "Steps", Active: "steps", Content: stepsDemoContent},
+		"components/table":            {Title: "Table", Active: "table", Content: tableDemoContent},
+		"components/tabs":             {Title: "Tabs", Active: "tabs", Content: tabsDemoContent},
+		"components/tags-list":        {Title: "Tags List", Active: "tags-list", Content: tagsListDemoContent},
+		"components/text-input":       {Title: "Text Input", Active: "text-input", Content: textInputDemoContent},
+		"components/textarea":         {Title: "Textarea", Active: "textarea", Content: textareaDemoContent},
+		"components/toast":            {Title: "Toast", Active: "toast", Content: toastDemoContent},
+		"components/toggle":           {Title: "Toggle", Active: "toggle", Content: toggleDemoContent},
+		"components/structured-input": {Title: "Structured Input", Active: "structured-input", Content: structuredInputDemoContent},
+		"components/tooltip":          {Title: "Tooltip", Active: "tooltip", Content: tooltipDemoContent},
+		"docs/agents":                 {Title: "AI Agents", Active: "agents", Content: agentsContent},
+		"docs/application-patterns":   {Title: "Application Patterns", Active: "application-patterns", Content: applicationPatternsContent},
+		"docs/component-model":        {Title: "Component Model", Active: "component-model", Content: componentModelContent},
+		"docs/theme":                  {Title: "Theme", Active: "theme", Content: themeDemoContent},
+		"modules/charts":              {Title: "Charts", Active: "module-charts", Content: chartsModuleContent},
+		"modules/app-shells":          {Title: "App Shells", Active: "module-app-shells", Content: appShellsModuleContent},
+		"getting-started":             {Title: "Getting Started", Content: gettingStartedContent},
+		"attributions":                {Title: "Attributions", Active: "attributions", Content: attributionsContent},
+		"license":                     {Title: "License", Active: "license", Content: licenseContent},
+		"privacy":                     {Title: "Privacy Policy", Active: "privacy", Content: privacyContent},
+		"examples":                    {Title: "Examples", Active: "examples", Content: examples.IndexContent},
+		"examples/todo":               {Title: "Todo List", Active: "todo", Content: examples.TodoContent},
+		"examples/expense":            {Title: "Expense Tracker", Active: "expense", Content: examples.ExpenseContent},
+		"examples/chat":               {Title: "Chat", Active: "chat", Content: func() templ.Component { return examples.ChatApp(chat.NewGuest(0)) }},
+		"examples/logs":               {Title: "Live Log Feed", Active: "logs", Content: examples.LogsContent},
+		"examples/profile":            {Title: "Profile", Active: "profile", Content: examples.ProfileContent},
+		"examples/ticker":             {Title: "Live Ticker", Active: "ticker", Content: examples.TickerContent},
+		"examples/wizard":             {Title: "Onboarding Wizard", Active: "wizard", Content: examples.WizardContent},
+	}
+	if _, ok := catalog.Lookup("components/icon"); ok {
+		demos["components/icon"] = DemoEntry{Title: "Icon", Active: "icon", Content: iconDemoContent}
+	}
+	return demos
 }
 
-func init() {
-	if _, ok := catalog.Lookup("components/icon"); ok {
-		Demos["components/icon"] = DemoEntry{Title: "Icon", Active: "icon", Content: iconDemoContent}
+func mustLegacyRegistry(entries map[string]DemoEntry) *demoregistry.Registry {
+	definitions := make([]demo.PageDefinition, 0, len(entries))
+	for key, entry := range entries {
+		entry.Key = key
+		entry.Description = demoDescription(key, entry)
+		definitions = append(definitions, entry)
 	}
+	registry, err := demoregistry.New(definitions, catalog.ComponentPages())
+	if err != nil {
+		panic(err)
+	}
+	return registry
 }
 
 // LookupDemo returns the entry for a given canonical key (no leading slash).
 func LookupDemo(key string) (DemoEntry, bool) {
-	e, ok := Demos[key]
-	return e, ok
+	return defaultRegistry.Lookup(key)
 }
 
 // componentCount uses registered component pages so the homepage reflects the
@@ -116,64 +127,17 @@ func componentCount() int {
 }
 
 func DemoMeta(key string, entry DemoEntry) demo.PageMeta {
-	path := "/" + strings.TrimPrefix(key, "/")
-	if key == "" {
-		path = "/"
-	}
-	title := entry.Title
-	metaType := "TechArticle"
-	switch {
-	case strings.HasPrefix(key, "components/"):
-		componentTitle := entry.Title
-		title = componentTitle + " Component - Goshtoso UI Library for Go"
-	case strings.HasPrefix(key, "examples/"):
-		title = entry.Title + " Example - Goshtoso Go UI Components"
-		metaType = "SoftwareSourceCode"
-	case key == "examples":
-		title = "Example Apps - Goshtoso Go UI Components"
-	case key == "getting-started":
-		title = "Getting Started with Goshtoso Go UI Components"
-	case key == "docs/agents":
-		title = "Using Goshtoso With AI Agents"
-	case key == "docs/application-patterns":
-		title = "Application Patterns for Goshtoso"
-	case key == "docs/component-model":
-		title = "Goshtoso Component Model"
-	case key == "docs/theme":
-		title = "Themes - Goshtoso UI Library for Go"
-	case key == "modules/charts":
-		title = "Goshtoso Charts Module"
-	case key == "modules/app-shells":
-		title = "Goshtoso App Shells Module"
-	}
-	return demo.PageMeta{
-		Title:       title,
-		Description: demoDescription(key, entry),
-		Path:        path,
-		Type:        metaType,
-	}
+	entry.Key = key
+	entry.Description = demoDescription(key, entry)
+	return demoregistry.MetaForDefinition(entry)
 }
 
 func MetaForKey(key string) demo.PageMeta {
-	entry, ok := LookupDemo(key)
-	if !ok {
-		return demo.DefaultMeta("Goshtoso")
-	}
-	return DemoMeta(key, entry)
+	return defaultRegistry.MetaForKey(key)
 }
 
 func AllPublicMeta() []demo.PageMeta {
-	pages := make([]demo.PageMeta, 0, len(Demos)+1)
-	pages = append(pages, demo.HomeMeta())
-	keys := make([]string, 0, len(Demos))
-	for key := range Demos {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	for _, key := range keys {
-		pages = append(pages, MetaForKey(key))
-	}
-	return pages
+	return defaultRegistry.AllPublicMeta()
 }
 
 func demoDescription(key string, entry DemoEntry) string {
