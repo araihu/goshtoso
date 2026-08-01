@@ -138,8 +138,20 @@ Migration is incremental so every batch compiles and renders correctly.
    remain unchanged.
 5. Move remaining non-component pages into grouped page packages, cut callers
    over to the neutral registry, and remove the compatibility facade.
-6. Add E2E build constraints, impact analysis, and CI selection only after the
-   real E2E package passes the focused compile and inventory gates below.
+6. Extract every cross-file E2E declaration into dedicated support files while
+   the suite is still untagged. The existing full E2E command must compile and
+   pass after extraction.
+7. Perform one atomic suite-gate cutover: add `e2e` constraints, add the
+   list-only `TestMain` path, and migrate every active E2E caller to pass
+   `-tags=e2e,full`. The repository may not contain a state where constraints
+   have landed but active commands cannot find the package.
+8. Replace runnable-file suite-only constraints with identity expressions and
+   keep support files suite-only.
+9. Run the per-identity compile and list inventories. Fix missing shared
+   declarations and incomplete identity expressions until every identity and
+   `full` pass.
+10. Add dependency impact selection and focused CI wiring only after the real
+    compile/list matrix is green.
 
 Only `.templ` sources and ordinary Go sources are moved manually. Generated
 `*_templ.go` files are removed at their old location and recreated with
@@ -185,6 +197,25 @@ Every Go file under `site/tests/e2e` has a build expression that implies
 identity files include `full` plus one or more focused identities. Validation
 rejects untagged files and expressions that can become true without `e2e`.
 
+### Active Caller Migration
+
+Adding the suite gate changes the package's public command contract. Every
+active caller is migrated in the same atomic cutover:
+
+- `Makefile` targets `test-e2e` and `test-e2e-one`;
+- the Justfile coverage target and its extracted reusable coverage script;
+- `site/tests/e2e/Dockerfile`;
+- Code CI and release workflows;
+- `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, the pull-request template,
+  `docs/RELEASE_CHECKLIST.md`, and `site/tests/e2e/README.md`.
+
+Full-suite and single-test documentation uses `-tags=e2e,full`; focused
+automation uses `-tags=e2e,<calculated identities>`. A repository validation
+scan rejects executable or current documented `go test` commands that target
+`site/tests/e2e` or `tests/e2e` without an `e2e` tag. Historical records under
+`docs/audits` and `docs/plans` remain immutable and are explicitly excluded
+from this active-caller scan.
+
 ### Shared Helper Extraction
 
 Focused constraints compile files independently. A helper declared in one
@@ -197,10 +228,10 @@ The current suite already violates this requirement. Known examples are:
   files;
 - `mustAttribute`, declared in `card_test.go` and used across fourteen files.
 
-Before adding identity constraints, every cross-file helper, type, variable,
-and constant moves into a support file that has `//go:build e2e` and contains
-no runnable `Test...` function. `TestMain` also remains in an `e2e`-only shared
-file.
+Every cross-file helper, type, variable, and constant first moves into a
+dedicated, temporarily untagged support file containing no runnable `Test...`
+function. The atomic suite-gate cutover then adds `//go:build e2e` to those
+support files and the `TestMain` file before identity constraints are applied.
 
 Validation performs a type-aware cross-file declaration/use inventory. A
 declaration used from another identity file is rejected unless its declaration
@@ -243,6 +274,35 @@ The command:
 Production imports drive impact. Test-only imports do not expand the graph
 because all unit tests already run. Cross-component E2E contracts remain
 explicit in their build expressions.
+
+### Git Range and History Semantics
+
+Changed paths come from NUL-delimited
+`git diff --name-status -z -M <start> <head>`. Status and paths are parsed
+without line-oriented shell splitting.
+
+For pull requests, CI fetches both the event's base SHA and head SHA with enough
+history to compute their merge base. The start revision is
+`git merge-base <base-sha> <head-sha>`, so a branch behind `main` does not treat
+unrelated base-branch commits as the pull request's work. Missing commits or an
+unavailable merge base select `full` with an explicit history reason.
+
+For a main push, the start revision is `github.event.before` and the head is
+`github.sha`; this covers every commit delivered by a multi-commit push. An
+all-zero `before`, missing revision, or non-ancestor/force-push relationship
+selects `full`. Release tag runs do not calculate impact because releases are
+always full.
+
+The head checkout supplies the package graph for added and modified files.
+Rename records classify both old and new paths for reporting, but any rename or
+deletion selects `full`; this avoids silently losing a removed package or old
+reverse edge from a head-only graph. Add records classify the new path.
+This policy deliberately chooses a full fallback instead of maintaining a
+second base-side Go workspace.
+
+Impact tests cover modified and added files, deleted files, renamed files,
+branch-behind pull requests, multi-commit pushes, an all-zero first push,
+force-push ancestry failure, and missing/shallow history.
 
 `gopls references` remains an optional diagnostic for investigating exact
 symbol uses. It is not part of CI correctness.
@@ -380,9 +440,44 @@ The pre-release job runs before the publishing job and includes:
 12. upload of merged coverage and E2E failure artifacts;
 13. coverage percentage/color outputs for badge publication.
 
+### Authoritative Coverage Denominator
+
+The published badge denominator is exactly the publishable component package
+set returned by:
+
+```bash
+component_coverpkg="$(go list ./components/... | sort | paste -sd, -)"
+```
+
+Root tests, site tests, and the E2E server instrument component packages as
+needed. `site/cmd/server` is instrumentation-only so the E2E shutdown path can
+flush coverage; it is never part of the published denominator.
+
+After merging native coverage data, both conversion commands use the same
+component filter:
+
+```bash
+go tool covdata percent \
+  -i=.coverage/merged \
+  -pkg="$component_coverpkg"
+go tool covdata textfmt \
+  -i=.coverage/merged \
+  -pkg="$component_coverpkg" \
+  -o=.coverage/coverage.out
+```
+
+The badge percentage is the `total:` value from `go tool cover
+-func=.coverage/coverage.out`. PR focused runs use the same package denominator
+but are labelled partial because selected E2E execution may not exercise every
+component path. Only release-full output updates the badge.
+
 The existing coverage shell logic moves into one reusable repository script so
 PR partial coverage, local full coverage, and release full coverage cannot
 silently diverge. The script receives the E2E tag set explicitly.
+
+The reusable script records its exact component package list and percentage.
+On the same commit, local `e2e,full` execution and release manual dry-run must
+produce the same package list and numeric percentage; mismatch fails acceptance.
 
 The release-publishing job has `needs: pre-release`. Only after the full gate
 passes may it create the GitHub release, update the coverage badge from the
@@ -424,10 +519,17 @@ Package segmentation is accepted only when:
 - every E2E identity compiles independently;
 - every identity's `go test -list` inventory matches its build constraints;
 - `full` lists and runs the complete suite;
+- every executable/current documented E2E caller passes `-tags=e2e,...`, while
+  historical audit and plan records remain unchanged;
 - authored Button plus derived templ/CSS output remains focused;
 - direct global CSS/runtime/theme and generated-only fixtures select `full`;
+- impact fixtures prove merge-base pull-request selection, exact main-push
+  before/after selection, add/modify handling, and full fallback for
+  delete/rename/force-push/all-zero/missing-history cases;
 - classifiable handler fixtures select their identities and shared server
   fixtures select `full`;
+- local and release-full coverage use the exact `components/...` denominator,
+  exclude `site/cmd/server`, and report the same percentage on the same commit;
 - the complete pre-release coverage job succeeds through the manual dry-run
   path without publishing or updating badges;
 - a second adversarial review finds no implementation blocker.
