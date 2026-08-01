@@ -5,8 +5,29 @@ import (
 	"github.com/araihu/goshtoso/site/internal/examples/chat"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	accordionpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/accordion"
 	actiongrouppage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/actiongroup"
+	alertpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/alert"
+	avatarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/avatar"
+	badgepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/badge"
+	bannerpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/banner"
+	breadcrumbspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/breadcrumbs"
 	buttonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button"
+	cardpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/card"
+	chatbubblepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/chatbubble"
+	codeblockpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/codeblock"
+	emptystatepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/emptystate"
+	headpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/head"
+	iconpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/icon"
+	kbdpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/kbd"
+	linkpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/link"
+	palettepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/palette"
+	panelpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/panel"
+	skeletonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/skeleton"
+	spinnerpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/spinner"
+	stepspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/steps"
+	toolbarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/toolbar"
+	tooltippage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/tooltip"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
 	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
@@ -31,35 +52,35 @@ func legacyDemos() map[string]DemoEntry {
 	demos := map[string]DemoEntry{
 		"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
 		"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
-		"components/toolbar":          {Title: "Toolbar", Active: "toolbar", Content: toolbarDemoContent},
+		"components/toolbar":          toolbarpage.Definition,
 		"components/action-group":     actiongrouppage.Definition,
-		"components/panel":            {Title: "Panel", Active: "panel", Content: panelDemoContent},
-		"components/empty-state":      {Title: "Empty State", Active: "empty-state", Content: emptyStateDemoContent},
-		"components/skeleton":         {Title: "Skeleton", Active: "skeleton", Content: skeletonDemoContent},
-		"components/accordion":        {Title: "Accordion", Active: "accordion", Content: accordionDemoContent},
-		"components/alert":            {Title: "Alert", Active: "alert", Content: alertDemoContent},
-		"components/avatar":           {Title: "Avatar", Active: "avatar", Content: avatarDemoContent},
-		"components/badge":            {Title: "Badge", Active: "badge", Content: badgeDemoContent},
-		"components/banner":           {Title: "Banner", Active: "banner", Content: bannerDemoContent},
-		"components/breadcrumbs":      {Title: "Breadcrumbs", Active: "breadcrumbs", Content: breadcrumbsDemoContent},
+		"components/panel":            panelpage.Definition,
+		"components/empty-state":      emptystatepage.Definition,
+		"components/skeleton":         skeletonpage.Definition,
+		"components/accordion":        accordionpage.Definition,
+		"components/alert":            alertpage.Definition,
+		"components/avatar":           avatarpage.Definition,
+		"components/badge":            badgepage.Definition,
+		"components/banner":           bannerpage.Definition,
+		"components/breadcrumbs":      breadcrumbspage.Definition,
 		"components/button":           buttonpage.Definition,
-		"components/card":             {Title: "Card", Active: "card", Content: cardDemoContent},
+		"components/card":             cardpage.Definition,
 		"components/carousel":         {Title: "Carousel", Active: "carousel", Content: carouselDemoContent},
-		"components/chatbubble":       {Title: "Chat Bubble", Active: "chatbubble", Content: chatBubbleDemoContent},
+		"components/chatbubble":       chatbubblepage.Definition,
 		"components/checkbox":         {Title: "Checkbox", Active: "checkbox", Content: checkboxDemoContent},
-		"components/codeblock":        {Title: "Code Block", Active: "codeblock", Content: codeBlockDemoContent},
+		"components/codeblock":        codeblockpage.Definition,
 		"components/combobox":         {Title: "Combobox", Active: "combobox", Content: comboboxDemoContent},
-		"components/dependencies":     {Title: "Dependencies", Active: "dependencies", Content: dependenciesDemoContent},
+		"components/dependencies":     headpage.Definition,
 		"components/drawer":           {Title: "Drawer", Active: "drawer", Content: drawerDemoContent},
 		"components/dropdown":         {Title: "Dropdown", Active: "dropdown", Content: dropdownDemoContent},
 		"components/fileinput":        {Title: "File Input", Active: "fileinput", Content: fileInputDemoContent},
 		"components/form":             {Title: "Form", Active: "form", Content: formDemoContent},
-		"components/kbd":              {Title: "KBD", Active: "kbd", Content: kbdDemoContent},
-		"components/link":             {Title: "Link", Active: "link", Content: linkDemoContent},
+		"components/kbd":              kbdpage.Definition,
+		"components/link":             linkpage.Definition,
 		"components/modal":            {Title: "Modal", Active: "modal", Content: modalDemoContent},
 		"components/navbar":           {Title: "Navbar", Active: "navbar", Content: navbarDemoContent},
 		"components/pagination":       {Title: "Pagination", Active: "pagination", Content: paginationDemoContent},
-		"components/palette":          {Title: "Palette", Active: "palette", Content: paletteDemoContent},
+		"components/palette":          palettepage.Definition,
 		"components/radio":            {Title: "Radio", Active: "radio", Content: radioDemoContent},
 		"components/range":            {Title: "Range", Active: "range", Content: rangeDemoContent},
 		"components/rating":           {Title: "Rating", Active: "rating", Content: ratingDemoContent},
@@ -67,8 +88,8 @@ func legacyDemos() map[string]DemoEntry {
 		"components/schema-form":      {Title: "Schema Form", Active: "schema-form", Content: schemaFormDemoContent},
 		"components/search":           {Title: "Search", Active: "search", Content: searchDemoContent},
 		"components/sidebar":          {Title: "Sidebar", Active: "sidebar", Content: sidebarDemoContent},
-		"components/spinner":          {Title: "Spinner", Active: "spinner", Content: spinnerDemoContent},
-		"components/steps":            {Title: "Steps", Active: "steps", Content: stepsDemoContent},
+		"components/spinner":          spinnerpage.Definition,
+		"components/steps":            stepspage.Definition,
 		"components/table":            {Title: "Table", Active: "table", Content: tableDemoContent},
 		"components/tabs":             {Title: "Tabs", Active: "tabs", Content: tabsDemoContent},
 		"components/tags-list":        {Title: "Tags List", Active: "tags-list", Content: tagsListDemoContent},
@@ -77,7 +98,7 @@ func legacyDemos() map[string]DemoEntry {
 		"components/toast":            {Title: "Toast", Active: "toast", Content: toastDemoContent},
 		"components/toggle":           {Title: "Toggle", Active: "toggle", Content: toggleDemoContent},
 		"components/structured-input": {Title: "Structured Input", Active: "structured-input", Content: structuredInputDemoContent},
-		"components/tooltip":          {Title: "Tooltip", Active: "tooltip", Content: tooltipDemoContent},
+		"components/tooltip":          tooltippage.Definition,
 		"docs/agents":                 {Title: "AI Agents", Active: "agents", Content: agentsContent},
 		"docs/application-patterns":   {Title: "Application Patterns", Active: "application-patterns", Content: applicationPatternsContent},
 		"docs/component-model":        {Title: "Component Model", Active: "component-model", Content: componentModelContent},
@@ -98,7 +119,7 @@ func legacyDemos() map[string]DemoEntry {
 		"examples/wizard":             {Title: "Onboarding Wizard", Active: "wizard", Content: examples.WizardContent},
 	}
 	if _, ok := catalog.Lookup("components/icon"); ok {
-		demos["components/icon"] = DemoEntry{Title: "Icon", Active: "icon", Content: iconDemoContent}
+		demos["components/icon"] = iconpage.Definition
 	}
 	return demos
 }
