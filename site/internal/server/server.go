@@ -20,6 +20,8 @@ import (
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	buttonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button"
+	comboboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/combobox"
+	stepspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/steps"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
 )
 
@@ -115,11 +117,11 @@ func (s *Server) setupRoutes() {
 	s.registerGettingStartedRoutes()
 
 	// Combobox users demo runs server-mode lazy search.
-	usersHandler := combobox.Handler(components.UsersCfg, usersProvider)
+	usersHandler := combobox.Handler(comboboxpage.UsersCfg, usersProvider)
 	s.mux.Handle("/api/components/combobox/users/options", usersHandler)
 	s.mux.Handle("/api/components/combobox/users/toggle", usersHandler)
 	s.mux.Handle("/api/components/combobox/users/clear", usersHandler)
-	clustersHandler := combobox.Handler(components.ClusterCfg, clustersProvider)
+	clustersHandler := combobox.Handler(comboboxpage.ClusterCfg, clustersProvider)
 	s.mux.Handle("/api/components/combobox/clusters/options", clustersHandler)
 	s.mux.Handle("/api/components/combobox/clusters/toggle", clustersHandler)
 	s.mux.Handle("/api/components/combobox/clusters/clear", clustersHandler)
@@ -381,7 +383,7 @@ func (s *Server) handleStepsDemo(w http.ResponseWriter, r *http.Request) {
 		current = 4
 	}
 
-	_ = components.StepsHTMXFlow(current).Render(r.Context(), w)
+	_ = stepspage.StepsHTMXFlow(current).Render(r.Context(), w)
 }
 
 func (s *Server) handleButtonFragment(w http.ResponseWriter, r *http.Request) {

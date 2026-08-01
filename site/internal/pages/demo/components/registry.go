@@ -8,24 +8,51 @@ import (
 	accordionpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/accordion"
 	actiongrouppage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/actiongroup"
 	alertpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/alert"
+	appshellpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/appshell"
 	avatarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/avatar"
 	badgepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/badge"
 	bannerpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/banner"
 	breadcrumbspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/breadcrumbs"
 	buttonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button"
 	cardpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/card"
+	carouselpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/carousel"
 	chatbubblepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/chatbubble"
+	checkboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/checkbox"
 	codeblockpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/codeblock"
+	comboboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/combobox"
+	drawerpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/drawer"
+	dropdownpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/dropdown"
 	emptystatepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/emptystate"
+	fileinputpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/fileinput"
+	formpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/form"
 	headpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/head"
 	iconpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/icon"
 	kbdpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/kbd"
 	linkpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/link"
+	modalpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/modal"
+	navbarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/navbar"
+	pageheaderpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/pageheader"
+	paginationpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/pagination"
 	palettepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/palette"
 	panelpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/panel"
+	radiopage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/radio"
+	rangepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/range"
+	ratingpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/rating"
+	schemaformpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/schemaform"
+	searchpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/search"
+	selectpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/select"
+	sidebarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/sidebar"
 	skeletonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/skeleton"
 	spinnerpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/spinner"
 	stepspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/steps"
+	structuredinputpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/structuredinput"
+	tablepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/table"
+	tabspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/tabs"
+	tagslistpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/tagslist"
+	textareapage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/textarea"
+	textinputpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/textinput"
+	toastpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/toast"
+	togglepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/toggle"
 	toolbarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/toolbar"
 	tooltippage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/tooltip"
 	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
@@ -50,8 +77,8 @@ var defaultRegistry = mustLegacyRegistry(Demos)
 
 func legacyDemos() map[string]DemoEntry {
 	demos := map[string]DemoEntry{
-		"components/app-shell":        {Title: "App Shell", Active: "app-shell", Content: appShellDemoContent},
-		"components/page-header":      {Title: "Page Header", Active: "page-header", Content: pageHeaderDemoContent},
+		"components/app-shell":        appshellpage.Definition,
+		"components/page-header":      pageheaderpage.Definition,
 		"components/toolbar":          toolbarpage.Definition,
 		"components/action-group":     actiongrouppage.Definition,
 		"components/panel":            panelpage.Definition,
@@ -65,39 +92,39 @@ func legacyDemos() map[string]DemoEntry {
 		"components/breadcrumbs":      breadcrumbspage.Definition,
 		"components/button":           buttonpage.Definition,
 		"components/card":             cardpage.Definition,
-		"components/carousel":         {Title: "Carousel", Active: "carousel", Content: carouselDemoContent},
+		"components/carousel":         carouselpage.Definition,
 		"components/chatbubble":       chatbubblepage.Definition,
-		"components/checkbox":         {Title: "Checkbox", Active: "checkbox", Content: checkboxDemoContent},
+		"components/checkbox":         checkboxpage.Definition,
 		"components/codeblock":        codeblockpage.Definition,
-		"components/combobox":         {Title: "Combobox", Active: "combobox", Content: comboboxDemoContent},
+		"components/combobox":         comboboxpage.Definition,
 		"components/dependencies":     headpage.Definition,
-		"components/drawer":           {Title: "Drawer", Active: "drawer", Content: drawerDemoContent},
-		"components/dropdown":         {Title: "Dropdown", Active: "dropdown", Content: dropdownDemoContent},
-		"components/fileinput":        {Title: "File Input", Active: "fileinput", Content: fileInputDemoContent},
-		"components/form":             {Title: "Form", Active: "form", Content: formDemoContent},
+		"components/drawer":           drawerpage.Definition,
+		"components/dropdown":         dropdownpage.Definition,
+		"components/fileinput":        fileinputpage.Definition,
+		"components/form":             formpage.Definition,
 		"components/kbd":              kbdpage.Definition,
 		"components/link":             linkpage.Definition,
-		"components/modal":            {Title: "Modal", Active: "modal", Content: modalDemoContent},
-		"components/navbar":           {Title: "Navbar", Active: "navbar", Content: navbarDemoContent},
-		"components/pagination":       {Title: "Pagination", Active: "pagination", Content: paginationDemoContent},
+		"components/modal":            modalpage.Definition,
+		"components/navbar":           navbarpage.Definition,
+		"components/pagination":       paginationpage.Definition,
 		"components/palette":          palettepage.Definition,
-		"components/radio":            {Title: "Radio", Active: "radio", Content: radioDemoContent},
-		"components/range":            {Title: "Range", Active: "range", Content: rangeDemoContent},
-		"components/rating":           {Title: "Rating", Active: "rating", Content: ratingDemoContent},
-		"components/select":           {Title: "Select", Active: "select", Content: selectDemoContent},
-		"components/schema-form":      {Title: "Schema Form", Active: "schema-form", Content: schemaFormDemoContent},
-		"components/search":           {Title: "Search", Active: "search", Content: searchDemoContent},
-		"components/sidebar":          {Title: "Sidebar", Active: "sidebar", Content: sidebarDemoContent},
+		"components/radio":            radiopage.Definition,
+		"components/range":            rangepage.Definition,
+		"components/rating":           ratingpage.Definition,
+		"components/select":           selectpage.Definition,
+		"components/schema-form":      schemaformpage.Definition,
+		"components/search":           searchpage.Definition,
+		"components/sidebar":          sidebarpage.Definition,
 		"components/spinner":          spinnerpage.Definition,
 		"components/steps":            stepspage.Definition,
-		"components/table":            {Title: "Table", Active: "table", Content: tableDemoContent},
-		"components/tabs":             {Title: "Tabs", Active: "tabs", Content: tabsDemoContent},
-		"components/tags-list":        {Title: "Tags List", Active: "tags-list", Content: tagsListDemoContent},
-		"components/text-input":       {Title: "Text Input", Active: "text-input", Content: textInputDemoContent},
-		"components/textarea":         {Title: "Textarea", Active: "textarea", Content: textareaDemoContent},
-		"components/toast":            {Title: "Toast", Active: "toast", Content: toastDemoContent},
-		"components/toggle":           {Title: "Toggle", Active: "toggle", Content: toggleDemoContent},
-		"components/structured-input": {Title: "Structured Input", Active: "structured-input", Content: structuredInputDemoContent},
+		"components/table":            tablepage.Definition,
+		"components/tabs":             tabspage.Definition,
+		"components/tags-list":        tagslistpage.Definition,
+		"components/text-input":       textinputpage.Definition,
+		"components/textarea":         textareapage.Definition,
+		"components/toast":            toastpage.Definition,
+		"components/toggle":           togglepage.Definition,
+		"components/structured-input": structuredinputpage.Definition,
 		"components/tooltip":          tooltippage.Definition,
 		"docs/agents":                 {Title: "AI Agents", Active: "agents", Content: agentsContent},
 		"docs/application-patterns":   {Title: "Application Patterns", Active: "application-patterns", Content: applicationPatternsContent},

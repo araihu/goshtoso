@@ -1,0 +1,185 @@
+package textareapage
+
+import (
+	"github.com/araihu/goshtoso/components/textarea"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// TextareaDemoPage renders the Textarea component demo
+templ TextareaDemoPage() {
+	@demo.Layout("Textarea", "textarea", textareaDemoContent())
+}
+
+// textareaDemoContent renders the demo. Each textarea variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/textarea). Wrapped in #textarea-fragment.
+templ textareaDemoContent() {
+	<div id="textarea-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Textarea",
+				Description: "A multi-line text input for longer content — comments, messages, descriptions. Supports validation states, disabled, and an actions variant.",
+			},
+			textareaDefaultPreview(),
+			`@textarea.Textarea(textarea.Config{
+    ID:          "comment",
+    Name:        "comment",
+    Label:       "Comment",
+    Placeholder: "We'd love to hear from you...",
+    Rows:        3,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Required",
+				Description: "Required: true emits the native required attribute for browser validation.",
+			},
+			textareaRequiredPreview(),
+			`@textarea.Textarea(textarea.Config{
+    ID:       "review-note",
+    Name:     "review_note",
+    Label:    "Review note",
+    Required: true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Error State",
+				Description: "State: textarea.StateError recolors the border and HelperText for validation errors.",
+			},
+			textareaErrorPreview(),
+			`@textarea.Textarea(textarea.Config{
+    ID:         "comment-error",
+    Name:       "comment",
+    Label:      "Comment",
+    State:      textarea.StateError,
+    HelperText: "Error: Please add some comments to your evaluation",
+    Rows:       3,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Success State",
+				Description: "State: textarea.StateSuccess applies the success styling.",
+			},
+			textareaSuccessPreview(),
+			`@textarea.Textarea(textarea.Config{
+    ID:    "comment-success",
+    Name:  "comment",
+    Label: "Comment",
+    State: textarea.StateSuccess,
+    Rows:  3,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks editing and dims the field.",
+			},
+			textareaDisabledPreview(),
+			`@textarea.Textarea(textarea.Config{
+    ID:          "comment-disabled",
+    Name:        "comment",
+    Label:       "Comment",
+    Placeholder: "This textarea is disabled",
+    Disabled:    true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Actions",
+				Description: "textarea.TextareaWithActions wraps the field with a toolbar/footer for inline actions.",
+			},
+			textareaActionsPreview(),
+			`@textarea.TextareaWithActions(textarea.Config{
+    ID:          "message",
+    Name:        "message",
+    Placeholder: "Type your message here...",
+    Rows:        6,
+})`,
+		)
+	</div>
+}
+
+// textareaRequiredPreview renders a natively required textarea.
+templ textareaRequiredPreview() {
+	<div id="textarea-required" class="w-full max-w-md mx-auto">
+		@textarea.Textarea(textarea.Config{
+			ID:         "demo-required",
+			Name:       "review_note",
+			Label:      "Review note",
+			HelperText: "Required before this review can be submitted.",
+			Required:   true,
+		})
+	</div>
+}
+
+// textareaDefaultPreview renders the default textarea.
+templ textareaDefaultPreview() {
+	<div id="textarea-default" class="w-full max-w-md mx-auto">
+		@textarea.Textarea(textarea.Config{
+			ID:          "demo-default",
+			Name:        "comment",
+			Label:       "Comment",
+			Placeholder: "We'd love to hear from you...",
+			Rows:        3,
+		})
+	</div>
+}
+
+// textareaErrorPreview renders the error state.
+templ textareaErrorPreview() {
+	<div id="textarea-error" class="w-full max-w-md mx-auto">
+		@textarea.Textarea(textarea.Config{
+			ID:         "demo-error",
+			Name:       "comment",
+			Label:      "Comment",
+			State:      textarea.StateError,
+			HelperText: "Error: Please add some comments to your evaluation",
+			Rows:       3,
+		})
+	</div>
+}
+
+// textareaSuccessPreview renders the success state.
+templ textareaSuccessPreview() {
+	<div id="textarea-success" class="w-full max-w-md mx-auto">
+		@textarea.Textarea(textarea.Config{
+			ID:    "demo-success",
+			Name:  "comment",
+			Label: "Comment",
+			State: textarea.StateSuccess,
+			Rows:  3,
+		})
+	</div>
+}
+
+// textareaDisabledPreview renders the disabled textarea.
+templ textareaDisabledPreview() {
+	<div id="textarea-disabled" class="w-full max-w-md mx-auto">
+		@textarea.Textarea(textarea.Config{
+			ID:          "demo-disabled",
+			Name:        "comment",
+			Label:       "Comment",
+			Placeholder: "This textarea is disabled",
+			Disabled:    true,
+		})
+	</div>
+}
+
+// textareaActionsPreview renders the textarea-with-actions variant.
+templ textareaActionsPreview() {
+	<div id="textarea-actions" class="w-full max-w-md mx-auto">
+		@textarea.TextareaWithActions(textarea.Config{
+			ID:          "demo-actions",
+			Name:        "message",
+			Placeholder: "Type your message here...",
+			Rows:        6,
+		})
+	</div>
+}
