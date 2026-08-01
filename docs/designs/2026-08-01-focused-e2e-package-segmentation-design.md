@@ -532,7 +532,7 @@ Package segmentation is accepted only when:
   exclude `site/cmd/server`, and report the same percentage on the same commit;
 - the complete pre-release coverage job succeeds through the manual dry-run
   path without publishing or updating badges;
-- a second adversarial review finds no implementation blocker.
+- the latest adversarial review finds no implementation blocker.
 
 The broad package migration itself receives one final full E2E run because it
 changes routing and page ownership across the site. Focused selection becomes
