@@ -1,4 +1,4 @@
-name: Runner Smoke Test
+name: GitHub-hosted Runner Smoke Test
 
 on:
   workflow_dispatch:
@@ -8,8 +8,8 @@ on:
 
 jobs:
   smoke:
-    name: Self-hosted runner smoke test
-    runs-on: araihu
+    name: GitHub-hosted runner smoke test
+    runs-on: ubuntu-24.04
     steps:
       - name: Runner identity
         run: |
@@ -18,7 +18,7 @@ jobs:
           echo "whoami: $(whoami)"
           echo "pwd: $(pwd)"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Repo checkout sanity
         run: |

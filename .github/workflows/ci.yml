@@ -28,7 +28,7 @@ jobs:
     name: Lint, drift checks, build
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -42,7 +42,7 @@ jobs:
           echo "GOBIN=$tool_bin" >> "$GITHUB_ENV"
           echo "$tool_bin" >> "$GITHUB_PATH"
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: ${{ env.GO_VERSION }}
           cache-dependency-path: |
@@ -50,7 +50,7 @@ jobs:
             site/go.sum
             tests/external/runtime-manifest/go.sum
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -159,7 +159,7 @@ jobs:
     name: Tests + coverage
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -177,7 +177,7 @@ jobs:
           } >> "$GITHUB_ENV"
           echo "$tool_bin" >> "$GITHUB_PATH"
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: ${{ env.GO_VERSION }}
           cache-dependency-path: |
@@ -185,7 +185,7 @@ jobs:
             site/go.sum
             tests/external/runtime-manifest/go.sum
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -245,7 +245,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload E2E impact decision
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-impact
           path: .e2e-impact.json
@@ -278,7 +278,7 @@ jobs:
 
       - name: Upload E2E artifacts on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-results
           path: site/tests/e2e/test-results/
