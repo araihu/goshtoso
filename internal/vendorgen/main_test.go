@@ -2,6 +2,7 @@ package vendorgen
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -57,6 +58,18 @@ func TestParseManifestPreservesOrderAndRequiresRuntimeMetadata(t *testing.T) {
 	missingLicenseFile := strings.Replace(testManifestJSON, `"license_file": "LICENSE.txt"`, `"license_file": ""`, 1)
 	if _, err := parseManifest([]byte(missingLicenseFile)); err == nil {
 		t.Fatal("parseManifest accepted a dependency without a bundled license file")
+	}
+	licenseOverwritesRuntime := strings.Replace(testManifestJSON, `"license_file": "LICENSE.txt"`, `"license_file": "alpine.min.js"`, 1)
+	if _, err := parseManifest([]byte(licenseOverwritesRuntime)); err == nil {
+		t.Fatal("parseManifest accepted license_file equal to the JavaScript file")
+	}
+	loaderWithVendoredMetadata := strings.Replace(testManifestJSON, `"name": "Goshtoso dependency loader",`, `"name": "Goshtoso dependency loader", "package_name": "ignored",`, 1)
+	if _, err := parseManifest([]byte(loaderWithVendoredMetadata)); err == nil {
+		t.Fatal("parseManifest accepted vendored-only metadata on the loader")
+	}
+	firstPartyWithVendoredMetadata := strings.Replace(testManifestJSON, `"name": "Goshtoso runtime",`, `"name": "Goshtoso runtime", "license_file": "ignored.txt",`, 1)
+	if _, err := parseManifest([]byte(firstPartyWithVendoredMetadata)); err == nil {
+		t.Fatal("parseManifest accepted vendored-only metadata on a first-party dependency")
 	}
 	unsafeLocalPath := strings.Replace(testManifestJSON, `/assets/js/goshtoso.min.js`, `/assets/js/../secret.js`, 1)
 	if _, err := parseManifest([]byte(unsafeLocalPath)); err == nil {
@@ -200,6 +213,141 @@ func TestWriteArtifactsStagesEverythingBeforeReplacingTargets(t *testing.T) {
 	}
 	if string(contents) != "old" {
 		t.Fatalf("first artifact changed after staging failure: %q", contents)
+	}
+}
+
+func TestCommitFileUpdatesPreservesBackupWhenRestoreFails(t *testing.T) {
+	root := t.TempDir()
+	first := filepath.Join(root, "first.txt")
+	second := filepath.Join(root, "second.txt")
+	for _, target := range []string{first, second} {
+		if err := os.WriteFile(target, []byte("old:"+filepath.Base(target)), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	originalRename := renameFile
+	renameFile = func(oldPath, newPath string) error {
+		stageFailure := newPath == second && strings.Contains(filepath.Base(oldPath), ".vendorgen-stage-")
+		rollbackFailure := newPath == first && strings.Contains(filepath.Base(oldPath), ".vendorgen-backup-")
+		if stageFailure || rollbackFailure {
+			return fmt.Errorf("injected rename failure")
+		}
+		return originalRename(oldPath, newPath)
+	}
+	t.Cleanup(func() { renameFile = originalRename })
+
+	err := commitFileUpdates([]fileUpdate{
+		{path: first, contents: []byte("new:first"), mode: 0o644},
+		{path: second, contents: []byte("new:second"), mode: 0o644},
+	})
+	if err == nil {
+		t.Fatal("commitFileUpdates accepted replacement and restoration failures")
+	}
+	backups, globErr := filepath.Glob(filepath.Join(root, ".vendorgen-backup-*"))
+	if globErr != nil {
+		t.Fatal(globErr)
+	}
+	if len(backups) != 1 {
+		t.Fatalf("preserved backups = %v, want exactly one", backups)
+	}
+	if !strings.Contains(err.Error(), backups[0]) {
+		t.Fatalf("error %q does not identify preserved backup %q", err, backups[0])
+	}
+	contents, readErr := os.ReadFile(backups[0])
+	if readErr != nil || string(contents) != "old:first.txt" {
+		t.Fatalf("preserved backup = %q, %v", contents, readErr)
+	}
+}
+
+func TestCommitFileUpdatesPreservesCurrentBackupWhenImmediateRestoreFails(t *testing.T) {
+	target := filepath.Join(t.TempDir(), "target.txt")
+	if err := os.WriteFile(target, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	originalRename := renameFile
+	renameFile = func(oldPath, newPath string) error {
+		if newPath == target && (strings.Contains(filepath.Base(oldPath), ".vendorgen-stage-") || strings.Contains(filepath.Base(oldPath), ".vendorgen-backup-")) {
+			return fmt.Errorf("injected immediate restore failure")
+		}
+		return originalRename(oldPath, newPath)
+	}
+	t.Cleanup(func() { renameFile = originalRename })
+
+	err := commitFileUpdates([]fileUpdate{{path: target, contents: []byte("new"), mode: 0o644}})
+	backups, globErr := filepath.Glob(filepath.Join(filepath.Dir(target), ".vendorgen-backup-*"))
+	if err == nil || globErr != nil || len(backups) != 1 {
+		t.Fatalf("error = %v, backups = %v, glob error = %v", err, backups, globErr)
+	}
+	if !strings.Contains(err.Error(), backups[0]) {
+		t.Fatalf("error %q does not identify preserved backup %q", err, backups[0])
+	}
+	contents, readErr := os.ReadFile(backups[0])
+	if readErr != nil || string(contents) != "old" {
+		t.Fatalf("preserved current backup = %q, %v", contents, readErr)
+	}
+}
+
+func TestQuarantineRestorePreservesDirectoryWhenRenameFails(t *testing.T) {
+	working := t.TempDir()
+	oldWorking, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(working); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(oldWorking) })
+	stale := filepath.Join(vendorRoot, "module", "old", "runtime.js")
+	if err := os.MkdirAll(filepath.Dir(stale), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(stale, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, restore, _, err := quarantineStaleVersions([]vendoredDependency{{Module: "module", Dependency: dep{Version: "new"}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	quarantines, err := filepath.Glob(filepath.Join(filepath.Dir(vendorRoot), ".vendorgen-prune-*"))
+	if err != nil || len(quarantines) != 1 {
+		t.Fatalf("quarantine paths = %v, %v", quarantines, err)
+	}
+
+	originalRename := renameFile
+	renameFile = func(oldPath, newPath string) error {
+		if strings.HasPrefix(oldPath, quarantines[0]+string(filepath.Separator)) {
+			return fmt.Errorf("injected quarantine restore failure")
+		}
+		return originalRename(oldPath, newPath)
+	}
+	t.Cleanup(func() { renameFile = originalRename })
+
+	restoreErr := restore()
+	if restoreErr == nil || !strings.Contains(restoreErr.Error(), quarantines[0]) {
+		t.Fatalf("restore error = %v, want preserved quarantine path", restoreErr)
+	}
+	if _, statErr := os.Stat(quarantines[0]); statErr != nil {
+		t.Fatalf("failed recovery quarantine was removed: %v", statErr)
+	}
+}
+
+func TestCommitFileUpdatesRejectsDuplicateDestinations(t *testing.T) {
+	target := filepath.Join(t.TempDir(), "same.txt")
+	if err := os.WriteFile(target, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	err := commitFileUpdates([]fileUpdate{
+		{path: target, contents: []byte("first"), mode: 0o644},
+		{path: filepath.Dir(target) + string(filepath.Separator) + "." + string(filepath.Separator) + filepath.Base(target), contents: []byte("second"), mode: 0o644},
+	})
+	if err == nil || !strings.Contains(err.Error(), "duplicate destination") {
+		t.Fatalf("duplicate destination error = %v", err)
+	}
+	contents, readErr := os.ReadFile(target)
+	if readErr != nil || string(contents) != "old" {
+		t.Fatalf("target changed after duplicate rejection: %q, %v", contents, readErr)
 	}
 }
 

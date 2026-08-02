@@ -2,6 +2,7 @@ package vendorgen
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -44,10 +45,18 @@ func downloadAll(deps []vendoredDependency, stdout io.Writer) error {
 		return err
 	}
 	if err := commitFileUpdates(updates); err != nil {
-		restorePruned()
+		var committedErr *committedFileUpdateError
+		if errors.As(err, &committedErr) {
+			if discardErr := discardPruned(); discardErr != nil {
+				return errors.Join(err, discardErr)
+			}
+			return err
+		}
+		return errors.Join(err, restorePruned())
+	}
+	if err := discardPruned(); err != nil {
 		return err
 	}
-	discardPruned()
 	for _, declared := range deps {
 		module, d := declared.Module, declared.Dependency
 		if _, err := fmt.Fprintf(stdout, "vendorgen: fetched %s@%s -> %s and %s\n", module, d.Version, diskPath(module, d), licenseDiskPath(module, d)); err != nil {
@@ -144,21 +153,36 @@ func verifyBytes(module string, d dep, body []byte) error {
 	return nil
 }
 
-// pruneStaleVersions first moves every stale directory into one quarantine
+// quarantineStaleVersions first moves every stale directory into one quarantine
 // outside the embedded tree. A late discovery error restores prior moves; once
 // all moves succeed, deleting the quarantine cannot expose a partial runtime.
-func quarantineStaleVersions(deps []vendoredDependency) ([]string, func(), func(), error) {
+func quarantineStaleVersions(deps []vendoredDependency) ([]string, func() error, func() error, error) {
 	quarantine, err := os.MkdirTemp(filepath.Dir(vendorRoot), ".vendorgen-prune-*")
 	if err != nil {
 		return nil, nil, nil, err
 	}
 	type movedDir struct{ from, to, label string }
 	var moved []movedDir
-	restore := func() {
+	restore := func() error {
+		var restoreErr error
 		for index := len(moved) - 1; index >= 0; index-- {
-			_ = os.Rename(moved[index].to, moved[index].from)
+			directory := &moved[index]
+			if directory.to == "" {
+				continue
+			}
+			if err := renameFile(directory.to, directory.from); err != nil {
+				restoreErr = errors.Join(restoreErr, fmt.Errorf("preserved recovery quarantine %s after restoring %s failed: %w", directory.to, directory.from, err))
+				continue
+			}
+			directory.to = ""
 		}
-		_ = os.RemoveAll(quarantine)
+		if restoreErr != nil {
+			return restoreErr
+		}
+		if err := os.RemoveAll(quarantine); err != nil {
+			return fmt.Errorf("restored stale directories but failed to remove empty quarantine %s: %w", quarantine, err)
+		}
+		return nil
 	}
 	for _, declared := range deps {
 		dir := filepath.Join(vendorRoot, declared.Module)
@@ -167,8 +191,7 @@ func quarantineStaleVersions(deps []vendoredDependency) ([]string, func(), func(
 			continue
 		}
 		if readErr != nil {
-			restore()
-			return nil, nil, nil, readErr
+			return nil, nil, nil, errors.Join(readErr, restore())
 		}
 		for _, entry := range entries {
 			if !entry.IsDir() || entry.Name() == declared.Dependency.Version {
@@ -176,9 +199,8 @@ func quarantineStaleVersions(deps []vendoredDependency) ([]string, func(), func(
 			}
 			from := filepath.Join(dir, entry.Name())
 			to := filepath.Join(quarantine, fmt.Sprintf("%06d", len(moved)))
-			if err := os.Rename(from, to); err != nil {
-				restore()
-				return nil, nil, nil, err
+			if err := renameFile(from, to); err != nil {
+				return nil, nil, nil, errors.Join(err, restore())
 			}
 			moved = append(moved, movedDir{from: from, to: to, label: declared.Module + "/" + entry.Name()})
 		}
@@ -187,6 +209,11 @@ func quarantineStaleVersions(deps []vendoredDependency) ([]string, func(), func(
 	for _, directory := range moved {
 		labels = append(labels, directory.label)
 	}
-	discard := func() { _ = os.RemoveAll(quarantine) }
+	discard := func() error {
+		if err := os.RemoveAll(quarantine); err != nil {
+			return fmt.Errorf("failed to remove committed stale-directory quarantine %s: %w", quarantine, err)
+		}
+		return nil
+	}
 	return labels, restore, discard, nil
 }

@@ -138,7 +138,7 @@ func validateLoaderAsset(asset runtimeAssetManifest) error {
 	if !safeEmbeddedJavaScriptURL(asset.LocalURL) {
 		return fmt.Errorf("local_url must be a safe /assets/js/*.js URL")
 	}
-	if asset.Module != "" || asset.Version != "" || asset.File != "" || asset.CDNURL != "" || asset.Attribution {
+	if declaresVendoredFields(asset) {
 		return fmt.Errorf("loader cannot be vendored or attributed")
 	}
 	return nil
@@ -148,7 +148,7 @@ func validateFirstPartyAsset(asset runtimeAssetManifest) error {
 	if !safeEmbeddedJavaScriptURL(asset.LocalURL) {
 		return fmt.Errorf("first-party local_url must be a safe /assets/js/*.js URL")
 	}
-	if asset.Version != "" || asset.File != "" || asset.CDNURL != "" || asset.Attribution {
+	if declaresVendoredFields(asset) {
 		return fmt.Errorf("first-party dependency cannot declare vendored or attribution fields")
 	}
 	return nil
@@ -160,6 +160,9 @@ func validateVendoredAsset(asset runtimeAssetManifest) error {
 	}
 	if !safePathSegment(asset.Module) || !safePathSegment(asset.Version) || !safePathSegment(asset.File) || !safePathSegment(asset.LicenseFile) {
 		return fmt.Errorf("module, version, file, and license_file must be safe path segments")
+	}
+	if asset.LicenseFile == asset.File {
+		return fmt.Errorf("license_file must differ from file")
 	}
 	for field, template := range map[string]string{"cdn_url": asset.CDNURL, "provenance_url": asset.ProvenanceURL, "license_url": asset.LicenseURL} {
 		if err := validateVersionedHTTPSURL(field, template, asset.Version); err != nil {
@@ -178,6 +181,13 @@ func validateVendoredAsset(asset runtimeAssetManifest) error {
 		return fmt.Errorf("homepage must be an absolute HTTPS URL")
 	}
 	return nil
+}
+
+func declaresVendoredFields(asset runtimeAssetManifest) bool {
+	return asset.Module != "" || asset.Version != "" || asset.File != "" || asset.CDNURL != "" ||
+		asset.Integrity != "" || asset.PackageName != "" || asset.ProvenanceURL != "" ||
+		asset.Attribution || asset.Homepage != "" || asset.License != "" || asset.LicenseFile != "" ||
+		asset.LicenseURL != "" || asset.LicenseIntegrity != ""
 }
 
 func validateVersionedHTTPSURL(field, template, version string) error {

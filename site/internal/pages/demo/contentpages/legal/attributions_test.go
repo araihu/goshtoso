@@ -22,6 +22,15 @@ func TestAttributionsRenderExactGeneratedRuntimeInventory(t *testing.T) {
 		wants = append(wants, runtime.Name, runtime.Version, runtime.LocalURL, runtime.License)
 		if runtime.LicenseURL != "" {
 			wants = append(wants, runtime.LicenseURL)
+			anchorStart := strings.Index(html, `href="`+runtime.LicenseURL+`"`)
+			if anchorStart < 0 {
+				t.Errorf("attributions missing license href %q for %s", runtime.LicenseURL, runtime.Name)
+				continue
+			}
+			anchorEnd := strings.Index(html[anchorStart:], "</a>")
+			if anchorEnd < 0 || !strings.Contains(html[anchorStart:anchorStart+anchorEnd], ">"+runtime.License) {
+				t.Errorf("license href %q is not paired with label %q", runtime.LicenseURL, runtime.License)
+			}
 		}
 	}
 	for _, want := range wants {
