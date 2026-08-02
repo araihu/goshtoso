@@ -478,6 +478,7 @@ func TestRenderRuntimeDocumentationListsCanonicalManifestAndInspectionAPI(t *tes
 		"| 1 | Alpine.js | `3.14.9` |",
 		"`/assets/js/runtime/alpinejs/3.14.9/alpine.min.js`",
 		"Pinned versions are the tested combination",
+		"[MIT](../assets/js/runtime/alpinejs/3.14.9/LICENSE.txt)",
 	} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("generated runtime documentation missing %q:\n%s", want, got)

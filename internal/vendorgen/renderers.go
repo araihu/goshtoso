@@ -140,7 +140,7 @@ func writeRuntimeDocumentationRow(buffer *strings.Builder, order int, asset runt
 	if license == "" {
 		license = "Goshtoso"
 	} else {
-		license = fmt.Sprintf("[%s](%s)", license, asset.LicenseLocalURL)
+		license = fmt.Sprintf("[%s](../%s)", license, strings.TrimPrefix(asset.LicenseLocalURL, "/"))
 	}
 	fmt.Fprintf(buffer, "| %d | %s | `%s` | `%s` | %s | %s | `%s` | `%s` | %s |\n", order, escapeMarkdownCell(asset.Name), version, asset.Role, yesNo(asset.Enabled), yesNo(asset.IncludeInMinimal), asset.LocalURL, primary, license)
 }
