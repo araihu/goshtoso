@@ -1,10 +1,13 @@
-name: GitHub-hosted Runner Smoke Test
+name: Runner Smoke Test
 
 on:
   workflow_dispatch:
   push:
     paths:
       - .github/workflows/runner-smoke-test.yml
+
+permissions:
+  contents: read
 
 jobs:
   smoke:
@@ -24,3 +27,65 @@ jobs:
         run: |
           echo "git rev: $(git rev-parse HEAD)"
           ls -la | head -20
+
+  hostinger-smoke:
+    name: Hostinger rootless runner smoke test
+    runs-on: [self-hosted, hostinger-vps]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Verify rootless Docker and resource boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          uname -m
+          docker info --format '{{json .SecurityOptions}}' \
+            | jq -e 'index("name=rootless") != null'
+          docker run --rm \
+            alpine:3.22@sha256:7c8cb692ae09657cbc4a3f3cbd0e8d5a2690ba38386aaaf252dbb060bf5eb2e6 \
+            true
+          shm_bytes=$(df -B1 --output=size /dev/shm | tail -1 | tr -d ' ')
+          test "$shm_bytes" -ge 2147483648
+          memory_max=$(cat /sys/fs/cgroup/memory.max)
+          test "$memory_max" != max
+          test "$memory_max" -le 6442450944
+          read -r cpu_quota cpu_period < /sys/fs/cgroup/cpu.max
+          test "$cpu_quota" != max
+          test "$cpu_quota" -le $((cpu_period * 2))
+
+      - name: Exercise persistent Go caches
+        shell: bash
+        run: |
+          set -euo pipefail
+          started=$SECONDS
+          go test ./... -run '^$'
+          echo "compile-only elapsed seconds: $((SECONDS - started))"
+          test -d "$GOMODCACHE"
+          test -d "$GOCACHE"
+
+      - name: Verify persistent cache without exposing data
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker=/opt/hostinger-cache/smoke/araihu-goshtoso
+          if test -e "$marker"; then
+            echo 'cache marker: present'
+          else
+            echo 'cache marker: absent'
+          fi
+          install -d -m 0700 "$(dirname "$marker")"
+          : > "$marker"
+
+      - name: Verify host credentials are absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e /etc/hostinger-runner/github-app/private-key.pem
+          test ! -e /run/secrets/ssh/id_ed25519
+          test ! -e /root/.ssh/hostinger_vps
