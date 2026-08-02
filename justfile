@@ -8,39 +8,24 @@ gp-generate:
 gp-dev: css
     go run ./site/cmd/server
 
-# Build assets/styles.css with the PINNED Tailwind (assets/tailwind.version),
-# regenerating the embeddable theme source first. Fetches the standalone binary
-# on demand into .tools/ (gitignored) — no binary is committed.
+# Build assets/styles.css with the Tailwind version and platform binary locked
+# by Muamba. The executable cache remains untracked.
 css:
-    #!/usr/bin/env bash
-    set -euo pipefail
+    go tool muamba sync --strict tailwindcss/cli
     go run ./cmd/themegen
-    ver="$(cat assets/tailwind.version)"
-    bin=".tools/tailwindcss-${ver}"
-    if [ ! -x "$bin" ]; then
-      mkdir -p .tools
-      _uname="$(uname -s | tr '[:upper:]' '[:lower:]')"
-      case "$_uname" in darwin) os=macos;; linux) os=linux;; *) os="$_uname";; esac
-      arch="$(uname -m)"; case "$arch" in arm64|aarch64) arch=arm64;; x86_64) arch=x64;; *) echo "unsupported arch: $arch" >&2; exit 1;; esac
-      echo "fetching tailwindcss v${ver} (${os}-${arch})..."
-      tmp="$(mktemp .tools/tailwindcss.XXXXXX)"
-      curl -fsSL -o "$tmp" \
-        "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-${os}-${arch}"
-      chmod +x "$tmp"
-      mv "$tmp" "$bin"
-    fi
-    "$bin" -i css/main.css -o assets/styles.css
-    echo "css: built assets/styles.css with tailwindcss v${ver}"
+    .tools/tailwindcss -i css/main.css -o assets/styles.css
 
-# Download the pinned CDN bytes declared by assets/js/runtime/manifest.json,
-# require their canonical SRI, and regenerate every manifest consumer.
+# Materialize locked runtime inputs and regenerate their Go/metadata consumers.
 vendor-js:
-    go run ./cmd/vendorgen -download
+    go tool muamba sync --strict
+    go tool muamba generate-go --strict --dir assets --output muamba_gen.go
+    go run ./cmd/runtimegen
 
-# Fetch every declared CDN URL without writing files and prove its bytes match
-# both the canonical SRI and the embedded local runtime.
+# Verify local acquisition bytes and every generated consumer without network.
 vendor-js-verify:
-    go run ./cmd/vendorgen -check -verify-remote
+    go tool muamba verify --strict
+    go tool muamba generate-go --strict --check --dir assets --output muamba_gen.go
+    go run ./cmd/runtimegen -check
 
 # Build tracked library and demo-site JavaScript from their owned source roots.
 js:

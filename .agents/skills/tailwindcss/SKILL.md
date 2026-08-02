@@ -11,8 +11,9 @@ Tailwind build.
 
 ## Build Contract
 
-- Tailwind CSS is v4 and uses the pinned standalone binary version from
-  `assets/tailwind.version`.
+- Tailwind CSS is v4. Muamba locks standalone v4.3.3 binaries by Go target in
+  `muamba.yaml`; `just css` materializes the current target into
+  `.tools/tailwindcss`.
 - Run `just css` after editing CSS, theme sources, or introducing new utility
   classes in templ/Go code.
 - `just css` regenerates the theme source and `assets/styles.css`.
