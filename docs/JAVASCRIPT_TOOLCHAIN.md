@@ -27,7 +27,7 @@ go run ./cmd/jslint -inventory
   Table runtimes, then component factories (`carousel`, `dropdown`, `palette`,
   `select`, `tabs`), in that fixed order;
 - `site/assets/js/goshtoso-demo.min.js` from the site bootstrap and providers
-  `site-bootstrap`, `demo-layout`, `select-demo`, `tab-view`, `action-group`,
+  `site-bootstrap`, `demo-layout`, `select-demo`, `action-group`,
   `avatar-showcase`, `log-feed`, `chat`, `profile-images`, `ticker-pane`, and
   `theme-page`, in that fixed order;
 - compatibility builds at `assets/js/combobox.js` (keyboard plus client-mode

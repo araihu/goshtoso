@@ -54,10 +54,6 @@ go test -tags=e2e,full ./tests/e2e/... -short
 - `TestIntegration` - Full user workflows
 - `TestErrorHandling` - Error scenarios
 
-### Visual Tests (`visual_helpers.go`)
-
-Screenshot comparison utilities for visual regression testing.
-
 ## Test Structure
 
 Each test follows this pattern:
@@ -110,23 +106,13 @@ func TestYourFeature(t *testing.T) {
 
 ## Utilities
 
-### Screenshot Comparison
-```go
-config := ScreenshotConfig{
-    OriginalURL:    baseURL + "/original",
-    GoshtosoURL:      baseURL + "/gottha",
-    ComponentName:  "your-component",
-    Threshold:      0.95, // 95% match required
-}
-result := CompareScreenshots(t, config)
-```
+### Tailwind Class Verification
 
-### Class Verification
 ```go
-htmlResult := ExtractAndCompareHTML(t, page, 
-    "original-selector",
-    "gottha-selector")
-PrintComparisonReport(t, htmlResult, nil)
+VerifyTailwindClasses(t, page.Locator(".your-selector"), []string{
+    "flex",
+    "items-center",
+})
 ```
 
 ## Continuous Integration

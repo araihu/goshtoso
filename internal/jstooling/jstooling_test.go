@@ -159,7 +159,6 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"site/assets/js/src/charts-showcase.js":        `(() => { window.chartsShowcaseFixture = true })();`,
 		"site/assets/js/src/demo-layout.js":            `(() => { window.demoLayoutFixture = true })();`,
 		"site/assets/js/src/select-demo.js":            `(() => { window.selectDemoFixture = true })();`,
-		"site/assets/js/src/tab-view.js":               `(() => { window.tabViewFixture = true })();`,
 		"site/assets/js/src/action-group.js":           `(() => { window.actionGroupDemoFixture = true })();`,
 		"site/assets/js/src/avatar-showcase.js":        `(() => { window.avatarShowcaseFixture = true })();`,
 		"site/assets/js/src/icon-catalog.js":           `(() => { window.iconCatalogFixture = true })();`,
@@ -246,7 +245,7 @@ func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte)
 		"paletteFixture", "selectFixture", "tabsFixture",
 	}
 	demoFixtures := []string{
-		"siteBootstrapFixture", "demoLayoutFixture", "selectDemoFixture", "tabViewFixture",
+		"siteBootstrapFixture", "demoLayoutFixture", "selectDemoFixture",
 		"actionGroupDemoFixture", "avatarShowcaseFixture", "iconCatalogFixture", "logFeedFixture",
 		"chatFixture", "profileImagesFixture", "tickerPaneFixture", "themePageFixture",
 	}

@@ -1064,9 +1064,6 @@
   .h-8 {
     height: calc(var(--spacing) * 8);
   }
-  .h-9 {
-    height: calc(var(--spacing) * 9);
-  }
   .h-10 {
     height: calc(var(--spacing) * 10);
   }
@@ -1246,9 +1243,6 @@
   }
   .w-8 {
     width: calc(var(--spacing) * 8);
-  }
-  .w-9 {
-    width: calc(var(--spacing) * 9);
   }
   .w-10 {
     width: calc(var(--spacing) * 10);
@@ -3697,9 +3691,6 @@
   .text-secondary {
     color: var(--color-secondary);
   }
-  .text-slate-50 {
-    color: var(--color-slate-50);
-  }
   .text-success {
     color: var(--color-success);
   }
@@ -4358,12 +4349,6 @@
       top: calc(var(--spacing) * 0);
     }
   }
-  .after\:top-0\.5 {
-    &::after {
-      content: var(--tw-content);
-      top: calc(var(--spacing) * 0.5);
-    }
-  }
   .after\:top-\[2px\] {
     &::after {
       content: var(--tw-content);
@@ -4401,22 +4386,10 @@
       height: calc(var(--spacing) * 5);
     }
   }
-  .after\:h-4 {
-    &::after {
-      content: var(--tw-content);
-      height: calc(var(--spacing) * 4);
-    }
-  }
   .after\:h-5 {
     &::after {
       content: var(--tw-content);
       height: calc(var(--spacing) * 5);
-    }
-  }
-  .after\:w-4 {
-    &::after {
-      content: var(--tw-content);
-      width: calc(var(--spacing) * 4);
     }
   }
   .after\:w-5 {
@@ -5032,11 +5005,6 @@
   .focus\:absolute {
     &:focus {
       position: absolute;
-    }
-  }
-  .focus\:z-10 {
-    &:focus {
-      z-index: 10;
     }
   }
   .focus\:z-50 {
@@ -6306,11 +6274,6 @@
   .lg\:justify-between {
     @media (width >= 64rem) {
       justify-content: space-between;
-    }
-  }
-  .lg\:gap-4 {
-    @media (width >= 64rem) {
-      gap: calc(var(--spacing) * 4);
     }
   }
   .lg\:gap-16 {

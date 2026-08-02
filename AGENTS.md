@@ -2,9 +2,10 @@
 
 This file gives external contributors and optional AI coding tools the small
 set of repo rules that matter most. `CLAUDE.md` is a symlink to this file for
-harnesses that look for that name. Local harness-specific directories such as
-`.codex/` and `docs/superpowers/` are intentionally ignored and not part of the
-public source tree. The curated `.agents/skills/` entries for Alpine.js, HTMX,
+harnesses that look for that name. Local harness and process-evidence directories
+`.codex/`, `.impeccable/`, `docs/audits/`, `docs/designs/`, `docs/plans/`, and
+`docs/superpowers/` are intentionally ignored and are not part of the public
+source tree. The curated `.agents/skills/` entries for Alpine.js, HTMX,
 Tailwind CSS, and templ stay tracked as optional core-stack references. A small
 generated compatibility reference remains under `.claude/skills/using-goshtoso/`
 because CI checks it after component API changes.
