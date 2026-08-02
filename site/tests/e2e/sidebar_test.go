@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
-	"github.com/playwright-community/playwright-go"
+	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

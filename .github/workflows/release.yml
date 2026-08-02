@@ -13,7 +13,7 @@ env:
   GO_VERSION: '1.26.5'
   NODE_VERSION: '24'
   TEMPL_VERSION: 'v0.3.1020'
-  PLAYWRIGHT_VERSION: 'v0.5700.1'
+  PLAYWRIGHT_VERSION: 'v0.6100.0'
 
 jobs:
   pre-release:
@@ -48,8 +48,13 @@ jobs:
 
       - name: Install Playwright + Chromium
         run: |
-          go install github.com/playwright-community/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
-          playwright install --with-deps chromium
+          set -euo pipefail
+          go install github.com/mxschmitt/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
+          playwright_bin="$(go env GOBIN)"
+          if [[ -z "$playwright_bin" ]]; then
+            playwright_bin="$(go env GOPATH)/bin"
+          fi
+          "$playwright_bin/playwright" install --with-deps chromium
 
       - name: Create current-source workspace
         run: go work init . ./site

@@ -2,13 +2,17 @@
 
 All notable changes to Goshtoso are documented in this file.
 
-## Pending release: canonical runtime manifest
+## [v0.1.3] - 2026-08-02
 
 ### Canonical embedded runtime manifest
 
 - Made `assets/js/runtime/manifest.json` the ordered source of truth for
   embedded JavaScript pins, CDN URLs, SRI, local paths, loader defaults,
   attribution data, package provenance, and retained license notices.
+- Added `head.WithRuntimeManifest` for typed ownership of dependency URLs,
+  integrity, enablement, minimal-mode membership, and safe execution order.
+  Existing per-dependency options remain supported and apply after the custom
+  manifest snapshot.
 - Added generated, caller-owned `assets.DefaultRuntimeMetadata()` for runtime
   identity and licensing. `assets.RuntimeAsset` remains the supported loading
   and override contract, with its original nine-field layout preserved for
@@ -20,6 +24,20 @@ All notable changes to Goshtoso are documented in this file.
 - Made the demo site select and order local runtime assets from the Goshtoso
   module linked into its binary, with explicit site-only enablement and
   v0.1.0-compatible fallbacks for optional roles.
+
+### Upgrade note
+
+- No migration is required for existing `head.Dependencies` or
+  `head.DependenciesMinimal` consumers. Default full, minimal, CDN-first, and
+  local-only rendering remain compatible. The manifest pins are the tested
+  runtime combination; overriding versions configures loading but does not
+  guarantee compatibility with arbitrary combinations.
+
+### Release verification
+
+- Updated Playwright Go to v0.6100.0 and its current
+  `github.com/mxschmitt/playwright-go` module path after the retired v1.57.0
+  driver archive made clean release-runner installation fail.
 
 ## [v0.1.2] - 2026-07-30
 
@@ -167,6 +185,9 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.1.3]: https://github.com/araihu/goshtoso/compare/v0.1.2...v0.1.3
+[v0.1.2]: https://github.com/araihu/goshtoso/compare/v0.1.1...v0.1.2
+[v0.1.1]: https://github.com/araihu/goshtoso/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/araihu/goshtoso/compare/v0.0.13...v0.1.0
 [v0.0.13]: https://github.com/araihu/goshtoso/compare/v0.0.12...v0.0.13
 [v0.0.12]: https://github.com/araihu/goshtoso/compare/v0.0.11...v0.0.12

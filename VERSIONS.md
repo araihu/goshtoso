@@ -10,6 +10,10 @@ record the pin directly in the release source.
 
 | Goshtoso | Tailwind CSS |
 |----------|--------------|
+| v0.1.3   | 4.3.0        |
+| v0.1.2   | 4.3.0        |
+| v0.1.1   | 4.3.0        |
+| v0.1.0   | 4.3.0        |
 | v0.0.13  | 4.3.0        |
 | v0.0.12  | 4.3.0        |
 | v0.0.11  | 4.3.0        |

@@ -136,7 +136,7 @@ func attributionsContent() templ.Component {
 			{Name: "a-h/templ", Href: "https://github.com/a-h/templ", License: "MIT", Note: "HTML template generation (.templ → .go)"},
 			{Name: "alecthomas/chroma", Href: "https://github.com/alecthomas/chroma", License: "MIT", Note: "Syntax highlighting (code blocks)"},
 			{Name: "coder/websocket", Href: "https://github.com/coder/websocket", License: "ISC", Note: "WebSocket server (chat example)"},
-			{Name: "playwright-community/playwright-go", Href: "https://github.com/playwright-community/playwright-go", License: "MIT", Note: "E2E testing (dev only)"},
+			{Name: "mxschmitt/playwright-go", Href: "https://github.com/mxschmitt/playwright-go", License: "MIT", Note: "E2E testing (dev only)"},
 			{Name: "stretchr/testify", Href: "https://github.com/stretchr/testify", License: "MIT", Note: "Test assertions (dev only)"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -22,7 +22,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/head"
-	"github.com/playwright-community/playwright-go"
+	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
