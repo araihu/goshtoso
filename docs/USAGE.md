@@ -131,7 +131,14 @@ leave the strong default unchanged.
 Default third-party scripts carry SHA-384 Subresource Integrity generated from
 the embedded bytes. When a custom CDN or local URL changes the bytes, pass its
 matching hash with `WithDependencyIntegrity`; pass an empty hash only when the
-application deliberately disables SRI for that dependency.
+application deliberately disables SRI for that dependency. A dependency has one
+integrity value for both its primary and fallback URL, so those two sources must
+serve byte-identical content when SRI is enabled.
+
+The tested default combination is Alpine.js and its plugins 3.14.9, HTMX 2.0.8,
+HTMX SSE 2.2.3, and HTMX WebSocket 2.0.3. Changing a URL or manifest configures
+how the browser loads the application-owned stack; it does not guarantee that
+arbitrary dependency versions are compatible with Goshtoso or each other.
 
 #### Runtime manifest and exact library identity
 
@@ -163,16 +170,97 @@ for _, dependency := range runtime.Dependencies {
 
 `RuntimeManifest.Stylesheet` is the compiled CSS. `Loader` is the external
 bootstrap rendered by the CDN-first default. `Dependencies` contains Alpine
-Collapse, Alpine Focus, Alpine Mask, Alpine core, HTMX, combobox, and
-ActionGroup in exact execution order, with explicit roles, primary and local
-URLs, SRI, enabled, minimal-set membership, direct-tag defer, and
-loader-readiness semantics.
+Collapse, Alpine Focus, Alpine Mask, the first-party bundle, dark-mode store,
+Alpine core, HTMX, HTMX SSE, HTMX WebSocket, Combobox, and ActionGroup in exact
+declared order. Dark mode, SSE, WS, Combobox, and ActionGroup are disabled
+inventory by default. Every entry exposes primary and local URLs, SRI, enabled,
+minimal-set membership, direct-tag defer, and loader-readiness semantics.
 Direct local rendering uses the dependency slice and does not execute the
 loader again.
 
 Each `DefaultRuntimeManifest` call owns its value and dependency slice; caller
 mutation cannot change later results or `head.Dependencies()` rendering. Every
 declared local URL uses the `/assets/` mount and is served by `assets.Handler()`.
+
+For full dependency ownership, pass a customized snapshot to
+`head.WithRuntimeManifest`. The loader emits enabled scripts in exact slice
+order, accepts unique custom roles, and filters `DependenciesMinimal` with
+`IncludeInMinimal`:
+
+```go
+func applicationRuntime() assets.RuntimeManifest {
+    runtime := assets.DefaultRuntimeManifest()
+    for i := range runtime.Dependencies {
+        dependency := &runtime.Dependencies[i]
+        switch dependency.Role {
+        case assets.RuntimeRoleDarkMode,
+            assets.RuntimeRoleHTMXExtSSE,
+            assets.RuntimeRoleHTMXExtWS:
+            dependency.Enabled = true
+        }
+    }
+    runtime.Dependencies = append(runtime.Dependencies, assets.RuntimeAsset{
+        Role:             "application-runtime",
+        Kind:             assets.RuntimeAssetScript,
+        PrimaryURL:       "/static/application-runtime.js",
+        LocalURL:         "/static/application-runtime.js",
+        Enabled:          true,
+        IncludeInMinimal: true,
+    })
+    return runtime
+}
+```
+
+```templ
+@head.Dependencies(head.WithRuntimeManifest(applicationRuntime()))
+```
+
+`WithRuntimeManifest` snapshots its argument immediately and can appear once.
+Other options apply afterward regardless of the manifest option's argument
+position. Under a custom manifest, an option targeting an absent built-in role
+is a render error instead of a silent no-op. Validation happens before HTML is
+written: roles must be unique and safe; dependencies must be scripts; URLs must
+be HTTP(S) or relative; enabled dependencies need the selected loader; Alpine
+plugins, the first-party bundle, and dark mode must precede Alpine; HTMX must
+precede SSE/WS; and the combined first-party bundle cannot run with either
+standalone compatibility helper.
+
+`Stylesheet.Enabled`, `Loader.Enabled`, and both top-level
+`IncludeInMinimal` values control whether those tags render. Their `Integrity`
+values render SRI attributes. `Loader.Defer` controls the loader tag. A loader's
+`LocalURL` is asset inventory, not an automatic fallback for the loader itself;
+only dependency entries use `LocalURL` as loader fallback. Likewise, a custom
+stylesheet's `LocalURL` is not an automatic CSS fallback. `WaitForWindowLoaded`
+is honored by the loader. Dependency `Defer` describes direct local script tags;
+it is not a compatibility or execution guarantee in custom loader mode.
+
+`WithLocalRuntime` deliberately rejects a custom manifest because a mixed set
+of direct deferred and non-deferred tags cannot guarantee declared execution
+order. For a custom local-only stack, use the ordered loader itself from a local
+URL, copy each desired `LocalURL` into its `PrimaryURL`, and disable fallback:
+
+```go
+func localApplicationRuntime() assets.RuntimeManifest {
+    runtime := applicationRuntime()
+    runtime.Stylesheet.PrimaryURL = runtime.Stylesheet.LocalURL
+    runtime.Loader.PrimaryURL = runtime.Loader.LocalURL
+    for i := range runtime.Dependencies {
+        runtime.Dependencies[i].PrimaryURL = runtime.Dependencies[i].LocalURL
+    }
+    return runtime
+}
+```
+
+```templ
+@head.Dependencies(
+    head.WithRuntimeManifest(localApplicationRuntime()),
+    head.WithoutLocalFallback(),
+)
+```
+
+Legacy `WithComboboxURL` and `WithActionGroupURL` remain compatibility options.
+Either replaces the combined first-party bundle with both standalone helpers;
+the bundle and standalones cannot be enabled together.
 
 `GoshtosoVersion` reads Go build information. `VersionExact` covers an
 unreplaced versioned module, including immutable pseudo-versions. A local or
