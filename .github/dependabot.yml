@@ -3,24 +3,40 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/"
+    directories:
+      - "/"
+      - "/examples/application-patterns"
+      - "/examples/brand-site"
+      - "/examples/getting-started"
+      - "/site"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
-      gomod-patch-minor:
+      go-minor-patch:
         patterns: ["*"]
         update-types: ["minor", "patch"]
-      gomod-major:
+      go-major:
         patterns: ["*"]
         update-types: ["major"]
-      x-libs:
-        patterns: ["golang.org/x/*"]
+
+  - package-ecosystem: "docker"
+    directories:
+      - "/"
+      - "/site/tests/e2e"
+    schedule:
+      interval: "weekly"
+    groups:
+      container-minor-patch:
+        patterns: ["*"]
         update-types: ["minor", "patch"]
+      container-major:
+        patterns: ["*"]
+        update-types: ["major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     groups:
-      gha:
+      github-actions:
         patterns: ["*"]
