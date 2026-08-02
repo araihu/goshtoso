@@ -32,6 +32,10 @@ func TestThemeCSS(t *testing.T) {
 }
 
 func TestVendorVersions(t *testing.T) {
+	byRole := make(map[RuntimeAssetRole]RuntimeAsset)
+	for _, dependency := range DefaultRuntimeManifest().Dependencies {
+		byRole[dependency.Role] = dependency
+	}
 	cases := map[string]string{
 		"Alpine":     AlpineVersion(),
 		"HTMX":       HTMXVersion(),
@@ -39,7 +43,10 @@ func TestVendorVersions(t *testing.T) {
 		"HTMXExtWS":  HTMXExtWSVersion(),
 	}
 	want := map[string]string{
-		"Alpine": "3.14.9", "HTMX": "2.0.8", "HTMXExtSSE": "2.2.3", "HTMXExtWS": "2.0.3",
+		"Alpine":     byRole[RuntimeRoleAlpineJS].Version,
+		"HTMX":       byRole[RuntimeRoleHTMX].Version,
+		"HTMXExtSSE": byRole[RuntimeRoleHTMXExtSSE].Version,
+		"HTMXExtWS":  byRole[RuntimeRoleHTMXExtWS].Version,
 	}
 	for k, got := range cases {
 		if got != want[k] {
@@ -49,22 +56,15 @@ func TestVendorVersions(t *testing.T) {
 }
 
 func TestVendorFilesEmbedded(t *testing.T) {
-	for _, p := range []string{
-		"js/runtime/alpinejs/3.14.9/alpine.min.js",
-		"js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js",
-		"js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js",
-		"js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js",
-		"js/runtime/htmx.org/2.0.8/htmx.min.js",
-		"js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js",
-		"js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js",
-		"js/dependency-loader.js",
-		"js/goshtoso.min.js",
-		"js/combobox.js",
-		"js/action-group.js",
-		"js/darkmode.js",
-	} {
+	manifest := DefaultRuntimeManifest()
+	declared := append([]RuntimeAsset{manifest.Loader}, manifest.Dependencies...)
+	for _, asset := range declared {
+		p := strings.TrimPrefix(asset.LocalURL, "/assets/")
 		if _, err := files.ReadFile(p); err != nil {
-			t.Errorf("embedded file missing: %s: %v", p, err)
+			t.Errorf("embedded file missing for %s: %s: %v", asset.Role, p, err)
 		}
+	}
+	if _, err := files.ReadFile("js/runtime/manifest.json"); err != nil {
+		t.Errorf("canonical runtime manifest is not embedded: %v", err)
 	}
 }

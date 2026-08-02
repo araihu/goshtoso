@@ -10,7 +10,7 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `templ generate`
   - `just css`
   - `go run ./cmd/skillgen`
-  - `go run ./cmd/vendorgen -check`
+  - `go run ./cmd/vendorgen -check -verify-remote`
   - `npx --yes skills add . --list`
   - `npx --yes skills use . --skill using-goshtoso`
   - `just site-current-source-integration`
@@ -21,6 +21,10 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `assets/styles.css`
   - `assets/goshtoso-theme.css`
   - `assets/vendor_gen.go`
+  - `assets/runtime_manifest_gen.go`
+  - `assets/js/runtime/versions.json`
+  - `docs/RUNTIME_DEPENDENCIES.md`
+  - `site/internal/pages/demo/contentpages/legal/runtime_attributions_gen.go`
   - `.claude/skills/using-goshtoso/components-reference.md`
   - `.agents/skills/using-goshtoso/references/components-reference.md`
   - `.agents/skills/using-goshtoso/references/application-patterns.md`

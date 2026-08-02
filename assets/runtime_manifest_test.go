@@ -26,6 +26,8 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	if manifest.Loader != (RuntimeAsset{
 		Role:             RuntimeRoleDependencyLoader,
 		Kind:             RuntimeAssetScript,
+		Name:             "Goshtoso dependency loader",
+		Purpose:          "Loads the declared runtime in order with same-version local fallback",
 		PrimaryURL:       DependencyLoaderURL,
 		LocalURL:         DependencyLoaderURL,
 		Enabled:          true,
@@ -103,6 +105,35 @@ func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
 	}
 	if len(fresh.Dependencies) != 11 {
 		t.Fatalf("fresh dependency count = %d, want 11", len(fresh.Dependencies))
+	}
+}
+
+func TestDefaultRuntimeManifestExposesCanonicalDependencyMetadata(t *testing.T) {
+	manifest := DefaultRuntimeManifest()
+	byRole := make(map[RuntimeAssetRole]RuntimeAsset, len(manifest.Dependencies))
+	for _, dependency := range manifest.Dependencies {
+		byRole[dependency.Role] = dependency
+	}
+
+	alpine := byRole[RuntimeRoleAlpineJS]
+	if alpine.Name != "Alpine.js" || alpine.Version != AlpineVersion() {
+		t.Fatalf("Alpine metadata = (%q, %q)", alpine.Name, alpine.Version)
+	}
+	if alpine.Homepage != "https://alpinejs.dev" || alpine.License != "MIT" || alpine.Purpose == "" {
+		t.Fatalf("Alpine attribution metadata = %#v", alpine)
+	}
+	if alpine.LocalURL != AlpineJSURL || alpine.Integrity != AlpineJSIntegrity {
+		t.Fatalf("Alpine embedded identity = %#v", alpine)
+	}
+
+	htmx := byRole[RuntimeRoleHTMX]
+	if htmx.Name != "htmx" || htmx.Version != HTMXVersion() || htmx.License != "Zero-Clause BSD" {
+		t.Fatalf("HTMX metadata = %#v", htmx)
+	}
+
+	firstParty := byRole[RuntimeRoleFirstParty]
+	if firstParty.Name == "" || firstParty.Version != "" || firstParty.Purpose == "" {
+		t.Fatalf("first-party metadata = %#v", firstParty)
 	}
 }
 

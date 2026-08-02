@@ -7,7 +7,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
+
+var fetchClient = &http.Client{Timeout: 30 * time.Second}
 
 // downloadAll fetches every dep in the manifest into its versioned dir,
 // verifies the bytes, and prunes stale version dirs. Run via `just vendor-js`.
@@ -38,8 +41,27 @@ func downloadAll(deps map[string]dep, stdout io.Writer) error {
 	return nil
 }
 
+// verifyRemote fetches every pinned CDN URL and proves it has the canonical
+// integrity recorded in the manifest without changing the embedded files.
+func verifyRemote(deps map[string]dep, stdout io.Writer) error {
+	for module, d := range deps {
+		url := strings.ReplaceAll(d.URL, "{v}", d.Version)
+		body, err := fetch(url)
+		if err != nil {
+			return fmt.Errorf("%s: %w", module, err)
+		}
+		if err := verifyBytes(module, d, body); err != nil {
+			return fmt.Errorf("%s: %w", module, err)
+		}
+		if _, err := fmt.Fprintf(stdout, "vendorgen: verified remote %s@%s (%s)\n", module, d.Version, d.Integrity); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func fetch(url string) ([]byte, error) {
-	resp, err := http.Get(url) //nolint:gosec // url is from the committed manifest
+	resp, err := fetchClient.Get(url) //nolint:gosec // url is validated from the committed manifest
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +90,9 @@ var markers = map[string][]string{
 func verifyBytes(module string, d dep, body []byte) error {
 	if len(body) == 0 {
 		return fmt.Errorf("empty download")
+	}
+	if got := integrityForBytes(body); got != d.Integrity {
+		return fmt.Errorf("integrity = %q, want canonical %q", got, d.Integrity)
 	}
 	s := string(body)
 	for _, m := range markers[module] {

@@ -32,10 +32,15 @@ css:
     "$bin" -i css/main.css -o assets/styles.css
     echo "css: built assets/styles.css with tailwindcss v${ver}"
 
-# Download the PINNED vendored JS (assets/js/runtime/versions.json) into
-# versioned dirs and regenerate the URL constants. Mirrors `just css`.
+# Download the pinned CDN bytes declared by assets/js/runtime/manifest.json,
+# require their canonical SRI, and regenerate every manifest consumer.
 vendor-js:
     go run ./cmd/vendorgen -download
+
+# Fetch every declared CDN URL without writing files and prove its bytes match
+# both the canonical SRI and the embedded local runtime.
+vendor-js-verify:
+    go run ./cmd/vendorgen -check -verify-remote
 
 # Build tracked library and demo-site JavaScript from their owned source roots.
 js:

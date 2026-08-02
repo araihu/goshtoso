@@ -117,8 +117,8 @@ jobs:
 
       - name: vendor JS constants drift check
         run: |
-          go run ./cmd/vendorgen -check \
-            || { echo "::error::assets/vendor_gen.go is stale — run 'go run ./cmd/vendorgen' and commit"; exit 1; }
+          go run ./cmd/vendorgen -check -verify-remote \
+            || { echo "::error::runtime manifest, embedded bytes, CDN bytes, or generated views differ — run 'go run ./cmd/vendorgen' and inspect"; exit 1; }
 
       - name: Heroicons bindings drift check
         run: |

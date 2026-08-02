@@ -128,17 +128,20 @@ download into `goshtoso:dependency-error`. `WithoutDependency(...)` is for an
 application that deliberately loads that runtime itself. Empty override URLs
 leave the strong default unchanged.
 
-Default third-party scripts carry SHA-384 Subresource Integrity generated from
-the embedded bytes. When a custom CDN or local URL changes the bytes, pass its
+Default third-party scripts carry canonical SHA-384 Subresource Integrity from
+the runtime manifest. Generation verifies the embedded bytes, and the remote
+verification gate fetches each pinned CDN URL and checks the same hash. When a
+custom CDN or local URL changes the bytes, pass its
 matching hash with `WithDependencyIntegrity`; pass an empty hash only when the
 application deliberately disables SRI for that dependency. A dependency has one
 integrity value for both its primary and fallback URL, so those two sources must
 serve byte-identical content when SRI is enabled.
 
-The tested default combination is Alpine.js and its plugins 3.14.9, HTMX 2.0.8,
-HTMX SSE 2.2.3, and HTMX WebSocket 2.0.3. Changing a URL or manifest configures
-how the browser loads the application-owned stack; it does not guarantee that
-arbitrary dependency versions are compatible with Goshtoso or each other.
+The exact tested pins, paths, loading order, and defaults are generated in
+[`RUNTIME_DEPENDENCIES.md`](RUNTIME_DEPENDENCIES.md) from the canonical
+JavaScript manifest. Changing a URL or manifest configures how the browser loads
+the application-owned stack; it does not guarantee that arbitrary dependency
+versions are compatible with Goshtoso or each other.
 
 #### Runtime manifest and exact library identity
 
@@ -308,25 +311,14 @@ The extracted CSS includes all Goshtoso component styles, the theme system (16 t
 
 If you use `@head.Dependencies()` (section 2), the JS is already wired — skip
 this. Only hand-roll the tags if you are not using the `head` package. In that
-case mirror what `head.Dependencies()` emits, in this order (plugins **before**
-Alpine core):
+case preserve the manifest order, including plugins **before** Alpine core.
 
-```html
-<!-- Versions are pinned in assets/js/runtime/versions.json
-     (see assets.AlpineVersion(), assets.HTMXVersion()). -->
-<link rel="stylesheet" href="/assets/styles.css"/>
-<script defer src="/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js"></script>
-<script defer src="/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js"></script>
-<script defer src="/assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js"></script>
-<script defer src="/assets/js/goshtoso.min.js"></script>
-<script defer src="/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"></script>
-<script src="/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"></script>
-```
-
-These are the vendored files `assets.Handler()` serves — the version is in the
-path, so there is no floating CDN tag to drift. **These versioned paths change
-when you upgrade a dep; prefer `@head.Dependencies()` so you never hardcode
-them.** Don't forget `goshtoso.min.js`: it contains only reusable component
+Use `assets.DefaultRuntimeManifest()` as the programmatic inventory instead of
+copying versioned paths into application source. The generated
+[`RUNTIME_DEPENDENCIES.md`](RUNTIME_DEPENDENCIES.md) table is the exact human
+readable view. Paths change when a dependency is upgraded; prefer
+`@head.Dependencies()` so the application never hardcodes them. Do not omit the
+first-party bundle: it contains only reusable component
 behavior, including combobox/ActionGroup helpers and Alpine factories. Demo-site
 providers are not part of this consumer contract. The legacy
 `/assets/js/combobox.js` and `/assets/js/action-group.js` URLs remain available
