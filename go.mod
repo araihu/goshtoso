@@ -5,6 +5,7 @@ go 1.26.5
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/alecthomas/chroma/v2 v2.24.1
+	github.com/araihu/assets v0.1.3
 	github.com/evanw/esbuild v0.28.1
 	github.com/stretchr/testify v1.11.1
 )

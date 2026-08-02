@@ -6,6 +6,8 @@ github.com/alecthomas/chroma/v2 v2.24.1 h1:m5ffpfZbIb++k8AqFEKy9uVgY12xIQtBsQlc6
 github.com/alecthomas/chroma/v2 v2.24.1/go.mod h1:l+ohZ9xRXIbGe7cIW+YZgOGbvuVLjMps/FYN/CwuabI=
 github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+github.com/araihu/assets v0.1.3 h1:1Gku5AwvmM3iyNw/8kXpR7CHZSlrlgtgk0q33muTEGI=
+github.com/araihu/assets v0.1.3/go.mod h1:+/gQytHdEJc062BmyKHnhO12HtyKfGO5ATb1PGx1QWU=
 github.com/araihu/muamba v0.0.2 h1:UAXI1ajiOHBcJqsB/NVYfsg9YbgsAsLFhKtPVp+WG/A=
 github.com/araihu/muamba v0.0.2/go.mod h1:HWgw9kWiYam0Y8Ulmej5aW/AvLd8L2GWUmO6WlYNsVQ=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
