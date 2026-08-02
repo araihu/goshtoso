@@ -26,62 +26,32 @@ env:
 jobs:
   lint-build:
     name: Lint, drift checks, build
-    runs-on: araihu
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Configure ARC persistent caches
+      - name: Configure job-local tools
         run: |
           set -euo pipefail
-          # The araihu ARC runner mounts its shared RWX cache at these paths.
-          # Go's module and build cache are content-addressed (the latter also
-          # keys entries by toolchain), so concurrent lint/test jobs can safely
-          # share them. Keep executable outputs job-local: two jobs installing
-          # the same tool must not race while replacing GOPATH/bin/templ.
-          cache_root="$HOME/.cache"
-          go_mod_cache="$HOME/go/pkg/mod/goshtoso-go${GO_VERSION}"
-          go_build_cache="$cache_root/go-build/goshtoso-go${GO_VERSION}"
           tool_bin="$RUNNER_TEMP/go-bin"
-          mkdir -p "$go_mod_cache" "$go_build_cache" \
-            "$cache_root/ms-playwright" "$tool_bin"
-          {
-            echo "GOMODCACHE=$go_mod_cache"
-            echo "GOCACHE=$go_build_cache"
-            echo "GOBIN=$tool_bin"
-            echo "PLAYWRIGHT_BROWSERS_PATH=$cache_root/ms-playwright"
-          } >> "$GITHUB_ENV"
+          mkdir -p "$tool_bin"
+          echo "GOBIN=$tool_bin" >> "$GITHUB_ENV"
           echo "$tool_bin" >> "$GITHUB_PATH"
 
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
-          # self-hosted araihu runner. setup-go's own cache tars+uploads that
-          # same tree to the GHA cache backend on every go.sum change — a ~9min
-          # post-job step that buys nothing here. Disable it.
-          cache: false
+          cache-dependency-path: |
+            go.sum
+            site/go.sum
+            tests/external/runtime-manifest/go.sum
 
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Verify ARC persistent caches
-        run: |
-          set -euo pipefail
-          for path in "$GOMODCACHE" "$GOCACHE" "$PLAYWRIGHT_BROWSERS_PATH"; do
-            test -d "$path"
-            test -w "$path"
-            printf '%s: ' "$path"
-            df -T "$path" | tail -n 1
-          done
-          test "$(go env GOMODCACHE)" = "$GOMODCACHE"
-          test "$(go env GOCACHE)" = "$GOCACHE"
-          echo "GOMODCACHE=$(go env GOMODCACHE)"
-          echo "GOCACHE=$(go env GOCACHE)"
-          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH"
 
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
@@ -186,59 +156,36 @@ jobs:
   # conservative impact selector. Partial coverage never updates the badge.
   test:
     name: Tests + coverage
-    runs-on: araihu
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Configure ARC persistent caches
+      - name: Configure job-local tools
         run: |
           set -euo pipefail
-          # See the matching lint-build step for sharing and concurrency
-          # rationale. Browser binaries live under the same RWX cache mount.
-          cache_root="$HOME/.cache"
-          go_mod_cache="$HOME/go/pkg/mod/goshtoso-go${GO_VERSION}"
-          go_build_cache="$cache_root/go-build/goshtoso-go${GO_VERSION}"
           tool_bin="$RUNNER_TEMP/go-bin"
-          mkdir -p "$go_mod_cache" "$go_build_cache" \
-            "$cache_root/ms-playwright" "$tool_bin"
+          browser_path="$HOME/.cache/ms-playwright"
+          mkdir -p "$tool_bin" "$browser_path"
           {
-            echo "GOMODCACHE=$go_mod_cache"
-            echo "GOCACHE=$go_build_cache"
             echo "GOBIN=$tool_bin"
-            echo "PLAYWRIGHT_BROWSERS_PATH=$cache_root/ms-playwright"
+            echo "PLAYWRIGHT_BROWSERS_PATH=$browser_path"
           } >> "$GITHUB_ENV"
           echo "$tool_bin" >> "$GITHUB_PATH"
 
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-          # NFS-backed GOMODCACHE/GOCACHE already persist across runs on the
-          # self-hosted araihu runner. setup-go's own cache tars+uploads that
-          # same tree to the GHA cache backend on every go.sum change — a ~9min
-          # post-job step that buys nothing here. Disable it.
-          cache: false
+          cache-dependency-path: |
+            go.sum
+            site/go.sum
+            tests/external/runtime-manifest/go.sum
 
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Verify ARC persistent caches
-        run: |
-          set -euo pipefail
-          for path in "$GOMODCACHE" "$GOCACHE" "$PLAYWRIGHT_BROWSERS_PATH"; do
-            test -d "$path"
-            test -w "$path"
-            printf '%s: ' "$path"
-            df -T "$path" | tail -n 1
-          done
-          test "$(go env GOMODCACHE)" = "$GOMODCACHE"
-          test "$(go env GOCACHE)" = "$GOCACHE"
-          echo "GOMODCACHE=$(go env GOMODCACHE)"
-          echo "GOCACHE=$(go env GOCACHE)"
-          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH"
 
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
@@ -340,7 +287,7 @@ jobs:
     name: Trigger Fly deploy
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [lint-build, test]
-    runs-on: araihu
+    runs-on: ubuntu-24.04
     concurrency: deploy-group
     steps:
       - name: Dispatch central deployment
