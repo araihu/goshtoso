@@ -307,6 +307,27 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@latest -theme -out=css/goshtoso-t
 go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 ```
 
+## Public Surface Guardrails
+
+- For a one-line install command, use the standard `codeblock.CodeBlock` inside
+  an app-owned wrapper that sets only width and spacing, as on the Goshtoso
+  landing page. Do not turn the component header and code body into a custom
+  grid or style its private DOM structure. For a dense list of short commands,
+  use a documented compact API when the pinned release provides one; otherwise
+  prefer prose or inline code instead of several bespoke mini code blocks.
+- Match app-shell color-mode controls with an icon button whose accessible label
+  changes between `Switch to dark mode` and `Switch to light mode`. Use
+  `toggle.Toggle` only when a labelled switch is the intended interface. Keep
+  the control inside a live Alpine `x-data` scope and bind it to the same state
+  that applies the document's `dark` class.
+- Treat unavailable browser storage as a normal runtime mode. A consent or
+  capability probe alone is not a fallback: guard every `localStorage`
+  read/write/remove operation, while the in-memory store continues to update the
+  document class for the session. Browser-test the actual visible control under
+  light and dark system preferences and with `localStorage` throwing. Assert the
+  document class, accessible control state, store, and persisted value remain
+  synchronized with no page errors.
+
 ## Integration Checks
 
 - Missing styling usually means `/assets/styles.css` is not served or
