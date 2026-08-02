@@ -43,6 +43,17 @@ func TestRootHeadComponentWithoutCompiledSiteImportFallsBackToFull(t *testing.T)
 	require.Contains(t, result.Reasons, "no focused E2E identity selected")
 }
 
+func TestSelectChangesAcceptsRelativeRepositoryRoot(t *testing.T) {
+	t.Chdir(repositoryRoot(t))
+	result := selectChanges(context.Background(), ".", []Change{{
+		Status:  "M",
+		OldPath: "site/internal/pages/demo/componentpages/head/dependencies.templ",
+		NewPath: "site/internal/pages/demo/componentpages/head/dependencies.templ",
+	}})
+	require.Equal(t, "focused", result.Mode, result.Reasons)
+	require.Contains(t, result.Tags, "head")
+}
+
 func TestRenameAndDeleteAlwaysSelectFull(t *testing.T) {
 	for _, change := range []Change{
 		{Status: "D", OldPath: "components/button/types.go", NewPath: "components/button/types.go"},
