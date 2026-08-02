@@ -9,7 +9,11 @@ import (
 	"html"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 	"sync/atomic"
@@ -129,50 +133,18 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
 func customManifestBrowserFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
 	t.Helper()
 
-	manifest := assets.DefaultRuntimeManifest()
-	rewrites := make(map[string]string)
-	register := func(customURL, embeddedURL string) {
-		rewrites[customURL] = embeddedURL
-	}
-
-	stylesheetURL := "/custom-runtime/primary/styles.css"
-	register(stylesheetURL, manifest.Stylesheet.LocalURL)
-	manifest.Stylesheet.PrimaryURL = stylesheetURL
-	manifest.Stylesheet.LocalURL = "/custom-runtime/inventory/styles.css"
-
-	loaderURL := "/custom-runtime/primary/loader.js"
-	register(loaderURL, manifest.Loader.LocalURL)
-	manifest.Loader.PrimaryURL = loaderURL
-	manifest.Loader.LocalURL = "/custom-runtime/inventory/loader.js"
-
-	failedPrimary := "/custom-runtime/primary/htmx-ext-sse.js"
-	for index := range manifest.Dependencies {
-		dependency := &manifest.Dependencies[index]
-		embeddedURL := dependency.LocalURL
-		primaryURL := "/custom-runtime/primary/" + string(dependency.Role) + ".js"
-		fallbackURL := "/custom-runtime/fallback/" + string(dependency.Role) + ".js"
-		register(primaryURL, embeddedURL)
-		register(fallbackURL, embeddedURL)
-		dependency.PrimaryURL = primaryURL
-		dependency.LocalURL = fallbackURL
-		if dependency.Role == assets.RuntimeRoleDarkMode || dependency.Role == assets.RuntimeRoleHTMXExtSSE || dependency.Role == assets.RuntimeRoleHTMXExtWS {
-			dependency.Enabled = true
-		}
-	}
-
-	var dependencyHead strings.Builder
-	require.NoError(t, head.Dependencies(head.WithRuntimeManifest(manifest)).Render(context.Background(), &dependencyHead))
+	probe := runCustomManifestProbe(t)
 
 	var failedRequests atomic.Int32
 	assetHandler := assets.Handler()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/custom-runtime/", func(writer http.ResponseWriter, request *http.Request) {
-		if request.URL.Path == failedPrimary {
+		if request.URL.Path == probe.FailedPrimary {
 			failedRequests.Add(1)
 			http.Error(writer, "simulated custom primary failure", http.StatusServiceUnavailable)
 			return
 		}
-		embeddedURL, ok := rewrites[request.URL.Path]
+		embeddedURL, ok := probe.Rewrites[request.URL.Path]
 		if !ok {
 			http.NotFound(writer, request)
 			return
@@ -184,12 +156,55 @@ func customManifestBrowserFixture(t *testing.T) (*httptest.Server, *atomic.Int32
 	})
 	mux.HandleFunc("/", func(writer http.ResponseWriter, _ *http.Request) {
 		writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = fmt.Fprintf(writer, `<!doctype html><html><head><meta charset="utf-8">%s</head><body><div id="alpine-ready" x-data="{ ready: true }" x-text="ready"></div></body></html>`, dependencyHead.String())
+		_, _ = fmt.Fprintf(writer, `<!doctype html><html><head><meta charset="utf-8">%s</head><body><div id="alpine-ready" x-data="{ ready: true }" x-text="ready"></div></body></html>`, probe.HeadHTML)
 	})
 
 	server := httptest.NewServer(mux)
 	t.Cleanup(server.Close)
 	return server, &failedRequests
+}
+
+type customManifestProbeOutput struct {
+	HeadHTML      string            `json:"head_html"`
+	Rewrites      map[string]string `json:"rewrites"`
+	FailedPrimary string            `json:"failed_primary"`
+}
+
+func runCustomManifestProbe(t *testing.T) customManifestProbeOutput {
+	t.Helper()
+
+	root := rootModuleDir(t)
+	command := exec.CommandContext(t.Context(), "go", "run", "./internal/e2eprobe/custommanifest")
+	command.Dir = root
+	command.Env = append(os.Environ(), "GOWORK=off")
+	var stderr strings.Builder
+	command.Stderr = &stderr
+	output, err := command.Output()
+	require.NoErrorf(t, err, "render custom manifest from root module:\n%s", stderr.String())
+
+	var probe customManifestProbeOutput
+	require.NoError(t, json.Unmarshal(output, &probe))
+	require.NotEmpty(t, probe.HeadHTML)
+	require.NotEmpty(t, probe.Rewrites)
+	require.NotEmpty(t, probe.FailedPrimary)
+	return probe
+}
+
+func rootModuleDir(t *testing.T) string {
+	t.Helper()
+
+	_, filename, _, ok := runtime.Caller(0)
+	require.True(t, ok, "resolve head E2E source path")
+	for directory := filepath.Dir(filename); ; directory = filepath.Dir(directory) {
+		goMod, err := os.ReadFile(filepath.Join(directory, "go.mod"))
+		if err == nil && strings.Contains(string(goMod), "module github.com/araihu/goshtoso\n") {
+			return directory
+		}
+		parent := filepath.Dir(directory)
+		if parent == directory {
+			t.Fatalf("root Goshtoso module not found from %s", filename)
+		}
+	}
 }
 
 // TestHeadAssetContractServed renders head.Dependencies and DependenciesMinimal,
