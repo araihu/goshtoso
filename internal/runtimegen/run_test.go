@@ -43,6 +43,39 @@ func TestCommitFileUpdatesRollsBackOnReplaceFailure(t *testing.T) {
 	}
 }
 
+func TestApplyStagedFilesRemovesBackupWhenCloseFails(t *testing.T) {
+	root := t.TempDir()
+	destination := filepath.Join(root, "output.go")
+	stage := filepath.Join(root, ".runtimegen-stage-test")
+	for path, contents := range map[string]string{destination: "old\n", stage: "new\n"} {
+		if err := os.WriteFile(path, []byte(contents), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	originalClose := closeFile
+	closeFile = func(file *os.File) error {
+		if strings.Contains(filepath.Base(file.Name()), ".runtimegen-backup-") {
+			_ = file.Close()
+			return errors.New("injected backup close failure")
+		}
+		return file.Close()
+	}
+	t.Cleanup(func() { closeFile = originalClose })
+
+	staged := []stagedFile{{update: fileUpdate{path: destination}, stage: stage}}
+	_, err := applyStagedFiles(staged)
+	if err == nil || !strings.Contains(err.Error(), "injected backup close failure") {
+		t.Fatalf("error = %v", err)
+	}
+	if staged[0].backup == "" {
+		t.Fatal("backup path was not recorded")
+	}
+	if _, statErr := os.Stat(staged[0].backup); !os.IsNotExist(statErr) {
+		t.Fatalf("backup remains after close failure: %v", statErr)
+	}
+}
+
 func TestRunGeneratesAndChecksEveryArtifact(t *testing.T) {
 	root := t.TempDir()
 	overlayPath := filepath.Join(root, "assets", "runtime.overlay.yaml")

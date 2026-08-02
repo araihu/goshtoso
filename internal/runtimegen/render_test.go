@@ -63,6 +63,17 @@ func TestRenderPreservesRuntimeContracts(t *testing.T) {
 	}
 }
 
+func TestRenderLocalAssetIgnoresIntegrityWithoutCDNURL(t *testing.T) {
+	model := Model{Loader: Asset{
+		Role: "loader", RoleGoName: "Loader", GoName: "Loader",
+		Name: "Loader", LocalURL: "/assets/js/loader.js", Integrity: "sha384-unused",
+	}}
+	manifest := renderRuntimeManifest(model)
+	if strings.Contains(manifest, "Integrity:") {
+		t.Fatalf("local-only asset references an integrity constant:\n%s", manifest)
+	}
+}
+
 func fixtureModel(t *testing.T) Model {
 	t.Helper()
 	model, err := Load(strings.NewReader(validOverlay), fixtureInventory(t))

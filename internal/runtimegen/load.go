@@ -203,7 +203,7 @@ func safeEmbeddedJavaScriptURL(value string) bool {
 }
 
 func safeRelativePath(value string) bool {
-	return value != "" && !strings.HasPrefix(value, "/") && path.Clean(value) == value && !strings.HasPrefix(value, "../") && !strings.ContainsAny(value, `%?#\`)
+	return value != "" && value != ".." && !strings.HasPrefix(value, "/") && path.Clean(value) == value && !strings.HasPrefix(value, "../") && !strings.ContainsAny(value, `%?#\`)
 }
 
 func absoluteHTTPSURL(value string) bool {

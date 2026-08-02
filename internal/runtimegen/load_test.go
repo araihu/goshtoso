@@ -51,6 +51,12 @@ func TestLoadRejectsInvalidOverlaySemantics(t *testing.T) {
 	}
 }
 
+func TestSafeRelativePathRejectsParentDirectory(t *testing.T) {
+	if safeRelativePath("..") {
+		t.Fatal("safeRelativePath accepted parent directory")
+	}
+}
+
 func loadRepositoryOverlay(t *testing.T) (Model, error) {
 	t.Helper()
 	file, err := os.Open("../../assets/runtime.overlay.yaml")

@@ -43,6 +43,8 @@ func TestMuambaRuntimeInputsSelectFullAsGlobalRuntime(t *testing.T) {
 		"muamba.yaml",
 		"assets/runtime.overlay.yaml",
 		"assets/muamba_gen.go",
+		"assets/runtime_manifest_gen.go",
+		"cmd/runtimegen/main.go",
 		"internal/runtimegen/load.go",
 	} {
 		t.Run(path, func(t *testing.T) {

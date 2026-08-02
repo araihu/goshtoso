@@ -167,7 +167,13 @@ runtime := assets.DefaultRuntimeManifest()
 // runtime.Stylesheet.LocalURL and runtime.Loader.LocalURL are served by Handler.
 // runtime.Dependencies is caller-owned and ordered for execution.
 for _, dependency := range runtime.Dependencies {
-	hash, _ := assets.RuntimeHash(dependency.Role)
+	if !dependency.Enabled {
+		continue
+	}
+	hash, ok := assets.RuntimeHash(dependency.Role)
+	if !ok {
+		continue
+	}
 	cache(dependency.Role, dependency.LocalURL, dependency.Integrity, hash)
 }
 ```

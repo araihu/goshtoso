@@ -71,7 +71,7 @@ func writeRuntimeAsset(buffer *bytes.Buffer, asset Asset) {
 		primary = asset.GoName + "CDNURL"
 	}
 	fmt.Fprintf(buffer, "RuntimeAsset{Role: RuntimeRole%s, Kind: RuntimeAssetScript, PrimaryURL: %s, LocalURL: %sURL", asset.RoleGoName, primary, asset.GoName)
-	if asset.Integrity != "" {
+	if asset.URL != "" && asset.Integrity != "" {
 		fmt.Fprintf(buffer, ", Integrity: %sIntegrity", asset.GoName)
 	}
 	if asset.Enabled {

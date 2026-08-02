@@ -11,6 +11,7 @@ import (
 var (
 	renameFile = os.Rename
 	removeFile = os.Remove
+	closeFile  = (*os.File).Close
 )
 
 type fileUpdate struct {
@@ -66,7 +67,7 @@ func stageFileUpdates(updates []fileUpdate) ([]stagedFile, error) {
 		if err == nil {
 			err = file.Sync()
 		}
-		if closeErr := file.Close(); err == nil {
+		if closeErr := closeFile(file); err == nil {
 			err = closeErr
 		}
 		if err != nil {
@@ -88,7 +89,8 @@ func applyStagedFiles(staged []stagedFile) (int, error) {
 				return index, createErr
 			}
 			file.backup = backup.Name()
-			if err := backup.Close(); err != nil {
+			if err := closeFile(backup); err != nil {
+				_ = removeFile(file.backup)
 				return index, err
 			}
 			if err := removeFile(file.backup); err != nil {
