@@ -539,20 +539,6 @@ func TestAccordion_Visual_Parity(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	t.Run("Screenshots_Match_Threshold", func(t *testing.T) {
-		// Take screenshot of entire page for visual comparison
-		screenshotDir := "test-results/screenshots"
-		screenshotPath := fmt.Sprintf("%s/accordion-parity-%d.png", screenshotDir, time.Now().Unix())
-
-		_, err := page.Screenshot(playwright.PageScreenshotOptions{
-			Path:     new(screenshotPath),
-			FullPage: new(false),
-		})
-		require.NoError(t, err)
-
-		t.Logf("✓ Screenshot saved: %s", screenshotPath)
-	})
-
 	t.Run("CSS_Classes_Match_Expected", func(t *testing.T) {
 		// Get first Goshtoso accordion
 		accordion := page.Locator("#accordion-fragment .divide-y").First()

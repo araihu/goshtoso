@@ -41,7 +41,7 @@ go test -tags=e2e,full ./tests/e2e/... -short
 - `TestAccordion_StaticContent` - Tests accordion expand/collapse with static content
 - `TestAccordion_ServerLoadedContent` - Tests HTMX lazy loading functionality
 - `TestAccordion_AllVariants` - Tests all accordion variants (Default, NoBackground, ServerLoaded)
-- `TestAccordion_Visual_Parity` - Visual regression tests with screenshots
+- `TestAccordion_Visual_Parity` - Verifies the rendered accordion uses the expected classes
 
 #### Button Tests
 - `TestButton_HTMXInteractions` - Tests HTMX POST/GET requests, loading states, confirm dialogs
