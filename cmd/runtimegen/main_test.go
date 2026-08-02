@@ -13,8 +13,8 @@ func TestInventoryAdaptsGeneratedMuambaRecords(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := len(inventory.Resources()); got != 4 {
-		t.Fatalf("resources = %d, want 4", got)
+	if got := len(inventory.Resources()); got != 5 {
+		t.Fatalf("resources = %d, want 5", got)
 	}
 	resolved, ok := inventory.Resolve(assetmeta.Ref{Resource: "alpinejs", Download: "core-js"})
 	if !ok || resolved.Download.Hash == "" || resolved.Download.Integrity == "" {

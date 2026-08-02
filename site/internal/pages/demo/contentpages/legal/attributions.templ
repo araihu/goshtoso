@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path"
-	"strings"
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -33,7 +32,7 @@ type runtimeAttributionDefinition struct {
 
 func runtimeAttributionRows() []attribution {
 	rows := []attribution{
-		{Name: "Tailwind CSS", Href: "https://tailwindcss.com", Version: assets.TailwindVersion(), LocalURL: assets.StylesURL, License: "MIT", LicenseURL: muambaAssetURL("tailwindcss", "license"), Note: "Utility-first styling"},
+		{Name: "Tailwind CSS", Href: "https://tailwindcss.com", Version: assets.TailwindVersion(), LocalURL: assets.StylesURL, License: "MIT", LicenseURL: tailwindLicenseURL(), Note: "Utility-first styling"},
 	}
 	linkedURLs := make(map[assets.RuntimeAssetRole]string)
 	for _, dependency := range assets.DefaultRuntimeManifest().Dependencies {
@@ -55,19 +54,10 @@ func runtimeAttributionRows() []attribution {
 	return rows
 }
 
-func muambaAssetURL(resourceName, downloadName string) string {
-	resource, ok := assets.MuambaResourceByName(resourceName)
-	if !ok {
-		return ""
-	}
-	for _, download := range resource.Downloads {
-		if download.Name != downloadName {
-			continue
-		}
-		relative, found := strings.CutPrefix(download.Path, "assets/")
-		if found {
-			return "/assets/" + relative
-		}
+func tailwindLicenseURL() string {
+	licenseURL := "/assets/licenses/tailwindcss/" + assets.TailwindVersion() + "/LICENSE.txt"
+	if linkedAssetServes(licenseURL) {
+		return licenseURL
 	}
 	return ""
 }
