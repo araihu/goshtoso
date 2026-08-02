@@ -24,3 +24,31 @@ func TestMuambaInventoryContainsRuntimeAndTailwindInputs(t *testing.T) {
 		t.Fatal("MuambaHash(alpinejs/core-js) missing")
 	}
 }
+
+func TestRuntimeHashMatchesMuambaInventory(t *testing.T) {
+	tests := []struct {
+		role     RuntimeAssetRole
+		resource string
+		download string
+	}{
+		{RuntimeRoleAlpineCollapse, "alpinejs", "collapse-js"},
+		{RuntimeRoleAlpineFocus, "alpinejs", "focus-js"},
+		{RuntimeRoleAlpineMask, "alpinejs", "mask-js"},
+		{RuntimeRoleAlpineJS, "alpinejs", "core-js"},
+		{RuntimeRoleHTMX, "htmx", "core-js"},
+		{RuntimeRoleHTMXExtSSE, "htmx-ext-sse", "runtime-js"},
+		{RuntimeRoleHTMXExtWS, "htmx-ext-ws", "runtime-js"},
+	}
+	for _, test := range tests {
+		got, ok := RuntimeHash(test.role)
+		want, wantOK := MuambaHash(test.resource, test.download)
+		if !ok || !wantOK || got != want {
+			t.Errorf("RuntimeHash(%q) = %q, %t; MuambaHash(%s/%s) = %q, %t", test.role, got, ok, test.resource, test.download, want, wantOK)
+		}
+	}
+	for _, role := range []RuntimeAssetRole{RuntimeRoleFirstParty, RuntimeRoleDependencyLoader, "unknown"} {
+		if hash, ok := RuntimeHash(role); ok || hash != "" {
+			t.Errorf("RuntimeHash(%q) = %q, %t; want missing", role, hash, ok)
+		}
+	}
+}
