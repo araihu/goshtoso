@@ -11,7 +11,6 @@ permissions:
 
 env:
   GO_VERSION: '1.26.5'
-  NODE_VERSION: '24'
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.6100.0'
 
@@ -31,20 +30,24 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - uses: actions/setup-node@v7
+      - uses: actions/cache@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          path: .cache/muamba
+          key: muamba-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('muamba.yaml') }}
 
       - name: Install pinned templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
 
-      - name: Install pinned Tailwind CSS
+      - name: Prime and verify every Muamba target
         run: |
           set -euo pipefail
-          ver="$(cat assets/tailwind.version)"
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
-          chmod +x /tmp/tailwindcss
-          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
+          for target in darwin/amd64 darwin/arm64 linux/amd64 linux/arm64 windows/amd64; do
+            go tool muamba sync --strict --target "$target" --cache-dir .cache/muamba tailwindcss/cli
+          done
+          go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba
+          go tool muamba verify --strict --all-platforms --cache-dir .cache/muamba
+          go tool muamba generate-go --strict --check --target linux/amd64 --dir assets --output muamba_gen.go
+          go run ./cmd/runtimegen -check
 
       - name: Install Playwright + Chromium
         run: |
@@ -66,8 +69,7 @@ jobs:
           go run ./cmd/themegen
           go run ./cmd/jsbuild
           go run ./cmd/skillgen
-          go run ./cmd/vendorgen -check -verify-remote
-          tailwindcss -i css/main.css -o assets/styles.css
+          .tools/tailwindcss -i css/main.css -o assets/styles.css
           git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null
           git diff --exit-code -- \
             '*_templ.go' assets/styles.css assets/goshtoso-theme.css assets/js/*.js \
@@ -134,7 +136,8 @@ jobs:
         run: |
           set -euo pipefail
           tag="${GITHUB_REF_NAME}"
-          ver="$(cat assets/tailwind.version)"
+          ver="$(sed -n '/^  tailwindcss:$/,/^  [^ ]/ s/^    version: "\([^"]*\)"/\1/p' muamba.yaml)"
+          test -n "$ver"
           awk -v heading="## [${tag}]" '
             index($0, heading) == 1 { found = 1; next }
             found && /^## \[/ { exit }

@@ -1,4 +1,4 @@
-package vendorgen
+package runtimegen
 
 import (
 	"errors"
@@ -11,6 +11,7 @@ import (
 var (
 	renameFile = os.Rename
 	removeFile = os.Remove
+	closeFile  = (*os.File).Close
 )
 
 type fileUpdate struct {
@@ -19,11 +20,6 @@ type fileUpdate struct {
 	mode     os.FileMode
 }
 
-type committedFileUpdateError struct{ err error }
-
-func (err *committedFileUpdateError) Error() string { return err.err.Error() }
-func (err *committedFileUpdateError) Unwrap() error { return err.err }
-
 type stagedFile struct {
 	update fileUpdate
 	stage  string
@@ -31,17 +27,15 @@ type stagedFile struct {
 	hadOld bool
 }
 
-// commitFileUpdates stages every byte before replacing any destination. It
-// applies paths deterministically and restores all originals if a replacement
-// fails. There is no portable multi-file atomic rename, so this provides an
-// all-old or all-new result when restoration succeeds. If the filesystem
-// rejects restoration, the old bytes remain at an exact path returned in the
-// error instead of being deleted by cleanup.
 func commitFileUpdates(updates []fileUpdate) error {
-	ordered, err := orderedFileUpdates(updates)
-	if err != nil {
-		return err
+	ordered := append([]fileUpdate(nil), updates...)
+	sort.Slice(ordered, func(i, j int) bool { return filepath.Clean(ordered[i].path) < filepath.Clean(ordered[j].path) })
+	for index := 1; index < len(ordered); index++ {
+		if filepath.Clean(ordered[index-1].path) == filepath.Clean(ordered[index].path) {
+			return fmt.Errorf("duplicate destination %s", ordered[index].path)
+		}
 	}
+
 	staged, err := stageFileUpdates(ordered)
 	if err != nil {
 		return err
@@ -51,32 +45,17 @@ func commitFileUpdates(updates []fileUpdate) error {
 	if err != nil {
 		return rollbackStagedFiles(staged, committed, err)
 	}
-	cleanupErr := cleanupBackupFiles(staged)
-	if cleanupErr != nil {
-		return &committedFileUpdateError{err: cleanupErr}
-	}
-	return nil
+	return cleanupBackupFiles(staged)
 }
 
-func orderedFileUpdates(updates []fileUpdate) ([]fileUpdate, error) {
-	ordered := append([]fileUpdate(nil), updates...)
-	sort.Slice(ordered, func(i, j int) bool { return filepath.Clean(ordered[i].path) < filepath.Clean(ordered[j].path) })
-	for index := 1; index < len(ordered); index++ {
-		if filepath.Clean(ordered[index-1].path) == filepath.Clean(ordered[index].path) {
-			return nil, fmt.Errorf("duplicate destination %s", ordered[index].path)
-		}
-	}
-	return ordered, nil
-}
-
-func stageFileUpdates(ordered []fileUpdate) ([]stagedFile, error) {
-	staged := make([]stagedFile, 0, len(ordered))
-	for _, update := range ordered {
+func stageFileUpdates(updates []fileUpdate) ([]stagedFile, error) {
+	staged := make([]stagedFile, 0, len(updates))
+	for _, update := range updates {
 		if err := os.MkdirAll(filepath.Dir(update.path), 0o755); err != nil {
 			cleanupStageFiles(staged)
 			return nil, err
 		}
-		file, err := os.CreateTemp(filepath.Dir(update.path), ".vendorgen-stage-*")
+		file, err := os.CreateTemp(filepath.Dir(update.path), ".runtimegen-stage-*")
 		if err != nil {
 			cleanupStageFiles(staged)
 			return nil, err
@@ -88,7 +67,7 @@ func stageFileUpdates(ordered []fileUpdate) ([]stagedFile, error) {
 		if err == nil {
 			err = file.Sync()
 		}
-		if closeErr := file.Close(); err == nil {
+		if closeErr := closeFile(file); err == nil {
 			err = closeErr
 		}
 		if err != nil {
@@ -105,12 +84,13 @@ func applyStagedFiles(staged []stagedFile) (int, error) {
 	for index := range staged {
 		file := &staged[index]
 		if _, err := os.Stat(file.update.path); err == nil {
-			backup, createErr := os.CreateTemp(filepath.Dir(file.update.path), ".vendorgen-backup-*")
+			backup, createErr := os.CreateTemp(filepath.Dir(file.update.path), ".runtimegen-backup-*")
 			if createErr != nil {
 				return index, createErr
 			}
 			file.backup = backup.Name()
-			if err := backup.Close(); err != nil {
+			if err := closeFile(backup); err != nil {
+				_ = removeFile(file.backup)
 				return index, err
 			}
 			if err := removeFile(file.backup); err != nil {
@@ -173,7 +153,7 @@ func cleanupBackupFiles(staged []stagedFile) error {
 			continue
 		}
 		if err := removeFile(file.backup); err != nil {
-			cleanupErr = errors.Join(cleanupErr, fmt.Errorf("committed %s but preserved recovery artifact %s because cleanup failed: %w", file.update.path, file.backup, err))
+			cleanupErr = errors.Join(cleanupErr, fmt.Errorf("committed %s but preserved recovery artifact %s: %w", file.update.path, file.backup, err))
 			continue
 		}
 		file.backup = ""

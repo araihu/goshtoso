@@ -1,0 +1,176 @@
+schema: 1
+metadata:
+  loader:
+    role: dependency-loader
+    go_name: DependencyLoader
+    name: Goshtoso dependency loader
+    local_url: /assets/js/dependency-loader.js
+    purpose: Loads the declared runtime in order with same-version local fallback
+    enabled: true
+    include_in_minimal: true
+    defer: true
+  order:
+    - download: alpinejs/collapse-js
+    - download: alpinejs/focus-js
+    - download: alpinejs/mask-js
+    - local: first-party
+    - local: dark-mode
+    - download: alpinejs/core-js
+    - download: htmx/core-js
+    - download: htmx-ext-sse/runtime-js
+    - download: htmx-ext-ws/runtime-js
+    - local: combobox
+    - local: action-group
+  first_party:
+    first-party:
+      role: first-party
+      go_name: FirstPartyBundle
+      role_go_name: FirstParty
+      name: Goshtoso component runtime
+      local_url: /assets/js/goshtoso.min.js
+      purpose: Reusable first-party component behavior
+      enabled: true
+      include_in_minimal: true
+      defer: true
+    dark-mode:
+      role: dark-mode
+      go_name: DarkMode
+      name: Goshtoso dark-mode runtime
+      local_url: /assets/js/darkmode.js
+      purpose: Registers the Alpine dark-mode store
+      enabled: false
+      include_in_minimal: true
+      defer: true
+    combobox:
+      role: combobox
+      go_name: Combobox
+      name: Goshtoso combobox compatibility runtime
+      local_url: /assets/js/combobox.js
+      purpose: Standalone compatibility build for combobox behavior
+      enabled: false
+      include_in_minimal: true
+      defer: true
+    action-group:
+      role: action-group
+      go_name: ActionGroup
+      name: Goshtoso action-group runtime
+      local_url: /assets/js/action-group.js
+      purpose: Responsive action-group measurement
+      enabled: false
+      include_in_minimal: true
+      defer: true
+resources:
+  alpinejs:
+    downloads:
+      collapse-js:
+        metadata:
+          role: alpine-collapse
+          go_name: AlpineCollapse
+          name: "@alpinejs/collapse"
+          package_name: "@alpinejs/collapse"
+          homepage: https://alpinejs.dev/plugins/collapse
+          license: MIT
+          license_ref: alpinejs/collapse-license
+          provenance_ref: alpinejs/collapse-package
+          purpose: Collapse transitions for accordions and disclosure components
+          attribution: true
+          enabled: true
+          include_in_minimal: false
+          defer: true
+      focus-js:
+        metadata:
+          role: alpine-focus
+          go_name: AlpineFocus
+          name: "@alpinejs/focus"
+          package_name: "@alpinejs/focus"
+          homepage: https://alpinejs.dev/plugins/focus
+          license: MIT
+          license_ref: alpinejs/focus-license
+          provenance_ref: alpinejs/focus-package
+          purpose: Focus trapping and keyboard focus management
+          attribution: true
+          enabled: true
+          include_in_minimal: false
+          defer: true
+      mask-js:
+        metadata:
+          role: alpine-mask
+          go_name: AlpineMask
+          name: "@alpinejs/mask"
+          package_name: "@alpinejs/mask"
+          homepage: https://alpinejs.dev/plugins/mask
+          license: MIT
+          license_ref: alpinejs/mask-license
+          provenance_ref: alpinejs/mask-package
+          purpose: Input masking
+          attribution: true
+          enabled: true
+          include_in_minimal: false
+          defer: true
+      core-js:
+        metadata:
+          role: alpine
+          go_name: AlpineJS
+          name: Alpine.js
+          package_name: alpinejs
+          homepage: https://alpinejs.dev
+          license: MIT
+          license_ref: alpinejs/core-license
+          provenance_ref: alpinejs/core-package
+          purpose: Reactive client-side UI state
+          attribution: true
+          enabled: true
+          include_in_minimal: true
+          defer: true
+  htmx:
+    downloads:
+      core-js:
+        metadata:
+          role: htmx
+          go_name: HTMX
+          name: htmx
+          package_name: htmx.org
+          homepage: https://htmx.org
+          license: Zero-Clause BSD
+          license_ref: htmx/license
+          provenance_ref: htmx/package
+          purpose: Server-driven interactions and fragment updates
+          attribution: true
+          enabled: true
+          include_in_minimal: true
+          defer: false
+          wait_for_window_loaded: true
+  htmx-ext-sse:
+    downloads:
+      runtime-js:
+        metadata:
+          role: htmx-ext-sse
+          go_name: HTMXExtSSE
+          name: htmx SSE extension
+          package_name: htmx-ext-sse
+          homepage: https://htmx.org/extensions/sse/
+          license: Zero-Clause BSD
+          license_ref: htmx-ext-sse/license
+          provenance_ref: htmx-ext-sse/package
+          purpose: Server-sent event integration
+          attribution: true
+          enabled: false
+          include_in_minimal: true
+          defer: true
+  htmx-ext-ws:
+    downloads:
+      runtime-js:
+        metadata:
+          role: htmx-ext-ws
+          go_name: HTMXExtWS
+          name: htmx WebSocket extension
+          package_name: htmx-ext-ws
+          homepage: https://htmx.org/extensions/ws/
+          license: Zero-Clause BSD
+          license_ref: htmx-ext-ws/license
+          provenance_ref: htmx-ext-ws/package
+          purpose: WebSocket integration
+          attribution: true
+          enabled: false
+          include_in_minimal: true
+          defer: true

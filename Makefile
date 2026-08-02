@@ -1,4 +1,4 @@
-.PHONY: all build test test-e2e test-e2e-focused clean dev dev-watch dev-air install install-templ install-playwright css css-watch generate js js-check
+.PHONY: all build test test-e2e test-e2e-focused clean dev dev-watch dev-air install install-templ install-playwright css css-watch generate js js-check vendor-js vendor-js-verify
 
 # Default target
 all: css build
@@ -33,12 +33,26 @@ install-air:
 # Build Tailwind CSS
 css:
 	@echo "Building Tailwind CSS..."
-	tailwindcss -i css/main.css -o assets/styles.css
+	go tool muamba sync --strict tailwindcss/cli
+	go run ./cmd/themegen
+	.tools/tailwindcss -i css/main.css -o assets/styles.css
 
 # Watch Tailwind CSS for changes
 css-watch:
 	@echo "Watching CSS for changes..."
-	tailwindcss -i css/main.css -o assets/styles.css --watch
+	go tool muamba sync --strict tailwindcss/cli
+	go run ./cmd/themegen
+	.tools/tailwindcss -i css/main.css -o assets/styles.css --watch
+
+vendor-js:
+	go tool muamba sync --strict
+	go tool muamba generate-go --strict --dir assets --output muamba_gen.go
+	go run ./cmd/runtimegen
+
+vendor-js-verify:
+	go tool muamba verify --strict
+	go tool muamba generate-go --strict --check --dir assets --output muamba_gen.go
+	go run ./cmd/runtimegen -check
 
 # Run Go tests
 test:
@@ -119,6 +133,8 @@ help:
 	@echo "  make generate       - Generate templ files"
 	@echo "  make js             - Build minified first-party JavaScript"
 	@echo "  make js-check       - Lint JavaScript and verify generated drift"
+	@echo "  make vendor-js      - Materialize Muamba inputs and regenerate runtime contracts"
+	@echo "  make vendor-js-verify - Verify Muamba inputs and generated runtime contracts"
 	@echo "  make clean          - Clean build artifacts"
 	@echo "  make fmt            - Format code"
 	@echo "  make lint           - Run linter"

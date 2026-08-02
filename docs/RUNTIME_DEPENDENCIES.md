@@ -1,8 +1,8 @@
 # Embedded JavaScript runtime
 
-`assets/js/runtime/manifest.json` is the checked-in source of truth for the embedded JavaScript inventory, execution order, pinned third-party versions, loading defaults, and attribution metadata. Generated Go and site files must not be edited by hand.
+`muamba.yaml` is the acquisition and SHA-384 integrity source of truth. `assets/runtime.overlay.yaml` owns Goshtoso runtime order, loading defaults, and attribution metadata. Generated Go, site, and documentation files must not be edited by hand.
 
-Inspect the exact runtime linked into a Go binary with `assets.DefaultRuntimeManifest()`. The legacy `/assets/js/runtime/versions.json` endpoint remains a generated compatibility view for version-only tooling.
+Inspect the exact runtime linked into a Go binary with `assets.DefaultRuntimeManifest()`. Inspect normalized vendored hashes for cache busting with `assets.RuntimeHash(role)` or the complete acquisition registry with `assets.MuambaResources()`.
 
 Inspect generated identity and retained-license metadata with `assets.DefaultRuntimeMetadata()`. Runtime metadata does not replace `RuntimeAsset`: the latter remains the supported loading, override, SRI, enablement, and ordering contract.
 
@@ -23,4 +23,4 @@ Pinned versions are the tested combination. Replacing URLs or versions configure
 | 10 | Goshtoso combobox compatibility runtime | `Goshtoso release` | `combobox` | false | true | `/assets/js/combobox.js` | `/assets/js/combobox.js` | Goshtoso |
 | 11 | Goshtoso action-group runtime | `Goshtoso release` | `action-group` | false | true | `/assets/js/action-group.js` | `/assets/js/action-group.js` | Goshtoso |
 
-Regenerate all consumers with `go run ./cmd/vendorgen`; verify local JavaScript and license hashes plus generated drift with `go run ./cmd/vendorgen -check`; fetch every declared CDN URL, package identity document, and license source with `go run ./cmd/vendorgen -check -verify-remote`.
+Regenerate all consumers with `go run ./cmd/runtimegen`; verify acquisition integrity and generated drift with `go tool muamba verify --strict`, `go tool muamba generate-go --strict --check --dir assets --output muamba_gen.go`, and `go run ./cmd/runtimegen -check`.

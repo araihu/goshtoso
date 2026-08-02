@@ -32,7 +32,7 @@ type runtimeAttributionDefinition struct {
 
 func runtimeAttributionRows() []attribution {
 	rows := []attribution{
-		{Name: "Tailwind CSS", Href: "https://tailwindcss.com", Version: assets.TailwindVersion(), LocalURL: assets.StylesURL, License: "MIT", Note: "Utility-first styling"},
+		{Name: "Tailwind CSS", Href: "https://tailwindcss.com", Version: assets.TailwindVersion(), LocalURL: assets.StylesURL, License: "MIT", LicenseURL: tailwindLicenseURL(), Note: "Utility-first styling"},
 	}
 	linkedURLs := make(map[assets.RuntimeAssetRole]string)
 	for _, dependency := range assets.DefaultRuntimeManifest().Dependencies {
@@ -52,6 +52,14 @@ func runtimeAttributionRows() []attribution {
 		rows = append(rows, row)
 	}
 	return rows
+}
+
+func tailwindLicenseURL() string {
+	licenseURL := "/assets/licenses/tailwindcss/" + assets.TailwindVersion() + "/LICENSE.txt"
+	if linkedAssetServes(licenseURL) {
+		return licenseURL
+	}
+	return ""
 }
 
 func linkedAssetServes(assetURL string) bool {
@@ -104,7 +112,7 @@ templ runtimeAttrSection(rows []attribution) {
 	<div>
 		<h2 data-toc-heading="Runtime libraries" class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Runtime libraries</h2>
 		<p class="mt-1 mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			This site renders pins and embedded paths from the Goshtoso module linked into this binary and loads those assets locally. The library's zero-option head helper remains CDN-first with same-version local fallback; local-only loading is supported. Inspect the linked binary with <code class="font-mono">assets.DefaultRuntimeManifest()</code> and its <a href="/assets/js/runtime/versions.json" class="text-primary dark:text-primary-dark underline underline-offset-2">embedded version view</a>.
+			This site renders pins and embedded paths from the Goshtoso module linked into this binary and loads those assets locally. The library's zero-option head helper remains CDN-first with same-version local fallback; local-only loading is supported. Inspect the linked binary with <code class="font-mono">assets.DefaultRuntimeManifest()</code>, <code class="font-mono">assets.DefaultRuntimeMetadata()</code>, and <code class="font-mono">assets.MuambaResources()</code>.
 		</p>
 		<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
 			<table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">

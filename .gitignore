@@ -80,6 +80,7 @@ og-site/
 
 # Pinned Tailwind standalone binary cache (fetched by `just css`)
 .tools/
+.cache/muamba/
 
 .superpowers/
 

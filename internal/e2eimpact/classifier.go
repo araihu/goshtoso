@@ -146,8 +146,9 @@ func derivedExplained(path string, changes []Change, authoredTempl, authoredJS b
 
 func globalPath(path string) bool {
 	return strings.HasPrefix(path, "assets/css/") || strings.HasPrefix(path, "assets/js/runtime/") ||
-		path == "assets/embed.go" || path == "assets/runtime_manifest.go" || path == "assets/vendor_gen.go" ||
-		path == "assets/tailwind.version" || strings.HasPrefix(path, "cmd/vendorgen/") ||
+		strings.HasPrefix(path, "internal/runtimegen/") || strings.HasPrefix(path, "cmd/runtimegen/") || path == "muamba.yaml" ||
+		path == "assets/runtime.overlay.yaml" || path == "assets/muamba_gen.go" ||
+		path == "assets/embed.go" || path == "assets/runtime_manifest.go" || path == "assets/runtime_manifest_gen.go" || path == "assets/vendor_gen.go" ||
 		strings.Contains(filepath.Base(path), "tailwind")
 }
 

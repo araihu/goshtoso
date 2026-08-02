@@ -1,0 +1,126 @@
+schema: 1
+resources:
+  alpinejs:
+    version: "3.14.9"
+    downloads:
+      collapse-js:
+        url: https://unpkg.com/@alpinejs/collapse@${version}/dist/cdn.min.js
+        path: assets/js/runtime/alpinejs-collapse/${version}/alpine-collapse.min.js
+        integrity: sha384-NArNwzWsUSF+kY2lgW4YriEkjLqi+J+za6HrENUn/3nZqkBnWbxV22kCJEK5Uu6n
+      collapse-package:
+        url: https://unpkg.com/@alpinejs/collapse@${version}/package.json
+        path: assets/js/runtime/alpinejs-collapse/${version}/package.json
+        integrity: sha384-1QeOrgxq0AdAEwIpHTsM/omCCQOYObl0SIsQXuUpZ2rPIr6mj4J4p7nXpHNmeNWN
+      collapse-license:
+        url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
+        path: assets/js/runtime/alpinejs-collapse/${version}/LICENSE.txt
+        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+      focus-js:
+        url: https://unpkg.com/@alpinejs/focus@${version}/dist/cdn.min.js
+        path: assets/js/runtime/alpinejs-focus/${version}/alpine-focus.min.js
+        integrity: sha384-bKXNU7o2Y3Uk/F2PB6U0bMyGZf6pLDnePM70U7sTE3cXUQ+JLgzrr/kwipEh0p23
+      focus-package:
+        url: https://unpkg.com/@alpinejs/focus@${version}/package.json
+        path: assets/js/runtime/alpinejs-focus/${version}/package.json
+        integrity: sha384-5l2aWHtBPo/rrIxhZ8Im61JbiVF0FkgTYdulyz4trswjhER/MMGlw6xKn19ZajNv
+      focus-license:
+        url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
+        path: assets/js/runtime/alpinejs-focus/${version}/LICENSE.txt
+        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+      mask-js:
+        url: https://unpkg.com/@alpinejs/mask@${version}/dist/cdn.min.js
+        path: assets/js/runtime/alpinejs-mask/${version}/alpine-mask.min.js
+        integrity: sha384-SGhOy1rqh2lYeihPkBYcEUWXaDP+024QNlkQuAn11pcP3NQ2QAdI3zWIN1iAslFe
+      mask-package:
+        url: https://unpkg.com/@alpinejs/mask@${version}/package.json
+        path: assets/js/runtime/alpinejs-mask/${version}/package.json
+        integrity: sha384-w+P3qD7IoaTS3qwShSIhDLOsSO54oguxDcOFG6fj4LgNT8MqMWEWD/RJNykq3c23
+      mask-license:
+        url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
+        path: assets/js/runtime/alpinejs-mask/${version}/LICENSE.txt
+        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+      core-js:
+        url: https://unpkg.com/alpinejs@${version}/dist/cdn.min.js
+        path: assets/js/runtime/alpinejs/${version}/alpine.min.js
+        integrity: sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F
+      core-package:
+        url: https://unpkg.com/alpinejs@${version}/package.json
+        path: assets/js/runtime/alpinejs/${version}/package.json
+        integrity: sha384-93cBdHwIn/lWQdKuHyN3js4uXvOU8C8Do2CQ+gfDl6kroambz+tW/9LeskiFVusA
+      core-license:
+        url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
+        path: assets/js/runtime/alpinejs/${version}/LICENSE.txt
+        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+  htmx:
+    version: "2.0.8"
+    downloads:
+      core-js:
+        url: https://unpkg.com/htmx.org@${version}/dist/htmx.min.js
+        path: assets/js/runtime/htmx.org/${version}/htmx.min.js
+        integrity: sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz
+      package:
+        url: https://unpkg.com/htmx.org@${version}/package.json
+        path: assets/js/runtime/htmx.org/${version}/package.json
+        integrity: sha384-NHRsoCB1k9O/hjsUudBAHt4Sh2XxPOVIr9cxNwrCo1hIr/M3if4YiXFLEexC6q9H
+      license:
+        url: https://unpkg.com/htmx.org@${version}/LICENSE
+        path: assets/js/runtime/htmx.org/${version}/LICENSE.txt
+        integrity: sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA
+  htmx-ext-sse:
+    version: "2.2.3"
+    downloads:
+      runtime-js:
+        url: https://unpkg.com/htmx-ext-sse@${version}/dist/sse.min.js
+        path: assets/js/runtime/htmx-ext-sse/${version}/htmx-ext-sse.min.js
+        integrity: sha384-Y4gc0CK6Kg+hmulDc6rZPJu0tqvk7EWlih0Oh+2OkAi1ZDlCbBDCQEE2uVk472Ky
+      package:
+        url: https://unpkg.com/htmx-ext-sse@${version}/package.json
+        path: assets/js/runtime/htmx-ext-sse/${version}/package.json
+        integrity: sha384-207L8WXQ4YzBbq9olqS6+o3/Zg1zNlV4IQGUrkRWzGjzaa0I26iTpHPeA+TzOYTn
+      license:
+        url: https://unpkg.com/htmx-ext-sse@${version}/LICENSE
+        path: assets/js/runtime/htmx-ext-sse/${version}/LICENSE.txt
+        integrity: sha384-oTkMp4+HooLc5pBZJ20QldWAgewTPXjxHjSD3my+oulQNRIwISxGjEzaXGM/UefT
+  htmx-ext-ws:
+    version: "2.0.3"
+    downloads:
+      runtime-js:
+        url: https://unpkg.com/htmx-ext-ws@${version}/ws.js
+        path: assets/js/runtime/htmx-ext-ws/${version}/htmx-ext-ws.js
+        integrity: sha384-IeVkDiDIU+Zsabm4HnVf7ifa7LYLSoUCAYrFIjsn+0voIDaflLAalBqJ4CeEZodl
+      package:
+        url: https://unpkg.com/htmx-ext-ws@${version}/package.json
+        path: assets/js/runtime/htmx-ext-ws/${version}/package.json
+        integrity: sha384-tCXvVmJJVdA8qM2S8c5m7ieSVjAdK/HvycooMC28nsjLHTKmbtjxxIZWEjpnRhVR
+      license:
+        url: https://unpkg.com/htmx-ext-ws@${version}/LICENSE
+        path: assets/js/runtime/htmx-ext-ws/${version}/LICENSE.txt
+        integrity: sha384-oTkMp4+HooLc5pBZJ20QldWAgewTPXjxHjSD3my+oulQNRIwISxGjEzaXGM/UefT
+  tailwindcss:
+    version: "4.3.3"
+    downloads:
+      license:
+        url: https://raw.githubusercontent.com/tailwindlabs/tailwindcss/v${version}/LICENSE
+        path: assets/licenses/tailwindcss/${version}/LICENSE.txt
+        max_size: 64KiB
+        integrity: sha384-zZwI/O2prTGDEmLZ7zRQDU5uBHh0I9RcfsxxiBs8rVAEUeWHCkfZZuadqFVCMuoU
+      cli:
+        path: .tools/tailwindcss
+        executable: true
+        max_size: 128MiB
+        platforms:
+          darwin/amd64:
+            url: https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-macos-x64
+            integrity: sha384-vex33PyRZ4M0BkVq/wPLznyQ76o7hGEwIRnf7x26sBgwreTw8w5m5NTTtyzhn784
+          darwin/arm64:
+            url: https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-macos-arm64
+            integrity: sha384-0CVmvBLjF2PaoNC85T0Xaa5AQLeS5CVVO3/z2sF5MJArgx89QaSg8aCQDnK6+UPX
+          linux/amd64:
+            url: https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-linux-x64
+            integrity: sha384-p0c/YYQPZb9mULEb2SKnGfaATi87F+J0PfpqaaKe6RS54CFEb0jbwmFV8lyPLTUj
+          linux/arm64:
+            url: https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-linux-arm64
+            integrity: sha384-FQcznCh8+brxslE2dgwD47hyzTKlgtp22txeWBhYp0vYuMCgCiPmFCENeUzFIVKP
+          windows/amd64:
+            url: https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-windows-x64.exe
+            integrity: sha384-U5bWRg5Y+iqbQc2V2BGi7fHJrmSFROGGuKfGO2rj7VsubUZMKxNTbQtOeWtrp18D

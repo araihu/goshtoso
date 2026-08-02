@@ -129,8 +129,8 @@ application that deliberately loads that runtime itself. Empty override URLs
 leave the strong default unchanged.
 
 Default third-party scripts carry canonical SHA-384 Subresource Integrity from
-the runtime manifest. Generation verifies the embedded bytes, and the remote
-verification gate fetches each pinned CDN URL and checks the same hash. When a
+`muamba.yaml`. Offline verification checks every embedded byte; the explicit
+`just vendor-js` acquisition step fetches and materializes locked inputs. When a
 custom CDN or local URL changes the bytes, pass its
 matching hash with `WithDependencyIntegrity`; pass an empty hash only when the
 application deliberately disables SRI for that dependency. A dependency has one
@@ -138,8 +138,8 @@ integrity value for both its primary and fallback URL, so those two sources must
 serve byte-identical content when SRI is enabled.
 
 The exact tested pins, paths, loading order, and defaults are generated in
-[`RUNTIME_DEPENDENCIES.md`](RUNTIME_DEPENDENCIES.md) from the canonical
-JavaScript manifest. Changing a URL or manifest configures how the browser loads
+[`RUNTIME_DEPENDENCIES.md`](RUNTIME_DEPENDENCIES.md) from `muamba.yaml` and
+`assets/runtime.overlay.yaml`. Changing a URL or manifest configures how the browser loads
 the application-owned stack; it does not guarantee that arbitrary dependency
 versions are compatible with Goshtoso or each other.
 
@@ -167,7 +167,14 @@ runtime := assets.DefaultRuntimeManifest()
 // runtime.Stylesheet.LocalURL and runtime.Loader.LocalURL are served by Handler.
 // runtime.Dependencies is caller-owned and ordered for execution.
 for _, dependency := range runtime.Dependencies {
-    cache(dependency.Role, dependency.LocalURL, dependency.Integrity)
+	if !dependency.Enabled {
+		continue
+	}
+	hash, ok := assets.RuntimeHash(dependency.Role)
+	if !ok {
+		continue
+	}
+	cache(dependency.Role, dependency.LocalURL, dependency.Integrity, hash)
 }
 ```
 
@@ -184,6 +191,9 @@ loader again.
 Each `DefaultRuntimeManifest` call owns its value and dependency slice; caller
 mutation cannot change later results or `head.Dependencies()` rendering. Every
 declared local URL uses the `/assets/` mount and is served by `assets.Handler()`.
+`RuntimeHash` returns normalized `sha384:<hex>` content hashes for vendored
+roles; `MuambaHash` and `MuambaResources` expose the lower-level acquisition
+records, retained licenses, and provenance files.
 
 For full dependency ownership, pass a customized snapshot to
 `head.WithRuntimeManifest`. The loader emits enabled scripts in exact slice

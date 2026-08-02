@@ -18,14 +18,13 @@ and Alpine.js. The root module is the publishable library
 examples, and E2E tests.
 
 Alpine.js, HTMX, and the htmx extensions are bundled locally under
-`assets/js/runtime/<module>/<version>/`. The ordered inventory, pinned versions,
-CDN URLs, canonical SRI, loading defaults, and attribution metadata live only in
-`assets/js/runtime/manifest.json`; `versions.json`, Go runtime data, docs, and
-site attribution data are generated compatibility/views. Runtime assets are
-served through `assets.Handler()`. Regenerate every manifest consumer with
-`go run ./cmd/vendorgen`, verify local/generated drift with
-`go run ./cmd/vendorgen -check`, verify CDN bytes with
-`go run ./cmd/vendorgen -verify-remote`, and update pins with `just vendor-js`.
+`assets/js/runtime/<module>/<version>/`. `muamba.yaml` is the only acquisition
+and SHA-384 lock manifest. `assets/runtime.overlay.yaml` owns Goshtoso runtime
+order, loading defaults, and attribution metadata. Runtime assets are served
+through `assets.Handler()`. Update locked inputs with `just vendor-js`; verify
+offline bytes and generated consumers with `just vendor-js-verify`. Public
+consumers can use `assets.MuambaHash(resource, download)` or
+`assets.RuntimeHash(role)` for cache keys without changing `RuntimeAsset`.
 
 ## Commands
 

@@ -89,6 +89,9 @@ templ Layout() {
 retries the matching embedded JavaScript when a CDN download fails. The CSS,
 loader, first-party helpers, and fallback files still come from
 `assets.Handler()`; third-party bytes are protected by generated SHA-384 SRI.
+Consumers that need content-addressed cache keys can use
+`assets.RuntimeHash(role)` or inspect `assets.MuambaResources()` without
+copying generated paths or hashes.
 For an offline PWA or desktop/mobile WebView, an air-gapped
 deployment, or another application that must never request a CDN, use:
 
@@ -224,6 +227,10 @@ The default loader tries version-pinned CDN URLs for Alpine.js and HTMX, then
 falls back to the same versions under `/assets/js/runtime/`. Use
 `head.WithLocalRuntime()` when an offline application such as a PWA or native
 WebView must be fully local.
+
+`assets.RuntimeHash(role)` exposes normalized SHA-384 hashes for vendored
+runtime roles. `assets.MuambaHash(resource, download)` and
+`assets.MuambaResources()` expose the complete embedded acquisition inventory.
 
 If you maintain a custom Tailwind build, Goshtoso also ships a CLI that extracts
 the compiled CSS or theme source:

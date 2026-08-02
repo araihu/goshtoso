@@ -51,12 +51,16 @@ CSP nonce propagation to every child script. Passing `WithComboboxURL` or
 `WithActionGroupURL` switches head rendering to both standalone compatibility
 entries so either legacy override keeps its original behavior.
 
-`assets/js/runtime/manifest.json` is the sole ordered source for the embedded
-JavaScript inventory, third-party versions and CDN URLs, canonical SRI, loading
-defaults, and attribution metadata. `go run ./cmd/vendorgen` generates the Go
-runtime, compatibility versions JSON, site attributions, and the exact runtime
-documentation. Its check mode verifies generated drift and embedded hashes;
-`-verify-remote` also fetches every declared CDN URL and requires the same SRI.
+`muamba.yaml` is the sole acquisition source for embedded JavaScript, exact
+versions, URLs, retained licenses/provenance, and SHA-384 locks.
+`assets/runtime.overlay.yaml` owns only Goshtoso order, loading defaults, and
+attribution semantics. `go run ./cmd/runtimegen` generates the Go runtime, site
+attributions, and exact runtime documentation. Verify offline acquisition and
+generated drift with `just vendor-js-verify`; use `just vendor-js` for the
+explicit network/materialization step.
+
+Consumers can use `assets.RuntimeHash(role)` for runtime-role cache busting or
+`assets.MuambaHash(resource, download)` for any embedded acquisition record.
 
 `assets.DefaultRuntimeManifest().Dependencies` remains the public library
 inventory: the component bundle entry is enabled by default, while the
