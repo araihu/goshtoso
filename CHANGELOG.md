@@ -2,6 +2,25 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## Pending release: canonical runtime manifest
+
+### Canonical embedded runtime manifest
+
+- Made `assets/js/runtime/manifest.json` the ordered source of truth for
+  embedded JavaScript pins, CDN URLs, SRI, local paths, loader defaults,
+  attribution data, package provenance, and retained license notices.
+- Added generated, caller-owned `assets.DefaultRuntimeMetadata()` for runtime
+  identity and licensing. `assets.RuntimeAsset` remains the supported loading
+  and override contract, with its original nine-field layout preserved for
+  source compatibility, including positional literals.
+- Added deterministic transactional generation/downloads, duplicate-module
+  rejection, exact package-version provenance checks, and remote CDN/license
+  hash verification. Configuration freedom does not imply arbitrary-version
+  compatibility; the manifest pins remain the tested combination.
+- Made the demo site select and order local runtime assets from the Goshtoso
+  module linked into its binary, with explicit site-only enablement and
+  v0.1.0-compatible fallbacks for optional roles.
+
 ## [v0.1.2] - 2026-07-30
 
 ### Automated Arai Hû fallback assets

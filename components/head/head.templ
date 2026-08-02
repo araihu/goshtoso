@@ -20,14 +20,19 @@ package head
 //
 // Third-party JavaScript uses pinned CDN URLs first and automatically retries
 // the matching embedded asset on download failure. WithLocalRuntime disables
-// CDN requests. Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme
-// tokens, which only exist in the compiled styles.css.
+// CDN requests for the default manifest. WithRuntimeManifest accepts a typed,
+// caller-owned dependency baseline and validates it before writing HTML. Custom
+// URLs configure loading; only the pinned default versions are tested together.
+// Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme tokens, which
+// only exist in the compiled styles.css.
 templ dependenciesTemplate(cfg config) {
-	<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL }/>
+	if cfg.includes(cfg.manifest.Stylesheet, false) {
+		<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL } { cfg.stylesheetAttributes()... }/>
+	}
 	if cfg.localRuntime {
 		@localDependencyScripts(cfg, false)
-	} else {
-		<script defer src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes(false)... }></script>
+	} else if cfg.includes(cfg.manifest.Loader, false) {
+		<script defer?={ cfg.manifest.Loader.Defer } src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes()... }></script>
 	}
 }
 
@@ -36,11 +41,13 @@ templ dependenciesTemplate(cfg config) {
 // page needs no plugin-backed components. Same /assets/ mount requirement as
 // Dependencies.
 templ dependenciesMinimalTemplate(cfg config) {
-	<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL }/>
+	if cfg.includes(cfg.manifest.Stylesheet, true) {
+		<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL } { cfg.stylesheetAttributes()... }/>
+	}
 	if cfg.localRuntime {
 		@localDependencyScripts(cfg, true)
-	} else {
-		<script defer src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes(true)... }></script>
+	} else if cfg.includes(cfg.manifest.Loader, true) {
+		<script defer?={ cfg.manifest.Loader.Defer } src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes()... }></script>
 	}
 }
 

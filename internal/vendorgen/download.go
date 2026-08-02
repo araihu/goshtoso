@@ -1,18 +1,25 @@
 package vendorgen
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
+
+var fetchClient = &http.Client{Timeout: 30 * time.Second}
 
 // downloadAll fetches every dep in the manifest into its versioned dir,
 // verifies the bytes, and prunes stale version dirs. Run via `just vendor-js`.
-func downloadAll(deps map[string]dep, stdout io.Writer) error {
-	for module, d := range deps {
+func downloadAll(deps []vendoredDependency, stdout io.Writer) error {
+	updates := make([]fileUpdate, 0, len(deps)*2)
+	for _, declared := range deps {
+		module, d := declared.Module, declared.Dependency
 		url := strings.ReplaceAll(d.URL, "{v}", d.Version)
 		body, err := fetch(url)
 		if err != nil {
@@ -21,17 +28,81 @@ func downloadAll(deps map[string]dep, stdout io.Writer) error {
 		if err := verifyBytes(module, d, body); err != nil {
 			return fmt.Errorf("%s: %w", module, err)
 		}
-		dst := diskPath(module, d)
-		if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
+		license, err := fetch(strings.ReplaceAll(d.LicenseURL, "{v}", d.Version))
+		if err != nil {
+			return fmt.Errorf("%s license: %w", module, err)
+		}
+		if got := integrityForBytes(license); got != d.LicenseIntegrity {
+			return fmt.Errorf("%s license integrity = %q, want canonical %q", module, got, d.LicenseIntegrity)
+		}
+		updates = append(updates,
+			fileUpdate{path: diskPath(module, d), contents: body, mode: 0o644},
+			fileUpdate{path: licenseDiskPath(module, d), contents: license, mode: 0o644},
+		)
+	}
+	pruned, restorePruned, discardPruned, err := quarantineStaleVersions(deps)
+	if err != nil {
+		return err
+	}
+	if err := commitFileUpdates(updates); err != nil {
+		var committedErr *committedFileUpdateError
+		if errors.As(err, &committedErr) {
+			if discardErr := discardPruned(); discardErr != nil {
+				return errors.Join(err, discardErr)
+			}
 			return err
 		}
-		if err := os.WriteFile(dst, body, 0o644); err != nil {
+		return errors.Join(err, restorePruned())
+	}
+	if err := discardPruned(); err != nil {
+		return err
+	}
+	for _, declared := range deps {
+		module, d := declared.Module, declared.Dependency
+		if _, err := fmt.Fprintf(stdout, "vendorgen: fetched %s@%s -> %s and %s\n", module, d.Version, diskPath(module, d), licenseDiskPath(module, d)); err != nil {
 			return err
 		}
-		if _, err := fmt.Fprintf(stdout, "vendorgen: fetched %s@%s -> %s\n", module, d.Version, dst); err != nil {
+	}
+	for _, label := range pruned {
+		if _, err := fmt.Fprintf(stdout, "vendorgen: pruned stale %s\n", label); err != nil {
 			return err
 		}
-		if err := pruneStale(module, d.Version, stdout); err != nil {
+	}
+	return nil
+}
+
+// verifyRemote fetches every pinned CDN URL and proves it has the canonical
+// integrity recorded in the manifest without changing the embedded files.
+func verifyRemote(deps []vendoredDependency, stdout io.Writer) error {
+	for _, declared := range deps {
+		module, d := declared.Module, declared.Dependency
+		url := strings.ReplaceAll(d.URL, "{v}", d.Version)
+		body, err := fetch(url)
+		if err != nil {
+			return fmt.Errorf("%s: %w", module, err)
+		}
+		if err := verifyBytes(module, d, body); err != nil {
+			return fmt.Errorf("%s: %w", module, err)
+		}
+		provenance, err := fetch(strings.ReplaceAll(d.ProvenanceURL, "{v}", d.Version))
+		if err != nil {
+			return fmt.Errorf("%s provenance: %w", module, err)
+		}
+		var identity struct {
+			Name    string `json:"name"`
+			Version string `json:"version"`
+		}
+		if err := json.Unmarshal(provenance, &identity); err != nil || identity.Name != d.PackageName || identity.Version != d.Version {
+			return fmt.Errorf("%s provenance identity = %q@%q, want %q@%q", module, identity.Name, identity.Version, d.PackageName, d.Version)
+		}
+		license, err := fetch(strings.ReplaceAll(d.LicenseURL, "{v}", d.Version))
+		if err != nil {
+			return fmt.Errorf("%s license: %w", module, err)
+		}
+		if got := integrityForBytes(license); got != d.LicenseIntegrity {
+			return fmt.Errorf("%s license integrity = %q, want canonical %q", module, got, d.LicenseIntegrity)
+		}
+		if _, err := fmt.Fprintf(stdout, "vendorgen: verified remote %s@%s (%s)\n", module, d.Version, d.Integrity); err != nil {
 			return err
 		}
 	}
@@ -39,7 +110,7 @@ func downloadAll(deps map[string]dep, stdout io.Writer) error {
 }
 
 func fetch(url string) ([]byte, error) {
-	resp, err := http.Get(url) //nolint:gosec // url is from the committed manifest
+	resp, err := fetchClient.Get(url) //nolint:gosec // url is validated from the committed manifest
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +140,9 @@ func verifyBytes(module string, d dep, body []byte) error {
 	if len(body) == 0 {
 		return fmt.Errorf("empty download")
 	}
+	if got := integrityForBytes(body); got != d.Integrity {
+		return fmt.Errorf("integrity = %q, want canonical %q", got, d.Integrity)
+	}
 	s := string(body)
 	for _, m := range markers[module] {
 		want := strings.ReplaceAll(m, "{v}", d.Version)
@@ -79,23 +153,67 @@ func verifyBytes(module string, d dep, body []byte) error {
 	return nil
 }
 
-// pruneStale removes assets/js/runtime/<module>/<otherVersion> dirs that are not
-// the pinned version, so only the current version ships.
-func pruneStale(module, keep string, stdout io.Writer) error {
-	dir := filepath.Join(vendorRoot, module)
-	entries, err := os.ReadDir(dir)
+// quarantineStaleVersions first moves every stale directory into one quarantine
+// outside the embedded tree. A late discovery error restores prior moves; once
+// all moves succeed, deleting the quarantine cannot expose a partial runtime.
+func quarantineStaleVersions(deps []vendoredDependency) ([]string, func() error, func() error, error) {
+	quarantine, err := os.MkdirTemp(filepath.Dir(vendorRoot), ".vendorgen-prune-*")
 	if err != nil {
-		return err
+		return nil, nil, nil, err
 	}
-	for _, e := range entries {
-		if e.IsDir() && e.Name() != keep {
-			if err := os.RemoveAll(filepath.Join(dir, e.Name())); err != nil {
-				return err
+	type movedDir struct{ from, to, label string }
+	var moved []movedDir
+	restore := func() error {
+		var restoreErr error
+		for index := len(moved) - 1; index >= 0; index-- {
+			directory := &moved[index]
+			if directory.to == "" {
+				continue
 			}
-			if _, err := fmt.Fprintf(stdout, "vendorgen: pruned stale %s/%s\n", module, e.Name()); err != nil {
-				return err
+			if err := renameFile(directory.to, directory.from); err != nil {
+				restoreErr = errors.Join(restoreErr, fmt.Errorf("preserved recovery quarantine %s after restoring %s failed: %w", directory.to, directory.from, err))
+				continue
 			}
+			directory.to = ""
+		}
+		if restoreErr != nil {
+			return restoreErr
+		}
+		if err := os.RemoveAll(quarantine); err != nil {
+			return fmt.Errorf("restored stale directories but failed to remove empty quarantine %s: %w", quarantine, err)
+		}
+		return nil
+	}
+	for _, declared := range deps {
+		dir := filepath.Join(vendorRoot, declared.Module)
+		entries, readErr := os.ReadDir(dir)
+		if os.IsNotExist(readErr) {
+			continue
+		}
+		if readErr != nil {
+			return nil, nil, nil, errors.Join(readErr, restore())
+		}
+		for _, entry := range entries {
+			if !entry.IsDir() || entry.Name() == declared.Dependency.Version {
+				continue
+			}
+			from := filepath.Join(dir, entry.Name())
+			to := filepath.Join(quarantine, fmt.Sprintf("%06d", len(moved)))
+			if err := renameFile(from, to); err != nil {
+				return nil, nil, nil, errors.Join(err, restore())
+			}
+			moved = append(moved, movedDir{from: from, to: to, label: declared.Module + "/" + entry.Name()})
 		}
 	}
-	return nil
+	labels := make([]string, 0, len(moved))
+	for _, directory := range moved {
+		labels = append(labels, directory.label)
+	}
+	discard := func() error {
+		if err := os.RemoveAll(quarantine); err != nil {
+			return fmt.Errorf("failed to remove committed stale-directory quarantine %s: %w", quarantine, err)
+		}
+		return nil
+	}
+	return labels, restore, discard, nil
 }

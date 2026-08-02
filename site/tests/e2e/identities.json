@@ -275,6 +275,7 @@
       ],
       "tests": [
         "TestDependenciesCDNFailureLoadsOrderedLocalFallback",
+        "TestDependenciesCustomManifestBootsExtensionsInDeclaredOrderWithFallback",
         "TestDependenciesDemoPage",
         "TestDependenciesLocalRuntimeBootsReusableComponentBundle",
         "TestDependenciesPageNoConsoleErrors",

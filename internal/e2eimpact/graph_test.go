@@ -20,6 +20,40 @@ func TestButtonChangeSelectsButtonAndReverseConsumers(t *testing.T) {
 	require.NotContains(t, result.Tags, "rating")
 }
 
+func TestMovedHeadDemoAndE2ETestSelectHeadIdentity(t *testing.T) {
+	for _, path := range []string{
+		"site/internal/pages/demo/componentpages/head/dependencies.templ",
+		"site/tests/e2e/head_coverage_test.go",
+	} {
+		t.Run(path, func(t *testing.T) {
+			result := selectChanges(context.Background(), repositoryRoot(t), []Change{{
+				Status: "M", OldPath: path, NewPath: path,
+			}})
+			require.Equal(t, "focused", result.Mode, result.Reasons)
+			require.Contains(t, result.Tags, "head")
+		})
+	}
+}
+
+func TestRootHeadComponentWithoutCompiledSiteImportFallsBackToFull(t *testing.T) {
+	result := selectChanges(context.Background(), repositoryRoot(t), []Change{{
+		Status: "M", OldPath: "components/head/types.go", NewPath: "components/head/types.go",
+	}})
+	require.Equal(t, "full", result.Mode)
+	require.Contains(t, result.Reasons, "no focused E2E identity selected")
+}
+
+func TestSelectChangesAcceptsRelativeRepositoryRoot(t *testing.T) {
+	t.Chdir(repositoryRoot(t))
+	result := selectChanges(context.Background(), ".", []Change{{
+		Status:  "M",
+		OldPath: "site/internal/pages/demo/componentpages/head/dependencies.templ",
+		NewPath: "site/internal/pages/demo/componentpages/head/dependencies.templ",
+	}})
+	require.Equal(t, "focused", result.Mode, result.Reasons)
+	require.Contains(t, result.Tags, "head")
+}
+
 func TestRenameAndDeleteAlwaysSelectFull(t *testing.T) {
 	for _, change := range []Change{
 		{Status: "D", OldPath: "components/button/types.go", NewPath: "components/button/types.go"},

@@ -51,6 +51,13 @@ CSP nonce propagation to every child script. Passing `WithComboboxURL` or
 `WithActionGroupURL` switches head rendering to both standalone compatibility
 entries so either legacy override keeps its original behavior.
 
+`assets/js/runtime/manifest.json` is the sole ordered source for the embedded
+JavaScript inventory, third-party versions and CDN URLs, canonical SRI, loading
+defaults, and attribution metadata. `go run ./cmd/vendorgen` generates the Go
+runtime, compatibility versions JSON, site attributions, and the exact runtime
+documentation. Its check mode verifies generated drift and embedded hashes;
+`-verify-remote` also fetches every declared CDN URL and requires the same SRI.
+
 `assets.DefaultRuntimeManifest().Dependencies` remains the public library
 inventory: the component bundle entry is enabled by default, while the
 standalone Combobox and ActionGroup entries remain present with

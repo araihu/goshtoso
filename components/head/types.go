@@ -2,6 +2,10 @@ package head
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"net/url"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/assets"
@@ -24,11 +28,14 @@ const (
 )
 
 type config struct {
-	initialized   bool
-	manifest      assets.RuntimeManifest
-	nonce         string
-	localFallback bool
-	localRuntime  bool
+	initialized    bool
+	manifest       assets.RuntimeManifest
+	nonce          string
+	localFallback  bool
+	localRuntime   bool
+	customManifest bool
+	err            error
+	loaderPayload  string
 }
 
 type runtimeAsset = assets.RuntimeAsset
@@ -45,6 +52,20 @@ func (fn optionFunc) apply(cfg *config) {
 	fn(cfg)
 }
 
+type runtimeManifestOption struct {
+	manifest assets.RuntimeManifest
+}
+
+func (runtimeManifestOption) apply(*config) {}
+
+// WithRuntimeManifest selects a caller-defined runtime manifest as the
+// dependency baseline. The manifest is snapshotted when this function is
+// called. Use it at most once; all other options apply afterward regardless of
+// its argument position.
+func WithRuntimeManifest(manifest assets.RuntimeManifest) Option {
+	return runtimeManifestOption{manifest: cloneRuntimeManifest(manifest)}
+}
+
 // WithDependencyCDNURL replaces the pinned CDN URL for one dependency. Empty
 // URLs leave the version-matched default unchanged. When changing versions,
 // also use WithDependencyLocalURL so the fallback remains version-matched.
@@ -53,7 +74,7 @@ func WithDependencyCDNURL(dependency Dependency, url string) Option {
 		if url == "" {
 			return
 		}
-		if source := cfg.source(dependency); source != nil {
+		if source := cfg.source(dependency, "WithDependencyCDNURL"); source != nil {
 			source.PrimaryURL = url
 		}
 	})
@@ -66,17 +87,18 @@ func WithDependencyLocalURL(dependency Dependency, url string) Option {
 		if url == "" {
 			return
 		}
-		if source := cfg.source(dependency); source != nil {
+		if source := cfg.source(dependency, "WithDependencyLocalURL"); source != nil {
 			source.LocalURL = url
 		}
 	})
 }
 
 // WithDependencyIntegrity replaces the Subresource Integrity value for one
-// dependency. Pass an empty string to disable integrity for a custom source.
+// dependency. One value applies to both primary and fallback, so their bytes
+// must match. Pass an empty string to disable integrity for a custom source.
 func WithDependencyIntegrity(dependency Dependency, integrity string) Option {
 	return optionFunc(func(cfg *config) {
-		if source := cfg.source(dependency); source != nil {
+		if source := cfg.source(dependency, "WithDependencyIntegrity"); source != nil {
 			source.Integrity = integrity
 		}
 	})
@@ -90,8 +112,10 @@ func WithoutLocalFallback() Option {
 	})
 }
 
-// WithLocalRuntime makes the embedded version-matched assets primary and emits
-// no CDN requests or fallback loader.
+// WithLocalRuntime makes the default embedded version-matched assets primary
+// and emits no CDN requests or fallback loader. It cannot be combined with
+// WithRuntimeManifest; custom local-only manifests must set PrimaryURL to the
+// desired local URL and use WithoutLocalFallback.
 func WithLocalRuntime() Option {
 	return optionFunc(func(cfg *config) {
 		cfg.localRuntime = true
@@ -101,7 +125,7 @@ func WithLocalRuntime() Option {
 // WithoutDependency omits a runtime that the application owns separately.
 func WithoutDependency(dependency Dependency) Option {
 	return optionFunc(func(cfg *config) {
-		if source := cfg.source(dependency); source != nil {
+		if source := cfg.source(dependency, "WithoutDependency"); source != nil {
 			source.Enabled = false
 		}
 	})
@@ -117,12 +141,14 @@ func WithStylesheetURL(url string) Option {
 	})
 }
 
-// WithComboboxURL replaces the first-party combobox keyboard helper URL.
+// WithComboboxURL selects legacy standalone compatibility mode, replacing the
+// first-party bundle with both standalone helpers, then replaces the Combobox
+// helper URL.
 func WithComboboxURL(url string) Option {
 	return optionFunc(func(cfg *config) {
 		if url != "" {
-			cfg.useStandaloneFirstParty()
-			if source := cfg.asset(assets.RuntimeRoleCombobox); source != nil {
+			cfg.useStandaloneFirstParty("WithComboboxURL")
+			if source := cfg.optionAsset(assets.RuntimeRoleCombobox, "WithComboboxURL"); source != nil {
 				source.PrimaryURL = url
 				source.LocalURL = url
 			}
@@ -130,12 +156,14 @@ func WithComboboxURL(url string) Option {
 	})
 }
 
-// WithActionGroupURL replaces the first-party ActionGroup measurement helper URL.
+// WithActionGroupURL selects legacy standalone compatibility mode, replacing
+// the first-party bundle with both standalone helpers, then replaces the
+// ActionGroup measurement helper URL.
 func WithActionGroupURL(url string) Option {
 	return optionFunc(func(cfg *config) {
 		if url != "" {
-			cfg.useStandaloneFirstParty()
-			if source := cfg.asset(assets.RuntimeRoleActionGroup); source != nil {
+			cfg.useStandaloneFirstParty("WithActionGroupURL")
+			if source := cfg.optionAsset(assets.RuntimeRoleActionGroup, "WithActionGroupURL"); source != nil {
 				source.PrimaryURL = url
 				source.LocalURL = url
 			}
@@ -155,21 +183,57 @@ func WithLoaderURL(url string) Option {
 }
 
 func newConfig(options []Option) config {
-	return newConfigFromManifest(assets.DefaultRuntimeManifest(), options)
+	manifest := assets.DefaultRuntimeManifest()
+	manifestCount := 0
+	for _, option := range options {
+		if baseline, ok := option.(runtimeManifestOption); ok {
+			manifest = cloneRuntimeManifest(baseline.manifest)
+			manifestCount++
+		}
+	}
+	cfg := baseConfig(manifest)
+	cfg.customManifest = manifestCount > 0
+	if manifestCount > 1 {
+		cfg.err = errors.New("head: WithRuntimeManifest may be used once")
+	}
+	for _, option := range options {
+		if option == nil {
+			continue
+		}
+		if _, ok := option.(runtimeManifestOption); ok {
+			continue
+		}
+		option.apply(&cfg)
+	}
+	finalizeConfig(&cfg)
+	return cfg
 }
 
 func newConfigFromManifest(manifest assets.RuntimeManifest, options []Option) config {
-	manifest.Dependencies = append([]assets.RuntimeAsset(nil), manifest.Dependencies...)
-	cfg := config{
-		initialized:   true,
-		manifest:      manifest,
-		localFallback: true,
-	}
+	cfg := baseConfig(manifest)
 	for _, option := range options {
 		if option != nil {
 			option.apply(&cfg)
 		}
 	}
+	finalizeConfig(&cfg)
+	return cfg
+}
+
+func cloneRuntimeManifest(manifest assets.RuntimeManifest) assets.RuntimeManifest {
+	manifest.Dependencies = append([]assets.RuntimeAsset(nil), manifest.Dependencies...)
+	return manifest
+}
+
+func baseConfig(manifest assets.RuntimeManifest) config {
+	return config{
+		initialized:   true,
+		manifest:      cloneRuntimeManifest(manifest),
+		localFallback: true,
+	}
+}
+
+func finalizeConfig(cfg *config) {
 	if cfg.localRuntime {
 		cfg.manifest.Stylesheet.PrimaryURL = cfg.manifest.Stylesheet.LocalURL
 		cfg.manifest.Loader.PrimaryURL = cfg.manifest.Loader.LocalURL
@@ -179,26 +243,34 @@ func newConfigFromManifest(manifest assets.RuntimeManifest, options []Option) co
 		}
 		cfg.localFallback = false
 	}
-	return cfg
 }
 
-func (cfg *config) source(dependency Dependency) *assets.RuntimeAsset {
-	var role assets.RuntimeAssetRole
-	switch dependency {
-	case DependencyAlpineJS:
-		role = assets.RuntimeRoleAlpineJS
-	case DependencyAlpineCollapse:
-		role = assets.RuntimeRoleAlpineCollapse
-	case DependencyAlpineFocus:
-		role = assets.RuntimeRoleAlpineFocus
-	case DependencyAlpineMask:
-		role = assets.RuntimeRoleAlpineMask
-	case DependencyHTMX:
-		role = assets.RuntimeRoleHTMX
-	default:
+func (cfg *config) source(dependency Dependency, option string) *assets.RuntimeAsset {
+	role, ok := dependencyRole(dependency)
+	if !ok {
+		if cfg.customManifest {
+			cfg.addError(fmt.Errorf("head: %s missing dependency role %q", option, dependency))
+		}
 		return nil
 	}
-	return cfg.asset(role)
+	return cfg.optionAsset(role, option)
+}
+
+func dependencyRole(dependency Dependency) (assets.RuntimeAssetRole, bool) {
+	switch dependency {
+	case DependencyAlpineJS:
+		return assets.RuntimeRoleAlpineJS, true
+	case DependencyAlpineCollapse:
+		return assets.RuntimeRoleAlpineCollapse, true
+	case DependencyAlpineFocus:
+		return assets.RuntimeRoleAlpineFocus, true
+	case DependencyAlpineMask:
+		return assets.RuntimeRoleAlpineMask, true
+	case DependencyHTMX:
+		return assets.RuntimeRoleHTMX, true
+	default:
+		return "", false
+	}
 }
 
 func (cfg *config) asset(role assets.RuntimeAssetRole) *assets.RuntimeAsset {
@@ -210,15 +282,32 @@ func (cfg *config) asset(role assets.RuntimeAssetRole) *assets.RuntimeAsset {
 	return nil
 }
 
-func (cfg *config) useStandaloneFirstParty() {
-	if bundle := cfg.asset(assets.RuntimeRoleFirstParty); bundle != nil {
+func (cfg *config) optionAsset(role assets.RuntimeAssetRole, option string) *assets.RuntimeAsset {
+	source := cfg.asset(role)
+	if source == nil && cfg.customManifest {
+		cfg.addError(fmt.Errorf("head: %s missing dependency role %q", option, role))
+	}
+	return source
+}
+
+func (cfg *config) useStandaloneFirstParty(option string) {
+	bundle := cfg.optionAsset(assets.RuntimeRoleFirstParty, option)
+	combobox := cfg.optionAsset(assets.RuntimeRoleCombobox, option)
+	actionGroup := cfg.optionAsset(assets.RuntimeRoleActionGroup, option)
+	if bundle != nil {
 		bundle.Enabled = false
 	}
-	if combobox := cfg.asset(assets.RuntimeRoleCombobox); combobox != nil {
+	if combobox != nil {
 		combobox.Enabled = true
 	}
-	if actionGroup := cfg.asset(assets.RuntimeRoleActionGroup); actionGroup != nil {
+	if actionGroup != nil {
 		actionGroup.Enabled = true
+	}
+}
+
+func (cfg *config) addError(err error) {
+	if cfg.err == nil {
+		cfg.err = err
 	}
 }
 
@@ -234,7 +323,22 @@ type loaderConfig struct {
 	Dependencies []loaderDependency `json:"dependencies"`
 }
 
-func (cfg config) loaderAttributes(minimal bool) templ.Attributes {
+func (cfg *config) prepare(minimal bool) error {
+	if cfg.err != nil {
+		return cfg.err
+	}
+	if err := cfg.validate(minimal); err != nil {
+		return err
+	}
+	payload, err := json.Marshal(cfg.loaderConfig(minimal))
+	if err != nil {
+		return fmt.Errorf("head: marshal dependency loader configuration: %w", err)
+	}
+	cfg.loaderPayload = string(payload)
+	return nil
+}
+
+func (cfg config) loaderConfig(minimal bool) loaderConfig {
 	dependencies := make([]loaderDependency, 0, 6)
 	for _, source := range cfg.manifest.Dependencies {
 		if !source.Enabled || minimal && !source.IncludeInMinimal {
@@ -251,16 +355,35 @@ func (cfg config) loaderAttributes(minimal bool) templ.Attributes {
 		}
 		dependencies = append(dependencies, entry)
 	}
+	return loaderConfig{Dependencies: dependencies}
+}
 
-	payload, err := json.Marshal(loaderConfig{Dependencies: dependencies})
-	if err != nil {
-		panic("head: marshal dependency loader configuration: " + err.Error())
+func (cfg config) loaderAttributes() templ.Attributes {
+	attrs := cfg.runtimeAttributes(cfg.manifest.Loader, true)
+	attrs["data-goshtoso-dependencies"] = cfg.loaderPayload
+	return attrs
+}
+
+func (cfg config) stylesheetAttributes() templ.Attributes {
+	return cfg.runtimeAttributes(cfg.manifest.Stylesheet, false)
+}
+
+func (cfg config) runtimeAttributes(source runtimeAsset, nonce bool) templ.Attributes {
+	attrs := templ.Attributes{}
+	if source.Integrity != "" {
+		attrs["crossorigin"] = "anonymous"
+		attrs["integrity"] = source.Integrity
 	}
-	attrs := templ.Attributes{"data-goshtoso-dependencies": string(payload)}
 	if cfg.nonce != "" {
-		attrs["nonce"] = cfg.nonce
+		if nonce {
+			attrs["nonce"] = cfg.nonce
+		}
 	}
 	return attrs
+}
+
+func (cfg config) includes(source runtimeAsset, minimal bool) bool {
+	return source.Enabled && (!minimal || source.IncludeInMinimal)
 }
 
 func (cfg config) localDependencies(minimal bool) []runtimeAsset {
@@ -274,13 +397,171 @@ func (cfg config) localDependencies(minimal bool) []runtimeAsset {
 }
 
 func (cfg config) scriptAttributes(source runtimeAsset) templ.Attributes {
-	attrs := templ.Attributes{}
-	if source.Integrity != "" {
-		attrs["crossorigin"] = "anonymous"
-		attrs["integrity"] = source.Integrity
+	return cfg.runtimeAttributes(source, true)
+}
+
+func (cfg config) validate(minimal bool) error {
+	if cfg.customManifest && cfg.localRuntime {
+		return errors.New("head: custom RuntimeManifest cannot be combined with WithLocalRuntime")
 	}
-	if cfg.nonce != "" {
-		attrs["nonce"] = cfg.nonce
+	if err := validateTopLevelAsset(cfg.manifest.Stylesheet, assets.RuntimeRoleStylesheet, assets.RuntimeAssetStylesheet, "stylesheet"); err != nil {
+		return err
 	}
-	return attrs
+	if err := validateTopLevelAsset(cfg.manifest.Loader, assets.RuntimeRoleDependencyLoader, assets.RuntimeAssetScript, "loader"); err != nil {
+		return err
+	}
+	selectedDependencies, err := cfg.validateDependencies(minimal)
+	if err != nil {
+		return err
+	}
+	if err := cfg.validateKnownOrder(); err != nil {
+		return err
+	}
+	if cfg.includes(cfg.manifest.Stylesheet, minimal) {
+		if err := validateRequiredURL("stylesheet primary URL", cfg.manifest.Stylesheet.PrimaryURL); err != nil {
+			return err
+		}
+	}
+	loaderEnabled := !cfg.localRuntime && cfg.includes(cfg.manifest.Loader, minimal)
+	if selectedDependencies > 0 && !cfg.localRuntime && !loaderEnabled {
+		return errors.New("head: enabled dependencies require an enabled loader for CDN rendering")
+	}
+	if loaderEnabled {
+		if err := validateRequiredURL("loader primary URL", cfg.manifest.Loader.PrimaryURL); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateTopLevelAsset(source runtimeAsset, role assets.RuntimeAssetRole, kind assets.RuntimeAssetKind, label string) error {
+	if source.Role != role {
+		return fmt.Errorf("head: %s role = %q, want %q", label, source.Role, role)
+	}
+	if source.Kind != kind {
+		return fmt.Errorf("head: %s kind = %q, want %q", label, source.Kind, kind)
+	}
+	if source.Defer && kind == assets.RuntimeAssetStylesheet {
+		return fmt.Errorf("head: %s Defer is unsupported", label)
+	}
+	if source.WaitForWindowLoaded {
+		return fmt.Errorf("head: %s WaitForWindowLoaded is unsupported", label)
+	}
+	if err := validateOptionalURL(label+" primary URL", source.PrimaryURL); err != nil {
+		return err
+	}
+	return validateOptionalURL(label+" local URL", source.LocalURL)
+}
+
+func (cfg config) validateDependencies(minimal bool) (int, error) {
+	seen := make(map[assets.RuntimeAssetRole]struct{}, len(cfg.manifest.Dependencies))
+	selected := 0
+	for _, source := range cfg.manifest.Dependencies {
+		if source.Role == "" {
+			return 0, errors.New("head: dependency role is empty")
+		}
+		if !safeRuntimeRole(source.Role) {
+			return 0, fmt.Errorf("head: dependency role %q is unsafe", source.Role)
+		}
+		if _, exists := seen[source.Role]; exists {
+			return 0, fmt.Errorf("head: duplicate dependency role %q", source.Role)
+		}
+		seen[source.Role] = struct{}{}
+		if source.Kind != assets.RuntimeAssetScript {
+			return 0, fmt.Errorf("head: dependency %s kind = %q, want %q", source.Role, source.Kind, assets.RuntimeAssetScript)
+		}
+		if err := validateOptionalURL("dependency "+string(source.Role)+" primary URL", source.PrimaryURL); err != nil {
+			return 0, err
+		}
+		if err := validateOptionalURL("dependency "+string(source.Role)+" local URL", source.LocalURL); err != nil {
+			return 0, err
+		}
+		if !cfg.includes(source, minimal) {
+			continue
+		}
+		selected++
+		if cfg.localRuntime {
+			if err := validateRequiredURL("dependency "+string(source.Role)+" local URL", source.LocalURL); err != nil {
+				return 0, err
+			}
+			continue
+		}
+		if err := validateRequiredURL("dependency "+string(source.Role)+" primary URL", source.PrimaryURL); err != nil {
+			return 0, err
+		}
+		if cfg.localFallback {
+			if err := validateRequiredURL("dependency "+string(source.Role)+" local URL", source.LocalURL); err != nil {
+				return 0, err
+			}
+		}
+	}
+	return selected, nil
+}
+
+func (cfg config) validateKnownOrder() error {
+	positions := make(map[assets.RuntimeAssetRole]int, len(cfg.manifest.Dependencies))
+	for index, source := range cfg.manifest.Dependencies {
+		if source.Enabled {
+			positions[source.Role] = index
+		}
+	}
+	for _, pair := range [][2]assets.RuntimeAssetRole{
+		{assets.RuntimeRoleAlpineCollapse, assets.RuntimeRoleAlpineJS},
+		{assets.RuntimeRoleAlpineFocus, assets.RuntimeRoleAlpineJS},
+		{assets.RuntimeRoleAlpineMask, assets.RuntimeRoleAlpineJS},
+		{assets.RuntimeRoleFirstParty, assets.RuntimeRoleAlpineJS},
+		{assets.RuntimeRoleDarkMode, assets.RuntimeRoleAlpineJS},
+		{assets.RuntimeRoleHTMX, assets.RuntimeRoleHTMXExtSSE},
+		{assets.RuntimeRoleHTMX, assets.RuntimeRoleHTMXExtWS},
+	} {
+		before, beforeEnabled := positions[pair[0]]
+		after, afterEnabled := positions[pair[1]]
+		if beforeEnabled && afterEnabled && before > after {
+			return fmt.Errorf("head: %s must precede %s", pair[0], pair[1])
+		}
+	}
+	_, bundleEnabled := positions[assets.RuntimeRoleFirstParty]
+	_, comboboxEnabled := positions[assets.RuntimeRoleCombobox]
+	_, actionGroupEnabled := positions[assets.RuntimeRoleActionGroup]
+	if bundleEnabled && (comboboxEnabled || actionGroupEnabled) {
+		return errors.New("head: first-party bundle cannot be combined with standalone combobox or action-group runtimes")
+	}
+	return nil
+}
+
+func safeRuntimeRole(role assets.RuntimeAssetRole) bool {
+	for index, character := range string(role) {
+		if character >= 'a' && character <= 'z' || character >= 'A' && character <= 'Z' || character >= '0' && character <= '9' || index > 0 && (character == '-' || character == '_' || character == '.') {
+			continue
+		}
+		return false
+	}
+	return true
+}
+
+func validateOptionalURL(label, rawURL string) error {
+	if rawURL == "" {
+		return nil
+	}
+	return validateRequiredURL(label, rawURL)
+}
+
+func validateRequiredURL(label, rawURL string) error {
+	if rawURL == "" || rawURL != strings.TrimSpace(rawURL) || strings.ContainsAny(rawURL, "\\\r\n\t") {
+		return fmt.Errorf("head: %s %q is not a safe HTTP(S) or relative URL", label, rawURL)
+	}
+	parsed, err := url.Parse(rawURL)
+	if err != nil {
+		return fmt.Errorf("head: %s %q is invalid: %w", label, rawURL, err)
+	}
+	if parsed.Scheme == "" {
+		if parsed.Host != "" || strings.HasPrefix(rawURL, "//") || parsed.Path == "" {
+			return fmt.Errorf("head: %s %q is not a safe relative URL", label, rawURL)
+		}
+		return nil
+	}
+	if parsed.Scheme != "http" && parsed.Scheme != "https" || parsed.Host == "" || parsed.User != nil {
+		return fmt.Errorf("head: %s %q is not a safe HTTP(S) URL", label, rawURL)
+	}
+	return nil
 }

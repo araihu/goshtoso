@@ -5,6 +5,7 @@ package e2e
 import (
 	"testing"
 
+	"github.com/araihu/goshtoso/assets"
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
 )
@@ -107,6 +108,26 @@ func TestLegalPages_DirectLoad(t *testing.T) {
 
 			require.Empty(t, jsErrors, "no JS console/page errors on %s: %v", p.path, jsErrors)
 		})
+	}
+}
+
+func TestAttributionsDisplaysCanonicalRuntimePinsAndEmbeddedPaths(t *testing.T) {
+	page := newIsolatedPage(t)
+	dismissCookieBanner(t, page)
+
+	_, err := page.Goto(baseURL + "/attributions")
+	require.NoError(t, err)
+
+	for _, text := range []string{
+		"CDN-first",
+		"assets.DefaultRuntimeManifest()",
+		assets.AlpineVersion(),
+		assets.AlpineJSURL,
+		assets.HTMXVersion(),
+		assets.HTMXURL,
+	} {
+		require.NoError(t, page.GetByText(text).First().WaitFor(
+			playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}), text)
 	}
 }
 

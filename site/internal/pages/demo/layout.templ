@@ -1,11 +1,9 @@
 package demo
 
 import (
-	"github.com/araihu/goshtoso/assets"
 	searchfield "github.com/araihu/goshtoso/components/search"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
-	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/araihu/goshtoso/site/internal/themes"
 )
@@ -47,21 +45,18 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			<link rel="shortcut icon" href="/favicon.ico"/>
 			<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 			<link rel="manifest" href="/site.webmanifest"/>
-			<link rel="stylesheet" href="/assets/styles.css"/>
+			<link rel="stylesheet" href={ siteRuntimeStylesheetURL() }/>
 			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-			<script src="/assets/js/darkmode.js"></script>
-			<script defer src={ assets.AlpineFocusURL }></script>
-			<script defer src={ assets.AlpineCollapseURL }></script>
-			<script defer src={ assets.AlpineMaskURL }></script>
-			<script defer src={ assets.FirstPartyBundleURL }></script>
-			<script defer src={ siteassets.DemoBundleURL }></script>
-			<script defer src={ assets.AlpineJSURL }></script>
-			<script src={ assets.HTMXURL }></script>
-			<script src={ assets.HTMXExtWSURL }></script>
-			<script src={ assets.HTMXExtSSEURL }></script>
+			for _, script := range siteRuntimeScripts() {
+				if script.Defer {
+					<script defer src={ script.URL }></script>
+				} else {
+					<script src={ script.URL }></script>
+				}
+			}
 			<style>
 				[x-cloak] { display: none !important; }
 				/* Hide scrollbar for sidebar */
