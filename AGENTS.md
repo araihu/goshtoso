@@ -127,7 +127,8 @@ instead of reusing generic names with different effects.
 When adding or changing a component:
 
 1. Update the component source in `components/<name>/`.
-2. Update or add the demo page under `site/internal/pages/demo/components/`.
+2. Update or add the leaf demo page under
+   `site/internal/pages/demo/componentpages/<identity>/`.
 3. Register the page in the demo registry and component catalog.
 4. Register any component-specific HTTP endpoints in `site/internal/server/server.go`.
 5. Add focused E2E coverage under `site/tests/e2e/`.
@@ -205,7 +206,7 @@ The demo HTMX endpoint is `/api/components/table/rows` and accepts
 
 Example apps under `/examples/*` are full runnable apps, not component docs.
 Keep pure domain logic in `site/internal/examples/<app>/`, templ pages/fragments
-in `site/internal/pages/demo/examples/`, and thin HTTP handlers in
+in `site/internal/pages/demo/examplepages/<identity>/`, and thin HTTP handlers in
 `site/internal/server/`. Prefer stateless per-user storage such as bounded
 cookies over server memory. E2E coverage for examples should include sidebar
 fragment navigation and console-error checks, not only direct page loads.

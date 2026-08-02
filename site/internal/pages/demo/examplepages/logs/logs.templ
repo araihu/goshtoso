@@ -1,0 +1,150 @@
+package logspage
+
+import (
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/spinner"
+	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/components/tooltip"
+	"github.com/araihu/goshtoso/site/internal/examples/logs"
+)
+
+// levelBadge maps a log level to a badge variant.
+func levelBadge(l logs.Level) badge.Tone {
+	switch l {
+	case logs.Error:
+		return badge.ToneDanger
+	case logs.Warn:
+		return badge.ToneWarning
+	case logs.Info:
+		return badge.ToneInfo
+	default: // Debug
+		return badge.ToneSecondary
+	}
+}
+
+// LogRow is one streamed feed row. The `log-level-<level>` class drives the
+// pure-CSS min-severity filter; the row text (time · source · message) is
+// hand-rolled because no component models a log line.
+templ LogRow(line logs.LogLine) {
+	<div class={ "log-row log-level-" + line.Level.String(),
+		"flex items-center gap-3 border-b border-outline/50 px-3 py-1.5 font-mono text-xs dark:border-outline-dark/50" }>
+		<time class="shrink-0 tabular-nums text-on-surface-muted dark:text-on-surface-dark-muted">
+			{ line.Time.Format("15:04:05") }
+		</time>
+		<span class="w-16 shrink-0">
+			@badge.Badge(badge.Config{
+				Tone: levelBadge(line.Level),
+				Appearance: badge.AppearanceSoft,
+				Size:    badge.SizeSM,
+				Label:    line.Level.String(),
+			})
+		</span>
+		<span class="w-20 shrink-0 truncate text-on-surface-muted dark:text-on-surface-dark-muted">{ line.Source }</span>
+		<span class="min-w-0 flex-1 truncate text-on-surface dark:text-on-surface-dark">{ line.Message }</span>
+	</div>
+}
+
+// logFilterStyle scopes the pure-CSS min-severity filter. The feed wrapper
+// carries flt-all / flt-warn / flt-error; rows carry log-level-<level>.
+templ logFilterStyle() {
+	@templ.Raw(`<style>
+	#logs-fragment .flt-warn .log-level-debug, #logs-fragment .flt-warn .log-level-info { display: none; }
+	#logs-fragment .flt-error .log-level-debug, #logs-fragment .flt-error .log-level-info, #logs-fragment .flt-error .log-level-warn { display: none; }
+	</style>`)
+}
+
+// LogsApp is the example body, rendered both on first load and as the fragment.
+templ LogsApp() {
+	@logFilterStyle()
+	<div
+		id="logs-fragment"
+		x-data="logFeed"
+		x-on:htmx:sse-open="connected = true"
+		x-on:htmx:sse-error="connected = false"
+		class="mx-auto max-w-3xl"
+	>
+		<header class="mb-6">
+			<h1 class="text-2xl font-bold text-on-surface dark:text-on-surface-dark">Live Log Feed</h1>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">
+				A streaming log viewer built from Goshtoso components. The server pushes synthetic
+				log lines over Server-Sent Events; htmx appends each rendered row while Alpine owns
+				filtering, auto-scroll, pause, and connection status. No state is stored — the only
+				state is the live connection, which closes when you pause or leave.
+			</p>
+		</header>
+		<div class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+			<div class="flex flex-col gap-4 p-4">
+				<!-- Control bar (OUTSIDE #log-feed so it survives every swap) -->
+				<div class="flex flex-wrap items-end gap-3">
+					<div class="w-40">
+						@selectfield.Select(selectfield.Config{
+							ID:          "log-filter",
+							Label:       "Minimum level",
+							Alpine: &selectfield.AlpineConfig{Model: "minLevel"},
+							Options: []selectfield.Option{
+								{Value: "all", Label: "All", Selected: true},
+								{Value: "warn", Label: "Warn+"},
+								{Value: "error", Label: "Error"},
+							},
+						})
+					</div>
+					<div class="self-center pt-5" x-on:change="autoScroll = $event.target.checked">
+						@toggle.Toggle(toggle.Config{ID: "log-autoscroll", Label: "Auto-scroll", Checked: true})
+					</div>
+					<div class="ml-auto flex items-center gap-3 self-center pt-5">
+						<span role="status" aria-live="polite" class="flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+							<span x-show="!connected && !paused">
+								@spinner.Spinner(spinner.Config{Size: spinner.SizeSM})
+							</span>
+							<span x-text="statusText"></span>
+						</span>
+						@tooltip.Tooltip(
+							"log-pause-tip",
+							"Pause closes the stream; resume reconnects",
+							tooltip.WithTrigger(pauseButton()),
+						)
+						@button.Button(
+							button.WithTone(button.ToneSecondary),
+							button.WithSize(button.SizeSmall),
+							button.WithAlpine(&button.AlpineConfig{OnClick: "clearFeed()"}),
+						) {
+							Clear
+						}
+					</div>
+				</div>
+				<!-- Persistent feed + filter wrapper -->
+				<div
+					x-ref="feedWrap"
+					class="flt-all rounded-radius border border-outline dark:border-outline-dark"
+				>
+					<div id="log-feed" class="h-80 overflow-y-auto"></div>
+				</div>
+				<!-- SSE connector: removed on pause (closes EventSource), targets the persistent feed -->
+				<template x-if="!paused">
+					<div hx-ext="sse" sse-connect="/api/examples/logs/stream">
+						<div sse-swap="message" hx-target="#log-feed" hx-swap="beforeend" hidden></div>
+					</div>
+				</template>
+			</div>
+		</div>
+	</div>
+}
+
+// pauseButton is the Pause/Resume button used as the tooltip trigger; its label
+// flips with the Alpine `paused` flag.
+templ pauseButton() {
+	@button.Button(
+		button.WithTone(button.ToneSecondary),
+		button.WithSize(button.SizeSmall),
+		button.WithAlpine(&button.AlpineConfig{OnClick: "togglePause()"}),
+	) {
+		<span x-text="paused ? 'Resume' : 'Pause'">Pause</span>
+	}
+}
+
+// LogsContent is the registry entry point.
+templ LogsContent() {
+	@LogsApp()
+}

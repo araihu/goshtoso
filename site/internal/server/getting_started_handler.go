@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/araihu/goshtoso/components/table"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
+	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
 )
 
 func (s *Server) registerGettingStartedRoutes() {
@@ -18,7 +18,7 @@ func (s *Server) registerGettingStartedRoutes() {
 func (s *Server) handleGettingStartedBreeds(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
-	cfg := components.GettingStartedPreviewConfigFromQuery(r.URL.Query())
+	cfg := startpages.GettingStartedPreviewConfigFromQuery(r.URL.Query())
 	for _, row := range cfg.Rows {
 		_ = table.TableRow(cfg, row).Render(r.Context(), w)
 	}

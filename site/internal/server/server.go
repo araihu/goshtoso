@@ -22,7 +22,9 @@ import (
 	buttonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button"
 	comboboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/combobox"
 	stepspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/steps"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
+	modulespages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/modules"
+	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
 // Server handles HTTP requests for Goshtoso components
@@ -144,7 +146,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/playground/extensions/charts/frame", s.handleChartsShowcaseFrame)
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			_ = components.LandingPage().Render(r.Context(), w)
+			_ = startpages.LandingPage().Render(r.Context(), w)
 			return
 		}
 		http.NotFound(w, r)
@@ -154,13 +156,13 @@ func (s *Server) setupRoutes() {
 func (s *Server) handleChartsShowcase(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
-	_ = components.ChartsShowcasePageForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
+	_ = modulespages.ChartsShowcasePageForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
 }
 
 func (s *Server) handleChartsShowcaseFrame(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
-	_ = components.ChartsShowcaseFrameForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
+	_ = modulespages.ChartsShowcaseFrameForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
 }
 
 func withImmutableCache(next http.Handler) http.Handler {
@@ -172,7 +174,7 @@ func withImmutableCache(next http.Handler) http.Handler {
 
 func (s *Server) handleLandingThemePlayground(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = components.LandingPlaygroundPage().Render(r.Context(), w)
+	_ = startpages.LandingPlaygroundPage().Render(r.Context(), w)
 }
 
 func (s *Server) handleRobots(w http.ResponseWriter, r *http.Request) {
@@ -202,7 +204,7 @@ func (s *Server) handleSitemap(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	pages := components.AllPublicMeta()
+	pages := demoregistry.AllPublicMeta()
 	lastMod := time.Now().UTC().Format("2006-01-02")
 	urls := make([]sitemapURL, 0, len(pages))
 	for _, page := range pages {
@@ -281,14 +283,14 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 // All sidebar-navigable pages flow through here so direct loads and fragment
 // nav stay in lock-step.
 func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) {
-	entry, ok := components.LookupDemo(key)
+	entry, ok := demoregistry.Lookup(key)
 	if !ok {
 		http.NotFound(w, r)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := entry.Content()
-	meta := components.DemoMeta(key, entry)
+	meta := demoregistry.MetaForKey(key)
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
 		_ = demo.ComponentDocsFragment(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
 		return

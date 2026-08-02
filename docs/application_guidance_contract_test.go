@@ -35,7 +35,7 @@ func TestReusableDocumentationShellGuidanceDistinguishesFrameFromPage(t *testing
 			"componentdocshell",
 			"componentpage",
 		},
-		"../site/internal/pages/demo/components/agents.templ": {
+		"../site/internal/pages/demo/contentpages/docs/agents.templ": {
 			"Reusable documentation shells",
 			"goshtoso-app-shells",
 		},

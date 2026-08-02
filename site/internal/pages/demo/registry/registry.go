@@ -42,8 +42,6 @@ func New(definitions []demo.PageDefinition, componentCatalog []catalog.Entry) (*
 			if !exists {
 				return nil, fmt.Errorf("component definition %q is not present in component catalog", definition.Key)
 			}
-			definition.Title = entry.Title
-			definition.Active = entry.Active
 			definition.Description = entry.Description
 		}
 		byKey[definition.Key] = definition

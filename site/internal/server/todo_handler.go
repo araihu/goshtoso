@@ -8,21 +8,21 @@ import (
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/examples/todo"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
+	todopage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/todo"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
 // writeListAndCount renders the TodoList and CountBadge OOB fragments, the two
 // most common outputs shared by every mutation handler.
 func writeListAndCount(r *http.Request, w http.ResponseWriter, st todo.State) {
-	_ = examples.TodoList(st).Render(r.Context(), w)
-	_ = examples.CountBadge(st.ActiveCount(), true).Render(r.Context(), w)
+	_ = todopage.TodoList(st).Render(r.Context(), w)
+	_ = todopage.CountBadge(st.ActiveCount(), true).Render(r.Context(), w)
 }
 
 // writeClearButton renders the ClearButton OOB fragment so the button's
 // disabled/enabled state tracks the current doneCount on every mutation.
 func writeClearButton(r *http.Request, w http.ResponseWriter, st todo.State) {
-	_ = examples.ClearButton(st.DoneCount(), true).Render(r.Context(), w)
+	_ = todopage.ClearButton(st.DoneCount(), true).Render(r.Context(), w)
 }
 
 func persistTodo(r *http.Request, w http.ResponseWriter, st todo.State) {
@@ -60,8 +60,8 @@ func (s *Server) renderTodoPage(w http.ResponseWriter, r *http.Request) {
 		st.Filter = "all"
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	content := examples.TodoApp(st)
-	meta := components.MetaForKey("examples/todo")
+	content := todopage.TodoApp(st)
+	meta := demoregistry.MetaForKey("examples/todo")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
 		_ = demo.ComponentDocsFragment(meta, "todo", content, storageAllowed(r)).Render(r.Context(), w)
 		return
@@ -232,7 +232,7 @@ func (s *Server) handleTodoDelete(w http.ResponseWriter, r *http.Request) {
 		cfg.Message = deleted.Title
 		cfg.ActionLabel = "Undo"
 		cfg.ActionHTMX = &toast.HTMXConfig{
-			Post:   examples.RestoreURL(*deleted),
+			Post:   todopage.RestoreURL(*deleted),
 			Target: "#todo-list",
 			Swap:   "outerHTML",
 		}
@@ -266,7 +266,7 @@ func (s *Server) handleTodoFilter(w http.ResponseWriter, r *http.Request) {
 	st.SetFilter(r.URL.Query().Get("f"))
 	persistTodo(r, w, st)
 	writeHTML(w)
-	_ = examples.TodoList(st).Render(r.Context(), w)
+	_ = todopage.TodoList(st).Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoMove(w http.ResponseWriter, r *http.Request) {
@@ -281,7 +281,7 @@ func (s *Server) handleTodoMove(w http.ResponseWriter, r *http.Request) {
 	moveByButton(&st, idParam(r), dir)
 	persistTodo(r, w, st)
 	writeHTML(w)
-	_ = examples.TodoList(st).Render(r.Context(), w)
+	_ = todopage.TodoList(st).Render(r.Context(), w)
 }
 
 func (s *Server) handleTodoClearCompleted(w http.ResponseWriter, r *http.Request) {

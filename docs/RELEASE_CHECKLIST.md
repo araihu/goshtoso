@@ -85,7 +85,7 @@ deployment, or a `site/go.mod` dependency update.
   `github.com/araihu/goshtoso@v0.0.14-0.20260729070831-8863d6b7d0e8`. All
   observed old-pin failures are recorded: missing
   `github.com/araihu/goshtoso/components/icon` at
-  `site/internal/pages/demo/components/icon_templ.go:12:2`; missing
+  `site/internal/pages/demo/componentpages/icon/icon_templ.go:12:2`; missing
   `github.com/araihu/goshtoso/components/icon/heroicons` at `:13:2`; and
   `undefined: components.KindIcon` at
   `site/internal/pages/catalog/catalog.go:221`.

@@ -6,8 +6,8 @@ import (
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/examples/wizard"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
+	wizardpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/wizard"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
 // persistWizard saves the wizard state to a cookie only when the visitor has not
@@ -33,8 +33,8 @@ func (s *Server) registerWizardRoutes() {
 func (s *Server) renderWizardPage(w http.ResponseWriter, r *http.Request) {
 	st := wizard.FromRequest(r).Normalized()
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	content := examples.WizardApp(st, nil)
-	meta := components.MetaForKey("examples/wizard")
+	content := wizardpage.WizardApp(st, nil)
+	meta := demoregistry.MetaForKey("examples/wizard")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
 		_ = demo.ComponentDocsFragment(meta, "wizard", content, storageAllowed(r)).Render(r.Context(), w)
 		return
@@ -69,7 +69,7 @@ func firstInvalidStep(st wizard.WizardState) (int, map[string]string) {
 // writeWizardBody renders the swappable body fragment and sets the content type.
 func writeWizardBody(r *http.Request, w http.ResponseWriter, st wizard.WizardState, errs map[string]string) {
 	writeHTML(w)
-	_ = examples.WizardBody(st, errs).Render(r.Context(), w)
+	_ = wizardpage.WizardBody(st, errs).Render(r.Context(), w)
 }
 
 func (s *Server) handleWizardNext(w http.ResponseWriter, r *http.Request) {

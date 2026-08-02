@@ -107,7 +107,7 @@ func TestRegistryCopiesInputsAndReturnsDefensiveMetadata(t *testing.T) {
 	require.Equal(t, "Themes - Goshtoso UI Library for Go", registry.MetaForKey("docs/theme").Title)
 }
 
-func TestRegistryUsesCatalogMetadataForComponents(t *testing.T) {
+func TestRegistryUsesCatalogDescriptionForComponents(t *testing.T) {
 	component := catalog.ComponentPages()[0]
 	registry, err := New([]demo.PageDefinition{
 		{
@@ -122,14 +122,14 @@ func TestRegistryUsesCatalogMetadataForComponents(t *testing.T) {
 
 	definition, ok := registry.Lookup(component.Key)
 	require.True(t, ok)
-	require.Equal(t, component.Title, definition.Title)
-	require.Equal(t, component.Active, definition.Active)
+	require.Equal(t, "Wrong title", definition.Title)
+	require.Equal(t, "wrong-active", definition.Active)
 	require.Equal(t, component.Description, definition.Description)
 
 	meta := registry.MetaForKey(component.Key)
 	require.Equal(t, component.Path, meta.Path)
 	require.Equal(t, component.Description, meta.Description)
-	require.Contains(t, meta.Title, component.Title+" Component")
+	require.Contains(t, meta.Title, "Wrong title Component")
 }
 
 func emptyComponent() templ.Component {

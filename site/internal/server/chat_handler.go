@@ -14,8 +14,8 @@ import (
 
 	"github.com/araihu/goshtoso/site/internal/examples/chat"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
+	chatpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/chat"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
 // chatHub is the single process-wide room. RAM-only: a server restart clears it.
@@ -60,8 +60,8 @@ func (s *Server) renderChatPage(w http.ResponseWriter, r *http.Request) {
 		setChatCookie(r, w, me)
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	content := examples.ChatApp(me)
-	meta := components.MetaForKey("examples/chat")
+	content := chatpage.ChatApp(me)
+	meta := demoregistry.MetaForKey("examples/chat")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
 		_ = demo.ComponentDocsFragment(meta, "chat", content, storageAllowed(r)).Render(r.Context(), w)
 		return
@@ -97,7 +97,7 @@ func (s *Server) handleChatRename(w http.ResponseWriter, r *http.Request) {
 	}
 	setChatCookie(r, w, me)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = examples.RenameResult(me).Render(r.Context(), w)
+	_ = chatpage.RenameResult(me).Render(r.Context(), w)
 }
 
 // wsFrame is the JSON htmx's ws extension sends on ws-send: the composer's form
@@ -202,10 +202,10 @@ func buildChatEvents(data []byte, fallbackNick string, connID uint64) []chat.Eve
 // no client JavaScript is needed to align own messages.
 func renderChatEvent(viewerConnID uint64, ev chat.Event) []byte {
 	if ev.Kind == chat.EventPresence {
-		return renderFrame(examples.PresenceFrame(ev.SystemText, ev.Count))
+		return renderFrame(chatpage.PresenceFrame(ev.SystemText, ev.Count))
 	}
 	mine := !ev.IsBot && ev.ConnID == viewerConnID
-	return renderFrame(examples.MessageFrame(examples.Message{
+	return renderFrame(chatpage.MessageFrame(chatpage.Message{
 		Nick: ev.Nick, Color: ev.Color, Text: ev.Text, Time: ev.Time, IsBot: ev.IsBot, Mine: mine,
 	}))
 }
