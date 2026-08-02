@@ -24,7 +24,7 @@ templ dependenciesDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Minimal Runtime",
-				Description: "Use DependenciesMinimal when the page does not need the Alpine collapse or focus plugins.",
+				Description: "Use DependenciesMinimal when the page does not need the Alpine collapse, focus, or mask plugins.",
 			},
 			dependenciesMinimalPreview(),
 			`<head>
@@ -57,6 +57,23 @@ mux.Handle("GET /assets/", assets.Handler())`,
     head.WithDependencyLocalURL(head.DependencyHTMX, "/static/htmx-2.0.8.min.js"),
     head.WithDependencyIntegrity(head.DependencyHTMX, "sha384-..."),
 )`,
+			)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Typed manifest ownership",
+				Description: "Start from the pinned public manifest when the application must enable optional runtimes, add a script, omit a dependency, or declare another safe order.",
+			},
+			dependenciesManifestPreview(),
+			`runtime := assets.DefaultRuntimeManifest()
+// Enable or edit entries by RuntimeAssetRole, then add application-owned code.
+runtime.Dependencies = append(runtime.Dependencies, assets.RuntimeAsset{
+    Role: "application-runtime", Kind: assets.RuntimeAssetScript,
+    PrimaryURL: "/static/application-runtime.js",
+    LocalURL: "/static/application-runtime.js",
+    Enabled: true,
+})
+
+@head.Dependencies(head.WithRuntimeManifest(runtime))`,
 		)
 	</div>
 }
@@ -75,6 +92,16 @@ templ dependenciesOptionsPreview() {
 		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
 			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Strong defaults, explicit escape hatches</p>
 			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">The default falls back to embedded assets with SHA-384 integrity. Local-only mode supports offline PWAs and WebViews; per-dependency options keep version ownership visible.</p>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">Custom URLs configure loading only. Goshtoso guarantees compatibility for its pinned, tested dependency combination—not arbitrary versions.</p>
+		</div>
+	</div>
+}
+
+templ dependenciesManifestPreview() {
+	<div id="dependencies-manifest" class="w-full max-w-2xl mx-auto">
+		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
+			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">One typed, ordered baseline</p>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">WithRuntimeManifest snapshots caller data and validates roles, URLs, loader availability, known runtime order, and first-party conflicts before writing HTML.</p>
 		</div>
 	</div>
 }
@@ -83,7 +110,7 @@ templ dependenciesMinimalPreview() {
 	<div id="dependencies-minimal" class="w-full max-w-2xl mx-auto">
 		<div class="rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
 			<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">DependenciesMinimal</p>
-			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">CSS, Alpine core, HTMX, and combobox keyboard navigation only.</p>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">CSS, the combined first-party bundle, Alpine core, and HTMX. Optional manifest entries still follow their IncludeInMinimal setting.</p>
 		</div>
 	</div>
 }
