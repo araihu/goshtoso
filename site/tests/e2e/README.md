@@ -23,6 +23,11 @@ The selector writes `.e2e-impact.json`. Unknown paths, shared runtime/theme
 changes, generated-only diffs, deletions, renames, and unsafe history select
 `e2e,full` rather than risking a false-negative focused run.
 
+In CI, the selected suite runs once as normal. If every failed top-level test
+failed on a Playwright timeout, the launcher retries only those exact tests
+once. Assertion failures and non-timeout failures are never retried, and a
+second timeout remains a failed check. Local runs stay strict and do not retry.
+
 ### Run specific test
 ```bash
 go test -tags=e2e,full ./tests/e2e/... -v -run TestAccordion_StaticContent
