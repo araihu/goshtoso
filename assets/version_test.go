@@ -1,17 +1,30 @@
 package assets
 
 import (
+	"errors"
+	"os"
 	"strings"
 	"testing"
 )
 
 func TestTailwindVersion(t *testing.T) {
 	got := TailwindVersion()
-	if got != "4.3.0" {
-		t.Fatalf("TailwindVersion() = %q, want %q", got, "4.3.0")
+	if got != "4.3.3" {
+		t.Fatalf("TailwindVersion() = %q, want %q", got, "4.3.3")
 	}
 	if strings.HasPrefix(got, "v") {
 		t.Fatalf("TailwindVersion() must not include a leading v: %q", got)
+	}
+}
+
+func TestRuntimeUsesOverlayWithoutLegacyManifests(t *testing.T) {
+	if _, err := os.Stat("runtime.overlay.yaml"); err != nil {
+		t.Fatalf("runtime overlay missing: %v", err)
+	}
+	for _, retired := range []string{"js/runtime/manifest.json", "js/runtime/versions.json", "tailwind.version"} {
+		if _, err := os.Stat(retired); !errors.Is(err, os.ErrNotExist) {
+			t.Errorf("retired runtime source %s still exists: %v", retired, err)
+		}
 	}
 }
 

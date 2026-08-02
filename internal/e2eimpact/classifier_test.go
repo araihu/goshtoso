@@ -24,13 +24,30 @@ func TestGeneratedOnlyAndGlobalChangesSelectFull(t *testing.T) {
 	for _, path := range []string{
 		"assets/styles.css",
 		"assets/css/theme.css",
-		"assets/js/runtime/versions.json",
+		"muamba.yaml",
+		"assets/runtime.overlay.yaml",
+		"assets/muamba_gen.go",
+		"internal/runtimegen/load.go",
 		"assets/runtime_manifest.go",
 		"assets/js/src/dependency-loader.js",
 	} {
 		t.Run(path, func(t *testing.T) {
 			classified := classifyChanges([]Change{{Status: "M", OldPath: path, NewPath: path}}, packageGraph{}, identityManifest{})
 			require.NotEmpty(t, classified.full)
+		})
+	}
+}
+
+func TestMuambaRuntimeInputsSelectFullAsGlobalRuntime(t *testing.T) {
+	for _, path := range []string{
+		"muamba.yaml",
+		"assets/runtime.overlay.yaml",
+		"assets/muamba_gen.go",
+		"internal/runtimegen/load.go",
+	} {
+		t.Run(path, func(t *testing.T) {
+			classified := classifyChanges([]Change{{Status: "M", OldPath: path, NewPath: path}}, packageGraph{}, identityManifest{})
+			require.Equal(t, []string{"global runtime or theme change " + path}, classified.full)
 		})
 	}
 }

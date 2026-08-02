@@ -19,7 +19,7 @@ import (
 	"strings"
 )
 
-//go:embed styles.css goshtoso-theme.css tailwind.version js/*.js images icons
+//go:embed styles.css goshtoso-theme.css js/*.js images icons
 var files embed.FS
 
 // Handler returns an http.Handler that serves the embedded Goshtoso assets
@@ -50,16 +50,14 @@ func StylesCSS() ([]byte, error) {
 	return files.ReadFile("styles.css")
 }
 
-// TailwindVersion returns the Tailwind CSS version that styles.css and
-// goshtoso-theme.css were built with — the single-source pin in
-// assets/tailwind.version (e.g. "4.3.0", no leading "v"). Match your own
-// Tailwind build to this when compiling Goshtoso's theme source yourself.
+// TailwindVersion returns the Tailwind CSS version locked in muamba.yaml.
+// Match your own Tailwind build to this when compiling Goshtoso's theme source.
 func TailwindVersion() string {
-	b, err := files.ReadFile("tailwind.version")
-	if err != nil {
+	resource, ok := MuambaResourceByName("tailwindcss")
+	if !ok {
 		return ""
 	}
-	return strings.TrimSpace(string(b))
+	return resource.Version
 }
 
 // ThemeCSS returns the Goshtoso theme SOURCE (tokens, @custom-variant, the 13

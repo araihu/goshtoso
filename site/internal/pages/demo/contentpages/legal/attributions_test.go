@@ -17,7 +17,7 @@ func TestAttributionsRenderExactGeneratedRuntimeInventory(t *testing.T) {
 		t.Fatalf("render attributions: %v", err)
 	}
 	html := rendered.String()
-	wants := []string{"DefaultRuntimeManifest", "CDN-first", "local fallback"}
+	wants := []string{"DefaultRuntimeManifest", "MuambaResources", "CDN-first", "local fallback"}
 	for _, runtime := range runtimeAttributionRows() {
 		wants = append(wants, runtime.Name, runtime.Version, runtime.LocalURL, runtime.License)
 		if runtime.LicenseURL != "" {
@@ -38,8 +38,8 @@ func TestAttributionsRenderExactGeneratedRuntimeInventory(t *testing.T) {
 			t.Errorf("attributions missing %q", want)
 		}
 	}
-	if !strings.Contains(html, `href="/assets/js/runtime/versions.json"`) {
-		t.Error("attributions do not link to the embedded compatibility manifest")
+	if strings.Contains(html, "/assets/js/runtime/versions.json") {
+		t.Error("attributions retain the removed compatibility manifest")
 	}
 }
 
