@@ -106,7 +106,7 @@ if ! awk '
   test_name != "" && /Error Trace:/ {
     trace_count++
   }
-  test_name != "" && /playwright: timeout: Timeout [0-9]+ms exceeded/ {
+  test_name != "" && /(playwright: timeout: Timeout|timeout:Timeout) [0-9]+([.][0-9]+)?ms exceeded[.]?/ {
     timeout_count++
   }
   END {

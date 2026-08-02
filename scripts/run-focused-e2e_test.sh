@@ -33,7 +33,7 @@ printf '%s\n' \
   '  echo "--- FAIL: TestTimeoutVictim (5.01s)"' \
   '  echo "    Error Trace: fake_test.go:10"' \
   '  if [[ "${FAKE_GO_MODE:-timeout}" != "assertion" ]]; then' \
-  '    echo "    playwright: timeout: Timeout 5000ms exceeded."' \
+  '    echo "    timeout:Timeout 5000.00ms exceeded."' \
   '    if [[ "${FAKE_GO_MODE:-timeout}" == "mixed" ]]; then' \
   '      echo "    Error Trace: fake_test.go:11"' \
   '      echo "    Error: Not equal"' \

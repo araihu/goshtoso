@@ -25,8 +25,10 @@ changes, generated-only diffs, deletions, renames, and unsafe history select
 
 In CI, the selected suite runs once as normal. If every failed top-level test
 failed on a Playwright timeout, the launcher retries only those exact tests
-once. Assertion failures and non-timeout failures are never retried, and a
-second timeout remains a failed check. Local runs stay strict and do not retry.
+once. The classifier recognizes timeout error formats emitted before and after
+the Go Playwright binding migration. Assertion failures and non-timeout
+failures are never retried, and a second timeout remains a failed check. Local
+runs stay strict and do not retry.
 
 ### Run specific test
 ```bash
