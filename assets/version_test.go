@@ -55,16 +55,18 @@ func TestVendorVersions(t *testing.T) {
 	}
 }
 
-func TestVendorFilesEmbedded(t *testing.T) {
+func TestRuntimeFilesUseTheirDeclaredEmbed(t *testing.T) {
 	manifest := DefaultRuntimeManifest()
 	declared := append([]RuntimeAsset{manifest.Loader}, manifest.Dependencies...)
 	for _, asset := range declared {
 		p := strings.TrimPrefix(asset.LocalURL, "/assets/")
-		if _, err := files.ReadFile(p); err != nil {
-			t.Errorf("embedded file missing for %s: %s: %v", asset.Role, p, err)
+		_, vendored := RuntimeHash(asset.Role)
+		_, err := files.ReadFile(p)
+		if vendored && err == nil {
+			t.Errorf("vendored file for %s is duplicated in first-party embed: %s", asset.Role, p)
 		}
-	}
-	if _, err := files.ReadFile("js/runtime/manifest.json"); err != nil {
-		t.Errorf("canonical runtime manifest is not embedded: %v", err)
+		if !vendored && err != nil {
+			t.Errorf("first-party embedded file missing for %s: %s: %v", asset.Role, p, err)
+		}
 	}
 }

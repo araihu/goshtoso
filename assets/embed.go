@@ -8,9 +8,9 @@
 //	mux := http.NewServeMux()
 //	mux.Handle("/assets/", assets.Handler())
 //
-// This serves compiled CSS, the complete JavaScript inventory declared by
-// js/runtime/manifest.json, brand images, and icons. Use
-// DefaultRuntimeManifest to inspect exact versions and local URLs.
+// This serves compiled CSS, the Muamba-backed JavaScript runtime, first-party
+// JavaScript, brand images, and icons. Use DefaultRuntimeManifest to inspect
+// exact versions and local URLs.
 package assets
 
 import (
@@ -19,7 +19,7 @@ import (
 	"strings"
 )
 
-//go:embed styles.css goshtoso-theme.css tailwind.version js/*.js js/runtime images icons
+//go:embed styles.css goshtoso-theme.css tailwind.version js/*.js images icons
 var files embed.FS
 
 // Handler returns an http.Handler that serves the embedded Goshtoso assets
@@ -33,6 +33,10 @@ var files embed.FS
 func Handler() http.Handler {
 	fileServer := http.FileServer(http.FS(files))
 	return http.StripPrefix("/assets/", http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if ref, ok := muambaHTTPFiles[request.URL.Path]; ok {
+			serveMuambaFile(writer, request, ref)
+			return
+		}
 		if strings.HasPrefix(request.URL.Path, "icons/") {
 			writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		}
@@ -68,7 +72,7 @@ func ThemeCSS() ([]byte, error) {
 }
 
 // AlpineVersion returns the Alpine.js version Goshtoso vendors (core, collapse,
-// focus, and mask share this version). Generated from js/runtime/manifest.json.
+// focus, and mask share this version). Generated from Muamba and the runtime overlay.
 func AlpineVersion() string { return runtimeVersionAlpineJS }
 
 // HTMXVersion returns the vendored HTMX version from the canonical manifest.
