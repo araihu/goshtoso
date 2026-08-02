@@ -23,6 +23,13 @@ The selector writes `.e2e-impact.json`. Unknown paths, shared runtime/theme
 changes, generated-only diffs, deletions, renames, and unsafe history select
 `e2e,full` rather than risking a false-negative focused run.
 
+In CI, the selected suite runs once as normal. If every failed top-level test
+failed on a Playwright timeout, the launcher retries only those exact tests
+once. The classifier recognizes timeout error formats emitted before and after
+the Go Playwright binding migration. Assertion failures and non-timeout
+failures are never retried, and a second timeout remains a failed check. Local
+runs stay strict and do not retry.
+
 ### Run specific test
 ```bash
 go test -tags=e2e,full ./tests/e2e/... -v -run TestAccordion_StaticContent
@@ -41,7 +48,7 @@ go test -tags=e2e,full ./tests/e2e/... -short
 - `TestAccordion_StaticContent` - Tests accordion expand/collapse with static content
 - `TestAccordion_ServerLoadedContent` - Tests HTMX lazy loading functionality
 - `TestAccordion_AllVariants` - Tests all accordion variants (Default, NoBackground, ServerLoaded)
-- `TestAccordion_Visual_Parity` - Visual regression tests with screenshots
+- `TestAccordion_Visual_Parity` - Verifies the rendered accordion uses the expected classes
 
 #### Button Tests
 - `TestButton_HTMXInteractions` - Tests HTMX POST/GET requests, loading states, confirm dialogs
@@ -53,10 +60,6 @@ go test -tags=e2e,full ./tests/e2e/... -short
 - `TestPerformance` - Performance benchmarks
 - `TestIntegration` - Full user workflows
 - `TestErrorHandling` - Error scenarios
-
-### Visual Tests (`visual_helpers.go`)
-
-Screenshot comparison utilities for visual regression testing.
 
 ## Test Structure
 
@@ -110,23 +113,13 @@ func TestYourFeature(t *testing.T) {
 
 ## Utilities
 
-### Screenshot Comparison
-```go
-config := ScreenshotConfig{
-    OriginalURL:    baseURL + "/original",
-    GoshtosoURL:      baseURL + "/gottha",
-    ComponentName:  "your-component",
-    Threshold:      0.95, // 95% match required
-}
-result := CompareScreenshots(t, config)
-```
+### Tailwind Class Verification
 
-### Class Verification
 ```go
-htmlResult := ExtractAndCompareHTML(t, page, 
-    "original-selector",
-    "gottha-selector")
-PrintComparisonReport(t, htmlResult, nil)
+VerifyTailwindClasses(t, page.Locator(".your-selector"), []string{
+    "flex",
+    "items-center",
+})
 ```
 
 ## Continuous Integration

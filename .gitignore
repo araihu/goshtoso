@@ -101,7 +101,11 @@ og-site/
 .claude/
 .codex/
 .github/skills/
-docs/superpowers/
+/.impeccable/
+/docs/audits/
+/docs/designs/
+/docs/plans/
+/docs/superpowers/
 scripts/skillgen/
 
 # Local coverage badge — published badge now lives in a shields.io endpoint gist (CI-updated).

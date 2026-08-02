@@ -61,7 +61,6 @@ var defaultArtifacts = []artifact{
 			"site/assets/js/src/site-bootstrap.js",
 			"site/assets/js/src/demo-layout.js",
 			"site/assets/js/src/select-demo.js",
-			"site/assets/js/src/tab-view.js",
 			"site/assets/js/src/action-group.js",
 			"site/assets/js/src/avatar-showcase.js",
 			"site/assets/js/src/icon-catalog.js",

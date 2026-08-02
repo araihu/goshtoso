@@ -64,14 +64,13 @@ func TestJavaScriptBatch3LaneF_SourceProvidersRunBeforeBundleIntegration(t *test
 
 	for _, source := range []string{
 		"../../assets/js/src/demo-layout.js",
-		"../../assets/js/src/tab-view.js",
 		"../../assets/js/src/select-demo.js",
 	} {
 		addLaneFSource(t, page, source)
 	}
 
 	providerReady, err := page.Evaluate(`() => {
-		if (!['demoLayout', 'demoStorageConsent', 'demoTabView'].every(
+		if (!['demoLayout', 'demoStorageConsent'].every(
 			name => typeof window.__laneFProviders[name] === 'function')) return false;
 		window.buildTOC();
 		if (document.querySelectorAll('#toc-list [data-toc-link]').length !== 2) return false;
@@ -88,11 +87,6 @@ func TestJavaScriptBatch3LaneF_SourceProvidersRunBeforeBundleIntegration(t *test
 		layout.init();
 		layout.destroy();
 		if (!stopped || layout._stopThemeWatch !== null) return false;
-
-		const tabs = window.__laneFProviders.demoTabView();
-		tabs._copyTimer = window.setTimeout(() => {}, 1000);
-		tabs.destroy();
-		if (!tabs._destroyed || tabs._copyTimer !== 0) return false;
 
 		const consent = window.__laneFProviders.demoStorageConsent();
 		consent.deny();
