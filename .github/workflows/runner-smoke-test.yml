@@ -18,7 +18,7 @@ jobs:
           echo "whoami: $(whoami)"
           echo "pwd: $(pwd)"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Repo checkout sanity
         run: |

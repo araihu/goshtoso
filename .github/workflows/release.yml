@@ -23,7 +23,7 @@ jobs:
       coverage-percent: ${{ steps.coverage.outputs.percent }}
       coverage-color: ${{ steps.coverage.outputs.color }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
 
@@ -126,7 +126,7 @@ jobs:
     needs: pre-release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
 
