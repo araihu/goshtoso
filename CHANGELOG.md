@@ -33,6 +33,12 @@ All notable changes to Goshtoso are documented in this file.
   runtime combination; overriding versions configures loading but does not
   guarantee compatibility with arbitrary combinations.
 
+### Release verification
+
+- Updated Playwright Go to v0.6100.0 and its current
+  `github.com/mxschmitt/playwright-go` module path after the retired v1.57.0
+  driver archive made clean release-runner installation fail.
+
 ## [v0.1.2] - 2026-07-30
 
 ### Automated Arai Hû fallback assets
@@ -179,6 +185,7 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.1.3]: https://github.com/araihu/goshtoso/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/araihu/goshtoso/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/araihu/goshtoso/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/araihu/goshtoso/compare/v0.0.13...v0.1.0

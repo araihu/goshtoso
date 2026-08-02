@@ -11,9 +11,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
-RUN go install github.com/playwright-community/playwright-go/cmd/playwright@v0.5700.1
+RUN go install github.com/mxschmitt/playwright-go/cmd/playwright@v0.6100.0
 
-RUN playwright install --with-deps chromium
+RUN /go/bin/playwright install --with-deps chromium
 
 WORKDIR /workspace/goshtoso
 
