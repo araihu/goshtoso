@@ -10,7 +10,9 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `templ generate`
   - `just css`
   - `go run ./cmd/skillgen`
-  - `go run ./cmd/vendorgen -check -verify-remote`
+  - `go tool muamba verify --strict`
+  - `go tool muamba generate-go --strict --check --dir assets --output muamba_gen.go`
+  - `go run ./cmd/runtimegen -check`
   - `npx --yes skills add . --list`
   - `npx --yes skills use . --skill using-goshtoso`
   - `just site-current-source-integration`
@@ -22,7 +24,7 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `assets/goshtoso-theme.css`
   - `assets/vendor_gen.go`
   - `assets/runtime_manifest_gen.go`
-  - `assets/js/runtime/versions.json`
+  - `assets/muamba_gen.go`
   - `docs/RUNTIME_DEPENDENCIES.md`
   - `site/internal/pages/demo/contentpages/legal/runtime_attributions_gen.go`
   - `.claude/skills/using-goshtoso/components-reference.md`
@@ -31,7 +33,7 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `.agents/skills/using-goshtoso/references/visual-acceptance.md`
   - `.agents/skills/using-goshtoso/references/adversarial-acceptance.md`
 - Update `VERSIONS.md` when the release uses a new Goshtoso tag or Tailwind
-  version.
+  version from `muamba.yaml`.
 - Review `README.md`, `docs/USAGE.md`, and `ROADMAP.md` for stale version,
   component, or stability language.
 - Review `/docs/agents`, application recipes, and

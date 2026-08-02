@@ -18,7 +18,6 @@ concurrency:
 
 env:
   GO_VERSION: '1.26.5'
-  NODE_VERSION: '24'
   TEMPL_VERSION: 'v0.3.1020'
   PLAYWRIGHT_VERSION: 'v0.6100.0'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
@@ -50,20 +49,20 @@ jobs:
             site/go.sum
             tests/external/runtime-manifest/go.sum
 
-      - uses: actions/setup-node@v7
+      - uses: actions/cache@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          path: .cache/muamba
+          key: muamba-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('muamba.yaml') }}
+
+      - name: Verify Muamba acquisition and generated runtime
+        run: |
+          go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba
+          go tool muamba verify --strict --target linux/amd64 --cache-dir .cache/muamba
+          go tool muamba generate-go --strict --check --target linux/amd64 --dir assets --output muamba_gen.go
+          go run ./cmd/runtimegen -check
 
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
-
-      - name: Install Tailwind CSS standalone
-        run: |
-          set -euo pipefail
-          ver="$(cat assets/tailwind.version)"
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
-          chmod +x /tmp/tailwindcss
-          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
       - name: templ generate drift check
         run: |
@@ -74,7 +73,7 @@ jobs:
       - name: Tailwind CSS + theme drift check
         run: |
           go run ./cmd/themegen
-          tailwindcss -i css/main.css -o assets/styles.css
+          .tools/tailwindcss -i css/main.css -o assets/styles.css
           git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css \
             || { echo "::error::css/theme drift — run 'just css' and commit assets/styles.css + assets/goshtoso-theme.css"; exit 1; }
 
@@ -85,11 +84,6 @@ jobs:
             .agents/skills/using-goshtoso/references/components-reference.md \
             .claude/skills/using-goshtoso/components-reference.md \
             || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./cmd/skillgen' and commit"; exit 1; }
-
-      - name: vendor JS constants drift check
-        run: |
-          go run ./cmd/vendorgen -check -verify-remote \
-            || { echo "::error::runtime manifest, embedded bytes, CDN bytes, or generated views differ — run 'go run ./cmd/vendorgen' and inspect"; exit 1; }
 
       - name: Heroicons bindings drift check
         run: |
@@ -185,20 +179,20 @@ jobs:
             site/go.sum
             tests/external/runtime-manifest/go.sum
 
-      - uses: actions/setup-node@v7
+      - uses: actions/cache@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          path: .cache/muamba
+          key: muamba-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('muamba.yaml') }}
+
+      - name: Verify Muamba acquisition and generated runtime
+        run: |
+          go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba
+          go tool muamba verify --strict --target linux/amd64 --cache-dir .cache/muamba
+          go tool muamba generate-go --strict --check --target linux/amd64 --dir assets --output muamba_gen.go
+          go run ./cmd/runtimegen -check
 
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
-
-      - name: Install Tailwind CSS standalone
-        run: |
-          set -euo pipefail
-          ver="$(cat assets/tailwind.version)"
-          curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
-          chmod +x /tmp/tailwindcss
-          sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
       - name: Install Playwright + Chromium
         run: |
@@ -254,7 +248,7 @@ jobs:
       - name: Generate templ + CSS
         run: |
           templ generate
-          tailwindcss -i css/main.css -o assets/styles.css
+          .tools/tailwindcss -i css/main.css -o assets/styles.css
 
       # The merged coverage profile uses Go's native 1.20+ coverage data format
       # so package tests and the coverage-instrumented demo server can drive

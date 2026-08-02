@@ -2,11 +2,25 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.4] - 2026-08-02
+
+### Muamba runtime acquisition
+
+- Replaced the private vendoring downloader and compatibility JSON views with
+  Muamba v0.0.2 SHA-384 locks plus a Goshtoso-owned metadata overlay.
+- Added `assets.MuambaResources`, `assets.MuambaHash`, and
+  `assets.RuntimeHash` for typed acquisition inspection and cache busting while
+  preserving the original nine-field `RuntimeAsset` layout.
+- Upgraded standalone Tailwind CSS to v4.3.3 with target-specific Muamba locks
+  and retained its MIT license alongside runtime licenses and provenance.
+- Kept runtime URLs, versions, ordering, enablement, SRI, attributions, and
+  CDN-first/local-fallback behavior compatible.
+
 ## [v0.1.3] - 2026-08-02
 
 ### Canonical embedded runtime manifest
 
-- Made `assets/js/runtime/manifest.json` the ordered source of truth for
+- Made the legacy JSON runtime inventory the ordered source of truth for
   embedded JavaScript pins, CDN URLs, SRI, local paths, loader defaults,
   attribution data, package provenance, and retained license notices.
 - Added `head.WithRuntimeManifest` for typed ownership of dependency URLs,
