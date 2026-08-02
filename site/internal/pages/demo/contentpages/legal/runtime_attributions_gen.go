@@ -3,12 +3,14 @@
 
 package legalpages
 
-var runtimeAttributions = []attribution{
-	{Name: "@alpinejs/collapse", Href: "https://alpinejs.dev/plugins/collapse", Version: "3.14.9", LocalURL: "/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js", License: "MIT", Note: "Collapse transitions for accordions and disclosure components"},
-	{Name: "@alpinejs/focus", Href: "https://alpinejs.dev/plugins/focus", Version: "3.14.9", LocalURL: "/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js", License: "MIT", Note: "Focus trapping and keyboard focus management"},
-	{Name: "@alpinejs/mask", Href: "https://alpinejs.dev/plugins/mask", Version: "3.14.9", LocalURL: "/assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js", License: "MIT", Note: "Input masking"},
-	{Name: "Alpine.js", Href: "https://alpinejs.dev", Version: "3.14.9", LocalURL: "/assets/js/runtime/alpinejs/3.14.9/alpine.min.js", License: "MIT", Note: "Reactive client-side UI state"},
-	{Name: "htmx", Href: "https://htmx.org", Version: "2.0.8", LocalURL: "/assets/js/runtime/htmx.org/2.0.8/htmx.min.js", License: "Zero-Clause BSD", Note: "Server-driven interactions and fragment updates"},
-	{Name: "htmx SSE extension", Href: "https://htmx.org/extensions/sse/", Version: "2.2.3", LocalURL: "/assets/js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js", License: "Zero-Clause BSD", Note: "Server-sent event integration"},
-	{Name: "htmx WebSocket extension", Href: "https://htmx.org/extensions/ws/", Version: "2.0.3", LocalURL: "/assets/js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js", License: "Zero-Clause BSD", Note: "WebSocket integration"},
+import "github.com/araihu/goshtoso/assets"
+
+var runtimeAttributionDefinitions = []runtimeAttributionDefinition{
+	{Attribution: attribution{Name: "@alpinejs/collapse", Href: "https://alpinejs.dev/plugins/collapse", License: "MIT", Note: "Collapse transitions for accordions and disclosure components"}, Role: assets.RuntimeAssetRole("alpine-collapse"), Version: assets.AlpineVersion, FallbackLocalURL: assets.AlpineCollapseURL},
+	{Attribution: attribution{Name: "@alpinejs/focus", Href: "https://alpinejs.dev/plugins/focus", License: "MIT", Note: "Focus trapping and keyboard focus management"}, Role: assets.RuntimeAssetRole("alpine-focus"), Version: assets.AlpineVersion, FallbackLocalURL: assets.AlpineFocusURL},
+	{Attribution: attribution{Name: "@alpinejs/mask", Href: "https://alpinejs.dev/plugins/mask", License: "MIT", Note: "Input masking"}, Role: assets.RuntimeAssetRole("alpine-mask"), Version: assets.AlpineVersion, FallbackLocalURL: assets.AlpineMaskURL},
+	{Attribution: attribution{Name: "Alpine.js", Href: "https://alpinejs.dev", License: "MIT", Note: "Reactive client-side UI state"}, Role: assets.RuntimeAssetRole("alpine"), Version: assets.AlpineVersion, FallbackLocalURL: assets.AlpineJSURL},
+	{Attribution: attribution{Name: "htmx", Href: "https://htmx.org", License: "Zero-Clause BSD", Note: "Server-driven interactions and fragment updates"}, Role: assets.RuntimeAssetRole("htmx"), Version: assets.HTMXVersion, FallbackLocalURL: assets.HTMXURL},
+	{Attribution: attribution{Name: "htmx SSE extension", Href: "https://htmx.org/extensions/sse/", License: "Zero-Clause BSD", Note: "Server-sent event integration"}, Role: assets.RuntimeAssetRole("htmx-ext-sse"), Version: assets.HTMXExtSSEVersion, FallbackLocalURL: assets.HTMXExtSSEURL},
+	{Attribution: attribution{Name: "htmx WebSocket extension", Href: "https://htmx.org/extensions/ws/", License: "Zero-Clause BSD", Note: "WebSocket integration"}, Role: assets.RuntimeAssetRole("htmx-ext-ws"), Version: assets.HTMXExtWSVersion, FallbackLocalURL: assets.HTMXExtWSURL},
 }

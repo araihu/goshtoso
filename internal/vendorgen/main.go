@@ -35,10 +35,15 @@ const (
 
 // dep is one vendored third-party JavaScript dependency.
 type dep struct {
-	Version   string `json:"version"`
-	File      string `json:"file"`
-	URL       string `json:"url"`
-	Integrity string `json:"-"`
+	Version          string `json:"version"`
+	File             string `json:"file"`
+	URL              string `json:"url"`
+	Integrity        string `json:"-"`
+	PackageName      string `json:"-"`
+	ProvenanceURL    string `json:"-"`
+	LicenseFile      string `json:"-"`
+	LicenseURL       string `json:"-"`
+	LicenseIntegrity string `json:"-"`
 }
 
 type generatedArtifact struct {
@@ -52,6 +57,10 @@ func urlPath(module string, d dep) string {
 
 func diskPath(module string, d dep) string {
 	return filepath.Join(vendorRoot, module, d.Version, d.File)
+}
+
+func licenseDiskPath(module string, d dep) string {
+	return filepath.Join(vendorRoot, module, d.Version, d.LicenseFile)
 }
 
 func integrityForBytes(contents []byte) string {
@@ -71,15 +80,23 @@ func loadManifest() (runtimeManifest, error) {
 	return manifest, nil
 }
 
-func verifyFiles(dependencies map[string]dep) error {
-	for module, dependency := range dependencies {
-		path := diskPath(module, dependency)
+func verifyFiles(dependencies []vendoredDependency) error {
+	for _, declared := range dependencies {
+		path := diskPath(declared.Module, declared.Dependency)
 		contents, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("vendored file missing: %s (run `just vendor-js`): %w", path, err)
 		}
-		if err := verifyBytes(module, dependency, contents); err != nil {
+		if err := verifyBytes(declared.Module, declared.Dependency, contents); err != nil {
 			return fmt.Errorf("vendored file %s: %w", path, err)
+		}
+		licensePath := licenseDiskPath(declared.Module, declared.Dependency)
+		license, err := os.ReadFile(licensePath)
+		if err != nil {
+			return fmt.Errorf("vendored license missing: %s (run `just vendor-js`): %w", licensePath, err)
+		}
+		if got := integrityForBytes(license); got != declared.Dependency.LicenseIntegrity {
+			return fmt.Errorf("vendored license %s: integrity = %q, want canonical %q", licensePath, got, declared.Dependency.LicenseIntegrity)
 		}
 	}
 	return nil
@@ -160,10 +177,14 @@ func checkArtifacts(artifacts []generatedArtifact) error {
 }
 
 func writeArtifacts(artifacts []generatedArtifact, stdout io.Writer) error {
+	updates := make([]fileUpdate, 0, len(artifacts))
 	for _, artifact := range artifacts {
-		if err := os.WriteFile(artifact.path, []byte(artifact.contents), 0o644); err != nil {
-			return err
-		}
+		updates = append(updates, fileUpdate{path: artifact.path, contents: []byte(artifact.contents), mode: 0o644})
+	}
+	if err := commitFileUpdates(updates); err != nil {
+		return err
+	}
+	for _, artifact := range artifacts {
 		if _, err := fmt.Fprintf(stdout, "vendorgen: wrote %s\n", artifact.path); err != nil {
 			return err
 		}

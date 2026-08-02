@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -44,31 +46,84 @@ func TestParseManifestPreservesOrderAndRequiresRuntimeMetadata(t *testing.T) {
 	if _, err := parseManifest([]byte(insecureCDN)); err == nil {
 		t.Fatal("parseManifest accepted a non-HTTPS CDN URL")
 	}
+	missingVersionToken := strings.Replace(testManifestJSON, `alpinejs@{v}/dist`, `alpinejs@3.14.9/dist`, 1)
+	if _, err := parseManifest([]byte(missingVersionToken)); err == nil {
+		t.Fatal("parseManifest accepted a CDN URL without exactly one {v} token")
+	}
+	duplicateVersionToken := strings.Replace(testManifestJSON, `alpinejs@{v}/dist`, `alpinejs@{v}/{v}/dist`, 1)
+	if _, err := parseManifest([]byte(duplicateVersionToken)); err == nil {
+		t.Fatal("parseManifest accepted a CDN URL with multiple {v} tokens")
+	}
+	missingLicenseFile := strings.Replace(testManifestJSON, `"license_file": "LICENSE.txt"`, `"license_file": ""`, 1)
+	if _, err := parseManifest([]byte(missingLicenseFile)); err == nil {
+		t.Fatal("parseManifest accepted a dependency without a bundled license file")
+	}
 	unsafeLocalPath := strings.Replace(testManifestJSON, `/assets/js/goshtoso.min.js`, `/assets/js/../secret.js`, 1)
 	if _, err := parseManifest([]byte(unsafeLocalPath)); err == nil {
 		t.Fatal("parseManifest accepted an unsafe embedded local URL")
 	}
 }
 
+func TestParseManifestRejectsDuplicateVendoredModule(t *testing.T) {
+	manifest, err := parseManifest([]byte(testManifestJSON))
+	if err != nil {
+		t.Fatal(err)
+	}
+	duplicate := manifest.Dependencies[0]
+	duplicate.Role = "alpine-copy"
+	duplicate.GoName = "AlpineCopy"
+	duplicate.RoleGoName = "AlpineCopy"
+	manifest.Dependencies = append(manifest.Dependencies, duplicate)
+	contents, err := json.Marshal(manifest)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := parseManifest(contents); err == nil || !strings.Contains(err.Error(), "duplicate module") {
+		t.Fatalf("parseManifest duplicate module error = %v", err)
+	}
+}
+
 func TestVerifyRemoteDownloadsManifestURLAndRequiresCanonicalIntegrity(t *testing.T) {
 	contents := []byte(`version:"3.14.9"`)
-	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
-		_, _ = writer.Write(contents)
+	license := []byte("MIT License")
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		switch request.URL.Path {
+		case "/package.json":
+			_, _ = writer.Write([]byte(`{"name":"alpinejs","version":"3.14.9"}`))
+		case "/LICENSE":
+			_, _ = writer.Write(license)
+		default:
+			_, _ = writer.Write(contents)
+		}
 	}))
 	t.Cleanup(server.Close)
 
 	dependency := dep{
-		Version:   "3.14.9",
-		URL:       server.URL + "/alpine-{v}.js",
-		Integrity: integrityForBytes(contents),
+		Version:          "3.14.9",
+		URL:              server.URL + "/alpine-{v}.js",
+		Integrity:        integrityForBytes(contents),
+		PackageName:      "alpinejs",
+		ProvenanceURL:    server.URL + "/package.json",
+		LicenseFile:      "LICENSE.txt",
+		LicenseURL:       server.URL + "/LICENSE",
+		LicenseIntegrity: integrityForBytes(license),
 	}
-	if err := verifyRemote(map[string]dep{"alpinejs": dependency}, &strings.Builder{}); err != nil {
+	dependencies := []vendoredDependency{{Module: "alpinejs", Dependency: dependency}}
+	if err := verifyRemote(dependencies, &strings.Builder{}); err != nil {
 		t.Fatalf("verifyRemote matching bytes: %v", err)
 	}
 
 	dependency.Integrity = integrityForBytes([]byte("different"))
-	if err := verifyRemote(map[string]dep{"alpinejs": dependency}, &strings.Builder{}); err == nil {
+	dependencies[0].Dependency = dependency
+	if err := verifyRemote(dependencies, &strings.Builder{}); err == nil {
 		t.Fatal("verifyRemote accepted CDN bytes that differ from canonical integrity")
+	}
+	dependency.Integrity = integrityForBytes(contents)
+	dependency.PackageName = "wrong-package"
+	dependencies[0].Dependency = dependency
+	if err := verifyRemote(dependencies, &strings.Builder{}); err == nil {
+		t.Fatal("verifyRemote accepted provenance for another package")
 	}
 }
 
@@ -77,6 +132,74 @@ func TestVerifyBytesRejectsEmbeddedBytesThatDifferFromManifestIntegrity(t *testi
 	dependency := dep{Version: "3.14.9", Integrity: integrityForBytes([]byte("different"))}
 	if err := verifyBytes("alpinejs", dependency, contents); err == nil {
 		t.Fatal("verifyBytes accepted embedded bytes that differ from the manifest integrity")
+	}
+}
+
+func TestDownloadAllDoesNotWriteWhenALaterFetchFails(t *testing.T) {
+	working := t.TempDir()
+	oldWorking, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(working); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(oldWorking) })
+	old := []byte("old")
+	target := filepath.Join("assets", "js", "runtime", "first", "1", "first.js")
+	if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(target, old, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if strings.Contains(request.URL.Path, "second") {
+			http.Error(writer, "late failure", http.StatusBadGateway)
+			return
+		}
+		_, _ = writer.Write([]byte("new"))
+	}))
+	t.Cleanup(server.Close)
+	good := dep{Version: "1", File: "first.js", URL: server.URL + "/first-{v}.js", Integrity: integrityForBytes([]byte("new")), LicenseFile: "LICENSE.txt", LicenseURL: server.URL + "/first-{v}-license", LicenseIntegrity: integrityForBytes([]byte("new"))}
+	bad := good
+	bad.File, bad.URL, bad.LicenseURL = "second.js", server.URL+"/second-{v}.js", server.URL+"/second-{v}-license"
+	if err := downloadAll([]vendoredDependency{{Module: "first", Dependency: good}, {Module: "second", Dependency: bad}}, &strings.Builder{}); err == nil {
+		t.Fatal("downloadAll accepted a late fetch failure")
+	}
+	got, err := os.ReadFile(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(old) {
+		t.Fatalf("first target changed after late failure: %q", got)
+	}
+}
+
+func TestWriteArtifactsStagesEverythingBeforeReplacingTargets(t *testing.T) {
+	root := t.TempDir()
+	first := filepath.Join(root, "first.txt")
+	if err := os.WriteFile(first, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	blocker := filepath.Join(root, "not-a-directory")
+	if err := os.WriteFile(blocker, []byte("block"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	err := writeArtifacts([]generatedArtifact{
+		{path: first, contents: "new"},
+		{path: filepath.Join(blocker, "second.txt"), contents: "new"},
+	}, &strings.Builder{})
+	if err == nil {
+		t.Fatal("writeArtifacts accepted a late staging failure")
+	}
+	contents, readErr := os.ReadFile(first)
+	if readErr != nil {
+		t.Fatal(readErr)
+	}
+	if string(contents) != "old" {
+		t.Fatalf("first artifact changed after staging failure: %q", contents)
 	}
 }
 
@@ -111,14 +234,15 @@ func TestRenderRuntimeManifestUsesDeclaredOrderAndSemantics(t *testing.T) {
 	got := renderRuntimeManifest(manifest)
 	for _, want := range []string{
 		`Role: RuntimeRoleAlpineJS`,
-		`Name: "Alpine.js"`,
-		`Version: "3.14.9"`,
 		`PrimaryURL: AlpineJSCDNURL`,
 		`LocalURL: AlpineJSURL`,
 		`Integrity: AlpineJSIntegrity`,
 		`Enabled: true`,
 		`IncludeInMinimal: true`,
 		`Role: RuntimeRoleFirstParty`,
+		`func defaultRuntimeMetadata() []RuntimeAssetMetadata`,
+		`Name: "Alpine.js"`,
+		`Version: "3.14.9"`,
 	} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("generated runtime manifest missing %q:\n%s", want, got)
@@ -159,8 +283,9 @@ func TestRenderRuntimeAttributionsUsesExactVersionAndEmbeddedPath(t *testing.T) 
 	got := renderRuntimeAttributions(manifest)
 	for _, want := range []string{
 		`Name: "Alpine.js"`,
-		`Version: "3.14.9"`,
-		`LocalURL: "/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"`,
+		`Role: assets.RuntimeAssetRole("alpine")`,
+		`Version: assets.AlpineVersion`,
+		`FallbackLocalURL: assets.AlpineJSURL`,
 		`License: "MIT"`,
 	} {
 		if !strings.Contains(got, want) {
@@ -273,9 +398,14 @@ const testManifestJSON = `{
       "version": "3.14.9",
       "file": "alpine.min.js",
       "cdn_url": "https://unpkg.com/alpinejs@{v}/dist/cdn.min.js",
+	  "package_name": "alpinejs",
+	  "provenance_url": "https://unpkg.com/alpinejs@{v}/package.json",
 	  "integrity": "sha384-ywB1P0WjXou1oD1pmsZQBycsMqsO3tFjGotgWkP/W+2AhgcroefMI1i67KE0yCWn",
       "homepage": "https://alpinejs.dev",
       "license": "MIT",
+	  "license_file": "LICENSE.txt",
+	  "license_url": "https://raw.githubusercontent.com/alpinejs/alpine/v{v}/LICENSE.md",
+	  "license_integrity": "sha384-ywB1P0WjXou1oD1pmsZQBycsMqsO3tFjGotgWkP/W+2AhgcroefMI1i67KE0yCWn",
       "purpose": "Reactive UI",
       "attribution": true,
       "enabled": true,

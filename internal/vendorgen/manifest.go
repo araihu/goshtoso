@@ -31,9 +31,15 @@ type runtimeAssetManifest struct {
 	Version             string `json:"version,omitempty"`
 	File                string `json:"file,omitempty"`
 	CDNURL              string `json:"cdn_url,omitempty"`
+	PackageName         string `json:"package_name,omitempty"`
+	ProvenanceURL       string `json:"provenance_url,omitempty"`
 	LocalURL            string `json:"local_url,omitempty"`
 	Homepage            string `json:"homepage,omitempty"`
 	License             string `json:"license,omitempty"`
+	LicenseFile         string `json:"license_file,omitempty"`
+	LicenseURL          string `json:"license_url,omitempty"`
+	LicenseIntegrity    string `json:"license_integrity,omitempty"`
+	LicenseLocalURL     string `json:"-"`
 	Purpose             string `json:"purpose"`
 	Attribution         bool   `json:"attribution,omitempty"`
 	Enabled             bool   `json:"enabled"`
@@ -65,6 +71,7 @@ func parseManifest(contents []byte) (runtimeManifest, error) {
 	seenRoles := map[string]bool{manifest.Loader.Role: true}
 	seenGoNames := map[string]bool{manifest.Loader.GoName: true}
 	seenRoleGoNames := map[string]bool{manifest.Loader.RoleGoName: true}
+	seenModules := make(map[string]bool)
 	for index := range manifest.Dependencies {
 		asset := &manifest.Dependencies[index]
 		if err := validateRuntimeAsset(*asset, false); err != nil {
@@ -86,7 +93,12 @@ func parseManifest(contents []byte) (runtimeManifest, error) {
 		seenGoNames[asset.GoName] = true
 		seenRoleGoNames[asset.RoleGoName] = true
 		if asset.Module != "" {
+			if seenModules[asset.Module] {
+				return runtimeManifest{}, fmt.Errorf("dependencies[%d]: duplicate module %q", index, asset.Module)
+			}
+			seenModules[asset.Module] = true
 			asset.LocalURL = urlPath(asset.Module, dep{Version: asset.Version, File: asset.File})
+			asset.LicenseLocalURL = urlPath(asset.Module, dep{Version: asset.Version, File: asset.LicenseFile})
 		}
 	}
 	return manifest, nil
@@ -143,25 +155,43 @@ func validateFirstPartyAsset(asset runtimeAssetManifest) error {
 }
 
 func validateVendoredAsset(asset runtimeAssetManifest) error {
-	if asset.Version == "" || asset.File == "" || asset.CDNURL == "" || asset.Integrity == "" {
-		return fmt.Errorf("vendored dependency requires version, file, cdn_url, and integrity")
+	if asset.Version == "" || asset.File == "" || asset.CDNURL == "" || asset.Integrity == "" || asset.PackageName == "" || asset.ProvenanceURL == "" {
+		return fmt.Errorf("vendored dependency requires version, file, cdn_url, integrity, package_name, and provenance_url")
 	}
-	if !safePathSegment(asset.Module) || !safePathSegment(asset.Version) || !safePathSegment(asset.File) {
-		return fmt.Errorf("module, version, and file must be safe path segments")
+	if !safePathSegment(asset.Module) || !safePathSegment(asset.Version) || !safePathSegment(asset.File) || !safePathSegment(asset.LicenseFile) {
+		return fmt.Errorf("module, version, file, and license_file must be safe path segments")
 	}
-	if !absoluteHTTPSURL(strings.ReplaceAll(asset.CDNURL, "{v}", asset.Version)) {
-		return fmt.Errorf("cdn_url must expand to an absolute HTTPS URL")
+	for field, template := range map[string]string{"cdn_url": asset.CDNURL, "provenance_url": asset.ProvenanceURL, "license_url": asset.LicenseURL} {
+		if err := validateVersionedHTTPSURL(field, template, asset.Version); err != nil {
+			return err
+		}
 	}
-	encodedIntegrity, found := strings.CutPrefix(asset.Integrity, "sha384-")
-	decodedIntegrity, err := base64.StdEncoding.DecodeString(encodedIntegrity)
-	if !found || err != nil || len(decodedIntegrity) != 48 {
-		return fmt.Errorf("integrity must be a SHA-384 SRI value")
+	for field, integrity := range map[string]string{"integrity": asset.Integrity, "license_integrity": asset.LicenseIntegrity} {
+		if err := validateSHA384Integrity(field, integrity); err != nil {
+			return err
+		}
 	}
 	if !asset.Attribution || asset.Homepage == "" || asset.License == "" {
 		return fmt.Errorf("vendored dependency requires attribution, homepage, and license")
 	}
 	if !absoluteHTTPSURL(asset.Homepage) {
 		return fmt.Errorf("homepage must be an absolute HTTPS URL")
+	}
+	return nil
+}
+
+func validateVersionedHTTPSURL(field, template, version string) error {
+	if strings.Count(template, "{v}") != 1 || !absoluteHTTPSURL(strings.ReplaceAll(template, "{v}", version)) {
+		return fmt.Errorf("%s must contain exactly one {v} and expand to an absolute HTTPS URL", field)
+	}
+	return nil
+}
+
+func validateSHA384Integrity(field, integrity string) error {
+	encodedIntegrity, found := strings.CutPrefix(integrity, "sha384-")
+	decodedIntegrity, err := base64.StdEncoding.DecodeString(encodedIntegrity)
+	if !found || err != nil || len(decodedIntegrity) != 48 {
+		return fmt.Errorf("%s must be a SHA-384 SRI value", field)
 	}
 	return nil
 }
@@ -179,18 +209,28 @@ func absoluteHTTPSURL(value string) bool {
 	return err == nil && parsed.Scheme == "https" && parsed.Host != ""
 }
 
-func vendoredDependencies(manifest runtimeManifest) map[string]dep {
-	dependencies := make(map[string]dep)
+type vendoredDependency struct {
+	Module     string
+	Dependency dep
+}
+
+func vendoredDependencies(manifest runtimeManifest) []vendoredDependency {
+	dependencies := make([]vendoredDependency, 0, len(manifest.Dependencies))
 	for _, asset := range manifest.Dependencies {
 		if asset.Module == "" {
 			continue
 		}
-		dependencies[asset.Module] = dep{
-			Version:   asset.Version,
-			File:      asset.File,
-			URL:       asset.CDNURL,
-			Integrity: asset.Integrity,
-		}
+		dependencies = append(dependencies, vendoredDependency{Module: asset.Module, Dependency: dep{
+			Version:          asset.Version,
+			File:             asset.File,
+			URL:              asset.CDNURL,
+			Integrity:        asset.Integrity,
+			PackageName:      asset.PackageName,
+			ProvenanceURL:    asset.ProvenanceURL,
+			LicenseFile:      asset.LicenseFile,
+			LicenseURL:       asset.LicenseURL,
+			LicenseIntegrity: asset.LicenseIntegrity,
+		}})
 	}
 	return dependencies
 }

@@ -21,8 +21,8 @@ func TestComponentDocsLayoutOwnsDemoBundleOutsideHeadDependencies(t *testing.T) 
 	require.Equal(t, "araihu", cfg.Appearance.DefaultTheme)
 	require.Equal(t, []string{
 		siteassets.DemoBundleURL,
-		assets.HTMXExtWSURL,
 		assets.HTMXExtSSEURL,
+		assets.HTMXExtWSURL,
 	}, cfg.Interactions.RuntimeScripts)
 
 	var page strings.Builder

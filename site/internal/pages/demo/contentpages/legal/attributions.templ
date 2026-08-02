@@ -1,6 +1,9 @@
 package legalpages
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"path"
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -16,14 +19,46 @@ type attribution struct {
 	Version string
 	LocalURL string
 	License string
+	LicenseURL string
 	Note    string
+}
+
+type runtimeAttributionDefinition struct {
+	Attribution attribution
+	Role assets.RuntimeAssetRole
+	Version func() string
+	FallbackLocalURL string
 }
 
 func runtimeAttributionRows() []attribution {
 	rows := []attribution{
 		{Name: "Tailwind CSS", Href: "https://tailwindcss.com", Version: assets.TailwindVersion(), LocalURL: assets.StylesURL, License: "MIT", Note: "Utility-first styling"},
 	}
-	return append(rows, runtimeAttributions...)
+	linkedURLs := make(map[assets.RuntimeAssetRole]string)
+	for _, dependency := range assets.DefaultRuntimeManifest().Dependencies {
+		linkedURLs[dependency.Role] = dependency.LocalURL
+	}
+	for _, definition := range runtimeAttributionDefinitions {
+		row := definition.Attribution
+		row.Version = definition.Version()
+		row.LocalURL = linkedURLs[definition.Role]
+		if row.LocalURL == "" {
+			row.LocalURL = definition.FallbackLocalURL
+		}
+		licenseURL := path.Join(path.Dir(row.LocalURL), "LICENSE.txt")
+		if linkedAssetServes(licenseURL) {
+			row.LicenseURL = licenseURL
+		}
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+func linkedAssetServes(assetURL string) bool {
+	request := httptest.NewRequest(http.MethodGet, assetURL, nil)
+	response := httptest.NewRecorder()
+	assets.Handler().ServeHTTP(response, request)
+	return response.Code == http.StatusOK
 }
 
 templ attributionsContent() {
@@ -34,8 +69,8 @@ templ attributionsContent() {
 				Goshtoso stands on the shoulders of excellent open-source work. It is a hard fork of
 				<a href="https://www.penguinui.com" target="_blank" rel="noopener" class="text-primary dark:text-primary-dark underline underline-offset-2">PenguinUI</a>,
 				re-implemented with Go's templating system. The projects below are bundled or depended
-				upon at build or runtime; each is used under its own license, and the original copyright
-				and license texts are retained.
+				upon at build or runtime; each is used under its own license. Bundled runtime license
+				texts are retained and linked below.
 			</p>
 		</div>
 
@@ -69,7 +104,7 @@ templ runtimeAttrSection(rows []attribution) {
 	<div>
 		<h2 data-toc-heading="Runtime libraries" class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Runtime libraries</h2>
 		<p class="mt-1 mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			Exact pins and embedded paths come from the <a href="https://github.com/araihu/goshtoso/blob/main/assets/js/runtime/manifest.json" target="_blank" rel="noopener" class="text-primary dark:text-primary-dark underline underline-offset-2">canonical runtime manifest</a>; a generated <a href="/assets/js/runtime/versions.json" class="text-primary dark:text-primary-dark underline underline-offset-2">version-only view</a> remains embedded for compatibility. The default loader is CDN-first with same-version local fallback; local-only loading is also supported. Inspect the linked binary programmatically with <code class="font-mono">assets.DefaultRuntimeManifest()</code>.
+			This site renders pins and embedded paths from the Goshtoso module linked into this binary and loads those assets locally. The library's zero-option head helper remains CDN-first with same-version local fallback; local-only loading is supported. Inspect the linked binary with <code class="font-mono">assets.DefaultRuntimeManifest()</code> and its <a href="/assets/js/runtime/versions.json" class="text-primary dark:text-primary-dark underline underline-offset-2">embedded version view</a>.
 		</p>
 		<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
 			<table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
@@ -91,7 +126,11 @@ templ runtimeAttrSection(rows []attribution) {
 							<td class="px-4 py-2.5 align-top whitespace-nowrap font-mono text-xs">{ a.Version }</td>
 							<td class="px-4 py-2.5 align-top font-mono text-xs">{ a.LocalURL }</td>
 							<td class="px-4 py-2.5 align-top whitespace-nowrap">
-								<span class="inline-block rounded-radius bg-surface-alt px-2 py-0.5 font-mono text-xs dark:bg-surface-dark-alt">{ a.License }</span>
+								if a.LicenseURL != "" {
+									<a href={ templ.SafeURL(a.LicenseURL) } class="inline-block rounded-radius bg-surface-alt px-2 py-0.5 font-mono text-xs underline underline-offset-2 dark:bg-surface-dark-alt">{ a.License }</a>
+								} else {
+									<span class="inline-block rounded-radius bg-surface-alt px-2 py-0.5 font-mono text-xs dark:bg-surface-dark-alt">{ a.License }</span>
+								}
 							</td>
 							<td class="px-4 py-2.5 align-top text-on-surface-muted dark:text-on-surface-dark-muted">{ a.Note }</td>
 						</tr>

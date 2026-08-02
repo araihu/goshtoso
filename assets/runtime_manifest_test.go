@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"path"
 	"reflect"
 	"testing"
 )
@@ -26,8 +27,6 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	if manifest.Loader != (RuntimeAsset{
 		Role:             RuntimeRoleDependencyLoader,
 		Kind:             RuntimeAssetScript,
-		Name:             "Goshtoso dependency loader",
-		Purpose:          "Loads the declared runtime in order with same-version local fallback",
 		PrimaryURL:       DependencyLoaderURL,
 		LocalURL:         DependencyLoaderURL,
 		Enabled:          true,
@@ -108,10 +107,10 @@ func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
 	}
 }
 
-func TestDefaultRuntimeManifestExposesCanonicalDependencyMetadata(t *testing.T) {
-	manifest := DefaultRuntimeManifest()
-	byRole := make(map[RuntimeAssetRole]RuntimeAsset, len(manifest.Dependencies))
-	for _, dependency := range manifest.Dependencies {
+func TestDefaultRuntimeMetadataExposesCanonicalDependencyMetadata(t *testing.T) {
+	metadata := DefaultRuntimeMetadata()
+	byRole := make(map[RuntimeAssetRole]RuntimeAssetMetadata, len(metadata))
+	for _, dependency := range metadata {
 		byRole[dependency.Role] = dependency
 	}
 
@@ -122,10 +121,12 @@ func TestDefaultRuntimeManifestExposesCanonicalDependencyMetadata(t *testing.T) 
 	if alpine.Homepage != "https://alpinejs.dev" || alpine.License != "MIT" || alpine.Purpose == "" {
 		t.Fatalf("Alpine attribution metadata = %#v", alpine)
 	}
-	if alpine.LocalURL != AlpineJSURL || alpine.Integrity != AlpineJSIntegrity {
-		t.Fatalf("Alpine embedded identity = %#v", alpine)
+	if alpine.PackageName != "alpinejs" || alpine.ProvenanceURL != "https://unpkg.com/alpinejs@3.14.9/package.json" {
+		t.Fatalf("Alpine provenance metadata = %#v", alpine)
 	}
-
+	if alpine.LicenseURL != path.Join(path.Dir(AlpineJSURL), "LICENSE.txt") {
+		t.Fatalf("Alpine license URL = %q", alpine.LicenseURL)
+	}
 	htmx := byRole[RuntimeRoleHTMX]
 	if htmx.Name != "htmx" || htmx.Version != HTMXVersion() || htmx.License != "Zero-Clause BSD" {
 		t.Fatalf("HTMX metadata = %#v", htmx)
@@ -134,6 +135,14 @@ func TestDefaultRuntimeManifestExposesCanonicalDependencyMetadata(t *testing.T) 
 	firstParty := byRole[RuntimeRoleFirstParty]
 	if firstParty.Name == "" || firstParty.Version != "" || firstParty.Purpose == "" {
 		t.Fatalf("first-party metadata = %#v", firstParty)
+	}
+}
+
+func TestDefaultRuntimeMetadataIsCallerOwned(t *testing.T) {
+	mutated := DefaultRuntimeMetadata()
+	mutated[0].Name = "mutated"
+	if fresh := DefaultRuntimeMetadata(); fresh[0].Name == "mutated" {
+		t.Fatal("DefaultRuntimeMetadata returned shared mutable state")
 	}
 }
 

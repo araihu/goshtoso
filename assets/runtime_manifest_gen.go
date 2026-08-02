@@ -31,21 +31,38 @@ const (
 )
 
 func defaultRuntimeLoader() RuntimeAsset {
-	return RuntimeAsset{Role: RuntimeRoleDependencyLoader, Kind: RuntimeAssetScript, Name: "Goshtoso dependency loader", Version: "", Homepage: "", License: "", Purpose: "Loads the declared runtime in order with same-version local fallback", PrimaryURL: DependencyLoaderURL, LocalURL: DependencyLoaderURL, Enabled: true, IncludeInMinimal: true, Defer: true}
+	return RuntimeAsset{Role: RuntimeRoleDependencyLoader, Kind: RuntimeAssetScript, PrimaryURL: DependencyLoaderURL, LocalURL: DependencyLoaderURL, Enabled: true, IncludeInMinimal: true, Defer: true}
 }
 
 func defaultRuntimeDependencies() []RuntimeAsset {
 	return []RuntimeAsset{
-		RuntimeAsset{Role: RuntimeRoleAlpineCollapse, Kind: RuntimeAssetScript, Name: "@alpinejs/collapse", Version: "3.14.9", Homepage: "https://alpinejs.dev/plugins/collapse", License: "MIT", Purpose: "Collapse transitions for accordions and disclosure components", PrimaryURL: AlpineCollapseCDNURL, LocalURL: AlpineCollapseURL, Integrity: AlpineCollapseIntegrity, Enabled: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleAlpineFocus, Kind: RuntimeAssetScript, Name: "@alpinejs/focus", Version: "3.14.9", Homepage: "https://alpinejs.dev/plugins/focus", License: "MIT", Purpose: "Focus trapping and keyboard focus management", PrimaryURL: AlpineFocusCDNURL, LocalURL: AlpineFocusURL, Integrity: AlpineFocusIntegrity, Enabled: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleAlpineMask, Kind: RuntimeAssetScript, Name: "@alpinejs/mask", Version: "3.14.9", Homepage: "https://alpinejs.dev/plugins/mask", License: "MIT", Purpose: "Input masking", PrimaryURL: AlpineMaskCDNURL, LocalURL: AlpineMaskURL, Integrity: AlpineMaskIntegrity, Enabled: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleFirstParty, Kind: RuntimeAssetScript, Name: "Goshtoso component runtime", Version: "", Homepage: "", License: "", Purpose: "Reusable first-party component behavior", PrimaryURL: FirstPartyBundleURL, LocalURL: FirstPartyBundleURL, Enabled: true, IncludeInMinimal: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleDarkMode, Kind: RuntimeAssetScript, Name: "Goshtoso dark-mode runtime", Version: "", Homepage: "", License: "", Purpose: "Registers the Alpine dark-mode store", PrimaryURL: DarkModeURL, LocalURL: DarkModeURL, IncludeInMinimal: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleAlpineJS, Kind: RuntimeAssetScript, Name: "Alpine.js", Version: "3.14.9", Homepage: "https://alpinejs.dev", License: "MIT", Purpose: "Reactive client-side UI state", PrimaryURL: AlpineJSCDNURL, LocalURL: AlpineJSURL, Integrity: AlpineJSIntegrity, Enabled: true, IncludeInMinimal: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleHTMX, Kind: RuntimeAssetScript, Name: "htmx", Version: "2.0.8", Homepage: "https://htmx.org", License: "Zero-Clause BSD", Purpose: "Server-driven interactions and fragment updates", PrimaryURL: HTMXCDNURL, LocalURL: HTMXURL, Integrity: HTMXIntegrity, Enabled: true, IncludeInMinimal: true, WaitForWindowLoaded: true},
-		RuntimeAsset{Role: RuntimeRoleHTMXExtSSE, Kind: RuntimeAssetScript, Name: "htmx SSE extension", Version: "2.2.3", Homepage: "https://htmx.org/extensions/sse/", License: "Zero-Clause BSD", Purpose: "Server-sent event integration", PrimaryURL: HTMXExtSSECDNURL, LocalURL: HTMXExtSSEURL, Integrity: HTMXExtSSEIntegrity, IncludeInMinimal: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleHTMXExtWS, Kind: RuntimeAssetScript, Name: "htmx WebSocket extension", Version: "2.0.3", Homepage: "https://htmx.org/extensions/ws/", License: "Zero-Clause BSD", Purpose: "WebSocket integration", PrimaryURL: HTMXExtWSCDNURL, LocalURL: HTMXExtWSURL, Integrity: HTMXExtWSIntegrity, IncludeInMinimal: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleCombobox, Kind: RuntimeAssetScript, Name: "Goshtoso combobox compatibility runtime", Version: "", Homepage: "", License: "", Purpose: "Standalone compatibility build for combobox behavior", PrimaryURL: ComboboxURL, LocalURL: ComboboxURL, IncludeInMinimal: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleActionGroup, Kind: RuntimeAssetScript, Name: "Goshtoso action-group runtime", Version: "", Homepage: "", License: "", Purpose: "Responsive action-group measurement", PrimaryURL: ActionGroupURL, LocalURL: ActionGroupURL, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleAlpineCollapse, Kind: RuntimeAssetScript, PrimaryURL: AlpineCollapseCDNURL, LocalURL: AlpineCollapseURL, Integrity: AlpineCollapseIntegrity, Enabled: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleAlpineFocus, Kind: RuntimeAssetScript, PrimaryURL: AlpineFocusCDNURL, LocalURL: AlpineFocusURL, Integrity: AlpineFocusIntegrity, Enabled: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleAlpineMask, Kind: RuntimeAssetScript, PrimaryURL: AlpineMaskCDNURL, LocalURL: AlpineMaskURL, Integrity: AlpineMaskIntegrity, Enabled: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleFirstParty, Kind: RuntimeAssetScript, PrimaryURL: FirstPartyBundleURL, LocalURL: FirstPartyBundleURL, Enabled: true, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleDarkMode, Kind: RuntimeAssetScript, PrimaryURL: DarkModeURL, LocalURL: DarkModeURL, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleAlpineJS, Kind: RuntimeAssetScript, PrimaryURL: AlpineJSCDNURL, LocalURL: AlpineJSURL, Integrity: AlpineJSIntegrity, Enabled: true, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleHTMX, Kind: RuntimeAssetScript, PrimaryURL: HTMXCDNURL, LocalURL: HTMXURL, Integrity: HTMXIntegrity, Enabled: true, IncludeInMinimal: true, WaitForWindowLoaded: true},
+		RuntimeAsset{Role: RuntimeRoleHTMXExtSSE, Kind: RuntimeAssetScript, PrimaryURL: HTMXExtSSECDNURL, LocalURL: HTMXExtSSEURL, Integrity: HTMXExtSSEIntegrity, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleHTMXExtWS, Kind: RuntimeAssetScript, PrimaryURL: HTMXExtWSCDNURL, LocalURL: HTMXExtWSURL, Integrity: HTMXExtWSIntegrity, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleCombobox, Kind: RuntimeAssetScript, PrimaryURL: ComboboxURL, LocalURL: ComboboxURL, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleActionGroup, Kind: RuntimeAssetScript, PrimaryURL: ActionGroupURL, LocalURL: ActionGroupURL, IncludeInMinimal: true, Defer: true},
+	}
+}
+
+func defaultRuntimeMetadata() []RuntimeAssetMetadata {
+	return []RuntimeAssetMetadata{
+		{Role: RuntimeRoleDependencyLoader, Name: "Goshtoso dependency loader", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Loads the declared runtime in order with same-version local fallback"},
+		{Role: RuntimeRoleAlpineCollapse, Name: "@alpinejs/collapse", Version: "3.14.9", PackageName: "@alpinejs/collapse", ProvenanceURL: "https://unpkg.com/@alpinejs/collapse@3.14.9/package.json", Homepage: "https://alpinejs.dev/plugins/collapse", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-collapse/3.14.9/LICENSE.txt", Purpose: "Collapse transitions for accordions and disclosure components"},
+		{Role: RuntimeRoleAlpineFocus, Name: "@alpinejs/focus", Version: "3.14.9", PackageName: "@alpinejs/focus", ProvenanceURL: "https://unpkg.com/@alpinejs/focus@3.14.9/package.json", Homepage: "https://alpinejs.dev/plugins/focus", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-focus/3.14.9/LICENSE.txt", Purpose: "Focus trapping and keyboard focus management"},
+		{Role: RuntimeRoleAlpineMask, Name: "@alpinejs/mask", Version: "3.14.9", PackageName: "@alpinejs/mask", ProvenanceURL: "https://unpkg.com/@alpinejs/mask@3.14.9/package.json", Homepage: "https://alpinejs.dev/plugins/mask", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-mask/3.14.9/LICENSE.txt", Purpose: "Input masking"},
+		{Role: RuntimeRoleFirstParty, Name: "Goshtoso component runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Reusable first-party component behavior"},
+		{Role: RuntimeRoleDarkMode, Name: "Goshtoso dark-mode runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Registers the Alpine dark-mode store"},
+		{Role: RuntimeRoleAlpineJS, Name: "Alpine.js", Version: "3.14.9", PackageName: "alpinejs", ProvenanceURL: "https://unpkg.com/alpinejs@3.14.9/package.json", Homepage: "https://alpinejs.dev", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs/3.14.9/LICENSE.txt", Purpose: "Reactive client-side UI state"},
+		{Role: RuntimeRoleHTMX, Name: "htmx", Version: "2.0.8", PackageName: "htmx.org", ProvenanceURL: "https://unpkg.com/htmx.org@2.0.8/package.json", Homepage: "https://htmx.org", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx.org/2.0.8/LICENSE.txt", Purpose: "Server-driven interactions and fragment updates"},
+		{Role: RuntimeRoleHTMXExtSSE, Name: "htmx SSE extension", Version: "2.2.3", PackageName: "htmx-ext-sse", ProvenanceURL: "https://unpkg.com/htmx-ext-sse@2.2.3/package.json", Homepage: "https://htmx.org/extensions/sse/", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx-ext-sse/2.2.3/LICENSE.txt", Purpose: "Server-sent event integration"},
+		{Role: RuntimeRoleHTMXExtWS, Name: "htmx WebSocket extension", Version: "2.0.3", PackageName: "htmx-ext-ws", ProvenanceURL: "https://unpkg.com/htmx-ext-ws@2.0.3/package.json", Homepage: "https://htmx.org/extensions/ws/", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt", Purpose: "WebSocket integration"},
+		{Role: RuntimeRoleCombobox, Name: "Goshtoso combobox compatibility runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Standalone compatibility build for combobox behavior"},
+		{Role: RuntimeRoleActionGroup, Name: "Goshtoso action-group runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Responsive action-group measurement"},
 	}
 }

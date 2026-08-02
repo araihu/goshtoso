@@ -32,8 +32,8 @@ func TestThemeCSS(t *testing.T) {
 }
 
 func TestVendorVersions(t *testing.T) {
-	byRole := make(map[RuntimeAssetRole]RuntimeAsset)
-	for _, dependency := range DefaultRuntimeManifest().Dependencies {
+	byRole := make(map[RuntimeAssetRole]RuntimeAssetMetadata)
+	for _, dependency := range DefaultRuntimeMetadata() {
 		byRole[dependency.Role] = dependency
 	}
 	cases := map[string]string{

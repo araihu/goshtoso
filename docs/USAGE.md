@@ -114,8 +114,8 @@ rest of the stack:
 
 ```templ
 @head.Dependencies(
-    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/htmx-2.0.8.min.js"),
-    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/vendor/htmx-2.0.8.min.js"),
+    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/custom-htmx.min.js"),
+    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/runtime/custom-htmx.min.js"),
     head.WithDependencyIntegrity(head.DependencyHTMX, "sha384-..."),
 )
 ```

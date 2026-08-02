@@ -25,9 +25,7 @@ const (
 )
 
 // RuntimeAsset describes one stylesheet or script in Goshtoso's default head
-// dependency contract. Name, Version, Homepage, License, and Purpose expose
-// generated inventory and attribution metadata. First-party assets intentionally
-// leave Version empty; use GoshtosoVersion for the linked module identity.
+// dependency contract.
 // PrimaryURL is used by the CDN-first loader; LocalURL is
 // the same-version embedded URL served by Handler. Integrity is SHA-384 SRI for
 // dependencies whose primary and local bytes are required to match; one value
@@ -41,11 +39,6 @@ const (
 type RuntimeAsset struct {
 	Role                RuntimeAssetRole
 	Kind                RuntimeAssetKind
-	Name                string
-	Version             string
-	Homepage            string
-	License             string
-	Purpose             string
 	PrimaryURL          string
 	LocalURL            string
 	Integrity           string
@@ -53,6 +46,29 @@ type RuntimeAsset struct {
 	IncludeInMinimal    bool
 	Defer               bool
 	WaitForWindowLoaded bool
+}
+
+// RuntimeAssetMetadata describes the identity, provenance, licensing, and
+// purpose of a runtime role without changing RuntimeAsset's loading contract.
+// First-party assets leave Version and License empty; use GoshtosoVersion for
+// the linked module identity.
+type RuntimeAssetMetadata struct {
+	Role          RuntimeAssetRole
+	Name          string
+	Version       string
+	PackageName   string
+	ProvenanceURL string
+	Homepage      string
+	License       string
+	LicenseURL    string
+	Purpose       string
+}
+
+// DefaultRuntimeMetadata returns generated metadata in loader execution order.
+// The returned slice is caller-owned.
+func DefaultRuntimeMetadata() []RuntimeAssetMetadata {
+	metadata := defaultRuntimeMetadata()
+	return append([]RuntimeAssetMetadata(nil), metadata...)
 }
 
 // RuntimeManifest is a typed embedded runtime/fallback contract. Dependencies
