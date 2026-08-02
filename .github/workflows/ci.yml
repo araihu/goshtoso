@@ -260,24 +260,7 @@ jobs:
         run: go work init . ./site
 
       - name: Unconditional root and site unit coverage
-        run: |
-          set -euo pipefail
-          root="$PWD"
-          component_coverpkg="$(go list ./components/... | paste -sd, -)"
-          rm -rf .coverage
-          mkdir -p .coverage/unit-root .coverage/unit-site .coverage/e2e .coverage/merged
-
-          root_pkgs="$(go list ./... | grep -v '^github.com/araihu/goshtoso/site/')"
-          go test -cover -coverpkg="$component_coverpkg" $root_pkgs -count=1 \
-            -args -test.gocoverdir="$root/.coverage/unit-root"
-
-          (
-            cd site
-            site_pkgs="$(go list ./... | grep -v '/tests/e2e')"
-            site_component_coverpkg="$(go list -deps $site_pkgs | grep '^github.com/araihu/goshtoso/components/' | sort -u | paste -sd, -)"
-            go test -cover -coverpkg="$site_component_coverpkg" $site_pkgs -count=1 \
-              -args -test.gocoverdir="$root/.coverage/unit-site"
-          )
+        run: scripts/run-component-coverage.sh --phase units
 
       - name: Select focused E2E identities
         id: e2e-impact
@@ -327,33 +310,8 @@ jobs:
         id: coverage
         run: |
           set -euo pipefail
-          root="$PWD"
-          component_coverpkg="$(go list ./components/... | paste -sd, -)"
-
-          GOSHTOSO_E2E_COVERDIR="$root/.coverage/e2e" \
-          GOSHTOSO_E2E_COVERPKG="$component_coverpkg" \
-            scripts/run-focused-e2e.sh .e2e-impact.json
-
-          go tool covdata merge \
-            -i=.coverage/unit-root,.coverage/unit-site,.coverage/e2e \
-            -o=.coverage/merged
-          go tool covdata percent -i=.coverage/merged -pkg="$component_coverpkg" > .coverage/coverage-percent.txt
-          go tool covdata textfmt -i=.coverage/merged -pkg="$component_coverpkg" -o=.coverage/coverage.out
-          go tool cover -func=.coverage/coverage.out > .coverage/coverage-func.txt
-          go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
-
+          scripts/run-component-coverage.sh --phase e2e-merge --impact .e2e-impact.json
           total_line="$(grep '^total:' .coverage/coverage-func.txt)"
-          total_percent="$(printf '%s\n' "$total_line" | sed -E 's/.*\t([0-9.]+)%.*/\1/')"
-
-          # shields.io badge color, mirroring scripts/coveragebadge thresholds.
-          color="red"
-          awk "BEGIN { exit !($total_percent >= 80) }" && color="brightgreen" || true
-          awk "BEGIN { exit !($total_percent >= 60 && $total_percent < 80) }" && color="green" || true
-          awk "BEGIN { exit !($total_percent >= 40 && $total_percent < 60) }" && color="yellow" || true
-
-          echo "percent=$total_percent" >> "$GITHUB_OUTPUT"
-          echo "color=$color" >> "$GITHUB_OUTPUT"
-
           echo "$total_line"
           {
             echo "### Partial component Go coverage"

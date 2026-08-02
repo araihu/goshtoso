@@ -4,49 +4,130 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 env:
+  GO_VERSION: '1.26.5'
+  NODE_VERSION: '24'
   TEMPL_VERSION: 'v0.3.1020'
+  PLAYWRIGHT_VERSION: 'v0.5700.1'
 
 jobs:
-  release:
+  pre-release:
+    name: Full release verification + coverage
     runs-on: ubuntu-latest
+    outputs:
+      coverage-percent: ${{ steps.coverage.outputs.percent }}
+      coverage-color: ${{ steps.coverage.outputs.color }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.26.5'
+          go-version: ${{ env.GO_VERSION }}
 
-      - name: Install templ
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pinned templ
         run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
 
-      - name: Install Tailwind CSS (pinned)
+      - name: Install pinned Tailwind CSS
         run: |
+          set -euo pipefail
           ver="$(cat assets/tailwind.version)"
           curl -fsSL -o /tmp/tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v${ver}/tailwindcss-linux-x64"
           chmod +x /tmp/tailwindcss
           sudo mv /tmp/tailwindcss /usr/local/bin/tailwindcss
 
-      - name: Build assets (pinned, reproducible)
+      - name: Install Playwright + Chromium
         run: |
+          go install github.com/playwright-community/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
+          playwright install --with-deps chromium
+
+      - name: Create current-source workspace
+        run: go work init . ./site
+
+      - name: Rebuild and verify generated assets
+        run: |
+          set -euo pipefail
           templ generate
           go run ./cmd/themegen
           go run ./cmd/jsbuild
+          go run ./cmd/skillgen
+          go run ./cmd/vendorgen -check
           tailwindcss -i css/main.css -o assets/styles.css
+          git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null
+          git diff --exit-code -- \
+            '*_templ.go' assets/styles.css assets/goshtoso-theme.css assets/js/*.js \
+            .agents/skills/using-goshtoso/references/components-reference.md \
+            .claude/skills/using-goshtoso/components-reference.md
 
-      - name: Verify committed assets match a pinned rebuild
+      - name: Verify both site-module contracts
         run: |
-          git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null \
-            || { echo "::error::release assets are not committed at this tag — run 'just css' and commit them"; exit 1; }
-          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css assets/js/*.js '*_templ.go' \
-            || { echo "::error::tag has stale assets/generated code — run 'templ generate' + 'just css' + 'just js' and re-tag"; exit 1; }
+          scripts/check-site-module current-source
+          scripts/check-site-module pinned-dependency
 
-      - name: Release notes
+      - name: Authoritative full component coverage
+        id: coverage
         run: |
+          set -euo pipefail
+          scripts/run-release-coverage.sh --local-dry-run
+          percent="$(cat .coverage/percentage.txt)"
+          color="$(cat .coverage/color.txt)"
+          echo "percent=$percent" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Authoritative release coverage"
+            echo
+            echo "Coverage: ${percent}%"
+            echo
+            echo "Packages: $(wc -l < .coverage/component-packages.txt) publishable component packages"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload authoritative coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-coverage
+          path: |
+            .coverage/component-packages.txt
+            .coverage/percentage.txt
+            .coverage/coverage-percent.txt
+            .coverage/coverage.out
+            .coverage/coverage-func.txt
+            .coverage/coverage.html
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload E2E artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-e2e-results
+          path: site/tests/e2e/test-results/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  publish:
+    name: Publish verified release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: pre-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Build release notes
+        run: |
+          set -euo pipefail
           tag="${GITHUB_REF_NAME}"
           ver="$(cat assets/tailwind.version)"
           awk -v heading="## [${tag}]" '
@@ -60,8 +141,7 @@ jobs:
             echo "## Build artifacts"
             echo
             echo "Built with Tailwind CSS ${ver}."
-            echo
-            echo "Assets attached: \`styles.css\` (serve directly) and \`goshtoso-theme.css\` (import into your own Tailwind v4 build)."
+            echo "Assets attached: \`styles.css\` and \`goshtoso-theme.css\`."
           } >> release-notes.md
 
       - name: Create GitHub release
@@ -72,9 +152,16 @@ jobs:
             assets/styles.css
             assets/goshtoso-theme.css
 
-      # Keep the README release badge on the same shields.io endpoint gist
-      # pattern used by the coverage badge, so new tags update the badge without
-      # committing badge churn back to main.
+      - name: Update authoritative coverage badge gist
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: fb3843c3a13793eb6cc0af638bc00ad4
+          filename: coverage.json
+          label: coverage
+          message: ${{ needs.pre-release.outputs.coverage-percent }}%
+          color: ${{ needs.pre-release.outputs.coverage-color }}
+
       - name: Update release badge gist
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
