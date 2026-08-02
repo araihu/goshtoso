@@ -85,6 +85,6 @@ func ignoredCommandDirectory(path string) bool {
 func activeCommandFile(path string) bool {
 	base := filepath.Base(path)
 	extension := filepath.Ext(path)
-	return base == "Makefile" || base == "Justfile" || base == "Dockerfile" ||
+	return base == "Makefile" || strings.EqualFold(base, "justfile") || base == "Dockerfile" ||
 		extension == ".md" || extension == ".yml" || extension == ".yaml"
 }

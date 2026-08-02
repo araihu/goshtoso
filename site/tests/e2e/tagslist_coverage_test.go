@@ -1,4 +1,4 @@
-//go:build e2e
+//go:build e2e && (full || tagslist)
 
 package e2e
 

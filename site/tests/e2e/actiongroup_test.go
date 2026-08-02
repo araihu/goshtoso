@@ -1,4 +1,4 @@
-//go:build e2e
+//go:build e2e && (full || actiongroup)
 
 package e2e
 
