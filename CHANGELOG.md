@@ -2,6 +2,17 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.5] - 2026-08-02
+
+### Inline code
+
+- Added `components/inlinecode`, a semantic, theme-aware primitive for short
+  code fragments inside prose and documentation.
+- Added consumer hooks through `WithRootClass` and `WithRootAttrs`, stable
+  component identity, generated skill reference, usage guidance, and tests.
+- Preserved standalone site deployability with a version-aware catalog bridge;
+  the public demo page follows after the site module pins this release.
+
 ## [v0.1.4] - 2026-08-02
 
 ### Muamba runtime acquisition
