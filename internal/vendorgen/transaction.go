@@ -33,8 +33,8 @@ type stagedFile struct {
 
 // commitFileUpdates stages every byte before replacing any destination. It
 // applies paths deterministically and restores all originals if a replacement
-// fails. There is no portable multi-file atomic rename, so this provides a
-// an all-old or all-new result when restoration succeeds. If the filesystem
+// fails. There is no portable multi-file atomic rename, so this provides an
+// all-old or all-new result when restoration succeeds. If the filesystem
 // rejects restoration, the old bytes remain at an exact path returned in the
 // error instead of being deleted by cleanup.
 func commitFileUpdates(updates []fileUpdate) error {
@@ -134,6 +134,9 @@ func applyStagedFiles(staged []stagedFile) (int, error) {
 
 func restoreStagedFile(file *stagedFile) error {
 	if err := removeFile(file.update.path); err != nil && !os.IsNotExist(err) {
+		if !file.hadOld {
+			return fmt.Errorf("removing new file %s failed and no original existed: %w", file.update.path, err)
+		}
 		return fmt.Errorf("preserved recovery artifact %s after removing replacement %s failed: %w", file.backup, file.update.path, err)
 	}
 	if !file.hadOld {

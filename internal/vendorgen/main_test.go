@@ -351,6 +351,26 @@ func TestCommitFileUpdatesRejectsDuplicateDestinations(t *testing.T) {
 	}
 }
 
+func TestRestoreStagedFileReportsNoOriginalWhenRemovingNewFileFails(t *testing.T) {
+	target := filepath.Join(t.TempDir(), "new.txt")
+	originalRemove := removeFile
+	removeFile = func(path string) error {
+		if path == target {
+			return fmt.Errorf("injected remove failure")
+		}
+		return originalRemove(path)
+	}
+	t.Cleanup(func() { removeFile = originalRemove })
+
+	err := restoreStagedFile(&stagedFile{update: fileUpdate{path: target}})
+	if err == nil || !strings.Contains(err.Error(), "no original existed") || !strings.Contains(err.Error(), target) {
+		t.Fatalf("restore error = %v", err)
+	}
+	if strings.Contains(err.Error(), "recovery artifact") {
+		t.Fatalf("restore error incorrectly claims an empty recovery artifact: %v", err)
+	}
+}
+
 func TestVerifyInventoryPathsRejectsUndeclaredOrMissingEmbeddedJavaScript(t *testing.T) {
 	manifest, err := parseManifest([]byte(testManifestJSON))
 	if err != nil {
