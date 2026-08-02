@@ -6,8 +6,8 @@ github.com/alecthomas/chroma/v2 v2.24.1 h1:m5ffpfZbIb++k8AqFEKy9uVgY12xIQtBsQlc6
 github.com/alecthomas/chroma/v2 v2.24.1/go.mod h1:l+ohZ9xRXIbGe7cIW+YZgOGbvuVLjMps/FYN/CwuabI=
 github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
-github.com/araihu/goshtoso v0.1.0 h1:OZ5rFfotw8qHUA+bn7qJzex7WlgOuBBgtJgmxt1ZaDE=
-github.com/araihu/goshtoso v0.1.0/go.mod h1:mY8kbNpqILeQ2MLW1eh14EIaudanLjAs6bf0sv51NXE=
+github.com/araihu/goshtoso v0.1.3 h1:rCXrswq6q7sf28n4EZ2MipRNTyHlZYdG8s5I0uAU4NY=
+github.com/araihu/goshtoso v0.1.3/go.mod h1:mY8kbNpqILeQ2MLW1eh14EIaudanLjAs6bf0sv51NXE=
 github.com/araihu/goshtoso-app-shells v0.1.1-0.20260730145401-4f5174eeb1a9 h1:cJP0YtKUfJfgLrmp9rH4rFGqNC0dRQci63zZ3Lh2BWI=
 github.com/araihu/goshtoso-app-shells v0.1.1-0.20260730145401-4f5174eeb1a9/go.mod h1:Nw6QAzP/ufjO4roQqTW2MePEG7annlRmlt7FQHA3ka0=
 github.com/araihu/goshtoso-charts v0.0.2-0.20260730033312-82e67bb7111f h1:XCzv73dCpGDdZlGgF3be5BuGy6tl4INT+iOJoS+TYww=
