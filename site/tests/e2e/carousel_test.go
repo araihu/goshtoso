@@ -111,15 +111,3 @@ func TestCarousel_AutoplayCanBePaused(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "true", pressed)
 }
-
-func waitForCarouselIndex(page playwright.Page, selector string, index int) error {
-	_, err := page.WaitForFunction(
-		`([selector, index]) => {
-			const el = document.querySelector(selector);
-			return !!el && Alpine.$data(el).currentSlideIndex === index;
-		}`,
-		[]any{selector, index},
-		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
-	)
-	return err
-}

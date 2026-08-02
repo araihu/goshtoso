@@ -60,10 +60,3 @@ func TestCardComponentDemo(t *testing.T) {
 	require.NoError(t, testimonialRating.WaitFor())
 	assert.Equal(t, "Rated 4 stars", mustAttribute(t, testimonialRating, "aria-label"))
 }
-
-func mustAttribute(t *testing.T, loc playwright.Locator, name string) string {
-	t.Helper()
-	value, err := loc.GetAttribute(name)
-	require.NoError(t, err)
-	return value
-}

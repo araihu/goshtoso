@@ -19,15 +19,6 @@ var legalPages = []struct {
 	{"/privacy", "/privacy", "Privacy Policy"},
 }
 
-// dismissCookieBanner pre-sets the consent flag so the fixed banner can't
-// intercept footer/link clicks.
-func dismissCookieBanner(t *testing.T, page playwright.Page) {
-	t.Helper()
-	require.NoError(t, page.AddInitScript(playwright.Script{
-		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
-	}))
-}
-
 func TestBrowserStorageNoticeOffersChoice(t *testing.T) {
 	page := newIsolatedPage(t)
 

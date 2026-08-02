@@ -3,42 +3,9 @@ package e2e
 import (
 	"testing"
 
-	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-const ratingDemoURL = "/components/rating"
-
-func navigateToRatingDemo(t *testing.T, page playwright.Page) {
-	t.Helper()
-	_, err := page.Goto(baseURL+ratingDemoURL, playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
-		Timeout:   playwright.Float(5000),
-	})
-	require.NoError(t, err)
-	require.NoError(t, page.Locator("#rating-fragment").WaitFor(
-		playwright.LocatorWaitForOptions{
-			State:   playwright.WaitForSelectorStateAttached,
-			Timeout: playwright.Float(3000),
-		},
-	))
-	_, err = page.WaitForFunction(
-		`() => typeof window.Alpine !== 'undefined'`,
-		nil,
-		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
-	)
-	require.NoError(t, err)
-}
-
-func ratingChecked(t *testing.T, page playwright.Page, selector string) bool {
-	t.Helper()
-	v, err := page.Locator(selector).Evaluate("el => el.checked", nil)
-	require.NoError(t, err)
-	checked, ok := v.(bool)
-	require.True(t, ok)
-	return checked
-}
 
 func TestRating_DefaultSelectionUpdates(t *testing.T) {
 	page := newPage(t, sharedBrowser)

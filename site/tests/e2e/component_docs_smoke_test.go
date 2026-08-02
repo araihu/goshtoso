@@ -278,30 +278,6 @@ func requireComponentDocsDestination(
 	failures.RequireEmpty(t)
 }
 
-func requireComponentGoAPILink(t *testing.T, page playwright.Page, entry catalog.Entry) {
-	t.Helper()
-
-	reference := page.Locator("[data-go-api-reference]")
-	version, err := reference.GetAttribute("data-go-api-version")
-	require.NoError(t, err)
-	require.Equal(t, goshtosoDocsVersion, version)
-
-	link := reference.Locator("[data-go-api-link]")
-	require.Equal(t, 1, mustLocatorCount(t, link))
-	href, err := link.GetAttribute("href")
-	require.NoError(t, err)
-	require.Equal(t, entry.GoDocsURL(goshtosoDocsVersion), href)
-	require.Equal(t, "_blank", mustAttribute(t, link, "target"))
-	require.Equal(t, "noopener noreferrer", mustAttribute(t, link, "rel"))
-}
-
-func mustLocatorCount(t *testing.T, locator playwright.Locator) int {
-	t.Helper()
-	count, err := locator.Count()
-	require.NoError(t, err)
-	return count
-}
-
 func TestComponentDocsHTMXProofRejectsFullPageReload(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")

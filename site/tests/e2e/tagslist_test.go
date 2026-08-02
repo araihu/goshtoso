@@ -3,27 +3,9 @@ package e2e
 import (
 	"testing"
 
-	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func gotoTagsList(t *testing.T, page playwright.Page) {
-	t.Helper()
-	_, err := page.Goto(baseURL+"/components/tags-list", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-	})
-	require.NoError(t, err)
-	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
-	require.NoError(t, err)
-}
-
-func fillAndDispatchInput(t *testing.T, locator playwright.Locator, value string) {
-	t.Helper()
-	require.NoError(t, locator.Fill(value))
-	_, err := locator.Evaluate(`(el) => el.dispatchEvent(new Event('input', {bubbles: true}))`, nil)
-	require.NoError(t, err)
-}
 
 func TestTagsList_RendersInitialChips(t *testing.T) {
 	if testing.Short() {
