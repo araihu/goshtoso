@@ -64,9 +64,11 @@ const (
 // dependencies whose primary and local bytes are required to match; one value
 // applies to both URLs. A top-level Loader LocalURL is inventory, not an
 // automatic fallback for the loader tag.
-// IncludeInMinimal selects DependenciesMinimal membership. Defer is the direct
-// local-script tag behavior. WaitForWindowLoaded is loader readiness behavior
-// used before dynamically inserting the script.
+// IncludeInMinimal selects DependenciesMinimal membership. On dependency
+// entries, Defer controls direct local-script tags and WaitForWindowLoaded
+// controls loader readiness before dynamically inserting the script. For
+// top-level assets, only Loader.Defer is supported; Stylesheet.Defer and either
+// top-level WaitForWindowLoaded value are rejected.
 type RuntimeAsset struct {
 	Role                RuntimeAssetRole
 	Kind                RuntimeAssetKind

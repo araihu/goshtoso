@@ -185,9 +185,12 @@ func TestCustomRuntimeManifestValidationFailsBeforeWritingHTML(t *testing.T) {
 	}{
 		{name: "stylesheet role", mutate: func(m *assets.RuntimeManifest) { m.Stylesheet.Role = "css" }, want: "stylesheet role"},
 		{name: "stylesheet kind", mutate: func(m *assets.RuntimeManifest) { m.Stylesheet.Kind = assets.RuntimeAssetScript }, want: "stylesheet kind"},
+		{name: "stylesheet defer", mutate: func(m *assets.RuntimeManifest) { m.Stylesheet.Defer = true }, want: "stylesheet Defer is unsupported"},
+		{name: "stylesheet wait for window loaded", mutate: func(m *assets.RuntimeManifest) { m.Stylesheet.WaitForWindowLoaded = true }, want: "stylesheet WaitForWindowLoaded is unsupported"},
 		{name: "stylesheet URL", mutate: func(m *assets.RuntimeManifest) { m.Stylesheet.PrimaryURL = "javascript:alert(1)" }, want: "stylesheet primary URL"},
 		{name: "loader role", mutate: func(m *assets.RuntimeManifest) { m.Loader.Role = "bootstrap" }, want: "loader role"},
 		{name: "loader kind", mutate: func(m *assets.RuntimeManifest) { m.Loader.Kind = assets.RuntimeAssetStylesheet }, want: "loader kind"},
+		{name: "loader wait for window loaded", mutate: func(m *assets.RuntimeManifest) { m.Loader.WaitForWindowLoaded = true }, want: "loader WaitForWindowLoaded is unsupported"},
 		{name: "loader URL", mutate: func(m *assets.RuntimeManifest) { m.Loader.PrimaryURL = "//cdn.example/loader.js" }, want: "loader primary URL"},
 		{name: "loader disabled", mutate: func(m *assets.RuntimeManifest) { m.Loader.Enabled = false }, want: "enabled dependencies require an enabled loader"},
 		{name: "loader excluded from minimal", minimal: true, mutate: func(m *assets.RuntimeManifest) { m.Loader.IncludeInMinimal = false }, want: "enabled dependencies require an enabled loader"},

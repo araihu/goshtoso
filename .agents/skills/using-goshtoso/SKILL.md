@@ -104,6 +104,8 @@ plugin/first-party/dark-mode-before-Alpine and HTMX-before-SSE/WS ordering.
 sets every desired `PrimaryURL` to its `LocalURL`, keeps the loader local, and
 uses `WithoutLocalFallback()`. Loader `LocalURL` is inventory, not bootstrap
 fallback. Dependency `Defer` describes direct tags, not custom-loader order.
+At the top level, only `Loader.Defer` is supported; stylesheet `Defer` and both
+top-level `WaitForWindowLoaded` values are rejected before rendering.
 
 Configuration freedom is not a compatibility guarantee. Goshtoso tests the
 pinned combination: Alpine 3.14.9, HTMX 2.0.8, SSE 2.2.3, and WS 2.0.3.

@@ -441,6 +441,12 @@ func validateTopLevelAsset(source runtimeAsset, role assets.RuntimeAssetRole, ki
 	if source.Kind != kind {
 		return fmt.Errorf("head: %s kind = %q, want %q", label, source.Kind, kind)
 	}
+	if source.Defer && kind == assets.RuntimeAssetStylesheet {
+		return fmt.Errorf("head: %s Defer is unsupported", label)
+	}
+	if source.WaitForWindowLoaded {
+		return fmt.Errorf("head: %s WaitForWindowLoaded is unsupported", label)
+	}
 	if err := validateOptionalURL(label+" primary URL", source.PrimaryURL); err != nil {
 		return err
 	}

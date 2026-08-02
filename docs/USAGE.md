@@ -227,12 +227,15 @@ standalone compatibility helper.
 
 `Stylesheet.Enabled`, `Loader.Enabled`, and both top-level
 `IncludeInMinimal` values control whether those tags render. Their `Integrity`
-values render SRI attributes. `Loader.Defer` controls the loader tag. A loader's
-`LocalURL` is asset inventory, not an automatic fallback for the loader itself;
-only dependency entries use `LocalURL` as loader fallback. Likewise, a custom
-stylesheet's `LocalURL` is not an automatic CSS fallback. `WaitForWindowLoaded`
-is honored by the loader. Dependency `Defer` describes direct local script tags;
-it is not a compatibility or execution guarantee in custom loader mode.
+values render SRI attributes. `Loader.Defer` controls the loader tag.
+`Stylesheet.Defer`, `Stylesheet.WaitForWindowLoaded`, and
+`Loader.WaitForWindowLoaded` are unsupported and rejected before HTML is
+written. A loader's `LocalURL` is asset inventory, not an automatic fallback
+for the loader itself; only dependency entries use `LocalURL` as loader
+fallback. Likewise, a custom stylesheet's `LocalURL` is not an automatic CSS
+fallback. On dependency entries, `WaitForWindowLoaded` is honored by the loader
+and `Defer` describes direct local script tags; neither field guarantees
+compatibility or custom-loader execution order.
 
 `WithLocalRuntime` deliberately rejects a custom manifest because a mixed set
 of direct deferred and non-deferred tags cannot guarantee declared execution
