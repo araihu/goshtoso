@@ -36,6 +36,7 @@ const (
 	KindCheckbox               Kind = "checkbox"
 	KindCheckboxGroup          Kind = "checkbox-group"
 	KindCodeBlock              Kind = "code-block"
+	KindInlineCode             Kind = "inline-code"
 	KindCombobox               Kind = "combobox"
 	KindDrawer                 Kind = "drawer"
 	KindDropdown               Kind = "dropdown"
@@ -121,6 +122,7 @@ var allKinds = []Kind{
 	KindCheckbox,
 	KindCheckboxGroup,
 	KindCodeBlock,
+	KindInlineCode,
 	KindCombobox,
 	KindDrawer,
 	KindDropdown,

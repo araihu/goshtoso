@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-52 component packages. Each is imported by its directory path; note the
+53 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -939,6 +939,16 @@ import "github.com/araihu/goshtoso/components/icon/heroicons"  // package heroic
 | `GoName` | `string` |  |
 | `CanonicalName` | `string` |  |
 | `Symbol` | `icon.Symbol` |  |
+
+## inlinecode
+
+```go
+import "github.com/araihu/goshtoso/components/inlinecode"  // package inlinecode
+```
+
+**Entry points:** `InlineCode(text string, options ...Option)`
+
+**Options:** `WithRootAttrs(attrs templ.Attributes)` · `WithRootClass(class string)`
 
 ## kbd
 
