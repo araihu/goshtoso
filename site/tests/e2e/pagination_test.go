@@ -1,3 +1,5 @@
+//go:build e2e && (full || pagination)
+
 package e2e
 
 import (

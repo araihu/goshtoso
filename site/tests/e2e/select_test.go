@@ -1,3 +1,5 @@
+//go:build e2e && (full || select)
+
 package e2e
 
 import (

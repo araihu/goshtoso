@@ -1,3 +1,5 @@
+//go:build e2e && (full || combobox)
+
 package e2e
 
 import (

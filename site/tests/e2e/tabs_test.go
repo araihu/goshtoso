@@ -1,7 +1,8 @@
+//go:build e2e && (full || tabs)
+
 package e2e
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -105,19 +106,6 @@ func TestTabs_URLHashSyncRestoresAndUpdatesSelection(t *testing.T) {
 	require.NoError(t, page.WaitForURL("**/components/tabs#saved"))
 }
 
-func waitForTabSelected(page playwright.Page, selector string, selected bool) error {
-	expected := "false"
-	if selected {
-		expected = "true"
-	}
-	_, err := page.WaitForFunction(
-		`([selector, expected]) => document.querySelector(selector)?.getAttribute('aria-selected') === expected`,
-		[]any{selector, expected},
-		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
-	)
-	return err
-}
-
 func waitForPanelVisibility(page playwright.Page, selector string, visible bool) error {
 	_, err := page.WaitForFunction(
 		`([selector, visible]) => {
@@ -130,18 +118,4 @@ func waitForPanelVisibility(page playwright.Page, selector string, visible bool)
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
 	)
 	return err
-}
-
-func mustBeVisible(t *testing.T, loc playwright.Locator) bool {
-	t.Helper()
-	visible, err := loc.IsVisible()
-	require.NoError(t, err)
-	return visible
-}
-
-func mustContainText(t *testing.T, loc playwright.Locator, expected string) bool {
-	t.Helper()
-	text, err := loc.TextContent()
-	require.NoError(t, err)
-	return strings.Contains(text, expected)
 }

@@ -6,16 +6,16 @@ import (
 	"github.com/araihu/goshtoso/components/toast"
 	"github.com/araihu/goshtoso/site/internal/examples/expense"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
+	expensepage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/expense"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
 // writeExpenseListAndTotal renders the ExpenseList and the SummaryBadge OOB
 // fragment, the two outputs shared by every mutation handler. The list is the
 // primary swap target (#expense-list); the total is updated out-of-band.
 func writeExpenseListAndTotal(r *http.Request, w http.ResponseWriter, st expense.State) {
-	_ = examples.ExpenseList(st, false).Render(r.Context(), w)
-	_ = examples.SummaryBadge(st, true).Render(r.Context(), w)
+	_ = expensepage.ExpenseList(st, false).Render(r.Context(), w)
+	_ = expensepage.SummaryBadge(st, true).Render(r.Context(), w)
 }
 
 // persistExpense writes the cookie only when the visitor has not opted out of
@@ -51,8 +51,8 @@ func (s *Server) renderExpensePage(w http.ResponseWriter, r *http.Request) {
 		st.Page = 1
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	content := examples.ExpenseApp(st)
-	meta := components.MetaForKey("examples/expense")
+	content := expensepage.ExpenseApp(st)
+	meta := demoregistry.MetaForKey("examples/expense")
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
 		_ = demo.ComponentDocsFragment(meta, "expense", content, storageAllowed(r)).Render(r.Context(), w)
 		return
@@ -75,9 +75,9 @@ func (s *Server) handleExpenseAdd(w http.ResponseWriter, r *http.Request) {
 	// list and total ride along out-of-band. On a rejected add we render the form
 	// WITH hx-preserve so htmx keeps the live form (values + focus); on success we
 	// render it WITHOUT preserve, replacing it with a blank form.
-	_ = examples.ExpenseAddForm(!added).Render(r.Context(), w)
-	_ = examples.ExpenseList(st, true).Render(r.Context(), w)
-	_ = examples.SummaryBadge(st, true).Render(r.Context(), w)
+	_ = expensepage.ExpenseAddForm(!added).Render(r.Context(), w)
+	_ = expensepage.ExpenseList(st, true).Render(r.Context(), w)
+	_ = expensepage.SummaryBadge(st, true).Render(r.Context(), w)
 	switch {
 	case added:
 		_ = toast.OOBToast(toast.Config{Tone: toast.ToneSuccess, Title: "Added", Message: desc}).Render(r.Context(), w)
@@ -105,7 +105,7 @@ func (s *Server) handleExpenseDelete(w http.ResponseWriter, r *http.Request) {
 		cfg.Message = deleted.Desc
 		cfg.ActionLabel = "Undo"
 		cfg.ActionHTMX = &toast.HTMXConfig{
-			Post:   examples.RestoreExpenseURL(deleted),
+			Post:   expensepage.RestoreExpenseURL(deleted),
 			Target: "#expense-list",
 			Swap:   "outerHTML",
 		}

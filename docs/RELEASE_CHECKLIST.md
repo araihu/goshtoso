@@ -15,9 +15,7 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `npx --yes skills use . --skill using-goshtoso`
   - `just site-current-source-integration`
   - `just site-pinned-dependency-deployability`
-  - `go test ./... -count=1`
-  - `cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1`
-  - `go test ./site/tests/e2e/... -count=1 -timeout 15m`
+  - `scripts/run-release-coverage.sh --local-dry-run`
 - Check that generated files have no drift:
   - `*_templ.go`
   - `assets/styles.css`
@@ -44,10 +42,14 @@ many of these steps, but the checklist keeps the public release story coherent.
 
 ## After the Tag Workflow
 
+- Confirm the `Full release verification + coverage` job passed before the
+  publishing job began. A manual workflow dispatch runs this same gate without
+  creating a release or updating either badge.
 - Confirm the GitHub release exists and includes `assets/styles.css` and
   `assets/goshtoso-theme.css`.
 - Confirm the release badge endpoint has the new tag.
-- Confirm the coverage badge endpoint still renders.
+- Confirm the coverage badge reports the authoritative full-suite percentage
+  from this release; focused PR/main runs must never update it.
 - Open a follow-up PR that pins `site/go.mod` to the new tag and updates any
   version-aware documentation links. Never push this follow-up directly to the
   protected `main` branch.
@@ -85,7 +87,7 @@ deployment, or a `site/go.mod` dependency update.
   `github.com/araihu/goshtoso@v0.0.14-0.20260729070831-8863d6b7d0e8`. All
   observed old-pin failures are recorded: missing
   `github.com/araihu/goshtoso/components/icon` at
-  `site/internal/pages/demo/components/icon_templ.go:12:2`; missing
+  `site/internal/pages/demo/componentpages/icon/icon_templ.go:12:2`; missing
   `github.com/araihu/goshtoso/components/icon/heroicons` at `:13:2`; and
   `undefined: components.KindIcon` at
   `site/internal/pages/catalog/catalog.go:221`.

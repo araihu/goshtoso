@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
+	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,7 +31,7 @@ func TestComponentPageRendersSEOMetadata(t *testing.T) {
 func TestLandingPageRendersSEOMetadata(t *testing.T) {
 	rec := httptest.NewRecorder()
 
-	err := components.LandingPage().Render(context.Background(), rec)
+	err := startpages.LandingPage().Render(context.Background(), rec)
 
 	require.NoError(t, err)
 	body := rec.Body.String()

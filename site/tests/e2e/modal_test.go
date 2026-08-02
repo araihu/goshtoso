@@ -1,3 +1,5 @@
+//go:build e2e && (full || modal)
+
 package e2e
 
 import (
@@ -113,18 +115,4 @@ func TestModal_JSActionRunsAfterConfirm(t *testing.T) {
 	default:
 		t.Fatal("expected JS modal primary action to show alert")
 	}
-}
-
-func waitForAlpine(page playwright.Page) error {
-	_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil, playwright.PageWaitForFunctionOptions{
-		Timeout: playwright.Float(3000),
-	})
-	return err
-}
-
-func mustText(t *testing.T, loc playwright.Locator) string {
-	t.Helper()
-	text, err := loc.TextContent()
-	require.NoError(t, err)
-	return text
 }

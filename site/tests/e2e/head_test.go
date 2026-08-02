@@ -1,3 +1,5 @@
+//go:build e2e && (full || head)
+
 package e2e
 
 import (

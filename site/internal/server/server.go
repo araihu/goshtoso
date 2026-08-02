@@ -13,13 +13,14 @@ import (
 
 	shellassets "github.com/araihu/goshtoso-app-shells/componentdocshell/assets"
 	chartassets "github.com/araihu/goshtoso-charts/assets"
-	"github.com/araihu/goshtoso/components/carousel"
 	combobox "github.com/araihu/goshtoso/components/combobox"
-	"github.com/araihu/goshtoso/components/toast"
 	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
+	comboboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/combobox"
+	modulespages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/modules"
+	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
 // Server handles HTTP requests for Goshtoso components
@@ -114,11 +115,11 @@ func (s *Server) setupRoutes() {
 	s.registerGettingStartedRoutes()
 
 	// Combobox users demo runs server-mode lazy search.
-	usersHandler := combobox.Handler(components.UsersCfg, usersProvider)
+	usersHandler := combobox.Handler(comboboxpage.UsersCfg, usersProvider)
 	s.mux.Handle("/api/components/combobox/users/options", usersHandler)
 	s.mux.Handle("/api/components/combobox/users/toggle", usersHandler)
 	s.mux.Handle("/api/components/combobox/users/clear", usersHandler)
-	clustersHandler := combobox.Handler(components.ClusterCfg, clustersProvider)
+	clustersHandler := combobox.Handler(comboboxpage.ClusterCfg, clustersProvider)
 	s.mux.Handle("/api/components/combobox/clusters/options", clustersHandler)
 	s.mux.Handle("/api/components/combobox/clusters/toggle", clustersHandler)
 	s.mux.Handle("/api/components/combobox/clusters/clear", clustersHandler)
@@ -141,7 +142,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/playground/extensions/charts/frame", s.handleChartsShowcaseFrame)
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			_ = components.LandingPage().Render(r.Context(), w)
+			_ = startpages.LandingPage().Render(r.Context(), w)
 			return
 		}
 		http.NotFound(w, r)
@@ -151,13 +152,13 @@ func (s *Server) setupRoutes() {
 func (s *Server) handleChartsShowcase(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
-	_ = components.ChartsShowcasePageForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
+	_ = modulespages.ChartsShowcasePageForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
 }
 
 func (s *Server) handleChartsShowcaseFrame(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
-	_ = components.ChartsShowcaseFrameForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
+	_ = modulespages.ChartsShowcaseFrameForQuery(r.URL.Query().Get("variant")).Render(r.Context(), w)
 }
 
 func withImmutableCache(next http.Handler) http.Handler {
@@ -169,7 +170,7 @@ func withImmutableCache(next http.Handler) http.Handler {
 
 func (s *Server) handleLandingThemePlayground(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = components.LandingPlaygroundPage().Render(r.Context(), w)
+	_ = startpages.LandingPlaygroundPage().Render(r.Context(), w)
 }
 
 func (s *Server) handleRobots(w http.ResponseWriter, r *http.Request) {
@@ -199,7 +200,7 @@ func (s *Server) handleSitemap(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	pages := components.AllPublicMeta()
+	pages := demoregistry.AllPublicMeta()
 	lastMod := time.Now().UTC().Format("2006-01-02")
 	urls := make([]sitemapURL, 0, len(pages))
 	for _, page := range pages {
@@ -278,43 +279,19 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 // All sidebar-navigable pages flow through here so direct loads and fragment
 // nav stay in lock-step.
 func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) {
-	entry, ok := components.LookupDemo(key)
+	entry, ok := demoregistry.Lookup(key)
 	if !ok {
 		http.NotFound(w, r)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := entry.Content()
-	meta := components.DemoMeta(key, entry)
+	meta := demoregistry.MetaForKey(key)
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
 		_ = demo.ComponentDocsFragment(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
 	_ = demo.ComponentDocsLayout(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
-}
-
-// handleRadioEcho returns a small HTML fragment for the radio demo's HTMX showcase.
-// It echoes back the radio value selected by the user.
-func (s *Server) handleRadioEcho(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	value := r.URL.Query().Get("value")
-	if value == "" {
-		value = "(empty)"
-	}
-	_, _ = fmt.Fprintf(w, `Server: you picked <span class="font-mono font-semibold">%s</span> at %s.`,
-		htmlEscape(value), time.Now().Format("15:04:05.000"))
-}
-
-// htmlEscape applies a minimal HTML escape suitable for an attribute-free text fragment.
-func htmlEscape(s string) string {
-	r := strings.NewReplacer(
-		"&", "&amp;",
-		"<", "&lt;",
-		">", "&gt;",
-		"\"", "&quot;",
-		"'", "&#39;",
-	)
-	return r.Replace(s)
 }
 
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
@@ -323,151 +300,6 @@ func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html")
 	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
-}
-
-func (s *Server) handleBannerAction(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_, _ = fmt.Fprint(w, `<p class="text-sm font-medium text-success">Banner action received</p>`)
-}
-
-func (s *Server) handleDropdownAction(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_, _ = fmt.Fprint(w, `<p class="font-medium text-success">Dropdown action received</p>`)
-}
-
-func (s *Server) handleFormExternalSubmit(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html")
-	version := r.FormValue("version")
-	if version == "" {
-		version = "selected version"
-	} else {
-		version = "v" + version
-	}
-	_ = toast.OOBToast(toast.Config{
-		Tone:    toast.ToneSuccess,
-		Title:   "Upgrade request submitted",
-		Message: fmt.Sprintf("Target version: %s", version),
-	}).Render(r.Context(), w)
-}
-
-func (s *Server) handleStepsDemo(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	current := 2
-	if raw := r.URL.Query().Get("step"); raw != "" {
-		if parsed, err := strconv.Atoi(raw); err == nil {
-			current = parsed
-		}
-	}
-
-	if current < 1 {
-		current = 1
-	}
-	if current > 4 {
-		current = 4
-	}
-
-	_ = components.StepsHTMXFlow(current).Render(r.Context(), w)
-}
-
-func (s *Server) handleButtonFragment(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	// Get disabled state from query params
-	disabled := r.URL.Query().Get("disabled") == "true"
-
-	// Render just the button grid fragment
-	_ = components.ButtonFragment(disabled).Render(r.Context(), w)
-}
-
-func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	// Extract the content ID from the URL path
-	path := strings.TrimPrefix(r.URL.Path, "/api/components/accordion-content/")
-	contentID := strings.Split(path, "/")[0]
-
-	// Simulate server processing delay
-	time.Sleep(500 * time.Millisecond)
-
-	// Return different content based on the ID
-	switch contentID {
-	case "lazy-content-a":
-		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
-			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Server Response A</h5>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">This content was loaded from the server at <strong>%s</strong>.</p>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">You can use this pattern to load large datasets, forms, or any dynamic content on demand.</p>
-			<div class="flex gap-2 mt-3">
-				<span class="px-2 py-1 text-xs bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark rounded">Loaded via HTMX</span>
-				<span class="px-2 py-1 text-xs bg-success/10 text-success dark:bg-success/10 dark:text-success rounded">On Demand</span>
-			</div>
-		</div>`, time.Now().Format("15:04:05"))
-	case "lazy-content-b":
-		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
-			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Server Response B</h5>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">This is another example of lazy-loaded content fetched at <strong>%s</strong>.</p>
-			<div class="p-3 bg-surface-alt dark:bg-surface-dark-alt rounded text-sm">
-				<code class="text-xs">Request: GET %s</code>
-			</div>
-			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mt-2">Perfect for performance optimization - content only loads when needed!</p>
-		</div>`, time.Now().Format("15:04:05"), r.URL.Path)
-	case "lazy-content-1":
-		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
-			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Dynamic Content Loaded!</h5>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">Loaded at %s</p>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">This demonstrates how you can defer loading heavy content until the user actually needs it.</p>
-		</div>`, time.Now().Format("15:04:05"))
-	default:
-		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown content ID: %s</div>`, contentID)
-	}
-}
-
-func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	path := strings.TrimPrefix(r.URL.Path, "/api/components/tab-content/")
-	tabID := strings.Split(path, "/")[0]
-
-	// Simulate server processing delay
-	time.Sleep(500 * time.Millisecond)
-
-	switch tabID {
-	case "details":
-		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
-			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Details (Lazy Loaded)</h5>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">This content was fetched from the server at <strong>%s</strong> via HTMX.</p>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">The panel only made the request when the tab was first selected, saving bandwidth and server load.</p>
-			<div class="flex gap-2 mt-3">
-				<span class="px-2 py-1 text-xs bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark rounded">hx-get</span>
-				<span class="px-2 py-1 text-xs bg-success/10 text-success dark:bg-success/10 dark:text-success rounded">Loaded Once</span>
-			</div>
-		</div>`, time.Now().Format("15:04:05"))
-	case "activity":
-		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
-			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Recent Activity</h5>
-			<p class="text-sm text-on-surface dark:text-on-surface-dark">Fetched at <strong>%s</strong>.</p>
-			<ul class="text-sm text-on-surface dark:text-on-surface-dark list-disc list-inside space-y-1 mt-2">
-				<li>User joined the group <em>Go Developers</em></li>
-				<li>New comment on <em>HTMX Patterns</em></li>
-				<li>Badge earned: <strong>Early Adopter</strong></li>
-			</ul>
-		</div>`, time.Now().Format("15:04:05"))
-	default:
-		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown tab content: %s</div>`, tabID)
-	}
 }
 
 func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
@@ -508,38 +340,6 @@ func (s *Server) handleLicense(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handlePrivacy(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "privacy")
-}
-
-func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	// Simulate server processing delay
-	time.Sleep(500 * time.Millisecond)
-
-	// Return a rendered static carousel with sample slides
-	cfg := carousel.Config{
-		Slides: []carousel.Slide{
-			{
-				ImgSrc:      "/assets/images/carousel/slide-1.webp",
-				ImgAlt:      "Vibrant abstract painting with swirling blue and light pink hues on a canvas.",
-				Title:       "Loaded via HTMX",
-				Description: fmt.Sprintf("This carousel was fetched from the server at %s.", time.Now().Format("15:04:05")),
-			},
-			{
-				ImgSrc:      "/assets/images/carousel/slide-2.webp",
-				ImgAlt:      "Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.",
-				Title:       "Dynamic Content",
-				Description: "Slides can come from a database, API, or any backend source.",
-			},
-			{
-				ImgSrc:      "/assets/images/carousel/slide-3.webp",
-				ImgAlt:      "Vibrant abstract painting with swirling blue and purple hues on a canvas.",
-				Title:       "HTMX + Alpine.js",
-				Description: "Server delivers HTML fragments, Alpine handles interactivity.",
-			},
-		},
-	}
-	_ = carousel.Carousel(cfg).Render(r.Context(), w)
 }
 
 // usersProvider is an OptionsProvider for the combobox users demo.

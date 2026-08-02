@@ -59,48 +59,11 @@ site-pinned-dependency-deployability:
 
 site-module-contracts: site-current-source-integration site-pinned-dependency-deployability
 
-# Run root unit tests, site unit tests, and E2E tests, then merge component
-# coverage data into .coverage/coverage.out and .coverage/coverage.html.
+# Run E2E identities impacted by committed changes since the supplied base.
+test-e2e-focused base="origin/main":
+    go run ./cmd/e2eimpact --base "{{base}}" --head HEAD > .e2e-impact.json
+    scripts/run-focused-e2e.sh .e2e-impact.json
+
+# Run the authoritative release-equivalent full coverage pipeline locally.
 coverage:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    root="$PWD"
-    component_coverpkg="$(go list ./components/... | paste -sd, -)"
-
-    if [ ! -f go.work ]; then
-      go work init . ./site
-    fi
-
-    rm -rf .coverage
-    mkdir -p .coverage/unit-root .coverage/unit-site .coverage/e2e .coverage/merged
-
-    root_pkgs="$(go list ./... | grep -v '^github.com/araihu/goshtoso/site/')"
-    go test -cover -coverpkg="$component_coverpkg" $root_pkgs -count=1 \
-      -args -test.gocoverdir="$root/.coverage/unit-root"
-
-    (
-      cd site
-      site_pkgs="$(go list ./... | grep -v '/tests/e2e')"
-      site_component_coverpkg="$(go list -deps $site_pkgs | grep '^github.com/araihu/goshtoso/components/' | sort -u | paste -sd, -)"
-      go test -cover -coverpkg="$site_component_coverpkg" $site_pkgs -count=1 \
-        -args -test.gocoverdir="$root/.coverage/unit-site"
-
-      GOSHTOSO_E2E_COVERDIR="$root/.coverage/e2e" \
-      GOSHTOSO_E2E_COVERPKG="$component_coverpkg" \
-        go test ./tests/e2e/... -count=1 -timeout 15m
-    )
-
-    go tool covdata merge \
-      -i=.coverage/unit-root,.coverage/unit-site,.coverage/e2e \
-      -o=.coverage/merged
-    go tool covdata percent -i=.coverage/merged -pkg="$component_coverpkg" > .coverage/coverage-percent.txt
-    go tool covdata textfmt -i=.coverage/merged -pkg="$component_coverpkg" -o=.coverage/coverage.out
-    go tool cover -func=.coverage/coverage.out > .coverage/coverage-func.txt
-    go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
-
-    total_line="$(grep '^total:' .coverage/coverage-func.txt)"
-    total_percent="$(printf '%s\n' "$total_line" | sed -E 's/.*\t([0-9.]+)%.*/\1/')"
-    scripts/coveragebadge "$total_percent"
-
-    echo "$total_line"
-    echo "coverage artifacts: .coverage/coverage.out .coverage/coverage-func.txt .coverage/coverage-percent.txt .coverage/coverage.html badges/coverage.svg"
+    scripts/run-release-coverage.sh

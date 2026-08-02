@@ -320,7 +320,7 @@ go test ./...
 cd site && go test ./...
 
 # Full Playwright E2E suite
-go test ./site/tests/e2e/... -count=1 -timeout 15m
+go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 15m
 ```
 
 Run lint checks per module:

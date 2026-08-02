@@ -1,4 +1,4 @@
-.PHONY: all build test test-e2e clean dev dev-watch dev-air install install-templ install-playwright css css-watch generate js js-check
+.PHONY: all build test test-e2e test-e2e-focused clean dev dev-watch dev-air install install-templ install-playwright css css-watch generate js js-check
 
 # Default target
 all: css build
@@ -47,11 +47,17 @@ test:
 
 # Run E2E tests (builds CSS first)
 test-e2e: css
-	cd site && go test ./tests/e2e/... -v
+	cd site && go test -tags=e2e,full ./tests/e2e/... -v
+
+# Run E2E identities impacted by committed changes since E2E_BASE.
+E2E_BASE ?= origin/main
+test-e2e-focused: css
+	go run ./cmd/e2eimpact --base "$(E2E_BASE)" --head HEAD > .e2e-impact.json
+	scripts/run-focused-e2e.sh .e2e-impact.json
 
 # Run specific E2E test
 test-e2e-one:
-	cd site && go test ./tests/e2e/... -v -run $(TEST)
+	cd site && go test -tags=e2e,full ./tests/e2e/... -v -run $(TEST)
 
 # Install dependencies
 install: install-templ install-playwright install-air
@@ -104,6 +110,7 @@ help:
 	@echo "  make css-watch      - Watch and rebuild CSS on changes"
 	@echo "  make test           - Run Go tests"
 	@echo "  make test-e2e       - Run E2E tests"
+	@echo "  make test-e2e-focused - Run impacted E2E identities (E2E_BASE=origin/main)"
 	@echo "  make test-e2e-one   - Run specific E2E test (TEST=TestName)"
 	@echo "  make install        - Install all dependencies"
 	@echo "  make install-air    - Install Air live reload tool"

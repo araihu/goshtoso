@@ -1,3 +1,5 @@
+//go:build e2e && (full || steps)
+
 package e2e
 
 import (

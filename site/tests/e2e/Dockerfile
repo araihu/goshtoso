@@ -17,4 +17,4 @@ RUN playwright install --with-deps chromium
 
 WORKDIR /workspace/goshtoso
 
-CMD ["bash", "-lc", "go test ./tests/e2e/..."]
+CMD ["bash", "-lc", "go test -tags=e2e,full ./tests/e2e/..."]

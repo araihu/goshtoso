@@ -1,3 +1,5 @@
+//go:build e2e && (full || banner)
+
 package e2e
 
 import (

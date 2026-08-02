@@ -1,3 +1,5 @@
+//go:build e2e && (full || tooltip)
+
 package e2e
 
 import (

@@ -14,6 +14,7 @@ examples/getting-started/getting-started
 # Output of the go coverage tool
 *.out
 .coverage/
+.e2e-impact.json
 
 # Dependency directories (Go vendor)
 vendor/

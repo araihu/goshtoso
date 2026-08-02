@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/araihu/goshtoso/site/internal/examples/logs"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
+	logspage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/logs"
 )
 
 // registerLogsRoutes wires the live log feed's SSE endpoint.
@@ -68,7 +68,7 @@ func streamLogs(ctx context.Context, w http.ResponseWriter, flusher http.Flusher
 			line := logs.Line(i)
 			line.Time = t
 			var buf bytes.Buffer
-			if err := examples.LogRow(line).Render(ctx, &buf); err != nil {
+			if err := logspage.LogRow(line).Render(ctx, &buf); err != nil {
 				return
 			}
 			if err := writeSSEMessage(w, buf.String()); err != nil {

@@ -1,0 +1,158 @@
+package codeblockpage
+
+import (
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// CodeBlockDemoPage renders the CodeBlock component demo
+templ CodeBlockDemoPage() {
+	@demo.Layout("Code Block", "codeblock", codeBlockDemoContent())
+}
+
+templ codeBlockDemoContent() {
+	<div id="codeblock-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Code Block",
+				Description: "Syntax-highlighted code rendered server-side with Chroma. It follows the active theme, includes an accessible copy button, and falls back to plain text when a lexer is unknown.",
+			},
+			codeBlockDemoPreview(),
+			`@codeblock.CodeBlock(codeblock.Config{
+    Language: "go",
+    Label:    "Hello",
+    Code:     `+"`"+`package main
+
+func main() {
+    fmt.Println("hello, world")
+}`+"`"+`,
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTML",
+				Description: "Use Language: \"html\" for templates, fragments, and Alpine/HTMX snippets.",
+			},
+			codeBlockHTMLPreview(),
+			`@codeblock.CodeBlock(codeblock.Config{
+    Language: "html",
+    Code:     `+"`"+`<button x-data="{open:false}" @click="open=!open" class="btn">Toggle</button>`+"`"+`,
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "CSS",
+				Description: "CSS snippets use the same highlighted shell, so theme token examples stay readable in light and dark mode.",
+			},
+			codeBlockCSSPreview(),
+			`@codeblock.CodeBlock(codeblock.Config{
+    Language: "css",
+    Code:     `+"`"+`.btn { color: var(--color-primary); padding: 0.5rem 1rem; }`+"`"+`,
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Bash",
+				Description: "Command snippets can set a short Label when the language name is not specific enough.",
+			},
+			codeBlockBashPreview(),
+			`@codeblock.CodeBlock(codeblock.Config{
+    Language: "bash",
+    Label:    "Install",
+    Code:     "go get github.com/a-h/templ",
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Scrollable",
+				Description: "Set MaxHeight for long snippets that should scroll inside the code panel instead of pushing the page apart.",
+			},
+			codeBlockScrollPreview(),
+			`@codeblock.CodeBlock(codeblock.Config{
+    Language:  "go",
+    MaxHeight: "180px",
+    Code:      longGoSnippet,
+})`,
+		)
+	</div>
+}
+
+templ codeBlockDemoPreview() {
+	<div class="w-full max-w-3xl mx-auto">
+		@codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "main.go",
+			Code: `package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("hello, world")
+}`,
+		})
+	</div>
+}
+
+templ codeBlockHTMLPreview() {
+	<div class="w-full max-w-3xl mx-auto">
+		@codeblock.CodeBlock(codeblock.Config{
+			Language: "html",
+			Code:     `<button x-data="{ open: false }" @click="open = !open" class="btn">Toggle</button>`,
+		})
+	</div>
+}
+
+templ codeBlockCSSPreview() {
+	<div class="w-full max-w-3xl mx-auto">
+		@codeblock.CodeBlock(codeblock.Config{
+			Language: "css",
+			Code: `.btn {
+    color: var(--color-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+}`,
+		})
+	</div>
+}
+
+templ codeBlockBashPreview() {
+	<div class="w-full max-w-3xl mx-auto">
+		@codeblock.CodeBlock(codeblock.Config{
+			Language: "bash",
+			Label:    "Install",
+			Code:     "go get github.com/a-h/templ\nnpm install -D tailwindcss@latest",
+		})
+	</div>
+}
+
+templ codeBlockScrollPreview() {
+	<div class="w-full max-w-3xl mx-auto">
+		@codeblock.CodeBlock(codeblock.Config{
+			Language:  "go",
+			Label:     "long.go",
+			MaxHeight: "180px",
+			Code: `package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "hello")
+    })
+    http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprintln(w, "ok")
+    })
+    http.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "v1.0.0")
+    })
+    if err := http.ListenAndServe(":8080", nil); err != nil {
+        panic(err)
+    }
+}`,
+		})
+	</div>
+}

@@ -8,7 +8,7 @@ import (
 
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/examples"
+	tickerpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/ticker"
 )
 
 // registerTickerRoutes wires the /api/examples/ticker/* endpoints.
@@ -63,7 +63,7 @@ func (s *Server) handleTickerRows(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = table.TableRows(examples.TickerTableConfig(matched)).Render(r.Context(), w)
+	_ = table.TableRows(tickerpage.TickerTableConfig(matched)).Render(r.Context(), w)
 }
 
 // writeTickerSnapshot renders each symbol's price fragment and emits it as a
@@ -71,7 +71,7 @@ func (s *Server) handleTickerRows(w http.ResponseWriter, r *http.Request) {
 func writeTickerSnapshot(r *http.Request, w http.ResponseWriter, rc *http.ResponseController, snap ticker.Snapshot) {
 	for _, sym := range snap.Symbols {
 		var buf bytes.Buffer
-		_ = examples.TickerCellInner(sym).Render(r.Context(), &buf)
+		_ = tickerpage.TickerCellInner(sym).Render(r.Context(), &buf)
 		writeSSEEvent(w, sym.Ticker, buf.String())
 	}
 	_ = rc.Flush()

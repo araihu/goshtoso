@@ -1,0 +1,391 @@
+package buttonpage
+
+import (
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/radio"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// ButtonDemoPage renders the Button component demo
+templ ButtonDemoPage() {
+	@demo.Layout("Buttons", "button", buttonDemoContent())
+}
+
+// buttonDemoContent renders the demo. Each button variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/button). The docs wrapper is #button-docs-fragment so
+// it doesn't collide with ButtonFragment's #button-fragment variants grid (which
+// the e2e suite and the HTMX fragment endpoint target).
+templ buttonDemoContent() {
+	<div id="button-docs-fragment" x-data="{ selected: 'md' }">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Button",
+				Description: "Trigger actions — submit a form, open a modal, navigate. Eight semantic tones, four sizes, disabled state, and first-class HTMX wiring (GET/POST/DELETE, confirm, loading indicator).",
+			},
+			buttonVariantsPreview(),
+			`@button.Button() { Primary }
+@button.Button(button.WithTone(button.ToneSecondary)) { Secondary }
+@button.Button(button.WithTone(button.ToneDanger)) { Danger }
+@button.Button(button.WithTone(button.ToneSuccess)) { Success }`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:        "Sizes",
+				Description:  "Four sizes via Size: SizeSmall, SizeMedium, SizeLarge, SizeXLarge.",
+				AbovePreview: buttonSizeSelector(),
+			},
+			buttonSizesPreview(),
+			`@button.Button(button.WithSize(button.SizeLarge)) { Large }`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Disabled",
+				Description: "Disabled: true blocks interaction and dims the button.",
+			},
+			buttonDisabledPreview(),
+			`@button.Button(button.Disabled()) { Primary }`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Native form actions",
+				Description: "Use WithAttrs for native name, value, formaction, data-*, or aria-* attributes not covered by a dedicated option.",
+			},
+			buttonFormActionsPreview(),
+			`@button.Button(
+    button.WithType("submit"),
+    button.WithTone(button.ToneAlternate),
+    button.WithAttrs(templ.Attributes{"name": "action", "value": "back"}),
+) { Back }
+
+@button.Button(
+    button.WithType("submit"),
+    button.WithAttrs(templ.Attributes{"name": "action", "value": "continue"}),
+) { Continue }`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTMX Interactions",
+				Description: "Attach an HTMX config to fire a request on click. Supports Get/Post/Delete, a Confirm prompt, a loading Indicator, and LoadingText.",
+			},
+			buttonHTMXPreview(),
+			`@button.Button(
+    button.WithRootClass("w-full sm:w-44 justify-center"),
+    button.WithHTMX(&button.HTMXConfig{Post: "/api/hello", Target: "#htmx-result-post", Swap: "innerHTML"}),
+) { Send POST }
+
+@button.Button(
+    button.WithTone(button.ToneInfo),
+    button.WithRootClass("w-full sm:w-44 justify-center"),
+    button.WithHTMX(&button.HTMXConfig{Get: "/api/hello", Target: "#htmx-result-get", Swap: "innerHTML"}),
+) { Send GET }
+
+@button.Button(
+    button.WithTone(button.ToneDanger),
+    button.WithRootClass("w-full sm:w-44 justify-center"),
+    button.WithHTMX(&button.HTMXConfig{Delete: "/api/hello", Confirm: "Are you sure?", Target: "#htmx-result-delete", Swap: "innerHTML"}),
+) { Delete }`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Form-owned HTMX loading",
+				Description: "LoadingText also follows an ancestor form request. Disable the submitter from the form so repeated activation cannot queue a duplicate mutation.",
+			},
+			buttonFormLoadingPreview(),
+			`<form
+    hx-post="/save"
+    hx-target="#save-result"
+    hx-disabled-elt="find button[type='submit']">
+    @button.Button(
+        button.WithType("submit"),
+        button.WithLoadingText("Saving…"),
+    ) { Save }
+</form>`,
+		)
+	</div>
+}
+
+templ buttonFormLoadingPreview() {
+	<form
+		id="button-form-loading"
+		class="mx-auto flex w-full max-w-3xl flex-col gap-3 sm:flex-row sm:items-center"
+		hx-post="/api/hello?delay_ms=400"
+		hx-target="#button-form-loading-result"
+		hx-swap="innerHTML"
+		hx-disabled-elt="find button[type='submit']"
+	>
+		@button.Button(
+			button.WithType("submit"),
+			button.WithRootClass("w-full justify-center sm:w-44"),
+			button.WithLoadingText("Saving…"),
+		) {
+			Save
+		}
+		@buttonHTMXResult("button-form-loading-result")
+	</form>
+}
+
+templ buttonFormActionsPreview() {
+	<form id="button-form-actions" class="flex flex-col gap-3 sm:flex-row" action="/components/button" method="get">
+		@button.Button(
+			button.WithType("submit"),
+			button.WithTone(button.ToneAlternate),
+			button.WithAttrs(templ.Attributes{"name": "action", "value": "back"}),
+		) {
+			Back
+		}
+		@button.Button(
+			button.WithType("submit"),
+			button.WithAttrs(templ.Attributes{"name": "action", "value": "continue"}),
+		) {
+			Continue
+		}
+	</form>
+}
+
+// buttonVariantsPreview renders the eight color variants (the ButtonFragment grid).
+templ buttonVariantsPreview() {
+	<div id="button-variants" class="w-full">
+		@ButtonFragment(false)
+	</div>
+}
+
+// buttonSizeSelector renders the segmented size selector above the size preview.
+templ buttonSizeSelector() {
+	<div class="mb-3 flex items-center gap-4">
+		<label class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Size</label>
+		<div data-testid="button-size-selector">
+			@radio.RadioBar() {
+				@buttonSizeOption("sm", "sm")
+				@buttonSizeOption("md", "md")
+				@buttonSizeOption("lg", "lg")
+				@buttonSizeOption("xl", "xl")
+			}
+		</div>
+		<span class="sr-only" data-testid="button-size-selected" x-text="selected"></span>
+	</div>
+}
+
+// buttonSizeOption renders one segmented radio option for the button size selector.
+templ buttonSizeOption(value, label string) {
+	@radio.Radio(radio.Config{
+		ID:        "button-size-" + value,
+		Name:      "button-size",
+		Value:     value,
+		Label:     label,
+		Segmented: true,
+		Alpine: &radio.AlpineConfig{
+			BindChecked: "selected === '" + value + "'",
+			OnChange:    "selected = '" + value + "'",
+		},
+	})
+}
+
+// buttonSizesPreview renders a single selected button size.
+templ buttonSizesPreview() {
+	<div id="button-sizes" class="w-full">
+		<div class="flex flex-wrap items-center justify-center gap-4">
+			<div data-testid="button-size-preview-sm" x-show="selected === 'sm'" x-cloak>
+				@button.Button(button.WithSize(button.SizeSmall)) {
+					Small
+				}
+			</div>
+			<div data-testid="button-size-preview-md" x-show="selected === 'md'">
+				@button.Button() {
+					Medium
+				}
+			</div>
+			<div data-testid="button-size-preview-lg" x-show="selected === 'lg'" x-cloak>
+				@button.Button(button.WithSize(button.SizeLarge)) {
+					Large
+				}
+			</div>
+			<div data-testid="button-size-preview-xl" x-show="selected === 'xl'" x-cloak>
+				@button.Button(button.WithSize(button.SizeXLarge)) {
+					Extra Large
+				}
+			</div>
+		</div>
+	</div>
+}
+
+// buttonDisabledPreview renders disabled buttons across variants.
+templ buttonDisabledPreview() {
+	<div id="button-disabled" class="w-full">
+		<div class="flex flex-wrap items-center justify-center gap-4">
+			@button.Button(button.Disabled()) {
+				Primary
+			}
+			@button.Button(button.WithTone(button.ToneSecondary), button.Disabled()) {
+				Secondary
+			}
+			@button.Button(button.WithTone(button.ToneDanger), button.Disabled()) {
+				Danger
+			}
+			@button.Button(button.WithTone(button.ToneSuccess), button.Disabled()) {
+				Success
+			}
+		</div>
+	</div>
+}
+
+// buttonHTMXPreview renders the HTMX-wired buttons with their result targets.
+templ buttonHTMXPreview() {
+	<div id="button-htmx" class="w-full">
+		<div class="mx-auto flex w-full max-w-3xl flex-col gap-3">
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+				@button.Button(
+					button.WithRootClass("w-full sm:w-44 justify-center"),
+					button.WithHTMX(&button.HTMXConfig{
+						Post:   "/api/hello",
+						Target: "#htmx-result-post",
+						Swap:   "innerHTML",
+					}),
+				) {
+					Send POST
+				}
+				@buttonHTMXResult("htmx-result-post")
+			</div>
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+				@button.Button(
+					button.WithTone(button.ToneInfo),
+					button.WithRootClass("w-full sm:w-44 justify-center"),
+					button.WithHTMX(&button.HTMXConfig{
+						Get:    "/api/hello",
+						Target: "#htmx-result-get",
+						Swap:   "innerHTML",
+					}),
+				) {
+					Send GET
+				}
+				@buttonHTMXResult("htmx-result-get")
+			</div>
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+				@button.Button(
+					button.WithTone(button.ToneDanger),
+					button.WithRootClass("w-full sm:w-44 justify-center"),
+					button.WithHTMX(&button.HTMXConfig{
+						Delete:  "/api/hello",
+						Confirm: "Are you sure?",
+						Target:  "#htmx-result-delete",
+						Swap:    "innerHTML",
+					}),
+				) {
+					Delete (confirm)
+				}
+				@buttonHTMXResult("htmx-result-delete")
+			</div>
+		</div>
+	</div>
+}
+
+templ buttonHTMXResult(id string) {
+	<div id={ id } class="flex min-h-[2.75rem] flex-1 items-center rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark">
+		<em class="text-on-surface-muted dark:text-on-surface-dark-muted">Waiting for server response...</em>
+	</div>
+}
+
+// ButtonFragment renders just the button grid (for HTMX fragment requests)
+templ ButtonFragment(disabled bool) {
+	<div class="mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center" id="button-fragment">
+		{{ primaryOptions := []button.Option{} }}
+		{{ secondaryOptions := []button.Option{button.WithTone(button.ToneSecondary)} }}
+		{{ alternateOptions := []button.Option{button.WithTone(button.ToneAlternate)} }}
+		{{ inverseOptions := []button.Option{button.WithTone(button.ToneInverse)} }}
+		{{ infoOptions := []button.Option{button.WithTone(button.ToneInfo)} }}
+		{{ dangerOptions := []button.Option{button.WithTone(button.ToneDanger)} }}
+		{{ warningOptions := []button.Option{button.WithTone(button.ToneWarning)} }}
+		{{ successOptions := []button.Option{button.WithTone(button.ToneSuccess)} }}
+		if disabled {
+			{{ primaryOptions = append(primaryOptions, button.Disabled()) }}
+			{{ secondaryOptions = append(secondaryOptions, button.Disabled()) }}
+			{{ alternateOptions = append(alternateOptions, button.Disabled()) }}
+			{{ inverseOptions = append(inverseOptions, button.Disabled()) }}
+			{{ infoOptions = append(infoOptions, button.Disabled()) }}
+			{{ dangerOptions = append(dangerOptions, button.Disabled()) }}
+			{{ warningOptions = append(warningOptions, button.Disabled()) }}
+			{{ successOptions = append(successOptions, button.Disabled()) }}
+		}
+		@button.Button(primaryOptions...) {
+			Primary
+		}
+		@button.Button(secondaryOptions...) {
+			Secondary
+		}
+		@button.Button(alternateOptions...) {
+			Alternate
+		}
+		@button.Button(inverseOptions...) {
+			Inverse
+		}
+		@button.Button(infoOptions...) {
+			Info
+		}
+		@button.Button(dangerOptions...) {
+			Danger
+		}
+		@button.Button(warningOptions...) {
+			Warning
+		}
+		@button.Button(successOptions...) {
+			Success
+		}
+	</div>
+}
+
+// HTMXButtonDemos renders buttons with HTMX functionality
+templ HTMXButtonDemos() {
+	<div class="space-y-6 p-8">
+		// Basic HTMX POST
+		<div class="flex items-center gap-4">
+			@button.Button(
+				button.WithHTMX(&button.HTMXConfig{
+					Post:   "/api/hello",
+					Target: "#htmx-result-1",
+					Swap:   "innerHTML",
+				}),
+			) {
+				Send POST Request
+			}
+			<div id="htmx-result-1" class="text-sm text-on-surface dark:text-on-surface-dark">
+				<em>Click button to load content...</em>
+			</div>
+		</div>
+		// HTMX with Loading Indicator
+		<div class="flex items-center gap-4">
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithHTMX(&button.HTMXConfig{
+					Get:       "/api/hello",
+					Target:    "#htmx-result-2",
+					Indicator: "#loading-spinner",
+				}),
+			) {
+				Load with Spinner
+			}
+			<div id="loading-spinner" class="htmx-indicator">
+				<svg class="animate-spin h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+					<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+				</svg>
+			</div>
+			<div id="htmx-result-2" class="text-sm text-on-surface dark:text-on-surface-dark">
+				<em>Content will appear here...</em>
+			</div>
+		</div>
+		// HTMX with Confirm
+		<div class="flex items-center gap-4">
+			@button.Button(
+				button.WithTone(button.ToneDanger),
+				button.WithHTMX(&button.HTMXConfig{
+					Delete:  "/api/hello",
+					Confirm: "Are you sure you want to proceed?",
+					Target:  "#htmx-result-3",
+				}),
+			) {
+				Delete (with Confirm)
+			}
+			<div id="htmx-result-3" class="text-sm text-on-surface dark:text-on-surface-dark"></div>
+		</div>
+	</div>
+}

@@ -1,0 +1,171 @@
+package startpages
+
+import (
+	"os"
+	"path/filepath"
+	"runtime"
+
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+templ GettingStartedPage() {
+	@demo.Layout("Getting Started", "", gettingStartedContent())
+}
+
+templ gettingStartedContent() {
+	<div class="space-y-12">
+		<div>
+			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Getting Started</h1>
+			<p class="mt-2 text-on-surface dark:text-on-surface-dark">
+				Start with a complete dog-breeds app built with
+				<a href="https://go.dev/" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">Go</a> +
+				<a href="https://templ.guide/" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">Templ</a> +
+				<a href="https://htmx.org/" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">HTMX</a> +
+				<a href="https://alpinejs.dev/" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">Alpine.js</a>.
+				Clone it, run it, then read how it works.
+			</p>
+		</div>
+
+		<section class="rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Learn the component model</h2>
+			<p class="mt-2 text-on-surface dark:text-on-surface-dark">
+				Read the <a href="/docs/component-model" hx-get="/docs/component-model" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="text-primary underline underline-offset-2 dark:text-primary-dark">Component Model</a> to learn the common component interface, concrete return values, constructor styles, stable Kind identity, and rendered defaults.
+			</p>
+		</section>
+
+		<section id="getting-started-preview" class="space-y-4">
+			<div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+				<div>
+					<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Expected outcome</h2>
+					<p class="mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+						This is the starter app's table running inside the docs. Try search, filtering, sorting, and pagination.
+					</p>
+				</div>
+				<a
+					href="https://github.com/araihu/goshtoso-getting-started"
+					target="_blank"
+					rel="noopener"
+					class="inline-flex w-fit items-center justify-center gap-2 rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary transition-opacity hover:opacity-90 dark:bg-primary-dark dark:text-on-primary-dark"
+				>
+					@starterRepositoryGitHubIcon()
+					Starter repository
+				</a>
+			</div>
+			<div class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
+				@table.Table(gettingStartedInitialConfig())
+			</div>
+		</section>
+
+		<section class="space-y-3">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Use the starter repo</h2>
+			<p class="text-on-surface dark:text-on-surface-dark mb-3">
+				The starter includes the Go server, templ page, generated templ output, and dog images.
+			</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: starterRepoCode()})
+		</section>
+
+		<section class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">How assets work</h2>
+			<ul class="grid gap-3 text-sm text-on-surface dark:text-on-surface-dark md:grid-cols-2">
+				<li class="rounded-radius border border-outline p-4 dark:border-outline-dark">
+					<p class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso runtime assets</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">
+						CSS, themes, Alpine.js, HTMX, fonts, and library artwork are served from <code class="font-mono">/assets/</code> by <code class="font-mono">assets.Handler()</code>.
+					</p>
+				</li>
+				<li class="rounded-radius border border-outline p-4 dark:border-outline-dark">
+					<p class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Starter app assets</p>
+					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">
+						Dog images live in <code class="font-mono">assets/dogs</code>, are embedded with Go, and are served by the starter app from <code class="font-mono">/dog-images/</code>.
+					</p>
+				</li>
+			</ul>
+		</section>
+
+		<section class="space-y-8">
+			<div>
+				<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Build it manually</h2>
+				<p class="text-on-surface dark:text-on-surface-dark">
+					The starter repo is the fastest path. The walkthrough below shows the moving parts if you want to build the same app from scratch.
+				</p>
+			</div>
+			<div>
+				<h3 class="text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">1. Create your project</h3>
+				@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: manualSetupCode()})
+			</div>
+			<div>
+				<h3 class="text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">2. Create the page template</h3>
+				<p class="text-on-surface dark:text-on-surface-dark mb-3">
+					<code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">page.templ</code>
+					renders the table and loads Goshtoso's runtime dependencies.
+				</p>
+				@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "page.templ", Code: readExampleFile("page.templ"), MaxHeight: "400px"})
+			</div>
+			<div>
+				<h3 class="text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">3. Create the server</h3>
+				<p class="text-on-surface dark:text-on-surface-dark mb-3">
+					<code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">main.go</code>
+					mounts Goshtoso runtime assets, serves embedded dog images, renders the page, and returns HTMX table fragments.
+				</p>
+				@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "main.go", Code: readExampleFile("main.go"), MaxHeight: "400px"})
+			</div>
+			<div>
+				<h3 class="text-lg font-semibold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">4. Generate and run</h3>
+				@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: "templ generate\ngo run .\n# Open http://localhost:3000"})
+			</div>
+		</section>
+
+		<div class="pb-8 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+			<p>
+				Starter source:
+				<a href="https://github.com/araihu/goshtoso-getting-started" target="_blank" rel="noopener" class="text-primary dark:text-primary-dark underline underline-offset-2">araihu/goshtoso-getting-started</a>
+			</p>
+		</div>
+	</div>
+}
+
+templ starterRepositoryGitHubIcon() {
+	<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 shrink-0">
+		<path d="M12 0a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.21.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 5.8c1.02 0 2.05.14 3 .4 2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.3c0 .32.22.69.82.57A12 12 0 0 0 12 0Z"></path>
+	</svg>
+}
+
+func starterRepoCode() string {
+	return `git clone https://github.com/araihu/goshtoso-getting-started dog-breeds
+cd dog-breeds
+go run .
+# Open http://localhost:3000`
+}
+
+func manualSetupCode() string {
+	return `mkdir dog-breeds && cd dog-breeds
+go mod init dog-breeds
+go get github.com/a-h/templ@latest
+go get github.com/araihu/goshtoso@latest`
+}
+
+// readExampleFile reads a source file from examples/getting-started/
+func readExampleFile(name string) string {
+	// Try relative to working directory first
+	paths := []string{
+		filepath.Join("examples", "getting-started", name),
+	}
+
+	// Also try relative to this source file
+	_, filename, _, ok := runtime.Caller(0)
+	if ok {
+		root := filepath.Join(filepath.Dir(filename), "..", "..", "..", "..")
+		paths = append(paths, filepath.Join(root, "examples", "getting-started", name))
+	}
+
+	for _, p := range paths {
+		data, err := os.ReadFile(p)
+		if err == nil {
+			return string(data)
+		}
+	}
+
+	return "// Source file not found: " + name
+}

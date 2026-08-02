@@ -1,3 +1,5 @@
+//go:build e2e && (full || structuredinput)
+
 package e2e
 
 import (

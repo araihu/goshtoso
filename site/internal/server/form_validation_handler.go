@@ -8,7 +8,7 @@ import (
 	"github.com/araihu/goshtoso/components/form"
 	"github.com/araihu/goshtoso/components/form/validation"
 	"github.com/araihu/goshtoso/components/textinput"
-	"github.com/araihu/goshtoso/site/internal/pages/demo/components"
+	formpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/form"
 )
 
 // takenSlugs simulates a database of existing slugs for the demo
@@ -124,7 +124,7 @@ func validateDemoField(ctx validation.ValidationContext, name string, fg *form.F
 
 func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		_ = components.FormDemoPage().Render(r.Context(), w)
+		_ = formpage.FormDemoPage().Render(r.Context(), w)
 		return
 	}
 
@@ -140,7 +140,7 @@ func (s *Server) handleFormValidation(w http.ResponseWriter, r *http.Request) {
 	if !result.Valid {
 		// Re-render the form section with validation errors
 		w.Header().Set("Content-Type", "text/html")
-		_ = components.FormValidationFormSection(
+		_ = formpage.FormValidationFormSection(
 			def.Fields["name"].FieldGroup,
 			def.Fields["slug"].FieldGroup,
 			def.Fields["email"].FieldGroup,

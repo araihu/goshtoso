@@ -1,3 +1,5 @@
+//go:build e2e && (full || badge)
+
 package e2e
 
 import (

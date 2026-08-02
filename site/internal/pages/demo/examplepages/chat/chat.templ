@@ -1,0 +1,193 @@
+package chatpage
+
+import (
+	"fmt"
+
+	"github.com/araihu/goshtoso/components/avatar"
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/chatbubble"
+	"github.com/araihu/goshtoso/components/textarea"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/site/internal/examples/chat"
+)
+
+// Message is a single rendered chat line. The handler renders it per recipient,
+// setting Mine=true only for the connection that sent it, so own messages are
+// right-aligned server-side — no client JS decides alignment.
+type Message struct {
+	Nick  string
+	Color string
+	Text  string
+	Time  string // "15:04"
+	IsBot bool
+	Mine  bool // true when rendered for the sender's own connection
+}
+
+// OnlineBadge is the live "N online" indicator. Pass oob=true when pushing it as
+// an out-of-band update over the socket; oob=false on first paint inside ChatApp.
+// (A first-paint hx-swap-oob would make htmx try to OOB-swap it with no existing
+// target when ChatApp arrives via a fragment nav — oobErrorNoTarget.)
+templ OnlineBadge(count int, oob bool) {
+	<span
+		id="chat-online"
+		if oob {
+			hx-swap-oob="true"
+		}
+	>
+		@badge.Badge(badge.Config{
+			Label:      fmt.Sprintf("%d online", count),
+			Tone:       badge.ToneSuccess,
+			Appearance: badge.AppearanceSoft,
+		})
+	</span>
+}
+
+// MessageBubble renders one chat line via the chatbubble component. The side is
+// decided server-side per recipient: Sent (right, primary, no name) when the
+// message is the viewer's own, otherwise Received (left, neutral, named). The
+// bot always renders Received with the "info" avatar variant.
+templ MessageBubble(m Message) {
+	{{
+		variant := avatar.Tone(m.Color)
+		side := chatbubble.Received
+		if m.Mine {
+			side = chatbubble.Sent
+		}
+		if m.IsBot {
+			variant = avatar.ToneInfo
+		}
+	}}
+	@chatbubble.ChatBubble(chatbubble.Config{
+		Side:       side,
+		SenderName: m.Nick,
+		Message:    m.Text,
+		Timestamp:  m.Time,
+		ShowAvatar: true,
+		IsBot:      m.IsBot,
+		AvatarTone: variant,
+	})
+}
+
+// MessageFrame is the exact bytes pushed over the socket for one message: the
+// bubble wrapped in an OOB "append to #chat-log" directive so every client's log
+// grows identically.
+templ MessageFrame(m Message) {
+	<div hx-swap-oob="beforeend:#chat-log">
+		@MessageBubble(m)
+	</div>
+}
+
+// PresenceFrame appends a centered in-chat system line (join/left) to #chat-log
+// and pushes an OOB online-count update, in a single socket frame.
+templ PresenceFrame(text string, count int) {
+	<div hx-swap-oob="beforeend:#chat-log">
+		@SystemMessage(text)
+	</div>
+	@OnlineBadge(count, true)
+}
+
+// SystemMessage is a centered, muted notice rendered inline in the chat log
+// (e.g. "Guest-xyz joined"). It carries no data-mine, so it is never aligned.
+templ SystemMessage(text string) {
+	<div class="my-3 flex justify-center">
+		<span class="rounded-full bg-surface-alt px-3 py-1 text-xs text-on-surface-muted dark:bg-surface-dark-alt dark:text-on-surface-dark-muted">{ text }</span>
+	</div>
+}
+
+// ChatApp is the first-paint shell for /examples/chat. me carries the visitor
+// identity from the cookie; the composer's hidden nick/color inputs seed every
+// outgoing frame and are OOB-swapped on rename.
+templ ChatApp(me chat.Identity) {
+	<div id="chat-fragment" class="mx-auto flex h-[78vh] max-w-2xl flex-col overflow-hidden rounded-radius border border-outline bg-surface shadow-sm dark:border-outline-dark dark:bg-surface-dark">
+		<!-- header: identity + presence -->
+		<header class="flex items-center justify-between gap-3 border-b border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+			<div class="flex min-w-0 items-center gap-3">
+				@avatar.Avatar(avatar.Config{Name: me.Nick, Size: avatar.SizeMD, Tone: avatar.Tone(me.Color), Status: avatar.StatusSuccess})
+				<div class="min-w-0 leading-tight">
+					<div id="chat-me" class="truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ me.Nick }</div>
+					<div class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Chatting as you</div>
+				</div>
+			</div>
+			@OnlineBadge(1, false)
+		</header>
+		<!-- rename row (plain hx-post: sets cookie + OOB-swaps hidden inputs) -->
+		<form
+			class="flex items-center gap-2 border-b border-outline px-4 py-2 dark:border-outline-dark"
+			hx-post="/api/examples/chat/rename"
+			hx-swap="none"
+		>
+			<label for="chat-nick-input" class="sr-only">Display name</label>
+			<div class="flex-1">
+				@textinput.TextInput(textinput.Config{
+					ID:          "chat-nick-input",
+					Name:        "nick",
+					Placeholder: "Change your name",
+					MaxLength:   24,
+					Value:       me.Nick,
+				})
+			</div>
+			@button.Button(button.WithType("submit"), button.WithTone(button.ToneSecondary), button.WithSize(button.SizeSmall)) {
+				Rename
+			}
+		</form>
+		<!-- message log -->
+		<div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages" class="flex-1 overflow-y-auto px-4 pb-4 pt-1"></div>
+		<!-- composer: ws-send form. The hx-ext="ws" wrapper must contain the form.
+		     onsubmit="return false" guards the htmx ws-send rebind race: on a
+		     fragment-nav swap htmx binds ws-send a beat after the form lands in the
+		     DOM. A submit fired in that window would otherwise fall through to the
+		     browser's NATIVE submit — and because this form has no action, that
+		     navigates to the current URL (?message=… as GET), reloading the page and
+		     wiping the composer. The guard makes a race-lost click a harmless no-op
+		     (htmx's own addEventListener handler still fires once bound), so the send
+		     simply succeeds on the next attempt with the typed text intact. -->
+		<div hx-ext="ws" ws-connect="/api/examples/chat/ws" class="border-t border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+			<form ws-send onsubmit="return false" class="flex flex-col gap-2">
+				@chatHidden("nick", me.Nick)
+				@chatHidden("color", me.Color)
+				<div class="flex items-end gap-2">
+					<label for="chat-message" class="sr-only">Message</label>
+					<div class="flex-1">
+						@textarea.Textarea(textarea.Config{
+							ID:          "chat-message",
+							Name:        "message",
+							Placeholder: "Type a message…",
+							Rows:        1,
+							// Enter sends (requestSubmit fires htmx's ws-send submit
+							// listener; the form's onsubmit="return false" only blocks
+							// the NATIVE submit). Shift+Enter falls through to insert a
+							// newline. Handler string carries no quotes or && so templ's
+							// attribute escaping cannot corrupt it.
+							InputAttrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
+						})
+					</div>
+					@button.Button(button.WithType("submit")) {
+						Send
+					}
+				</div>
+				@toggle.Toggle(toggle.Config{
+					ID:    "chat-eliza",
+					Name:  "eliza",
+					Value: "on",
+					Label: "ELIZA bot replies",
+				})
+			</form>
+		</div>
+	</div>
+}
+
+// chatHidden is a hidden input carrying identity into every ws-send frame. It is
+// id'd so the rename handler can OOB-swap its value.
+templ chatHidden(name, value string) {
+	<input type="hidden" id={ "chat-hidden-" + name } name={ name } value={ value }/>
+}
+
+// RenameResult is the OOB response to a rename: updates the visible nick and both
+// hidden composer inputs so the next message carries the new identity.
+templ RenameResult(me chat.Identity) {
+	<div id="chat-me" hx-swap-oob="true" class="truncate text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ me.Nick }</div>
+	<input type="hidden" id="chat-hidden-nick" hx-swap-oob="true" name="nick" value={ me.Nick }/>
+	<input type="hidden" id="chat-hidden-color" hx-swap-oob="true" name="color" value={ me.Color }/>
+}

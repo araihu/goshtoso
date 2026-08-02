@@ -1,3 +1,5 @@
+//go:build e2e && (full || tabs)
+
 package e2e
 
 import (

@@ -1,3 +1,5 @@
+//go:build e2e && (full || radio)
+
 package e2e
 
 import (
@@ -7,31 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-const radioDemoURL = "/components/radio"
-
-// navigateToRadioDemo loads the radio component demo page and waits for it to render.
-func navigateToRadioDemo(t *testing.T, page playwright.Page) {
-	t.Helper()
-	_, err := page.Goto(baseURL+radioDemoURL, playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
-		Timeout:   playwright.Float(5000),
-	})
-	require.NoError(t, err)
-	require.NoError(t, page.Locator("[data-testid='radio-default-group']").WaitFor(
-		playwright.LocatorWaitForOptions{
-			State:   playwright.WaitForSelectorStateAttached,
-			Timeout: playwright.Float(3000),
-		},
-	))
-	// Wait for Alpine so xbind / x-on work.
-	_, err = page.WaitForFunction(
-		`() => typeof window.Alpine !== 'undefined'`,
-		nil,
-		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
-	)
-	require.NoError(t, err)
-}
 
 // radioIsChecked returns the live `checked` property of a radio input.
 func radioIsChecked(t *testing.T, page playwright.Page, selector string) bool {

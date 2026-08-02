@@ -1,0 +1,147 @@
+package actiongrouppage
+
+import (
+	"github.com/araihu/goshtoso/components/actiongroup"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// ActionGroupDemoPage renders the Action Group component demo.
+templ ActionGroupDemoPage() {
+	@demo.Layout("Action Group", "action-group", actionGroupDemoContent())
+}
+
+templ actionGroupDemoContent() {
+	<div id="action-group-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Action Group",
+				Description: "Keeps the primary action visible and measures its container so trailing, lower-priority actions move into one flat overflow Dropdown only when needed.",
+			},
+			actionGroupResponsivePreview(),
+			`@actiongroup.ActionGroup(actiongroup.Config{
+    Label:   "Release actions",
+    Primary: actiongroup.Action{Label: "Publish", Href: "/releases/publish"},
+    Secondary: []actiongroup.Action{
+        {Label: "Preview", Href: "/preview"},
+        {Label: "Schedule", HTMX: &dropdown.HTMXConfig{Post: "/releases/schedule", Target: "#release-result", Swap: "innerHTML"}},
+        // Optional local enhancement remains available after declarative action setup.
+        {Label: "Notify", OnClick: "notify()"},
+        {Label: "Archive", Disabled: true, Tooltip: "Published releases cannot be archived"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Stacked actions flatten into overflow",
+				Description: "Items renders one ordinary flat Dropdown while space permits. When constrained, its child items become a labeled section in the shared overflow Dropdown; Goshtoso never creates nested menus.",
+			},
+			actionGroupStackedPreview(),
+			`@actiongroup.ActionGroup(actiongroup.Config{
+    Label:   "Chart actions",
+    Primary: actiongroup.Action{Label: "Refresh", Href: "/charts/current"},
+    Secondary: []actiongroup.Action{
+        {
+            Label: "Export",
+            Items: []actiongroup.Action{
+                {Label: "PNG", Icon: imageIcon(), HTMX: &dropdown.HTMXConfig{Get: "/charts/export.png", Target: "#export-result", Swap: "innerHTML"}},
+                {Label: "CSV", Icon: tableIcon(), OnClick: "exportCSV()"},
+            },
+        },
+        {Label: "Duplicate", OnClick: "duplicateChart()"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Priority follows source order",
+				Description: "Secondary actions are ordered highest to lowest priority. The runtime keeps leading actions inline and moves trailing actions first.",
+			},
+			actionGroupPriorityPreview(),
+			`// Save remains primary. Edit outranks Share, and Share outranks Delete.
+@actiongroup.ActionGroup(actiongroup.Config{
+    Primary: actiongroup.Action{Label: "Save"},
+    Secondary: []actiongroup.Action{
+        {Label: "Edit"},
+        {Label: "Share"},
+        {Label: "Delete", Danger: true},
+    },
+})`,
+		)
+	</div>
+}
+
+templ actionGroupResponsivePreview() {
+	<div id="action-group-responsive" class="w-full" x-data="actionGroupDemo">
+		@actiongroup.ActionGroup(actiongroup.Config{
+			Label: "Release actions",
+			Primary: actiongroup.Action{
+				Label:   "Publish",
+				OnClick: "lastAction = 'publish'",
+				ID:      "action-group-publish",
+			},
+			Secondary: []actiongroup.Action{
+				{Label: "Preview", Href: "#preview", ID: "action-group-preview"},
+				{Label: "Schedule", OnClick: "lastAction = 'schedule'", ID: "action-group-schedule"},
+				{Label: "Archive", Disabled: true, Tooltip: "Published releases cannot be archived", ID: "action-group-archive"},
+			},
+		})
+		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted" aria-live="polite">
+			Last action: <span x-text="lastAction"></span>
+		</p>
+	</div>
+}
+
+templ actionGroupStackedPreview() {
+	<div id="action-group-stacked" class="w-80 max-w-full" x-data="actionGroupDemo">
+		@actiongroup.ActionGroup(actiongroup.Config{
+			Label: "Chart actions",
+			Primary: actiongroup.Action{
+				Label:   "Refresh",
+				OnClick: "lastAction = 'refresh'",
+				ID:      "action-group-refresh",
+			},
+			Secondary: []actiongroup.Action{
+				{
+					Label: "Export",
+					ID:    "action-group-export",
+					Items: []actiongroup.Action{
+						{Label: "PNG", Icon: actionGroupImageIcon(), OnClick: "lastAction = 'png'", ID: "action-group-export-png"},
+						{Label: "CSV", Icon: actionGroupTableIcon(), OnClick: "lastAction = 'csv'", ID: "action-group-export-csv"},
+					},
+				},
+				{Label: "Duplicate", OnClick: "lastAction = 'duplicate'", ID: "action-group-duplicate"},
+			},
+		})
+		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted" aria-live="polite">
+			Last action: <span x-text="lastAction"></span>
+		</p>
+	</div>
+}
+
+templ actionGroupPriorityPreview() {
+	<div id="action-group-priority" class="w-96 max-w-full">
+		@actiongroup.ActionGroup(actiongroup.Config{
+			Label:   "Document actions",
+			Primary: actiongroup.Action{Label: "Save", ID: "action-group-save"},
+			Secondary: []actiongroup.Action{
+				{Label: "Edit", ID: "action-group-edit"},
+				{Label: "Share", ID: "action-group-share"},
+				{Label: "Delete", Danger: true, ID: "action-group-delete"},
+			},
+		})
+	</div>
+}
+
+templ actionGroupImageIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-4">
+		<path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6Zm3 12.75h15l-4.72-4.72a.75.75 0 0 0-1.06 0l-1.47 1.47-3.22-3.22a.75.75 0 0 0-1.06 0L4.5 15.75v3Zm3-9.75a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ actionGroupTableIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-4">
+		<path fill-rule="evenodd" d="M3.75 3A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21h16.5a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 20.25 3H3.75ZM3 8.25h5.25V4.5h-4.5A.75.75 0 0 0 3 5.25v3Zm6.75 0h4.5V4.5h-4.5v3.75Zm6 0H21v-3a.75.75 0 0 0-.75-.75h-4.5v3.75ZM21 9.75h-5.25v3.75H21V9.75Zm0 5.25h-5.25v4.5h4.5a.75.75 0 0 0 .75-.75V15Zm-6.75 4.5V15h-4.5v4.5h4.5Zm-6 0V15H3v3.75c0 .414.336.75.75.75h4.5ZM3 13.5h5.25V9.75H3v3.75Zm6.75 0h4.5V9.75h-4.5v3.75Z" clip-rule="evenodd"></path>
+	</svg>
+}

@@ -1,3 +1,5 @@
+//go:build e2e && (full || pageheader)
+
 package e2e
 
 import (
@@ -26,11 +28,4 @@ func TestPageHeaderTitleHooksStayOnTheHeading(t *testing.T) {
 	assert.Contains(t, classes, "font-mono")
 	assert.Contains(t, classes, "tracking-tight")
 	assert.Equal(t, 0, mustCount(t, page.Locator(`#page-header-custom-title header[data-heading-voice]`)))
-}
-
-func mustCount(t *testing.T, locator playwright.Locator) int {
-	t.Helper()
-	count, err := locator.Count()
-	require.NoError(t, err)
-	return count
 }

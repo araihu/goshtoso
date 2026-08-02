@@ -1,3 +1,5 @@
+//go:build e2e && (full || example_chat)
+
 package e2e
 
 import (

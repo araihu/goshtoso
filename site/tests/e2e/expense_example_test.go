@@ -1,3 +1,5 @@
+//go:build e2e && (full || example_expense)
+
 package e2e
 
 import (

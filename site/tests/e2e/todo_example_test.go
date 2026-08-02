@@ -1,3 +1,5 @@
+//go:build e2e && (full || example_todo)
+
 package e2e
 
 import (
@@ -7,23 +9,6 @@ import (
 	"github.com/playwright-community/playwright-go"
 	"github.com/stretchr/testify/require"
 )
-
-// newIsolatedPage creates a new browser context (fresh cookies) and page for
-// tests that rely on cookie-backed state (like the todo app). Each call returns
-// both the context and page; the caller must close the context in t.Cleanup.
-func newIsolatedPage(t *testing.T) playwright.Page {
-	t.Helper()
-	ctx, err := sharedBrowser.NewContext()
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = ctx.Close() })
-
-	page, err := ctx.NewPage()
-	require.NoError(t, err)
-	page.SetDefaultTimeout(3000)
-	page.SetDefaultNavigationTimeout(5000)
-	t.Cleanup(func() { _ = page.Close() })
-	return page
-}
 
 // addTodo fills the add form and submits, waiting for the row to appear.
 func addTodo(t *testing.T, page playwright.Page, title string) {

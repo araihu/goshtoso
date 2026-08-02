@@ -1,0 +1,91 @@
+package skeletonpage
+
+import (
+	"github.com/araihu/goshtoso/components/skeleton"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// SkeletonDemoPage renders the Skeleton component demo.
+templ SkeletonDemoPage() {
+	@demo.Layout("Skeleton", "skeleton", skeletonDemoContent())
+}
+
+templ skeletonDemoContent() {
+	<div id="skeleton-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Skeleton",
+				Description: "Represent loading structure with accessible text, reduced-motion support, and predictable text placeholders.",
+			},
+			skeletonDefaultPreview(),
+			`@skeleton.Skeleton(skeleton.Config{
+    Label: "Loading incidents",
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Content shapes",
+				Description: "Use rectangle for panels and circle for avatar or identity placeholders.",
+			},
+			skeletonShapesPreview(),
+			`@skeleton.Skeleton(skeleton.Config{
+    Shape: skeleton.ShapeRectangle,
+    Label: "Loading chart",
+})
+@skeleton.Skeleton(skeleton.Config{
+    Shape: skeleton.ShapeCircle,
+    Count: 3,
+    Label: "Loading owners",
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Static",
+				Description: "Set Static when a placeholder should preserve loading semantics without pulse animation.",
+			},
+			skeletonStaticPreview(),
+			`@skeleton.Skeleton(skeleton.Config{
+    Count:  2,
+    Label:  "Loading summary",
+    Static: true,
+})`,
+		)
+	</div>
+}
+
+templ skeletonDefaultPreview() {
+	<div id="skeleton-default" class="w-full max-w-2xl">
+		<p class="mb-3 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Incident list</p>
+		@skeleton.Skeleton(skeleton.Config{Label: "Loading incidents"})
+	</div>
+}
+
+templ skeletonShapesPreview() {
+	<div id="skeleton-shapes" class="grid w-full gap-6 md:grid-cols-2">
+		<div>
+			<p class="mb-3 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Chart</p>
+			@skeleton.Skeleton(skeleton.Config{
+				Shape: skeleton.ShapeRectangle,
+				Label: "Loading chart",
+			})
+		</div>
+		<div>
+			<p class="mb-3 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Owners</p>
+			@skeleton.Skeleton(skeleton.Config{
+				Shape: skeleton.ShapeCircle,
+				Count: 3,
+				Label: "Loading owners",
+			})
+		</div>
+	</div>
+}
+
+templ skeletonStaticPreview() {
+	<div id="skeleton-static" class="w-full max-w-2xl">
+		@skeleton.Skeleton(skeleton.Config{
+			Count:  2,
+			Label:  "Loading summary",
+			Static: true,
+		})
+	</div>
+}

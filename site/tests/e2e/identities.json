@@ -1,0 +1,920 @@
+{
+  "identities": [
+    {
+      "name": "accordion",
+      "files": [
+        "accordion_coverage_test.go",
+        "accordion_test.go"
+      ],
+      "tests": [
+        "TestAccordionCoverageDemo",
+        "TestAccordion_Accessibility",
+        "TestAccordion_AllThemes",
+        "TestAccordion_CSSClassParity",
+        "TestAccordion_GoshtosoComponent",
+        "TestAccordion_Variants",
+        "TestAccordion_VisualParity_99_99"
+      ]
+    },
+    {
+      "name": "actiongroup",
+      "files": [
+        "actiongroup_test.go",
+        "composition_components_test.go"
+      ],
+      "tests": [
+        "TestActionGroupPartialCollapseKeyboardNavigation",
+        "TestActionGroupResponsiveTransformAndAccessibility",
+        "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
+        "TestCompositionComponentDemosRenderPublicContracts"
+      ]
+    },
+    {
+      "name": "alert",
+      "files": [
+        "alert_coverage_test.go",
+        "alert_test.go"
+      ],
+      "tests": [
+        "TestAlertComponentDemo",
+        "TestAlertCoverageDemo"
+      ]
+    },
+    {
+      "name": "appshell",
+      "files": [
+        "composition_components_test.go"
+      ],
+      "tests": [
+        "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
+        "TestCompositionComponentDemosRenderPublicContracts"
+      ]
+    },
+    {
+      "name": "avatar",
+      "files": [
+        "avatar_test.go"
+      ],
+      "tests": [
+        "TestAvatar_CachedReload",
+        "TestAvatar_FragmentNav_ShowcaseRegistered",
+        "TestAvatar_ImageError_FallsBackToInitials",
+        "TestAvatar_ImageLoaded_SpinnerGoneInitialsHidden",
+        "TestAvatar_RadiusSelector_DrivesSquareAvatar",
+        "TestAvatar_SizeSelector_DrivesReactiveAvatars",
+        "TestAvatar_SizeSelector_FixturesUnchanged",
+        "TestAvatar_SizeSelector_RendersSixPills",
+        "TestAvatar_StackedAvatars_RenderOverlappedGroup"
+      ]
+    },
+    {
+      "name": "badge",
+      "files": [
+        "badge_coverage_test.go",
+        "badge_test.go"
+      ],
+      "tests": [
+        "TestBadgeComponentDemo",
+        "TestBadgeCoverageDemo"
+      ]
+    },
+    {
+      "name": "banner",
+      "files": [
+        "banner_coverage_test.go",
+        "banner_test.go"
+      ],
+      "tests": [
+        "TestBannerComponentDemoVariants",
+        "TestBannerCoverageDemo"
+      ]
+    },
+    {
+      "name": "breadcrumbs",
+      "files": [
+        "breadcrumbs_coverage_test.go",
+        "breadcrumbs_test.go"
+      ],
+      "tests": [
+        "TestBreadcrumbsComponentDemo",
+        "TestBreadcrumbsCoverageDemo",
+        "TestBreadcrumbsCoverageFragmentNavigation"
+      ]
+    },
+    {
+      "name": "button",
+      "files": [
+        "button_coverage_test.go",
+        "button_test.go"
+      ],
+      "tests": [
+        "TestButtonCoverageDemo",
+        "TestButton_GoshtosoComponent"
+      ]
+    },
+    {
+      "name": "card",
+      "files": [
+        "card_coverage_test.go",
+        "card_test.go"
+      ],
+      "tests": [
+        "TestCardComponentDemo",
+        "TestCardCoverageDarkMode",
+        "TestCardCoverageFragmentNav",
+        "TestCardCoverageHorizontalLayout"
+      ]
+    },
+    {
+      "name": "carousel",
+      "files": [
+        "carousel_coverage_test.go",
+        "carousel_hardening_test.go",
+        "carousel_test.go"
+      ],
+      "tests": [
+        "TestCarouselCoverageDemoVariants",
+        "TestCarouselRejectsExecutableCTAHref",
+        "TestCarousel_AutoplayCanBePaused",
+        "TestCarousel_DefaultNavigationAndIndicators",
+        "TestCarousel_HTMXLoadedSlidesRemainInteractive"
+      ]
+    },
+    {
+      "name": "chatbubble",
+      "files": [
+        "chatbubble_test.go"
+      ],
+      "tests": [
+        "TestChatBubbleComponentDemoVariants"
+      ]
+    },
+    {
+      "name": "checkbox",
+      "files": [
+        "checkbox_coverage_test.go",
+        "checkbox_test.go"
+      ],
+      "tests": [
+        "TestCheckbox",
+        "TestCheckboxCoverageDemo"
+      ]
+    },
+    {
+      "name": "codeblock",
+      "files": [
+        "codeblock_coverage_test.go",
+        "codeblock_test.go"
+      ],
+      "tests": [
+        "TestCodeBlock_ChromaHighlighting",
+        "TestCodeBlock_DirectDemoPage",
+        "TestCodeblockCoverageDemo"
+      ]
+    },
+    {
+      "name": "combobox",
+      "files": [
+        "combobox_bfcache_test.go",
+        "combobox_client_test.go",
+        "combobox_coverage_test.go",
+        "combobox_swap_test.go"
+      ],
+      "tests": [
+        "TestComboboxCoverage_CascadingProviderReloadsClusterOptions",
+        "TestComboboxCoverage_Demo",
+        "TestComboboxCoverage_KeyboardAndChevron",
+        "TestComboboxCoverage_ServerLazySearchAndToggle",
+        "TestCombobox_BFCache_RestoresSelection",
+        "TestCombobox_ClientMode_MultiToggleAndClear",
+        "TestCombobox_ClientMode_NoHTTPOnToggle",
+        "TestCombobox_Toggle_PreservesIsOpen"
+      ]
+    },
+    {
+      "name": "drawer",
+      "files": [
+        "drawer_coverage_test.go",
+        "drawer_test.go"
+      ],
+      "tests": [
+        "TestDrawerCoverageDemo",
+        "TestDrawerCoverageDispatchIgnoresMismatchedIDs",
+        "TestDrawerDemoPage"
+      ]
+    },
+    {
+      "name": "dropdown",
+      "files": [
+        "dropdown_coverage_test.go",
+        "dropdown_test.go"
+      ],
+      "tests": [
+        "TestDropdownCoverageDemo",
+        "TestDropdown_ActionsMenu",
+        "TestDropdown_ClickVariant",
+        "TestDropdown_ContextMenu",
+        "TestDropdown_PageLoads",
+        "TestDropdown_WithDividers",
+        "TestDropdown_WithIcons"
+      ]
+    },
+    {
+      "name": "emptystate",
+      "files": [
+        "composition_components_test.go"
+      ],
+      "tests": [
+        "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
+        "TestCompositionComponentDemosRenderPublicContracts"
+      ]
+    },
+    {
+      "name": "fileinput",
+      "files": [
+        "fileinput_coverage_test.go",
+        "fileinput_test.go"
+      ],
+      "tests": [
+        "TestFileInputFragmentNavNoErrors",
+        "TestFileInputVariants",
+        "TestFileinputCoverageDemo"
+      ]
+    },
+    {
+      "name": "form",
+      "files": [
+        "form_coverage_test.go",
+        "form_demo_test.go",
+        "form_hardening_test.go",
+        "form_validation_test.go"
+      ],
+      "tests": [
+        "TestFormCoverageDemo",
+        "TestFormDemoCollapsibleComboboxEscapesAccordionClip",
+        "TestFormDemoExternalSubmitUsesModalConfirmation",
+        "TestFormDemoStickyFooterKeepsMobileActionsAndLastControlUsable",
+        "TestFormNavigationSinksRejectExecutableSchemes",
+        "TestFormValidation_Dependency_SlugAutoUpdates",
+        "TestFormValidation_EmailInvalid",
+        "TestFormValidation_ErrorClearing",
+        "TestFormValidation_FieldChange_NameTooShort",
+        "TestFormValidation_FieldChange_NameValid",
+        "TestFormValidation_MergedIntoFormPage",
+        "TestFormValidation_SlugTaken",
+        "TestFormValidation_SubmitEmpty",
+        "TestFormValidation_SubmitValid",
+        "TestFormValidation_ValuePreservation"
+      ]
+    },
+    {
+      "name": "head",
+      "files": [
+        "head_coverage_test.go",
+        "head_test.go"
+      ],
+      "tests": [
+        "TestDependenciesCDNFailureLoadsOrderedLocalFallback",
+        "TestDependenciesDemoPage",
+        "TestDependenciesLocalRuntimeBootsReusableComponentBundle",
+        "TestDependenciesPageNoConsoleErrors",
+        "TestHeadAssetContractServed"
+      ]
+    },
+    {
+      "name": "icon",
+      "files": [
+        "icon_test.go"
+      ],
+      "tests": [
+        "TestIconCatalogSpriteWorkbench"
+      ]
+    },
+    {
+      "name": "kbd",
+      "files": [
+        "kbd_coverage_test.go",
+        "kbd_test.go"
+      ],
+      "tests": [
+        "TestKbdComponentDemoVariants",
+        "TestKbdCoverageDemo",
+        "TestKbdCoverageFragmentNavigation"
+      ]
+    },
+    {
+      "name": "link",
+      "files": [
+        "link_coverage_test.go",
+        "link_test.go"
+      ],
+      "tests": [
+        "TestLinkComponentDemo",
+        "TestLinkCoverageDemo"
+      ]
+    },
+    {
+      "name": "modal",
+      "files": [
+        "modal_coverage_test.go",
+        "modal_test.go"
+      ],
+      "tests": [
+        "TestModalCoverageDemo",
+        "TestModal_DefaultDialogOpensAndDismisses",
+        "TestModal_HTMXPrimaryActionClosesDialogAndSwapsResult",
+        "TestModal_JSActionRunsAfterConfirm"
+      ]
+    },
+    {
+      "name": "navbar",
+      "files": [
+        "navbar_coverage_test.go",
+        "navbar_test.go"
+      ],
+      "tests": [
+        "TestNavbarCoverageDemo",
+        "TestNavbar_AvatarDropdown",
+        "TestNavbar_DesktopLinksVisible",
+        "TestNavbar_MobileMenu"
+      ]
+    },
+    {
+      "name": "pageheader",
+      "files": [
+        "composition_components_test.go",
+        "pageheader_test.go"
+      ],
+      "tests": [
+        "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
+        "TestCompositionComponentDemosRenderPublicContracts",
+        "TestPageHeaderTitleHooksStayOnTheHeading"
+      ]
+    },
+    {
+      "name": "pagination",
+      "files": [
+        "pagination_coverage_test.go",
+        "pagination_test.go"
+      ],
+      "tests": [
+        "TestPaginationCoverageDemo",
+        "TestPagination_DeepLinkKeepsTOCRailAttachedToContent",
+        "TestPagination_DocumentedHTMXVariantExposesHTMXAttributes",
+        "TestPagination_EllipsisMiddleShowsCurrentAndCollapsedRanges",
+        "TestPagination_FirstPageDisablesPreviousAndKeepsNextAvailable"
+      ]
+    },
+    {
+      "name": "palette",
+      "files": [
+        "palette_coverage_test.go",
+        "palette_test.go"
+      ],
+      "tests": [
+        "TestPalette_HasSingleSelectedPreview",
+        "TestPalette_HexInputCommitsValidTyping",
+        "TestPalette_HexInputRejectsInvalidValues",
+        "TestPalette_HoverShowsLabel",
+        "TestPalette_InShell_HexInputUpdatesTriggerPreview",
+        "TestPalette_InShell_OpensPicksCloses",
+        "TestPalette_NoConsoleErrors",
+        "TestPalette_PickSetsModel",
+        "TestPalette_PickUpdatesHexControls",
+        "TestPalette_ResetClearsModel"
+      ]
+    },
+    {
+      "name": "panel",
+      "files": [
+        "composition_components_test.go"
+      ],
+      "tests": [
+        "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
+        "TestCompositionComponentDemosRenderPublicContracts"
+      ]
+    },
+    {
+      "name": "radio",
+      "files": [
+        "radio_coverage_test.go",
+        "radio_test.go"
+      ],
+      "tests": [
+        "TestRadioCoverage_FragmentNavNoConsoleErrors",
+        "TestRadioCoverage_TriggerMarkupClean",
+        "TestRadio_AlpinePrimitive",
+        "TestRadio_ColorVariants",
+        "TestRadio_DefaultChecks",
+        "TestRadio_Disabled",
+        "TestRadio_HTMXPrimitive",
+        "TestRadio_HybridPrimitive",
+        "TestRadio_SegmentedContainer",
+        "TestRadio_SizeSelector"
+      ]
+    },
+    {
+      "name": "range",
+      "files": [
+        "range_coverage_test.go",
+        "range_test.go"
+      ],
+      "tests": [
+        "TestRangeCoverageDemo",
+        "TestRange_DefaultAttributes",
+        "TestRange_Disabled",
+        "TestRange_LiveValueUpdates",
+        "TestRange_TicksAndIconsRender"
+      ]
+    },
+    {
+      "name": "rating",
+      "files": [
+        "rating_coverage_test.go",
+        "rating_test.go"
+      ],
+      "tests": [
+        "TestRating_DefaultSelectionUpdates",
+        "TestRating_DemoLoadsWithoutConsoleErrors",
+        "TestRating_DisabledAndDisplay",
+        "TestRating_EmojiSelectionUpdates",
+        "TestRating_KeyboardArrowSelects",
+        "TestRating_LiveStarBindingHighlightsCumulative",
+        "TestRating_SizesRenderDistinctIconScales"
+      ]
+    },
+    {
+      "name": "schemaform",
+      "files": [
+        "schemaform_coverage_test.go",
+        "schemaform_test.go"
+      ],
+      "tests": [
+        "TestSchemaFormCoverageDemo",
+        "TestSchemaFormDemoPage"
+      ]
+    },
+    {
+      "name": "search",
+      "files": [
+        "search_coverage_test.go",
+        "search_test.go"
+      ],
+      "tests": [
+        "TestSearchCoverageClickOutsideCloses",
+        "TestSearchCoverageEnterNavigates",
+        "TestSearchCoverageKeyboardNavigation",
+        "TestSearch_FuzzyModeFiltersDOMItems",
+        "TestSearch_ItemsURLFetchesAndFilters",
+        "TestSearch_PageLoadsAndFilters",
+        "TestSidebarSearch_DoesNotOpenDuringSidebarNavigation",
+        "TestSidebarSearch_GlobalShortcutOnlyOpensDocsSearch",
+        "TestSidebarSearch_UsesKbdAndNavigates"
+      ]
+    },
+    {
+      "name": "select",
+      "files": [
+        "select_coverage_test.go",
+        "select_readonly_test.go",
+        "select_test.go"
+      ],
+      "tests": [
+        "TestSelectClickOutsideCloses",
+        "TestSelectDependentBinding",
+        "TestSelectExternalDraftRestoration",
+        "TestSelectKeyboardAdvancesFromSelectedValue",
+        "TestSelectKeyboardMovesActiveOption",
+        "TestSelectKeyboardOpenClose",
+        "TestSelectOpenAndSelect",
+        "TestSelect_CountrySelect",
+        "TestSelect_DefaultRendering",
+        "TestSelect_DisabledState",
+        "TestSelect_ReadonlyDisabledWithHiddenInput",
+        "TestSelect_ValidationStates"
+      ]
+    },
+    {
+      "name": "sidebar",
+      "files": [
+        "sidebar_coverage_test.go",
+        "sidebar_test.go"
+      ],
+      "tests": [
+        "TestSidebarComponentDemoVariants",
+        "TestSidebarCoverageDemo",
+        "TestSidebar_AllComponentsPresent",
+        "TestSidebar_ExamplesTopItemNavigatesToOverview",
+        "TestSidebar_LinksNavigate"
+      ]
+    },
+    {
+      "name": "skeleton",
+      "files": [
+        "composition_components_test.go"
+      ],
+      "tests": [
+        "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
+        "TestCompositionComponentDemosRenderPublicContracts"
+      ]
+    },
+    {
+      "name": "spinner",
+      "files": [
+        "spinner_coverage_test.go",
+        "spinner_test.go"
+      ],
+      "tests": [
+        "TestSpinnerComponentDemoVariants",
+        "TestSpinnerCoverageDemo"
+      ]
+    },
+    {
+      "name": "steps",
+      "files": [
+        "steps_coverage_test.go",
+        "steps_test.go"
+      ],
+      "tests": [
+        "TestStepsCoverageDarkMode",
+        "TestStepsCoverageDemo",
+        "TestStepsCoverageOrientationClasses",
+        "TestSteps_HTMXFlowProgressesAndRegresses"
+      ]
+    },
+    {
+      "name": "structuredinput",
+      "files": [
+        "structuredinput_coverage_test.go",
+        "structuredinput_test.go"
+      ],
+      "tests": [
+        "TestStructuredInputCoverageDemo",
+        "TestStructuredInput_AddAndRemoveMetadataRows",
+        "TestStructuredInput_SelectColumnDefaults",
+        "TestStructuredInput_SelectColumnSeparators"
+      ]
+    },
+    {
+      "name": "table",
+      "files": [
+        "table_coverage_test.go",
+        "table_filter_inline_test.go",
+        "table_filter_test.go",
+        "table_hardening_test.go",
+        "table_htmx_test.go",
+        "table_pagination_nav_test.go",
+        "table_test.go"
+      ],
+      "tests": [
+        "TestTableCheckboxSelection",
+        "TestTableCoverageDemo",
+        "TestTableExpandableRowIDEscapesAlpineExpressions",
+        "TestTableFilter",
+        "TestTableFilter_InlineVariant",
+        "TestTableHTMX_BrowserInfiniteScroll",
+        "TestTableHTMX_BrowserLazyLoad",
+        "TestTableHTMX_BrowserPagination",
+        "TestTableHTMX_BrowserSorting",
+        "TestTableHTMX_DataIntegrity",
+        "TestTableHTMX_EdgeCases",
+        "TestTableHTMX_FilterSortPaginate",
+        "TestTableHTMX_Filtering",
+        "TestTableHTMX_Pagination",
+        "TestTableHTMX_ResponseFormat",
+        "TestTableHTMX_SortAndPaginate",
+        "TestTableHTMX_SortCycling",
+        "TestTableHTMX_Sorting",
+        "TestTablePaginationNav",
+        "TestTableStripedAppearance",
+        "TestTable_API",
+        "TestTable_AllVariantsRender",
+        "TestTable_DefaultTable",
+        "TestTable_InfiniteScroll",
+        "TestTable_LazyLoad",
+        "TestTable_Pagination",
+        "TestTable_SortableTable",
+        "TestTable_UsersTable",
+        "TestTable_WithAction"
+      ]
+    },
+    {
+      "name": "tabs",
+      "files": [
+        "tabs_coverage_test.go",
+        "tabs_fragment_lifecycle_test.go",
+        "tabs_test.go"
+      ],
+      "tests": [
+        "TestTabsCoverageBadgeActiveStateSwitches",
+        "TestTabsCoverageDemoNoConsoleErrors",
+        "TestTabs_ClickAndKeyboardSelection",
+        "TestTabs_HTMXFragmentLifecycle",
+        "TestTabs_HTMXLazyPanelLoadsOnlyAfterSelection",
+        "TestTabs_URLHashSyncRestoresAndUpdatesSelection"
+      ]
+    },
+    {
+      "name": "tagslist",
+      "files": [
+        "tagslist_coverage_test.go",
+        "tagslist_test.go"
+      ],
+      "tests": [
+        "TestTagsList_AddTagViaButton",
+        "TestTagsList_AddTagViaEnter",
+        "TestTagsList_CoverageDemoNoConsoleErrors",
+        "TestTagsList_DisabledState",
+        "TestTagsList_EmptyInputDoesNotAdd",
+        "TestTagsList_RemoveChip",
+        "TestTagsList_RendersInitialChips"
+      ]
+    },
+    {
+      "name": "textarea",
+      "files": [
+        "textarea_coverage_test.go",
+        "textarea_test.go"
+      ],
+      "tests": [
+        "TestTextareaCoverageDemo",
+        "TestTextarea_GoshtosoComponent"
+      ]
+    },
+    {
+      "name": "textinput",
+      "files": [
+        "textinput_attrs_test.go",
+        "textinput_coverage_test.go",
+        "textinput_test.go"
+      ],
+      "tests": [
+        "TestTextInput_GoshtosoComponent",
+        "TestTextInput_MaxLengthAttribute",
+        "TestTextInput_PatternAttribute",
+        "TestTextInput_PatternValidationFeedback",
+        "TestTextInput_ReadonlyAttribute",
+        "TestTextinputCoverageDemo"
+      ]
+    },
+    {
+      "name": "toast",
+      "files": [
+        "toast_coverage_test.go",
+        "toast_test.go"
+      ],
+      "tests": [
+        "TestToastCoverageDemo",
+        "TestToastDangerTriggerCreatesToast",
+        "TestToastServerToastsHaveStackGap",
+        "TestToastStaticExamplesStayVisible"
+      ]
+    },
+    {
+      "name": "toggle",
+      "files": [
+        "toggle_test.go"
+      ],
+      "tests": [
+        "TestToggleAttrsPassthrough",
+        "TestToggle_Accessibility",
+        "TestToggle_ColorVariants",
+        "TestToggle_ContainerStyle",
+        "TestToggle_DefaultToggle",
+        "TestToggle_DisabledStates",
+        "TestToggle_PageLoads"
+      ]
+    },
+    {
+      "name": "toolbar",
+      "files": [
+        "composition_components_test.go"
+      ],
+      "tests": [
+        "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
+        "TestCompositionComponentDemosRenderPublicContracts"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "files": [
+        "tooltip_coverage_test.go",
+        "tooltip_test.go"
+      ],
+      "tests": [
+        "TestTooltipCoverageDemo",
+        "TestTooltipCustomButtonTriggerFocusWiring",
+        "TestTooltipCustomTriggerInitializerLifecycle",
+        "TestTooltip_ClickTooltip",
+        "TestTooltip_DefaultHover",
+        "TestTooltip_Positions",
+        "TestTooltip_RichTooltip"
+      ]
+    },
+    {
+      "name": "example_chat",
+      "files": [
+        "chat_test.go"
+      ],
+      "tests": [
+        "TestChat_Broadcast",
+        "TestChat_ComposerClearsOnSend",
+        "TestChat_ElizaDeterministic",
+        "TestChat_EnterToSend",
+        "TestChat_FragmentNavNoErrors",
+        "TestChat_OwnMessageAligned",
+        "TestChat_Presence",
+        "TestChat_Rename",
+        "TestChat_ScrollsToBottomOnSend",
+        "TestChat_SidebarPresent"
+      ]
+    },
+    {
+      "name": "example_expense",
+      "files": [
+        "expense_example_test.go"
+      ],
+      "tests": [
+        "TestExpenseExample_AddAndTotal",
+        "TestExpenseExample_CategoryFilter",
+        "TestExpenseExample_ClearAllModal",
+        "TestExpenseExample_DeleteUndo",
+        "TestExpenseExample_FragmentNavNoErrors",
+        "TestExpenseExample_Pagination",
+        "TestExpenseExample_RejectsBadAmount",
+        "TestExpenseExample_SearchFilter",
+        "TestExpenseExample_SidebarPresent",
+        "TestExpenseExample_ValidSubmitClearsInputs"
+      ]
+    },
+    {
+      "name": "example_logs",
+      "files": [
+        "logs_test.go"
+      ],
+      "tests": [
+        "TestLogFeed_AutoScrollFollowsStream",
+        "TestLogFeed_ClearEmptiesFeed",
+        "TestLogFeed_FilterHidesLowerLevels",
+        "TestLogFeed_FragmentNavNoErrors",
+        "TestLogFeed_PauseStopsAndResumes",
+        "TestLogFeed_SidebarScrollPreservedDuringStream",
+        "TestLogFeed_StatusReachesConnected",
+        "TestLogFeed_StreamsRows"
+      ]
+    },
+    {
+      "name": "example_profile",
+      "files": [
+        "profile_test.go"
+      ],
+      "tests": [
+        "TestProfileAvatarUploadPersists",
+        "TestProfileDarkToggle",
+        "TestProfileFragmentNavNoConsoleErrors",
+        "TestProfileIdentityPersists",
+        "TestProfileOversizeRejected",
+        "TestProfileRemoveModal",
+        "TestProfileThemePicker"
+      ]
+    },
+    {
+      "name": "example_ticker",
+      "files": [
+        "ticker_test.go"
+      ],
+      "tests": [
+        "TestTicker_CardsUpdateLive",
+        "TestTicker_FragmentNavNoErrors",
+        "TestTicker_PauseStopsUpdates",
+        "TestTicker_ProviderBootstrapsFirstPaint",
+        "TestTicker_StreamUpdatesCells",
+        "TestTicker_TableFilterServerSide"
+      ]
+    },
+    {
+      "name": "example_todo",
+      "files": [
+        "todo_example_test.go"
+      ],
+      "tests": [
+        "TestTodoExample_AddAndCount",
+        "TestTodoExample_ClearCompleted",
+        "TestTodoExample_ClearCompletedDisabled",
+        "TestTodoExample_Filters",
+        "TestTodoExample_FragmentNavNoErrors",
+        "TestTodoExample_ReorderButtons",
+        "TestTodoExample_SidebarPresent",
+        "TestTodoExample_ToggleDelete",
+        "TestTodoExample_UndoDelete"
+      ]
+    },
+    {
+      "name": "example_wizard",
+      "files": [
+        "wizard_test.go"
+      ],
+      "tests": [
+        "TestWizard_BackPreservesData",
+        "TestWizard_ForwardPath",
+        "TestWizard_SidebarNavNoErrors",
+        "TestWizard_SidebarPresent",
+        "TestWizard_ValidationBlocks"
+      ]
+    }
+  ],
+  "full_only": {
+    "name": "full_only",
+    "files": [
+      "application_patterns_test.go",
+      "component_docs_smoke_test.go",
+      "component_interaction_contrast_test.go",
+      "components_test.go",
+      "e2e_shutdown_test.go",
+      "getting_started_test.go",
+      "javascript_extraction_batch2_test.go",
+      "javascript_extraction_batch3_lane_f_test.go",
+      "js_extraction_integration_test.go",
+      "landing_test.go",
+      "legal_pages_test.go",
+      "modules_test.go",
+      "page_failures_test.go",
+      "security_attack_surface_test.go",
+      "size_selectors_fragment_test.go",
+      "theme_contrast_test.go",
+      "theme_page_test.go",
+      "theme_test.go"
+    ],
+    "tests": [
+      "TestAPIEndpoints",
+      "TestAccordion_AllVariants",
+      "TestAccordion_ServerLoadedContent",
+      "TestAccordion_StaticContent",
+      "TestAccordion_Visual_Parity",
+      "TestActionGroupFragmentNavigationUsesBundledProvider",
+      "TestAllComponentDocsDirectLoad",
+      "TestAllComponentDocsFragmentNavigation",
+      "TestApplicationPatternsPageAndResponsiveRecipes",
+      "TestApplicationPatternsSearchNavigatesToRecipePage",
+      "TestBrowserStorageNoticeCanDisableDemoCookies",
+      "TestBrowserStorageNoticeOffersChoice",
+      "TestButton_HTMXInteractions",
+      "TestChartsModuleLazyLoadsStaticInteractiveAndThreeD",
+      "TestChartsShowcase_MobileFits",
+      "TestComponentDocsComponentPageSpacing",
+      "TestComponentDocsHTMXProofRejectsFullPageReload",
+      "TestComponentDocsPreserveApplicationHeadAndRuntimeContracts",
+      "TestComponentDocsThemeMatrix",
+      "TestComponent_DarkMode",
+      "TestCoreActionAndHelperContrastAcrossAcceptanceThemes",
+      "TestE2ECoverPkgIncludesServerMainPackage",
+      "TestErrorHandling",
+      "TestFilterIgnorableOnlyDropsIntentionalAvatarFixtureNoise",
+      "TestGettingStarted_StarterRepoAndLiveOutcome",
+      "TestIntegration",
+      "TestJavaScriptBatch2_FirstPaintFactoriesAndDataIntegrity",
+      "TestJavaScriptBatch2_LibraryFactoriesSurviveFragmentNavigation",
+      "TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources",
+      "TestJavaScriptBatch3LaneF_SourceProvidersRunBeforeBundleIntegration",
+      "TestLanding_HeroAndStructure",
+      "TestLanding_NoConsoleErrors",
+      "TestLegalPages_DirectLoad",
+      "TestLegalPages_FooterNav",
+      "TestModulesSidebarAndAppShellsShowcase",
+      "TestPerformance",
+      "TestPrivacyPageExplainsBrowserStorageChoices",
+      "TestSecurityAttackSurfaceSearchAttrsNavigationIsRevalidated",
+      "TestSecurityAttackSurfaceTableFilterKeyDoesNotExecuteScript",
+      "TestSecurityAttackSurfaceTableFilterTargetDoesNotExecuteScript",
+      "TestSecurityAttackSurfaceUnsafeHrefSchemesDoNotExecute",
+      "TestSizeSelector_DirectBadgeMinimalClickKeepsContent",
+      "TestSizeSelectors_FragmentNavigationClicksKeepContent",
+      "TestStopServerUsesShutdownEndpointWhenConfigured",
+      "TestThemeContrastMinimalDarkSmallCopyMeetsAA",
+      "TestThemeContrastResolvesColors",
+      "TestThemePage_BorderRadius_AppliesVar",
+      "TestThemePage_CSSExport_FilterAndMode",
+      "TestThemePage_ColorPalette_BlackWhiteApply",
+      "TestThemePage_ColorPalette_PickAppliesVar",
+      "TestThemePage_ColorPalette_TogglesOpen",
+      "TestThemePage_ContrastMatrix_BaseColorSwitch",
+      "TestThemePage_ContrastMatrix_Renders",
+      "TestThemePage_DarkModeGroup_Visibility",
+      "TestThemePage_FragmentNavBootstrapsData",
+      "TestThemePage_Loads",
+      "TestThemePage_OverridesSurviveReload",
+      "TestThemePage_PaletteVariablesExist",
+      "TestThemePage_ResetAll_ClearsOverrides",
+      "TestThemePage_Showcase_Toggles_Flip",
+      "TestThemePage_Showcase_UpdateBanner_Dismiss",
+      "TestThemePage_ThemeGrid_OnlyOneSelectedCard",
+      "TestThemePage_ThemeGrid_SwitchesTheme",
+      "TestThemePage_Typography_AppliesFontVar",
+      "TestTheme_Classes_Presence",
+      "TestTheme_Colors_VerifyComputedValues",
+      "TestTheme_DarkMode_Toggle",
+      "TestTheme_LockedToAraiHu",
+      "TestWaitForPageSettledCapturesDelayedConsoleError"
+    ]
+  }
+}

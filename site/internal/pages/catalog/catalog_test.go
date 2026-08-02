@@ -7,7 +7,7 @@ import (
 
 	"github.com/araihu/goshtoso/components"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
-	democomponents "github.com/araihu/goshtoso/site/internal/pages/demo/components"
+	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 	"github.com/stretchr/testify/require"
 )
 
@@ -155,15 +155,15 @@ func TestComponentCatalogPathsMatchDemoRegistryExactly(t *testing.T) {
 
 	for _, page := range pages {
 		require.Equalf(t, "/"+page.Key, page.Path, "%s canonical component path", page.Key)
-		entry, ok := democomponents.Demos[page.Key]
+		entry, ok := demoregistry.Lookup(page.Key)
 		require.Truef(t, ok, "missing demo registry entry for %s", page.Key)
 		require.Equalf(t, page.Active, entry.Active, "%s navigation active key", page.Key)
 		require.NotNilf(t, entry.Content, "%s route content", page.Key)
 		catalogKeys = append(catalogKeys, strings.TrimPrefix(page.Path, "/"))
 	}
-	for key := range democomponents.Demos {
-		if strings.HasPrefix(key, "components/") {
-			registryKeys = append(registryKeys, key)
+	for _, meta := range demoregistry.AllPublicMeta() {
+		if strings.HasPrefix(meta.Path, "/components/") {
+			registryKeys = append(registryKeys, strings.TrimPrefix(meta.Path, "/"))
 		}
 	}
 

@@ -1,0 +1,214 @@
+package navbarpage
+
+import (
+	templpkg "github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// NavbarDemoPage renders the Navbar component demo
+templ NavbarDemoPage() {
+	@demo.Layout("Navbar", "navbar", navbarDemoContent())
+}
+
+// navbarDemoContent renders the demo. Each navbar variant lives in its own
+// preview frame followed by its own code block (mirrors
+// penguinui.com/components/navbar). The simple navbar stays first so the e2e
+// .First() selectors keep resolving to it. Wrapped in #navbar-fragment.
+templ navbarDemoContent() {
+	<div id="navbar-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Navbar",
+				Description: "A responsive navigation bar with brand, links, a user-avatar dropdown, a custom right-side slot, and a mobile menu. Built with Alpine.js.",
+			},
+			navbarSimplePreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand: brand(),
+    Links: []navbar.NavLink{
+        {Label: "Products", Href: "#", Active: true},
+        {Label: "Pricing", Href: "#"},
+        {Label: "Blog", Href: "#"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With User Profile",
+				Description: "Pass a User and UserMenu to render an avatar button that opens a dropdown with name, email, and action items.",
+			},
+			navbarWithUserPreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand: brand(),
+    Links: links,
+    User:  &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
+    UserMenu: []navbar.UserMenuItem{
+        {Label: "Dashboard", Href: "#"},
+        {Label: "Sign Out", Href: "#", Danger: true},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Right Slot",
+				Description: "Use Actions with ActionRight to render custom content beside the user avatar.",
+			},
+			navbarWithRightSlotPreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand:     brand(),
+    Actions: []navbar.ActionItem{{Content: darkModeToggle(), Position: navbar.ActionRight}},
+    User:      &navbar.UserProfile{Name: "Alice Brown", Email: "alice.brown@example.com"},
+    UserMenu:  menu,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Actions, Avatar, and Link Attributes",
+				Description: "ActionItem.Position controls whether custom controls render after the brand or before the avatar. NavLink.LinkAttrs and UserMenuItem.LinkAttrs carry analytics, HTMX, or test attributes through to the rendered anchors.",
+			},
+			navbarActionsAvatarPreview(),
+			`@navbar.Navbar(navbar.Config{
+    BrandHref: "/docs",
+    Brand:     brand(),
+    Links: []navbar.NavLink{
+        {Label: "Docs", Href: "/docs", Active: true, LinkAttrs: templ.Attributes{"data-track": "nav-docs"}},
+        {Label: "API", Href: "/api"},
+    },
+    Actions: []navbar.ActionItem{
+        {Content: environmentBadge(), Position: navbar.ActionLeft},
+        {Content: commandButton(), Position: navbar.ActionRight},
+    },
+    User: &navbar.UserProfile{
+        Name:   "Maya Chen",
+        Email:  "maya@example.com",
+        Avatar: initialsAvatar("MC"),
+    },
+    UserMenu: []navbar.UserMenuItem{
+        {Label: "Profile", Href: "/profile", Icon: userIcon()},
+        {Label: "Sign Out", Href: "/logout", Danger: true, LinkAttrs: templ.Attributes{"data-method": "post"}},
+    },
+})`,
+		)
+	</div>
+}
+
+// navbarSimplePreview renders the basic navbar (kept first for e2e .First()).
+templ navbarSimplePreview() {
+	<div id="navbar-simple" class="w-full">
+		@navbar.Navbar(navbar.Config{
+			Brand: demoBrandText(),
+			Links: []navbar.NavLink{
+				{Label: "Products", Href: "#", Active: true},
+				{Label: "Pricing", Href: "#"},
+				{Label: "Blog", Href: "#"},
+				{Label: "Login", Href: "#"},
+			},
+		})
+	</div>
+}
+
+// navbarWithUserPreview renders the navbar with a user-profile dropdown.
+templ navbarWithUserPreview() {
+	<div id="navbar-user" class="w-full" style="min-height: 200px;">
+		@navbar.Navbar(navbar.Config{
+			Brand: demoBrandText(),
+			Links: []navbar.NavLink{
+				{Label: "Products", Href: "#", Active: true},
+				{Label: "Pricing", Href: "#"},
+				{Label: "Blog", Href: "#"},
+			},
+			User: &navbar.UserProfile{
+				Name:  "Alice Brown",
+				Email: "alice.brown@example.com",
+			},
+			UserMenu: []navbar.UserMenuItem{
+				{Label: "Dashboard", Href: "#"},
+				{Label: "Settings", Href: "#"},
+				{Label: "Sign Out", Href: "#", Danger: true},
+			},
+		})
+	</div>
+}
+
+// navbarWithRightSlotPreview renders the navbar with a custom right slot.
+templ navbarWithRightSlotPreview() {
+	<div id="navbar-right-slot" class="w-full" style="min-height: 200px;">
+		@navbar.Navbar(navbar.Config{
+			Brand:     demoBrandText(),
+			Actions: []navbar.ActionItem{{Content: demoRightSlot(), Position: navbar.ActionRight}},
+			User: &navbar.UserProfile{
+				Name:  "Alice Brown",
+				Email: "alice.brown@example.com",
+			},
+			UserMenu: []navbar.UserMenuItem{
+				{Label: "Settings", Href: "#"},
+				{Label: "Sign Out", Href: "#", Danger: true},
+			},
+		})
+	</div>
+}
+
+// navbarActionsAvatarPreview renders a mixed action placement and custom avatar example.
+templ navbarActionsAvatarPreview() {
+	<div id="navbar-actions-avatar" class="w-full" style="min-height: 220px;">
+		@navbar.Navbar(navbar.Config{
+			BrandHref: "/docs",
+			Brand:     demoBrandText(),
+			Links: []navbar.NavLink{
+				{Label: "Docs", Href: "/docs", Active: true, LinkAttrs: templpkg.Attributes{"data-track": "nav-docs"}},
+				{Label: "API", Href: "/api", LinkAttrs: templpkg.Attributes{"data-track": "nav-api"}},
+				{Label: "Changelog", Href: "/changelog"},
+			},
+			Actions: []navbar.ActionItem{
+				{Content: demoEnvironmentBadge(), Position: navbar.ActionLeft},
+				{Content: demoCommandButton(), Position: navbar.ActionRight},
+			},
+			User: &navbar.UserProfile{
+				Name:   "Maya Chen",
+				Email:  "maya@example.com",
+				Avatar: demoInitialsAvatar("MC"),
+			},
+			UserMenu: []navbar.UserMenuItem{
+				{Label: "Profile", Href: "/profile", Icon: demoUserMenuIcon()},
+				{Label: "Sign Out", Href: "/logout", Danger: true, LinkAttrs: templpkg.Attributes{"data-method": "post"}},
+			},
+		})
+	</div>
+}
+
+// --- Demo Helpers ---
+
+templ demoBrandText() {
+	<span>Peng<span class="text-primary dark:text-primary-dark">ui</span>n</span>
+}
+
+templ demoRightSlot() {
+	<button class="p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors rounded-radius" aria-label="Toggle dark mode">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="h-5 w-5">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>
+		</svg>
+	</button>
+}
+
+templ demoEnvironmentBadge() {
+	<span class="rounded-full border border-outline px-2.5 py-1 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">Prod</span>
+}
+
+templ demoCommandButton() {
+	<button class="rounded-radius border border-outline px-2.5 py-1.5 text-xs font-medium text-on-surface transition hover:bg-surface-dark/5 dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface/5">
+		Ctrl K
+	</button>
+}
+
+templ demoInitialsAvatar(initials string) {
+	<span class="inline-flex size-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-on-primary dark:bg-primary-dark dark:text-on-primary-dark">{ initials }</span>
+}
+
+templ demoUserMenuIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-4" aria-hidden="true">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a8.25 8.25 0 0 1 15 0"></path>
+	</svg>
+}

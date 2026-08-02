@@ -1,3 +1,5 @@
+//go:build e2e && (full || appshell || pageheader || toolbar || actiongroup || panel || emptystate || skeleton)
+
 package e2e
 
 import (

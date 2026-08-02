@@ -1,3 +1,5 @@
+//go:build e2e && (full || example_wizard)
+
 package e2e
 
 import (

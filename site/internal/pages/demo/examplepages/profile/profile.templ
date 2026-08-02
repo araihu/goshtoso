@@ -1,0 +1,229 @@
+package profilepage
+
+import (
+	"github.com/araihu/goshtoso/components/avatar"
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/modal"
+	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/tabs"
+	"github.com/araihu/goshtoso/components/textarea"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/components/toast"
+	"github.com/araihu/goshtoso/components/toggle"
+	"github.com/araihu/goshtoso/components/tooltip"
+	"github.com/araihu/goshtoso/site/internal/examples/profile"
+	"github.com/araihu/goshtoso/site/internal/themes"
+)
+
+// themeOptions builds the non-default theme options, marking current selected.
+func themeOptions(current string) []selectfield.Option {
+	out := make([]selectfield.Option, 0, themes.Count()-1)
+	for _, theme := range themes.All() {
+		if theme.Key == "goshtoso" {
+			continue
+		}
+		out = append(out, selectfield.Option{Value: theme.Key, Label: theme.Label, Selected: theme.Key == current})
+	}
+	return out
+}
+
+// IdentityFields renders the name + bio inputs inside #profile-identity, the
+// HTMX swap target. The handler re-renders this same fragment after a save so
+// the inputs reflect the persisted (trimmed/clamped) values.
+templ IdentityFields(s profile.State) {
+	<div id="profile-identity" class="flex flex-col gap-4">
+		@textinput.TextInput(textinput.Config{
+			ID:          "profile-name",
+			Name:        "name",
+			Label:       "Display name",
+			Placeholder: "Your name",
+			Value:       s.Name,
+			MaxLength:   profile.MaxNameLen,
+		})
+		@textarea.Textarea(textarea.Config{
+			ID:          "profile-bio",
+			Name:        "bio",
+			Label:       "Bio",
+			Placeholder: "A sentence or two about you.",
+			Value:       s.Bio,
+			Rows:        4,
+		})
+	</div>
+}
+
+// ProfileApp is the interactive profile screen, rendered both on first load and
+// as the registry fragment. It composes Goshtoso components with a client-only
+// `profileImages` Alpine component (IndexedDB-backed avatar/banner) and reuses
+// the app's existing theme engine (root x-data `theme` + $store.darkMode).
+templ ProfileApp(s profile.State) {
+	<div id="profile-fragment" class="mx-auto max-w-3xl" x-data="profileImages">
+		<header class="mb-6">
+			<h1 class="text-2xl font-bold text-on-surface dark:text-on-surface-dark">Profile</h1>
+			<p class="mt-2 text-on-surface-muted dark:text-on-surface-dark-muted">
+				A profile screen built from Goshtoso components. Your name and bio live in a
+				cookie (HTMX form, no server-side memory); your avatar and cover image stay on
+				your device in IndexedDB — the server never receives the bytes; and theme + dark
+				mode reuse the app's own appearance engine.
+			</p>
+		</header>
+		@tabs.Tabs(tabs.Config{
+			ID:         "profile-tabs",
+			DefaultTab: "profile",
+			Tabs: []tabs.Tab{
+				{ID: "profile", Label: "Profile", Content: profileMainPanel(s)},
+				{ID: "appearance", Label: "Appearance", Content: profileAppearancePanel()},
+			},
+		})
+		@toast.ToastContainer(toast.ContainerConfig{})
+	</div>
+}
+
+// profileMainPanel is the "Profile" tab: photos (avatar + cover, IndexedDB) and
+// identity (name + bio, cookie-backed via HTMX). It lives inside the
+// #profile-fragment x-data="profileImages" wrapper, so avatarSrc/bannerSrc and
+// the avatar <img> persist across tab switches (tab panels are x-show toggled,
+// never unmounted).
+templ profileMainPanel(s profile.State) {
+	<!-- Photos: avatar + cover, stored client-side in IndexedDB -->
+	<section id="profile-photos" class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+		<div class="relative">
+			<!-- Cover image area -->
+			<div class="h-40 w-full overflow-hidden rounded-t-radius bg-surface dark:bg-surface-dark">
+				<img
+					x-show="bannerSrc"
+					x-bind:src="bannerSrc"
+					alt="Cover image"
+					class="h-40 w-full object-cover"
+				/>
+				<div
+					x-show="!bannerSrc"
+					class="flex h-40 w-full items-center justify-center text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
+				>
+					No cover image
+				</div>
+			</div>
+			<!-- Avatar, overlapping the cover -->
+			<div id="profile-avatar" class="-mt-12 flex justify-center">
+				@avatar.Avatar(avatar.Config{
+					SrcExpr: "avatarSrc",
+					Name:    s.Name,
+					Size:    avatar.SizeXL,
+					Shape:   avatar.ShapeCircle,
+					Border:  true,
+				})
+			</div>
+		</div>
+		<!-- Hidden file inputs driven by the Upload buttons -->
+		@fileinput.FileInput(fileinput.Config{
+			ID:     "profile-avatar-input",
+			Accept: "image/*",
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('avatar', $event)"},
+		})
+		@fileinput.FileInput(fileinput.Config{
+			ID:     "profile-banner-input",
+			Accept: "image/*",
+			RootClass:  "hidden",
+			InputAttrs: templ.Attributes{"x-on:change": "onFile('banner', $event)"},
+		})
+		<div class="flex flex-wrap items-center justify-center gap-3 p-4">
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithSize(button.SizeSmall),
+				button.WithAlpine(&button.AlpineConfig{OnClick: "pick('avatar')"}),
+			) {
+				Upload avatar
+			}
+			@button.Button(
+				button.WithTone(button.ToneSecondary),
+				button.WithSize(button.SizeSmall),
+				button.WithAlpine(&button.AlpineConfig{OnClick: "pick('banner')"}),
+			) {
+				Upload cover
+			}
+			<!-- Tooltip: upload requirements hint (hover/focus) -->
+			@tooltip.Tooltip(
+				"profile-upload-hint",
+				"PNG, JPG, WebP, or GIF, up to 1 MB. Stored only in your browser.",
+				tooltip.WithTriggerLabel("Upload requirements"),
+			)
+			<!-- Modal-confirmed photo removal; only meaningful when an image exists -->
+			<span x-show="avatarSrc || bannerSrc">
+				@modal.Modal(modal.Config{
+					ID:            "profileRemoveModal",
+					Title:         "Remove photos?",
+					Body:          "This removes your avatar and cover image from this browser. It cannot be undone.",
+					TriggerLabel:   "Remove photos",
+					PrimaryLabel:   "Remove",
+					PrimaryAction: &modal.ButtonAction{OnClick: "remove('avatar'); remove('banner')"},
+					SecondaryLabel: "Cancel",
+				})
+			</span>
+		</div>
+		<p class="px-4 pb-4 text-center text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
+			Images stay on this device (IndexedDB). PNG, JPG, WebP, or GIF, up to 1 MB.
+		</p>
+	</section>
+	<!-- Identity: name + bio, cookie-backed via HTMX -->
+	<section id="profile-identity-section" class="mt-6 rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+		<div class="flex flex-col gap-4 p-4">
+			<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Identity</h2>
+			<form
+				class="flex flex-col gap-4"
+				hx-post="/api/examples/profile/identity"
+				hx-target="#profile-identity"
+				hx-swap="outerHTML"
+			>
+				@IdentityFields(s)
+				<div class="flex justify-end">
+					@button.Button(button.WithType("submit")) {
+						Save
+					}
+				</div>
+			</form>
+		</div>
+	</section>
+}
+
+// profileAppearancePanel is the "Appearance" tab: theme Select + dark Toggle,
+// reusing the app's own theme engine (root x-data `theme` + $store.darkMode).
+templ profileAppearancePanel() {
+	<!-- Appearance: theme + dark mode, reusing the app's existing engine -->
+	<section id="profile-appearance" class="rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+		<div class="flex flex-col gap-4 p-4">
+			<div class="flex items-center gap-2">
+				<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Appearance</h2>
+				@badge.Badge(badge.Config{Tone: badge.ToneSecondary, Label: "live"})
+			</div>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+				These reuse the app's own theme engine — changes apply instantly and persist in your browser.
+			</p>
+			<div class="sm:w-64">
+				@selectfield.Select(selectfield.Config{
+					ID:          "profile-theme",
+					Name:        "theme",
+					Label:       "Theme",
+					Alpine: &selectfield.AlpineConfig{Model: "theme"},
+					Options:     themeOptions(""),
+				})
+			</div>
+			@toggle.Toggle(toggle.Config{
+				ID:    "profile-dark",
+				Label: "Dark mode",
+				InputAttrs: templ.Attributes{
+					"x-bind:checked": "$store.darkMode.on",
+					"x-on:change":    "$store.darkMode.toggle()",
+				},
+			})
+		</div>
+	</section>
+}
+
+// ProfileContent is the registry entry point: renders an empty-state app for
+// direct nav when no cookie exists. The server's first-load handler renders
+// ProfileApp(state) (or profile.Sample()) directly.
+templ ProfileContent() {
+	@ProfileApp(profile.State{})
+}
