@@ -8,7 +8,7 @@ import (
 	"io/fs"
 )
 
-//go:embed js/runtime/alpinejs-collapse/3.14.9/LICENSE.txt js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js js/runtime/alpinejs-collapse/3.14.9/package.json js/runtime/alpinejs-focus/3.14.9/LICENSE.txt js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js js/runtime/alpinejs-focus/3.14.9/package.json js/runtime/alpinejs-mask/3.14.9/LICENSE.txt js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js js/runtime/alpinejs-mask/3.14.9/package.json js/runtime/alpinejs/3.14.9/LICENSE.txt js/runtime/alpinejs/3.14.9/alpine.min.js js/runtime/alpinejs/3.14.9/package.json js/runtime/htmx-ext-sse/2.2.3/LICENSE.txt js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js js/runtime/htmx-ext-sse/2.2.3/package.json js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js js/runtime/htmx-ext-ws/2.0.3/package.json js/runtime/htmx.org/2.0.8/LICENSE.txt js/runtime/htmx.org/2.0.8/htmx.min.js js/runtime/htmx.org/2.0.8/package.json
+//go:embed js/runtime/alpinejs-collapse/3.14.9/LICENSE.txt js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js js/runtime/alpinejs-collapse/3.14.9/package.json js/runtime/alpinejs-focus/3.14.9/LICENSE.txt js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js js/runtime/alpinejs-focus/3.14.9/package.json js/runtime/alpinejs-mask/3.14.9/LICENSE.txt js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js js/runtime/alpinejs-mask/3.14.9/package.json js/runtime/alpinejs/3.14.9/LICENSE.txt js/runtime/alpinejs/3.14.9/alpine.min.js js/runtime/alpinejs/3.14.9/package.json js/runtime/htmx-ext-sse/2.2.3/LICENSE.txt js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js js/runtime/htmx-ext-sse/2.2.3/package.json js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js js/runtime/htmx-ext-ws/2.0.3/package.json js/runtime/htmx.org/2.0.8/LICENSE.txt js/runtime/htmx.org/2.0.8/htmx.min.js js/runtime/htmx.org/2.0.8/package.json licenses/tailwindcss/4.3.3/LICENSE.txt
 var muambaFiles embed.FS
 
 const (
@@ -33,10 +33,12 @@ const (
 	muambaDownloadHtmxExtWsRuntimeJs      = "runtime-js"
 	muambaDownloadHtmxLicense             = "license"
 	muambaDownloadHtmxPackage             = "package"
+	muambaDownloadTailwindcssLicense      = "license"
 	muambaResourceAlpinejs                = "alpinejs"
 	muambaResourceHtmx                    = "htmx"
 	muambaResourceHtmxExtSse              = "htmx-ext-sse"
 	muambaResourceHtmxExtWs               = "htmx-ext-ws"
+	muambaResourceTailwindcss             = "tailwindcss"
 )
 
 type MuambaResource struct {
@@ -83,6 +85,9 @@ var muambaResources = []MuambaResource{
 		{Name: "package", URL: "https://unpkg.com/htmx-ext-ws@2.0.3/package.json", Path: "assets/js/runtime/htmx-ext-ws/2.0.3/package.json", Integrity: "sha384-tCXvVmJJVdA8qM2S8c5m7ieSVjAdK/HvycooMC28nsjLHTKmbtjxxIZWEjpnRhVR", Hash: "sha384:b425ef56624955d03ca8cd92f1ce66ee279256301d2bf1efc9ca28302dbc9ec8cb1d32a66ed8f1c48656123a67461551"},
 		{Name: "runtime-js", URL: "https://unpkg.com/htmx-ext-ws@2.0.3/ws.js", Path: "assets/js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js", Integrity: "sha384-IeVkDiDIU+Zsabm4HnVf7ifa7LYLSoUCAYrFIjsn+0voIDaflLAalBqJ4CeEZodl", Hash: "sha384:21e5640e20c853e66c69b9b81e755fee27daecb60b4a8502018ac5223b27fb4be820369f94b01a941a89e02784668765"},
 	}},
+	{Name: "tailwindcss", Version: "4.3.3", Downloads: []MuambaDownload{
+		{Name: "license", URL: "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/v4.3.3/LICENSE", Path: "assets/licenses/tailwindcss/4.3.3/LICENSE.txt", Integrity: "sha384-zZwI/O2prTGDEmLZ7zRQDU5uBHh0I9RcfsxxiBs8rVAEUeWHCkfZZuadqFVCMuoU", Hash: "sha384:cd9c08fceda9ad31831262d9ef34500d4e6e04787423d45c7ecc71881b3cad500451e5870a47d966e69da8554232ea14"},
+	}},
 }
 
 var muambaEmbeddedPaths = map[string]string{
@@ -107,6 +112,7 @@ var muambaEmbeddedPaths = map[string]string{
 	"htmx-ext-ws\x00license":       "js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt",
 	"htmx-ext-ws\x00package":       "js/runtime/htmx-ext-ws/2.0.3/package.json",
 	"htmx-ext-ws\x00runtime-js":    "js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js",
+	"tailwindcss\x00license":       "licenses/tailwindcss/4.3.3/LICENSE.txt",
 }
 
 var muambaHashes = map[string]string{
@@ -131,6 +137,7 @@ var muambaHashes = map[string]string{
 	"htmx-ext-ws\x00license":       "sha384:a1390ca78f87a282dce69059276d1095d58081ec133d78f11e3483de6cbea2e950351230212c468c4cda5c633f51e7d3",
 	"htmx-ext-ws\x00package":       "sha384:b425ef56624955d03ca8cd92f1ce66ee279256301d2bf1efc9ca28302dbc9ec8cb1d32a66ed8f1c48656123a67461551",
 	"htmx-ext-ws\x00runtime-js":    "sha384:21e5640e20c853e66c69b9b81e755fee27daecb60b4a8502018ac5223b27fb4be820369f94b01a941a89e02784668765",
+	"tailwindcss\x00license":       "sha384:cd9c08fceda9ad31831262d9ef34500d4e6e04787423d45c7ecc71881b3cad500451e5870a47d966e69da8554232ea14",
 }
 
 func MuambaResources() []MuambaResource {

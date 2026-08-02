@@ -4,11 +4,11 @@ import "testing"
 
 func TestMuambaInventoryContainsRuntimeAndTailwindInputs(t *testing.T) {
 	resources := MuambaResources()
-	if len(resources) != 4 {
-		t.Fatalf("resources = %d, want 4 embedded runtime resources", len(resources))
+	if len(resources) != 5 {
+		t.Fatalf("resources = %d, want 4 runtime resources plus Tailwind license metadata", len(resources))
 	}
 
-	want := []string{"alpinejs", "htmx", "htmx-ext-sse", "htmx-ext-ws"}
+	want := []string{"alpinejs", "htmx", "htmx-ext-sse", "htmx-ext-ws", "tailwindcss"}
 	for _, name := range want {
 		resource, ok := MuambaResourceByName(name)
 		if !ok || resource.Version == "" || len(resource.Downloads) == 0 {
@@ -22,6 +22,15 @@ func TestMuambaInventoryContainsRuntimeAndTailwindInputs(t *testing.T) {
 	}
 	if _, ok := MuambaHash("alpinejs", "core-js"); !ok {
 		t.Fatal("MuambaHash(alpinejs/core-js) missing")
+	}
+	if resource, ok := MuambaResourceByName("tailwindcss"); !ok || resource.Version != "4.3.3" {
+		t.Fatalf("tailwindcss resource = %#v, %t", resource, ok)
+	}
+	if _, ok := MuambaHash("tailwindcss", "license"); !ok {
+		t.Fatal("MuambaHash(tailwindcss/license) missing")
+	}
+	if _, ok := MuambaHash("tailwindcss", "cli"); ok {
+		t.Fatal("Tailwind executable must not be embedded in package assets")
 	}
 }
 

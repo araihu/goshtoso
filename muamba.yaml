@@ -99,6 +99,11 @@ resources:
   tailwindcss:
     version: "4.3.3"
     downloads:
+      license:
+        url: https://raw.githubusercontent.com/tailwindlabs/tailwindcss/v${version}/LICENSE
+        path: assets/licenses/tailwindcss/${version}/LICENSE.txt
+        max_size: 64KiB
+        integrity: sha384-zZwI/O2prTGDEmLZ7zRQDU5uBHh0I9RcfsxxiBs8rVAEUeWHCkfZZuadqFVCMuoU
       cli:
         path: .tools/tailwindcss
         executable: true
