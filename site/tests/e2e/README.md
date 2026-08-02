@@ -11,12 +11,12 @@ make test-e2e
 
 ### Run specific test
 ```bash
-go test ./tests/e2e/... -v -run TestAccordion_StaticContent
+go test -tags=e2e,full ./tests/e2e/... -v -run TestAccordion_StaticContent
 ```
 
 ### Run in short mode (skip E2E)
 ```bash
-go test ./tests/e2e/... -short
+go test -tags=e2e,full ./tests/e2e/... -short
 ```
 
 ## Test Coverage
@@ -124,7 +124,7 @@ To run in CI/CD:
 make install-playwright
 
 # Run all E2E tests
-go test ./tests/e2e/... -v
+go test -tags=e2e,full ./tests/e2e/... -v
 ```
 
 ## Debugging
@@ -135,10 +135,10 @@ Failed tests save screenshots to `test-results/screenshots/`
 ### View Test Output
 Run with verbose flag:
 ```bash
-go test ./tests/e2e/... -v 2>&1 | tee test-output.log
+go test -tags=e2e,full ./tests/e2e/... -v 2>&1 | tee test-output.log
 ```
 
 ### Run Single Test
 ```bash
-go test ./tests/e2e/... -v -run TestAccordion_StaticContent/Accordion_Expands_And_Collapses
+go test -tags=e2e,full ./tests/e2e/... -v -run TestAccordion_StaticContent/Accordion_Expands_And_Collapses
 ```

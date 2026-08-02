@@ -43,10 +43,10 @@ go test ./... -count=1
 cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1
 
 # Full E2E suite.
-go test ./site/tests/e2e/... -count=1 -timeout 15m
+go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 15m
 
 # Specific E2E test.
-go test ./site/tests/e2e/... -count=1 -timeout 5m -run TestDropdown
+go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 5m -run TestDropdown
 ```
 
 ## Two Modules
@@ -228,7 +228,7 @@ cd site && golangci-lint run
 go fix ./... && (cd site && go fix ./...)
 go build -o bin/server ./site/cmd/server
 go test ./... -count=1
-go test ./site/tests/e2e/... -count=1 -timeout 15m
+go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 15m
 ```
 
 Keep new functions below the configured cyclomatic complexity ceiling of 20.

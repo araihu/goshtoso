@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -49,6 +51,10 @@ func freePort() (int, error) {
 }
 
 func TestMain(m *testing.M) {
+	if os.Getenv("GOSHTOSO_E2E_LIST_ONLY") == "1" {
+		os.Exit(m.Run())
+	}
+
 	// Build server
 	projectRoot, _ := filepath.Abs("../..")
 	buildArgs := []string{"build", "-o", "bin/server"}

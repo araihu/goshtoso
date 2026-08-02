@@ -20,7 +20,7 @@ agree to uphold it.
 | templ | v0.3.x | `go install github.com/a-h/templ/cmd/templ@latest` |
 | Tailwind CSS | v4 | standalone CLI or `npm i` |
 | golangci-lint | latest | https://golangci-lint.run |
-| Playwright (E2E) | v0.5700.1 | resolved by `go test ./site/tests/e2e/...` |
+| Playwright (E2E) | v0.5700.1 | resolved by `go test -tags=e2e,full ./site/tests/e2e/...` |
 
 ## Getting started
 
@@ -85,7 +85,7 @@ golangci-lint run                                   # cyclomatic ceiling: 20
 go fix ./...                                         # also runs via pre-commit hook
 go build -o bin/server ./site/cmd/server
 go test ./... -count=1                               # unit tests
-go test ./site/tests/e2e/... -count=1 -timeout 15m        # full E2E (~2.5 min)
+go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 15m # full E2E
 ```
 
 Test components in **both light and dark mode** across themes (especially

@@ -17,7 +17,7 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `just site-pinned-dependency-deployability`
   - `go test ./... -count=1`
   - `cd site && go test $(go list ./... | grep -v /tests/e2e) -count=1`
-  - `go test ./site/tests/e2e/... -count=1 -timeout 15m`
+  - `go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 15m`
 - Check that generated files have no drift:
   - `*_templ.go`
   - `assets/styles.css`

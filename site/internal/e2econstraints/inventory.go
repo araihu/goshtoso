@@ -31,6 +31,9 @@ func FindCrossFileDeclarations(siteDir string) ([]CrossFileDeclaration, error) {
 			packages.NeedTypesInfo,
 		Dir:   siteDir,
 		Tests: true,
+		BuildFlags: []string{
+			"-tags=e2e,full",
+		},
 	}
 	loaded, err := packages.Load(config, "./tests/e2e")
 	if err != nil {

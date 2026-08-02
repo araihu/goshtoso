@@ -283,7 +283,7 @@ jobs:
 
             GOSHTOSO_E2E_COVERDIR="$root/.coverage/e2e" \
             GOSHTOSO_E2E_COVERPKG="$component_coverpkg" \
-              go test ./tests/e2e/... -count=1 -timeout 15m
+              go test -tags=e2e,full ./tests/e2e/... -count=1 -timeout 15m
           )
 
           go tool covdata merge \

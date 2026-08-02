@@ -47,11 +47,11 @@ test:
 
 # Run E2E tests (builds CSS first)
 test-e2e: css
-	cd site && go test ./tests/e2e/... -v
+	cd site && go test -tags=e2e,full ./tests/e2e/... -v
 
 # Run specific E2E test
 test-e2e-one:
-	cd site && go test ./tests/e2e/... -v -run $(TEST)
+	cd site && go test -tags=e2e,full ./tests/e2e/... -v -run $(TEST)
 
 # Install dependencies
 install: install-templ install-playwright install-air
