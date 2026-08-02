@@ -77,7 +77,12 @@ Choose deliberately:
   make a probe easier; exercise the default fallback contract.
 - Override one pair with `WithDependencyCDNURL` and
   `WithDependencyLocalURL`, plus `WithDependencyIntegrity` when the bytes
-  change; do not hand-roll the rest of the dependency stack.
+  change. One integrity value applies to both sources, so primary and fallback
+  bytes must match.
+- Use `WithRuntimeManifest(assets.DefaultRuntimeManifest())` when the consumer
+  must enable, omit, add, or reorder the complete typed dependency set. The
+  option snapshots once; other options apply afterward regardless of argument
+  position. Invalid manifests fail before writing HTML.
 - Use `WithoutLocalFallback()` only when failure is preferable to local retry.
 - Await `window.goshtosoDependencies.ready` before application JavaScript that
   requires every dynamically loaded dependency.
@@ -89,8 +94,21 @@ execution order and includes roles, CDN primary, Handler-served local URL, SRI,
 enabled, minimal-set membership, defer, and loader-readiness semantics. Cache
 the separate stylesheet and bootstrap loader local URLs too; execute only
 enabled dependencies. The combined first-party bundle is enabled by default;
-disabled Combobox and ActionGroup entries preserve standalone URL inventory for
-legacy overrides. Do not execute the loader and direct local scripts together.
+dark mode, HTMX SSE/WS, Combobox, and ActionGroup are disabled inventory. Legacy
+Combobox/ActionGroup overrides replace the bundle with both standalone helpers.
+Do not execute the loader and direct local scripts together.
+
+Custom manifests may contain unique safe custom script roles. Preserve Alpine
+plugin/first-party/dark-mode-before-Alpine and HTMX-before-SSE/WS ordering.
+`WithLocalRuntime` is only for the default manifest; custom local-only loading
+sets every desired `PrimaryURL` to its `LocalURL`, keeps the loader local, and
+uses `WithoutLocalFallback()`. Loader `LocalURL` is inventory, not bootstrap
+fallback. Dependency `Defer` describes direct tags, not custom-loader order.
+At the top level, only `Loader.Defer` is supported; stylesheet `Defer` and both
+top-level `WaitForWindowLoaded` values are rejected before rendering.
+
+Configuration freedom is not a compatibility guarantee. Goshtoso tests the
+pinned combination: Alpine 3.14.9, HTMX 2.0.8, SSE 2.2.3, and WS 2.0.3.
 
 Bind same-version caches only when `assets.GoshtosoVersion().Status` is
 `assets.VersionExact`. Development, replaced, and unavailable builds leave the

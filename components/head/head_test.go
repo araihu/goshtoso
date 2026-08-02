@@ -74,11 +74,13 @@ func loaderEntry(t *testing.T, cfg testLoaderConfig, name string) testLoaderEntr
 
 func TestDependenciesUsesVersionedPaths(t *testing.T) {
 	out := render(t, Dependencies())
+	// Compatibility golden: these values come from the generated manifest
+	// constants so pin changes update the assertion through one source.
 	for _, want := range []string{
-		"/assets/js/runtime/alpinejs/3.14.9/alpine.min.js",
-		"/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js",
-		"/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js",
-		"/assets/js/runtime/htmx.org/2.0.8/htmx.min.js",
+		assets.AlpineJSURL,
+		assets.AlpineCollapseURL,
+		assets.AlpineFocusURL,
+		assets.HTMXURL,
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("Dependencies() missing versioned path %q\n%s", want, out)
@@ -95,8 +97,8 @@ func TestDependenciesUsesVersionedPaths(t *testing.T) {
 func TestDependenciesMinimalUsesVersionedPaths(t *testing.T) {
 	out := render(t, DependenciesMinimal())
 	for _, want := range []string{
-		"/assets/js/runtime/alpinejs/3.14.9/alpine.min.js",
-		"/assets/js/runtime/htmx.org/2.0.8/htmx.min.js",
+		assets.AlpineJSURL,
+		assets.HTMXURL,
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("DependenciesMinimal() missing %q\n%s", want, out)
@@ -195,6 +197,9 @@ func TestDependenciesRenderFromPublicManifestCopy(t *testing.T) {
 	manifest.Loader.PrimaryURL = "/mutated/loader.js"
 	manifest.Dependencies[0].PrimaryURL = "/mutated/collapse.js"
 
+	if err := cfg.prepare(false); err != nil {
+		t.Fatalf("prepare manifest: %v", err)
+	}
 	out := render(t, dependenciesTemplate(cfg))
 	if !strings.Contains(out, `href="/contract/styles.css"`) {
 		t.Fatalf("stylesheet did not come from copied manifest\n%s", out)
@@ -217,6 +222,9 @@ func TestDependenciesMinimalFiltersPublicManifestOrder(t *testing.T) {
 	manifest.Dependencies[0].IncludeInMinimal = true
 	manifest.Dependencies[3].IncludeInMinimal = false
 	cfg := newConfigFromManifest(manifest, nil)
+	if err := cfg.prepare(true); err != nil {
+		t.Fatalf("prepare manifest: %v", err)
+	}
 	loader := parseLoaderConfig(t, render(t, dependenciesMinimalTemplate(cfg)))
 
 	want := []string{"alpine-collapse", "alpine", "htmx"}

@@ -1,14 +1,17 @@
 package runtimecontract_test
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"os/exec"
+	"strings"
 	"testing"
 
 	"github.com/araihu/goshtoso/assets"
+	"github.com/araihu/goshtoso/components/head"
 )
 
 func TestExternalConsumerCanBindManifestAndReplacementIdentity(t *testing.T) {
@@ -36,8 +39,8 @@ func TestExternalConsumerCanBindManifestAndReplacementIdentity(t *testing.T) {
 	}
 
 	manifest := assets.DefaultRuntimeManifest()
-	if len(manifest.Dependencies) != 6 {
-		t.Fatalf("dependency count = %d, want 6", len(manifest.Dependencies))
+	if len(manifest.Dependencies) != 11 {
+		t.Fatalf("dependency count = %d, want 11", len(manifest.Dependencies))
 	}
 	if manifest.Dependencies[0].Role != assets.RuntimeRoleAlpineCollapse {
 		t.Fatalf("first dependency = %q, want %q", manifest.Dependencies[0].Role, assets.RuntimeRoleAlpineCollapse)
@@ -52,5 +55,46 @@ func TestExternalConsumerCanBindManifestAndReplacementIdentity(t *testing.T) {
 	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
 		t.Fatalf("GET loader status = %d, want 200", response.StatusCode)
+	}
+}
+
+func TestExternalConsumerCanRenderCustomPublicRuntimeManifest(t *testing.T) {
+	manifest := assets.DefaultRuntimeManifest()
+	manifest.Stylesheet.PrimaryURL = "/consumer/goshtoso.css"
+	manifest.Loader.PrimaryURL = "/consumer/loader.js"
+	for index := range manifest.Dependencies {
+		dependency := &manifest.Dependencies[index]
+		if dependency.Role == assets.RuntimeRoleDarkMode || dependency.Role == assets.RuntimeRoleHTMXExtSSE || dependency.Role == assets.RuntimeRoleHTMXExtWS {
+			dependency.Enabled = true
+		}
+	}
+	manifest.Dependencies = append(manifest.Dependencies, assets.RuntimeAsset{
+		Role: "consumer-runtime", Kind: assets.RuntimeAssetScript,
+		PrimaryURL: "/consumer/runtime.js", LocalURL: "/consumer/runtime.js",
+		Enabled: true, IncludeInMinimal: true,
+	})
+
+	var output strings.Builder
+	err := head.Dependencies(
+		head.WithDependencyCDNURL(head.DependencyHTMX, "/consumer/htmx.js"),
+		head.WithRuntimeManifest(manifest),
+		head.WithoutLocalFallback(),
+	).Render(context.Background(), &output)
+	if err != nil {
+		t.Fatalf("render custom public manifest: %v", err)
+	}
+	markup := output.String()
+	for _, want := range []string{
+		`href="/consumer/goshtoso.css"`,
+		`src="/consumer/loader.js"`,
+		`consumer-runtime`,
+		`/consumer/htmx.js`,
+		`htmx-ext-sse`,
+		`htmx-ext-ws`,
+		`dark-mode`,
+	} {
+		if !strings.Contains(markup, want) {
+			t.Errorf("custom public manifest markup missing %q:\n%s", want, markup)
+		}
 	}
 }

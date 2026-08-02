@@ -55,6 +55,11 @@ func Select(ctx context.Context, repoRoot, base, head string) Result {
 
 func selectChanges(ctx context.Context, repoRoot string, changes []Change) Result {
 	paths := changedPaths(changes)
+	absoluteRoot, err := filepath.Abs(repoRoot)
+	if err != nil {
+		return fullResult(paths, "repository root unavailable: "+err.Error())
+	}
+	repoRoot = absoluteRoot
 	manifest, err := loadIdentityManifest(repoRoot)
 	if err != nil {
 		return fullResult(paths, "identity manifest unavailable: "+err.Error())

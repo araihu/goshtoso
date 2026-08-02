@@ -8,26 +8,13 @@
 //	mux := http.NewServeMux()
 //	mux.Handle("/assets/", assets.Handler())
 //
-// This serves:
-//   - /assets/styles.css — compiled Tailwind CSS with all theme definitions
-//   - /assets/js/runtime/alpinejs/3.14.9/alpine.min.js — Alpine.js
-//   - /assets/js/runtime/htmx.org/2.0.8/htmx.min.js — HTMX
-//   - /assets/js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js — HTMX SSE extension
-//   - /assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js — Alpine collapse plugin
-//   - /assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js — Alpine focus plugin
-//   - /assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js — Alpine mask plugin
-//   - /assets/js/dependency-loader.js — ordered CDN loader with local fallback
-//   - /assets/js/goshtoso.min.js — minified reusable component behavior
-//   - /assets/js/combobox.js — standalone compatibility build
-//   - /assets/js/action-group.js — responsive ActionGroup measurement
-//   - vendored JS versions are pinned in js/runtime/versions.json (see AlpineVersion()/HTMXVersion())
-//   - /assets/js/darkmode.js — Alpine dark mode store
-//   - /assets/images/* — brand artwork (mascot, logos)
+// This serves compiled CSS, the complete JavaScript inventory declared by
+// js/runtime/manifest.json, brand images, and icons. Use
+// DefaultRuntimeManifest to inspect exact versions and local URLs.
 package assets
 
 import (
 	"embed"
-	"encoding/json"
 	"net/http"
 	"strings"
 )
@@ -80,36 +67,15 @@ func ThemeCSS() ([]byte, error) {
 	return files.ReadFile("goshtoso-theme.css")
 }
 
-// vendorDep mirrors one entry in js/runtime/versions.json.
-type vendorDep struct {
-	Version string `json:"version"`
-	File    string `json:"file"`
-	URL     string `json:"url"`
-}
-
-// vendorVersion returns the pinned version of a vendored module from the
-// embedded manifest (js/runtime/versions.json), or "" if absent.
-func vendorVersion(module string) string {
-	b, err := files.ReadFile("js/runtime/versions.json")
-	if err != nil {
-		return ""
-	}
-	var m map[string]vendorDep
-	if json.Unmarshal(b, &m) != nil {
-		return ""
-	}
-	return m[module].Version
-}
-
 // AlpineVersion returns the Alpine.js version Goshtoso vendors (core, collapse,
-// focus, and mask share this version). Pinned in js/runtime/versions.json.
-func AlpineVersion() string { return vendorVersion("alpinejs") }
+// focus, and mask share this version). Generated from js/runtime/manifest.json.
+func AlpineVersion() string { return runtimeVersionAlpineJS }
 
-// HTMXVersion returns the vendored HTMX version (js/runtime/versions.json).
-func HTMXVersion() string { return vendorVersion("htmx.org") }
+// HTMXVersion returns the vendored HTMX version from the canonical manifest.
+func HTMXVersion() string { return runtimeVersionHTMX }
 
 // HTMXExtSSEVersion returns the vendored htmx-ext-sse version.
-func HTMXExtSSEVersion() string { return vendorVersion("htmx-ext-sse") }
+func HTMXExtSSEVersion() string { return runtimeVersionHTMXExtSSE }
 
 // HTMXExtWSVersion returns the vendored htmx-ext-ws version.
-func HTMXExtWSVersion() string { return vendorVersion("htmx-ext-ws") }
+func HTMXExtWSVersion() string { return runtimeVersionHTMXExtWS }

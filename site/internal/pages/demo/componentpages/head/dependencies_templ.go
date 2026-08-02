@@ -83,7 +83,7 @@ func dependenciesDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Minimal Runtime",
-				Description: "Use DependenciesMinimal when the page does not need the Alpine collapse or focus plugins.",
+				Description: "Use DependenciesMinimal when the page does not need the Alpine collapse, focus, or mask plugins.",
 			},
 			dependenciesMinimalPreview(),
 			`<head>
@@ -126,6 +126,26 @@ mux.Handle("GET /assets/", assets.Handler())`,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Typed manifest ownership",
+				Description: "Start from the pinned public manifest when the application must enable optional runtimes, add a script, omit a dependency, or declare another safe order.",
+			},
+			dependenciesManifestPreview(),
+			`runtime := assets.DefaultRuntimeManifest()
+// Enable or edit entries by RuntimeAssetRole, then add application-owned code.
+runtime.Dependencies = append(runtime.Dependencies, assets.RuntimeAsset{
+    Role: "application-runtime", Kind: assets.RuntimeAssetScript,
+    PrimaryURL: "/static/application-runtime.js",
+    LocalURL: "/static/application-runtime.js",
+    Enabled: true,
+})
+
+@head.Dependencies(head.WithRuntimeManifest(runtime))`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -162,7 +182,7 @@ func dependenciesFullPreview() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("@head.Dependencies()\n\nCDN: pinned Alpine + HTMX\nFallback: /assets/js/runtime/*\nLoader: /assets/js/dependency-loader.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/head/dependencies.templ`, Line: 68, Col: 270}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/head/dependencies.templ`, Line: 85, Col: 270}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -197,7 +217,36 @@ func dependenciesOptionsPreview() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"dependencies-options\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Strong defaults, explicit escape hatches</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">The default falls back to embedded assets with SHA-384 integrity. Local-only mode supports offline PWAs and WebViews; per-dependency options keep version ownership visible.</p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"dependencies-options\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Strong defaults, explicit escape hatches</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">The default falls back to embedded assets with SHA-384 integrity. Local-only mode supports offline PWAs and WebViews; per-dependency options keep version ownership visible.</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">Custom URLs configure loading only. Goshtoso guarantees compatibility for its pinned, tested dependency combination—not arbitrary versions.</p></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func dependenciesManifestPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"dependencies-manifest\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">One typed, ordered baseline</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">WithRuntimeManifest snapshots caller data and validates roles, URLs, loader availability, known runtime order, and first-party conflicts before writing HTML.</p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -221,12 +270,12 @@ func dependenciesMinimalPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"dependencies-minimal\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">DependenciesMinimal</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">CSS, Alpine core, HTMX, and combobox keyboard navigation only.</p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"dependencies-minimal\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">DependenciesMinimal</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">CSS, the combined first-party bundle, Alpine core, and HTMX. Optional manifest entries still follow their IncludeInMinimal setting.</p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -250,12 +299,12 @@ func dependenciesAssetContractPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"dependencies-asset-contract\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Serve bundled assets</p><pre class=\"mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\"><code>mux.Handle(\"GET /assets/\", assets.Handler())</code></pre></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div id=\"dependencies-asset-contract\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Serve bundled assets</p><pre class=\"mt-3 overflow-x-auto rounded-radius bg-surface p-3 text-xs text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\"><code>mux.Handle(\"GET /assets/\", assets.Handler())</code></pre></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

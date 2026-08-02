@@ -1,6 +1,12 @@
 package legalpages
 
-import "github.com/araihu/goshtoso/site/internal/pages/demo"
+import (
+	"net/http"
+	"net/http/httptest"
+	"path"
+	"github.com/araihu/goshtoso/assets"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
 
 templ AttributionsPage() {
 	@demo.Layout("Attributions", "attributions", attributionsContent())
@@ -10,8 +16,49 @@ templ AttributionsPage() {
 type attribution struct {
 	Name    string
 	Href    string
+	Version string
+	LocalURL string
 	License string
+	LicenseURL string
 	Note    string
+}
+
+type runtimeAttributionDefinition struct {
+	Attribution attribution
+	Role assets.RuntimeAssetRole
+	Version func() string
+	FallbackLocalURL string
+}
+
+func runtimeAttributionRows() []attribution {
+	rows := []attribution{
+		{Name: "Tailwind CSS", Href: "https://tailwindcss.com", Version: assets.TailwindVersion(), LocalURL: assets.StylesURL, License: "MIT", Note: "Utility-first styling"},
+	}
+	linkedURLs := make(map[assets.RuntimeAssetRole]string)
+	for _, dependency := range assets.DefaultRuntimeManifest().Dependencies {
+		linkedURLs[dependency.Role] = dependency.LocalURL
+	}
+	for _, definition := range runtimeAttributionDefinitions {
+		row := definition.Attribution
+		row.Version = definition.Version()
+		row.LocalURL = linkedURLs[definition.Role]
+		if row.LocalURL == "" {
+			row.LocalURL = definition.FallbackLocalURL
+		}
+		licenseURL := path.Join(path.Dir(row.LocalURL), "LICENSE.txt")
+		if linkedAssetServes(licenseURL) {
+			row.LicenseURL = licenseURL
+		}
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+func linkedAssetServes(assetURL string) bool {
+	request := httptest.NewRequest(http.MethodGet, assetURL, nil)
+	response := httptest.NewRecorder()
+	assets.Handler().ServeHTTP(response, request)
+	return response.Code == http.StatusOK
 }
 
 templ attributionsContent() {
@@ -22,8 +69,8 @@ templ attributionsContent() {
 				Goshtoso stands on the shoulders of excellent open-source work. It is a hard fork of
 				<a href="https://www.penguinui.com" target="_blank" rel="noopener" class="text-primary dark:text-primary-dark underline underline-offset-2">PenguinUI</a>,
 				re-implemented with Go's templating system. The projects below are bundled or depended
-				upon at build or runtime; each is used under its own license, and the original copyright
-				and license texts are retained.
+				upon at build or runtime; each is used under its own license. Bundled runtime license
+				texts are retained and linked below.
 			</p>
 		</div>
 
@@ -34,15 +81,7 @@ templ attributionsContent() {
 			{Name: "Bootstrap Icons", Href: "https://icons.getbootstrap.com", License: "MIT", Note: "Some icons sourced from this set"},
 		})
 
-		@attrSection("Runtime libraries (bundled)", "Shipped locally under assets/ — no CDN at runtime.", []attribution{
-			{Name: "Tailwind CSS", Href: "https://tailwindcss.com", License: "MIT", Note: "Utility-first styling (v4)"},
-			{Name: "Alpine.js", Href: "https://alpinejs.dev", License: "MIT", Note: "Reactive UI (v3)"},
-			{Name: "@alpinejs/collapse", Href: "https://alpinejs.dev/plugins/collapse", License: "MIT", Note: "Collapse plugin (accordion)"},
-			{Name: "@alpinejs/focus", Href: "https://alpinejs.dev/plugins/focus", License: "MIT", Note: "Focus-trap plugin (modal)"},
-			{Name: "htmx", Href: "https://htmx.org", License: "Zero-Clause BSD", Note: "Dynamic content loading (v2)"},
-			{Name: "htmx SSE extension", Href: "https://htmx.org/extensions/sse/", License: "Zero-Clause BSD", Note: "Server-sent events (log feed example)"},
-			{Name: "htmx WebSocket extension", Href: "https://htmx.org/extensions/ws/", License: "Zero-Clause BSD", Note: "WebSockets (chat example)"},
-		})
+		@runtimeAttrSection(runtimeAttributionRows())
 
 		@attrSection("Go modules", "Direct dependencies from go.mod.", []attribution{
 			{Name: "a-h/templ", Href: "https://github.com/a-h/templ", License: "MIT", Note: "HTML template generation (.templ → .go)"},
@@ -57,6 +96,47 @@ templ attributionsContent() {
 				Spotted a missing credit or licensing issue? Open an issue at
 				<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" class="text-primary dark:text-primary-dark underline underline-offset-2">github.com/araihu/goshtoso</a>.
 			</p>
+		</div>
+	</div>
+}
+
+templ runtimeAttrSection(rows []attribution) {
+	<div>
+		<h2 data-toc-heading="Runtime libraries" class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Runtime libraries</h2>
+		<p class="mt-1 mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+			This site renders pins and embedded paths from the Goshtoso module linked into this binary and loads those assets locally. The library's zero-option head helper remains CDN-first with same-version local fallback; local-only loading is supported. Inspect the linked binary with <code class="font-mono">assets.DefaultRuntimeManifest()</code> and its <a href="/assets/js/runtime/versions.json" class="text-primary dark:text-primary-dark underline underline-offset-2">embedded version view</a>.
+		</p>
+		<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
+			<table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
+				<thead class="border-b border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt">
+					<tr>
+						<th class="px-4 py-2.5 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Project</th>
+						<th class="px-4 py-2.5 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Version</th>
+						<th class="px-4 py-2.5 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Embedded path</th>
+						<th class="px-4 py-2.5 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">License</th>
+						<th class="px-4 py-2.5 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Used for</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, a := range rows {
+						<tr class="border-b border-outline last:border-0 dark:border-outline-dark">
+							<td class="px-4 py-2.5 align-top">
+								<a href={ templ.SafeURL(a.Href) } target="_blank" rel="noopener" class="font-medium text-primary dark:text-primary-dark underline underline-offset-2">{ a.Name }</a>
+							</td>
+							<td class="px-4 py-2.5 align-top whitespace-nowrap font-mono text-xs">{ a.Version }</td>
+							<td class="px-4 py-2.5 align-top font-mono text-xs">{ a.LocalURL }</td>
+							<td class="px-4 py-2.5 align-top whitespace-nowrap">
+								if a.LicenseURL != "" {
+									<a href={ templ.SafeURL(a.LicenseURL) } class="inline-block rounded-radius bg-surface-alt px-2 py-0.5 font-mono text-xs underline underline-offset-2 dark:bg-surface-dark-alt">{ a.License }</a>
+								} else {
+									<span class="inline-block rounded-radius bg-surface-alt px-2 py-0.5 font-mono text-xs dark:bg-surface-dark-alt">{ a.License }</span>
+								}
+							</td>
+							<td class="px-4 py-2.5 align-top text-on-surface-muted dark:text-on-surface-dark-muted">{ a.Note }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
 		</div>
 	</div>
 }

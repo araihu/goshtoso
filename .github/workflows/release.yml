@@ -61,7 +61,7 @@ jobs:
           go run ./cmd/themegen
           go run ./cmd/jsbuild
           go run ./cmd/skillgen
-          go run ./cmd/vendorgen -check
+          go run ./cmd/vendorgen -check -verify-remote
           tailwindcss -i css/main.css -o assets/styles.css
           git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null
           git diff --exit-code -- \

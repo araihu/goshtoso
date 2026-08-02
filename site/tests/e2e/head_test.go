@@ -42,4 +42,6 @@ func TestDependenciesDemoPage(t *testing.T) {
 	require.NoError(t, page.Locator("#dependencies-minimal").GetByText("DependenciesMinimal").WaitFor())
 	require.NoError(t, page.Locator("#dependencies-asset-contract").GetByText("assets.Handler()").WaitFor())
 	require.NoError(t, page.Locator("#dependencies-options").GetByText("Strong defaults, explicit escape hatches").WaitFor())
+	require.NoError(t, page.Locator("#dependencies-manifest").GetByText("One typed, ordered baseline").WaitFor())
+	require.NoError(t, page.GetByText("not arbitrary versions").WaitFor())
 }

@@ -30,6 +30,9 @@ func (instance Instance) Render(ctx context.Context, w io.Writer) error {
 		cfg = newConfig(nil)
 	}
 	cfg.nonce = templ.GetNonce(ctx)
+	if err := cfg.prepare(false); err != nil {
+		return err
+	}
 	return dependenciesTemplate(cfg).Render(ctx, w)
 }
 
@@ -55,6 +58,9 @@ func (instance MinimalInstance) Render(ctx context.Context, w io.Writer) error {
 		cfg = newConfig(nil)
 	}
 	cfg.nonce = templ.GetNonce(ctx)
+	if err := cfg.prepare(true); err != nil {
+		return err
+	}
 	return dependenciesMinimalTemplate(cfg).Render(ctx, w)
 }
 

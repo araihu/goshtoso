@@ -17,12 +17,15 @@ and Alpine.js. The root module is the publishable library
 `github.com/araihu/goshtoso`; `site/` is a separate module for the demo site,
 examples, and E2E tests.
 
-Alpine.js, HTMX, and the htmx SSE extension are bundled locally under
-`assets/js/runtime/<module>/<version>/`; pinned versions live in
-`assets/js/runtime/versions.json`. Runtime assets are served through
-`assets.Handler()`, so page loads should not depend on a CDN. Regenerate runtime
-URL constants with `go run ./cmd/vendorgen` and update pinned JS with
-`just vendor-js`.
+Alpine.js, HTMX, and the htmx extensions are bundled locally under
+`assets/js/runtime/<module>/<version>/`. The ordered inventory, pinned versions,
+CDN URLs, canonical SRI, loading defaults, and attribution metadata live only in
+`assets/js/runtime/manifest.json`; `versions.json`, Go runtime data, docs, and
+site attribution data are generated compatibility/views. Runtime assets are
+served through `assets.Handler()`. Regenerate every manifest consumer with
+`go run ./cmd/vendorgen`, verify local/generated drift with
+`go run ./cmd/vendorgen -check`, verify CDN bytes with
+`go run ./cmd/vendorgen -verify-remote`, and update pins with `just vendor-js`.
 
 ## Commands
 
