@@ -306,7 +306,9 @@ func RunCompileMatrix(ctx context.Context, siteDir string, manifest Manifest, ou
 	defer func() { _ = os.RemoveAll(temporary) }()
 	identities := append(identityNames(manifest), "full")
 	for _, identity := range identities {
-		fmt.Fprintf(output, "compile e2e,%s\n", identity)
+		if _, err := fmt.Fprintf(output, "compile e2e,%s\n", identity); err != nil {
+			return fmt.Errorf("report compile identity: %w", err)
+		}
 		command := exec.CommandContext(ctx, "go", "test", "-c", "-tags=e2e,"+identity,
 			"-o", filepath.Join(temporary, identity+".test"), "./tests/e2e")
 		command.Dir = siteDir
@@ -323,7 +325,9 @@ func RunCompileMatrix(ctx context.Context, siteDir string, manifest Manifest, ou
 func RunListMatrix(ctx context.Context, siteDir string, suite Suite, manifest Manifest, output io.Writer) error {
 	identities := append(identityNames(manifest), "full")
 	for _, identity := range identities {
-		fmt.Fprintf(output, "list e2e,%s\n", identity)
+		if _, err := fmt.Fprintf(output, "list e2e,%s\n", identity); err != nil {
+			return fmt.Errorf("report list identity: %w", err)
+		}
 		command := exec.CommandContext(ctx, "go", "test", "-tags=e2e,"+identity, "-list", "^Test", "./tests/e2e")
 		command.Dir = siteDir
 		command.Env = append(os.Environ(), "GOSHTOSO_E2E_LIST_ONLY=1")
