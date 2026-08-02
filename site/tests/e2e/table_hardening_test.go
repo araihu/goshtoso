@@ -8,7 +8,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/araihu/goshtoso/components/table"
-	"github.com/playwright-community/playwright-go"
+	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 )
 

@@ -69,8 +69,10 @@ install-templ:
 
 # Install Playwright browsers
 install-playwright:
-	go install github.com/playwright-community/playwright-go/cmd/playwright@v0.5700.1
-	playwright install chromium
+	go install github.com/mxschmitt/playwright-go/cmd/playwright@v0.6100.0
+	@playwright_bin="$$(go env GOBIN)"; \
+	if [ -z "$$playwright_bin" ]; then playwright_bin="$$(go env GOPATH)/bin"; fi; \
+	"$$playwright_bin/playwright" install chromium
 
 # Generate templ files
 generate:

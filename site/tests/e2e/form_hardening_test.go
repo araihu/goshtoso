@@ -7,7 +7,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/form"
-	"github.com/playwright-community/playwright-go"
+	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 )
 
