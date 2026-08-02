@@ -59,6 +59,11 @@ site-pinned-dependency-deployability:
 
 site-module-contracts: site-current-source-integration site-pinned-dependency-deployability
 
+# Run E2E identities impacted by committed changes since the supplied base.
+test-e2e-focused base="origin/main":
+    go run ./cmd/e2eimpact --base "{{base}}" --head HEAD > .e2e-impact.json
+    scripts/run-focused-e2e.sh .e2e-impact.json
+
 # Run root unit tests, site unit tests, and E2E tests, then merge component
 # coverage data into .coverage/coverage.out and .coverage/coverage.html.
 coverage:

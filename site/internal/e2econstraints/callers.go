@@ -55,7 +55,7 @@ func FindBareE2ECommands(repoRoot string) ([]BareE2ECommand, error) {
 				strings.Contains(line, "grep -v /tests/e2e") {
 				continue
 			}
-			if strings.Contains(line, "-tags=e2e,") || strings.Contains(line, "-tags e2e,") {
+			if strings.Contains(line, "-tags") && strings.Contains(line, "e2e,") {
 				continue
 			}
 			findings = append(findings, BareE2ECommand{Path: relative, Line: lineNumber, Text: strings.TrimSpace(line)})
@@ -86,5 +86,5 @@ func activeCommandFile(path string) bool {
 	base := filepath.Base(path)
 	extension := filepath.Ext(path)
 	return base == "Makefile" || strings.EqualFold(base, "justfile") || base == "Dockerfile" ||
-		extension == ".md" || extension == ".yml" || extension == ".yaml"
+		extension == ".md" || extension == ".yml" || extension == ".yaml" || extension == ".sh"
 }
