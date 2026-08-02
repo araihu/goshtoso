@@ -262,6 +262,9 @@ jobs:
       - name: Unconditional root and site unit coverage
         run: scripts/run-component-coverage.sh --phase units
 
+      - name: External runtime-manifest consumer contract
+        run: cd tests/external/runtime-manifest && GOWORK=off go test ./... -count=1
+
       - name: Select focused E2E identities
         id: e2e-impact
         env:

@@ -195,6 +195,9 @@ func TestDependenciesRenderFromPublicManifestCopy(t *testing.T) {
 	manifest.Loader.PrimaryURL = "/mutated/loader.js"
 	manifest.Dependencies[0].PrimaryURL = "/mutated/collapse.js"
 
+	if err := cfg.prepare(false); err != nil {
+		t.Fatalf("prepare manifest: %v", err)
+	}
 	out := render(t, dependenciesTemplate(cfg))
 	if !strings.Contains(out, `href="/contract/styles.css"`) {
 		t.Fatalf("stylesheet did not come from copied manifest\n%s", out)
@@ -217,6 +220,9 @@ func TestDependenciesMinimalFiltersPublicManifestOrder(t *testing.T) {
 	manifest.Dependencies[0].IncludeInMinimal = true
 	manifest.Dependencies[3].IncludeInMinimal = false
 	cfg := newConfigFromManifest(manifest, nil)
+	if err := cfg.prepare(true); err != nil {
+		t.Fatalf("prepare manifest: %v", err)
+	}
 	loader := parseLoaderConfig(t, render(t, dependenciesMinimalTemplate(cfg)))
 
 	want := []string{"alpine-collapse", "alpine", "htmx"}

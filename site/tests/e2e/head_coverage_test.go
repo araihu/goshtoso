@@ -126,6 +126,72 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
 	return server, &failedRequests
 }
 
+func customManifestBrowserFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
+	t.Helper()
+
+	manifest := assets.DefaultRuntimeManifest()
+	rewrites := make(map[string]string)
+	register := func(customURL, embeddedURL string) {
+		rewrites[customURL] = embeddedURL
+	}
+
+	stylesheetURL := "/custom-runtime/primary/styles.css"
+	register(stylesheetURL, manifest.Stylesheet.LocalURL)
+	manifest.Stylesheet.PrimaryURL = stylesheetURL
+	manifest.Stylesheet.LocalURL = "/custom-runtime/inventory/styles.css"
+
+	loaderURL := "/custom-runtime/primary/loader.js"
+	register(loaderURL, manifest.Loader.LocalURL)
+	manifest.Loader.PrimaryURL = loaderURL
+	manifest.Loader.LocalURL = "/custom-runtime/inventory/loader.js"
+
+	failedPrimary := "/custom-runtime/primary/htmx-ext-sse.js"
+	for index := range manifest.Dependencies {
+		dependency := &manifest.Dependencies[index]
+		embeddedURL := dependency.LocalURL
+		primaryURL := "/custom-runtime/primary/" + string(dependency.Role) + ".js"
+		fallbackURL := "/custom-runtime/fallback/" + string(dependency.Role) + ".js"
+		register(primaryURL, embeddedURL)
+		register(fallbackURL, embeddedURL)
+		dependency.PrimaryURL = primaryURL
+		dependency.LocalURL = fallbackURL
+		if dependency.Role == assets.RuntimeRoleDarkMode || dependency.Role == assets.RuntimeRoleHTMXExtSSE || dependency.Role == assets.RuntimeRoleHTMXExtWS {
+			dependency.Enabled = true
+		}
+	}
+
+	var dependencyHead strings.Builder
+	require.NoError(t, head.Dependencies(head.WithRuntimeManifest(manifest)).Render(context.Background(), &dependencyHead))
+
+	var failedRequests atomic.Int32
+	assetHandler := assets.Handler()
+	mux := http.NewServeMux()
+	mux.HandleFunc("/custom-runtime/", func(writer http.ResponseWriter, request *http.Request) {
+		if request.URL.Path == failedPrimary {
+			failedRequests.Add(1)
+			http.Error(writer, "simulated custom primary failure", http.StatusServiceUnavailable)
+			return
+		}
+		embeddedURL, ok := rewrites[request.URL.Path]
+		if !ok {
+			http.NotFound(writer, request)
+			return
+		}
+		rewritten := request.Clone(request.Context())
+		rewritten.URL.Path = embeddedURL
+		rewritten.RequestURI = embeddedURL
+		assetHandler.ServeHTTP(writer, rewritten)
+	})
+	mux.HandleFunc("/", func(writer http.ResponseWriter, _ *http.Request) {
+		writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_, _ = fmt.Fprintf(writer, `<!doctype html><html><head><meta charset="utf-8">%s</head><body><div id="alpine-ready" x-data="{ ready: true }" x-text="ready"></div></body></html>`, dependencyHead.String())
+	})
+
+	server := httptest.NewServer(mux)
+	t.Cleanup(server.Close)
+	return server, &failedRequests
+}
+
 // TestHeadAssetContractServed renders head.Dependencies and DependenciesMinimal,
 // then asserts every asset URL they reference is actually served (HTTP 200) by
 // the running server's mounted asset handler. This is the component's core
@@ -270,6 +336,46 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 	require.NoError(t, err)
 	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx"}, fallbacks)
 	assert.Empty(t, pageErrors, "fallback must not cause uncaught JavaScript errors")
+}
+
+func TestDependenciesCustomManifestBootsExtensionsInDeclaredOrderWithFallback(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	server, failedRequests := customManifestBrowserFixture(t)
+	page := newPage(t, sharedBrowser)
+	var pageErrors []string
+	page.On("pageerror", func(err error) { pageErrors = append(pageErrors, err.Error()) })
+
+	_, err := page.Goto(server.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.NoError(t, err)
+	_, err = page.Evaluate(`async () => await window.goshtosoDependencies.ready`, nil)
+	require.NoError(t, err)
+	require.Equal(t, int32(1), failedRequests.Load(), "custom SSE primary must fail exactly once before fallback")
+
+	orderValue, err := page.Evaluate(`() => Array.from(document.querySelectorAll("script[data-goshtoso-dependency]"), script => script.dataset.goshtosoDependency)`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "dark-mode", "alpine", "htmx", "htmx-ext-sse", "htmx-ext-ws"}, orderValue)
+
+	sourcesValue, err := page.Evaluate(`() => window.goshtosoDependencies.sources`, nil)
+	require.NoError(t, err)
+	sources, ok := sourcesValue.(map[string]any)
+	require.True(t, ok, "custom dependency source ledger should be an object: %#v", sourcesValue)
+	assert.Equal(t, "fallback", sources["htmx-ext-sse"])
+	for _, role := range []string{"dark-mode", "alpine", "htmx", "htmx-ext-ws"} {
+		assert.Equal(t, "primary", sources[role], "%s should load from its controlled primary", role)
+	}
+
+	_, err = page.WaitForFunction(`() =>
+typeof Alpine !== "undefined" &&
+Alpine.store("darkMode") !== undefined &&
+typeof htmx !== "undefined" &&
+typeof htmx.createEventSource === "function" &&
+typeof htmx.createWebSocket === "function" &&
+document.querySelector("#alpine-ready").textContent === "true"`, nil)
+	require.NoError(t, err)
+	assert.Empty(t, pageErrors, "custom ordered runtime must boot without uncaught JavaScript errors")
 }
 
 func TestDependenciesLocalRuntimeBootsReusableComponentBundle(t *testing.T) {

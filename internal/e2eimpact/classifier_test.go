@@ -21,7 +21,13 @@ func TestDerivedTemplAndStylesAreIgnoredWhenAuthoredTemplChanged(t *testing.T) {
 }
 
 func TestGeneratedOnlyAndGlobalChangesSelectFull(t *testing.T) {
-	for _, path := range []string{"assets/styles.css", "assets/css/theme.css", "assets/js/runtime/versions.json"} {
+	for _, path := range []string{
+		"assets/styles.css",
+		"assets/css/theme.css",
+		"assets/js/runtime/versions.json",
+		"assets/runtime_manifest.go",
+		"assets/js/src/dependency-loader.js",
+	} {
 		t.Run(path, func(t *testing.T) {
 			classified := classifyChanges([]Change{{Status: "M", OldPath: path, NewPath: path}}, packageGraph{}, identityManifest{})
 			require.NotEmpty(t, classified.full)
