@@ -239,7 +239,23 @@ Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
 
-### Reusable documentation shells
+### Reusable application shells
+
+For a public product landing page that should follow the Goshtoso site frame,
+use `github.com/araihu/goshtoso-app-shells/landingshell` instead of copying the
+demo landing page's utility classes. The shell owns the document head,
+first-paint and interactive color mode, responsive brand/navigation header,
+version badge, icon-only mode and repository controls, hero boundary, content
+container, and structured linked footer. The consumer owns the product's hero
+copy, content sections, calls to action, code examples, and art direction.
+
+Configure the shell with typed `Brand`, `Navigation`, `Appearance`, and
+`Footer` values, then supply `Page.Hero` and `Page.Content` components. Keep
+footer identity structured: product logo/name, concise metadata, linked
+organization, and typed links. Static generators must extract the exact
+content-versioned stylesheet and script returned by
+`landingshell/assets.Handler()` using `StylesheetURL` and `ScriptURL`; do not
+copy those files or recreate the dark-mode runtime in the consumer.
 
 For a documentation site that should follow the Goshtoso demo frame, use the
 public `github.com/araihu/goshtoso-app-shells/componentdocshell` module instead
