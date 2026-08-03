@@ -145,15 +145,22 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.Contains(t, txt, "Server-rendered Go UI")
 
 		tagline := lockup.GetByText("Server-rendered Go UI", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)})
+		getStarted := page.Locator("#hero nav[aria-label='Primary navigation'] a[href='/getting-started']")
 		require.NoError(t, page.SetViewportSize(654, 781))
 		visible, err = tagline.IsVisible()
 		require.NoError(t, err)
 		require.False(t, visible, "brand tagline should stay hidden on medium and small screens")
+		visible, err = getStarted.IsVisible()
+		require.NoError(t, err)
+		require.False(t, visible, "header Get started link should stay hidden on medium and small screens")
 
 		require.NoError(t, page.SetViewportSize(1280, 900))
 		visible, err = tagline.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "brand tagline should return on large screens")
+		visible, err = getStarted.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "header Get started link should return on large screens")
 	})
 
 	t.Run("BrandFollowsDarkMode", func(t *testing.T) {

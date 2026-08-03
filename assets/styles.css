@@ -5304,6 +5304,9 @@
     .lg\:hidden {
       display: none;
     }
+    .lg\:inline-flex {
+      display: inline-flex;
+    }
     .lg\:h-64 {
       height: calc(var(--spacing) * 64);
     }
