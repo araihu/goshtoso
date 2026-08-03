@@ -509,6 +509,8 @@ import "github.com/araihu/goshtoso/components/codeblock"  // package codeblock
 
 **Entry points:** `CodeBlock(cfg Config)`
 
+- **Density** — DensityDefault = "", DensityCompact = "compact"
+
 **Config**
 
 | Field | Type | Description |
@@ -517,6 +519,7 @@ import "github.com/araihu/goshtoso/components/codeblock"  // package codeblock
 | `Code` | `string` | Code is the source code to display |
 | `Label` | `string` | Label is the header text (defaults to Language if empty) |
 | `MaxHeight` | `string` | MaxHeight is an optional CSS max-height for scrollable long code (e.g. "400px") |
+| `Density` | `Density` | Density controls spacing in the header and highlighted code body. |
 | `ID` | `string` | ID overrides the auto-generated element ID |
 
 ## combobox

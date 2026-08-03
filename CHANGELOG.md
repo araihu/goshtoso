@@ -10,6 +10,8 @@ All notable changes to Goshtoso are documented in this file.
   code fragments inside prose and documentation.
 - Added consumer hooks through `WithRootClass` and `WithRootAttrs`, stable
   component identity, generated skill reference, usage guidance, and tests.
+- Added `codeblock.DensityCompact` for short install and command snippets that
+  need tighter header and code-body spacing without consumer CSS overrides.
 - Preserved standalone site deployability with a version-aware catalog bridge;
   the public demo page follows after the site module pins this release.
 
