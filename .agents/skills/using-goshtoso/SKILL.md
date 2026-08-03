@@ -239,7 +239,40 @@ Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
 
-### Reusable documentation shells
+### Reusable application shells
+
+For a public product landing page that should follow the Goshtoso site frame,
+use `github.com/araihu/goshtoso-app-shells/landingshell` instead of copying the
+demo landing page's utility classes. The shell owns the document head,
+first-paint and interactive color mode, responsive brand/navigation header,
+version badge, icon-only mode and repository controls, hero boundary, content
+container, and structured linked footer. The consumer owns the product's hero
+copy, content sections, calls to action, code examples, and art direction.
+
+Install the first public release containing this package explicitly:
+
+```bash
+go get github.com/araihu/goshtoso-app-shells/landingshell@v0.1.2
+```
+
+Configure `landingshell.Config` with `landingshell.Brand`,
+`[]landingshell.Link`, `landingshell.AppearanceConfig`, and
+`landingshell.Footer`, then supply `landingshell.Page.Hero` and
+`landingshell.Page.Content` components. Keep footer identity structured:
+product logo/name, concise metadata, linked organization, and typed links.
+
+Static generators must import the assets package and extract the exact
+content-versioned files from its handler:
+
+```go
+import landingassets "github.com/araihu/goshtoso-app-shells/landingshell/assets"
+
+handler := landingassets.Handler()
+stylesheetURL := landingassets.StylesheetURL("")
+scriptURL := landingassets.ScriptURL("")
+```
+
+Do not copy those files or recreate the dark-mode runtime in the consumer.
 
 For a documentation site that should follow the Goshtoso demo frame, use the
 public `github.com/araihu/goshtoso-app-shells/componentdocshell` module instead
@@ -306,6 +339,27 @@ and print the component source path for Tailwind scanning:
 go run github.com/araihu/goshtoso/cmd/goshtoso@latest -theme -out=css/goshtoso-theme.css
 go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
 ```
+
+## Public Surface Guardrails
+
+- For a one-line install command, use the standard `codeblock.CodeBlock` inside
+  an app-owned wrapper that sets only width and spacing, as on the Goshtoso
+  landing page. Do not turn the component header and code body into a custom
+  grid or style its private DOM structure. For a dense list of short commands,
+  use a documented compact API when the pinned release provides one; otherwise
+  prefer prose or inline code instead of several bespoke mini code blocks.
+- Match app-shell color-mode controls with an icon button whose accessible label
+  changes between `Switch to dark mode` and `Switch to light mode`. Use
+  `toggle.Toggle` only when a labelled switch is the intended interface. Keep
+  the control inside a live Alpine `x-data` scope and bind it to the same state
+  that applies the document's `dark` class.
+- Treat unavailable browser storage as a normal runtime mode. A consent or
+  capability probe alone is not a fallback: guard every `localStorage`
+  read/write/remove operation, while the in-memory store continues to update the
+  document class for the session. Browser-test the actual visible control under
+  light and dark system preferences and with `localStorage` throwing. Assert the
+  document class, accessible control state, store, and persisted value remain
+  synchronized with no page errors.
 
 ## Integration Checks
 
