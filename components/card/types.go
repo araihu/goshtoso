@@ -69,7 +69,7 @@ func (cfg Config) containerClasses() string {
 	}
 
 	if cfg.Interaction == InteractionPressed {
-		base += " shadow-lg transition-[transform,box-shadow] duration-150 ease-out hover:translate-y-1.5 hover:shadow-sm active:translate-y-2 active:shadow-none motion-reduce:transform-none motion-reduce:transition-none"
+		base += " shadow-lg transition-[translate,box-shadow] duration-150 ease-out hover:translate-y-1.5 hover:shadow-sm active:translate-y-2 active:shadow-none motion-reduce:hover:translate-none motion-reduce:active:translate-none motion-reduce:transition-none"
 	}
 
 	// Layout

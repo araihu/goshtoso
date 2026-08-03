@@ -2,6 +2,20 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.7] - 2026-08-02
+
+### Reduced-motion pressed cards
+
+- Corrected `card.InteractionPressed` to transition the Tailwind v4 individual
+  `translate` property, so its pressed movement animates as designed.
+- Neutralized hover and active translation when `prefers-reduced-motion` is
+  enabled, keeping pressed cards spatially still for reduced-motion users.
+
+### Upgrade note
+
+- No API changes are required. Consumers using `InteractionPressed` should
+  update their Goshtoso stylesheet and dependency pin together.
+
 ## [v0.1.6] - 2026-08-02
 
 ### Expressive project cards and directional drawers

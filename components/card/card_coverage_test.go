@@ -51,7 +51,7 @@ func TestContainerClasses(t *testing.T) {
 		{
 			name:     "pressed interaction",
 			cfg:      Config{Interaction: InteractionPressed},
-			contains: []string{"hover:translate-y-1.5", "active:translate-y-2", "motion-reduce:transform-none"},
+			contains: []string{"transition-[translate,box-shadow]", "hover:translate-y-1.5", "active:translate-y-2", "motion-reduce:hover:translate-none", "motion-reduce:active:translate-none", "motion-reduce:transition-none"},
 			absent:   []string{"hover:-translate-y"},
 		},
 	}
