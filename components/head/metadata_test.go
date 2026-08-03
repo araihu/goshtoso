@@ -217,3 +217,47 @@ func TestMetadataRejectsIncompleteSocialContractWithoutOutput(t *testing.T) {
 		})
 	}
 }
+
+func TestMetadataValidatesAndCanonicalizesImageMIMEType(t *testing.T) {
+	valid := map[string]string{
+		"image/jpeg":    "image/jpeg",
+		"IMAGE/JPEG":    "image/jpeg",
+		"image/svg+xml": "image/svg+xml",
+	}
+	for input, canonical := range valid {
+		t.Run("valid/"+input, func(t *testing.T) {
+			cfg := completeMetadataConfig()
+			cfg.Image.MIMEType = input
+			out, err := renderMetadata(cfg)
+			if err != nil {
+				t.Fatalf("Metadata() rejected valid image media type %q: %v", input, err)
+			}
+			want := `property="og:image:type" content="` + canonical + `"`
+			if !strings.Contains(out, want) {
+				t.Fatalf("Metadata() did not emit canonical media type %q:\n%s", canonical, out)
+			}
+		})
+	}
+
+	invalid := []string{
+		"image/",
+		"image",
+		"image/jp eg",
+		"text/html",
+		"image/jpeg; charset=utf-8",
+		"image/jpeg; charset=",
+	}
+	for _, input := range invalid {
+		t.Run("invalid/"+input, func(t *testing.T) {
+			cfg := completeMetadataConfig()
+			cfg.Image.MIMEType = input
+			out, err := renderMetadata(cfg)
+			if err == nil {
+				t.Fatalf("Metadata() accepted invalid or parameterized image media type %q", input)
+			}
+			if out != "" {
+				t.Fatalf("Metadata() wrote partial tags before rejecting media type %q:\n%s", input, out)
+			}
+		})
+	}
+}

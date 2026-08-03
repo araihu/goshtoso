@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"mime"
 	"net/url"
 	"strconv"
 	"strings"
@@ -34,7 +35,7 @@ const (
 type SocialImage struct {
 	// URL is the absolute HTTPS URL crawlers use to fetch the image.
 	URL string
-	// MIMEType is the image media type, such as image/jpeg or image/png.
+	// MIMEType is a parameter-free image media type, such as image/jpeg or image/png.
 	MIMEType string
 	// Width is the image width in pixels and must be positive.
 	Width int
@@ -87,9 +88,9 @@ func (cfg MetadataConfig) validated() (MetadataConfig, error) {
 		return MetadataConfig{}, err
 	}
 
-	cfg.Image.MIMEType = strings.TrimSpace(cfg.Image.MIMEType)
-	if !strings.HasPrefix(cfg.Image.MIMEType, "image/") {
-		return MetadataConfig{}, errors.New("head.Metadata: Image.MIMEType must be an image media type")
+	cfg.Image.MIMEType, err = imageMIMEType(cfg.Image.MIMEType)
+	if err != nil {
+		return MetadataConfig{}, err
 	}
 	if cfg.Image.Width <= 0 {
 		return MetadataConfig{}, errors.New("head.Metadata: Image.Width must be positive")
@@ -132,6 +133,21 @@ func absoluteHTTPSURL(field, value string) (string, error) {
 	}
 	parsed.Scheme = "https"
 	return parsed.String(), nil
+}
+
+func imageMIMEType(value string) (string, error) {
+	mediaType, parameters, err := mime.ParseMediaType(strings.TrimSpace(value))
+	if err != nil {
+		return "", fmt.Errorf("head.Metadata: Image.MIMEType must be a valid image media type: %w", err)
+	}
+	parts := strings.SplitN(mediaType, "/", 2)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "image") || parts[1] == "" {
+		return "", errors.New("head.Metadata: Image.MIMEType must be an image media type")
+	}
+	if len(parameters) != 0 {
+		return "", errors.New("head.Metadata: Image.MIMEType parameters are not supported")
+	}
+	return strings.ToLower(mediaType), nil
 }
 
 func (image SocialImage) widthContent() string {
