@@ -574,6 +574,14 @@ var componentPages = availableComponentPages([]Entry{
 })
 
 func availableComponentPages(pages []Entry) []Entry {
+	if slices.Contains(components.AllKinds(), components.Kind("inline-code")) {
+		for index := range pages {
+			if pages[index].Key == "components/codeblock" {
+				pages[index].Kinds = append(pages[index].Kinds, components.Kind("inline-code"))
+				break
+			}
+		}
+	}
 	if slices.Contains(components.AllKinds(), components.KindIcon) {
 		return pages
 	}

@@ -566,7 +566,7 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The catalog has 52 public component packages, 50 documentation pages, and 82 renderable primitives.
+The catalog has 53 public component packages, 50 documentation pages, and 83 renderable primitives.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -586,7 +586,8 @@ configuration previews, and API tables.
 | `carousel` | `components/carousel` | Image carousel with autoplay, navigation, and HTMX lazy loading |
 | `chatbubble` | `components/chatbubble` | Chat/message bubbles with sender alignment and avatar support |
 | `checkbox` | `components/checkbox` | Checkboxes with semantic tones, group layout, and indeterminate state |
-| `codeblock` | `components/codeblock` | Code display block with copy button and max-height scrolling |
+| `codeblock` | `components/codeblock` | Code display block with copy button, compact density, and max-height scrolling |
+| `inlinecode` | `components/inlinecode` | Semantic inline code fragments for prose and documentation |
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
 | `drawer` | `components/drawer` | Slide-over drawers for navigation and contextual panels |
 | `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |

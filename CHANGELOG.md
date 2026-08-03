@@ -2,7 +2,7 @@
 
 All notable changes to Goshtoso are documented in this file.
 
-## [v0.1.5] - 2026-08-02
+## [v0.1.6] - 2026-08-02
 
 ### Expressive project cards and directional drawers
 
@@ -19,6 +19,19 @@ All notable changes to Goshtoso are documented in this file.
 
 - Existing Card and Drawer configurations remain source compatible. Consumers
   opt into custom media, pressed interaction, or vertical drawer directions.
+
+## [v0.1.5] - 2026-08-02
+
+### Inline code
+
+- Added `components/inlinecode`, a semantic, theme-aware primitive for short
+  code fragments inside prose and documentation.
+- Added consumer hooks through `WithRootClass` and `WithRootAttrs`, stable
+  component identity, generated skill reference, usage guidance, and tests.
+- Added `codeblock.DensityCompact` for short install and command snippets that
+  need tighter header and code-body spacing without consumer CSS overrides.
+- Preserved standalone site deployability with a version-aware catalog bridge;
+  the public demo page follows after the site module pins this release.
 
 ## [v0.1.4] - 2026-08-02
 

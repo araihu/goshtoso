@@ -1,0 +1,11 @@
+package inlinecode
+
+// InlineCode renders short semantic code inside prose.
+//
+// Usage:
+//
+//	@inlinecode.InlineCode("${version}")
+templ inlineCodeTemplate(text string, options ...Option) {
+	{{ cfg := newConfig(text, options) }}
+	<code class={ cfg.rootClasses() } { cfg.rootAttrs... }>{ cfg.text }</code>
+}

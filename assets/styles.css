@@ -3416,6 +3416,9 @@
   .text-\[0\.68rem\] {
     font-size: 0.68rem;
   }
+  .text-\[0\.875em\] {
+    font-size: 0.875em;
+  }
   .text-\[10px\] {
     font-size: 10px;
   }
@@ -7273,6 +7276,10 @@
   padding: 1rem;
   font-size: 0.8125rem;
   line-height: 1.5;
+}
+.codeblock.codeblock-compact pre.ch-chroma {
+  padding: 0.625rem 0.75rem;
+  line-height: 1.375;
 }
 .codeblock pre.ch-chroma code {
   background: transparent;

@@ -90,3 +90,22 @@ func TestCodeBlockEscapesIDInAlpineExpression(t *testing.T) {
 		t.Fatalf("escaped ID not found in Alpine expression:\n%s", html)
 	}
 }
+
+func TestCodeBlockCompactDensityReducesHeaderAndBodySpacing(t *testing.T) {
+	html := renderCodeBlock(t, Config{
+		Language: "bash",
+		Label:    "Install",
+		Code:     "go get github.com/araihu/goshtoso@latest",
+		Density:  DensityCompact,
+	})
+
+	if !strings.Contains(html, `data-density="compact"`) {
+		t.Fatalf("compact code block missing density identity:\n%s", html)
+	}
+	if !strings.Contains(html, `data-code-block-header`) || !strings.Contains(html, `px-3 py-1.5`) {
+		t.Fatalf("compact code block missing compact header spacing:\n%s", html)
+	}
+	if !strings.Contains(html, `class="codeblock codeblock-compact overflow-x-auto"`) {
+		t.Fatalf("compact code block missing compact body class:\n%s", html)
+	}
+}
