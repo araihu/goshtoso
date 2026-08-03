@@ -42,23 +42,7 @@ templ drawerDemoContent() {
 }) {
     <div id="filtersDrawer-body">...</div>
 }`,
-		)
-
-		@demo.DemoSection(
-			demo.DemoSectionProps{
-				Title:       "Top and Bottom",
-				Description: "Use SideTop or SideBottom for navigation drawers, command surfaces, and mobile action trays. Height controls the vertical extent.",
-			},
-			drawerVerticalPreview(),
-			`@drawer.Drawer(drawer.Config{
-    ID:     "mobileNavigation",
-    Title:  "Navigation",
-    Side:   drawer.SideTop,
-    Height: drawer.HeightMD,
-}) {
-    <nav>...</nav>
-}`,
-		)
+			)
 
 			@demo.DemoSection(
 				demo.DemoSectionProps{
@@ -97,50 +81,6 @@ templ drawerDemoContent() {
 </button>`,
 			)
 		</div>
-}
-
-templ drawerVerticalPreview() {
-	<div id="drawer-vertical" class="flex w-full max-w-2xl flex-wrap gap-3 mx-auto">
-		<button
-			type="button"
-			x-data
-			x-on:click="$dispatch('drawer:open', { id: 'topNavigation' })"
-			class="inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt"
-		>
-			Open top drawer
-		</button>
-		<button
-			type="button"
-			x-data
-			x-on:click="$dispatch('drawer:open', { id: 'bottomActions' })"
-			class="inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt"
-		>
-			Open bottom drawer
-		</button>
-		@drawer.Drawer(drawer.Config{
-			ID:     "topNavigation",
-			Title:  "Navigation",
-			Side:   drawer.SideTop,
-			Height: drawer.HeightMD,
-		}) {
-			<nav class="grid gap-2 p-4" aria-label="Example navigation">
-				<a class="rounded-radius px-3 py-2 hover:bg-surface-alt dark:hover:bg-surface-dark-alt" href="#drawer-vertical">Overview</a>
-				<a class="rounded-radius px-3 py-2 hover:bg-surface-alt dark:hover:bg-surface-dark-alt" href="#drawer-vertical">Components</a>
-				<a class="rounded-radius px-3 py-2 hover:bg-surface-alt dark:hover:bg-surface-dark-alt" href="#drawer-vertical">Examples</a>
-			</nav>
-		}
-		@drawer.Drawer(drawer.Config{
-			ID:     "bottomActions",
-			Title:  "Quick actions",
-			Side:   drawer.SideBottom,
-			Height: drawer.HeightSM,
-		}) {
-			<div class="flex flex-wrap gap-2 p-4">
-				<button type="button" class="rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary dark:bg-primary-dark dark:text-on-primary-dark">Create project</button>
-				<button type="button" class="rounded-radius border border-outline px-4 py-2 text-sm font-medium dark:border-outline-dark">Open settings</button>
-			</div>
-		}
-	</div>
 }
 
 templ drawerDefaultPreview() {

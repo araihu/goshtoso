@@ -82,24 +82,6 @@ templ bookNowButton() {
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
-				Title:       "Pressed Card with Custom Media",
-				Description: "Use InteractionPressed for whole-card links that should feel physically pressable. Media accepts any templ component, so project art can cross card regions without turning the Card API into an image-layout DSL.",
-			},
-			cardPressedMediaPreview(),
-			`<a href="/projects/atlas" aria-label="Explore Atlas">
-    @card.Card(card.Config{
-        Media:       projectPreview(),
-        MediaClass:  "h-64",
-        Tag:         "Go UI",
-        Title:       "Atlas",
-        Description: "Server-rendered interfaces for durable applications.",
-        Interaction: card.InteractionPressed,
-    })
-</a>`,
-		)
-
-		@demo.DemoSection(
-			demo.DemoSectionProps{
 				Title:       "Product Card",
 				Description: "An e-commerce recipe: compose a bordered article with rating.RatingDisplay, a price, and an Add to Cart button. Price and rating are application content, not Card config fields.",
 			},
@@ -223,31 +205,6 @@ templ cardHorizontalPreview() {
 			Title:       "AI-Powered VR Goggles Redefine Reality",
 			Description: "Experience the next level of augmented reality with smart goggles integrating cutting-edge AI for seamless interaction with the world around you.",
 		})
-	</div>
-}
-
-templ cardPressedMediaPreview() {
-	<a id="card-pressed-media" class="block w-full max-w-2xl mx-auto no-underline" href="#card-pressed-media" aria-label="Explore Atlas">
-		@card.Card(card.Config{
-			Media:       projectPreview(),
-			MediaClass:  "h-64 md:h-72",
-			Tag:         "Go UI",
-			Title:       "Atlas",
-			Description: "Server-rendered interfaces for durable applications.",
-			Interaction: card.InteractionPressed,
-			RootClass:   "max-w-2xl",
-		})
-	</a>
-}
-
-templ projectPreview() {
-	<div data-card-media class="relative h-full overflow-hidden bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark">
-		<div class="absolute -right-10 -top-10 size-40 rounded-full bg-secondary opacity-70"></div>
-		<div class="absolute inset-x-8 bottom-8 grid grid-cols-3 gap-3" aria-hidden="true">
-			<span class="h-20 rounded-radius bg-surface shadow-lg"></span>
-			<span class="h-28 -translate-y-8 rounded-radius bg-surface-alt shadow-lg"></span>
-			<span class="h-24 -translate-y-3 rounded-radius bg-surface shadow-lg"></span>
-		</div>
 	</div>
 }
 
