@@ -25,7 +25,19 @@ env:
 jobs:
   lint-build:
     name: Lint, drift checks, build
-    runs-on: ubuntu-24.04
+    runs-on: >-
+      ${{
+        github.event_name == 'pull_request' &&
+        contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action) &&
+        github.event.pull_request.draft == false &&
+        github.event.pull_request.user.login == github.actor &&
+        github.event.pull_request.base.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.fork == false &&
+        contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
+        fromJSON('["self-hosted","Linux","X64","hostinger-vps"]') ||
+        'ubuntu-24.04'
+      }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -151,7 +163,19 @@ jobs:
   # conservative impact selector. Partial coverage never updates the badge.
   test:
     name: Tests + coverage
-    runs-on: ubuntu-24.04
+    runs-on: >-
+      ${{
+        github.event_name == 'pull_request' &&
+        contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action) &&
+        github.event.pull_request.draft == false &&
+        github.event.pull_request.user.login == github.actor &&
+        github.event.pull_request.base.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.fork == false &&
+        contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
+        fromJSON('["self-hosted","Linux","X64","hostinger-vps"]') ||
+        'ubuntu-24.04'
+      }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -283,7 +307,19 @@ jobs:
     name: Trigger Fly deploy
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: [lint-build, test]
-    runs-on: ubuntu-24.04
+    runs-on: >-
+      ${{
+        github.event_name == 'pull_request' &&
+        contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action) &&
+        github.event.pull_request.draft == false &&
+        github.event.pull_request.user.login == github.actor &&
+        github.event.pull_request.base.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.fork == false &&
+        contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
+        fromJSON('["self-hosted","Linux","X64","hostinger-vps"]') ||
+        'ubuntu-24.04'
+      }}
     concurrency: deploy-group
     steps:
       - name: Dispatch central deployment
