@@ -35,7 +35,7 @@ const (
 type SocialImage struct {
 	// URL is the absolute HTTPS URL crawlers use to fetch the image.
 	URL string
-	// MIMEType is a parameter-free image media type, such as image/jpeg or image/png.
+	// MIMEType is a parameter-free RFC 6838 image type, such as image/jpeg.
 	MIMEType string
 	// Width is the image width in pixels and must be positive.
 	Width int
@@ -141,13 +141,38 @@ func imageMIMEType(value string) (string, error) {
 		return "", fmt.Errorf("head.Metadata: Image.MIMEType must be a valid image media type: %w", err)
 	}
 	parts := strings.SplitN(mediaType, "/", 2)
-	if len(parts) != 2 || !strings.EqualFold(parts[0], "image") || parts[1] == "" {
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "image") ||
+		!validRestrictedMediaName(parts[1]) {
 		return "", errors.New("head.Metadata: Image.MIMEType must be an image media type")
 	}
 	if len(parameters) != 0 {
 		return "", errors.New("head.Metadata: Image.MIMEType parameters are not supported")
 	}
 	return strings.ToLower(mediaType), nil
+}
+
+func validRestrictedMediaName(value string) bool {
+	if len(value) == 0 || len(value) > 127 || !isASCIIAlphaNumeric(value[0]) {
+		return false
+	}
+	for index := 1; index < len(value); index++ {
+		character := value[index]
+		if isASCIIAlphaNumeric(character) {
+			continue
+		}
+		switch character {
+		case '!', '#', '$', '&', '-', '^', '_', '.', '+':
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+func isASCIIAlphaNumeric(character byte) bool {
+	return character >= 'a' && character <= 'z' ||
+		character >= 'A' && character <= 'Z' ||
+		character >= '0' && character <= '9'
 }
 
 func (image SocialImage) widthContent() string {

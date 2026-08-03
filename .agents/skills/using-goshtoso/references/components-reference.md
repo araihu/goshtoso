@@ -931,7 +931,7 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 | Field | Type | Description |
 |-------|------|-------------|
 | `URL` | `string` | URL is the absolute HTTPS URL crawlers use to fetch the image. |
-| `MIMEType` | `string` | MIMEType is a parameter-free image media type, such as image/jpeg or image/png. |
+| `MIMEType` | `string` | MIMEType is a parameter-free RFC 6838 image type, such as image/jpeg. |
 | `Width` | `int` | Width is the image width in pixels and must be positive. |
 | `Height` | `int` | Height is the image height in pixels and must be positive. |
 | `Alt` | `string` | Alt describes the image for accessible social clients and must be non-empty. |

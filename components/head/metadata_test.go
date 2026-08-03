@@ -220,9 +220,11 @@ func TestMetadataRejectsIncompleteSocialContractWithoutOutput(t *testing.T) {
 
 func TestMetadataValidatesAndCanonicalizesImageMIMEType(t *testing.T) {
 	valid := map[string]string{
-		"image/jpeg":    "image/jpeg",
-		"IMAGE/JPEG":    "image/jpeg",
-		"image/svg+xml": "image/svg+xml",
+		"image/jpeg":             "image/jpeg",
+		"IMAGE/JPEG":             "image/jpeg",
+		"image/svg+xml":          "image/svg+xml",
+		"image/vnd.example+json": "image/vnd.example+json",
+		"image/prs.example":      "image/prs.example",
 	}
 	for input, canonical := range valid {
 		t.Run("valid/"+input, func(t *testing.T) {
@@ -246,6 +248,11 @@ func TestMetadataValidatesAndCanonicalizesImageMIMEType(t *testing.T) {
 		"text/html",
 		"image/jpeg; charset=utf-8",
 		"image/jpeg; charset=",
+		"image/*",
+		"image/.",
+		"image/-jpeg",
+		"image/+xml",
+		"image/" + strings.Repeat("a", 128),
 	}
 	for _, input := range invalid {
 		t.Run("invalid/"+input, func(t *testing.T) {

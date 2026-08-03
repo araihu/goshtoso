@@ -80,11 +80,11 @@ templ Layout() {
 
 `head.Metadata()` emits route-specific document, canonical, Open Graph, and
 X/Twitter Card metadata in initial server-rendered HTML. Title, description,
-canonical URL, image URL, parameter-free image MIME type, positive dimensions,
-and image alt text are required; both URLs must be absolute HTTPS. `Render`
-validates the whole configuration before writing and returns an error rather
-than partial metadata. Open Graph type defaults to `website`; X/Twitter Card
-defaults to `summary_large_image`. Give each indexable route distinct values;
+canonical URL, image URL, parameter-free RFC 6838 image MIME type, positive
+dimensions, and image alt text are required; both URLs must be absolute HTTPS.
+`Render` validates the whole configuration before writing and returns an error
+rather than partial metadata. Open Graph type defaults to `website`; X/Twitter
+Card defaults to `summary_large_image`. Give each indexable route distinct values;
 1280x640 JPEG or PNG under 1 MB is the safe default. Do not inject share
 metadata through JavaScript or an HTMX fragment because link-preview crawlers
 may not execute either.
