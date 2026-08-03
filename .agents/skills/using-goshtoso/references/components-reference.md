@@ -904,11 +904,37 @@ import "github.com/araihu/goshtoso/components/form/validation"  // package valid
 import "github.com/araihu/goshtoso/components/head"  // package head
 ```
 
-**Entry points:** `Dependencies(options ...Option)` · `DependenciesMinimal(options ...Option)`
+**Entry points:** `Dependencies(options ...Option)` · `DependenciesMinimal(options ...Option)` · `Metadata(metadata MetadataConfig)`
 
 **Options:** `WithActionGroupURL(url string)` · `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithRuntimeManifest(manifest assets.RuntimeManifest)` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
 
 - **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx"
+- **OpenGraphType** — OpenGraphTypeWebsite = "website"
+- **TwitterCard** — TwitterCardSummary = "summary", TwitterCardSummaryLargeImage = "summary_large_image"
+
+**MetadataConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Title` | `string` |  |
+| `Description` | `string` |  |
+| `CanonicalURL` | `string` |  |
+| `OpenGraphType` | `OpenGraphType` |  |
+| `SiteName` | `string` |  |
+| `Locale` | `string` |  |
+| `Image` | `SocialImage` |  |
+| `TwitterCard` | `TwitterCard` |  |
+| `TwitterSite` | `string` |  |
+
+**SocialImage**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `URL` | `string` |  |
+| `MIMEType` | `string` |  |
+| `Width` | `int` |  |
+| `Height` | `int` |  |
+| `Alt` | `string` |  |
 
 ## icon
 

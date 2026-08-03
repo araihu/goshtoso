@@ -1,5 +1,69 @@
 package head
 
+// Metadata renders route-specific document, Open Graph, and X/Twitter Card
+// metadata. Render it inside <head> before Dependencies. Supply absolute public
+// URLs for CanonicalURL and Image.URL, plus image Alt text.
+templ metadataTemplate(metadata MetadataConfig) {
+	if metadata.Title != "" {
+		<title>{ metadata.Title }</title>
+	}
+	if metadata.Description != "" {
+		<meta name="description" content={ metadata.Description }/>
+	}
+	if metadata.CanonicalURL != "" {
+		<link rel="canonical" href={ templ.URL(metadata.CanonicalURL) }/>
+		<meta property="og:url" content={ metadata.CanonicalURL }/>
+	}
+	if metadata.OpenGraphType != "" {
+		<meta property="og:type" content={ string(metadata.OpenGraphType) }/>
+	}
+	if metadata.Title != "" {
+		<meta property="og:title" content={ metadata.Title }/>
+	}
+	if metadata.Description != "" {
+		<meta property="og:description" content={ metadata.Description }/>
+	}
+	if metadata.SiteName != "" {
+		<meta property="og:site_name" content={ metadata.SiteName }/>
+	}
+	if metadata.Locale != "" {
+		<meta property="og:locale" content={ metadata.Locale }/>
+	}
+	if metadata.Image.URL != "" {
+		<meta property="og:image" content={ metadata.Image.URL }/>
+		if metadata.Image.MIMEType != "" {
+			<meta property="og:image:type" content={ metadata.Image.MIMEType }/>
+		}
+		if metadata.Image.Width > 0 {
+			<meta property="og:image:width" content={ metadata.Image.widthContent() }/>
+		}
+		if metadata.Image.Height > 0 {
+			<meta property="og:image:height" content={ metadata.Image.heightContent() }/>
+		}
+		if metadata.Image.Alt != "" {
+			<meta property="og:image:alt" content={ metadata.Image.Alt }/>
+		}
+	}
+	if metadata.TwitterCard != "" {
+		<meta name="twitter:card" content={ string(metadata.TwitterCard) }/>
+	}
+	if metadata.Title != "" {
+		<meta name="twitter:title" content={ metadata.Title }/>
+	}
+	if metadata.Description != "" {
+		<meta name="twitter:description" content={ metadata.Description }/>
+	}
+	if metadata.Image.URL != "" {
+		<meta name="twitter:image" content={ metadata.Image.URL }/>
+		if metadata.Image.Alt != "" {
+			<meta name="twitter:image:alt" content={ metadata.Image.Alt }/>
+		}
+	}
+	if metadata.TwitterSite != "" {
+		<meta name="twitter:site" content={ metadata.TwitterSite }/>
+	}
+}
+
 // Dependencies renders the <script>/<link> tags for every Goshtoso runtime
 // asset: the Tailwind-compiled CSS (which carries the theme tokens — bg-primary,
 // text-on-primary, etc.), Alpine core + collapse/focus/mask plugins, HTMX, and the

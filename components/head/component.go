@@ -13,6 +13,12 @@ type Instance struct {
 	config config
 }
 
+// Metadata renders route-specific title, description, canonical, Open Graph,
+// and X/Twitter Card tags from one config.
+func Metadata(metadata MetadataConfig) templ.Component {
+	return metadataTemplate(metadata.normalized())
+}
+
 // Dependencies returns the full Goshtoso runtime dependency set.
 func Dependencies(options ...Option) Instance {
 	return Instance{config: newConfig(options)}

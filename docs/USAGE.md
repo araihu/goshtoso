@@ -57,6 +57,19 @@ import "github.com/araihu/goshtoso/components/head"
 templ Layout() {
     <html>
         <head>
+            @head.Metadata(head.MetadataConfig{
+                Title:        "Page title",
+                Description:  "Route-specific description",
+                CanonicalURL: "https://example.com/route",
+                SiteName:     "Product name",
+                Image: head.SocialImage{
+                    URL:      "https://example.com/og.jpg",
+                    MIMEType: "image/jpeg",
+                    Width:    1280,
+                    Height:   640,
+                    Alt:      "Useful description of the preview",
+                },
+            })
             @head.Dependencies()        // CSS + Alpine + plugins + HTMX + first-party helpers
             // or @head.DependenciesMinimal() — no Alpine plugins
         </head>
@@ -64,6 +77,13 @@ templ Layout() {
     </html>
 }
 ```
+
+`head.Metadata()` emits route-specific document, canonical, Open Graph, and
+X/Twitter Card metadata in initial server-rendered HTML. Use absolute public
+HTTPS canonical and image URLs. Give each indexable route distinct values and
+provide image MIME type, dimensions, and alt text; 1280x640 JPEG or PNG under
+1 MB is the safe default. Do not inject share metadata through JavaScript or an
+HTMX fragment because link-preview crawlers may not execute either.
 
 The served `styles.css` already carries every component style + the theme system
 (16 themes). **Stock CDN Tailwind will not work** — the theme tokens

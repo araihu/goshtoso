@@ -25,6 +25,18 @@ func entryPoints() []struct {
 		name string
 		comp templ.Component
 	}{
+		{"Metadata", Metadata(MetadataConfig{
+			Title:        "Example",
+			Description:  "Example page.",
+			CanonicalURL: "https://example.com/",
+			Image: SocialImage{
+				URL:      "https://example.com/og.jpg",
+				MIMEType: "image/jpeg",
+				Width:    1280,
+				Height:   640,
+				Alt:      "Example preview",
+			},
+		})},
 		{"Dependencies", Dependencies()},
 		{"DependenciesMinimal", DependenciesMinimal()},
 	}

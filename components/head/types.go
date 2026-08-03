@@ -5,11 +5,85 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/assets"
 )
+
+// OpenGraphType identifies the Open Graph object type for a page.
+type OpenGraphType string
+
+const (
+	// OpenGraphTypeWebsite is the default type for site and documentation pages.
+	OpenGraphTypeWebsite OpenGraphType = "website"
+)
+
+// TwitterCard identifies the X/Twitter Card presentation for a page.
+type TwitterCard string
+
+const (
+	// TwitterCardSummary renders a compact summary card.
+	TwitterCardSummary TwitterCard = "summary"
+	// TwitterCardSummaryLargeImage renders a wide image-led summary card.
+	TwitterCardSummaryLargeImage TwitterCard = "summary_large_image"
+)
+
+// SocialImage defines one absolute social-preview image and its structured
+// metadata. Use a public HTTPS URL and provide Alt whenever URL is set.
+type SocialImage struct {
+	URL      string
+	MIMEType string
+	Width    int
+	Height   int
+	Alt      string
+}
+
+// MetadataConfig defines route-specific document, Open Graph, and X/Twitter
+// Card metadata. CanonicalURL and Image.URL should be absolute public URLs.
+type MetadataConfig struct {
+	Title         string
+	Description   string
+	CanonicalURL  string
+	OpenGraphType OpenGraphType
+	SiteName      string
+	Locale        string
+	Image         SocialImage
+	TwitterCard   TwitterCard
+	TwitterSite   string
+}
+
+func (cfg MetadataConfig) normalized() MetadataConfig {
+	if !cfg.hasContent() {
+		return cfg
+	}
+	if cfg.OpenGraphType == "" {
+		cfg.OpenGraphType = OpenGraphTypeWebsite
+	}
+	if cfg.TwitterCard == "" {
+		if cfg.Image.URL == "" {
+			cfg.TwitterCard = TwitterCardSummary
+		} else {
+			cfg.TwitterCard = TwitterCardSummaryLargeImage
+		}
+	}
+	return cfg
+}
+
+func (cfg MetadataConfig) hasContent() bool {
+	return cfg.Title != "" || cfg.Description != "" || cfg.CanonicalURL != "" ||
+		cfg.SiteName != "" || cfg.Locale != "" || cfg.Image.URL != "" ||
+		cfg.TwitterCard != "" || cfg.TwitterSite != ""
+}
+
+func (image SocialImage) widthContent() string {
+	return strconv.Itoa(image.Width)
+}
+
+func (image SocialImage) heightContent() string {
+	return strconv.Itoa(image.Height)
+}
 
 // Dependency identifies a third-party runtime managed by Dependencies.
 type Dependency string

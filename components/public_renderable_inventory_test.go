@@ -74,6 +74,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"form.FormErrors":                 {},
 		"head.Dependencies":               {},
 		"head.DependenciesMinimal":        {},
+		"head.Metadata":                   {},
 		"head.WithComboboxURL":            {},
 		"head.WithActionGroupURL":         {},
 		"head.WithDependencyCDNURL":       {},

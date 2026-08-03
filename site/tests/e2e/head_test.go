@@ -39,6 +39,8 @@ func TestDependenciesDemoPage(t *testing.T) {
 	assert.Equal(t, 1, linkCount)
 
 	require.NoError(t, page.Locator("#dependencies-full").GetByText("Fallback: /assets/js/runtime/*").WaitFor())
+	require.NoError(t, page.Locator("#head-metadata").GetByText("complete social contract").WaitFor())
+	require.NoError(t, page.GetByText("head.Metadata(head.MetadataConfig{").WaitFor())
 	require.NoError(t, page.Locator("#dependencies-minimal").GetByText("DependenciesMinimal").WaitFor())
 	require.NoError(t, page.Locator("#dependencies-asset-contract").GetByText("assets.Handler()").WaitFor())
 	require.NoError(t, page.Locator("#dependencies-options").GetByText("Strong defaults, explicit escape hatches").WaitFor())
