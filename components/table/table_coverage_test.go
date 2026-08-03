@@ -569,13 +569,15 @@ func TestRenderPaginationControls(t *testing.T) {
 	mustContainAll(t, nav, "nav") // pagination component renders a nav element
 	mustNotContain(t, nav, "Page 2 of 4")
 
-	// Single page -> no pagination chrome.
+	// Single page keeps a hidden host so later OOB responses can restore controls.
 	single := Config{
 		Columns:    []Column{{Key: "name", Label: "N"}},
 		Rows:       []Row{{ID: "1", Cells: map[string]Cell{"name": {Text: "A"}}}},
 		Pagination: &PaginationConfig{CurrentPage: 1, TotalPages: 1, PerPage: 3},
 	}
-	mustNotContain(t, renderT(t, tablePagination(single)), "table-pagination")
+	singlePage := renderT(t, tablePagination(single))
+	mustContainAll(t, singlePage, `id="table-pagination"`, "hidden")
+	mustNotContain(t, singlePage, "Page 1 of 1")
 }
 
 func TestRenderContainedInfiniteScrollVariants(t *testing.T) {
@@ -651,7 +653,7 @@ func TestRenderFilterBarVariants(t *testing.T) {
 	mustContainAll(t, html,
 		`data-table-filters`,
 		`x-data="goshtosoTableFilters($el)"`,
-		`data-table-filter-endpoint="/api/components/table/rows"`,
+		`data-table-filter-endpoint="/api/components/table/rows?table_id=filtered"`,
 		`id="filtered-filters"`,      // filter bar id
 		`@click="filtersExpanded`,    // collapsible toggle
 		`type="search"`,              // search input

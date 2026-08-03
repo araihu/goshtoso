@@ -131,7 +131,7 @@ templ tableEditButton() {
 			tableSortablePreview(),
 			`@table.Table(table.Config{
     ID:           "sortable-table",
-    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=sortable&per_page=6"},
     SortBy:       "id",
     SortDir:      table.SortAsc,
     Columns: []table.Column{
@@ -159,6 +159,7 @@ templ tableEditButton() {
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				ID:          "paginated-table-example",
 				Title:       "Paginated Table",
 				Description: "Pass a Pagination config; Prev/Next and page links swap the tbody and paginator via HTMX OOB.",
 			},
@@ -166,13 +167,14 @@ templ tableEditButton() {
 			`@table.Table(table.Config{
     ID:           "paginated-table",
     HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
-    Columns:      columns,
+    Columns:      sortableColumns(),
     Rows:         pageRows(1),
     Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 })`,
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				ID:          "filtered-table-example",
 				Title:       "Filtered Table",
 				Description: "Add a Filters config with search/select/toggle filters. The bar variant renders a collapsible bordered block.",
 			},
@@ -235,6 +237,7 @@ templ tableEditButton() {
 templ tableDefaultPreview() {
 	<div id="table-default" class="w-full">
 		@table.Table(table.Config{
+			ID:      "table-default-demo",
 			Columns: defaultColumns(),
 			Rows:    defaultRows(),
 		})
@@ -245,6 +248,7 @@ templ tableDefaultPreview() {
 templ tableStripedPreview() {
 	<div id="table-striped" class="w-full">
 		@table.Table(table.Config{
+			ID:         "table-striped-demo",
 			Appearance: table.AppearanceStriped,
 			Columns:    defaultColumns(),
 			Rows:       stripedRows(),
@@ -256,6 +260,7 @@ templ tableStripedPreview() {
 templ tableActionPreview() {
 	<div id="table-action" class="w-full">
 		@table.Table(table.Config{
+			ID:      "table-action-demo",
 			Columns: actionColumns(),
 			Rows:    actionRows(),
 		})
@@ -267,6 +272,7 @@ templ tableActionPreview() {
 templ tableLinkedActionsPreview() {
 	<div id="table-linked-actions" class="w-full">
 		@table.Table(table.Config{
+			ID:      "table-linked-actions-demo",
 			Columns: defaultColumns(),
 			Rows:    linkedActionRows(),
 		})
@@ -277,6 +283,7 @@ templ tableLinkedActionsPreview() {
 templ tableCheckboxPreview() {
 	<div id="table-checkbox" class="w-full">
 		@table.Table(table.Config{
+			ID:           "table-checkbox-demo",
 			ShowCheckbox: true,
 			Columns:      actionColumns(),
 			Rows:         checkboxRows(),
@@ -288,6 +295,7 @@ templ tableCheckboxPreview() {
 templ tableUsersPreview() {
 	<div id="table-users" class="w-full">
 		@table.Table(table.Config{
+			ID:      "table-users-demo",
 			Columns: usersColumns(),
 			Rows:    usersRows(),
 		})
@@ -299,7 +307,7 @@ templ tableSortablePreview() {
 	<div id="table-sortable" class="w-full">
 		@table.Table(table.Config{
 			ID:      "sortable-table",
-			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=sortable&per_page=6"},
 			SortBy:  "id",
 			SortDir: table.SortAsc,
 			Columns: sortableColumns(),
@@ -335,7 +343,7 @@ templ tablePaginatedPreview() {
 		@table.Table(table.Config{
 			ID:         "paginated-table",
 			HTMX:       &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
-			Columns:    defaultColumns(),
+			Columns:    sortableColumns(),
 			Rows:       paginatedRows(1),
 			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 		})
@@ -387,7 +395,7 @@ templ tableInlineFilteredPreview() {
 	<div id="table-inline-filtered" class="w-full">
 		@table.Table(table.Config{
 			ID:   "inline-filtered-table",
-			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=inline-filtered"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID"},
 				{Key: "name", Label: "Name"},

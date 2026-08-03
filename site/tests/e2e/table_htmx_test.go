@@ -361,6 +361,10 @@ func TestTableHTMX_BrowserSorting(t *testing.T) {
 	})
 
 	t.Run("ClickSortHeader_UpdatesRows", func(t *testing.T) {
+		initialRows, err := page.Locator("#sortable-table tbody tr").Count()
+		require.NoError(t, err)
+		require.Equal(t, 6, initialRows, "sortable preview should start with six rows")
+
 		// Get initial first row text
 		initialFirst, err := page.Locator("#sortable-table tbody tr").First().TextContent()
 		require.NoError(t, err)
@@ -375,15 +379,42 @@ func TestTableHTMX_BrowserSorting(t *testing.T) {
 
 		err = nameHeader.Click()
 		require.NoError(t, err)
-		time.Sleep(500 * time.Millisecond) // Wait for HTMX swap
+		_, err = page.WaitForFunction(
+			`() => {
+				var rows = document.querySelectorAll('#sortable-table tbody tr');
+				var nameHeader = document.querySelector('#sortable-table-thead th[hx-get*="order_by=name"]');
+				return rows.length === 6 &&
+					rows[0].textContent.includes('Alex Martinez') &&
+					nameHeader?.getAttribute('hx-get').includes('order_dir=desc');
+			}`, nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+		)
+		require.NoError(t, err, "ascending sort should complete before the next interaction")
 
 		// Get new first row text - should be different if sort changed
 		newFirst, err := page.Locator("#sortable-table tbody tr").First().TextContent()
 		require.NoError(t, err)
 
 		// After clicking name sort, the order should change
+		assert.Contains(t, newFirst, "Alex Martinez")
+		assert.NotEqual(t, initialFirst, newFirst)
 		t.Logf("Before sort: %.50s", strings.TrimSpace(initialFirst))
 		t.Logf("After sort:  %.50s", strings.TrimSpace(newFirst))
+
+		// Response-generated headers must retain the six-row endpoint state.
+		err = nameHeader.Click()
+		require.NoError(t, err)
+		_, err = page.WaitForFunction(
+			`() => {
+				var rows = document.querySelectorAll('#sortable-table tbody tr');
+				var nameHeader = document.querySelector('#sortable-table-thead th[hx-get*="order_by=name"]');
+				return rows.length === 6 &&
+					rows[0].textContent.includes('Sophia Chen') &&
+					!nameHeader?.getAttribute('hx-get').includes('order_dir=');
+			}`, nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+		)
+		require.NoError(t, err, "second sort should preserve all six preview rows")
 	})
 }
 

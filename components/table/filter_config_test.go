@@ -198,7 +198,7 @@ func TestFilterRuntimeContractPreservesExtraQueryParamsAndPerPage(t *testing.T) 
 	}
 	out := renderFilterContract(t, cfg)
 	for _, want := range []string{
-		`data-table-filter-endpoint="/console/addons/install"`,
+		`data-table-filter-endpoint="/console/addons/install?table_id=cluster-picker-table"`,
 		`data-table-filter-extra-query="&amp;addon_name=argo-cd"`,
 		`data-table-filter-per-page="25"`,
 	} {

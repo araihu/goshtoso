@@ -55,7 +55,7 @@ templ tableTemplate(cfg Config) {
 	if cfg.hasFilters() {
 		<div
 			data-table-filters
-			data-table-filter-endpoint={ cfg.htmxEndpointValue() }
+			data-table-filter-endpoint={ cfg.filterEndpointURL() }
 			data-table-filter-per-page={ filterPerPage(cfg) }
 			data-table-filter-extra-query={ cfg.ExtraQueryParams }
 			data-table-filter-target={ cfg.Filters.resolvedHXTarget(cfg) }
@@ -297,7 +297,12 @@ templ tableHeadRow(cfg Config) {
 
 // tableHead renders the thead element for initial page render.
 templ tableHead(cfg Config) {
-	<thead id={ cfg.theadID() } class={ cfg.theadClasses() }>
+	<thead
+		id={ cfg.theadID() }
+		data-table-sort-by={ cfg.SortBy }
+		data-table-sort-dir={ string(cfg.SortDir) }
+		class={ cfg.theadClasses() }
+	>
 		@tableHeadRow(cfg)
 	</thead>
 }
@@ -656,18 +661,24 @@ templ scrollSentinel(cfg Config) {
 
 // tablePagination renders page navigation controls below the table using the pagination component.
 templ tablePagination(cfg Config) {
-	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
-		<div id={ cfg.paginationID() } class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">
-			<div class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				Page { itoa(cfg.Pagination.CurrentPage) } of { itoa(cfg.Pagination.TotalPages) }
-			</div>
-			@pagination.Pagination(pagination.Config{
-				Mode:        pagination.ModeEllipsis,
-				CurrentPage: cfg.Pagination.CurrentPage,
-				TotalPages:  cfg.Pagination.TotalPages,
-				BaseURL:     cfg.paginationBaseURL(),
-				HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.tbodyID(), Swap: "innerHTML"},
-			})
+	if cfg.Pagination != nil {
+		<div
+			id={ cfg.paginationID() }
+			class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark"
+			hidden?={ cfg.Pagination.TotalPages <= 1 }
+		>
+			if cfg.Pagination.TotalPages > 1 {
+				<div class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+					Page { itoa(cfg.Pagination.CurrentPage) } of { itoa(cfg.Pagination.TotalPages) }
+				</div>
+				@pagination.Pagination(pagination.Config{
+					Mode:        pagination.ModeEllipsis,
+					CurrentPage: cfg.Pagination.CurrentPage,
+					TotalPages:  cfg.Pagination.TotalPages,
+					BaseURL:     cfg.paginationBaseURL(),
+					HTMX:        &pagination.HTMXConfig{Target: "#" + cfg.tbodyID(), Swap: "innerHTML"},
+				})
+			}
 		</div>
 	}
 }

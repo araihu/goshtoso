@@ -81,14 +81,28 @@ templ paginationTemplate(cfg Config) {
 						</li>
 					} else if item.IsCurrent {
 						<li>
-							<a
-								href={ templ.URL(cfg.PageURL(item.Page)) }
-								class={ cfg.pageClasses(true) }
-								aria-current="page"
-								aria-label={ "page " + itoa(item.Page) }
-							>
-								{ itoa(item.Page) }
-							</a>
+							if cfg.HTMX != nil && cfg.HTMX.Target != "" {
+								<a
+									href={ templ.URL(cfg.PageURL(item.Page)) }
+									class={ cfg.pageClasses(true) }
+									aria-current="page"
+									aria-label={ "page " + itoa(item.Page) }
+									hx-get={ cfg.PageURL(item.Page) }
+									hx-target={ cfg.HTMX.Target }
+									hx-swap={ cfg.swapStrategy() }
+								>
+									{ itoa(item.Page) }
+								</a>
+							} else {
+								<a
+									href={ templ.URL(cfg.PageURL(item.Page)) }
+									class={ cfg.pageClasses(true) }
+									aria-current="page"
+									aria-label={ "page " + itoa(item.Page) }
+								>
+									{ itoa(item.Page) }
+								</a>
+							}
 						</li>
 					} else {
 						<li>
