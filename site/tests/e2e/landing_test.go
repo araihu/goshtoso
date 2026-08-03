@@ -143,6 +143,17 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		txt, err := lockup.InnerText()
 		require.NoError(t, err)
 		require.Contains(t, txt, "Server-rendered Go UI")
+
+		tagline := lockup.GetByText("Server-rendered Go UI", playwright.LocatorGetByTextOptions{Exact: playwright.Bool(true)})
+		require.NoError(t, page.SetViewportSize(654, 781))
+		visible, err = tagline.IsVisible()
+		require.NoError(t, err)
+		require.False(t, visible, "brand tagline should stay hidden on medium and small screens")
+
+		require.NoError(t, page.SetViewportSize(1280, 900))
+		visible, err = tagline.IsVisible()
+		require.NoError(t, err)
+		require.True(t, visible, "brand tagline should return on large screens")
 	})
 
 	t.Run("BrandFollowsDarkMode", func(t *testing.T) {
