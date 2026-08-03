@@ -14,6 +14,7 @@ import (
 	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/araihu/goshtoso/components/icon"
+	"github.com/araihu/goshtoso/components/inlinecode"
 	"github.com/araihu/goshtoso/components/kbd"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/stretchr/testify/require"
@@ -39,6 +40,7 @@ func displayRenderables() map[components.Kind]components.Component {
 		components.KindDependencies:        head.Dependencies(),
 		components.KindDependenciesMinimal: head.DependenciesMinimal(),
 		components.KindIcon:                icon.Icon(icon.Config{SpriteURL: "/sprites/ui.svg", Symbol: "check"}),
+		components.KindInlineCode:          inlinecode.InlineCode(""),
 		components.KindKbd:                 kbd.Kbd(""),
 		components.KindTable:               table.Table(table.Config{}),
 		components.KindTableHeadContent:    table.TableHeadContent(table.Config{}),
@@ -51,7 +53,7 @@ func displayRenderables() map[components.Kind]components.Component {
 
 func TestDisplayRenderablesExposeKinds(t *testing.T) {
 	values := displayRenderables()
-	require.Len(t, values, 25)
+	require.Len(t, values, 26)
 	for want, value := range values {
 		require.Equal(t, want, value.Kind())
 	}

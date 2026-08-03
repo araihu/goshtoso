@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-52 component packages. Each is imported by its directory path; note the
+53 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -509,6 +509,8 @@ import "github.com/araihu/goshtoso/components/codeblock"  // package codeblock
 
 **Entry points:** `CodeBlock(cfg Config)`
 
+- **Density** — DensityDefault = "", DensityCompact = "compact"
+
 **Config**
 
 | Field | Type | Description |
@@ -517,6 +519,7 @@ import "github.com/araihu/goshtoso/components/codeblock"  // package codeblock
 | `Code` | `string` | Code is the source code to display |
 | `Label` | `string` | Label is the header text (defaults to Language if empty) |
 | `MaxHeight` | `string` | MaxHeight is an optional CSS max-height for scrollable long code (e.g. "400px") |
+| `Density` | `Density` | Density controls spacing in the header and highlighted code body. |
 | `ID` | `string` | ID overrides the auto-generated element ID |
 
 ## combobox
@@ -939,6 +942,16 @@ import "github.com/araihu/goshtoso/components/icon/heroicons"  // package heroic
 | `GoName` | `string` |  |
 | `CanonicalName` | `string` |  |
 | `Symbol` | `icon.Symbol` |  |
+
+## inlinecode
+
+```go
+import "github.com/araihu/goshtoso/components/inlinecode"  // package inlinecode
+```
+
+**Entry points:** `InlineCode(text string, options ...Option)`
+
+**Options:** `WithRootAttrs(attrs templ.Attributes)` · `WithRootClass(class string)`
 
 ## kbd
 

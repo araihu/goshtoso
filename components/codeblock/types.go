@@ -7,6 +7,16 @@ import (
 	"unicode"
 )
 
+// Density controls spacing inside code block regions.
+type Density string
+
+const (
+	// DensityDefault uses standard documentation spacing.
+	DensityDefault Density = ""
+	// DensityCompact reduces header and code padding for short snippets.
+	DensityCompact Density = "compact"
+)
+
 // Config holds configuration for the code block component
 type Config struct {
 	// Language selects the Chroma lexer (e.g. "go", "bash", "html", "css").
@@ -18,8 +28,26 @@ type Config struct {
 	Label string
 	// MaxHeight is an optional CSS max-height for scrollable long code (e.g. "400px")
 	MaxHeight string
+	// Density controls spacing in the header and highlighted code body.
+	Density Density
 	// ID overrides the auto-generated element ID
 	ID string
+}
+
+func (cfg Config) headerClasses() string {
+	spacing := "px-4 py-2"
+	if cfg.Density == DensityCompact {
+		spacing = "px-3 py-1.5"
+	}
+	return "flex items-center justify-between " + spacing + " bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark"
+}
+
+func (cfg Config) bodyClasses() string {
+	classes := "codeblock overflow-x-auto"
+	if cfg.Density == DensityCompact {
+		classes = "codeblock codeblock-compact overflow-x-auto"
+	}
+	return classes
 }
 
 // GetID returns a stable ID for the code element.

@@ -26,9 +26,11 @@ templ codeBlockTemplate(cfg Config) {
 	<div
 		x-data={ fmt.Sprintf("{ copied: false, copyCode() { navigator.clipboard.writeText(document.getElementById('%s').textContent).then(() => { this.copied = true; setTimeout(() => this.copied = false, 2000); }); } }", jsID) }
 		class="rounded-radius border border-outline dark:border-outline-dark overflow-hidden"
+		data-code-block
+		data-density={ string(cfg.Density) }
 	>
 			<!-- Header -->
-			<div class="flex items-center justify-between px-4 py-2 bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark">
+			<div class={ cfg.headerClasses() } data-code-block-header>
 				<span class="text-xs font-medium text-on-surface dark:text-on-surface-dark">{ cfg.getLabel() }</span>
 				<button
 					type="button"
@@ -46,7 +48,7 @@ templ codeBlockTemplate(cfg Config) {
 			</button>
 		</div>
 		<!-- Code -->
-		<div id={ id } class="codeblock overflow-x-auto" style={ cfg.maxHeightStyle() }>
+		<div id={ id } class={ cfg.bodyClasses() } style={ cfg.maxHeightStyle() }>
 			@templ.Raw(Render(cfg.Code, cfg.Language))
 		</div>
 	</div>
