@@ -3898,8 +3898,8 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
-  .transition-\[transform\,box-shadow\] {
-    transition-property: transform,box-shadow;
+  .transition-\[translate\,box-shadow\] {
+    transition-property: translate,box-shadow;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
@@ -4984,9 +4984,6 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .motion-reduce\:transform-none {
-      transform: none;
-    }
     .motion-reduce\:animate-none {
       animation: none;
     }
@@ -4997,6 +4994,14 @@
     }
     .motion-reduce\:transition-none {
       transition-property: none;
+    }
+    @media (hover: hover) {
+      .motion-reduce\:hover\:translate-none:hover {
+        translate: none;
+      }
+    }
+    .motion-reduce\:active\:translate-none:active {
+      translate: none;
     }
   }
   @media (width >= 40rem) {
