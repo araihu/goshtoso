@@ -20,20 +20,51 @@
     });
   }
 
+  function relativeRequestURL(url) {
+    if (url.origin !== window.location.origin) return url.toString();
+    return url.pathname + url.search + url.hash;
+  }
+
+  function applyExtraQuery(url, extraQuery) {
+    var query = (extraQuery || "").replace(/^[?&]+/, "");
+    new URLSearchParams(query).forEach(function (value, key) {
+      url.searchParams.set(key, value);
+    });
+  }
+
+  function applySortQuery(url, root) {
+    var head = root.querySelector("thead[data-table-sort-by]");
+    var orderBy = (head && head.dataset.tableSortBy) || "";
+    var orderDir = (head && head.dataset.tableSortDir) || "";
+    url.searchParams.delete("order_by");
+    url.searchParams.delete("order_dir");
+    if (orderBy && orderDir) {
+      url.searchParams.set("order_by", orderBy);
+      url.searchParams.set("order_dir", orderDir);
+    }
+  }
+
   window.goshtosoTableFilters = function (root) {
     return {
       filtersExpanded: root.dataset.tableFiltersExpanded === "true",
       filters: readInitialFilters(root),
       configRequestListener: null,
       buildFilterURL: function () {
-        var url = (root.dataset.tableFilterEndpoint || "") + "?_filter=1";
+        var endpoint = root.dataset.tableFilterEndpoint || "";
+        var url = new URL(endpoint || window.location.href, window.location.href);
+        url.searchParams.set("_filter", "1");
+        url.searchParams.delete("page");
         var perPage = root.dataset.tableFilterPerPage || "";
-        if (perPage) url += "&per_page=" + encodeURIComponent(perPage);
-        url += root.dataset.tableFilterExtraQuery || "";
-        activeFilterEntries(this.filters).forEach(function (entry) {
-          url += "&" + encodeURIComponent(entry[0]) + "=" + encodeURIComponent(entry[1]);
+        if (perPage) url.searchParams.set("per_page", perPage);
+        applyExtraQuery(url, root.dataset.tableFilterExtraQuery);
+        applySortQuery(url, root);
+        Object.keys(this.filters).forEach(function (key) {
+          url.searchParams.delete(key);
         });
-        return url;
+        activeFilterEntries(this.filters).forEach(function (entry) {
+          url.searchParams.set(entry[0], entry[1]);
+        });
+        return relativeRequestURL(url);
       },
       applyFilters: function () {
         if (!window.htmx) return;

@@ -205,7 +205,7 @@ templ tableEditButton() {
 			tableSortablePreview(),
 			`@table.Table(table.Config{
     ID:           "sortable-table",
-    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+    HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=sortable&per_page=6"},
     SortBy:       "id",
     SortDir:      table.SortAsc,
     Columns: []table.Column{
@@ -239,6 +239,7 @@ templ tableEditButton() {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
+				ID:          "paginated-table-example",
 				Title:       "Paginated Table",
 				Description: "Pass a Pagination config; Prev/Next and page links swap the tbody and paginator via HTMX OOB.",
 			},
@@ -246,7 +247,7 @@ templ tableEditButton() {
 			`@table.Table(table.Config{
     ID:           "paginated-table",
     HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
-    Columns:      columns,
+    Columns:      sortableColumns(),
     Rows:         pageRows(1),
     Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 })`,
@@ -256,6 +257,7 @@ templ tableEditButton() {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
+				ID:          "filtered-table-example",
 				Title:       "Filtered Table",
 				Description: "Add a Filters config with search/select/toggle filters. The bar variant renders a collapsible bordered block.",
 			},
@@ -354,6 +356,7 @@ func tableDefaultPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:      "table-default-demo",
 			Columns: defaultColumns(),
 			Rows:    defaultRows(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -395,6 +398,7 @@ func tableStripedPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:         "table-striped-demo",
 			Appearance: table.AppearanceStriped,
 			Columns:    defaultColumns(),
 			Rows:       stripedRows(),
@@ -437,6 +441,7 @@ func tableActionPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:      "table-action-demo",
 			Columns: actionColumns(),
 			Rows:    actionRows(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -479,6 +484,7 @@ func tableLinkedActionsPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:      "table-linked-actions-demo",
 			Columns: defaultColumns(),
 			Rows:    linkedActionRows(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -520,6 +526,7 @@ func tableCheckboxPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:           "table-checkbox-demo",
 			ShowCheckbox: true,
 			Columns:      actionColumns(),
 			Rows:         checkboxRows(),
@@ -562,6 +569,7 @@ func tableUsersPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:      "table-users-demo",
 			Columns: usersColumns(),
 			Rows:    usersRows(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -604,7 +612,7 @@ func tableSortablePreview() templ.Component {
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
 			ID:      "sortable-table",
-			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			HTMX:    &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=sortable&per_page=6"},
 			SortBy:  "id",
 			SortDir: table.SortAsc,
 			Columns: sortableColumns(),
@@ -720,7 +728,7 @@ func tablePaginatedPreview() templ.Component {
 		templ_7745c5c3_Err = table.Table(table.Config{
 			ID:         "paginated-table",
 			HTMX:       &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
-			Columns:    defaultColumns(),
+			Columns:    sortableColumns(),
 			Rows:       paginatedRows(1),
 			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -834,7 +842,7 @@ func tableInlineFilteredPreview() templ.Component {
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
 			ID:   "inline-filtered-table",
-			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows"},
+			HTMX: &table.HTMXConfig{Endpoint: "/api/components/table/rows?variant=inline-filtered"},
 			Columns: []table.Column{
 				{Key: "id", Label: "CustomerID"},
 				{Key: "name", Label: "Name"},

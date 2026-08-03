@@ -24,6 +24,8 @@ var handlerIdentities = map[string][]string{
 	"search_handler.go":          {"search"},
 	"steps_handler.go":           {"steps"},
 	"table_handler.go":           {"table"},
+	"table_fragments.templ":      {"table"},
+	"table_fragments_templ.go":   {"table"},
 	"tabs_handler.go":            {"tabs"},
 	"ticker_handler.go":          {"example_ticker"},
 	"toast_handler.go":           {"toast"},

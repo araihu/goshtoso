@@ -89,6 +89,13 @@ func TestTablePaginationNav(t *testing.T) {
 		assert.Contains(t, firstRow, "Alice Brown")
 	})
 
+	t.Run("InitialState_SortableHeaders", func(t *testing.T) {
+		headers := page.Locator("#paginated-table-thead th[hx-get*='order_by']")
+		count, err := headers.Count()
+		require.NoError(t, err)
+		assert.Equal(t, 3, count, "paginated sorting must be available before the first page request")
+	})
+
 	// --- Navigate to Page 2 ---
 
 	t.Run("NavigateToPage2", func(t *testing.T) {
@@ -198,6 +205,21 @@ func TestTablePaginationNav(t *testing.T) {
 		text, err := activePage.TextContent()
 		require.NoError(t, err)
 		assert.Contains(t, text, "4", "active page should be 4")
+	})
+
+	t.Run("SortOnPage4_PreservesCurrentPage", func(t *testing.T) {
+		nameHeader := page.Locator("#paginated-table-thead th:has-text('Name')")
+		require.NoError(t, nameHeader.Click())
+
+		_, err := page.WaitForFunction(
+			`() => {
+				var paginator = document.querySelector('#paginated-table-pagination');
+				var firstRow = document.querySelector('#paginated-table tbody tr');
+				return paginator?.textContent.includes('Page 4 of 4') && firstRow?.textContent.includes('Ryan Thompson');
+			}`, nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+		)
+		require.NoError(t, err, "sorting on page 4 should preserve page 4")
 	})
 
 	// --- Navigate back to Page 1 via Prev ---

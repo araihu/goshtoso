@@ -48,6 +48,9 @@ type ComponentDemoProps struct {
 
 // DemoSectionProps holds configuration for individual demo sections within a page
 type DemoSectionProps struct {
+	// ID overrides the generated heading anchor when a preview needs the title's
+	// default slug for one of its own DOM targets.
+	ID          string
 	Title       string
 	Description string
 	// AbovePreview is an optional slot rendered between the section copy and
@@ -119,6 +122,7 @@ func DemoSection(props DemoSectionProps, preview templ.Component, code string) t
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = componentpage.Section(componentpage.Example{
+			ID:           props.ID,
 			Title:        props.Title,
 			Description:  props.Description,
 			RootAttrs:    templ.Attributes{"data-demo-section": true},

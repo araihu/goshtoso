@@ -1,0 +1,31 @@
+package server
+
+templ tableHeadOOBFragment(id string, sortBy string, sortDir string, content templ.Component) {
+	<template>
+		<thead
+			id={ id }
+			hx-swap-oob="outerHTML"
+			data-table-sort-by={ sortBy }
+			data-table-sort-dir={ sortDir }
+			class={ tableHeadClasses }
+		>
+			@content
+		</thead>
+	</template>
+}
+
+templ tablePaginationOOBFragment(id string, page int, totalPages int, navigation templ.Component) {
+	<div
+		id={ id }
+		hx-swap-oob="true"
+		class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark"
+		hidden?={ totalPages <= 1 }
+	>
+		if totalPages > 1 {
+			<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">
+				Page { page } of { totalPages }
+			</div>
+			@navigation
+		}
+	</div>
+}
