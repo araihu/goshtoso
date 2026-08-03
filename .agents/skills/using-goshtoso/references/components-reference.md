@@ -360,6 +360,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 **Entry points:** `Card(cfg Config)`
 
 - **Appearance** — AppearanceDefault = "", AppearancePrimary = "primary"
+- **Interaction** — InteractionDefault = "", InteractionPressed = "pressed"
 - **Layout** — LayoutVertical = "vertical", LayoutHorizontal = "horizontal"
 
 **Config**
@@ -368,6 +369,8 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 |-------|------|-------------|
 | `Image` | `string` | Image is the card image URL |
 | `ImageAlt` | `string` | ImageAlt is the image alt text |
+| `Media` | `templ.Component` | Media replaces Image with arbitrary card media or decorative content. |
+| `MediaClass` | `string` | MediaClass allows additional CSS classes on the media container. |
 | `Tag` | `string` | Tag is an optional category/tag (shown above title) |
 | `Title` | `string` | Title is the card title |
 | `Description` | `string` | Description is the card body text |
@@ -375,6 +378,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |
 | `Appearance` | `Appearance` | Appearance determines the card's visual treatment. |
 | `Layout` | `Layout` | Layout determines vertical or horizontal layout |
+| `Interaction` | `Interaction` | Interaction determines optional card motion. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the card root. |
 
 ## carousel
@@ -586,7 +590,8 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 
 **Entry points:** `Drawer(cfg Config)`
 
-- **Side** — SideRight = "right", SideLeft = "left"
+- **Height** — HeightSM = "sm", HeightMD = "md", HeightLG = "lg", HeightXL = "xl", HeightFull = "full"
+- **Side** — SideRight = "right", SideLeft = "left", SideTop = "top", SideBottom = "bottom"
 - **Width** — WidthSM = "sm", WidthMD = "md", WidthLG = "lg", WidthXL = "xl", WidthFull = "full"
 
 **Config**
@@ -596,7 +601,8 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 | `ID` | `string` | ID uniquely identifies the drawer. Required. Used for the Alpine state var name (`{ID}IsOpen`) and for the aria-labelledby target (`{ID}Title`). |
 | `Title` | `string` | Title is the drawer heading. Required for accessibility. |
 | `Side` | `Side` | Side the drawer slides in from. Default: SideRight. |
-| `Width` | `Width` | Width preset. Default: WidthMD. |
+| `Width` | `Width` | Width preset. Default: WidthMD. Applies to left and right drawers. |
+| `Height` | `Height` | Height preset. Default: HeightMD. Applies to top and bottom drawers. |
 | `BodyID` | `string` | BodyID is the id attribute of the inner content container. Exposed so HTMX targets can swap content directly: hx-target="#{BodyID}". Default: "{ID}-body". |
 | `Persistent` | `bool` | Persistent disables click-backdrop and Esc-to-close. Default: false. |
 | `PanelClass` | `string` | PanelClass allows extra CSS classes on the panel (not the overlay). |

@@ -41,7 +41,12 @@ templ drawerTemplate(cfg Config) {
 		<div
 			x-cloak
 			x-show={ state }
-			x-transition.opacity.duration.200ms
+			x-transition:enter="transition-opacity duration-200 motion-reduce:transition-none"
+			x-transition:enter-start="opacity-0"
+			x-transition:enter-end="opacity-100"
+			x-transition:leave="transition-opacity duration-150 motion-reduce:transition-none"
+			x-transition:leave-start="opacity-100"
+			x-transition:leave-end="opacity-0"
 			class={ cfg.overlayClasses() }
 			if !cfg.Persistent {
 				x-on:click={ closeReq }

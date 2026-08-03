@@ -2,6 +2,24 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.6] - 2026-08-02
+
+### Expressive project cards and directional drawers
+
+- Added `card.Config.Media` and `MediaClass` so consumers can supply arbitrary
+  templ media while retaining Card structure, semantics, and content styling.
+- Added the opt-in `card.InteractionPressed` treatment for linked or clickable
+  cards, including reduced-motion-safe transform and transition behavior.
+- Added `drawer.SideTop` and `drawer.SideBottom` with height presets from small
+  through full-screen, while preserving existing left/right defaults.
+- Added component demos, focused rendering tests, generated CSS, and updated
+  consumer-agent references for all new configuration choices.
+
+### Upgrade note
+
+- Existing Card and Drawer configurations remain source compatible. Consumers
+  opt into custom media, pressed interaction, or vertical drawer directions.
+
 ## [v0.1.5] - 2026-08-02
 
 ### Inline code

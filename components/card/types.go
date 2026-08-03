@@ -10,6 +10,15 @@ const (
 	AppearancePrimary Appearance = "primary"
 )
 
+// Interaction selects optional pointer and keyboard motion for a card.
+type Interaction string
+
+const (
+	InteractionDefault Interaction = ""
+	// InteractionPressed gives linked and clickable cards a physical press response.
+	InteractionPressed Interaction = "pressed"
+)
+
 // Layout represents card layout
 type Layout string
 
@@ -24,6 +33,10 @@ type Config struct {
 	Image string
 	// ImageAlt is the image alt text
 	ImageAlt string
+	// Media replaces Image with arbitrary card media or decorative content.
+	Media templ.Component
+	// MediaClass allows additional CSS classes on the media container.
+	MediaClass string
 	// Tag is an optional category/tag (shown above title)
 	Tag string
 	// Title is the card title
@@ -38,6 +51,8 @@ type Config struct {
 	Appearance Appearance
 	// Layout determines vertical or horizontal layout
 	Layout Layout
+	// Interaction determines optional card motion.
+	Interaction Interaction
 	// RootClass allows additional CSS classes on the card root.
 	RootClass string
 }
@@ -53,6 +68,10 @@ func (cfg Config) containerClasses() string {
 		base += " border-outline"
 	}
 
+	if cfg.Interaction == InteractionPressed {
+		base += " shadow-lg transition-[transform,box-shadow] duration-150 ease-out hover:translate-y-1.5 hover:shadow-sm active:translate-y-2 active:shadow-none motion-reduce:transform-none motion-reduce:transition-none"
+	}
+
 	// Layout
 	if cfg.Layout == LayoutHorizontal {
 		base += " max-w-2xl grid grid-cols-1 md:grid-cols-8"
@@ -66,9 +85,9 @@ func (cfg Config) containerClasses() string {
 // ImageContainerClasses returns the image container classes
 func (cfg Config) imageContainerClasses() string {
 	if cfg.Layout == LayoutHorizontal {
-		return "col-span-3 overflow-hidden"
+		return "col-span-3 overflow-hidden " + cfg.MediaClass
 	}
-	return "h-44 md:h-64 overflow-hidden"
+	return "h-44 md:h-64 overflow-hidden " + cfg.MediaClass
 }
 
 // ImageClasses returns the image classes
@@ -105,4 +124,8 @@ func (cfg Config) descriptionClasses() string {
 // HasImage returns true if card has an image
 func (cfg Config) hasImage() bool {
 	return cfg.Image != ""
+}
+
+func (cfg Config) hasMedia() bool {
+	return cfg.Media != nil || cfg.hasImage()
 }

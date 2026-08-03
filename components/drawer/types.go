@@ -9,8 +9,10 @@ import (
 type Side string
 
 const (
-	SideRight Side = "right"
-	SideLeft  Side = "left"
+	SideRight  Side = "right"
+	SideLeft   Side = "left"
+	SideTop    Side = "top"
+	SideBottom Side = "bottom"
 )
 
 // Width is a preset panel width.
@@ -22,6 +24,17 @@ const (
 	WidthLG   Width = "lg"   // 560px
 	WidthXL   Width = "xl"   // 720px
 	WidthFull Width = "full" // 100vw on mobile, capped on desktop
+)
+
+// Height is a preset panel height for top and bottom drawers.
+type Height string
+
+const (
+	HeightSM   Height = "sm"   // 320px
+	HeightMD   Height = "md"   // 420px (default)
+	HeightLG   Height = "lg"   // 560px
+	HeightXL   Height = "xl"   // 720px
+	HeightFull Height = "full" // 100vh on mobile, capped on desktop
 )
 
 // Config holds the drawer configuration. The drawer is opened/closed via Alpine
@@ -42,7 +55,12 @@ type Config struct {
 	Side Side
 
 	// Width preset. Default: WidthMD.
+	// Applies to left and right drawers.
 	Width Width
+
+	// Height preset. Default: HeightMD.
+	// Applies to top and bottom drawers.
+	Height Height
 
 	// BodyID is the id attribute of the inner content container. Exposed so
 	// HTMX targets can swap content directly: hx-target="#{BodyID}".
@@ -85,26 +103,21 @@ func (cfg Config) overlayClasses() string {
 
 // PanelClasses returns classes for the sliding panel.
 func (cfg Config) panelClasses() string {
-	base := "fixed z-50 top-0 bottom-0 flex flex-col bg-surface dark:bg-surface-dark border-outline dark:border-outline-dark shadow-xl"
+	base := "fixed z-50 flex flex-col bg-surface dark:bg-surface-dark border-outline dark:border-outline-dark shadow-xl"
 
 	switch cfg.Side {
 	case SideLeft:
-		base += " left-0 border-r"
+		base += " left-0 top-0 bottom-0 border-r"
+		base += cfg.widthClasses()
+	case SideTop:
+		base += " left-0 right-0 top-0 border-b"
+		base += cfg.heightClasses()
+	case SideBottom:
+		base += " left-0 right-0 bottom-0 border-t"
+		base += cfg.heightClasses()
 	default:
-		base += " right-0 border-l"
-	}
-
-	switch cfg.Width {
-	case WidthSM:
-		base += " w-full max-w-[320px]"
-	case WidthLG:
-		base += " w-full max-w-[560px]"
-	case WidthXL:
-		base += " w-full max-w-[720px]"
-	case WidthFull:
-		base += " w-full max-w-full md:max-w-[90vw]"
-	default:
-		base += " w-full max-w-[420px]"
+		base += " right-0 top-0 bottom-0 border-l"
+		base += cfg.widthClasses()
 	}
 
 	if cfg.PanelClass != "" {
@@ -113,16 +126,55 @@ func (cfg Config) panelClasses() string {
 	return base
 }
 
+func (cfg Config) widthClasses() string {
+	switch cfg.Width {
+	case WidthSM:
+		return " w-full max-w-[320px]"
+	case WidthLG:
+		return " w-full max-w-[560px]"
+	case WidthXL:
+		return " w-full max-w-[720px]"
+	case WidthFull:
+		return " w-full max-w-full md:max-w-[90vw]"
+	default:
+		return " w-full max-w-[420px]"
+	}
+}
+
+func (cfg Config) heightClasses() string {
+	switch cfg.Height {
+	case HeightSM:
+		return " h-full max-h-[320px]"
+	case HeightLG:
+		return " h-full max-h-[560px]"
+	case HeightXL:
+		return " h-full max-h-[720px]"
+	case HeightFull:
+		return " h-full max-h-full md:max-h-[90vh]"
+	default:
+		return " h-full max-h-[420px]"
+	}
+}
+
 // EnterStart returns the Alpine transition enter-start classes.
 func (cfg Config) enterStart() string {
-	if cfg.Side == SideLeft {
+	switch cfg.Side {
+	case SideLeft:
 		return "-translate-x-full"
+	case SideTop:
+		return "-translate-y-full"
+	case SideBottom:
+		return "translate-y-full"
+	default:
+		return "translate-x-full"
 	}
-	return "translate-x-full"
 }
 
 // EnterEnd returns the Alpine transition enter-end classes.
 func (cfg Config) enterEnd() string {
+	if cfg.Side == SideTop || cfg.Side == SideBottom {
+		return "translate-y-0"
+	}
 	return "translate-x-0"
 }
 
