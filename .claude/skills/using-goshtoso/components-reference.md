@@ -587,7 +587,8 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 
 **Entry points:** `Drawer(cfg Config)`
 
-- **Side** — SideRight = "right", SideLeft = "left"
+- **Height** — HeightSM = "sm", HeightMD = "md", HeightLG = "lg", HeightXL = "xl", HeightFull = "full"
+- **Side** — SideRight = "right", SideLeft = "left", SideTop = "top", SideBottom = "bottom"
 - **Width** — WidthSM = "sm", WidthMD = "md", WidthLG = "lg", WidthXL = "xl", WidthFull = "full"
 
 **Config**
@@ -597,7 +598,8 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 | `ID` | `string` | ID uniquely identifies the drawer. Required. Used for the Alpine state var name (`{ID}IsOpen`) and for the aria-labelledby target (`{ID}Title`). |
 | `Title` | `string` | Title is the drawer heading. Required for accessibility. |
 | `Side` | `Side` | Side the drawer slides in from. Default: SideRight. |
-| `Width` | `Width` | Width preset. Default: WidthMD. |
+| `Width` | `Width` | Width preset. Default: WidthMD. Applies to left and right drawers. |
+| `Height` | `Height` | Height preset. Default: HeightMD. Applies to top and bottom drawers. |
 | `BodyID` | `string` | BodyID is the id attribute of the inner content container. Exposed so HTMX targets can swap content directly: hx-target="#{BodyID}". Default: "{ID}-body". |
 | `Persistent` | `bool` | Persistent disables click-backdrop and Esc-to-close. Default: false. |
 | `PanelClass` | `string` | PanelClass allows extra CSS classes on the panel (not the overlay). |
