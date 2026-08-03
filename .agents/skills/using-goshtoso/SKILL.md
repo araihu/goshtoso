@@ -76,8 +76,12 @@ templ Layout() {
 
 `head.Metadata()` emits the document title and description, canonical URL,
 required Open Graph properties, structured image metadata and alt text, plus
-explicit X/Twitter Card tags. Use absolute public HTTPS URLs. Give every
-indexable route its own title, description, canonical URL, and `og:url`; do not
+explicit X/Twitter Card tags. Title, description, canonical URL, image URL,
+image MIME type, positive dimensions, and image alt text are required. Both URLs
+must be absolute HTTPS. `Render` validates the whole configuration before
+writing and returns an error instead of emitting partial or mixed metadata.
+Open Graph type defaults to `website`; X/Twitter Card defaults to
+`summary_large_image`. Give every indexable route distinct values and do not
 reuse homepage metadata for subpages. A 1280x640 JPEG or PNG under 1 MB is the
 safe default social image. Render metadata in initial HTML, not through client
 JavaScript or HTMX fragments.

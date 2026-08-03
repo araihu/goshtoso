@@ -916,25 +916,25 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Title` | `string` |  |
-| `Description` | `string` |  |
-| `CanonicalURL` | `string` |  |
-| `OpenGraphType` | `OpenGraphType` |  |
-| `SiteName` | `string` |  |
-| `Locale` | `string` |  |
-| `Image` | `SocialImage` |  |
-| `TwitterCard` | `TwitterCard` |  |
-| `TwitterSite` | `string` |  |
+| `Title` | `string` | Title is the non-empty route-specific document and social title. |
+| `Description` | `string` | Description is the non-empty route-specific document and social summary. |
+| `CanonicalURL` | `string` | CanonicalURL is the route's absolute HTTPS canonical and Open Graph URL. |
+| `OpenGraphType` | `OpenGraphType` | OpenGraphType is the Open Graph object type and defaults to website. |
+| `SiteName` | `string` | SiteName is the optional Open Graph site name. |
+| `Locale` | `string` | Locale is the optional Open Graph locale, such as en_US. |
+| `Image` | `SocialImage` | Image is the required social-preview image and structured metadata. |
+| `TwitterCard` | `TwitterCard` | TwitterCard selects the X/Twitter presentation and defaults to summary_large_image. |
+| `TwitterSite` | `string` | TwitterSite is the optional real project account handle, including @. |
 
 **SocialImage**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `URL` | `string` |  |
-| `MIMEType` | `string` |  |
-| `Width` | `int` |  |
-| `Height` | `int` |  |
-| `Alt` | `string` |  |
+| `URL` | `string` | URL is the absolute HTTPS URL crawlers use to fetch the image. |
+| `MIMEType` | `string` | MIMEType is the image media type, such as image/jpeg or image/png. |
+| `Width` | `int` | Width is the image width in pixels and must be positive. |
+| `Height` | `int` | Height is the image height in pixels and must be positive. |
+| `Alt` | `string` | Alt describes the image for accessible social clients and must be non-empty. |
 
 ## icon
 

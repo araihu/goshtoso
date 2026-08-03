@@ -30,51 +30,108 @@ const (
 	TwitterCardSummaryLargeImage TwitterCard = "summary_large_image"
 )
 
-// SocialImage defines one absolute social-preview image and its structured
-// metadata. Use a public HTTPS URL and provide Alt whenever URL is set.
+// SocialImage defines the required image portion of a complete social preview.
 type SocialImage struct {
-	URL      string
+	// URL is the absolute HTTPS URL crawlers use to fetch the image.
+	URL string
+	// MIMEType is the image media type, such as image/jpeg or image/png.
 	MIMEType string
-	Width    int
-	Height   int
-	Alt      string
+	// Width is the image width in pixels and must be positive.
+	Width int
+	// Height is the image height in pixels and must be positive.
+	Height int
+	// Alt describes the image for accessible social clients and must be non-empty.
+	Alt string
 }
 
 // MetadataConfig defines route-specific document, Open Graph, and X/Twitter
-// Card metadata. CanonicalURL and Image.URL should be absolute public URLs.
+// Card metadata. Render fails without a complete social contract.
 type MetadataConfig struct {
-	Title         string
-	Description   string
-	CanonicalURL  string
+	// Title is the non-empty route-specific document and social title.
+	Title string
+	// Description is the non-empty route-specific document and social summary.
+	Description string
+	// CanonicalURL is the route's absolute HTTPS canonical and Open Graph URL.
+	CanonicalURL string
+	// OpenGraphType is the Open Graph object type and defaults to website.
 	OpenGraphType OpenGraphType
-	SiteName      string
-	Locale        string
-	Image         SocialImage
-	TwitterCard   TwitterCard
-	TwitterSite   string
+	// SiteName is the optional Open Graph site name.
+	SiteName string
+	// Locale is the optional Open Graph locale, such as en_US.
+	Locale string
+	// Image is the required social-preview image and structured metadata.
+	Image SocialImage
+	// TwitterCard selects the X/Twitter presentation and defaults to summary_large_image.
+	TwitterCard TwitterCard
+	// TwitterSite is the optional real project account handle, including @.
+	TwitterSite string
 }
 
-func (cfg MetadataConfig) normalized() MetadataConfig {
-	if !cfg.hasContent() {
-		return cfg
+func (cfg MetadataConfig) validated() (MetadataConfig, error) {
+	cfg.Title = strings.TrimSpace(cfg.Title)
+	if cfg.Title == "" {
+		return MetadataConfig{}, errors.New("head.Metadata: Title is required")
 	}
+	cfg.Description = strings.TrimSpace(cfg.Description)
+	if cfg.Description == "" {
+		return MetadataConfig{}, errors.New("head.Metadata: Description is required")
+	}
+
+	var err error
+	cfg.CanonicalURL, err = absoluteHTTPSURL("CanonicalURL", cfg.CanonicalURL)
+	if err != nil {
+		return MetadataConfig{}, err
+	}
+	cfg.Image.URL, err = absoluteHTTPSURL("Image.URL", cfg.Image.URL)
+	if err != nil {
+		return MetadataConfig{}, err
+	}
+
+	cfg.Image.MIMEType = strings.TrimSpace(cfg.Image.MIMEType)
+	if !strings.HasPrefix(cfg.Image.MIMEType, "image/") {
+		return MetadataConfig{}, errors.New("head.Metadata: Image.MIMEType must be an image media type")
+	}
+	if cfg.Image.Width <= 0 {
+		return MetadataConfig{}, errors.New("head.Metadata: Image.Width must be positive")
+	}
+	if cfg.Image.Height <= 0 {
+		return MetadataConfig{}, errors.New("head.Metadata: Image.Height must be positive")
+	}
+	cfg.Image.Alt = strings.TrimSpace(cfg.Image.Alt)
+	if cfg.Image.Alt == "" {
+		return MetadataConfig{}, errors.New("head.Metadata: Image.Alt is required")
+	}
+
+	cfg.OpenGraphType = OpenGraphType(strings.TrimSpace(string(cfg.OpenGraphType)))
 	if cfg.OpenGraphType == "" {
 		cfg.OpenGraphType = OpenGraphTypeWebsite
 	}
+	cfg.TwitterCard = TwitterCard(strings.TrimSpace(string(cfg.TwitterCard)))
 	if cfg.TwitterCard == "" {
-		if cfg.Image.URL == "" {
-			cfg.TwitterCard = TwitterCardSummary
-		} else {
-			cfg.TwitterCard = TwitterCardSummaryLargeImage
-		}
+		cfg.TwitterCard = TwitterCardSummaryLargeImage
 	}
-	return cfg
+	if cfg.TwitterCard != TwitterCardSummary && cfg.TwitterCard != TwitterCardSummaryLargeImage {
+		return MetadataConfig{}, fmt.Errorf("head.Metadata: unsupported TwitterCard %q", cfg.TwitterCard)
+	}
+
+	cfg.SiteName = strings.TrimSpace(cfg.SiteName)
+	cfg.Locale = strings.TrimSpace(cfg.Locale)
+	cfg.TwitterSite = strings.TrimSpace(cfg.TwitterSite)
+	return cfg, nil
 }
 
-func (cfg MetadataConfig) hasContent() bool {
-	return cfg.Title != "" || cfg.Description != "" || cfg.CanonicalURL != "" ||
-		cfg.SiteName != "" || cfg.Locale != "" || cfg.Image.URL != "" ||
-		cfg.TwitterCard != "" || cfg.TwitterSite != ""
+func absoluteHTTPSURL(field, value string) (string, error) {
+	value = strings.TrimSpace(value)
+	parsed, err := url.Parse(value)
+	if err != nil {
+		return "", fmt.Errorf("head.Metadata: %s must be an absolute HTTPS URL: %w", field, err)
+	}
+	if !strings.EqualFold(parsed.Scheme, "https") || parsed.Host == "" ||
+		parsed.Hostname() == "" || parsed.Opaque != "" || parsed.User != nil {
+		return "", fmt.Errorf("head.Metadata: %s must be an absolute HTTPS URL", field)
+	}
+	parsed.Scheme = "https"
+	return parsed.String(), nil
 }
 
 func (image SocialImage) widthContent() string {

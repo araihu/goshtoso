@@ -181,6 +181,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 	}
 
 	allowedMethods := map[string]struct{}{
+		"head.metadataComponent.Render":          {},
 		"combobox.Config.Validate":               {},
 		"combobox.Config.InitialState":           {},
 		"combobox.comboHandler.ServeHTTP":        {},

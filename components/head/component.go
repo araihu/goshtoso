@@ -14,9 +14,26 @@ type Instance struct {
 }
 
 // Metadata renders route-specific title, description, canonical, Open Graph,
-// and X/Twitter Card tags from one config.
+// and X/Twitter Card tags from one complete config. Render returns an error and
+// writes no tags when required text, image metadata, or absolute HTTPS URLs are
+// missing or invalid.
 func Metadata(metadata MetadataConfig) templ.Component {
-	return metadataTemplate(metadata.normalized())
+	return metadataComponent{config: metadata}
+}
+
+type metadataComponent struct {
+	config MetadataConfig
+}
+
+func (component metadataComponent) Render(ctx context.Context, w io.Writer) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	metadata, err := component.config.validated()
+	if err != nil {
+		return err
+	}
+	return metadataTemplate(metadata).Render(ctx, w)
 }
 
 // Dependencies returns the full Goshtoso runtime dependency set.

@@ -200,7 +200,7 @@ func metadataPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"head-metadata\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">One route config, complete social contract</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">Metadata defaults to website plus a summary card, or a large-image card when a preview image is present.</p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"head-metadata\" class=\"w-full max-w-2xl mx-auto\"><div class=\"rounded-radius border border-outline bg-surface-alt p-4 text-sm dark:border-outline-dark dark:bg-surface-dark-alt\"><p class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">One route config, complete social contract</p><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">Metadata defaults to website plus a large-image card and rejects incomplete or non-HTTPS configurations before writing tags.</p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

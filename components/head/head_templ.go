@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 // Metadata renders route-specific document, Open Graph, and X/Twitter Card
-// metadata. Render it inside <head> before Dependencies. Supply absolute public
-// URLs for CanonicalURL and Image.URL, plus image Alt text.
+// metadata. Render it inside <head> before Dependencies. The caller-facing
+// component validates the complete contract before this template writes tags.
 func metadataTemplate(metadata MetadataConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

@@ -1,8 +1,8 @@
 package head
 
 // Metadata renders route-specific document, Open Graph, and X/Twitter Card
-// metadata. Render it inside <head> before Dependencies. Supply absolute public
-// URLs for CanonicalURL and Image.URL, plus image Alt text.
+// metadata. Render it inside <head> before Dependencies. The caller-facing
+// component validates the complete contract before this template writes tags.
 templ metadataTemplate(metadata MetadataConfig) {
 	if metadata.Title != "" {
 		<title>{ metadata.Title }</title>

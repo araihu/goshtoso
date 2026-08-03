@@ -1,9 +1,31 @@
 package head
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
+
+func completeMetadataConfig() MetadataConfig {
+	return MetadataConfig{
+		Title:        "Example page",
+		Description:  "A complete route-specific description.",
+		CanonicalURL: "https://example.com/docs",
+		Image: SocialImage{
+			URL:      "https://example.com/social/docs.jpg",
+			MIMEType: "image/jpeg",
+			Width:    1280,
+			Height:   640,
+			Alt:      "Example documentation preview",
+		},
+	}
+}
+
+func renderMetadata(cfg MetadataConfig) (string, error) {
+	var output strings.Builder
+	err := Metadata(cfg).Render(context.Background(), &output)
+	return output.String(), err
+}
 
 func TestMetadataRendersCompleteSocialContract(t *testing.T) {
 	out := render(t, Metadata(MetadataConfig{
@@ -59,8 +81,11 @@ func TestMetadataDefaultsAndEscapesValues(t *testing.T) {
 		Description:  `quoted "description"`,
 		CanonicalURL: "https://example.com/docs?a=1&b=2",
 		Image: SocialImage{
-			URL: "https://example.com/og.png?a=1&b=2",
-			Alt: `Diagram "with labels"`,
+			URL:      "https://example.com/og.png?a=1&b=2",
+			MIMEType: "image/png",
+			Width:    1280,
+			Height:   640,
+			Alt:      `Diagram "with labels"`,
 		},
 	}))
 
@@ -81,18 +106,13 @@ func TestMetadataDefaultsAndEscapesValues(t *testing.T) {
 }
 
 func TestMetadataOmitsUnavailableOptionalValues(t *testing.T) {
-	out := render(t, Metadata(MetadataConfig{
-		Title:        "Status",
-		Description:  "Current service status.",
-		CanonicalURL: "https://status.example.com/",
-		TwitterCard:  TwitterCardSummary,
-	}))
+	cfg := completeMetadataConfig()
+	cfg.TwitterCard = TwitterCardSummary
+	out := render(t, Metadata(cfg))
 
 	for _, absent := range []string{
-		`og:image`,
 		`og:site_name`,
 		`og:locale`,
-		`twitter:image`,
 		`twitter:site`,
 	} {
 		if strings.Contains(out, absent) {
@@ -101,5 +121,99 @@ func TestMetadataOmitsUnavailableOptionalValues(t *testing.T) {
 	}
 	if !strings.Contains(out, `<meta name="twitter:card" content="summary">`) {
 		t.Fatalf("Metadata() missing explicit summary card\n%s", out)
+	}
+}
+
+func TestMetadataRejectsInvalidURLsWithoutWritingPartialTags(t *testing.T) {
+	invalidURLs := map[string]string{
+		"relative":        "/docs",
+		"scheme-relative": "//example.com/docs",
+		"http":            "http://example.com/docs",
+		"javascript":      "javascript:alert(1)",
+		"data":            "data:text/plain,preview",
+		"missing-host":    "https:///docs",
+		"malformed":       "https://example.com/%zz",
+	}
+
+	for name, invalidURL := range invalidURLs {
+		for _, field := range []string{"canonical", "image"} {
+			t.Run(name+"/"+field, func(t *testing.T) {
+				cfg := completeMetadataConfig()
+				if field == "canonical" {
+					cfg.CanonicalURL = invalidURL
+				} else {
+					cfg.Image.URL = invalidURL
+				}
+
+				out, err := renderMetadata(cfg)
+				if err == nil {
+					t.Fatalf("Metadata() accepted invalid %s URL %q", field, invalidURL)
+				}
+				if out != "" {
+					t.Fatalf("Metadata() wrote partial tags before rejecting %s URL %q:\n%s", field, invalidURL, out)
+				}
+			})
+		}
+	}
+}
+
+func TestMetadataRejectsIncompleteSocialContractWithoutOutput(t *testing.T) {
+	tests := map[string]MetadataConfig{
+		"empty":      {},
+		"title-only": {Title: "Only a title"},
+		"url-only":   {CanonicalURL: "https://example.com/docs"},
+		"image-only": {Image: completeMetadataConfig().Image},
+		"missing-title": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.Title = ""
+			return cfg
+		}(),
+		"missing-description": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.Description = ""
+			return cfg
+		}(),
+		"missing-canonical": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.CanonicalURL = ""
+			return cfg
+		}(),
+		"missing-image": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.Image = SocialImage{}
+			return cfg
+		}(),
+		"missing-image-type": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.Image.MIMEType = ""
+			return cfg
+		}(),
+		"missing-image-width": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.Image.Width = 0
+			return cfg
+		}(),
+		"missing-image-height": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.Image.Height = 0
+			return cfg
+		}(),
+		"missing-image-alt": func() MetadataConfig {
+			cfg := completeMetadataConfig()
+			cfg.Image.Alt = ""
+			return cfg
+		}(),
+	}
+
+	for name, cfg := range tests {
+		t.Run(name, func(t *testing.T) {
+			out, err := renderMetadata(cfg)
+			if err == nil {
+				t.Fatal("Metadata() accepted an incomplete social contract")
+			}
+			if out != "" {
+				t.Fatalf("Metadata() wrote partial tags before rejecting config:\n%s", out)
+			}
+		})
 	}
 }
