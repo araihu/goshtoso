@@ -155,6 +155,28 @@ before choosing between constructors or configuration fields. It documents the
 common component interface, concrete return values, constructor styles, stable
 Kind identity, and rendered defaults.
 
+For short install and command snippets, use the component-owned compact
+density. Keep multiline manifests and source examples at default density:
+
+```templ
+@codeblock.CodeBlock(codeblock.Config{
+	Language: "bash",
+	Label: "Install",
+	Code: "go get github.com/araihu/goshtoso@v0.1.5",
+	Density: codeblock.DensityCompact,
+})
+
+@codeblock.CodeBlock(codeblock.Config{
+	Language: "yaml",
+	Label: "manifest.yaml",
+	Code: manifestYAML,
+})
+```
+
+Do not rebuild the header/copy control or override internal padding in consumer
+CSS. Compact density is for short snippets; default density preserves scanning
+rhythm for multiline code.
+
 ## Sprite Icons
 
 Use `components/icon` for accessible SVG sprite symbols. External mode is the
