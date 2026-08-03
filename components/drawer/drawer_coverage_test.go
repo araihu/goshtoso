@@ -133,6 +133,8 @@ func TestCoverageRenderPersistentDrawerWithCustomBody(t *testing.T) {
 		`md:max-w-[90vw]`,
 		`<p>drawer body</p>`,
 		`<svg`,
+		`x-transition:enter="transition-opacity duration-200 motion-reduce:transition-none"`,
+		`x-transition:leave="transition-opacity duration-150 motion-reduce:transition-none"`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("rendered drawer missing %q:\n%s", want, html)
