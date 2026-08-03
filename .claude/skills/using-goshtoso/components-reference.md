@@ -360,6 +360,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 **Entry points:** `Card(cfg Config)`
 
 - **Appearance** — AppearanceDefault = "", AppearancePrimary = "primary"
+- **Interaction** — InteractionDefault = "", InteractionPressed = "pressed"
 - **Layout** — LayoutVertical = "vertical", LayoutHorizontal = "horizontal"
 
 **Config**
@@ -368,6 +369,8 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 |-------|------|-------------|
 | `Image` | `string` | Image is the card image URL |
 | `ImageAlt` | `string` | ImageAlt is the image alt text |
+| `Media` | `templ.Component` | Media replaces Image with arbitrary card media or decorative content. |
+| `MediaClass` | `string` | MediaClass allows additional CSS classes on the media container. |
 | `Tag` | `string` | Tag is an optional category/tag (shown above title) |
 | `Title` | `string` | Title is the card title |
 | `Description` | `string` | Description is the card body text |
@@ -375,6 +378,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |
 | `Appearance` | `Appearance` | Appearance determines the card's visual treatment. |
 | `Layout` | `Layout` | Layout determines vertical or horizontal layout |
+| `Interaction` | `Interaction` | Interaction determines optional card motion. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the card root. |
 
 ## carousel

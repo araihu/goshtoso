@@ -48,6 +48,12 @@ func TestContainerClasses(t *testing.T) {
 			cfg:      Config{RootClass: "custom-card"},
 			contains: []string{"custom-card"},
 		},
+		{
+			name:     "pressed interaction",
+			cfg:      Config{Interaction: InteractionPressed},
+			contains: []string{"hover:translate-y-1.5", "active:translate-y-2", "motion-reduce:transform-none"},
+			absent:   []string{"hover:-translate-y"},
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -63,6 +69,36 @@ func TestContainerClasses(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestCardRenderCustomMediaBeforeContent(t *testing.T) {
+	media := templ.Raw(`<div data-card-media>Interactive project preview</div>`)
+	html := render(t, Card(Config{
+		Media:      media,
+		MediaClass: "custom-media",
+		Title:      "Project",
+	}))
+
+	mediaIndex := strings.Index(html, "data-card-media")
+	titleIndex := strings.Index(html, "Project")
+	if mediaIndex < 0 || titleIndex <= mediaIndex {
+		t.Fatalf("custom media must render before content: %s", html)
+	}
+	if !strings.Contains(html, "custom-media") {
+		t.Fatalf("custom media class missing: %s", html)
+	}
+}
+
+func TestCardCustomMediaTakesPrecedenceOverImage(t *testing.T) {
+	html := render(t, Card(Config{
+		Image: "fallback.png",
+		Media: templ.Raw(`<div data-card-media></div>`),
+		Title: "Project",
+	}))
+
+	if strings.Contains(html, "fallback.png") {
+		t.Fatalf("fallback image rendered with custom media: %s", html)
 	}
 }
 
