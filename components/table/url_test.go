@@ -58,8 +58,22 @@ func TestSortURLResetOmitsSortParams(t *testing.T) {
 	}
 }
 
+func TestSortURLPreservesCurrentPage(t *testing.T) {
+	cfg := Config{
+		ID:         "orders",
+		HTMX:       &HTMXConfig{Endpoint: "/api/components/table/rows"},
+		Pagination: &PaginationConfig{CurrentPage: 4, PerPage: 3},
+	}
+
+	got := cfg.SortURL("name")
+	if queryValue(t, got, "page") != "4" {
+		t.Fatalf("SortURL page = %q; want 4 in %q", queryValue(t, got, "page"), got)
+	}
+}
+
 func TestPageURLMergesExtraQueryParams(t *testing.T) {
 	cfg := Config{
+		ID:               "audit table",
 		HTMX:             &HTMXConfig{Endpoint: "/api/components/table/rows?variant=static"},
 		ExtraQueryParams: "&addon_name=argo cd&membership=admin",
 		Pagination:       &PaginationConfig{PerPage: 50},
@@ -71,6 +85,7 @@ func TestPageURLMergesExtraQueryParams(t *testing.T) {
 
 	for key, want := range map[string]string{
 		"variant":    "static",
+		"table_id":   "audit table",
 		"addon_name": "argo cd",
 		"membership": "admin",
 		"page":       "3",
@@ -81,6 +96,19 @@ func TestPageURLMergesExtraQueryParams(t *testing.T) {
 		if gotVal := queryValue(t, got, key); gotVal != want {
 			t.Fatalf("PageURL query %s = %q; want %q in %q", key, gotVal, want, got)
 		}
+	}
+}
+
+func TestPaginationBaseURLIncludesTableID(t *testing.T) {
+	cfg := Config{
+		ID:         "inline-filtered-table",
+		HTMX:       &HTMXConfig{Endpoint: "/api/components/table/rows"},
+		Pagination: &PaginationConfig{PerPage: 3},
+	}
+
+	got := cfg.paginationBaseURL()
+	if queryValue(t, got, "table_id") != "inline-filtered-table" {
+		t.Fatalf("paginationBaseURL table_id = %q in %q", queryValue(t, got, "table_id"), got)
 	}
 }
 

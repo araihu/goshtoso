@@ -26,9 +26,13 @@ package card
 //	})
 templ cardTemplate(cfg Config) {
 	<article class={ cfg.containerClasses() }>
-		if cfg.hasImage() {
+		if cfg.hasMedia() {
 			<div class={ cfg.imageContainerClasses() }>
-				<img src={ cfg.Image } class={ cfg.imageClasses() } alt={ cfg.ImageAlt } />
+				if cfg.Media != nil {
+					@cfg.Media
+				} else {
+					<img src={ cfg.Image } class={ cfg.imageClasses() } alt={ cfg.ImageAlt } />
+				}
 			</div>
 		}
 		<div class={ cfg.contentClasses() }>

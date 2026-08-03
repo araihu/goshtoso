@@ -457,6 +457,10 @@ func (cfg Config) htmxEndpointValue() string {
 	return cfg.HTMX.Endpoint
 }
 
+func (cfg Config) filterEndpointURL() string {
+	return tableURL(cfg.htmxEndpointValue(), map[string]string{"table_id": cfg.getID()}, "")
+}
+
 func (cfg Config) htmxTargetValue() string {
 	if cfg.HTMX == nil {
 		return ""
@@ -512,7 +516,7 @@ func (cfg Config) paginationID() string {
 
 // PaginationBaseURL returns the base URL for pagination links with per_page and sort params
 func (cfg Config) paginationBaseURL() string {
-	params := map[string]string{}
+	params := map[string]string{"table_id": cfg.getID()}
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 	}
@@ -558,6 +562,9 @@ func (cfg Config) SortURL(key string) string {
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 	}
+	if cfg.Pagination != nil && cfg.Pagination.CurrentPage > 0 {
+		params["page"] = strconv.Itoa(cfg.Pagination.CurrentPage)
+	}
 	if dir != SortNone {
 		params["order_by"] = key
 		params["order_dir"] = string(dir)
@@ -567,7 +574,10 @@ func (cfg Config) SortURL(key string) string {
 
 // PageURL builds the HTMX URL for a specific page
 func (cfg Config) PageURL(page int) string {
-	params := map[string]string{"page": strconv.Itoa(page)}
+	params := map[string]string{
+		"page":     strconv.Itoa(page),
+		"table_id": cfg.getID(),
+	}
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		params["per_page"] = strconv.Itoa(cfg.Pagination.PerPage)
 	}

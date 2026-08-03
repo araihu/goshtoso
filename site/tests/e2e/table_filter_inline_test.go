@@ -3,6 +3,7 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/mxschmitt/playwright-go"
@@ -57,11 +58,23 @@ func TestTableFilter_InlineVariant(t *testing.T) {
 		assert.Equal(t, 0, count, "inline variant must not render the collapsible header button")
 	})
 
+	t.Run("HeadersStartNonSortable", func(t *testing.T) {
+		headers := page.Locator("#inline-filtered-table-thead th[hx-get*='order_by']")
+		count, err := headers.Count()
+		require.NoError(t, err)
+		assert.Zero(t, count, "inline filter appearance must not gain an unrelated sorting contract")
+	})
+
 	t.Run("SearchStillSwapsTbody", func(t *testing.T) {
 		// Inline variant should still fire HTMX on input, same as bar.
 		input := page.Locator("#inline-filtered-table-filters input[type='search']")
+		paginator := page.Locator("#inline-filtered-table-pagination")
+		text, err := paginator.TextContent()
+		require.NoError(t, err)
+		assert.Contains(t, text, "Page 1 of 4")
+
 		require.NoError(t, input.Fill("alice"))
-		_, err := input.Evaluate(`(el) => el.dispatchEvent(new Event('input', {bubbles: true}))`, nil)
+		_, err = input.Evaluate(`(el) => el.dispatchEvent(new Event('input', {bubbles: true}))`, nil)
 		require.NoError(t, err)
 
 		_, err = page.WaitForFunction(
@@ -73,11 +86,14 @@ func TestTableFilter_InlineVariant(t *testing.T) {
 		)
 		require.NoError(t, err, "inline filter input should still swap the tbody on input")
 
-		text, err := page.Locator("#inline-filtered-table tbody").TextContent()
+		text, err = page.Locator("#inline-filtered-table tbody").TextContent()
 		require.NoError(t, err)
 		assert.Contains(t, text, "Alice Brown")
+		hidden, err := paginator.IsHidden()
+		require.NoError(t, err)
+		require.True(t, hidden, "one-page filtered results must hide stale pagination controls")
 
-		// Clean up so other subtests start from baseline.
+		// Clear back to four pages and prove the stable host restores controls.
 		require.NoError(t, input.Fill(""))
 		_, err = input.Evaluate(`(el) => el.dispatchEvent(new Event('input', {bubbles: true}))`, nil)
 		require.NoError(t, err)
@@ -86,5 +102,54 @@ func TestTableFilter_InlineVariant(t *testing.T) {
 			nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
 		)
 		require.NoError(t, err)
+		_, err = page.WaitForFunction(
+			`() => {
+				const pagination = document.querySelector('#inline-filtered-table-pagination');
+				return pagination && !pagination.hidden && pagination.textContent.includes('Page 1 of 4');
+			}`,
+			nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+		)
+		require.NoError(t, err)
+		activeText, err := paginator.Locator("a[aria-current='page']").TextContent()
+		require.NoError(t, err)
+		assert.Equal(t, "1", strings.TrimSpace(activeText))
+		hxGet, err := paginator.Locator("a[aria-current='page']").GetAttribute("hx-get")
+		require.NoError(t, err)
+		assert.Contains(t, hxGet, "table_id=inline-filtered-table")
+	})
+
+	t.Run("PaginationKeepsTableAndPaginatorState", func(t *testing.T) {
+		currentPage := page.Locator("#inline-filtered-table-pagination a[aria-current='page']")
+		hxGet, err := currentPage.GetAttribute("hx-get")
+		require.NoError(t, err)
+		assert.Contains(t, hxGet, "table_id=inline-filtered-table")
+
+		require.NoError(t, currentPage.Click())
+		assert.Contains(t, page.URL(), "/components/table", "active page click must remain an HTMX swap")
+
+		page2 := page.Locator("#inline-filtered-table-pagination a[aria-label='page 2']")
+		require.NoError(t, page2.Click())
+		_, err = page.WaitForFunction(
+			`() => document.querySelector('#inline-filtered-table-pagination')?.textContent.includes('Page 2 of 4')`, nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+		)
+		require.NoError(t, err, "page 2 should update inline table paginator")
+
+		activeText, err := page.Locator("#inline-filtered-table-pagination a[aria-current='page']").TextContent()
+		require.NoError(t, err)
+		assert.Equal(t, "2", strings.TrimSpace(activeText))
+
+		next := page.Locator("#inline-filtered-table-pagination a[aria-label='next page']")
+		require.NoError(t, next.Click())
+		_, err = page.WaitForFunction(
+			`() => document.querySelector('#inline-filtered-table-pagination')?.textContent.includes('Page 3 of 4')`, nil,
+			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+		)
+		require.NoError(t, err, "Next should advance inline table paginator")
+
+		headers := page.Locator("#inline-filtered-table-thead th[hx-get*='order_by']")
+		count, err := headers.Count()
+		require.NoError(t, err)
+		assert.Zero(t, count, "pagination responses must preserve non-sortable inline headers")
 	})
 }

@@ -22,6 +22,16 @@ func TestCoveragePanelClassesCoverSidesWidthsAndCustomClass(t *testing.T) {
 			want: []string{"left-0", "border-r", "max-w-[320px]"},
 		},
 		{
+			name: "top medium",
+			cfg:  Config{Side: SideTop},
+			want: []string{"left-0", "right-0", "top-0", "border-b", "max-h-[420px]"},
+		},
+		{
+			name: "bottom large",
+			cfg:  Config{Side: SideBottom, Height: HeightLG},
+			want: []string{"left-0", "right-0", "bottom-0", "border-t", "max-h-[560px]"},
+		},
+		{
 			name: "large",
 			cfg:  Config{Width: WidthLG},
 			want: []string{"right-0", "max-w-[560px]"},
@@ -63,6 +73,15 @@ func TestCoverageBodyAndTransitionDefaults(t *testing.T) {
 	}
 	if got := (Config{Side: SideRight}).enterStart(); got != "translate-x-full" {
 		t.Fatalf("right enterStart() = %q; want translate-x-full", got)
+	}
+	if got := (Config{Side: SideTop}).enterStart(); got != "-translate-y-full" {
+		t.Fatalf("top enterStart() = %q; want -translate-y-full", got)
+	}
+	if got := (Config{Side: SideBottom}).enterStart(); got != "translate-y-full" {
+		t.Fatalf("bottom enterStart() = %q; want translate-y-full", got)
+	}
+	if got := (Config{Side: SideTop}).enterEnd(); got != "translate-y-0" {
+		t.Fatalf("top enterEnd() = %q; want translate-y-0", got)
 	}
 	if got := (Config{}).enterEnd(); got != "translate-x-0" {
 		t.Fatalf("enterEnd() = %q; want translate-x-0", got)
@@ -114,6 +133,8 @@ func TestCoverageRenderPersistentDrawerWithCustomBody(t *testing.T) {
 		`md:max-w-[90vw]`,
 		`<p>drawer body</p>`,
 		`<svg`,
+		`x-transition:enter="transition-opacity duration-200 motion-reduce:transition-none"`,
+		`x-transition:leave="transition-opacity duration-150 motion-reduce:transition-none"`,
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("rendered drawer missing %q:\n%s", want, html)

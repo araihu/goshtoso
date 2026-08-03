@@ -97,8 +97,26 @@ func drawerDemoContent() templ.Component {
     Title: "Filters",
     Side:  drawer.SideLeft,
     Width: drawer.WidthSM,
-}) {
+			}) {
     <div id="filtersDrawer-body">...</div>
+}`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Top and Bottom",
+				Description: "Use SideTop or SideBottom for navigation drawers, command surfaces, and mobile action trays. Height controls the vertical extent.",
+			},
+			drawerVerticalPreview(),
+			`@drawer.Drawer(drawer.Config{
+    ID:     "mobileNavigation",
+    Title:  "Navigation",
+    Side:   drawer.SideTop,
+    Height: drawer.HeightMD,
+}) {
+    <nav>...</nav>
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -153,7 +171,7 @@ func drawerDemoContent() templ.Component {
 	})
 }
 
-func drawerDefaultPreview() templ.Component {
+func drawerVerticalPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -174,7 +192,7 @@ func drawerDefaultPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"drawer-default\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'projectDetails' })\" class=\"inline-flex items-center justify-center rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark/90\">Open details</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"drawer-vertical\" class=\"flex w-full max-w-2xl flex-wrap gap-3 mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'topNavigation' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open top drawer</button> <button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'bottomActions' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open bottom drawer</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -190,7 +208,94 @@ func drawerDefaultPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Deployment target</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Production cluster, rolling update, two approvals required.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Current status</p><p class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">Ready for review</p></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<nav class=\"grid gap-2 p-4\" aria-label=\"Example navigation\"><a class=\"rounded-radius px-3 py-2 hover:bg-surface-alt dark:hover:bg-surface-dark-alt\" href=\"#drawer-vertical\">Overview</a> <a class=\"rounded-radius px-3 py-2 hover:bg-surface-alt dark:hover:bg-surface-dark-alt\" href=\"#drawer-vertical\">Components</a> <a class=\"rounded-radius px-3 py-2 hover:bg-surface-alt dark:hover:bg-surface-dark-alt\" href=\"#drawer-vertical\">Examples</a></nav>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = drawer.Drawer(drawer.Config{
+			ID:     "topNavigation",
+			Title:  "Navigation",
+			Side:   drawer.SideTop,
+			Height: drawer.HeightMD,
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"flex flex-wrap gap-2 p-4\"><button type=\"button\" class=\"rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary dark:bg-primary-dark dark:text-on-primary-dark\">Create project</button> <button type=\"button\" class=\"rounded-radius border border-outline px-4 py-2 text-sm font-medium dark:border-outline-dark\">Open settings</button></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = drawer.Drawer(drawer.Config{
+			ID:     "bottomActions",
+			Title:  "Quick actions",
+			Side:   drawer.SideBottom,
+			Height: drawer.HeightSM,
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func drawerDefaultPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"drawer-default\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'projectDetails' })\" class=\"inline-flex items-center justify-center rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark/90\">Open details</button>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Deployment target</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Production cluster, rolling update, two approvals required.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Current status</p><p class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">Ready for review</p></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -201,11 +306,11 @@ func drawerDefaultPreview() templ.Component {
 			Title: "Project details",
 			Side:  drawer.SideRight,
 			Width: drawer.WidthLG,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -229,16 +334,16 @@ func drawerLeftPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div id=\"drawer-left\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'filtersDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open filters</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div id=\"drawer-left\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'filtersDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open filters</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -250,7 +355,7 @@ func drawerLeftPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"space-y-3 p-4 text-sm\"><label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Only active records</span></label> <label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Needs attention</span></label></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"space-y-3 p-4 text-sm\"><label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Only active records</span></label> <label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Needs attention</span></label></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -261,11 +366,11 @@ func drawerLeftPreview() templ.Component {
 			Title: "Filters",
 			Side:  drawer.SideLeft,
 			Width: drawer.WidthSM,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -289,16 +394,16 @@ func drawerPersistentPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div id=\"drawer-persistent\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'editProfile' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open persistent drawer</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"drawer-persistent\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'editProfile' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open persistent drawer</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -310,7 +415,7 @@ func drawerPersistentPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<form class=\"space-y-4 p-4\"><div><label for=\"drawer-name\" class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Display name</label> <input id=\"drawer-name\" name=\"name\" value=\"Goshtoso\" class=\"mt-1 w-full rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Backdrop clicks and Escape are ignored while this form is open.</p></form>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<form class=\"space-y-4 p-4\"><div><label for=\"drawer-name\" class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Display name</label> <input id=\"drawer-name\" name=\"name\" value=\"Goshtoso\" class=\"mt-1 w-full rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Backdrop clicks and Escape are ignored while this form is open.</p></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -320,11 +425,11 @@ func drawerPersistentPreview() templ.Component {
 			ID:         "editProfile",
 			Title:      "Edit profile",
 			Persistent: true,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -348,16 +453,16 @@ func drawerHTMXPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"drawer-htmx\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'orderDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark/90\">Open order drawer</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div id=\"drawer-htmx\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'orderDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark/90\">Open order drawer</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -369,7 +474,7 @@ func drawerHTMXPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"orderDrawerBody\" class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Order #42</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">This body has a stable id so an HTMX response can replace only the drawer content.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Swap target</p><p class=\"mt-1 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">#orderDrawerBody</p></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"orderDrawerBody\" class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Order #42</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">This body has a stable id so an HTMX response can replace only the drawer content.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Swap target</p><p class=\"mt-1 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">#orderDrawerBody</p></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -380,11 +485,11 @@ func drawerHTMXPreview() templ.Component {
 			Title:  "Order details",
 			BodyID: "orderDrawerBody",
 			Width:  drawer.WidthLG,
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

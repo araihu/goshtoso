@@ -1,8 +1,9 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
+	"net/url"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -12,6 +13,8 @@ import (
 )
 
 const tableHeadClasses = "border-b border-outline bg-surface-alt text-sm text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong"
+
+var safeTableIDPattern = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_-]*$`)
 
 func resolvedTableID(cfg table.Config) string {
 	if cfg.ID != "" {
@@ -126,6 +129,28 @@ func parsePageParams(pageStr, perPageStr string) (page, perPage int) {
 	return page, perPage
 }
 
+func tableRowsEndpoint(variant string, perPage int) string {
+	const endpoint = "/api/components/table/rows"
+	if variant == "" {
+		return endpoint
+	}
+	query := url.Values{}
+	query.Set("variant", variant)
+	query.Set("per_page", strconv.Itoa(perPage))
+	return endpoint + "?" + query.Encode()
+}
+
+func activeTableFilterQuery(search, membership string) string {
+	query := url.Values{}
+	if search != "" {
+		query.Set("search", search)
+	}
+	if membership != "" {
+		query.Set("membership", membership)
+	}
+	return query.Encode()
+}
+
 func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
@@ -138,6 +163,10 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	search := q.Get("search")
 	membership := q.Get("membership")
 	tableID := q.Get("table_id")
+	if tableID != "" && !safeTableIDPattern.MatchString(tableID) {
+		http.Error(w, "invalid table_id", http.StatusBadRequest)
+		return
+	}
 
 	records := allRecords()
 
@@ -175,17 +204,28 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	hasMore := end < len(records)
 	nextPage := page + 1
 
-	cfg := table.Config{
-		Columns: []table.Column{
-			{Key: "id", Label: "CustomerID", Sortable: true},
-			{Key: "name", Label: "Name", Sortable: true},
+	columns := []table.Column{
+		{Key: "id", Label: "CustomerID", Sortable: true},
+		{Key: "name", Label: "Name", Sortable: true},
+		{Key: "email", Label: "Email"},
+		{Key: "membership", Label: "Membership", Sortable: true},
+	}
+	if variant == "inline-filtered" {
+		columns = []table.Column{
+			{Key: "id", Label: "CustomerID"},
+			{Key: "name", Label: "Name"},
 			{Key: "email", Label: "Email"},
-			{Key: "membership", Label: "Membership", Sortable: true},
-		},
+			{Key: "membership", Label: "Membership"},
+		}
+	}
+
+	cfg := table.Config{
+		Columns: columns,
 		Rows:    rows,
 		SortBy:  orderBy,
 		SortDir: table.SortDir(orderDir),
 	}
+	cfg.ExtraQueryParams = activeTableFilterQuery(search, membership)
 
 	// For infinite scroll, render rows without tbody wrapper (appended to existing tbody)
 	if variant == "infinite" {
@@ -200,14 +240,14 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cfg.HTMX = &table.HTMXConfig{Endpoint: "/api/components/table/rows"}
+	cfg.HTMX = &table.HTMXConfig{Endpoint: tableRowsEndpoint(variant, perPage)}
 
 	if tableID != "" {
 		cfg.ID = tableID
 	}
 
 	// For pagination, render rows as tbody inner HTML + OOB pagination update
-	if pageStr != "" || variant == "" {
+	if pageStr != "" || variant == "" || q.Has("_filter") {
 		cfg.Pagination = &table.PaginationConfig{
 			CurrentPage: page,
 			TotalPages:  totalPages,
@@ -227,17 +267,22 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	// Wrapped in <template> so the HTML parser doesn't strip <thead>/<tr> elements
 	// when they appear alongside tbody <tr> rows in the response.
 	if tableID != "" {
-		_, _ = fmt.Fprintf(w, `<template><thead id="%s" hx-swap-oob="outerHTML" class="%s">`,
-			resolvedTableID(cfg)+"-thead", tableHeadClasses)
-		_ = table.TableHeadContent(cfg).Render(r.Context(), w)
-		_, _ = fmt.Fprintf(w, `</thead></template>`)
+		_ = tableHeadOOBFragment(
+			resolvedTableID(cfg)+"-thead",
+			cfg.SortBy,
+			string(cfg.SortDir),
+			table.TableHeadContent(cfg),
+		).Render(r.Context(), w)
 	}
 
-	// OOB swap: update pagination controls so active page, prev/next states refresh
-	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
-		_, _ = fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">`, resolvedTableID(cfg)+"-pagination")
-		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">Page %d of %d</div>`, page, totalPages)
-		_ = table.TablePaginationNav(cfg).Render(r.Context(), w)
-		_, _ = fmt.Fprintf(w, `</div>`)
+	// OOB swap: always replace the stable pagination host. One-page and empty
+	// results hide it without removing the target needed to restore controls.
+	if cfg.Pagination != nil {
+		_ = tablePaginationOOBFragment(
+			resolvedTableID(cfg)+"-pagination",
+			page,
+			totalPages,
+			table.TablePaginationNav(cfg),
+		).Render(r.Context(), w)
 	}
 }

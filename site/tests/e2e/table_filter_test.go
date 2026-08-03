@@ -288,3 +288,85 @@ func TestTableFilter(t *testing.T) {
 		require.NoError(t, err)
 	})
 }
+
+func TestTableFilter_SortPersistsAcrossFilterAndPagination(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+	page.SetDefaultTimeout(5000)
+
+	_, err := page.Goto(baseURL+"/components/table", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	ensureFiltersExpanded(t, page)
+
+	nameHeader := page.Locator("#filtered-table-thead th[hx-get*='order_by=name']")
+	count, err := nameHeader.Count()
+	require.NoError(t, err)
+	require.Equal(t, 1, count)
+	require.NoError(t, nameHeader.Click())
+
+	_, err = page.WaitForFunction(
+		`() => {
+			var rows = document.querySelectorAll('#filtered-table-tbody tr');
+			var head = document.querySelector('#filtered-table-thead');
+			return rows[0]?.textContent.includes('Alex Martinez') &&
+				head?.dataset.tableSortBy === 'name' &&
+				head?.dataset.tableSortDir === 'asc';
+		}`, nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+	)
+	require.NoError(t, err, "name ascending sort should finish before filtering")
+
+	membership := page.Locator("#filtered-table-filters select")
+	_, err = membership.SelectOption(playwright.SelectOptionValues{Values: &[]string{"Gold"}})
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(
+		`() => {
+			var rows = Array.from(document.querySelectorAll('#filtered-table-tbody tr'));
+			var head = document.querySelector('#filtered-table-thead');
+			var pagination = document.querySelector('#filtered-table-pagination');
+			return rows.length === 3 &&
+				rows[0]?.textContent.includes('Alex Martinez') &&
+				rows.every(function (row) { return row.querySelector('td:nth-child(4)')?.textContent.includes('Gold'); }) &&
+				head?.dataset.tableSortBy === 'name' &&
+				head?.dataset.tableSortDir === 'asc' &&
+				pagination?.textContent.includes('Page 1 of 3');
+		}`, nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+	)
+	require.NoError(t, err, "filter should preserve name ascending order")
+
+	nextSortURL, err := page.Locator("#filtered-table-thead th[hx-get*='order_by=name']").GetAttribute("hx-get")
+	require.NoError(t, err)
+	assert.Contains(t, nextSortURL, "membership=Gold")
+	assert.Contains(t, nextSortURL, "order_by=name")
+	assert.Contains(t, nextSortURL, "order_dir=desc")
+
+	pageTwo := page.Locator("#filtered-table-pagination a[aria-label='page 2']")
+	pageTwoURL, err := pageTwo.GetAttribute("hx-get")
+	require.NoError(t, err)
+	assert.Contains(t, pageTwoURL, "membership=Gold")
+	assert.Contains(t, pageTwoURL, "order_by=name")
+	assert.Contains(t, pageTwoURL, "order_dir=asc")
+	require.NoError(t, pageTwo.Click())
+
+	_, err = page.WaitForFunction(
+		`() => {
+			var rows = document.querySelectorAll('#filtered-table-tbody tr');
+			var head = document.querySelector('#filtered-table-thead');
+			var pagination = document.querySelector('#filtered-table-pagination');
+			return rows[0]?.textContent.includes('Emma Harris') &&
+				head?.dataset.tableSortBy === 'name' &&
+				head?.dataset.tableSortDir === 'asc' &&
+				pagination?.textContent.includes('Page 2 of 3');
+		}`, nil,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+	)
+	require.NoError(t, err, "pagination should preserve combined filter and sort state")
+}
