@@ -904,11 +904,37 @@ import "github.com/araihu/goshtoso/components/form/validation"  // package valid
 import "github.com/araihu/goshtoso/components/head"  // package head
 ```
 
-**Entry points:** `Dependencies(options ...Option)` · `DependenciesMinimal(options ...Option)`
+**Entry points:** `Dependencies(options ...Option)` · `DependenciesMinimal(options ...Option)` · `Metadata(metadata MetadataConfig)`
 
 **Options:** `WithActionGroupURL(url string)` · `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithRuntimeManifest(manifest assets.RuntimeManifest)` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
 
 - **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx"
+- **OpenGraphType** — OpenGraphTypeWebsite = "website"
+- **TwitterCard** — TwitterCardSummary = "summary", TwitterCardSummaryLargeImage = "summary_large_image"
+
+**MetadataConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Title` | `string` | Title is the non-empty route-specific document and social title. |
+| `Description` | `string` | Description is the non-empty route-specific document and social summary. |
+| `CanonicalURL` | `string` | CanonicalURL is the route's absolute HTTPS canonical and Open Graph URL. |
+| `OpenGraphType` | `OpenGraphType` | OpenGraphType is the Open Graph object type and defaults to website. |
+| `SiteName` | `string` | SiteName is the optional Open Graph site name. |
+| `Locale` | `string` | Locale is the optional Open Graph locale, such as en_US. |
+| `Image` | `SocialImage` | Image is the required social-preview image and structured metadata. |
+| `TwitterCard` | `TwitterCard` | TwitterCard selects the X/Twitter presentation and defaults to summary_large_image. |
+| `TwitterSite` | `string` | TwitterSite is the optional real project account handle, including @. |
+
+**SocialImage**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `URL` | `string` | URL is the absolute HTTPS URL crawlers use to fetch the image. |
+| `MIMEType` | `string` | MIMEType is a parameter-free RFC 6838 image type, such as image/jpeg. |
+| `Width` | `int` | Width is the image width in pixels and must be positive. |
+| `Height` | `int` | Height is the image height in pixels and must be positive. |
+| `Alt` | `string` | Alt describes the image for accessible social clients and must be non-empty. |
 
 ## icon
 

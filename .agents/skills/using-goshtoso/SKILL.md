@@ -1,6 +1,6 @@
 ---
 name: using-goshtoso
-description: Use when building, designing, redesigning, integrating, or updating an external Go/templ application with Goshtoso, including application shells, dashboards, operations lists, detail pages, settings, onboarding, workflows, public content, component selection, visual direction, state design, installing github.com/araihu/goshtoso, serving bundled assets, wiring head.Dependencies, Tailwind CSS strategy, or debugging Goshtoso styles, Alpine.js, HTMX, and component APIs.
+description: Use when building, designing, redesigning, integrating, or updating an external Go/templ application with Goshtoso, including application shells, dashboards, operations lists, detail pages, settings, onboarding, workflows, public content, page metadata, Open Graph and X/Twitter Cards, social previews, component selection, visual direction, state design, installing github.com/araihu/goshtoso, serving bundled assets, wiring head.Metadata and head.Dependencies, Tailwind CSS strategy, or debugging Goshtoso styles, Alpine.js, HTMX, and component APIs.
 ---
 
 # Using Goshtoso
@@ -54,12 +54,38 @@ import "github.com/araihu/goshtoso/components/head"
 templ Layout() {
 	<html>
 		<head>
+			@head.Metadata(head.MetadataConfig{
+				Title:        "Page title",
+				Description:  "Route-specific description",
+				CanonicalURL: "https://example.com/route",
+				SiteName:     "Product name",
+				Image: head.SocialImage{
+					URL:      "https://example.com/og.jpg",
+					MIMEType: "image/jpeg",
+					Width:    1280,
+					Height:   640,
+					Alt:      "Useful description of the preview",
+				},
+			})
 			@head.Dependencies()
 		</head>
 		<body>{ children... }</body>
 	</html>
 }
 ```
+
+`head.Metadata()` emits the document title and description, canonical URL,
+required Open Graph properties, structured image metadata and alt text, plus
+explicit X/Twitter Card tags. Title, description, canonical URL, image URL,
+parameter-free RFC 6838 image MIME type, positive dimensions, and image alt
+text are required. Both URLs must be absolute HTTPS. `Render` validates the
+whole configuration before writing and returns an error instead of emitting
+partial or mixed metadata.
+Open Graph type defaults to `website`; X/Twitter Card defaults to
+`summary_large_image`. Give every indexable route distinct values and do not
+reuse homepage metadata for subpages. A 1280x640 JPEG or PNG under 1 MB is the
+safe default social image. Render metadata in initial HTML, not through client
+JavaScript or HTMX fragments.
 
 `head.Dependencies()` emits Goshtoso CSS and an ordered loader for Alpine.js,
 its collapse/focus/mask plugins, HTMX, and the first-party

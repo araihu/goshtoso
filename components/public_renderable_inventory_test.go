@@ -74,6 +74,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"form.FormErrors":                 {},
 		"head.Dependencies":               {},
 		"head.DependenciesMinimal":        {},
+		"head.Metadata":                   {},
 		"head.WithComboboxURL":            {},
 		"head.WithActionGroupURL":         {},
 		"head.WithDependencyCDNURL":       {},
@@ -180,6 +181,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 	}
 
 	allowedMethods := map[string]struct{}{
+		"head.metadataComponent.Render":          {},
 		"combobox.Config.Validate":               {},
 		"combobox.Config.InitialState":           {},
 		"combobox.comboHandler.ServeHTTP":        {},
