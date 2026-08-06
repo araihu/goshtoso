@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/araihu/goshtoso/actions/workflows/ci.yml"><img src="https://github.com/araihu/goshtoso/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
-  <a href="https://app.codecov.io/gh/araihu/goshtoso"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/guilycst/fb3843c3a13793eb6cc0af638bc00ad4/raw/coverage.json" alt="Authored Go coverage" /></a>
+  <a href="https://app.codecov.io/gh/araihu/goshtoso"><img src="https://codecov.io/gh/araihu/goshtoso/branch/main/graph/badge.svg" alt="Codecov coverage" /></a>
   <a href="https://pkg.go.dev/github.com/araihu/goshtoso"><img src="https://pkg.go.dev/badge/github.com/araihu/goshtoso.svg" alt="Go Reference" /></a>
   <a href="https://goreportcard.com/report/github.com/araihu/goshtoso"><img src="https://goreportcard.com/badge/github.com/araihu/goshtoso" alt="Go Report Card" /></a>
   <a href="https://github.com/araihu/goshtoso/releases/latest"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/guilycst/fb3843c3a13793eb6cc0af638bc00ad4/raw/release.json" alt="Latest release" /></a>
