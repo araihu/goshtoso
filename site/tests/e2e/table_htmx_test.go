@@ -402,19 +402,15 @@ func TestTableHTMX_BrowserSorting(t *testing.T) {
 		t.Logf("After sort:  %.50s", strings.TrimSpace(newFirst))
 
 		// Response-generated headers must retain the six-row endpoint state.
-		err = nameHeader.Click()
-		require.NoError(t, err)
-		_, err = page.WaitForFunction(
+		clickUntil(t, page, nameHeader,
 			`() => {
 				var rows = document.querySelectorAll('#sortable-table tbody tr');
 				var nameHeader = document.querySelector('#sortable-table-thead th[hx-get*="order_by=name"]');
 				return rows.length === 6 &&
 					rows[0].textContent.includes('Sophia Chen') &&
 					!nameHeader?.getAttribute('hx-get').includes('order_dir=');
-			}`, nil,
-			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+			}`,
 		)
-		require.NoError(t, err, "second sort should preserve all six preview rows")
 	})
 }
 

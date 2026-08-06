@@ -55,7 +55,12 @@ many of these steps, but the checklist keeps the public release story coherent.
   `assets/goshtoso-theme.css`.
 - Confirm the release badge endpoint has the new tag.
 - Confirm the coverage badge reports the authoritative full-suite percentage
-  from this release; focused PR/main runs must never update it.
+  for authored Go source from this release; focused PR/main runs must never
+  update it.
+- Confirm Codecov received `.coverage/coverage-authored.out` and exposes the
+  current release report. The `CODECOV_TOKEN` repository secret must be present.
+- Confirm the release coverage artifact retains both authored-source and full
+  generated-inclusive profiles, function summaries, and HTML reports.
 - Open a follow-up PR that pins `site/go.mod` to the new tag and updates any
   version-aware documentation links. Never push this follow-up directly to the
   protected `main` branch.
