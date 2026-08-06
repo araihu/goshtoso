@@ -370,7 +370,9 @@ func TestTableHTMX_BrowserSorting(t *testing.T) {
 		require.NoError(t, err)
 
 		// Click the Name header to sort
-		nameHeader := page.Locator("#sortable-table thead th[hx-get*='order_by=name']")
+		nameHeader := page.Locator("#sortable-table-thead th").Filter(
+			playwright.LocatorFilterOptions{HasText: "Name"},
+		).First()
 		count, err := nameHeader.Count()
 		require.NoError(t, err)
 		if count == 0 {
@@ -402,19 +404,23 @@ func TestTableHTMX_BrowserSorting(t *testing.T) {
 		t.Logf("After sort:  %.50s", strings.TrimSpace(newFirst))
 
 		// Response-generated headers must retain the six-row endpoint state.
-		err = nameHeader.Click()
-		require.NoError(t, err)
-		_, err = page.WaitForFunction(
+		clickUntil(t, page, nameHeader,
 			`() => {
 				var rows = document.querySelectorAll('#sortable-table tbody tr');
-				var nameHeader = document.querySelector('#sortable-table-thead th[hx-get*="order_by=name"]');
+				var tableHead = document.querySelector('#sortable-table-thead');
+				var nameHeader = Array.from(tableHead?.querySelectorAll('th') || [])
+					.find((header) => header.textContent.includes('Name'));
+				var nextURL = nameHeader?.getAttribute('hx-get') || '';
 				return rows.length === 6 &&
 					rows[0].textContent.includes('Sophia Chen') &&
-					!nameHeader?.getAttribute('hx-get').includes('order_dir=');
-			}`, nil,
-			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+					tableHead?.dataset.tableSortBy === 'name' &&
+					tableHead?.dataset.tableSortDir === 'desc' &&
+					nameHeader !== undefined &&
+					nextURL.includes('per_page=6') &&
+					!nextURL.includes('order_by=') &&
+					!nextURL.includes('order_dir=');
+			}`,
 		)
-		require.NoError(t, err, "second sort should preserve all six preview rows")
 	})
 }
 

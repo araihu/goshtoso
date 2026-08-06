@@ -96,12 +96,24 @@ go tool covdata percent \
 go tool covdata textfmt \
   -i=.coverage/merged -pkg="$component_coverpkg" \
   -o=.coverage/coverage.out
+scripts/filter-authored-coverage \
+  .coverage/coverage.out .coverage/coverage-authored.out
 go tool cover -func=.coverage/coverage.out > .coverage/coverage-func.txt
+go tool cover -func=.coverage/coverage-authored.out > .coverage/coverage-authored-func.txt
 go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
+go tool cover -html=.coverage/coverage-authored.out -o .coverage/coverage-authored.html
 
-total_line="$(grep '^total:' .coverage/coverage-func.txt)"
-total_percent="$(printf '%s\n' "$total_line" | sed -E 's/.*[[:space:]]([0-9.]+)%.*/\1/')"
+full_total_line="$(grep '^total:' .coverage/coverage-func.txt)"
+full_total_percent="$(printf '%s\n' "$full_total_line" | sed -E 's/.*[[:space:]]([0-9.]+)%.*/\1/')"
+printf '%s\n' "$full_total_percent" > .coverage/full-percentage.txt
+
+authored_total_line="$(grep '^total:' .coverage/coverage-authored-func.txt)"
+total_percent="$(printf '%s\n' "$authored_total_line" | sed -E 's/.*[[:space:]]([0-9.]+)%.*/\1/')"
 printf '%s\n' "$total_percent" > .coverage/percentage.txt
+if ! awk "BEGIN { exit !($total_percent >= 80) }"; then
+  echo "authored Go coverage is below 80%: $total_percent%" >&2
+  exit 1
+fi
 
 color="red"
 awk "BEGIN { exit !($total_percent >= 80) }" && color="brightgreen" || true
@@ -113,6 +125,7 @@ if [[ "$write_badge" == true ]]; then
   scripts/coveragebadge "$total_percent"
 fi
 
-echo "$total_line"
+echo "full generated-inclusive coverage: $full_total_line"
+echo "authored Go coverage: $authored_total_line"
 echo "component package list: .coverage/component-packages.txt"
-echo "coverage percentage: $total_percent"
+echo "authored coverage percentage: $total_percent"

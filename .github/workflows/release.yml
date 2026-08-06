@@ -93,10 +93,38 @@ jobs:
           {
             echo "### Authoritative release coverage"
             echo
-            echo "Coverage: ${percent}%"
+            echo "Authored Go coverage: ${percent}%"
+            echo "Full generated-inclusive coverage: $(cat .coverage/full-percentage.txt)%"
             echo
             echo "Packages: $(wc -l < .coverage/component-packages.txt) publishable component packages"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Detect Codecov configuration
+        id: codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          configured=false
+          if [[ -n "$CODECOV_TOKEN" ]]; then
+            configured=true
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "::error::CODECOV_TOKEN is required for tagged releases"
+            exit 1
+          else
+            echo "::warning::CODECOV_TOKEN is not configured; authored coverage will not be published"
+          fi
+          echo "configured=$configured" >> "$GITHUB_OUTPUT"
+
+      - name: Upload authored Go coverage to Codecov
+        if: steps.codecov.outputs.configured == 'true'
+        uses: codecov/codecov-action@v5
+        with:
+          disable_search: true
+          fail_ci_if_error: true
+          files: .coverage/coverage-authored.out
+          flags: authored-go
+          name: release-authored-go
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload authoritative coverage
         if: always()
@@ -106,10 +134,14 @@ jobs:
           path: |
             .coverage/component-packages.txt
             .coverage/percentage.txt
+            .coverage/full-percentage.txt
             .coverage/coverage-percent.txt
             .coverage/coverage.out
             .coverage/coverage-func.txt
             .coverage/coverage.html
+            .coverage/coverage-authored.out
+            .coverage/coverage-authored-func.txt
+            .coverage/coverage-authored.html
           retention-days: 30
           if-no-files-found: ignore
 
@@ -166,7 +198,7 @@ jobs:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: fb3843c3a13793eb6cc0af638bc00ad4
           filename: coverage.json
-          label: coverage
+          label: authored coverage
           message: ${{ needs.pre-release.outputs.coverage-percent }}%
           color: ${{ needs.pre-release.outputs.coverage-color }}
 

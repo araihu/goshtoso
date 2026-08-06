@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 2 ]]; then
+  echo "usage: scripts/filter-authored-coverage <input> <output>" >&2
+  exit 2
+fi
+
+awk 'NR == 1 || $1 !~ /_templ\.go:/' "$1" > "$2"
