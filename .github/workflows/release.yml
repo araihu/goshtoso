@@ -107,6 +107,9 @@ jobs:
           configured=false
           if [[ -n "$CODECOV_TOKEN" ]]; then
             configured=true
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "::error::CODECOV_TOKEN is required for tagged releases"
+            exit 1
           else
             echo "::warning::CODECOV_TOKEN is not configured; authored coverage will not be published"
           fi
