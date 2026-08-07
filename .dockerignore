@@ -12,6 +12,5 @@ node_modules
 .air.toml
 .vscode
 .idea
-Makefile
 justfile
 og-site

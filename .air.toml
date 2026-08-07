@@ -5,10 +5,10 @@ tmp_dir = "tmp"
 [build]
   args_bin = ["-port", "8090"]
   bin = "./tmp/main"
-  cmd = "make generate && go build -o ./tmp/main ./site/cmd/server"
+  cmd = "just generate && go build -o ./tmp/main ./site/cmd/server"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "og-site", "tests", "test-results", "bin"]
-  exclude_file = ["Makefile", "README.md", ".gitignore", "assets/styles.css"]
+  exclude_file = ["justfile", "README.md", ".gitignore", "assets/styles.css"]
   exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false
   follow_symlink = false

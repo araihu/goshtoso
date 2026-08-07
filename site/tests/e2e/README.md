@@ -6,7 +6,7 @@ This directory contains end-to-end tests using Playwright for browser automation
 
 ### Run all E2E tests
 ```bash
-make test-e2e
+just test-e2e
 ```
 
 ### Run only impacted component and example identities
@@ -16,7 +16,7 @@ changes with a base revision and run the directly affected identities plus
 their reverse Go-package consumers:
 
 ```bash
-make test-e2e-focused E2E_BASE=origin/main
+just test-e2e-focused origin/main
 ```
 
 The selector writes `.e2e-impact.json`. Unknown paths, shared runtime/theme
@@ -128,7 +128,7 @@ To run in CI/CD:
 
 ```bash
 # Install Playwright browsers
-make install-playwright
+just install-playwright
 
 # Run all E2E tests
 go test -tags=e2e,full ./tests/e2e/... -v

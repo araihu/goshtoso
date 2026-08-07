@@ -62,9 +62,9 @@ Language Server for IDE integrations (VS Code, Neovim, JetBrains, …). Not run 
 ## This repo (Goshtoso)
 
 ```bash
-templ generate                                   # or: just gp-generate
+templ generate                                   # or: just generate
 tailwindcss -i css/main.css -o assets/styles.css # after CSS edits
-go run cmd/server/main.go                         # or: just gp-dev (port 8090)
+go run cmd/server/main.go                         # or: just dev (port 8090)
 ```
 
 **Regeneration quirk:** `templ generate` sometimes reports "0 updates" though source changed. Force it:
