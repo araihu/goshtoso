@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"bufio"
+	"bytes"
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
@@ -36,6 +37,7 @@ type releaseBoundary struct {
 	catalog   iconcatalog.Catalog
 	release   releaseDocument
 	checksums map[string]string
+	files     map[string][]byte
 }
 
 type releaseDocument struct {
@@ -114,23 +116,33 @@ func (boundary *releaseBoundary) verify(opts Options) error {
 	if err := validateReleaseRoot(boundary.root); err != nil {
 		return err
 	}
-	if err := verifyPinnedReleaseFiles(boundary.root, opts); err != nil {
+	root, err := os.OpenRoot(boundary.root)
+	if err != nil {
+		return fmt.Errorf("open contained release root: %w", err)
+	}
+	defer func() { _ = root.Close() }()
+	if err := validateOpenedReleaseRoot(boundary.root, root); err != nil {
 		return err
 	}
-	checksums, err := verifyReleaseChecksums(boundary.root)
+	pinned, err := verifyPinnedReleaseFiles(root, opts)
+	if err != nil {
+		return err
+	}
+	checksums, files, err := verifyReleaseChecksums(root, pinned["checksums.txt"])
 	if err != nil {
 		return err
 	}
 	boundary.checksums = checksums
-	release, err := loadReleaseDocument(boundary.root)
+	boundary.files = files
+	release, err := loadReleaseDocument(files["release.json"])
 	if err != nil {
 		return err
 	}
-	if err := validateReleaseDocument(boundary.root, release, checksums, opts); err != nil {
+	if err := validateReleaseDocument(release, checksums, files, opts); err != nil {
 		return err
 	}
 	boundary.release = release
-	catalog, err := loadReleaseCatalog(boundary.root, opts)
+	catalog, err := loadReleaseCatalog(files["catalog.json"], opts)
 	if err != nil {
 		return err
 	}
@@ -162,45 +174,73 @@ func validateReleaseRoot(root string) error {
 	return nil
 }
 
-func verifyPinnedReleaseFiles(root string, opts Options) error {
+func validateOpenedReleaseRoot(name string, root *os.Root) error {
+	pathInfo, err := os.Lstat(name)
+	if err != nil {
+		return fmt.Errorf("reinspect release root: %w", err)
+	}
+	if !pathInfo.IsDir() || pathInfo.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("release root must remain a real directory")
+	}
+	openedInfo, err := root.Stat(".")
+	if err != nil {
+		return fmt.Errorf("inspect opened release root: %w", err)
+	}
+	if !os.SameFile(pathInfo, openedInfo) {
+		return fmt.Errorf("release root changed while opening")
+	}
+	return nil
+}
+
+func verifyPinnedReleaseFiles(root *os.Root, opts Options) (map[string][]byte, error) {
+	pinned := make(map[string][]byte, 3)
 	for _, expected := range []struct{ name, digest string }{
 		{"catalog.json", opts.CatalogSHA256},
 		{"release.json", opts.ReleaseJSONSHA256},
 		{"checksums.txt", opts.ChecksumsSHA256},
 	} {
-		got, _, err := hashRegularFile(filepath.Join(root, expected.name))
+		contents, err := readContainedRegularFile(root, expected.name)
 		if err != nil {
-			return fmt.Errorf("verify %s: %w", expected.name, err)
+			return nil, fmt.Errorf("verify %s: %w", expected.name, err)
 		}
+		got := hashBytes(contents)
 		if got != expected.digest {
-			return fmt.Errorf("%s SHA-256 mismatch: got %s, want %s", expected.name, got, expected.digest)
+			return nil, fmt.Errorf("%s SHA-256 mismatch: got %s, want %s", expected.name, got, expected.digest)
 		}
+		pinned[expected.name] = contents
 	}
-	return nil
+	return pinned, nil
 }
 
-func verifyReleaseChecksums(root string) (map[string]string, error) {
-	checksums, err := loadChecksums(filepath.Join(root, "checksums.txt"))
+func verifyReleaseChecksums(root *os.Root, checksumsBytes []byte) (map[string]string, map[string][]byte, error) {
+	checksums, err := loadChecksums(checksumsBytes)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
+	if len(checksums) > maxArchiveFiles {
+		return nil, nil, fmt.Errorf("release inventory exceeds %d-file limit", maxArchiveFiles)
+	}
+	files := make(map[string][]byte, len(checksums))
+	var total int64
 	for relative, expected := range checksums {
-		got, _, err := hashReleaseFile(root, relative)
+		contents, err := readContainedRegularFile(root, relative)
 		if err != nil {
-			return nil, fmt.Errorf("verify checksums entry %q: %w", relative, err)
+			return nil, nil, fmt.Errorf("verify checksums entry %q: %w", relative, err)
 		}
+		got := hashBytes(contents)
 		if got != expected {
-			return nil, fmt.Errorf("checksums entry %q mismatch: got %s, want %s", relative, got, expected)
+			return nil, nil, fmt.Errorf("checksums entry %q mismatch: got %s, want %s", relative, got, expected)
 		}
+		total += int64(len(contents))
+		if total > maxArchiveBytes {
+			return nil, nil, fmt.Errorf("release inventory exceeds %d-byte limit", maxArchiveBytes)
+		}
+		files[relative] = contents
 	}
-	return checksums, nil
+	return checksums, files, nil
 }
 
-func loadReleaseDocument(root string) (releaseDocument, error) {
-	releaseBytes, err := os.ReadFile(filepath.Join(root, "release.json"))
-	if err != nil {
-		return releaseDocument{}, fmt.Errorf("read release.json: %w", err)
-	}
+func loadReleaseDocument(releaseBytes []byte) (releaseDocument, error) {
 	var release releaseDocument
 	decoder := json.NewDecoder(strings.NewReader(string(releaseBytes)))
 	decoder.DisallowUnknownFields()
@@ -213,7 +253,7 @@ func loadReleaseDocument(root string) (releaseDocument, error) {
 	return release, nil
 }
 
-func validateReleaseDocument(root string, release releaseDocument, checksums map[string]string, opts Options) error {
+func validateReleaseDocument(release releaseDocument, checksums map[string]string, files map[string][]byte, opts Options) error {
 	if release.SchemaVersion != 1 || release.IdentityRevision != 11 || release.RuntimeVersion != 1 {
 		return fmt.Errorf("unsupported release metadata schema=%d identityRevision=%d runtimeVersion=%d", release.SchemaVersion, release.IdentityRevision, release.RuntimeVersion)
 	}
@@ -223,21 +263,13 @@ func validateReleaseDocument(root string, release releaseDocument, checksums map
 	if release.CatalogSHA256 != opts.CatalogSHA256 {
 		return fmt.Errorf("release.json catalogSha256 %s does not match expected %s", release.CatalogSHA256, opts.CatalogSHA256)
 	}
-	return verifyReleaseInventory(root, release, checksums)
+	return verifyReleaseInventory(release, checksums, files)
 }
 
-func loadReleaseCatalog(root string, opts Options) (iconcatalog.Catalog, error) {
-	catalogFile, err := os.Open(filepath.Join(root, "catalog.json"))
+func loadReleaseCatalog(catalogBytes []byte, opts Options) (iconcatalog.Catalog, error) {
+	catalog, err := iconcatalog.Load(bytes.NewReader(catalogBytes))
 	if err != nil {
-		return iconcatalog.Catalog{}, fmt.Errorf("open catalog.json: %w", err)
-	}
-	catalog, loadErr := iconcatalog.Load(catalogFile)
-	closeErr := catalogFile.Close()
-	if loadErr != nil {
-		return iconcatalog.Catalog{}, fmt.Errorf("validate catalog.json: %w", loadErr)
-	}
-	if closeErr != nil {
-		return iconcatalog.Catalog{}, fmt.Errorf("close catalog.json: %w", closeErr)
+		return iconcatalog.Catalog{}, fmt.Errorf("validate catalog.json: %w", err)
 	}
 	if catalog.SchemaVersion != 2 {
 		return iconcatalog.Catalog{}, fmt.Errorf("unsupported iconpack catalog schemaVersion %d: want 2", catalog.SchemaVersion)
@@ -248,7 +280,7 @@ func loadReleaseCatalog(root string, opts Options) (iconcatalog.Catalog, error) 
 	return catalog, nil
 }
 
-func verifyReleaseInventory(root string, release releaseDocument, checksums map[string]string) error {
+func verifyReleaseInventory(release releaseDocument, checksums map[string]string, files map[string][]byte) error {
 	if len(release.Files) == 0 {
 		return fmt.Errorf("release.json files must not be empty")
 	}
@@ -274,11 +306,8 @@ func verifyReleaseInventory(root string, release releaseDocument, checksums map[
 		if !ok || checksum != file.SHA256 {
 			return fmt.Errorf("release.json file %q disagrees with checksums.txt", file.Path)
 		}
-		got, size, err := hashReleaseFile(root, file.Path)
-		if err != nil {
-			return err
-		}
-		if got != file.SHA256 || size != file.Size {
+		contents, ok := files[file.Path]
+		if !ok || hashBytes(contents) != file.SHA256 || int64(len(contents)) != file.Size {
 			return fmt.Errorf("release.json file %q content does not match inventory", file.Path)
 		}
 	}
@@ -321,16 +350,11 @@ func verifyReleaseFileOrder(files []releaseFile) error {
 	return nil
 }
 
-func loadChecksums(filename string) (map[string]string, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("open checksums.txt: %w", err)
-	}
-	defer func() { _ = file.Close() }()
+func loadChecksums(contents []byte) (map[string]string, error) {
 	checksums := map[string]string{}
 	caseFolded := map[string]string{}
 	previous := ""
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(bytes.NewReader(contents))
 	scanner.Buffer(make([]byte, 64*1024), 1024*1024)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -367,11 +391,72 @@ func loadChecksums(filename string) (map[string]string, error) {
 	return checksums, nil
 }
 
-func hashReleaseFile(root, relative string) (string, int64, error) {
+func readContainedRegularFile(root *os.Root, relative string) ([]byte, error) {
 	if err := safeRelativePath(relative); err != nil {
-		return "", 0, err
+		return nil, err
 	}
-	return hashRegularFile(filepath.Join(root, filepath.FromSlash(relative)))
+	if err := validateContainedPath(root, relative); err != nil {
+		return nil, err
+	}
+	file, err := root.Open(relative)
+	if err != nil {
+		return nil, err
+	}
+	openedInfo, statErr := file.Stat()
+	if statErr != nil {
+		_ = file.Close()
+		return nil, statErr
+	}
+	if !openedInfo.Mode().IsRegular() {
+		_ = file.Close()
+		return nil, fmt.Errorf("release path %q is not a regular file", relative)
+	}
+	contents, readErr := io.ReadAll(io.LimitReader(file, maxMemberBytes+1))
+	closeErr := file.Close()
+	if readErr != nil {
+		return nil, readErr
+	}
+	if closeErr != nil {
+		return nil, closeErr
+	}
+	if int64(len(contents)) > maxMemberBytes {
+		return nil, fmt.Errorf("release file %q exceeds %d-byte limit", relative, maxMemberBytes)
+	}
+	if err := validateContainedPath(root, relative); err != nil {
+		return nil, fmt.Errorf("release path %q changed while reading: %w", relative, err)
+	}
+	currentInfo, err := root.Lstat(relative)
+	if err != nil {
+		return nil, fmt.Errorf("inspect release path %q after reading: %w", relative, err)
+	}
+	if !os.SameFile(openedInfo, currentInfo) {
+		return nil, fmt.Errorf("release path %q changed while reading", relative)
+	}
+	return contents, nil
+}
+
+func validateContainedPath(root *os.Root, relative string) error {
+	segments := strings.Split(relative, "/")
+	for index := range segments {
+		current := strings.Join(segments[:index+1], "/")
+		info, err := root.Lstat(current)
+		if err != nil {
+			return fmt.Errorf("inspect release path %q: %w", current, err)
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("release path %q contains symbolic link %q", relative, current)
+		}
+		if index < len(segments)-1 {
+			if !info.IsDir() {
+				return fmt.Errorf("release path %q has non-directory parent %q", relative, current)
+			}
+			continue
+		}
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("release path %q is not a regular file", relative)
+		}
+	}
+	return nil
 }
 
 func hashRegularFile(filename string) (string, int64, error) {

@@ -74,6 +74,68 @@ func TestGenerateFromVerifiedArchive(t *testing.T) {
 	assertFileContains(t, filepath.Join(opts.OutputDir, "sprite.svg"), `id="devicon-trpc"`)
 }
 
+func TestGenerateFromVerifiedRootRejectsNestedOutsideSymlink(t *testing.T) {
+	opts := syntheticRelease(t)
+	outside := t.TempDir()
+	originalIcons := filepath.Join(opts.ReleaseRoot, "icons")
+	movedIcons := filepath.Join(outside, "icons")
+	if err := os.Rename(originalIcons, movedIcons); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(movedIcons, originalIcons); err != nil {
+		t.Fatal(err)
+	}
+	opts.OutputDir = filepath.Join(t.TempDir(), "pack")
+	opts.Names = []string{"brand-developer-icons-tRPC"}
+	opts.Package = "appicons"
+	opts.ConstPrefix = "Icon"
+	opts.SpriteURL = "/assets/icons/app.svg"
+
+	_, err := Generate(context.Background(), opts)
+	if err == nil || !strings.Contains(err.Error(), "symbolic link") {
+		t.Fatalf("Generate() error = %v, want nested symbolic-link rejection", err)
+	}
+	if _, statErr := os.Lstat(opts.OutputDir); !os.IsNotExist(statErr) {
+		t.Fatalf("output directory exists after rejected release root: %v", statErr)
+	}
+}
+
+func TestVerifiedRootUsesCapturedBytesAfterSourceMutation(t *testing.T) {
+	opts := syntheticRelease(t)
+	boundary, err := openRelease(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer boundary.cleanup()
+
+	if err := os.WriteFile(
+		filepath.Join(opts.ReleaseRoot, "icons/brand/developer-icons/tRPC.svg"),
+		[]byte(`<svg xmlns="http://www.w3.org/2000/svg"/>`),
+		0o644,
+	); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(opts.ReleaseRoot, "icons/brand/developer-icons/sprite.svg"),
+		[]byte(`<svg xmlns="http://www.w3.org/2000/svg"><symbol id="mutated" viewBox="0 0 1 1"/></svg>`),
+		0o644,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	selected, families, err := selectAssets(boundary, []string{"brand-developer-icons-tRPC"}, "Icon")
+	if err != nil {
+		t.Fatalf("select captured asset: %v", err)
+	}
+	sprite, err := buildSprite(boundary, selected, families)
+	if err != nil {
+		t.Fatalf("build from captured sprite: %v", err)
+	}
+	if !strings.Contains(string(sprite), `id="devicon-trpc"`) || strings.Contains(string(sprite), `id="mutated"`) {
+		t.Fatalf("sprite uses mutable release-root bytes:\n%s", sprite)
+	}
+}
+
 func TestExtractArchiveRejectsTraversal(t *testing.T) {
 	archive := filepath.Join(t.TempDir(), "bad.tar.gz")
 	file, err := os.Create(archive)
