@@ -32,7 +32,8 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 		entry, ok := catalog.Lookup("components/icon")
 		require.True(t, ok)
 		require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-			Name: entry.Title,
+			Name:  entry.Title,
+			Exact: playwright.Bool(true),
 		}).WaitFor())
 
 		cards := page.Locator("[data-icon-card]")

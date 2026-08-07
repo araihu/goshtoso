@@ -269,7 +269,10 @@ already-present symbol from the current document; cross-origin external sprites
 depend on browser support and CORS, and HTTPS pages should not reference an HTTP
 sprite. A blank label and `Decorative: true` both produce a decorative icon.
 See [docs/USAGE.md](docs/USAGE.md#sprite-icons) for generator and deployment
-details.
+details. To add icons without changing Goshtoso's curated embedded package,
+use the [consumer-local iconpack guide](docs/ICONPACK.md); it generates the
+parallel sprite, typed bindings, provenance, and licenses from a verified Arai
+Hû Assets release.
 
 ## Repository Layout
 

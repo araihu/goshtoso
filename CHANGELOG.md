@@ -2,6 +2,22 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.0] - 2026-08-07
+
+### Verified consumer-local icon packs
+
+- Added `cmd/iconpack` and the `iconpack` package.
+- Generates a selected SVG sprite, typed Go bindings, manifest, provenance,
+  licenses, and notice from a verified Arai Hû Assets release.
+- Supports exact mixed-case schema-v2 canonical names and literal catalog
+  sprite symbols.
+- Leaves Goshtoso's curated embedded Heroicons package unchanged.
+
+### Upgrade note
+
+This feature is opt-in. Existing icon consumers require no migration; use the
+release-backed generator only when an application needs additional icons.
+
 ## [v0.1.8] - 2026-08-07
 
 ### Scroll region boundary cues
@@ -20,7 +36,6 @@ All notable changes to Goshtoso are documented in this file.
   vertical viewport needs non-interactive overflow cues.
 - Stable component identity and the public catalog page follow in the site pin
   update after this root package is reachable as `v0.1.8`.
-
 ## [v0.1.7] - 2026-08-02
 
 ### Reduced-motion pressed cards
@@ -263,6 +278,8 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.2.0]: https://github.com/araihu/goshtoso/compare/v0.1.8...v0.2.0
+[v0.1.7]: https://github.com/araihu/goshtoso/compare/v0.1.6...v0.1.7
 [v0.1.3]: https://github.com/araihu/goshtoso/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/araihu/goshtoso/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/araihu/goshtoso/compare/v0.1.0...v0.1.1

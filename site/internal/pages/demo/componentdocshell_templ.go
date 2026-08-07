@@ -46,14 +46,14 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:title\" content=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><meta property=\"og:locale\" content=\"en_US\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:title\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 10, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 11, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -66,7 +66,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 11, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 12, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -79,7 +79,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.CanonicalURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 12, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 13, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -92,52 +92,117 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 13, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 14, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"><meta property=\"og:image:type\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageMIMEType)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 15, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 15, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><meta name=\"twitter:description\" content=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><meta property=\"og:image:width\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageWidth)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 16, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 16, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><meta name=\"twitter:image\" content=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"><meta property=\"og:image:height\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageHeight)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 17, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 17, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"><meta property=\"og:image:alt\" content=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageAlt())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 18, Col: 58}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 20, Col: 54}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><meta name=\"twitter:description\" content=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 21, Col: 60}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><meta name=\"twitter:image\" content=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 22, Col: 55}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"><meta name=\"twitter:image:alt\" content=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageAlt())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 23, Col: 59}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -145,7 +210,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -169,9 +234,9 @@ func componentDocsBodyEnd() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = search.SearchModal(docsSearchConfig()).Render(ctx, templ_7745c5c3_Buffer)
@@ -202,12 +267,12 @@ func componentDocsStorageConsent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div x-data=\"demoStorageConsent\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div x-data=\"demoStorageConsent\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Allow browser storage</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

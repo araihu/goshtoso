@@ -69,10 +69,11 @@ many of these steps, but the checklist keeps the public release story coherent.
 - Confirm `npx skills add araihu/goshtoso --list` discovers the released
   consumer-agent skill.
 
-## Pending v0.1.0 icon catalog evidence
+## Historical v0.1.0 icon catalog evidence
 
-This is release-candidate evidence only. It does not authorize a tag, push,
-deployment, or a `site/go.mod` dependency update.
+This section is retained as historical evidence for the v0.1.0 catalog work. It
+does not describe the v0.2.0 release boundary and does not authorize a tag,
+push, deployment, or a `site/go.mod` dependency update.
 
 - Assets release candidate: P1 source `246cb28`, integrated `80d43a3`; UI
   sprite correction `613335f`.
@@ -107,7 +108,27 @@ deployment, or a `site/go.mod` dependency update.
   the site pin in its follow-up pull request, then rerun pinned-dependency
   deployability successfully before merge or deployment.
 
+## v0.2.0 iconpack release gate
+
+- [x] Muamba `v0.0.4` is publicly released and the Assets release no longer
+  depends on an unpublished pseudo-version.
+- [x] Arai Hû Assets `v0.2.0` is publicly released with the recorded catalog,
+  release, checksums, and archive digests reverified from published bytes.
+  Published SHA-256 values: catalog
+  `a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6`, release
+  JSON `77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260`,
+  checksums `334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5`,
+  and archive `5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5`.
+- [x] `docs/ICONPACK.md` uses the immutable Assets release URL, distinguishes
+  Assets hashes from Goshtoso's version, and records the published archive,
+  release, and checksums digests.
+- [x] Root and site documentation tests assert the pinned command, archive
+  hashes, clickable guide, release notes, and complete route metadata.
+- [ ] After the root tag exists, `site/go.mod` is updated to
+  `github.com/araihu/goshtoso v0.2.0` in a separate follow-up PR with no
+  `replace`, and both site module contracts pass.
+
 ## Support Notes
 
-During alpha, only the latest `v0.0.x` tag receives fixes. Older tags remain
-available for reproducibility but are not maintained.
+The latest supported pre-1.0 release line receives routine fixes. Older tags
+remain available for reproducibility but are not maintained.

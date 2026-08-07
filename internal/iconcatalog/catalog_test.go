@@ -39,7 +39,7 @@ func fixtureFile(t *testing.T, name string) string {
 }
 
 func TestLoadRejectsUnsupportedSchemaAndDuplicateSymbol(t *testing.T) {
-	_, err := Load(strings.NewReader(`{"schemaVersion":2,"assets":[]}`))
+	_, err := Load(strings.NewReader(`{"schemaVersion":3,"assets":[]}`))
 	if err == nil || !strings.Contains(err.Error(), "unsupported schemaVersion") {
 		t.Fatalf("Load() error = %v, want unsupported schemaVersion", err)
 	}
@@ -48,6 +48,22 @@ func TestLoadRejectsUnsupportedSchemaAndDuplicateSymbol(t *testing.T) {
 	_, err = Load(strings.NewReader(duplicate))
 	if err == nil || !strings.Contains(err.Error(), "duplicate spriteSymbol") {
 		t.Fatalf("Load() error = %v, want duplicate spriteSymbol", err)
+	}
+}
+
+func TestLoadSchemaV2PreservesMixedCaseCanonicalName(t *testing.T) {
+	input := strings.NewReplacer(
+		`"schemaVersion": 1`, `"schemaVersion": 2`,
+		`"canonicalName": "ui-hi-16-solid-arrow-down"`, `"canonicalName": "ui-hi-16-solid-arrow-down-TRPC"`,
+		`"appearance": "default"`, `"appearance": "16-solid"`,
+	).Replace(fixtureJSON(t))
+
+	catalog, err := Load(strings.NewReader(input))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := catalog.Assets[0].CanonicalName; got != "ui-hi-16-solid-arrow-down-TRPC" {
+		t.Fatalf("canonicalName = %q, want literal mixed case preserved", got)
 	}
 }
 
