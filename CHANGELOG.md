@@ -278,6 +278,8 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.2.0]: https://github.com/araihu/goshtoso/compare/v0.1.7...v0.2.0
+[v0.1.7]: https://github.com/araihu/goshtoso/compare/v0.1.6...v0.1.7
 [v0.1.3]: https://github.com/araihu/goshtoso/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/araihu/goshtoso/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/araihu/goshtoso/compare/v0.1.0...v0.1.1

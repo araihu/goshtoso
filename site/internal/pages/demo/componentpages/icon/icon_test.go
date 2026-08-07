@@ -45,6 +45,8 @@ func TestIconShowcaseDocumentsReleaseBackedIconpack(t *testing.T) {
 	for _, expected := range []string{
 		"ui/heroicons",
 		"brand/developer-icons",
+		"repeated exact",
+		"-name",
 		"github.com/araihu/goshtoso/cmd/iconpack@v0.2.0",
 		"dcb97bbbbf98fb2e3c0e96b63eefb17b9b60eb2b3d8097fa6b4e2876f3f19271",
 		"a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6",

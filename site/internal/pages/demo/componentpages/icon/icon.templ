@@ -82,7 +82,8 @@ templ iconPackExtension() {
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "bash",
 				Label: "Generate from a verified release archive",
-				Code: `go run github.com/araihu/goshtoso/cmd/iconpack@v0.2.0 \
+					Code: `# After the Goshtoso v0.2.0 and Assets v0.2.0 tags are public:
+go run github.com/araihu/goshtoso/cmd/iconpack@v0.2.0 \
 	-release-archive ./araihu-assets-v0.2.0.tar.gz \
 	-archive-sha256 dcb97bbbbf98fb2e3c0e96b63eefb17b9b60eb2b3d8097fa6b4e2876f3f19271 -release v0.2.0 \
 	-catalog-sha256 a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6 \
@@ -94,7 +95,7 @@ templ iconPackExtension() {
 			})
 		</div>
 		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			JSON selection manifests are canonical; YAML compatibility is accepted. Read the <a href="https://github.com/araihu/goshtoso/blob/v0.2.0/docs/ICONPACK.md" target="_blank" rel="noreferrer">iconpack guide</a> covering release verification, output, attribution, and failure-safety contracts.
+				JSON selection manifests are canonical; YAML compatibility and repeated exact <code class="font-mono">-name</code> flags are accepted, but a command must choose one selection mode. Read the <a href="https://github.com/araihu/goshtoso/blob/v0.2.0/docs/ICONPACK.md" target="_blank" rel="noreferrer">iconpack guide</a> covering release verification, output, attribution, and failure-safety contracts.
 		</p>
 	</section>
 }
