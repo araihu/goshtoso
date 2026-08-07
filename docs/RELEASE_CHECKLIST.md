@@ -110,13 +110,19 @@ push, deployment, or a `site/go.mod` dependency update.
 
 ## v0.2.0 iconpack release gate
 
-- [ ] Muamba `v0.0.4` is publicly released and the Assets candidate no longer
+- [x] Muamba `v0.0.4` is publicly released and the Assets release no longer
   depends on an unpublished pseudo-version.
-- [ ] Arai Hû Assets `v0.2.0` is publicly released with the recorded catalog,
+- [x] Arai Hû Assets `v0.2.0` is publicly released with the recorded catalog,
   release, checksums, and archive digests reverified from published bytes.
-- [ ] `docs/ICONPACK.md` uses the immutable Assets release URL and distinguishes
-  Assets hashes from Goshtoso's version.
-- [ ] Root and site documentation tests assert the pinned command, archive
+  Published SHA-256 values: catalog
+  `a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6`, release
+  JSON `77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260`,
+  checksums `334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5`,
+  and archive `5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5`.
+- [x] `docs/ICONPACK.md` uses the immutable Assets release URL, distinguishes
+  Assets hashes from Goshtoso's version, and records the published archive,
+  release, and checksums digests.
+- [x] Root and site documentation tests assert the pinned command, archive
   hashes, clickable guide, release notes, and complete route metadata.
 - [ ] After the root tag exists, `site/go.mod` is updated to
   `github.com/araihu/goshtoso v0.2.0` in a separate follow-up PR with no

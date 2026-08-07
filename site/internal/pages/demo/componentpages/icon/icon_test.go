@@ -48,10 +48,10 @@ func TestIconShowcaseDocumentsReleaseBackedIconpack(t *testing.T) {
 		"repeated exact",
 		"-name",
 		"github.com/araihu/goshtoso/cmd/iconpack@v0.2.0",
-		"dcb97bbbbf98fb2e3c0e96b63eefb17b9b60eb2b3d8097fa6b4e2876f3f19271",
+		"5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5",
 		"a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6",
-		"0650e51dd2b7ec7797622b3cdd9ff75dfd53cb1914155931014223bbd1684fa6",
-		"86dac118901d423117e20bd14ce6ed30717fca9c2a8244909c2be4b926ce1c4e",
+		"77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260",
+		"334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5",
 		"https://github.com/araihu/goshtoso/blob/v0.2.0/docs/ICONPACK.md",
 	} {
 		require.Contains(t, html, expected)

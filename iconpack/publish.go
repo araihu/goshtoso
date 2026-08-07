@@ -14,6 +14,10 @@ import (
 )
 
 func publishOutput(ctx context.Context, requested string, files map[string][]byte, check bool) (bool, string, error) {
+	return publishOutputWithHook(ctx, requested, files, check, nil)
+}
+
+func publishOutputWithHook(ctx context.Context, requested string, files map[string][]byte, check bool, beforeCommit func(string) error) (bool, string, error) {
 	location, err := resolveOutputLocation(requested)
 	if err != nil {
 		return false, "", err
@@ -43,7 +47,7 @@ func publishOutput(ctx context.Context, requested string, files map[string][]byt
 		}
 		return false, "", fmt.Errorf("output %s already exists with different or unrelated files; refusing to overwrite", location.output)
 	}
-	if err := stageAndPublish(location, files); err != nil {
+	if err := stageAndPublish(location, files, beforeCommit); err != nil {
 		return false, "", err
 	}
 	return true, location.output, nil
@@ -91,7 +95,7 @@ func acquireOutputLock(ctx context.Context, location outputLocation) (*flock.Flo
 	return lock, nil
 }
 
-func stageAndPublish(location outputLocation, files map[string][]byte) error {
+func stageAndPublish(location outputLocation, files map[string][]byte, beforeCommit func(string) error) error {
 	staging, err := os.MkdirTemp(location.parent, "."+location.base+".tmp-*")
 	if err != nil {
 		return fmt.Errorf("create staged output directory: %w", err)
@@ -115,8 +119,13 @@ func stageAndPublish(location outputLocation, files map[string][]byte) error {
 	if err := syncDirectory(staging); err != nil {
 		return err
 	}
-	if err := os.Rename(staging, location.output); err != nil {
-		return fmt.Errorf("atomically publish output directory: %w", err)
+	if beforeCommit != nil {
+		if err := beforeCommit(location.output); err != nil {
+			return fmt.Errorf("before atomic publication hook: %w", err)
+		}
+	}
+	if err := renameNoReplace(staging, location.output); err != nil {
+		return fmt.Errorf("atomically publish output without replacement: %w", err)
 	}
 	committed = true
 	return nil

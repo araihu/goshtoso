@@ -51,6 +51,34 @@ func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing
 	assertFileContains(t, filepath.Join(opts.OutputDir, "unrelated.txt"), "owner data")
 }
 
+func TestPublishOutputRefusesDestinationCreatedAfterPreflight(t *testing.T) {
+	parent := t.TempDir()
+	output := filepath.Join(parent, "pack")
+	files := map[string][]byte{
+		"manifest.json": []byte(`{"schemaVersion":1,"tool":"goshtoso-iconpack"}`),
+	}
+
+	_, _, err := publishOutputWithHook(context.Background(), output, files, false, func(path string) error {
+		if err := os.Mkdir(path, 0o755); err != nil {
+			return err
+		}
+		return os.WriteFile(filepath.Join(path, "marker.txt"), []byte("created-after-preflight\n"), 0o644)
+	})
+	if err == nil || !strings.Contains(err.Error(), "without replacement") {
+		t.Fatalf("publishOutputWithHook() error = %v, want no-replacement refusal", err)
+	}
+	assertFileContains(t, filepath.Join(output, "marker.txt"), "created-after-preflight")
+	entries, err := os.ReadDir(parent)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), ".pack.tmp-") {
+			t.Fatalf("staged directory %q remains after rejected publication", entry.Name())
+		}
+	}
+}
+
 func TestGenerateFromVerifiedArchive(t *testing.T) {
 	opts := syntheticRelease(t)
 	archive := filepath.Join(t.TempDir(), "araihu-assets-v0.2.0.tar.gz")
