@@ -96,7 +96,7 @@ test-e2e-focused base="origin/main": css
     scripts/run-focused-e2e.sh .e2e-impact.json
 
 # Run one named E2E test.
-test-e2e-one test:
+test-e2e-one test: css
     cd site && go test -tags=e2e,full ./tests/e2e/... -v -run "{{test}}"
 
 # Format root and site Go code.
