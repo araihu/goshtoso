@@ -1,5 +1,5 @@
 // Command iconpack generates one consumer-local attributed icon pack from a
-// verified Arai Hu Assets release root or archive.
+// verified Arai Hû Assets release root or archive.
 package main
 
 import (

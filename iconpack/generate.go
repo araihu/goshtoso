@@ -94,6 +94,9 @@ func generate(ctx context.Context, opts Options) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
+	if err := validateGeneratedIdentifierNamespace(selected); err != nil {
+		return Result{}, err
+	}
 	files, err := buildOutputs(boundary, opts, selected, families)
 	if err != nil {
 		return Result{}, err
@@ -290,6 +293,46 @@ func generateBindings(boundary releaseBoundary, opts Options, selected []selecte
 		return nil, fmt.Errorf("format generated Go bindings: %w", err)
 	}
 	return formatted, nil
+}
+
+func validateGeneratedIdentifierNamespace(selected []selectedAsset) error {
+	identifiers := make(map[string]string, len(selected)*2+7)
+	declare := func(identifier, declaration string) error {
+		if first, exists := identifiers[identifier]; exists {
+			return fmt.Errorf("generated Go identifier %q collides between %s and %s", identifier, first, declaration)
+		}
+		identifiers[identifier] = declaration
+		return nil
+	}
+	for _, fixed := range []struct {
+		identifier  string
+		declaration string
+	}{
+		{"Name", "type Name"},
+		{"Glyph", "type Glyph"},
+		{"Config", "type Config"},
+		{"SpriteURL", "constant SpriteURL"},
+		{"Glyphs", "variable Glyphs"},
+		{"Lookup", "function Lookup"},
+		{"Icon", "function Icon"},
+	} {
+		if err := declare(fixed.identifier, fixed.declaration); err != nil {
+			return err
+		}
+	}
+	for _, asset := range selected {
+		nameIdentifier, err := goIdentifier("Name", asset.CanonicalName)
+		if err != nil {
+			return err
+		}
+		if err := declare(nameIdentifier, fmt.Sprintf("canonical-name constant for %q", asset.CanonicalName)); err != nil {
+			return err
+		}
+		if err := declare(asset.goName, fmt.Sprintf("symbol constant for %q", asset.CanonicalName)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func goIdentifier(prefix, canonicalName string) (string, error) {

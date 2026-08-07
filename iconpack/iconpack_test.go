@@ -51,6 +51,23 @@ func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing
 	assertFileContains(t, filepath.Join(opts.OutputDir, "unrelated.txt"), "owner data")
 }
 
+func TestGenerateRejectsGeneratedIdentifierCollisionBeforePublication(t *testing.T) {
+	opts := syntheticRelease(t)
+	opts.OutputDir = filepath.Join(t.TempDir(), "pack")
+	opts.Names = []string{"brand-developer-icons-tRPC"}
+	opts.Package = "appicons"
+	opts.ConstPrefix = "Name"
+	opts.SpriteURL = "/assets/icons/app.svg"
+
+	_, err := Generate(context.Background(), opts)
+	if err == nil || !strings.Contains(err.Error(), `generated Go identifier "NameBrandDeveloperIconsTRPC"`) {
+		t.Fatalf("Generate() error = %v, want complete generated-namespace collision", err)
+	}
+	if _, statErr := os.Lstat(opts.OutputDir); !os.IsNotExist(statErr) {
+		t.Fatalf("output directory exists after rejected identifier collision: %v", statErr)
+	}
+}
+
 func TestPublishOutputRefusesDestinationCreatedAfterPreflight(t *testing.T) {
 	parent := t.TempDir()
 	output := filepath.Join(parent, "pack")

@@ -2,7 +2,7 @@
 
 `iconpack` generates an attributed SVG sprite and typed Go component package in
 a consumer-owned directory. It does not add selected icons to Goshtoso's
-embedded Heroicons package. Consumers choose assets by exact Arai Hu Assets
+embedded Heroicons package. Consumers choose assets by exact Arai Hû Assets
 catalog canonical name, including literal mixed-case names such as
 `brand-developer-icons-tRPC`.
 

@@ -1,5 +1,5 @@
 // Package iconpack generates consumer-local, attributed SVG icon packs from a
-// verified Arai Hu Assets release boundary.
+// verified Arai Hû Assets release boundary.
 package iconpack
 
 import (
