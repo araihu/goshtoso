@@ -33,6 +33,28 @@ func TestComponentPageRendersSEOMetadata(t *testing.T) {
 	require.Contains(t, body, `"@type":"TechArticle"`)
 }
 
+func TestIconComponentPageRendersCompleteSEOMetadata(t *testing.T) {
+	s := &Server{}
+	req := httptest.NewRequest(http.MethodGet, "/components/icon", nil)
+	rec := httptest.NewRecorder()
+
+	s.renderDemo(rec, req, "components/icon")
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	body := rec.Body.String()
+	require.Contains(t, body, "<title>Icon Component - Goshtoso UI Library for Go</title>")
+	require.Contains(t, body, `<meta name="description" content="Render accessible SVG sprite symbols and generate release-verified consumer-local icon packs with typed Go bindings and attribution.">`)
+	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/components/icon">`)
+	require.Contains(t, body, `<meta property="og:url" content="https://goshtoso.araihu.com/components/icon">`)
+	require.Contains(t, body, `<meta property="og:image:type" content="image/png">`)
+	require.Contains(t, body, `<meta property="og:image:width" content="1200">`)
+	require.Contains(t, body, `<meta property="og:image:height" content="630">`)
+	require.Contains(t, body, `<meta property="og:image:alt" content="Icon Component - Goshtoso UI Library for Go — Goshtoso Go UI component library preview">`)
+	require.Contains(t, body, `<meta name="twitter:image:alt" content="Icon Component - Goshtoso UI Library for Go — Goshtoso Go UI component library preview">`)
+	require.Equal(t, 1, strings.Count(body, `property="og:url"`))
+	require.Equal(t, 1, strings.Count(body, `name="twitter:image"`))
+}
+
 func TestLandingPageRendersSEOMetadata(t *testing.T) {
 	rec := httptest.NewRecorder()
 

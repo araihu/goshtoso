@@ -69,10 +69,11 @@ many of these steps, but the checklist keeps the public release story coherent.
 - Confirm `npx skills add araihu/goshtoso --list` discovers the released
   consumer-agent skill.
 
-## Pending v0.1.0 icon catalog evidence
+## Historical v0.1.0 icon catalog evidence
 
-This is release-candidate evidence only. It does not authorize a tag, push,
-deployment, or a `site/go.mod` dependency update.
+This section is retained as historical evidence for the v0.1.0 catalog work. It
+does not describe the v0.2.0 release boundary and does not authorize a tag,
+push, deployment, or a `site/go.mod` dependency update.
 
 - Assets release candidate: P1 source `246cb28`, integrated `80d43a3`; UI
   sprite correction `613335f`.
@@ -107,7 +108,21 @@ deployment, or a `site/go.mod` dependency update.
   the site pin in its follow-up pull request, then rerun pinned-dependency
   deployability successfully before merge or deployment.
 
+## v0.2.0 iconpack release gate
+
+- [ ] Muamba `v0.0.4` is publicly released and the Assets candidate no longer
+  depends on an unpublished pseudo-version.
+- [ ] Arai Hû Assets `v0.2.0` is publicly released with the recorded catalog,
+  release, checksums, and archive digests reverified from published bytes.
+- [ ] `docs/ICONPACK.md` uses the immutable Assets release URL and distinguishes
+  Assets hashes from Goshtoso's version.
+- [ ] Root and site documentation tests assert the pinned command, archive
+  hashes, clickable guide, release notes, and complete route metadata.
+- [ ] After the root tag exists, `site/go.mod` is updated to
+  `github.com/araihu/goshtoso v0.2.0` in a separate follow-up PR with no
+  `replace`, and both site module contracts pass.
+
 ## Support Notes
 
-During alpha, only the latest `v0.0.x` tag receives fixes. Older tags remain
-available for reproducibility but are not maintained.
+The latest supported pre-1.0 release line receives routine fixes. Older tags
+remain available for reproducibility but are not maintained.

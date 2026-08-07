@@ -75,26 +75,26 @@ templ iconPackExtension() {
 			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Consumer-local extension</p>
 			<h2 id="iconpack-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Generate an attributed icon pack</h2>
 			<p class="mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				Select full Heroicons and Developer Icons assets by exact Arai Hu Assets canonical name. <code class="font-mono">iconpack</code> verifies a release root or archive, then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
+				Select assets from the <code class="font-mono">ui/heroicons</code> and <code class="font-mono">brand/developer-icons</code> families by exact Arai Hu Assets canonical name. <code class="font-mono">iconpack</code> verifies a release root or archive, then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
 			</p>
 		</div>
 		<div data-component-code>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "bash",
 				Label: "Generate from a verified release archive",
-				Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
-  -release-archive ./araihu-assets-vX.Y.Z.tar.gz \
-  -archive-sha256 "$ARCHIVE_SHA256" -release vX.Y.Z \
-  -catalog-sha256 "$CATALOG_SHA256" \
-  -release-json-sha256 "$RELEASE_JSON_SHA256" \
-  -checksums-sha256 "$CHECKSUMS_SHA256" \
-  -name brand-developer-icons-tRPC \
-  -out ./internal/appicons -package appicons \
-  -const-prefix Icon -sprite-url /assets/icons/app.svg`,
+				Code: `go run github.com/araihu/goshtoso/cmd/iconpack@v0.2.0 \
+	-release-archive ./araihu-assets-v0.2.0.tar.gz \
+	-archive-sha256 dcb97bbbbf98fb2e3c0e96b63eefb17b9b60eb2b3d8097fa6b4e2876f3f19271 -release v0.2.0 \
+	-catalog-sha256 a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6 \
+	-release-json-sha256 0650e51dd2b7ec7797622b3cdd9ff75dfd53cb1914155931014223bbd1684fa6 \
+	-checksums-sha256 86dac118901d423117e20bd14ce6ed30717fca9c2a8244909c2be4b926ce1c4e \
+	-name brand-developer-icons-tRPC \
+	-out ./internal/appicons -package appicons \
+	-const-prefix Icon -sprite-url /assets/icons/app.svg`,
 			})
 		</div>
 		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			JSON selection manifests are canonical; YAML compatibility is accepted. See <code class="font-mono">docs/ICONPACK.md</code> to review output and failure-safety contracts.
+			JSON selection manifests are canonical; YAML compatibility is accepted. Read the <a href="https://github.com/araihu/goshtoso/blob/v0.2.0/docs/ICONPACK.md" target="_blank" rel="noreferrer">iconpack guide</a> covering release verification, output, attribution, and failure-safety contracts.
 		</p>
 	</section>
 }

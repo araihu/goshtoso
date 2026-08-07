@@ -4,25 +4,23 @@ Goshtoso is alpha-stage software. The components are already usable in real Go
 applications, but the public API is still allowed to change while the project
 moves toward a stable release line.
 
-## Alpha Stability Policy
+## Pre-1.0 stability policy
 
-- Tags use `v0.0.x` while the API is still being refined.
-- Only the latest `v0.0.x` tag is supported during alpha. See
+- Tags use semver pre-1.0 versions while the API is still being refined.
+- Only the latest supported release line receives routine fixes. See
   [SECURITY.md](SECURITY.md) for the security support policy.
-- Breaking component API changes may ship in `v0.0.x`, but they should be
-  intentional, documented in the release notes, and reflected in demos, tests,
-  and generated references.
+- Breaking component API changes must be intentional, documented in the release
+  notes, and reflected in demos, tests, and generated references.
 - Generated files are part of the published module. Consumers should not need to
   run `templ generate` for Goshtoso's own components.
 - Runtime JavaScript and CSS should stay locally bundled and versioned through
   the asset pipeline, not CDN-dependent at page load time.
 
-## Path to v0.1
+## Release-line criteria
 
-The first `v0.1.x` line should mean the core component APIs are coherent enough
-for early adopters to upgrade with normal release-note guidance.
-
-Before `v0.1.0`, the project should have:
+Each new release line should keep the core component APIs coherent enough for
+early adopters to upgrade with normal release-note guidance. Before a release,
+the project should have:
 
 - Stable naming conventions across public component config fields.
 - Current component demos, API tables, and E2E coverage for the supported

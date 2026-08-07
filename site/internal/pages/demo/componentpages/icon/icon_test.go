@@ -39,6 +39,23 @@ func TestIconShowcaseUsesCanonicalCatalogHeading(t *testing.T) {
 	require.Truef(t, strings.Contains(html, `>`+entry.Title+`</h1>`), "icon H1 must match catalog title %q", entry.Title)
 }
 
+func TestIconShowcaseDocumentsReleaseBackedIconpack(t *testing.T) {
+	html := renderIconShowcase(t)
+
+	for _, expected := range []string{
+		"ui/heroicons",
+		"brand/developer-icons",
+		"github.com/araihu/goshtoso/cmd/iconpack@v0.2.0",
+		"dcb97bbbbf98fb2e3c0e96b63eefb17b9b60eb2b3d8097fa6b4e2876f3f19271",
+		"a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6",
+		"0650e51dd2b7ec7797622b3cdd9ff75dfd53cb1914155931014223bbd1684fa6",
+		"86dac118901d423117e20bd14ce6ed30717fca9c2a8244909c2be4b926ce1c4e",
+		"https://github.com/araihu/goshtoso/blob/v0.2.0/docs/ICONPACK.md",
+	} {
+		require.Contains(t, html, expected)
+	}
+}
+
 func TestIconShowcaseParticipatesInComponentDocsContract(t *testing.T) {
 	html := renderIconShowcase(t)
 
