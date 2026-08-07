@@ -2,6 +2,25 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.8] - 2026-08-07
+
+### Scroll region boundary cues
+
+- Added `components/scrollregion` for bounded, independently scrollable content
+  with semantic top and bottom boundary indicators.
+- Added HTMX-aware runtime initialization and cleanup for scroll, resize, and
+  dynamic-content changes without intercepting pointer input.
+- Published the generated JavaScript, Tailwind CSS, and consumer-agent API
+  references required by downstream renderers.
+
+### Upgrade note
+
+- Existing components are unchanged. Consumers can render
+  `scrollregion.ScrollRegion(scrollregion.Config{...})` wherever a bounded
+  vertical viewport needs non-interactive overflow cues.
+- Stable component identity and the public catalog page follow in the site pin
+  update after this root package is reachable as `v0.1.8`.
+
 ## [v0.1.7] - 2026-08-02
 
 ### Reduced-motion pressed cards

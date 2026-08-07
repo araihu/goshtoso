@@ -103,6 +103,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"rating.Rating":                   {},
 		"rating.RatingDisplay":            {},
 		"schemaform.Fields":               {},
+		"scrollregion.ScrollRegion":       {},
 		"search.Search":                   {},
 		"search.SearchField":              {},
 		"search.SearchModal":              {},

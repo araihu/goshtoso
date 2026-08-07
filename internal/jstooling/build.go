@@ -53,6 +53,7 @@ var defaultArtifacts = []artifact{
 			"assets/js/src/components/palette.js",
 			"assets/js/src/components/select.js",
 			"assets/js/src/components/tabs.js",
+			"assets/js/src/components/scroll-region.js",
 		},
 	},
 	{

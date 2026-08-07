@@ -10,7 +10,7 @@ or store mixed values through the common interface and inspect their stable
 listed below. See
 [docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
 
-53 component packages. Each is imported by its directory path; note the
+54 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -1424,6 +1424,23 @@ import "github.com/araihu/goshtoso/components/schemaform"  // package schemaform
 |-------|------|-------------|
 | `Fields` | `[]Field` | Fields is the ordered form control list produced by Walk / FallbackFromDefaults. |
 | `NamePrefix` | `string` | NamePrefix prefixes every input name (so the server sees `values.&lt;path&gt;`). Default: "values". |
+
+## scrollregion
+
+```go
+import "github.com/araihu/goshtoso/components/scrollregion"  // package scrollregion
+```
+
+**Entry points:** `ScrollRegion(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Content` | `templ.Component` | Content is rendered inside the scroll viewport. |
+| `RootClass` | `string` | RootClass appends classes to the positioning root. |
+| `ViewportClass` | `string` | ViewportClass appends classes to the scroll viewport. |
+| `DisableIndicators` | `bool` | DisableIndicators keeps the sentinels but omits the visual boundary cues. |
 
 ## search
 
