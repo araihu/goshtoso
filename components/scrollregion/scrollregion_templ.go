@@ -74,7 +74,7 @@ func scrollRegionTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" data-goshtoso-scroll-viewport><span class=\"block h-0 w-full overflow-hidden\" data-goshtoso-scroll-start aria-hidden=\"true\"></span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" data-goshtoso-scroll-viewport tabindex=\"0\"><span class=\"block h-0 w-full overflow-hidden\" data-goshtoso-scroll-start aria-hidden=\"true\"></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

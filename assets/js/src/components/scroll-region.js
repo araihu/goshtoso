@@ -22,6 +22,13 @@
     var resizeObserver;
     var mutationObserver;
 
+    function observeContent() {
+      if (!resizeObserver) return;
+      Array.prototype.forEach.call(viewport.children, function (child) {
+        resizeObserver.observe(child);
+      });
+    }
+
     function update() {
       frame = 0;
       var viewportRect = viewport.getBoundingClientRect();
@@ -44,10 +51,14 @@
       resizeObserver = new ResizeObserver(schedule);
       resizeObserver.observe(viewport);
       resizeObserver.observe(end);
+      observeContent();
     }
 
     if (window.MutationObserver) {
-      mutationObserver = new MutationObserver(schedule);
+      mutationObserver = new MutationObserver(function () {
+        observeContent();
+        schedule();
+      });
       mutationObserver.observe(viewport, { childList: true, subtree: true });
     }
 

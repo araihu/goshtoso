@@ -15,6 +15,7 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 		"combobox-client.js",
 		"navigation.js",
 		"search.js",
+		"scroll-region.js",
 		"table.js",
 	}
 	sources := make(map[string][]byte, len(paths))
@@ -67,6 +68,19 @@ func TestAuthoredComponentRuntimePreservesLifecycleAndDataContracts(t *testing.T
 	for _, forbidden := range []string{`protocol === "javascript:"`, `protocol === "data:"`} {
 		if strings.Contains(navigation, forbidden) {
 			t.Fatalf("navigation runtime permits executable protocol through %q", forbidden)
+		}
+	}
+
+	scrollRegion := readRuntimeSource(t, "scroll-region.js")
+	for _, want := range []string{
+		"resizeObserver.observe(viewport)",
+		"resizeObserver.observe(child)",
+		"mutationObserver.observe(viewport",
+		`document.addEventListener("htmx:beforeCleanupElement"`,
+		"nestedState.disconnect()",
+	} {
+		if !strings.Contains(scrollRegion, want) {
+			t.Fatalf("scroll-region runtime missing %q", want)
 		}
 	}
 }

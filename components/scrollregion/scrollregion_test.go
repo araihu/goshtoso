@@ -28,6 +28,7 @@ func TestScrollRegionRendersIndependentBoundaryCues(t *testing.T) {
 	for _, marker := range []string{
 		`data-goshtoso-scroll-region`,
 		`data-goshtoso-scroll-viewport`,
+		`tabindex="0"`,
 		`data-goshtoso-scroll-start`,
 		`data-goshtoso-scroll-end`,
 		`data-goshtoso-scroll-start-indicator`,

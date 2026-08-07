@@ -7,7 +7,7 @@ import (
 
 templ scrollRegionTemplate(cfg Config) {
 	<div class={ cfg.rootClasses() } data-goshtoso-scroll-region>
-		<div class={ cfg.viewportClasses() } data-goshtoso-scroll-viewport>
+		<div class={ cfg.viewportClasses() } data-goshtoso-scroll-viewport tabindex="0">
 			<span class="block h-0 w-full overflow-hidden" data-goshtoso-scroll-start aria-hidden="true"></span>
 			if cfg.Content != nil {
 				@cfg.Content

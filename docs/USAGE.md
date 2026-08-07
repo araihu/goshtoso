@@ -590,7 +590,8 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The catalog has 54 public component packages, 50 documentation pages, and 83 renderable primitives.
+The public surface has 54 public component packages and 83 renderable primitives;
+the demo catalog has 50 documentation pages.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
