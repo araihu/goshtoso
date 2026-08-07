@@ -10,8 +10,6 @@ import (
 	"go/format"
 	"go/token"
 	"net/url"
-	"os"
-	"path/filepath"
 	"sort"
 	"strings"
 	"unicode"
@@ -248,14 +246,14 @@ func readVerifiedReleaseFile(boundary releaseBoundary, relative string) ([]byte,
 	if !ok {
 		return nil, fmt.Errorf("required release file %q is absent from checksums.txt", relative)
 	}
-	b, err := os.ReadFile(filepath.Join(boundary.root, filepath.FromSlash(relative)))
-	if err != nil {
-		return nil, fmt.Errorf("read release file %q: %w", relative, err)
+	b, ok := boundary.files[relative]
+	if !ok {
+		return nil, fmt.Errorf("required release file %q is absent from captured release boundary", relative)
 	}
 	if hashBytes(b) != expected {
-		return nil, fmt.Errorf("release file %q changed after verification", relative)
+		return nil, fmt.Errorf("captured release file %q failed its verified identity", relative)
 	}
-	return b, nil
+	return append([]byte(nil), b...), nil
 }
 
 func generateBindings(boundary releaseBoundary, opts Options, selected []selectedAsset) ([]byte, error) {

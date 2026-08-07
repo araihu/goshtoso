@@ -5,8 +5,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"os"
-	"path/filepath"
 )
 
 func buildSprite(boundary releaseBoundary, selected []selectedAsset, families []sourceFamily) ([]byte, error) {
@@ -21,7 +19,7 @@ func buildSprite(boundary releaseBoundary, selected []selectedAsset, families []
 	extracted := map[string][]byte{}
 	for _, family := range families {
 		key := family.Namespace + "/" + family.Product
-		got, err := extractFamilySymbols(boundary.root, family.SpritePath, wantedByFamily[key])
+		got, err := extractFamilySymbols(boundary, family.SpritePath, wantedByFamily[key])
 		if err != nil {
 			return nil, err
 		}
@@ -47,9 +45,8 @@ func buildSprite(boundary releaseBoundary, selected []selectedAsset, families []
 	return output.Bytes(), nil
 }
 
-func extractFamilySymbols(root, relative string, wanted map[string]string) (map[string][]byte, error) {
-	filename := releasePath(root, relative)
-	b, err := os.ReadFile(filename)
+func extractFamilySymbols(boundary releaseBoundary, relative string, wanted map[string]string) (map[string][]byte, error) {
+	b, err := readVerifiedReleaseFile(boundary, relative)
 	if err != nil {
 		return nil, fmt.Errorf("read source sprite %q: %w", relative, err)
 	}
@@ -192,8 +189,4 @@ func consumeElement(decoder *xml.Decoder) error {
 		}
 	}
 	return nil
-}
-
-func releasePath(root, relative string) string {
-	return filepath.Join(root, filepath.FromSlash(relative))
 }

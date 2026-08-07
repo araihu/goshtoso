@@ -62,10 +62,11 @@ func selectAssets(boundary releaseBoundary, names []string, prefix string) ([]se
 		if asset.Format != "svg" || asset.SpriteSymbol == "" {
 			return nil, nil, fmt.Errorf("canonical name %q is not an SVG sprite asset", name)
 		}
-		got, _, err := hashReleaseFile(boundary.root, asset.Path)
+		artifact, err := readVerifiedReleaseFile(boundary, asset.Path)
 		if err != nil {
 			return nil, nil, fmt.Errorf("verify selected artifact %q: %w", name, err)
 		}
+		got := hashBytes(artifact)
 		if got != asset.SHA256 || boundary.checksums[asset.Path] != asset.SHA256 {
 			return nil, nil, fmt.Errorf("selected artifact %q SHA-256 does not match catalog and release checksums", name)
 		}
