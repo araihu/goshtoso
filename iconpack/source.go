@@ -158,12 +158,10 @@ func validateReleaseRoot(root string) error {
 	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
 		return fmt.Errorf("release root must be a real directory")
 	}
-	for _, segment := range strings.Split(filepath.ToSlash(root), "/") {
-		switch strings.ToLower(segment) {
-		case ".git", "internal", "acquisition", "vendor":
-			return fmt.Errorf("release root crosses forbidden source-tree segment %q", segment)
-		}
-	}
+	// Parent directory names are not source-boundary evidence. Consumers may
+	// keep a verified release under paths such as internal/, vendor/, or
+	// acquisition/. The selected root itself must be structurally release-like;
+	// pinned release files and the checksummed inventory are validated below.
 	for _, marker := range []string{"go.mod", ".git"} {
 		if _, err := os.Lstat(filepath.Join(root, marker)); err == nil {
 			return fmt.Errorf("release root is a source checkout, not an extracted release boundary")

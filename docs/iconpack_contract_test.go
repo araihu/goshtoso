@@ -17,6 +17,11 @@ func TestIconpackReleaseDocumentationContract(t *testing.T) {
 		"dcb97bbbbf98fb2e3c0e96b63eefb17b9b60eb2b3d8097fa6b4e2876f3f19271",
 		"JSON is the canonical manifest form",
 		"repeated `-name` flags are also supported",
+		"not by the names of its parent directories",
+		"below a consumer path such as",
+		"`internal/`",
+		"`vendor/`",
+		"`acquisition/`",
 		"ui/heroicons",
 		"brand/developer-icons",
 	} {

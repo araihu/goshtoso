@@ -136,6 +136,71 @@ func TestVerifiedRootUsesCapturedBytesAfterSourceMutation(t *testing.T) {
 	}
 }
 
+func TestVerifiedRootAllowsReservedConsumerAncestorNames(t *testing.T) {
+	for _, ancestor := range []string{"internal", "vendor", "acquisition"} {
+		t.Run(ancestor, func(t *testing.T) {
+			opts := syntheticRelease(t)
+			parent := t.TempDir()
+			nested := filepath.Join(parent, "consumer", ancestor, "release")
+			if err := os.MkdirAll(filepath.Dir(nested), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Rename(opts.ReleaseRoot, nested); err != nil {
+				t.Fatal(err)
+			}
+			opts.ReleaseRoot = nested
+
+			boundary, err := openRelease(opts)
+			if err != nil {
+				t.Fatalf("openRelease() under %s: %v", ancestor, err)
+			}
+			boundary.cleanup()
+		})
+	}
+}
+
+func TestReleaseRootRejectsSelectedSourceCheckout(t *testing.T) {
+	for _, marker := range []string{"go.mod", ".git"} {
+		t.Run(marker, func(t *testing.T) {
+			opts := syntheticRelease(t)
+			markerPath := filepath.Join(opts.ReleaseRoot, marker)
+			if marker == ".git" {
+				if err := os.Mkdir(markerPath, 0o755); err != nil {
+					t.Fatal(err)
+				}
+			} else if err := os.WriteFile(markerPath, []byte("module example.com/checkout\n"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+
+			_, err := openRelease(opts)
+			if err == nil || !strings.Contains(err.Error(), "source checkout") {
+				t.Fatalf("openRelease() error = %v, want source-checkout rejection", err)
+			}
+		})
+	}
+}
+
+func TestReleaseRootRejectsUnstructuredVendorSourceTree(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "project", "internal", "acquisition", "vendor")
+	if err := os.MkdirAll(root, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "heroicons.svg"), []byte("source bytes\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := openRelease(Options{
+		ReleaseRoot:       root,
+		Release:           "v0.2.0",
+		CatalogSHA256:     strings.Repeat("0", 64),
+		ReleaseJSONSHA256: strings.Repeat("1", 64),
+		ChecksumsSHA256:   strings.Repeat("2", 64),
+	})
+	if err == nil || !strings.Contains(err.Error(), "verify catalog.json") {
+		t.Fatalf("openRelease() error = %v, want unstructured source-tree rejection", err)
+	}
+}
+
 func TestExtractArchiveRejectsTraversal(t *testing.T) {
 	archive := filepath.Join(t.TempDir(), "bad.tar.gz")
 	file, err := os.Create(archive)

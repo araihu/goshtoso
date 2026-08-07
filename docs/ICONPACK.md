@@ -8,9 +8,13 @@ catalog canonical name, including literal mixed-case names such as
 
 The input must be either an extracted release root or a release archive. A
 Goshtoso checkout, GitHub source archive, `internal/acquisition/vendor` tree, or
-other source directory is not a release boundary and is rejected. Generation
-requires separately pinned SHA-256 values for `catalog.json`, `release.json`,
-and `checksums.txt`; archive mode also requires the archive SHA-256. The command
+other source directory is not a release boundary and is rejected by its
+structure, not by the names of its parent directories. A verified release may
+therefore be stored below a consumer path such as `internal/`, `vendor/`, or
+`acquisition/`; only the selected root's checkout markers, pinned release files,
+and checksummed inventory determine its boundary. Generation requires
+separately pinned SHA-256 values for `catalog.json`, `release.json`, and
+`checksums.txt`; archive mode also requires the archive SHA-256. The command
 verifies every checksums record, release inventory entry, selected artifact,
 namespace/product allowlist, and exact source-sprite symbol before writing.
 Release-root reads are descriptor-relative and reject symbolic links, special
