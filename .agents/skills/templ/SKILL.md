@@ -103,7 +103,7 @@ templ fmt .                 # format; templ fmt -fail . in CI
 templ lsp                   # language server (used by IDE extensions, not directly)
 ```
 
-In this repo: `templ generate` (or `just gp-generate`). If it reports "0 updates" wrongly, `rm components/<n>/<n>_templ.go && templ generate`.
+In this repo: `templ generate` (or `just generate`). If it reports "0 updates" wrongly, `rm components/<n>/<n>_templ.go && templ generate`.
 
 ## Detailed references (load when needed)
 

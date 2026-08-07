@@ -301,33 +301,26 @@ Useful commands from the repo root:
 
 ```bash
 # Generate *_templ.go files after editing .templ sources
-templ generate
-# or
-just gp-generate
+just generate
 
 # Rebuild the embedded Tailwind CSS after editing CSS/theme sources
 just css
 
 # Run the demo server on :8090
-go run ./site/cmd/server
-# or
-just gp-dev
+just dev
 
 # Build the demo server
-go build -o bin/server ./site/cmd/server
+just build
 ```
 
 Run tests:
 
 ```bash
-# Library tests
-go test ./...
-
-# Site tests
-cd site && go test ./...
+# Root and site unit tests
+just test
 
 # Full Playwright E2E suite
-go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 15m
+just test-e2e
 
 # Release-equivalent unit + Playwright coverage
 just coverage
