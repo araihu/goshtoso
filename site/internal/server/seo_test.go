@@ -25,6 +25,11 @@ func TestComponentPageRendersSEOMetadata(t *testing.T) {
 	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/components/accordion">`)
 	require.Contains(t, body, `<meta property="og:title" content="Accordion Component - Goshtoso UI Library for Go">`)
 	require.Contains(t, body, `<meta name="twitter:card" content="summary_large_image">`)
+	require.Contains(t, body, `<meta property="og:image:type" content="image/png">`)
+	require.Contains(t, body, `<meta property="og:image:width" content="1200">`)
+	require.Contains(t, body, `<meta property="og:image:height" content="630">`)
+	require.Contains(t, body, `<meta property="og:image:alt" content="Accordion Component - Goshtoso UI Library for Go — Goshtoso Go UI component library preview">`)
+	require.Contains(t, body, `<meta name="twitter:image:alt" content="Accordion Component - Goshtoso UI Library for Go — Goshtoso Go UI component library preview">`)
 	require.Contains(t, body, `"@type":"TechArticle"`)
 }
 

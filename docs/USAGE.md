@@ -424,7 +424,7 @@ block it. Keep same-origin relative URLs as the deployment default.
 ### Generate project-local typed bindings
 
 `iconcatalog` generates an enumerable `Glyphs` list and typed `icon.Symbol`
-constants from a schema-v1 asset catalog. Keep the catalog and generated Go file
+constants from a schema-v1 or schema-v2 asset catalog. Keep the catalog and generated Go file
 in the consuming project; the generic Goshtoso package contains no project or
 brand-specific names.
 
@@ -444,6 +444,13 @@ collisions, non-SVG assets, and invalid color behavior rather than emitting
 unsafe or ambiguous bindings. `monochrome` and `tintable` symbols can inherit
 `currentColor`; `protected` brand symbols keep their intrinsic fills and should
 not be presented as recolorable by an icon component.
+
+For a release-verified, consumer-local sprite with parallel Go bindings,
+manifest metadata, provenance, and licenses, use [`iconpack`](ICONPACK.md).
+Unlike `iconcatalog`, it consumes only an explicit extracted release root or
+release archive, validates the full release boundary, and publishes one owned
+output directory atomically. Goshtoso's embedded Heroicons remain curated and
+unchanged.
 
 ### Default Heroicons provenance
 

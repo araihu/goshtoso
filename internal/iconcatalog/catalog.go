@@ -1,4 +1,4 @@
-// Package iconcatalog loads schema-v1 asset catalogs and generates typed sprite
+// Package iconcatalog loads supported asset catalogs and generates typed sprite
 // bindings for a selected namespace and product.
 package iconcatalog
 
@@ -17,14 +17,17 @@ import (
 )
 
 const (
-	schemaVersion    = 1
+	schemaVersionV1  = 1
+	schemaVersionV2  = 2
 	identityRevision = 11
 )
 
 var (
-	lowerKebabRE = regexp.MustCompile(`^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$`)
-	semverRE     = regexp.MustCompile(`^v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$`)
-	sha256RE     = regexp.MustCompile(`^[0-9a-f]{64}$`)
+	lowerKebabRE        = regexp.MustCompile(`^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$`)
+	lowerKebabVariantRE = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
+	mixedCaseKebabRE    = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*$`)
+	semverRE            = regexp.MustCompile(`^v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$`)
+	sha256RE            = regexp.MustCompile(`^[0-9a-f]{64}$`)
 )
 
 var (
@@ -36,7 +39,7 @@ var (
 	dimensionsKeys = keySet("width", "height", "viewBox")
 )
 
-// Catalog is the schema-v1 assets catalog. Hash is the SHA-256 digest of the
+// Catalog is a supported assets catalog. Hash is the SHA-256 digest of the
 // exact source bytes and is intentionally excluded from JSON.
 type Catalog struct {
 	SchemaVersion    int     `json:"schemaVersion"`
@@ -73,7 +76,7 @@ type Dimensions struct {
 	ViewBox string `json:"viewBox,omitempty"`
 }
 
-// Load decodes one exact schema-v1 assets catalog and records its source hash.
+// Load decodes one exact schema-v1 or schema-v2 assets catalog and records its source hash.
 // It rejects unknown, duplicate, and case-variant keys at every schema object.
 func Load(r io.Reader) (Catalog, error) {
 	b, err := io.ReadAll(r)
@@ -92,8 +95,8 @@ func Load(r io.Reader) (Catalog, error) {
 	if err != nil {
 		return Catalog{}, err
 	}
-	if schema != schemaVersion {
-		return Catalog{}, fmt.Errorf("unsupported schemaVersion %d: want %d", schema, schemaVersion)
+	if schema != schemaVersionV1 && schema != schemaVersionV2 {
+		return Catalog{}, fmt.Errorf("unsupported schemaVersion %d: want %d or %d", schema, schemaVersionV1, schemaVersionV2)
 	}
 	if err := requireKeys(fields, "top-level", "release", "identityRevision", "assets"); err != nil {
 		return Catalog{}, err
@@ -227,7 +230,7 @@ func validateCatalog(catalog Catalog) error {
 	names := make(map[string]struct{}, len(catalog.Assets))
 	symbols := make(map[string]struct{}, len(catalog.Assets))
 	for index, asset := range catalog.Assets {
-		if err := validateCatalogAsset(asset); err != nil {
+		if err := validateCatalogAsset(asset, catalog.SchemaVersion); err != nil {
 			return fmt.Errorf("asset %d: %w", index, err)
 		}
 		if _, exists := names[asset.CanonicalName]; exists {
@@ -250,11 +253,15 @@ func validateCatalog(catalog Catalog) error {
 	return nil
 }
 
-func validateCatalogAsset(asset Asset) error {
+func validateCatalogAsset(asset Asset, schema int) error {
 	if asset.CanonicalName == "" {
 		return fmt.Errorf("empty canonicalName")
 	}
-	if !lowerKebabRE.MatchString(asset.CanonicalName) {
+	canonicalPattern := lowerKebabRE
+	if schema == schemaVersionV2 {
+		canonicalPattern = mixedCaseKebabRE
+	}
+	if !canonicalPattern.MatchString(asset.CanonicalName) {
 		return fmt.Errorf("invalid canonicalName %q", asset.CanonicalName)
 	}
 	if asset.Namespace != "brand" && asset.Namespace != "ui" {
@@ -263,12 +270,19 @@ func validateCatalogAsset(asset Asset) error {
 	for _, field := range []struct {
 		name, value string
 	}{
-		{"product", asset.Product}, {"artwork", asset.Artwork}, {"appearance", asset.Appearance},
+		{"product", asset.Product}, {"artwork", asset.Artwork},
 		{"surface", asset.Surface}, {"framing", asset.Framing},
 	} {
 		if !lowerKebabRE.MatchString(field.value) {
 			return fmt.Errorf("invalid %s %q", field.name, field.value)
 		}
+	}
+	appearancePattern := lowerKebabRE
+	if schema == schemaVersionV2 {
+		appearancePattern = lowerKebabVariantRE
+	}
+	if !appearancePattern.MatchString(asset.Appearance) {
+		return fmt.Errorf("invalid appearance %q", asset.Appearance)
 	}
 	if err := validatePath(asset.Path, asset.Format); err != nil {
 		return err

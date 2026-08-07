@@ -9,8 +9,11 @@ import (
 const (
 	SiteName        = "Goshtoso"
 	SiteBaseURL     = "https://goshtoso.araihu.com"
-	OGImagePath     = "/assets/images/goshtoso-art.png"
+	OGImagePath     = "/assets/images/goshtoso-social-card.png"
 	HomeOGImagePath = "/assets/images/goshtoso-social-card.png"
+	OGImageMIMEType = "image/png"
+	OGImageWidth    = "1200"
+	OGImageHeight   = "630"
 )
 
 // PageMeta describes crawler and social-preview metadata for one public page.
@@ -69,6 +72,10 @@ func (m PageMeta) OGImageURL() string {
 		imagePath = OGImagePath
 	}
 	return SiteBaseURL + imagePath
+}
+
+func (m PageMeta) OGImageAlt() string {
+	return m.TitleText() + " — Goshtoso Go UI component library preview"
 }
 
 func (m PageMeta) SchemaType() string {
