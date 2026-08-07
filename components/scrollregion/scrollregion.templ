@@ -1,0 +1,47 @@
+package scrollregion
+
+import (
+	"github.com/araihu/goshtoso/components/icon"
+	"github.com/araihu/goshtoso/components/icon/heroicons"
+)
+
+templ scrollRegionTemplate(cfg Config) {
+	<div class={ cfg.rootClasses() } data-goshtoso-scroll-region>
+		<div class={ cfg.viewportClasses() } data-goshtoso-scroll-viewport>
+			<span class="block h-0 w-full overflow-hidden" data-goshtoso-scroll-start aria-hidden="true"></span>
+			if cfg.Content != nil {
+				@cfg.Content
+			}
+			<span class="block h-0 w-full overflow-hidden" data-goshtoso-scroll-end aria-hidden="true"></span>
+		</div>
+		if !cfg.DisableIndicators {
+			<div
+				hidden
+				data-goshtoso-scroll-start-indicator
+				aria-hidden="true"
+				class="pointer-events-none absolute inset-x-0 top-0 z-10 flex h-8 items-start justify-center bg-linear-to-b from-surface via-surface/90 to-transparent pt-1 text-on-surface-muted dark:from-surface-dark dark:via-surface-dark/90 dark:text-on-surface-dark-muted"
+			>
+				@icon.Icon(icon.Config{
+					SpriteURL: heroicons.SpriteURL,
+					Symbol:    heroicons.Icon16SolidChevronDown,
+					Size:      icon.SizeSM,
+					Decorative: true,
+					RootClass: "rotate-180",
+				})
+			</div>
+			<div
+				hidden
+				data-goshtoso-scroll-end-indicator
+				aria-hidden="true"
+				class="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-8 items-end justify-center bg-linear-to-t from-surface via-surface/90 to-transparent pb-1 text-on-surface-muted dark:from-surface-dark dark:via-surface-dark/90 dark:text-on-surface-dark-muted"
+			>
+				@icon.Icon(icon.Config{
+					SpriteURL: heroicons.SpriteURL,
+					Symbol:    heroicons.Icon16SolidChevronDown,
+					Size:      icon.SizeSM,
+					Decorative: true,
+				})
+			</div>
+		}
+	</div>
+}
