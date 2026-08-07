@@ -14,15 +14,21 @@ templ HeadMeta(meta PageMeta) {
 	<meta name="description" content={ meta.Description }/>
 	<link rel="canonical" href={ meta.CanonicalURL() }/>
 	<meta property="og:site_name" content={ SiteName }/>
+	<meta property="og:locale" content="en_US"/>
 	<meta property="og:type" content="website"/>
 	<meta property="og:title" content={ meta.TitleText() }/>
 	<meta property="og:description" content={ meta.Description }/>
 	<meta property="og:url" content={ meta.CanonicalURL() }/>
 	<meta property="og:image" content={ meta.OGImageURL() }/>
+	<meta property="og:image:type" content={ OGImageMIMEType }/>
+	<meta property="og:image:width" content={ OGImageWidth }/>
+	<meta property="og:image:height" content={ OGImageHeight }/>
+	<meta property="og:image:alt" content={ meta.OGImageAlt() }/>
 	<meta name="twitter:card" content="summary_large_image"/>
 	<meta name="twitter:title" content={ meta.TitleText() }/>
 	<meta name="twitter:description" content={ meta.Description }/>
 	<meta name="twitter:image" content={ meta.OGImageURL() }/>
+	<meta name="twitter:image:alt" content={ meta.OGImageAlt() }/>
 	@templ.Raw(`<script type="application/ld+json">` + SafeJSONLD(meta) + `</script>`)
 }
 
