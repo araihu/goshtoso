@@ -23,12 +23,12 @@ This local candidate example uses the frozen Arai Hu Assets v0.2.0 archive. It
 does not claim that v0.2.0, its Muamba prerequisite, or this Goshtoso change is
 published.
 
-The verified v0.2.0 artifact quartet is: archive
-`5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5`,
-`release.json`
-`77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260`, and
-`checksums.txt`
-`334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5`.
+The verified v0.2.0 artifact quartet is:
+
+- outer archive SHA-256: `5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5`
+- `catalog.json` SHA-256: `a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6`
+- `release.json` SHA-256: `77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260`
+- `checksums.txt` SHA-256: `334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5`
 
 ```bash
 go run ./cmd/iconpack \
