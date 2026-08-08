@@ -47,7 +47,6 @@ func selectAssets(boundary releaseBoundary, names []string, prefix string) ([]se
 		byName[asset.CanonicalName] = asset
 	}
 	selected := make([]selectedAsset, 0, len(names))
-	identifiers := map[string]string{}
 	usedFamilies := map[string]sourceFamily{}
 	for _, name := range names {
 		asset, ok := byName[name]
@@ -74,14 +73,13 @@ func selectAssets(boundary releaseBoundary, names []string, prefix string) ([]se
 		if err != nil {
 			return nil, nil, err
 		}
-		if first, exists := identifiers[goName]; exists {
-			return nil, nil, fmt.Errorf("go identifier collision %q from %q and %q", goName, first, name)
-		}
-		identifiers[goName] = name
 		selected = append(selected, selectedAsset{Asset: asset, family: family, goName: goName})
 		usedFamilies[familyKey] = family
 	}
 	sort.Slice(selected, func(i, j int) bool { return selected[i].CanonicalName < selected[j].CanonicalName })
+	if err := validateGeneratedNamespace(selected); err != nil {
+		return nil, nil, err
+	}
 	families := make([]sourceFamily, 0, len(usedFamilies))
 	for _, family := range usedFamilies {
 		families = append(families, family)

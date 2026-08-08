@@ -92,6 +92,10 @@ func acquireOutputLock(ctx context.Context, location outputLocation) (*flock.Flo
 }
 
 func stageAndPublish(location outputLocation, files map[string][]byte) error {
+	return stageAndPublishWithHook(location, files, nil)
+}
+
+func stageAndPublishWithHook(location outputLocation, files map[string][]byte, beforeFinalize func() error) error {
 	staging, err := os.MkdirTemp(location.parent, "."+location.base+".tmp-*")
 	if err != nil {
 		return fmt.Errorf("create staged output directory: %w", err)
@@ -115,8 +119,13 @@ func stageAndPublish(location outputLocation, files map[string][]byte) error {
 	if err := syncDirectory(staging); err != nil {
 		return err
 	}
-	if err := os.Rename(staging, location.output); err != nil {
-		return fmt.Errorf("atomically publish output directory: %w", err)
+	if beforeFinalize != nil {
+		if err := beforeFinalize(); err != nil {
+			return fmt.Errorf("prepare final output publication: %w", err)
+		}
+	}
+	if err := renameNoReplace(staging, location.output); err != nil {
+		return fmt.Errorf("atomically publish output directory without replacement: %w", err)
 	}
 	committed = true
 	return nil

@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"github.com/araihu/goshtoso/internal/iconcatalog"
 )
 
 func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing.T) {
@@ -95,6 +97,103 @@ func TestGenerateRejectsUnsafeSpriteURL(t *testing.T) {
 
 			if _, err := Generate(context.Background(), opts); err == nil || !strings.Contains(err.Error(), "sprite-url") {
 				t.Fatalf("Generate() error = %v, want sprite-url rejection", err)
+			}
+		})
+	}
+}
+
+func TestGenerateRejectsConstPrefixNameCollisionBeforePublishing(t *testing.T) {
+	opts := syntheticRelease(t)
+	opts.OutputDir = filepath.Join(t.TempDir(), "pack")
+	opts.Names = []string{"brand-developer-icons-tRPC"}
+	opts.Package = "appicons"
+	opts.ConstPrefix = "Name"
+	opts.SpriteURL = "/assets/icons/app.svg"
+
+	_, err := Generate(context.Background(), opts)
+	if err == nil || !strings.Contains(err.Error(), `go declaration collision "NameBrandDeveloperIconsTRPC"`) {
+		t.Fatalf("Generate() error = %v, want complete declaration namespace collision", err)
+	}
+	if _, statErr := os.Lstat(opts.OutputDir); !os.IsNotExist(statErr) {
+		t.Fatalf("output directory exists after declaration collision: %v", statErr)
+	}
+}
+
+func TestGeneratedDeclarationNamespaceReservesFixedNames(t *testing.T) {
+	for _, name := range []string{"Name", "Glyph", "Config", "SpriteURL", "Glyphs", "Lookup", "Icon"} {
+		t.Run(name, func(t *testing.T) {
+			selected := []selectedAsset{{
+				Asset:  iconcatalog.Asset{CanonicalName: "brand-example"},
+				goName: name,
+			}}
+			err := validateGeneratedNamespace(selected)
+			if err == nil || !strings.Contains(err.Error(), `go declaration collision "`+name+`"`) {
+				t.Fatalf("validateGeneratedNamespace() error = %v, want reserved-name collision", err)
+			}
+		})
+	}
+}
+
+func TestStageAndPublishRejectsConcurrentDestination(t *testing.T) {
+	for _, kind := range []string{"file", "directory", "symlink"} {
+		t.Run(kind, func(t *testing.T) {
+			parent := t.TempDir()
+			output := filepath.Join(parent, "pack")
+			location := outputLocation{output: output, parent: parent, base: "pack"}
+			target := filepath.Join(parent, "attacker-target")
+			files := map[string][]byte{"manifest.json": []byte("generated\n")}
+
+			err := stageAndPublishWithHook(location, files, func() error {
+				switch kind {
+				case "file":
+					return os.WriteFile(output, []byte("attacker\n"), 0o644)
+				case "directory":
+					return os.Mkdir(output, 0o755)
+				case "symlink":
+					if err := os.WriteFile(target, []byte("attacker target\n"), 0o644); err != nil {
+						return err
+					}
+					return os.Symlink(target, output)
+				default:
+					return fmt.Errorf("unknown destination kind %q", kind)
+				}
+			})
+			if err == nil {
+				t.Fatal("stageAndPublishWithHook() succeeded after concurrent destination creation")
+			}
+
+			info, statErr := os.Lstat(output)
+			if statErr != nil {
+				t.Fatalf("concurrent destination missing after rejected publish: %v", statErr)
+			}
+			switch kind {
+			case "file":
+				contents, readErr := os.ReadFile(output)
+				if readErr != nil || string(contents) != "attacker\n" {
+					t.Fatalf("concurrent file changed: contents=%q error=%v", contents, readErr)
+				}
+			case "directory":
+				if !info.IsDir() {
+					t.Fatalf("concurrent directory replaced by mode %v", info.Mode())
+				}
+			case "symlink":
+				if info.Mode()&os.ModeSymlink == 0 {
+					t.Fatalf("concurrent symbolic link replaced by mode %v", info.Mode())
+				}
+				link, readErr := os.Readlink(output)
+				if readErr != nil || link != target {
+					t.Fatalf("concurrent symbolic link changed: target=%q error=%v", link, readErr)
+				}
+			}
+
+			entries, readErr := os.ReadDir(parent)
+			if readErr != nil {
+				t.Fatal(readErr)
+			}
+			for _, entry := range entries {
+				if strings.HasPrefix(entry.Name(), ".pack.tmp-") {
+					t.Fatalf("staged directory leaked after rejected publish: %s", entry.Name())
+				}
 			}
 		})
 	}
