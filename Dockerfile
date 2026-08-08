@@ -21,7 +21,7 @@ RUN GOSHTOSO_DOCS_VERSION="$(cd site && GOWORK=off go list -m -f '{{.Version}}' 
 # (the final stage copies all of /src for its assets/).
 RUN rm -f go.work go.work.sum
 
-FROM alpine:3.21
+FROM alpine:3.24
 
 WORKDIR /app
 
