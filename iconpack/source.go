@@ -536,7 +536,7 @@ func withVerifiedReleaseArchive(filename, expectedDigest string, afterVerified f
 }
 
 func safeRelativePath(relative string) error {
-	if relative == "" || strings.Contains(relative, "\\") || strings.ContainsRune(relative, '\x00') || strings.HasPrefix(relative, "/") || path.Clean(relative) != relative {
+	if relative == "" || strings.Contains(relative, "\\") || strings.ContainsRune(relative, '\x00') || strings.HasPrefix(relative, "/") || path.Clean(relative) != relative || hasWindowsDrivePrefix(relative) {
 		return fmt.Errorf("unsafe relative path %q", relative)
 	}
 	for segment := range strings.SplitSeq(relative, "/") {
@@ -545,6 +545,14 @@ func safeRelativePath(relative string) error {
 		}
 	}
 	return nil
+}
+
+func hasWindowsDrivePrefix(name string) bool {
+	if len(name) < 2 || name[1] != ':' {
+		return false
+	}
+	first := name[0]
+	return first >= 'A' && first <= 'Z' || first >= 'a' && first <= 'z'
 }
 
 func requireJSONEOF(decoder *json.Decoder, name string) error {
@@ -582,7 +590,13 @@ func extractOpenedArchive(archive *os.File, archivePath string, size int64, dest
 	}
 }
 
-func extractTarGzip(archive io.Reader, destination string) error {
+func extractTarGzip(archive io.ReadSeeker, destination string) error {
+	if err := countTarEntries(archive); err != nil {
+		return err
+	}
+	if _, err := archive.Seek(0, io.SeekStart); err != nil {
+		return fmt.Errorf("rewind tar archive: %w", err)
+	}
 	gzipReader, err := gzip.NewReader(archive)
 	if err != nil {
 		return fmt.Errorf("open gzip stream: %w", err)
@@ -600,10 +614,11 @@ func extractTarGzip(archive io.Reader, destination string) error {
 		if err != nil {
 			return fmt.Errorf("read tar archive: %w", err)
 		}
-		if err := recordArchivePath(seen, header.Name); err != nil {
+		relative, err := recordArchivePath(seen, header.Name)
+		if err != nil {
 			return err
 		}
-		target := filepath.Join(destination, filepath.FromSlash(header.Name))
+		target := filepath.Join(destination, relative)
 		switch header.Typeflag {
 		case tar.TypeDir:
 			if err := os.MkdirAll(target, 0o755); err != nil {
@@ -630,14 +645,18 @@ func extractZip(archive io.ReaderAt, size int64, destination string) error {
 	if err != nil {
 		return fmt.Errorf("open zip archive: %w", err)
 	}
+	if err := archiveEntryBudget(len(reader.File)); err != nil {
+		return err
+	}
 	seen := map[string]string{}
 	var files int
 	var total int64
 	for _, member := range reader.File {
-		if err := recordArchivePath(seen, member.Name); err != nil {
+		relative, err := recordArchivePath(seen, member.Name)
+		if err != nil {
 			return err
 		}
-		target := filepath.Join(destination, filepath.FromSlash(member.Name))
+		target := filepath.Join(destination, relative)
 		if member.FileInfo().IsDir() {
 			if err := os.MkdirAll(target, 0o755); err != nil {
 				return fmt.Errorf("create archive directory: %w", err)
@@ -669,15 +688,55 @@ func extractZip(archive io.ReaderAt, size int64, destination string) error {
 	return nil
 }
 
-func recordArchivePath(seen map[string]string, name string) error {
-	if err := safeRelativePath(strings.TrimSuffix(name, "/")); err != nil {
-		return fmt.Errorf("unsafe archive member %q", name)
+func recordArchivePath(seen map[string]string, name string) (string, error) {
+	portable := strings.TrimSuffix(name, "/")
+	if err := safeRelativePath(portable); err != nil {
+		return "", fmt.Errorf("unsafe archive member %q", name)
 	}
-	folded := strings.ToLower(strings.TrimSuffix(name, "/"))
+	relative, err := filepath.Localize(portable)
+	if err != nil || !filepath.IsLocal(relative) || filepath.IsAbs(relative) || filepath.VolumeName(relative) != "" {
+		return "", fmt.Errorf("unsafe archive member %q", name)
+	}
+	folded := strings.ToLower(portable)
 	if first, exists := seen[folded]; exists {
-		return fmt.Errorf("duplicate or case-folded archive members %q and %q", first, name)
+		return "", fmt.Errorf("duplicate or case-folded archive members %q and %q", first, name)
 	}
 	seen[folded] = name
+	return relative, nil
+}
+
+func countTarEntries(archive io.ReadSeeker) error {
+	gzipReader, err := gzip.NewReader(archive)
+	if err != nil {
+		return fmt.Errorf("open gzip stream: %w", err)
+	}
+	reader := tar.NewReader(gzipReader)
+	entries := 0
+	for {
+		_, err := reader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			_ = gzipReader.Close()
+			return fmt.Errorf("read tar archive: %w", err)
+		}
+		entries++
+		if err := archiveEntryBudget(entries); err != nil {
+			_ = gzipReader.Close()
+			return err
+		}
+	}
+	if err := gzipReader.Close(); err != nil {
+		return fmt.Errorf("close gzip stream: %w", err)
+	}
+	return nil
+}
+
+func archiveEntryBudget(entries int) error {
+	if entries > maxArchiveFiles {
+		return fmt.Errorf("release archive exceeds safe extraction budget")
+	}
 	return nil
 }
 

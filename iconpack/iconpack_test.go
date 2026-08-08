@@ -76,6 +76,30 @@ func TestGenerateFromVerifiedArchive(t *testing.T) {
 	assertFileContains(t, filepath.Join(opts.OutputDir, "sprite.svg"), `id="devicon-trpc"`)
 }
 
+func TestGenerateRejectsUnsafeSpriteURL(t *testing.T) {
+	for _, spriteURL := range []string{
+		" /assets/icons/app.svg",
+		"/assets/icons/app.svg\n",
+		`..\icons\app.svg`,
+		"javascript:app.svg",
+		"//example.com/app.svg",
+		"/assets/icons/app.svg#symbol",
+	} {
+		t.Run(fmt.Sprintf("%q", spriteURL), func(t *testing.T) {
+			opts := syntheticRelease(t)
+			opts.OutputDir = filepath.Join(t.TempDir(), "pack")
+			opts.Names = []string{"brand-developer-icons-tRPC"}
+			opts.Package = "appicons"
+			opts.ConstPrefix = "Icon"
+			opts.SpriteURL = spriteURL
+
+			if _, err := Generate(context.Background(), opts); err == nil || !strings.Contains(err.Error(), "sprite-url") {
+				t.Fatalf("Generate() error = %v, want sprite-url rejection", err)
+			}
+		})
+	}
+}
+
 func TestVerifiedArchiveSnapshotSurvivesPathReplacement(t *testing.T) {
 	for _, format := range []string{"tar.gz", "zip"} {
 		t.Run(format, func(t *testing.T) {
@@ -262,6 +286,64 @@ func TestExtractArchiveRejectsTraversal(t *testing.T) {
 	err = extractArchive(archive, t.TempDir())
 	if err == nil || !strings.Contains(err.Error(), "unsafe archive member") {
 		t.Fatalf("extractArchive() error = %v, want traversal rejection", err)
+	}
+}
+
+func TestExtractArchiveRejectsTooManyDirectoryEntries(t *testing.T) {
+	for _, format := range []string{"tar.gz", "zip"} {
+		t.Run(format, func(t *testing.T) {
+			archive := filepath.Join(t.TempDir(), "too-many."+format)
+			writeDirectoryArchive(t, archive, maxArchiveFiles+1)
+			destination := t.TempDir()
+
+			err := extractArchive(archive, destination)
+			if err == nil || !strings.Contains(err.Error(), "safe extraction budget") {
+				t.Fatalf("extractArchive() error = %v, want entry-budget rejection", err)
+			}
+			entries, readErr := os.ReadDir(destination)
+			if readErr != nil {
+				t.Fatal(readErr)
+			}
+			if len(entries) != 0 {
+				t.Fatalf("rejected directory-only archive wrote destination entries: %v", entries)
+			}
+		})
+	}
+}
+
+func TestExtractArchiveRejectsNonPortableMemberPaths(t *testing.T) {
+	members := []struct {
+		name string
+		path string
+	}{
+		{name: "parent traversal", path: "../escape"},
+		{name: "absolute", path: "/escape"},
+		{name: "drive absolute", path: "C:/escape"},
+		{name: "drive relative", path: "C:escape"},
+		{name: "backslash traversal", path: `..\escape`},
+		{name: "backslash separator", path: `nested\escape`},
+		{name: "UNC", path: `\\server\share\escape`},
+	}
+	for _, format := range []string{"tar.gz", "zip"} {
+		for _, member := range members {
+			t.Run(format+"/"+member.name, func(t *testing.T) {
+				archive := filepath.Join(t.TempDir(), "bad."+format)
+				writeSingleMemberArchive(t, archive, member.path, []byte("escape"))
+				destination := t.TempDir()
+
+				err := extractArchive(archive, destination)
+				if err == nil || !strings.Contains(err.Error(), "unsafe archive member") {
+					t.Fatalf("extractArchive() error = %v, want unsafe-member rejection", err)
+				}
+				entries, readErr := os.ReadDir(destination)
+				if readErr != nil {
+					t.Fatal(readErr)
+				}
+				if len(entries) != 0 {
+					t.Fatalf("rejected archive wrote destination entries: %v", entries)
+				}
+			})
+		}
 	}
 }
 
@@ -503,6 +585,89 @@ func writeTarMembers(t *testing.T, file *os.File, names []string, files map[stri
 		t.Fatal(err)
 	}
 	if err := gz.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func writeDirectoryArchive(t *testing.T, archive string, count int) {
+	t.Helper()
+	file, err := os.Create(archive)
+	if err != nil {
+		t.Fatal(err)
+	}
+	switch {
+	case strings.HasSuffix(archive, ".tar.gz"):
+		gz := gzip.NewWriter(file)
+		tw := tar.NewWriter(gz)
+		for index := range count {
+			name := fmt.Sprintf("directory-%05d/", index)
+			if err := tw.WriteHeader(&tar.Header{Name: name, Mode: 0o755, Typeflag: tar.TypeDir}); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if err := tw.Close(); err != nil {
+			t.Fatal(err)
+		}
+		if err := gz.Close(); err != nil {
+			t.Fatal(err)
+		}
+	case strings.HasSuffix(archive, ".zip"):
+		zw := zip.NewWriter(file)
+		for index := range count {
+			name := fmt.Sprintf("directory-%05d/", index)
+			if _, err := zw.Create(name); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if err := zw.Close(); err != nil {
+			t.Fatal(err)
+		}
+	default:
+		t.Fatalf("unsupported test archive %q", archive)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func writeSingleMemberArchive(t *testing.T, archive, name string, contents []byte) {
+	t.Helper()
+	file, err := os.Create(archive)
+	if err != nil {
+		t.Fatal(err)
+	}
+	switch {
+	case strings.HasSuffix(archive, ".tar.gz"):
+		gz := gzip.NewWriter(file)
+		tw := tar.NewWriter(gz)
+		if err := tw.WriteHeader(&tar.Header{Name: name, Mode: 0o644, Size: int64(len(contents)), Typeflag: tar.TypeReg}); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := tw.Write(contents); err != nil {
+			t.Fatal(err)
+		}
+		if err := tw.Close(); err != nil {
+			t.Fatal(err)
+		}
+		if err := gz.Close(); err != nil {
+			t.Fatal(err)
+		}
+	case strings.HasSuffix(archive, ".zip"):
+		zw := zip.NewWriter(file)
+		member, err := zw.Create(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := member.Write(contents); err != nil {
+			t.Fatal(err)
+		}
+		if err := zw.Close(); err != nil {
+			t.Fatal(err)
+		}
+	default:
+		t.Fatalf("unsupported test archive %q", archive)
+	}
+	if err := file.Close(); err != nil {
 		t.Fatal(err)
 	}
 }
