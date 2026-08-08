@@ -2,8 +2,9 @@ package icon
 
 import (
 	"fmt"
-	"net/url"
 	"strings"
+
+	"github.com/araihu/goshtoso/internal/iconurl"
 )
 
 // Symbol identifies an SVG symbol in a sprite.
@@ -60,7 +61,10 @@ func (cfg Config) validate() error {
 
 	switch cfg.Mode {
 	case ModeExternal:
-		return validateSpriteURL(cfg.SpriteURL)
+		if err := iconurl.ValidateSpriteURL(cfg.SpriteURL); err != nil {
+			return fmt.Errorf("icon: %w", err)
+		}
+		return nil
 	case ModeInline:
 		return nil
 	default:
@@ -87,34 +91,6 @@ func validSymbol(symbol Symbol) bool {
 		return false
 	}
 	return true
-}
-
-func validateSpriteURL(raw string) error {
-	if raw == "" {
-		return fmt.Errorf("icon: SpriteURL is required in external mode")
-	}
-	if raw != strings.TrimSpace(raw) || strings.ContainsAny(raw, "\\\\\r\n") {
-		return fmt.Errorf("icon: invalid SpriteURL %q", raw)
-	}
-
-	parsed, err := url.Parse(raw)
-	if err != nil {
-		return fmt.Errorf("icon: invalid SpriteURL %q: %w", raw, err)
-	}
-	if parsed.Fragment != "" || parsed.Path == "" {
-		return fmt.Errorf("icon: SpriteURL must identify a sprite document")
-	}
-
-	if parsed.Scheme == "" {
-		if parsed.Host != "" {
-			return fmt.Errorf("icon: protocol-relative SpriteURL is not allowed")
-		}
-		return nil
-	}
-	if (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" || parsed.User != nil {
-		return fmt.Errorf("icon: SpriteURL must use relative, http, or https URL syntax")
-	}
-	return nil
 }
 
 func (cfg Config) href() string {

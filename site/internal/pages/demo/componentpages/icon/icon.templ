@@ -29,6 +29,7 @@ templ iconDemoContent() {
 		</div>
 
 		@iconUsageBasics()
+		@iconPackExtension()
 		@iconCatalogGrid()
 		@iconPickerModal()
 	</div>
@@ -65,6 +66,36 @@ templ iconUsageBasics() {
 			@icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidStar, Decorative: true, Size: icon.SizeLG})
 			@icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidStar, Decorative: true, Size: icon.SizeXL})
 		</div>
+	</section>
+}
+
+templ iconPackExtension() {
+	<section class="mb-10" aria-labelledby="iconpack-title">
+		<div class="mb-4 max-w-3xl">
+			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Consumer-local extension</p>
+			<h2 id="iconpack-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Generate an attributed icon pack</h2>
+			<p class="mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+				Select full Heroicons and Developer Icons assets by exact Arai Hu Assets canonical name. <code class="font-mono">iconpack</code> verifies a release root or archive, then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
+			</p>
+		</div>
+		<div data-component-code>
+			@codeblock.CodeBlock(codeblock.Config{
+				Language: "bash",
+				Label: "Generate from a verified release archive",
+				Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
+  -release-archive ./araihu-assets-vX.Y.Z.tar.gz \
+  -archive-sha256 "$ARCHIVE_SHA256" -release vX.Y.Z \
+  -catalog-sha256 "$CATALOG_SHA256" \
+  -release-json-sha256 "$RELEASE_JSON_SHA256" \
+  -checksums-sha256 "$CHECKSUMS_SHA256" \
+  -name brand-developer-icons-tRPC \
+  -out ./internal/appicons -package appicons \
+  -const-prefix Icon -sprite-url /assets/icons/app.svg`,
+			})
+		</div>
+		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+			JSON selection manifests are canonical; YAML compatibility is accepted. See <code class="font-mono">docs/ICONPACK.md</code> to review output and failure-safety contracts.
+		</p>
 	</section>
 }
 
