@@ -128,6 +128,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
 	s.mux.HandleFunc("/docs/application-patterns", s.handleApplicationPatternsPage)
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
+	s.mux.HandleFunc("/docs/iconpack", s.handleIconpackPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.mux.HandleFunc("/modules/charts", s.handleChartsModulePage)
 	s.mux.HandleFunc("/modules/app-shells", s.handleAppShellsModulePage)
@@ -312,6 +313,10 @@ func (s *Server) handleApplicationPatternsPage(w http.ResponseWriter, r *http.Re
 
 func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/component-model")
+}
+
+func (s *Server) handleIconpackPage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "docs/iconpack")
 }
 
 func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
