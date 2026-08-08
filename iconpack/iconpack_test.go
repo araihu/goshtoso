@@ -2,9 +2,11 @@ package iconpack
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"compress/gzip"
 	"context"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"sort"
@@ -72,6 +74,102 @@ func TestGenerateFromVerifiedArchive(t *testing.T) {
 		t.Fatal(err)
 	}
 	assertFileContains(t, filepath.Join(opts.OutputDir, "sprite.svg"), `id="devicon-trpc"`)
+}
+
+func TestVerifiedArchiveSnapshotSurvivesPathReplacement(t *testing.T) {
+	for _, format := range []string{"tar.gz", "zip"} {
+		t.Run(format, func(t *testing.T) {
+			opts := syntheticRelease(t)
+			directory := t.TempDir()
+			archive := filepath.Join(directory, "araihu-assets-v0.2.0."+format)
+			replacement := filepath.Join(directory, "replacement."+format)
+			writeReleaseArchive(t, opts.ReleaseRoot, archive, nil)
+			writeReleaseArchive(t, opts.ReleaseRoot, replacement, map[string][]byte{
+				"replacement-only.txt": []byte("unverified replacement\n"),
+			})
+			verifiedBytes, err := os.ReadFile(archive)
+			if err != nil {
+				t.Fatal(err)
+			}
+			opts.ReleaseRoot = ""
+			opts.ReleaseArchive = archive
+			opts.ArchiveSHA256 = hashBytes(verifiedBytes)
+
+			boundary, err := openReleaseWithArchiveVerifiedHook(opts, func() error {
+				return os.Rename(replacement, archive)
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer boundary.cleanup()
+			if _, err := os.Lstat(filepath.Join(boundary.root, "replacement-only.txt")); !os.IsNotExist(err) {
+				t.Fatalf("replacement-only archive member materialized: %v", err)
+			}
+		})
+	}
+}
+
+func TestVerifiedArchiveSnapshotSurvivesSameInodeRewrite(t *testing.T) {
+	for _, format := range []string{"tar.gz", "zip"} {
+		t.Run(format, func(t *testing.T) {
+			opts := syntheticRelease(t)
+			directory := t.TempDir()
+			archive := filepath.Join(directory, "araihu-assets-v0.2.0."+format)
+			replacement := filepath.Join(directory, "replacement."+format)
+			writeReleaseArchive(t, opts.ReleaseRoot, archive, nil)
+			writeReleaseArchive(t, opts.ReleaseRoot, replacement, map[string][]byte{
+				"replacement-only.txt": []byte("unverified replacement\n"),
+			})
+			replacementBytes, err := os.ReadFile(replacement)
+			if err != nil {
+				t.Fatal(err)
+			}
+			padFileToSize(t, archive, int64(len(replacementBytes)))
+			verifiedBytes, err := os.ReadFile(archive)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(verifiedBytes) != len(replacementBytes) {
+				t.Fatalf("archive sizes differ: verified=%d replacement=%d", len(verifiedBytes), len(replacementBytes))
+			}
+			originalInfo, err := os.Stat(archive)
+			if err != nil {
+				t.Fatal(err)
+			}
+			opts.ReleaseRoot = ""
+			opts.ReleaseArchive = archive
+			opts.ArchiveSHA256 = hashBytes(verifiedBytes)
+
+			boundary, err := openReleaseWithArchiveVerifiedHook(opts, func() error {
+				file, err := os.OpenFile(archive, os.O_WRONLY|os.O_TRUNC, 0)
+				if err != nil {
+					return err
+				}
+				if _, err := file.Write(replacementBytes); err != nil {
+					_ = file.Close()
+					return err
+				}
+				if err := file.Close(); err != nil {
+					return err
+				}
+				currentInfo, err := os.Stat(archive)
+				if err != nil {
+					return err
+				}
+				if !os.SameFile(originalInfo, currentInfo) {
+					return fmt.Errorf("test rewrite replaced inode")
+				}
+				return nil
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer boundary.cleanup()
+			if _, err := os.Lstat(filepath.Join(boundary.root, "replacement-only.txt")); !os.IsNotExist(err) {
+				t.Fatalf("same-inode replacement archive member materialized: %v", err)
+			}
+		})
+	}
 }
 
 func TestGenerateFromVerifiedRootRejectsNestedOutsideSymlink(t *testing.T) {
@@ -333,6 +431,109 @@ func writeTarGzip(t *testing.T, root, archive string) {
 		t.Fatal(err)
 	}
 	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func writeReleaseArchive(t *testing.T, root, archive string, extra map[string][]byte) {
+	t.Helper()
+	files := readFixtureTree(t, root)
+	maps.Copy(files, extra)
+	names := make([]string, 0, len(files))
+	for name := range files {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	file, err := os.Create(archive)
+	if err != nil {
+		t.Fatal(err)
+	}
+	switch {
+	case strings.HasSuffix(archive, ".tar.gz"):
+		writeTarMembers(t, file, names, files)
+	case strings.HasSuffix(archive, ".zip"):
+		writeZipMembers(t, file, names, files)
+	default:
+		t.Fatalf("unsupported test archive %q", archive)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func readFixtureTree(t *testing.T, root string) map[string][]byte {
+	t.Helper()
+	files := map[string][]byte{}
+	err := filepath.WalkDir(root, func(filename string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil || entry.IsDir() {
+			return walkErr
+		}
+		relative, err := filepath.Rel(root, filename)
+		if err != nil {
+			return err
+		}
+		contents, err := os.ReadFile(filename)
+		if err != nil {
+			return err
+		}
+		files[filepath.ToSlash(relative)] = contents
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return files
+}
+
+func writeTarMembers(t *testing.T, file *os.File, names []string, files map[string][]byte) {
+	t.Helper()
+	gz := gzip.NewWriter(file)
+	tw := tar.NewWriter(gz)
+	for _, name := range names {
+		contents := files[name]
+		if err := tw.WriteHeader(&tar.Header{Name: name, Mode: 0o644, Size: int64(len(contents)), Typeflag: tar.TypeReg}); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := tw.Write(contents); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := tw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := gz.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func writeZipMembers(t *testing.T, file *os.File, names []string, files map[string][]byte) {
+	t.Helper()
+	zw := zip.NewWriter(file)
+	for _, name := range names {
+		member, err := zw.Create(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := member.Write(files[name]); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func padFileToSize(t *testing.T, filename string, size int64) {
+	t.Helper()
+	info, err := os.Stat(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Size() > size {
+		t.Fatalf("cannot pad %q from %d down to %d bytes", filename, info.Size(), size)
+	}
+	if err := os.Truncate(filename, size); err != nil {
 		t.Fatal(err)
 	}
 }

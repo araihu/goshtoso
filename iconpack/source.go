@@ -58,6 +58,10 @@ type releaseFile struct {
 }
 
 func openRelease(opts Options) (releaseBoundary, error) {
+	return openReleaseWithArchiveVerifiedHook(opts, nil)
+}
+
+func openReleaseWithArchiveVerifiedHook(opts Options, afterArchiveVerified func() error) (releaseBoundary, error) {
 	if (opts.ReleaseRoot == "") == (opts.ReleaseArchive == "") {
 		return releaseBoundary{}, fmt.Errorf("exactly one of release-root or release-archive is required")
 	}
@@ -80,21 +84,19 @@ func openRelease(opts Options) (releaseBoundary, error) {
 		if !digestRE.MatchString(opts.ArchiveSHA256) {
 			return releaseBoundary{}, fmt.Errorf("archive-sha256 must be a lowercase SHA-256")
 		}
-		got, _, err := hashRegularFile(opts.ReleaseArchive)
+		var temporary string
+		err := withVerifiedReleaseArchive(opts.ReleaseArchive, opts.ArchiveSHA256, afterArchiveVerified, func(archive *os.File, size int64) error {
+			var err error
+			temporary, err = os.MkdirTemp("", "goshtoso-iconpack-release-*")
+			if err != nil {
+				return fmt.Errorf("create archive extraction root: %w", err)
+			}
+			cleanup = func() { _ = os.RemoveAll(temporary) }
+			return extractOpenedArchive(archive, opts.ReleaseArchive, size, temporary)
+		})
 		if err != nil {
-			return releaseBoundary{}, fmt.Errorf("verify release archive: %w", err)
-		}
-		if got != opts.ArchiveSHA256 {
-			return releaseBoundary{}, fmt.Errorf("release archive SHA-256 mismatch: got %s, want %s", got, opts.ArchiveSHA256)
-		}
-		temporary, err := os.MkdirTemp("", "goshtoso-iconpack-release-*")
-		if err != nil {
-			return releaseBoundary{}, fmt.Errorf("create archive extraction root: %w", err)
-		}
-		cleanup = func() { _ = os.RemoveAll(temporary) }
-		if err := extractArchive(opts.ReleaseArchive, temporary); err != nil {
 			cleanup()
-			return releaseBoundary{}, err
+			return releaseBoundary{}, fmt.Errorf("verify release archive: %w", err)
 		}
 		root = temporary
 	}
@@ -459,28 +461,78 @@ func validateContainedPath(root *os.Root, relative string) error {
 	return nil
 }
 
-func hashRegularFile(filename string) (string, int64, error) {
-	info, err := os.Lstat(filename)
+func openRegularFile(filename string) (*os.File, error) {
+	pathInfo, err := os.Lstat(filename)
 	if err != nil {
-		return "", 0, err
+		return nil, err
 	}
-	if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
-		return "", 0, fmt.Errorf("not a regular file")
+	if !pathInfo.Mode().IsRegular() || pathInfo.Mode()&os.ModeSymlink != 0 {
+		return nil, fmt.Errorf("not a regular file")
 	}
 	file, err := os.Open(filename)
 	if err != nil {
-		return "", 0, err
+		return nil, err
 	}
+	openedInfo, err := file.Stat()
+	if err != nil {
+		_ = file.Close()
+		return nil, err
+	}
+	currentInfo, err := os.Lstat(filename)
+	if err != nil {
+		_ = file.Close()
+		return nil, err
+	}
+	if !openedInfo.Mode().IsRegular() || currentInfo.Mode()&os.ModeSymlink != 0 || !currentInfo.Mode().IsRegular() || !os.SameFile(pathInfo, openedInfo) || !os.SameFile(openedInfo, currentInfo) {
+		_ = file.Close()
+		return nil, fmt.Errorf("archive path changed while opening")
+	}
+	return file, nil
+}
+
+func withVerifiedReleaseArchive(filename, expectedDigest string, afterVerified func() error, consume func(*os.File, int64) error) (err error) {
+	source, err := openRegularFile(filename)
+	if err != nil {
+		return err
+	}
+	sourceClosed := false
+	defer func() {
+		if !sourceClosed {
+			_ = source.Close()
+		}
+	}()
+	snapshot, err := os.CreateTemp("", "goshtoso-iconpack-archive-snapshot-*")
+	if err != nil {
+		return fmt.Errorf("create private archive snapshot: %w", err)
+	}
+	snapshotName := snapshot.Name()
+	defer func() {
+		_ = snapshot.Close()
+		_ = os.Remove(snapshotName)
+	}()
 	hash := sha256.New()
-	size, copyErr := io.Copy(hash, file)
-	closeErr := file.Close()
-	if copyErr != nil {
-		return "", 0, copyErr
+	size, err := io.Copy(io.MultiWriter(hash, snapshot), source)
+	if err != nil {
+		return fmt.Errorf("copy release archive into private snapshot: %w", err)
 	}
+	closeErr := source.Close()
+	sourceClosed = true
 	if closeErr != nil {
-		return "", 0, closeErr
+		return fmt.Errorf("close release archive: %w", closeErr)
 	}
-	return hex.EncodeToString(hash.Sum(nil)), size, nil
+	digest := hex.EncodeToString(hash.Sum(nil))
+	if digest != expectedDigest {
+		return fmt.Errorf("release archive SHA-256 mismatch: got %s, want %s", digest, expectedDigest)
+	}
+	if _, err := snapshot.Seek(0, io.SeekStart); err != nil {
+		return fmt.Errorf("rewind verified archive snapshot: %w", err)
+	}
+	if afterVerified != nil {
+		if err := afterVerified(); err != nil {
+			return fmt.Errorf("after archive verification: %w", err)
+		}
+	}
+	return consume(snapshot, size)
 }
 
 func safeRelativePath(relative string) error {
@@ -507,23 +559,31 @@ func requireJSONEOF(decoder *json.Decoder, name string) error {
 }
 
 func extractArchive(archivePath, destination string) error {
+	archive, err := openRegularFile(archivePath)
+	if err != nil {
+		return fmt.Errorf("open release archive: %w", err)
+	}
+	defer func() { _ = archive.Close() }()
+	info, err := archive.Stat()
+	if err != nil {
+		return fmt.Errorf("inspect release archive: %w", err)
+	}
+	return extractOpenedArchive(archive, archivePath, info.Size(), destination)
+}
+
+func extractOpenedArchive(archive *os.File, archivePath string, size int64, destination string) error {
 	switch {
 	case strings.HasSuffix(archivePath, ".tar.gz"), strings.HasSuffix(archivePath, ".tgz"):
-		return extractTarGzip(archivePath, destination)
+		return extractTarGzip(archive, destination)
 	case strings.HasSuffix(archivePath, ".zip"):
-		return extractZip(archivePath, destination)
+		return extractZip(archive, size, destination)
 	default:
 		return fmt.Errorf("unsupported release archive type: want .tar.gz, .tgz, or .zip")
 	}
 }
 
-func extractTarGzip(archivePath, destination string) error {
-	file, err := os.Open(archivePath)
-	if err != nil {
-		return fmt.Errorf("open tar archive: %w", err)
-	}
-	defer func() { _ = file.Close() }()
-	gzipReader, err := gzip.NewReader(file)
+func extractTarGzip(archive io.Reader, destination string) error {
+	gzipReader, err := gzip.NewReader(archive)
 	if err != nil {
 		return fmt.Errorf("open gzip stream: %w", err)
 	}
@@ -565,12 +625,11 @@ func extractTarGzip(archivePath, destination string) error {
 	return nil
 }
 
-func extractZip(archivePath, destination string) error {
-	reader, err := zip.OpenReader(archivePath)
+func extractZip(archive io.ReaderAt, size int64, destination string) error {
+	reader, err := zip.NewReader(archive, size)
 	if err != nil {
 		return fmt.Errorf("open zip archive: %w", err)
 	}
-	defer func() { _ = reader.Close() }()
 	seen := map[string]string{}
 	var files int
 	var total int64
