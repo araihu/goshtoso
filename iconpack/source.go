@@ -482,7 +482,7 @@ func hashRegularFile(filename string) (string, int64, error) {
 }
 
 func safeRelativePath(relative string) error {
-	if relative == "" || strings.Contains(relative, "\\") || strings.ContainsRune(relative, '\x00') || strings.HasPrefix(relative, "/") || path.Clean(relative) != relative {
+	if relative == "" || strings.Contains(relative, "\\") || strings.ContainsRune(relative, '\x00') || strings.HasPrefix(relative, "/") || path.Clean(relative) != relative || hasWindowsDrivePrefix(relative) {
 		return fmt.Errorf("unsafe relative path %q", relative)
 	}
 	for _, segment := range strings.Split(relative, "/") {
@@ -491,6 +491,14 @@ func safeRelativePath(relative string) error {
 		}
 	}
 	return nil
+}
+
+func hasWindowsDrivePrefix(name string) bool {
+	if len(name) < 2 || name[1] != ':' {
+		return false
+	}
+	first := name[0]
+	return first >= 'A' && first <= 'Z' || first >= 'a' && first <= 'z'
 }
 
 func requireJSONEOF(decoder *json.Decoder, name string) error {
@@ -505,17 +513,22 @@ func requireJSONEOF(decoder *json.Decoder, name string) error {
 }
 
 func extractArchive(archivePath, destination string) error {
+	root, err := os.OpenRoot(destination)
+	if err != nil {
+		return fmt.Errorf("open archive extraction root: %w", err)
+	}
+	defer func() { _ = root.Close() }()
 	switch {
 	case strings.HasSuffix(archivePath, ".tar.gz"), strings.HasSuffix(archivePath, ".tgz"):
-		return extractTarGzip(archivePath, destination)
+		return extractTarGzip(archivePath, root)
 	case strings.HasSuffix(archivePath, ".zip"):
-		return extractZip(archivePath, destination)
+		return extractZip(archivePath, root)
 	default:
 		return fmt.Errorf("unsupported release archive type: want .tar.gz, .tgz, or .zip")
 	}
 }
 
-func extractTarGzip(archivePath, destination string) error {
+func extractTarGzip(archivePath string, destination *os.Root) error {
 	file, err := os.Open(archivePath)
 	if err != nil {
 		return fmt.Errorf("open tar archive: %w", err)
@@ -538,13 +551,13 @@ func extractTarGzip(archivePath, destination string) error {
 		if err != nil {
 			return fmt.Errorf("read tar archive: %w", err)
 		}
-		if err := recordArchivePath(seen, header.Name); err != nil {
+		relative, err := recordArchivePath(seen, header.Name)
+		if err != nil {
 			return err
 		}
-		target := filepath.Join(destination, filepath.FromSlash(header.Name))
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(target, 0o755); err != nil {
+			if err := destination.MkdirAll(relative, 0o755); err != nil {
 				return fmt.Errorf("create archive directory: %w", err)
 			}
 		case tar.TypeReg:
@@ -553,7 +566,7 @@ func extractTarGzip(archivePath, destination string) error {
 			if err := archiveBudget(files, header.Size, total); err != nil {
 				return err
 			}
-			if err := writeArchiveMember(target, io.LimitReader(reader, header.Size), header.Size); err != nil {
+			if err := writeArchiveMember(destination, relative, io.LimitReader(reader, header.Size), header.Size); err != nil {
 				return err
 			}
 		default:
@@ -563,7 +576,7 @@ func extractTarGzip(archivePath, destination string) error {
 	return nil
 }
 
-func extractZip(archivePath, destination string) error {
+func extractZip(archivePath string, destination *os.Root) error {
 	reader, err := zip.OpenReader(archivePath)
 	if err != nil {
 		return fmt.Errorf("open zip archive: %w", err)
@@ -573,12 +586,12 @@ func extractZip(archivePath, destination string) error {
 	var files int
 	var total int64
 	for _, member := range reader.File {
-		if err := recordArchivePath(seen, member.Name); err != nil {
+		relative, err := recordArchivePath(seen, member.Name)
+		if err != nil {
 			return err
 		}
-		target := filepath.Join(destination, filepath.FromSlash(member.Name))
 		if member.FileInfo().IsDir() {
-			if err := os.MkdirAll(target, 0o755); err != nil {
+			if err := destination.MkdirAll(relative, 0o755); err != nil {
 				return fmt.Errorf("create archive directory: %w", err)
 			}
 			continue
@@ -596,7 +609,7 @@ func extractZip(archivePath, destination string) error {
 		if err != nil {
 			return fmt.Errorf("open archive member %q: %w", member.Name, err)
 		}
-		writeErr := writeArchiveMember(target, input, size)
+		writeErr := writeArchiveMember(destination, relative, input, size)
 		closeErr := input.Close()
 		if writeErr != nil {
 			return writeErr
@@ -608,16 +621,21 @@ func extractZip(archivePath, destination string) error {
 	return nil
 }
 
-func recordArchivePath(seen map[string]string, name string) error {
-	if err := safeRelativePath(strings.TrimSuffix(name, "/")); err != nil {
-		return fmt.Errorf("unsafe archive member %q", name)
+func recordArchivePath(seen map[string]string, name string) (string, error) {
+	portable := strings.TrimSuffix(name, "/")
+	if err := safeRelativePath(portable); err != nil {
+		return "", fmt.Errorf("unsafe archive member %q", name)
 	}
-	folded := strings.ToLower(strings.TrimSuffix(name, "/"))
+	relative, err := filepath.Localize(portable)
+	if err != nil || !filepath.IsLocal(relative) || filepath.IsAbs(relative) || filepath.VolumeName(relative) != "" {
+		return "", fmt.Errorf("unsafe archive member %q", name)
+	}
+	folded := strings.ToLower(portable)
 	if first, exists := seen[folded]; exists {
-		return fmt.Errorf("duplicate or case-folded archive members %q and %q", first, name)
+		return "", fmt.Errorf("duplicate or case-folded archive members %q and %q", first, name)
 	}
 	seen[folded] = name
-	return nil
+	return relative, nil
 }
 
 func archiveBudget(files int, size, total int64) error {
@@ -627,24 +645,27 @@ func archiveBudget(files int, size, total int64) error {
 	return nil
 }
 
-func writeArchiveMember(target string, input io.Reader, size int64) error {
-	if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
-		return fmt.Errorf("create archive member parent: %w", err)
+func writeArchiveMember(destination *os.Root, relative string, input io.Reader, size int64) error {
+	parent := filepath.Dir(relative)
+	if parent != "." {
+		if err := destination.MkdirAll(parent, 0o755); err != nil {
+			return fmt.Errorf("create archive member parent: %w", err)
+		}
 	}
-	output, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
+	output, err := destination.OpenFile(relative, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if err != nil {
-		return fmt.Errorf("create archive member %q: %w", target, err)
+		return fmt.Errorf("create archive member %q: %w", relative, err)
 	}
 	written, copyErr := io.Copy(output, input)
 	closeErr := output.Close()
 	if copyErr != nil {
-		return fmt.Errorf("write archive member %q: %w", target, copyErr)
+		return fmt.Errorf("write archive member %q: %w", relative, copyErr)
 	}
 	if closeErr != nil {
-		return fmt.Errorf("close archive member %q: %w", target, closeErr)
+		return fmt.Errorf("close archive member %q: %w", relative, closeErr)
 	}
 	if written != size {
-		return fmt.Errorf("archive member %q size mismatch: got %d, want %d", target, written, size)
+		return fmt.Errorf("archive member %q size mismatch: got %d, want %d", relative, written, size)
 	}
 	return nil
 }

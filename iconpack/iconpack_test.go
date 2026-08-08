@@ -2,6 +2,7 @@ package iconpack
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"compress/gzip"
 	"context"
 	"fmt"
@@ -290,34 +291,61 @@ func TestReleaseRootRejectsUnstructuredVendorSourceTree(t *testing.T) {
 	}
 }
 
-func TestExtractArchiveRejectsTraversal(t *testing.T) {
-	archive := filepath.Join(t.TempDir(), "bad.tar.gz")
-	file, err := os.Create(archive)
-	if err != nil {
-		t.Fatal(err)
+func TestExtractArchiveRejectsNonPortableMemberPaths(t *testing.T) {
+	members := []struct {
+		name string
+		path string
+	}{
+		{name: "parent traversal", path: "../escape"},
+		{name: "absolute", path: "/escape"},
+		{name: "drive absolute", path: "C:/escape"},
+		{name: "drive relative", path: "C:escape"},
+		{name: "backslash traversal", path: `..\escape`},
+		{name: "backslash separator", path: `nested\escape`},
+		{name: "UNC", path: `\\server\share\escape`},
 	}
-	gz := gzip.NewWriter(file)
-	tw := tar.NewWriter(gz)
-	contents := []byte("escape")
-	if err := tw.WriteHeader(&tar.Header{Name: "../escape", Mode: 0o644, Size: int64(len(contents)), Typeflag: tar.TypeReg}); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := tw.Write(contents); err != nil {
-		t.Fatal(err)
-	}
-	if err := tw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err := gz.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err := file.Close(); err != nil {
-		t.Fatal(err)
-	}
+	for _, format := range []string{"tar.gz", "zip"} {
+		for _, member := range members {
+			t.Run(format+"/"+member.name, func(t *testing.T) {
+				archive := filepath.Join(t.TempDir(), "bad."+format)
+				writeSingleMemberArchive(t, archive, member.path, []byte("escape"))
+				destination := t.TempDir()
 
-	err = extractArchive(archive, t.TempDir())
-	if err == nil || !strings.Contains(err.Error(), "unsafe archive member") {
-		t.Fatalf("extractArchive() error = %v, want traversal rejection", err)
+				err := extractArchive(archive, destination)
+				if err == nil || !strings.Contains(err.Error(), "unsafe archive member") {
+					t.Fatalf("extractArchive() error = %v, want unsafe-member rejection", err)
+				}
+				entries, readErr := os.ReadDir(destination)
+				if readErr != nil {
+					t.Fatal(readErr)
+				}
+				if len(entries) != 0 {
+					t.Fatalf("rejected archive wrote destination entries: %v", entries)
+				}
+			})
+		}
+	}
+}
+
+func TestExtractArchiveCannotEscapeThroughDestinationSymlink(t *testing.T) {
+	for _, format := range []string{"tar.gz", "zip"} {
+		t.Run(format, func(t *testing.T) {
+			archive := filepath.Join(t.TempDir(), "bad."+format)
+			writeSingleMemberArchive(t, archive, "linked/escape", []byte("escape"))
+			destination := t.TempDir()
+			outside := t.TempDir()
+			if err := os.Symlink(outside, filepath.Join(destination, "linked")); err != nil {
+				t.Skipf("create destination symlink: %v", err)
+			}
+
+			err := extractArchive(archive, destination)
+			if err == nil {
+				t.Fatal("extractArchive() succeeded through destination symlink")
+			}
+			if _, statErr := os.Lstat(filepath.Join(outside, "escape")); !os.IsNotExist(statErr) {
+				t.Fatalf("archive wrote outside destination: %v", statErr)
+			}
+		})
 	}
 }
 
@@ -485,6 +513,48 @@ func writeTarGzip(t *testing.T, root, archive string) {
 	}
 	if err := gz.Close(); err != nil {
 		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func writeSingleMemberArchive(t *testing.T, archive, name string, contents []byte) {
+	t.Helper()
+	file, err := os.Create(archive)
+	if err != nil {
+		t.Fatal(err)
+	}
+	switch {
+	case strings.HasSuffix(archive, ".tar.gz"):
+		gz := gzip.NewWriter(file)
+		tw := tar.NewWriter(gz)
+		if err := tw.WriteHeader(&tar.Header{Name: name, Mode: 0o644, Size: int64(len(contents)), Typeflag: tar.TypeReg}); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := tw.Write(contents); err != nil {
+			t.Fatal(err)
+		}
+		if err := tw.Close(); err != nil {
+			t.Fatal(err)
+		}
+		if err := gz.Close(); err != nil {
+			t.Fatal(err)
+		}
+	case strings.HasSuffix(archive, ".zip"):
+		zw := zip.NewWriter(file)
+		member, err := zw.Create(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := member.Write(contents); err != nil {
+			t.Fatal(err)
+		}
+		if err := zw.Close(); err != nil {
+			t.Fatal(err)
+		}
+	default:
+		t.Fatalf("unsupported test archive %q", archive)
 	}
 	if err := file.Close(); err != nil {
 		t.Fatal(err)
