@@ -24,6 +24,12 @@ const (
 	maxArchiveFiles = 10_000
 	maxArchiveBytes = int64(1 << 30)
 	maxMemberBytes  = int64(64 << 20)
+
+	assetsV020Release           = "v0.2.0"
+	assetsV020ArchiveSHA256     = "5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5"
+	assetsV020CatalogSHA256     = "a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6"
+	assetsV020ReleaseJSONSHA256 = "77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f226"
+	assetsV020ChecksumsSHA256   = "334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5"
 )
 
 var (
@@ -32,12 +38,14 @@ var (
 )
 
 type releaseBoundary struct {
-	root      string
-	cleanup   func()
-	catalog   iconcatalog.Catalog
-	release   releaseDocument
-	checksums map[string]string
-	files     map[string][]byte
+	root          string
+	cleanup       func()
+	sourceKind    string
+	archiveSHA256 string
+	catalog       iconcatalog.Catalog
+	release       releaseDocument
+	checksums     map[string]string
+	files         map[string][]byte
 }
 
 type releaseDocument struct {
@@ -77,13 +85,20 @@ func openReleaseWithArchiveVerifiedHook(opts Options, afterArchiveVerified func(
 			return releaseBoundary{}, fmt.Errorf("%s must be a lowercase SHA-256", field.name)
 		}
 	}
+	if err := validateTrustedReleaseIdentity(opts); err != nil {
+		return releaseBoundary{}, err
+	}
 
 	root := opts.ReleaseRoot
 	cleanup := func() {}
+	sourceKind := "release-root"
+	archiveSHA256 := ""
 	if opts.ReleaseArchive != "" {
 		if !digestRE.MatchString(opts.ArchiveSHA256) {
 			return releaseBoundary{}, fmt.Errorf("archive-sha256 must be a lowercase SHA-256")
 		}
+		sourceKind = "release-archive"
+		archiveSHA256 = opts.ArchiveSHA256
 		var temporary string
 		err := withVerifiedReleaseArchive(opts.ReleaseArchive, opts.ArchiveSHA256, afterArchiveVerified, func(archive *os.File, size int64) error {
 			var err error
@@ -106,12 +121,33 @@ func openReleaseWithArchiveVerifiedHook(opts Options, afterArchiveVerified func(
 		cleanup()
 		return releaseBoundary{}, fmt.Errorf("resolve release root: %w", err)
 	}
-	boundary := releaseBoundary{root: absRoot, cleanup: cleanup}
+	boundary := releaseBoundary{root: absRoot, cleanup: cleanup, sourceKind: sourceKind, archiveSHA256: archiveSHA256}
 	if err := boundary.verify(opts); err != nil {
 		cleanup()
 		return releaseBoundary{}, err
 	}
 	return boundary, nil
+}
+
+func validateTrustedReleaseIdentity(opts Options) error {
+	if opts.Release != assetsV020Release {
+		return nil
+	}
+	for _, expected := range []struct {
+		name, got, want string
+	}{
+		{"catalog-sha256", opts.CatalogSHA256, assetsV020CatalogSHA256},
+		{"release-json-sha256", opts.ReleaseJSONSHA256, assetsV020ReleaseJSONSHA256},
+		{"checksums-sha256", opts.ChecksumsSHA256, assetsV020ChecksumsSHA256},
+	} {
+		if expected.got != expected.want {
+			return fmt.Errorf("v0.2.0 %s does not match the published Assets release boundary", expected.name)
+		}
+	}
+	if opts.ReleaseArchive != "" && opts.ArchiveSHA256 != assetsV020ArchiveSHA256 {
+		return fmt.Errorf("v0.2.0 archive-sha256 does not match the published Assets release boundary")
+	}
+	return nil
 }
 
 func (boundary *releaseBoundary) verify(opts Options) error {

@@ -9,10 +9,11 @@ import (
 	"fmt"
 	"go/format"
 	"go/token"
-	"net/url"
 	"sort"
 	"strings"
 	"unicode"
+
+	"github.com/araihu/goshtoso/components/icon"
 )
 
 type outputFile struct {
@@ -31,6 +32,8 @@ type outputManifest struct {
 	CatalogSHA256        string          `json:"catalogSha256"`
 	ReleaseJSONSHA256    string          `json:"releaseJsonSha256"`
 	ChecksumsSHA256      string          `json:"checksumsSha256"`
+	SourceKind           string          `json:"sourceKind"`
+	ArchiveSHA256        string          `json:"archiveSha256"`
 	Package              string          `json:"package"`
 	ConstPrefix          string          `json:"constPrefix"`
 	SpriteURL            string          `json:"spriteUrl"`
@@ -54,6 +57,8 @@ type provenanceDocument struct {
 	Tool          string             `json:"tool"`
 	Release       string             `json:"release"`
 	CatalogSHA256 string             `json:"catalogSha256"`
+	SourceKind    string             `json:"sourceKind"`
+	ArchiveSHA256 string             `json:"archiveSha256"`
 	Sources       []provenanceSource `json:"sources"`
 	Assets        []provenanceAsset  `json:"assets"`
 }
@@ -125,12 +130,8 @@ func validateGenerationOptions(opts Options) error {
 	if !validGoIdentifier(opts.ConstPrefix) || opts.ConstPrefix == "_" {
 		return fmt.Errorf("const-prefix %q is not a valid Go identifier", opts.ConstPrefix)
 	}
-	if opts.SpriteURL != strings.TrimSpace(opts.SpriteURL) || strings.ContainsAny(opts.SpriteURL, "\\\r\n") {
-		return fmt.Errorf("invalid sprite-url %q", opts.SpriteURL)
-	}
-	parsed, err := url.Parse(opts.SpriteURL)
-	if err != nil || parsed.Path == "" || parsed.Fragment != "" || parsed.Host != "" && parsed.Scheme == "" || parsed.User != nil || parsed.Scheme != "" && parsed.Scheme != "http" && parsed.Scheme != "https" {
-		return fmt.Errorf("sprite-url must be a relative, http, or https sprite document URL")
+	if err := icon.ValidateSpriteURL(opts.SpriteURL); err != nil {
+		return fmt.Errorf("sprite-url: %w", err)
 	}
 	return nil
 }
@@ -153,6 +154,8 @@ func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAss
 		Tool:          toolName,
 		Release:       boundary.catalog.Release,
 		CatalogSHA256: boundary.catalog.Hash,
+		SourceKind:    boundary.sourceKind,
+		ArchiveSHA256: boundary.archiveSHA256,
 	}
 	for _, family := range families {
 		sourceBytes, err := readVerifiedReleaseFile(boundary, family.ProvenancePath)
@@ -206,6 +209,8 @@ func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAss
 		CatalogSHA256:        boundary.catalog.Hash,
 		ReleaseJSONSHA256:    opts.ReleaseJSONSHA256,
 		ChecksumsSHA256:      opts.ChecksumsSHA256,
+		SourceKind:           boundary.sourceKind,
+		ArchiveSHA256:        boundary.archiveSHA256,
 		Package:              opts.Package,
 		ConstPrefix:          opts.ConstPrefix,
 		SpriteURL:            opts.SpriteURL,

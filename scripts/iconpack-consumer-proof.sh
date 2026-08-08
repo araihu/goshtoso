@@ -11,6 +11,11 @@ if [[ $archive != /* ]]; then
   archive=$(pwd)/$archive
 fi
 archive_sha256=$2
+expected_archive_sha256=5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5
+if [[ $archive_sha256 != "$expected_archive_sha256" ]]; then
+  echo "archive SHA-256 is not the published Arai Hu Assets v0.2.0 boundary" >&2
+  exit 1
+fi
 repo_root=$(git rev-parse --show-toplevel)
 proof_root=$(mktemp -d /tmp/goshtoso-iconpack-consumer-proof.XXXXXX)
 trap 'rm -rf "$proof_root"' EXIT

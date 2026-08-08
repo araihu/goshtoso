@@ -35,6 +35,8 @@ func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing
 	assertFileContains(t, filepath.Join(opts.OutputDir, "icons_gen.go"), `NameBrandDeveloperIconsTRPC Name`)
 	assertFileContains(t, filepath.Join(opts.OutputDir, "icons_gen.go"), `IconBrandDeveloperIconsTRPC icon.Symbol = "devicon-trpc"`)
 	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"canonicalName": "brand-developer-icons-tRPC"`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"sourceKind": "release-root"`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "provenance.json"), `"archiveSha256": ""`)
 
 	opts.Check = true
 	result, err = Generate(context.Background(), opts)
@@ -76,6 +78,8 @@ func TestGenerateFromVerifiedArchive(t *testing.T) {
 		t.Fatal(err)
 	}
 	assertFileContains(t, filepath.Join(opts.OutputDir, "sprite.svg"), `id="devicon-trpc"`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"sourceKind": "release-archive"`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"archiveSha256": "`+opts.ArchiveSHA256+`"`)
 }
 
 func TestGenerateRejectsUnsafeSpriteURL(t *testing.T) {
@@ -84,6 +88,7 @@ func TestGenerateRejectsUnsafeSpriteURL(t *testing.T) {
 		"/assets/icons/app.svg\n",
 		`..\icons\app.svg`,
 		"javascript:app.svg",
+		"http:/assets/icons/app.svg",
 		"//example.com/app.svg",
 		"/assets/icons/app.svg#symbol",
 	} {
@@ -99,6 +104,27 @@ func TestGenerateRejectsUnsafeSpriteURL(t *testing.T) {
 				t.Fatalf("Generate() error = %v, want sprite-url rejection", err)
 			}
 		})
+	}
+}
+
+func TestTrustedV020ReleaseBoundaryRejectsRepackedArchive(t *testing.T) {
+	opts := Options{
+		Release:           assetsV020Release,
+		CatalogSHA256:     assetsV020CatalogSHA256,
+		ReleaseJSONSHA256: assetsV020ReleaseJSONSHA256,
+		ChecksumsSHA256:   assetsV020ChecksumsSHA256,
+	}
+	if err := validateTrustedReleaseIdentity(opts); err != nil {
+		t.Fatalf("validateTrustedReleaseIdentity(root) = %v", err)
+	}
+	opts.ReleaseArchive = "assets-v0.2.0.tar.gz"
+	opts.ArchiveSHA256 = assetsV020ArchiveSHA256
+	if err := validateTrustedReleaseIdentity(opts); err != nil {
+		t.Fatalf("validateTrustedReleaseIdentity(archive) = %v", err)
+	}
+	opts.ArchiveSHA256 = strings.Repeat("0", 64)
+	if err := validateTrustedReleaseIdentity(opts); err == nil || !strings.Contains(err.Error(), "archive-sha256") {
+		t.Fatalf("validateTrustedReleaseIdentity(repacked) = %v, want outer archive rejection", err)
 	}
 }
 
@@ -487,7 +513,7 @@ func syntheticRelease(t *testing.T) Options {
 	sprite := []byte(`<svg xmlns="http://www.w3.org/2000/svg"><symbol id="devicon-trpc" viewBox="0 0 100 100"><path fill="#398CCB" d="M0 0h100v100H0z"/></symbol></svg>`)
 	catalog := fmt.Sprintf(`{
   "schemaVersion": 2,
-  "release": "v0.2.0",
+  "release": "v0.2.0-test",
   "identityRevision": 11,
   "assets": [
     {
@@ -529,7 +555,7 @@ func syntheticRelease(t *testing.T) Options {
 	}
 	sort.Strings(paths)
 	release := releaseDocument{
-		SchemaVersion: 1, Release: "v0.2.0", IdentityRevision: 11, RuntimeVersion: 1,
+		SchemaVersion: 1, Release: "v0.2.0-test", IdentityRevision: 11, RuntimeVersion: 1,
 		CatalogSHA256: hashBytes(files["catalog.json"]), ThemesSHA256: hashBytes(files["themes.json"]), CampaignsSHA256: hashBytes(files["campaigns.json"]),
 	}
 	releaseOrder := []string{"catalog.json", "themes.json", "campaigns.json"}
@@ -557,7 +583,7 @@ func syntheticRelease(t *testing.T) Options {
 	writeFixtureFile(t, root, "checksums.txt", checksumsBytes)
 	return Options{
 		ReleaseRoot:       root,
-		Release:           "v0.2.0",
+		Release:           "v0.2.0-test",
 		CatalogSHA256:     hashBytes(files["catalog.json"]),
 		ReleaseJSONSHA256: hashBytes(releaseBytes),
 		ChecksumsSHA256:   hashBytes(checksumsBytes),
