@@ -32,16 +32,14 @@ var files embed.FS
 //	http.Handle("/assets/", http.StripPrefix("/assets/", assets.Handler())) // WRONG: double-strip → 404
 func Handler() http.Handler {
 	fileServer := http.FileServer(http.FS(files))
-	return http.StripPrefix("/assets/", http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+	assetHandler := http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		if ref, ok := muambaHTTPFiles[request.URL.Path]; ok {
 			serveMuambaFile(writer, request, ref)
 			return
 		}
-		if strings.HasPrefix(request.URL.Path, "icons/") {
-			writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-		}
 		fileServer.ServeHTTP(writer, request)
-	}))
+	})
+	return http.StripPrefix("/assets/", WithCacheControl(assetHandler))
 }
 
 // StylesCSS returns the compiled Goshtoso Tailwind CSS.
