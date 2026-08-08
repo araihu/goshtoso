@@ -54,6 +54,17 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 		}
 	})
 
+	t.Run("consumer-local icon pack usage is documented", func(t *testing.T) {
+		page := openIconCatalogPage(t)
+		body, err := page.Locator("body").TextContent()
+		require.NoError(t, err)
+		assert.Contains(t, body, "Generate an attributed icon pack")
+		assert.Contains(t, body, "Render the generated package through Goshtoso Icon")
+		assert.Contains(t, body, "IconBrandDeveloperIconsTRPC")
+		assert.Contains(t, body, "components/icon")
+		assert.Contains(t, body, "/assets/icons/appicons/sprite.svg")
+	})
+
 	t.Run("grid uses one three and six columns at responsive breakpoints", func(t *testing.T) {
 		page := openIconCatalogPage(t)
 		grid := page.Locator("[data-testid='icon-catalog-grid']")

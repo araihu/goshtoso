@@ -29,6 +29,9 @@ func TestIconShowcaseRendersEveryGlyphInResponsiveGrid(t *testing.T) {
 	require.Contains(t, html, `grid-cols-1 sm:grid-cols-3 xl:grid-cols-6`)
 	require.Contains(t, html, "Paste into a")
 	require.Contains(t, html, "https://github.com/tailwindlabs/heroicons/blob/master/LICENSE")
+	require.Contains(t, html, "IconBrandDeveloperIconsTRPC")
+	require.Contains(t, html, "components/icon")
+	require.Contains(t, html, "/assets/icons/appicons/sprite.svg")
 }
 
 func TestIconShowcaseUsesCanonicalCatalogHeading(t *testing.T) {

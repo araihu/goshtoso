@@ -53,12 +53,59 @@ go run ./cmd/iconpack \
   -out ./internal/appicons \
   -package appicons \
   -const-prefix Icon \
-  -sprite-url /assets/icons/app.svg
+  -sprite-url /assets/icons/appicons/sprite.svg
 ```
 
 Use `-release-root /path/to/extracted-release` instead of `-release-archive`
 and `-archive-sha256` for a verified extracted root. The output parent must
 already exist.
+
+## Serve and render the generated package
+
+The output is a consumer-owned Go package. Its `Icon` helper returns the same
+`icon.Instance` used by Goshtoso's bundled Heroicons, so accessibility,
+`currentColor`, size classes, and SVG URL validation stay on the core component
+path. Serve the generated `sprite.svg` at the exact URL passed to
+`-sprite-url`, then use the generated typed symbols:
+
+```go
+import (
+    "github.com/araihu/goshtoso/components/icon"
+    "github.com/your/app/internal/appicons"
+)
+
+// Mount the generated directory with your application's router.
+// GET /assets/icons/appicons/sprite.svg -> ./internal/appicons/sprite.svg
+
+templ ProviderIcon() {
+    @appicons.Icon(appicons.Config{
+        Symbol:    appicons.IconBrandDeveloperIconsTRPC,
+        Size:      icon.SizeLG,
+        Label:     "tRPC",
+        RootClass: "text-primary",
+    })
+}
+```
+
+Generated names preserve exact catalog bytes separately from Go identifiers:
+`appicons.NameBrandDeveloperIconsTRPC` represents the literal canonical name
+`brand-developer-icons-tRPC`, while `appicons.IconBrandDeveloperIconsTRPC`
+binds the literal sprite symbol `devicon-trpc`. Use `Lookup` when a caller
+stores canonical names in configuration:
+
+```go
+func IconForName(name appicons.Name) icon.Instance {
+    glyph, ok := appicons.Lookup(name)
+    if !ok {
+        panic("icon is not in this generated pack")
+    }
+    return appicons.Icon(appicons.Config{Symbol: glyph.Symbol, Label: "tRPC"})
+}
+```
+
+For decorative output, set `Decorative: true` or leave `Label` blank. The
+generated helper delegates these fields to `components/icon`; it does not
+create a second rendering or accessibility contract.
 
 ## Selection manifest
 

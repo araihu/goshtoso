@@ -90,11 +90,23 @@ templ iconPackExtension() {
   -checksums-sha256 "$CHECKSUMS_SHA256" \
   -name brand-developer-icons-tRPC \
   -out ./internal/appicons -package appicons \
-  -const-prefix Icon -sprite-url /assets/icons/app.svg`,
+  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
+			})
+			@codeblock.CodeBlock(codeblock.Config{
+				Language: "go",
+				Label: "Render the generated package through Goshtoso Icon",
+				Code: `import "github.com/your/app/internal/appicons"
+
+templ ProviderIcon() {
+    @appicons.Icon(appicons.Config{
+        Symbol: appicons.IconBrandDeveloperIconsTRPC,
+        Label:  "tRPC",
+    })
+}`,
 			})
 		</div>
 		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			JSON selection manifests are canonical; YAML compatibility is accepted. See <code class="font-mono">docs/ICONPACK.md</code> to review output and failure-safety contracts.
+			The generated helper delegates to <code class="font-mono">components/icon</code>; JSON selection manifests are canonical and YAML compatibility is accepted. See <code class="font-mono">docs/ICONPACK.md</code> to review output, serving, and failure-safety contracts.
 		</p>
 	</section>
 }
