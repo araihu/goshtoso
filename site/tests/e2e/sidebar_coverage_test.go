@@ -5,6 +5,9 @@ package e2e
 import (
 	"testing"
 
+	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components/head"
+	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 )
@@ -111,7 +114,235 @@ func TestSidebarCoverageDemo(t *testing.T) {
 		}))
 	})
 
+	t.Run("mobile target preserves themes focus and desktop layout", func(t *testing.T) {
+		verifySidebarOverlayMobileTargetAcrossAcceptanceThemes(t)
+	})
+
 	require.Empty(t, jsErrors, "no JS console/page errors on sidebar demo: %v", jsErrors)
+}
+
+func verifySidebarOverlayMobileTargetAcrossAcceptanceThemes(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	var jsErrors []string
+	page.On("pageerror", func(err error) { jsErrors = append(jsErrors, err.Error()) })
+	page.On("console", func(message playwright.ConsoleMessage) {
+		if message.Type() == "error" {
+			jsErrors = append(jsErrors, message.Text())
+		}
+	})
+
+	_, err := page.Goto(baseURL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateLoad})
+	require.NoError(t, err)
+	html := renderInteractiveDocument(
+		t,
+		head.Dependencies(head.WithLocalRuntime()),
+		templ.Raw(`<main><div data-testid="desktop-sidebar" class="hidden w-72 lg:block">`+
+			renderComponentFragment(t, sidebar.Sidebar(sidebar.Config{LogoText: "Desktop navigation"}))+
+			`</div><div id="default-overlay">`+
+			renderComponentFragment(t, sidebar.Overlay(sidebar.OverlayConfig{
+				ID:           "acceptance-default",
+				RootClass:    "lg:hidden",
+				TriggerLabel: "Open navigation",
+				Sidebar: sidebar.Config{
+					LogoText: "Default overlay",
+					Items:    []sidebar.Item{{Label: "Default panel link", Href: "#default-panel"}},
+				},
+			}))+
+			`</div><div id="custom-overlay">`+
+			renderComponentFragment(t, sidebar.Overlay(sidebar.OverlayConfig{
+				ID:           "acceptance-custom",
+				RootClass:    "lg:hidden",
+				Trigger:      templ.Raw(`<svg data-testid="custom-sidebar-icon" viewBox="0 0 28 28" class="size-7" aria-hidden="true"><path d="M4 8h20M4 14h20M4 20h20" stroke="currentColor" stroke-width="2"/></svg>`),
+				TriggerLabel: "Open the complete application navigation for this workspace",
+				Sidebar: sidebar.Config{
+					LogoText: "Custom overlay",
+					Items:    []sidebar.Item{{Label: "Custom panel link", Href: "#custom-panel"}},
+				},
+			}))+
+			`</div></main>`),
+	)
+	require.NoError(t, page.SetContent(html, playwright.PageSetContentOptions{WaitUntil: playwright.WaitUntilStateLoad}))
+	require.NoError(t, waitForAlpine(page))
+	require.NoError(t, page.SetViewportSize(390, 844))
+
+	defaultTrigger := page.Locator("#default-overlay button[aria-label='Open navigation']")
+	customTrigger := page.Locator("#custom-overlay button[aria-controls='acceptance-custom-panel']")
+	require.NoError(t, defaultTrigger.WaitFor())
+	require.NoError(t, customTrigger.WaitFor())
+
+	for _, theme := range []string{"goshtoso", "minimal", "araihu"} {
+		for _, dark := range []bool{false, true} {
+			t.Run(theme+sidebarModeName(dark), func(t *testing.T) {
+				setSidebarThemeMode(t, page, theme, dark)
+				defaultBox, err := defaultTrigger.BoundingBox()
+				require.NoError(t, err)
+				require.NotNil(t, defaultBox)
+				require.GreaterOrEqual(t, defaultBox.Width, 44.0)
+				require.GreaterOrEqual(t, defaultBox.Height, 44.0)
+
+				customBox, err := customTrigger.BoundingBox()
+				require.NoError(t, err)
+				require.NotNil(t, customBox)
+				require.GreaterOrEqual(t, customBox.Width, 44.0)
+				require.GreaterOrEqual(t, customBox.Height, 44.0)
+				requireSidebarTriggerContainsContent(t, customTrigger)
+				t.Logf(
+					"theme=%s dark=%t viewport=390x844 default=%.0fx%.0f custom=%.0fx%.0f",
+					theme,
+					dark,
+					defaultBox.Width,
+					defaultBox.Height,
+					customBox.Width,
+					customBox.Height,
+				)
+			})
+		}
+	}
+
+	require.Equal(t,
+		"Open the complete application navigation for this workspace",
+		mustAttribute(t, customTrigger, "aria-label"),
+	)
+	require.Equal(t, 1, mustLocatorCount(t, customTrigger.Locator("[data-testid='custom-sidebar-icon']")))
+
+	_, err = page.Evaluate(`() => document.activeElement?.blur()`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Keyboard().Press("Tab"))
+	requireSidebarTriggerKeyboardFocus(t, defaultTrigger)
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	waitForSidebarExpanded(t, page, "#default-overlay", true)
+	waitForSidebarPanelVisible(t, page, "#acceptance-default-panel")
+	tabIntoSidebarPanel(t, page, "#acceptance-default-panel")
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	waitForSidebarExpanded(t, page, "#default-overlay", false)
+	require.NoError(t, page.Locator("#acceptance-default-panel").WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateHidden,
+	}))
+	focused, err := defaultTrigger.Evaluate("el => el === document.activeElement", nil)
+	require.NoError(t, err)
+	require.Equal(t, true, focused, "Escape should preserve focus on the trigger")
+	require.NoError(t, page.Keyboard().Press("Tab"))
+	requireSidebarTriggerKeyboardFocus(t, customTrigger)
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	waitForSidebarExpanded(t, page, "#custom-overlay", true)
+	waitForSidebarPanelVisible(t, page, "#acceptance-custom-panel")
+	tabIntoSidebarPanel(t, page, "#acceptance-custom-panel")
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	waitForSidebarExpanded(t, page, "#custom-overlay", false)
+	require.NoError(t, page.Locator("#acceptance-custom-panel").WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateHidden,
+	}))
+	focused, err = customTrigger.Evaluate("el => el === document.activeElement", nil)
+	require.NoError(t, err)
+	require.Equal(t, true, focused, "Escape should return focus to the custom trigger")
+
+	require.NoError(t, page.SetViewportSize(1280, 900))
+	hidden, err := defaultTrigger.IsHidden()
+	require.NoError(t, err)
+	require.True(t, hidden, "mobile overlay trigger should stay out of desktop layout")
+	desktop := page.Locator("[data-testid='desktop-sidebar']")
+	desktopBox, err := desktop.BoundingBox()
+	require.NoError(t, err)
+	require.NotNil(t, desktopBox)
+	require.InDelta(t, 288.0, desktopBox.Width, 0.5, "desktop w-72 sidebar width should remain unchanged")
+
+	require.Empty(t, jsErrors, "no JS console/page errors in sidebar target fixture: %v", jsErrors)
+}
+
+func sidebarModeName(dark bool) string {
+	if dark {
+		return "Dark"
+	}
+	return "Light"
+}
+
+func setSidebarThemeMode(t *testing.T, page playwright.Page, theme string, dark bool) {
+	t.Helper()
+	_, err := page.Evaluate(`([theme, dark]) => {
+		const root = document.documentElement;
+		root.setAttribute('data-theme', theme);
+		root.classList.toggle('dark', dark);
+	}`, []any{theme, dark})
+	require.NoError(t, err)
+}
+
+func requireSidebarTriggerContainsContent(t *testing.T, trigger playwright.Locator) {
+	t.Helper()
+	contained, err := trigger.Evaluate(`el =>
+		el.scrollWidth <= el.clientWidth && el.scrollHeight <= el.clientHeight &&
+		Array.from(el.children).every(child => {
+			const parent = el.getBoundingClientRect();
+			const box = child.getBoundingClientRect();
+			return box.left >= parent.left && box.right <= parent.right &&
+				box.top >= parent.top && box.bottom <= parent.bottom;
+		})`, nil)
+	require.NoError(t, err)
+	require.Equal(t, true, contained, "custom icon should stay inside trigger bounds")
+}
+
+func tabIntoSidebarPanel(t *testing.T, page playwright.Page, panel string) {
+	t.Helper()
+	for attempt := 0; attempt < 8; attempt++ {
+		focused, err := page.Evaluate(`panel => {
+			const node = document.querySelector(panel);
+			return !!node && node.contains(document.activeElement);
+		}`, panel)
+		require.NoError(t, err)
+		if focused == true {
+			return
+		}
+		require.NoError(t, page.Keyboard().Press("Tab"))
+	}
+	t.Fatalf("Tab did not move focus into open sidebar panel %s", panel)
+}
+
+func waitForSidebarPanelVisible(t *testing.T, page playwright.Page, panel string) {
+	t.Helper()
+	require.NoError(t, page.Locator(panel).WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+}
+
+func requireSidebarTriggerKeyboardFocus(t *testing.T, trigger playwright.Locator) {
+	t.Helper()
+	focus, err := trigger.Evaluate(`el => {
+		const style = getComputedStyle(el);
+		return {
+			active: el === document.activeElement,
+			outlineStyle: style.outlineStyle,
+			outlineWidth: parseFloat(style.outlineWidth),
+		};
+	}`, nil)
+	require.NoError(t, err)
+	values, ok := focus.(map[string]any)
+	require.True(t, ok, "unexpected focus result %T: %v", focus, focus)
+	require.Equal(t, true, values["active"])
+	require.NotEqual(t, "none", values["outlineStyle"])
+	outlineWidth := 0.0
+	switch value := values["outlineWidth"].(type) {
+	case float64:
+		outlineWidth = value
+	case int:
+		outlineWidth = float64(value)
+	default:
+		t.Fatalf("unexpected outline width %T: %v", value, value)
+	}
+	require.GreaterOrEqual(t, outlineWidth, 2.0)
+}
+
+func waitForSidebarExpanded(t *testing.T, page playwright.Page, scope string, expanded bool) {
+	t.Helper()
+	want := "false"
+	if expanded {
+		want = "true"
+	}
+	_, err := page.WaitForFunction(
+		`([scope, want]) => document.querySelector(scope + ' button')?.getAttribute('aria-expanded') === want`,
+		[]any{scope, want},
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
+	)
+	require.NoError(t, err)
 }
 
 func sidebarVisible(t *testing.T, page playwright.Page, scope string, text string) bool {

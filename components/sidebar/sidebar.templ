@@ -100,12 +100,13 @@ templ overlayTemplate(cfg OverlayConfig) {
 	{{ panelID := cfg.panelID() }}
 	<div
 		x-data={ fmt.Sprintf("{ %s: false }", state) }
-		x-on:keydown.escape.window={ fmt.Sprintf("%s = false", state) }
+		x-on:keydown.escape.window={ fmt.Sprintf("if (%s) { %s = false; $nextTick(() => $refs.trigger.focus()) }", state, state) }
 		class={ cfg.rootClasses() }
 	>
 		<button
 			type="button"
 			x-on:click={ fmt.Sprintf("%s = !%s", state, state) }
+			x-ref="trigger"
 			x-bind:aria-expanded={ fmt.Sprintf("%s.toString()", state) }
 			aria-controls={ panelID }
 			aria-label={ cfg.triggerLabelText() }

@@ -158,7 +158,7 @@ func (cfg OverlayConfig) rootClasses() string {
 
 // TriggerClasses returns classes for the overlay trigger button.
 func (cfg OverlayConfig) triggerClasses() string {
-	base := "inline-flex items-center justify-center rounded-radius p-2 text-on-surface transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
+	base := "inline-flex min-h-11 min-w-11 items-center justify-center rounded-radius p-2 text-on-surface transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
 	if cfg.TriggerClass != "" {
 		base += " " + cfg.TriggerClass
 	}

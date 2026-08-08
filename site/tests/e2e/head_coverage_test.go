@@ -241,6 +241,91 @@ func TestHeadAssetContractServed(t *testing.T) {
 		assert.Equalf(t, http.StatusOK, resp.StatusCode, "asset %s must be served", url)
 		require.NoError(t, resp.Body.Close())
 	}
+
+	assertStylesheetOnlyBrowserContract(t)
+}
+
+func assertStylesheetOnlyBrowserContract(t *testing.T) {
+	t.Helper()
+	dependencyHead := stylesheetOnlyHeadHTML(t)
+	require.NotContains(t, dependencyHead, "<script")
+
+	var stylesheetRequests atomic.Int32
+	assetHandler := assets.Handler()
+	mux := http.NewServeMux()
+	mux.HandleFunc("/assets/", func(writer http.ResponseWriter, request *http.Request) {
+		if request.URL.Path == assets.StylesURL {
+			stylesheetRequests.Add(1)
+		}
+		assetHandler.ServeHTTP(writer, request)
+	})
+	mux.HandleFunc("/", func(writer http.ResponseWriter, _ *http.Request) {
+		writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_, _ = fmt.Fprintf(writer, `<!doctype html><html><head>%s</head><body><div id="styled" class="flex">Styles only</div></body></html>`, dependencyHead)
+	})
+	server := httptest.NewServer(mux)
+	t.Cleanup(server.Close)
+
+	page := newPage(t, sharedBrowser)
+	var pageErrors []string
+	page.On("pageerror", func(err error) { pageErrors = append(pageErrors, err.Error()) })
+	_, err := page.Goto(server.URL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateNetworkidle})
+	require.NoError(t, err)
+
+	display, err := page.Locator("#styled").Evaluate("element => getComputedStyle(element).display", nil)
+	require.NoError(t, err)
+	assert.Equal(t, "flex", display)
+	scriptCount, err := page.Locator("script").Count()
+	require.NoError(t, err)
+	assert.Zero(t, scriptCount)
+	globals, err := page.Evaluate(`() => ({ alpine: typeof window.Alpine, htmx: typeof window.htmx, loader: typeof window.goshtosoDependencies })`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, map[string]any{"alpine": "undefined", "htmx": "undefined", "loader": "undefined"}, globals)
+	assert.Equal(t, int32(1), stylesheetRequests.Load())
+	assert.Empty(t, pageErrors)
+}
+
+func stylesheetOnlyHeadHTML(t *testing.T) string {
+	t.Helper()
+
+	directory := t.TempDir()
+	goMod := fmt.Sprintf(`module goshtoso-head-stylesheet-only-e2e
+
+go 1.26.5
+
+require github.com/araihu/goshtoso v0.0.0
+
+replace github.com/araihu/goshtoso => %s
+`, filepath.ToSlash(rootModuleDir(t)))
+	mainGo := `package main
+
+import (
+	"context"
+	"os"
+
+	"github.com/araihu/goshtoso/components/head"
+)
+
+func main() {
+	if err := head.Dependencies(
+		head.WithStylesheetOnly(),
+		head.WithLocalRuntime(),
+	).Render(context.Background(), os.Stdout); err != nil {
+		panic(err)
+	}
+}
+`
+	require.NoError(t, os.WriteFile(filepath.Join(directory, "go.mod"), []byte(goMod), 0o600))
+	require.NoError(t, os.WriteFile(filepath.Join(directory, "main.go"), []byte(mainGo), 0o600))
+
+	command := exec.CommandContext(t.Context(), "go", "run", "-mod=mod", ".")
+	command.Dir = directory
+	command.Env = append(os.Environ(), "GOWORK=off")
+	var stderr strings.Builder
+	command.Stderr = &stderr
+	output, err := command.Output()
+	require.NoErrorf(t, err, "render stylesheet-only Head fixture:\n%s", stderr.String())
+	return string(output)
 }
 
 // TestDependenciesPageNoConsoleErrors loads the dependencies demo page in a real
