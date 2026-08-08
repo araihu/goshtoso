@@ -106,6 +106,9 @@ Publication uses a sibling lock and same-parent staged directory. An absent
 destination is published with one directory rename. An identical owned output
 is idempotent. A changed, symlinked, non-owned, or unrelated destination is
 never replaced. Use `-check` in CI to verify an existing output byte-for-byte.
+On Darwin, Linux, and Windows the final rename uses the platform's atomic
+no-replace operation. FreeBSD, OpenBSD, and other unsupported targets fail
+closed rather than using a race-prone check-then-rename fallback.
 
 ## External consumer proof
 

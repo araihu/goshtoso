@@ -212,22 +212,27 @@ func TestGeneratedDeclarationNamespaceReservesFixedNames(t *testing.T) {
 func TestStageAndPublishRejectsConcurrentDestination(t *testing.T) {
 	for _, kind := range []string{"file", "directory", "symlink"} {
 		t.Run(kind, func(t *testing.T) {
-			parent := t.TempDir()
-			output := filepath.Join(parent, "pack")
-			location := outputLocation{output: output, parent: parent, base: "pack"}
-			target := filepath.Join(parent, "attacker-target")
-			files := map[string][]byte{"manifest.json": []byte("generated\n")}
-
-			err := stageAndPublishWithHook(location, files, func() error {
-				return createConcurrentDestination(kind, output, target)
-			})
-			if err == nil {
-				t.Fatal("stageAndPublishWithHook() succeeded after concurrent destination creation")
-			}
-			assertConcurrentDestinationPreserved(t, kind, output, target)
-			assertNoStagedDirectory(t, parent)
+			testConcurrentDestinationKind(t, kind)
 		})
 	}
+}
+
+func testConcurrentDestinationKind(t *testing.T, kind string) {
+	t.Helper()
+	parent := t.TempDir()
+	output := filepath.Join(parent, "pack")
+	location := outputLocation{output: output, parent: parent, base: "pack"}
+	target := filepath.Join(parent, "attacker-target")
+	files := map[string][]byte{"manifest.json": []byte("generated\n")}
+
+	err := stageAndPublishWithHook(location, files, func() error {
+		return createConcurrentDestination(kind, output, target)
+	})
+	if err == nil {
+		t.Fatal("stageAndPublishWithHook() succeeded after concurrent destination creation")
+	}
+	assertConcurrentDestinationPreserved(t, kind, output, target)
+	assertNoStagedDirectory(t, parent)
 }
 
 func createConcurrentDestination(kind, output, target string) error {

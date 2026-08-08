@@ -668,10 +668,10 @@ func extractArchive(archivePath, destination string) error {
 }
 
 func extractOpenedArchive(archive *os.File, archivePath string, size int64, destination string) error {
-	switch {
-	case strings.HasSuffix(archivePath, ".tar.gz"), strings.HasSuffix(archivePath, ".tgz"):
+	switch archiveKind(archivePath) {
+	case "tar.gz":
 		return extractTarGzip(archive, destination)
-	case strings.HasSuffix(archivePath, ".zip"):
+	case "zip":
 		return extractZip(archive, size, destination)
 	default:
 		return fmt.Errorf("unsupported release archive type: want .tar.gz, .tgz, or .zip")

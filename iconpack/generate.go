@@ -9,10 +9,11 @@ import (
 	"fmt"
 	"go/format"
 	"go/token"
-	"net/url"
 	"sort"
 	"strings"
 	"unicode"
+
+	"github.com/araihu/goshtoso/internal/iconurl"
 )
 
 type outputFile struct {
@@ -129,34 +130,8 @@ func validateGenerationOptions(opts Options) error {
 	if !validGoIdentifier(opts.ConstPrefix) || opts.ConstPrefix == "_" {
 		return fmt.Errorf("const-prefix %q is not a valid Go identifier", opts.ConstPrefix)
 	}
-	if err := validateSpriteURL(opts.SpriteURL); err != nil {
+	if err := iconurl.ValidateSpriteURL(opts.SpriteURL); err != nil {
 		return fmt.Errorf("sprite-url: %w", err)
-	}
-	return nil
-}
-
-func validateSpriteURL(raw string) error {
-	if raw == "" {
-		return fmt.Errorf("SpriteURL is required in external mode")
-	}
-	if raw != strings.TrimSpace(raw) || strings.ContainsAny(raw, "\\\\\r\n") {
-		return fmt.Errorf("invalid SpriteURL %q", raw)
-	}
-	parsed, err := url.Parse(raw)
-	if err != nil {
-		return fmt.Errorf("invalid SpriteURL %q: %w", raw, err)
-	}
-	if parsed.Fragment != "" || parsed.Path == "" {
-		return fmt.Errorf("SpriteURL must identify a sprite document")
-	}
-	if parsed.Scheme == "" {
-		if parsed.Host != "" {
-			return fmt.Errorf("protocol-relative SpriteURL is not allowed")
-		}
-		return nil
-	}
-	if (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" || parsed.User != nil {
-		return fmt.Errorf("SpriteURL must use relative, http, or https URL syntax")
 	}
 	return nil
 }

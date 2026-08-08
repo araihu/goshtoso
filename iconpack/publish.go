@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"time"
 
@@ -125,7 +124,7 @@ func stageAndPublishWithHook(location outputLocation, files map[string][]byte, b
 			return fmt.Errorf("prepare final output publication: %w", err)
 		}
 	}
-	if err := publishDirectoryNoReplace(staging, location.output); err != nil {
+	if err := renameNoReplace(staging, location.output); err != nil {
 		return fmt.Errorf("atomically publish output directory without replacement: %w", err)
 	}
 	committed = true
@@ -156,36 +155,6 @@ func writeStagedFile(staging, relative string, contents []byte) error {
 		return fmt.Errorf("close staged output %q: %w", relative, err)
 	}
 	return nil
-}
-
-func syncDirectory(directory string) error {
-	if runtime.GOOS == "windows" {
-		// Windows cannot open a directory through os.Open with the write access
-		// FlushFileBuffers requires. Every staged file was already synced.
-		return nil
-	}
-	stagingDir, err := os.Open(directory)
-	if err != nil {
-		return fmt.Errorf("open staged output directory: %w", err)
-	}
-	syncErr := stagingDir.Sync()
-	closeErr := stagingDir.Close()
-	if syncErr != nil {
-		return fmt.Errorf("sync staged output directory: %w", syncErr)
-	}
-	if closeErr != nil {
-		return fmt.Errorf("close staged output directory: %w", closeErr)
-	}
-	return nil
-}
-
-func publishDirectoryNoReplace(from, to string) error {
-	if _, err := os.Lstat(to); err == nil {
-		return os.ErrExist
-	} else if !os.IsNotExist(err) {
-		return err
-	}
-	return os.Rename(from, to)
 }
 
 func compareOwnedOutput(output string, expected map[string][]byte) (bool, bool, error) {
