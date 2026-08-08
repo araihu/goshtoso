@@ -27,10 +27,20 @@ func TestIconpackReleaseDocumentationContract(t *testing.T) {
 		"`acquisition/`",
 		"ui/heroicons",
 		"brand/developer-icons",
+		"internal/appicons/v1",
+		"internal/appicons/v2",
+		"example.com/application/internal/appicons/v2",
+		"/assets/icons/app-v2.svg",
+		".v2.goshtoso-iconpack.lock",
+		"**/.*.goshtoso-iconpack.lock",
+		"git revert",
 	} {
 		if !strings.Contains(guide, required) {
 			t.Errorf("ICONPACK.md missing %q", required)
 		}
+	}
+	if strings.Contains(guide, "documented reviewed replacement procedure") {
+		t.Error("ICONPACK.md still refers to an update procedure that does not exist")
 	}
 	for _, required := range []string{
 		"## v0.2.0 iconpack release gate",

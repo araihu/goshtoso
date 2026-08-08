@@ -51,6 +51,50 @@ func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing
 	assertFileContains(t, filepath.Join(opts.OutputDir, "unrelated.txt"), "owner data")
 }
 
+func TestGenerateOwnsPersistentSiblingCoordinationFile(t *testing.T) {
+	parent := t.TempDir()
+	opts := syntheticRelease(t)
+	opts.OutputDir = filepath.Join(parent, "v2")
+	opts.Names = []string{"brand-developer-icons-tRPC"}
+	opts.Package = "appicons"
+	opts.ConstPrefix = "Icon"
+	opts.SpriteURL = "/assets/icons/app-v2.svg"
+
+	if _, err := Generate(context.Background(), opts); err != nil {
+		t.Fatal(err)
+	}
+	lockPath := filepath.Join(parent, ".v2.goshtoso-iconpack.lock")
+	lockInfo, err := os.Lstat(lockPath)
+	if err != nil {
+		t.Fatalf("persistent sibling lock: %v", err)
+	}
+	if !lockInfo.Mode().IsRegular() || lockInfo.Mode().Perm() != 0o600 {
+		t.Fatalf("lock mode = %v, want regular 0600", lockInfo.Mode())
+	}
+
+	opts.Check = true
+	if _, err := Generate(context.Background(), opts); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Lstat(lockPath); err != nil {
+		t.Fatalf("lock did not persist after check: %v", err)
+	}
+
+	checkOnly := opts
+	checkOnly.OutputDir = filepath.Join(parent, "missing")
+	if _, err := Generate(context.Background(), checkOnly); err == nil || !strings.Contains(err.Error(), "stale or absent") {
+		t.Fatalf("missing check error = %v, want stale-or-absent refusal", err)
+	}
+	missingLock := filepath.Join(parent, ".missing.goshtoso-iconpack.lock")
+	missingInfo, err := os.Lstat(missingLock)
+	if err != nil {
+		t.Fatalf("missing-output check lock: %v", err)
+	}
+	if !missingInfo.Mode().IsRegular() || missingInfo.Mode().Perm() != 0o600 {
+		t.Fatalf("missing-output lock mode = %v, want regular 0600", missingInfo.Mode())
+	}
+}
+
 func TestGenerateRejectsGeneratedIdentifierCollisionBeforePublication(t *testing.T) {
 	opts := syntheticRelease(t)
 	opts.OutputDir = filepath.Join(t.TempDir(), "pack")

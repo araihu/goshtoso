@@ -117,6 +117,22 @@ destination is published with one directory rename. An identical owned output
 is idempotent. A changed, symlinked, non-owned, or unrelated destination is
 never replaced. Use `-check` in CI to verify an existing output byte-for-byte.
 
+For an output `parent/base`, generation and `-check` both use the persistent
+coordination file `parent/.base.goshtoso-iconpack.lock`. It is a regular file
+created with mode `0600`. The lock is consumer-owned state, but it is not part
+of the generated package and is not listed in `manifest.json`. Keep it out of
+version control with this consumer repository rule:
+
+```gitignore
+**/.*.goshtoso-iconpack.lock
+```
+
+The file may remain indefinitely. Do not remove it while any generator or
+checker can target that output. Same-parent `.base.tmp-*` directories are
+transient staging state. The generator removes them after any returned
+publication failure; after an interrupted process, inspect and remove one only
+when no generator or checker can still target the output.
+
 ## Serve and render the pack
 
 The `-sprite-url` value is the public URL of the generated `sprite.svg`. If the
@@ -139,19 +155,72 @@ the identities of every other generated output; it does not hash itself.
 
 ## Update a pack
 
-Changing the selected names, Assets release, or output options changes the
-consumer-owned identity. Because publication refuses a different-byte existing
-directory, generate into a new versioned directory first, run `-check` and the
-consumer tests, then switch the application URL deliberately. Replace an
-existing directory only through the documented reviewed replacement procedure;
-never delete or overwrite a directory to make a failed generation appear
-successful.
+Changing selected names, the Assets release, or any output option creates a new
+consumer-owned identity. The supported update path never replaces an existing
+directory. Give each pack an absent versioned Go package directory and a
+versioned sprite URL. For example, keep the deployed pack in
+`internal/appicons/v1` at `/assets/icons/app-v1.svg`, then generate its successor
+in `internal/appicons/v2` at `/assets/icons/app-v2.svg`.
+
+Create `icons-v2.json` with the new exact canonical-name selection, make sure
+`internal/appicons` already exists, and run:
+
+```bash
+generator=(
+  go run github.com/araihu/goshtoso/cmd/iconpack@v0.2.0
+  -release-archive /path/to/araihu-assets-v0.2.0.tar.gz
+  -archive-sha256 5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5
+  -release v0.2.0
+  -catalog-sha256 a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6
+  -release-json-sha256 77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260
+  -checksums-sha256 334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5
+  -manifest ./icons-v2.json
+  -out ./internal/appicons/v2
+  -package appicons
+  -const-prefix Icon
+  -sprite-url /assets/icons/app-v2.svg
+)
+"${generator[@]}"
+"${generator[@]}" -check
+```
+
+The two invocations intentionally leave
+`internal/appicons/.v2.goshtoso-iconpack.lock`. Update the application in one
+reviewed commit so the generated Go import and the file served at the generated
+sprite URL move together:
+
+```go
+import appicons "example.com/application/internal/appicons/v2"
+
+const generatedSpritePath = "internal/appicons/v2/sprite.svg"
+const generatedSpriteURL = "/assets/icons/app-v2.svg"
+```
+
+Change the application's static-file route from the v1 path and URL to these v2
+values. Then build, render a selected v2 icon, run the consumer tests, and run
+the exact `-check` command above before deployment. Commit the new generated
+directory, the Go import change, and the sprite route change together. The
+parent of that cutover commit is the exact rollback point; keep v1 unchanged
+through rollout so `git revert <cutover-commit>` restores both its import and
+sprite route. A revert does not remove the ignored v2 lock. After rollback is
+settled and no generator or checker can target v2, remove that inactive lock
+with `rm -- internal/appicons/.v2.goshtoso-iconpack.lock`.
+
+After the migration is accepted and rollback is no longer required, retire v1
+in a later reviewed change with `git rm -r internal/appicons/v1`. Only after no
+generator or checker can target v1 may its ignored coordination file be removed
+with `rm -- internal/appicons/.v1.goshtoso-iconpack.lock`. Keep the v2 lock while
+v2 is active. At no point does this lifecycle overwrite an output directory or
+touch unrelated files in its parent.
 
 ## External consumer proof
 
-The proof script extracts the verified release archive into a private temporary
-boundary, generates a separate Go module, builds it, renders the generated
-component, and checks the literal `devicon-trpc` reference:
+The proof script extracts the verified release archive into private temporary
+boundaries and generates a separate Go module. It builds and renders v1, creates
+a different v2 selection through the update commands above, runs `-check`, then
+builds and renders the migrated consumer. It also verifies the import and sprite
+URL cutover, the retained rollback directory, both declared lock files, and an
+unrelated consumer-owned byte:
 
 ```bash
 ./scripts/iconpack-consumer-proof.sh \
