@@ -14,6 +14,7 @@ const (
 	OGImageMIMEType = "image/png"
 	OGImageWidth    = "1200"
 	OGImageHeight   = "630"
+	OGImageAltText  = "Goshtoso wordmark beside a sunglasses-wearing Go gopher in Rio, with Button, Input, Alert, and Card UI previews."
 )
 
 // PageMeta describes crawler and social-preview metadata for one public page.
@@ -75,7 +76,7 @@ func (m PageMeta) OGImageURL() string {
 }
 
 func (m PageMeta) OGImageAlt() string {
-	return m.TitleText() + " — Goshtoso Go UI component library preview"
+	return OGImageAltText
 }
 
 func (m PageMeta) SchemaType() string {
