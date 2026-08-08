@@ -28,7 +28,7 @@ const (
 	assetsV020Release           = "v0.2.0"
 	assetsV020ArchiveSHA256     = "5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5"
 	assetsV020CatalogSHA256     = "a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6"
-	assetsV020ReleaseJSONSHA256 = "77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f226"
+	assetsV020ReleaseJSONSHA256 = "77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260"
 	assetsV020ChecksumsSHA256   = "334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5"
 )
 
