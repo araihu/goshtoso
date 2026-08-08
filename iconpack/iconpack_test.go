@@ -3,6 +3,7 @@ package iconpack
 import (
 	"archive/tar"
 	"archive/zip"
+	"bytes"
 	"compress/gzip"
 	"context"
 	"fmt"
@@ -37,6 +38,24 @@ func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing
 	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"canonicalName": "brand-developer-icons-tRPC"`)
 	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"sourceKind": "release-root"`)
 	assertFileContains(t, filepath.Join(opts.OutputDir, "provenance.json"), `"archiveSha256": ""`)
+	manifestBefore, err := os.Stat(filepath.Join(opts.OutputDir, "manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	idempotent, err := Generate(context.Background(), opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if idempotent.Published {
+		t.Fatal("identical output was replaced instead of reused")
+	}
+	manifestAfter, err := os.Stat(filepath.Join(opts.OutputDir, "manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !os.SameFile(manifestBefore, manifestAfter) {
+		t.Fatal("identical publication replaced existing output")
+	}
 
 	opts.Check = true
 	result, err = Generate(context.Background(), opts)
@@ -107,7 +126,7 @@ func TestGenerateRejectsUnsafeSpriteURL(t *testing.T) {
 	}
 }
 
-func TestTrustedV020ReleaseBoundaryRejectsRepackedArchive(t *testing.T) {
+func TestTrustedV020ReleaseBoundaryAcceptsOfficialArchiveKinds(t *testing.T) {
 	opts := Options{
 		Release:           assetsV020Release,
 		CatalogSHA256:     assetsV020CatalogSHA256,
@@ -117,14 +136,44 @@ func TestTrustedV020ReleaseBoundaryRejectsRepackedArchive(t *testing.T) {
 	if err := validateTrustedReleaseIdentity(opts); err != nil {
 		t.Fatalf("validateTrustedReleaseIdentity(root) = %v", err)
 	}
-	opts.ReleaseArchive = "assets-v0.2.0.tar.gz"
-	opts.ArchiveSHA256 = assetsV020ArchiveSHA256
-	if err := validateTrustedReleaseIdentity(opts); err != nil {
-		t.Fatalf("validateTrustedReleaseIdentity(archive) = %v", err)
+	for _, archive := range []struct {
+		name, digest string
+	}{
+		{"assets-v0.2.0.tar.gz", assetsV020TarGzipSHA256},
+		{"assets-v0.2.0.tgz", assetsV020TarGzipSHA256},
+		{"assets-v0.2.0.zip", assetsV020ZipSHA256},
+	} {
+		t.Run(archive.name, func(t *testing.T) {
+			candidate := opts
+			candidate.ReleaseArchive = archive.name
+			candidate.ArchiveSHA256 = archive.digest
+			if err := validateTrustedReleaseIdentity(candidate); err != nil {
+				t.Fatalf("validateTrustedReleaseIdentity(archive) = %v", err)
+			}
+		})
 	}
-	opts.ArchiveSHA256 = strings.Repeat("0", 64)
-	if err := validateTrustedReleaseIdentity(opts); err == nil || !strings.Contains(err.Error(), "archive-sha256") {
-		t.Fatalf("validateTrustedReleaseIdentity(repacked) = %v, want outer archive rejection", err)
+}
+
+func TestTrustedV020ReleaseBoundaryRejectsWrongKindDigestAndRepack(t *testing.T) {
+	base := Options{
+		Release: assetsV020Release, CatalogSHA256: assetsV020CatalogSHA256,
+		ReleaseJSONSHA256: assetsV020ReleaseJSONSHA256, ChecksumsSHA256: assetsV020ChecksumsSHA256,
+	}
+	for _, test := range []struct {
+		name, archive, digest string
+	}{
+		{"tar with zip digest", "assets-v0.2.0.tar.gz", assetsV020ZipSHA256},
+		{"zip with tar digest", "assets-v0.2.0.zip", assetsV020TarGzipSHA256},
+		{"repacked", "assets-v0.2.0.tar.gz", strings.Repeat("0", 64)},
+		{"unsupported", "assets-v0.2.0.7z", strings.Repeat("0", 64)},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			opts := base
+			opts.ReleaseArchive, opts.ArchiveSHA256 = test.archive, test.digest
+			if err := validateTrustedReleaseIdentity(opts); err == nil {
+				t.Fatal("validateTrustedReleaseIdentity() accepted wrong archive boundary")
+			}
+		})
 	}
 }
 
@@ -170,56 +219,85 @@ func TestStageAndPublishRejectsConcurrentDestination(t *testing.T) {
 			files := map[string][]byte{"manifest.json": []byte("generated\n")}
 
 			err := stageAndPublishWithHook(location, files, func() error {
-				switch kind {
-				case "file":
-					return os.WriteFile(output, []byte("attacker\n"), 0o644)
-				case "directory":
-					return os.Mkdir(output, 0o755)
-				case "symlink":
-					if err := os.WriteFile(target, []byte("attacker target\n"), 0o644); err != nil {
-						return err
-					}
-					return os.Symlink(target, output)
-				default:
-					return fmt.Errorf("unknown destination kind %q", kind)
-				}
+				return createConcurrentDestination(kind, output, target)
 			})
 			if err == nil {
 				t.Fatal("stageAndPublishWithHook() succeeded after concurrent destination creation")
 			}
+			assertConcurrentDestinationPreserved(t, kind, output, target)
+			assertNoStagedDirectory(t, parent)
+		})
+	}
+}
 
-			info, statErr := os.Lstat(output)
-			if statErr != nil {
-				t.Fatalf("concurrent destination missing after rejected publish: %v", statErr)
-			}
-			switch kind {
-			case "file":
-				contents, readErr := os.ReadFile(output)
-				if readErr != nil || string(contents) != "attacker\n" {
-					t.Fatalf("concurrent file changed: contents=%q error=%v", contents, readErr)
-				}
-			case "directory":
-				if !info.IsDir() {
-					t.Fatalf("concurrent directory replaced by mode %v", info.Mode())
-				}
-			case "symlink":
-				if info.Mode()&os.ModeSymlink == 0 {
-					t.Fatalf("concurrent symbolic link replaced by mode %v", info.Mode())
-				}
-				link, readErr := os.Readlink(output)
-				if readErr != nil || link != target {
-					t.Fatalf("concurrent symbolic link changed: target=%q error=%v", link, readErr)
-				}
-			}
+func createConcurrentDestination(kind, output, target string) error {
+	switch kind {
+	case "file":
+		return os.WriteFile(output, []byte("attacker\n"), 0o644)
+	case "directory":
+		return os.Mkdir(output, 0o755)
+	case "symlink":
+		if err := os.WriteFile(target, []byte("attacker target\n"), 0o644); err != nil {
+			return err
+		}
+		return os.Symlink(target, output)
+	default:
+		return fmt.Errorf("unknown destination kind %q", kind)
+	}
+}
 
-			entries, readErr := os.ReadDir(parent)
-			if readErr != nil {
-				t.Fatal(readErr)
-			}
-			for _, entry := range entries {
-				if strings.HasPrefix(entry.Name(), ".pack.tmp-") {
-					t.Fatalf("staged directory leaked after rejected publish: %s", entry.Name())
-				}
+func assertConcurrentDestinationPreserved(t *testing.T, kind, output, target string) {
+	t.Helper()
+	info, err := os.Lstat(output)
+	if err != nil {
+		t.Fatalf("concurrent destination missing after rejected publish: %v", err)
+	}
+	switch kind {
+	case "file":
+		contents, readErr := os.ReadFile(output)
+		if readErr != nil || string(contents) != "attacker\n" {
+			t.Fatalf("concurrent file changed: contents=%q error=%v", contents, readErr)
+		}
+	case "directory":
+		if !info.IsDir() {
+			t.Fatalf("concurrent directory replaced by mode %v", info.Mode())
+		}
+	case "symlink":
+		link, readErr := os.Readlink(output)
+		if info.Mode()&os.ModeSymlink == 0 || readErr != nil || link != target {
+			t.Fatalf("concurrent symbolic link changed: target=%q mode=%v error=%v", link, info.Mode(), readErr)
+		}
+	}
+}
+
+func assertNoStagedDirectory(t *testing.T, parent string) {
+	t.Helper()
+	entries, err := os.ReadDir(parent)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), ".pack.tmp-") {
+			t.Fatalf("staged directory leaked after rejected publish: %s", entry.Name())
+		}
+	}
+}
+
+func TestArchiveSnapshotRejectsOversizedAndGrowingSources(t *testing.T) {
+	for _, test := range []struct {
+		name         string
+		contents     []byte
+		declaredSize int64
+		want         string
+	}{
+		{"oversized", nil, maxArchiveSnapshotBytes + 1, "snapshot limit"},
+		{"growing", []byte("grew"), 3, "changed size while snapshotting"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			var snapshot bytes.Buffer
+			_, _, err := copyArchiveSnapshot(bytes.NewReader(test.contents), &snapshot, test.declaredSize)
+			if err == nil || !strings.Contains(err.Error(), test.want) {
+				t.Fatalf("copyArchiveSnapshot() error = %v, want %q", err, test.want)
 			}
 		})
 	}

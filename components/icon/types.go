@@ -60,7 +60,7 @@ func (cfg Config) validate() error {
 
 	switch cfg.Mode {
 	case ModeExternal:
-		return ValidateSpriteURL(cfg.SpriteURL)
+		return validateSpriteURL(cfg.SpriteURL)
 	case ModeInline:
 		return nil
 	default:
@@ -89,10 +89,7 @@ func validSymbol(symbol Symbol) bool {
 	return true
 }
 
-// ValidateSpriteURL validates the URL syntax accepted by external sprite
-// references. It is shared by iconpack generation and icon rendering so a
-// generated component cannot accept a URL that the runtime rejects.
-func ValidateSpriteURL(raw string) error {
+func validateSpriteURL(raw string) error {
 	if raw == "" {
 		return fmt.Errorf("icon: SpriteURL is required in external mode")
 	}

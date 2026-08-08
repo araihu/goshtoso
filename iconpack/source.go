@@ -21,12 +21,14 @@ import (
 )
 
 const (
-	maxArchiveFiles = 10_000
-	maxArchiveBytes = int64(1 << 30)
-	maxMemberBytes  = int64(64 << 20)
+	maxArchiveFiles         = 10_000
+	maxArchiveBytes         = int64(1 << 30)
+	maxMemberBytes          = int64(64 << 20)
+	maxArchiveSnapshotBytes = int64(64 << 20)
 
 	assetsV020Release           = "v0.2.0"
-	assetsV020ArchiveSHA256     = "5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5"
+	assetsV020TarGzipSHA256     = "5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5"
+	assetsV020ZipSHA256         = "881094d3d161b79904fcfad320c26d947c9a1e526ee0b69ce8a2d04c3ff4b1b0"
 	assetsV020CatalogSHA256     = "a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6"
 	assetsV020ReleaseJSONSHA256 = "77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260"
 	assetsV020ChecksumsSHA256   = "334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5"
@@ -141,13 +143,42 @@ func validateTrustedReleaseIdentity(opts Options) error {
 		{"checksums-sha256", opts.ChecksumsSHA256, assetsV020ChecksumsSHA256},
 	} {
 		if expected.got != expected.want {
-			return fmt.Errorf("v0.2.0 %s does not match the published Assets release boundary", expected.name)
+			return fmt.Errorf("v0.2.0 %s does not match the frozen Assets candidate boundary", expected.name)
 		}
 	}
-	if opts.ReleaseArchive != "" && opts.ArchiveSHA256 != assetsV020ArchiveSHA256 {
-		return fmt.Errorf("v0.2.0 archive-sha256 does not match the published Assets release boundary")
+	if opts.ReleaseArchive != "" {
+		expected, ok := assetsV020ArchiveDigest(opts.ReleaseArchive)
+		if !ok {
+			return fmt.Errorf("v0.2.0 archive must use .tar.gz, .tgz, or .zip kind")
+		}
+		if opts.ArchiveSHA256 != expected {
+			return fmt.Errorf("v0.2.0 archive-sha256 does not match the frozen Assets candidate %s boundary", archiveKind(opts.ReleaseArchive))
+		}
 	}
 	return nil
+}
+
+func assetsV020ArchiveDigest(filename string) (string, bool) {
+	switch archiveKind(filename) {
+	case "tar.gz":
+		return assetsV020TarGzipSHA256, true
+	case "zip":
+		return assetsV020ZipSHA256, true
+	default:
+		return "", false
+	}
+}
+
+func archiveKind(filename string) string {
+	lower := strings.ToLower(filename)
+	switch {
+	case strings.HasSuffix(lower, ".tar.gz"), strings.HasSuffix(lower, ".tgz"):
+		return "tar.gz"
+	case strings.HasSuffix(lower, ".zip"):
+		return "zip"
+	default:
+		return "unsupported"
+	}
 }
 
 func (boundary *releaseBoundary) verify(opts Options) error {
@@ -537,6 +568,10 @@ func withVerifiedReleaseArchive(filename, expectedDigest string, afterVerified f
 			_ = source.Close()
 		}
 	}()
+	sourceInfo, err := source.Stat()
+	if err != nil {
+		return fmt.Errorf("inspect release archive before snapshot: %w", err)
+	}
 	snapshot, err := os.CreateTemp("", "goshtoso-iconpack-archive-snapshot-*")
 	if err != nil {
 		return fmt.Errorf("create private archive snapshot: %w", err)
@@ -546,17 +581,15 @@ func withVerifiedReleaseArchive(filename, expectedDigest string, afterVerified f
 		_ = snapshot.Close()
 		_ = os.Remove(snapshotName)
 	}()
-	hash := sha256.New()
-	size, err := io.Copy(io.MultiWriter(hash, snapshot), source)
+	digest, size, err := copyArchiveSnapshot(source, snapshot, sourceInfo.Size())
 	if err != nil {
-		return fmt.Errorf("copy release archive into private snapshot: %w", err)
+		return err
 	}
 	closeErr := source.Close()
 	sourceClosed = true
 	if closeErr != nil {
 		return fmt.Errorf("close release archive: %w", closeErr)
 	}
-	digest := hex.EncodeToString(hash.Sum(nil))
 	if digest != expectedDigest {
 		return fmt.Errorf("release archive SHA-256 mismatch: got %s, want %s", digest, expectedDigest)
 	}
@@ -569,6 +602,25 @@ func withVerifiedReleaseArchive(filename, expectedDigest string, afterVerified f
 		}
 	}
 	return consume(snapshot, size)
+}
+
+func copyArchiveSnapshot(source io.Reader, snapshot io.Writer, declaredSize int64) (string, int64, error) {
+	if declaredSize < 0 || declaredSize > maxArchiveSnapshotBytes {
+		return "", 0, fmt.Errorf("release archive exceeds %d-byte snapshot limit", maxArchiveSnapshotBytes)
+	}
+	hash := sha256.New()
+	limited := &io.LimitedReader{R: source, N: maxArchiveSnapshotBytes + 1}
+	size, err := io.Copy(io.MultiWriter(hash, snapshot), limited)
+	if err != nil {
+		return "", 0, fmt.Errorf("copy release archive into private snapshot: %w", err)
+	}
+	if size > maxArchiveSnapshotBytes {
+		return "", 0, fmt.Errorf("release archive exceeds %d-byte snapshot limit", maxArchiveSnapshotBytes)
+	}
+	if size != declaredSize {
+		return "", 0, fmt.Errorf("release archive changed size while snapshotting: got %d, expected %d", size, declaredSize)
+	}
+	return hex.EncodeToString(hash.Sum(nil)), size, nil
 }
 
 func safeRelativePath(relative string) error {
