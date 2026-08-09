@@ -9,6 +9,7 @@ import (
 	"github.com/araihu/goshtoso/components/radio"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/site/internal/demoicons/bootstrapicons"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -30,6 +31,7 @@ templ iconDemoContent() {
 
 		@iconUsageBasics()
 		@iconPackExtension()
+		@externalIconPackPreview()
 		@iconCatalogGrid()
 		@iconPickerModal()
 	</div>
@@ -69,13 +71,36 @@ templ iconUsageBasics() {
 	</section>
 }
 
+templ externalIconPackPreview() {
+	<section data-component-preview data-testid="bootstrap-iconpack-preview" class="mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40" aria-labelledby="bootstrap-iconpack-title">
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+			<div>
+				<p class="text-sm font-medium text-primary dark:text-primary-dark">Non-catalog source proof</p>
+				<h2 id="bootstrap-iconpack-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Bootstrap Icons, generated locally</h2>
+				<p class="mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">This site also owns a tiny generated Bootstrap Icons package. It uses the same <code class="font-mono">components/icon</code> contract, but does not depend on the Arai Hu Assets catalog.</p>
+			</div>
+			<a href="https://icons.getbootstrap.com/" target="_blank" rel="noreferrer" class="text-sm font-medium text-primary underline underline-offset-4 dark:text-primary-dark">Bootstrap Icons</a>
+		</div>
+		<div class="mt-5 flex flex-wrap items-center gap-5" data-testid="bootstrap-iconpack-icons">
+			<div data-testid="bootstrap-icon-labelled" class="flex items-center gap-2 text-primary dark:text-primary-dark">
+				@bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsAlarm, Label: "Alarm"})
+				<span class="text-sm">Labelled</span>
+			</div>
+			<div data-testid="bootstrap-icon-decorative" class="flex items-center gap-2 text-secondary dark:text-secondary-dark">
+				@bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsBootstrap, Decorative: true})
+				<span class="text-sm">Decorative</span>
+			</div>
+		</div>
+	</section>
+}
+
 templ iconPackExtension() {
 	<section class="mb-10" aria-labelledby="iconpack-title">
 		<div class="mb-4 max-w-3xl">
 			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Consumer-local extension</p>
 			<h2 id="iconpack-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Generate an attributed icon pack</h2>
 			<p class="mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				Select full Heroicons and Developer Icons assets by exact Arai Hu Assets canonical name. <code class="font-mono">iconpack</code> verifies a release root or archive, then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
+				Select Arai Hu Assets icons by exact canonical name, or bring another pack with a hashed source manifest. <code class="font-mono">iconpack</code> verifies the source boundary, then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
 			</p>
 		</div>
 		<div data-component-code>
@@ -106,7 +131,7 @@ templ ProviderIcon() {
 			})
 		</div>
 		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			The generated helper delegates to <code class="font-mono">components/icon</code>; JSON selection manifests are canonical and YAML compatibility is accepted. See <code class="font-mono">docs/ICONPACK.md</code> to review output, serving, and failure-safety contracts.
+			The generated helper delegates to <code class="font-mono">components/icon</code>; JSON selection and source manifests are canonical, with YAML compatibility accepted. See <code class="font-mono">docs/ICONPACK.md</code> to review Arai Hu Assets and arbitrary-pack boundaries.
 		</p>
 	</section>
 }

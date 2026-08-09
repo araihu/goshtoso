@@ -135,6 +135,11 @@ func (s *Server) setupAssetRoutes() {
 	assetsDir := filepath.Join(s.projectRoot, "assets")
 	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
 	s.mux.Handle("/assets/", libraryassets.WithCacheControl(assetsHandler))
+	bootstrapSprite := filepath.Join(s.projectRoot, "site", "internal", "demoicons", "bootstrapicons", "sprite.svg")
+	s.mux.HandleFunc("GET /assets/icons/bootstrapicons/sprite.svg", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/svg+xml")
+		http.ServeFile(w, r, bootstrapSprite)
+	})
 	s.mux.Handle("/site-assets/", libraryassets.WithCacheControl(siteassets.Handler()))
 	s.mux.Handle("/componentdocshell/assets/", libraryassets.WithCacheControl(shellassets.Handler()))
 	s.mux.Handle("GET "+chartassets.Prefix, withImmutableCache(chartassets.Handler()))

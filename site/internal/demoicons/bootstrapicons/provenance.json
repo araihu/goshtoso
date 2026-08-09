@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "tool": "goshtoso-iconpack",
+  "release": "v1.11.3",
+  "catalogSha256": "8301abe07c29764270abd9404b09acf9e7b303e57215460b76413302d08c18e0",
+  "sourceKind": "source-root",
+  "archiveSha256": "",
+  "sources": [
+    {
+      "namespace": "custom",
+      "product": "Bootstrap Icons",
+      "spritePath": "",
+      "spriteSha256": "",
+      "manifestPath": "source-manifest.json",
+      "manifestSha256": "8301abe07c29764270abd9404b09acf9e7b303e57215460b76413302d08c18e0",
+      "provenancePath": "",
+      "provenanceSha256": "",
+      "licensePath": "LICENSE",
+      "licenseSha256": "0fb3e11bd57e896c5a512afd64864d28a37de45d19835016c87ca1ad19ead969"
+    }
+  ],
+  "assets": [
+    {
+      "canonicalName": "bootstrap-icons-alarm",
+      "source": "https://github.com/twbs/icons/tree/v1.11.3:icons/alarm.svg",
+      "license": "MIT",
+      "path": "icons/alarm.svg",
+      "sha256": "10a4a02a0aecef851aaa9b99f36472c87cbadef7100c973cd0e90775d094f11b"
+    },
+    {
+      "canonicalName": "bootstrap-icons-bootstrap",
+      "source": "https://github.com/twbs/icons/tree/v1.11.3:icons/bootstrap.svg",
+      "license": "MIT",
+      "path": "icons/bootstrap.svg",
+      "sha256": "3a1383fba77279419a6605935aa66e7cff9fa114d8d9a2ad76107f047547b4a2"
+    }
+  ]
+}

@@ -8,6 +8,9 @@ import (
 )
 
 func buildSprite(boundary releaseBoundary, selected []selectedAsset, families []sourceFamily) ([]byte, error) {
+	if boundary.generic != nil && boundary.generic.manifest.SpritePath == "" {
+		return buildStandaloneSprite(boundary, selected)
+	}
 	wantedByFamily := map[string]map[string]string{}
 	for _, asset := range selected {
 		key := asset.family.Namespace + "/" + asset.family.Product
@@ -39,6 +42,26 @@ func buildSprite(boundary releaseBoundary, selected []selectedAsset, families []
 			return nil, fmt.Errorf("exact sprite symbol %q for %q was not found", asset.SpriteSymbol, asset.CanonicalName)
 		}
 		output.Write(raw)
+		output.WriteByte('\n')
+	}
+	output.WriteString("</svg>\n")
+	return output.Bytes(), nil
+}
+
+func buildStandaloneSprite(boundary releaseBoundary, selected []selectedAsset) ([]byte, error) {
+	var output bytes.Buffer
+	output.WriteString(`<svg xmlns="http://www.w3.org/2000/svg">`)
+	output.WriteByte('\n')
+	for _, asset := range selected {
+		raw, err := readVerifiedReleaseFile(boundary, asset.Path)
+		if err != nil {
+			return nil, fmt.Errorf("read source icon %q: %w", asset.CanonicalName, err)
+		}
+		symbol, err := standaloneSVGSymbol(raw, asset.Path, asset.SpriteSymbol, asset.Dimensions.ViewBox)
+		if err != nil {
+			return nil, err
+		}
+		output.Write(symbol)
 		output.WriteByte('\n')
 	}
 	output.WriteString("</svg>\n")

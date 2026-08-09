@@ -14,6 +14,7 @@ type sourceFamily struct {
 	ProvenancePath string
 	LicensePath    string
 	LicenseOutput  string
+	Generic        bool
 }
 
 var allowedFamilies = map[string]sourceFamily{
@@ -55,8 +56,13 @@ func selectAssets(boundary releaseBoundary, names []string, prefix string) ([]se
 		}
 		familyKey := asset.Namespace + "/" + asset.Product
 		family, allowed := allowedFamilies[familyKey]
+		if boundary.generic != nil {
+			familyKey = "generic/" + boundary.generic.manifest.Name
+			family = boundary.generic.family
+			allowed = true
+		}
 		if !allowed {
-			return nil, nil, fmt.Errorf("canonical name %q resolves to disallowed namespace/product %s", name, familyKey)
+			return nil, nil, fmt.Errorf("canonical name %q resolves to unsupported namespace/product %s", name, familyKey)
 		}
 		if asset.Format != "svg" || asset.SpriteSymbol == "" {
 			return nil, nil, fmt.Errorf("canonical name %q is not an SVG sprite asset", name)

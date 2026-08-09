@@ -48,6 +48,14 @@ type releaseBoundary struct {
 	release       releaseDocument
 	checksums     map[string]string
 	files         map[string][]byte
+	generic       *genericPack
+}
+
+func openSourceBoundary(opts Options) (releaseBoundary, error) {
+	if opts.SourceManifest != "" {
+		return openGenericPack(opts)
+	}
+	return openRelease(opts)
 }
 
 type releaseDocument struct {
