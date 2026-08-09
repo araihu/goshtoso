@@ -79,10 +79,13 @@ sources:
 	if !result.Published || result.SelectedCount != 2 {
 		t.Fatalf("Generate() result = %+v", result)
 	}
-	for _, filename := range []string{".iconpack.lock.yaml", ".iconpack.engine.yaml", "generated/appicons/sprite.svg", "generated/appicons/PROVENANCE/.iconpack.yaml"} {
+	for _, filename := range []string{".iconpack.lock.yaml", "generated/appicons/sprite.svg", "generated/appicons/PROVENANCE/.iconpack.yaml"} {
 		if _, err := os.Stat(filepath.Join(root, filename)); err != nil {
 			t.Fatalf("expected %s: %v", filename, err)
 		}
+	}
+	if _, err := os.Stat(filepath.Join(root, ".iconpack.engine.yaml")); !os.IsNotExist(err) {
+		t.Fatalf("generated adapter declaration was persisted: %v", err)
 	}
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `id="heroicons-icons-16-solid-academic-cap"`)
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `id="custom-file-custom"`)

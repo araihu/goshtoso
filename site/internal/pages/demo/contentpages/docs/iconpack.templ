@@ -91,7 +91,7 @@ sources:
 	  -out ./internal/appicons -package appicons \
 	  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
 			})
-			<p class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The generated <code class="font-mono">.iconpack.lock.yaml</code> is the TOFU boundary. Remove <code class="font-mono">-trust</code> after the first run. If <code class="font-mono">paths</code> is omitted, every SVG in the tree is locked and available; names use <code class="font-mono">packName-path</code>, such as <code class="font-mono">heroicons-16-solid-academic-cap</code>. Git trees without <code class="font-mono">packName</code> use the repository name; other sources use <code class="font-mono">id-full-normalized-path</code>. The same file supports multiple sources.</p>
+			<p class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The generated <code class="font-mono">.iconpack.lock.yaml</code> is the TOFU boundary. Remove <code class="font-mono">-trust</code> after the first run. The Muamba adapter declaration is built in memory, so no <code class="font-mono">.iconpack.engine.yaml</code> file is left in the consumer project. If <code class="font-mono">paths</code> is omitted, every SVG in the tree is locked and available; names use <code class="font-mono">packName-path</code>, such as <code class="font-mono">heroicons-16-solid-academic-cap</code>. Git trees without <code class="font-mono">packName</code> use the repository name; other sources use <code class="font-mono">id-full-normalized-path</code>. The same file supports multiple sources.</p>
 		</section>
 
 		<section id="generic-source" class="space-y-5" aria-labelledby="generic-source-title">

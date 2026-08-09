@@ -9,12 +9,10 @@ contract.
 
 The general contract uses Muamba as a Go library; consumers do not install a
 Muamba executable and the command never searches for or changes `muamba.yaml`,
-`.muamba.yaml`, or `.muamba.lock.yaml`. It writes only the explicit
-`.iconpack.engine.yaml` adapter declaration, `.iconpack.lock.yaml`, and the
-consumer-owned output. Development currently follows the latest upstream
-Muamba `v0.0.4` boundary, which is newer than the latest public Muamba release;
-the release prerequisite must be published before this dependency is released
-to consumers.
+`.muamba.yaml`, or `.muamba.lock.yaml`. The generated Muamba adapter
+declaration is kept in memory. Only the explicit `.iconpack.lock.yaml` and the
+consumer-owned output are durable. The Goshtoso integration uses Muamba
+`v0.0.5` or newer; the adapter never creates a `.iconpack.engine.yaml` file.
 
 For Arai Hû Assets, the input is an extracted release root or release archive.
 A Goshtoso checkout, GitHub source archive, `internal/acquisition/vendor` tree,

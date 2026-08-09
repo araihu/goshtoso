@@ -120,15 +120,16 @@ func prepareMuambaInput(opts Options) (muambaInput, error) {
 }
 
 func openMuambaEngine(ctx context.Context, input muambaInput, opts Options) (*muambasource.Engine, error) {
-	enginePath := filepath.Join(input.configDir, ".iconpack.engine.yaml")
-	if err := os.WriteFile(enginePath, input.engineBytes, 0o644); err != nil {
-		return nil, fmt.Errorf("write generated iconpack engine declaration: %w", err)
-	}
+	// Muamba receives the generated declaration in memory. This logical path
+	// gives its materialized files and mutation lock a stable source namespace;
+	// no adapter declaration is persisted beside the consumer's config.
+	enginePath := filepath.Join(input.configDir, ".iconpack-engine")
 	engine, err := muambasource.New(muambasource.Options{
-		ManifestPath: enginePath,
-		LockPath:     input.lockPath,
-		CacheDir:     filepath.Join(input.configDir, ".iconpack-cache"),
-		AllowHTTP:    opts.AllowHTTP,
+		ManifestPath:  enginePath,
+		ManifestBytes: input.engineBytes,
+		LockPath:      input.lockPath,
+		CacheDir:      filepath.Join(input.configDir, ".iconpack-cache"),
+		AllowHTTP:     opts.AllowHTTP,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("open iconpack Muamba engine: %w", err)
