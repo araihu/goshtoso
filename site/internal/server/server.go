@@ -108,6 +108,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
 	s.mux.HandleFunc("/docs/application-patterns", s.handleApplicationPatternsPage)
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
+	s.mux.HandleFunc("/docs/iconpack", s.handleIconpackPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.mux.HandleFunc("/modules/charts", s.handleChartsModulePage)
 	s.mux.HandleFunc("/modules/app-shells", s.handleAppShellsModulePage)
@@ -145,13 +146,14 @@ func (s *Server) setupAssetRoutes() {
 		"favicon.ico", "favicon.svg", "favicon-96x96.png", "apple-touch-icon.png",
 		"site.webmanifest", "web-app-manifest-192x192.png", "web-app-manifest-512x512.png",
 	} {
+		routeName := name
 		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.HasSuffix(r.URL.Path, ".webmanifest") {
+			if strings.HasSuffix(routeName, ".webmanifest") {
 				w.Header().Set("Content-Type", "application/manifest+json")
 			}
-			http.ServeFile(w, r, filepath.Join(assetsDir, r.URL.Path[1:]))
+			http.ServeFile(w, r, filepath.Join(assetsDir, routeName))
 		})
-		s.mux.Handle("/"+name, libraryassets.WithCacheControl(handler))
+		s.mux.Handle("/"+routeName, libraryassets.WithCacheControl(handler))
 	}
 }
 
@@ -315,6 +317,10 @@ func (s *Server) handleApplicationPatternsPage(w http.ResponseWriter, r *http.Re
 
 func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/component-model")
+}
+
+func (s *Server) handleIconpackPage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "docs/iconpack")
 }
 
 func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {

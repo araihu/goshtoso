@@ -10,23 +10,21 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"mime"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 
-	goshtosoiconpack "github.com/araihu/goshtoso/iconpack"
+	"github.com/araihu/goshtoso/iconpack"
 	"github.com/mxschmitt/playwright-go"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-)
-
-const (
-	iconpackCanonicalName = "brand-developer-icons-tRPC"
-	iconpackSpriteSymbol  = "devicon-trpc"
 )
 
 func TestIconpackGeneratedConsumerBrowserProof(t *testing.T) {
@@ -34,308 +32,80 @@ func TestIconpackGeneratedConsumerBrowserProof(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	repositoryRoot, err := filepath.Abs("../../..")
-	require.NoError(t, err)
-	consumerRoot := t.TempDir()
-	options := synthesizeIconpackRelease(t)
-	options.Names = []string{iconpackCanonicalName}
-	options.OutputDir = filepath.Join(consumerRoot, "appicons")
-	options.Package = "appicons"
-	options.ConstPrefix = "Icon"
-	options.SpriteURL = "/assets/icons/app.svg"
-
-	result, err := goshtosoiconpack.Generate(context.Background(), options)
-	require.NoError(t, err)
-	require.True(t, result.Published)
-	require.Equal(t, 1, result.SelectedCount)
-	require.Equal(t, options.Release, result.Release)
-
-	writeIconpackConsumerModule(t, consumerRoot, repositoryRoot)
-	consumerURL := startIconpackConsumer(t, consumerRoot)
-
+	consumerURL := startIconpackConsumer(t)
 	page := newPage(t, sharedBrowser)
-	response, err := page.Goto(consumerURL, playwright.PageGotoOptions{
+	failures := watchPageFailures(page)
+	t.Cleanup(func() {
+		waitForPageSettled(t, page)
+		failures.RequireEmpty(t)
+	})
+
+	_, err := page.Goto(consumerURL+"/", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
-	require.NotNil(t, response)
-	require.Equal(t, 200, response.Status())
-	assertIconpackMediaType(t, response, "text/html")
 
-	identity := page.Locator("[data-testid='iconpack-identity']")
-	require.NoError(t, identity.WaitFor(playwright.LocatorWaitForOptions{
-		State: playwright.WaitForSelectorStateAttached,
-	}))
-	canonicalName, err := identity.GetAttribute("data-canonical-name")
-	require.NoError(t, err)
-	require.Equal(t, iconpackCanonicalName, canonicalName)
-	spriteSymbol, err := identity.GetAttribute("data-sprite-symbol")
-	require.NoError(t, err)
-	require.Equal(t, iconpackSpriteSymbol, spriteSymbol)
+	root := page.Locator("[data-testid='generated-iconpack']")
+	require.NoError(t, root.WaitFor())
+	assert.Equal(t, "brand-developer-icons-tRPC", mustAttribute(t, root, "data-canonical-name"))
+	assert.Equal(t, "devicon-trpc", mustAttribute(t, root, "data-symbol"))
 
-	labelled := page.Locator("[data-testid='iconpack-labelled'] svg")
-	require.NoError(t, labelled.WaitFor())
-	require.Equal(t, "img", iconpackAttribute(t, labelled, "role"))
-	require.Equal(t, "tRPC", iconpackAttribute(t, labelled, "aria-label"))
-	require.Empty(t, iconpackAttribute(t, labelled, "aria-hidden"))
-	assertIconpackExternalUse(t, labelled)
+	labelled := root.Locator("svg").Nth(0)
+	assertConsumerSVGAttributes(t, labelled, "img", "tRPC", "")
+	assert.Equal(t, "/assets/icons/appicons/sprite.svg#devicon-trpc", mustAttribute(t, labelled.Locator("use"), "href"))
+	assertConsumerSVGGeometry(t, labelled)
 
-	decorative := page.Locator("[data-testid='iconpack-decorative'] svg")
-	require.NoError(t, decorative.WaitFor())
-	require.Equal(t, "true", iconpackAttribute(t, decorative, "aria-hidden"))
-	require.Empty(t, iconpackAttribute(t, decorative, "role"))
-	require.Empty(t, iconpackAttribute(t, decorative, "aria-label"))
-	assertIconpackExternalUse(t, decorative)
+	decorative := root.Locator("svg").Nth(1)
+	assertConsumerSVGAttributes(t, decorative, "", "", "true")
+	assert.Equal(t, "/assets/icons/appicons/sprite.svg#hi-16-solid-check", mustAttribute(t, decorative.Locator("use"), "href"))
+	assertConsumerSVGGeometry(t, decorative)
 
-	_, err = page.WaitForFunction(`() => {
-		const use = document.querySelector("[data-testid='iconpack-labelled'] use");
-		if (!use) return false;
-		const bounds = use.getBBox();
-		return bounds.width > 0 && bounds.height > 0;
-	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
-	require.NoError(t, err, "generated external symbol must paint positive geometry")
-
-	spriteBytes, err := os.ReadFile(filepath.Join(options.OutputDir, "sprite.svg"))
+	response, err := http.Get(consumerURL + "/assets/icons/appicons/sprite.svg")
 	require.NoError(t, err)
-	spritePage := newPage(t, sharedBrowser)
-	spriteResponse, err := spritePage.Goto(consumerURL + options.SpriteURL)
+	defer response.Body.Close()
+	assert.Equal(t, http.StatusOK, response.StatusCode)
+	assert.Equal(t, "image/svg+xml", strings.Split(response.Header.Get("Content-Type"), ";")[0])
+	sprite, err := io.ReadAll(response.Body)
 	require.NoError(t, err)
-	require.NotNil(t, spriteResponse)
-	require.Equal(t, 200, spriteResponse.Status())
-	assertIconpackMediaType(t, spriteResponse, "image/svg+xml")
-	servedSprite, err := spriteResponse.Body()
-	require.NoError(t, err)
-	require.Equal(t, spriteBytes, servedSprite)
+	assert.Contains(t, string(sprite), `id="devicon-trpc"`)
+	assert.Contains(t, string(sprite), `id="hi-16-solid-check"`)
 }
 
-func assertIconpackExternalUse(t *testing.T, svg playwright.Locator) {
+func startIconpackConsumer(t *testing.T) string {
 	t.Helper()
-	href, err := svg.Locator("use").GetAttribute("href")
+	root := t.TempDir()
+	opts := writeE2EIconpackRelease(t, filepath.Join(root, "release"))
+	opts.OutputDir = filepath.Join(root, "consumer", "appicons")
+	opts.Package = "appicons"
+	opts.ConstPrefix = "Icon"
+	opts.SpriteURL = "/assets/icons/appicons/sprite.svg"
+	require.NoError(t, os.MkdirAll(filepath.Dir(opts.OutputDir), 0o755))
+	_, err := iconpack.Generate(context.Background(), opts)
 	require.NoError(t, err)
-	require.Equal(t, "/assets/icons/app.svg#"+iconpackSpriteSymbol, href)
-}
 
-func assertIconpackMediaType(t *testing.T, response playwright.Response, want string) {
-	t.Helper()
-	contentType, err := response.HeaderValue("content-type")
-	require.NoError(t, err)
-	mediaType, _, err := mime.ParseMediaType(contentType)
-	require.NoError(t, err)
-	require.Equal(t, want, mediaType)
-}
-
-func iconpackAttribute(t *testing.T, locator playwright.Locator, name string) string {
-	t.Helper()
-	value, err := locator.GetAttribute(name)
-	require.NoError(t, err)
-	return value
-}
-
-type iconpackReleaseDocument struct {
-	SchemaVersion    int                   `json:"schemaVersion"`
-	Release          string                `json:"release"`
-	IdentityRevision int                   `json:"identityRevision"`
-	RuntimeVersion   int                   `json:"runtimeVersion"`
-	CatalogSHA256    string                `json:"catalogSha256"`
-	ThemesSHA256     string                `json:"themesSha256"`
-	CampaignsSHA256  string                `json:"campaignsSha256"`
-	Files            []iconpackReleaseFile `json:"files"`
-}
-
-type iconpackReleaseFile struct {
-	Path   string `json:"path"`
-	SHA256 string `json:"sha256"`
-	Size   int64  `json:"size"`
-}
-
-func synthesizeIconpackRelease(t *testing.T) goshtosoiconpack.Options {
-	t.Helper()
-	releaseRoot := t.TempDir()
-	asset := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="#398CCB" d="M0 0h100v100H0z"/></svg>`)
-	sprite := []byte(`<svg xmlns="http://www.w3.org/2000/svg"><symbol id="devicon-trpc" viewBox="0 0 100 100"><path fill="#398CCB" d="M0 0h100v100H0z"/></symbol></svg>`)
-	release := "v0.2.0-test"
-	catalog := fmt.Sprintf(`{
-  "schemaVersion": 2,
-  "release": %q,
-  "identityRevision": 11,
-  "assets": [
-    {
-      "canonicalName": %q,
-      "namespace": "brand",
-      "path": "icons/brand/developer-icons/tRPC.svg",
-      "product": "developer-icons",
-      "artwork": "icon",
-      "appearance": "default",
-      "surface": "transparent",
-      "framing": "optical",
-      "format": "svg",
-      "dimensions": {"viewBox": "0 0 100 100"},
-      "spriteSymbol": %q,
-      "colorBehavior": "protected",
-      "license": "MIT",
-      "source": "developer-icons@example:icons/tRPC.svg",
-      "sha256": %q
-    }
-  ]
-}
-`, release, iconpackCanonicalName, iconpackSpriteSymbol, iconpackSHA256(asset))
-	files := map[string][]byte{
-		"NOTICE":                                      []byte("Synthetic consumer proof notice\n"),
-		"campaigns.json":                              []byte("{}\n"),
-		"catalog.json":                                []byte(catalog),
-		"icons/brand/developer-icons/tRPC.svg":        asset,
-		"icons/brand/developer-icons/sprite.svg":      sprite,
-		"icons/brand/developer-icons/provenance.json": []byte("{}\n"),
-		"licenses/developer-icons-MIT.txt":            []byte("Synthetic MIT license\n"),
-		"themes.json":                                 []byte("{}\n"),
-	}
-	for relative, contents := range files {
-		writeIconpackFixtureFile(t, releaseRoot, relative, contents)
-	}
-
-	relatives := make([]string, 0, len(files))
-	for relative := range files {
-		relatives = append(relatives, relative)
-	}
-	sort.Strings(relatives)
-	document := iconpackReleaseDocument{
-		SchemaVersion:    1,
-		Release:          release,
-		IdentityRevision: 11,
-		RuntimeVersion:   1,
-		CatalogSHA256:    iconpackSHA256(files["catalog.json"]),
-		ThemesSHA256:     iconpackSHA256(files["themes.json"]),
-		CampaignsSHA256:  iconpackSHA256(files["campaigns.json"]),
-	}
-	releaseOrder := []string{"catalog.json", "themes.json", "campaigns.json"}
-	for _, relative := range relatives {
-		if relative != "catalog.json" && relative != "themes.json" && relative != "campaigns.json" {
-			releaseOrder = append(releaseOrder, relative)
-		}
-	}
-	for _, relative := range releaseOrder {
-		document.Files = append(document.Files, iconpackReleaseFile{
-			Path: relative, SHA256: iconpackSHA256(files[relative]), Size: int64(len(files[relative])),
-		})
-	}
-	releaseJSON, err := json.MarshalIndent(document, "", "  ")
-	require.NoError(t, err)
-	releaseJSON = append(releaseJSON, '\n')
-	files["release.json"] = releaseJSON
-	writeIconpackFixtureFile(t, releaseRoot, "release.json", releaseJSON)
-
-	relatives = append(relatives, "release.json")
-	sort.Strings(relatives)
-	var checksums strings.Builder
-	for _, relative := range relatives {
-		fmt.Fprintf(&checksums, "%s  %s\n", iconpackSHA256(files[relative]), relative)
-	}
-	checksumsBytes := []byte(checksums.String())
-	writeIconpackFixtureFile(t, releaseRoot, "checksums.txt", checksumsBytes)
-
-	return goshtosoiconpack.Options{
-		ReleaseRoot:       releaseRoot,
-		Release:           release,
-		CatalogSHA256:     iconpackSHA256(files["catalog.json"]),
-		ReleaseJSONSHA256: iconpackSHA256(releaseJSON),
-		ChecksumsSHA256:   iconpackSHA256(checksumsBytes),
-	}
-}
-
-func iconpackSHA256(contents []byte) string {
-	digest := sha256.Sum256(contents)
-	return hex.EncodeToString(digest[:])
-}
-
-func writeIconpackFixtureFile(t *testing.T, root, relative string, contents []byte) {
-	t.Helper()
-	filename := filepath.Join(root, filepath.FromSlash(relative))
-	require.NoError(t, os.MkdirAll(filepath.Dir(filename), 0o755))
-	require.NoError(t, os.WriteFile(filename, contents, 0o644))
-}
-
-func writeIconpackConsumerModule(t *testing.T, root, repositoryRoot string) {
-	t.Helper()
-	goMod := fmt.Sprintf(`module example.com/goshtoso-iconpack-consumer
+	consumerDir := filepath.Dir(opts.OutputDir)
+	repoRoot := e2eRepositoryRoot(t)
+	goMod := fmt.Sprintf(`module example.com/goshtoso-iconpack-e2e
 
 go 1.26.5
 
 require github.com/araihu/goshtoso v0.0.0
 
 replace github.com/araihu/goshtoso => %s
-`, filepath.ToSlash(repositoryRoot))
-	require.NoError(t, os.WriteFile(filepath.Join(root, "go.mod"), []byte(goMod), 0o644))
-	require.NoError(t, os.WriteFile(filepath.Join(root, "main.go"), []byte(iconpackConsumerMain), 0o644))
-
-	runIconpackConsumerCommand(t, root, "go", "mod", "tidy")
-	runIconpackConsumerCommand(t, root, "go", "build", "-o", filepath.Join(root, "consumer"), ".")
-}
-
-func runIconpackConsumerCommand(t *testing.T, directory, name string, args ...string) {
-	t.Helper()
-	command := exec.Command(name, args...)
-	command.Dir = directory
-	command.Env = append(os.Environ(), "GOWORK=off")
-	output, err := command.CombinedOutput()
-	require.NoError(t, err, "%s %s\n%s", name, strings.Join(args, " "), output)
-}
-
-func startIconpackConsumer(t *testing.T, root string) string {
-	t.Helper()
-	command := exec.Command(filepath.Join(root, "consumer"))
-	command.Dir = root
-	stdout, err := command.StdoutPipe()
-	require.NoError(t, err)
-	var stderr bytes.Buffer
-	command.Stderr = &stderr
-	require.NoError(t, command.Start())
-	waited := make(chan error, 1)
-	go func() { waited <- command.Wait() }()
-	t.Cleanup(func() {
-		if command.Process != nil {
-			_ = command.Process.Kill()
-		}
-		select {
-		case <-waited:
-		case <-time.After(5 * time.Second):
-			t.Errorf("consumer process did not stop")
-		}
-	})
-
-	address := make(chan string, 1)
-	go func() {
-		scanner := bufio.NewScanner(stdout)
-		if scanner.Scan() {
-			address <- strings.TrimSpace(scanner.Text())
-			return
-		}
-		address <- ""
-	}()
-	select {
-	case url := <-address:
-		require.NotEmpty(t, url, "consumer exited before reporting address: %s", stderr.String())
-		require.True(t, strings.HasPrefix(url, "http://127.0.0.1:"), "consumer address = %q", url)
-		return url
-	case err := <-waited:
-		t.Fatalf("consumer exited before reporting address: %v\n%s", err, stderr.String())
-	case <-time.After(10 * time.Second):
-		t.Fatal("consumer did not report its 127.0.0.1:0 listener")
-	}
-	return ""
-}
-
-const iconpackConsumerMain = `package main
+`, repoRoot)
+	require.NoError(t, os.WriteFile(filepath.Join(consumerDir, "go.mod"), []byte(goMod), 0o644))
+	mainSource := `package main
 
 import (
 	"bytes"
 	"context"
 	"fmt"
-	"html"
 	"net"
 	"net/http"
 	"os"
 
-	"example.com/goshtoso-iconpack-consumer/appicons"
+	"github.com/araihu/goshtoso/components/icon"
+	"example.com/goshtoso-iconpack-e2e/appicons"
 )
 
 func main() {
@@ -345,47 +115,236 @@ func main() {
 	}
 	glyph, ok := appicons.Lookup(appicons.NameBrandDeveloperIconsTRPC)
 	if !ok || glyph.CanonicalName != "brand-developer-icons-tRPC" || glyph.Symbol != appicons.IconBrandDeveloperIconsTRPC {
-		panic("generated canonical-name lookup mismatch")
-	}
-	page, err := renderPage(glyph.CanonicalName, string(glyph.Symbol))
-	if err != nil {
-		panic(err)
+		panic("generated canonical lookup failed")
 	}
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /assets/icons/app.svg", func(writer http.ResponseWriter, _ *http.Request) {
-		writer.Header().Set("Content-Type", "image/svg+xml")
-		_, _ = writer.Write(sprite)
+	mux.HandleFunc("GET /assets/icons/appicons/sprite.svg", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "image/svg+xml")
+		_, _ = w.Write(sprite)
 	})
-	mux.HandleFunc("GET /", func(writer http.ResponseWriter, _ *http.Request) {
-		writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = writer.Write(page)
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, _ *http.Request) {
+		var page bytes.Buffer
+		page.WriteString("<main data-testid=\"generated-iconpack\" data-canonical-name=\"" + glyph.CanonicalName + "\" data-symbol=\"" + string(glyph.Symbol) + "\">")
+		_ = appicons.Icon(appicons.Config{Symbol: appicons.IconBrandDeveloperIconsTRPC, Label: "tRPC", Size: icon.SizeLG}).Render(contextBackground(), &page)
+		_ = appicons.Icon(appicons.Config{Symbol: appicons.IconUiHi16SolidCheck, Decorative: true}).Render(contextBackground(), &page)
+		page.WriteString("</main>")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_, _ = w.Write(page.Bytes())
 	})
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("http://" + listener.Addr().String())
+	fmt.Printf("READY http://%s\n", listener.Addr())
 	if err := http.Serve(listener, mux); err != nil {
 		panic(err)
 	}
 }
 
-func renderPage(canonicalName, spriteSymbol string) ([]byte, error) {
-	var output bytes.Buffer
-	fmt.Fprintf(&output, ` + "`" + `<!doctype html><html><head><style>svg{width:64px;height:64px}</style></head><body><main><div data-testid="iconpack-identity" data-canonical-name="%s" data-sprite-symbol="%s"></div><div data-testid="iconpack-labelled">` + "`" + `,
-		html.EscapeString(canonicalName), html.EscapeString(spriteSymbol))
-	labelled := appicons.Icon(appicons.Config{Symbol: appicons.IconBrandDeveloperIconsTRPC, Label: "tRPC"})
-	if err := labelled.Render(context.Background(), &output); err != nil {
-		return nil, err
-	}
-	output.WriteString(` + "`" + `</div><div data-testid="iconpack-decorative">` + "`" + `)
-	decorative := appicons.Icon(appicons.Config{
-		Symbol: appicons.IconBrandDeveloperIconsTRPC, Label: "must be hidden", Decorative: true,
-	})
-	if err := decorative.Render(context.Background(), &output); err != nil {
-		return nil, err
-	}
-	output.WriteString(` + "`" + `</div></main></body></html>` + "`" + `)
-	return output.Bytes(), nil
-}
+func contextBackground() context.Context { return context.Background() }
 `
+	require.NoError(t, os.WriteFile(filepath.Join(consumerDir, "main.go"), []byte(mainSource), 0o644))
+	tidy := exec.Command("go", "mod", "tidy")
+	tidy.Dir = consumerDir
+	tidy.Env = append(os.Environ(), "GOWORK=off", "GOFLAGS=-p=2")
+	output, err := tidy.CombinedOutput()
+	require.NoErrorf(t, err, "tidy generated consumer: %s", output)
+
+	cmd := exec.Command("go", "run", ".")
+	cmd.Dir = consumerDir
+	cmd.Env = append(os.Environ(), "GOWORK=off", "GOFLAGS=-p=2")
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	stdout, err := cmd.StdoutPipe()
+	require.NoError(t, err)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	require.NoError(t, cmd.Start())
+	t.Cleanup(func() { stopIconpackConsumer(cmd) })
+
+	ready := make(chan string, 1)
+	readDone := make(chan error, 1)
+	go func() {
+		scanner := bufio.NewScanner(stdout)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.HasPrefix(line, "READY ") {
+				ready <- strings.TrimSpace(strings.TrimPrefix(line, "READY "))
+				return
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			readDone <- err
+			return
+		}
+		readDone <- fmt.Errorf("consumer exited before READY: %s", strings.TrimSpace(stderr.String()))
+	}()
+
+	select {
+	case url := <-ready:
+		return url
+	case err := <-readDone:
+		t.Fatalf("start generated consumer: %v", err)
+	case <-time.After(30 * time.Second):
+		t.Fatalf("timed out waiting for generated consumer: %s", strings.TrimSpace(stderr.String()))
+	}
+	return ""
+}
+
+func stopIconpackConsumer(cmd *exec.Cmd) {
+	if cmd == nil || cmd.Process == nil || cmd.ProcessState != nil {
+		return
+	}
+	_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM)
+	done := make(chan struct{})
+	go func() {
+		_ = cmd.Wait()
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
+		<-done
+	}
+}
+
+func writeE2EIconpackRelease(t *testing.T, root string) iconpack.Options {
+	t.Helper()
+	devAsset := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="#398CCB" d="M0 0h100v100H0z"/></svg>`)
+	heroAsset := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="currentColor" d="M2 8l4 4 8-8"/></svg>`)
+	devSprite := []byte(`<svg xmlns="http://www.w3.org/2000/svg"><symbol id="devicon-trpc" viewBox="0 0 100 100"><path fill="#398CCB" d="M0 0h100v100H0z"/></symbol></svg>`)
+	heroSprite := []byte(`<svg xmlns="http://www.w3.org/2000/svg"><symbol id="hi-16-solid-check" viewBox="0 0 16 16"><path fill="currentColor" d="M2 8l4 4 8-8"/></symbol></svg>`)
+	files := map[string][]byte{
+		"NOTICE":                                      []byte("E2E iconpack notice\n"),
+		"campaigns.json":                              []byte("{}\n"),
+		"themes.json":                                 []byte("{}\n"),
+		"icons/brand/developer-icons/tRPC.svg":        devAsset,
+		"icons/brand/developer-icons/sprite.svg":      devSprite,
+		"icons/brand/developer-icons/provenance.json": []byte("{}\n"),
+		"licenses/developer-icons-MIT.txt":            []byte("Developer Icons MIT\n"),
+		"icons/ui/heroicons/16-solid-check.svg":       heroAsset,
+		"icons/ui/sprite.svg":                         heroSprite,
+		"icons/ui/heroicons/provenance.json":          []byte("{}\n"),
+		"licenses/heroicons-MIT.txt":                  []byte("Heroicons MIT\n"),
+	}
+	assets := []map[string]any{
+		{
+			"canonicalName": "brand-developer-icons-tRPC", "namespace": "brand", "path": "icons/brand/developer-icons/tRPC.svg", "product": "developer-icons", "artwork": "icon", "appearance": "default", "surface": "transparent", "framing": "optical", "format": "svg", "dimensions": map[string]any{"viewBox": "0 0 100 100"}, "spriteSymbol": "devicon-trpc", "colorBehavior": "protected", "license": "MIT", "source": "developer-icons@v7.0.1:icons/tRPC.svg", "sha256": digest(devAsset),
+		},
+		{
+			"canonicalName": "ui-hi-16-solid-check", "namespace": "ui", "path": "icons/ui/heroicons/16-solid-check.svg", "product": "heroicons", "artwork": "icon", "appearance": "default", "surface": "transparent", "framing": "optical", "format": "svg", "dimensions": map[string]any{"viewBox": "0 0 16 16"}, "spriteSymbol": "hi-16-solid-check", "colorBehavior": "monochrome", "license": "MIT", "source": "heroicons@v2.2.0:16/solid/check.svg", "sha256": digest(heroAsset),
+		},
+	}
+	catalog := map[string]any{"schemaVersion": 2, "release": "v0.2.0-e2e", "identityRevision": 11, "assets": assets}
+	catalogBytes := mustJSON(t, catalog)
+	files["catalog.json"] = catalogBytes
+
+	paths := sortedFilePaths(files)
+	releasePaths := []string{"catalog.json", "themes.json", "campaigns.json"}
+	for _, path := range paths {
+		if path != "catalog.json" && path != "themes.json" && path != "campaigns.json" {
+			releasePaths = append(releasePaths, path)
+		}
+	}
+	releaseFiles := make([]map[string]any, 0, len(releasePaths))
+	for _, path := range releasePaths {
+		releaseFiles = append(releaseFiles, map[string]any{"path": path, "sha256": digest(files[path]), "size": len(files[path])})
+	}
+	release := map[string]any{
+		"schemaVersion": 1, "release": "v0.2.0-e2e", "identityRevision": 11, "runtimeVersion": 1,
+		"catalogSha256": digest(catalogBytes), "themesSha256": digest(files["themes.json"]), "campaignsSha256": digest(files["campaigns.json"]), "files": releaseFiles,
+	}
+	releaseBytes := mustJSON(t, release)
+	files["release.json"] = releaseBytes
+	paths = sortedFilePaths(files)
+	var checksums strings.Builder
+	for _, path := range paths {
+		fmt.Fprintf(&checksums, "%s  %s\n", digest(files[path]), path)
+	}
+	checksumsBytes := []byte(checksums.String())
+	writeE2EFiles(t, root, files)
+	require.NoError(t, os.WriteFile(filepath.Join(root, "checksums.txt"), checksumsBytes, 0o644))
+	return iconpack.Options{
+		ReleaseRoot: root, Release: "v0.2.0-e2e", CatalogSHA256: digest(catalogBytes), ReleaseJSONSHA256: digest(releaseBytes), ChecksumsSHA256: digest(checksumsBytes),
+		Names: []string{"brand-developer-icons-tRPC", "ui-hi-16-solid-check"},
+	}
+}
+
+func writeE2EFiles(t *testing.T, root string, files map[string][]byte) {
+	t.Helper()
+	for path, contents := range files {
+		filename := filepath.Join(root, filepath.FromSlash(path))
+		require.NoError(t, os.MkdirAll(filepath.Dir(filename), 0o755))
+		require.NoError(t, os.WriteFile(filename, contents, 0o644))
+	}
+}
+
+func sortedFilePaths(files map[string][]byte) []string {
+	paths := make([]string, 0, len(files))
+	for path := range files {
+		paths = append(paths, path)
+	}
+	sort.Strings(paths)
+	return paths
+}
+
+func mustJSON(t *testing.T, value any) []byte {
+	t.Helper()
+	contents, err := json.MarshalIndent(value, "", "  ")
+	require.NoError(t, err)
+	return append(contents, '\n')
+}
+
+func assertConsumerSVGAttributes(t *testing.T, svg playwright.Locator, role, label, hidden string) {
+	t.Helper()
+	actualRole, err := svg.GetAttribute("role")
+	require.NoError(t, err)
+	assert.Equal(t, role, actualRole)
+	actualLabel, err := svg.GetAttribute("aria-label")
+	require.NoError(t, err)
+	assert.Equal(t, label, actualLabel)
+	actualHidden, err := svg.GetAttribute("aria-hidden")
+	require.NoError(t, err)
+	assert.Equal(t, hidden, actualHidden)
+}
+
+func assertConsumerSVGGeometry(t *testing.T, svg playwright.Locator) {
+	t.Helper()
+	value, err := svg.Evaluate(`el => {
+		const use = el.querySelector('use');
+		const glyph = use && use.getBBox();
+		return {
+			width: el.getBoundingClientRect().width,
+			height: el.getBoundingClientRect().height,
+			glyphWidth: glyph ? glyph.width : 0,
+			glyphHeight: glyph ? glyph.height : 0,
+		};
+	}`, nil)
+	require.NoError(t, err)
+	geometry, ok := value.(map[string]interface{})
+	require.True(t, ok, "expected SVG geometry object, got %T", value)
+	for _, key := range []string{"width", "height", "glyphWidth", "glyphHeight"} {
+		measurement := 0.0
+		switch value := geometry[key].(type) {
+		case float64:
+			measurement = value
+		case int:
+			measurement = float64(value)
+		default:
+			t.Fatalf("expected %s to be numeric, got %T", key, geometry[key])
+		}
+		assert.Greater(t, measurement, float64(0), key)
+	}
+}
+
+func digest(contents []byte) string {
+	sum := sha256.Sum256(contents)
+	return hex.EncodeToString(sum[:])
+}
+
+func e2eRepositoryRoot(t *testing.T) string {
+	t.Helper()
+	root, err := filepath.Abs("../../..")
+	require.NoError(t, err)
+	return root
+}

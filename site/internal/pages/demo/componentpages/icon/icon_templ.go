@@ -213,12 +213,27 @@ func iconPackExtension() templ.Component {
   -checksums-sha256 "$CHECKSUMS_SHA256" \
   -name brand-developer-icons-tRPC \
   -out ./internal/appicons -package appicons \
-  -const-prefix Icon -sprite-url /assets/icons/app.svg`,
+  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">JSON selection manifests are canonical; YAML compatibility is accepted. See <code class=\"font-mono\">docs/ICONPACK.md</code> to review output and failure-safety contracts.</p></section>")
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "Render the generated package through Goshtoso Icon",
+			Code: `import "github.com/your/app/internal/appicons"
+
+templ ProviderIcon() {
+    @appicons.Icon(appicons.Config{
+        Symbol: appicons.IconBrandDeveloperIconsTRPC,
+        Label:  "tRPC",
+    })
+}`,
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The generated helper delegates to <code class=\"font-mono\">components/icon</code>; JSON selection manifests are canonical and YAML compatibility is accepted. See <code class=\"font-mono\">docs/ICONPACK.md</code> to review output, serving, and failure-safety contracts.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -293,7 +308,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 122, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 134, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -306,7 +321,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 123, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 135, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -319,7 +334,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(glyph.Symbol))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 124, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 136, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -340,7 +355,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 131, Col: 139}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 143, Col: 139}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -353,7 +368,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 131, Col: 156}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 143, Col: 156}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -366,7 +381,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(glyph.Symbol)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 132, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 144, Col: 122}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {

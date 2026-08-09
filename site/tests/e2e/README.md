@@ -35,6 +35,16 @@ runs stay strict and do not retry.
 go test -tags=e2e,full ./tests/e2e/... -v -run TestAccordion_StaticContent
 ```
 
+### Prove a generated consumer-local icon pack
+
+This focused browser test creates a verified release fixture, generates a
+temporary consumer package, serves its sprite over HTTP, and renders the
+generated helper through Goshtoso's core `components/icon` path:
+
+```bash
+go test -tags=e2e,iconpack ./tests/e2e -v -run TestIconpackGeneratedConsumerBrowserProof
+```
+
 ### Run in short mode (skip E2E)
 ```bash
 go test -tags=e2e,full ./tests/e2e/... -short

@@ -130,6 +130,8 @@ func MetaForDefinition(definition demo.PageDefinition) demo.PageMeta {
 		title = "Application Patterns for Goshtoso"
 	case definition.Key == "docs/component-model":
 		title = "Goshtoso Component Model"
+	case definition.Key == "docs/iconpack":
+		title = "Icon Packs - Goshtoso UI Library for Go"
 	case definition.Key == "docs/theme":
 		title = "Themes - Goshtoso UI Library for Go"
 	case definition.Key == "modules/charts":

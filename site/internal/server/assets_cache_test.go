@@ -66,6 +66,32 @@ func TestPackageAndDemoHandlersReturnIdenticalCachePolicy(t *testing.T) {
 	}
 }
 
+func TestRootAssetAliasesUseFixedFileNames(t *testing.T) {
+	server := newAssetTestServer(t)
+
+	manifest := httptest.NewRecorder()
+	server.ServeHTTP(manifest, httptest.NewRequest(http.MethodGet, "/site.webmanifest", nil))
+	if manifest.Code != http.StatusOK {
+		t.Fatalf("GET /site.webmanifest status = %d, want 200", manifest.Code)
+	}
+	if got := manifest.Header().Get("Content-Type"); got != "application/manifest+json" {
+		t.Fatalf("GET /site.webmanifest Content-Type = %q, want application/manifest+json", got)
+	}
+
+	for _, path := range []string{
+		"/favicon.svg%2f..%2fsite.webmanifest",
+		"/favicon.svg/../../site.webmanifest",
+	} {
+		t.Run(path, func(t *testing.T) {
+			response := httptest.NewRecorder()
+			server.ServeHTTP(response, httptest.NewRequest(http.MethodGet, path, nil))
+			if response.Code == http.StatusOK {
+				t.Fatalf("GET %s unexpectedly served a root asset", path)
+			}
+		})
+	}
+}
+
 func newAssetTestServer(t *testing.T) *Server {
 	t.Helper()
 	server := &Server{
