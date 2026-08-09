@@ -26,11 +26,12 @@ const (
 
 // RuntimeAsset describes one stylesheet or script in Goshtoso's default head
 // dependency contract.
-// PrimaryURL is used by the CDN-first loader; LocalURL is
-// the same-version embedded URL served by Handler. Integrity is SHA-384 SRI for
-// dependencies whose primary and local bytes are required to match; one value
-// applies to both URLs. A top-level Loader LocalURL is inventory, not an
-// automatic fallback for the loader tag.
+// PrimaryURL is used by the CDN-first loader and is not necessarily embedded.
+// LocalURL is the same-version embedded URL served by Handler; remove its fixed
+// "/assets/" prefix to read the corresponding name from FS or ReadFile.
+// Integrity is SHA-384 SRI for dependencies whose primary and local bytes are
+// required to match; one value applies to both URLs. A top-level Loader
+// LocalURL is inventory, not an automatic fallback for the loader tag.
 // IncludeInMinimal selects DependenciesMinimal membership. On dependency
 // entries, Defer controls direct local-script tags and WaitForWindowLoaded
 // controls loader readiness before dynamically inserting the script. For

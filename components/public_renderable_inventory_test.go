@@ -83,6 +83,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"head.WithLoaderURL":              {},
 		"head.WithLocalRuntime":           {},
 		"head.WithRuntimeManifest":        {},
+		"head.WithStylesheetOnly":         {},
 		"head.WithStylesheetURL":          {},
 		"head.WithoutDependency":          {},
 		"head.WithoutLocalFallback":       {},

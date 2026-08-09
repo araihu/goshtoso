@@ -444,9 +444,13 @@ func TestSidebarOverlayRendersNativeOffCanvasShell(t *testing.T) {
 
 	assertContainsAll(t, html,
 		`x-data="{ docsNavOpen: false }"`,
-		`x-on:keydown.escape.window="docsNavOpen = false"`,
+		`x-on:keydown.escape.window="if (docsNavOpen) { docsNavOpen = false; $nextTick(() =&gt; $refs.trigger.focus()) }"`,
 		`class="lg:hidden"`,
 		`type="button"`,
+		`x-ref="trigger"`,
+		`min-h-11 min-w-11`,
+		`focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`,
+		`dark:focus-visible:outline-primary-dark`,
 		`aria-label="Open API navigation"`,
 		`aria-controls="docs-nav-panel"`,
 		`x-on:click="docsNavOpen = !docsNavOpen"`,
@@ -465,6 +469,27 @@ func TestSidebarOverlayRendersNativeOffCanvasShell(t *testing.T) {
 		if strings.Contains(html, absent) {
 			t.Fatalf("sidebar overlay should match the docs navigation drawer and avoid modal focus behavior; found %q in %s", absent, html)
 		}
+	}
+}
+
+func TestSidebarOverlayPreservesLongLabelCustomTriggerAndClasses(t *testing.T) {
+	const label = "Open the complete application navigation for this workspace"
+	html := renderOverlay(t, OverlayConfig{
+		ID:           "custom-nav",
+		Trigger:      testComponent(`<svg data-testid="custom-sidebar-trigger" class="size-7" aria-hidden="true"></svg>`),
+		TriggerLabel: label,
+		TriggerClass: "border border-outline",
+	})
+
+	assertContainsAll(t, html,
+		`aria-label="`+label+`"`,
+		`min-h-11 min-w-11`,
+		`border border-outline`,
+		`data-testid="custom-sidebar-trigger"`,
+		`class="size-7"`,
+	)
+	if strings.Contains(html, `class="size-5"`) {
+		t.Fatalf("custom overlay trigger should replace default menu icon: %s", html)
 	}
 }
 
