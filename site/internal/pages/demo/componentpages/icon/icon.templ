@@ -100,10 +100,31 @@ templ iconPackExtension() {
 			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Consumer-local extension</p>
 			<h2 id="iconpack-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Generate an attributed icon pack</h2>
 			<p class="mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				Select Arai Hu Assets icons by exact canonical name, or bring another pack with a hashed source manifest. <code class="font-mono">iconpack</code> verifies the source boundary, then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
+			Select Arai Hu Assets icons by exact canonical name, or bring any GitHub tree, single SVG, or multiple packs with a Goshtoso-owned <code class="font-mono">.iconpack.yaml</code>. Muamba performs explicit TOFU and verified snapshots; <code class="font-mono">iconpack</code> then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
 			</p>
 		</div>
 		<div data-component-code>
+			@codeblock.CodeBlock(codeblock.Config{
+				Language: "yaml",
+				Label: "Describe any source",
+				Code: `schemaVersion: 1
+sources:
+  - id: heroicons
+    url: https://github.com/tailwindlabs/heroicons/tree/master/src
+    packName: heroicons
+    paths: [16/solid/academic-cap.svg]
+    license: MIT
+    licensePath: LICENSE
+    licenseUrl: https://raw.githubusercontent.com/tailwindlabs/heroicons/master/LICENSE`,
+			})
+			@codeblock.CodeBlock(codeblock.Config{
+				Language: "bash",
+				Label: "First trust a consumer-owned pack",
+				Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
+  -config ./.iconpack.yaml -trust \
+  -out ./internal/appicons -package appicons \
+  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
+			})
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "bash",
 				Label: "Generate from a verified release archive",
@@ -131,7 +152,7 @@ templ ProviderIcon() {
 			})
 		</div>
 		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			The generated helper delegates to <code class="font-mono">components/icon</code>; JSON selection and source manifests are canonical, with YAML compatibility accepted. See <code class="font-mono">docs/ICONPACK.md</code> to review Arai Hu Assets and arbitrary-pack boundaries.
+			The generated helper delegates to <code class="font-mono">components/icon</code>. The generated <code class="font-mono">.iconpack.lock.yaml</code> is the explicit TOFU boundary, and existing JSON/YAML source manifests remain available for migration. See <code class="font-mono">docs/ICONPACK.md</code> to review Arai Hu Assets and arbitrary-pack boundaries.
 		</p>
 	</section>
 }

@@ -45,6 +45,14 @@ generated helper through Goshtoso's core `components/icon` path:
 go test -tags=e2e,iconpack ./tests/e2e -v -run TestIconpackGeneratedConsumerBrowserProof
 ```
 
+The arbitrary-source proof uses a Goshtoso-owned `.iconpack.yaml`, an
+explicit `.iconpack.lock.yaml` first-trust boundary, and the same browser
+assertions through `components/icon`:
+
+```bash
+go test -tags=e2e,iconpack ./tests/e2e -v -run TestIconpackConfigGeneratedConsumerBrowserProof
+```
+
 ### Run in short mode (skip E2E)
 ```bash
 go test -tags=e2e,full ./tests/e2e/... -short

@@ -8,7 +8,7 @@ import (
 )
 
 func buildSprite(boundary releaseBoundary, selected []selectedAsset, families []sourceFamily) ([]byte, error) {
-	if boundary.generic != nil && boundary.generic.manifest.SpritePath == "" {
+	if boundary.muamba != nil || boundary.generic != nil && boundary.generic.manifest.SpritePath == "" {
 		return buildStandaloneSprite(boundary, selected)
 	}
 	wantedByFamily := map[string]map[string]string{}

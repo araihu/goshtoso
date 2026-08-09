@@ -3,8 +3,10 @@
 package e2e
 
 import (
+	"archive/tar"
 	"bufio"
 	"bytes"
+	"compress/gzip"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -12,6 +14,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -69,6 +72,190 @@ func TestIconpackGeneratedConsumerBrowserProof(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, string(sprite), `id="devicon-trpc"`)
 	assert.Contains(t, string(sprite), `id="hi-16-solid-check"`)
+}
+
+func TestIconpackConfigGeneratedConsumerBrowserProof(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	consumerURL := startIconpackConfigConsumer(t)
+	page := newPage(t, sharedBrowser)
+	failures := watchPageFailures(page)
+	t.Cleanup(func() {
+		waitForPageSettled(t, page)
+		failures.RequireEmpty(t)
+	})
+	_, err := page.Goto(consumerURL+"/", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	root := page.Locator("[data-testid='generated-iconpack']")
+	require.NoError(t, root.WaitFor())
+	assert.Equal(t, "demo-pack-16-solid-check", mustAttribute(t, root, "data-canonical-name"))
+	assert.Equal(t, "demo-pack-16-solid-check", mustAttribute(t, root, "data-symbol"))
+	icon := root.Locator("svg").First()
+	assertConsumerSVGAttributes(t, icon, "img", "demo check", "")
+	assert.Equal(t, "/assets/icons/appicons/sprite.svg#demo-pack-16-solid-check", mustAttribute(t, icon.Locator("use"), "href"))
+	assertConsumerSVGGeometry(t, icon)
+
+	response, err := http.Get(consumerURL + "/assets/icons/appicons/sprite.svg")
+	require.NoError(t, err)
+	defer response.Body.Close()
+	assert.Equal(t, http.StatusOK, response.StatusCode)
+	sprite, err := io.ReadAll(response.Body)
+	require.NoError(t, err)
+	assert.Contains(t, string(sprite), `id="demo-pack-16-solid-check"`)
+}
+
+func startIconpackConfigConsumer(t *testing.T) string {
+	t.Helper()
+	archive := e2eIconpackArchive(t)
+	archiveServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/icons.tar.gz" {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "application/gzip")
+		_, _ = w.Write(archive)
+	}))
+	t.Cleanup(archiveServer.Close)
+
+	root := t.TempDir()
+	configPath := filepath.Join(root, ".iconpack.yaml")
+	config := fmt.Sprintf(`schemaVersion: 1
+sources:
+  - id: demo-source
+    kind: archive
+    url: %s/icons.tar.gz
+    packName: demo-pack
+    stripComponents: 1
+    paths:
+      - 16/solid/check.svg
+    license: MIT
+    licensePath: LICENSE
+`, archiveServer.URL)
+	require.NoError(t, os.WriteFile(configPath, []byte(config), 0o644))
+	output := filepath.Join(root, "consumer", "appicons")
+	require.NoError(t, os.MkdirAll(filepath.Dir(output), 0o755))
+	_, err := iconpack.Generate(context.Background(), iconpack.Options{
+		ConfigPath: configPath, Trust: true, AllowHTTP: true,
+		OutputDir: output, Package: "appicons", ConstPrefix: "Icon", SpriteURL: "/assets/icons/appicons/sprite.svg",
+	})
+	require.NoError(t, err)
+
+	consumerDir := filepath.Dir(output)
+	repoRoot := e2eRepositoryRoot(t)
+	goMod := fmt.Sprintf(`module example.com/goshtoso-iconpack-config-e2e
+
+go 1.26.5
+
+require github.com/araihu/goshtoso v0.0.0
+
+replace github.com/araihu/goshtoso => %s
+`, repoRoot)
+	require.NoError(t, os.WriteFile(filepath.Join(consumerDir, "go.mod"), []byte(goMod), 0o644))
+	mainSource := `package main
+
+import (
+    "bytes"
+    "context"
+    "fmt"
+    "net"
+    "net/http"
+    "os"
+
+    "github.com/araihu/goshtoso/components/icon"
+    "example.com/goshtoso-iconpack-config-e2e/appicons"
+)
+
+func main() {
+    sprite, err := os.ReadFile("appicons/sprite.svg")
+    if err != nil { panic(err) }
+    glyph, ok := appicons.Lookup(appicons.NameDemoPack16SolidCheck)
+    if !ok || glyph.CanonicalName != "demo-pack-16-solid-check" || glyph.Symbol != appicons.IconDemoPack16SolidCheck { panic("generated config lookup failed") }
+    mux := http.NewServeMux()
+    mux.HandleFunc("GET /assets/icons/appicons/sprite.svg", func(w http.ResponseWriter, _ *http.Request) {
+        w.Header().Set("Content-Type", "image/svg+xml")
+        _, _ = w.Write(sprite)
+    })
+    mux.HandleFunc("GET /", func(w http.ResponseWriter, _ *http.Request) {
+        var page bytes.Buffer
+        page.WriteString("<main data-testid=\"generated-iconpack\" data-canonical-name=\"" + glyph.CanonicalName + "\" data-symbol=\"" + string(glyph.Symbol) + "\">")
+        _ = appicons.Icon(appicons.Config{Symbol: glyph.Symbol, Label: "demo check", Size: icon.SizeLG}).Render(context.Background(), &page)
+        page.WriteString("</main>")
+        w.Header().Set("Content-Type", "text/html; charset=utf-8")
+        _, _ = w.Write(page.Bytes())
+    })
+    listener, err := net.Listen("tcp", "127.0.0.1:0")
+    if err != nil { panic(err) }
+    fmt.Printf("READY http://%s\n", listener.Addr())
+    if err := http.Serve(listener, mux); err != nil { panic(err) }
+}
+`
+	require.NoError(t, os.WriteFile(filepath.Join(consumerDir, "main.go"), []byte(mainSource), 0o644))
+	tidy := exec.Command("go", "mod", "tidy")
+	tidy.Dir = consumerDir
+	tidy.Env = append(os.Environ(), "GOWORK=off", "GOFLAGS=-p=2")
+	outputBytes, err := tidy.CombinedOutput()
+	require.NoErrorf(t, err, "tidy generated config consumer: %s", outputBytes)
+
+	cmd := exec.Command("go", "run", ".")
+	cmd.Dir = consumerDir
+	cmd.Env = append(os.Environ(), "GOWORK=off", "GOFLAGS=-p=2")
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	stdout, err := cmd.StdoutPipe()
+	require.NoError(t, err)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	require.NoError(t, cmd.Start())
+	t.Cleanup(func() { stopIconpackConsumer(cmd) })
+	ready := make(chan string, 1)
+	readDone := make(chan error, 1)
+	go func() {
+		scanner := bufio.NewScanner(stdout)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.HasPrefix(line, "READY ") {
+				ready <- strings.TrimSpace(strings.TrimPrefix(line, "READY "))
+				return
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			readDone <- err
+			return
+		}
+		readDone <- fmt.Errorf("config consumer exited before READY: %s", strings.TrimSpace(stderr.String()))
+	}()
+	select {
+	case url := <-ready:
+		return url
+	case err := <-readDone:
+		t.Fatalf("start generated config consumer: %v", err)
+	case <-time.After(30 * time.Second):
+		t.Fatalf("timed out waiting for generated config consumer: %s", strings.TrimSpace(stderr.String()))
+	}
+	return ""
+}
+
+func e2eIconpackArchive(t *testing.T) []byte {
+	t.Helper()
+	var output bytes.Buffer
+	gzipWriter := gzip.NewWriter(&output)
+	tarWriter := tar.NewWriter(gzipWriter)
+	files := map[string][]byte{
+		"iconpack/16/solid/check.svg": []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 1h14v14H1z"/></svg>`),
+		"iconpack/LICENSE":            []byte("MIT\n"),
+	}
+	for name, contents := range files {
+		require.NoError(t, tarWriter.WriteHeader(&tar.Header{Name: name, Mode: 0o644, Size: int64(len(contents))}))
+		_, err := tarWriter.Write(contents)
+		require.NoError(t, err)
+	}
+	require.NoError(t, tarWriter.Close())
+	require.NoError(t, gzipWriter.Close())
+	return output.Bytes()
 }
 
 func startIconpackConsumer(t *testing.T) string {

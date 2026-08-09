@@ -34,6 +34,8 @@ type outputManifest struct {
 	ChecksumsSHA256      string          `json:"checksumsSha256"`
 	SourceKind           string          `json:"sourceKind"`
 	ArchiveSHA256        string          `json:"archiveSha256"`
+	SourceConfigSHA256   string          `json:"sourceConfigSha256,omitempty"`
+	SourceLockSHA256     string          `json:"sourceLockSha256,omitempty"`
 	Package              string          `json:"package"`
 	ConstPrefix          string          `json:"constPrefix"`
 	SpriteURL            string          `json:"spriteUrl"`
@@ -53,14 +55,16 @@ type manifestAsset struct {
 }
 
 type provenanceDocument struct {
-	SchemaVersion int                `json:"schemaVersion"`
-	Tool          string             `json:"tool"`
-	Release       string             `json:"release"`
-	CatalogSHA256 string             `json:"catalogSha256"`
-	SourceKind    string             `json:"sourceKind"`
-	ArchiveSHA256 string             `json:"archiveSha256"`
-	Sources       []provenanceSource `json:"sources"`
-	Assets        []provenanceAsset  `json:"assets"`
+	SchemaVersion      int                `json:"schemaVersion"`
+	Tool               string             `json:"tool"`
+	Release            string             `json:"release"`
+	CatalogSHA256      string             `json:"catalogSha256"`
+	SourceKind         string             `json:"sourceKind"`
+	ArchiveSHA256      string             `json:"archiveSha256"`
+	SourceConfigSHA256 string             `json:"sourceConfigSha256,omitempty"`
+	SourceLockSHA256   string             `json:"sourceLockSha256,omitempty"`
+	Sources            []provenanceSource `json:"sources"`
+	Assets             []provenanceAsset  `json:"assets"`
 }
 
 type provenanceSource struct {
@@ -92,11 +96,16 @@ func generate(ctx context.Context, opts Options) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	boundary, err := openSourceBoundary(opts)
+	boundary, err := openSourceBoundary(ctx, opts)
 	if err != nil {
 		return Result{}, err
 	}
 	defer boundary.cleanup()
+	if len(names) == 0 {
+		for _, asset := range boundary.catalog.Assets {
+			names = append(names, asset.CanonicalName)
+		}
+	}
 	selected, families, err := selectAssets(boundary, names, opts.ConstPrefix)
 	if err != nil {
 		return Result{}, err
@@ -119,6 +128,13 @@ func generate(ctx context.Context, opts Options) (Result, error) {
 }
 
 func validateGenerationOptions(opts Options) error {
+	if err := validateOutputOptions(opts); err != nil {
+		return err
+	}
+	return validateSourceOptions(opts)
+}
+
+func validateOutputOptions(opts Options) error {
 	for _, field := range []struct{ name, value string }{
 		{"out", opts.OutputDir}, {"package", opts.Package}, {"const-prefix", opts.ConstPrefix}, {"sprite-url", opts.SpriteURL},
 	} {
@@ -135,14 +151,29 @@ func validateGenerationOptions(opts Options) error {
 	if err := iconurl.ValidateSpriteURL(opts.SpriteURL); err != nil {
 		return fmt.Errorf("sprite-url: %w", err)
 	}
+	return nil
+}
+
+func validateSourceOptions(opts Options) error {
+	configSource := opts.ConfigPath != ""
 	releaseSource := opts.ReleaseRoot != "" || opts.ReleaseArchive != ""
 	manifestSource := opts.SourceRoot != "" || opts.SourceArchive != "" || opts.SourceManifest != ""
+	if (releaseSource || manifestSource) && configSource {
+		return fmt.Errorf("iconpack config and legacy source inputs are mutually exclusive")
+	}
 	if releaseSource && manifestSource {
 		return fmt.Errorf("release source and generic source inputs are mutually exclusive")
 	}
-	if !releaseSource && !manifestSource {
+	if !configSource && !releaseSource && !manifestSource {
 		return fmt.Errorf("exactly one of Arai Hu Assets release input or generic source input is required")
 	}
+	if configSource && !releaseSource && !manifestSource {
+		return nil
+	}
+	return validateGenericSourceOptions(opts, manifestSource)
+}
+
+func validateGenericSourceOptions(opts Options, manifestSource bool) error {
 	if manifestSource && opts.SourceManifest == "" {
 		return fmt.Errorf("source-manifest is required with generic source input")
 	}
@@ -173,57 +204,8 @@ func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAss
 		SourceKind:    boundary.sourceKind,
 		ArchiveSHA256: boundary.archiveSHA256,
 	}
-	if boundary.generic != nil {
-		family := boundary.generic.family
-		files["PROVENANCE/"+boundary.generic.fileName+"-manifest.json"] = append([]byte(nil), boundary.generic.manifestBytes...)
-		licenseBytes, err := readVerifiedReleaseFile(boundary, family.LicensePath)
-		if err != nil {
-			return nil, err
-		}
-		files[family.LicenseOutput] = licenseBytes
-		provenance.Sources = append(provenance.Sources, provenanceSource{
-			Namespace:      family.Namespace,
-			Product:        family.Product,
-			SpritePath:     family.SpritePath,
-			SpriteSHA256:   boundary.checksums[family.SpritePath],
-			ManifestPath:   "source-manifest.json",
-			ManifestSHA256: boundary.generic.manifestHash,
-			LicensePath:    family.LicensePath,
-			LicenseSHA256:  boundary.checksums[family.LicensePath],
-		})
-		if boundary.generic.manifest.NoticePath != "" {
-			notice, err := readVerifiedReleaseFile(boundary, boundary.generic.manifest.NoticePath)
-			if err != nil {
-				return nil, err
-			}
-			files["NOTICE"] = notice
-		} else {
-			files["NOTICE"] = fmt.Appendf(nil, "%s %s\nSource: %s\nLicense: %s\n", boundary.generic.manifest.Name, boundary.generic.manifest.Release, boundary.generic.manifest.Source, boundary.generic.manifest.License)
-		}
-	} else {
-		for _, family := range families {
-			sourceBytes, err := readVerifiedReleaseFile(boundary, family.ProvenancePath)
-			if err != nil {
-				return nil, err
-			}
-			provenanceOutput := "PROVENANCE/" + family.Product + ".json"
-			files[provenanceOutput] = sourceBytes
-			licenseBytes, err := readVerifiedReleaseFile(boundary, family.LicensePath)
-			if err != nil {
-				return nil, err
-			}
-			files[family.LicenseOutput] = licenseBytes
-			provenance.Sources = append(provenance.Sources, provenanceSource{
-				Namespace:        family.Namespace,
-				Product:          family.Product,
-				SpritePath:       family.SpritePath,
-				SpriteSHA256:     boundary.checksums[family.SpritePath],
-				ProvenancePath:   family.ProvenancePath,
-				ProvenanceSHA256: boundary.checksums[family.ProvenancePath],
-				LicensePath:      family.LicensePath,
-				LicenseSHA256:    boundary.checksums[family.LicensePath],
-			})
-		}
+	if err := addBoundaryOutputs(boundary, families, files, &provenance); err != nil {
+		return nil, err
 	}
 	for _, asset := range selected {
 		provenance.Assets = append(provenance.Assets, provenanceAsset{
@@ -239,7 +221,7 @@ func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAss
 		return nil, fmt.Errorf("encode provenance: %w", err)
 	}
 	files["provenance.json"] = provenanceBytes
-	if boundary.generic == nil {
+	if boundary.generic == nil && boundary.muamba == nil {
 		if notice, err := readVerifiedReleaseFile(boundary, "NOTICE"); err == nil {
 			files["NOTICE"] = notice
 		} else {
@@ -261,6 +243,10 @@ func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAss
 		Package:              opts.Package,
 		ConstPrefix:          opts.ConstPrefix,
 		SpriteURL:            opts.SpriteURL,
+	}
+	if boundary.muamba != nil {
+		manifest.SourceConfigSHA256 = boundary.muamba.configHash
+		manifest.SourceLockSHA256 = boundary.muamba.lockHash
 	}
 	for _, asset := range selected {
 		manifest.Assets = append(manifest.Assets, manifestAsset{
@@ -291,6 +277,111 @@ func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAss
 	}
 	files["manifest.json"] = manifestBytes
 	return files, nil
+}
+
+func addBoundaryOutputs(boundary releaseBoundary, families []sourceFamily, files map[string][]byte, provenance *provenanceDocument) error {
+	if boundary.muamba != nil {
+		return addMuambaOutputs(boundary, families, files, provenance)
+	}
+	if boundary.generic != nil {
+		return addGenericOutputs(boundary, files, provenance)
+	}
+	return addReleaseOutputs(boundary, families, files, provenance)
+}
+
+func addMuambaOutputs(boundary releaseBoundary, families []sourceFamily, files map[string][]byte, provenance *provenanceDocument) error {
+	files["PROVENANCE/"+boundary.muamba.manifestPath] = append([]byte(nil), boundary.muamba.configBytes...)
+	provenance.SourceConfigSHA256 = boundary.muamba.configHash
+	provenance.SourceLockSHA256 = boundary.muamba.lockHash
+	var notice bytes.Buffer
+	for _, family := range families {
+		licenseBytes, err := readVerifiedReleaseFile(boundary, family.LicensePath)
+		if err != nil {
+			return err
+		}
+		files[family.LicenseOutput] = licenseBytes
+		sourceID, _, ok := strings.Cut(family.LicensePath, "/")
+		if !ok {
+			return fmt.Errorf("iconpack family %q has invalid license path", family.Product)
+		}
+		declared, ok := findConfigSource(boundary.muamba.config, sourceID)
+		if !ok {
+			return fmt.Errorf("iconpack family %q has no source declaration", family.Product)
+		}
+		provenance.Sources = append(provenance.Sources, provenanceSource{
+			Namespace: family.Namespace, Product: family.Product,
+			ManifestPath: boundary.muamba.manifestPath, ManifestSHA256: boundary.muamba.configHash,
+			LicensePath: family.LicensePath, LicenseSHA256: boundary.checksums[family.LicensePath],
+		})
+		fmt.Fprintf(&notice, "%s\nSource: %s\nLicense: %s\n\n", family.Product, declared.URL, declared.License)
+	}
+	files["NOTICE"] = notice.Bytes()
+	return nil
+}
+
+func findConfigSource(config Config, id string) (ConfigSource, bool) {
+	for _, source := range config.Sources {
+		if source.ID == id {
+			return source, true
+		}
+	}
+	return ConfigSource{}, false
+}
+
+func addGenericOutputs(boundary releaseBoundary, files map[string][]byte, provenance *provenanceDocument) error {
+	family := boundary.generic.family
+	files["PROVENANCE/"+boundary.generic.fileName+"-manifest.json"] = append([]byte(nil), boundary.generic.manifestBytes...)
+	licenseBytes, err := readVerifiedReleaseFile(boundary, family.LicensePath)
+	if err != nil {
+		return err
+	}
+	files[family.LicenseOutput] = licenseBytes
+	provenance.Sources = append(provenance.Sources, provenanceSource{
+		Namespace:      family.Namespace,
+		Product:        family.Product,
+		SpritePath:     family.SpritePath,
+		SpriteSHA256:   boundary.checksums[family.SpritePath],
+		ManifestPath:   "source-manifest.json",
+		ManifestSHA256: boundary.generic.manifestHash,
+		LicensePath:    family.LicensePath,
+		LicenseSHA256:  boundary.checksums[family.LicensePath],
+	})
+	if boundary.generic.manifest.NoticePath != "" {
+		notice, err := readVerifiedReleaseFile(boundary, boundary.generic.manifest.NoticePath)
+		if err != nil {
+			return err
+		}
+		files["NOTICE"] = notice
+		return nil
+	}
+	files["NOTICE"] = fmt.Appendf(nil, "%s %s\nSource: %s\nLicense: %s\n", boundary.generic.manifest.Name, boundary.generic.manifest.Release, boundary.generic.manifest.Source, boundary.generic.manifest.License)
+	return nil
+}
+
+func addReleaseOutputs(boundary releaseBoundary, families []sourceFamily, files map[string][]byte, provenance *provenanceDocument) error {
+	for _, family := range families {
+		sourceBytes, err := readVerifiedReleaseFile(boundary, family.ProvenancePath)
+		if err != nil {
+			return err
+		}
+		files["PROVENANCE/"+family.Product+".json"] = sourceBytes
+		licenseBytes, err := readVerifiedReleaseFile(boundary, family.LicensePath)
+		if err != nil {
+			return err
+		}
+		files[family.LicenseOutput] = licenseBytes
+		provenance.Sources = append(provenance.Sources, provenanceSource{
+			Namespace:        family.Namespace,
+			Product:          family.Product,
+			SpritePath:       family.SpritePath,
+			SpriteSHA256:     boundary.checksums[family.SpritePath],
+			ProvenancePath:   family.ProvenancePath,
+			ProvenanceSHA256: boundary.checksums[family.ProvenancePath],
+			LicensePath:      family.LicensePath,
+			LicenseSHA256:    boundary.checksums[family.LicensePath],
+		})
+	}
+	return nil
 }
 
 func readVerifiedReleaseFile(boundary releaseBoundary, relative string) ([]byte, error) {

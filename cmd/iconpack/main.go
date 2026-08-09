@@ -32,6 +32,10 @@ func run(ctx context.Context, args []string) error {
 	fs.SetOutput(os.Stderr)
 	var opts iconpack.Options
 	var names stringList
+	fs.StringVar(&opts.ConfigPath, "config", "", "Goshtoso-owned .iconpack.yaml source configuration")
+	fs.StringVar(&opts.IconpackLockPath, "lock", "", "Goshtoso-owned .iconpack.lock.yaml path")
+	fs.BoolVar(&opts.Trust, "trust", false, "explicitly first-trust unlocked iconpack sources")
+	fs.BoolVar(&opts.AllowHTTP, "allow-http", false, "allow HTTP iconpack sources (for local/test endpoints)")
 	fs.StringVar(&opts.ReleaseRoot, "release-root", "", "verified Arai Hu Assets extracted release root")
 	fs.StringVar(&opts.ReleaseArchive, "release-archive", "", "verified Arai Hu Assets .tar.gz or .zip release archive")
 	fs.StringVar(&opts.Release, "release", "", "expected release tag")
