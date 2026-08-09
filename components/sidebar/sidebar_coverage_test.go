@@ -443,8 +443,8 @@ func TestSidebarOverlayRendersNativeOffCanvasShell(t *testing.T) {
 	})
 
 	assertContainsAll(t, html,
-		`x-data="{ docsNavOpen: false }"`,
-		`x-on:keydown.escape.window="if (docsNavOpen) { docsNavOpen = false; $nextTick(() =&gt; $refs.trigger.focus()) }"`,
+		`x-data="goshtosoSidebarOverlay()"`,
+		`x-on:keydown.escape.window="closeAndFocus()"`,
 		`class="lg:hidden"`,
 		`type="button"`,
 		`x-ref="trigger"`,
@@ -453,17 +453,20 @@ func TestSidebarOverlayRendersNativeOffCanvasShell(t *testing.T) {
 		`dark:focus-visible:outline-primary-dark`,
 		`aria-label="Open API navigation"`,
 		`aria-controls="docs-nav-panel"`,
-		`x-on:click="docsNavOpen = !docsNavOpen"`,
-		`x-bind:aria-expanded="docsNavOpen.toString()"`,
-		`x-show="docsNavOpen"`,
-		`x-on:click="docsNavOpen = false"`,
+		`x-on:click="open = !open"`,
+		`x-bind:aria-expanded="open.toString()"`,
+		`x-show="open"`,
+		`x-on:click="open = false"`,
 		`class="fixed top-16 bottom-0 inset-x-0 z-30 bg-black/50"`,
 		`id="docs-nav-panel"`,
 		`class="fixed top-16 bottom-0 left-0 z-40 w-72"`,
-		`x-on:click="if ($event.target.closest(&#39;a[href]:not([aria-controls])&#39;)) docsNavOpen = false"`,
+		`x-on:click="if ($event.target.closest('a[href]:not([aria-controls])')) open = false"`,
 		`API`,
 		`Overview`,
 	)
+	if strings.Contains(html, `$nextTick`) {
+		t.Fatalf("sidebar overlay should keep Escape control flow in the registered Alpine provider: %s", html)
+	}
 
 	for _, absent := range []string{`x-trap`, `role="dialog"`, `aria-modal="true"`} {
 		if strings.Contains(html, absent) {

@@ -3,6 +3,7 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/a-h/templ"
@@ -161,6 +162,9 @@ func verifySidebarOverlayMobileTargetAcrossAcceptanceThemes(t *testing.T) {
 			}))+
 			`</div></main>`),
 	)
+	// SetContent injects a complete document without parser-deferred ordering.
+	// Keep this synthetic fixture in production script order before Alpine scans.
+	html = strings.ReplaceAll(html, "<script defer ", "<script ")
 	require.NoError(t, page.SetContent(html, playwright.PageSetContentOptions{WaitUntil: playwright.WaitUntilStateLoad}))
 	require.NoError(t, waitForAlpine(page))
 	require.NoError(t, page.SetViewportSize(390, 844))

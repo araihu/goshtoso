@@ -147,6 +147,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"assets/js/src/components/tooltip.js":          `(() => { window.tooltipFixture = true })();`,
 		"assets/js/src/components/data.js":             `(() => { window.dataFixture = true })();`,
 		"assets/js/src/components/navigation.js":       `(() => { window.navigationFixture = true })();`,
+		"assets/js/src/components/sidebar.js":          `(() => { window.sidebarFixture = true })();`,
 		"assets/js/src/components/search.js":           `(() => { window.searchFixture = true })();`,
 		"assets/js/src/components/table.js":            `(() => { window.tableFixture = true })();`,
 		"assets/js/src/components/carousel.js":         `(() => { window.carouselFixture = true })();`,
@@ -242,7 +243,7 @@ func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte)
 
 	componentFixtures := []string{
 		"comboboxFixture", "comboboxClientFixture", "actionGroupFixture", "structuredInputFixture", "tooltipFixture",
-		"dataFixture", "navigationFixture", "searchFixture", "tableFixture", "carouselFixture", "dropdownFixture",
+		"dataFixture", "navigationFixture", "sidebarFixture", "searchFixture", "tableFixture", "carouselFixture", "dropdownFixture",
 		"paletteFixture", "selectFixture", "tabsFixture",
 	}
 	demoFixtures := []string{

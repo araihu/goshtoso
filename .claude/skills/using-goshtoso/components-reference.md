@@ -1586,7 +1586,7 @@ import "github.com/araihu/goshtoso/components/sidebar"  // package sidebar
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `ID` | `string` | ID identifies the overlay panel and derives the Alpine open state. |
+| `ID` | `string` | ID identifies the overlay panel. |
 | `Sidebar` | `Config` | Sidebar is the sidebar configuration rendered inside the overlay panel. |
 | `Trigger` | `templ.Component` | Trigger replaces the default menu icon inside the trigger button. |
 | `TriggerLabel` | `string` | TriggerLabel is the accessible label for the trigger button. Default: "Open sidebar". |
