@@ -33,8 +33,8 @@ func TestHandlerServesEveryMuambaRuntimeDownload(t *testing.T) {
 			if readErr != nil || wantErr != nil || response.StatusCode != http.StatusOK || !bytes.Equal(got, want) {
 				t.Fatalf("served %s differs: status=%d read=%v want=%v", local, response.StatusCode, readErr, wantErr)
 			}
-			if strings.Contains(local, "/js/runtime/") && response.Header.Get("Cache-Control") != "public, max-age=31536000, immutable" {
-				t.Errorf("GET %s Cache-Control = %q", local, response.Header.Get("Cache-Control"))
+			if got, want := response.Header.Get("Cache-Control"), CacheControl(local); got != want {
+				t.Errorf("GET %s Cache-Control = %q, want %q", local, got, want)
 			}
 		}
 	}

@@ -37,8 +37,8 @@ func TestHandlerServesHeroiconsSpriteAndLicense(t *testing.T) {
 			if got := recorder.Header().Get("Content-Type"); !strings.HasPrefix(got, test.contentType) {
 				t.Errorf("GET %s Content-Type = %q, want prefix %q", test.path, got, test.contentType)
 			}
-			if got := recorder.Header().Get("Cache-Control"); got != "public, max-age=31536000, immutable" {
-				t.Errorf("GET %s Cache-Control = %q, want immutable asset policy", test.path, got)
+			if got := recorder.Header().Get("Cache-Control"); got != RevalidateCacheControl {
+				t.Errorf("GET %s Cache-Control = %q, want revalidation policy", test.path, got)
 			}
 			sum := sha256.Sum256(recorder.Body.Bytes())
 			if got := hex.EncodeToString(sum[:]); got != test.sha256 {

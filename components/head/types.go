@@ -205,6 +205,7 @@ type config struct {
 	nonce          string
 	localFallback  bool
 	localRuntime   bool
+	stylesheetOnly bool
 	customManifest bool
 	err            error
 	loaderPayload  string
@@ -291,6 +292,16 @@ func WithoutLocalFallback() Option {
 func WithLocalRuntime() Option {
 	return optionFunc(func(cfg *config) {
 		cfg.localRuntime = true
+	})
+}
+
+// WithStylesheetOnly emits the configured Goshtoso stylesheet without the
+// dependency loader or runtime scripts. Combine it with WithLocalRuntime to
+// select the manifest's local stylesheet URL, or WithStylesheetURL to select a
+// custom stylesheet URL.
+func WithStylesheetOnly() Option {
+	return optionFunc(func(cfg *config) {
+		cfg.stylesheetOnly = true
 	})
 }
 

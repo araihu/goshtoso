@@ -16,7 +16,7 @@ func Run(args []string, stdout, stderr io.Writer) error {
 	fs := flag.NewFlagSet("iconcatalog", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	opts := Options{}
-	fs.StringVar(&opts.CatalogPath, "catalog", "", "schema-v1 catalog path")
+	fs.StringVar(&opts.CatalogPath, "catalog", "", "schema-v1 or schema-v2 catalog path")
 	fs.StringVar(&opts.OutputPath, "out", "", "generated Go output path")
 	fs.StringVar(&opts.Package, "package", "", "generated Go package")
 	fs.StringVar(&opts.Namespace, "namespace", "", "catalog namespace")

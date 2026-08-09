@@ -44,8 +44,5 @@ func serveMuambaFile(writer http.ResponseWriter, request *http.Request, ref muam
 		http.Error(writer, "embedded asset metadata unavailable", http.StatusInternalServerError)
 		return
 	}
-	if strings.HasPrefix(request.URL.Path, "js/runtime/") {
-		writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-	}
 	http.ServeContent(writer, request, info.Name(), info.ModTime(), seeker)
 }

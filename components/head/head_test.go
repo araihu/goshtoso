@@ -109,6 +109,76 @@ func TestDependenciesMinimalUsesVersionedPaths(t *testing.T) {
 	}
 }
 
+func TestDependenciesStylesheetOnlyEmitsSelectedStylesheetWithoutRuntime(t *testing.T) {
+	tests := []struct {
+		name    string
+		options []Option
+		wantURL string
+	}{
+		{
+			name:    "default stylesheet",
+			options: []Option{WithStylesheetOnly()},
+			wantURL: assets.StylesURL,
+		},
+		{
+			name:    "local stylesheet",
+			options: []Option{WithStylesheetOnly(), WithLocalRuntime()},
+			wantURL: assets.StylesURL,
+		},
+		{
+			name:    "custom stylesheet",
+			options: []Option{WithStylesheetOnly(), WithStylesheetURL("/static/goshtoso.css")},
+			wantURL: "/static/goshtoso.css",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			output := render(t, Dependencies(test.options...))
+			if got, want := strings.Count(output, `<link rel="stylesheet"`), 1; got != want {
+				t.Fatalf("stylesheet link count = %d, want %d\n%s", got, want, output)
+			}
+			if !strings.Contains(output, `href="`+test.wantURL+`"`) {
+				t.Fatalf("stylesheet-only output missing %q\n%s", test.wantURL, output)
+			}
+			for _, forbidden := range []string{"<script", "data-goshtoso-dependencies", ".js"} {
+				if strings.Contains(output, forbidden) {
+					t.Fatalf("stylesheet-only output contains runtime marker %q\n%s", forbidden, output)
+				}
+			}
+		})
+	}
+}
+
+func TestDependenciesStylesheetOnlyPreservesOptionOrder(t *testing.T) {
+	first := render(t, Dependencies(
+		WithStylesheetOnly(),
+		WithStylesheetURL("https://static.example/goshtoso.css"),
+	))
+	last := render(t, Dependencies(
+		WithStylesheetURL("https://static.example/goshtoso.css"),
+		WithStylesheetOnly(),
+	))
+
+	if first != last {
+		t.Fatalf("stylesheet-only option order changed output:\nfirst: %s\nlast: %s", first, last)
+	}
+}
+
+func TestDependenciesMinimalSupportsStylesheetOnly(t *testing.T) {
+	output := render(t, DependenciesMinimal(
+		WithLocalRuntime(),
+		WithStylesheetOnly(),
+	))
+
+	if !strings.Contains(output, `href="`+assets.StylesURL+`"`) {
+		t.Fatalf("minimal stylesheet-only output missing local stylesheet\n%s", output)
+	}
+	if strings.Contains(output, "<script") {
+		t.Fatalf("minimal stylesheet-only output contains runtime script\n%s", output)
+	}
+}
+
 func TestPublicDependenciesAndBundleExcludeDemoSiteProviders(t *testing.T) {
 	t.Parallel()
 
