@@ -2,6 +2,26 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.12] - 2026-08-09
+
+### TOFU iconpack sources
+
+- Added the Muamba-backed `.iconpack.yaml` and `.iconpack.lock.yaml` flow for
+  consumer-owned icon packs, without reading or changing an existing Muamba
+  manifest in the consumer repository.
+- Added Git tree, archive, single-file, and multi-source inputs with explicit
+  first trust, later byte verification, deterministic names, typed Go bindings,
+  sprites, provenance, licenses, and atomic output publication.
+- Updated the Goshtoso site guide and Bootstrap Icons browser proof to exercise
+  the generic source contract through the core `components/icon` API.
+
+### Upgrade note
+
+- Existing embedded icons and the previous source-manifest flags remain
+  compatible. Consumers using the new config flow do not install Muamba; the
+  generator uses Muamba `v0.0.5` as an in-memory Go library and never creates
+  `.iconpack.engine.yaml`.
+
 ## [v0.1.11] - 2026-08-09
 
 ### Arbitrary consumer icon packs
