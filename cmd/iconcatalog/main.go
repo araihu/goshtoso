@@ -1,4 +1,4 @@
-// Command iconcatalog generates typed sprite bindings from a schema-v1 asset
+// Command iconcatalog generates typed sprite bindings from a supported asset
 // catalog.
 package main
 

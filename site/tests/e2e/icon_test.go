@@ -32,7 +32,8 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 		entry, ok := catalog.Lookup("components/icon")
 		require.True(t, ok)
 		require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-			Name: entry.Title,
+			Name:  entry.Title,
+			Exact: playwright.Bool(true),
 		}).WaitFor())
 
 		cards := page.Locator("[data-icon-card]")
@@ -51,6 +52,17 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 			require.NoError(t, err)
 			assert.Equal(t, heroicons.SpriteURL+"#"+string(glyph.Symbol), href)
 		}
+	})
+
+	t.Run("consumer-local icon pack usage is documented", func(t *testing.T) {
+		page := openIconCatalogPage(t)
+		body, err := page.Locator("body").TextContent()
+		require.NoError(t, err)
+		assert.Contains(t, body, "Generate an attributed icon pack")
+		assert.Contains(t, body, "Render the generated package through Goshtoso Icon")
+		assert.Contains(t, body, "IconBrandDeveloperIconsTRPC")
+		assert.Contains(t, body, "components/icon")
+		assert.Contains(t, body, "/assets/icons/appicons/sprite.svg")
 	})
 
 	t.Run("grid uses one three and six columns at responsive breakpoints", func(t *testing.T) {

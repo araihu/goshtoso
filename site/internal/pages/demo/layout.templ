@@ -14,15 +14,21 @@ templ HeadMeta(meta PageMeta) {
 	<meta name="description" content={ meta.Description }/>
 	<link rel="canonical" href={ meta.CanonicalURL() }/>
 	<meta property="og:site_name" content={ SiteName }/>
+	<meta property="og:locale" content="en_US"/>
 	<meta property="og:type" content="website"/>
 	<meta property="og:title" content={ meta.TitleText() }/>
 	<meta property="og:description" content={ meta.Description }/>
 	<meta property="og:url" content={ meta.CanonicalURL() }/>
 	<meta property="og:image" content={ meta.OGImageURL() }/>
+	<meta property="og:image:type" content={ OGImageMIMEType }/>
+	<meta property="og:image:width" content={ OGImageWidth }/>
+	<meta property="og:image:height" content={ OGImageHeight }/>
+	<meta property="og:image:alt" content={ meta.OGImageAlt() }/>
 	<meta name="twitter:card" content="summary_large_image"/>
 	<meta name="twitter:title" content={ meta.TitleText() }/>
 	<meta name="twitter:description" content={ meta.Description }/>
 	<meta name="twitter:image" content={ meta.OGImageURL() }/>
+	<meta name="twitter:image:alt" content={ meta.OGImageAlt() }/>
 	@templ.Raw(`<script type="application/ld+json">` + SafeJSONLD(meta) + `</script>`)
 }
 
@@ -307,6 +313,7 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebarComponentModelIcon(), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebarApplicationPatternsIcon(), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
+		{ID: "iconpack", Label: "Icon Packs", Href: "/docs/iconpack", Icon: sidebarIconpackIcon(), Active: activeComponent == "iconpack", LinkAttrs: navHxAttrs("/docs/iconpack", "")},
 		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: sidebarAgentsIcon(), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebarAttributionsIcon(), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
@@ -340,6 +347,13 @@ templ sidebarHomeIcon() {
 templ sidebarComponentModelIcon() {
 	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
 		<path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25M21 7.5v9L12 21.75m0-9L3 7.5m9 5.25v9M3 7.5v9l9 5.25"/>
+	</svg>
+}
+
+templ sidebarIconpackIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M12 3.75 4.5 8.25v7.5l7.5 4.5 7.5-4.5v-7.5L12 3.75Z"/>
+		<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 8.25 7.5 4.5 7.5-4.5M12 12.75v7.5"/>
 	</svg>
 }
 
@@ -394,6 +408,7 @@ func getSearchItems() []searchfield.Item {
 		{ID: "search-getting-started", Title: "Getting Started", Description: "Install Goshtoso, wire assets, and render your first component.", Href: "/getting-started", Section: "Docs", Attrs: navHxAttrs("/getting-started", "")},
 		{ID: "search-component-model", Title: "Component Model", Description: "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.", Href: "/docs/component-model", Section: "Docs", Attrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "search-application-patterns", Title: "Application Patterns", Description: "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces.", Href: "/docs/application-patterns", Section: "Docs", Keywords: []string{"recipes app shell operations detail workflow"}, Attrs: navHxAttrs("/docs/application-patterns", "")},
+		{ID: "search-iconpack", Title: "Icon Packs", Description: "Generate verified consumer-local icon packs and render them through the Goshtoso core icon component.", Href: "/docs/iconpack", Section: "Docs", Keywords: []string{"sprite heroicons developer icons generated assets"}, Attrs: navHxAttrs("/docs/iconpack", "")},
 		{ID: "search-examples", Title: "Examples", Description: "Full runnable app examples built with Goshtoso components.", Href: "/examples", Section: "Examples", Attrs: navHxAttrs("/examples", "")},
 		{ID: "search-agents", Title: "AI Agents", Description: "Install and verify the Goshtoso consumer integration skill for AI coding tools.", Href: "/docs/agents", Section: "Docs", Attrs: navHxAttrs("/docs/agents", "")},
 		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},

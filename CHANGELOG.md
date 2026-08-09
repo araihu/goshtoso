@@ -2,6 +2,25 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.9] - 2026-08-08
+
+### Consumer-local icon packs
+
+- Added consumer-local `iconpack` generation from a verified Arai Hu Assets
+  release root or archive, preserving the catalog's canonical names and sprite
+  symbols while generating a parallel Go package.
+- Added generated `Icon`, `Lookup`, `Name`, `Glyph`, `Config`, and `SpriteURL`
+  usage through the core `components/icon` API, with licenses, provenance, and
+  manifest outputs kept beside the generated package.
+- Added the Goshtoso `/docs/iconpack` guide, Icon workbench examples, and
+  focused external-consumer/browser proof for generated icons and their sprite.
+
+### Upgrade note
+
+- Existing bundled Heroicons and the core `components/icon` API remain
+  unchanged. Consumers should use the generator's exact release hashes and
+  serve the generated sprite from the configured same-origin URL.
+
 ## [v0.1.8] - 2026-08-07
 
 ### Scroll region boundary cues
@@ -263,6 +282,7 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.1.9]: https://github.com/araihu/goshtoso/compare/v0.1.8...v0.1.9
 [v0.1.3]: https://github.com/araihu/goshtoso/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/araihu/goshtoso/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/araihu/goshtoso/compare/v0.1.0...v0.1.1

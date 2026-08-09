@@ -215,7 +215,7 @@ var componentPages = availableComponentPages([]Entry{
 		Path:        "/components/icon",
 		Title:       "Icon",
 		Active:      "icon",
-		Description: "Render accessible SVG sprite symbols from a relative same-origin sprite or the current document without forcing fill or stroke styles.",
+		Description: "Render accessible SVG sprite symbols and generate release-verified consumer-local icon packs with typed Go bindings and attribution.",
 		Section:     "Display",
 		Order:       16,
 		Kinds:       []components.Kind{components.KindIcon},
