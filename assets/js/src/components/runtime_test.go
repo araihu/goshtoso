@@ -15,6 +15,7 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 		"combobox-client.js",
 		"navigation.js",
 		"search.js",
+		"sidebar.js",
 		"scroll-region.js",
 		"table.js",
 	}
@@ -68,6 +69,20 @@ func TestAuthoredComponentRuntimePreservesLifecycleAndDataContracts(t *testing.T
 	for _, forbidden := range []string{`protocol === "javascript:"`, `protocol === "data:"`} {
 		if strings.Contains(navigation, forbidden) {
 			t.Fatalf("navigation runtime permits executable protocol through %q", forbidden)
+		}
+	}
+
+	sidebar := readRuntimeSource(t, "sidebar.js")
+	for _, want := range []string{
+		"window.goshtosoSidebarOverlay =",
+		`window.Alpine.data("goshtosoSidebarOverlay", window.goshtosoSidebarOverlay)`,
+		"open: false",
+		"closeAndFocus: function",
+		"this.open = false",
+		"this.$refs.trigger.focus()",
+	} {
+		if !strings.Contains(sidebar, want) {
+			t.Fatalf("sidebar runtime missing %q", want)
 		}
 	}
 

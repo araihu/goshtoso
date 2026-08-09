@@ -3,7 +3,6 @@ package sidebar
 import (
 	"maps"
 	"strings"
-	"unicode"
 
 	"github.com/a-h/templ"
 )
@@ -79,7 +78,7 @@ type Config struct {
 
 // OverlayConfig wraps a Sidebar in an Alpine-controlled off-canvas panel.
 type OverlayConfig struct {
-	// ID identifies the overlay panel and derives the Alpine open state.
+	// ID identifies the overlay panel.
 	ID string
 	// Sidebar is the sidebar configuration rendered inside the overlay panel.
 	Sidebar Config
@@ -130,11 +129,6 @@ func (cfg Config) navClasses() string {
 	return "flex-1 overflow-y-auto sidebar-scroll scrollbar-custom p-4"
 }
 
-// StateVar returns the Alpine state variable that controls the overlay.
-func (cfg OverlayConfig) stateVar() string {
-	return safeJSIdentifier(cfg.ID, "sidebarOverlay") + "Open"
-}
-
 // PanelID returns the id for the overlay panel.
 func (cfg OverlayConfig) panelID() string {
 	if id := strings.TrimSpace(cfg.ID); id != "" {
@@ -158,7 +152,7 @@ func (cfg OverlayConfig) rootClasses() string {
 
 // TriggerClasses returns classes for the overlay trigger button.
 func (cfg OverlayConfig) triggerClasses() string {
-	base := "inline-flex items-center justify-center rounded-radius p-2 text-on-surface transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
+	base := "inline-flex min-h-11 min-w-11 items-center justify-center rounded-radius p-2 text-on-surface transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark"
 	if cfg.TriggerClass != "" {
 		base += " " + cfg.TriggerClass
 	}
@@ -260,34 +254,4 @@ func sidebarSectionItemsClasses(section Section) string {
 		return "ml-4 flex flex-col"
 	}
 	return "flex flex-col"
-}
-
-func safeJSIdentifier(raw, fallback string) string {
-	raw = strings.TrimSpace(raw)
-	if raw == "" {
-		raw = fallback
-	}
-	var b strings.Builder
-	upperNext := false
-	for _, r := range raw {
-		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
-			if b.Len() == 0 && unicode.IsDigit(r) {
-				b.WriteString(fallback)
-			}
-			if upperNext {
-				b.WriteRune(unicode.ToUpper(r))
-				upperNext = false
-			} else {
-				b.WriteRune(r)
-			}
-			continue
-		}
-		if b.Len() > 0 {
-			upperNext = true
-		}
-	}
-	if b.Len() == 0 {
-		return fallback
-	}
-	return b.String()
 }

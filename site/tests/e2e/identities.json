@@ -292,6 +292,15 @@
       ]
     },
     {
+      "name": "iconpack",
+      "files": [
+        "iconpack_consumer_test.go"
+      ],
+      "tests": [
+        "TestIconpackGeneratedConsumerBrowserProof"
+      ]
+    },
+    {
       "name": "kbd",
       "files": [
         "kbd_coverage_test.go",
@@ -564,15 +573,18 @@
         "table_filter_test.go",
         "table_hardening_test.go",
         "table_htmx_test.go",
+        "table_identity_test.go",
         "table_pagination_nav_test.go",
         "table_test.go"
       ],
       "tests": [
         "TestTableCheckboxSelection",
         "TestTableCoverageDemo",
+        "TestTableDemoIDsAreUnique",
         "TestTableExpandableRowIDEscapesAlpineExpressions",
         "TestTableFilter",
         "TestTableFilter_InlineVariant",
+        "TestTableFilter_SortPersistsAcrossFilterAndPagination",
         "TestTableHTMX_BrowserInfiniteScroll",
         "TestTableHTMX_BrowserLazyLoad",
         "TestTableHTMX_BrowserPagination",
@@ -857,6 +869,7 @@
       "TestAllComponentDocsFragmentNavigation",
       "TestApplicationPatternsPageAndResponsiveRecipes",
       "TestApplicationPatternsSearchNavigatesToRecipePage",
+      "TestAttributionsDisplaysCanonicalRuntimePinsAndEmbeddedPaths",
       "TestBrowserStorageNoticeCanDisableDemoCookies",
       "TestBrowserStorageNoticeOffersChoice",
       "TestButton_HTMXInteractions",

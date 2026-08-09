@@ -13,6 +13,7 @@ import (
 
 	shellassets "github.com/araihu/goshtoso-app-shells/componentdocshell/assets"
 	chartassets "github.com/araihu/goshtoso-charts/assets"
+	libraryassets "github.com/araihu/goshtoso/assets"
 	combobox "github.com/araihu/goshtoso/components/combobox"
 	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
@@ -57,28 +58,7 @@ func tickerInterval() time.Duration {
 }
 
 func (s *Server) setupRoutes() {
-	// Compiled assets (CSS, JS)
-	assetsDir := filepath.Join(s.projectRoot, "assets")
-	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
-	s.mux.Handle("/assets/", assetsHandler)
-	s.mux.Handle("/site-assets/", siteassets.Handler())
-	s.mux.Handle("/componentdocshell/assets/", shellassets.Handler())
-	s.mux.Handle("GET "+chartassets.Prefix, withImmutableCache(chartassets.Handler()))
-
-	// Favicons are referenced at root paths from <head>, so they are served from
-	// the root mux, but the files live alongside the other assets on disk.
-	// Exact-match patterns; no path traversal possible.
-	for _, name := range []string{
-		"favicon.ico", "favicon.svg", "favicon-96x96.png", "apple-touch-icon.png",
-		"site.webmanifest", "web-app-manifest-192x192.png", "web-app-manifest-512x512.png",
-	} {
-		s.mux.HandleFunc("/"+name, func(w http.ResponseWriter, r *http.Request) {
-			if strings.HasSuffix(r.URL.Path, ".webmanifest") {
-				w.Header().Set("Content-Type", "application/manifest+json")
-			}
-			http.ServeFile(w, r, filepath.Join(assetsDir, r.URL.Path[1:]))
-		})
-	}
+	s.setupAssetRoutes()
 
 	// Component comparison pages
 	s.mux.HandleFunc("/robots.txt", s.handleRobots)
@@ -150,6 +130,33 @@ func (s *Server) setupRoutes() {
 	})
 }
 
+func (s *Server) setupAssetRoutes() {
+	// Compiled assets (CSS, JS)
+	assetsDir := filepath.Join(s.projectRoot, "assets")
+	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
+	s.mux.Handle("/assets/", libraryassets.WithCacheControl(assetsHandler))
+	s.mux.Handle("/site-assets/", libraryassets.WithCacheControl(siteassets.Handler()))
+	s.mux.Handle("/componentdocshell/assets/", libraryassets.WithCacheControl(shellassets.Handler()))
+	s.mux.Handle("GET "+chartassets.Prefix, withImmutableCache(chartassets.Handler()))
+
+	// Favicons are referenced at root paths from <head>, so they are served from
+	// the root mux, but the files live alongside the other assets on disk.
+	// Exact-match patterns; no path traversal possible.
+	for _, name := range []string{
+		"favicon.ico", "favicon.svg", "favicon-96x96.png", "apple-touch-icon.png",
+		"site.webmanifest", "web-app-manifest-192x192.png", "web-app-manifest-512x512.png",
+	} {
+		routeName := name
+		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasSuffix(routeName, ".webmanifest") {
+				w.Header().Set("Content-Type", "application/manifest+json")
+			}
+			http.ServeFile(w, r, filepath.Join(assetsDir, routeName))
+		})
+		s.mux.Handle("/"+routeName, libraryassets.WithCacheControl(handler))
+	}
+}
+
 func (s *Server) handleChartsShowcase(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400")
@@ -163,10 +170,7 @@ func (s *Server) handleChartsShowcaseFrame(w http.ResponseWriter, r *http.Reques
 }
 
 func withImmutableCache(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-		next.ServeHTTP(w, r)
-	})
+	return libraryassets.WithCacheControl(next)
 }
 
 func (s *Server) handleLandingThemePlayground(w http.ResponseWriter, r *http.Request) {

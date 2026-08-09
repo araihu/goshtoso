@@ -46,6 +46,7 @@ var defaultArtifacts = []artifact{
 			"assets/js/src/components/tooltip.js",
 			"assets/js/src/components/data.js",
 			"assets/js/src/components/navigation.js",
+			"assets/js/src/components/sidebar.js",
 			"assets/js/src/components/search.js",
 			"assets/js/src/components/table.js",
 			"assets/js/src/components/carousel.js",

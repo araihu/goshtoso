@@ -87,16 +87,19 @@ templ metadataTemplate(metadata MetadataConfig) {
 // CDN requests for the default manifest. WithRuntimeManifest accepts a typed,
 // caller-owned dependency baseline and validates it before writing HTML. Custom
 // URLs configure loading; only the pinned default versions are tested together.
+// WithStylesheetOnly emits the selected stylesheet without any runtime script.
 // Stock CDN Tailwind cannot be used: it lacks Goshtoso's theme tokens, which
 // only exist in the compiled styles.css.
 templ dependenciesTemplate(cfg config) {
 	if cfg.includes(cfg.manifest.Stylesheet, false) {
 		<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL } { cfg.stylesheetAttributes()... }/>
 	}
-	if cfg.localRuntime {
-		@localDependencyScripts(cfg, false)
-	} else if cfg.includes(cfg.manifest.Loader, false) {
-		<script defer?={ cfg.manifest.Loader.Defer } src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes()... }></script>
+	if !cfg.stylesheetOnly {
+		if cfg.localRuntime {
+			@localDependencyScripts(cfg, false)
+		} else if cfg.includes(cfg.manifest.Loader, false) {
+			<script defer?={ cfg.manifest.Loader.Defer } src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes()... }></script>
+		}
 	}
 }
 
@@ -108,10 +111,12 @@ templ dependenciesMinimalTemplate(cfg config) {
 	if cfg.includes(cfg.manifest.Stylesheet, true) {
 		<link rel="stylesheet" href={ cfg.manifest.Stylesheet.PrimaryURL } { cfg.stylesheetAttributes()... }/>
 	}
-	if cfg.localRuntime {
-		@localDependencyScripts(cfg, true)
-	} else if cfg.includes(cfg.manifest.Loader, true) {
-		<script defer?={ cfg.manifest.Loader.Defer } src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes()... }></script>
+	if !cfg.stylesheetOnly {
+		if cfg.localRuntime {
+			@localDependencyScripts(cfg, true)
+		} else if cfg.includes(cfg.manifest.Loader, true) {
+			<script defer?={ cfg.manifest.Loader.Defer } src={ cfg.manifest.Loader.PrimaryURL } { cfg.loaderAttributes()... }></script>
+		}
 	}
 }
 

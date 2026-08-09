@@ -1,7 +1,5 @@
 package sidebar
 
-import "fmt"
-
 // Sidebar renders a collapsible sidebar navigation component based on PenguinUI
 // Usage:
 //
@@ -96,17 +94,17 @@ templ sidebarTemplate(cfg Config) {
 // The inner panel renders a normal Sidebar so consumers keep the same item,
 // section, slot, and HTMX APIs.
 templ overlayTemplate(cfg OverlayConfig) {
-	{{ state := cfg.stateVar() }}
 	{{ panelID := cfg.panelID() }}
 	<div
-		x-data={ fmt.Sprintf("{ %s: false }", state) }
-		x-on:keydown.escape.window={ fmt.Sprintf("%s = false", state) }
+		x-data="goshtosoSidebarOverlay()"
+		x-on:keydown.escape.window="closeAndFocus()"
 		class={ cfg.rootClasses() }
 	>
 		<button
 			type="button"
-			x-on:click={ fmt.Sprintf("%s = !%s", state, state) }
-			x-bind:aria-expanded={ fmt.Sprintf("%s.toString()", state) }
+			x-on:click="open = !open"
+			x-ref="trigger"
+			x-bind:aria-expanded="open.toString()"
 			aria-controls={ panelID }
 			aria-label={ cfg.triggerLabelText() }
 			class={ cfg.triggerClasses() }
@@ -119,16 +117,16 @@ templ overlayTemplate(cfg OverlayConfig) {
 		</button>
 		<div
 			x-cloak
-			x-show={ state }
+			x-show="open"
 			x-transition.opacity.duration.200ms
-			x-on:click={ fmt.Sprintf("%s = false", state) }
+			x-on:click="open = false"
 			class={ cfg.backdropClasses() }
 			aria-hidden="true"
 		></div>
 		<div
 			id={ panelID }
 			x-cloak
-			x-show={ state }
+			x-show="open"
 			x-transition:enter="transition-transform ease-out duration-200 motion-reduce:transition-none"
 			x-transition:enter-start="-translate-x-full"
 			x-transition:enter-end="translate-x-0"
@@ -139,7 +137,7 @@ templ overlayTemplate(cfg OverlayConfig) {
 		>
 			<div
 				class="h-full"
-				x-on:click={ fmt.Sprintf("if ($event.target.closest('a[href]:not([aria-controls])')) %s = false", state) }
+				x-on:click="if ($event.target.closest('a[href]:not([aria-controls])')) open = false"
 			>
 				@sidebarTemplate(cfg.Sidebar)
 			</div>
