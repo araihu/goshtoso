@@ -7,7 +7,6 @@ import (
 	"bufio"
 	"bytes"
 	"compress/gzip"
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -24,11 +23,19 @@ import (
 	"testing"
 	"time"
 
-	"github.com/araihu/goshtoso/iconpack"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+type e2eIconpackRelease struct {
+	Root              string
+	Release           string
+	CatalogSHA256     string
+	ReleaseJSONSHA256 string
+	ChecksumsSHA256   string
+	Names             []string
+}
 
 func TestIconpackGeneratedConsumerBrowserProof(t *testing.T) {
 	if testing.Short() {
@@ -139,14 +146,15 @@ sources:
 	require.NoError(t, os.WriteFile(configPath, []byte(config), 0o644))
 	output := filepath.Join(root, "consumer", "appicons")
 	require.NoError(t, os.MkdirAll(filepath.Dir(output), 0o755))
-	_, err := iconpack.Generate(context.Background(), iconpack.Options{
-		ConfigPath: configPath, Trust: true, AllowHTTP: true,
-		OutputDir: output, Package: "appicons", ConstPrefix: "Icon", SpriteURL: "/assets/icons/appicons/sprite.svg",
-	})
-	require.NoError(t, err)
+	repoRoot := e2eRepositoryRoot(t)
+	runIconpack(t, repoRoot,
+		"run", "./cmd/iconpack",
+		"-config", configPath, "-trust", "-allow-http",
+		"-out", output, "-package", "appicons", "-const-prefix", "Icon",
+		"-sprite-url", "/assets/icons/appicons/sprite.svg",
+	)
 
 	consumerDir := filepath.Dir(output)
-	repoRoot := e2eRepositoryRoot(t)
 	goMod := fmt.Sprintf(`module example.com/goshtoso-iconpack-config-e2e
 
 go 1.26.5
@@ -261,17 +269,24 @@ func e2eIconpackArchive(t *testing.T) []byte {
 func startIconpackConsumer(t *testing.T) string {
 	t.Helper()
 	root := t.TempDir()
-	opts := writeE2EIconpackRelease(t, filepath.Join(root, "release"))
-	opts.OutputDir = filepath.Join(root, "consumer", "appicons")
-	opts.Package = "appicons"
-	opts.ConstPrefix = "Icon"
-	opts.SpriteURL = "/assets/icons/appicons/sprite.svg"
-	require.NoError(t, os.MkdirAll(filepath.Dir(opts.OutputDir), 0o755))
-	_, err := iconpack.Generate(context.Background(), opts)
-	require.NoError(t, err)
-
-	consumerDir := filepath.Dir(opts.OutputDir)
+	release := writeE2EIconpackRelease(t, filepath.Join(root, "release"))
+	output := filepath.Join(root, "consumer", "appicons")
+	require.NoError(t, os.MkdirAll(filepath.Dir(output), 0o755))
 	repoRoot := e2eRepositoryRoot(t)
+	args := []string{
+		"run", "./cmd/iconpack", "-release-root", release.Root,
+		"-release", release.Release, "-catalog-sha256", release.CatalogSHA256,
+		"-release-json-sha256", release.ReleaseJSONSHA256,
+		"-checksums-sha256", release.ChecksumsSHA256,
+		"-out", output, "-package", "appicons", "-const-prefix", "Icon",
+		"-sprite-url", "/assets/icons/appicons/sprite.svg",
+	}
+	for _, name := range release.Names {
+		args = append(args, "-name", name)
+	}
+	runIconpack(t, repoRoot, args...)
+
+	consumerDir := filepath.Dir(output)
 	goMod := fmt.Sprintf(`module example.com/goshtoso-iconpack-e2e
 
 go 1.26.5
@@ -334,8 +349,8 @@ func contextBackground() context.Context { return context.Background() }
 	tidy := exec.Command("go", "mod", "tidy")
 	tidy.Dir = consumerDir
 	tidy.Env = append(os.Environ(), "GOWORK=off", "GOFLAGS=-p=2")
-	output, err := tidy.CombinedOutput()
-	require.NoErrorf(t, err, "tidy generated consumer: %s", output)
+	outputBytes, err := tidy.CombinedOutput()
+	require.NoErrorf(t, err, "tidy generated consumer: %s", outputBytes)
 
 	cmd := exec.Command("go", "run", ".")
 	cmd.Dir = consumerDir
@@ -395,7 +410,7 @@ func stopIconpackConsumer(cmd *exec.Cmd) {
 	}
 }
 
-func writeE2EIconpackRelease(t *testing.T, root string) iconpack.Options {
+func writeE2EIconpackRelease(t *testing.T, root string) e2eIconpackRelease {
 	t.Helper()
 	devAsset := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="#398CCB" d="M0 0h100v100H0z"/></svg>`)
 	heroAsset := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="currentColor" d="M2 8l4 4 8-8"/></svg>`)
@@ -451,10 +466,19 @@ func writeE2EIconpackRelease(t *testing.T, root string) iconpack.Options {
 	checksumsBytes := []byte(checksums.String())
 	writeE2EFiles(t, root, files)
 	require.NoError(t, os.WriteFile(filepath.Join(root, "checksums.txt"), checksumsBytes, 0o644))
-	return iconpack.Options{
-		ReleaseRoot: root, Release: "v0.2.0-e2e", CatalogSHA256: digest(catalogBytes), ReleaseJSONSHA256: digest(releaseBytes), ChecksumsSHA256: digest(checksumsBytes),
+	return e2eIconpackRelease{
+		Root: root, Release: "v0.2.0-e2e", CatalogSHA256: digest(catalogBytes), ReleaseJSONSHA256: digest(releaseBytes), ChecksumsSHA256: digest(checksumsBytes),
 		Names: []string{"brand-developer-icons-tRPC", "ui-hi-16-solid-check"},
 	}
+}
+
+func runIconpack(t *testing.T, repoRoot string, args ...string) {
+	t.Helper()
+	command := exec.Command("go", args...)
+	command.Dir = repoRoot
+	command.Env = append(os.Environ(), "GOWORK=off", "GOFLAGS=-p=2")
+	output, err := command.CombinedOutput()
+	require.NoErrorf(t, err, "iconpack CLI: %s", output)
 }
 
 func writeE2EFiles(t *testing.T, root string, files map[string][]byte) {
