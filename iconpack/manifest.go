@@ -23,6 +23,9 @@ func selectionNames(opts Options) ([]string, error) {
 		return nil, fmt.Errorf("name and manifest selection are mutually exclusive")
 	}
 	if len(opts.Names) == 0 && opts.SelectionManifest == "" {
+		if opts.ConfigPath != "" {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("at least one exact canonical name or a selection manifest is required")
 	}
 	names := append([]string(nil), opts.Names...)

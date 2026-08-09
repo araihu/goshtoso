@@ -15,6 +15,12 @@ const (
 
 // Options describes one deterministic icon-pack generation.
 type Options struct {
+	// ConfigPath selects the Muamba-backed .iconpack.yaml contract. It is
+	// mutually exclusive with the legacy release/source flags below.
+	ConfigPath          string
+	IconpackLockPath    string
+	Trust               bool
+	AllowHTTP           bool
 	ReleaseRoot         string
 	ReleaseArchive      string
 	Release             string

@@ -8,8 +8,8 @@ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/araihu/assets v0.1.4 h1:ANovhAqzPu5kGoOjBeCxkVDHC2a7dpnmyptc5C8du9E=
 github.com/araihu/assets v0.1.4/go.mod h1:8K1pCpn+l4LnqkiWA3uRynJ5aZ3yVbSTTgCCn+HFxKo=
-github.com/araihu/muamba v0.0.2 h1:UAXI1ajiOHBcJqsB/NVYfsg9YbgsAsLFhKtPVp+WG/A=
-github.com/araihu/muamba v0.0.2/go.mod h1:HWgw9kWiYam0Y8Ulmej5aW/AvLd8L2GWUmO6WlYNsVQ=
+github.com/araihu/muamba v0.0.5 h1:trn4AXXhk0jPdA5hsobEiHA5bs1/awkboZVFLbKlvV8=
+github.com/araihu/muamba v0.0.5/go.mod h1:HWgw9kWiYam0Y8Ulmej5aW/AvLd8L2GWUmO6WlYNsVQ=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=

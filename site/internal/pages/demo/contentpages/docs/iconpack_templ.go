@@ -63,7 +63,7 @@ func iconpackContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"iconpack-fragment\" class=\"mx-auto max-w-5xl space-y-12\"><header class=\"space-y-4\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Extension surface</p><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Consumer-local icon packs</h1><p class=\"max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark\">Bring any hashed SVG icon pack into your application without patching Goshtoso's curated core package. Arai Hu Assets releases are supported directly, while a small JSON or YAML source manifest makes packs such as Bootstrap Icons first-class inputs. The generator creates a parallel package and sprite inside your application, while rendering still goes through Goshtoso's accessible <code class=\"font-mono\">components/icon</code> contract.</p><div class=\"flex flex-wrap gap-4 text-sm font-semibold\"><a href=\"/components/icon\" hx-get=\"/components/icon\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Open the Icon component workbench</a> <a href=\"https://github.com/araihu/goshtoso/blob/main/docs/ICONPACK.md\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Read the complete repository guide</a></div></header><section id=\"why-icon-packs\" class=\"space-y-5\" aria-labelledby=\"why-icon-packs-title\"><h2 id=\"why-icon-packs-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Why generate locally?</h2><div class=\"grid gap-4 md:grid-cols-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"iconpack-fragment\" class=\"mx-auto max-w-5xl space-y-12\"><header class=\"space-y-4\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Extension surface</p><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Consumer-local icon packs</h1><p class=\"max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark\">Bring any icon pack into your application without patching Goshtoso's curated core package. Arai Hu Assets releases and the Muamba-backed <code class=\"font-mono\">.iconpack.yaml</code> contract are supported directly. The generator creates a parallel package and sprite inside your application, while rendering still goes through Goshtoso's accessible <code class=\"font-mono\">components/icon</code> contract.</p><div class=\"flex flex-wrap gap-4 text-sm font-semibold\"><a href=\"/components/icon\" hx-get=\"/components/icon\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Open the Icon component workbench</a> <a href=\"https://github.com/araihu/goshtoso/blob/main/docs/ICONPACK.md\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Read the complete repository guide</a></div></header><section id=\"why-icon-packs\" class=\"space-y-5\" aria-labelledby=\"why-icon-packs-title\"><h2 id=\"why-icon-packs-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Why generate locally?</h2><div class=\"grid gap-4 md:grid-cols-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,7 +71,7 @@ func iconpackContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = iconpackPrinciple("Any source", "Use the Arai Hu Assets catalog or describe another pack with a source manifest containing exact paths, symbols, licenses, viewBoxes, and SHA-256 values.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = iconpackPrinciple("Any source", "Use Arai Hu Assets, a GitHub tree, a single remote SVG, or several packs together. Muamba owns TOFU and verified snapshots; iconpack owns the names and generated package.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -103,47 +103,63 @@ func iconpackContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">For a verified extracted release root, use <code class=\"font-mono\">-release-root</code> instead of <code class=\"font-mono\">-release-archive</code>. Keep the output parent present and let the generator publish the owned output directory atomically.</p></section><section id=\"generic-source\" class=\"space-y-5\" aria-labelledby=\"generic-source-title\"><div><h2 id=\"generic-source-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">2. Bring any SVG pack</h2><p class=\"mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark\">A source manifest is the only adapter required for a non-Arai Hu Assets pack. This Bootstrap Icons example uses individual SVG files; the generator normalizes them into the same safe symbol sprite.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">For a verified extracted release root, use <code class=\"font-mono\">-release-root</code> instead of <code class=\"font-mono\">-release-archive</code>. Keep the output parent present and let the generator publish the owned output directory atomically.</p></section><section id=\"iconpack-config\" class=\"space-y-5\" aria-labelledby=\"iconpack-config-title\"><div><h2 id=\"iconpack-config-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">2. Bring any pack with .iconpack.yaml</h2><p class=\"mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark\">The config is Goshtoso-owned and never discovers or changes an existing <code class=\"font-mono\">muamba.yaml</code>. Muamba is used as a Go library; the first lock is explicit and later runs verify the same source bytes.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
-			Language: "json",
-			Label:    "bootstrap-icons.goshtoso.json",
-			Code: `{
-  "schemaVersion": 1,
-  "name": "Bootstrap Icons",
-  "release": "v1.11.3",
-  "source": "https://github.com/twbs/icons/tree/v1.11.3",
-  "license": "MIT",
-  "licensePath": "LICENSE",
-  "licenseSha256": "<sha256 of LICENSE>",
-  "icons": [{
-    "canonicalName": "bootstrap-icons-alarm",
-    "path": "icons/alarm.svg",
-    "spriteSymbol": "bi-alarm",
-    "viewBox": "0 0 16 16",
-    "sha256": "<sha256 of icons/alarm.svg>"
-  }]
-}`,
+			Language: "yaml",
+			Label:    ".iconpack.yaml",
+			Code: `schemaVersion: 1
+sources:
+  - id: heroicons
+    url: https://github.com/tailwindlabs/heroicons/tree/master/src
+    packName: heroicons
+    paths:
+      - 16/solid/academic-cap.svg
+    license: MIT
+    licensePath: LICENSE
+    licenseUrl: https://raw.githubusercontent.com/tailwindlabs/heroicons/master/LICENSE
+  - id: bootstrap
+    kind: file
+    url: https://raw.githubusercontent.com/twbs/icons/v1.11.3/icons/alarm.svg
+    path: alarm.svg
+    license: MIT
+    licensePath: LICENSE
+    licenseUrl: https://raw.githubusercontent.com/twbs/icons/v1.11.3/LICENSE.md`,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
 			Language: "bash",
-			Label:    "Generate from the generic source boundary",
+			Label:    "First trust and generate",
 			Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
-  -source-root ./vendor/bootstrap-icons \
-  -source-manifest ./bootstrap-icons.goshtoso.json \
-  -name bootstrap-icons-alarm \
-  -out ./internal/bootstrapicons -package bootstrapicons \
-  -const-prefix Icon -sprite-url /assets/icons/bootstrapicons/sprite.svg`,
+	  -config ./.iconpack.yaml -trust \
+	  -out ./internal/appicons -package appicons \
+	  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">JSON is canonical; YAML with the same fields is accepted. The source manifest is not an Arai Hu Assets catalog and is not inferred from filenames. Keep the exact upstream license in the generated <code class=\"font-mono\">LICENSES/</code> output.</p></section><section id=\"serve-and-render\" class=\"space-y-5\" aria-labelledby=\"serve-and-render-title\"><div><h2 id=\"serve-and-render-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">3. Serve the sprite and render through core</h2><p class=\"mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark\">Mount the generated <code class=\"font-mono\">sprite.svg</code> at the exact same-origin URL supplied to the generator. The generated <code class=\"font-mono\">Icon</code> helper accepts the small generated config and delegates to Goshtoso's core icon component.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">The generated <code class=\"font-mono\">.iconpack.lock.yaml</code> is the TOFU boundary. Remove <code class=\"font-mono\">-trust</code> after the first run. The Muamba adapter declaration is built in memory, so no <code class=\"font-mono\">.iconpack.engine.yaml</code> file is left in the consumer project. If <code class=\"font-mono\">paths</code> is omitted, every SVG in the tree is locked and available; names use <code class=\"font-mono\">packName-path</code>, such as <code class=\"font-mono\">heroicons-16-solid-academic-cap</code>. Git trees without <code class=\"font-mono\">packName</code> use the repository name; other sources use <code class=\"font-mono\">id-full-normalized-path</code>. The same file supports multiple sources.</p></section><section id=\"generic-source\" class=\"space-y-5\" aria-labelledby=\"generic-source-title\"><div><h2 id=\"generic-source-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">3. Compatibility source manifests</h2><p class=\"mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark\">Existing JSON or YAML source manifests remain accepted for migration and the checked-in Bootstrap fixture. New integrations should use <code class=\"font-mono\">.iconpack.yaml</code> so Muamba owns acquisition and lock verification.</p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "bash",
+			Label:    "Generate from an existing hashed source manifest",
+			Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
+	-source-root ./vendor/bootstrap-icons \
+	-source-manifest ./bootstrap-icons.goshtoso.json \
+	-name bootstrap-icons-alarm \
+	-out ./internal/bootstrapicons -package bootstrapicons \
+	-const-prefix Icon -sprite-url /assets/icons/bootstrapicons/sprite.svg`,
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">This compatibility path still verifies explicit per-file SHA-256 values. It does not read or modify any Muamba manifest.</p></section><section id=\"serve-and-render\" class=\"space-y-5\" aria-labelledby=\"serve-and-render-title\"><div><h2 id=\"serve-and-render-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">4. Serve the sprite and render through core</h2><p class=\"mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark\">Mount the generated <code class=\"font-mono\">sprite.svg</code> at the exact same-origin URL supplied to the generator. The generated <code class=\"font-mono\">Icon</code> helper accepts the small generated config and delegates to Goshtoso's core icon component.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -168,7 +184,7 @@ templ ProviderIcon() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"grid gap-4 md:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"grid gap-4 md:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -180,7 +196,7 @@ templ ProviderIcon() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></section><section id=\"lookup\" class=\"space-y-5\" aria-labelledby=\"lookup-title\"><h2 id=\"lookup-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">4. Resolve names from configuration</h2><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">When an application stores canonical names in configuration, use the generated <code class=\"font-mono\">Name</code> type and <code class=\"font-mono\">Lookup</code>. An absent name is an application configuration error, not a reason to fall back to an arbitrary glyph.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><section id=\"lookup\" class=\"space-y-5\" aria-labelledby=\"lookup-title\"><h2 id=\"lookup-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">5. Resolve names from configuration</h2><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">When an application stores canonical names in configuration, use the generated <code class=\"font-mono\">Name</code> type and <code class=\"font-mono\">Lookup</code>. An absent name is an application configuration error, not a reason to fall back to an arbitrary glyph.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -201,7 +217,7 @@ templ ProviderIcon() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</section><section id=\"manifest-and-licenses\" class=\"space-y-5\" aria-labelledby=\"manifest-and-licenses-title\"><h2 id=\"manifest-and-licenses-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Inspect the generated boundary</h2><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">Keep these generated files with the application package. They make the selected release, source bytes, symbols, output hashes, provenance, and licenses auditable without reopening the vendored source tree.</p><div class=\"grid gap-3 sm:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</section><section id=\"manifest-and-licenses\" class=\"space-y-5\" aria-labelledby=\"manifest-and-licenses-title\"><h2 id=\"manifest-and-licenses-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Inspect the generated boundary</h2><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">Keep these generated files with the application package. They make the selected release, source bytes, symbols, output hashes, provenance, and licenses auditable without reopening the vendored source tree.</p><div class=\"grid gap-3 sm:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -225,7 +241,7 @@ templ ProviderIcon() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></section><section id=\"runtime-contract\" class=\"space-y-5\" aria-labelledby=\"runtime-contract-title\"><h2 id=\"runtime-contract-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Runtime and update contract</h2><ul class=\"list-disc space-y-3 pl-5 text-on-surface dark:text-on-surface-dark\"><li>Use a relative same-origin sprite URL. HTTPS pages must not depend on an HTTP sprite or cross-origin <code class=\"font-mono\">&lt;use&gt;</code> behavior.</li><li>Give labelled icons a nonblank <code class=\"font-mono\">Label</code>. Set <code class=\"font-mono\">Decorative: true</code> on purely visual icons; the generated helper passes both decisions to core.</li><li>Do not recolor protected brand assets. Monochrome assets can inherit <code class=\"font-mono\">currentColor</code> through your normal Goshtoso classes.</li><li>When updating, generate a new versioned output and sprite route, verify the new manifest, then switch the application import and route together. Retain the previous output as a rollback artifact until the deployment is confirmed.</li></ul><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The <a href=\"/components/icon\" hx-get=\"/components/icon\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Icon workbench</a> shows the same accessibility, size, color, and SVG geometry behavior within the embedded package. The generated-consumer proof follows that same core path.</p></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></section><section id=\"runtime-contract\" class=\"space-y-5\" aria-labelledby=\"runtime-contract-title\"><h2 id=\"runtime-contract-title\" data-toc-heading class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Runtime and update contract</h2><ul class=\"list-disc space-y-3 pl-5 text-on-surface dark:text-on-surface-dark\"><li>Use a relative same-origin sprite URL. HTTPS pages must not depend on an HTTP sprite or cross-origin <code class=\"font-mono\">&lt;use&gt;</code> behavior.</li><li>Give labelled icons a nonblank <code class=\"font-mono\">Label</code>. Set <code class=\"font-mono\">Decorative: true</code> on purely visual icons; the generated helper passes both decisions to core.</li><li>Do not recolor protected brand assets. Monochrome assets can inherit <code class=\"font-mono\">currentColor</code> through your normal Goshtoso classes.</li><li>When updating, generate a new versioned output and sprite route, verify the new manifest, then switch the application import and route together. Retain the previous output as a rollback artifact until the deployment is confirmed.</li></ul><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The <a href=\"/components/icon\" hx-get=\"/components/icon\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Icon workbench</a> shows the same accessibility, size, color, and SVG geometry behavior within the embedded package. The generated-consumer proof follows that same core path.</p></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -254,33 +270,33 @@ func iconpackPrinciple(title, description string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 173, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 190, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</h3><p class=\"mt-2 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</h3><p class=\"mt-2 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 174, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 191, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -309,33 +325,33 @@ func iconpackCodeNote(title, description string) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<article class=\"border-y border-outline py-4 dark:border-outline-dark\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<article class=\"border-y border-outline py-4 dark:border-outline-dark\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 180, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 197, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</h3><p class=\"mt-1 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</h3><p class=\"mt-1 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 181, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 198, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</p></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -364,33 +380,33 @@ func iconpackOutputFile(name, description string) templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"rounded-radius border border-outline p-4 dark:border-outline-dark\"><code class=\"font-mono text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"rounded-radius border border-outline p-4 dark:border-outline-dark\"><code class=\"font-mono text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 187, Col: 110}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 204, Col: 110}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</code><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</code><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 188, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/iconpack.templ`, Line: 205, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

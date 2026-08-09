@@ -248,7 +248,34 @@ func iconPackExtension() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section class=\"mb-10\" aria-labelledby=\"iconpack-title\"><div class=\"mb-4 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Consumer-local extension</p><h2 id=\"iconpack-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Generate an attributed icon pack</h2><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Select Arai Hu Assets icons by exact canonical name, or bring another pack with a hashed source manifest. <code class=\"font-mono\">iconpack</code> verifies the source boundary, then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.</p></div><div data-component-code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section class=\"mb-10\" aria-labelledby=\"iconpack-title\"><div class=\"mb-4 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Consumer-local extension</p><h2 id=\"iconpack-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Generate an attributed icon pack</h2><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Select Arai Hu Assets icons by exact canonical name, or bring any GitHub tree, single SVG, or multiple packs with a Goshtoso-owned <code class=\"font-mono\">.iconpack.yaml</code>. Muamba performs explicit TOFU and verified snapshots; <code class=\"font-mono\">iconpack</code> then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.</p></div><div data-component-code>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "yaml",
+			Label:    "Describe any source",
+			Code: `schemaVersion: 1
+sources:
+  - id: heroicons
+    url: https://github.com/tailwindlabs/heroicons/tree/master/src
+    packName: heroicons
+    paths: [16/solid/academic-cap.svg]
+    license: MIT
+    licensePath: LICENSE
+    licenseUrl: https://raw.githubusercontent.com/tailwindlabs/heroicons/master/LICENSE`,
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "bash",
+			Label:    "First trust a consumer-owned pack",
+			Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
+  -config ./.iconpack.yaml -trust \
+  -out ./internal/appicons -package appicons \
+  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -283,7 +310,7 @@ templ ProviderIcon() {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The generated helper delegates to <code class=\"font-mono\">components/icon</code>; JSON selection and source manifests are canonical, with YAML compatibility accepted. See <code class=\"font-mono\">docs/ICONPACK.md</code> to review Arai Hu Assets and arbitrary-pack boundaries.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The generated helper delegates to <code class=\"font-mono\">components/icon</code>. The generated <code class=\"font-mono\">.iconpack.lock.yaml</code> is the explicit TOFU boundary, and existing JSON/YAML source manifests remain available for migration. See <code class=\"font-mono\">docs/ICONPACK.md</code> to review Arai Hu Assets and arbitrary-pack boundaries.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -358,7 +385,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 159, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 180, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -371,7 +398,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 160, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 181, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -384,7 +411,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(glyph.Symbol))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 161, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 182, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -405,7 +432,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 168, Col: 139}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 189, Col: 139}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -418,7 +445,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 168, Col: 156}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 189, Col: 156}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -431,7 +458,7 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(glyph.Symbol)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 169, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 190, Col: 122}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {

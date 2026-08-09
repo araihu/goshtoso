@@ -61,6 +61,9 @@ func selectAssets(boundary releaseBoundary, names []string, prefix string) ([]se
 			family = boundary.generic.family
 			allowed = true
 		}
+		if boundary.muamba != nil {
+			family, allowed = boundary.muamba.families[familyKey]
+		}
 		if !allowed {
 			return nil, nil, fmt.Errorf("canonical name %q resolves to unsupported namespace/product %s", name, familyKey)
 		}

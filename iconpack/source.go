@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"bytes"
 	"compress/gzip"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -49,9 +50,13 @@ type releaseBoundary struct {
 	checksums     map[string]string
 	files         map[string][]byte
 	generic       *genericPack
+	muamba        *muambaPack
 }
 
-func openSourceBoundary(opts Options) (releaseBoundary, error) {
+func openSourceBoundary(ctx context.Context, opts Options) (releaseBoundary, error) {
+	if opts.ConfigPath != "" {
+		return openMuambaPack(ctx, opts)
+	}
 	if opts.SourceManifest != "" {
 		return openGenericPack(opts)
 	}
