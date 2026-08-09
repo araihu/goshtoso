@@ -17,6 +17,9 @@ func TestIconpackDocsRenderConsumerSurface(t *testing.T) {
 	for _, expected := range []string{
 		"Consumer-local icon packs",
 		"Generate from an Assets release",
+		"Bring any SVG pack",
+		"Bootstrap Icons",
+		"source-manifest",
 		"brand-developer-icons-tRPC",
 		"IconBrandDeveloperIconsTRPC",
 		"Lookup",

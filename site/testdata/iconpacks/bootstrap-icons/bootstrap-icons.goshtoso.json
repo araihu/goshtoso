@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "name": "Bootstrap Icons",
+  "release": "v1.11.3",
+  "source": "https://github.com/twbs/icons/tree/v1.11.3",
+  "license": "MIT",
+  "licensePath": "LICENSE",
+  "licenseSha256": "0fb3e11bd57e896c5a512afd64864d28a37de45d19835016c87ca1ad19ead969",
+  "icons": [
+    {
+      "canonicalName": "bootstrap-icons-alarm",
+      "path": "icons/alarm.svg",
+      "spriteSymbol": "bi-alarm",
+      "viewBox": "0 0 16 16",
+      "colorBehavior": "currentColor",
+      "sha256": "10a4a02a0aecef851aaa9b99f36472c87cbadef7100c973cd0e90775d094f11b"
+    },
+    {
+      "canonicalName": "bootstrap-icons-bootstrap",
+      "path": "icons/bootstrap.svg",
+      "spriteSymbol": "bi-bootstrap",
+      "viewBox": "0 0 16 16",
+      "colorBehavior": "currentColor",
+      "sha256": "3a1383fba77279419a6605935aa66e7cff9fa114d8d9a2ad76107f047547b4a2"
+    }
+  ]
+}

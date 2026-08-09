@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "tool": "goshtoso-iconpack",
+  "release": "v1.11.3",
+  "identityRevision": 1,
+  "catalogSchemaVersion": 1,
+  "catalogSha256": "8301abe07c29764270abd9404b09acf9e7b303e57215460b76413302d08c18e0",
+  "releaseJsonSha256": "",
+  "checksumsSha256": "",
+  "sourceKind": "source-root",
+  "archiveSha256": "",
+  "package": "bootstrapicons",
+  "constPrefix": "Icon",
+  "spriteUrl": "/assets/icons/bootstrapicons/sprite.svg",
+  "assets": [
+    {
+      "canonicalName": "bootstrap-icons-alarm",
+      "namespace": "custom",
+      "product": "Bootstrap Icons",
+      "path": "icons/alarm.svg",
+      "spriteSymbol": "bi-alarm",
+      "colorBehavior": "currentColor",
+      "sha256": "10a4a02a0aecef851aaa9b99f36472c87cbadef7100c973cd0e90775d094f11b",
+      "goIdentifier": "IconBootstrapIconsAlarm"
+    },
+    {
+      "canonicalName": "bootstrap-icons-bootstrap",
+      "namespace": "custom",
+      "product": "Bootstrap Icons",
+      "path": "icons/bootstrap.svg",
+      "spriteSymbol": "bi-bootstrap",
+      "colorBehavior": "currentColor",
+      "sha256": "3a1383fba77279419a6605935aa66e7cff9fa114d8d9a2ad76107f047547b4a2",
+      "goIdentifier": "IconBootstrapIconsBootstrap"
+    }
+  ],
+  "files": [
+    {
+      "path": "LICENSES/bootstrap-icons.txt",
+      "mode": "0644",
+      "bytes": 1093,
+      "sha256": "0fb3e11bd57e896c5a512afd64864d28a37de45d19835016c87ca1ad19ead969"
+    },
+    {
+      "path": "NOTICE",
+      "mode": "0644",
+      "bytes": 88,
+      "sha256": "38ecf191acbc92ee5f9f4d1132dc6639580b2632cb71efc6abd05a2f60e54670"
+    },
+    {
+      "path": "PROVENANCE/bootstrap-icons-manifest.json",
+      "mode": "0644",
+      "bytes": 860,
+      "sha256": "8301abe07c29764270abd9404b09acf9e7b303e57215460b76413302d08c18e0"
+    },
+    {
+      "path": "icons_gen.go",
+      "mode": "0644",
+      "bytes": 1623,
+      "sha256": "92c7a1c0e97bada49d62d05d4788e6b8612383668f64a49626511696f9e7b60d"
+    },
+    {
+      "path": "provenance.json",
+      "mode": "0644",
+      "bytes": 1274,
+      "sha256": "33e37b5bc071f33976655387d1d82f53aa442a0c10b6cccf152810451608b9f0"
+    },
+    {
+      "path": "sprite.svg",
+      "mode": "0644",
+      "bytes": 1353,
+      "sha256": "98faf3239440315b034bcbf2a8964bb1b9cce9ad76426e94b1dbda43232bcadb"
+    }
+  ]
+}

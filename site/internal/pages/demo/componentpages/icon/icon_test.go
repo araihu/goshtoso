@@ -32,6 +32,8 @@ func TestIconShowcaseRendersEveryGlyphInResponsiveGrid(t *testing.T) {
 	require.Contains(t, html, "IconBrandDeveloperIconsTRPC")
 	require.Contains(t, html, "components/icon")
 	require.Contains(t, html, "/assets/icons/appicons/sprite.svg")
+	require.Contains(t, html, "Bootstrap Icons, generated locally")
+	require.Contains(t, html, "/assets/icons/bootstrapicons/sprite.svg")
 }
 
 func TestIconShowcaseUsesCanonicalCatalogHeading(t *testing.T) {

@@ -101,6 +101,21 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 		assertSVGGeometryAndCurrentColor(t, currentColor)
 	})
 
+	t.Run("site renders a generic Bootstrap Icons pack through core", func(t *testing.T) {
+		page := openIconCatalogPage(t)
+		labelled := page.Locator("[data-testid='bootstrap-icon-labelled'] svg")
+		require.NoError(t, labelled.WaitFor())
+		assertSVGAttributes(t, labelled, "img", "Alarm", "")
+		assert.Equal(t, "/assets/icons/bootstrapicons/sprite.svg#bi-alarm", mustAttribute(t, labelled.Locator("use"), "href"))
+		assertSVGGeometry(t, labelled)
+
+		decorative := page.Locator("[data-testid='bootstrap-icon-decorative'] svg")
+		require.NoError(t, decorative.WaitFor())
+		assertSVGAttributes(t, decorative, "", "", "true")
+		assert.Equal(t, "/assets/icons/bootstrapicons/sprite.svg#bi-bootstrap", mustAttribute(t, decorative.Locator("use"), "href"))
+		assertSVGGeometry(t, decorative)
+	})
+
 	t.Run("magnifying glass modal traps focus and returns it on escape", func(t *testing.T) {
 		page, card, dialog := openMagnifyingGlassModal(t)
 		_, err := page.WaitForFunction(`() => document.activeElement?.id === "icon-size-xl"`, nil)
@@ -182,7 +197,7 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 
 	t.Run("bundled sprite and license return success", func(t *testing.T) {
 		_ = openIconCatalogPage(t)
-		for _, path := range []string{"/assets/icons/heroicons.svg", "/assets/icons/HEROICONS_LICENSE.txt"} {
+		for _, path := range []string{"/assets/icons/heroicons.svg", "/assets/icons/HEROICONS_LICENSE.txt", "/assets/icons/bootstrapicons/sprite.svg"} {
 			response, err := http.Get(baseURL + path)
 			require.NoError(t, err)
 			require.Equal(t, http.StatusOK, response.StatusCode, path)

@@ -2,6 +2,26 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.11] - 2026-08-09
+
+### Arbitrary consumer icon packs
+
+- Extended `iconpack` beyond the Arai Hu Assets catalog: consumers can bring
+  any SVG icon pack, or a single icon, through a hashed JSON or YAML source
+  manifest and a source root or verified archive.
+- Added deterministic standalone SVG normalization, typed consumer-local Go
+  bindings, sprite output, provenance, licenses, and exact source hashes while
+  preserving the existing `components/icon` rendering and accessibility
+  contract.
+- Added a checked-in Bootstrap Icons example and browser proof in the
+  Goshtoso site, plus the `/docs/iconpack` usage guide for both source modes.
+
+### Upgrade note
+
+- Existing embedded Heroicons and the Arai Hu Assets release mode remain
+  compatible. Consumers may adopt arbitrary packs without modifying the
+  embedded Goshtoso icon package.
+
 ## [v0.1.9] - 2026-08-08
 
 ### Consumer-local icon packs
