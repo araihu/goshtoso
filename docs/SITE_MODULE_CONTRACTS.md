@@ -9,6 +9,22 @@ must keep both green.
 uses a temporary `go.work`; it proves an atomic root-plus-site change works
 together without committing workspace state.
 
+Current-source-only compatibility fixtures that import an unreleased root API
+run as ordinary packages in this contract. The pinned contract excludes only
+those explicitly named fixture packages, because it must remain an untagged
+`GOWORK=off` check against the released version in `site/go.mod`.
+
+The root-catalog browser agreement has the same boundary. Its maintained entry
+point creates a temporary root-plus-site workspace, proves the focused test is
+listed under its current-source build tag, and then runs it:
+
+```bash
+just test-e2e-theme-catalog-current-source
+```
+
+Required Code CI runs this command after generating the demo CSS. The standalone
+v0.1.12 site contract does not compile or execute this unreleased-root fixture.
+
 Run:
 
 ```bash

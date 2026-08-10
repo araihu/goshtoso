@@ -86,18 +86,42 @@ else
 	echo "site pinned-dependency deployability: $dependency_module@$version (GOWORK=off)"
 fi
 
+site_module="$(cd "$site_dir" && GOWORK="$workspace" go list -m -f '{{.Path}} {{.Dir}}' | awk -v site_dir="$site_dir" '$2 == site_dir { print $1 }')" \
+	|| fail "site module identity"
+if [[ -z "$site_module" ]]; then
+	fail "site module identity (site module not found)"
+fi
+current_source_theme_package="${GOSHTOSO_CURRENT_SOURCE_THEME_PACKAGE:-${site_module}/internal/themes/current_source}"
+
 packages_file="$tmp_dir/packages.txt"
 if ! (cd "$site_dir" && GOWORK="$workspace" go list ./... > "$packages_file"); then
 	fail "package discovery"
 fi
 
 site_packages=()
+current_source_fixture_seen=0
 while IFS= read -r package; do
 	case "$package" in
+	"$current_source_theme_package")
+		if [[ "$mode" == "pinned-dependency" ]]; then
+			continue
+		fi
+		current_source_fixture_seen=$((current_source_fixture_seen + 1))
+		site_packages+=("$package")
+		;;
 		*/tests/e2e | */tests/e2e/*) ;;
 		*) site_packages+=("$package") ;;
 	esac
 done < "$packages_file"
+
+if [[ "$mode" == "current-source" ]]; then
+	if [[ "$current_source_fixture_seen" -ne 1 ]]; then
+		fail "current-source agreement fixture missing or duplicated"
+	fi
+	echo "current-source agreement fixture: included ($current_source_theme_package)"
+else
+	echo "pinned-dependency excludes current-source agreement fixture ($current_source_theme_package)"
+fi
 
 if [[ "${#site_packages[@]}" -eq 0 ]]; then
 	fail "package discovery (no non-E2E packages found)"

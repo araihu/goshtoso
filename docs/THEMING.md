@@ -121,25 +121,51 @@ assembling `bg-danger text-on-danger` yourself.
 |-------|---------|-------------------|
 | `--radius-radius` | Global border radius for all components | `rounded-radius` |
 
-## Available Themes
+## Built-in Theme Catalog
 
-| Theme | Font | Primary | Radius | Description |
-|-------|------|---------|--------|-------------|
-| *(default)* | Poppins / Inter | Purple | xl | Default PenguinUI theme |
-| `arctic` | Inter | Blue | lg | Cool blue professional |
-| `minimal` | Montserrat | Black | none | Clean, no rounded corners |
-| `modern` | Lato | Black | sm | Subtle, professional |
-| `high-contrast` | Inter | Dark Sky | sm | Maximum readability |
-| `neo-brutalism` | Space Mono / Montserrat | Violet | none | Bold, graphic style |
-| `halloween` | Poppins / Denk One | Orange | xl | Orange & purple festive |
-| `zombie` | Montserrat / Denk One | Orange | xl | Violet-tinted Halloween variant |
-| `pastel` | Playpen Sans | Rose | xl | Soft, warm tones |
-| `90s` | Poppins / Oswald | Purple | xl | Retro feel |
-| `christmas` | Lato / Jost | Red | md | Red & green festive |
-| `prototype` | Playpen Sans | Black | none | Wireframe/sketch style |
-| `news` | Inter / Merriweather | Sky | sm | Editorial, serif headings |
-| `industrial` | Poppins / Oswald | Amber | none | Bold, utilitarian |
-| `dracula` | Fira Code | Purple (#bd93f9) | md | Developer-focused dark theme |
+The root module publishes stable built-in keys and canonical design-system
+labels through `github.com/araihu/goshtoso/themes`:
+
+```go
+import (
+    "fmt"
+
+    "github.com/araihu/goshtoso/themes"
+)
+
+for _, theme := range themes.BuiltIn() {
+    fmt.Printf("%s: %s\n", theme.Key, theme.Label)
+}
+```
+
+`themes.BuiltIn()` returns caller-owned values in deterministic key order. That
+traversal order supports reproducible serialization; it is not a required
+presentation order and does not select a default. Consumers own selector
+presentation order, defaults, and custom themes. A shell may render different
+presentation copy for a label or omit a built-in option without changing this
+design-system catalog.
+
+The catalog intentionally contains keys and labels only. CSS tokens, fonts,
+colors, radii, and other styling details remain CSS and consumer concerns.
+
+| Key | Canonical label |
+|-----|-----------------|
+| `90s` | 90s |
+| `araihu` | Arai Hû |
+| `arctic` | Arctic |
+| `christmas` | Christmas |
+| `dracula` | Dracula |
+| `goshtoso` | Goshtoso |
+| `halloween` | Halloween |
+| `high-contrast` | High Contrast |
+| `industrial` | Industrial |
+| `minimal` | Minimal |
+| `modern` | Modern |
+| `neo-brutalism` | Neo Brutalism |
+| `news` | News |
+| `pastel` | Pastel |
+| `prototype` | Prototype |
+| `zombie` | Zombie |
 
 ## Creating a Custom Theme
 
