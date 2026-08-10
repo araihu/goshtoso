@@ -13,6 +13,7 @@ import (
 
 	demothemes "github.com/araihu/goshtoso/site/internal/themes"
 	corethemes "github.com/araihu/goshtoso/themes"
+	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,31 +46,50 @@ func TestThemePage_PublicCatalogInventoryAndSocialContract(t *testing.T) {
 	require.Equal(t, "Zombie", publicByKey["zombie"])
 	require.Equal(t, "Halloween II", demothemes.ZombiePresentationLabelOverride)
 
-	page := newPage(t, sharedBrowser)
-	gotoThemePage(t, page)
-	rawInventory, err := page.Evaluate(`() => {
-		const themePage = document.querySelector('[x-data="themePage"]');
-		const selectorKeys = Alpine.$data(themePage).allThemes;
-		const cards = [...document.querySelectorAll('h2 + .grid button[data-theme-key]')].map(card => ({
-			key: card.dataset.themeKey,
-			label: card.querySelector('.text-xs.font-bold').textContent.trim(),
-		}));
-		return JSON.stringify({selectorKeys, cards});
-	}`, nil)
-	require.NoError(t, err)
-	inventoryJSON, ok := rawInventory.(string)
-	require.True(t, ok, "unexpected inventory type %T", rawInventory)
-	var inventory struct {
-		SelectorKeys []string        `json:"selectorKeys"`
-		Cards        []renderedTheme `json:"cards"`
-	}
-	require.NoError(t, json.Unmarshal([]byte(inventoryJSON), &inventory))
 	expectedKeys := make([]string, 0, len(expected))
 	for _, theme := range expected {
 		expectedKeys = append(expectedKeys, theme.Key)
 	}
-	require.Equal(t, expectedKeys, inventory.SelectorKeys, "rendered theme selector state must follow site catalog")
-	require.Equal(t, expected, inventory.Cards, "rendered theme cards must follow site presentation catalog")
+
+	page := newIsolatedPage(t)
+	dismissCookieBanner(t, page)
+	failures := watchPageFailures(page)
+	_, err := page.Goto(baseURL+"/getting-started", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	themeLink := page.Locator("nav[aria-label='sidebar navigation'] a[href='/docs/theme']").First()
+	_, err = page.ExpectResponse("**/docs/theme", func() error {
+		return themeLink.Click()
+	}, playwright.PageExpectResponseOptions{Timeout: playwright.Float(5000)})
+	require.NoError(t, err)
+	require.NoError(t, page.WaitForURL("**/docs/theme"))
+	_, err = page.WaitForFunction(`() => {
+		const root = document.querySelector('[x-data="themePage"]');
+		const data = root && Alpine.$data(root);
+		return root && root._x_dataStack && data && data.allThemes.length > 0;
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err)
+
+	for _, mode := range []struct {
+		name  string
+		theme string
+		dark  bool
+	}{
+		{name: "GoshtosoLight", theme: "goshtoso"},
+		{name: "GoshtosoDark", theme: "goshtoso", dark: true},
+		{name: "MinimalLight", theme: "minimal"},
+		{name: "MinimalDark", theme: "minimal", dark: true},
+	} {
+		t.Run(mode.name, func(t *testing.T) {
+			setSidebarThemeMode(t, page, mode.theme, mode.dark)
+			assertRenderedThemeInventory(t, page, expectedKeys, expected)
+		})
+	}
+	waitForPageSettled(t, page)
+	failures.RequireEmpty(t)
 
 	response, err := http.Get(baseURL + "/docs/theme")
 	require.NoError(t, err)
@@ -117,4 +137,27 @@ func TestThemePage_PublicCatalogInventoryAndSocialContract(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 1200, config.Width)
 	require.Equal(t, 630, config.Height)
+}
+
+func assertRenderedThemeInventory(t *testing.T, page playwright.Page, expectedKeys []string, expected []renderedTheme) {
+	t.Helper()
+	rawInventory, err := page.Evaluate(`() => {
+		const themePage = document.querySelector('[x-data="themePage"]');
+		const selectorKeys = Alpine.$data(themePage).allThemes;
+		const cards = [...document.querySelectorAll('h2 + .grid button[data-theme-key]')].map(card => ({
+			key: card.dataset.themeKey,
+			label: card.querySelector('.text-xs.font-bold').textContent.trim(),
+		}));
+		return JSON.stringify({selectorKeys, cards});
+	}`, nil)
+	require.NoError(t, err)
+	inventoryJSON, ok := rawInventory.(string)
+	require.True(t, ok, "unexpected inventory type %T", rawInventory)
+	var inventory struct {
+		SelectorKeys []string        `json:"selectorKeys"`
+		Cards        []renderedTheme `json:"cards"`
+	}
+	require.NoError(t, json.Unmarshal([]byte(inventoryJSON), &inventory))
+	require.Equal(t, expectedKeys, inventory.SelectorKeys, "rendered theme selector state must follow site catalog")
+	require.Equal(t, expected, inventory.Cards, "rendered theme cards must follow site presentation catalog")
 }
