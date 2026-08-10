@@ -99,6 +99,11 @@ test-e2e-focused base="origin/main": css
 test-e2e-one test: css
     cd site && go test -tags=e2e,full ./tests/e2e/... -v -run "{{test}}"
 
+# List and run the root-catalog browser agreement in a temporary current-source
+# workspace. This test is intentionally absent from pinned v0.1.12 E2E builds.
+test-e2e-theme-catalog-current-source:
+    scripts/run-focused-e2e.sh --current-source-theme-catalog
+
 # Format root and site Go code.
 fmt:
     go fmt ./...

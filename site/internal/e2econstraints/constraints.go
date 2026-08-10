@@ -20,6 +20,8 @@ import (
 
 var identityPattern = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
 
+const currentSourceTag = "goshtoso_current_source"
+
 // Identity records the source files and runnable tests selected by one build tag.
 type Identity struct {
 	Name  string   `json:"name"`
@@ -143,12 +145,13 @@ func discoverTests(path string) ([]string, error) {
 
 // ValidateSuite checks tag safety and exact manifest ownership.
 func ValidateSuite(suite Suite, manifest Manifest) error {
-	known := map[string]bool{"e2e": true, "full": true}
+	known := map[string]bool{"e2e": true, "full": true, currentSourceTag: true}
 	for _, identity := range manifest.Identities {
 		known[identity.Name] = true
 	}
 	for _, file := range suite.Files {
-		for _, tag := range expressionTags(file.Expr) {
+		tags := expressionTags(file.Expr)
+		for _, tag := range tags {
 			if !known[tag] {
 				return fmt.Errorf("%s: unknown build tag %q", file.Name, tag)
 			}
@@ -159,6 +162,19 @@ func ValidateSuite(suite Suite, manifest Manifest) error {
 		if len(file.Tests) > 0 {
 			if file.Expr.Eval(func(tag string) bool { return tag == "e2e" }) {
 				return fmt.Errorf("%s: runnable tests use suite-only support constraint", file.Name)
+			}
+			if slices.Contains(tags, currentSourceTag) {
+				standardFull := func(tag string) bool { return tag == "e2e" || tag == "full" }
+				if file.Expr.Eval(standardFull) {
+					return fmt.Errorf("%s: current-source-only tests must be excluded from standard full", file.Name)
+				}
+				dedicated := func(tag string) bool {
+					return tag == "e2e" || tag == "full" || tag == currentSourceTag
+				}
+				if !file.Expr.Eval(dedicated) {
+					return fmt.Errorf("%s: current-source-only tests are missing dedicated tag inclusion", file.Name)
+				}
+				continue
 			}
 			if !file.Expr.Eval(func(tag string) bool { return tag == "e2e" || tag == "full" }) {
 				return fmt.Errorf("%s: runnable tests are missing full fallback", file.Name)
@@ -189,6 +205,14 @@ func ValidateSuite(suite Suite, manifest Manifest) error {
 		return err
 	}
 	return nil
+}
+
+// CurrentSourceInventory returns tests compiled by the dedicated root-plus-site
+// E2E contract. It includes standard full tests because current-source-only
+// files may use helpers declared behind the full suite tag.
+func (suite Suite) CurrentSourceInventory() Identity {
+	tags := map[string]bool{"e2e": true, "full": true, currentSourceTag: true}
+	return suite.inventory(currentSourceTag, func(tag string) bool { return tags[tag] })
 }
 
 // ExpandedManifest fills the checked-in identity names with their parsed files and tests.
@@ -350,7 +374,7 @@ func RunListMatrix(ctx context.Context, siteDir string, suite Suite, manifest Ma
 
 func parseGoTestList(output string) []string {
 	var tests []string
-	for _, line := range strings.Split(output, "\n") {
+	for line := range strings.SplitSeq(output, "\n") {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "Test") && !strings.ContainsAny(line, " \t") {
 			tests = append(tests, line)
