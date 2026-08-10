@@ -150,35 +150,8 @@ func ValidateSuite(suite Suite, manifest Manifest) error {
 		known[identity.Name] = true
 	}
 	for _, file := range suite.Files {
-		tags := expressionTags(file.Expr)
-		for _, tag := range tags {
-			if !known[tag] {
-				return fmt.Errorf("%s: unknown build tag %q", file.Name, tag)
-			}
-		}
-		if file.Expr.Eval(func(tag string) bool { return tag != "e2e" && known[tag] }) {
-			return fmt.Errorf("%s: build expression does not require e2e", file.Name)
-		}
-		if len(file.Tests) > 0 {
-			if file.Expr.Eval(func(tag string) bool { return tag == "e2e" }) {
-				return fmt.Errorf("%s: runnable tests use suite-only support constraint", file.Name)
-			}
-			if slices.Contains(tags, currentSourceTag) {
-				standardFull := func(tag string) bool { return tag == "e2e" || tag == "full" }
-				if file.Expr.Eval(standardFull) {
-					return fmt.Errorf("%s: current-source-only tests must be excluded from standard full", file.Name)
-				}
-				dedicated := func(tag string) bool {
-					return tag == "e2e" || tag == "full" || tag == currentSourceTag
-				}
-				if !file.Expr.Eval(dedicated) {
-					return fmt.Errorf("%s: current-source-only tests are missing dedicated tag inclusion", file.Name)
-				}
-				continue
-			}
-			if !file.Expr.Eval(func(tag string) bool { return tag == "e2e" || tag == "full" }) {
-				return fmt.Errorf("%s: runnable tests are missing full fallback", file.Name)
-			}
+		if err := validateSourceFile(file, known); err != nil {
+			return err
 		}
 	}
 
@@ -203,6 +176,41 @@ func ValidateSuite(suite Suite, manifest Manifest) error {
 	}
 	if err := compareIdentity(manifest.FullOnly, suite.FullOnly(manifest)); err != nil {
 		return err
+	}
+	return nil
+}
+
+func validateSourceFile(file SourceFile, known map[string]bool) error {
+	tags := expressionTags(file.Expr)
+	for _, tag := range tags {
+		if !known[tag] {
+			return fmt.Errorf("%s: unknown build tag %q", file.Name, tag)
+		}
+	}
+	if file.Expr.Eval(func(tag string) bool { return tag != "e2e" && known[tag] }) {
+		return fmt.Errorf("%s: build expression does not require e2e", file.Name)
+	}
+	if len(file.Tests) == 0 {
+		return nil
+	}
+	if file.Expr.Eval(func(tag string) bool { return tag == "e2e" }) {
+		return fmt.Errorf("%s: runnable tests use suite-only support constraint", file.Name)
+	}
+	if slices.Contains(tags, currentSourceTag) {
+		standardFull := func(tag string) bool { return tag == "e2e" || tag == "full" }
+		if file.Expr.Eval(standardFull) {
+			return fmt.Errorf("%s: current-source-only tests must be excluded from standard full", file.Name)
+		}
+		dedicated := func(tag string) bool {
+			return tag == "e2e" || tag == "full" || tag == currentSourceTag
+		}
+		if !file.Expr.Eval(dedicated) {
+			return fmt.Errorf("%s: current-source-only tests are missing dedicated tag inclusion", file.Name)
+		}
+		return nil
+	}
+	if !file.Expr.Eval(func(tag string) bool { return tag == "e2e" || tag == "full" }) {
+		return fmt.Errorf("%s: runnable tests are missing full fallback", file.Name)
 	}
 	return nil
 }
