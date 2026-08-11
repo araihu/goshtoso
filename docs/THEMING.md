@@ -121,6 +121,13 @@ assembling `bg-danger text-on-danger` yourself.
 |-------|---------|-------------------|
 | `--radius-radius` | Global border radius for all components | `rounded-radius` |
 
+Tooltip panels use `rounded-radius` unless their public contract documents a
+component-specific semantic radius token. Tooltip currently has no radius
+exception: default, rich, and persistent Tooltip panels all resolve through
+`--radius-radius`. The built-in Minimal theme maps that token to
+`var(--radius-none)`, so Tooltip panels compute to exactly `0px` in both light
+and dark mode.
+
 ## Built-in Theme Catalog
 
 The root module publishes stable built-in keys and canonical design-system
