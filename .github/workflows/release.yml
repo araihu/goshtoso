@@ -30,7 +30,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .cache/muamba
           key: muamba-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('muamba.yaml') }}
@@ -117,7 +117,7 @@ jobs:
 
       - name: Upload authored Go coverage to Codecov
         if: steps.codecov.outputs.configured == 'true'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           disable_search: true
           fail_ci_if_error: true
@@ -185,7 +185,7 @@ jobs:
           } >> release-notes.md
 
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           body_path: release-notes.md
           files: |
@@ -193,7 +193,7 @@ jobs:
             assets/goshtoso-theme.css
 
       - name: Update authoritative coverage badge gist
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.9.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: fb3843c3a13793eb6cc0af638bc00ad4
@@ -203,7 +203,7 @@ jobs:
           color: ${{ needs.pre-release.outputs.coverage-color }}
 
       - name: Update release badge gist
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.9.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: fb3843c3a13793eb6cc0af638bc00ad4

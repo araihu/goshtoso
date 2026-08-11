@@ -52,7 +52,7 @@
     Alpine.__themePageRegistered = true;
     Alpine.data("themePage", function () {
       return {
-        theme: readStoredValue("theme", "goshtoso"),
+        theme: document.documentElement.getAttribute("data-theme") || "araihu",
         titleFont: readStoredValue("themeTitleFont", ""),
         bodyFont: readStoredValue("themeBodyFont", ""),
         radius: readStoredValue("themeRadius", ""),
@@ -92,7 +92,7 @@
           this.allTokens = Array.isArray(data.allTokens) ? data.allTokens : [];
           this.tokenLabels = data.tokenLabels || {};
           this.overrides = sanitizeOverrides(this.overrides, this.allTokens);
-          if (!this.allThemes.includes(this.theme)) this.theme = "goshtoso";
+          if (!this.allThemes.includes(this.theme)) this.theme = "araihu";
           document.documentElement.setAttribute("data-theme", this.theme);
 
           try {

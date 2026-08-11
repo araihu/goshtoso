@@ -2,8 +2,56 @@
 set -euo pipefail
 
 usage() {
-  echo "usage: scripts/run-focused-e2e.sh <impact.json> [--dry-run]" >&2
+  cat >&2 <<'EOF'
+usage: scripts/run-focused-e2e.sh <impact.json> [--dry-run]
+       scripts/run-focused-e2e.sh --current-source-theme-catalog [--dry-run]
+EOF
 }
+
+if [[ "${1:-}" == "--current-source-theme-catalog" ]]; then
+  if [[ $# -gt 2 || ( $# -eq 2 && "${2:-}" != "--dry-run" ) ]]; then
+    usage
+    exit 2
+  fi
+
+  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  tmp_base="${TMPDIR:-/tmp}"
+  tmp_base="${tmp_base%/}"
+  workspace_dir="$(mktemp -d "$tmp_base/goshtoso-theme-catalog-e2e.XXXXXX")"
+  cleanup_current_source_workspace() {
+    case "$workspace_dir" in
+      "$tmp_base"/goshtoso-theme-catalog-e2e.*) rm -rf -- "$workspace_dir" ;;
+      *) echo "refusing to remove unexpected temporary path: $workspace_dir" >&2 ;;
+    esac
+  }
+  trap cleanup_current_source_workspace EXIT
+  workspace="$workspace_dir/go.work"
+
+  (cd "$workspace_dir" && GOWORK="$workspace" go work init "$repo_root" "$repo_root/site")
+
+  test_name="TestThemePage_PublicCatalogInventoryAndSocialContract"
+  suite_tags="e2e,full,goshtoso_current_source"
+  list_pattern="^${test_name}$"
+  echo "Current-source E2E tags: $suite_tags"
+  if [[ "${2:-}" == "--dry-run" ]]; then
+    echo "GOSHTOSO_E2E_LIST_ONLY=1 GOWORK=$workspace go test -tags=e2e,full,goshtoso_current_source ./site/tests/e2e -list '$list_pattern'"
+    echo "GOWORK=$workspace go test -tags=e2e,full,goshtoso_current_source ./site/tests/e2e -count=1 -timeout 5m -run '$list_pattern'"
+    exit 0
+  fi
+
+  cd "$repo_root"
+  list_output="$(GOSHTOSO_E2E_LIST_ONLY=1 GOWORK="$workspace" go test -tags=e2e,full,goshtoso_current_source \
+    ./site/tests/e2e -list "$list_pattern")"
+  printf '%s\n' "$list_output"
+  if [[ "$(grep -c "^${test_name}$" <<< "$list_output")" -ne 1 ]]; then
+    echo "current-source E2E listing must contain exactly one $test_name" >&2
+    exit 1
+  fi
+
+  GOWORK="$workspace" go test -tags=e2e,full,goshtoso_current_source ./site/tests/e2e \
+    -count=1 -timeout 5m -run "$list_pattern"
+  exit 0
+fi
 
 if [[ $# -lt 1 || $# -gt 2 ]]; then
   usage
