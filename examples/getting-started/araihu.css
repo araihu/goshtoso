@@ -2,14 +2,15 @@
  * Arai Hû for Goshtoso
  *
  * Load after Goshtoso's stylesheet, then set `data-theme="araihu"` on <html>.
- * This is an organization theme, deliberately kept outside Goshtoso's base
- * theme catalogue.
+ * Modern geometry with the Arai Hû organization palette. Typography and
+ * corner geometry track Goshtoso's Modern theme; semantic colors remain the
+ * organization identity.
  */
 @layer base {
   [data-theme="araihu"] {
     color-scheme: light;
-    --font-body: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
-    --font-title: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Lato", ui-sans-serif, system-ui, sans-serif;
+    --font-title: "Lato", ui-sans-serif, system-ui, sans-serif;
 
     /* V11 inline SVG contract. External SVGs use their embedded scheme fallback. */
     --araihu-logo-surface: var(--color-surface);
@@ -50,7 +51,7 @@
     --color-on-warning: #ffffff;
     --color-danger: #b42c46;
     --color-on-danger: #ffffff;
-    --radius-radius: var(--radius-lg);
+    --radius-radius: var(--radius-sm);
   }
 
   [data-theme="araihu"].dark,
