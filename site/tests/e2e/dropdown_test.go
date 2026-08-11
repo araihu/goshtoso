@@ -119,6 +119,71 @@ func TestDropdown_ClickVariant(t *testing.T) {
 	})
 }
 
+func TestDropdownEscapeFocusRestorationIsReopenSafe(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			document.activeElement?.getAttribute("role") === "menuitem";
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "false" && document.activeElement === trigger;
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	_, err = page.WaitForFunction(`() => document.activeElement?.getAttribute("role") === "menuitem"`, nil)
+	require.NoError(t, err)
+	_, err = page.Evaluate(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		document.activeElement.dispatchEvent(new KeyboardEvent("keydown", {
+			key: "Escape",
+			bubbles: true,
+			cancelable: true,
+		}));
+		trigger.dispatchEvent(new KeyboardEvent("keydown", {
+			key: "Enter",
+			bubbles: true,
+			cancelable: true,
+		}));
+	}`, nil)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			document.activeElement?.getAttribute("role") === "menuitem";
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "false" && document.activeElement === trigger;
+	}`, nil)
+	require.NoError(t, err)
+}
+
 // TestDropdown_WithDividers tests dropdown with sections and dividers
 func TestDropdown_WithDividers(t *testing.T) {
 	if testing.Short() {
