@@ -24,6 +24,12 @@ func TestToastRendersReducedMotionTransitionsAndRemovalDelay(t *testing.T) {
 	if count := strings.Count(containerHTML, "motion-reduce:transition-none"); count < 2 {
 		t.Errorf("client Toast transitions have %d reduced-motion overrides; want at least 2", count)
 	}
+	if !strings.Contains(containerHTML, `x-on:click="goshtosoDismissClientMessageToast($data, notification.id)"`) {
+		t.Errorf("client message Toast must delegate dismissal to the authored runtime: %s", containerHTML)
+	}
+	if strings.Contains(containerHTML, `setTimeout(() => { removeNotification(notification.id) }, reducedMotion ? 0 : 400)`) {
+		t.Errorf("client message Toast still embeds its reduced-motion dismissal runtime: %s", containerHTML)
+	}
 
 	messageHTML := html.UnescapeString(renderToastComponent(t, MessageToast(MessageConfig{
 		Message:         "Review ready",

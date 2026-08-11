@@ -20,6 +20,7 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 		"sidebar.js":         "assets/js/src/components/sidebar.js",
 		"scroll-region.js":   "assets/js/src/components/scroll-region.js",
 		"table.js":           "assets/js/src/components/table.js",
+		"toast.js":           "assets/js/src/components/toast.js",
 	}
 	sources := make(map[string][]byte, len(paths))
 	for path, sourcePath := range paths {
@@ -31,6 +32,22 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 	}
 	if err := jstooling.ValidateJavaScript(sources); err != nil {
 		t.Fatalf("validate component runtime JavaScript: %v", err)
+	}
+}
+
+func TestToastRuntimeExtractsClientMessageDismissal(t *testing.T) {
+	t.Parallel()
+
+	toast := readRuntimeSource(t, "toast.js")
+	for _, want := range []string{
+		"window.goshtosoDismissClientMessageToast = function",
+		"state.isVisible = false",
+		"state.reducedMotion ? 0 : 400",
+		"state.removeNotification(notificationID)",
+	} {
+		if !strings.Contains(toast, want) {
+			t.Fatalf("Toast runtime missing extracted dismissal contract %q", want)
+		}
 	}
 }
 

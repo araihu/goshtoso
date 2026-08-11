@@ -44,6 +44,7 @@ var defaultArtifacts = []artifact{
 			"assets/js/src/action-group.js",
 			"assets/js/src/components/structured-input.js",
 			"assets/js/src/components/tooltip.js",
+			"assets/js/src/components/toast.js",
 			"assets/js/src/components/data.js",
 			"assets/js/src/components/navigation.js",
 			"assets/js/src/components/sidebar.js",

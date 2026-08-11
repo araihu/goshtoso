@@ -161,7 +161,7 @@ templ clientMessageNotification() {
 					<p x-cloak x-show="notification.message" class="text-pretty text-sm" x-text="notification.message"></p>
 					<!-- Dismiss Action -->
 					<div class="flex items-center gap-4">
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="isVisible = false; setTimeout(() => { removeNotification(notification.id) }, reducedMotion ? 0 : 400)">Dismiss</button>
+						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="goshtosoDismissClientMessageToast($data, notification.id)">Dismiss</button>
 					</div>
 				</div>
 			</div>

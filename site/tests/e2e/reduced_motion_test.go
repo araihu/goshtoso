@@ -405,7 +405,28 @@ func assertToastMotionMode(t *testing.T, page playwright.Page, mode motionMode) 
 	require.NoError(t, err)
 	lifecycleMS := motionNumber(t, lifecycleElapsed)
 	assert.GreaterOrEqual(t, lifecycleMS, 600.0, "Toast display duration must remain intact")
-	t.Logf("motion family=toast mode=%s transition_property=%s duration_ms=%.1f transition_runs=%d opacity=%.3f settle_ms=%.1f frames=%d dismiss_ms=%.1f lifecycle_ms=%.1f", mode.name, toastProbe.Property, toastProbe.DurationMS, toastProbe.TransitionRunCount, toastProbe.Opacity, toastProbe.SettleMS, toastProbe.Frames, dismissMS, lifecycleMS)
+
+	_, err = page.Evaluate(`() => {
+		window.dispatchEvent(new CustomEvent('notify', { detail: { kind: 'message-toast', sender: { name: 'Motion sender', avatar: '' }, message: 'Dismiss extracted message' } }));
+	}`, nil)
+	require.NoError(t, err)
+	messageAlert := container.Locator("[role='alert']").First()
+	require.NoError(t, messageAlert.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateAttached}))
+	dismissAction := messageAlert.GetByRole("button", playwright.LocatorGetByRoleOptions{Name: "Dismiss", Exact: playwright.Bool(true)})
+	_, err = dismissAction.Evaluate(`element => { window.motionMessageDismissStart = performance.now(); element.click() }`, nil)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => document.querySelectorAll('#motion-toasts [role="alert"]').length === 0`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
+	require.NoError(t, err)
+	messageElapsed, err := page.Evaluate(`() => performance.now() - window.motionMessageDismissStart`, nil)
+	require.NoError(t, err)
+	messageDismissMS := motionNumber(t, messageElapsed)
+	if mode.reduced {
+		assert.LessOrEqual(t, messageDismissMS, 150.0, "reduced message Toast removal latency")
+	} else {
+		assert.GreaterOrEqual(t, messageDismissMS, 700.0, "normal message Toast preserves the two-stage removal latency")
+	}
+
+	t.Logf("motion family=toast mode=%s transition_property=%s duration_ms=%.1f transition_runs=%d opacity=%.3f settle_ms=%.1f frames=%d dismiss_ms=%.1f lifecycle_ms=%.1f message_dismiss_ms=%.1f", mode.name, toastProbe.Property, toastProbe.DurationMS, toastProbe.TransitionRunCount, toastProbe.Opacity, toastProbe.SettleMS, toastProbe.Frames, dismissMS, lifecycleMS, messageDismissMS)
 }
 
 func assertTooltipMotionMode(t *testing.T, page playwright.Page, mode motionMode) {
