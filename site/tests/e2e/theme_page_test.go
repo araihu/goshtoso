@@ -142,7 +142,7 @@ func TestThemePage_FragmentNavigationPreservesActiveTheme(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, activeTheme, appliedTheme, "opening the theme workbench must preserve the active theme")
 
-			pressed, err := page.Locator(fmt.Sprintf("button[data-theme-key='%s']", activeTheme)).First().GetAttribute("aria-pressed")
+			pressed, err := page.Locator(fmt.Sprintf("h2:has-text('Themes') ~ div button[data-theme-key='%s']", activeTheme)).First().GetAttribute("aria-pressed")
 			require.NoError(t, err)
 			require.Equal(t, "true", pressed, "theme workbench selection must match the applied theme")
 		})
