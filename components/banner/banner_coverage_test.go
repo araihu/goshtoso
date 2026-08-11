@@ -75,10 +75,10 @@ func TestCoverageLinkClassesCoverEveryTone(t *testing.T) {
 	}{
 		{name: "default", cfg: Config{}, want: "text-primary"},
 		{name: "primary", cfg: Config{Tone: TonePrimary}, want: "text-primary"},
-		{name: "info", cfg: Config{Tone: ToneInfo}, want: "text-info"},
-		{name: "success", cfg: Config{Tone: ToneSuccess}, want: "text-success"},
-		{name: "warning", cfg: Config{Tone: ToneWarning}, want: "text-warning"},
-		{name: "danger", cfg: Config{Tone: ToneDanger}, want: "text-danger"},
+		{name: "info", cfg: Config{Tone: ToneInfo}, want: "text-info-text dark:text-info-text-dark"},
+		{name: "success", cfg: Config{Tone: ToneSuccess}, want: "text-success-text dark:text-success-text-dark"},
+		{name: "warning", cfg: Config{Tone: ToneWarning}, want: "text-warning-text dark:text-warning-text-dark"},
+		{name: "danger", cfg: Config{Tone: ToneDanger}, want: "text-danger-text dark:text-danger-text-dark"},
 	}
 
 	for _, tt := range tests {

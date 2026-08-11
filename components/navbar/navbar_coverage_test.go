@@ -40,13 +40,14 @@ func TestCoverageNavbarClassHelpers(t *testing.T) {
 	assert.NotContains(t, inactiveLink, "font-bold")
 
 	dangerItem := menuItemClasses(true)
-	assert.Contains(t, dangerItem, "text-danger")
+	assert.Contains(t, dangerItem, "text-danger-text")
+	assert.Contains(t, dangerItem, "dark:text-danger-text-dark")
 	assert.Contains(t, dangerItem, "hover:bg-danger/5")
 
 	standardItem := menuItemClasses(false)
 	assert.Contains(t, standardItem, "text-on-surface")
 	assert.Contains(t, standardItem, "hover:text-on-surface-strong")
-	assert.NotContains(t, standardItem, "text-danger")
+	assert.NotContains(t, standardItem, "text-danger-text")
 }
 
 func TestCoverageRenderFullNavbarBranches(t *testing.T) {
@@ -87,7 +88,8 @@ func TestCoverageRenderFullNavbarBranches(t *testing.T) {
 		`Ada Lovelace`,
 		`ada@example.test`,
 		`Sign out`,
-		`text-danger`,
+		`text-danger-text`,
+		`dark:text-danger-text-dark`,
 		`x-on:keydown.escape.window="mobileMenuIsOpen = false"`,
 		`x-bind:aria-label="mobileMenuIsOpen ? 'Close mobile menu' : 'Open mobile menu'"`,
 		`x-show="mobileMenuIsOpen"`,

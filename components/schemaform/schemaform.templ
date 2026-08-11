@@ -56,7 +56,7 @@ templ field(f Field, prefix string) {
 			<label for={ inputName } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark">
 				<span>{ f.Label }</span>
 				if f.Required {
-					<span class="text-danger" aria-label="required">*</span>
+					<span class="text-danger-text dark:text-danger-text-dark" aria-label="required">*</span>
 				}
 				if f.Managed {
 					@managedBadge()
@@ -80,7 +80,7 @@ templ field(f Field, prefix string) {
 					@unknownFallback(f, inputName)
 			}
 			for _, e := range f.Errors {
-				<span class="text-xs text-danger">{ e }</span>
+				<span class="text-xs text-danger-text dark:text-danger-text-dark">{ e }</span>
 			}
 		</div>
 	}

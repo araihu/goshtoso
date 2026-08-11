@@ -167,13 +167,13 @@ func (cfg Config) linkClasses() string {
 	case TonePrimary:
 		return "font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark"
 	case ToneInfo:
-		return "font-medium text-info underline-offset-2 hover:underline focus:underline focus:outline-hidden"
+		return "font-medium text-info-text dark:text-info-text-dark underline-offset-2 hover:underline focus:underline focus:outline-hidden"
 	case ToneSuccess:
-		return "font-medium text-success underline-offset-2 hover:underline focus:underline focus:outline-hidden"
+		return "font-medium text-success-text dark:text-success-text-dark underline-offset-2 hover:underline focus:underline focus:outline-hidden"
 	case ToneWarning:
-		return "font-medium text-warning underline-offset-2 hover:underline focus:underline focus:outline-hidden"
+		return "font-medium text-warning-text dark:text-warning-text-dark underline-offset-2 hover:underline focus:underline focus:outline-hidden"
 	case ToneDanger:
-		return "font-medium text-danger underline-offset-2 hover:underline focus:underline focus:outline-hidden"
+		return "font-medium text-danger-text dark:text-danger-text-dark underline-offset-2 hover:underline focus:underline focus:outline-hidden"
 	default:
 		return "font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark"
 	}

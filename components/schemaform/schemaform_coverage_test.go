@@ -30,6 +30,21 @@ func TestCoverageRenderDefaultSchemafield(t *testing.T) {
 	}
 }
 
+func TestFieldsUseReadableSemanticRolesForRequiredAndErrors(t *testing.T) {
+	html := render(t, Fields(FieldsConfig{Fields: []Field{{
+		Path:     "name",
+		Label:    "Name",
+		Kind:     KindString,
+		Required: true,
+		Errors:   []string{"Name is required"},
+	}}}))
+
+	want := `text-danger-text dark:text-danger-text-dark`
+	if got := strings.Count(html, want); got != 2 {
+		t.Fatalf("required marker and error must use semantic danger text roles: got %d in %s", got, html)
+	}
+}
+
 // schema used across the Walk-based render tests. Exercises every kind plus
 // object unwrap, multi-child section, disabled skip, managed, and required.
 func sampleSchema() map[string]any {

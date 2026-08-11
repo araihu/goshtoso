@@ -615,7 +615,7 @@ func mobileMenu(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if item.Danger {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, " class=\"w-full text-danger focus:underline\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, " class=\"w-full text-danger-text focus:underline dark:text-danger-text-dark\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

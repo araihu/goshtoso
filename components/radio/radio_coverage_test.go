@@ -303,7 +303,7 @@ func TestCoverageRadioGroup(t *testing.T) {
 	assert.Contains(t, html, "more")
 	assert.Contains(t, html, "Badged")
 	// BadgeColor success -> badgeClasses success palette.
-	assert.Contains(t, html, "bg-success/10 text-success")
+	assert.Contains(t, html, "bg-success/10 text-success-text dark:text-success-text-dark")
 }
 
 // TestCoverageRadioGroupNoTitle covers the empty-title branch of RadioGroup.
@@ -367,10 +367,10 @@ func TestCoverageSizeClasses(t *testing.T) {
 // default.
 func TestCoverageBadgeClasses(t *testing.T) {
 	cases := map[string]string{
-		"success":   "bg-success/10 text-success",
-		"danger":    "bg-danger/10 text-danger",
-		"warning":   "bg-warning/10 text-warning",
-		"info":      "bg-info/10 text-info",
+		"success":   "bg-success/10 text-success-text dark:text-success-text-dark",
+		"danger":    "bg-danger/10 text-danger-text dark:text-danger-text-dark",
+		"warning":   "bg-warning/10 text-warning-text dark:text-warning-text-dark",
+		"info":      "bg-info/10 text-info-text dark:text-info-text-dark",
 		"primary":   "bg-primary/10",
 		"secondary": "bg-secondary/10 text-secondary",
 		"neutral":   "bg-on-surface/10",

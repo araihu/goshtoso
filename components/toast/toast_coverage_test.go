@@ -22,11 +22,11 @@ func TestCoverageToastToneClasses(t *testing.T) {
 		title    string
 		fallback bool
 	}{
-		{"info", ToneInfo, "border-info", "bg-info/10", "bg-info/15 text-info", "text-info", false},
-		{"success", ToneSuccess, "border-success", "bg-success/10", "bg-success/15 text-success", "text-success", false},
-		{"warning", ToneWarning, "border-warning", "bg-warning/10", "bg-warning/15 text-warning", "text-warning", false},
-		{"danger", ToneDanger, "border-danger", "bg-danger/10", "bg-danger/15 text-danger", "text-danger", false},
-		{"fallback", Tone("custom"), "border-info", "bg-info/10", "bg-info/15 text-info", "text-info", true},
+		{"info", ToneInfo, "border-info", "bg-info/10", "bg-info/15 text-info", "text-info-text dark:text-info-text-dark", false},
+		{"success", ToneSuccess, "border-success", "bg-success/10", "bg-success/15 text-success", "text-success-text dark:text-success-text-dark", false},
+		{"warning", ToneWarning, "border-warning", "bg-warning/10", "bg-warning/15 text-warning", "text-warning-text dark:text-warning-text-dark", false},
+		{"danger", ToneDanger, "border-danger", "bg-danger/10", "bg-danger/15 text-danger", "text-danger-text dark:text-danger-text-dark", false},
+		{"fallback", Tone("custom"), "border-info", "bg-info/10", "bg-info/15 text-info", "text-info-text dark:text-info-text-dark", true},
 	}
 
 	for _, tt := range tests {
@@ -105,7 +105,7 @@ func TestCoverageRenderOOBToastWithActionHTMX(t *testing.T) {
 		`}, 2500);`,
 		`border-warning`,
 		`bg-warning/10`,
-		`text-warning`,
+		`text-warning-text dark:text-warning-text-dark`,
 		`Storage low`,
 		`Upgrade soon.`,
 		`hx-post="/api/upgrade"`,

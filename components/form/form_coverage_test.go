@@ -235,6 +235,7 @@ func TestCoverageFlipSectionReadOnly(t *testing.T) {
 		"Done",
 		`x-show="!isEditing"`,
 		`x-show="isEditing"`,
+		`text-success-text dark:text-success-text-dark`,
 	)
 }
 
@@ -412,6 +413,7 @@ func TestCoverageFormErrorsListWithPathHintCustom(t *testing.T) {
 		"mb-4",
 		"<ul",
 		"values.auth.password",
+		`text-danger-text dark:text-danger-text-dark`,
 		"too short",
 		"needs k8s 1.28+",
 	)

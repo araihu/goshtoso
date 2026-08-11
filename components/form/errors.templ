@@ -98,9 +98,9 @@ templ formErrorsTemplate(cfg FormErrorsConfig) {
 					for _, item := range cfg.Items {
 						<li class="flex flex-wrap items-baseline gap-x-2 text-on-surface dark:text-on-surface-dark">
 							if item.TargetID != "" {
-								<a class="font-medium text-danger underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark" href={ item.targetHref() }>{ item.linkLabel() }</a>
+								<a class="font-medium text-danger-text underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-danger-text-dark dark:focus-visible:outline-primary-dark" href={ item.targetHref() }>{ item.linkLabel() }</a>
 							} else if item.Path != "" {
-								<code class="font-mono text-xs text-danger">{ item.Path }</code>
+								<code class="font-mono text-xs text-danger-text dark:text-danger-text-dark">{ item.Path }</code>
 							}
 							if item.Path != "" || item.TargetID == "" {
 								<span>{ item.Message }</span>

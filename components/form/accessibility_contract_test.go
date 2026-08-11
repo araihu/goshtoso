@@ -181,6 +181,8 @@ func TestFormErrorsLinksSummaryToFocusableFieldTargets(t *testing.T) {
 		`tabindex="-1"`,
 		`x-init="$el.focus()"`,
 		`href="#email"`,
+		`text-danger-text`,
+		`dark:text-danger-text-dark`,
 		`>Email</a>`,
 		`href="#branch-control-trigger"`,
 		`>Choose a branch</a>`,

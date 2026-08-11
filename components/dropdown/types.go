@@ -221,7 +221,7 @@ func (cfg Config) itemClasses(hasIcon bool) string {
 // to ItemClasses when Item.Danger is true. Palette matches the navbar
 // UserMenuItem danger styling for parity.
 func (cfg Config) dangerClasses() string {
-	return "text-danger hover:bg-danger/5 hover:text-danger focus-visible:bg-danger/10 focus-visible:text-danger dark:text-danger dark:hover:bg-danger/10 dark:hover:text-danger dark:focus-visible:bg-danger/10 dark:focus-visible:text-danger"
+	return "text-danger-text hover:bg-danger/5 hover:text-danger-text focus-visible:bg-danger/10 focus-visible:text-danger-text dark:text-danger-text-dark dark:hover:bg-danger/10 dark:hover:text-danger-text-dark dark:focus-visible:bg-danger/10 dark:focus-visible:text-danger-text-dark"
 }
 
 // DisabledClasses returns the classes applied when Item.Disabled is true.

@@ -154,23 +154,23 @@ func clientNotification(tone string) templ.Component {
 		borderClass := "border-info"
 		bgClass := "bg-info/10"
 		iconBgClass := "bg-info/15 text-info"
-		titleClass := "text-info"
+		titleClass := "text-info-text dark:text-info-text-dark"
 		switch tone {
 		case "success":
 			borderClass = "border-success"
 			bgClass = "bg-success/10"
 			iconBgClass = "bg-success/15 text-success"
-			titleClass = "text-success"
+			titleClass = "text-success-text dark:text-success-text-dark"
 		case "warning":
 			borderClass = "border-warning"
 			bgClass = "bg-warning/10"
 			iconBgClass = "bg-warning/15 text-warning"
-			titleClass = "text-warning"
+			titleClass = "text-warning-text dark:text-warning-text-dark"
 		case "danger":
 			borderClass = "border-danger"
 			bgClass = "bg-danger/10"
 			iconBgClass = "bg-danger/15 text-danger"
-			titleClass = "text-danger"
+			titleClass = "text-danger-text dark:text-danger-text-dark"
 		}
 		var templ_7745c5c3_Var6 = []any{"pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", borderClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)

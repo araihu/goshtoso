@@ -222,13 +222,13 @@ func badgeClasses(color string) string {
 	base := "w-fit rounded-radius px-2 py-0.5 text-xs font-medium"
 	switch color {
 	case "success":
-		return base + " bg-success/10 text-success"
+		return base + " bg-success/10 text-success-text dark:text-success-text-dark"
 	case "danger":
-		return base + " bg-danger/10 text-danger"
+		return base + " bg-danger/10 text-danger-text dark:text-danger-text-dark"
 	case "warning":
-		return base + " bg-warning/10 text-warning"
+		return base + " bg-warning/10 text-warning-text dark:text-warning-text-dark"
 	case "info":
-		return base + " bg-info/10 text-info"
+		return base + " bg-info/10 text-info-text dark:text-info-text-dark"
 	case "primary":
 		return base + " bg-primary/10 text-primary dark:text-primary-dark"
 	case "secondary":

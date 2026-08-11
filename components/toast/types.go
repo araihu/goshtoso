@@ -180,15 +180,15 @@ func (cfg Config) iconBgClass() string {
 func (cfg Config) titleClass() string {
 	switch cfg.Tone {
 	case ToneInfo:
-		return "text-info"
+		return "text-info-text dark:text-info-text-dark"
 	case ToneSuccess:
-		return "text-success"
+		return "text-success-text dark:text-success-text-dark"
 	case ToneWarning:
-		return "text-warning"
+		return "text-warning-text dark:text-warning-text-dark"
 	case ToneDanger:
-		return "text-danger"
+		return "text-danger-text dark:text-danger-text-dark"
 	default:
-		return "text-info"
+		return "text-info-text dark:text-info-text-dark"
 	}
 }
 

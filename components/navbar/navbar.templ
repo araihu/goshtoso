@@ -223,7 +223,7 @@ templ mobileMenu(cfg Config) {
 						href={ templ.URL(item.Href) }
 						{ item.LinkAttrs... }
 						if item.Danger {
-							class="w-full text-danger focus:underline"
+							class="w-full text-danger-text focus:underline dark:text-danger-text-dark"
 						} else {
 							class="w-full text-on-surface focus:underline dark:text-on-surface-dark"
 						}
