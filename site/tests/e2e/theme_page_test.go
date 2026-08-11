@@ -12,9 +12,9 @@ import (
 )
 
 // gotoThemePage navigates to /docs/theme, waits for Alpine, and resets all
-// per-token overrides + theme/dark-mode state so each test starts from a
-// known baseline. localStorage carries over across tests on the shared
-// browser otherwise, masking regressions.
+// per-token overrides plus dark-mode state so each test starts from a known
+// baseline. localStorage carries over across tests on the shared browser
+// otherwise, masking regressions.
 func gotoThemePage(t *testing.T, page playwright.Page) {
 	t.Helper()
 	_, err := page.Goto(baseURL+"/docs/theme", playwright.PageGotoOptions{
@@ -25,7 +25,7 @@ func gotoThemePage(t *testing.T, page playwright.Page) {
 		Timeout: playwright.Float(3000),
 	})
 	require.NoError(t, err)
-	// Wipe persisted overrides + theme + dark-mode so the test starts clean,
+	// Wipe persisted overrides plus dark-mode so the test starts clean,
 	// then reload so the wipe takes effect.
 	_, err = page.Evaluate(`() => {
 		localStorage.removeItem('themeOverrides');
@@ -34,7 +34,6 @@ func gotoThemePage(t *testing.T, page playwright.Page) {
 		localStorage.removeItem('themeRadius');
 		localStorage.removeItem('themeCssMode');
 		localStorage.removeItem('themeCssFilter');
-		localStorage.setItem('theme', 'minimal');
 		localStorage.setItem('darkMode', 'false');
 	}`, nil)
 	require.NoError(t, err)
@@ -117,6 +116,37 @@ func TestThemePage_FragmentNavBootstrapsData(t *testing.T) {
 		"() => document.documentElement.style.getPropertyValue('--radius-radius') === '1rem'", nil)
 	require.NoError(t, err, "fragment-loaded theme data should drive static behavior")
 	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav theme page: %v", jsErrors)
+}
+
+func TestThemePage_FragmentNavigationPreservesActiveTheme(t *testing.T) {
+	for _, activeTheme := range []string{"araihu", "minimal"} {
+		t.Run(activeTheme, func(t *testing.T) {
+			page := newIsolatedPage(t)
+			dismissCookieBanner(t, page)
+
+			_, err := page.Goto(baseURL + "/getting-started")
+			require.NoError(t, err)
+			require.NoError(t, waitForAlpine(page))
+			_, err = page.Locator("html").Evaluate("(root, theme) => root.setAttribute('data-theme', theme)", activeTheme)
+			require.NoError(t, err)
+
+			require.NoError(t, page.Locator("a[href='/docs/theme']").First().Click())
+			_, err = page.WaitForFunction(`() => {
+				const root = document.querySelector('[x-data="themePage"]');
+				const data = root && Alpine.$data(root);
+				return window.location.pathname === '/docs/theme' && data && data.allThemes.length === 16;
+			}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+			require.NoError(t, err)
+
+			appliedTheme, err := page.Locator("html").GetAttribute("data-theme")
+			require.NoError(t, err)
+			require.Equal(t, activeTheme, appliedTheme, "opening the theme workbench must preserve the active theme")
+
+			pressed, err := page.Locator(fmt.Sprintf("h2:has-text('Themes') ~ div button[data-theme-key='%s']", activeTheme)).First().GetAttribute("aria-pressed")
+			require.NoError(t, err)
+			require.Equal(t, "true", pressed, "theme workbench selection must match the applied theme")
+		})
+	}
 }
 
 func TestThemePage_ThemeGrid_SwitchesTheme(t *testing.T) {
@@ -414,14 +444,14 @@ func TestThemePage_CSSExport_FilterAndMode(t *testing.T) {
 
 	output := page.Locator("#theme-css-output code")
 
-	// Default state: single mode + active theme = minimal single block rendered.
+	// Default state: single mode + active Arai Hû theme rendered.
 	require.NoError(t, output.WaitFor(playwright.LocatorWaitForOptions{
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(1500),
 	}))
 	text, err := output.TextContent()
 	require.NoError(t, err)
-	assert.Contains(t, text, "[data-theme=minimal]")
+	assert.Contains(t, text, "[data-theme=araihu]")
 	assert.NotContains(t, text, "@layer base")
 
 	// Switch to All Themes + Multiple. cssFilter is the Goshtoso Select
