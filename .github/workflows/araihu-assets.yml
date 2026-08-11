@@ -193,7 +193,6 @@ jobs:
           add-paths: |
             araihu-assets.json
             examples/getting-started/araihu.css
-            assets/icons/heroicons.svg
             assets/favicon.svg
             assets/images/goshtoso-logo.svg
             assets/images/goshtoso-mark.svg
