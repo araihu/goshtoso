@@ -65,7 +65,7 @@ templ staticCarousel(cfg Config) {
 				<div
 					x-cloak
 					x-show="currentSlideIndex == index + 1"
-					class="absolute inset-0"
+				class="absolute inset-0 motion-reduce:transition-none!"
 					{ transitionAttrs(transitionAttr)... }
 				>
 					@slideOverlay()
@@ -120,7 +120,7 @@ templ cardCarousel(cfg CardConfig) {
 				<div
 					x-cloak
 					x-show="currentSlideIndex == index + 1"
-					class="absolute inset-0"
+					class="absolute inset-0 motion-reduce:transition-none!"
 					{ transitionAttrs("300ms")... }
 				>
 					<img

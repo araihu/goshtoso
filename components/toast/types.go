@@ -197,6 +197,29 @@ func containerAlpineData(cfg ContainerConfig) string {
 	return fmt.Sprintf(`{
         notifications: [],
         displayDuration: %d,
+        motionQuery: null,
+        motionChangeHandler: null,
+        reducedMotion: false,
+
+        init() {
+            this.motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            this.reducedMotion = this.motionQuery.matches;
+            this.motionChangeHandler = (event) => { this.reducedMotion = event.matches };
+            if (this.motionQuery.addEventListener) {
+                this.motionQuery.addEventListener('change', this.motionChangeHandler);
+            } else {
+                this.motionQuery.addListener(this.motionChangeHandler);
+            }
+        },
+
+        destroy() {
+            if (!this.motionQuery || !this.motionChangeHandler) return;
+            if (this.motionQuery.removeEventListener) {
+                this.motionQuery.removeEventListener('change', this.motionChangeHandler);
+            } else {
+                this.motionQuery.removeListener(this.motionChangeHandler);
+            }
+        },
 
         addNotification(data) {
             var id = Date.now();
@@ -214,24 +237,52 @@ func containerAlpineData(cfg ContainerConfig) string {
                 this.notifications = this.notifications.filter(
                     (notification) => notification.id !== id
                 );
-            }, 400);
+            }, this.reducedMotion ? 0 : 400);
         }
     }`, cfg.effectiveDuration())
 }
 
 // singleToastAlpineData returns the Alpine.js x-data for an individual toast item
 func singleToastAlpineData(duration int, persistent bool) string {
+	initVisibility := ""
+	visible := "true"
 	if persistent {
-		return `{ isVisible: true }`
+		return singleToastMotionAlpineData(visible, initVisibility)
 	}
-	return fmt.Sprintf(`{
-        isVisible: false,
-        timeout: null,
-        init() {
+	visible = "false"
+	initVisibility = fmt.Sprintf(`
             this.$nextTick(() => { this.isVisible = true });
-            this.timeout = setTimeout(() => { this.isVisible = false; this.$dispatch('toast-dismiss', { id: this.$el.dataset.toastId }); }, %d);
+            this.timeout = setTimeout(() => { this.isVisible = false; this.$dispatch('toast-dismiss', { id: this.$el.dataset.toastId }); }, %d);`, duration)
+	return singleToastMotionAlpineData(visible, initVisibility)
+}
+
+func singleToastMotionAlpineData(visible, initVisibility string) string {
+	return fmt.Sprintf(`{
+        isVisible: %s,
+        timeout: null,
+        motionQuery: null,
+        motionChangeHandler: null,
+        reducedMotion: false,
+        init() {
+            this.motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            this.reducedMotion = this.motionQuery.matches;
+            this.motionChangeHandler = (event) => { this.reducedMotion = event.matches };
+            if (this.motionQuery.addEventListener) {
+                this.motionQuery.addEventListener('change', this.motionChangeHandler);
+            } else {
+                this.motionQuery.addListener(this.motionChangeHandler);
+            }%s
+        },
+        destroy() {
+            clearTimeout(this.timeout);
+            if (!this.motionQuery || !this.motionChangeHandler) return;
+            if (this.motionQuery.removeEventListener) {
+                this.motionQuery.removeEventListener('change', this.motionChangeHandler);
+            } else {
+                this.motionQuery.removeListener(this.motionChangeHandler);
+            }
         }
-    }`, duration)
+    }`, visible, initVisibility)
 }
 
 // jsEscapeSingle escapes single quotes and backslashes for safe JS string embedding

@@ -5029,6 +5029,9 @@
     .motion-reduce\:transition-none {
       transition-property: none;
     }
+    .motion-reduce\:transition-none\! {
+      transition-property: none !important;
+    }
     @media (hover: hover) {
       .motion-reduce\:hover\:translate-none:hover {
         translate: none;

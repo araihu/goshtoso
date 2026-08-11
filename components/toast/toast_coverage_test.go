@@ -131,7 +131,10 @@ func TestCoverageRenderPersistentMessageToast(t *testing.T) {
 
 	for _, want := range []string{
 		`id="server-toast-1"`,
-		`x-data="{ isVisible: true }"`,
+		`isVisible: true,`,
+		`prefers-reduced-motion: reduce`,
+		`addEventListener('change'`,
+		`removeEventListener('change'`,
 		`border-outline bg-surface`,
 		`src="/assets/avatar.webp"`,
 		`Avery`,

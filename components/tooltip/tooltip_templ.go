@@ -166,7 +166,7 @@ func defaultTooltip(cfg config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var7 = []any{cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface-strong"}
+		var templ_7745c5c3_Var7 = []any{cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out motion-reduce:transition-none! peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface-strong"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -204,7 +204,7 @@ func defaultTooltip(cfg config) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 49, Col: 346}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 49, Col: 377}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -315,7 +315,7 @@ func richTooltip(cfg config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var16 = []any{cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-sm bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface"}
+		var templ_7745c5c3_Var16 = []any{cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-sm bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out motion-reduce:transition-none! peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -508,14 +508,14 @@ func clickTooltip(cfg config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" role=\"tooltip\" x-transition:enter=\"transition ease-out\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-out\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" role=\"tooltip\" x-transition:enter=\"transition ease-out motion-reduce:transition-none!\" x-transition:enter-start=\"opacity-0\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-out motion-reduce:transition-none!\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var29 string
 		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 92, Col: 536}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 92, Col: 598}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 		if templ_7745c5c3_Err != nil {

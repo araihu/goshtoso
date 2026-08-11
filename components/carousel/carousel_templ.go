@@ -266,7 +266,7 @@ func staticCarousel(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "><template x-for=\"(slide, index) in slides\"><div x-cloak x-show=\"currentSlideIndex == index + 1\" class=\"absolute inset-0\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "><template x-for=\"(slide, index) in slides\"><div x-cloak x-show=\"currentSlideIndex == index + 1\" class=\"absolute inset-0 motion-reduce:transition-none!\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -448,7 +448,7 @@ func cardCarousel(cfg CardConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<template x-for=\"(slide, index) in slides\"><div x-cloak x-show=\"currentSlideIndex == index + 1\" class=\"absolute inset-0\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<template x-for=\"(slide, index) in slides\"><div x-cloak x-show=\"currentSlideIndex == index + 1\" class=\"absolute inset-0 motion-reduce:transition-none!\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
