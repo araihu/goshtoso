@@ -165,7 +165,7 @@ func (cfg OverlayConfig) backdropClasses() string {
 	if position == "" {
 		position = "fixed inset-0"
 	}
-	base := position + " z-30 bg-black/50"
+	base := position + " z-30 bg-backdrop/50"
 	if cfg.BackdropClass != "" {
 		base += " " + cfg.BackdropClass
 	}

@@ -459,7 +459,7 @@ func TestSidebarOverlayRendersNativeOffCanvasShell(t *testing.T) {
 		`x-bind:aria-expanded="open.toString()"`,
 		`x-show="open"`,
 		`x-on:click="open = false"`,
-		`class="fixed top-16 bottom-0 inset-x-0 z-30 bg-black/50"`,
+		`class="fixed top-16 bottom-0 inset-x-0 z-30 bg-backdrop/50"`,
 		`id="docs-nav-panel"`,
 		`class="fixed top-16 bottom-0 left-0 z-40 w-72"`,
 		`x-on:click="if ($event.target.closest('a[href]:not([aria-controls])')) open = false"`,

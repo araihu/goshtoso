@@ -297,7 +297,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" x-data=\"goshtosoSearchModal($el)\" x-on:goshtoso-search-open.window=\"if ($event.detail.id === searchId) openSearch()\" x-show=\"open\" x-transition.opacity.duration.150ms x-trap.inert.noscroll=\"open\" x-on:click.self=\"closeSearch()\" class=\"fixed inset-0 z-[80] flex justify-center bg-surface-dark/55 px-4 backdrop-blur-md dark:bg-black/60\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" x-data=\"goshtosoSearchModal($el)\" x-on:goshtoso-search-open.window=\"if ($event.detail.id === searchId) openSearch()\" x-show=\"open\" x-transition.opacity.duration.150ms x-trap.inert.noscroll=\"open\" x-on:click.self=\"closeSearch()\" class=\"fixed inset-0 z-[80] flex justify-center bg-backdrop-surface/55 px-4 backdrop-blur-md dark:bg-backdrop/60\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
