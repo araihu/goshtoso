@@ -173,7 +173,7 @@ func (cfg Config) triggerClasses() string {
 
 // DialogClasses returns classes for the search panel.
 func (cfg Config) dialogClasses() string {
-	classes := "relative mt-16 flex w-full max-w-2xl flex-col text-on-surface shadow-2xl shadow-black/20 dark:text-on-surface-dark"
+	classes := "relative mt-16 flex w-full max-w-2xl flex-col text-on-surface shadow-elevation-overlay dark:text-on-surface-dark"
 	if cfg.DialogClass != "" {
 		classes += " " + cfg.DialogClass
 	}

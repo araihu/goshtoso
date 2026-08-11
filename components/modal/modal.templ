@@ -42,7 +42,7 @@ templ defaultModal(cfg Config) {
 			x-trap.inert.noscroll={ stateVar }
 			x-on:keydown.esc.window={ fmt.Sprintf("%s = false", stateVar) }
 			x-on:click.self={ fmt.Sprintf("%s = false", stateVar) }
-			class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
+			class="fixed inset-0 z-30 flex items-end justify-center bg-backdrop/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={ titleID }
@@ -100,7 +100,7 @@ templ alertDialog(cfg AlertDialogConfig) {
 			x-trap.inert.noscroll={ stateVar }
 			x-on:keydown.esc.window={ fmt.Sprintf("%s = false", stateVar) }
 			x-on:click.self={ fmt.Sprintf("%s = false", stateVar) }
-			class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
+			class="fixed inset-0 z-30 flex items-end justify-center bg-backdrop/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
 			role="alertdialog"
 			aria-modal="true"
 			aria-labelledby={ titleID }

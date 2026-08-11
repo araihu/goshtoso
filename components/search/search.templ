@@ -70,7 +70,7 @@ templ searchModalTemplate(cfg Config) {
 		x-transition:leave-end="opacity-0 motion-reduce:opacity-100"
 		x-trap.inert.noscroll="open"
 		x-on:click.self="closeSearch()"
-		class="fixed inset-0 z-[80] flex justify-center bg-surface-dark/55 px-4 backdrop-blur-md dark:bg-black/60"
+		class="fixed inset-0 z-[80] flex justify-center bg-backdrop-surface/55 px-4 backdrop-blur-md dark:bg-backdrop/60"
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby={ id + "-label" }
