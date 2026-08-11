@@ -43,7 +43,7 @@ templ paletteTemplate(cfg Config) {
 			<div class="flex items-center gap-2 pt-1">
 				<label
 					data-selected-preview
-					class="relative size-7 overflow-hidden rounded border border-outline shadow-sm dark:border-outline-dark cursor-pointer"
+					class="relative size-7 overflow-hidden rounded border border-control-outline shadow-sm dark:border-control-outline-dark cursor-pointer"
 					title="Custom color"
 					:style="{ backgroundColor: selectedHex }"
 				>
@@ -66,7 +66,7 @@ templ paletteTemplate(cfg Config) {
 					@keydown.enter.prevent="commitHex(hexInput)"
 					@blur="commitHex(hexInput)"
 					:aria-invalid="hexInvalid ? 'true' : 'false'"
-					class="w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[invalid=true]:border-danger aria-[invalid=true]:text-danger dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
+					class="w-24 rounded-radius border border-control-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[invalid=true]:border-danger aria-[invalid=true]:text-danger dark:border-control-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
 				/>
 			</div>
 		}
@@ -84,7 +84,7 @@ templ swatchGrid(cfg Config) {
 				@mouseleave="hovered = ''"
 				@focus="hovered = $el.dataset.cls"
 				@blur="hovered = ''"
-				class="h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
+				class="h-5 w-full rounded-sm border border-control-outline bg-white transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-control-outline-dark dark:hover:ring-primary-dark"
 				title="white"
 			></button>
 			<button
@@ -95,7 +95,7 @@ templ swatchGrid(cfg Config) {
 				@mouseleave="hovered = ''"
 				@focus="hovered = $el.dataset.cls"
 				@blur="hovered = ''"
-				class="h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
+				class="h-5 w-full rounded-sm border border-control-outline bg-black transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-control-outline-dark dark:hover:ring-primary-dark"
 				title="black"
 			></button>
 		}
@@ -109,7 +109,7 @@ templ swatchGrid(cfg Config) {
 					@mouseleave="hovered = ''"
 					@focus="hovered = $el.dataset.cls"
 					@blur="hovered = ''"
-					class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
+					class="h-5 w-full rounded-sm border border-control-outline dark:border-control-outline-dark transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
 					{ swatchStyle(hue, shade)... }
 					title={ hue + "-" + shade }
 				></button>

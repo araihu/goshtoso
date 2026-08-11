@@ -34,6 +34,12 @@ func TestCoverageStandardRadio(t *testing.T) {
 	assert.Contains(t, html, "size-4") // default SizeMD
 }
 
+func TestDisabledRadioDimsContentWithoutFadingBoundary(t *testing.T) {
+	html := render(t, Radio(Config{ID: "disabled-boundary", Name: "group", Label: "Disabled", Disabled: true}))
+	assert.NotContains(t, html, "has-disabled:opacity-75", "ancestor opacity fades the control boundary")
+	assert.Contains(t, html, `<span class="opacity-75">Disabled</span>`, "disabled content must retain a visible disabled treatment")
+}
+
 // TestCoverageContainerRadio hits radioWithContainer and its bordered look.
 func TestCoverageContainerRadio(t *testing.T) {
 	html := render(t, Radio(Config{ID: "ct", Label: "Boxed", Container: true}))
@@ -331,6 +337,9 @@ func TestRadioGroupContainerOnlyChangesInnerInputBackground(t *testing.T) {
 // TestCoverageToneClasses asserts each Tone flows through the three
 // checked-color helpers via inputClasses.
 func TestCoverageToneClasses(t *testing.T) {
+	base := Config{}.inputClasses()
+	assert.Contains(t, base, "border-control-outline")
+	assert.Contains(t, base, "dark:border-control-outline-dark")
 	cases := []struct {
 		variant Tone
 		border  string

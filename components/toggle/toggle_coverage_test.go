@@ -149,6 +149,9 @@ func TestCoverageCheckedClassesAllVariants(t *testing.T) {
 
 func TestCoverageToggleClassesStyleBranches(t *testing.T) {
 	defaultClasses := Config{Appearance: AppearanceDefault}.toggleClasses()
+	if !strings.Contains(defaultClasses, "border-control-outline") || !strings.Contains(defaultClasses, "dark:border-control-outline-dark") {
+		t.Errorf("default track should use control boundary roles: %s", defaultClasses)
+	}
 	if !strings.Contains(defaultClasses, "bg-surface-alt") {
 		t.Errorf("default style should use bg-surface-alt: %s", defaultClasses)
 	}
@@ -164,6 +167,17 @@ func TestCoverageToggleClassesStyleBranches(t *testing.T) {
 	// toggleClasses always appends variant (checked) classes.
 	if !strings.Contains(defaultClasses, "peer-checked:bg-primary") {
 		t.Errorf("toggleClasses should append checked classes: %s", defaultClasses)
+	}
+}
+
+func TestDisabledToggleDimsLabelWithoutFadingTrackBoundary(t *testing.T) {
+	track := Config{Disabled: true}.toggleClasses()
+	if strings.Contains(track, "peer-disabled:opacity-70") {
+		t.Fatalf("disabled opacity must not fade the track boundary: %s", track)
+	}
+	html := renderToggle(t, Config{ID: "disabled-boundary", Label: "Disabled", Disabled: true})
+	if !strings.Contains(html, "peer-disabled:opacity-70") {
+		t.Fatalf("disabled label must retain content-level opacity semantics: %s", html)
 	}
 }
 

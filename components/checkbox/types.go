@@ -189,11 +189,11 @@ func (cfg Config) svgTextClass() string {
 
 // InputClasses returns the full CSS class string for the checkbox input
 func (cfg Config) inputClasses() string {
-	base := "before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface-alt before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:focus:outline-outline-dark-strong"
+	base := "before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-control-outline bg-surface-alt before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-control-outline-dark dark:bg-surface-dark-alt dark:focus:outline-outline-dark-strong"
 
 	if cfg.Container {
 		// Container variant uses bg-surface instead of bg-surface-alt
-		base = "before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark dark:focus:outline-outline-dark-strong"
+		base = "before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-control-outline bg-surface before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed dark:border-control-outline-dark dark:bg-surface-dark dark:focus:outline-outline-dark-strong"
 	}
 
 	classes := base + " " + cfg.checkedBorderClass() + " " + cfg.checkedBgClass() + " " + cfg.focusCheckedClass()
@@ -207,6 +207,13 @@ func (cfg Config) inputClasses() string {
 	}
 
 	return classes
+}
+
+func (cfg Config) disabledContentClasses() string {
+	if cfg.Disabled {
+		return "opacity-75"
+	}
+	return ""
 }
 
 // SvgClasses returns the CSS class string for the SVG icon

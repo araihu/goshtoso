@@ -223,7 +223,7 @@ templ filterSearchInput(cfg Config, filter Filter) {
 			x-model="filters[$el.dataset.tableFilterKey]"
 			@input.debounce.300ms="applyFilters()"
 			placeholder={ filter.Placeholder }
-			class="w-full min-w-[200px] rounded-radius border border-outline bg-surface py-2 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:placeholder:text-on-surface-dark-muted dark:focus-visible:outline-primary-dark"
+			class="w-full min-w-[200px] rounded-radius border border-control-outline bg-surface py-2 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-control-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:placeholder:text-on-surface-dark-muted dark:focus-visible:outline-primary-dark"
 		/>
 	</div>
 }
@@ -237,7 +237,7 @@ templ filterSelectInput(cfg Config, filter Filter) {
 		hx-preserve="true"
 		x-model="filters[$el.dataset.tableFilterKey]"
 		@change="applyFilters()"
-		class="rounded-radius border border-outline bg-surface py-2 pl-3 pr-8 text-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
+		class="rounded-radius border border-control-outline bg-surface py-2 pl-3 pr-8 text-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-control-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
 		if filter.OptionsHTMX != nil && filter.OptionsHTMX.Get != "" {
 			hx-get={ filter.OptionsHTMX.Get }
 			hx-trigger="load"

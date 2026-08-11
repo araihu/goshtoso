@@ -52,7 +52,7 @@ func TestSelectClasses_AllStates(t *testing.T) {
 	assert.Contains(t, okClasses, "border-success")
 
 	defClasses := Config{}.selectClasses()
-	assert.Contains(t, defClasses, "border-outline dark:border-outline-dark")
+	assert.Contains(t, defClasses, "border-control-outline dark:border-control-outline-dark")
 	// shared base survives across states
 	assert.Contains(t, defClasses, "appearance-none")
 }
@@ -79,6 +79,13 @@ func TestLabelClasses_AllStates(t *testing.T) {
 }
 
 func TestTriggerClasses_StateBranches(t *testing.T) {
+	defaultClasses := Config{}.triggerClasses()
+	assert.Contains(t, defaultClasses, "border-control-outline")
+	assert.Contains(t, defaultClasses, "dark:border-control-outline-dark")
+	disabledClasses := Config{Disabled: true}.triggerClasses()
+	assert.Contains(t, disabledClasses, "border-control-outline")
+	assert.Contains(t, disabledClasses, "dark:border-control-outline-dark")
+
 	errClasses := Config{State: StateError}.triggerClasses()
 	assert.Contains(t, errClasses, "border-danger")
 	assert.Contains(t, errClasses, "bg-surface")

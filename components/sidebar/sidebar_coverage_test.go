@@ -77,6 +77,8 @@ func TestCoverageRenderSidebarBranches(t *testing.T) {
 		`Docs`,
 		`coverage-root`,
 		`placeholder="Filter navigation"`,
+		`border-control-outline`,
+		`dark:border-control-outline-dark`,
 		`href="/overview"`,
 		`data-sidebar-item="Overview"`,
 		`hx-get="/overview"`,

@@ -11,7 +11,7 @@ func TestTriggerClassesUseActiveSurfaceVocabulary(t *testing.T) {
 	for _, want := range []string{
 		"bg-surface",
 		"text-on-surface-strong",
-		"disabled:opacity-50",
+		"disabled:[&>*]:opacity-50",
 	} {
 		if !strings.Contains(classes, want) {
 			t.Fatalf("triggerClasses() missing %q in %q", want, classes)
@@ -25,11 +25,16 @@ func TestDisabledTriggerClassesUseDisabledVocabulary(t *testing.T) {
 	for _, want := range []string{
 		"bg-surface-alt",
 		"text-on-surface-muted",
-		"opacity-50",
+		"[&>*]:opacity-50",
 		"cursor-not-allowed",
 	} {
 		if !strings.Contains(classes, want) {
 			t.Fatalf("triggerClasses() missing %q in %q", want, classes)
+		}
+	}
+	for class := range strings.FieldsSeq(classes) {
+		if class == "opacity-50" || class == "disabled:opacity-50" {
+			t.Fatalf("disabled opacity must not fade the trigger boundary: %q", classes)
 		}
 	}
 }

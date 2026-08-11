@@ -501,10 +501,22 @@ func TestPrefillHelpers(t *testing.T) {
 
 func TestInputClassesAndOrDefault(t *testing.T) {
 	managed := inputClasses(true)
+	if !strings.Contains(managed, "border-control-outline") || !strings.Contains(managed, "dark:border-control-outline-dark") {
+		t.Errorf("managed classes missing control boundary roles: %q", managed)
+	}
 	if !strings.Contains(managed, "cursor-not-allowed") {
 		t.Errorf("managed classes missing cursor-not-allowed: %q", managed)
 	}
+	if strings.Contains(managed, "opacity-70") {
+		t.Errorf("managed opacity must not fade the control boundary: %q", managed)
+	}
+	if !strings.Contains(managed, "bg-surface-alt") || !strings.Contains(managed, "text-on-surface-muted") {
+		t.Errorf("managed control must retain governed disabled surface/text semantics: %q", managed)
+	}
 	normal := inputClasses(false)
+	if !strings.Contains(normal, "border-control-outline") || !strings.Contains(normal, "dark:border-control-outline-dark") {
+		t.Errorf("normal classes missing control boundary roles: %q", normal)
+	}
 	if strings.Contains(normal, "cursor-not-allowed") {
 		t.Errorf("normal classes should not be disabled: %q", normal)
 	}
@@ -513,6 +525,32 @@ func TestInputClassesAndOrDefault(t *testing.T) {
 	}
 	if got := orDefault("set", "fallback"); got != "set" {
 		t.Errorf("orDefault set = %q", got)
+	}
+}
+
+func TestBooleanInputRendersActualControlBoundary(t *testing.T) {
+	html := render(t, Fields(FieldsConfig{Fields: []Field{
+		{Path: "enabled", Label: "Enabled", Kind: KindBoolean, Default: "true"},
+		{Path: "locked", Label: "Locked", Kind: KindBoolean, Managed: true},
+	}}))
+	if !strings.Contains(html, `class="size-4 appearance-none rounded border border-control-outline`) {
+		t.Fatalf("boolean input needs border width plus semantic control role: %s", html)
+	}
+	if !strings.Contains(html, "appearance-none") {
+		t.Fatalf("boolean input must opt out of native appearance so its semantic border actually renders: %s", html)
+	}
+	if !strings.Contains(html, "checked:bg-primary") || !strings.Contains(html, "dark:checked:bg-primary-dark") {
+		t.Fatalf("appearance-none boolean must retain a governed checked affordance: %s", html)
+	}
+	for _, hook := range []string{
+		`label for="values.enabled"`,
+		`type="checkbox" id="values.enabled" name="values.enabled" value="true" checked`,
+		`type="checkbox" id="values.locked" name="values.locked" value="true" disabled`,
+		"focus-visible:outline-2",
+	} {
+		if !strings.Contains(html, hook) {
+			t.Errorf("boolean native semantics/state hook missing %q: %s", hook, html)
+		}
 	}
 }
 

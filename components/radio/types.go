@@ -247,12 +247,19 @@ func (cfg Config) inputClasses() string {
 		bg = "bg-surface dark:bg-surface-dark"
 	}
 
-	base := "before:content[''] peer relative shrink-0 appearance-none overflow-hidden rounded-full border border-outline " + bg +
+	base := "before:content[''] peer relative shrink-0 appearance-none overflow-hidden rounded-full border border-control-outline " + bg +
 		" before:absolute before:inset-0 before:scale-0 before:rounded-full before:transition before:duration-200 checked:before:scale-[0.55]" +
 		" focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed" +
-		" dark:border-outline-dark dark:focus:outline-outline-dark-strong"
+		" dark:border-control-outline-dark dark:focus:outline-outline-dark-strong"
 
 	return base + " " + cfg.sizeBoxClass() + " " + cfg.checkedBorderClass() + " " + cfg.checkedBgClass() + " " + cfg.focusCheckedClass()
+}
+
+func (cfg Config) disabledContentClasses() string {
+	if cfg.Disabled {
+		return "opacity-75"
+	}
+	return ""
 }
 
 // SegmentedLabelClasses returns the label classes for the Segmented variant.

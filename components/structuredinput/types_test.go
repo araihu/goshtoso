@@ -170,7 +170,7 @@ func TestStructuredInputRendersSelectColumn(t *testing.T) {
 	}
 
 	html := buf.String()
-	for _, want := range []string{`<select`, `x-model="entry[1]"`, `<option value="NoSchedule">NoSchedule</option>`} {
+	for _, want := range []string{`<select`, `x-model="entry[1]"`, `<option value="NoSchedule">NoSchedule</option>`, `border-control-outline dark:border-control-outline-dark`} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("rendered HTML missing %s:\n%s", want, html)
 		}

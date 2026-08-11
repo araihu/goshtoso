@@ -291,7 +291,7 @@ func TestRowAndSortableHeaderClasses(t *testing.T) {
 	unsorted := cfg.sortableHeaderClasses("other")
 	mustNotContain(t, unsorted, "text-primary dark:text-primary-dark")
 
-	mustContainAll(t, (Config{}).checkboxClasses(), "appearance-none")
+	mustContainAll(t, (Config{}).checkboxClasses(), "appearance-none", "border-control-outline", "dark:border-control-outline-dark")
 	mustContainAll(t, (Config{}).tableClasses(), "w-full")
 	mustContainAll(t, (Config{}).theadClasses(), "border-b")
 	mustContainAll(t, (Config{}).tbodyClasses(), "divide-y")

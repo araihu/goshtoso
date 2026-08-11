@@ -92,7 +92,7 @@ func (cfg Config) labelClasses() string {
 func (cfg Config) dropZoneClasses() string {
 	base := "flex w-full flex-col items-center justify-center gap-2 rounded-radius border border-dashed p-8 text-on-surface dark:text-on-surface-dark"
 	if cfg.Disabled {
-		return base + " opacity-50 cursor-not-allowed"
+		return base + " [&>*]:opacity-50 cursor-not-allowed"
 	}
 	return base
 }
@@ -109,23 +109,27 @@ func (cfg Config) isUpload() bool {
 
 // UploadControlClasses returns classes for the compact upload control.
 func (cfg Config) uploadControlClasses() string {
-	base := "flex w-full items-stretch overflow-hidden rounded-radius border border-outline bg-surface-alt text-sm text-on-surface focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-within:outline-primary-dark"
+	base := "flex w-full items-stretch overflow-hidden rounded-radius border border-control-outline bg-surface-alt text-sm text-on-surface focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary dark:border-control-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-within:outline-primary-dark"
 	if cfg.Disabled {
-		return base + " cursor-not-allowed opacity-75"
+		return base + " cursor-not-allowed"
 	}
 	return base + " cursor-pointer"
 }
 
 // UploadFileNameClasses returns classes for the compact file-name display.
 func (cfg Config) uploadFileNameClasses() string {
-	return "flex min-w-0 flex-1 items-center px-2 py-2 text-on-surface-muted dark:text-on-surface-dark-muted"
+	base := "flex min-w-0 flex-1 items-center px-2 py-2 text-on-surface-muted dark:text-on-surface-dark-muted"
+	if cfg.Disabled {
+		return base + " opacity-75"
+	}
+	return base
 }
 
 // UploadButtonClasses returns classes for the compact Browse affordance.
 func (cfg Config) uploadButtonClasses() string {
 	base := "flex shrink-0 items-center border-l border-outline bg-surface px-3 py-2 font-medium text-primary dark:border-outline-dark dark:bg-surface-dark dark:text-primary-dark"
 	if cfg.Disabled {
-		return base + " cursor-not-allowed"
+		return base + " cursor-not-allowed opacity-75"
 	}
 	return base
 }

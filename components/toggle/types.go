@@ -51,7 +51,7 @@ type Config struct {
 
 // ToggleClasses returns the CSS classes for the toggle track div
 func (cfg Config) toggleClasses() string {
-	base := "relative h-6 w-11 after:h-5 after:w-5 peer-checked:after:translate-x-5 rounded-full border border-outline after:absolute after:bottom-0 after:left-[0.0625rem] after:top-0 after:my-auto after:rounded-full after:bg-on-surface after:transition-all after:content-[''] peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-outline-strong peer-active:outline-offset-0 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:border-outline-dark dark:after:bg-on-surface-dark dark:peer-focus:outline-outline-dark-strong"
+	base := "relative h-6 w-11 after:h-5 after:w-5 peer-checked:after:translate-x-5 rounded-full border border-control-outline after:absolute after:bottom-0 after:left-[0.0625rem] after:top-0 after:my-auto after:rounded-full after:bg-on-surface after:transition-all after:content-[''] peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-outline-strong peer-active:outline-offset-0 peer-disabled:cursor-not-allowed dark:border-control-outline-dark dark:after:bg-on-surface-dark dark:peer-focus:outline-outline-dark-strong"
 
 	switch cfg.Appearance {
 	case AppearanceContainer:

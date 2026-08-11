@@ -29,6 +29,8 @@ func TestPalette_GridAndStaticDispatch(t *testing.T) {
 	assert.Contains(t, html, `@click="pick($el.dataset.cls, $el)"`)
 	assert.Contains(t, html, `data-cls="white"`)
 	assert.Contains(t, html, `data-cls="black"`)
+	assert.Contains(t, html, `border-control-outline`)
+	assert.Contains(t, html, `dark:border-control-outline-dark`)
 	assert.Contains(t, html, `@click="pick('', null)"`)
 	assert.Contains(t, html, "Reset")
 	assert.NotContains(t, html, `type="color"`)
@@ -47,6 +49,8 @@ func TestPalette_AlpineConfigAndHex(t *testing.T) {
 	assert.Contains(t, html, `@keydown.enter.prevent="commitHex(hexInput)"`)
 	assert.Contains(t, html, `@blur="commitHex(hexInput)"`)
 	assert.Contains(t, html, `:aria-invalid="hexInvalid ? 'true' : 'false'"`)
+	assert.Contains(t, html, `border-control-outline`)
+	assert.Contains(t, html, `dark:border-control-outline-dark`)
 }
 
 func TestPalette_HideFlags(t *testing.T) {

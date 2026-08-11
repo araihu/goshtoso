@@ -19,18 +19,18 @@ templ checkboxTemplate(cfg Config) {
 
 // standardCheckbox renders a basic checkbox with label
 templ standardCheckbox(cfg Config) {
-	<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+	<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed">
 		@checkboxInput(cfg)
-		<span>{ cfg.Label }</span>
+		<span class={ cfg.disabledContentClasses() }>{ cfg.Label }</span>
 	</label>
 }
 
 // checkboxWithDescription renders a checkbox with helper text below
 templ checkboxWithDescription(cfg Config) {
 	<div class="flex flex-col items-start">
-		<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+		<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed">
 			@checkboxInput(cfg)
-			<span>{ cfg.Label }</span>
+			<span class={ cfg.disabledContentClasses() }>{ cfg.Label }</span>
 		</label>
 		<span id={ cfg.HelperTextID } class="ml-6 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.HelperText }</span>
 	</div>
@@ -38,8 +38,8 @@ templ checkboxWithDescription(cfg Config) {
 
 // checkboxWithContainer renders a checkbox inside a bordered container
 templ checkboxWithContainer(cfg Config) {
-	<label for={ cfg.ID } class="inline-flex min-w-52 items-center justify-between rounded-radius gap-3 border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed">
-		<span>{ cfg.Label }</span>
+	<label for={ cfg.ID } class="inline-flex min-w-52 items-center justify-between rounded-radius gap-3 border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed">
+		<span class={ cfg.disabledContentClasses() }>{ cfg.Label }</span>
 		@checkboxInput(cfg)
 	</label>
 }
@@ -95,8 +95,8 @@ templ checkboxGroupTemplate(cfg GroupConfig) {
 
 // groupCheckboxItem renders a single checkbox inside a group list item
 templ groupCheckboxItem(cfg Config) {
-	<label for={ cfg.ID } class="flex items-center gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+	<label for={ cfg.ID } class="flex items-center gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed">
 		@checkboxInput(cfg)
-		<span>{ cfg.Label }</span>
+		<span class={ cfg.disabledContentClasses() }>{ cfg.Label }</span>
 	</label>
 }

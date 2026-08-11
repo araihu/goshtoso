@@ -368,7 +368,7 @@ func searchModalTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" x-show=\"open\" x-transition:enter=\"transition ease-out duration-150\" x-transition:enter-start=\"opacity-0 translate-y-1\" x-transition:enter-end=\"opacity-100 translate-y-0\"><div class=\"relative flex items-center gap-3 border border-outline bg-surface px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt\" x-bind:class=\"query.trim().length > 0 ? 'rounded-t-radius border-b-0' : 'rounded-radius'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" x-show=\"open\" x-transition:enter=\"transition ease-out duration-150\" x-transition:enter-start=\"opacity-0 translate-y-1\" x-transition:enter-end=\"opacity-100 translate-y-0\"><div class=\"relative flex items-center gap-3 border border-control-outline bg-surface px-4 py-3 dark:border-control-outline-dark dark:bg-surface-dark-alt\" x-bind:class=\"query.trim().length > 0 ? 'rounded-t-radius border-b-0' : 'rounded-radius'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

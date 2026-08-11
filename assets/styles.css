@@ -1973,6 +1973,9 @@
   .border-control-outline {
     border-color: var(--color-control-outline);
   }
+  .border-control-outline-dark {
+    border-color: var(--color-control-outline-dark);
+  }
   .border-danger {
     border-color: var(--color-danger);
   }
@@ -4386,6 +4389,9 @@
   .checked\:border-warning:checked {
     border-color: var(--color-warning);
   }
+  .checked\:bg-primary:checked {
+    background-color: var(--color-primary);
+  }
   .checked\:before\:translate-y-0:checked::before {
     content: var(--tw-content);
     --tw-translate-y: 0px;
@@ -4463,6 +4469,9 @@
     .hover\:border-l-2:hover {
       border-left-style: var(--tw-border-style);
       border-left-width: 2px;
+    }
+    .hover\:border-control-outline:hover {
+      border-color: var(--color-control-outline);
     }
     .hover\:border-outline-strong:hover {
       border-color: var(--color-outline-strong);
@@ -6375,6 +6384,9 @@
   .dark\:checked\:border-warning:where(.dark, .dark *):checked {
     border-color: var(--color-warning);
   }
+  .dark\:checked\:bg-primary-dark:where(.dark, .dark *):checked {
+    background-color: var(--color-primary-dark);
+  }
   .dark\:checked\:before\:bg-danger:where(.dark, .dark *):checked::before {
     content: var(--tw-content);
     background-color: var(--color-danger);
@@ -6406,6 +6418,9 @@
     outline-color: var(--color-primary-dark);
   }
   @media (hover: hover) {
+    .dark\:hover\:border-control-outline-dark:where(.dark, .dark *):hover {
+      border-color: var(--color-control-outline-dark);
+    }
     .dark\:hover\:border-outline-dark-strong:where(.dark, .dark *):hover {
       border-color: var(--color-outline-dark-strong);
     }
@@ -6763,6 +6778,12 @@
   .dark\:focus-visible\:\[\&\:\:-webkit-slider-thumb\]\:outline-primary-dark:where(.dark, .dark *):focus-visible::-webkit-slider-thumb {
     outline-color: var(--color-primary-dark);
   }
+  .\[\&\>\*\]\:opacity-50 > * {
+    opacity: 50%;
+  }
+  .disabled\:\[\&\>\*\]\:opacity-50:disabled > * {
+    opacity: 50%;
+  }
   .\[\&\>div\:first-child\]\:aspect-\[16\/9\] > div:first-child {
     aspect-ratio: 16/9;
   }
@@ -6869,6 +6890,7 @@
     --color-on-secondary: var(--color-white);
     --color-outline: var(--color-neutral-300);
     --color-outline-strong: var(--color-neutral-800);
+    --color-control-outline: var(--color-outline-strong);
     --color-surface-dark: var(--color-neutral-950);
     --color-surface-dark-alt: var(--color-neutral-900);
     --color-on-surface-dark: var(--color-neutral-300);
@@ -6879,6 +6901,7 @@
     --color-on-secondary-dark: var(--color-black);
     --color-outline-dark: var(--color-neutral-700);
     --color-outline-dark-strong: var(--color-neutral-300);
+    --color-control-outline-dark: var(--color-outline-dark-strong);
     --color-info: var(--color-sky-500);
     --color-on-info: var(--color-white);
     --color-success: var(--color-green-500);

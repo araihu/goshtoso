@@ -121,9 +121,9 @@ templ radioBarTemplate() {
 
 // standardRadio renders a basic radio with label
 templ standardRadio(cfg Config) {
-	<label for={ cfg.ID } class={ "flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75 " + cfg.RootClass }>
+	<label for={ cfg.ID } class={ "flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed " + cfg.RootClass }>
 		@radioInput(cfg)
-		<span>{ cfg.Label }</span>
+		<span class={ cfg.disabledContentClasses() }>{ cfg.Label }</span>
 	</label>
 }
 
@@ -132,7 +132,7 @@ templ radioWithDescription(cfg Config) {
 	<div class={ "flex items-start gap-2 " + cfg.RootClass }>
 		@radioInput(cfg)
 		<div class="flex flex-col">
-			<label for={ cfg.ID } class="text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+			<label for={ cfg.ID } class={ "text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed " + cfg.disabledContentClasses() }>
 				{ cfg.Label }
 			</label>
 			if cfg.HelperTextID != "" {
@@ -146,8 +146,8 @@ templ radioWithDescription(cfg Config) {
 
 // radioWithContainer renders a radio inside a bordered container (segmented look)
 templ radioWithContainer(cfg Config) {
-	<label for={ cfg.ID } class={ "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed " + cfg.RootClass }>
-		<span>{ cfg.Label }</span>
+	<label for={ cfg.ID } class={ "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed " + cfg.RootClass }>
+		<span class={ cfg.disabledContentClasses() }>{ cfg.Label }</span>
 		@radioInput(cfg)
 	</label>
 }
@@ -268,19 +268,19 @@ templ radioGroupTemplate(cfg GroupConfig) {
 
 // groupRadioItem renders a single radio inside a group list item
 templ groupRadioItem(cfg Config) {
-	<label for={ cfg.ID } class="flex items-center gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+	<label for={ cfg.ID } class="flex items-center gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed">
 		@radioInput(cfg)
-		<span>{ cfg.Label }</span>
+		<span class={ cfg.disabledContentClasses() }>{ cfg.Label }</span>
 	</label>
 }
 
 // groupRadioItemWithDescription renders a radio with description inside a group list item
 templ groupRadioItemWithDescription(cfg Config) {
-	<label for={ cfg.ID } class="flex items-start gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75 cursor-pointer">
+	<label for={ cfg.ID } class="flex items-start gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed cursor-pointer">
 		<span class="mt-0.5 flex">
 			@radioInput(cfg)
 		</span>
-		<div class="flex min-w-0 flex-col gap-0.5">
+		<div class={ "flex min-w-0 flex-col gap-0.5 " + cfg.disabledContentClasses() }>
 			if cfg.BadgeColor != "" {
 				<span class={ badgeClasses(cfg.BadgeColor) }>{ cfg.Label }</span>
 			} else {

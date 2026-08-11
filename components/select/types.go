@@ -117,7 +117,7 @@ func (cfg Config) containerClasses() string {
 
 // SelectClasses returns CSS classes for the select element (legacy, kept for compatibility)
 func (cfg Config) selectClasses() string {
-	base := "w-full appearance-none rounded-radius border bg-surface px-4 py-2 text-sm text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface-alt disabled:text-on-surface-muted disabled:opacity-50 dark:bg-surface-dark dark:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark dark:disabled:bg-surface-dark-alt dark:disabled:text-on-surface-dark-muted"
+	base := "w-full appearance-none rounded-radius border bg-surface px-4 py-2 text-sm text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-surface-alt disabled:text-on-surface-muted dark:bg-surface-dark dark:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark dark:disabled:bg-surface-dark-alt dark:disabled:text-on-surface-dark-muted"
 
 	switch cfg.State {
 	case StateError:
@@ -125,16 +125,16 @@ func (cfg Config) selectClasses() string {
 	case StateSuccess:
 		return base + " border-success"
 	default:
-		return base + " border-outline dark:border-outline-dark"
+		return base + " border-control-outline dark:border-control-outline-dark"
 	}
 }
 
 // TriggerClasses returns CSS classes for the custom dropdown trigger button
 func (cfg Config) triggerClasses() string {
-	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:contrast-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:contrast-100"
+	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:contrast-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:[&>*]:opacity-50 disabled:hover:contrast-100"
 
 	if cfg.isEffectivelyDisabled() {
-		return base + " border-outline bg-surface-alt text-on-surface-muted opacity-50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted"
+		return base + " border-control-outline bg-surface-alt text-on-surface-muted cursor-not-allowed dark:border-control-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted"
 	}
 
 	switch cfg.State {
@@ -143,7 +143,7 @@ func (cfg Config) triggerClasses() string {
 	case StateSuccess:
 		return base + " border-success bg-surface text-on-surface-strong dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	default:
-		return base + " border-outline bg-surface text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong"
+		return base + " border-control-outline bg-surface text-on-surface-strong dark:border-control-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong"
 	}
 }
 

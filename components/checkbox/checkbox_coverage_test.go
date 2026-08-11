@@ -3,6 +3,7 @@ package checkbox
 import (
 	"bytes"
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,6 +15,17 @@ func renderCheckboxGroup(t *testing.T, cfg GroupConfig) string {
 	var buf bytes.Buffer
 	require.NoError(t, CheckboxGroup(cfg).Render(context.Background(), &buf))
 	return buf.String()
+}
+
+func TestDisabledCheckboxDimsContentWithoutFadingBoundary(t *testing.T) {
+	html := renderCheckbox(t, Config{ID: "disabled-boundary", Label: "Disabled", Disabled: true})
+	assert.NotContains(t, html, "has-disabled:opacity-75", "ancestor opacity fades the control boundary")
+	assert.Contains(t, html, `<span class="opacity-75">Disabled</span>`, "disabled content must retain a visible disabled treatment")
+	inputStart := strings.Index(html, `<input`)
+	require.GreaterOrEqual(t, inputStart, 0)
+	inputEnd := strings.Index(html[inputStart:], `>`)
+	require.GreaterOrEqual(t, inputEnd, 0)
+	assert.NotContains(t, html[inputStart:inputStart+inputEnd], "opacity-", "boundary input must remain fully opaque")
 }
 
 func TestCoverageCheckboxToneClassesAndIcons(t *testing.T) {
@@ -95,10 +107,14 @@ func TestCoverageCheckboxToneClassesAndIcons(t *testing.T) {
 
 func TestCoverageCheckboxAnimationClasses(t *testing.T) {
 	scaleInput := Config{Animation: AnimationScaleUp}.inputClasses()
+	assert.Contains(t, scaleInput, "border-control-outline")
+	assert.Contains(t, scaleInput, "dark:border-control-outline-dark")
 	assert.Contains(t, scaleInput, "before:scale-0")
 	assert.Contains(t, scaleInput, "checked:before:scale-125")
 
 	slideDownInput := Config{Animation: AnimationSlideDown}.inputClasses()
+	assert.Contains(t, Config{Container: true}.inputClasses(), "border-control-outline")
+	assert.Contains(t, Config{Container: true}.inputClasses(), "dark:border-control-outline-dark")
 	assert.Contains(t, slideDownInput, "before:-translate-y-4")
 	assert.Contains(t, slideDownInput, "checked:before:translate-y-0")
 

@@ -1,6 +1,7 @@
 package themegen
 
 import (
+	"os"
 	"strings"
 	"testing"
 )
@@ -43,5 +44,29 @@ func TestGenerateTheme(t *testing.T) {
 	}
 	if strings.Contains(out, `@import "../all-themes.css"`) || strings.Contains(out, `@import "./codeblock.css"`) {
 		t.Error("relative @imports must be replaced, not left in place")
+	}
+}
+
+func TestModernThemeMapsControlBoundariesToGovernedStrongOutlines(t *testing.T) {
+	source, err := os.ReadFile("../../all-themes.css")
+	if err != nil {
+		t.Fatalf("read all-themes.css: %v", err)
+	}
+	css := string(source)
+	start := strings.Index(css, "[data-theme=modern]")
+	if start < 0 {
+		t.Fatal("all-themes.css has no Modern theme block")
+	}
+	block := css[start:]
+	if end := strings.Index(block[1:], "[data-theme="); end >= 0 {
+		block = block[:end+1]
+	}
+	for _, mapping := range []string{
+		"--color-control-outline: var(--color-outline-strong);",
+		"--color-control-outline-dark: var(--color-outline-dark-strong);",
+	} {
+		if !strings.Contains(block, mapping) {
+			t.Errorf("Modern theme must map control boundaries through governed strong outline token %q; block:\n%s", mapping, block)
+		}
 	}
 }

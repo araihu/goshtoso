@@ -3,6 +3,7 @@ package fileinput
 import (
 	"bytes"
 	"context"
+	"slices"
 	"strings"
 	"testing"
 
@@ -26,6 +27,7 @@ func TestCoverageRenderDefaultFileinput(t *testing.T) {
 		`data-fileinput-variant="dropzone"`,
 		`type="file"`,
 		"border-dashed",
+		"border-control-outline dark:border-control-outline-dark",
 		"Browse",
 		"or drag and drop here",
 	} {
@@ -127,6 +129,28 @@ func TestCoverageUploadDisabled(t *testing.T) {
 	}
 }
 
+func TestDisabledFileInputsDimContentWithoutFadingBoundaries(t *testing.T) {
+	dropzone := Config{Disabled: true}.dropZoneClasses()
+	if slicesContain(strings.Fields(dropzone), "opacity-50") {
+		t.Fatalf("dropzone boundary must not receive direct disabled opacity: %q", dropzone)
+	}
+	if !strings.Contains(dropzone, "[&>*]:opacity-50") {
+		t.Fatalf("dropzone content must retain scoped disabled opacity: %q", dropzone)
+	}
+
+	upload := Config{Appearance: AppearanceUpload, Disabled: true}
+	if slicesContain(strings.Fields(upload.uploadControlClasses()), "opacity-75") {
+		t.Fatalf("upload boundary must not receive direct disabled opacity: %q", upload.uploadControlClasses())
+	}
+	if !strings.Contains(upload.uploadFileNameClasses(), "opacity-75") || !strings.Contains(upload.uploadButtonClasses(), "opacity-75") {
+		t.Fatalf("upload content must retain disabled opacity: filename=%q button=%q", upload.uploadFileNameClasses(), upload.uploadButtonClasses())
+	}
+}
+
+func slicesContain(values []string, want string) bool {
+	return slices.Contains(values, want)
+}
+
 func TestCoverageNoLabelNoHelper(t *testing.T) {
 	// Drop zone without label/helper exercises the false branches.
 	html := renderConfig(t, Config{ID: "bare"})
@@ -205,6 +229,10 @@ func TestCoverageClassHelpers(t *testing.T) {
 
 	if !strings.Contains(cfg.uploadControlClasses(), "cursor-pointer") {
 		t.Fatal("enabled uploadControlClasses missing cursor-pointer")
+	}
+	if !strings.Contains(cfg.uploadControlClasses(), "border-control-outline") ||
+		!strings.Contains(cfg.uploadControlClasses(), "dark:border-control-outline-dark") {
+		t.Fatalf("uploadControlClasses missing control boundary roles: %q", cfg.uploadControlClasses())
 	}
 	if !strings.Contains((Config{Disabled: true}).uploadControlClasses(), "cursor-not-allowed") {
 		t.Fatal("disabled uploadControlClasses missing cursor-not-allowed")

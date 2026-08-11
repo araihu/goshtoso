@@ -560,7 +560,7 @@ func booleanInput(f Field, name string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, " class=\"size-4 rounded border-outline bg-surface text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark\"> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, " class=\"size-4 appearance-none rounded border border-control-outline bg-surface text-primary checked:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-control-outline-dark dark:bg-surface-dark dark:checked:bg-primary-dark\"> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -979,13 +979,11 @@ func managedBadge() templ.Component {
 }
 
 func inputClasses(managed bool) string {
-	base := "w-full rounded-radius border bg-surface px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-muted focus:outline-none focus:ring-2 focus:ring-primary dark:bg-surface-dark dark:text-on-surface-dark dark:placeholder:text-on-surface-dark-muted dark:focus:ring-primary-dark"
+	base := "w-full rounded-radius border px-3 py-2 text-sm placeholder:text-on-surface-muted focus:outline-none focus:ring-2 focus:ring-primary dark:placeholder:text-on-surface-dark-muted dark:focus:ring-primary-dark"
 	if managed {
-		base += " border-outline cursor-not-allowed opacity-70 dark:border-outline-dark"
-	} else {
-		base += " border-outline dark:border-outline-dark"
+		return base + " border-control-outline bg-surface-alt text-on-surface-muted cursor-not-allowed dark:border-control-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted"
 	}
-	return base
+	return base + " border-control-outline bg-surface text-on-surface dark:border-control-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 }
 
 func orDefault(s, def string) string {

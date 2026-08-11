@@ -77,6 +77,13 @@ func TestConfigCustomValueBranches(t *testing.T) {
 			t.Errorf("%s = %q, want it to contain %q", c.name, c.got, c.want)
 		}
 	}
+	if classes := cfg.triggerClasses(); !strings.Contains(classes, "border-control-outline") || !strings.Contains(classes, "dark:border-control-outline-dark") {
+		t.Errorf("triggerClasses missing control boundary roles: %q", classes)
+	}
+	html := renderHTML(t, Search(cfg))
+	if !strings.Contains(html, "border-control-outline") || !strings.Contains(html, "dark:border-control-outline-dark") {
+		t.Errorf("search query shell missing control boundary roles: %s", html)
+	}
 }
 
 // TestRootClassesDefaultOmitsExtra confirms the default branch leaves the base
