@@ -194,5 +194,6 @@ jobs:
             araihu-assets.json
             examples/getting-started/araihu.css
             assets/favicon.svg
+            assets/icons/heroicons.svg
             assets/images/goshtoso-logo.svg
             assets/images/goshtoso-mark.svg

@@ -114,8 +114,8 @@ func TestEveryGeneratedSymbolExistsExactlyOnceInSprite(t *testing.T) {
 			}
 		}
 	}
-	if len(counts) != len(Glyphs) {
-		t.Fatalf("sprite symbol count = %d, generated glyph count = %d", len(counts), len(Glyphs))
+	if len(counts) != 1288 {
+		t.Fatalf("sprite symbol count = %d, want Assets v0.2.1 count 1288", len(counts))
 	}
 	for _, glyph := range Glyphs {
 		if got := counts[string(glyph.Symbol)]; got != 1 {

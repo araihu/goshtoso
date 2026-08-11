@@ -34,10 +34,11 @@ func componentDocsConfig(persist bool) componentdocshell.Config {
 		Brand:      componentdocshell.Brand{Name: SiteName, HomeURL: "/", Logo: templ.Raw(`<img src="/assets/images/goshtoso-logo.svg" alt="" aria-hidden="true" class="h-12 w-auto">`), HideName: true, FaviconURL: "/favicon.svg", Badge: componentDocsBuildBadge(buildinfo.GoDocsVersion())},
 		Navigation: componentdocshell.Navigation{Items: getSidebarTopItems(""), SectionsTitle: "Components", Sections: sections, SearchPlaceholder: "Search", SearchSlot: sidebarSearchSlot()},
 		Appearance: componentdocshell.AppearanceConfig{
-			Themes:               getThemeOptions(),
-			DefaultTheme:         "araihu",
-			DisableThemeSelector: true,
-			PersistPreferences:   persist,
+			Themes:                        getThemeOptions(),
+			DefaultTheme:                  "araihu",
+			DisableThemeSelector:          true,
+			DisableDefaultThemeStylesheet: true,
+			PersistPreferences:            persist,
 			DarkModeBinding: &componentdocshell.DarkModeBinding{
 				ButtonID:         "darkModeToggleBtn",
 				StateExpression:  "$store.darkMode.on",

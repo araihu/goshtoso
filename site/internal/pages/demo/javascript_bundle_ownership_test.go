@@ -18,6 +18,7 @@ func TestComponentDocsLayoutOwnsDemoBundleOutsideHeadDependencies(t *testing.T) 
 
 	cfg := componentDocsConfig(false)
 	require.True(t, cfg.Appearance.DisableThemeSelector)
+	require.True(t, cfg.Appearance.DisableDefaultThemeStylesheet)
 	require.Equal(t, "araihu", cfg.Appearance.DefaultTheme)
 	require.Equal(t, []string{
 		siteassets.DemoBundleURL,
@@ -73,6 +74,7 @@ func TestDemoRuntimeProvidersStayExternalAndLifecycleAware(t *testing.T) {
 	var layout strings.Builder
 	require.NoError(t, LayoutWithMeta(DefaultMeta("External runtime"), "", templ.NopComponent).Render(context.Background(), &layout))
 	require.Contains(t, layout.String(), `x-data="demoLayout"`)
+	require.NotContains(t, layout.String(), `/componentdocshell/assets/araihu.css`)
 	require.Contains(t, layout.String(), `x-data="demoStorageConsent"`)
 	require.NotContains(t, layout.String(), "Alpine.store('nav'", "navigation runtime must stay in site bundle source")
 	require.NotContains(t, layout.String(), "window.buildTOC = function", "TOC runtime must stay in site bundle source")

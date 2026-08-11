@@ -54,6 +54,18 @@ func TestSelectChangesAcceptsRelativeRepositoryRoot(t *testing.T) {
 	require.Contains(t, result.Tags, "head")
 }
 
+func TestLoadPackageGraphCrossesNestedSiteModuleWithWorkspaceDisabled(t *testing.T) {
+	t.Setenv("GOWORK", "off")
+
+	graph, err := loadPackageGraph(context.Background(), repositoryRoot(t), map[string]bool{
+		"button": true,
+	})
+	require.NoError(t, err)
+	require.Contains(t, graph.packages, "github.com/araihu/goshtoso/components/button")
+	require.Contains(t, graph.packages, "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button")
+	require.Equal(t, "button", graph.identities["github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/button"])
+}
+
 func TestRenameAndDeleteAlwaysSelectFull(t *testing.T) {
 	for _, change := range []Change{
 		{Status: "D", OldPath: "components/button/types.go", NewPath: "components/button/types.go"},

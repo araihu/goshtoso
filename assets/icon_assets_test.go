@@ -18,7 +18,7 @@ func TestHandlerServesHeroiconsSpriteAndLicense(t *testing.T) {
 		{
 			path:        "/assets/icons/heroicons.svg",
 			contentType: "image/svg+xml",
-			sha256:      "75e282de7a19efba9cf0285b44af0641c1527361f921b7d7f8020efc1f1f0fb7",
+			sha256:      "65cdb814125787460b548428dd49edd8e29250ee9eba5e6f27f4eb1b746fc3ca",
 		},
 		{
 			path:        "/assets/icons/HEROICONS_LICENSE.txt",

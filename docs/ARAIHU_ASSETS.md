@@ -1,6 +1,7 @@
 # Arai Hu fallback assets
 
-Goshtoso keeps four repository-owned Arai Hû theme and brand fallback files
+Goshtoso keeps five repository-owned Arai Hû theme, UI sprite, and brand
+fallback files
 synchronized with immutable
 [`araihu/assets`](https://github.com/araihu/assets) releases. The root
 [`araihu-assets.json`](../araihu-assets.json) manifest pins the release tag,
@@ -9,9 +10,11 @@ allowed source-to-destination mapping.
 
 Brand mappings additionally pin the catalog canonical name and semantic roles.
 The updater rejects a release when a canonical name resolves to a different
-path, role, or checksum. Theme CSS is a release-inventory file without a brand
-catalog identity. Goshtoso's bundled Heroicons sprite remains a separately
-curated, typed surface and is not replaced by Arai Hû release fan-out.
+path, role, or checksum. Theme CSS and the UI sprite are release-inventory files
+without a brand catalog identity. Goshtoso keeps its curated typed Heroicons Go
+API and stable `/assets/icons/heroicons.svg` URL; the sprite bytes served at that
+URL come from the authenticated Arai Hû release and may contain additional
+compatible symbols.
 
 ## Local update
 

@@ -1,6 +1,7 @@
 package e2eimpact
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -25,33 +26,22 @@ type packageGraph struct {
 }
 
 func loadPackageGraph(ctx context.Context, repoRoot string, known map[string]bool) (packageGraph, error) {
-	command := exec.CommandContext(ctx, "go", "list", "-json", "./...", "./site/...")
-	command.Dir = repoRoot
-	output, err := command.StdoutPipe()
+	absoluteRoot, err := filepath.Abs(repoRoot)
 	if err != nil {
-		return packageGraph{}, err
-	}
-	var stderr strings.Builder
-	command.Stderr = &stderr
-	if err := command.Start(); err != nil {
-		return packageGraph{}, err
+		return packageGraph{}, fmt.Errorf("resolve repository root: %w", err)
 	}
 	graph := packageGraph{
 		packages: make(map[string]goPackage), reverse: make(map[string][]string),
-		identities: make(map[string]string), repoRoot: repoRoot,
+		identities: make(map[string]string), repoRoot: absoluteRoot,
 	}
-	decoder := json.NewDecoder(output)
-	for {
-		var pkg goPackage
-		if err := decoder.Decode(&pkg); err == io.EOF {
-			break
-		} else if err != nil {
-			return packageGraph{}, fmt.Errorf("decode go list: %w", err)
+	for _, moduleRoot := range []string{absoluteRoot, filepath.Join(absoluteRoot, "site")} {
+		packages, err := listModulePackages(ctx, moduleRoot)
+		if err != nil {
+			return packageGraph{}, err
 		}
-		graph.packages[pkg.ImportPath] = pkg
-	}
-	if err := command.Wait(); err != nil {
-		return packageGraph{}, fmt.Errorf("go list: %s: %w", strings.TrimSpace(stderr.String()), err)
+		for _, pkg := range packages {
+			graph.packages[pkg.ImportPath] = pkg
+		}
 	}
 	for path, pkg := range graph.packages {
 		for _, imported := range pkg.Imports {
@@ -64,17 +54,41 @@ func loadPackageGraph(ctx context.Context, repoRoot string, known map[string]boo
 	return graph, nil
 }
 
+func listModulePackages(ctx context.Context, moduleRoot string) ([]goPackage, error) {
+	command := exec.CommandContext(ctx, "go", "list", "-json", "./...")
+	command.Dir = moduleRoot
+	var stderr strings.Builder
+	command.Stderr = &stderr
+	output, err := command.Output()
+	if err != nil {
+		return nil, fmt.Errorf("go list in %q: %s: %w", moduleRoot, strings.TrimSpace(stderr.String()), err)
+	}
+
+	var packages []goPackage
+	decoder := json.NewDecoder(bytes.NewReader(output))
+	for {
+		var pkg goPackage
+		if err := decoder.Decode(&pkg); err == io.EOF {
+			break
+		} else if err != nil {
+			return nil, fmt.Errorf("decode go list in %q: %w", moduleRoot, err)
+		}
+		packages = append(packages, pkg)
+	}
+	return packages, nil
+}
+
 func packageIdentity(importPath string) (string, bool) {
 	const components = "/site/internal/pages/demo/componentpages/"
-	if index := strings.Index(importPath, components); index >= 0 {
-		remainder := importPath[index+len(components):]
+	if _, after, ok := strings.Cut(importPath, components); ok {
+		remainder := after
 		if remainder != "" && !strings.Contains(remainder, "/") {
 			return remainder, true
 		}
 	}
 	const examples = "/site/internal/pages/demo/examplepages/"
-	if index := strings.Index(importPath, examples); index >= 0 {
-		remainder := importPath[index+len(examples):]
+	if _, after, ok := strings.Cut(importPath, examples); ok {
+		remainder := after
 		if remainder != "" && remainder != "index" && !strings.Contains(remainder, "/") {
 			return "example_" + remainder, true
 		}

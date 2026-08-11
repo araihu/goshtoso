@@ -12,6 +12,10 @@
       "destination": "examples/getting-started/araihu.css"
     },
     {
+      "source": "icons/ui/sprite.svg",
+      "destination": "assets/icons/heroicons.svg"
+    },
+    {
       "source": "brand/goshtoso/logo/adaptive-transparent-optical.svg",
       "destination": "assets/images/goshtoso-logo.svg",
       "canonicalName": "goshtoso-logo-adaptive-transparent-optical",
