@@ -2,6 +2,21 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.13] - 2026-08-11
+
+### Modern-based Arai Hû theme
+
+- Adopted the verified Arai Hû Assets `v0.2.1` fallback release.
+- Aligned Arai Hû typography and corner geometry with the Modern theme by
+  using Lato and `--radius-sm`, while preserving the Arai Hû semantic palette.
+- Kept Goshtoso's curated 67-symbol typed Heroicons surface separate from the
+  broader Assets UI sprite.
+
+### Upgrade note
+
+- No Go API changes are required. Consumers serving the Arai Hû fallback
+  should update the stylesheet and Goshtoso dependency together.
+
 ## [v0.1.12] - 2026-08-09
 
 ### TOFU iconpack sources

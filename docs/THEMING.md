@@ -147,6 +147,10 @@ design-system catalog.
 
 The catalog intentionally contains keys and labels only. CSS tokens, fonts,
 colors, radii, and other styling details remain CSS and consumer concerns.
+The built-in Arai Hû theme uses Modern typography and corner geometry (`Lato`
+and `--radius-sm`) with the Arai Hû semantic palette. Its fallback copy is
+byte-identical to `araihu/assets` release `v0.2.1` at commit
+`fdfb1c2aad8fa61779e7b8c6f208e52a6cf825ce`.
 
 | Key | Canonical label |
 |-----|-----------------|

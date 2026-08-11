@@ -34,9 +34,22 @@ func TestAraiHuThemeIsServed(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("theme status = %d, want 200", rec.Code)
 	}
-	for _, want := range []string{`[data-theme="araihu"]`, `--color-primary: #173b72`, `--color-primary-dark: #c7ff4a`} {
+	for _, want := range []string{
+		`[data-theme="araihu"]`,
+		`Modern geometry with the Arai Hû organization palette`,
+		`--font-body: "Lato", ui-sans-serif, system-ui, sans-serif;`,
+		`--font-title: "Lato", ui-sans-serif, system-ui, sans-serif;`,
+		`--color-primary: #173b72`,
+		`--color-primary-dark: #c7ff4a`,
+		`--radius-radius: var(--radius-sm);`,
+	} {
 		if !strings.Contains(rec.Body.String(), want) {
 			t.Fatalf("theme missing canonical token %q", want)
+		}
+	}
+	for _, obsolete := range []string{"Instrument Sans", "var(--radius-lg)"} {
+		if strings.Contains(rec.Body.String(), obsolete) {
+			t.Fatalf("theme retains pre-Modern token %q", obsolete)
 		}
 	}
 }
