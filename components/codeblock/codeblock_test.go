@@ -109,3 +109,29 @@ func TestCodeBlockCompactDensityReducesHeaderAndBodySpacing(t *testing.T) {
 		t.Fatalf("compact code block missing compact body class:\n%s", html)
 	}
 }
+
+func TestCodeBlockCopiedFeedbackRejectsRawPaletteClass(t *testing.T) {
+	html := renderCodeBlock(t, Config{
+		ID:       "semantic-copy-feedback",
+		Language: "go",
+		Label:    "main.go",
+		Code:     `fmt.Println("copied")`,
+	})
+
+	if strings.Contains(html, "text-green-500") {
+		t.Fatalf("copied feedback uses forbidden raw palette class text-green-500:\n%s", html)
+	}
+}
+
+func TestCodeBlockCopiedFeedbackUsesSemanticSuccessTextRoles(t *testing.T) {
+	html := renderCodeBlock(t, Config{
+		ID:       "semantic-copy-feedback",
+		Language: "go",
+		Label:    "main.go",
+		Code:     `fmt.Println("copied")`,
+	})
+
+	if !strings.Contains(html, "text-success-text dark:text-success-text-dark") {
+		t.Fatalf("copied feedback missing semantic success text roles:\n%s", html)
+	}
+}
