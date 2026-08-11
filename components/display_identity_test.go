@@ -16,6 +16,7 @@ import (
 	"github.com/araihu/goshtoso/components/icon"
 	"github.com/araihu/goshtoso/components/inlinecode"
 	"github.com/araihu/goshtoso/components/kbd"
+	"github.com/araihu/goshtoso/components/scrollregion"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/stretchr/testify/require"
 )
@@ -42,6 +43,7 @@ func displayRenderables() map[components.Kind]components.Component {
 		components.KindIcon:                icon.Icon(icon.Config{SpriteURL: "/sprites/ui.svg", Symbol: "check"}),
 		components.KindInlineCode:          inlinecode.InlineCode(""),
 		components.KindKbd:                 kbd.Kbd(""),
+		components.KindScrollRegion:        scrollregion.ScrollRegion(scrollregion.Config{}).(components.Component),
 		components.KindTable:               table.Table(table.Config{}),
 		components.KindTableHeadContent:    table.TableHeadContent(table.Config{}),
 		components.KindTableRows:           table.TableRows(table.Config{}),
@@ -53,7 +55,7 @@ func displayRenderables() map[components.Kind]components.Component {
 
 func TestDisplayRenderablesExposeKinds(t *testing.T) {
 	values := displayRenderables()
-	require.Len(t, values, 26)
+	require.Len(t, values, 27)
 	for want, value := range values {
 		require.Equal(t, want, value.Kind())
 	}

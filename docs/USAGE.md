@@ -597,8 +597,8 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The public surface has 54 public component packages and 83 renderable primitives;
-the demo catalog has 50 documentation pages.
+The public surface has 54 public component packages and 84 renderable primitives;
+the demo catalog has 51 documentation pages.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -642,6 +642,7 @@ configuration previews, and API tables.
 | `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
 | `skeleton` | `components/skeleton` | Accessible loading placeholders for text, rectangles, and circles |
+| `scrollregion` | `components/scrollregion` | Bounded keyboard- and touch-scrollable content with automatic boundary indicators |
 | `spinner` | `components/spinner` | Loading spinner with independent size and tone dimensions |
 | `steps` | `components/steps` | Stepper/progress navigation for multi-step flows |
 | `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |
@@ -684,6 +685,33 @@ Public config fields follow
 [`docs/COMPONENT_API_NAMING.md`](COMPONENT_API_NAMING.md). Shared extension
 points generally use target-specific names such as `RootClass`, `InputAttrs`,
 `HTMX`, and `Alpine`.
+
+### Bounded scroll regions
+
+Give Scroll Region a bounded height through its root or containing layout. The
+viewport remains focusable for keyboard scrolling, accepts ordinary touch
+scrolling, and updates its start/end cues as content or size changes:
+
+```templ
+import "github.com/araihu/goshtoso/components/scrollregion"
+
+templ ActivityHistory() {
+    @scrollregion.ScrollRegion(scrollregion.Config{
+        RootClass:     "h-64",
+        ViewportClass: "border border-outline p-4 dark:border-outline-dark",
+        Content:       activityRows(),
+    })
+}
+```
+
+Set `DisableIndicators: true` when the surrounding interface already provides
+an equivalent boundary cue. The viewport and its start/end sentinels remain in
+the DOM, so keyboard and touch behavior do not change.
+
+For source compatibility, `ScrollRegion` keeps its original
+`func(Config) templ.Component` signature. The returned value also implements
+`components.Component` and reports `components.KindScrollRegion` when a
+consumer needs stable runtime identity.
 
 ## Theming
 

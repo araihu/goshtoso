@@ -8,7 +8,18 @@ import (
 	"testing"
 
 	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components"
 )
+
+func TestScrollRegionIdentity(t *testing.T) {
+	component, ok := ScrollRegion(Config{}).(components.Component)
+	if !ok {
+		t.Fatalf("ScrollRegion return type %T does not implement components.Component", ScrollRegion(Config{}))
+	}
+	if got := component.Kind(); got != components.KindScrollRegion {
+		t.Fatalf("Kind() = %q; want %q", got, components.KindScrollRegion)
+	}
+}
 
 func TestScrollRegionRendersIndependentBoundaryCues(t *testing.T) {
 	var output bytes.Buffer

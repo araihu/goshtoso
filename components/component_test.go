@@ -8,7 +8,7 @@ import (
 
 func TestAllKindsAreStableAndUnique(t *testing.T) {
 	kinds := AllKinds()
-	require.Len(t, kinds, 83)
+	require.Len(t, kinds, 84)
 
 	seen := map[Kind]struct{}{}
 	for _, kind := range kinds {
@@ -28,6 +28,7 @@ func TestAllKindsAreStableAndUnique(t *testing.T) {
 		KindSkeleton,
 		KindIcon,
 		KindInlineCode,
+		KindScrollRegion,
 	})
 }
 

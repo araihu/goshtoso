@@ -1,0 +1,104 @@
+package scrollregionpage
+
+import (
+	"fmt"
+
+	"github.com/araihu/goshtoso/components/scrollregion"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// ScrollRegionDemoPage renders the Scroll Region component demo.
+templ ScrollRegionDemoPage() {
+	@demo.Layout("Scroll Region", "scroll-region", scrollRegionDemoContent())
+}
+
+templ scrollRegionDemoContent() {
+	<div id="scroll-region-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Scroll Region",
+				Description: "Bounds long content inside a focusable viewport and shows independent start and end cues for keyboard, mouse, and touch scrolling.",
+			},
+			scrollRegionDefaultPreview(),
+			`@scrollregion.ScrollRegion(scrollregion.Config{
+    RootClass:     "h-56",
+    ViewportClass: "border border-outline p-4 dark:border-outline-dark",
+    Content:       activityHistory(),
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Content that does not overflow",
+				Description: "Both boundary cues stay hidden when all content fits inside the viewport.",
+			},
+			scrollRegionNoOverflowPreview(),
+			`@scrollregion.ScrollRegion(scrollregion.Config{
+    RootClass: "h-40",
+    Content:   shortSummary(),
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Indicators disabled",
+				Description: "DisableIndicators removes the visual cues without removing the focusable viewport or boundary sentinels.",
+			},
+			scrollRegionIndicatorsDisabledPreview(),
+			`@scrollregion.ScrollRegion(scrollregion.Config{
+    RootClass:         "h-40",
+    Content:           activityHistory(),
+    DisableIndicators: true,
+})`,
+		)
+	</div>
+}
+
+templ scrollRegionDefaultPreview() {
+	<div id="scroll-region-default" class="h-56 w-full max-w-2xl">
+		@scrollregion.ScrollRegion(scrollregion.Config{
+			RootClass:     "h-full",
+			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
+			Content:        scrollRegionActivityHistory(),
+		})
+	</div>
+}
+
+templ scrollRegionNoOverflowPreview() {
+	<div id="scroll-region-no-overflow" class="h-40 w-full max-w-2xl">
+		@scrollregion.ScrollRegion(scrollregion.Config{
+			RootClass:     "h-full",
+			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
+			Content:        scrollRegionShortSummary(),
+		})
+	</div>
+}
+
+templ scrollRegionIndicatorsDisabledPreview() {
+	<div id="scroll-region-indicators-disabled" class="h-40 w-full max-w-2xl">
+		@scrollregion.ScrollRegion(scrollregion.Config{
+			RootClass:         "h-full",
+			ViewportClass:     "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
+			Content:           scrollRegionActivityHistory(),
+			DisableIndicators: true,
+		})
+	</div>
+}
+
+templ scrollRegionActivityHistory() {
+	<ol class="space-y-3">
+		for index := range 18 {
+			<li class="rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark">
+				<span class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Activity { fmt.Sprintf("%02d", index+1) }</span>
+				<span class="ml-2 text-on-surface-muted dark:text-on-surface-dark-muted">Deployment state recorded.</span>
+			</li>
+		}
+	</ol>
+}
+
+templ scrollRegionShortSummary() {
+	<div class="space-y-2 text-sm text-on-surface dark:text-on-surface-dark">
+		<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Current release</p>
+		<p>All checks passed. No additional scrolling is needed.</p>
+	</div>
+}

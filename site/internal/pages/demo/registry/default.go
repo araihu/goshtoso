@@ -38,6 +38,7 @@ import (
 	rangepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/range"
 	ratingpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/rating"
 	schemaformpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/schemaform"
+	scrollregionpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/scrollregion"
 	searchpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/search"
 	selectpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/select"
 	sidebarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/sidebar"
@@ -110,6 +111,7 @@ func mustDefault() *Registry {
 		selectpage.Definition,
 		sidebarpage.Definition,
 		skeletonpage.Definition,
+		scrollregionpage.Definition,
 		spinnerpage.Definition,
 		stepspage.Definition,
 		structuredinputpage.Definition,

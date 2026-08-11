@@ -20,7 +20,7 @@ type Config struct {
 
 // ScrollRegion creates a bounded scroll region with automatic boundary cues.
 func ScrollRegion(cfg Config) templ.Component {
-	return scrollRegionTemplate(cfg)
+	return Instance{cfg: cfg}
 }
 
 func (cfg Config) rootClasses() string {
@@ -28,7 +28,7 @@ func (cfg Config) rootClasses() string {
 }
 
 func (cfg Config) viewportClasses() string {
-	return joinClasses("h-full overflow-y-auto", cfg.ViewportClass)
+	return joinClasses("h-full overflow-y-auto rounded-radius focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark", cfg.ViewportClass)
 }
 
 func joinClasses(values ...string) string {

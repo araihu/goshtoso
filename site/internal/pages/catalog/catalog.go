@@ -231,6 +231,16 @@ var componentPages = availableComponentPages([]Entry{
 		Kinds:       []components.Kind{components.KindKbd},
 	},
 	{
+		Key:         "components/scroll-region",
+		Path:        "/components/scroll-region",
+		Title:       "Scroll Region",
+		Active:      "scroll-region",
+		Description: "Keep bounded content keyboard- and touch-scrollable with automatic start and end boundary cues.",
+		Section:     "Display",
+		Order:       18,
+		Kinds:       availableKinds(components.Kind("scroll-region")),
+	},
+	{
 		Key:         "components/table",
 		Path:        "/components/table",
 		Title:       "Table",
@@ -582,16 +592,22 @@ func availableComponentPages(pages []Entry) []Entry {
 			}
 		}
 	}
-	if slices.Contains(components.AllKinds(), components.KindIcon) {
-		return pages
+	if !slices.Contains(components.AllKinds(), components.KindIcon) {
+		pages = slices.DeleteFunc(pages, func(entry Entry) bool {
+			return entry.Key == "components/icon"
+		})
 	}
-	pages = slices.DeleteFunc(pages, func(entry Entry) bool {
-		return entry.Key == "components/icon"
-	})
 	for index := range pages {
 		pages[index].Order = index
 	}
 	return pages
+}
+
+func availableKinds(kinds ...components.Kind) []components.Kind {
+	available := components.AllKinds()
+	return slices.DeleteFunc(slices.Clone(kinds), func(kind components.Kind) bool {
+		return !slices.Contains(available, kind)
+	})
 }
 
 // ComponentPages returns the component documentation entries in sidebar order.
