@@ -1,15 +1,44 @@
 package server
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	chartassets "github.com/araihu/goshtoso-charts/assets"
 	libraryassets "github.com/araihu/goshtoso/assets"
 )
+
+func TestAraiHuThemeUsesModernFoundation(t *testing.T) {
+	server := newAssetTestServer(t)
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/componentdocshell/assets/araihu.css", nil))
+
+	if response.Code != http.StatusOK {
+		t.Fatalf("GET /componentdocshell/assets/araihu.css status = %d, want 200", response.Code)
+	}
+	body := response.Body.String()
+	if got, want := fmt.Sprintf("%x", sha256.Sum256([]byte(body))), "9ec3f3187b736252b18f3aefef4737ba2025ef1c637611c3d0ecf58748043f1b"; got != want {
+		t.Fatalf("Arai Hû CSS SHA-256 = %s, want %s", got, want)
+	}
+	for _, want := range []string{
+		`--font-body: "Lato"`,
+		`--font-title: "Lato"`,
+		`--radius-radius: var(--radius-sm)`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("Arai Hû CSS does not contain %q", want)
+		}
+	}
+	if strings.Contains(body, "Instrument Sans") {
+		t.Error("Arai Hû CSS still contains Instrument Sans")
+	}
+}
 
 func TestDemoAssetHandlersUseSharedCachePolicy(t *testing.T) {
 	server := newAssetTestServer(t)
