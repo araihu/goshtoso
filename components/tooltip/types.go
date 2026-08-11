@@ -17,6 +17,10 @@ type Activation string
 
 const (
 	ActivationHover Activation = "hover"
+	// ActivationClick makes the Tooltip persistent. Its actual trigger keeps
+	// aria-describedby, controls and reflects the Tooltip's expanded state, and
+	// supports click, Enter, Space, Escape, and outside-click interaction. A
+	// Tooltip is descriptive content, so this mode does not add aria-haspopup.
 	ActivationClick Activation = "click"
 )
 
@@ -55,7 +59,8 @@ func WithPosition(position Position) Option {
 	})
 }
 
-// WithActivation sets how the tooltip is activated.
+// WithActivation sets how the tooltip is activated. ActivationClick opts into
+// the persistent, reflected-state behavior documented by ActivationClick.
 func WithActivation(activation Activation) Option {
 	return optionFunc(func(cfg *config) {
 		cfg.activation = activation

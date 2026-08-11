@@ -100,7 +100,7 @@ func tooltipDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Click Trigger",
-				Description: "Use ActivationClick to toggle the tooltip on click instead of hover.",
+				Description: "Use ActivationClick for a persistent tooltip. Its actual trigger retains aria-describedby and reflects aria-controls and aria-expanded; click, Enter, or Space toggles it, while Escape or an outside click dismisses it without moving focus. Because the content remains a tooltip, the trigger does not use aria-haspopup.",
 			},
 			tooltipClickPreview(),
 			`@tooltip.Tooltip(
