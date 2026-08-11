@@ -1,0 +1,37 @@
+name: Fly deploy
+
+on:
+  workflow_run:
+    workflows: [Code CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Trigger Fly deploy
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    concurrency: deploy-group
+    steps:
+      - name: Dispatch central deployment
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.FLY_DEPLOY_DISPATCH_TOKEN }}
+          script: |
+            const sourceSha = context.payload.workflow_run.head_sha
+            await github.rest.repos.createDispatchEvent({
+              owner: 'araihu',
+              repo: 'fly-deploy',
+              event_type: 'goshtoso-main',
+              client_payload: {
+                goshtoso_ref: sourceSha,
+                goshtoso_sha: sourceSha,
+                goshtoso_run_id: String(context.payload.workflow_run.id),
+                source_repository: `${context.repo.owner}/${context.repo.repo}`,
+              },
+            })
