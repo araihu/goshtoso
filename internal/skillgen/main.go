@@ -562,8 +562,7 @@ func render(pkgs []pkgAPI) string {
 	b.WriteString("and `templ.Component`. Use the concrete return type for component-specific code,\n")
 	b.WriteString("or store mixed values through the common interface and inspect their stable\n")
 	b.WriteString("`Kind()`. Constructor signatures, config fields, options, and rendered defaults are\n")
-	b.WriteString("listed below. See\n")
-	b.WriteString("[docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).\n\n")
+	b.WriteString("listed below. See the selected Goshtoso tag's `docs/COMPONENT_MODEL.md`.\n\n")
 	fmt.Fprintf(&b, "%d component packages. Each is imported by its directory path; note the\n", len(pkgs))
 	b.WriteString("**package name** when it differs from the directory (e.g. `select` → `selectfield`).\n\n")
 	for _, p := range pkgs {

@@ -32,9 +32,11 @@ an application dashboard or coupling basic content to a server runtime.
 
 ### Start here
 
-Copy `examples/brand-site` with `goshtoso -init-brand-site=./my-site`. Its Go
-binary writes `public/index.html`, Goshtoso's compiled stylesheet, and a
-product-owned brand stylesheet. The output is deployable on any static host.
+Evaluate App Shells `landingshell` first for product or organization landing
+pages. Use the selected Goshtoso tag's `examples/brand-site` starter only after
+recording a need for a fully app-owned static generator or content structure
+that shell slots cannot express. Its Go binary writes `public/index.html`,
+Goshtoso's compiled stylesheet, and a product-owned brand stylesheet.
 
 ### Contract
 
@@ -43,7 +45,7 @@ product-owned brand stylesheet. The output is deployable on any static host.
 - Goshtoso owns its semantic token vocabulary and any added controls, forms,
   feedback, or navigation primitives.
 - Use ordinary document landmarks, native links, and one clear heading
-  hierarchy. Do not add an App Shell, sidebar, dashboard metrics, or generic
+  hierarchy. Do not add a dashboard shell, sidebar, metrics, or generic
   hero/features/testimonials/CTA sequence without a real product reason.
 - Keep custom CSS deliberately scoped to the product; it is not a component
   workaround and must not leak into Goshtoso's base themes.
@@ -384,8 +386,8 @@ color also contrasts as text in both modes. Dark tokens follow their semantic gr
 `--color-outline-dark-strong`, and `--color-primary-dark` are representative
 names. Base status tokens are shared across modes; their derived `*-text-dark`
 variants follow the dark surface foreground. Alias these into product-named
-variables when that makes app CSS clearer. See `docs/THEMING.md` for the
-complete contract.
+variables when that makes app CSS clearer. See the selected Goshtoso tag's
+`docs/THEMING.md` for the complete contract.
 
 For a filled semantic action, use `button.WithTone` rather than composing raw
 status utilities. Button's derived `*-action` pairs guarantee a matching
@@ -445,11 +447,11 @@ turning prose into equal dashboard cards.
 
 ## Verified standalone recipe
 
-[`examples/application-patterns`](https://github.com/araihu/goshtoso/tree/main/examples/application-patterns)
-is the repository's standalone consumer module. Its file map includes handlers,
-domain fixtures, templ views, app CSS, tests, and module boundaries; it imports
-public Goshtoso packages only. In the repository, its `replace` directive tests
-the local candidate. To copy it into another workspace, follow its README:
+The selected Goshtoso tag's `examples/application-patterns` is the standalone
+consumer module. Its file map includes handlers, domain fixtures, templ views,
+app CSS, tests, and module boundaries; it imports public Goshtoso packages only.
+In the repository, its `replace` directive tests the local candidate. To copy
+it into another workspace, follow its README:
 remove the local replace, pin a released Goshtoso version, run `go mod tidy`,
 then regenerate and test. The interactive examples under `site/` are demo-site
 applications and may depend on `site/internal` packages, so do not describe

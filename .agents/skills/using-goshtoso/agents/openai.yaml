@@ -1,4 +1,4 @@
 interface:
   display_name: "Using Goshtoso"
-  short_description: "Use Goshtoso components in Go apps"
-  default_prompt: "Use $using-goshtoso to integrate Goshtoso components into my templ Go app."
+  short_description: "Find and reuse Goshtoso ecosystem solutions"
+  default_prompt: "Use $using-goshtoso to search Goshtoso components, Charts, Margo, App Shells, and Iconpack before adding custom HTML or JavaScript to my templ Go app."

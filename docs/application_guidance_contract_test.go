@@ -2,9 +2,24 @@ package docs_test
 
 import (
 	"os"
+	"os/exec"
+	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 )
+
+var expectedAgentSkillArtifacts = []string{
+	"SKILL.md",
+	"agents/openai.yaml",
+	"references/adversarial-acceptance.md",
+	"references/application-patterns.md",
+	"references/components-reference.md",
+	"references/design-intelligence.md",
+	"references/ecosystem-discovery.md",
+	"references/runtime-integration.md",
+	"references/visual-acceptance.md",
+}
 
 func TestAgentSkillRoutesFromIntegrationToApplicationPatterns(t *testing.T) {
 	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
@@ -18,6 +33,151 @@ func TestAgentSkillRoutesFromIntegrationToApplicationPatterns(t *testing.T) {
 	} {
 		if !strings.Contains(skill, want) {
 			t.Errorf("agent skill missing application guidance %q", want)
+		}
+	}
+}
+
+func TestAgentSkillDiscoveryPassIsStreamingSafe(t *testing.T) {
+	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
+	for _, want := range []string{
+		"## Required Discovery Pass",
+		"go list -m all",
+		"Goshtoso Charts",
+		"Margo",
+		"Goshtoso App Shells",
+		"cmd/iconpack",
+		"reuse`, `compose`, or `gap",
+		"Custom HTML, CSS, or JavaScript requires a concrete gap",
+		"streaming `skills use` client provides only this file",
+	} {
+		if !strings.Contains(skill, want) {
+			t.Errorf("streamed agent skill missing discovery guidance %q", want)
+		}
+	}
+}
+
+func TestAgentSkillDistributionCLI(t *testing.T) {
+	npx, err := exec.LookPath("npx")
+	if err != nil {
+		t.Fatalf("find npx: %v", err)
+	}
+	productionRoot := filepath.Join("..", ".agents", "skills", "using-goshtoso")
+	production, err := agentSkillInventory(productionRoot)
+	if err != nil {
+		t.Fatalf("inventory production skill: %v", err)
+	}
+	if strings.Join(production, "\n") != strings.Join(expectedAgentSkillArtifacts, "\n") {
+		t.Fatalf("production skill inventory mismatch\nwant:\n%s\ngot:\n%s",
+			strings.Join(expectedAgentSkillArtifacts, "\n"), strings.Join(production, "\n"))
+	}
+
+	source := filepath.Join(t.TempDir(), "source")
+	sourceRoot := filepath.Join(source, ".agents", "skills", "using-goshtoso")
+	for _, relative := range expectedAgentSkillArtifacts {
+		contents, readErr := os.ReadFile(filepath.Join(productionRoot, filepath.FromSlash(relative)))
+		if readErr != nil {
+			t.Fatalf("read source artifact %s: %v", relative, readErr)
+		}
+		destination := filepath.Join(sourceRoot, filepath.FromSlash(relative))
+		if mkdirErr := os.MkdirAll(filepath.Dir(destination), 0o755); mkdirErr != nil {
+			t.Fatalf("create source artifact directory: %v", mkdirErr)
+		}
+		if writeErr := os.WriteFile(destination, contents, 0o644); writeErr != nil {
+			t.Fatalf("copy source artifact %s: %v", relative, writeErr)
+		}
+	}
+	gitSource := exec.Command("git", "init", "-q")
+	gitSource.Dir = source
+	if output, initErr := gitSource.CombinedOutput(); initErr != nil {
+		t.Fatalf("initialize isolated skill source: %v\n%s", initErr, output)
+	}
+
+	use := exec.Command(npx, "--yes", "skills", "use", source, "--skill", "using-goshtoso")
+	streamed, err := use.CombinedOutput()
+	if err != nil {
+		t.Fatalf("stream using-goshtoso: %v\n%s", err, streamed)
+	}
+	for _, want := range []string{
+		"## Required Discovery Pass",
+		"go list -m -versions",
+		"Goshtoso Charts",
+		"Margo",
+		"Goshtoso App Shells",
+		"cmd/iconpack",
+		"reuse`, `compose`, or `gap",
+		"Custom HTML, CSS, or JavaScript requires a concrete gap",
+	} {
+		if !strings.Contains(string(streamed), want) {
+			t.Errorf("streamed skill missing %q", want)
+		}
+	}
+
+	target := t.TempDir()
+	gitInit := exec.Command("git", "init", "-q")
+	gitInit.Dir = target
+	if output, err := gitInit.CombinedOutput(); err != nil {
+		t.Fatalf("initialize install probe: %v\n%s", err, output)
+	}
+	install := exec.Command(npx, "--yes", "skills", "add", source,
+		"--skill", "using-goshtoso", "--agent", "codex", "--copy", "-y")
+	install.Dir = target
+	if output, err := install.CombinedOutput(); err != nil {
+		t.Fatalf("install using-goshtoso: %v\n%s", err, output)
+	}
+
+	root := filepath.Join(target, ".agents", "skills", "using-goshtoso")
+	installed, err := agentSkillInventory(root)
+	if err != nil {
+		t.Fatalf("inventory installed skill: %v", err)
+	}
+	if strings.Join(installed, "\n") != strings.Join(expectedAgentSkillArtifacts, "\n") {
+		t.Fatalf("installed skill inventory mismatch\nwant:\n%s\ngot:\n%s",
+			strings.Join(expectedAgentSkillArtifacts, "\n"), strings.Join(installed, "\n"))
+	}
+}
+
+func agentSkillInventory(root string) ([]string, error) {
+	var files []string
+	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		relative, relErr := filepath.Rel(root, path)
+		if relErr != nil {
+			return relErr
+		}
+		files = append(files, filepath.ToSlash(relative))
+		return nil
+	})
+	sort.Strings(files)
+	return files, err
+}
+
+func TestEcosystemDiscoveryUsesSiblingReferencePaths(t *testing.T) {
+	discovery := readDoc(t, "../.agents/skills/using-goshtoso/references/ecosystem-discovery.md")
+	for _, broken := range []string{
+		"`references/components-reference.md`",
+		"`references/application-patterns.md`",
+	} {
+		if strings.Contains(discovery, broken) {
+			t.Errorf("ecosystem discovery contains nested reference path %q", broken)
+		}
+	}
+}
+
+func TestPublicLandingGuidanceTriesLandingShellBeforeBrandSite(t *testing.T) {
+	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
+	landing := strings.Index(skill, "try App Shells\n`landingshell` first")
+	brand := strings.Index(skill, "examples/brand-site")
+	if landing < 0 || brand < 0 || landing > brand {
+		t.Error("agent skill must try landingshell before selecting brand-site")
+	}
+	for _, want := range []string{"Record that concrete gap first", `@"$GOSHTOSO_VERSION"`} {
+		if !strings.Contains(skill, want) {
+			t.Errorf("public landing guidance missing %q", want)
 		}
 	}
 }
@@ -67,9 +227,20 @@ func TestReadmeMakesApplicationGuidanceDiscoverable(t *testing.T) {
 
 func TestReleaseChecklistProtectsApplicationReferences(t *testing.T) {
 	checklist := readDoc(t, "RELEASE_CHECKLIST.md")
+	for _, artifact := range expectedAgentSkillArtifacts {
+		path := ".agents/skills/using-goshtoso/" + artifact
+		if !strings.Contains(checklist, path) {
+			t.Errorf("release checklist missing packaged skill artifact %q", path)
+		}
+	}
 	for _, want := range []string{
 		"references/application-patterns.md",
 		"references/visual-acceptance.md",
+		"references/design-intelligence.md",
+		"references/ecosystem-discovery.md",
+		"references/runtime-integration.md",
+		"complete required",
+		"every `references/*.md` file",
 		"application recipes",
 	} {
 		if !strings.Contains(checklist, want) {

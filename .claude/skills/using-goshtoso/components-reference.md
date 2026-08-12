@@ -7,8 +7,7 @@ Public constructors return concrete values that implement `components.Component`
 and `templ.Component`. Use the concrete return type for component-specific code,
 or store mixed values through the common interface and inspect their stable
 `Kind()`. Constructor signatures, config fields, options, and rendered defaults are
-listed below. See
-[docs/COMPONENT_MODEL.md](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md).
+listed below. See the selected Goshtoso tag's `docs/COMPONENT_MODEL.md`.
 
 54 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
