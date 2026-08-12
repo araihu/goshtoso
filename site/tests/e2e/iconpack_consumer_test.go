@@ -60,15 +60,48 @@ func TestIconpackGeneratedConsumerBrowserProof(t *testing.T) {
 	assert.Equal(t, "brand-developer-icons-tRPC", mustAttribute(t, root, "data-canonical-name"))
 	assert.Equal(t, "devicon-trpc", mustAttribute(t, root, "data-symbol"))
 
-	labelled := root.Locator("svg").Nth(0)
+	labelled := root.Locator("[data-testid='iconpack-labelled'] svg")
 	assertConsumerSVGAttributes(t, labelled, "img", "tRPC", "")
 	assert.Equal(t, "/assets/icons/appicons/sprite.svg#devicon-trpc", mustAttribute(t, labelled.Locator("use"), "href"))
-	assertConsumerSVGGeometry(t, labelled)
 
-	decorative := root.Locator("svg").Nth(1)
+	decorative := root.Locator("[data-testid='iconpack-decorative'] svg")
 	assertConsumerSVGAttributes(t, decorative, "", "", "true")
 	assert.Equal(t, "/assets/icons/appicons/sprite.svg#hi-16-solid-check", mustAttribute(t, decorative.Locator("use"), "href"))
-	assertConsumerSVGGeometry(t, decorative)
+
+	currentColor := root.Locator("[data-testid='iconpack-current-color'] svg")
+	assertConsumerSVGAttributes(t, currentColor, "img", "current color check", "")
+	assert.Equal(t, "/assets/icons/appicons/sprite.svg#hi-16-solid-check", mustAttribute(t, currentColor.Locator("use"), "href"))
+
+	missing := root.Locator("[data-testid='iconpack-missing'] svg")
+	assertConsumerSVGAttributes(t, missing, "img", "missing symbol", "")
+	assert.Equal(t, "/assets/icons/appicons/sprite.svg#missing-symbol", mustAttribute(t, missing.Locator("use"), "href"))
+
+	session, err := page.Context().NewCDPSession(page)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_, _ = session.Send("Emulation.setPageScaleFactor", map[string]any{"pageScaleFactor": 1})
+		_ = session.Detach()
+	})
+	cells := 0
+	for _, theme := range []string{"araihu", "goshtoso", "minimal"} {
+		for _, dark := range []bool{false, true} {
+			for _, zoom := range []float64{1, 2} {
+				name := fmt.Sprintf("%s/dark=%t/zoom=%.0f", theme, dark, zoom)
+				t.Run(name, func(t *testing.T) {
+					setIconpackAppearance(t, page, session, theme, dark, zoom)
+					assertConsumerSVGGeometry(t, labelled)
+					assertConsumerSVGGeometry(t, decorative)
+					assertConsumerSVGGeometry(t, currentColor)
+					color, err := currentColor.Evaluate(`el => getComputedStyle(el).color`, nil)
+					require.NoError(t, err)
+					require.NotEmpty(t, color, "%s currentColor must resolve", name)
+					assertConsumerMissingSymbol(t, missing)
+					cells++
+				})
+			}
+		}
+	}
+	require.Equal(t, 12, cells)
 
 	response, err := http.Get(consumerURL + "/assets/icons/appicons/sprite.svg")
 	require.NoError(t, err)
@@ -273,6 +306,9 @@ func startIconpackConsumer(t *testing.T) string {
 	output := filepath.Join(root, "consumer", "appicons")
 	require.NoError(t, os.MkdirAll(filepath.Dir(output), 0o755))
 	repoRoot := e2eRepositoryRoot(t)
+	styles, err := os.ReadFile(filepath.Join(repoRoot, "assets", "styles.css"))
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(filepath.Join(filepath.Dir(output), "styles.css"), styles, 0o644))
 	args := []string{
 		"run", "./cmd/iconpack", "-release-root", release.Root,
 		"-release", release.Release, "-catalog-sha256", release.CatalogSHA256,
@@ -320,16 +356,27 @@ func main() {
 		panic("generated canonical lookup failed")
 	}
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /assets/styles.css", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+		http.ServeFile(w, r, "styles.css")
+	})
 	mux.HandleFunc("GET /assets/icons/appicons/sprite.svg", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "image/svg+xml")
 		_, _ = w.Write(sprite)
 	})
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, _ *http.Request) {
 		var page bytes.Buffer
+		page.WriteString("<!doctype html><html data-theme=\"araihu\"><head><link rel=\"stylesheet\" href=\"/assets/styles.css\"></head><body>")
 		page.WriteString("<main data-testid=\"generated-iconpack\" data-canonical-name=\"" + glyph.CanonicalName + "\" data-symbol=\"" + string(glyph.Symbol) + "\">")
+		page.WriteString("<span data-testid=\"iconpack-labelled\">")
 		_ = appicons.Icon(appicons.Config{Symbol: appicons.IconBrandDeveloperIconsTRPC, Label: "tRPC", Size: icon.SizeLG}).Render(contextBackground(), &page)
+		page.WriteString("</span><span data-testid=\"iconpack-decorative\">")
 		_ = appicons.Icon(appicons.Config{Symbol: appicons.IconUiHi16SolidCheck, Decorative: true}).Render(contextBackground(), &page)
-		page.WriteString("</main>")
+		page.WriteString("</span><span data-testid=\"iconpack-current-color\">")
+		_ = appicons.Icon(appicons.Config{Symbol: appicons.IconUiHi16SolidCheck, Label: "current color check", RootClass: "text-primary"}).Render(contextBackground(), &page)
+		page.WriteString("</span><span data-testid=\"iconpack-missing\">")
+		_ = icon.Icon(icon.Config{Symbol: icon.Symbol("missing-symbol"), SpriteURL: "/assets/icons/appicons/sprite.svg", Label: "missing symbol"}).Render(contextBackground(), &page)
+		page.WriteString("</span></main></body></html>")
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_, _ = w.Write(page.Bytes())
 	})
@@ -545,6 +592,52 @@ func assertConsumerSVGGeometry(t *testing.T, svg playwright.Locator) {
 			t.Fatalf("expected %s to be numeric, got %T", key, geometry[key])
 		}
 		assert.Greater(t, measurement, float64(0), key)
+	}
+}
+
+func setIconpackAppearance(t *testing.T, page playwright.Page, session playwright.CDPSession, theme string, dark bool, zoom float64) {
+	t.Helper()
+	_, err := session.Send("Emulation.setPageScaleFactor", map[string]any{"pageScaleFactor": zoom})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`zoom => Math.abs((window.visualViewport?.scale || 1) - zoom) < 0.05`, zoom)
+	require.NoError(t, err)
+	_, err = page.Evaluate(`([theme, dark]) => {
+		document.documentElement.dataset.theme = theme;
+		document.documentElement.classList.toggle('dark', dark);
+	}`, []any{theme, dark})
+	require.NoError(t, err)
+}
+
+func assertConsumerMissingSymbol(t *testing.T, svg playwright.Locator) {
+	t.Helper()
+	value, err := svg.Evaluate(`el => {
+		const use = el.querySelector('use');
+		const glyph = use && use.getBBox();
+		return {
+			width: el.getBoundingClientRect().width,
+			height: el.getBoundingClientRect().height,
+			glyphWidth: glyph ? glyph.width : 0,
+			glyphHeight: glyph ? glyph.height : 0,
+		};
+	}`, nil)
+	require.NoError(t, err)
+	geometry := value.(map[string]interface{})
+	assert.Greater(t, consumerMeasurement(t, geometry["width"]), float64(0))
+	assert.Greater(t, consumerMeasurement(t, geometry["height"]), float64(0))
+	assert.Zero(t, consumerMeasurement(t, geometry["glyphWidth"]))
+	assert.Zero(t, consumerMeasurement(t, geometry["glyphHeight"]))
+}
+
+func consumerMeasurement(t *testing.T, value interface{}) float64 {
+	t.Helper()
+	switch value := value.(type) {
+	case float64:
+		return value
+	case int:
+		return float64(value)
+	default:
+		t.Fatalf("expected numeric browser measurement, got %T", value)
+		return 0
 	}
 }
 

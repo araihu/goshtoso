@@ -177,6 +177,69 @@ func TestTrustedV020ReleaseBoundaryRejectsWrongKindDigestAndRepack(t *testing.T)
 	}
 }
 
+func TestTrustedSourceLookupPinsV020AndV021(t *testing.T) {
+	if len(trustedSources) != 2 {
+		t.Fatalf("len(trustedSources) = %d, want v0.2.0 and v0.2.1", len(trustedSources))
+	}
+
+	v020, ok := lookupTrustedSource("v0.2.0")
+	if !ok || v020.release != "v0.2.0" {
+		t.Fatalf("lookupTrustedSource(v0.2.0) = %+v, %t", v020, ok)
+	}
+
+	v021, ok := lookupTrustedSource("v0.2.1")
+	if !ok {
+		t.Fatal("lookupTrustedSource(v0.2.1) missing authenticated Assets release")
+	}
+	for _, field := range []struct {
+		name, got, want string
+	}{
+		{"release", v021.release, "v0.2.1"},
+		{"tar-gzip-sha256", v021.tarGzipSHA256, "818a32246c040871c8f28bb085269b6b9f21c579b18dc4c3c1f20d70716eaf70"},
+		{"catalog-sha256", v021.catalogSHA256, "b2b3ab2ac7e87e2eb333725195c394ebcfb1edc5f89542d89d375f2675a2aead"},
+		{"release-json-sha256", v021.releaseJSONSHA256, "1e071ba6d88efa862b6166820bdc759c7edb917c8566ce7111358c5c3dc2714e"},
+		{"checksums-sha256", v021.checksumsSHA256, "05cf07d924827f1eb306323a3bae5591b2a8d3b6255211c354952c0ac8dc190f"},
+	} {
+		if field.got != field.want {
+			t.Errorf("v0.2.1 %s = %q, want %q", field.name, field.got, field.want)
+		}
+	}
+
+	opts := Options{
+		Release:           v021.release,
+		ReleaseArchive:    "araihu-assets-v0.2.1.tar.gz",
+		ArchiveSHA256:     strings.Repeat("0", 64),
+		CatalogSHA256:     v021.catalogSHA256,
+		ReleaseJSONSHA256: v021.releaseJSONSHA256,
+		ChecksumsSHA256:   v021.checksumsSHA256,
+	}
+	if err := validateTrustedReleaseIdentity(opts); err == nil {
+		t.Fatal("validateTrustedReleaseIdentity() accepted mismatched v0.2.1 archive digest")
+	}
+}
+
+func TestTrustedSourcesRejectUnsupportedReleaseSchemaAndUnsafeExtraction(t *testing.T) {
+	for _, source := range trustedSources {
+		t.Run(source.release+"/schema", func(t *testing.T) {
+			opts := Options{Release: source.release, CatalogSHA256: source.catalogSHA256}
+			release := releaseDocument{SchemaVersion: 2, IdentityRevision: 11, RuntimeVersion: 1}
+			if err := validateReleaseDocument(release, nil, nil, opts); err == nil || !strings.Contains(err.Error(), "unsupported release metadata schema") {
+				t.Fatalf("validateReleaseDocument() error = %v, want schema rejection", err)
+			}
+		})
+	}
+
+	for _, format := range []string{"tar.gz", "zip"} {
+		t.Run(format+"/extraction", func(t *testing.T) {
+			archive := filepath.Join(t.TempDir(), "assets-v0.2.1."+format)
+			writeSingleMemberArchive(t, archive, "../escape", []byte("escape"))
+			if err := extractArchive(archive, t.TempDir()); err == nil || !strings.Contains(err.Error(), "unsafe archive member") {
+				t.Fatalf("extractArchive() error = %v, want traversal rejection", err)
+			}
+		})
+	}
+}
+
 func TestGenerateRejectsConstPrefixNameCollisionBeforePublishing(t *testing.T) {
 	opts := syntheticRelease(t)
 	opts.OutputDir = filepath.Join(t.TempDir(), "pack")

@@ -1,23 +1,46 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -ne 2 ]]; then
-  echo "usage: $0 /path/to/araihu-assets-v0.2.0.{tar.gz,zip} ARCHIVE_SHA256" >&2
+if [[ $# -eq 2 ]]; then
+  release=v0.2.0
+  archive=$1
+  archive_sha256=$2
+elif [[ $# -eq 3 ]]; then
+  release=$1
+  archive=$2
+  archive_sha256=$3
+else
+  echo "usage: $0 [v0.2.0|v0.2.1] /path/to/araihu-assets-RELEASE.{tar.gz,zip} ARCHIVE_SHA256" >&2
   exit 2
 fi
 
-archive=$1
 if [[ $archive != /* ]]; then
   archive=$(pwd)/$archive
 fi
-archive_sha256=$2
+case "$release" in
+  v0.2.0)
+    catalog_sha256=a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6
+    release_json_sha256=77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260
+    checksums_sha256=334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5
+    tar_sha256=5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5
+    zip_sha256=881094d3d161b79904fcfad320c26d947c9a1e526ee0b69ce8a2d04c3ff4b1b0
+    ;;
+  v0.2.1)
+    catalog_sha256=b2b3ab2ac7e87e2eb333725195c394ebcfb1edc5f89542d89d375f2675a2aead
+    release_json_sha256=1e071ba6d88efa862b6166820bdc759c7edb917c8566ce7111358c5c3dc2714e
+    checksums_sha256=05cf07d924827f1eb306323a3bae5591b2a8d3b6255211c354952c0ac8dc190f
+    tar_sha256=818a32246c040871c8f28bb085269b6b9f21c579b18dc4c3c1f20d70716eaf70
+    zip_sha256=700212506c8c3a44c877d10a7a6696d73c561b321724aecec8e6ee51c4cdb099
+    ;;
+  *) echo "unsupported trusted Assets release: $release" >&2; exit 1 ;;
+esac
 case "$archive" in
-  *.tar.gz|*.tgz) expected_archive_sha256=5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5 ;;
-  *.zip) expected_archive_sha256=881094d3d161b79904fcfad320c26d947c9a1e526ee0b69ce8a2d04c3ff4b1b0 ;;
-  *) echo "unsupported candidate archive kind" >&2; exit 1 ;;
+  *.tar.gz|*.tgz) expected_archive_sha256=$tar_sha256; archive_kind=tar ;;
+  *.zip) expected_archive_sha256=$zip_sha256; archive_kind=zip ;;
+  *) echo "unsupported trusted archive kind" >&2; exit 1 ;;
 esac
 if [[ $archive_sha256 != "$expected_archive_sha256" ]]; then
-  echo "archive SHA-256 is not the frozen Arai Hû Assets v0.2.0 candidate boundary" >&2
+  echo "archive SHA-256 is not the trusted Arai Hû Assets $release boundary" >&2
   exit 1
 fi
 repo_root=$(git rev-parse --show-toplevel)
@@ -26,17 +49,34 @@ trap 'rm -rf "$proof_root"' EXIT
 
 cd "$repo_root"
 mkdir -p "$proof_root/consumer"
-# Frozen from exact Assets v0.2.0 candidate archive bytes. Accepted outer
-# SHA-256 depends on archive kind and is checked above.
-# release.json SHA-256: 77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260
-# checksums.txt SHA-256: 334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5
-go run ./cmd/iconpack \
+# Extract only the authenticated catalog for an independent generator drift
+# check. The source archive is never modified.
+if [[ $archive_kind == tar ]]; then
+  tar -xOf "$archive" catalog.json > "$proof_root/catalog.json"
+else
+  unzip -p "$archive" catalog.json > "$proof_root/catalog.json"
+fi
+if [[ $(shasum -a 256 "$proof_root/catalog.json" | awk '{print $1}') != "$catalog_sha256" ]]; then
+  echo "extracted catalog SHA-256 does not match the trusted $release boundary" >&2
+  exit 1
+fi
+mkdir -p "$proof_root/catalogbindings"
+GOWORK=off go run ./cmd/iconcatalog \
+  -catalog "$proof_root/catalog.json" -namespace brand -product developer-icons \
+  -out "$proof_root/catalogbindings/icons_gen.go" -package catalogbindings \
+  -const-prefix Icon -sprite-url /assets/icons/app.svg
+GOWORK=off go run ./cmd/iconcatalog \
+  -catalog "$proof_root/catalog.json" -namespace brand -product developer-icons \
+  -out "$proof_root/catalogbindings/icons_gen.go" -package catalogbindings \
+  -const-prefix Icon -sprite-url /assets/icons/app.svg -check
+
+GOWORK=off go run ./cmd/iconpack \
   -release-archive "$archive" \
   -archive-sha256 "$archive_sha256" \
-  -release v0.2.0 \
-  -catalog-sha256 a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6 \
-  -release-json-sha256 77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260 \
-  -checksums-sha256 334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5 \
+  -release "$release" \
+  -catalog-sha256 "$catalog_sha256" \
+  -release-json-sha256 "$release_json_sha256" \
+  -checksums-sha256 "$checksums_sha256" \
   -name brand-developer-icons-tRPC \
   -name ui-hi-16-solid-check \
   -out "$proof_root/consumer/appicons" \
@@ -219,8 +259,8 @@ func attributes(input []xml.Attr) map[string]string {
 	return result
 }
 EOF
-go mod tidy
-go test ./...
-go run ./cmd/proof
+GOWORK=off go mod tidy
+GOWORK=off go test ./...
+GOWORK=off go run ./cmd/proof
 
 echo "iconpack consumer proof: PASS"

@@ -33,7 +33,54 @@ const (
 	assetsV020CatalogSHA256     = "a0e8e5c8928e37de979ce9a60f3d66fad1aa1b4c7d2904f9275f0be9932a33d6"
 	assetsV020ReleaseJSONSHA256 = "77c696ae5eceb5e7bc11d19affb7c2c7b7e8afc6414882b9b059239e315f2260"
 	assetsV020ChecksumsSHA256   = "334005c77622250a1e827b9472161cd6e56c82d487fc0d44023d49261f8dbee5"
+
+	assetsV021Release           = "v0.2.1"
+	assetsV021TarGzipSHA256     = "818a32246c040871c8f28bb085269b6b9f21c579b18dc4c3c1f20d70716eaf70"
+	assetsV021ZipSHA256         = "700212506c8c3a44c877d10a7a6696d73c561b321724aecec8e6ee51c4cdb099"
+	assetsV021CatalogSHA256     = "b2b3ab2ac7e87e2eb333725195c394ebcfb1edc5f89542d89d375f2675a2aead"
+	assetsV021ReleaseJSONSHA256 = "1e071ba6d88efa862b6166820bdc759c7edb917c8566ce7111358c5c3dc2714e"
+	assetsV021ChecksumsSHA256   = "05cf07d924827f1eb306323a3bae5591b2a8d3b6255211c354952c0ac8dc190f"
 )
+
+type trustedSource struct {
+	release           string
+	tarGzipSHA256     string
+	zipSHA256         string
+	catalogSHA256     string
+	releaseJSONSHA256 string
+	checksumsSHA256   string
+}
+
+var trustedSources = []trustedSource{
+	{
+		release: assetsV020Release, tarGzipSHA256: assetsV020TarGzipSHA256, zipSHA256: assetsV020ZipSHA256,
+		catalogSHA256: assetsV020CatalogSHA256, releaseJSONSHA256: assetsV020ReleaseJSONSHA256, checksumsSHA256: assetsV020ChecksumsSHA256,
+	},
+	{
+		release: assetsV021Release, tarGzipSHA256: assetsV021TarGzipSHA256, zipSHA256: assetsV021ZipSHA256,
+		catalogSHA256: assetsV021CatalogSHA256, releaseJSONSHA256: assetsV021ReleaseJSONSHA256, checksumsSHA256: assetsV021ChecksumsSHA256,
+	},
+}
+
+func lookupTrustedSource(release string) (trustedSource, bool) {
+	for _, source := range trustedSources {
+		if source.release == release {
+			return source, true
+		}
+	}
+	return trustedSource{}, false
+}
+
+func (source trustedSource) archiveDigest(filename string) (string, bool) {
+	switch archiveKind(filename) {
+	case "tar.gz":
+		return source.tarGzipSHA256, true
+	case "zip":
+		return source.zipSHA256, true
+	default:
+		return "", false
+	}
+}
 
 var (
 	digestRE  = regexp.MustCompile(`^[0-9a-f]{64}$`)
@@ -145,41 +192,31 @@ func openReleaseWithArchiveVerifiedHook(opts Options, afterArchiveVerified func(
 }
 
 func validateTrustedReleaseIdentity(opts Options) error {
-	if opts.Release != assetsV020Release {
+	source, ok := lookupTrustedSource(opts.Release)
+	if !ok {
 		return nil
 	}
 	for _, expected := range []struct {
 		name, got, want string
 	}{
-		{"catalog-sha256", opts.CatalogSHA256, assetsV020CatalogSHA256},
-		{"release-json-sha256", opts.ReleaseJSONSHA256, assetsV020ReleaseJSONSHA256},
-		{"checksums-sha256", opts.ChecksumsSHA256, assetsV020ChecksumsSHA256},
+		{"catalog-sha256", opts.CatalogSHA256, source.catalogSHA256},
+		{"release-json-sha256", opts.ReleaseJSONSHA256, source.releaseJSONSHA256},
+		{"checksums-sha256", opts.ChecksumsSHA256, source.checksumsSHA256},
 	} {
 		if expected.got != expected.want {
-			return fmt.Errorf("v0.2.0 %s does not match the frozen Assets candidate boundary", expected.name)
+			return fmt.Errorf("%s %s does not match the trusted Assets release boundary", source.release, expected.name)
 		}
 	}
 	if opts.ReleaseArchive != "" {
-		expected, ok := assetsV020ArchiveDigest(opts.ReleaseArchive)
+		expected, ok := source.archiveDigest(opts.ReleaseArchive)
 		if !ok {
-			return fmt.Errorf("v0.2.0 archive must use .tar.gz, .tgz, or .zip kind")
+			return fmt.Errorf("%s archive must use .tar.gz, .tgz, or .zip kind", source.release)
 		}
 		if opts.ArchiveSHA256 != expected {
-			return fmt.Errorf("v0.2.0 archive-sha256 does not match the frozen Assets candidate %s boundary", archiveKind(opts.ReleaseArchive))
+			return fmt.Errorf("%s archive-sha256 does not match the trusted Assets release %s boundary", source.release, archiveKind(opts.ReleaseArchive))
 		}
 	}
 	return nil
-}
-
-func assetsV020ArchiveDigest(filename string) (string, bool) {
-	switch archiveKind(filename) {
-	case "tar.gz":
-		return assetsV020TarGzipSHA256, true
-	case "zip":
-		return assetsV020ZipSHA256, true
-	default:
-		return "", false
-	}
 }
 
 func archiveKind(filename string) string {

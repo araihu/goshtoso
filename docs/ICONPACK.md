@@ -78,18 +78,54 @@ After reviewing the generated `.iconpack.lock.yaml`, regenerate without
 `-trust`. Use `-allow-http` only for a deliberately local test endpoint; HTTPS
 is the default.
 
-For the frozen Assets v0.2.0 candidate boundary, the command pins the complete
+For each trusted Assets release, the command pins the complete
 catalog/release/checksums/archive identities below. Archive identity is
-kind-specific: the official tar gzip and ZIP candidate bytes have distinct
-full SHA-256 digests. An archive with the same inner files but different outer
-bytes is rejected. Generated `manifest.json` and
+kind-specific: the official tar gzip and ZIP bytes have distinct full SHA-256
+digests. An archive with the same inner files but different outer bytes is
+rejected. Generated `manifest.json` and
 `provenance.json` preserve `sourceKind` and `archiveSha256`; the latter is
 empty only when the caller supplies an extracted release root rather than the
 verified archive itself.
 
 ## Exact-name selection
 
-This local candidate example uses frozen Arai Hû Assets v0.2.0 archive bytes.
+### Current cited Assets v0.2.1 release
+
+The current example consumes the immutable GitHub release asset at
+`https://github.com/araihu/assets/releases/download/v0.2.1/araihu-assets-v0.2.1.tar.gz`.
+Annotated tag `84fd4565606a088e09fff1c042a18b2841c58642` peels to commit
+`fdfb1c2aad8fa61779e7b8c6f208e52a6cf825ce`, whose tree is
+`e89dce3f6bbb129bf3dfd3f04d874cdb220bb4a0`. The tag is annotated but
+unsigned, so trust here comes from the explicitly authenticated release-chain
+identity and exact byte digests, not a signature claim.
+
+The trusted v0.2.1 identities are:
+
+- tar gzip archive SHA-256: `818a32246c040871c8f28bb085269b6b9f21c579b18dc4c3c1f20d70716eaf70`
+- ZIP archive SHA-256: `700212506c8c3a44c877d10a7a6696d73c561b321724aecec8e6ee51c4cdb099`
+- `catalog.json` SHA-256: `b2b3ab2ac7e87e2eb333725195c394ebcfb1edc5f89542d89d375f2675a2aead`
+- `release.json` SHA-256: `1e071ba6d88efa862b6166820bdc759c7edb917c8566ce7111358c5c3dc2714e`
+- `checksums.txt` SHA-256: `05cf07d924827f1eb306323a3bae5591b2a8d3b6255211c354952c0ac8dc190f`
+
+```bash
+go run ./cmd/iconpack \
+  -release-archive /path/to/araihu-assets-v0.2.1.tar.gz \
+  -archive-sha256 818a32246c040871c8f28bb085269b6b9f21c579b18dc4c3c1f20d70716eaf70 \
+  -release v0.2.1 \
+  -catalog-sha256 b2b3ab2ac7e87e2eb333725195c394ebcfb1edc5f89542d89d375f2675a2aead \
+  -release-json-sha256 1e071ba6d88efa862b6166820bdc759c7edb917c8566ce7111358c5c3dc2714e \
+  -checksums-sha256 05cf07d924827f1eb306323a3bae5591b2a8d3b6255211c354952c0ac8dc190f \
+  -name brand-developer-icons-tRPC \
+  -name ui-hi-16-solid-check \
+  -out ./internal/appicons \
+  -package appicons \
+  -const-prefix Icon \
+  -sprite-url /assets/icons/appicons/sprite.svg
+```
+
+### Historical v0.2.0 fixture
+
+The earlier local candidate example remains recorded as historical evidence.
 It makes no publication claim about Assets, its Muamba prerequisite, or this
 Goshtoso change.
 
@@ -271,19 +307,26 @@ closed rather than using a race-prone check-then-rename fallback.
 
 ## External consumer proof
 
-The proof script extracts the verified candidate archive into a private
+The proof script extracts the verified archive into a private
 temporary boundary, generates a separate Go module, and exercises a real HTTP
 server. It requires HTTP 200 responses, exact content types and sprite bytes,
 positive `devicon-trpc` geometry, the literal catalog lookup, and labelled plus
-decorative accessibility behavior:
+decorative accessibility behavior. It also runs `iconcatalog` generation and
+`-check` against the authenticated catalog, with `GOWORK=off` for every Go
+consumer command. The current cited release proof is:
 
 ```bash
 ./scripts/iconpack-consumer-proof.sh \
-  /path/to/araihu-assets-v0.2.0.tar.gz \
-  5d7d691e22d4071507b0bf2248713d7008adf57c18840cfd46e20901db0b78e5
+  v0.2.1 \
+  /path/to/araihu-assets-v0.2.1.tar.gz \
+  818a32246c040871c8f28bb085269b6b9f21c579b18dc4c3c1f20d70716eaf70
 ```
+
+The historical two-argument invocation remains supported and defaults to the
+frozen v0.2.0 fixture boundary.
 
 The temporary consumer replaces Goshtoso only as its Go dependency so an
 uncommitted producer can be tested. All icon inputs still come exclusively from
 the verified candidate archive; no Goshtoso checkout or vendored asset tree is an
-icon source.
+icon source. Icon rendering has no motion or transition lifecycle, so static
+reduced-motion acceptance is explicitly not applicable.
