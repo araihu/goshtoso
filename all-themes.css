@@ -99,6 +99,7 @@
 
 @layer base {
 
+    /* goshtoso-theme: arctic | Arctic | generic */
     [data-theme=arctic] {
         --font-body: 'Inter', sans-serif;
         --font-title: 'Inter', sans-serif;
@@ -136,6 +137,7 @@
         --radius-radius: var(--radius-lg);
     }
 
+    /* goshtoso-theme: minimal | Minimal | generic */
     [data-theme=minimal] {
         --font-body: 'Montserrat', sans-serif;
         --font-title: 'Montserrat', sans-serif;
@@ -173,6 +175,7 @@
         --radius-radius: var(--radius-none);
     }
 
+    /* goshtoso-theme: modern | Modern | generic */
     [data-theme=modern] {
         --font-body: 'Lato', sans-serif;
         --font-title: 'Lato', sans-serif;
@@ -209,6 +212,7 @@
         --radius-radius: var(--radius-sm);
     }
 
+    /* goshtoso-theme: high-contrast | High Contrast | generic */
     [data-theme=high-contrast] {
         --font-body: 'Inter', sans-serif;
         --font-title: 'Inter', sans-serif;
@@ -243,6 +247,7 @@
         --radius-radius: var(--radius-sm);
     }
 
+    /* goshtoso-theme: neo-brutalism | Neo Brutalism | generic */
     [data-theme=neo-brutalism] {
         --font-body: 'Space Mono', monospace;
         --font-title: 'Montserrat', sans-serif;
@@ -277,6 +282,7 @@
         --radius-radius: var(--radius-none);
     }
 
+    /* goshtoso-theme: halloween | Halloween | generic */
     [data-theme=halloween] {
         --font-body: 'Poppins', sans-serif;
         --font-title: 'Denk One', sans-serif;
@@ -311,6 +317,7 @@
         --radius-radius: var(--radius-xl);
     }
 
+    /* goshtoso-theme: zombie | Zombie | generic */
     [data-theme=zombie] {
         --font-body: 'Montserrat', sans-serif;
         --font-title: 'Denk One', sans-serif;
@@ -345,6 +352,7 @@
         --radius-radius: var(--radius-xl);
     }
 
+    /* goshtoso-theme: pastel | Pastel | generic */
     [data-theme=pastel] {
         --font-body: 'Playpen Sans', cursive;
         --font-title: 'Playpen Sans', cursive;
@@ -379,6 +387,7 @@
         --radius-radius: var(--radius-xl);
     }
 
+    /* goshtoso-theme: 90s | 90s | generic */
     [data-theme=90s] {
         --font-body: 'Poppins', sans-serif;
         --font-title: 'Oswald', sans-serif;
@@ -413,6 +422,7 @@
         --radius-radius: var(--radius-xl);
     }
 
+    /* goshtoso-theme: christmas | Christmas | generic */
     [data-theme=christmas] {
         --font-body: 'Lato', sans-serif;
         --font-title: 'Jost', sans-serif;
@@ -447,6 +457,7 @@
         --radius-radius: var(--radius-md);
     }
 
+    /* goshtoso-theme: prototype | Prototype | generic */
     [data-theme=prototype] {
         --font-body: 'Playpen Sans', cursive;
         --font-title: 'Playpen Sans', cursive;
@@ -481,6 +492,7 @@
         --radius-radius: var(--radius-none);
     }
 
+    /* goshtoso-theme: news | News | generic */
     [data-theme=news] {
         --font-body: 'Inter', sans-serif;
         --font-title: 'Merriweather', serif;
@@ -515,6 +527,7 @@
         --radius-radius: var(--radius-sm);
     }
 
+    /* goshtoso-theme: industrial | Industrial | generic */
     [data-theme=industrial] {
         --font-body: 'Poppins', sans-serif;
         --font-title: 'Oswald', sans-serif;
@@ -549,6 +562,7 @@
         --radius-radius: var(--radius-none);
     }
 
+    /* goshtoso-theme: dracula | Dracula | generic */
     [data-theme=dracula] {
         /* Dracula Theme — https://draculatheme.com */
         --font-body: 'Fira Code', 'JetBrains Mono', monospace;
@@ -588,6 +602,7 @@
         --radius-radius: var(--radius-md);
     }
 
+    /* goshtoso-theme: araihu | Arai Hû | organization */
     [data-theme=araihu] {
         /* Arai Hû — Modern geometry with the organization palette. */
         color-scheme: light;
@@ -637,6 +652,7 @@
         --araihu-logo-signal: var(--color-primary-dark);
     }
 
+    /* goshtoso-theme: goshtoso | Goshtoso | organization */
     [data-theme=goshtoso] {
         /* Goshtoso brand theme — palette pulled from the mascot art:
            Yale Blue (sky/sea) / Lime Moss + Forest Moss (palms, shirt) /

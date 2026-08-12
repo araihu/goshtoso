@@ -18,8 +18,9 @@ import (
 )
 
 type renderedTheme struct {
-	Key   string `json:"key"`
-	Label string `json:"label"`
+	Key       string `json:"key"`
+	Label     string `json:"label"`
+	Ownership string `json:"ownership"`
 }
 
 func TestThemePage_PublicCatalogInventoryAndSocialContract(t *testing.T) {
@@ -40,7 +41,7 @@ func TestThemePage_PublicCatalogInventoryAndSocialContract(t *testing.T) {
 		} else {
 			require.Equal(t, canonical, theme.Label, "canonical label drift for %q", theme.Key)
 		}
-		expected = append(expected, renderedTheme{Key: theme.Key, Label: theme.Label})
+		expected = append(expected, renderedTheme{Key: theme.Key, Label: theme.Label, Ownership: string(theme.Ownership)})
 	}
 	require.Len(t, siteCatalog, len(publicByKey))
 	require.Equal(t, "Zombie", publicByKey["zombie"])
@@ -144,9 +145,10 @@ func assertRenderedThemeInventory(t *testing.T, page playwright.Page, expectedKe
 	rawInventory, err := page.Evaluate(`() => {
 		const themePage = document.querySelector('[x-data="themePage"]');
 		const selectorKeys = Alpine.$data(themePage).allThemes;
-		const cards = [...document.querySelectorAll('h2 + .grid button[data-theme-key]')].map(card => ({
-			key: card.dataset.themeKey,
-			label: card.querySelector('.text-xs.font-bold').textContent.trim(),
+			const cards = [...document.querySelectorAll('h2 + .grid button[data-theme-key]')].map(card => ({
+				key: card.dataset.themeKey,
+				label: card.querySelector('.text-xs.font-bold').textContent.trim(),
+				ownership: card.dataset.themeOwnership,
 		}));
 		return JSON.stringify({selectorKeys, cards});
 	}`, nil)

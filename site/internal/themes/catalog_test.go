@@ -8,22 +8,22 @@ import (
 
 func TestCatalogPreservesDemoPresentationOrder(t *testing.T) {
 	require.Equal(t, []Theme{
-		{Key: "araihu", Label: "Arai Hû"},
-		{Key: "goshtoso", Label: "Goshtoso"},
-		{Key: "minimal", Label: "Minimal"},
-		{Key: "modern", Label: "Modern"},
-		{Key: "arctic", Label: "Arctic"},
-		{Key: "high-contrast", Label: "High Contrast"},
-		{Key: "neo-brutalism", Label: "Neo Brutalism"},
-		{Key: "news", Label: "News"},
-		{Key: "industrial", Label: "Industrial"},
-		{Key: "90s", Label: "90s"},
-		{Key: "pastel", Label: "Pastel"},
-		{Key: "christmas", Label: "Christmas"},
-		{Key: "halloween", Label: "Halloween"},
-		{Key: "zombie", Label: ZombiePresentationLabelOverride},
-		{Key: "prototype", Label: "Prototype"},
-		{Key: "dracula", Label: "Dracula"},
+		{Key: "araihu", Label: "Arai Hû", Ownership: OwnershipOrganization},
+		{Key: "goshtoso", Label: "Goshtoso", Ownership: OwnershipOrganization},
+		{Key: "minimal", Label: "Minimal", Ownership: OwnershipGeneric},
+		{Key: "modern", Label: "Modern", Ownership: OwnershipGeneric},
+		{Key: "arctic", Label: "Arctic", Ownership: OwnershipGeneric},
+		{Key: "high-contrast", Label: "High Contrast", Ownership: OwnershipGeneric},
+		{Key: "neo-brutalism", Label: "Neo Brutalism", Ownership: OwnershipGeneric},
+		{Key: "news", Label: "News", Ownership: OwnershipGeneric},
+		{Key: "industrial", Label: "Industrial", Ownership: OwnershipGeneric},
+		{Key: "90s", Label: "90s", Ownership: OwnershipGeneric},
+		{Key: "pastel", Label: "Pastel", Ownership: OwnershipGeneric},
+		{Key: "christmas", Label: "Christmas", Ownership: OwnershipGeneric},
+		{Key: "halloween", Label: "Halloween", Ownership: OwnershipGeneric},
+		{Key: "zombie", Label: ZombiePresentationLabelOverride, Ownership: OwnershipGeneric},
+		{Key: "prototype", Label: "Prototype", Ownership: OwnershipGeneric},
+		{Key: "dracula", Label: "Dracula", Ownership: OwnershipGeneric},
 	}, All())
 }
 
@@ -36,6 +36,7 @@ func TestCatalogHasSixteenUniqueBuiltInThemes(t *testing.T) {
 	for _, theme := range all {
 		require.NotEmpty(t, theme.Key)
 		require.NotEmpty(t, theme.Label)
+		require.Contains(t, []Ownership{OwnershipGeneric, OwnershipOrganization}, theme.Ownership)
 		require.False(t, seen[theme.Key], "duplicate theme key %q", theme.Key)
 		seen[theme.Key] = true
 	}
@@ -50,7 +51,7 @@ func TestCatalogReturnsCallerOwnedSlice(t *testing.T) {
 
 	second := All()
 	require.Len(t, second, 16)
-	require.Equal(t, Theme{Key: "araihu", Label: "Arai Hû"}, second[0])
+	require.Equal(t, Theme{Key: "araihu", Label: "Arai Hû", Ownership: OwnershipOrganization}, second[0])
 }
 
 func TestPresentationLabelOverrideIsExplicitAndNarrow(t *testing.T) {

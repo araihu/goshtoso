@@ -161,7 +161,7 @@ import (
 )
 
 for _, theme := range themes.BuiltIn() {
-    fmt.Printf("%s: %s\n", theme.Key, theme.Label)
+    fmt.Printf("%s: %s (%s)\n", theme.Key, theme.Label, theme.Ownership)
 }
 ```
 
@@ -172,31 +172,34 @@ presentation order, defaults, and custom themes. A shell may render different
 presentation copy for a label or omit a built-in option without changing this
 design-system catalog.
 
-The catalog intentionally contains keys and labels only. CSS tokens, fonts,
-colors, radii, and other styling details remain CSS and consumer concerns.
+The catalog intentionally contains keys, labels, and source ownership
+classification only. `organization` identifies Arai Hû product identities;
+`generic` identifies reusable visual themes. This classification does not move
+ownership of CSS tokens, fonts, colors, radii, or other styling details out of
+CSS and consumer concerns.
 The built-in Arai Hû theme uses Modern typography and corner geometry (`Lato`
 and `--radius-sm`) with the Arai Hû semantic palette. Its fallback copy is
 byte-identical to `araihu/assets` release `v0.2.1` at commit
 `fdfb1c2aad8fa61779e7b8c6f208e52a6cf825ce`.
 
-| Key | Canonical label |
-|-----|-----------------|
-| `90s` | 90s |
-| `araihu` | Arai Hû |
-| `arctic` | Arctic |
-| `christmas` | Christmas |
-| `dracula` | Dracula |
-| `goshtoso` | Goshtoso |
-| `halloween` | Halloween |
-| `high-contrast` | High Contrast |
-| `industrial` | Industrial |
-| `minimal` | Minimal |
-| `modern` | Modern |
-| `neo-brutalism` | Neo Brutalism |
-| `news` | News |
-| `pastel` | Pastel |
-| `prototype` | Prototype |
-| `zombie` | Zombie |
+| Key | Canonical label | Ownership |
+|-----|-----------------|-----------|
+| `90s` | 90s | Generic |
+| `araihu` | Arai Hû | Organization |
+| `arctic` | Arctic | Generic |
+| `christmas` | Christmas | Generic |
+| `dracula` | Dracula | Generic |
+| `goshtoso` | Goshtoso | Organization |
+| `halloween` | Halloween | Generic |
+| `high-contrast` | High Contrast | Generic |
+| `industrial` | Industrial | Generic |
+| `minimal` | Minimal | Generic |
+| `modern` | Modern | Generic |
+| `neo-brutalism` | Neo Brutalism | Generic |
+| `news` | News | Generic |
+| `pastel` | Pastel | Generic |
+| `prototype` | Prototype | Generic |
+| `zombie` | Zombie | Generic |
 
 ## Creating a Custom Theme
 

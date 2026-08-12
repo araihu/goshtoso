@@ -90,6 +90,7 @@ func wrapSingleTheme(key string) string {
 type ThemeInfo struct {
 	Key            string
 	Label          string
+	Ownership      string
 	PrimaryClass   string
 	SecondaryClass string
 	SurfaceClass   string
@@ -171,6 +172,7 @@ func getThemeInfos() []ThemeInfo {
 		style := styles[theme.Key]
 		style.Key = theme.Key
 		style.Label = theme.Label
+		style.Ownership = string(theme.Ownership)
 		infos = append(infos, style)
 	}
 	return infos
@@ -1001,6 +1003,7 @@ templ themeGridSection() {
 				<button
 					type="button"
 					data-theme-key={ t.Key }
+					data-theme-ownership={ t.Ownership }
 					@click="setTheme($el.dataset.themeKey)"
 					x-bind:aria-pressed={ fmt.Sprintf("theme === '%s'", t.Key) }
 					class="group overflow-hidden rounded-radius border bg-surface text-left transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark dark:focus-visible:outline-primary-dark"

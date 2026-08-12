@@ -9,10 +9,20 @@ package themes
 
 import "slices"
 
+// Ownership classifies built-in themes without assigning ownership of their
+// CSS token values.
+type Ownership string
+
+const (
+	OwnershipGeneric      Ownership = "generic"
+	OwnershipOrganization Ownership = "organization"
+)
+
 // Theme is one built-in Goshtoso theme.
 type Theme struct {
-	Key   string
-	Label string
+	Key       string
+	Label     string
+	Ownership Ownership
 }
 
 // ZombiePresentationLabelOverride is the demo's intentional presentation copy
@@ -20,22 +30,22 @@ type Theme struct {
 const ZombiePresentationLabelOverride = "Halloween II"
 
 var catalog = []Theme{
-	{Key: "araihu", Label: "Arai Hû"},
-	{Key: "goshtoso", Label: "Goshtoso"},
-	{Key: "minimal", Label: "Minimal"},
-	{Key: "modern", Label: "Modern"},
-	{Key: "arctic", Label: "Arctic"},
-	{Key: "high-contrast", Label: "High Contrast"},
-	{Key: "neo-brutalism", Label: "Neo Brutalism"},
-	{Key: "news", Label: "News"},
-	{Key: "industrial", Label: "Industrial"},
-	{Key: "90s", Label: "90s"},
-	{Key: "pastel", Label: "Pastel"},
-	{Key: "christmas", Label: "Christmas"},
-	{Key: "halloween", Label: "Halloween"},
-	{Key: "zombie", Label: ZombiePresentationLabelOverride},
-	{Key: "prototype", Label: "Prototype"},
-	{Key: "dracula", Label: "Dracula"},
+	{Key: "araihu", Label: "Arai Hû", Ownership: OwnershipOrganization},
+	{Key: "goshtoso", Label: "Goshtoso", Ownership: OwnershipOrganization},
+	{Key: "minimal", Label: "Minimal", Ownership: OwnershipGeneric},
+	{Key: "modern", Label: "Modern", Ownership: OwnershipGeneric},
+	{Key: "arctic", Label: "Arctic", Ownership: OwnershipGeneric},
+	{Key: "high-contrast", Label: "High Contrast", Ownership: OwnershipGeneric},
+	{Key: "neo-brutalism", Label: "Neo Brutalism", Ownership: OwnershipGeneric},
+	{Key: "news", Label: "News", Ownership: OwnershipGeneric},
+	{Key: "industrial", Label: "Industrial", Ownership: OwnershipGeneric},
+	{Key: "90s", Label: "90s", Ownership: OwnershipGeneric},
+	{Key: "pastel", Label: "Pastel", Ownership: OwnershipGeneric},
+	{Key: "christmas", Label: "Christmas", Ownership: OwnershipGeneric},
+	{Key: "halloween", Label: "Halloween", Ownership: OwnershipGeneric},
+	{Key: "zombie", Label: ZombiePresentationLabelOverride, Ownership: OwnershipGeneric},
+	{Key: "prototype", Label: "Prototype", Ownership: OwnershipGeneric},
+	{Key: "dracula", Label: "Dracula", Ownership: OwnershipGeneric},
 }
 
 // All returns the built-in themes in stable product order.

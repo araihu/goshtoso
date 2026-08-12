@@ -3,13 +3,28 @@
 package e2e
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
+	demothemes "github.com/araihu/goshtoso/site/internal/themes"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+type themeInventoryBrowserState struct {
+	Path            string   `json:"path"`
+	RootTheme       string   `json:"rootTheme"`
+	AlpineTheme     string   `json:"alpineTheme"`
+	SelectedKeys    []string `json:"selectedKeys"`
+	Ownership       string   `json:"ownership"`
+	Dark            bool     `json:"dark"`
+	PrimaryColor    string   `json:"primaryColor"`
+	SurfaceColor    string   `json:"surfaceColor"`
+	Radius          string   `json:"radius"`
+	SurfaceVariable string   `json:"surfaceVariable"`
+}
 
 // gotoThemePage navigates to /docs/theme, waits for Alpine, and resets all
 // per-token overrides plus dark-mode state so each test starts from a known
@@ -84,6 +99,127 @@ func TestThemePage_Loads(t *testing.T) {
 		require.NoError(t, err)
 		assert.Greater(t, count, 0, "missing section heading %q", heading)
 	}
+}
+
+func TestThemeInventory_BFullAllThemesAndDeepModes(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	page := newIsolatedPage(t)
+	dismissCookieBanner(t, page)
+	gotoThemePage(t, page)
+
+	catalog := demothemes.All()
+	require.Len(t, catalog, 16)
+	require.Equal(t, 16, mustLocatorCount(t, page.Locator("button[data-theme-key][data-theme-ownership]")))
+
+	for _, theme := range catalog {
+		t.Run("Smoke/"+theme.Key, func(t *testing.T) {
+			selectThemeInventoryCard(t, page, theme.Key)
+			state := readThemeInventoryBrowserState(t, page)
+			require.Equal(t, "/docs/theme", state.Path)
+			require.Equal(t, theme.Key, state.RootTheme)
+			require.Equal(t, theme.Key, state.AlpineTheme)
+			require.Equal(t, []string{theme.Key}, state.SelectedKeys)
+			require.Equal(t, string(theme.Ownership), state.Ownership)
+			require.NotEmpty(t, state.SurfaceVariable)
+		})
+	}
+
+	deepModes := []struct {
+		name         string
+		theme        string
+		ownership    string
+		dark         bool
+		primaryColor string
+		surfaceColor string
+		radius       string
+	}{
+		{name: "AraiHuLight", theme: "araihu", ownership: "organization", primaryColor: "rgb(23, 59, 114)", surfaceColor: "rgb(243, 242, 233)", radius: "4px"},
+		{name: "AraiHuDark", theme: "araihu", ownership: "organization", dark: true, primaryColor: "rgb(199, 255, 74)", surfaceColor: "rgb(7, 17, 31)", radius: "4px"},
+		{name: "GoshtosoLight", theme: "goshtoso", ownership: "organization", primaryColor: "rgb(33, 114, 163)", surfaceColor: "rgb(255, 255, 255)", radius: "8px"},
+		{name: "GoshtosoDark", theme: "goshtoso", ownership: "organization", dark: true, primaryColor: "rgb(59, 206, 247)", surfaceColor: "rgb(19, 25, 32)", radius: "8px"},
+		{name: "MinimalLight", theme: "minimal", ownership: "generic", primaryColor: "rgb(0, 0, 0)", surfaceColor: "rgb(255, 255, 255)", radius: "0px"},
+		{name: "MinimalDark", theme: "minimal", ownership: "generic", dark: true, primaryColor: "rgb(255, 255, 255)", surfaceColor: "oklch(0.145 0 none)", radius: "0px"},
+	}
+	for _, mode := range deepModes {
+		t.Run("Deep/"+mode.name, func(t *testing.T) {
+			selectThemeInventoryCard(t, page, mode.theme)
+			setThemeInventoryDarkMode(t, page, mode.dark)
+			state := readThemeInventoryBrowserState(t, page)
+			require.Equal(t, "/docs/theme", state.Path)
+			require.Equal(t, mode.theme, state.RootTheme)
+			require.Equal(t, mode.theme, state.AlpineTheme)
+			require.Equal(t, []string{mode.theme}, state.SelectedKeys)
+			require.Equal(t, mode.ownership, state.Ownership)
+			require.Equal(t, mode.dark, state.Dark)
+			require.Equal(t, mode.primaryColor, state.PrimaryColor)
+			require.Equal(t, mode.surfaceColor, state.SurfaceColor)
+			require.Equal(t, mode.radius, state.Radius)
+		})
+	}
+}
+
+func selectThemeInventoryCard(t *testing.T, page playwright.Page, key string) {
+	t.Helper()
+	card := page.Locator(fmt.Sprintf("h2:has-text('Themes') ~ div button[data-theme-key='%s']", key)).First()
+	require.NoError(t, card.Click())
+	_, err := page.WaitForFunction(fmt.Sprintf(`() => {
+		const root = document.querySelector('[x-data="themePage"]');
+		const selected = document.querySelector('button[data-theme-key="%s"][aria-pressed="true"]');
+		return document.documentElement.dataset.theme === %q && Alpine.$data(root).theme === %q && selected;
+	}`, key, key, key), nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
+	require.NoError(t, err)
+}
+
+func setThemeInventoryDarkMode(t *testing.T, page playwright.Page, dark bool) {
+	t.Helper()
+	_, err := page.Evaluate(`dark => {
+		const store = Alpine.store('darkMode');
+		if (store.on !== dark) store.toggle();
+	}`, dark)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`dark => Alpine.store('darkMode').on === dark && document.documentElement.classList.contains('dark') === dark`, dark,
+		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
+	require.NoError(t, err)
+}
+
+func readThemeInventoryBrowserState(t *testing.T, page playwright.Page) themeInventoryBrowserState {
+	t.Helper()
+	raw, err := page.Evaluate(`() => {
+		const root = document.querySelector('[x-data="themePage"]');
+		const selected = [...document.querySelectorAll('button[data-theme-key][aria-pressed="true"]')];
+		const probe = document.createElement('div');
+		probe.className = 'bg-primary dark:bg-primary-dark rounded-radius';
+		document.body.appendChild(probe);
+		const probeStyle = getComputedStyle(probe);
+		const rootStyle = getComputedStyle(document.documentElement);
+		const state = {
+			path: window.location.pathname,
+			rootTheme: document.documentElement.dataset.theme || '',
+			alpineTheme: Alpine.$data(root).theme,
+			selectedKeys: selected.map(card => card.dataset.themeKey),
+			ownership: selected[0]?.dataset.themeOwnership || '',
+			dark: document.documentElement.classList.contains('dark') && Alpine.store('darkMode').on,
+			primaryColor: probeStyle.backgroundColor,
+			surfaceColor: '',
+			radius: probeStyle.borderRadius,
+			surfaceVariable: rootStyle.getPropertyValue('--color-surface').trim(),
+		};
+		const surfaceProbe = document.createElement('div');
+		surfaceProbe.className = 'bg-surface dark:bg-surface-dark';
+		document.body.appendChild(surfaceProbe);
+		state.surfaceColor = getComputedStyle(surfaceProbe).backgroundColor;
+		probe.remove();
+		surfaceProbe.remove();
+		return JSON.stringify(state);
+	}`, nil)
+	require.NoError(t, err)
+	encoded, ok := raw.(string)
+	require.True(t, ok, "unexpected browser state type %T", raw)
+	var state themeInventoryBrowserState
+	require.NoError(t, json.Unmarshal([]byte(encoded), &state))
+	return state
 }
 
 func TestThemePage_FragmentNavBootstrapsData(t *testing.T) {

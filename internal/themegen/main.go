@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/araihu/goshtoso/internal/themeinventory"
 )
 
 // Run regenerates assets/goshtoso-theme.css. It must be called from the repo root.
@@ -18,6 +20,9 @@ func Run(stdout io.Writer) error {
 	allThemes, err := os.ReadFile("all-themes.css")
 	if err != nil {
 		return err
+	}
+	if _, err := themeinventory.Parse(allThemes); err != nil {
+		return fmt.Errorf("validate all-themes.css inventory: %w", err)
 	}
 	codeblock, err := os.ReadFile("css/codeblock.css")
 	if err != nil {

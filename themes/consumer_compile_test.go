@@ -37,5 +37,8 @@ func TestPublicConsumerContractCompiles(t *testing.T) {
 		if catalog[index].Label == "" {
 			t.Fatalf("themes.BuiltIn()[%d].Label is empty", index)
 		}
+		if catalog[index].Ownership != themes.OwnershipGeneric && catalog[index].Ownership != themes.OwnershipOrganization {
+			t.Fatalf("themes.BuiltIn()[%d].Ownership = %q", index, catalog[index].Ownership)
+		}
 	}
 }

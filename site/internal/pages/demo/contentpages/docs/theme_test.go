@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	demothemes "github.com/araihu/goshtoso/site/internal/themes"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -28,6 +29,7 @@ func TestThemeGridRendersReferenceStylePreviewCards(t *testing.T) {
 	html := buf.String()
 
 	assert.Equal(t, len(getThemeInfos()), strings.Count(html, `data-theme-key=`))
+	assert.Equal(t, len(getThemeInfos()), strings.Count(html, `data-theme-ownership=`))
 	assert.Equal(t, len(getThemeInfos()), strings.Count(html, `x-bind:aria-pressed=`))
 	assert.Equal(t, len(getThemeInfos()), strings.Count(html, `data-theme-selected-icon`))
 	assert.Contains(t, html, `h-24 border-t`)
@@ -39,12 +41,28 @@ func TestThemeCSSExportBlocksMatchThemeSource(t *testing.T) {
 	source, err := os.ReadFile("../../../../../../all-themes.css")
 	require.NoError(t, err)
 
-	for key, exported := range getThemeCSSBlocks() {
+	blocks := getThemeCSSBlocks()
+	require.Len(t, blocks, demothemes.Count())
+	for _, theme := range demothemes.All() {
+		exported, ok := blocks[theme.Key]
+		require.True(t, ok, "catalog theme %q missing from exported CSS blocks", theme.Key)
+		key := theme.Key
 		t.Run(key, func(t *testing.T) {
 			want := themeDeclarations(t, string(source), key)
 			got := cssDeclarations(exported)
 			assert.Equal(t, want, got, "exported theme CSS drifted from all-themes.css")
 		})
+	}
+}
+
+func TestThemeInfosCarryCatalogOwnership(t *testing.T) {
+	catalog := demothemes.All()
+	infos := getThemeInfos()
+	require.Len(t, infos, len(catalog))
+	for index := range catalog {
+		require.Equal(t, catalog[index].Key, infos[index].Key)
+		require.Equal(t, catalog[index].Label, infos[index].Label)
+		require.Equal(t, string(catalog[index].Ownership), infos[index].Ownership)
 	}
 }
 

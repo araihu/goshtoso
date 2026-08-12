@@ -8,6 +8,15 @@ import "slices"
 // Key identifies a built-in Goshtoso theme.
 type Key string
 
+// Ownership classifies a theme as generic design-system styling or an Arai Hû
+// organization identity. It does not assign ownership of CSS token values.
+type Ownership string
+
+const (
+	OwnershipGeneric      Ownership = "generic"
+	OwnershipOrganization Ownership = "organization"
+)
+
 const (
 	Key90s          Key = "90s"
 	KeyAraiHu       Key = "araihu"
@@ -27,31 +36,32 @@ const (
 	KeyZombie       Key = "zombie"
 )
 
-// Theme identifies one theme built into Goshtoso and its canonical
-// design-system label. It deliberately excludes CSS tokens, defaults, and
-// presentation metadata.
+// Theme identifies one theme built into Goshtoso, its canonical design-system
+// label, and its source classification. It deliberately excludes CSS tokens,
+// defaults, and presentation metadata.
 type Theme struct {
-	Key   Key
-	Label string
+	Key       Key
+	Label     string
+	Ownership Ownership
 }
 
 var builtIn = [...]Theme{
-	{Key: Key90s, Label: "90s"},
-	{Key: KeyAraiHu, Label: "Arai Hû"},
-	{Key: KeyArctic, Label: "Arctic"},
-	{Key: KeyChristmas, Label: "Christmas"},
-	{Key: KeyDracula, Label: "Dracula"},
-	{Key: KeyGoshtoso, Label: "Goshtoso"},
-	{Key: KeyHalloween, Label: "Halloween"},
-	{Key: KeyHighContrast, Label: "High Contrast"},
-	{Key: KeyIndustrial, Label: "Industrial"},
-	{Key: KeyMinimal, Label: "Minimal"},
-	{Key: KeyModern, Label: "Modern"},
-	{Key: KeyNeoBrutalism, Label: "Neo Brutalism"},
-	{Key: KeyNews, Label: "News"},
-	{Key: KeyPastel, Label: "Pastel"},
-	{Key: KeyPrototype, Label: "Prototype"},
-	{Key: KeyZombie, Label: "Zombie"},
+	{Key: Key90s, Label: "90s", Ownership: OwnershipGeneric},
+	{Key: KeyAraiHu, Label: "Arai Hû", Ownership: OwnershipOrganization},
+	{Key: KeyArctic, Label: "Arctic", Ownership: OwnershipGeneric},
+	{Key: KeyChristmas, Label: "Christmas", Ownership: OwnershipGeneric},
+	{Key: KeyDracula, Label: "Dracula", Ownership: OwnershipGeneric},
+	{Key: KeyGoshtoso, Label: "Goshtoso", Ownership: OwnershipOrganization},
+	{Key: KeyHalloween, Label: "Halloween", Ownership: OwnershipGeneric},
+	{Key: KeyHighContrast, Label: "High Contrast", Ownership: OwnershipGeneric},
+	{Key: KeyIndustrial, Label: "Industrial", Ownership: OwnershipGeneric},
+	{Key: KeyMinimal, Label: "Minimal", Ownership: OwnershipGeneric},
+	{Key: KeyModern, Label: "Modern", Ownership: OwnershipGeneric},
+	{Key: KeyNeoBrutalism, Label: "Neo Brutalism", Ownership: OwnershipGeneric},
+	{Key: KeyNews, Label: "News", Ownership: OwnershipGeneric},
+	{Key: KeyPastel, Label: "Pastel", Ownership: OwnershipGeneric},
+	{Key: KeyPrototype, Label: "Prototype", Ownership: OwnershipGeneric},
+	{Key: KeyZombie, Label: "Zombie", Ownership: OwnershipGeneric},
 }
 
 // BuiltIn returns every built-in theme in deterministic key order. This order

@@ -32,6 +32,14 @@ func TestCatalogAgreementRejectsKeyAndCanonicalLabelDrift(t *testing.T) {
 		err := compareCatalogs(corethemes.BuiltIn(), drifted)
 		require.EqualError(t, err, `theme label drift for "goshtoso": demo="Demo-only Goshtoso" canonical="Goshtoso"`)
 	})
+
+	t.Run("ownership", func(t *testing.T) {
+		drifted := demothemes.All()
+		drifted[0].Ownership = demothemes.OwnershipGeneric
+
+		err := compareCatalogs(corethemes.BuiltIn(), drifted)
+		require.EqualError(t, err, `theme ownership drift for "araihu": demo="generic" canonical="organization"`)
+	})
 }
 
 func TestCatalogAgreementNamesSolePresentationOverride(t *testing.T) {
@@ -50,20 +58,24 @@ func TestCatalogAgreementNamesSolePresentationOverride(t *testing.T) {
 
 func compareCatalogs(public []corethemes.Theme, demo []demothemes.Theme) error {
 	publicByKey := make(map[string]string, len(public))
+	publicOwnership := make(map[string]string, len(public))
 	for _, theme := range public {
 		key := string(theme.Key)
 		if _, exists := publicByKey[key]; exists {
 			return fmt.Errorf("duplicate public theme key %q", key)
 		}
 		publicByKey[key] = theme.Label
+		publicOwnership[key] = string(theme.Ownership)
 	}
 
 	demoByKey := make(map[string]string, len(demo))
+	demoOwnership := make(map[string]string, len(demo))
 	for _, theme := range demo {
 		if _, exists := demoByKey[theme.Key]; exists {
 			return fmt.Errorf("duplicate demo theme key %q", theme.Key)
 		}
 		demoByKey[theme.Key] = theme.Label
+		demoOwnership[theme.Key] = string(theme.Ownership)
 	}
 
 	missing, extra := make([]string, 0), make([]string, 0)
@@ -90,6 +102,9 @@ func compareCatalogs(public []corethemes.Theme, demo []demothemes.Theme) error {
 		}
 		if demoByKey[key] != want {
 			return fmt.Errorf("theme label drift for %q: demo=%q canonical=%q", key, demoByKey[key], canonical)
+		}
+		if demoOwnership[key] != publicOwnership[key] {
+			return fmt.Errorf("theme ownership drift for %q: demo=%q canonical=%q", key, demoOwnership[key], publicOwnership[key])
 		}
 	}
 	return nil
