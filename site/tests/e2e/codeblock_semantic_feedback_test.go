@@ -121,6 +121,7 @@ func TestCodeBlockCopiedFeedbackSemanticContrastAndClipboardStates(t *testing.T)
 				require.NoError(t, err)
 				require.Equal(t, 200, response.Status())
 				require.NoError(t, waitForAlpine(page))
+				waitForPageSettled(t, page)
 
 				wrapper := page.Locator("[data-code-block]").First()
 				require.NoError(t, wrapper.WaitFor())
