@@ -75,7 +75,9 @@ Density: compact
 Motion: restrained; only explain row/status changes
 Visual direction: one dense incident queue, restrained dividers, tabular identifiers, semantic state color, no elevation
 Chosen Goshtoso pattern and primitives: App Shell + Operations List; PageHeader, Toolbar, Alert, Table, Badge, Panel, EmptyState, Skeleton
-No-match/application CSS: compact trend strip; application-owned because no public chart primitive matches
+Closest ecosystem surface: Goshtoso Charts static line chart
+Decision: compose
+No-match/application CSS: none; chart remains subordinate to actionable rows
 ```
 
 This brief makes the incident queue dominant. It does not create one Card per
@@ -145,9 +147,10 @@ Combine them when the task requires it and keep domain rules in the app.
 - Use `skeleton.Skeleton`, `emptystate.EmptyState`, `alert.Alert`, and success
   feedback as first-class states, not late decorations.
 
-When no Goshtoso primitive matches, keep the composition application-owned and
-say “no public primitive matched.” Do not silently pretend Card, Tabs, or a
-button has different semantics.
+When no Goshtoso ecosystem surface matches after the Required Discovery Pass,
+keep the composition application-owned and name the searched public surfaces
+plus the concrete gap. Do not silently pretend Card, Tabs, or a button has
+different semantics.
 
 ## Choose a deliberate direction
 

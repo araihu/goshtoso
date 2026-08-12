@@ -1,6 +1,6 @@
 ---
 name: using-goshtoso
-description: Use when building, designing, redesigning, integrating, or updating an external Go/templ application with Goshtoso, including application shells, dashboards, operations lists, detail pages, settings, onboarding, workflows, public content, page metadata, Open Graph and X/Twitter Cards, social previews, component selection, visual direction, state design, installing github.com/araihu/goshtoso, serving bundled assets, wiring head.Metadata and head.Dependencies, Tailwind CSS strategy, or debugging Goshtoso styles, Alpine.js, HTMX, and component APIs.
+description: Use when building, designing, redesigning, integrating, or updating an external Go/templ application in the Goshtoso ecosystem. Triggers for discovery and reuse of Goshtoso components, Goshtoso Charts, Margo Markdown/document rendering, Goshtoso App Shells, consumer icon packs, application shells, dashboards, operations lists, detail pages, settings, onboarding, workflows, public content, metadata, social previews, component selection, visual direction, state design, asset serving, Tailwind CSS, Alpine.js, HTMX, or component API debugging. Requires checking supported ecosystem solutions before writing custom HTML, CSS, or JavaScript.
 ---
 
 # Using Goshtoso
@@ -13,15 +13,66 @@ embedded assets, and run `templ generate` only for their own `.templ` files.
 This skill is for integrating Goshtoso into external applications, not for
 modifying the Goshtoso component library or demo site itself.
 
+## When to Use
+
+- Build or redesign a Go/templ product with Goshtoso.
+- Select components, charts, document rendering, page frames, or icons.
+- Integrate Goshtoso assets, metadata, CSS, HTMX, or Alpine.js.
+- Diagnose a consumer-side Goshtoso rendering or interaction problem.
+
+## When NOT to Use
+
+- Modify Goshtoso or a related module itself; follow that repository's rules.
+- Build a non-Go or non-templ UI that cannot consume server-rendered components.
+- Perform release, publication, deployment, or repository-maintainer work.
+
+## Required Discovery Pass
+
+Before writing custom HTML, CSS, JavaScript, or a new templ primitive, inspect
+the consumer's selected module versions and public packages:
+
+```bash
+go list -m all | rg '^github.com/araihu/(goshtoso|goshtoso-charts|goshtoso-app-shells|margo)( |$)'
+for module in goshtoso goshtoso-charts goshtoso-app-shells margo; do
+  go list -m -versions "github.com/araihu/$module"
+done
+```
+
+For modules already selected in `go.mod`, inspect exact public packages with
+`go doc`, including Goshtoso `components`, Charts `components/line`, App Shells
+`consoleshell`, and Margo's root package. For an absent module, inspect the
+chosen release tag's docs and public source without adding it merely to browse.
+Absence from `go.mod` is not proof of a gap.
+
+Route the need through these surfaces in order:
+
+1. Goshtoso components and documented application patterns for UI and layout.
+2. Goshtoso Charts for static/vector or interactive data visualization.
+3. Margo for Markdown, standalone HTML, linked sites, PDF, or slide decks.
+4. Goshtoso App Shells for landing, console, component-doc, or component-page
+   frames.
+5. Bundled Heroicons or `cmd/iconpack` for icons.
+
+Record the closest supported surface and choose `reuse`, `compose`, or `gap`.
+Custom HTML, CSS, or JavaScript requires a concrete gap. Prefer app-owned
+semantic content inside supported component or shell slots; never copy
+demo-site or `internal/` implementation markup.
+
+When installed references are available, read `references/ecosystem-discovery.md`
+for module-specific searches and public surfaces. The discovery decision above
+remains complete when a streaming `skills use` client provides only this file.
+
 ## Default Integration
 
 Use this path unless the app deliberately owns a custom Tailwind build.
 Goshtoso requires **Go 1.26.5 or newer**.
 
 ```bash
-go get github.com/araihu/goshtoso@latest
+GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set a release such as v0.1.13}"
+go get github.com/araihu/goshtoso@"$GOSHTOSO_VERSION"
 go get github.com/a-h/templ
-go install github.com/a-h/templ/cmd/templ@latest
+TEMPL_VERSION="$(go list -m -f '{{.Version}}' github.com/a-h/templ)"
+go install github.com/a-h/templ/cmd/templ@"$TEMPL_VERSION"
 templ generate
 go mod tidy
 go test ./...
@@ -30,7 +81,7 @@ go test ./...
 Create the consumer's `.templ` file before `templ generate`. Run
 `templ generate` before `go mod tidy`: generated Go is what makes the templ
 runtime import visible, while tidying an empty pre-generation module can remove
-the dependency you are about to need.
+the dependency required by the generated source.
 
 Mount Goshtoso assets directly at `/assets/` with a method-qualified Go
 `ServeMux` pattern:
@@ -94,69 +145,16 @@ version-pinned CDN URLs first and create a fresh script for the exact embedded
 version when a CDN download fails. Keep `assets.Handler()` mounted even when
 the third-party CDN normally succeeds.
 
-Choose deliberately:
-
-- Use `head.Dependencies()` for the resilient CDN-first default.
-- Use `head.Dependencies(head.WithLocalRuntime())` when the app must make no
-  runtime CDN requests, such as an offline PWA, desktop/mobile WebView,
-  air-gapped deployment, or explicit network policy. Do not select it merely to
-  make a probe easier; exercise the default fallback contract.
-- Override one pair with `WithDependencyCDNURL` and
-  `WithDependencyLocalURL`, plus `WithDependencyIntegrity` when the bytes
-  change. One integrity value applies to both sources, so primary and fallback
-  bytes must match.
-- Use `WithRuntimeManifest(assets.DefaultRuntimeManifest())` when the consumer
-  must enable, omit, add, or reorder the complete typed dependency set. The
-  option snapshots once; other options apply afterward regardless of argument
-  position. Invalid manifests fail before writing HTML.
-- Use `WithoutLocalFallback()` only when failure is preferable to local retry.
-- Await `window.goshtosoDependencies.ready` before application JavaScript that
-  requires every dynamically loaded dependency.
-
-For offline inventories or build descriptors, use
-`assets.DefaultRuntimeManifest()` instead of copying versioned paths from
-generated files or the module cache. Its caller-owned dependency slice is in
-execution order and includes roles, CDN primary, Handler-served local URL, SRI,
-enabled, minimal-set membership, defer, and loader-readiness semantics. Cache
-the separate stylesheet and bootstrap loader local URLs too; execute only
-enabled dependencies. The combined first-party bundle is enabled by default;
-dark mode, HTMX SSE/WS, Combobox, and ActionGroup are disabled inventory. Legacy
-Combobox/ActionGroup overrides replace the bundle with both standalone helpers.
-Do not execute the loader and direct local scripts together.
-
-Custom manifests may contain unique safe custom script roles. Preserve Alpine
-plugin/first-party/dark-mode-before-Alpine and HTMX-before-SSE/WS ordering.
-`WithLocalRuntime` is only for the default manifest; custom local-only loading
-sets every desired `PrimaryURL` to its `LocalURL`, keeps the loader local, and
-uses `WithoutLocalFallback()`. Loader `LocalURL` is inventory, not bootstrap
-fallback. Dependency `Defer` describes direct tags, not custom-loader order.
-At the top level, only `Loader.Defer` is supported; stylesheet `Defer` and both
-top-level `WaitForWindowLoaded` values are rejected before rendering.
-
-Configuration freedom is not a compatibility guarantee. Goshtoso tests the
-pinned combination: Alpine 3.14.9, HTMX 2.0.8, SSE 2.2.3, and WS 2.0.3.
-
-Bind same-version caches only when `assets.GoshtosoVersion().Status` is
-`assets.VersionExact`. Development, replaced, and unavailable builds leave the
-exact `Version` empty. Replacement request/target metadata is diagnostic only:
-the requested release version does not identify replacement bytes.
-
-If the consumer sets Content Security Policy, test the rendered application
-under that exact policy. The bundled standard Alpine runtime requires dynamic
-function evaluation, and Alpine/component state writes inline style
-attributes. A policy that allows only `script-src 'self'` can load every local
-file and still leave Alpine behavior dead. Allow the configured CDN origin or
-use `WithLocalRuntime()`, plus the required Alpine behavior (`'unsafe-eval'` for
-scripts and inline style mutation). `templ.WithNonce` is propagated to the
-loader and its child scripts for nonce/`strict-dynamic` policies. Otherwise,
-deliberately replace the default head/runtime wiring with a CSP-compatible stack
-and verify every Alpine-backed component. Do not weaken unrelated CSP
-directives.
+Use `head.Dependencies()` for the resilient CDN-first default and
+`head.Dependencies(head.WithLocalRuntime())` for explicit offline or no-CDN
+policy. Await `window.goshtosoDependencies.ready` before app JavaScript needing
+the complete runtime. Read `references/runtime-integration.md` before changing
+the runtime manifest, integrity, fallback, cache identity, or CSP behavior.
 
 ## Rendering Components
 
 Import from `github.com/araihu/goshtoso/components/<name>` and call the exported
-templ component from your own `.templ` files:
+templ component from application-owned `.templ` files:
 
 ```templ
 import "github.com/araihu/goshtoso/components/button"
@@ -171,15 +169,14 @@ templ Example() {
 }
 ```
 
-Read `references/components-reference.md` when you need exact component import
-paths, package names, entry points, config fields, enum values, or package names
-that differ from the directory name.
+Search `references/components-reference.md` with `rg` for the package or symbol;
+do not load its full generated catalog. It contains exact import paths, entry
+points, config fields, enum values, and differing package names.
 
-Read the public
-[component model](https://github.com/araihu/goshtoso/blob/main/docs/COMPONENT_MODEL.md)
-before choosing between constructors or configuration fields. It documents the
-common component interface, concrete return values, constructor styles, stable
-Kind identity, and rendered defaults.
+Read the selected Goshtoso tag's `docs/COMPONENT_MODEL.md` before choosing
+between constructors or configuration fields. It documents the common
+component interface, concrete return values, constructor styles, stable Kind
+identity, and rendered defaults.
 
 For short install and command snippets, use the component-owned compact
 density. Keep multiline manifests and source examples at default density:
@@ -234,36 +231,49 @@ exists in the current document. Cross-origin external `<use>` references vary
 by browser and CORS policy; an HTTPS page may block an HTTP sprite. Keep
 same-origin relative sprite paths as the normal deployment choice.
 
-Generate project-local typed bindings for a schema-v1 catalog instead of
-putting project-specific names in Goshtoso:
+For icons outside bundled Heroicons, use the consumer-local `iconpack` flow.
+Declare sources in `.iconpack.yaml`, then explicitly establish first trust:
 
 ```bash
-go run github.com/araihu/goshtoso/cmd/iconcatalog@latest \
-  -catalog ./assets/icons/catalog.json \
-  -namespace ui -product application -sprite-url /assets/icons/app.svg \
-  -package appicons -const-prefix Icon -out ./internal/appicons/names_gen.go
+GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set v0.1.12 or newer}"
+go run github.com/araihu/goshtoso/cmd/iconpack@"$GOSHTOSO_VERSION" \
+  -config ./.iconpack.yaml -trust \
+  -out ./internal/appicons -package appicons \
+  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg
 ```
 
-Run it with `-check` in CI. The generator rejects unsupported schemas,
-duplicate or malformed names/symbols, identifier collisions, non-sprite SVG
-inputs, and incompatible color behavior.
+Review and commit `.iconpack.lock.yaml`, generated manifest, provenance, and
+licenses. Rerun without `-trust`; changed or unavailable source bytes must fail
+instead of silently re-trusting. Serve the generated sprite at the exact
+`-sprite-url`, then render through the generated typed `Icon` helper. Read the
+selected tag's `docs/ICONPACK.md` and run the selected command with `-help` for
+arbitrary GitHub trees/files, multiple packs, Arai Hû Assets release archives,
+CI checks, and migration from legacy source manifests. The `.iconpack.yaml`
+flow requires Goshtoso `v0.1.12` or newer; retain an older app dependency only
+when the generated package remains compatible with that app.
 
 ## From First Component to Application
 
-Do not invent the page around isolated components. For any build or redesign,
-read `references/design-intelligence.md` first. Write its compact surface brief,
-use the existing identity when present, route by the user's task archetype, and
-choose a deliberate visual direction before selecting components. Do not ask
-for an aesthetic preference when a reversible, context-backed choice is
-available.
+Do not invent the page around isolated components. Complete the Required
+Discovery Pass, then read `references/design-intelligence.md`. Write its compact
+surface brief, use the existing identity when present, route by the user's task
+archetype, and choose a deliberate visual direction before selecting
+components. Do not ask for an aesthetic preference when a reversible,
+context-backed choice is available.
 
-For a public organization, product, portfolio, or publication with static
-content, begin with `examples/brand-site`, not App Shell. It is a complete,
-copyable Go/templ static generator and explicitly separates Goshtoso tokens
-from product-owned visual direction. Create it in an empty target with:
+For a public product or organization landing page, try App Shells
+`landingshell` first. It already owns the responsive frame, metadata,
+first-paint color mode, navigation, hero boundary, and structured footer while
+leaving content and art direction to the app.
+
+Choose the selected Goshtoso tag's `examples/brand-site` starter only when the
+surface needs a fully app-owned static generator or content structure that
+`landingshell` slots cannot express. Record that concrete gap first. Create the
+starter in an empty target with:
 
 ```bash
-go run github.com/araihu/goshtoso/cmd/goshtoso@latest -init-brand-site=./my-site
+GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set a release}"
+go run github.com/araihu/goshtoso/cmd/goshtoso@"$GOSHTOSO_VERSION" -init-brand-site=./my-site
 ```
 
 Then replace its placeholder content and `brand.css`; do not turn the starter
@@ -287,60 +297,25 @@ Keep domain vocabulary, authorization, data priority, and workflow rules in the
 application. Goshtoso supplies the component vocabulary and supported layout
 contract, not the product decisions.
 
-### Reusable application shells
+### Related ecosystem modules
 
-For a public product landing page that should follow the Goshtoso site frame,
-use `github.com/araihu/goshtoso-app-shells/landingshell` instead of copying the
-demo landing page's utility classes. The shell owns the document head,
-first-paint and interactive color mode, responsive brand/navigation header,
-version badge, icon-only mode and repository controls, hero boundary, content
-container, and structured linked footer. The consumer owns the product's hero
-copy, content sections, calls to action, code examples, and art direction.
+Read `references/ecosystem-discovery.md` before implementing any page frame,
+chart, document renderer, or icon acquisition. It records current public
+surfaces for `goshtoso-app-shells`, `goshtoso-charts`, Margo, and Iconpack.
+Use the consumer's selected release and its public packages; do not infer API
+availability from a repository's `main` branch.
 
-Install the first public release containing this package explicitly:
+App Shells supplies `landingshell`, `consoleshell`, `componentdocshell`, and
+`componentpage`. Charts supplies typed static/vector and opt-in interactive
+components. Margo owns Markdown-to-HTML/site/PDF/deck workflows. These are
+supported solutions, not examples to copy into app-owned HTML or JavaScript.
 
-```bash
-go get github.com/araihu/goshtoso-app-shells/landingshell@v0.1.2
-```
-
-Configure `landingshell.Config` with `landingshell.Brand`,
-`[]landingshell.Link`, `landingshell.AppearanceConfig`, and
-`landingshell.Footer`, then supply `landingshell.Page.Hero` and
-`landingshell.Page.Content` components. Keep footer identity structured:
-product logo/name, concise metadata, linked organization, and typed links.
-
-Static generators must import the assets package and extract the exact
-content-versioned files from its handler:
-
-```go
-import landingassets "github.com/araihu/goshtoso-app-shells/landingshell/assets"
-
-handler := landingassets.Handler()
-stylesheetURL := landingassets.StylesheetURL("")
-scriptURL := landingassets.ScriptURL("")
-```
-
-Do not copy those files or recreate the dark-mode runtime in the consumer.
-
-For a documentation site that should follow the Goshtoso demo frame, use the
-public `github.com/araihu/goshtoso-app-shells/componentdocshell` module instead
-of copying the demo site's layout. It owns the full-width brand header,
-search-first fixed desktop sidebar and mobile drawer, theme and dark-mode
-controls, optional table of contents, and HTMX main-content navigation. The
-consumer still supplies brand assets, navigation/search data, page content,
-runtime slots, and application-specific metadata.
-
-Configure the shell through `componentdocshell.Config` and its nested config
-structs. Set the default theme, available theme list, theme selector ID,
-dark-mode binding, TOC hooks, and whether appearance controls render. The shell
-includes all Goshtoso themes by default and can run with one fixed theme and no
-selector when a product requires that behavior.
-
-Use `github.com/araihu/goshtoso-app-shells/componentpage` for the repeated
-structure inside component reference pages, including semantic sections and
-preview/code examples. It does not own the site frame; the catalog shell is a
-separate pattern. Do not treat a catalog grid and a component documentation
-page as the same shell.
+Use `github.com/araihu/goshtoso-app-shells/componentdocshell` for the full
+documentation or API-reference frame. Use
+`github.com/araihu/goshtoso-app-shells/componentpage` only for repeated
+component-reference page structure inside that frame; the catalog shell is a
+separate pattern. Keep `consoleshell` for operations products and
+`landingshell` for public product or organization pages.
 
 Before implementing a consequential action, stale-data recovery, or
 interruptible workflow, read `references/adversarial-acceptance.md`. Copy its
@@ -384,8 +359,9 @@ If a unified build is required, use the `goshtoso` CLI to extract theme source
 and print the component source path for Tailwind scanning:
 
 ```bash
-go run github.com/araihu/goshtoso/cmd/goshtoso@latest -theme -out=css/goshtoso-theme.css
-go run github.com/araihu/goshtoso/cmd/goshtoso@latest -source-path
+GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set a release}"
+go run github.com/araihu/goshtoso/cmd/goshtoso@"$GOSHTOSO_VERSION" -theme -out=css/goshtoso-theme.css
+go run github.com/araihu/goshtoso/cmd/goshtoso@"$GOSHTOSO_VERSION" -source-path
 ```
 
 ## Public Surface Guardrails

@@ -15,10 +15,14 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `go run ./cmd/runtimegen -check`
   - `npx --yes skills add . --list`
   - `npx --yes skills use . --skill using-goshtoso`
+  - confirm the installed `using-goshtoso` copy contains `SKILL.md`,
+    `agents/openai.yaml`, and every `references/*.md` file
+  - confirm streamed `skills use` output contains the complete required
+    discovery pass without depending on bundled references
   - `just site-current-source-integration`
   - `just site-pinned-dependency-deployability`
   - `scripts/run-release-coverage.sh --local-dry-run`
-- Check that generated files have no drift:
+- Check that generated and public distribution files have no drift:
   - `*_templ.go`
   - `assets/styles.css`
   - `assets/goshtoso-theme.css`
@@ -28,7 +32,12 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `docs/RUNTIME_DEPENDENCIES.md`
   - `site/internal/pages/demo/contentpages/legal/runtime_attributions_gen.go`
   - `.claude/skills/using-goshtoso/components-reference.md`
+  - `.agents/skills/using-goshtoso/SKILL.md`
+  - `.agents/skills/using-goshtoso/agents/openai.yaml`
   - `.agents/skills/using-goshtoso/references/components-reference.md`
+  - `.agents/skills/using-goshtoso/references/design-intelligence.md`
+  - `.agents/skills/using-goshtoso/references/ecosystem-discovery.md`
+  - `.agents/skills/using-goshtoso/references/runtime-integration.md`
   - `.agents/skills/using-goshtoso/references/application-patterns.md`
   - `.agents/skills/using-goshtoso/references/visual-acceptance.md`
   - `.agents/skills/using-goshtoso/references/adversarial-acceptance.md`
