@@ -5,31 +5,12 @@ on:
     types: [araihu-assets-released]
   workflow_dispatch:
     inputs:
-      assets_repository:
-        description: Release repository
-        required: true
-        default: araihu/assets
-        type: string
-      assets_revision:
-        description: Full release commit SHA
-        required: true
-        type: string
-      release:
-        description: Stable release tag (vX.Y.Z)
-        required: true
-        type: string
-      release_url:
-        description: Immutable tar.gz release URL
-        required: true
-        type: string
-      release_sha256:
-        description: Release archive SHA-256
-        required: true
-        type: string
-      release_json_sha256:
-        description: release.json SHA-256
-        required: true
-        type: string
+      assets_repository: {description: Release repository, required: true, default: araihu/assets, type: string}
+      assets_revision: {description: Full release commit SHA, required: true, type: string}
+      release: {description: Stable release tag (vX.Y.Z), required: true, type: string}
+      release_url: {description: Immutable tar.gz release URL, required: true, type: string}
+      release_sha256: {description: Release archive SHA-256, required: true, type: string}
+      release_json_sha256: {description: release.json SHA-256, required: true, type: string}
 
 permissions:
   contents: read
@@ -49,35 +30,22 @@ jobs:
       RELEASE_SHA256: ${{ github.event.client_payload.release_sha256 || inputs.release_sha256 }}
       RELEASE_JSON_SHA256: ${{ github.event.client_payload.release_json_sha256 || inputs.release_json_sha256 }}
     steps:
-      - name: Validate immutable release identity
+      - name: Check out Goshtoso read-only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate and materialize immutable handoff
         shell: bash
         run: |
           set -euo pipefail
-          test "$ASSETS_REPOSITORY" = "araihu/assets"
+          test "$ASSETS_REPOSITORY" = araihu/assets
           [[ "$ASSETS_REVISION" =~ ^[0-9a-f]{40}$ ]]
           [[ "$RELEASE" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
           [[ "$RELEASE_SHA256" =~ ^[0-9a-f]{64}$ ]]
           [[ "$RELEASE_JSON_SHA256" =~ ^[0-9a-f]{64}$ ]]
-          expected_url="https://github.com/araihu/assets/releases/download/${RELEASE}/araihu-assets-${RELEASE}.tar.gz"
-          test "$RELEASE_URL" = "$expected_url"
-
-      - name: Verify tag resolves to dispatched revision
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          object=$(gh api "repos/araihu/assets/git/ref/tags/${RELEASE}" \
-            --jq '.object.type + " " + .object.sha')
-          read -r object_type object_sha <<< "$object"
-          if test "$object_type" = tag; then
-            object=$(gh api "repos/araihu/assets/git/tags/${object_sha}" \
-              --jq '.object.type + " " + .object.sha')
-            read -r object_type object_sha <<< "$object"
-          fi
-          test "$object_type" = commit
-          test "$object_sha" = "$ASSETS_REVISION"
-
+          test "$RELEASE_URL" = "https://github.com/araihu/assets/releases/download/$RELEASE/araihu-assets-$RELEASE.tar.gz"
+          jq -cn --arg assets_repository "$ASSETS_REPOSITORY" --arg assets_revision "$ASSETS_REVISION" --arg release "$RELEASE" --arg release_url "$RELEASE_URL" --arg release_sha256 "$RELEASE_SHA256" --arg release_json_sha256 "$RELEASE_JSON_SHA256" \
+            '{assets_repository:$assets_repository,assets_revision:$assets_revision,release:$release,release_url:$release_url,release_sha256:$release_sha256,release_json_sha256:$release_json_sha256}' > .assets-handoff.json
       - name: Create selected-repository App token
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -89,68 +57,21 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
           permission-issues: read
-
-      - name: Check out Goshtoso
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Validate and update fallback assets through Dagger
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
         with:
-          token: ${{ steps.app-token.outputs.token }}
-          persist-credentials: false
-
-      - name: Set up Go
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version: '1.26.5'
-          cache: true
-
-      - name: Download and verify release once
-        id: archive
+          version: '0.21.8'
+          verb: call
+          args: update-araihu-assets --source=. --metadata=.assets-handoff.json --github-token=env:ASSETS_GITHUB_TOKEN --cache-partition=trusted-assets --run-nonce=${{ github.run_id }}-${{ github.run_attempt }} export --path=.dagger-assets
+        env:
+          ASSETS_GITHUB_TOKEN: ${{ github.token }}
+      - name: Materialize allowlisted update
         shell: bash
         run: |
           set -euo pipefail
-          archive="$RUNNER_TEMP/araihu-assets-${RELEASE}.tar.gz"
-          extracted="$RUNNER_TEMP/araihu-assets-${RELEASE}"
-          curl --fail --location --silent --show-error --retry 3 \
-            --output "$archive" "$RELEASE_URL"
-          printf '%s  %s\n' "$RELEASE_SHA256" "$archive" \
-            | sha256sum --check --strict
-          while IFS= read -r member; do
-            case "$member" in
-              /*|../*|*/../*|*/..) echo "unsafe archive member: $member" >&2; exit 1 ;;
-            esac
-          done < <(tar --list --gzip --file "$archive")
-          if tar --list --verbose --gzip --file "$archive" | grep --extended-regexp --quiet '^[lh]'; then
-            echo "release archive contains a link" >&2
-            exit 1
-          fi
-          mkdir "$extracted"
-          tar --extract --gzip --file "$archive" --directory "$extracted" \
-            --no-same-owner --no-same-permissions
-          echo "release-dir=$extracted" >> "$GITHUB_OUTPUT"
-
-      - name: Update allowlisted fallback assets
-        shell: bash
-        run: |
-          set -euo pipefail
-          args=(
-            -release-dir "${{ steps.archive.outputs.release-dir }}"
-            -assets-repository "$ASSETS_REPOSITORY"
-            -assets-revision "$ASSETS_REVISION"
-            -release "$RELEASE"
-            -release-url "$RELEASE_URL"
-            -release-sha256 "$RELEASE_SHA256"
-            -release-json-sha256 "$RELEASE_JSON_SHA256"
-          )
-          go run ./cmd/araihu-assets-update "${args[@]}"
-          first_diff="$RUNNER_TEMP/first.diff"
-          second_diff="$RUNNER_TEMP/second.diff"
-          git diff --binary > "$first_diff"
-          go run ./cmd/araihu-assets-update "${args[@]}"
-          git diff --binary > "$second_diff"
-          cmp "$first_diff" "$second_diff"
-
-      - name: Run focused updater tests
-        run: go test ./internal/araihuassets ./cmd/araihu-assets-update -count=1
-
+          for path in araihu-assets.json examples/getting-started/araihu.css assets/favicon.svg assets/images/goshtoso-logo.svg assets/images/goshtoso-mark.svg; do
+            install -D ".dagger-assets/$path" "$path"
+          done
       - name: Select existing labels only
         id: labels
         shell: bash
@@ -158,20 +79,12 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
-          available=$(gh label list --repo "$GITHUB_REPOSITORY" --limit 1000 \
-            --json name --jq '.[].name')
+          available=$(gh label list --repo "$GITHUB_REPOSITORY" --limit 1000 --json name --jq '.[].name')
           selected=""
           for label in dependencies assets; do
-            if grep --fixed-strings --line-regexp --quiet "$label" <<< "$available"; then
-              selected+="${selected:+$'\n'}$label"
-            fi
+            if grep -Fxq "$label" <<< "$available"; then selected+="${selected:+$'\n'}$label"; fi
           done
-          {
-            echo 'labels<<EOF'
-            printf '%s\n' "$selected"
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
-
+          { echo 'labels<<EOF'; printf '%s\n' "$selected"; echo EOF; } >> "$GITHUB_OUTPUT"
       - name: Create or update fallback asset PR
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:

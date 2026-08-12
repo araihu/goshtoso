@@ -3,25 +3,24 @@ name: Code CI
 on:
   pull_request:
     branches: [main]
-    paths-ignore:
-      - '**/*.md'
+    paths-ignore: ['**/*.md']
   push:
     branches: [main]
-    paths-ignore:
-      - '**/*.md'
+    paths-ignore: ['**/*.md']
 
-# PRs cancel superseded runs per head ref; main pushes each get a unique group
-# (run_id) so rapid merges don't cancel the coverage/deploy jobs mid-flight.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+permissions:
+  contents: read
+
 env:
-  GO_VERSION: '1.26.5'
-  NODE_VERSION: '24.19.0'
-  TEMPL_VERSION: 'v0.3.1020'
-  PLAYWRIGHT_VERSION: 'v0.6100.0'
-  GOLANGCI_LINT_VERSION: 'v2.12.2'
+  CACHE_PARTITION: >-
+    ${{
+      github.event_name == 'push' && 'trusted-main' ||
+      'untrusted-github'
+    }}
 
 jobs:
   lint-build:
@@ -30,214 +29,51 @@ jobs:
       ${{
         github.event_name == 'pull_request' &&
         contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action) &&
-        github.event.pull_request.draft == false &&
-        github.event.pull_request.user.login == github.actor &&
-        github.event.pull_request.base.repo.full_name == github.repository &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        github.event.pull_request.head.repo.fork == false &&
-        contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
-        fromJSON('["self-hosted","Linux","X64","hostinger-vps"]') ||
-        'ubuntu-24.04'
+        github.event.pull_request.draft == false && github.event.pull_request.user.login == github.actor &&
+        github.event.pull_request.base.repo.full_name == github.repository && github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.fork == false && contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
+        fromJSON('["self-hosted","Linux","X64","hostinger-vps-pr"]') || 'ubuntu-24.04'
       }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-
-      - name: Configure job-local tools
+      - name: Dagger lint, drift, and build gates (embedded CLI)
+        if: runner.environment == 'self-hosted'
+        shell: bash
         run: |
           set -euo pipefail
-          tool_bin="$RUNNER_TEMP/go-bin"
-          mkdir -p "$tool_bin"
-          echo "GOBIN=$tool_bin" >> "$GITHUB_ENV"
-          echo "$tool_bin" >> "$GITHUB_PATH"
-
-      - uses: actions/setup-go@v7
+          test "$(dagger version | awk '{print $2}')" = v0.21.8
+          dagger call lint-build --source=. --cache-partition="$CACHE_PARTITION"
+      - name: Dagger lint, drift, and build gates
+        if: runner.environment != 'self-hosted'
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
         with:
-          go-version: ${{ env.GO_VERSION }}
-          # Hostinger runners are ephemeral. setup-go's post-job cache save can
-          # outlive the runner lease and strand the workflow after every real
-          # gate has passed.
-          cache: false
+          version: '0.21.8'
+          verb: call
+          args: lint-build --source=. --cache-partition=${{ env.CACHE_PARTITION }}
 
-      - uses: actions/cache@v6
-        with:
-          path: .cache/muamba
-          key: muamba-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('muamba.yaml') }}
-
-      - name: Verify Muamba acquisition and generated runtime
-        run: |
-          go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba
-          go tool muamba verify --strict --target linux/amd64 --cache-dir .cache/muamba
-          go tool muamba generate-go --strict --check --target linux/amd64 --dir assets --output muamba_gen.go
-          go run ./cmd/runtimegen -check
-
-      - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
-
-      - name: templ generate drift check
-        run: |
-          templ generate
-          git diff --exit-code -- '*_templ.go' \
-            || { echo "::error::templ generate drift — run 'templ generate' and commit"; exit 1; }
-
-      - name: Tailwind CSS + theme drift check
-        run: |
-          go run ./cmd/themegen
-          .tools/tailwindcss -i css/main.css -o assets/styles.css
-          git diff --exit-code -- assets/styles.css assets/goshtoso-theme.css \
-            || { echo "::error::css/theme drift — run 'just css' and commit assets/styles.css + assets/goshtoso-theme.css"; exit 1; }
-
-      - name: using-goshtoso skill reference drift check
-        run: |
-          go run ./cmd/skillgen
-          git diff --exit-code -- \
-            .agents/skills/using-goshtoso/references/components-reference.md \
-            .claude/skills/using-goshtoso/components-reference.md \
-            || { echo "::error::using-goshtoso skill reference is stale — run 'go run ./cmd/skillgen' and commit"; exit 1; }
-
-      - name: Heroicons bindings drift check
-        run: |
-          go run ./cmd/iconcatalog \
-            -catalog internal/iconcatalog/testdata/heroicons-catalog.json \
-            -namespace ui -product heroicons \
-            -sprite-url /assets/icons/heroicons.svg \
-            -package heroicons -const-prefix Icon \
-            -out components/icon/heroicons/names_gen.go -check \
-            || { echo "::error::Heroicons bindings are stale — run iconcatalog and commit names_gen.go"; exit 1; }
-
-      - name: First-party JavaScript lint + drift check
-        run: |
-          go run ./cmd/jslint
-          go run ./cmd/jsbuild -check \
-            || { echo "::error::first-party JavaScript is stale — run 'go run ./cmd/jsbuild' and commit"; exit 1; }
-
-      - name: go mod tidy drift check
-        run: |
-          go mod tidy
-          git diff --exit-code -- go.mod go.sum \
-            || { echo "::error::go.mod/go.sum drift — run 'go mod tidy' and commit"; exit 1; }
-
-      - name: gofmt
-        run: |
-          out=$(gofmt -l .)
-          if [ -n "$out" ]; then
-            echo "::error::gofmt drift in:"
-            echo "$out"
-            exit 1
-          fi
-
-      - name: go vet
-        run: go vet ./...
-
-      - name: golangci-lint (library, root module)
-        run: |
-          set -euo pipefail
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh \
-            | sh -s -- -b "$GOBIN" "${GOLANGCI_LINT_VERSION}"
-          "$GOBIN/golangci-lint" run --timeout 5m
-
-      # Current-source integration: the site builds against the root library at
-      # this commit through a throwaway workspace. The pinned-dependency
-      # deployability contract runs separately in Required CI with GOWORK=off.
-      - name: Current-source integration workspace (root library + site)
-        run: go work init . ./site
-
-      - name: go vet (site module)
-        run: cd site && go vet ./...
-
-      - name: golangci-lint (site module)
-        run: cd site && "$GOBIN/golangci-lint" run --timeout 5m
-
-      - name: Build server (current-source integration)
-        run: |
-          GOSHTOSO_DOCS_VERSION="$(cd site && GOWORK=off go list -m -f '{{.Version}}' github.com/araihu/goshtoso)"
-          go build \
-            -ldflags "-X github.com/araihu/goshtoso/site/internal/buildinfo.goDocsVersion=${GOSHTOSO_DOCS_VERSION}" \
-            -o bin/server ./site/cmd/server
-
-  # Single test runner: executes the same root-unit + site-unit + E2E sets the
-  # old unit-test and e2e jobs ran, but coverage-instrumented — so tests run
-  # once, not twice. Unit tests remain unconditional; Playwright uses the
-  # conservative impact selector. Partial coverage never updates the badge.
   test:
     name: Tests + coverage
     runs-on: >-
       ${{
         github.event_name == 'pull_request' &&
         contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action) &&
-        github.event.pull_request.draft == false &&
-        github.event.pull_request.user.login == github.actor &&
-        github.event.pull_request.base.repo.full_name == github.repository &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        github.event.pull_request.head.repo.fork == false &&
-        contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
-        fromJSON('["self-hosted","Linux","X64","hostinger-vps"]') ||
-        'ubuntu-24.04'
+        github.event.pull_request.draft == false && github.event.pull_request.user.login == github.actor &&
+        github.event.pull_request.base.repo.full_name == github.repository && github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.fork == false && contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
+        fromJSON('["self-hosted","Linux","X64","hostinger-vps-pr"]') || 'ubuntu-24.04'
       }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-
-      - name: Configure job-local tools
-        run: |
-          set -euo pipefail
-          tool_bin="$RUNNER_TEMP/go-bin"
-          browser_path="$HOME/.cache/ms-playwright"
-          mkdir -p "$tool_bin" "$browser_path"
-          {
-            echo "GOBIN=$tool_bin"
-            echo "PLAYWRIGHT_BROWSERS_PATH=$browser_path"
-          } >> "$GITHUB_ENV"
-          echo "$tool_bin" >> "$GITHUB_PATH"
-
-      - uses: actions/setup-go@v7
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          # Keep ephemeral Hostinger jobs free of setup-go post-job cache work.
-          cache: false
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - uses: actions/cache@v6
-        with:
-          path: .cache/muamba
-          key: muamba-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('muamba.yaml') }}
-
-      - name: Verify Muamba acquisition and generated runtime
-        run: |
-          go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba
-          go tool muamba verify --strict --target linux/amd64 --cache-dir .cache/muamba
-          go tool muamba generate-go --strict --check --target linux/amd64 --dir assets --output muamba_gen.go
-          go run ./cmd/runtimegen -check
-
-      - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
-
-      - name: Install Playwright + Chromium
-        run: |
-          set -euo pipefail
-          go install github.com/mxschmitt/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
-          "$GOBIN/playwright" install --with-deps chromium
-
-      - name: Current-source integration workspace
-        run: go work init . ./site
-
-      - name: Unconditional root and site unit coverage
-        run: scripts/run-component-coverage.sh --phase units
-
-      - name: External runtime-manifest consumer contract
-        run: cd tests/external/runtime-manifest && GOWORK=off go test ./... -count=1
-
-      - name: Select focused E2E identities
-        id: e2e-impact
+      - name: Materialize conservative E2E change stream
+        shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -246,65 +82,54 @@ jobs:
           PUSH_HEAD_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            if ! start="$(git merge-base "$PR_BASE_SHA" "$PR_HEAD_SHA")"; then
-              start="$PR_BASE_SHA"
+          if [[ "$EVENT_NAME" == pull_request ]]; then
+            if ! base=$(git merge-base "$PR_BASE_SHA" "$PR_HEAD_SHA"); then
+              printf 'M\0.dagger-unsafe-range\0' > .e2e-changes
+              exit 0
             fi
-            head="$PR_HEAD_SHA"
+            head=$PR_HEAD_SHA
           else
-            start="$PUSH_BEFORE_SHA"
-            head="$PUSH_HEAD_SHA"
+            base=$PUSH_BEFORE_SHA
+            head=$PUSH_HEAD_SHA
           fi
-          go run ./cmd/e2eimpact --base "$start" --head "$head" > .e2e-impact.json
-          cat .e2e-impact.json
-          {
-            echo "### Playwright impact"
-            echo
-            echo '```json'
-            cat .e2e-impact.json
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload E2E impact decision
-        uses: actions/upload-artifact@v7
-        with:
-          name: e2e-impact
-          path: .e2e-impact.json
-          retention-days: 7
-
-      - name: Generate templ + CSS
-        run: |
-          templ generate
-          .tools/tailwindcss -i css/main.css -o assets/styles.css
-
-      - name: Current-source theme catalog E2E listing and run
-        run: scripts/run-focused-e2e.sh --current-source-theme-catalog
-
-      # The merged coverage profile uses Go's native 1.20+ coverage data format
-      # so package tests and the coverage-instrumented demo server can drive
-      # the publishable library without counting demo-site package coverage.
-      - name: Focused E2E + merged component coverage
-        id: coverage
+          if [[ ! "$base" =~ ^[0-9a-f]{40}$ || "$base" == 0000000000000000000000000000000000000000 ]] ||
+             ! git merge-base --is-ancestor "$base" "$head"; then
+            printf 'M\0.dagger-unsafe-range\0' > .e2e-changes
+          else
+            git diff --name-status -z -M "$base" "$head" > .e2e-changes
+          fi
+      - name: Dagger unit, E2E, and coverage gates (embedded CLI)
+        if: runner.environment == 'self-hosted'
+        shell: bash
         run: |
           set -euo pipefail
-          scripts/run-component-coverage.sh --phase e2e-merge --impact .e2e-impact.json
-          total_line="$(grep '^total:' .coverage/coverage-func.txt)"
-          echo "$total_line"
-          {
-            echo "### Partial component Go coverage"
-            echo
-            echo "Focused Playwright results never update the authoritative coverage badge."
-            echo
-            echo '```text'
-            echo "$total_line"
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload E2E artifacts on failure
-        if: failure()
-        uses: actions/upload-artifact@v7
+          test "$(dagger version | awk '{print $2}')" = v0.21.8
+          dagger call tests --source=. --changes=.e2e-changes --cache-partition="$CACHE_PARTITION" --run-nonce="${{ github.run_id }}-${{ github.run_attempt }}" export --path=.dagger-output
+      - name: Dagger unit, E2E, and coverage gates
+        if: runner.environment != 'self-hosted'
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
+        with:
+          version: '0.21.8'
+          verb: call
+          args: tests --source=. --changes=.e2e-changes --cache-partition=${{ env.CACHE_PARTITION }} --run-nonce=${{ github.run_id }}-${{ github.run_attempt }} export --path=.dagger-output
+      - name: Upload E2E impact decision
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        with:
+          name: e2e-impact
+          path: .dagger-output/e2e-impact.json
+          retention-days: 7
+      - name: Upload E2E artifacts
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
         with:
           name: e2e-results
-          path: site/tests/e2e/test-results/
+          path: |
+            .dagger-output/tests.log
+            .dagger-output/coverage/
+            .dagger-output/e2e-results/
           retention-days: 7
           if-no-files-found: ignore
+      - name: Propagate test status
+        if: always()
+        run: test "$(cat .dagger-output/status)" = 0
