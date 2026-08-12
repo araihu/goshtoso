@@ -3,24 +3,32 @@ name: GitHub-hosted Runner Smoke Test
 on:
   workflow_dispatch:
   push:
-    paths:
-      - .github/workflows/runner-smoke-test.yml
+    paths: ['.github/workflows/runner-smoke-test.yml', '.dagger/**', 'dagger.json']
+
+permissions:
+  contents: read
 
 jobs:
   smoke:
     name: GitHub-hosted runner smoke test
     runs-on: ubuntu-24.04
     steps:
-      - name: Runner identity
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Audit committed Dagger bootstrap lock
+        run: npm audit --prefix .dagger --package-lock-only --omit=dev --audit-level=high
+      - name: Materialize provider Git identity
+        shell: bash
+        env:
+          REVISION: ${{ github.sha }}
         run: |
-          echo "hostname: $(hostname)"
-          echo "uname: $(uname -a)"
-          echo "whoami: $(whoami)"
-          echo "pwd: $(pwd)"
-
-      - uses: actions/checkout@v7
-
-      - name: Repo checkout sanity
-        run: |
-          echo "git rev: $(git rev-parse HEAD)"
-          ls -la | head -20
+          set -euo pipefail
+          [[ "$REVISION" =~ ^[0-9a-f]{40}$ ]]
+          jq -cn --arg revision "$REVISION" '{revision:$revision}' > .runner-identity.json
+      - name: Runner-to-Dagger smoke proof
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
+        with:
+          version: '0.21.8'
+          verb: call
+          args: smoke --source=. --identity=.runner-identity.json --run-nonce=${{ github.run_id }}-${{ github.run_attempt }}

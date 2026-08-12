@@ -297,6 +297,38 @@ go work init . ./site
 
 ## Development
 
+### Dagger CI locally
+
+All repository CI gates are implemented by the Dagger module pinned to
+`v0.21.8`; GitHub Actions only supplies event routing, immutable identities,
+secrets, and artifact/publication adapters. Run the same safe gates locally:
+
+```bash
+nonce=$(uuidgen)
+dagger call lint-build --source=. --cache-partition=local
+dagger call required --source=. --cache-partition=local
+dagger call docs --source=. --cache-partition=local
+
+# Supply a committed range for conservative focused E2E selection. Dirty
+# staged, unstaged, or untracked source forces the full suite so selection and
+# the Dagger source snapshot cannot diverge.
+base=$(git merge-base origin/main HEAD)
+scripts/materialize-e2e-changes "$base" HEAD .e2e-changes
+dagger call tests --source=. --changes=.e2e-changes \
+  --cache-partition=local --run-nonce="$nonce" export --path=.dagger-output
+```
+
+Release verification is also safe locally and performs no publication:
+
+```bash
+dagger call release-verify --source=. --cache-partition=local \
+  --run-nonce="$(uuidgen)" export --path=.coverage
+```
+
+Cache namespaces are explicitly partitioned into `local`, trusted CI, and
+untrusted CI domains. Every effectful or externally mutable entry point also
+requires a fresh nonce; GitHub uses `run_id-run_attempt`.
+
 Useful commands from the repo root:
 
 ```bash

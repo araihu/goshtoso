@@ -3,16 +3,10 @@ name: Docs
 on:
   pull_request:
     branches: [main]
-    paths:
-      - '**/*.md'
-      - '.github/workflows/docs.yml'
-      - '.lychee.toml'
+    paths: ['**/*.md', '.github/workflows/docs.yml', '.lychee.toml', '.dagger/**', 'dagger.json']
   push:
     branches: [main]
-    paths:
-      - '**/*.md'
-      - '.github/workflows/docs.yml'
-      - '.lychee.toml'
+    paths: ['**/*.md', '.github/workflows/docs.yml', '.lychee.toml', '.dagger/**', 'dagger.json']
 
 concurrency:
   group: docs-${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
@@ -24,23 +18,36 @@ permissions:
 jobs:
   links:
     name: Markdown links
+    env:
+      CACHE_PARTITION: >-
+        ${{
+          github.event_name == 'push' && 'trusted-main' ||
+          'untrusted-github'
+        }}
     runs-on: >-
       ${{
         github.event_name == 'pull_request' &&
         contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action) &&
-        github.event.pull_request.draft == false &&
-        github.event.pull_request.user.login == github.actor &&
-        github.event.pull_request.base.repo.full_name == github.repository &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        github.event.pull_request.head.repo.fork == false &&
-        contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
-        fromJSON('["self-hosted","Linux","X64","hostinger-vps"]') ||
-        'ubuntu-latest'
+        github.event.pull_request.draft == false && github.event.pull_request.user.login == github.actor &&
+        github.event.pull_request.base.repo.full_name == github.repository && github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.repo.fork == false && contains(fromJSON(vars.HOSTINGER_PR_ACTORS_JSON || '[]'), github.actor) &&
+        fromJSON('["self-hosted","Linux","X64","hostinger-vps-pr"]') || 'ubuntu-latest'
       }}
     steps:
-      - uses: actions/checkout@v7
-      - name: Check links
-        uses: lycheeverse/lychee-action@v2.9.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          args: --config .lychee.toml './**/*.md'
-          fail: true
+          persist-credentials: false
+      - name: Dagger Markdown link gate (embedded CLI)
+        if: runner.environment == 'self-hosted'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(dagger version | awk '{print $2}')" = v0.21.8
+          dagger call docs --source=. --cache-partition="$CACHE_PARTITION"
+      - name: Dagger Markdown link gate
+        if: runner.environment != 'self-hosted'
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
+        with:
+          version: '0.21.8'
+          verb: call
+          args: docs --source=. --cache-partition=${{ env.CACHE_PARTITION }}

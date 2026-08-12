@@ -2,18 +2,11 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
   contents: write
-
-env:
-  GO_VERSION: '1.26.5'
-  NODE_VERSION: '24.19.0'
-  TEMPL_VERSION: 'v0.3.1020'
-  PLAYWRIGHT_VERSION: 'v0.6100.0'
 
 jobs:
   pre-release:
@@ -23,106 +16,51 @@ jobs:
       coverage-percent: ${{ steps.coverage.outputs.percent }}
       coverage-color: ${{ steps.coverage.outputs.color }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.ref }}
-
-      - uses: actions/setup-go@v7
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Dagger release-equivalent gates
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
         with:
-          go-version: ${{ env.GO_VERSION }}
-
-      - uses: actions/setup-node@v7
+          version: '0.21.8'
+          verb: call
+          args: release-verify --source=. --cache-partition=trusted-release --run-nonce=${{ github.run_id }}-${{ github.run_attempt }} export --path=.coverage
+      - name: Upload release diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - uses: actions/cache@v6
-        with:
-          path: .cache/muamba
-          key: muamba-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('muamba.yaml') }}
-
-      - name: Install pinned templ
-        run: go install github.com/a-h/templ/cmd/templ@${{ env.TEMPL_VERSION }}
-
-      - name: Prime and verify every Muamba target
-        run: |
-          set -euo pipefail
-          for target in darwin/amd64 darwin/arm64 linux/amd64 linux/arm64 windows/amd64; do
-            go tool muamba sync --strict --target "$target" --cache-dir .cache/muamba tailwindcss/cli
-          done
-          go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba
-          go tool muamba verify --strict --all-platforms --cache-dir .cache/muamba
-          go tool muamba generate-go --strict --check --target linux/amd64 --dir assets --output muamba_gen.go
-          go run ./cmd/runtimegen -check
-
-      - name: Install Playwright + Chromium
-        run: |
-          set -euo pipefail
-          go install github.com/mxschmitt/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
-          playwright_bin="$(go env GOBIN)"
-          if [[ -z "$playwright_bin" ]]; then
-            playwright_bin="$(go env GOPATH)/bin"
-          fi
-          "$playwright_bin/playwright" install --with-deps chromium
-
-      - name: Create current-source workspace
-        run: go work init . ./site
-
-      - name: Rebuild and verify generated assets
-        run: |
-          set -euo pipefail
-          templ generate
-          go run ./cmd/themegen
-          go run ./cmd/jsbuild
-          go run ./cmd/skillgen
-          .tools/tailwindcss -i css/main.css -o assets/styles.css
-          git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null
-          git diff --exit-code -- \
-            '*_templ.go' assets/styles.css assets/goshtoso-theme.css assets/js/*.js \
-            .agents/skills/using-goshtoso/references/components-reference.md \
-            .claude/skills/using-goshtoso/components-reference.md
-
-      - name: Verify both site-module contracts
-        run: |
-          scripts/check-site-module current-source
-          scripts/check-site-module pinned-dependency
-
-      - name: Authoritative full component coverage
+          name: release-e2e-results
+          path: |
+            .coverage/release.log
+            .coverage/e2e-results/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Propagate release verification status
+        run: test "$(cat .coverage/status)" = 0
+      - name: Read authoritative coverage
         id: coverage
+        shell: bash
         run: |
           set -euo pipefail
-          scripts/run-release-coverage.sh --local-dry-run
-          percent="$(cat .coverage/percentage.txt)"
-          color="$(cat .coverage/color.txt)"
-          echo "percent=$percent" >> "$GITHUB_OUTPUT"
-          echo "color=$color" >> "$GITHUB_OUTPUT"
-          {
-            echo "### Authoritative release coverage"
-            echo
-            echo "Authored Go coverage: ${percent}%"
-            echo "Full generated-inclusive coverage: $(cat .coverage/full-percentage.txt)%"
-            echo
-            echo "Packages: $(wc -l < .coverage/component-packages.txt) publishable component packages"
-          } >> "$GITHUB_STEP_SUMMARY"
-
+          echo "percent=$(cat .coverage/percentage.txt)" >> "$GITHUB_OUTPUT"
+          echo "color=$(cat .coverage/color.txt)" >> "$GITHUB_OUTPUT"
       - name: Detect Codecov configuration
         id: codecov
+        shell: bash
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
+          set -euo pipefail
           configured=false
-          if [[ -n "$CODECOV_TOKEN" ]]; then
-            configured=true
-          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            echo "::error::CODECOV_TOKEN is required for tagged releases"
-            exit 1
-          else
-            echo "::warning::CODECOV_TOKEN is not configured; authored coverage will not be published"
+          if [[ -n "$CODECOV_TOKEN" ]]; then configured=true
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then exit 1
           fi
           echo "configured=$configured" >> "$GITHUB_OUTPUT"
-
       - name: Upload authored Go coverage to Codecov
         if: steps.codecov.outputs.configured == 'true'
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         with:
           disable_search: true
           fail_ci_if_error: true
@@ -130,33 +68,13 @@ jobs:
           flags: authored-go
           name: release-authored-go
           token: ${{ secrets.CODECOV_TOKEN }}
-
       - name: Upload authoritative coverage
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
         with:
           name: release-coverage
-          path: |
-            .coverage/component-packages.txt
-            .coverage/percentage.txt
-            .coverage/full-percentage.txt
-            .coverage/coverage-percent.txt
-            .coverage/coverage.out
-            .coverage/coverage-func.txt
-            .coverage/coverage.html
-            .coverage/coverage-authored.out
-            .coverage/coverage-authored-func.txt
-            .coverage/coverage-authored.html
+          path: .coverage/
           retention-days: 30
-          if-no-files-found: ignore
-
-      - name: Upload E2E artifacts on failure
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-e2e-results
-          path: site/tests/e2e/test-results/
-          retention-days: 14
           if-no-files-found: ignore
 
   publish:
@@ -165,54 +83,29 @@ jobs:
     needs: pre-release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.ref }}
-
-      - name: Build release notes
+          persist-credentials: false
+      - name: Download verified coverage handoff
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-coverage
+          path: .coverage
+      - name: Materialize release identity
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          tag="${GITHUB_REF_NAME}"
-          ver="$(sed -n '/^  tailwindcss:$/,/^  [^ ]/ s/^    version: "\([^"]*\)"/\1/p' muamba.yaml)"
-          test -n "$ver"
-          awk -v heading="## [${tag}]" '
-            index($0, heading) == 1 { found = 1; next }
-            found && /^## \[/ { exit }
-            found { print }
-            END { if (!found) exit 1 }
-          ' CHANGELOG.md > release-notes.md
-          {
-            echo
-            echo "## Build artifacts"
-            echo
-            echo "Built with Tailwind CSS ${ver}."
-            echo "Assets attached: \`styles.css\` and \`goshtoso-theme.css\`."
-          } >> release-notes.md
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v3
+          [[ "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          jq -cn --arg tag "$RELEASE_TAG" '{tag:$tag}' > .release-handoff.json
+      - name: Publish release and badges through Dagger
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
         with:
-          body_path: release-notes.md
-          files: |
-            assets/styles.css
-            assets/goshtoso-theme.css
-
-      - name: Update authoritative coverage badge gist
-        uses: schneegans/dynamic-badges-action@v1.9.0
-        with:
-          auth: ${{ secrets.GIST_TOKEN }}
-          gistID: fb3843c3a13793eb6cc0af638bc00ad4
-          filename: coverage.json
-          label: authored coverage
-          message: ${{ needs.pre-release.outputs.coverage-percent }}%
-          color: ${{ needs.pre-release.outputs.coverage-color }}
-
-      - name: Update release badge gist
-        uses: schneegans/dynamic-badges-action@v1.9.0
-        with:
-          auth: ${{ secrets.GIST_TOKEN }}
-          gistID: fb3843c3a13793eb6cc0af638bc00ad4
-          filename: release.json
-          label: release
-          message: ${{ github.ref_name }}
-          color: blue
+          version: '0.21.8'
+          verb: call
+          args: publish-release --source=. --coverage=.coverage --metadata=.release-handoff.json --github-token=env:GITHUB_RELEASE_TOKEN --gist-token=env:GIST_TOKEN --run-nonce=${{ github.run_id }}-${{ github.run_attempt }}
+        env:
+          GITHUB_RELEASE_TOKEN: ${{ github.token }}
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}

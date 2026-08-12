@@ -1,0 +1,9 @@
+{
+  "name": "goshtoso-dagger",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@dagger.io/dagger": "./sdk",
+    "typescript": "^6.0.3"
+  }
+}
