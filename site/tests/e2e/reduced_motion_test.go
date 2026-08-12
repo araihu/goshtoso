@@ -37,6 +37,8 @@ type transitionProbe struct {
 	Opacity            float64
 	SettleMS           float64
 	Frames             int
+	ImmediateProperty  string
+	ImmediateOpacity   float64
 }
 
 func motionNumber(t *testing.T, value any) float64 {
@@ -315,7 +317,7 @@ func assertTransitionProbe(t *testing.T, mode motionMode, family string, probe t
 		assert.Equalf(t, "none", probe.Property, "%s reduced transition property in %s", family, mode.name)
 		assert.Equalf(t, 0, probe.TransitionRunCount, "%s reduced transition events in %s", family, mode.name)
 		assert.InDeltaf(t, 1.0, probe.Opacity, 0.01, "%s reduced final opacity in %s", family, mode.name)
-		assert.LessOrEqualf(t, probe.SettleMS, 75.0, "%s reduced time to final state in %s", family, mode.name)
+		assert.LessOrEqualf(t, probe.Frames, 3, "%s reduced frames to final state in %s", family, mode.name)
 		return
 	}
 	assert.NotEqualf(t, "none", probe.Property, "%s normal transition property in %s", family, mode.name)
@@ -481,6 +483,9 @@ func assertTooltipMotionMode(t *testing.T, page playwright.Page, mode motionMode
 		tooltip.addEventListener('transitionrun', () => transitionRuns++);
 		const startedAt = performance.now();
 		trigger.click();
+		const immediateStyle = getComputedStyle(tooltip);
+		const immediateProperty = immediateStyle.transitionProperty;
+		const immediateOpacity = Number.parseFloat(immediateStyle.opacity);
 		let style;
 		let frames = 0;
 		while (frames < 120) {
@@ -497,6 +502,8 @@ func assertTooltipMotionMode(t *testing.T, page playwright.Page, mode motionMode
 			opacity: Number.parseFloat(style.opacity),
 			settle: performance.now() - startedAt,
 			frames,
+			immediateProperty,
+			immediateOpacity,
 		};
 	}`, nil)
 	require.NoError(t, err)
@@ -508,6 +515,8 @@ func assertTooltipMotionMode(t *testing.T, page playwright.Page, mode motionMode
 		Opacity:            motionNumber(t, clickResult["opacity"]),
 		SettleMS:           motionNumber(t, clickResult["settle"]),
 		Frames:             int(motionNumber(t, clickResult["frames"])),
+		ImmediateProperty:  clickResult["immediateProperty"].(string),
+		ImmediateOpacity:   motionNumber(t, clickResult["immediateOpacity"]),
 	}
 	assertTransitionProbe(t, mode, "click Tooltip", clickProbe, 100)
 	_, err = page.Evaluate(`async () => {
@@ -517,7 +526,7 @@ func assertTooltipMotionMode(t *testing.T, page playwright.Page, mode motionMode
 	require.NoError(t, err)
 	_, err = page.WaitForFunction(`() => getComputedStyle(document.querySelector('#motion-click')).display === 'none'`, nil)
 	require.NoError(t, err)
-	t.Logf("motion family=tooltip mode=%s hover_property=%s hover_duration_ms=%.1f hover_transition_runs=%d hover_opacity=%.3f hover_settle_ms=%.1f hover_frames=%d click_property=%s click_duration_ms=%.1f click_transition_runs=%d click_opacity=%.3f click_settle_ms=%.1f click_frames=%d", mode.name, hoverProbe.Property, hoverProbe.DurationMS, hoverProbe.TransitionRunCount, hoverProbe.Opacity, hoverProbe.SettleMS, hoverProbe.Frames, clickProbe.Property, clickProbe.DurationMS, clickProbe.TransitionRunCount, clickProbe.Opacity, clickProbe.SettleMS, clickProbe.Frames)
+	t.Logf("motion family=tooltip mode=%s hover_property=%s hover_duration_ms=%.1f hover_transition_runs=%d hover_opacity=%.3f hover_settle_ms=%.1f hover_frames=%d click_immediate_property=%s click_immediate_opacity=%.3f click_property=%s click_duration_ms=%.1f click_transition_runs=%d click_opacity=%.3f click_settle_ms=%.1f click_frames=%d", mode.name, hoverProbe.Property, hoverProbe.DurationMS, hoverProbe.TransitionRunCount, hoverProbe.Opacity, hoverProbe.SettleMS, hoverProbe.Frames, clickProbe.ImmediateProperty, clickProbe.ImmediateOpacity, clickProbe.Property, clickProbe.DurationMS, clickProbe.TransitionRunCount, clickProbe.Opacity, clickProbe.SettleMS, clickProbe.Frames)
 }
 
 func motionHandler(t *testing.T) http.Handler {
