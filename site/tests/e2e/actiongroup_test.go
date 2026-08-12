@@ -107,6 +107,9 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		require.NoError(t, err)
 
 		menu := overflow.Locator(`[role="menu"]`)
+		require.NoError(t, menu.WaitFor(playwright.LocatorWaitForOptions{
+			State: playwright.WaitForSelectorStateVisible,
+		}))
 		require.Equal(t, 0, actionGroupMustCount(t, menu.Locator(`[role="menu"]`)))
 		visibleItems := menu.Locator(`[role="menuitem"]:visible`)
 		_, err = page.WaitForFunction(`() =>

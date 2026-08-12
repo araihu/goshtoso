@@ -70,11 +70,22 @@ func TestFileinputCoverageDemo(t *testing.T) {
 
 	require.NoError(t, zone.DispatchEvent("dragleave", nil))
 	_, err = page.WaitForFunction(
-		"() => document.querySelector('#fileinput-default [data-fileinput-variant=\"dropzone\"]').className.includes('border-outline')",
+		`() => {
+			const zone = document.querySelector('#fileinput-default [data-fileinput-variant="dropzone"]')
+			return zone &&
+				Alpine.$data(zone).dragging === false &&
+				zone.classList.contains('border-control-outline') &&
+				!zone.classList.contains('border-primary')
+		}`,
 		nil,
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
 	)
-	require.NoError(t, err, "dragleave should restore the default border")
+	require.NoError(t, err, "dragleave should clear drag state and restore the default border")
+	dropZoneClass, err := zone.GetAttribute("class")
+	require.NoError(t, err)
+	require.Contains(t, dropZoneClass, "border-control-outline")
+	require.Contains(t, dropZoneClass, "dark:border-control-outline-dark")
+	require.NotContains(t, dropZoneClass, "border-primary")
 
 	// Selecting a file on the drop zone input keeps the page error-free and the
 	// hidden input retains the file (drop zone has no x-text display).

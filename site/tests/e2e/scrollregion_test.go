@@ -15,23 +15,8 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
-		HasTouch: new(true),
-		Viewport: &playwright.Size{Width: 720, Height: 900},
-	})
-	failures := watchPageFailures(page)
-	response, err := page.Goto(baseURL+"/components/scroll-region", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
-	})
-	require.NoError(t, err)
-	require.Equal(t, 200, response.Status(), "Scroll Region must have a direct documentation route")
-
-	root := page.Locator("#scroll-region-default [data-goshtoso-scroll-region]")
-	viewport := root.Locator("[data-goshtoso-scroll-viewport]")
-	require.NoError(t, root.WaitFor())
-	waitForScrollRegionPosition(t, page, "#scroll-region-default", "start")
-
 	t.Run("default and no-overflow", func(t *testing.T) {
+		page, viewport, failures := newScrollRegionTestPage(t)
 		require.Equal(t, "0", scrollRegionAttribute(t, viewport, "tabindex"))
 		_, err := page.WaitForFunction(`() => {
 			const viewport = document.querySelector("#scroll-region-no-overflow [data-goshtoso-scroll-viewport]");
@@ -42,30 +27,52 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 				start.hidden && end.hidden;
 		}`, nil)
 		require.NoError(t, err)
+		requireScrollRegionPageHealthy(t, page, failures)
 	})
 
 	t.Run("focused keyboard start middle and end", func(t *testing.T) {
-		require.NoError(t, viewport.Focus())
-		focused, err := viewport.Evaluate(`el => ({
-			active: document.activeElement === el,
-			outlineStyle: getComputedStyle(el).outlineStyle,
-			outlineWidth: getComputedStyle(el).outlineWidth,
-		})`, nil)
-		require.NoError(t, err)
-		focusState := focused.(map[string]any)
-		require.Equal(t, true, focusState["active"])
-		require.NotEqual(t, "none", focusState["outlineStyle"])
-		require.NotEqual(t, "0px", focusState["outlineWidth"])
+		t.Run("PageDown reaches the middle", func(t *testing.T) {
+			page, viewport, failures := newScrollRegionTestPage(t)
+			setScrollRegionPosition(t, page, "#scroll-region-default", "start")
+			require.NoError(t, viewport.Focus())
+			focused, err := viewport.Evaluate(`el => ({
+				active: document.activeElement === el,
+				outlineStyle: getComputedStyle(el).outlineStyle,
+				outlineWidth: getComputedStyle(el).outlineWidth,
+			})`, nil)
+			require.NoError(t, err)
+			focusState := focused.(map[string]any)
+			require.Equal(t, true, focusState["active"])
+			require.NotEqual(t, "none", focusState["outlineStyle"])
+			require.NotEqual(t, "0px", focusState["outlineWidth"])
 
-		require.NoError(t, viewport.Press("PageDown"))
-		waitForScrollRegionPosition(t, page, "#scroll-region-default", "middle")
-		require.NoError(t, viewport.Press("End"))
-		waitForScrollRegionPosition(t, page, "#scroll-region-default", "end")
-		require.NoError(t, viewport.Press("Home"))
-		waitForScrollRegionPosition(t, page, "#scroll-region-default", "start")
+			require.NoError(t, viewport.Press("PageDown"))
+			waitForScrollRegionPosition(t, page, "#scroll-region-default", "middle")
+			requireScrollRegionPageHealthy(t, page, failures)
+		})
+
+		t.Run("End reaches the end", func(t *testing.T) {
+			page, viewport, failures := newScrollRegionTestPage(t)
+			setScrollRegionPosition(t, page, "#scroll-region-default", "start")
+			require.NoError(t, viewport.Focus())
+			require.NoError(t, viewport.Press("End"))
+			waitForScrollRegionPosition(t, page, "#scroll-region-default", "end")
+			requireScrollRegionPageHealthy(t, page, failures)
+		})
+
+		t.Run("Home returns to the start", func(t *testing.T) {
+			page, viewport, failures := newScrollRegionTestPage(t)
+			setScrollRegionPosition(t, page, "#scroll-region-default", "end")
+			require.NoError(t, viewport.Focus())
+			require.NoError(t, viewport.Press("Home"))
+			waitForScrollRegionPosition(t, page, "#scroll-region-default", "start")
+			requireScrollRegionPageHealthy(t, page, failures)
+		})
 	})
 
 	t.Run("touch scroll updates boundary state", func(t *testing.T) {
+		page, viewport, failures := newScrollRegionTestPage(t)
+		setScrollRegionPosition(t, page, "#scroll-region-default", "start")
 		require.NoError(t, viewport.Focus())
 		box, err := viewport.BoundingBox()
 		require.NoError(t, err)
@@ -82,9 +89,11 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 		})
 		require.NoError(t, err)
 		waitForScrollRegionPosition(t, page, "#scroll-region-default", "middle")
+		requireScrollRegionPageHealthy(t, page, failures)
 	})
 
 	t.Run("zoom and three-theme mode matrix", func(t *testing.T) {
+		page, viewport, failures := newScrollRegionTestPage(t)
 		session, err := page.Context().NewCDPSession(page)
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = session.Detach() })
@@ -92,6 +101,8 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 		require.NoError(t, err)
 		_, err = page.WaitForFunction(`() => window.visualViewport && window.visualViewport.scale >= 1.9`, nil)
 		require.NoError(t, err)
+		setScrollRegionPosition(t, page, "#scroll-region-default", "start")
+		require.NoError(t, viewport.Focus())
 		require.NoError(t, viewport.Press("End"))
 		waitForScrollRegionPosition(t, page, "#scroll-region-default", "end")
 		_, err = session.Send("Emulation.setPageScaleFactor", map[string]any{"pageScaleFactor": 1})
@@ -115,8 +126,43 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 				})
 			}
 		}
+		requireScrollRegionPageHealthy(t, page, failures)
 	})
+}
 
+func newScrollRegionTestPage(t *testing.T) (playwright.Page, playwright.Locator, *pageFailures) {
+	t.Helper()
+	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
+		HasTouch: new(true),
+		Viewport: &playwright.Size{Width: 720, Height: 900},
+	})
+	failures := watchPageFailures(page)
+	response, err := page.Goto(baseURL+"/components/scroll-region", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.Equal(t, 200, response.Status(), "Scroll Region must have a direct documentation route")
+
+	root := page.Locator("#scroll-region-default [data-goshtoso-scroll-region]")
+	viewport := root.Locator("[data-goshtoso-scroll-viewport]")
+	require.NoError(t, root.WaitFor())
+	waitForScrollRegionPosition(t, page, "#scroll-region-default", "start")
+	return page, viewport, failures
+}
+
+func setScrollRegionPosition(t *testing.T, page playwright.Page, containerID, position string) {
+	t.Helper()
+	_, err := page.Evaluate(`([containerID, position]) => {
+		const viewport = document.querySelector(containerID + " [data-goshtoso-scroll-viewport]");
+		const max = viewport.scrollHeight - viewport.clientHeight;
+		viewport.scrollTop = position === "end" ? max : 0;
+	}`, []any{containerID, position})
+	require.NoError(t, err)
+	waitForScrollRegionPosition(t, page, containerID, position)
+}
+
+func requireScrollRegionPageHealthy(t *testing.T, page playwright.Page, failures *pageFailures) {
+	t.Helper()
 	waitForPageSettled(t, page)
 	failures.RequireEmpty(t)
 }

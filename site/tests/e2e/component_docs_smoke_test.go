@@ -93,10 +93,11 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
-	entries := slices.DeleteFunc(catalog.ComponentPages(), func(entry catalog.Entry) bool {
+	componentPages := catalog.ComponentPages()
+	entries := slices.DeleteFunc(slices.Clone(componentPages), func(entry catalog.Entry) bool {
 		return entry.Active == "app-shell"
 	})
-	require.Len(t, entries, 49)
+	require.Len(t, entries, len(componentPages)-1)
 
 	page := newPage(t, sharedBrowser)
 	failures := watchPageFailures(page)

@@ -3,6 +3,7 @@
 package e2e
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
@@ -24,8 +25,10 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 
 	page := newPage(t, browser)
 
-	componentPages := catalog.ComponentPages()
-	require.Len(t, componentPages, 50)
+	componentPages := slices.DeleteFunc(catalog.ComponentPages(), func(entry catalog.Entry) bool {
+		return entry.Active == "app-shell"
+	})
+	require.NotEmpty(t, componentPages)
 
 	_, err := page.Goto(baseURL+componentPages[0].Path, playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
@@ -37,11 +40,11 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		State:   playwright.WaitForSelectorStateVisible,
 		Timeout: playwright.Float(3000),
 	}))
+	componentLinkCount, err := sidebar.Locator("a[href^='/components/']").Count()
+	require.NoError(t, err)
+	require.Equal(t, len(componentPages), componentLinkCount)
 
 	for _, componentPage := range componentPages {
-		if componentPage.Active == "app-shell" {
-			continue
-		}
 		t.Run(componentPage.Title, func(t *testing.T) {
 			link := sidebar.Locator("a[href='" + componentPage.Path + "']").Filter(playwright.LocatorFilterOptions{
 				HasText: componentPage.Title,
