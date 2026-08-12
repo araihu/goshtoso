@@ -19,6 +19,7 @@ const NODE_IMAGE =
   "node:24.19.0-bookworm-slim@sha256:3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03"
 const TEMPL_VERSION = "v0.3.1020"
 const PLAYWRIGHT_VERSION = "v0.6100.0"
+const PLAYWRIGHT_DRIVER_VERSION = "1.61.1"
 const GOLANGCI_LINT_VERSION = "v2.12.2"
 const GOLANGCI_LINT_AMD64_SHA256 = "8df580d2670fed8fa984aac0507099af8df275e665215f5c7a2ae3943893a553"
 const GOLANGCI_LINT_ARM64_SHA256 = "44cd40a8c76c86755375adfeea52cfd3533cb43d7bd647771e0ae065e166df3a"
@@ -319,12 +320,13 @@ echo "published $TAG and badge documents"`
     const cacheNamespace = this.cacheNamespace(key)
     let project = this.goProject(source, key)
       .withEnvVariable("PLAYWRIGHT_BROWSERS_PATH", "/playwright")
+      .withEnvVariable("PLAYWRIGHT_DRIVER_PATH", "/playwright/driver")
       .withExec(["mkdir", "-p", "/playwright"])
     if (cacheNamespace !== undefined) {
       project = project.withMountedCache("/playwright", dag.cacheVolume(`goshtoso-${cacheNamespace}-playwright-${PLAYWRIGHT_VERSION}`), { sharing: CacheSharingMode.Locked })
     }
     return project
-      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/playwright || go install github.com/mxschmitt/playwright-go/cmd/playwright@${PLAYWRIGHT_VERSION}; test -f /playwright/.chromium-ready || { playwright install --with-deps chromium; touch /playwright/.chromium-ready; }`])
+      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/playwright || go install github.com/mxschmitt/playwright-go/cmd/playwright@${PLAYWRIGHT_VERSION}; ready=/playwright/.chromium-${PLAYWRIGHT_DRIVER_VERSION}-ready; if ! test -f "$ready" || ! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js" || ! test -x "$PLAYWRIGHT_DRIVER_PATH/node"; then rm -rf -- "$PLAYWRIGHT_DRIVER_PATH"; rm -f -- "$ready"; playwright install --with-deps chromium; test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"; test -x "$PLAYWRIGHT_DRIVER_PATH/node"; marker_tmp="$ready.tmp.$$"; : > "$marker_tmp"; mv -f -- "$marker_tmp" "$ready"; fi`])
   }
 
   private partition(value: string): string {

@@ -352,6 +352,101 @@ func TestDaggerSerializesSharedToolCacheWriters(t *testing.T) {
 	}
 }
 
+func TestDaggerCachesMatchingPlaywrightDriverAndBrowsers(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".dagger/src/index.ts"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	module := string(data)
+	for _, expected := range []string{
+		`const PLAYWRIGHT_VERSION = "v0.6100.0"`,
+		`const PLAYWRIGHT_DRIVER_VERSION = "1.61.1"`,
+		`.withEnvVariable("PLAYWRIGHT_DRIVER_PATH", "/playwright/driver")`,
+		`ready=/playwright/.chromium-${PLAYWRIGHT_DRIVER_VERSION}-ready`,
+		`! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"`,
+		`! test -x "$PLAYWRIGHT_DRIVER_PATH/node"`,
+		`rm -rf -- "$PLAYWRIGHT_DRIVER_PATH"; rm -f -- "$ready"`,
+		`playwright install --with-deps chromium; test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"; test -x "$PLAYWRIGHT_DRIVER_PATH/node"`,
+		`marker_tmp="$ready.tmp.$$"; : > "$marker_tmp"; mv -f -- "$marker_tmp" "$ready"`,
+		`goshtoso-${cacheNamespace}-playwright-${PLAYWRIGHT_VERSION}`,
+	} {
+		if !strings.Contains(module, expected) {
+			t.Fatalf("missing Playwright driver/browser cache contract %q", expected)
+		}
+	}
+}
+
+func TestPlaywrightWarmMarkerWithoutDriverReinstalls(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	bin := filepath.Join(root, "bin")
+	driver := filepath.Join(root, "playwright", "driver")
+	ready := filepath.Join(root, "playwright", ".chromium-1.61.1-ready")
+	installLog := filepath.Join(root, "install.log")
+	if err := os.MkdirAll(bin, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Dir(ready), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(driver, "package"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(driver, "package", "cli.js"), []byte("partial"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(ready, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	fake := `#!/bin/sh
+set -eu
+test "$*" = "install --with-deps chromium"
+test ! -e "$PLAYWRIGHT_DRIVER_PATH"
+test ! -e "$PLAYWRIGHT_READY"
+mkdir -p "$PLAYWRIGHT_DRIVER_PATH/package"
+: > "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"
+printf '#!/bin/sh\n' > "$PLAYWRIGHT_DRIVER_PATH/node"
+chmod +x "$PLAYWRIGHT_DRIVER_PATH/node"
+: > "$PLAYWRIGHT_INSTALL_LOG"
+`
+	if err := os.WriteFile(filepath.Join(bin, "playwright"), []byte(fake), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	script := `set -euo pipefail
+ready="$PLAYWRIGHT_READY"
+if ! test -f "$ready" || ! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js" || ! test -x "$PLAYWRIGHT_DRIVER_PATH/node"; then
+  rm -rf -- "$PLAYWRIGHT_DRIVER_PATH"
+  rm -f -- "$ready"
+  playwright install --with-deps chromium
+  test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"
+  test -x "$PLAYWRIGHT_DRIVER_PATH/node"
+  marker_tmp="$ready.tmp.$$"
+  : > "$marker_tmp"
+  mv -f -- "$marker_tmp" "$ready"
+fi`
+	cmd := exec.Command("bash", "-c", script)
+	cmd.Env = append(os.Environ(),
+		"PATH="+bin+":"+os.Getenv("PATH"),
+		"PLAYWRIGHT_DRIVER_PATH="+driver,
+		"PLAYWRIGHT_READY="+ready,
+		"PLAYWRIGHT_INSTALL_LOG="+installLog,
+	)
+	if output, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("warm marker recovery failed: %v\n%s", err, output)
+	}
+	for _, path := range []string{installLog, filepath.Join(driver, "package", "cli.js"), filepath.Join(driver, "node"), ready} {
+		if _, err := os.Stat(path); err != nil {
+			t.Fatalf("expected recovered Playwright artifact %s: %v", path, err)
+		}
+	}
+}
+
 func TestDaggerInstallsVerifiedGolangCILintArchives(t *testing.T) {
 	t.Parallel()
 	root, err := filepath.Abs("..")
