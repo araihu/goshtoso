@@ -309,10 +309,11 @@ dagger call lint-build --source=. --cache-partition=local
 dagger call required --source=. --cache-partition=local
 dagger call docs --source=. --cache-partition=local
 
-# Supply a committed range for conservative focused E2E selection. This
-# boundary file works from ordinary clones and linked Git worktrees alike.
+# Supply a committed range for conservative focused E2E selection. Dirty
+# staged, unstaged, or untracked source forces the full suite so selection and
+# the Dagger source snapshot cannot diverge.
 base=$(git merge-base origin/main HEAD)
-git diff --name-status -z -M "$base" HEAD > .e2e-changes
+scripts/materialize-e2e-changes "$base" HEAD .e2e-changes
 dagger call tests --source=. --changes=.e2e-changes \
   --cache-partition=local --run-nonce="$nonce" export --path=.dagger-output
 ```

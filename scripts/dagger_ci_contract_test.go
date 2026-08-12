@@ -267,3 +267,238 @@ func TestPullRequestsUseHostIsolatedPersistentDaggerCaches(t *testing.T) {
 		t.Fatal("PR cache namespace must stay centralized as constant pr behind the host-owned Engine boundary")
 	}
 }
+
+func TestDaggerTestsAcquireTailwindBeforeCSSBuild(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".dagger/src/index.ts"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	module := string(data)
+	start := strings.Index(module, "  tests(")
+	end := strings.Index(module, "  /** Standalone site/go.mod consumer contract")
+	if start < 0 || end <= start {
+		t.Fatal("cannot locate Dagger tests pipeline")
+	}
+	body := module[start:end]
+	acquire := strings.Index(body, "go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba tailwindcss/cli")
+	build := strings.Index(body, ".tools/tailwindcss -i css/main.css -o assets/styles.css")
+	if acquire < 0 || build <= acquire {
+		t.Fatalf("Dagger tests must acquire locked Tailwind before CSS build: acquire=%d build=%d", acquire, build)
+	}
+}
+
+func TestDaggerDocsExtractsLycheeFromVersionedArchiveDirectory(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".dagger/src/index.ts"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	module := string(data)
+	start := strings.Index(module, "  async docs(")
+	end := strings.Index(module, "  /** Full release-equivalent regeneration")
+	if start < 0 || end <= start {
+		t.Fatal("cannot locate Dagger docs pipeline")
+	}
+	body := module[start:end]
+	for _, expected := range []string{
+		"dir=lychee-$arch-unknown-linux-gnu",
+		`--strip-components=1 "$dir/lychee"`,
+	} {
+		if !strings.Contains(body, expected) {
+			t.Fatalf("Dagger docs must extract the versioned lychee archive member %q", expected)
+		}
+	}
+}
+
+func TestDaggerSerializesSharedToolCacheWriters(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".dagger/src/index.ts"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	module := string(data)
+	for _, expected := range []string{
+		"CacheSharingMode,",
+		`withMountedCache("/tools", dag.cacheVolume(`,
+		`withMountedCache("/playwright", dag.cacheVolume(`,
+	} {
+		if !strings.Contains(module, expected) {
+			t.Fatalf("missing shared tool cache contract %q", expected)
+		}
+	}
+	if strings.Count(module, "{ sharing: CacheSharingMode.Locked }") != 2 {
+		t.Fatal("tool and Playwright caches must both serialize check-then-install writers")
+	}
+}
+
+func TestDaggerInstallsVerifiedGolangCILintArchives(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".dagger/src/index.ts"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	module := string(data)
+	if strings.Contains(module, "raw.githubusercontent.com/golangci/golangci-lint") || strings.Contains(module, "install.sh | sh") {
+		t.Fatal("golangci-lint must not execute a remote installer script")
+	}
+	for _, expected := range []string{
+		`const GOLANGCI_LINT_AMD64_SHA256 = "8df580d2670fed8fa984aac0507099af8df275e665215f5c7a2ae3943893a553"`,
+		`const GOLANGCI_LINT_ARM64_SHA256 = "44cd40a8c76c86755375adfeea52cfd3533cb43d7bd647771e0ae065e166df3a"`,
+		`file=golangci-lint-2.12.2-linux-$arch.tar.gz`,
+		`dir=\${file%.tar.gz}`,
+		`echo "$sha  /tmp/golangci-lint.tgz" | sha256sum -c -`,
+		`--strip-components=1 "$dir/golangci-lint"`,
+	} {
+		if !strings.Contains(module, expected) {
+			t.Fatalf("missing verified golangci-lint archive contract %q", expected)
+		}
+	}
+}
+
+func TestLocalE2EChangeProviderPreservesCleanCommittedRange(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	provider := filepath.Join(root, "scripts/materialize-e2e-changes")
+	repo := newGitRepo(t)
+	base := strings.TrimSpace(runGitOutput(t, repo, "rev-parse", "HEAD"))
+	if err := os.WriteFile(filepath.Join(repo, "tracked.txt"), []byte("committed\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	runGit(t, repo, "add", "tracked.txt")
+	runGit(t, repo, "commit", "-qm", "change")
+	output := filepath.Join(repo, ".e2e-changes")
+	command := exec.Command(provider, base, "HEAD", output)
+	command.Dir = repo
+	if combined, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("materialize clean E2E changes: %v: %s", err, combined)
+	}
+	data, err := os.ReadFile(output)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(data) != "M\x00tracked.txt\x00" {
+		t.Fatalf("clean committed range changed bytes: %q", data)
+	}
+}
+
+func TestAssetsWorkflowPreservesDataFileModes(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".github/workflows/araihu-assets.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	workflow := string(data)
+	if !strings.Contains(workflow, `install -D -m 0644 ".dagger-assets/$path" "$path"`) {
+		t.Fatal("asset materialization must preserve non-executable 0644 modes")
+	}
+}
+
+func TestLocalE2EChangeProviderForcesFullForDirtySource(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	provider := filepath.Join(root, "scripts/materialize-e2e-changes")
+
+	for _, test := range []struct {
+		name  string
+		dirty func(t *testing.T, repo string)
+	}{
+		{name: "unstaged", dirty: func(t *testing.T, repo string) {
+			t.Helper()
+			if err := os.WriteFile(filepath.Join(repo, "tracked.txt"), []byte("unstaged\n"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+		}},
+		{name: "staged", dirty: func(t *testing.T, repo string) {
+			t.Helper()
+			if err := os.WriteFile(filepath.Join(repo, "tracked.txt"), []byte("staged\n"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			runGit(t, repo, "add", "tracked.txt")
+		}},
+		{name: "untracked", dirty: func(t *testing.T, repo string) {
+			t.Helper()
+			if err := os.WriteFile(filepath.Join(repo, "untracked.txt"), []byte("untracked\n"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+		}},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			repo := newGitRepo(t)
+			test.dirty(t, repo)
+			output := filepath.Join(repo, ".e2e-changes")
+			command := exec.Command(provider, "HEAD", "HEAD", output)
+			command.Dir = repo
+			if combined, err := command.CombinedOutput(); err != nil {
+				t.Fatalf("materialize E2E changes: %v: %s", err, combined)
+			}
+			data, err := os.ReadFile(output)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(data) != "M\x00.dagger-dirty-worktree\x00" {
+				t.Fatalf("dirty source did not force full E2E selection: %q", data)
+			}
+		})
+	}
+}
+
+func newGitRepo(t *testing.T) string {
+	t.Helper()
+	repo := t.TempDir()
+	runGit(t, repo, "init", "-q")
+	runGit(t, repo, "config", "user.name", "Dagger contract")
+	runGit(t, repo, "config", "user.email", "dagger-contract@invalid")
+	if err := os.WriteFile(filepath.Join(repo, "tracked.txt"), []byte("clean\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	runGit(t, repo, "add", "tracked.txt")
+	runGit(t, repo, "commit", "-qm", "baseline")
+	return repo
+}
+
+func runGit(t *testing.T, repo string, args ...string) {
+	t.Helper()
+	command := exec.Command("git", args...)
+	command.Dir = repo
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("git %s: %v: %s", strings.Join(args, " "), err, output)
+	}
+}
+
+func runGitOutput(t *testing.T, repo string, args ...string) string {
+	t.Helper()
+	command := exec.Command("git", args...)
+	command.Dir = repo
+	output, err := command.CombinedOutput()
+	if err != nil {
+		t.Fatalf("git %s: %v: %s", strings.Join(args, " "), err, output)
+	}
+	return string(output)
+}

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo "usage: scripts/materialize-e2e-changes <base> [head] [output]" >&2
+  exit 2
+}
+
+(( $# >= 1 && $# <= 3 )) || usage
+base=$1
+head=${2:-HEAD}
+output=${3:-.e2e-changes}
+
+output_dir=$(dirname -- "$output")
+test -d "$output_dir" || { echo "output directory does not exist: $output_dir" >&2; exit 1; }
+temporary=$(mktemp "${TMPDIR:-/tmp}/goshtoso-e2e-changes.XXXXXX")
+trap 'rm -f -- "$temporary"' EXIT
+
+force_full() {
+  printf 'M\0%s\0' "$1" > "$temporary"
+  mv -f -- "$temporary" "$output"
+  trap - EXIT
+}
+
+# A committed range cannot describe staged, unstaged, or untracked bytes that
+# Dagger includes in --source=.; force a conservative full E2E selection.
+if [[ -n "$(git status --porcelain=v1 --untracked-files=all)" ]]; then
+  force_full .dagger-dirty-worktree
+  exit 0
+fi
+
+if [[ ! "$base" =~ ^[0-9a-fA-F]{40}$ ]] ||
+   ! git cat-file -e "$base^{commit}" 2>/dev/null ||
+   ! git cat-file -e "$head^{commit}" 2>/dev/null ||
+   ! git merge-base --is-ancestor "$base" "$head"; then
+  force_full .dagger-unsafe-range
+  exit 0
+fi
+
+git diff --name-status -z -M "$base" "$head" > "$temporary"
+mv -f -- "$temporary" "$output"
+trap - EXIT

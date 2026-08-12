@@ -1,5 +1,6 @@
 import {
   argument,
+  CacheSharingMode,
   dag,
   Container,
   Directory,
@@ -19,6 +20,8 @@ const NODE_IMAGE =
 const TEMPL_VERSION = "v0.3.1020"
 const PLAYWRIGHT_VERSION = "v0.6100.0"
 const GOLANGCI_LINT_VERSION = "v2.12.2"
+const GOLANGCI_LINT_AMD64_SHA256 = "8df580d2670fed8fa984aac0507099af8df275e665215f5c7a2ae3943893a553"
+const GOLANGCI_LINT_ARM64_SHA256 = "44cd40a8c76c86755375adfeea52cfd3533cb43d7bd647771e0ae065e166df3a"
 const LYCHEE_VERSION = "v0.24.2"
 const LYCHEE_X86_64_SHA256 = "1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a"
 const LYCHEE_AARCH64_SHA256 = "91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c"
@@ -100,6 +103,7 @@ test -f go.work || go work init . ./site
 scripts/run-component-coverage.sh --phase units
 (cd tests/external/runtime-manifest && GOWORK=off go test ./... -count=1)
 go run ./cmd/e2eimpact --changes-file /tmp/e2e-changes > /out/e2e-impact.json
+go tool muamba sync --strict --target linux/amd64 --cache-dir .cache/muamba tailwindcss/cli
 templ generate
 .tools/tailwindcss -i css/main.css -o assets/styles.css
 scripts/run-focused-e2e.sh --current-source-theme-catalog
@@ -129,7 +133,7 @@ scripts/run-component-coverage.sh --phase e2e-merge --impact /out/e2e-impact.jso
     cachePartition: string,
   ): Promise<string> {
     return this.base(source, cachePartition)
-      .withExec(["bash", "-euo", "pipefail", "-c", `case "$(uname -m)" in x86_64) arch=x86_64; sha=${LYCHEE_X86_64_SHA256};; aarch64|arm64) arch=aarch64; sha=${LYCHEE_AARCH64_SHA256};; *) echo unsupported architecture >&2; exit 1;; esac; file=lychee-$arch-unknown-linux-gnu.tar.gz; curl -fsSL -o /tmp/lychee.tgz https://github.com/lycheeverse/lychee/releases/download/lychee-${LYCHEE_VERSION}/$file; echo "$sha  /tmp/lychee.tgz" | sha256sum -c -; tar -xzf /tmp/lychee.tgz -C /usr/local/bin lychee`])
+      .withExec(["bash", "-euo", "pipefail", "-c", `case "$(uname -m)" in x86_64) arch=x86_64; sha=${LYCHEE_X86_64_SHA256};; aarch64|arm64) arch=aarch64; sha=${LYCHEE_AARCH64_SHA256};; *) echo unsupported architecture >&2; exit 1;; esac; file=lychee-$arch-unknown-linux-gnu.tar.gz; dir=lychee-$arch-unknown-linux-gnu; curl -fsSL -o /tmp/lychee.tgz https://github.com/lycheeverse/lychee/releases/download/lychee-${LYCHEE_VERSION}/$file; echo "$sha  /tmp/lychee.tgz" | sha256sum -c -; tar -xzf /tmp/lychee.tgz -C /usr/local/bin --strip-components=1 "$dir/lychee"`])
       .withExec(["lychee", "--config", ".lychee.toml", "./**/*.md"])
       .stdout()
   }
@@ -304,10 +308,10 @@ echo "published $TAG and badge documents"`
       .withEnvVariable("GOBIN", "/tools/bin").withEnvVariable("PATH", "/tools/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")
       .withExec(["mkdir", "-p", "/tools/bin"])
     if (cacheNamespace !== undefined) {
-      project = project.withMountedCache("/tools", dag.cacheVolume(`goshtoso-${cacheNamespace}-go-tools-${TEMPL_VERSION}-${GOLANGCI_LINT_VERSION}-${PLAYWRIGHT_VERSION}`))
+      project = project.withMountedCache("/tools", dag.cacheVolume(`goshtoso-${cacheNamespace}-go-tools-${TEMPL_VERSION}-${GOLANGCI_LINT_VERSION}-${PLAYWRIGHT_VERSION}`), { sharing: CacheSharingMode.Locked })
     }
     return project
-      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/templ || go install github.com/a-h/templ/cmd/templ@${TEMPL_VERSION}; test -x /tools/bin/golangci-lint || { curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/v2.12.2/install.sh | sh -s -- -b /tools/bin ${GOLANGCI_LINT_VERSION}; }`])
+      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/templ || go install github.com/a-h/templ/cmd/templ@${TEMPL_VERSION}; test -x /tools/bin/golangci-lint || { case "$(uname -m)" in x86_64) arch=amd64; sha=${GOLANGCI_LINT_AMD64_SHA256};; aarch64|arm64) arch=arm64; sha=${GOLANGCI_LINT_ARM64_SHA256};; *) echo unsupported architecture >&2; exit 1;; esac; file=golangci-lint-2.12.2-linux-$arch.tar.gz; dir=\${file%.tar.gz}; curl -fsSL --retry 3 -o /tmp/golangci-lint.tgz https://github.com/golangci/golangci-lint/releases/download/${GOLANGCI_LINT_VERSION}/$file; echo "$sha  /tmp/golangci-lint.tgz" | sha256sum -c -; tar -xzf /tmp/golangci-lint.tgz -C /tools/bin --strip-components=1 "$dir/golangci-lint"; }`])
   }
 
   private browserProject(source: Directory, partition: string): Container {
@@ -317,7 +321,7 @@ echo "published $TAG and badge documents"`
       .withEnvVariable("PLAYWRIGHT_BROWSERS_PATH", "/playwright")
       .withExec(["mkdir", "-p", "/playwright"])
     if (cacheNamespace !== undefined) {
-      project = project.withMountedCache("/playwright", dag.cacheVolume(`goshtoso-${cacheNamespace}-playwright-${PLAYWRIGHT_VERSION}`))
+      project = project.withMountedCache("/playwright", dag.cacheVolume(`goshtoso-${cacheNamespace}-playwright-${PLAYWRIGHT_VERSION}`), { sharing: CacheSharingMode.Locked })
     }
     return project
       .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/playwright || go install github.com/mxschmitt/playwright-go/cmd/playwright@${PLAYWRIGHT_VERSION}; test -f /playwright/.chromium-ready || { playwright install --with-deps chromium; touch /playwright/.chromium-ready; }`])

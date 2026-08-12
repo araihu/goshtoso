@@ -70,7 +70,7 @@ jobs:
         run: |
           set -euo pipefail
           for path in araihu-assets.json examples/getting-started/araihu.css assets/favicon.svg assets/images/goshtoso-logo.svg assets/images/goshtoso-mark.svg; do
-            install -D ".dagger-assets/$path" "$path"
+            install -D -m 0644 ".dagger-assets/$path" "$path"
           done
       - name: Select existing labels only
         id: labels
