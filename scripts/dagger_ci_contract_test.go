@@ -292,7 +292,7 @@ func TestDaggerTestsAcquireTailwindBeforeCSSBuild(t *testing.T) {
 	}
 }
 
-func TestDaggerDocsExtractsLycheeFromVersionedArchiveDirectory(t *testing.T) {
+func TestDaggerDocsUsesPinnedStaticLycheeArchive(t *testing.T) {
 	t.Parallel()
 	root, err := filepath.Abs("..")
 	if err != nil {
@@ -310,12 +310,20 @@ func TestDaggerDocsExtractsLycheeFromVersionedArchiveDirectory(t *testing.T) {
 	}
 	body := module[start:end]
 	for _, expected := range []string{
-		"dir=lychee-$arch-unknown-linux-gnu",
+		`const LYCHEE_VERSION = "v0.24.2"`,
+		`const LYCHEE_X86_64_SHA256 = "73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5"`,
+		`const LYCHEE_AARCH64_SHA256 = "5d0b0e3aeab240f41920c633a6eaf97599be6eedda034b36e858ede7dba5e535"`,
+		"file=lychee-$arch-unknown-linux-musl.tar.gz",
+		"dir=lychee-$arch-unknown-linux-musl",
+		`releases/download/lychee-${LYCHEE_VERSION}/$file`,
 		`--strip-components=1 "$dir/lychee"`,
 	} {
-		if !strings.Contains(body, expected) {
-			t.Fatalf("Dagger docs must extract the versioned lychee archive member %q", expected)
+		if !strings.Contains(module, expected) {
+			t.Fatalf("Dagger docs must use the pinned static lychee release contract %q", expected)
 		}
+	}
+	if strings.Contains(body, "unknown-linux-gnu") {
+		t.Fatal("Dagger docs must not use the glibc-dependent lychee archive")
 	}
 }
 

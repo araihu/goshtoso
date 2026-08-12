@@ -23,8 +23,8 @@ const GOLANGCI_LINT_VERSION = "v2.12.2"
 const GOLANGCI_LINT_AMD64_SHA256 = "8df580d2670fed8fa984aac0507099af8df275e665215f5c7a2ae3943893a553"
 const GOLANGCI_LINT_ARM64_SHA256 = "44cd40a8c76c86755375adfeea52cfd3533cb43d7bd647771e0ae065e166df3a"
 const LYCHEE_VERSION = "v0.24.2"
-const LYCHEE_X86_64_SHA256 = "1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a"
-const LYCHEE_AARCH64_SHA256 = "91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c"
+const LYCHEE_X86_64_SHA256 = "73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5"
+const LYCHEE_AARCH64_SHA256 = "5d0b0e3aeab240f41920c633a6eaf97599be6eedda034b36e858ede7dba5e535"
 
 const SOURCE_EXCLUDES = [
   ".dagger/node_modules",
@@ -133,7 +133,7 @@ scripts/run-component-coverage.sh --phase e2e-merge --impact /out/e2e-impact.jso
     cachePartition: string,
   ): Promise<string> {
     return this.base(source, cachePartition)
-      .withExec(["bash", "-euo", "pipefail", "-c", `case "$(uname -m)" in x86_64) arch=x86_64; sha=${LYCHEE_X86_64_SHA256};; aarch64|arm64) arch=aarch64; sha=${LYCHEE_AARCH64_SHA256};; *) echo unsupported architecture >&2; exit 1;; esac; file=lychee-$arch-unknown-linux-gnu.tar.gz; dir=lychee-$arch-unknown-linux-gnu; curl -fsSL -o /tmp/lychee.tgz https://github.com/lycheeverse/lychee/releases/download/lychee-${LYCHEE_VERSION}/$file; echo "$sha  /tmp/lychee.tgz" | sha256sum -c -; tar -xzf /tmp/lychee.tgz -C /usr/local/bin --strip-components=1 "$dir/lychee"`])
+      .withExec(["bash", "-euo", "pipefail", "-c", `case "$(uname -m)" in x86_64) arch=x86_64; sha=${LYCHEE_X86_64_SHA256};; aarch64|arm64) arch=aarch64; sha=${LYCHEE_AARCH64_SHA256};; *) echo unsupported architecture >&2; exit 1;; esac; file=lychee-$arch-unknown-linux-musl.tar.gz; dir=lychee-$arch-unknown-linux-musl; curl -fsSL -o /tmp/lychee.tgz https://github.com/lycheeverse/lychee/releases/download/lychee-${LYCHEE_VERSION}/$file; echo "$sha  /tmp/lychee.tgz" | sha256sum -c -; tar -xzf /tmp/lychee.tgz -C /usr/local/bin --strip-components=1 "$dir/lychee"`])
       .withExec(["lychee", "--config", ".lychee.toml", "./**/*.md"])
       .stdout()
   }
