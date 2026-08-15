@@ -11,24 +11,76 @@ import (
 func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 	t.Parallel()
 
-	paths := []string{
-		"combobox-client.js",
-		"navigation.js",
-		"search.js",
-		"sidebar.js",
-		"scroll-region.js",
-		"table.js",
+	paths := map[string]string{
+		"../action-group.js": "assets/js/src/action-group.js",
+		"combobox-client.js": "assets/js/src/components/combobox-client.js",
+		"dropdown.js":        "assets/js/src/components/dropdown.js",
+		"navigation.js":      "assets/js/src/components/navigation.js",
+		"search.js":          "assets/js/src/components/search.js",
+		"sidebar.js":         "assets/js/src/components/sidebar.js",
+		"scroll-region.js":   "assets/js/src/components/scroll-region.js",
+		"table.js":           "assets/js/src/components/table.js",
 	}
 	sources := make(map[string][]byte, len(paths))
-	for _, path := range paths {
+	for path, sourcePath := range paths {
 		content, err := os.ReadFile(path)
 		if err != nil {
 			t.Fatalf("read %s: %v", path, err)
 		}
-		sources["assets/js/src/components/"+path] = content
+		sources[sourcePath] = content
 	}
 	if err := jstooling.ValidateJavaScript(sources); err != nil {
 		t.Fatalf("validate component runtime JavaScript: %v", err)
+	}
+}
+
+func TestActionGroupRuntimeDeclaresObservableLayoutContract(t *testing.T) {
+	t.Parallel()
+
+	actionGroup := readRuntimeSource(t, "../action-group.js")
+	for _, want := range []string{
+		`root.dataset.actionGroupLayoutState = "pending"`,
+		`root.dataset.actionGroupLayoutRevision = "0"`,
+		`root.dataset.actionGroupLayoutState = state`,
+		`root.dataset.actionGroupLayoutRevision = String(layoutRevision)`,
+		`layoutRevision += 1`,
+		`collapsed.every(Boolean)`,
+		`collapsed.some(Boolean)`,
+	} {
+		if !strings.Contains(actionGroup, want) {
+			t.Fatalf("Action Group runtime missing observable layout contract %q", want)
+		}
+	}
+}
+
+func TestDropdownRuntimeRestoresEscapeFocusAfterTrapCleanup(t *testing.T) {
+	t.Parallel()
+
+	dropdown := readRuntimeSource(t, "dropdown.js")
+	for _, want := range []string{
+		"focusTriggerIfOwned: function",
+		"deferFocusRestoreUntilMenuHidden: function",
+		"restoreTriggerAfterMenuHidden: function",
+		`window.getComputedStyle(menu).display !== "none"`,
+		`new MutationObserver(function ()`,
+		`menu.addEventListener("transitionend"`,
+		"requestAnimationFrame",
+		`attributeFilter: ["class", "hidden", "style"]`,
+		"this.isOpen || this.openedWithKeyboard",
+		"closingFocus === trigger",
+		"active === closingFocus",
+		"focusRestoreGeneration: 0",
+		"destroyed: false",
+		"state.destroyed",
+		"state.focusRestoreGeneration !== generation",
+		"state.focusTriggerIfOwned(trigger, menu, closingFocus)",
+		"state.deferFocusRestoreUntilMenuHidden(trigger, menu, closingFocus, generation)",
+		"this.cancelFocusRestore()",
+		"trigger.focus()",
+	} {
+		if !strings.Contains(dropdown, want) {
+			t.Fatalf("Dropdown runtime missing guarded Escape focus restoration %q", want)
+		}
 	}
 }
 

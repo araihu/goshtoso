@@ -9,6 +9,18 @@ import (
 	"slices"
 )
 
+// SelectNameStatus calculates the safe E2E scope from a NUL-delimited
+// `git diff --name-status -z -M` stream supplied by a trusted Git boundary.
+// Keeping Git metadata outside the source Directory makes Dagger calls work
+// from both ordinary clones and linked worktrees.
+func SelectNameStatus(ctx context.Context, repoRoot string, data []byte) Result {
+	changes, err := parseNameStatus(data)
+	if err != nil {
+		return fullResult(nil, "invalid Git name-status stream: "+err.Error())
+	}
+	return selectChanges(ctx, repoRoot, changes)
+}
+
 type identityRecord struct {
 	Name  string   `json:"name"`
 	Files []string `json:"files"`

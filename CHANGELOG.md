@@ -2,6 +2,22 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.14] - 2026-08-12
+
+### Consumer-agent ecosystem discovery
+
+- Made the `using-goshtoso` skill inspect Goshtoso components, Charts, Margo,
+  App Shells, and Iconpack before authoring custom HTML, CSS, or JavaScript.
+- Added version-aware ecosystem and runtime references, including reproducible
+  selected-tag guidance for Iconpack generation.
+- Strengthened distribution tests for the complete skill package and its
+  self-contained streamed discovery guidance.
+
+### Upgrade note
+
+- No Go API or runtime changes are required. Consumers using the bundled agent
+  skill should reinstall it from `v0.1.14` to receive the new discovery flow.
+
 ## [v0.1.13] - 2026-08-11
 
 ### Modern-based Arai Hû theme

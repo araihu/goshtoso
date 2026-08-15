@@ -15,6 +15,7 @@ examples/getting-started/getting-started
 *.out
 .coverage/
 .e2e-impact.json
+.e2e-changes
 
 # Dependency directories (Go vendor)
 vendor/
@@ -46,6 +47,10 @@ Thumbs.db
 # Node modules (if using npm for anything)
 node_modules/
 node_modules
+.dagger/node_modules/
+.dagger/sdk/
+.dagger-output/
+.dagger-assets/
 
 # Claude Code local worktrees
 .claude/worktrees/

@@ -12,26 +12,30 @@ permissions:
 jobs:
   deploy:
     name: Trigger Fly deploy
-    if: >-
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     concurrency: deploy-group
     steps:
-      - name: Dispatch central deployment
-        uses: actions/github-script@v9
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          github-token: ${{ secrets.FLY_DEPLOY_DISPATCH_TOKEN }}
-          script: |
-            const sourceSha = context.payload.workflow_run.head_sha
-            await github.rest.repos.createDispatchEvent({
-              owner: 'araihu',
-              repo: 'fly-deploy',
-              event_type: 'goshtoso-main',
-              client_payload: {
-                goshtoso_ref: sourceSha,
-                goshtoso_sha: sourceSha,
-                goshtoso_run_id: String(context.payload.workflow_run.id),
-                source_repository: `${context.repo.owner}/${context.repo.repo}`,
-              },
-            })
+          persist-credentials: false
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Materialize verified deployment handoff
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$SOURCE_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          jq -cn --arg source_repository araihu/goshtoso --arg source_sha "$SOURCE_SHA" --arg source_run_id "$SOURCE_RUN_ID" \
+            '{source_repository:$source_repository,source_run_id:$source_run_id,source_sha:$source_sha}' > .fly-handoff.json
+      - name: Dispatch central deployment through Dagger
+        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
+        with:
+          version: '0.21.8'
+          verb: call
+          args: dispatch-fly --metadata=.fly-handoff.json --token=env:FLY_DEPLOY_DISPATCH_TOKEN --run-nonce=${{ github.run_id }}-${{ github.run_attempt }}
+        env:
+          FLY_DEPLOY_DISPATCH_TOKEN: ${{ secrets.FLY_DEPLOY_DISPATCH_TOKEN }}
