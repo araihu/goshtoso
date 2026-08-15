@@ -824,6 +824,9 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 	if strings.TrimSpace(raw.TargetSelector) == "" || len(raw.Text) == 0 || len(raw.Boundaries) == 0 {
 		return bfullRawResult{}, fmt.Errorf("target, descendant text, and adjacent boundary samples are required")
 	}
+	if bfullFixtureOwnedSelector(raw.TargetSelector) {
+		return bfullRawResult{}, fmt.Errorf("fixture-owned selector cannot prove component target")
+	}
 	if raw.TargetSelector == "[data-conformance-state]" || !strings.Contains(raw.TargetSelector, " ") {
 		return bfullRawResult{}, fmt.Errorf("target selector must name an actual descendant")
 	}
@@ -831,6 +834,9 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 		for _, sample := range samples {
 			if strings.TrimSpace(sample.Selector) == "" || strings.TrimSpace(sample.AdjacentSelector) == "" || strings.TrimSpace(sample.Background) == "" || len(sample.BackgroundChain) == 0 {
 				return false, fmt.Errorf("sample selector, adjacent selector, and actual composited background chain are required")
+			}
+			if bfullFixtureOwnedSelector(sample.Selector) || bfullFixtureOwnedSelector(sample.AdjacentSelector) {
+				return false, fmt.Errorf("fixture-owned selector cannot prove component paint")
 			}
 			if sample.Selector == raw.TargetSelector || !strings.HasPrefix(sample.Selector, raw.TargetSelector+" ") {
 				return false, fmt.Errorf("sample selector must name a target descendant")
@@ -887,6 +893,9 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 		if strings.TrimSpace(raw.Motion.ActionToken) == "" || raw.Motion.ActionMS <= 0 || raw.Motion.ObservedDeltaMS <= 0 || raw.Motion.ActionMS <= raw.Motion.BeforeMS || raw.Motion.ActionMS-raw.Motion.BeforeMS < raw.Motion.ObservedDeltaMS || raw.Motion.ReducedMS > raw.Motion.ActionMS {
 			return bfullRawResult{}, fmt.Errorf("motion action outcome is static or invalid")
 		}
+		if bfullFixtureOwnedSelector(raw.Motion.Selector) || bfullFixtureOwnedSelector(raw.Motion.DescendantSelector) {
+			return bfullRawResult{}, fmt.Errorf("fixture-owned selector cannot prove component motion")
+		}
 		motion = true
 	}
 	overlay := false
@@ -894,12 +903,19 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 		if strings.TrimSpace(raw.Overlay.Selector) == "" || strings.TrimSpace(raw.Overlay.Role) == "" || strings.TrimSpace(raw.Overlay.SourceSelector) == "" || strings.TrimSpace(raw.Overlay.SourceToken) == "" {
 			return bfullRawResult{}, fmt.Errorf("overlay selector, role, and source token are required")
 		}
-		if raw.Overlay.SourceToken == "role-backed-overlay" || raw.Overlay.SourceSelector == raw.Overlay.Selector || raw.Overlay.SourceSelector == "[data-conformance-state]" {
+		if raw.Overlay.SourceToken == "role-backed-overlay" || raw.Overlay.SourceSelector == raw.Overlay.Selector || raw.Overlay.SourceSelector == "[data-conformance-state]" || bfullFixtureOwnedSelector(raw.Overlay.SourceSelector) {
 			return bfullRawResult{}, fmt.Errorf("overlay source token is not source-bound")
 		}
 		overlay = true
 	}
 	return bfullRawResult{textContrast: text, boundaryContrast: boundary, motionOutcome: motion, overlayProvenance: overlay}, nil
+}
+
+// bfullFixtureOwnedSelector rejects helper wrappers emitted only by the
+// conformance fixture. They can locate a harness frame, never a served
+// component descendant or its computed paint.
+func bfullFixtureOwnedSelector(selector string) bool {
+	return strings.Contains(selector, "data-conformance-target") || strings.Contains(selector, "data-conformance-paint-target")
 }
 
 func bfullRGBA(value string) ([4]float64, bool) {

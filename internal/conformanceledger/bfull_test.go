@@ -102,7 +102,7 @@ func bfullFixture(t *testing.T, axes BFullAxes) BFullManifest {
 						}
 						for _, state := range axes.States {
 							passed := BFullSemanticAssertion{Applicability: Applicable, Passed: true}
-							observation := BFullStateObservation{State: state, Exists: true, DOMNodes: 1, Visible: true, Width: 10, Height: 10, Color: "rgb(0, 0, 0)", Background: "rgba(0, 0, 0, 0)", Theme: theme, Mode: mode, Motion: motion, Zoom: zoom, TextContrast: passed, BoundaryContrast: passed, MotionOutcome: passed, OverlayProvenance: passed, Raw: BFullRawStateMeasurements{TargetSelector: "[data-conformance-state] [data-conformance-target]", Text: []BFullPaintMeasurement{{Selector: "[data-conformance-state] [data-conformance-target] button", AdjacentSelector: "[data-conformance-state] [data-conformance-target]", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", BackgroundChain: []string{"rgba(255, 255, 255, 1)"}, CompositedBackground: "rgb(255, 255, 255)"}}, Boundaries: []BFullPaintMeasurement{{Selector: "[data-conformance-state] [data-conformance-target] button", AdjacentSelector: "main", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", BackgroundChain: []string{"rgba(255, 255, 255, 1)"}, CompositedBackground: "rgb(255, 255, 255)"}}, Motion: BFullMotionMeasurement{Selector: "[data-conformance-state] [data-conformance-target]", DescendantSelector: "[data-conformance-state] [data-conformance-target] span", BeforeMS: 1, ActionMS: 2, ObservedDeltaMS: 1, ActionToken: "requestAnimationFrame", ReducedMS: .1}, Overlay: BFullOverlayMeasurement{Selector: "[role=dialog]", Role: "dialog", SourceSelector: "[data-conformance-state] [data-conformance-target]", SourceToken: "fixture"}}}
+							observation := BFullStateObservation{State: state, Exists: true, DOMNodes: 1, Visible: true, Width: 10, Height: 10, Color: "rgb(0, 0, 0)", Background: "rgba(0, 0, 0, 0)", Theme: theme, Mode: mode, Motion: motion, Zoom: zoom, TextContrast: passed, BoundaryContrast: passed, MotionOutcome: passed, OverlayProvenance: passed, Raw: BFullRawStateMeasurements{TargetSelector: "[data-component-rendered] [data-component-target]", Text: []BFullPaintMeasurement{{Selector: "[data-component-rendered] [data-component-target] button", AdjacentSelector: "[data-component-rendered] [data-component-target]", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", BackgroundChain: []string{"rgba(255, 255, 255, 1)"}, CompositedBackground: "rgb(255, 255, 255)"}}, Boundaries: []BFullPaintMeasurement{{Selector: "[data-component-rendered] [data-component-target] button", AdjacentSelector: "main", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", BackgroundChain: []string{"rgba(255, 255, 255, 1)"}, CompositedBackground: "rgb(255, 255, 255)"}}, Motion: BFullMotionMeasurement{Selector: "[data-component-rendered] [data-component-target]", DescendantSelector: "[data-component-rendered] [data-component-target] span", BeforeMS: 1, ActionMS: 2, ObservedDeltaMS: 1, ActionToken: "requestAnimationFrame", ReducedMS: .1}, Overlay: BFullOverlayMeasurement{Selector: "[role=dialog]", Role: "dialog", SourceSelector: "[data-component-rendered] [data-component-target]", SourceToken: "fixture"}}}
 							evidence.FirstPaint = append(evidence.FirstPaint, observation)
 							evidence.Persistence = append(evidence.Persistence, observation)
 							for _, input := range axes.Inputs {
@@ -222,6 +222,15 @@ func TestValidateBFullManifestRejectsStructuredEvidenceClaimsWithoutExecution(t 
 		{name: "generic overlay source", mutate: func(evidence *BFullBatchEvidence) {
 			evidence.FirstPaint[0].Raw.Overlay.SourceSelector = "[data-conformance-state]"
 		}, wantErr: "overlay source token is not source-bound"},
+		{name: "fixture owned target", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.FirstPaint[0].Raw.TargetSelector = "[data-conformance-state] [data-conformance-target]"
+		}, wantErr: "fixture-owned selector"},
+		{name: "fixture owned paint", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.FirstPaint[0].Raw.Text[0].Selector = "[data-conformance-state] [data-conformance-paint-target] button"
+		}, wantErr: "fixture-owned selector"},
+		{name: "fixture owned motion", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.FirstPaint[0].Raw.Motion.DescendantSelector = "[data-conformance-state] [data-conformance-paint-target] span"
+		}, wantErr: "fixture-owned selector"},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
