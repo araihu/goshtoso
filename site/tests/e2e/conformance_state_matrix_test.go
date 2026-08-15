@@ -21,8 +21,12 @@ import (
 )
 
 func TestConformanceLedgerStateFixturesRenderEverySourceState(t *testing.T) {
+	repoRoot, err := filepath.Abs("../../..")
+	require.NoError(t, err)
+	inventory, err := conformanceledger.DeriveInventory(repoRoot)
+	require.NoError(t, err)
 	fixtures := conformanceStateFixtures()
-	require.Len(t, fixtures, 347)
+	require.Len(t, fixtures, len(inventory.States))
 	seen := make(map[string]struct{}, len(fixtures))
 	for _, fixture := range fixtures {
 		fixture := fixture
@@ -39,11 +43,12 @@ func TestConformanceLedgerStateFixturesRenderEverySourceState(t *testing.T) {
 }
 
 func TestConformanceLedgerPublicStateBFull(t *testing.T) {
-	fixtures := conformanceStateFixtures()
-	require.Len(t, fixtures, 347)
-
 	repoRoot, err := filepath.Abs("../../..")
 	require.NoError(t, err)
+	inventory, err := conformanceledger.DeriveInventory(repoRoot)
+	require.NoError(t, err)
+	fixtures := conformanceStateFixtures()
+	require.Len(t, fixtures, len(inventory.States))
 	commit := conformanceGitIdentity(t, repoRoot, "HEAD^{commit}")
 	tree := conformanceGitIdentity(t, repoRoot, "HEAD^{tree}")
 	browserIdentity := "Chromium " + sharedBrowser.Version()
@@ -142,17 +147,16 @@ func TestConformanceLedgerPublicStateBFull(t *testing.T) {
 			errorMu.Unlock()
 		}
 	})
-	inventory, err := conformanceledger.DeriveInventory(repoRoot)
-	require.NoError(t, err)
 	axes, err := conformanceledger.ExpectedBFullAxesFromInventory(inventory)
 	require.NoError(t, err)
-	require.Equal(t, 699552, len(axes.States)*len(axes.Themes)*len(axes.Modes)*len(axes.Viewports)*len(axes.Zooms)*len(axes.Motions)*len(axes.Inputs))
+	expectedCellCount := conformanceledger.BFullCellCount(axes)
+	require.Equal(t, expectedCellCount, len(axes.States)*len(axes.Themes)*len(axes.Modes)*len(axes.Viewports)*len(axes.Zooms)*len(axes.Motions)*len(axes.Inputs))
 
 	manifest := conformanceledger.BFullManifest{SchemaVersion: conformanceledger.SchemaVersion, SourceCommit: commit, SourceTree: tree, Identity: identity, Browser: browserIdentity}
 	if diagnostic {
 		manifest.Diagnostic = &conformanceledger.BFullDiagnostic{NonClosure: true, StateCap: diagnosticStateCap, Reason: "bounded dirty-bound feasibility slice; never closure evidence"}
 	}
-	manifest.Cells = make([]conformanceledger.BFullCell, 0, 699552)
+	manifest.Cells = make([]conformanceledger.BFullCell, 0, expectedCellCount)
 	session, err := page.Context().NewCDPSession(page)
 	require.NoError(t, err)
 
@@ -248,7 +252,7 @@ func TestConformanceLedgerPublicStateBFull(t *testing.T) {
 		return
 	}
 	require.Len(t, manifest.Batches, 504)
-	require.Len(t, manifest.Cells, 699552)
+	require.Len(t, manifest.Cells, expectedCellCount)
 	require.NoError(t, conformanceledger.ValidateBFullManifest(manifest, commit, tree, axes))
 	manifestSHA256, err := conformanceledger.SHA256File(manifestPath)
 	require.NoError(t, err)

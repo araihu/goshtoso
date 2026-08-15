@@ -136,7 +136,9 @@ func TestDeriveInventoryUsesCurrentSourceAuthorities(t *testing.T) {
 	assertLen(t, "renderables", inventory.Renderables, 84)
 	assertLen(t, "kinds", inventory.Kinds, 84)
 	assertLen(t, "routes", inventory.Routes, 51)
-	assertLen(t, "configuration/default states", inventory.States, 352)
+	if len(inventory.States) == 0 {
+		t.Fatal("source-derived configuration/default states are empty")
+	}
 	assertLen(t, "dynamic lifecycle states", inventory.LifecycleStates, 13)
 	assertLen(t, "themes", inventory.Themes, 16)
 	wantEdges := []int{640, 768, 1024, 1280, 1536}

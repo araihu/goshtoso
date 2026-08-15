@@ -75,7 +75,7 @@ type BFullDirtyEntry struct {
 }
 
 // BFullCoverage closes source-derived axes that deliberately sit outside the
-// 347-state Cartesian product: public packages/renderables/Kinds/routes and
+// source-derived configuration/default-state Cartesian product: public packages/renderables/Kinds/routes and
 // the maintained dynamic lifecycle authority. Values are source identifiers,
 // never hand-picked labels.
 type BFullCoverage struct {
@@ -611,7 +611,7 @@ func ValidateBFullManifest(manifest BFullManifest, sourceCommit, sourceTree stri
 		return fmt.Errorf("B-FULL missing %d mandatory batches", len(expectedBatches)-len(batchEvidence))
 	}
 
-	expected := make(map[string]struct{}, bfullCellCount(axes))
+	expected := make(map[string]struct{}, BFullCellCount(axes))
 	for _, state := range axes.States {
 		for _, theme := range axes.Themes {
 			for _, mode := range axes.Modes {
@@ -1258,7 +1258,9 @@ func validSHA256(value string) bool {
 	return err == nil
 }
 
-func bfullCellCount(axes BFullAxes) int {
+// BFullCellCount returns the exact Cartesian product of the source-derived
+// B-FULL axes. Callers must not duplicate a stale fixed cardinality.
+func BFullCellCount(axes BFullAxes) int {
 	return len(axes.States) * len(axes.Themes) * len(axes.Modes) * len(axes.Viewports) * len(axes.Zooms) * len(axes.Motions) * len(axes.Inputs)
 }
 

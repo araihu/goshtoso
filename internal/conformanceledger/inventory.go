@@ -27,7 +27,7 @@ var (
 // lifecycleStateAuthorities is intentionally small and explicit. Each marker
 // is owned by maintained component source, and DeriveInventory fails if a
 // source change removes or renames a required dynamic state without updating
-// its conformance mapping. These do not inflate the 347 configuration/default
+// its conformance mapping. These do not inflate the source-derived configuration/default
 // state Cartesian axis; they are a separately reconciled lifecycle axis.
 var lifecycleStateAuthorities = []struct {
 	Value  string

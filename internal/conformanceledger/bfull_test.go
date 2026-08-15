@@ -268,8 +268,12 @@ func TestExpectedBFullAxesIncludesSourceDerivedConsumerThemeAndExactCellCount(t 
 	for _, theme := range []string{"araihu", "goshtoso", "minimal", "modern"} {
 		ledger.Rows = append(ledger.Rows, Row{Class: ClassInventory, Theme: theme})
 	}
-	for index := range 347 {
-		ledger.Rows = append(ledger.Rows, Row{ID: "execution/state/" + string(rune(index+1)), Class: ClassExecution, State: string(rune(index + 1))})
+	inventory, err := DeriveInventory(repoRoot(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, state := range inventory.States {
+		ledger.Rows = append(ledger.Rows, Row{ID: "execution/state/" + state.Value, Class: ClassExecution, State: state.Value})
 	}
 	for _, viewport := range []int{390, 639, 640, 641, 704, 767, 768, 769, 896, 1023, 1024, 1025, 1152, 1279, 1280, 1281, 1408, 1440, 1535, 1536, 1537} {
 		ledger.Rows = append(ledger.Rows, Row{Class: ClassExecution, Viewport: viewport})
@@ -281,8 +285,9 @@ func TestExpectedBFullAxesIncludesSourceDerivedConsumerThemeAndExactCellCount(t 
 	if got, want := axes.Themes, []string{"araihu", "goshtoso", "minimal", "modern"}; strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Fatalf("themes = %v, want %v", got, want)
 	}
-	if got := bfullCellCount(axes); got != 699552 {
-		t.Fatalf("cell count = %d, want 699552", got)
+	wantCellCount := len(inventory.States) * len(axes.Themes) * len(axes.Modes) * len(axes.Viewports) * len(axes.Zooms) * len(axes.Motions) * len(axes.Inputs)
+	if got := BFullCellCount(axes); got != wantCellCount {
+		t.Fatalf("cell count = %d, want %d", got, wantCellCount)
 	}
 
 	axes.Themes = axes.Themes[:3]
