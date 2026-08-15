@@ -420,6 +420,7 @@ func sourceAxisBijection(axis string, items []SourceItem, rows []Row, value func
 				problems = append(problems, fmt.Sprintf("%s %s row ID %s does not match source value %s", expected.name, axis, row.ID, axisValue))
 				continue
 			}
+			problems = append(problems, sourceAxisProjectionProblems(expected.name, axis, row)...)
 			counts[axisValue]++
 		}
 		for _, item := range items {
@@ -427,6 +428,62 @@ func sourceAxisBijection(axis string, items []SourceItem, rows []Row, value func
 				problems = append(problems, fmt.Sprintf("%s %s %s count = %d, want 1", expected.name, axis, item.Value, counts[item.Value]))
 			}
 		}
+	}
+	return problems
+}
+
+// sourceAxisProjectionProblems prevents one source-axis row from satisfying
+// unrelated axes or from carrying a checklist mapping that only a route row
+// can own. Exact IDs alone are insufficient because a caller could retain a
+// valid package ID while smuggling a state or route value into the same row.
+func sourceAxisProjectionProblems(className, axis string, row Row) []string {
+	allowed := map[string]bool{}
+	switch axis {
+	case "package":
+		allowed["package"] = true
+	case "renderable":
+		allowed["renderable"] = true
+	case "kind":
+		allowed["kind"] = true
+	case "route":
+		allowed["route"] = true
+	case "state", "lifecycle-state":
+		allowed["state"] = true
+	case "theme":
+		allowed["theme"] = true
+	}
+	values := []struct {
+		name  string
+		value string
+	}{
+		{name: "package", value: row.Package},
+		{name: "renderable", value: row.Renderable},
+		{name: "kind", value: row.Kind},
+		{name: "route", value: row.Route},
+		{name: "state", value: row.State},
+		{name: "theme", value: row.Theme},
+		{name: "mode", value: row.Mode},
+		{name: "breakpoint", value: row.Breakpoint},
+		{name: "input", value: row.Input},
+		{name: "AT", value: row.AT},
+	}
+	var problems []string
+	for _, value := range values {
+		if value.value != "" && !allowed[value.name] {
+			problems = append(problems, fmt.Sprintf("%s %s row %s projects unexpected %s", className, axis, row.ID, value.name))
+		}
+	}
+	if row.Viewport != 0 && !allowed["viewport"] {
+		problems = append(problems, fmt.Sprintf("%s %s row %s projects unexpected viewport", className, axis, row.ID))
+	}
+	if row.Zoom != 0 && !allowed["zoom"] {
+		problems = append(problems, fmt.Sprintf("%s %s row %s projects unexpected zoom", className, axis, row.ID))
+	}
+	if row.Motion != "" && !allowed["motion"] {
+		problems = append(problems, fmt.Sprintf("%s %s row %s projects unexpected motion", className, axis, row.ID))
+	}
+	if axis != "route" && (len(row.ChecklistURLs) != 0 || len(row.ChecklistMappings) != 0) {
+		problems = append(problems, fmt.Sprintf("%s %s row %s non-route source row carries checklist", className, axis, row.ID))
 	}
 	return problems
 }

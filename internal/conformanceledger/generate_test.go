@@ -238,6 +238,28 @@ func TestValidateRejectsAxisPrefixCrossAxisEscape(t *testing.T) {
 	t.Fatal("package execution row fixture missing")
 }
 
+func TestValidateRejectsMultiAxisSourceRowAndChecklistEscape(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	packageValue := inventory.Packages[0].Value
+	for index := range ledger.Rows {
+		row := &ledger.Rows[index]
+		if row.ID != "inventory/package/"+strings.ReplaceAll(packageValue, "/", "_") {
+			continue
+		}
+		row.State = inventory.States[0].Value
+		row.ChecklistURLs = []string{ChecklistA11Y}
+		row.ChecklistMappings = []ChecklistMapping{{URL: ChecklistA11Y, Kind: ChecklistFoundation, Rationale: "forged route mapping"}}
+		if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "projects unexpected state") || !strings.Contains(err.Error(), "non-route source row carries checklist") {
+			t.Fatalf("multi-axis source row error = %v", err)
+		}
+		return
+	}
+	t.Fatal("package inventory row fixture missing")
+}
+
 func TestGenerateSkeletonPersistsChecklistMappingKindAndRationale(t *testing.T) {
 	ledger, _, err := GenerateSkeleton(generationFixture(t))
 	if err != nil {
