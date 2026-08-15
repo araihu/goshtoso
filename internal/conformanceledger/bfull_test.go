@@ -102,7 +102,7 @@ func bfullFixture(t *testing.T, axes BFullAxes) BFullManifest {
 						}
 						for _, state := range axes.States {
 							passed := BFullSemanticAssertion{Applicability: Applicable, Passed: true}
-							observation := BFullStateObservation{State: state, Exists: true, DOMNodes: 1, Visible: true, Width: 10, Height: 10, Color: "rgb(0, 0, 0)", Background: "rgba(0, 0, 0, 0)", Theme: theme, Mode: mode, Motion: motion, Zoom: zoom, TextContrast: passed, BoundaryContrast: passed, MotionOutcome: passed, OverlayProvenance: passed, Raw: BFullRawStateMeasurements{TargetSelector: "[data-conformance-state]", Text: []BFullPaintMeasurement{{Selector: "button", AdjacentSelector: "[data-conformance-state]", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", CompositedBackground: "rgb(255, 255, 255)"}}, Boundaries: []BFullPaintMeasurement{{Selector: "button", AdjacentSelector: "main", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", CompositedBackground: "rgb(255, 255, 255)"}}, Motion: BFullMotionMeasurement{Selector: "button", DescendantSelector: "button > span", BeforeMS: 0, ActionMS: 1, ReducedMS: .1}, Overlay: BFullOverlayMeasurement{Selector: "[role=dialog]", Role: "dialog", SourceToken: "fixture"}}}
+							observation := BFullStateObservation{State: state, Exists: true, DOMNodes: 1, Visible: true, Width: 10, Height: 10, Color: "rgb(0, 0, 0)", Background: "rgba(0, 0, 0, 0)", Theme: theme, Mode: mode, Motion: motion, Zoom: zoom, TextContrast: passed, BoundaryContrast: passed, MotionOutcome: passed, OverlayProvenance: passed, Raw: BFullRawStateMeasurements{TargetSelector: "[data-conformance-state] [data-conformance-target]", Text: []BFullPaintMeasurement{{Selector: "[data-conformance-state] [data-conformance-target] button", AdjacentSelector: "[data-conformance-state] [data-conformance-target]", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", CompositedBackground: "rgb(255, 255, 255)"}}, Boundaries: []BFullPaintMeasurement{{Selector: "[data-conformance-state] [data-conformance-target] button", AdjacentSelector: "main", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", CompositedBackground: "rgb(255, 255, 255)"}}, Motion: BFullMotionMeasurement{Selector: "[data-conformance-state] [data-conformance-target]", DescendantSelector: "[data-conformance-state] [data-conformance-target] span", BeforeMS: 0, ActionMS: 1, ReducedMS: .1}, Overlay: BFullOverlayMeasurement{Selector: "[role=dialog]", Role: "dialog", SourceSelector: "[data-conformance-state]", SourceToken: "fixture"}}}
 							evidence.FirstPaint = append(evidence.FirstPaint, observation)
 							evidence.Persistence = append(evidence.Persistence, observation)
 							for _, input := range axes.Inputs {
@@ -204,6 +204,15 @@ func TestValidateBFullManifestRejectsStructuredEvidenceClaimsWithoutExecution(t 
 		{name: "bad descendant despite wrapper", mutate: func(evidence *BFullBatchEvidence) {
 			evidence.FirstPaint[0].Raw.Text[0].Foreground = "rgb(255, 255, 255)"
 		}, wantErr: "semantic assertions do not match raw target measurements"},
+		{name: "generic target", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.FirstPaint[0].Raw.TargetSelector = "[data-conformance-state]"
+		}, wantErr: "target selector must name an actual descendant"},
+		{name: "static motion", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.FirstPaint[0].Raw.Motion.BeforeMS = evidence.FirstPaint[0].Raw.Motion.ActionMS
+		}, wantErr: "motion action outcome is static"},
+		{name: "role backed overlay", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.FirstPaint[0].Raw.Overlay.SourceToken = "role-backed-overlay"
+		}, wantErr: "overlay source token is not source-bound"},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

@@ -196,9 +196,10 @@ type BFullMotionMeasurement struct {
 }
 
 type BFullOverlayMeasurement struct {
-	Selector    string `json:"selector"`
-	Role        string `json:"role"`
-	SourceToken string `json:"source_token"`
+	Selector       string `json:"selector"`
+	Role           string `json:"role"`
+	SourceSelector string `json:"source_selector"`
+	SourceToken    string `json:"source_token"`
 }
 
 type BFullAccessibilityScan struct {
@@ -819,10 +820,16 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 	if strings.TrimSpace(raw.TargetSelector) == "" || len(raw.Text) == 0 || len(raw.Boundaries) == 0 {
 		return bfullRawResult{}, fmt.Errorf("target, descendant text, and adjacent boundary samples are required")
 	}
+	if raw.TargetSelector == "[data-conformance-state]" || !strings.Contains(raw.TargetSelector, " ") {
+		return bfullRawResult{}, fmt.Errorf("target selector must name an actual descendant")
+	}
 	contrast := func(samples []BFullPaintMeasurement, minimum float64) (bool, error) {
 		for _, sample := range samples {
 			if strings.TrimSpace(sample.Selector) == "" || strings.TrimSpace(sample.AdjacentSelector) == "" || strings.TrimSpace(sample.Background) == "" {
 				return false, fmt.Errorf("sample selector, adjacent selector, and alpha background are required")
+			}
+			if sample.Selector == raw.TargetSelector || !strings.HasPrefix(sample.Selector, raw.TargetSelector+" ") {
+				return false, fmt.Errorf("sample selector must name a target descendant")
 			}
 			foreground, ok := bfullRGBA(sample.Foreground)
 			if !ok {
@@ -854,12 +861,18 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 		if strings.TrimSpace(raw.Motion.Selector) == "" || strings.TrimSpace(raw.Motion.DescendantSelector) == "" {
 			return bfullRawResult{}, fmt.Errorf("motion target and descendant selectors are required")
 		}
-		motion = raw.Motion.ActionMS > 0 && raw.Motion.ReducedMS <= raw.Motion.ActionMS
+		if raw.Motion.ActionMS <= 0 || raw.Motion.ActionMS == raw.Motion.BeforeMS || raw.Motion.ReducedMS > raw.Motion.ActionMS {
+			return bfullRawResult{}, fmt.Errorf("motion action outcome is static or invalid")
+		}
+		motion = true
 	}
 	overlay := false
 	if raw.Overlay.Selector != "" || raw.Overlay.Role != "" || raw.Overlay.SourceToken != "" {
-		if strings.TrimSpace(raw.Overlay.Selector) == "" || strings.TrimSpace(raw.Overlay.Role) == "" || strings.TrimSpace(raw.Overlay.SourceToken) == "" {
+		if strings.TrimSpace(raw.Overlay.Selector) == "" || strings.TrimSpace(raw.Overlay.Role) == "" || strings.TrimSpace(raw.Overlay.SourceSelector) == "" || strings.TrimSpace(raw.Overlay.SourceToken) == "" {
 			return bfullRawResult{}, fmt.Errorf("overlay selector, role, and source token are required")
+		}
+		if raw.Overlay.SourceToken == "role-backed-overlay" || raw.Overlay.SourceSelector == raw.Overlay.Selector {
+			return bfullRawResult{}, fmt.Errorf("overlay source token is not source-bound")
 		}
 		overlay = true
 	}

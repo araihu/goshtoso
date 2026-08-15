@@ -396,17 +396,22 @@ const conformanceStateInspectionScript = `async config => {
 	return [...document.querySelectorAll('[data-conformance-state]')].map(section => {
 		const style = getComputedStyle(section), rect = section.getBoundingClientRect();
 		const base = '[data-conformance-state="' + CSS.escape(section.dataset.conformanceState) + '"]';
-		const target = [...section.querySelectorAll('button,input,select,textarea,[role]')].find(visible) || section;
+		const target = section.querySelector('[data-conformance-target]');
+		if (!target || !visible(target)) throw new Error('state ' + section.dataset.conformanceState + ' lacks source-owned data-conformance-target');
+		const paintTarget = target.querySelector('[data-conformance-paint-target]');
+		if (!paintTarget || !visible(paintTarget)) throw new Error('state ' + section.dataset.conformanceState + ' lacks source-owned data-conformance-paint-target');
 		const targetStyle = getComputedStyle(target), targetRect = target.getBoundingClientRect();
+		const paintStyle = getComputedStyle(paintTarget);
 		const rgba = color => 'rgba(' + color.map(value => Math.round(value)).join(', ') + ', 1)';
-		const textRatio = contrast(parseColor(targetStyle.color), background(target));
+		const textRatio = contrast(parseColor(paintStyle.color), background(paintTarget));
 		const borderWidth = Math.max(Number.parseFloat(targetStyle.borderTopWidth) || 0, Number.parseFloat(targetStyle.borderRightWidth) || 0, Number.parseFloat(targetStyle.borderBottomWidth) || 0, Number.parseFloat(targetStyle.borderLeftWidth) || 0);
 		const boundaryRatio = contrast(parseColor(targetStyle.borderTopColor), background(target.parentElement));
 		const hasBoundary = borderWidth > 0 || (targetStyle.boxShadow && targetStyle.boxShadow !== 'none');
 		const motionDuration = Math.max(duration(targetStyle.animationDuration), duration(targetStyle.transitionDuration));
 		const hasMotion = (targetStyle.animationName && targetStyle.animationName !== 'none') || (targetStyle.transitionProperty && targetStyle.transitionProperty !== 'none' && motionDuration > 0);
 		const overlay = [...section.querySelectorAll('[role="dialog"],[role="alertdialog"],[role="menu"],[role="tooltip"]')].find(visible);
-		const targetSelector = target === section ? base : base + ' :is(button,input,select,textarea,[role])';
+		const targetSelector = base + ' [data-conformance-target]';
+		const paintSelector = targetSelector + ' [data-conformance-paint-target]';
 		return {
 			state: section.dataset.conformanceState,
 			exists: section.isConnected,
@@ -427,10 +432,10 @@ const conformanceStateInspectionScript = `async config => {
 			overlay_provenance: !overlay ? na('source-rendered state has no visible overlay in this phase') : pass(overlay.closest('[data-conformance-state]') === section && Boolean(overlay.getAttribute('role') || overlay.id)),
 			raw: {
 				target_selector: targetSelector,
-				text: [{selector: targetSelector, adjacent_selector: base, foreground: targetStyle.color, background: targetStyle.backgroundColor, composited_background: rgba(background(target))}],
-				boundaries: [{selector: targetSelector, adjacent_selector: base, foreground: targetStyle.borderTopColor, background: targetStyle.backgroundColor, composited_background: rgba(background(target.parentElement))}],
-				motion: hasMotion ? {selector: targetSelector, descendant_selector: targetSelector, before_ms: 0, action_ms: motionDuration * 1000, reduced_ms: config.motion === 'reduced' ? motionDuration * 1000 : 0} : {},
-				overlay: !overlay ? {} : {selector: base + ' [role="' + overlay.getAttribute('role') + '"]', role: overlay.getAttribute('role'), source_token: overlay.id || overlay.getAttribute('aria-labelledby') || overlay.getAttribute('data-goshtoso-overlay') || 'role-backed-overlay'},
+				text: [{selector: paintSelector, adjacent_selector: targetSelector, foreground: paintStyle.color, background: paintStyle.backgroundColor, composited_background: rgba(background(paintTarget))}],
+				boundaries: [{selector: paintSelector, adjacent_selector: targetSelector, foreground: paintStyle.borderTopColor, background: paintStyle.backgroundColor, composited_background: rgba(background(target))}],
+				motion: hasMotion ? {selector: targetSelector, descendant_selector: paintSelector, before_ms: 0, action_ms: motionDuration * 1000, reduced_ms: config.motion === 'reduced' ? motionDuration * 1000 : 0} : {},
+				overlay: !overlay ? {} : {selector: base + ' [role="' + overlay.getAttribute('role') + '"]', role: overlay.getAttribute('role'), source_selector: base, source_token: overlay.id || overlay.getAttribute('aria-labelledby') || overlay.getAttribute('data-goshtoso-overlay') || ''},
 			},
 		};
 	});
