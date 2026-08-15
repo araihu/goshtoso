@@ -392,13 +392,18 @@ const conformanceStateInspectionScript = `async config => {
 	const na = rationale => ({applicability: 'not-applicable', rationale});
 	return [...document.querySelectorAll('[data-conformance-state]')].map(section => {
 		const style = getComputedStyle(section), rect = section.getBoundingClientRect();
-		const textRatio = contrast(parseColor(style.color), background(section));
-		const borderWidth = Math.max(Number.parseFloat(style.borderTopWidth) || 0, Number.parseFloat(style.borderRightWidth) || 0, Number.parseFloat(style.borderBottomWidth) || 0, Number.parseFloat(style.borderLeftWidth) || 0);
-		const boundaryRatio = contrast(parseColor(style.borderTopColor), background(section.parentElement));
-		const hasBoundary = borderWidth > 0 || (style.boxShadow && style.boxShadow !== 'none');
-		const motionDuration = Math.max(duration(style.animationDuration), duration(style.transitionDuration));
-		const hasMotion = (style.animationName && style.animationName !== 'none') || (style.transitionProperty && style.transitionProperty !== 'none' && motionDuration > 0);
+		const base = '[data-conformance-state="' + CSS.escape(section.dataset.conformanceState) + '"]';
+		const target = [...section.querySelectorAll('button,input,select,textarea,[role]')].find(visible) || section;
+		const targetStyle = getComputedStyle(target), targetRect = target.getBoundingClientRect();
+		const rgba = color => 'rgba(' + color.map(value => Math.round(value)).join(', ') + ', 1)';
+		const textRatio = contrast(parseColor(targetStyle.color), background(target));
+		const borderWidth = Math.max(Number.parseFloat(targetStyle.borderTopWidth) || 0, Number.parseFloat(targetStyle.borderRightWidth) || 0, Number.parseFloat(targetStyle.borderBottomWidth) || 0, Number.parseFloat(targetStyle.borderLeftWidth) || 0);
+		const boundaryRatio = contrast(parseColor(targetStyle.borderTopColor), background(target.parentElement));
+		const hasBoundary = borderWidth > 0 || (targetStyle.boxShadow && targetStyle.boxShadow !== 'none');
+		const motionDuration = Math.max(duration(targetStyle.animationDuration), duration(targetStyle.transitionDuration));
+		const hasMotion = (targetStyle.animationName && targetStyle.animationName !== 'none') || (targetStyle.transitionProperty && targetStyle.transitionProperty !== 'none' && motionDuration > 0);
 		const overlay = [...section.querySelectorAll('[role="dialog"],[role="alertdialog"],[role="menu"],[role="tooltip"]')].find(visible);
+		const targetSelector = target === section ? base : base + ' :is(button,input,select,textarea,[role])';
 		return {
 			state: section.dataset.conformanceState,
 			exists: section.isConnected,
@@ -417,6 +422,13 @@ const conformanceStateInspectionScript = `async config => {
 			boundary_contrast: !hasBoundary ? na('source-rendered state has no visual boundary contract') : (boundaryRatio === null ? na('source-rendered boundary has no computable opaque contrast pair') : pass(boundaryRatio >= 3)),
 			motion_outcome: !hasMotion ? na('source-rendered state has no animation or transition contract') : pass(config.motion === 'reduced' ? motionDuration <= .1 : motionDuration > 0),
 			overlay_provenance: !overlay ? na('source-rendered state has no visible overlay in this phase') : pass(overlay.closest('[data-conformance-state]') === section && Boolean(overlay.getAttribute('role') || overlay.id)),
+			raw: {
+				target_selector: targetSelector,
+				text: [{selector: targetSelector, adjacent_selector: base, foreground: targetStyle.color, background: targetStyle.backgroundColor, composited_background: rgba(background(target))}],
+				boundaries: [{selector: targetSelector, adjacent_selector: base, foreground: targetStyle.borderTopColor, background: targetStyle.backgroundColor, composited_background: rgba(background(target.parentElement))}],
+				motion: hasMotion ? {selector: targetSelector, descendant_selector: targetSelector, before_ms: 0, action_ms: motionDuration * 1000, reduced_ms: config.motion === 'reduced' ? motionDuration * 1000 : 0} : {},
+				overlay: !overlay ? {} : {selector: base + ' [role="' + overlay.getAttribute('role') + '"]', role: overlay.getAttribute('role'), source_token: overlay.id || overlay.getAttribute('aria-labelledby') || overlay.getAttribute('data-goshtoso-overlay') || 'role-backed-overlay'},
+			},
 		};
 	});
 }`

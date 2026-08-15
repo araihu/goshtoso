@@ -828,13 +828,21 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 	if err != nil {
 		return bfullRawResult{}, err
 	}
-	if strings.TrimSpace(raw.Motion.Selector) == "" || strings.TrimSpace(raw.Motion.DescendantSelector) == "" {
-		return bfullRawResult{}, fmt.Errorf("motion target and descendant selectors are required")
+	motion := false
+	if raw.Motion.Selector != "" || raw.Motion.DescendantSelector != "" {
+		if strings.TrimSpace(raw.Motion.Selector) == "" || strings.TrimSpace(raw.Motion.DescendantSelector) == "" {
+			return bfullRawResult{}, fmt.Errorf("motion target and descendant selectors are required")
+		}
+		motion = raw.Motion.ActionMS > 0 && raw.Motion.ReducedMS <= raw.Motion.ActionMS
 	}
-	if strings.TrimSpace(raw.Overlay.Selector) == "" || strings.TrimSpace(raw.Overlay.Role) == "" || strings.TrimSpace(raw.Overlay.SourceToken) == "" {
-		return bfullRawResult{}, fmt.Errorf("overlay selector, role, and source token are required")
+	overlay := false
+	if raw.Overlay.Selector != "" || raw.Overlay.Role != "" || raw.Overlay.SourceToken != "" {
+		if strings.TrimSpace(raw.Overlay.Selector) == "" || strings.TrimSpace(raw.Overlay.Role) == "" || strings.TrimSpace(raw.Overlay.SourceToken) == "" {
+			return bfullRawResult{}, fmt.Errorf("overlay selector, role, and source token are required")
+		}
+		overlay = true
 	}
-	return bfullRawResult{textContrast: text, boundaryContrast: boundary, motionOutcome: raw.Motion.ActionMS > 0 && raw.Motion.ReducedMS <= raw.Motion.ActionMS, overlayProvenance: true}, nil
+	return bfullRawResult{textContrast: text, boundaryContrast: boundary, motionOutcome: motion, overlayProvenance: overlay}, nil
 }
 
 func bfullRGBA(value string) ([4]float64, bool) {
