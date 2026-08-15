@@ -8,6 +8,7 @@
       openedWithKeyboard: false,
       leaveTimeout: null,
       focusRestoreObserver: null,
+      focusRestoreFallbackCleanup: null,
       focusRestoreGeneration: 0,
       destroyed: false,
       get triggerClass() {
@@ -19,6 +20,8 @@
         this.focusRestoreGeneration += 1;
         if (this.focusRestoreObserver) this.focusRestoreObserver.disconnect();
         this.focusRestoreObserver = null;
+        if (this.focusRestoreFallbackCleanup) this.focusRestoreFallbackCleanup();
+        this.focusRestoreFallbackCleanup = null;
       },
       focusTriggerIfOwned: function (trigger, menu, closingFocus) {
         if (this.destroyed || !trigger) return false;
@@ -40,6 +43,55 @@
         }
         trigger.focus();
         return true;
+      },
+      deferFocusRestoreUntilMenuHidden: function (trigger, menu, closingFocus, generation) {
+        var state = this;
+        var animationFrame = null;
+        var timeout = null;
+        var settled = false;
+        var cleanup = function () {
+          if (settled) return;
+          settled = true;
+          if (animationFrame !== null && typeof window.cancelAnimationFrame === "function") {
+            window.cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+          }
+          if (timeout !== null) {
+            window.clearTimeout(timeout);
+            timeout = null;
+          }
+          menu.removeEventListener("transitionend", onTransitionEnd);
+          menu.removeEventListener("animationend", onTransitionEnd);
+          if (state.focusRestoreFallbackCleanup === cleanup) {
+            state.focusRestoreFallbackCleanup = null;
+          }
+        };
+        var schedule = function () {
+          if (settled) return;
+          if (typeof window.requestAnimationFrame === "function") {
+            animationFrame = window.requestAnimationFrame(attempt);
+          } else {
+            timeout = window.setTimeout(attempt, 16);
+          }
+        };
+        var attempt = function () {
+          if (state.destroyed || state.focusRestoreGeneration !== generation) {
+            cleanup();
+            return;
+          }
+          if (state.restoreTriggerAfterMenuHidden(trigger, menu, closingFocus)) {
+            cleanup();
+            return;
+          }
+          schedule();
+        };
+        var onTransitionEnd = function (event) {
+          if (event.target === menu) attempt();
+        };
+        this.focusRestoreFallbackCleanup = cleanup;
+        menu.addEventListener("transitionend", onTransitionEnd);
+        menu.addEventListener("animationend", onTransitionEnd);
+        attempt();
       },
       restoreTriggerAfterMenuHidden: function (trigger, menu, closingFocus) {
         if (this.destroyed) return true;
@@ -66,7 +118,11 @@
         this.$nextTick(function () {
           if (state.destroyed || state.focusRestoreGeneration !== generation) return;
           if (state.restoreTriggerAfterMenuHidden(trigger, menu, closingFocus)) return;
-          if (typeof window.MutationObserver !== "function" || !menu) {
+          if (typeof window.MutationObserver !== "function") {
+            if (menu) {
+              state.deferFocusRestoreUntilMenuHidden(trigger, menu, closingFocus, generation);
+              return;
+            }
             state.focusTriggerIfOwned(trigger, menu, closingFocus);
             state.cancelFocusRestore();
             return;

@@ -59,9 +59,12 @@ func TestDropdownRuntimeRestoresEscapeFocusAfterTrapCleanup(t *testing.T) {
 	dropdown := readRuntimeSource(t, "dropdown.js")
 	for _, want := range []string{
 		"focusTriggerIfOwned: function",
+		"deferFocusRestoreUntilMenuHidden: function",
 		"restoreTriggerAfterMenuHidden: function",
 		`window.getComputedStyle(menu).display !== "none"`,
 		`new MutationObserver(function ()`,
+		`menu.addEventListener("transitionend"`,
+		"requestAnimationFrame",
 		`attributeFilter: ["class", "hidden", "style"]`,
 		"this.isOpen || this.openedWithKeyboard",
 		"closingFocus === trigger",
@@ -71,6 +74,7 @@ func TestDropdownRuntimeRestoresEscapeFocusAfterTrapCleanup(t *testing.T) {
 		"state.destroyed",
 		"state.focusRestoreGeneration !== generation",
 		"state.focusTriggerIfOwned(trigger, menu, closingFocus)",
+		"state.deferFocusRestoreUntilMenuHidden(trigger, menu, closingFocus, generation)",
 		"this.cancelFocusRestore()",
 		"trigger.focus()",
 	} {

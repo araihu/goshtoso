@@ -292,6 +292,58 @@ func TestDropdownEscapeWithoutMutationObserverPreservesExternalFocus(t *testing.
 	require.NoError(t, err)
 }
 
+func TestDropdownEscapeWithoutMutationObserverRestoresOwnedFocus(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			menu && getComputedStyle(menu).display !== "none" &&
+			document.activeElement?.getAttribute("role") === "menuitem";
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.Evaluate(`() => { window.MutationObserver = undefined; }`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "false" &&
+			menu && getComputedStyle(menu).display === "none";
+	}`, nil)
+	require.NoError(t, err)
+	time.Sleep(100 * time.Millisecond)
+
+	activeIsTrigger, err := page.Evaluate(`() => document.activeElement === document.querySelector("#dropdown-click button")`, nil)
+	require.NoError(t, err)
+	activeDescription, err := page.Evaluate(`() => ({
+		tag: document.activeElement?.tagName,
+		role: document.activeElement?.getAttribute("role") || "",
+		text: document.activeElement?.textContent?.trim() || "",
+	})`, nil)
+	require.NoError(t, err)
+	t.Logf("activeIsTrigger=%v active=%v", activeIsTrigger, activeDescription)
+	require.True(t, activeIsTrigger.(bool), "owned keyboard Escape must restore trigger focus")
+}
+
 func TestReviewDropdownAlpineDestroyInvalidatesQueuedFocusRestore(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
