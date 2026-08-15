@@ -5016,6 +5016,10 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .motion-reduce\:translate-y-0 {
+      --tw-translate-y: 0px;
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
     .motion-reduce\:scale-100 {
       --tw-scale-x: 100%;
       --tw-scale-y: 100%;
@@ -5035,6 +5039,9 @@
     }
     .motion-reduce\:transition-none {
       transition-property: none;
+    }
+    .motion-reduce\:delay-0 {
+      transition-delay: 0ms;
     }
     @media (hover: hover) {
       .motion-reduce\:hover\:translate-none:hover {

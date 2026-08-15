@@ -62,7 +62,12 @@ templ searchModalTemplate(cfg Config) {
 		x-data="goshtosoSearchModal($el)"
 		x-on:goshtoso-search-open.window="if ($event.detail.id === searchId) openSearch()"
 		x-show="open"
-		x-transition.opacity.duration.150ms
+		x-transition:enter="transition-opacity ease-out duration-150 motion-reduce:transition-none"
+		x-transition:enter-start="opacity-0 motion-reduce:opacity-100"
+		x-transition:enter-end="opacity-100"
+		x-transition:leave="transition-opacity ease-in duration-100 motion-reduce:transition-none"
+		x-transition:leave-start="opacity-100"
+		x-transition:leave-end="opacity-0 motion-reduce:opacity-100"
 		x-trap.inert.noscroll="open"
 		x-on:click.self="closeSearch()"
 		class="fixed inset-0 z-[80] flex justify-center bg-surface-dark/55 px-4 backdrop-blur-md dark:bg-black/60"
@@ -77,9 +82,12 @@ templ searchModalTemplate(cfg Config) {
 		<div
 			class={ cfg.dialogClasses() }
 			x-show="open"
-			x-transition:enter="transition ease-out duration-150"
-			x-transition:enter-start="opacity-0 translate-y-1"
+			x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"
+			x-transition:enter-start="opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0"
 			x-transition:enter-end="opacity-100 translate-y-0"
+			x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
+			x-transition:leave-start="opacity-100 translate-y-0"
+			x-transition:leave-end="opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0"
 		>
 			<div
 				class="relative flex items-center gap-3 border border-outline bg-surface px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt"
