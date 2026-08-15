@@ -103,6 +103,54 @@ func TestTooltipCoverageDemo(t *testing.T) {
 	require.Empty(t, jsErrors, "no JS console/page errors on tooltip demo: %v", jsErrors)
 }
 
+func TestTooltipReducedMotionShowsWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForTooltipAlpine(page))
+
+	hoverTrigger := page.Locator("[aria-describedby='demoTop']").First()
+	require.NoError(t, hoverTrigger.Hover())
+	_, err = page.WaitForFunction(`() => {
+		const tooltip = document.querySelector('#demoTop');
+		if (!tooltip || getComputedStyle(tooltip).opacity !== '1') return false;
+		const style = getComputedStyle(tooltip);
+		return style.transitionProperty === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	clickTrigger := page.Locator("[aria-describedby='clickTop']").First()
+	require.NoError(t, clickTrigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const tooltip = document.querySelector('#clickTop');
+		if (!tooltip || getComputedStyle(tooltip).display === 'none') return false;
+		const style = getComputedStyle(tooltip);
+		return style.transitionProperty === 'none' && style.opacity === '1';
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("main").Click(playwright.LocatorClickOptions{
+		Position: &playwright.Position{X: 10, Y: 10},
+	}))
+	_, err = page.WaitForFunction(
+		`() => getComputedStyle(document.querySelector('#clickTop')).display === 'none'`,
+		nil,
+	)
+	require.NoError(t, err)
+}
+
 func waitForTooltipAlpine(page playwright.Page) error {
 	_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	return err

@@ -181,6 +181,29 @@ func TestTooltipCoverageRenderDefaultRichClickAndCustomTrigger(t *testing.T) {
 	}
 }
 
+func TestTooltipReducedMotionTransitionContract(t *testing.T) {
+	defaultHTML := renderTooltip(t, "defaultTip", "Helpful context")
+	richHTML := renderTooltip(t, "richTip", "Storage", WithDescription("Backed up every hour"))
+	clickHTML := renderTooltip(t, "clickTip", "Click details", WithActivation(ActivationClick))
+
+	for _, html := range []string{defaultHTML, richHTML} {
+		if !strings.Contains(html, "transition-all ease-out motion-reduce:transition-none") {
+			t.Fatalf("hover tooltip is missing reduced-motion transition suppression: %s", html)
+		}
+	}
+
+	for _, want := range []string{
+		`x-transition:enter="transition ease-out motion-reduce:transition-none"`,
+		`x-transition:enter-start="opacity-0 motion-reduce:opacity-100"`,
+		`x-transition:leave="transition ease-in motion-reduce:transition-none"`,
+		`x-transition:leave-end="opacity-0 motion-reduce:opacity-100"`,
+	} {
+		if !strings.Contains(clickHTML, want) {
+			t.Fatalf("click tooltip is missing %q: %s", want, clickHTML)
+		}
+	}
+}
+
 func TestTooltipCoverageCustomTriggerRenderErrors(t *testing.T) {
 	errTrigger := errors.New("trigger render failed")
 	failingTrigger := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
