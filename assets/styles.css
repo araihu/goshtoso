@@ -5016,6 +5016,10 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .motion-reduce\:translate-x-0 {
+      --tw-translate-x: 0px;
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
     .motion-reduce\:translate-y-0 {
       --tw-translate-y: 0px;
       translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -5412,6 +5416,12 @@
     .md\:text-4xl {
       font-size: var(--text-4xl);
       line-height: var(--tw-leading, var(--text-4xl--line-height));
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .md\:motion-reduce\:translate-x-0 {
+        --tw-translate-x: 0px;
+        translate: var(--tw-translate-x) var(--tw-translate-y);
+      }
     }
   }
   @media (width >= 64rem) {

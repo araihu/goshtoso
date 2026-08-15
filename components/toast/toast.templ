@@ -87,11 +87,11 @@ templ clientNotification(tone string) {
 		x-on:pause-auto-dismiss.window="clearTimeout(timeout)"
 		x-on:resume-auto-dismiss.window="timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
 		x-init="$nextTick(() => { isVisible = true }); timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
-		x-transition:enter="transition duration-300 ease-out"
+		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
 		x-transition:enter-end="translate-y-0"
-		x-transition:enter-start="translate-y-8"
-		x-transition:leave="transition duration-300 ease-in"
-		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24"
+		x-transition:enter-start="translate-y-8 motion-reduce:translate-y-0"
+		x-transition:leave="transition duration-300 ease-in motion-reduce:transition-none"
+		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
 		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", bgClass }>
@@ -143,11 +143,11 @@ templ clientMessageNotification() {
 		x-on:pause-auto-dismiss.window="clearTimeout(timeout)"
 		x-on:resume-auto-dismiss.window="timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
 		x-init="$nextTick(() => { isVisible = true }); timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
-		x-transition:enter="transition duration-300 ease-out"
+		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
 		x-transition:enter-end="translate-y-0"
-		x-transition:enter-start="translate-y-8"
-		x-transition:leave="transition duration-300 ease-in"
-		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24"
+		x-transition:enter-start="translate-y-8 motion-reduce:translate-y-0"
+		x-transition:leave="transition duration-300 ease-in motion-reduce:transition-none"
+		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
 		<div class="flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 dark:bg-surface-dark-alt">
@@ -233,11 +233,11 @@ templ serverToast(cfg Config) {
 		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
 		class={ "pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.borderClass() }
 		role="alert"
-		x-transition:enter="transition duration-300 ease-out"
+		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
 		x-transition:enter-end="translate-y-0"
-		x-transition:enter-start="translate-y-8"
-		x-transition:leave="transition duration-300 ease-in"
-		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24"
+		x-transition:enter-start="translate-y-8 motion-reduce:translate-y-0"
+		x-transition:leave="transition duration-300 ease-in motion-reduce:transition-none"
+		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
 		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.bgClass() }>
@@ -310,11 +310,11 @@ templ serverMessageToast(cfg MessageConfig) {
 		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
 		class="pointer-events-auto relative rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 		role="alert"
-		x-transition:enter="transition duration-300 ease-out"
+		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
 		x-transition:enter-end="translate-y-0"
-		x-transition:enter-start="translate-y-8"
-		x-transition:leave="transition duration-300 ease-in"
-		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24"
+		x-transition:enter-start="translate-y-8 motion-reduce:translate-y-0"
+		x-transition:leave="transition duration-300 ease-in motion-reduce:transition-none"
+		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
 		<div class="flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 dark:bg-surface-dark-alt">
