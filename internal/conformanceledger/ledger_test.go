@@ -214,6 +214,27 @@ func TestValidateRequiresProvenanceApplicabilityAndReceiptStatus(t *testing.T) {
 	}
 }
 
+func TestValidateRejectsMandatoryExecutionRowMarkedNotApplicable(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for index := range ledger.Rows {
+		row := &ledger.Rows[index]
+		if row.ID != "execution/kind/button" {
+			continue
+		}
+		row.Applicability = NotApplicable
+		row.ReceiptStatus = StatusNotApplicable
+		row.Rationale = "claimant supplied N/A"
+		if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "mandatory execution row cannot be N/A") {
+			t.Fatalf("mandatory direct N/A error = %v", err)
+		}
+		return
+	}
+	t.Fatal("mandatory execution row fixture missing")
+}
+
 func TestRequiredViewportWidthsIncludeEachCompiledEdgeAndIntermediate(t *testing.T) {
 	got := RequiredViewportWidths([]int{640, 768, 1024, 1280, 1536})
 	want := []int{390, 639, 640, 641, 704, 767, 768, 769, 896, 1023, 1024, 1025, 1152, 1279, 1280, 1281, 1408, 1440, 1535, 1536, 1537}

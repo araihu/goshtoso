@@ -931,21 +931,13 @@ func validateBFullInputObservation(observation BFullInputObservation) error {
 		return nil
 	}
 	if observation.Applicability == NotApplicable {
-		if observation.ReceiptStatus != StatusNotApplicable || strings.TrimSpace(observation.Rationale) == "" {
-			return fmt.Errorf("N/A input requires status and rationale")
-		}
-		if observation.TargetSelector != "" || observation.EventCount != 0 || strings.TrimSpace(observation.SourceGrounding) == "" {
-			return fmt.Errorf("N/A input cannot claim target or events")
-		}
-		for name, assertion := range map[string]BFullSemanticAssertion{"focus-visible": observation.FocusVisible, "movement-return": observation.MovementReturn} {
-			if err := assertNotApplicable(name, assertion); err != nil {
-				return err
-			}
-		}
-		return assertEscapeNotApplicable(observation.Escape)
+		return fmt.Errorf("mandatory B-FULL input cannot be N/A")
 	}
-	if observation.Applicability != Applicable || observation.ReceiptStatus != StatusExecuted {
-		return fmt.Errorf("applicable input must be executed")
+	if observation.Applicability != Applicable {
+		return fmt.Errorf("B-FULL input has invalid applicability %q", observation.Applicability)
+	}
+	if observation.ReceiptStatus != StatusExecuted {
+		return fmt.Errorf("mandatory B-FULL input action did not execute: %s", observation.ReceiptStatus)
 	}
 	if strings.TrimSpace(observation.TargetSelector) == "" || strings.TrimSpace(observation.TargetRole) == "" || strings.TrimSpace(observation.AccessibleName) == "" || observation.ARIAState == nil || observation.EventCount < 1 || strings.TrimSpace(observation.Driver) == "" || strings.TrimSpace(observation.SourceGrounding) == "" {
 		return fmt.Errorf("executed input requires target, role, name, ARIA state, and event")

@@ -712,7 +712,7 @@ func conformanceNoTarget(state, input, source, rationale string) conformanceledg
 	rationale = source + "; " + rationale
 	na := conformanceledger.BFullSemanticAssertion{Applicability: conformanceledger.NotApplicable, Rationale: rationale}
 	return conformanceledger.BFullInputObservation{
-		State: state, Input: input, Applicability: conformanceledger.NotApplicable, ReceiptStatus: conformanceledger.StatusNotApplicable,
+		State: state, Input: input, Applicability: conformanceledger.Applicable, ReceiptStatus: conformanceledger.StatusFailed,
 		Rationale: rationale, ARIAState: map[string]string{}, SourceGrounding: source, FocusVisible: na, MovementReturn: na,
 		Escape: conformanceledger.BFullEscapeOutcome{Applicability: conformanceledger.NotApplicable, Rationale: rationale},
 	}
@@ -726,7 +726,7 @@ func conformanceFailure(state, input, source, driver string, target conformanceP
 		escape = conformanceledger.BFullEscapeOutcome{Applicability: conformanceledger.Applicable, Rationale: rationale}
 	}
 	return conformanceledger.BFullInputObservation{
-		State: state, Input: input, Applicability: conformanceledger.Applicable, ReceiptStatus: conformanceledger.StatusExecuted,
+		State: state, Input: input, Applicability: conformanceledger.Applicable, ReceiptStatus: conformanceledger.StatusFailed,
 		Rationale: rationale, TargetSelector: target.Selector, TargetRole: target.Role, AccessibleName: target.Name, ARIAState: target.ARIAState,
 		Driver: driver, SourceGrounding: source, Before: before, Action: before, Return: before,
 		FocusVisible: na, MovementReturn: na, Escape: escape,

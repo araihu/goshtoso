@@ -216,6 +216,34 @@ func TestValidateBFullManifestRejectsStructuredEvidenceClaimsWithoutExecution(t 
 	}
 }
 
+func TestValidateBFullManifestRejectsMandatoryInputNotApplicable(t *testing.T) {
+	axes := BFullAxes{States: []string{"button/default"}, Themes: []string{"araihu"}, Modes: []string{"light"}, Viewports: []int{390}, Zooms: []int{100}, Motions: []string{"normal"}, Inputs: []string{"mouse"}}
+	manifest := bfullFixture(t, axes)
+	for index := range manifest.Cells {
+		manifest.Cells[index].Applicability = NotApplicable
+		manifest.Cells[index].ReceiptStatus = StatusNotApplicable
+		manifest.Cells[index].Rationale = "claimant says target is unavailable"
+	}
+	rewriteBFullEvidence(t, &manifest.Batches[0], func(evidence *BFullBatchEvidence) {
+		observation := &evidence.Inputs[0]
+		observation.Applicability = NotApplicable
+		observation.ReceiptStatus = StatusNotApplicable
+		observation.Rationale = "claimant says target is unavailable"
+		observation.TargetSelector = ""
+		observation.EventCount = 0
+		na := BFullSemanticAssertion{Applicability: NotApplicable, Rationale: observation.Rationale}
+		observation.FocusVisible = na
+		observation.MovementReturn = na
+		observation.Escape = BFullEscapeOutcome{Applicability: NotApplicable, Rationale: observation.Rationale}
+	})
+	for index := range manifest.Cells {
+		manifest.Cells[index].EvidenceSHA256 = manifest.Batches[0].EvidenceSHA256
+	}
+	if err := ValidateBFullManifest(manifest, manifest.SourceCommit, manifest.SourceTree, axes); err == nil || !strings.Contains(err.Error(), "mandatory B-FULL input cannot be N/A") {
+		t.Fatalf("mandatory input N/A error = %v", err)
+	}
+}
+
 func bfullFixtureIdentity(t *testing.T) (BFullIdentity, string, string) {
 	t.Helper()
 	repo := t.TempDir()

@@ -167,6 +167,9 @@ func Validate(ledger Ledger, required Inventory) error {
 			if strings.TrimSpace(row.Rationale) == "" {
 				problems = append(problems, prefix+" N/A row missing rationale")
 			}
+			if mandatoryExecutionRow(row) {
+				problems = append(problems, prefix+" mandatory execution row cannot be N/A")
+			}
 		} else {
 			if row.ReceiptStatus == StatusNotApplicable {
 				problems = append(problems, prefix+" applicable row cannot use not-applicable receipt status")
