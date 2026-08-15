@@ -109,3 +109,24 @@ func TestCoverageRenderDefaultsAndSuppressesEmptyOptionalRegions(t *testing.T) {
 	assert.NotContains(t, html, `x-bind:aria-label="mobileMenuIsOpen`)
 	assert.NotContains(t, html, `aria-label="user menu"`)
 }
+
+func TestNavbarReducedMotionTransitionContract(t *testing.T) {
+	html := renderNavbar(t, Config{
+		User: &UserProfile{Name: "Ada Lovelace"},
+	})
+
+	for _, want := range []string{
+		`motion-reduce:transition-none hover:scale-110`,
+		`motion-reduce:hover:scale-100`,
+		`motion-reduce:active:scale-100`,
+		`x-transition:enter="transition-opacity ease-out duration-150 motion-reduce:transition-none"`,
+		`x-transition:enter-start="opacity-0 motion-reduce:opacity-100"`,
+		`x-transition:enter-end="opacity-100"`,
+		`x-transition:leave="transition-opacity ease-in duration-100 motion-reduce:transition-none"`,
+		`x-transition:leave-start="opacity-100"`,
+		`x-transition:leave-end="opacity-0 motion-reduce:opacity-100"`,
+	} {
+		assert.Contains(t, html, want)
+	}
+	assert.NotContains(t, html, `x-transition.opacity`)
+}

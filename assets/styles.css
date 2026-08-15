@@ -5051,9 +5051,21 @@
       .motion-reduce\:hover\:translate-none:hover {
         translate: none;
       }
+      .motion-reduce\:hover\:scale-100:hover {
+        --tw-scale-x: 100%;
+        --tw-scale-y: 100%;
+        --tw-scale-z: 100%;
+        scale: var(--tw-scale-x) var(--tw-scale-y);
+      }
     }
     .motion-reduce\:active\:translate-none:active {
       translate: none;
+    }
+    .motion-reduce\:active\:scale-100:active {
+      --tw-scale-x: 100%;
+      --tw-scale-y: 100%;
+      --tw-scale-z: 100%;
+      scale: var(--tw-scale-x) var(--tw-scale-y);
     }
   }
   @media (width >= 40rem) {
