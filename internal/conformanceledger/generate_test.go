@@ -195,6 +195,30 @@ func TestGenerateSkeletonPersistsChecklistMappingKindAndRationale(t *testing.T) 
 	}
 }
 
+func TestGenerateSkeletonBindsStateActionContractsToSourceAndExecutionRows(t *testing.T) {
+	ledger, _, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for id, expected := range map[string]string{
+		"inventory/lifecycle-state/button_lifecycle_disabled": "native disabled control",
+		"execution/lifecycle-state/button_lifecycle_disabled": "native disabled control",
+		"inventory/state/checkbox_Config.Checked":             "keyboard Space changes checked state",
+		"execution/state/checkbox_Config.Checked":             "keyboard Space changes checked state",
+	} {
+		var found *Row
+		for index := range ledger.Rows {
+			if ledger.Rows[index].ID == id {
+				found = &ledger.Rows[index]
+				break
+			}
+		}
+		if found == nil || !strings.Contains(found.Rationale, expected) {
+			t.Fatalf("state row %s omits action contract: %#v", id, found)
+		}
+	}
+}
+
 func generationFixture(t *testing.T) GenerationConfig {
 	t.Helper()
 	directory := t.TempDir()

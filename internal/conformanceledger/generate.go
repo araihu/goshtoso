@@ -329,6 +329,9 @@ func appendSourceRows(rows []Row, axis string, items []SourceItem, assign func(*
 			ReceiptStatus: StatusExecuted,
 			Receipt:       "current-source derivation",
 		}
+		if item.Action != "" {
+			row.Rationale = "source-grounded action contract: " + item.Action
+		}
 		assign(&row, item.Value)
 		rows = append(rows, row)
 	}
@@ -340,6 +343,9 @@ func appendExecutionRows(rows []Row, axis string, items []SourceItem, receipt st
 		row := blockedRow("execution/"+axis+"/"+strings.ReplaceAll(item.Value, "/", "_"), item.Source, receipt, func(row *Row) {
 			assign(row, item.Value)
 		})
+		if item.Action != "" {
+			row.Rationale += "; source-grounded action contract: " + item.Action
+		}
 		rows = append(rows, row)
 	}
 	return rows

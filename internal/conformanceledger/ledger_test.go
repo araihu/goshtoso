@@ -167,6 +167,15 @@ func TestDeriveInventoryIncludesSourceVisiblePublicConfigurationStates(t *testin
 	}
 }
 
+func TestDeriveLifecycleStatesRejectsAuthorityWithoutRealActionContract(t *testing.T) {
+	original := lifecycleStateAuthorities[0].Action
+	lifecycleStateAuthorities[0].Action = ""
+	t.Cleanup(func() { lifecycleStateAuthorities[0].Action = original })
+	if _, err := deriveLifecycleStates(repoRoot(t)); err == nil || !strings.Contains(err.Error(), "lacks action contract") {
+		t.Fatalf("missing lifecycle action contract error = %v", err)
+	}
+}
+
 func TestValidateRejectsIncompleteMandatoryRows(t *testing.T) {
 	required := Inventory{
 		Packages:        []SourceItem{{Value: "github.com/araihu/goshtoso/components/button", Source: SourceRef{Path: "components/button", Symbol: "package button"}}},

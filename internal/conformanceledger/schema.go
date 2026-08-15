@@ -43,6 +43,9 @@ type SourceRef struct {
 type SourceItem struct {
 	Value  string    `json:"value"`
 	Source SourceRef `json:"source"`
+	// Action is the maintained real interaction contract when this authority
+	// represents an executable configuration or lifecycle state.
+	Action string `json:"action,omitempty"`
 }
 
 type Inventory struct {

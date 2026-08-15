@@ -33,20 +33,21 @@ var lifecycleStateAuthorities = []struct {
 	Value  string
 	Path   string
 	Marker string
+	Action string
 }{
-	{Value: "button/lifecycle/disabled", Path: "components/button/button.templ", Marker: "disabled"},
-	{Value: "button/lifecycle/loading", Path: "components/button/button.templ", Marker: "data-goshtoso-loading"},
-	{Value: "button/lifecycle/hover-focus", Path: "components/button/types.go", Marker: "focus-visible"},
-	{Value: "dropdown/lifecycle/open-closed-dismiss", Path: "components/dropdown/dropdown.templ", Marker: "closeAndFocus()"},
-	{Value: "modal/lifecycle/open-closed-dismiss", Path: "components/modal/modal.templ", Marker: "keydown.esc.window"},
-	{Value: "drawer/lifecycle/open-closed-dismiss", Path: "components/drawer/drawer.templ", Marker: "drawer:close-request"},
-	{Value: "tooltip/lifecycle/hover-focus", Path: "components/tooltip/tooltip.templ", Marker: "peer-hover:opacity-100"},
-	{Value: "tooltip/lifecycle/click-open-dismiss", Path: "components/tooltip/tooltip.templ", Marker: "showTooltip = false"},
-	{Value: "search/lifecycle/open-closed-dismiss", Path: "components/search/search.templ", Marker: "closeSearch()"},
-	{Value: "carousel/lifecycle/touch-reduced-motion", Path: "components/carousel/carousel.templ", Marker: "x-on:touchstart"},
-	{Value: "form/lifecycle/error", Path: "components/form/errors.templ", Marker: "role=\"alert\""},
-	{Value: "form/lifecycle/empty", Path: "components/form/errors.templ", Marker: "Empty Items renders nothing"},
-	{Value: "avatar/lifecycle/loading-error", Path: "components/avatar/avatar.templ", Marker: "x-on:error"},
+	{Value: "button/lifecycle/disabled", Path: "components/button/button.templ", Marker: "disabled", Action: "keyboard Tab and Enter prove native disabled control rejects focus and activation"},
+	{Value: "button/lifecycle/loading", Path: "components/button/button.templ", Marker: "data-goshtoso-loading", Action: "mouse click trigger, wait for loading marker, then verify returned idle state"},
+	{Value: "button/lifecycle/hover-focus", Path: "components/button/types.go", Marker: "focus-visible", Action: "mouse hover then keyboard Tab captures visible focus before and after return"},
+	{Value: "dropdown/lifecycle/open-closed-dismiss", Path: "components/dropdown/dropdown.templ", Marker: "closeAndFocus()", Action: "mouse click opens menu; real Escape closes it and returns focus to trigger"},
+	{Value: "modal/lifecycle/open-closed-dismiss", Path: "components/modal/modal.templ", Marker: "keydown.esc.window", Action: "mouse click opens dialog; real Escape closes it and returns focus to trigger"},
+	{Value: "drawer/lifecycle/open-closed-dismiss", Path: "components/drawer/drawer.templ", Marker: "drawer:close-request", Action: "mouse click opens drawer; real Escape closes it and returns focus to trigger"},
+	{Value: "tooltip/lifecycle/hover-focus", Path: "components/tooltip/tooltip.templ", Marker: "peer-hover:opacity-100", Action: "mouse hover and keyboard focus reveal tooltip, then leave/blur returns hidden state"},
+	{Value: "tooltip/lifecycle/click-open-dismiss", Path: "components/tooltip/tooltip.templ", Marker: "showTooltip = false", Action: "mouse click opens tooltip; real Escape dismisses it and returns focus"},
+	{Value: "search/lifecycle/open-closed-dismiss", Path: "components/search/search.templ", Marker: "closeSearch()", Action: "mouse click opens search; real Escape closes it and returns focus to trigger"},
+	{Value: "carousel/lifecycle/touch-reduced-motion", Path: "components/carousel/carousel.templ", Marker: "x-on:touchstart", Action: "CDP touch swipe advances slide; reduced-motion outcome preserves accessible current-slide state"},
+	{Value: "form/lifecycle/error", Path: "components/form/errors.templ", Marker: "role=\"alert\"", Action: "keyboard submit invalid form exposes alert before correction and valid submit returns clear state"},
+	{Value: "form/lifecycle/empty", Path: "components/form/errors.templ", Marker: "Empty Items renders nothing", Action: "real empty-items fixture renders no error surface; populated validation action exposes error surface"},
+	{Value: "avatar/lifecycle/loading-error", Path: "components/avatar/avatar.templ", Marker: "x-on:error", Action: "served broken image response triggers native error event and fallback state"},
 }
 
 // StateExecutionContract names a maintained finite Config-state authority.
@@ -123,6 +124,9 @@ func deriveLifecycleStates(repoRoot string) ([]SourceItem, error) {
 			return nil, fmt.Errorf("duplicate lifecycle state authority %s", authority.Value)
 		}
 		seen[authority.Value] = struct{}{}
+		if strings.TrimSpace(authority.Action) == "" {
+			return nil, fmt.Errorf("lifecycle state authority %s lacks action contract", authority.Value)
+		}
 		content, err := os.ReadFile(filepath.Join(repoRoot, authority.Path))
 		if err != nil {
 			return nil, fmt.Errorf("read lifecycle authority %s: %w", authority.Path, err)
@@ -137,7 +141,7 @@ func deriveLifecycleStates(repoRoot string) ([]SourceItem, error) {
 		if line == 0 {
 			return nil, fmt.Errorf("unmapped lifecycle state %s: marker %q has no source line", authority.Value, authority.Marker)
 		}
-		items = append(items, SourceItem{Value: authority.Value, Source: SourceRef{Path: authority.Path, Symbol: fmt.Sprintf("%s:%d", authority.Marker, line)}})
+		items = append(items, SourceItem{Value: authority.Value, Source: SourceRef{Path: authority.Path, Symbol: fmt.Sprintf("%s:%d", authority.Marker, line)}, Action: authority.Action})
 	}
 	sortSourceItems(items)
 	return items, nil
@@ -166,7 +170,7 @@ func deriveMaintainedConfigStates(repoRoot string) ([]SourceItem, error) {
 		if strings.TrimSpace(contract.State) == "" || strings.TrimSpace(contract.Fixture) == "" || strings.TrimSpace(contract.Action) == "" {
 			return nil, fmt.Errorf("maintained Config state authority %s lacks state, fixture, or action contract", key)
 		}
-		states = append(states, SourceItem{Value: contract.State, Source: field.Source})
+		states = append(states, SourceItem{Value: contract.State, Source: field.Source, Action: contract.Action})
 	}
 	sortSourceItems(states)
 	for index := 1; index < len(states); index++ {
