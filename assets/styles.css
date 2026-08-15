@@ -5050,6 +5050,10 @@
     .motion-reduce\:delay-0 {
       transition-delay: 0ms;
     }
+    .motion-reduce\:before\:transition-none::before {
+      content: var(--tw-content);
+      transition-property: none;
+    }
     @media (hover: hover) {
       .motion-reduce\:hover\:translate-none:hover {
         translate: none;

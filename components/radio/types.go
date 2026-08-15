@@ -248,7 +248,7 @@ func (cfg Config) inputClasses() string {
 	}
 
 	base := "before:content[''] peer relative shrink-0 appearance-none overflow-hidden rounded-full border border-outline " + bg +
-		" before:absolute before:inset-0 before:scale-0 before:rounded-full before:transition before:duration-200 checked:before:scale-[0.55]" +
+		" before:absolute before:inset-0 before:scale-0 before:rounded-full before:transition before:duration-200 motion-reduce:before:transition-none checked:before:scale-[0.55]" +
 		" focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong active:outline-offset-0 disabled:cursor-not-allowed" +
 		" dark:border-outline-dark dark:focus:outline-outline-dark-strong"
 
@@ -261,7 +261,7 @@ func (cfg Config) inputClasses() string {
 // `has-checked:` selector (label has a checked input child → primary fill).
 func (cfg Config) segmentedLabelClasses() string {
 	checkedVariant := segmentedCheckedClasses(cfg.Tone)
-	return "relative cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors " +
+	return "relative cursor-pointer select-none inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-colors motion-reduce:transition-none " +
 		"text-on-surface hover:bg-surface dark:text-on-surface-dark dark:hover:bg-surface-dark " +
 		"has-disabled:cursor-not-allowed has-disabled:opacity-75 " + checkedVariant
 }

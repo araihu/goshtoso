@@ -27,3 +27,11 @@ func TestRadio_HelperTextRenders(t *testing.T) {
 
 	assert.Contains(t, html, "Runs every day")
 }
+
+func TestRadio_AnimationsProvideReducedMotionContracts(t *testing.T) {
+	standard := renderRadio(t, Config{ID: "reduced-standard", Name: "reduced", Value: "standard", Label: "Standard"})
+	assert.Contains(t, standard, "motion-reduce:before:transition-none")
+
+	segmented := renderRadio(t, Config{ID: "reduced-segmented", Name: "reduced", Value: "segmented", Label: "Segmented", Segmented: true})
+	assert.Contains(t, segmented, "transition-colors motion-reduce:transition-none")
+}

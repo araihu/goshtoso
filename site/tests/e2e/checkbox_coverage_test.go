@@ -139,3 +139,26 @@ func TestCheckboxCoverageDemo(t *testing.T) {
 
 	require.Empty(t, jsErrors, "no JS console/page errors on checkbox demo: %v", jsErrors)
 }
+
+func TestCheckboxReducedMotionStopsAnimationTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/checkbox", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => {
+		const pseudoInputs = ["#animScaleUp", "#animSlideDown"].map(selector => document.querySelector(selector));
+		const icons = Array.from(document.querySelectorAll("#checkbox-animations svg"));
+		return pseudoInputs.every(input => input && getComputedStyle(input, "::before").transitionProperty === "none") &&
+			icons.length === 3 && icons.every(icon => getComputedStyle(icon).transitionProperty === "none");
+	}`, nil)
+	require.NoError(t, err, "checkbox animation transitions should be disabled under reduced motion")
+}
