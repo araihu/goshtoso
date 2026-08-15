@@ -210,6 +210,7 @@ func Validate(ledger Ledger, required Inventory) error {
 	problems = append(problems, sourceAxisBijection("theme", required.Themes, ledger.Rows, func(row Row) string { return row.Theme })...)
 	problems = append(problems, sourceAxisBijection("state", required.States, ledger.Rows, func(row Row) string { return row.State })...)
 	problems = append(problems, sourceAxisBijection("lifecycle-state", required.LifecycleStates, ledger.Rows, func(row Row) string { return row.State })...)
+	problems = append(problems, validateSourceAxisNamespace(ledger.Rows)...)
 	problems = append(problems, validateChecklistProvenance(ledger.Rows)...)
 
 	if !anyRow(ledger.Rows, func(row Row) bool { return row.State != "" }) {
@@ -252,6 +253,24 @@ func Validate(ledger Ledger, required Inventory) error {
 	}
 	sort.Strings(problems)
 	return errors.New(strings.Join(problems, "; "))
+}
+
+func validateSourceAxisNamespace(rows []Row) []string {
+	known := map[string]bool{
+		"package": true, "renderable": true, "kind": true, "route": true,
+		"theme": true, "state": true, "lifecycle-state": true,
+	}
+	var problems []string
+	for _, row := range rows {
+		parts := strings.Split(row.ID, "/")
+		if len(parts) < 2 || (parts[0] != string(ClassInventory) && parts[0] != string(ClassExecution)) {
+			continue
+		}
+		if len(parts) != 3 || !known[parts[1]] {
+			problems = append(problems, fmt.Sprintf("row %s has unexpected source axis namespace", row.ID))
+		}
+	}
+	return problems
 }
 
 func ValidateClosure(ledger Ledger, required Inventory) error {

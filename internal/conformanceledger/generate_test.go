@@ -260,6 +260,21 @@ func TestValidateRejectsMultiAxisSourceRowAndChecklistEscape(t *testing.T) {
 	t.Fatal("package inventory row fixture missing")
 }
 
+func TestValidateRejectsUnexpectedSourceNamespaceRow(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	row := ledger.Rows[0]
+	row.ID = "inventory/unmapped/claimant"
+	row.Class = ClassInventory
+	row.Package = inventory.Packages[0].Value
+	ledger.Rows = append(ledger.Rows, row)
+	if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "unexpected source axis") {
+		t.Fatalf("unexpected source namespace row error = %v", err)
+	}
+}
+
 func TestGenerateSkeletonPersistsChecklistMappingKindAndRationale(t *testing.T) {
 	ledger, _, err := GenerateSkeleton(generationFixture(t))
 	if err != nil {
