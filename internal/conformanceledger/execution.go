@@ -2,9 +2,12 @@ package conformanceledger
 
 import (
 	"bytes"
+	"crypto/ed25519"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"image"
 	_ "image/png"
@@ -12,6 +15,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/araihu/goshtoso/internal/atattestation"
 )
 
 type ExecutionReceipt struct {
@@ -420,13 +425,6 @@ func validateATExecutionReceipt(ledger Ledger, rowIndex map[string]int, receipt 
 	if receipt.Context.AT != target.AT || receipt.Context.Route != target.Route || receipt.Context.State != target.State {
 		return fmt.Errorf("execution receipt %s AT context %s/%s/%s does not match row %s/%s/%s", receipt.ID, receipt.Context.AT, receipt.Context.Route, receipt.Context.State, target.AT, target.Route, target.State)
 	}
-	counts := map[string]int{}
-	for _, artifact := range receipt.Artifacts {
-		counts[artifact.Kind]++
-	}
-	if len(receipt.Artifacts) != 2 || counts["at-caption-screenshot"] != 1 || counts["at-cursor-trace"] != 1 {
-		return fmt.Errorf("execution receipt %s requires exactly one at-caption-screenshot and one at-cursor-trace", receipt.ID)
-	}
 	browser := strings.TrimSpace(receipt.ToolVersions["browser"])
 	screenReader := strings.TrimSpace(receipt.ToolVersions["screen_reader"])
 	if browser == "" || screenReader == "" {
@@ -446,7 +444,53 @@ func validateATExecutionReceipt(ledger Ledger, rowIndex map[string]int, receipt 
 			return fmt.Errorf("execution receipt %s artifact %s AT version %q does not match tool screen reader %q", receipt.ID, artifact.Kind, artifact.ATVersion, screenReader)
 		}
 	}
+	counts := map[string]int{}
+	artifacts := map[string]EvidenceArtifact{}
+	for _, artifact := range receipt.Artifacts {
+		counts[artifact.Kind]++
+		artifacts[artifact.Kind] = artifact
+	}
+	if len(receipt.Artifacts) != 4 || counts["at-caption-screenshot"] != 1 || counts["at-cursor-trace"] != 1 || counts["at-served-response"] != 1 || counts["at-signed-attestation"] != 1 {
+		return fmt.Errorf("execution receipt %s requires exactly one at-caption-screenshot and one at-cursor-trace plus served response and signed attestation", receipt.ID)
+	}
+	trusted, err := loadConformanceATTrustedKeys(receipt.Context.RepoRoot)
+	if err != nil {
+		return err
+	}
+	attestation, err := os.ReadFile(artifacts["at-signed-attestation"].Path)
+	if err != nil {
+		return fmt.Errorf("read signed AT attestation: %w", err)
+	}
+	want := atattestation.Claims{SourceCommit: ledger.SourceCommit, SourceTree: ledger.SourceTree, Route: target.Route, State: target.State, Browser: browser, ScreenReader: screenReader, ServedSHA256: artifacts["at-served-response"].ExpectedSHA256, ScreenshotSHA256: artifacts["at-caption-screenshot"].ExpectedSHA256, TraceSHA256: artifacts["at-cursor-trace"].ExpectedSHA256}
+	if err := atattestation.Verify(attestation, trusted, want); err != nil {
+		return fmt.Errorf("execution receipt %s signed AT attestation: %w", receipt.ID, err)
+	}
 	return nil
+}
+
+func loadConformanceATTrustedKeys(repoRoot string) (map[string]ed25519.PublicKey, error) {
+	paths := map[string]string{"macos-voiceover-20260812": "tests/external/scrollregion-a11y/attestation-keys/macos-voiceover-public.pem", "windows-nvda-20260812": "tests/external/scrollregion-a11y/attestation-keys/windows-nvda-public.pem"}
+	keys := make(map[string]ed25519.PublicKey, len(paths))
+	for id, relative := range paths {
+		raw, err := os.ReadFile(filepath.Join(repoRoot, filepath.FromSlash(relative)))
+		if err != nil {
+			return nil, fmt.Errorf("read source-pinned AT recorder key %s: %w", id, err)
+		}
+		block, _ := pem.Decode(raw)
+		if block == nil {
+			return nil, fmt.Errorf("decode source-pinned AT recorder key %s", id)
+		}
+		parsed, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("parse source-pinned AT recorder key %s: %w", id, err)
+		}
+		key, ok := parsed.(ed25519.PublicKey)
+		if !ok {
+			return nil, fmt.Errorf("source-pinned AT recorder key %s is not Ed25519", id)
+		}
+		keys[id] = key
+	}
+	return keys, nil
 }
 
 func validateATToolIdentity(at, browser, screenReader string) error {
