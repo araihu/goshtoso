@@ -476,11 +476,22 @@ func validateATExecutionReceipt(ledger Ledger, rowIndex map[string]int, receipt 
 	if err != nil {
 		return fmt.Errorf("read signed AT attestation: %w", err)
 	}
-	want := atattestation.Claims{SourceCommit: ledger.SourceCommit, SourceTree: ledger.SourceTree, Route: target.Route, State: target.State, Browser: browser, ScreenReader: screenReader, ServedSHA256: artifacts["at-served-response"].ExpectedSHA256, ScreenshotSHA256: artifacts["at-caption-screenshot"].ExpectedSHA256, TraceSHA256: artifacts["at-cursor-trace"].ExpectedSHA256}
+	want := atattestation.Claims{SourceCommit: ledger.SourceCommit, SourceTree: ledger.SourceTree, Route: target.Route, State: target.State, Browser: browser, ScreenReader: screenReader, Pair: target.AT, Recorder: trustedATRecorderForPair(target.AT), ServedSHA256: artifacts["at-served-response"].ExpectedSHA256, ScreenshotSHA256: artifacts["at-caption-screenshot"].ExpectedSHA256, TraceSHA256: artifacts["at-cursor-trace"].ExpectedSHA256}
 	if err := atattestation.Verify(attestation, trusted, want); err != nil {
 		return fmt.Errorf("execution receipt %s signed AT attestation: %w", receipt.ID, err)
 	}
 	return nil
+}
+
+func trustedATRecorderForPair(pair string) string {
+	switch pair {
+	case "safari-voiceover":
+		return "macos-voiceover-20260812"
+	case "chromium-screen-reader":
+		return "windows-nvda-20260812"
+	default:
+		return ""
+	}
 }
 
 func loadConformanceATTrustedKeys(repoRoot string) (map[string]ed25519.PublicKey, error) {
@@ -533,22 +544,32 @@ func validateEvidenceArtifactFormat(artifact EvidenceArtifact, content []byte) e
 			return fmt.Errorf("caption screenshot is not a PNG")
 		}
 		config, format, err := image.DecodeConfig(bytes.NewReader(content))
-		if err != nil || format != "png" || config.Width < 1 || config.Height < 1 {
+		if err != nil || format != "png" || config.Width < 2 || config.Height < 2 {
 			return fmt.Errorf("caption screenshot is not a decodable non-empty PNG")
 		}
 	case "at-cursor-trace":
 		var trace struct {
-			Route        string            `json:"route"`
-			State        string            `json:"state"`
-			Browser      string            `json:"browser"`
-			ScreenReader string            `json:"screen_reader"`
-			Events       []json.RawMessage `json:"events"`
+			Route        string `json:"route"`
+			State        string `json:"state"`
+			Browser      string `json:"browser"`
+			ScreenReader string `json:"screen_reader"`
+			Events       []struct {
+				At   string `json:"at"`
+				Type string `json:"type"`
+				Role string `json:"role"`
+				Name string `json:"name"`
+			} `json:"events"`
 		}
 		if err := json.Unmarshal(content, &trace); err != nil {
 			return fmt.Errorf("cursor trace is not JSON: %w", err)
 		}
 		if trace.Route != artifact.Route || trace.State != artifact.State || trace.Browser != artifact.Browser || trace.ScreenReader != artifact.ATVersion || len(trace.Events) == 0 {
 			return fmt.Errorf("cursor trace context or events do not match artifact metadata")
+		}
+		for _, event := range trace.Events {
+			if strings.TrimSpace(event.At) == "" || strings.TrimSpace(event.Type) == "" || (strings.TrimSpace(event.Role) == "" && strings.TrimSpace(event.Name) == "") {
+				return fmt.Errorf("cursor trace requires non-empty typed events")
+			}
 		}
 	}
 	return nil

@@ -9,6 +9,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strings"
+	"time"
 )
 
 const PayloadType = "application/vnd.araihu.goshtoso.at-capture.v1+json"
@@ -33,8 +35,11 @@ type Claims struct {
 	State            string   `json:"state"`
 	Browser          string   `json:"browser"`
 	ScreenReader     string   `json:"screen_reader"`
+	Pair             string   `json:"pair"`
 	CapturedAt       string   `json:"captured_at"`
+	Challenge        string   `json:"challenge"`
 	ActionToken      string   `json:"action_token"`
+	ActionCommand    string   `json:"action_command"`
 	ActionSequence   []string `json:"action_sequence"`
 	Recorder         string   `json:"recorder"`
 	ServedSHA256     string   `json:"served_sha256"`
@@ -70,8 +75,16 @@ func Verify(raw []byte, trusted map[string]ed25519.PublicKey, want Claims) error
 	if err := decoder.Decode(&claims); err != nil {
 		return fmt.Errorf("decode signed AT claims: %w", err)
 	}
-	if claims.SourceCommit != want.SourceCommit || claims.SourceTree != want.SourceTree || claims.Route != want.Route || claims.State != want.State || claims.Browser != want.Browser || claims.ScreenReader != want.ScreenReader || claims.ServedSHA256 != want.ServedSHA256 || claims.ScreenshotSHA256 != want.ScreenshotSHA256 || claims.TraceSHA256 != want.TraceSHA256 || claims.CapturedAt == "" || claims.ActionToken == "" || claims.Recorder == "" || len(claims.ActionSequence) == 0 {
-		return fmt.Errorf("signed AT claims do not bind exact target, action, tool, and raw artifacts")
+	if claims.SourceCommit != want.SourceCommit || claims.SourceTree != want.SourceTree || claims.Route != want.Route || claims.State != want.State || claims.Browser != want.Browser || claims.ScreenReader != want.ScreenReader || claims.Pair != want.Pair || claims.Recorder != envelope.Signatures[0].KeyID || claims.Recorder != want.Recorder || claims.ServedSHA256 != want.ServedSHA256 || claims.ScreenshotSHA256 != want.ScreenshotSHA256 || claims.TraceSHA256 != want.TraceSHA256 || strings.TrimSpace(claims.Challenge) == "" || strings.TrimSpace(claims.ActionToken) == "" || strings.TrimSpace(claims.ActionCommand) == "" || len(claims.ActionSequence) == 0 {
+		return fmt.Errorf("signed AT claims do not bind exact pair/key/recorder/challenge/action/tool/raw artifacts")
+	}
+	if _, err := time.Parse(time.RFC3339, claims.CapturedAt); err != nil {
+		return fmt.Errorf("signed AT claims capture time is invalid")
+	}
+	for _, action := range claims.ActionSequence {
+		if strings.TrimSpace(action) == "" {
+			return fmt.Errorf("signed AT claims action sequence contains an empty action")
+		}
 	}
 	return nil
 }

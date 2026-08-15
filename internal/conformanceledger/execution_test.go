@@ -167,6 +167,17 @@ func TestApplyExecutionReceiptsRequiresAuthenticatedATArtifactMetadata(t *testin
 	}
 }
 
+func TestValidateEvidenceArtifactFormatRejectsEmptyTypedATEvents(t *testing.T) {
+	artifact := EvidenceArtifact{Kind: "at-cursor-trace", Route: "/getting-started", State: "initial", Browser: "Safari 26.5.2", ATVersion: "VoiceOver bundle 10"}
+	content, err := json.Marshal(map[string]any{"route": artifact.Route, "state": artifact.State, "browser": artifact.Browser, "screen_reader": artifact.ATVersion, "events": []map[string]any{{}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := validateEvidenceArtifactFormat(artifact, content); err == nil || !strings.Contains(err.Error(), "typed events") {
+		t.Fatalf("empty typed AT event error = %v", err)
+	}
+}
+
 func TestApplyExecutionReceiptsRequiresExactATArtifactPairAndIdentity(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -359,13 +370,13 @@ func evidenceArtifactFixture(t *testing.T, kind, route, state, browser, atVersio
 	content := []byte(kind + " evidence\n")
 	if kind == "at-caption-screenshot" {
 		var screenshot bytes.Buffer
-		if err := png.Encode(&screenshot, image.NewRGBA(image.Rect(0, 0, 1, 1))); err != nil {
+		if err := png.Encode(&screenshot, image.NewRGBA(image.Rect(0, 0, 2, 2))); err != nil {
 			t.Fatal(err)
 		}
 		content = screenshot.Bytes()
 	}
 	if kind == "at-cursor-trace" {
-		content, _ = json.Marshal(map[string]any{"route": route, "state": state, "browser": browser, "screen_reader": atVersion, "events": []map[string]string{{"event": "focus", "text": "State"}}})
+		content, _ = json.Marshal(map[string]any{"route": route, "state": state, "browser": browser, "screen_reader": atVersion, "events": []map[string]string{{"at": "2026-08-15T00:00:00Z", "type": "focus", "role": "region", "name": "State"}}})
 	}
 	if err := os.WriteFile(path, content, 0o600); err != nil {
 		t.Fatal(err)
