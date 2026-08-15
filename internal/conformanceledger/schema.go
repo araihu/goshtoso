@@ -209,7 +209,7 @@ func Validate(ledger Ledger, required Inventory) error {
 	problems = append(problems, sourceAxisBijection("theme", required.Themes, ledger.Rows, func(row Row) string { return row.Theme })...)
 	problems = append(problems, sourceAxisBijection("state", required.States, ledger.Rows, func(row Row) string { return row.State })...)
 	problems = append(problems, sourceAxisBijection("lifecycle-state", required.LifecycleStates, ledger.Rows, func(row Row) string { return row.State })...)
-	problems = append(problems, validateSourceAxisNamespace(ledger.Rows)...)
+	problems = append(problems, validateSourceAxisUnion(ledger.Rows, required)...)
 	problems = append(problems, validateChecklistProvenance(ledger.Rows)...)
 
 	if !anyRow(ledger.Rows, func(row Row) bool { return row.State != "" }) {
@@ -254,22 +254,76 @@ func Validate(ledger Ledger, required Inventory) error {
 	return errors.New(strings.Join(problems, "; "))
 }
 
-func validateSourceAxisNamespace(rows []Row) []string {
-	known := map[string]bool{
-		"package": true, "renderable": true, "kind": true, "route": true,
-		"theme": true, "state": true, "lifecycle-state": true,
-	}
+// validateSourceAxisUnion classifies source-bearing rows from their class and
+// populated discriminator, not from a claimant-controlled ID prefix. Every
+// such row must be one exact projection of one current-source inventory axis.
+func validateSourceAxisUnion(rows []Row, required Inventory) []string {
+	known := map[string]bool{"package": true, "renderable": true, "kind": true, "route": true, "theme": true, "state": true, "lifecycle-state": true}
 	var problems []string
 	for _, row := range rows {
-		parts := strings.Split(row.ID, "/")
-		if len(parts) < 2 || (parts[0] != string(ClassInventory) && parts[0] != string(ClassExecution)) {
+		// AT exemplar rows are a separately source-maintained route/state
+		// authority. Their two fields are intentionally not an inventory-axis
+		// projection and are validated by the AT contract.
+		if row.AT != "" {
 			continue
 		}
-		if len(parts) != 3 || !known[parts[1]] {
-			problems = append(problems, fmt.Sprintf("row %s has unexpected source axis namespace", row.ID))
+		parts := strings.Split(row.ID, "/")
+		declaresSourceAxis := len(parts) >= 2 && (parts[0] == string(ClassInventory) || parts[0] == string(ClassExecution)) && known[parts[1]]
+		axes := sourceAxesForRow(row, required)
+		if len(axes) == 0 {
+			if declaresSourceAxis {
+				problems = append(problems, fmt.Sprintf("row %s source axis row has no source discriminator", row.ID))
+			}
+			continue
 		}
+		if len(axes) != 1 {
+			problems = append(problems, fmt.Sprintf("row %s source-bearing row projects %d source axes, want 1", row.ID, len(axes)))
+			continue
+		}
+		axis := axes[0]
+		expectedID := ledgerSourceRowID(row.Class, axis.name, axis.value)
+		if row.ID != expectedID {
+			problems = append(problems, fmt.Sprintf("row %s source-bearing row has noncanonical ID, want %s", row.ID, expectedID))
+			continue
+		}
+		problems = append(problems, sourceAxisProjectionProblems(string(row.Class), axis.name, row)...)
 	}
 	return problems
+}
+
+type sourceAxisValue struct{ name, value string }
+
+func sourceAxesForRow(row Row, required Inventory) []sourceAxisValue {
+	axes := make([]sourceAxisValue, 0, 2)
+	for _, axis := range []struct{ name, value string }{
+		{name: "package", value: row.Package},
+		{name: "renderable", value: row.Renderable},
+		{name: "kind", value: row.Kind},
+		{name: "route", value: row.Route},
+		{name: "theme", value: row.Theme},
+	} {
+		if axis.value != "" {
+			axes = append(axes, sourceAxisValue(axis))
+		}
+	}
+	if row.State == "" {
+		return axes
+	}
+	if sourceItemContains(required.States, row.State) {
+		axes = append(axes, sourceAxisValue{name: "state", value: row.State})
+	}
+	if sourceItemContains(required.LifecycleStates, row.State) {
+		axes = append(axes, sourceAxisValue{name: "lifecycle-state", value: row.State})
+	}
+	if !sourceItemContains(required.States, row.State) && !sourceItemContains(required.LifecycleStates, row.State) {
+		// Preserve a non-empty discriminator so its noncanonical ID is rejected.
+		axes = append(axes, sourceAxisValue{name: "state", value: row.State})
+	}
+	return axes
+}
+
+func sourceItemContains(items []SourceItem, value string) bool {
+	return slices.ContainsFunc(items, func(item SourceItem) bool { return item.Value == value })
 }
 
 func ValidateClosure(ledger Ledger, required Inventory) error {

@@ -272,6 +272,57 @@ func TestValidateRejectsAxisPrefixCrossAxisEscape(t *testing.T) {
 	t.Fatal("package execution row fixture missing")
 }
 
+func TestValidateRejectsExtraOrEmptySourceAxisRows(t *testing.T) {
+	for _, test := range []struct {
+		name   string
+		mutate func(*Ledger, Inventory)
+		want   string
+	}{
+		{
+			name: "extra source row outside canonical namespace",
+			mutate: func(ledger *Ledger, inventory Inventory) {
+				for _, row := range ledger.Rows {
+					if row.ID == "inventory/package/"+strings.ReplaceAll(inventory.Packages[0].Value, "/", "_") {
+						duplicate := row
+						duplicate.ID = "claimant-row-outside-source-namespace"
+						ledger.Rows = append(ledger.Rows, duplicate)
+						return
+					}
+				}
+				t.Fatal("inventory package row fixture missing")
+			},
+			want: "source-bearing row has noncanonical ID",
+		},
+		{
+			name: "source axis ID without source discriminator",
+			mutate: func(ledger *Ledger, inventory Inventory) {
+				for _, row := range ledger.Rows {
+					if row.ID == "inventory/package/"+strings.ReplaceAll(inventory.Packages[0].Value, "/", "_") {
+						duplicate := row
+						duplicate.ID = "inventory/package/"
+						duplicate.Package = ""
+						ledger.Rows = append(ledger.Rows, duplicate)
+						return
+					}
+				}
+				t.Fatal("inventory package row fixture missing")
+			},
+			want: "source axis row has no source discriminator",
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+			if err != nil {
+				t.Fatal(err)
+			}
+			test.mutate(&ledger, inventory)
+			if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), test.want) {
+				t.Fatalf("Validate error = %v, want %q", err, test.want)
+			}
+		})
+	}
+}
+
 func TestValidateRejectsMultiAxisSourceRowAndChecklistEscape(t *testing.T) {
 	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
 	if err != nil {
@@ -299,14 +350,18 @@ func TestValidateRejectsUnexpectedSourceNamespaceRow(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	row := ledger.Rows[0]
-	row.ID = "inventory/unmapped/claimant"
-	row.Class = ClassInventory
-	row.Package = inventory.Packages[0].Value
-	ledger.Rows = append(ledger.Rows, row)
-	if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "unexpected source axis") {
-		t.Fatalf("unexpected source namespace row error = %v", err)
+	for _, row := range ledger.Rows {
+		if row.ID != "inventory/package/"+strings.ReplaceAll(inventory.Packages[0].Value, "/", "_") {
+			continue
+		}
+		row.ID = "inventory/unmapped/claimant"
+		ledger.Rows = append(ledger.Rows, row)
+		if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "source-bearing row has noncanonical ID") {
+			t.Fatalf("unexpected source namespace row error = %v", err)
+		}
+		return
 	}
+	t.Fatal("inventory package row fixture missing")
 }
 
 func TestGenerateSkeletonPersistsChecklistMappingKindAndRationale(t *testing.T) {
