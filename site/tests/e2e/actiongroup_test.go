@@ -110,8 +110,18 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		require.Equal(t, 0, actionGroupMustCount(t, menu.Locator(`[role="menu"]`)))
 		visibleItems := menu.Locator(`[role="menuitem"]:visible`)
 		_, err = page.WaitForFunction(`() =>
-			document.querySelectorAll("#action-group-stacked [data-action-group-overflow] [role=menuitem]:not([hidden])").length === 4
-		`, nil)
+		(() => {
+			const trigger = document.querySelector("#action-group-stacked [data-action-group-overflow] button");
+			const menu = document.querySelector("#action-group-stacked [data-action-group-overflow] [role=menu]");
+			if (trigger?.getAttribute("aria-expanded") !== "true" || !menu || getComputedStyle(menu).display === "none") return false;
+			const visibleItems = Array.from(menu.querySelectorAll("[role=menuitem]")).filter(item =>
+				!item.hidden && getComputedStyle(item).display !== "none" &&
+				getComputedStyle(item).visibility !== "hidden" && item.getClientRects().length > 0
+			);
+			const active = document.activeElement;
+			return visibleItems.length === 4 && active && menu.contains(active) && active.getAttribute("role") === "menuitem";
+		})()
+	`, nil)
 		require.NoError(t, err)
 		visibilityState, err := menu.Evaluate(`menu => ({
 			menu: { hidden: menu.hidden, display: getComputedStyle(menu).display },

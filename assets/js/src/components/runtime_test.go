@@ -63,7 +63,12 @@ func TestDropdownRuntimeRestoresEscapeFocusAfterTrapCleanup(t *testing.T) {
 		`new MutationObserver(function ()`,
 		`attributeFilter: ["class", "hidden", "style"]`,
 		"this.isOpen || this.openedWithKeyboard",
+		"closingFocus === trigger",
 		"active === closingFocus",
+		"focusRestoreGeneration: 0",
+		"destroyed: false",
+		"state.destroyed",
+		"state.focusRestoreGeneration !== generation",
 		"this.cancelFocusRestore()",
 		"trigger.focus()",
 	} {
