@@ -240,6 +240,58 @@ func TestDropdownEscapeFromExternalFocusPreservesExternalFocus(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestDropdownEscapeWithoutMutationObserverPreservesExternalFocus(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			menu && getComputedStyle(menu).display !== "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.Evaluate(`() => {
+		const external = document.createElement("button");
+		external.id = "dropdown-missing-observer-external-focus";
+		external.type = "button";
+		external.textContent = "External focus";
+		document.body.appendChild(external);
+		window.MutationObserver = undefined;
+		external.focus();
+		external.dispatchEvent(new KeyboardEvent("keydown", {
+			key: "Escape",
+			bubbles: true,
+			cancelable: true,
+		}));
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "false" &&
+			menu && getComputedStyle(menu).display === "none" &&
+			document.activeElement?.id === "dropdown-missing-observer-external-focus";
+	}`, nil)
+	require.NoError(t, err)
+}
+
 func TestReviewDropdownAlpineDestroyInvalidatesQueuedFocusRestore(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")

@@ -20,6 +20,27 @@
         if (this.focusRestoreObserver) this.focusRestoreObserver.disconnect();
         this.focusRestoreObserver = null;
       },
+      focusTriggerIfOwned: function (trigger, menu, closingFocus) {
+        if (this.destroyed || !trigger) return false;
+        var active = document.activeElement;
+        var closingFocusOwned =
+          closingFocus === trigger ||
+          closingFocus === document.body ||
+          closingFocus === document.documentElement ||
+          (menu && menu.contains(closingFocus));
+        if (
+          !closingFocusOwned ||
+          !(active === closingFocus ||
+            active === trigger ||
+            active === document.body ||
+            active === document.documentElement ||
+            (menu && menu.contains(active)))
+        ) {
+          return false;
+        }
+        trigger.focus();
+        return true;
+      },
       restoreTriggerAfterMenuHidden: function (trigger, menu, closingFocus) {
         if (this.destroyed) return true;
         if (this.isOpen || this.openedWithKeyboard) {
@@ -28,24 +49,8 @@
         }
         if (menu && window.getComputedStyle(menu).display !== "none") return false;
 
-        var active = document.activeElement;
-        var closingFocusOwned =
-          closingFocus === trigger ||
-          closingFocus === document.body ||
-          closingFocus === document.documentElement ||
-          (menu && menu.contains(closingFocus));
         this.cancelFocusRestore();
-        if (
-          trigger &&
-          closingFocusOwned &&
-          (active === closingFocus ||
-            active === trigger ||
-            active === document.body ||
-            active === document.documentElement ||
-            (menu && menu.contains(active)))
-        ) {
-          trigger.focus();
-        }
+        this.focusTriggerIfOwned(trigger, menu, closingFocus);
         return true;
       },
       closeAndFocus: function () {
@@ -62,7 +67,8 @@
           if (state.destroyed || state.focusRestoreGeneration !== generation) return;
           if (state.restoreTriggerAfterMenuHidden(trigger, menu, closingFocus)) return;
           if (typeof window.MutationObserver !== "function" || !menu) {
-            if (trigger) trigger.focus();
+            state.focusTriggerIfOwned(trigger, menu, closingFocus);
+            state.cancelFocusRestore();
             return;
           }
           if (state.destroyed || state.focusRestoreGeneration !== generation) return;
