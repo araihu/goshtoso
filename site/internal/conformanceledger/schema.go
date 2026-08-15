@@ -360,7 +360,10 @@ func validateIndependentReproductions(row Row, sourceCommit, sourceTree string) 
 			return fmt.Errorf("reproduction is not backed by an immutable successful attempt")
 		}
 	}
-	return nil
+	// Producer, run, recorder, and artifact digests are claimant-authored.
+	// This candidate has no independent producer-attestation authority, so two
+	// internally consistent records cannot close T-GS-010.
+	return fmt.Errorf("independent reproduction producer attestation unavailable")
 }
 
 func mandatoryExecutionRow(row Row) bool {

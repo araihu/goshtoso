@@ -392,8 +392,8 @@ func TestValidateClosureRequiresTwoIndependentExecutionReproductions(t *testing.
 			})
 		}
 	}
-	if err := ValidateClosure(ledger, inventory); err != nil {
-		t.Fatalf("two reproduction closure error = %v", err)
+	if err := ValidateClosure(ledger, inventory); err == nil || !strings.Contains(err.Error(), "independent reproduction producer attestation unavailable") {
+		t.Fatalf("claimant-authored reproduction closure error = %v", err)
 	}
 	for index := range ledger.Rows {
 		row := &ledger.Rows[index]
