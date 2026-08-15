@@ -3,9 +3,11 @@ package conformanceledger
 import (
 	"crypto/ed25519"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"os"
 	"os/exec"
@@ -70,12 +72,14 @@ type PrerequisiteCandidate struct {
 }
 
 type PrerequisiteReport struct {
+	Path   string `json:"path"`
 	SHA256 string `json:"sha256"`
 }
 
 type PrerequisiteGate struct {
 	Name   string `json:"name"`
 	Tool   string `json:"tool"`
+	Path   string `json:"path"`
 	SHA256 string `json:"sha256"`
 }
 
@@ -231,7 +235,7 @@ func authenticateReceipts(config GenerationConfig) (map[string]string, error) {
 	trusted := config.trustedPrerequisiteKeys
 	if len(trusted) == 0 {
 		var err error
-		trusted, err = loadConformanceATTrustedKeys(config.RepoRoot)
+		trusted, err = loadConformanceReviewerTrustedKeys(config.RepoRoot)
 		if err != nil {
 			return nil, fmt.Errorf("load pinned prerequisite trust: %w", err)
 		}
@@ -283,6 +287,9 @@ func authenticateReceipts(config GenerationConfig) (map[string]string, error) {
 		if err := verifyPrerequisiteSignature(receipt, trusted); err != nil {
 			return nil, fmt.Errorf("prerequisite receipt %s trusted prerequisite signature: %w", task, err)
 		}
+		if err := verifyPrerequisiteBoundBytes(receipt); err != nil {
+			return nil, fmt.Errorf("prerequisite receipt %s: %w", task, err)
+		}
 		if other, duplicate := receiptIDs[receipt.ReceiptID]; duplicate {
 			return nil, fmt.Errorf("aliased prerequisite receipt identity %s used by %s and %s", receipt.ReceiptID, other, task)
 		}
@@ -291,6 +298,7 @@ func authenticateReceipts(config GenerationConfig) (map[string]string, error) {
 		metadata["receipt."+task+".sha256"] = got
 		metadata["receipt."+task+".id"] = receipt.ReceiptID
 		metadata["receipt."+task+".report_sha256"] = receipt.Report.SHA256
+		metadata["receipt."+task+".report_path"] = receipt.Report.Path
 		metadata["receipt."+task+".provenance"] = receipt.Provenance
 	}
 	if len(byTask) != len(RequiredReceiptTasks) {
@@ -315,8 +323,8 @@ func validatePrerequisiteReceipt(receipt PrerequisiteReceipt, task, sourceCommit
 	if receipt.Candidate.Tree != sourceTree {
 		return fmt.Errorf("prerequisite receipt %s candidate tree %s, want %s", task, receipt.Candidate.Tree, sourceTree)
 	}
-	if !validPrerequisiteSHA256(receipt.Report.SHA256) {
-		return fmt.Errorf("prerequisite receipt %s missing valid report SHA-256", task)
+	if strings.TrimSpace(receipt.Report.Path) == "" || !validPrerequisiteSHA256(receipt.Report.SHA256) {
+		return fmt.Errorf("prerequisite receipt %s missing bound report bytes", task)
 	}
 	if !authorizedPrerequisiteProvenance[receipt.Provenance] {
 		return fmt.Errorf("prerequisite receipt %s lacks authorized provenance", task)
@@ -328,11 +336,62 @@ func validatePrerequisiteReceipt(receipt PrerequisiteReceipt, task, sourceCommit
 		return fmt.Errorf("prerequisite receipt %s missing gate evidence", task)
 	}
 	for index, gate := range receipt.GateEvidence {
-		if strings.TrimSpace(gate.Name) == "" || strings.TrimSpace(gate.Tool) == "" || !validPrerequisiteSHA256(gate.SHA256) {
+		if strings.TrimSpace(gate.Name) == "" || strings.TrimSpace(gate.Tool) == "" || strings.TrimSpace(gate.Path) == "" || !validPrerequisiteSHA256(gate.SHA256) {
 			return fmt.Errorf("prerequisite receipt %s gate evidence %d is invalid", task, index)
 		}
 	}
 	return nil
+}
+
+func verifyPrerequisiteBoundBytes(receipt PrerequisiteReceipt) error {
+	verify := func(kind, path, expected string) error {
+		content, err := os.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("read bound %s bytes: %w", kind, err)
+		}
+		digest := sha256.Sum256(content)
+		if hex.EncodeToString(digest[:]) != strings.ToLower(expected) {
+			return fmt.Errorf("bound %s bytes SHA-256 does not match signed receipt", kind)
+		}
+		return nil
+	}
+	if err := verify("report", receipt.Report.Path, receipt.Report.SHA256); err != nil {
+		return err
+	}
+	for index, gate := range receipt.GateEvidence {
+		if err := verify(fmt.Sprintf("gate evidence %d", index), gate.Path, gate.SHA256); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// loadConformanceReviewerTrustedKeys is intentionally separate from AT
+// recorder trust. Review signatures authorize prerequisite reports; they
+// cannot be minted with a device key that only records accessibility capture.
+func loadConformanceReviewerTrustedKeys(repoRoot string) (map[string]ed25519.PublicKey, error) {
+	paths := map[string]string{"t-gs-010-reviewer-20260815": "internal/conformanceledger/reviewer-keys/t-gs-010-reviewer-public.pem"}
+	keys := make(map[string]ed25519.PublicKey, len(paths))
+	for id, relative := range paths {
+		raw, err := os.ReadFile(filepath.Join(repoRoot, filepath.FromSlash(relative)))
+		if err != nil {
+			return nil, fmt.Errorf("read source-pinned reviewer key %s: %w", id, err)
+		}
+		block, remainder := pem.Decode(raw)
+		if block == nil || len(strings.TrimSpace(string(remainder))) != 0 {
+			return nil, fmt.Errorf("decode source-pinned reviewer key %s", id)
+		}
+		parsed, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("parse source-pinned reviewer key %s: %w", id, err)
+		}
+		key, ok := parsed.(ed25519.PublicKey)
+		if !ok {
+			return nil, fmt.Errorf("source-pinned reviewer key %s is not Ed25519", id)
+		}
+		keys[id] = key
+	}
+	return keys, nil
 }
 
 func verifyPrerequisiteSignature(receipt PrerequisiteReceipt, trusted map[string]ed25519.PublicKey) error {

@@ -108,6 +108,45 @@ func TestGenerateSkeletonRejectsPrerequisiteWithoutGateEvidence(t *testing.T) {
 	}
 }
 
+func TestGenerateSkeletonRejectsPrerequisiteWithoutBoundReportAndGateBytes(t *testing.T) {
+	config := generationFixture(t)
+	rewritePrerequisiteReceipt(t, &config.Receipts[0], func(receipt map[string]any) {
+		receipt["report"].(map[string]any)["path"] = ""
+	})
+	if _, _, err := GenerateSkeleton(config); err == nil || !strings.Contains(err.Error(), "report bytes") {
+		t.Fatalf("unbound prerequisite report error = %v", err)
+	}
+}
+
+func TestGenerateSkeletonRejectsTamperedBoundPrerequisiteBytes(t *testing.T) {
+	config := generationFixture(t)
+	content, err := os.ReadFile(config.Receipts[0].Path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var receipt PrerequisiteReceipt
+	if err := json.Unmarshal(content, &receipt); err != nil {
+		t.Fatal(err)
+	}
+	requireWriteFile(t, receipt.Report.Path, []byte("claimant replacement report\n"))
+	if _, _, err := GenerateSkeleton(config); err == nil || !strings.Contains(err.Error(), "bound report bytes SHA-256") {
+		t.Fatalf("tampered bound report error = %v", err)
+	}
+}
+
+func TestReviewerTrustIsSeparateFromATRecorderTrust(t *testing.T) {
+	reviewers, err := loadConformanceReviewerTrustedKeys(repoRoot(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(reviewers) != 1 || len(reviewers["t-gs-010-reviewer-20260815"]) != ed25519.PublicKeySize {
+		t.Fatalf("reviewer trust = %#v", reviewers)
+	}
+	if _, exists := reviewers["macos-voiceover-20260812"]; exists {
+		t.Fatal("AT recorder key reused as prerequisite reviewer authority")
+	}
+}
+
 func TestGenerateSkeletonRejectsUnapprovedPrerequisiteProvenance(t *testing.T) {
 	config := generationFixture(t)
 	rewritePrerequisiteReceipt(t, &config.Receipts[0], func(receipt map[string]any) {
@@ -265,6 +304,14 @@ func generationFixture(t *testing.T) GenerationConfig {
 	receipts := make([]ReceiptInput, 0, len(RequiredReceiptTasks))
 	for _, task := range RequiredReceiptTasks {
 		path := filepath.Join(directory, task+".md")
+		reportPath := filepath.Join(directory, task+"-report.md")
+		reportBytes := []byte("independent review report for " + task + "\ncommit=" + commit + "\ntree=" + tree + "\n")
+		requireWriteFile(t, reportPath, reportBytes)
+		reportDigest := sha256.Sum256(reportBytes)
+		gatePath := filepath.Join(directory, task+"-gate.txt")
+		gateBytes := []byte("reviewer gate for " + task + "\n")
+		requireWriteFile(t, gatePath, gateBytes)
+		gateDigest := sha256.Sum256(gateBytes)
 		document := map[string]any{
 			"schema_version": 1,
 			"task":           task,
@@ -273,11 +320,12 @@ func generationFixture(t *testing.T) GenerationConfig {
 				"commit": commit,
 				"tree":   tree,
 			},
-			"report": map[string]any{"sha256": strings.Repeat("a", 64)},
+			"report": map[string]any{"path": reportPath, "sha256": hex.EncodeToString(reportDigest[:])},
 			"gate_evidence": []any{map[string]any{
 				"name":   "independent-review",
 				"tool":   "reviewer",
-				"sha256": strings.Repeat("b", 64),
+				"path":   gatePath,
+				"sha256": hex.EncodeToString(gateDigest[:]),
 			}},
 			"provenance": "independent-review",
 			"receipt_id": "receipt-" + task,
@@ -312,6 +360,13 @@ func generationFixture(t *testing.T) GenerationConfig {
 		Receipts:                receipts,
 		ATBlockerReceipt:        "AT capability receipt",
 		trustedPrerequisiteKeys: map[string]ed25519.PublicKey{"fixture-reviewer": public},
+	}
+}
+
+func requireWriteFile(t *testing.T, path string, content []byte) {
+	t.Helper()
+	if err := os.WriteFile(path, content, 0o600); err != nil {
+		t.Fatal(err)
 	}
 }
 
