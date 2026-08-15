@@ -43,7 +43,9 @@ const (
 	scrollRegionBFullThemeInitialSource     = "server-routed-html"
 	scrollRegionBFullThemePersistenceNA     = "locked-site-selector-disabled: ComponentDocsLayout Appearance.DisableThemeSelector=true; t-gs-011-theme is server-routed initial HTML only"
 	scrollRegionBFullDarkPersistence        = "product-ui"
-	scrollRegionBFullReceiptSchema          = "goshtoso.t-gs-011.bfull.receipt.v5"
+	scrollRegionBFullReceiptSchema          = "goshtoso.t-gs-011.bfull.receipt.v6"
+	scrollRegionBFullProvenanceStructural   = "structural-unattested"
+	scrollRegionBFullClosureUnattested      = "unattested-non-closure"
 	scrollRegionBFullStorageEvidenceSchema  = "goshtoso.t-gs-011.bfull.storage.v1"
 	scrollRegionBFullActionEvidenceSchema   = "goshtoso.t-gs-011.bfull.action.v1"
 	scrollRegionBFullPaintEvidenceSchema    = "goshtoso.t-gs-011.bfull.first-paint.v1"
@@ -234,15 +236,16 @@ func scrollRegionBFullPaintEvidenceFromObserver(cellID string, events []scrollRe
 }
 
 type scrollRegionBFullReceipt struct {
-	Schema        string                               `json:"schema"`
-	Closure       string                               `json:"closure"`
-	ExpectedCells int                                  `json:"expected_cells"`
-	Binding       scrollRegionBFullIdentityBinding     `json:"binding"`
-	ToolVersions  scrollRegionBFullToolVersions        `json:"tool_versions"`
-	Widths        []int                                `json:"widths"`
-	Cells         []scrollRegionBFullCellReceipt       `json:"cells"`
-	TraceByCell   map[string]scrollRegionBFullArtifact `json:"trace_by_cell"`
-	WrapperSHA256 string                               `json:"wrapper_sha256"`
+	Schema          string                               `json:"schema"`
+	Closure         string                               `json:"closure"`
+	ProvenanceClass string                               `json:"provenance_class"`
+	ExpectedCells   int                                  `json:"expected_cells"`
+	Binding         scrollRegionBFullIdentityBinding     `json:"binding"`
+	ToolVersions    scrollRegionBFullToolVersions        `json:"tool_versions"`
+	Widths          []int                                `json:"widths"`
+	Cells           []scrollRegionBFullCellReceipt       `json:"cells"`
+	TraceByCell     map[string]scrollRegionBFullArtifact `json:"trace_by_cell"`
+	WrapperSHA256   string                               `json:"wrapper_sha256"`
 }
 
 type scrollRegionBFullToolVersions struct {
@@ -276,7 +279,7 @@ func TestScrollRegionBFullFirstPaintObserverCannotMutateProductState(t *testing.
 	require.NotContains(t, string(source), "requireScrollRegion"+"SelectTheme", "B-FULL must not claim client theme persistence through a nonexistent selector")
 	require.Contains(t, string(source), `Name:        playwright.String("scrollregion-bfull-" + scrollRegionBFullArtifactName(cellID))`, "trace names must not contain raw route separators that discard Playwright trace entries")
 	observer := scrollRegionBFullFirstPaintObserverScript()
-	for _, required := range []string{"func requireScrollRegionWideConsumerHorizontalAccess", `Press("ArrowRight")`, `Input.dispatchTouchEvent`} {
+	for _, required := range []string{"func requireScrollRegionWideConsumerHorizontalAccess", "validateScrollRegionBFullHorizontalContract", "allowInternalHorizontalRange", `Press("ArrowRight")`, `Input.dispatchTouchEvent`} {
 		require.Contains(t, string(source), required, "wide consumer horizontal contract must retain real keyboard and CDP touch actions")
 	}
 	consumerCSS, err := os.ReadFile(filepath.Join(repository, "tests", "external", "scrollregion-a11y", "consumer-scrollregion.css"))
@@ -310,6 +313,12 @@ func TestScrollRegionBFullFirstPaintObserverCannotMutateProductState(t *testing.
 	require.Equal(t, "dark", cellURL.Query().Get("t-gs-011-mode"))
 	require.Equal(t, "390", cellURL.Query().Get("t-gs-011-width"))
 	require.Equal(t, "ua-200", cellURL.Query().Get("t-gs-011-zoom"))
+	// Consumer fixture deliberately owns a horizontal content range. The page
+	// must still have no horizontal range; ordinary cells must not acquire one.
+	require.NoError(t, validateScrollRegionBFullHorizontalContract(false, 390, 390, 0))
+	require.Error(t, validateScrollRegionBFullHorizontalContract(false, 390, 704, 314))
+	require.NoError(t, validateScrollRegionBFullHorizontalContract(true, 390, 704, 314))
+	require.Error(t, validateScrollRegionBFullHorizontalContract(true, 390, 390, 0))
 }
 
 // scrollRegionBFullRunPlan makes diagnostic sampling opt-in and receipt-visible.
@@ -340,7 +349,7 @@ func TestScrollRegionBFull(t *testing.T) {
 	axe := loadScrollRegionAxeCore(t)
 	recorder := newScrollRegionBFullRecorder(t, widths, binding, plan)
 	consumerCSS := scrollRegionBFullConsumerStylesheet(t)
-	t.Logf("T-GS-011 B-FULL closure=%s widths=%v themes=%v zooms=[default ua-200]", scrollRegionBFullPlanClosure(plan), widths, scrollRegionBFullThemeIDs())
+	t.Logf("T-GS-011 B-FULL provenance=%s closure=%s widths=%v themes=%v zooms=[default ua-200]", scrollRegionBFullProvenanceStructural, scrollRegionBFullPlanClosure(plan), widths, scrollRegionBFullThemeIDs())
 
 	baseline := scrollRegionBFullZoom{
 		ID:             "default",
@@ -403,7 +412,10 @@ func scrollRegionBFullPlanClosure(plan scrollRegionBFullRunPlan) string {
 	if plan.Diagnostic {
 		return "diagnostic-non-closure"
 	}
-	return "full-closure"
+	// Raw Playwright archives and PNGs are structurally validated, but their
+	// bytes have no independent browser-attestation authority. Literal coverage
+	// therefore remains non-closure until such an authority exists.
+	return scrollRegionBFullClosureUnattested
 }
 
 func TestScrollRegionBFullPlanRejectsUnmarkedCap(t *testing.T) {
@@ -422,6 +434,12 @@ func TestScrollRegionBFullPlanMarksExplicitDiagnosticNonClosure(t *testing.T) {
 	require.Equal(t, 2, plan.ExpectedCells)
 	require.Equal(t, 16, plan.FullExpectedCells)
 	require.Equal(t, "diagnostic-non-closure", scrollRegionBFullPlanClosure(plan))
+
+	t.Setenv(scrollRegionBFullDiagnosticEnvironment, "")
+	t.Setenv(scrollRegionBFullDiagnosticMaxCellsEnv, "")
+	fullPlan, err := scrollRegionBFullPlan([]int{390})
+	require.NoError(t, err)
+	require.Equal(t, "unattested-non-closure", scrollRegionBFullPlanClosure(fullPlan), "structural trace/PNG evidence cannot claim independent full closure")
 }
 
 // Regression fixture copied from the V4 UA-200 receipt. It visibly contains
@@ -986,7 +1004,7 @@ func runScrollRegionBFullCell(t *testing.T, zoom scrollRegionBFullZoom, context 
 	viewport := defaultRoot.Locator("[data-goshtoso-scroll-viewport]")
 	require.NoError(t, defaultRoot.WaitFor())
 	initialPaint, firstPaint, settledPaint, observerEvents := requireScrollRegionFirstPaint(t, page, viewport, theme, dark, width, zoom)
-	capture := requireScrollRegionVisualCapture(t, page, defaultRoot, viewport)
+	capture := requireScrollRegionVisualCapture(t, page, defaultRoot, viewport, theme.ConsumerCSS)
 	initialScreenshot := recorder.screenshot(t, page, capture, theme, dark, width, zoom, "post-consent-region")
 
 	requireScrollRegionAccessibleNames(t, page)
@@ -1399,10 +1417,10 @@ func scrollRegionBFullPaintFromBrowser(t *testing.T, raw any) scrollRegionBFullP
 // requireScrollRegionVisualCapture establishes a DOM-to-page-surface capture
 // plan. The later CDP screenshot must map each CSS anchor into exact PNG pixels
 // before it can be recorded as named Scroll Region visual evidence.
-func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, viewport playwright.Locator) scrollRegionBFullCapture {
+func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, viewport playwright.Locator, allowInternalHorizontalRange bool) scrollRegionBFullCapture {
 	t.Helper()
 	require.NoError(t, root.ScrollIntoViewIfNeeded())
-	state, err := root.Evaluate(`(el) => {
+	state, err := root.Evaluate(`(el, allowInternalHorizontalRange) => {
 		const viewport = el.querySelector('[data-goshtoso-scroll-viewport]');
 		if (!viewport) throw new Error('named Scroll Region viewport is absent');
 		const rect = el.getBoundingClientRect();
@@ -1427,7 +1445,7 @@ func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, 
 		};
 		const cardAnchor = (name, card) => {
 			const cardRect = card.getBoundingClientRect();
-			const x = cardRect.left + Math.min(Math.max(6, cardRect.width / 8), 10);
+			const x = Math.max(viewportRect.left + 6, Math.min(viewportRect.right - 6, cardRect.left + Math.min(Math.max(6, cardRect.width / 8), 10)));
 			const y = cardRect.top + cardRect.height / 2;
 			return {
 				name,
@@ -1444,7 +1462,11 @@ func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, 
 				cardRect.top >= viewportRect.top + 2 &&
 				cardRect.bottom <= viewportRect.bottom - 2;
 		});
-		if (fullyVisibleCards.length === 0) throw new Error('named Scroll Region needs at least one fully visible Activity card for pixel anchoring');
+		const anchorCards = allowInternalHorizontalRange ? cards.filter((card) => {
+			const cardRect = card.getBoundingClientRect();
+			return cardRect.right > viewportRect.left + 6 && cardRect.left < viewportRect.right - 6 && cardRect.top >= viewportRect.top + 2 && cardRect.bottom <= viewportRect.bottom - 2;
+		}) : fullyVisibleCards;
+		if (anchorCards.length === 0) throw new Error('named Scroll Region needs at least one visible Activity card for pixel anchoring');
 		const endIndicator = el.querySelector('[data-goshtoso-scroll-end-indicator]');
 		if (!endIndicator || endIndicator.hidden) throw new Error('named Scroll Region end cue must be visibly rendered at the initial scroll boundary');
 		const endRect = endIndicator.getBoundingClientRect();
@@ -1492,7 +1514,7 @@ func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, 
 			occluders,
 			visual: {left, top, width: visualWidth, height: visualHeight, devicePixelRatio: window.devicePixelRatio},
 			crop: {x: cropX, y: cropY, width: rect.width + padding * 2, height: rect.height + padding * 2},
-			anchors: fullyVisibleCards.slice(0, 2).map((card, index) => cardAnchor('visible-activity-card-' + (index + 1), card)),
+			anchors: anchorCards.slice(0, 2).map((card, index) => cardAnchor('visible-activity-card-' + (index + 1), card)),
 			cue: {
 				state: 'end',
 				visible: true,
@@ -1502,7 +1524,7 @@ func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, 
 				cssHeight: endRect.height,
 			},
 		};
-	}`, nil)
+	}`, allowInternalHorizontalRange)
 	require.NoError(t, err)
 	values, ok := state.(map[string]any)
 	require.True(t, ok, "unexpected visual-capture state %T", state)
@@ -1511,8 +1533,12 @@ func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, 
 	require.Equal(t, "region", values["role"])
 	require.NotEmpty(t, values["name"])
 	require.Equal(t, false, values["pageCanScrollHorizontally"], "the actual document scrolling element and visual viewport must reject horizontal scroll at the visual evidence cell: %#v", values)
-	require.LessOrEqual(t, scrollRegionBFullNumber(t, values["viewportScrollWidth"]), scrollRegionBFullNumber(t, values["viewportClientWidth"])+1, "the wrapped demo copy must not acquire a horizontal range: %#v", values)
-	require.EqualValues(t, 0, values["attemptedViewportScrollLeft"], "the wrapped demo copy must not acquire a horizontal range: %#v", values)
+	require.NoError(t, validateScrollRegionBFullHorizontalContract(
+		allowInternalHorizontalRange,
+		scrollRegionBFullNumber(t, values["viewportClientWidth"]),
+		scrollRegionBFullNumber(t, values["viewportScrollWidth"]),
+		scrollRegionBFullNumber(t, values["attemptedViewportScrollLeft"]),
+	), "Scroll Region horizontal contract: %#v", values)
 	require.Equal(t, "auto", values["viewportOverflowX"])
 	occluders, ok := values["occluders"].([]any)
 	require.True(t, ok)
@@ -1523,7 +1549,7 @@ func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, 
 	require.True(t, ok)
 	anchors, ok := values["anchors"].([]any)
 	require.True(t, ok)
-	require.NotEmpty(t, anchors, "capture must bind at least one fully visible Activity card")
+	require.NotEmpty(t, anchors, "capture must bind at least one visible Activity card")
 	cue, ok := values["cue"].(map[string]any)
 	require.True(t, ok)
 	require.Equal(t, "end", cue["state"])
@@ -1578,6 +1604,23 @@ func requireScrollRegionVisualCapture(t *testing.T, page playwright.Page, root, 
 	require.LessOrEqual(t, capture.Proof.CropCSSX+capture.Proof.CropCSSWidth, capture.Proof.VisualViewportWidth)
 	require.LessOrEqual(t, capture.Proof.CropCSSY+capture.Proof.CropCSSHeight, capture.Proof.VisualViewportHeight)
 	return capture
+}
+
+// validateScrollRegionBFullHorizontalContract distinguishes a page-level
+// regression from the maintained consumer's intentional internal range.
+// Non-consumer documentation states must remain vertically scroll-only.
+func validateScrollRegionBFullHorizontalContract(allowInternalRange bool, clientWidth, scrollWidth, attemptedScrollLeft float64) error {
+	hasRange := scrollWidth > clientWidth+1 && attemptedScrollLeft > 0
+	if allowInternalRange {
+		if !hasRange {
+			return fmt.Errorf("wide consumer Scroll Region must retain an intentional internal horizontal range")
+		}
+		return nil
+	}
+	if hasRange || scrollWidth > clientWidth+1 || attemptedScrollLeft > 0 {
+		return fmt.Errorf("non-wide Scroll Region must not acquire an internal horizontal range")
+	}
+	return nil
 }
 
 func scrollRegionBFullNumber(t *testing.T, value any) float64 {
@@ -2068,20 +2111,21 @@ func (recorder *scrollRegionBFullRecorder) write(t *testing.T, repositoryRoot st
 		require.Nil(t, recorder.binding.Identity, "diagnostic receipt must make no final source identity claim")
 		require.Less(t, recorder.plan.ExpectedCells, recorder.plan.FullExpectedCells)
 	} else {
-		require.NotNil(t, recorder.binding.Identity, "full closure receipt requires a sealed identity")
+		require.NotNil(t, recorder.binding.Identity, "literal full-coverage receipt requires a sealed identity")
 		require.Equal(t, recorder.plan.FullExpectedCells, recorder.plan.ExpectedCells)
 		require.NoError(t, recorder.binding.revalidate(repositoryRoot), "source identity must remain exact until receipt bytes are written")
 	}
 	require.NotEmpty(t, recorder.tools.PlaywrightGo, "receipt must record source-derived Playwright Go pin")
 	receipt := scrollRegionBFullReceipt{
-		Schema:        scrollRegionBFullReceiptSchema,
-		Closure:       scrollRegionBFullPlanClosure(recorder.plan),
-		ExpectedCells: recorder.plan.ExpectedCells,
-		Binding:       recorder.binding,
-		ToolVersions:  recorder.tools,
-		Widths:        recorder.widths,
-		Cells:         recorder.cells,
-		TraceByCell:   recorder.traces,
+		Schema:          scrollRegionBFullReceiptSchema,
+		Closure:         scrollRegionBFullPlanClosure(recorder.plan),
+		ProvenanceClass: scrollRegionBFullProvenanceStructural,
+		ExpectedCells:   recorder.plan.ExpectedCells,
+		Binding:         recorder.binding,
+		ToolVersions:    recorder.tools,
+		Widths:          recorder.widths,
+		Cells:           recorder.cells,
+		TraceByCell:     recorder.traces,
 	}
 	digest, err := scrollRegionBFullReceiptDigest(receipt)
 	require.NoError(t, err)
@@ -2108,10 +2152,11 @@ func scrollRegionBFullReceiptDigest(receipt scrollRegionBFullReceipt) (string, e
 	return scrollRegionBFullSHA256(canonical), nil
 }
 
-// validateScrollRegionBFullReceiptWrapper checks wrapper transport integrity,
-// not semantic authority. It is intentionally a strict decoder so a caller
-// cannot add unbound status, row, or tool fields; raw browser artifacts below
-// independently re-derive every persistence claim.
+// validateScrollRegionBFullReceiptWrapper checks wrapper integrity and
+// structural consistency, not independent browser provenance. The current
+// trace and PNG parser can reject malformed or cross-cell artifacts, but a
+// claimant can reproduce structurally valid bytes; only non-closure receipts
+// are accepted until independent attestation exists.
 func validateScrollRegionBFullReceiptWrapper(content []byte) (scrollRegionBFullReceipt, error) {
 	var receipt scrollRegionBFullReceipt
 	if err := scrollRegionDecodeStrictJSON(content, &receipt); err != nil {
@@ -2129,6 +2174,9 @@ func validateScrollRegionBFullReceiptWrapper(content []byte) (scrollRegionBFullR
 	}
 	if receipt.Schema != scrollRegionBFullReceiptSchema {
 		return scrollRegionBFullReceipt{}, fmt.Errorf("B-FULL receipt schema %q is unsupported", receipt.Schema)
+	}
+	if receipt.ProvenanceClass != scrollRegionBFullProvenanceStructural {
+		return scrollRegionBFullReceipt{}, fmt.Errorf("B-FULL receipt provenance %q is unsupported; current Playwright trace/PNG evidence is structural-unattested", receipt.ProvenanceClass)
 	}
 	if err := validateScrollRegionBFullThemeEvidence(receipt); err != nil {
 		return scrollRegionBFullReceipt{}, err
@@ -2216,8 +2264,13 @@ func validateScrollRegionBFullReceiptAxes(receipt scrollRegionBFullReceipt) erro
 	fullExpected := len(scrollRegionBFullThemes()) * 2 * len(receipt.Widths) * 2
 	switch receipt.Closure {
 	case "full-closure":
+		// Wrapper hashes, structural ZIP parsing, and DOM-to-PNG coordinates are
+		// all claimant-recomputable. No independent artifact attestation class is
+		// implemented yet, so current receipts must never assert full closure.
+		return fmt.Errorf("full B-FULL closure requires independent artifact attestation; structural trace/PNG evidence is unattested")
+	case scrollRegionBFullClosureUnattested:
 		if receipt.ExpectedCells != fullExpected {
-			return fmt.Errorf("full B-FULL receipt expected_cells=%d, want literal matrix=%d", receipt.ExpectedCells, fullExpected)
+			return fmt.Errorf("unattested literal B-FULL receipt expected_cells=%d, want literal matrix=%d", receipt.ExpectedCells, fullExpected)
 		}
 		for _, theme := range scrollRegionBFullThemes() {
 			for _, dark := range []bool{false, true} {
@@ -2225,7 +2278,7 @@ func validateScrollRegionBFullReceiptAxes(receipt scrollRegionBFullReceipt) erro
 					for _, zoom := range []string{"default", "ua-200"} {
 						id := scrollRegionBFullCellID(theme, dark, width, scrollRegionBFullZoom{ID: zoom})
 						if _, found := seen[id]; !found {
-							return fmt.Errorf("full B-FULL receipt is missing literal cell %q", id)
+							return fmt.Errorf("unattested literal B-FULL receipt is missing cell %q", id)
 						}
 					}
 				}

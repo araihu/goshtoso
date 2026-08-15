@@ -511,6 +511,30 @@ func TestScrollRegionBFullReceiptWrapperRejectsTampering(t *testing.T) {
 	require.NoError(t, err)
 	_, err = validateScrollRegionBFullReceiptWrapper(encoded)
 	require.ErrorContains(t, err, "wrapper SHA-256 mismatch")
+
+	t.Run("structural-artifacts-cannot-claim-full-closure", func(t *testing.T) {
+		forged := scrollRegionBFullReceiptForFixture(t)
+		forged.Closure = "full-closure"
+		digest, err := scrollRegionBFullReceiptDigest(forged)
+		require.NoError(t, err)
+		forged.WrapperSHA256 = digest
+		encoded, err := json.Marshal(forged)
+		require.NoError(t, err)
+		_, err = validateScrollRegionBFullReceiptWrapper(encoded)
+		require.ErrorContains(t, err, "independent artifact attestation", "recomputed trace/PNG metadata is structural evidence only")
+	})
+
+	t.Run("invented-attestation-class-is-not-trusted", func(t *testing.T) {
+		forged := scrollRegionBFullReceiptForFixture(t)
+		forged.ProvenanceClass = "independently-attested"
+		digest, err := scrollRegionBFullReceiptDigest(forged)
+		require.NoError(t, err)
+		forged.WrapperSHA256 = digest
+		encoded, err := json.Marshal(forged)
+		require.NoError(t, err)
+		_, err = validateScrollRegionBFullReceiptWrapper(encoded)
+		require.ErrorContains(t, err, "provenance", "a claimant-authored class label cannot create an independent attestation authority")
+	})
 }
 
 // The selector is deliberately absent from locked component docs. A signed
@@ -519,12 +543,13 @@ func TestScrollRegionBFullReceiptWrapperRejectsTampering(t *testing.T) {
 // that visual axis.
 func TestScrollRegionBFullReceiptRejectsLockedThemePersistenceClaim(t *testing.T) {
 	receipt := scrollRegionBFullReceipt{
-		Schema:        scrollRegionBFullReceiptSchema,
-		Closure:       "diagnostic-non-closure",
-		ExpectedCells: 1,
-		Binding:       scrollRegionBFullIdentityBinding{Binding: "diagnostic-unbound-dirty-worktree"},
-		ToolVersions:  scrollRegionBFullToolVersions{GoRuntime: "go1.26.5", PlaywrightGo: "v0.6100.0", BrowserByZoom: map[string]string{"default": "Chromium 140.0.0.0"}, AxeCore: scrollRegionAxeCoreVersion},
-		Widths:        []int{390},
+		Schema:          scrollRegionBFullReceiptSchema,
+		Closure:         "diagnostic-non-closure",
+		ProvenanceClass: scrollRegionBFullProvenanceStructural,
+		ExpectedCells:   1,
+		Binding:         scrollRegionBFullIdentityBinding{Binding: "diagnostic-unbound-dirty-worktree"},
+		ToolVersions:    scrollRegionBFullToolVersions{GoRuntime: "go1.26.5", PlaywrightGo: "v0.6100.0", BrowserByZoom: map[string]string{"default": "Chromium 140.0.0.0"}, AxeCore: scrollRegionAxeCoreVersion},
+		Widths:          []int{390},
 		Cells: []scrollRegionBFullCellReceipt{{
 			CellID: "locked-theme-forgery",
 			Persistence: scrollRegionBFullPersistenceProof{
@@ -545,9 +570,9 @@ func TestScrollRegionBFullReceiptRejectsLockedThemePersistenceClaim(t *testing.T
 	require.ErrorContains(t, err, "theme persistence")
 }
 
-// The wrapper digest is only integrity metadata. An attacker can recompute it,
-// so B-FULL semantic validation must independently decode every raw Page A/B
-// artifact and reject a self-consistent forged wrapper.
+// The wrapper digest is only integrity metadata. Structural decoding rejects
+// inconsistent Page A/B payloads, but cannot establish independent browser
+// provenance; this fixture remains diagnostic/unattested by contract.
 func TestScrollRegionBFullReceiptRejectsRecomputedPersistenceForgeries(t *testing.T) {
 	for name, mutate := range map[string]func(t *testing.T, receipt *scrollRegionBFullReceipt){
 		"page-a-action": func(t *testing.T, receipt *scrollRegionBFullReceipt) {
@@ -686,7 +711,7 @@ func scrollRegionBFullReceiptForFixture(t *testing.T) scrollRegionBFullReceipt {
 		NAs:        map[string]string{"theme-persistence": scrollRegionBFullThemePersistenceNA},
 	}
 	return scrollRegionBFullReceipt{
-		Schema: scrollRegionBFullReceiptSchema, Closure: "diagnostic-non-closure", ExpectedCells: 1,
+		Schema: scrollRegionBFullReceiptSchema, Closure: "diagnostic-non-closure", ProvenanceClass: scrollRegionBFullProvenanceStructural, ExpectedCells: 1,
 		Binding: scrollRegionBFullIdentityBinding{Binding: "diagnostic-unbound-dirty-worktree"}, ToolVersions: scrollRegionBFullToolVersions{GoRuntime: "go1.26.5", PlaywrightGo: "v0.6100.0", BrowserByZoom: map[string]string{"default": "Chromium 140.0.0.0"}, AxeCore: scrollRegionAxeCoreVersion}, Widths: []int{390},
 		Cells: []scrollRegionBFullCellReceipt{cell}, TraceByCell: map[string]scrollRegionBFullArtifact{cellID: trace},
 	}
@@ -705,10 +730,9 @@ func scrollRegionBFullFixtureBytesArtifact(t *testing.T, directory, name string,
 	return scrollRegionBFullEvidenceArtifactForFile(t, path)
 }
 
-// scrollRegionBFullFixturePlaywrightTrace creates the minimum structured
-// Playwright archive used by validator tests. It deliberately writes the same
-// trace.trace, trace.network, and screencast resource layout emitted by
-// Playwright rather than a ZIP-magic placeholder.
+// scrollRegionBFullFixturePlaywrightTrace writes a structural archive fixture
+// for parser tests. It is deliberately claimant-authored and is valid only for
+// diagnostic/unattested receipt coverage, never Playwright provenance.
 func scrollRegionBFullFixturePlaywrightTrace(t *testing.T, directory, name, cellID string) scrollRegionBFullArtifact {
 	t.Helper()
 	path := filepath.Join(directory, name)
