@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 )
@@ -75,7 +76,7 @@ func Verify(raw []byte, trusted map[string]ed25519.PublicKey, want Claims) error
 	if err := decoder.Decode(&claims); err != nil {
 		return fmt.Errorf("decode signed AT claims: %w", err)
 	}
-	if claims.SourceCommit != want.SourceCommit || claims.SourceTree != want.SourceTree || claims.Route != want.Route || claims.State != want.State || claims.Browser != want.Browser || claims.ScreenReader != want.ScreenReader || claims.Pair != want.Pair || claims.Recorder != envelope.Signatures[0].KeyID || claims.Recorder != want.Recorder || claims.ServedSHA256 != want.ServedSHA256 || claims.ScreenshotSHA256 != want.ScreenshotSHA256 || claims.TraceSHA256 != want.TraceSHA256 || strings.TrimSpace(claims.Challenge) == "" || strings.TrimSpace(claims.ActionToken) == "" || strings.TrimSpace(claims.ActionCommand) == "" || len(claims.ActionSequence) == 0 {
+	if claims.SourceCommit != want.SourceCommit || claims.SourceTree != want.SourceTree || claims.Route != want.Route || claims.State != want.State || claims.Browser != want.Browser || claims.ScreenReader != want.ScreenReader || claims.Pair != want.Pair || claims.Recorder != envelope.Signatures[0].KeyID || claims.Recorder != want.Recorder || claims.ServedSHA256 != want.ServedSHA256 || claims.ScreenshotSHA256 != want.ScreenshotSHA256 || claims.TraceSHA256 != want.TraceSHA256 || claims.Challenge != want.Challenge || claims.ActionToken != want.ActionToken || claims.ActionCommand != want.ActionCommand || !slices.Equal(claims.ActionSequence, want.ActionSequence) || strings.TrimSpace(claims.Challenge) == "" || strings.TrimSpace(claims.ActionToken) == "" || strings.TrimSpace(claims.ActionCommand) == "" || len(claims.ActionSequence) == 0 {
 		return fmt.Errorf("signed AT claims do not bind exact pair/key/recorder/challenge/action/tool/raw artifacts")
 	}
 	if _, err := time.Parse(time.RFC3339, claims.CapturedAt); err != nil {

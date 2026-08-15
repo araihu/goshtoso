@@ -32,6 +32,16 @@ func TestVerifyRejectsUnsignedAndMutatedClaims(t *testing.T) {
 	if err := Verify(raw, map[string]ed25519.PublicKey{"test": public}, wrongPair); err == nil {
 		t.Fatal("wrong signed AT pair accepted")
 	}
+	wrongAction := claims
+	wrongAction.Challenge = "other-challenge"
+	if err := Verify(raw, map[string]ed25519.PublicKey{"test": public}, wrongAction); err == nil {
+		t.Fatal("wrong expected AT challenge accepted")
+	}
+	wrongAction = claims
+	wrongAction.ActionCommand = "End"
+	if err := Verify(raw, map[string]ed25519.PublicKey{"test": public}, wrongAction); err == nil {
+		t.Fatal("wrong expected AT action command accepted")
+	}
 	wrongSigner := claims
 	wrongSigner.Recorder = "other-recorder"
 	wrongPayload, err := json.Marshal(wrongSigner)
