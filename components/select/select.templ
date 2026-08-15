@@ -80,7 +80,7 @@ templ selectTemplate(cfg Config) {
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 20 20"
 					fill="currentColor"
-					class="size-5 shrink-0 transition-transform duration-150"
+					class="size-5 shrink-0 transition-transform duration-150 motion-reduce:transition-none"
 					x-bind:class="isOpen || openedWithKeyboard ? 'rotate-180' : ''"
 					aria-hidden="true"
 				>
@@ -110,7 +110,12 @@ templ selectTemplate(cfg Config) {
 			<div
 				x-cloak
 				x-show="isOpen || openedWithKeyboard"
-				x-transition
+				x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"
+				x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
+				x-transition:enter-end="opacity-100 scale-100"
+				x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
+				x-transition:leave-start="opacity-100 scale-100"
+				x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
 				x-on:click.outside="isOpen = false; openedWithKeyboard = false"
 				class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 				if cfg.Shell {

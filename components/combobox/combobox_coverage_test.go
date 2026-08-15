@@ -117,6 +117,26 @@ func TestChevronClass_ReflectsSelection(t *testing.T) {
 	assert.Contains(t, got, "dark:text-secondary-dark")
 }
 
+func TestCombobox_PopoverProvidesReducedMotionTransition(t *testing.T) {
+	cfg := Config{
+		ID:   "industry",
+		Name: "industry",
+		Source: Source{Static: []Option{
+			{Value: "tech", Label: "Technology"},
+		}},
+	}
+
+	rendered := renderHTML(t, Combobox(cfg, cfg.InitialState()))
+
+	assert.Contains(t, rendered, `x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"`)
+	assert.Contains(t, rendered, `x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`)
+	assert.Contains(t, rendered, `x-transition:enter-end="opacity-100 scale-100"`)
+	assert.Contains(t, rendered, `x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"`)
+	assert.Contains(t, rendered, `x-transition:leave-start="opacity-100 scale-100"`)
+	assert.Contains(t, rendered, `x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`)
+	assert.Contains(t, rendered, `transition-transform duration-150 motion-reduce:transition-none`)
+}
+
 func TestCombobox_LabelDisabledRootClass(t *testing.T) {
 	cfg := Config{
 		ID: "industry", Name: "industry", Mode: ModeSingle,

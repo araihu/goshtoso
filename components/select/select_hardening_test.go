@@ -61,6 +61,30 @@ func TestSelect_RenderedKeyboardAndExternalSyncContract(t *testing.T) {
 	assert.NotContains(t, browserHTML, "<script")
 }
 
+func TestSelect_RenderedReducedMotionTransitionContract(t *testing.T) {
+	for _, cfg := range []Config{
+		{
+			ID:      "choice",
+			Options: []Option{{Value: "a", Label: "A"}},
+		},
+		{
+			ID:        "custom-choice",
+			Shell:     true,
+			ValueExpr: "choice",
+		},
+	} {
+		rendered := html.UnescapeString(renderSelect(t, cfg, nil))
+
+		assert.Contains(t, rendered, `x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"`)
+		assert.Contains(t, rendered, `x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`)
+		assert.Contains(t, rendered, `x-transition:enter-end="opacity-100 scale-100"`)
+		assert.Contains(t, rendered, `x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"`)
+		assert.Contains(t, rendered, `x-transition:leave-start="opacity-100 scale-100"`)
+		assert.Contains(t, rendered, `x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`)
+		assert.Contains(t, rendered, `class="size-5 shrink-0 transition-transform duration-150 motion-reduce:transition-none"`)
+	}
+}
+
 func TestSelectFactoryDataJSONPreservesOptionAndPlaceholderStrings(t *testing.T) {
 	cfg := Config{
 		Placeholder: `Pick Bob's \ region & team`,
