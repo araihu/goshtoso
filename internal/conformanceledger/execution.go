@@ -37,16 +37,20 @@ type ExecutionReceipt struct {
 // dependency graph, and browser/AT context. A receipt cannot silently borrow
 // a result produced against a different checkout or route.
 type ExecutionContext struct {
-	RepoRoot       string            `json:"repo_root"`
-	SourceCommit   string            `json:"source_commit"`
-	SourceTree     string            `json:"source_tree"`
-	Identity       BFullIdentity     `json:"identity"`
-	DependencyPins map[string]string `json:"dependency_pins"`
-	Route          string            `json:"route,omitempty"`
-	State          string            `json:"state,omitempty"`
-	Viewport       int               `json:"viewport,omitempty"`
-	Breakpoint     string            `json:"breakpoint,omitempty"`
-	AT             string            `json:"at,omitempty"`
+	RepoRoot         string            `json:"repo_root"`
+	SourceCommit     string            `json:"source_commit"`
+	SourceTree       string            `json:"source_tree"`
+	Identity         BFullIdentity     `json:"identity"`
+	DependencyPins   map[string]string `json:"dependency_pins"`
+	Route            string            `json:"route,omitempty"`
+	State            string            `json:"state,omitempty"`
+	Viewport         int               `json:"viewport,omitempty"`
+	Breakpoint       string            `json:"breakpoint,omitempty"`
+	AT               string            `json:"at,omitempty"`
+	ATChallenge      string            `json:"at_challenge,omitempty"`
+	ATActionToken    string            `json:"at_action_token,omitempty"`
+	ATActionCommand  string            `json:"at_action_command,omitempty"`
+	ATActionSequence []string          `json:"at_action_sequence,omitempty"`
 }
 
 // ExecutionReceiptEnvelope is the authenticated wrapper consumed by the CLI.
@@ -480,6 +484,9 @@ func validateATExecutionReceipt(ledger Ledger, rowIndex map[string]int, receipt 
 	if len(receipt.Artifacts) != 4 || counts["at-caption-screenshot"] != 1 || counts["at-cursor-trace"] != 1 || counts["at-served-response"] != 1 || counts["at-signed-attestation"] != 1 {
 		return fmt.Errorf("execution receipt %s requires exactly one at-caption-screenshot and one at-cursor-trace plus served response and signed attestation", receipt.ID)
 	}
+	if strings.TrimSpace(receipt.Context.ATChallenge) == "" || strings.TrimSpace(receipt.Context.ATActionToken) == "" || strings.TrimSpace(receipt.Context.ATActionCommand) == "" || len(receipt.Context.ATActionSequence) == 0 {
+		return fmt.Errorf("execution receipt %s AT execution requires issued challenge and exact action contract", receipt.ID)
+	}
 	trusted, err := loadConformanceATTrustedKeys(receipt.Context.RepoRoot)
 	if err != nil {
 		return err
@@ -488,7 +495,7 @@ func validateATExecutionReceipt(ledger Ledger, rowIndex map[string]int, receipt 
 	if err != nil {
 		return fmt.Errorf("read signed AT attestation: %w", err)
 	}
-	want := atattestation.Claims{SourceCommit: ledger.SourceCommit, SourceTree: ledger.SourceTree, Route: target.Route, State: target.State, Browser: browser, ScreenReader: screenReader, Pair: target.AT, Recorder: trustedATRecorderForPair(target.AT), ServedSHA256: artifacts["at-served-response"].ExpectedSHA256, ScreenshotSHA256: artifacts["at-caption-screenshot"].ExpectedSHA256, TraceSHA256: artifacts["at-cursor-trace"].ExpectedSHA256}
+	want := atattestation.Claims{SourceCommit: ledger.SourceCommit, SourceTree: ledger.SourceTree, Route: target.Route, State: target.State, Browser: browser, ScreenReader: screenReader, Pair: target.AT, Recorder: trustedATRecorderForPair(target.AT), Challenge: receipt.Context.ATChallenge, ActionToken: receipt.Context.ATActionToken, ActionCommand: receipt.Context.ATActionCommand, ActionSequence: receipt.Context.ATActionSequence, ServedSHA256: artifacts["at-served-response"].ExpectedSHA256, ScreenshotSHA256: artifacts["at-caption-screenshot"].ExpectedSHA256, TraceSHA256: artifacts["at-cursor-trace"].ExpectedSHA256}
 	if err := atattestation.Verify(attestation, trusted, want); err != nil {
 		return fmt.Errorf("execution receipt %s signed AT attestation: %w", receipt.ID, err)
 	}

@@ -214,6 +214,25 @@ func TestApplyExecutionReceiptsRequiresExactATArtifactPairAndIdentity(t *testing
 	}
 }
 
+func TestApplyExecutionReceiptsRejectsATWithoutIssuedActionContract(t *testing.T) {
+	ledger, _, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	receipt := executionFixture(t, "at-contract", []string{"at/safari-voiceover/public"}, StatusExecuted)
+	receipt.Context.AT, receipt.Context.Route, receipt.Context.State = "safari-voiceover", "/getting-started", "initial"
+	receipt.ToolVersions = map[string]string{"browser": "Safari 26.5.2", "screen_reader": "VoiceOver bundle 10"}
+	receipt.Artifacts = []EvidenceArtifact{
+		evidenceArtifactFixture(t, "at-caption-screenshot", "/getting-started", "initial", "Safari 26.5.2", "VoiceOver bundle 10"),
+		evidenceArtifactFixture(t, "at-cursor-trace", "/getting-started", "initial", "Safari 26.5.2", "VoiceOver bundle 10"),
+		evidenceArtifactFixture(t, "at-served-response", "/getting-started", "initial", "Safari 26.5.2", "VoiceOver bundle 10"),
+		evidenceArtifactFixture(t, "at-signed-attestation", "/getting-started", "initial", "Safari 26.5.2", "VoiceOver bundle 10"),
+	}
+	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{receipt}); err == nil || !strings.Contains(err.Error(), "issued challenge and exact action contract") {
+		t.Fatalf("missing issued AT action contract error = %v", err)
+	}
+}
+
 func TestApplyExecutionReceiptsRejectsForgedATPNG(t *testing.T) {
 	ledger, _, err := GenerateSkeleton(generationFixture(t))
 	if err != nil {
