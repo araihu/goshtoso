@@ -27,7 +27,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/araihu/goshtoso/components/table"
-	"github.com/araihu/goshtoso/internal/conformanceledger"
+	"github.com/araihu/goshtoso/site/internal/conformanceledger"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 )

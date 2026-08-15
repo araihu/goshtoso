@@ -13,6 +13,7 @@ import (
 
 	"github.com/araihu/goshtoso/components/scrollregion"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/scrollregioncompat"
 )
 
 // ScrollRegionDemoPage renders the Scroll Region component demo.
@@ -147,11 +148,11 @@ func scrollRegionDefaultPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = scrollregion.Named(scrollregion.Config{
+		templ_7745c5c3_Err = scrollregioncompat.Named(scrollregion.Config{
 			RootClass:     "h-full",
 			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:       scrollRegionActivityHistory(),
-		}, scrollregion.AccessibleName{Label: "Activity history"}).Render(ctx, templ_7745c5c3_Buffer)
+		}, "Activity history").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -188,11 +189,11 @@ func scrollRegionNoOverflowPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = scrollregion.Named(scrollregion.Config{
+		templ_7745c5c3_Err = scrollregioncompat.Named(scrollregion.Config{
 			RootClass:     "h-full",
 			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:       scrollRegionShortSummary(),
-		}, scrollregion.AccessibleName{Label: "Current release"}).Render(ctx, templ_7745c5c3_Buffer)
+		}, "Current release").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -229,12 +230,12 @@ func scrollRegionIndicatorsDisabledPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = scrollregion.Named(scrollregion.Config{
+		templ_7745c5c3_Err = scrollregioncompat.Named(scrollregion.Config{
 			RootClass:         "h-full",
 			ViewportClass:     "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:           scrollRegionActivityHistory(),
 			DisableIndicators: true,
-		}, scrollregion.AccessibleName{Label: "Activity history without indicators"}).Render(ctx, templ_7745c5c3_Buffer)
+		}, "Activity history without indicators").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -279,7 +280,7 @@ func scrollRegionActivityHistory() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%02d", index+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/scrollregion/scrollregion.templ`, Line: 92, Col: 125}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/scrollregion/scrollregion.templ`, Line: 93, Col: 125}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {

@@ -22,6 +22,7 @@ func run(args []string, stdout io.Writer) error {
 	flags.SetOutput(io.Discard)
 	repo := flags.String("repo", "", "exact Goshtoso repository root")
 	stateFixturesOutput := flags.String("state-fixtures-output", "", "generate exhaustive E2E state fixture Go source")
+	siteLedgerOutput := flags.String("site-ledger-output", "", "generate site-module-local E2E ledger Go source directory")
 	commit := flags.String("commit", "", "exact source commit")
 	tree := flags.String("tree", "", "exact source tree")
 	receiptsPath := flags.String("receipts", "", "JSON array of authenticated prior receipts")
@@ -45,6 +46,16 @@ func run(args []string, stdout io.Writer) error {
 			return fmt.Errorf("write state fixtures: %w", err)
 		}
 		fmt.Fprintf(stdout, "state_fixtures=%s\n", *stateFixturesOutput)
+		return nil
+	}
+	if *siteLedgerOutput != "" {
+		if *repo == "" {
+			return fmt.Errorf("-repo is required with -site-ledger-output")
+		}
+		if err := conformanceledger.WriteSiteLedgerSource(*repo, *siteLedgerOutput); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "site_ledger=%s\n", *siteLedgerOutput)
 		return nil
 	}
 	if *repo == "" || *commit == "" || *tree == "" || *receiptsPath == "" || *atBlocker == "" || *output == "" {

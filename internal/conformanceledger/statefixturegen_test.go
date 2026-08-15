@@ -58,3 +58,21 @@ func TestGeneratedStateFixtureTrackedSourceMatchesGenerator(t *testing.T) {
 		t.Fatalf("generated state fixture drift: %s must byte-match GenerateStateFixtureSource output", path)
 	}
 }
+
+func TestGeneratedSiteLedgerTrackedSourceMatchesGenerator(t *testing.T) {
+	repo := repoRoot(t)
+	want, err := GenerateSiteLedgerSource(repo)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for relative, source := range want {
+		path := filepath.Join(repo, "site", "internal", "conformanceledger", relative)
+		got, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read generated site ledger %s: %v", path, err)
+		}
+		if !bytes.Equal(got, source) {
+			t.Fatalf("generated site ledger drift: %s must byte-match GenerateSiteLedgerSource output", path)
+		}
+	}
+}

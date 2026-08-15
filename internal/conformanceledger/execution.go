@@ -218,19 +218,6 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 	return nil
 }
 
-func mandatoryExecutionRow(row Row) bool {
-	if row.Class != ClassExecution {
-		return false
-	}
-	return strings.HasPrefix(row.ID, "execution/") ||
-		strings.HasPrefix(row.ID, "at/") ||
-		strings.HasPrefix(row.ID, "mode/") ||
-		strings.HasPrefix(row.ID, "viewport/") ||
-		strings.HasPrefix(row.ID, "zoom/") ||
-		strings.HasPrefix(row.ID, "motion/") ||
-		strings.HasPrefix(row.ID, "input/")
-}
-
 func ReadAndApplyExecutionReceiptEnvelope(ledger *Ledger, path, expectedSHA256 string) error {
 	if ledger == nil {
 		return fmt.Errorf("nil ledger")

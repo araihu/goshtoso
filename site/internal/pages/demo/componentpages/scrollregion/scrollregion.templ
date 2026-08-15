@@ -5,6 +5,7 @@ import (
 
 	"github.com/araihu/goshtoso/components/scrollregion"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/site/internal/scrollregioncompat"
 )
 
 // ScrollRegionDemoPage renders the Scroll Region component demo.
@@ -56,32 +57,32 @@ templ scrollRegionDemoContent() {
 
 templ scrollRegionDefaultPreview() {
 	<div id="scroll-region-default" class="h-56 w-full max-w-2xl">
-		@scrollregion.Named(scrollregion.Config{
+		@scrollregioncompat.Named(scrollregion.Config{
 			RootClass:     "h-full",
 			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:        scrollRegionActivityHistory(),
-		}, scrollregion.AccessibleName{Label: "Activity history"})
+		}, "Activity history")
 	</div>
 }
 
 templ scrollRegionNoOverflowPreview() {
 	<div id="scroll-region-no-overflow" class="h-64 w-full max-w-2xl">
-		@scrollregion.Named(scrollregion.Config{
+		@scrollregioncompat.Named(scrollregion.Config{
 			RootClass:     "h-full",
 			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:        scrollRegionShortSummary(),
-		}, scrollregion.AccessibleName{Label: "Current release"})
+		}, "Current release")
 	</div>
 }
 
 templ scrollRegionIndicatorsDisabledPreview() {
 	<div id="scroll-region-indicators-disabled" class="h-40 w-full max-w-2xl">
-		@scrollregion.Named(scrollregion.Config{
+		@scrollregioncompat.Named(scrollregion.Config{
 			RootClass:         "h-full",
 			ViewportClass:     "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:           scrollRegionActivityHistory(),
 			DisableIndicators: true,
-		}, scrollregion.AccessibleName{Label: "Activity history without indicators"})
+		}, "Activity history without indicators")
 	</div>
 }
 
