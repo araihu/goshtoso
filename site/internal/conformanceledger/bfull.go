@@ -181,11 +181,12 @@ type BFullRawStateMeasurements struct {
 }
 
 type BFullPaintMeasurement struct {
-	Selector             string `json:"selector"`
-	AdjacentSelector     string `json:"adjacent_selector"`
-	Foreground           string `json:"foreground"`
-	Background           string `json:"background"`
-	CompositedBackground string `json:"composited_background"`
+	Selector             string   `json:"selector"`
+	AdjacentSelector     string   `json:"adjacent_selector"`
+	Foreground           string   `json:"foreground"`
+	Background           string   `json:"background"`
+	BackgroundChain      []string `json:"background_chain"`
+	CompositedBackground string   `json:"composited_background"`
 }
 
 type BFullMotionMeasurement struct {
@@ -193,6 +194,8 @@ type BFullMotionMeasurement struct {
 	DescendantSelector string  `json:"descendant_selector"`
 	BeforeMS           float64 `json:"before_ms"`
 	ActionMS           float64 `json:"action_ms"`
+	ObservedDeltaMS    float64 `json:"observed_delta_ms"`
+	ActionToken        string  `json:"action_token"`
 	ReducedMS          float64 `json:"reduced_ms"`
 }
 
@@ -826,8 +829,8 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 	}
 	contrast := func(samples []BFullPaintMeasurement, minimum float64) (bool, error) {
 		for _, sample := range samples {
-			if strings.TrimSpace(sample.Selector) == "" || strings.TrimSpace(sample.AdjacentSelector) == "" || strings.TrimSpace(sample.Background) == "" {
-				return false, fmt.Errorf("sample selector, adjacent selector, and alpha background are required")
+			if strings.TrimSpace(sample.Selector) == "" || strings.TrimSpace(sample.AdjacentSelector) == "" || strings.TrimSpace(sample.Background) == "" || len(sample.BackgroundChain) == 0 {
+				return false, fmt.Errorf("sample selector, adjacent selector, and actual composited background chain are required")
 			}
 			if sample.Selector == raw.TargetSelector || !strings.HasPrefix(sample.Selector, raw.TargetSelector+" ") {
 				return false, fmt.Errorf("sample selector must name a target descendant")
@@ -836,12 +839,31 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 			if !ok {
 				return false, fmt.Errorf("invalid foreground %q", sample.Foreground)
 			}
-			if _, ok := bfullRGBA(sample.Background); !ok {
+			backgroundInput, ok := bfullRGBA(sample.Background)
+			if !ok {
 				return false, fmt.Errorf("invalid alpha background %q", sample.Background)
+			}
+			chain := make([][4]float64, 0, len(sample.BackgroundChain))
+			for index, rawLayer := range sample.BackgroundChain {
+				layer, ok := bfullRGBA(rawLayer)
+				if !ok {
+					return false, fmt.Errorf("invalid background chain layer %q", rawLayer)
+				}
+				if index == 0 && !bfullRGBAEqual(layer, backgroundInput) {
+					return false, fmt.Errorf("background chain does not start with measured background")
+				}
+				chain = append(chain, layer)
+			}
+			calculatedBackground, opaque := bfullCompositeBackground(chain)
+			if !opaque {
+				return false, fmt.Errorf("background chain does not resolve to an opaque adjacent surface")
 			}
 			background, ok := bfullRGBA(sample.CompositedBackground)
 			if !ok || background[3] != 1 {
 				return false, fmt.Errorf("invalid opaque composited background %q", sample.CompositedBackground)
+			}
+			if !bfullRGBAEqual(background, calculatedBackground) {
+				return false, fmt.Errorf("composited background does not match measured background chain")
 			}
 			if bfullContrast(foreground, background) < minimum {
 				return false, nil
@@ -862,7 +884,7 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 		if strings.TrimSpace(raw.Motion.Selector) == "" || strings.TrimSpace(raw.Motion.DescendantSelector) == "" {
 			return bfullRawResult{}, fmt.Errorf("motion target and descendant selectors are required")
 		}
-		if raw.Motion.ActionMS <= 0 || raw.Motion.ActionMS == raw.Motion.BeforeMS || raw.Motion.ReducedMS > raw.Motion.ActionMS {
+		if strings.TrimSpace(raw.Motion.ActionToken) == "" || raw.Motion.ActionMS <= 0 || raw.Motion.ObservedDeltaMS <= 0 || raw.Motion.ActionMS <= raw.Motion.BeforeMS || raw.Motion.ActionMS-raw.Motion.BeforeMS < raw.Motion.ObservedDeltaMS || raw.Motion.ReducedMS > raw.Motion.ActionMS {
 			return bfullRawResult{}, fmt.Errorf("motion action outcome is static or invalid")
 		}
 		motion = true
@@ -872,7 +894,7 @@ func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawR
 		if strings.TrimSpace(raw.Overlay.Selector) == "" || strings.TrimSpace(raw.Overlay.Role) == "" || strings.TrimSpace(raw.Overlay.SourceSelector) == "" || strings.TrimSpace(raw.Overlay.SourceToken) == "" {
 			return bfullRawResult{}, fmt.Errorf("overlay selector, role, and source token are required")
 		}
-		if raw.Overlay.SourceToken == "role-backed-overlay" || raw.Overlay.SourceSelector == raw.Overlay.Selector {
+		if raw.Overlay.SourceToken == "role-backed-overlay" || raw.Overlay.SourceSelector == raw.Overlay.Selector || raw.Overlay.SourceSelector == "[data-conformance-state]" {
 			return bfullRawResult{}, fmt.Errorf("overlay source token is not source-bound")
 		}
 		overlay = true
@@ -912,6 +934,39 @@ func bfullRGBA(value string) ([4]float64, bool) {
 		color[3] = 1
 	}
 	return color, true
+}
+
+func bfullRGBAEqual(left, right [4]float64) bool {
+	const epsilon = 1.0 / 255.0
+	for index := range left {
+		delta := left[index] - right[index]
+		if delta < 0 {
+			delta = -delta
+		}
+		if delta > epsilon {
+			return false
+		}
+	}
+	return true
+}
+
+// bfullCompositeBackground alpha-composites an inner-to-outer computed
+// background chain. The terminal layer must make the adjacent surface opaque;
+// white/default fallbacks are intentionally forbidden.
+func bfullCompositeBackground(chain [][4]float64) ([4]float64, bool) {
+	var result [4]float64
+	for index := len(chain) - 1; index >= 0; index-- {
+		layer := chain[index]
+		alpha := layer[3] + result[3]*(1-layer[3])
+		if alpha == 0 {
+			continue
+		}
+		for channel := 0; channel < 3; channel++ {
+			result[channel] = (layer[channel]*layer[3] + result[channel]*result[3]*(1-layer[3])) / alpha
+		}
+		result[3] = alpha
+	}
+	return result, result[3] == 1
 }
 
 func bfullContrast(left, right [4]float64) float64 {

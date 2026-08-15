@@ -169,7 +169,10 @@ func conformanceStateDocument(t *testing.T, fixtures []conformanceStateFixture, 
 	for _, fixture := range fixtures {
 		var rendered strings.Builder
 		require.NoError(t, fixture.Component.Render(context.Background(), &rendered), fixture.State)
-		fmt.Fprintf(&body, `<section class="conformance-state min-w-0 border border-outline p-3" data-conformance-state=%q><h2 class="sr-only">%s</h2>%s</section>`, fixture.State, html.EscapeString(fixture.State), conformanceNamespaceFragment(rendered.String(), fixture.State))
+		// These markers are fixture-owned measurement anchors, not a guessed
+		// button/input fallback. The inner anchor contains the component bytes
+		// whose text and adjacent surface B-FULL measures.
+		fmt.Fprintf(&body, `<section class="conformance-state min-w-0 border border-outline p-3" data-conformance-state=%q><h2 class="sr-only">%s</h2><div data-conformance-target><div data-conformance-paint-target>%s</div></div></section>`, fixture.State, html.EscapeString(fixture.State), conformanceNamespaceFragment(rendered.String(), fixture.State))
 	}
 	dependencies := renderComponentFragment(t, head.Dependencies(head.WithLocalRuntime()))
 	darkClass := ""
@@ -371,14 +374,25 @@ const conformanceStateInspectionScript = `async config => {
 	};
 	const parseColor = value => {
 		const parts = String(value || '').match(/[\\d.]+/g);
-		return parts && parts.length >= 3 ? [Number(parts[0]), Number(parts[1]), Number(parts[2])] : null;
+		return parts && parts.length >= 3 ? [Number(parts[0]), Number(parts[1]), Number(parts[2]), parts.length > 3 ? Number(parts[3]) : 1] : null;
 	};
-	const background = element => {
+	const encodeColor = color => color ? 'rgba(' + color.slice(0, 3).map(value => Math.round(value)).join(', ') + ', ' + color[3] + ')' : '';
+	const composite = chain => {
+		let result = [0, 0, 0, 0];
+		for (let index = chain.length - 1; index >= 0; index--) {
+			const layer = chain[index], alpha = layer[3] + result[3] * (1 - layer[3]);
+			if (!alpha) continue;
+			result = [0, 1, 2].map(channel => (layer[channel] * layer[3] + result[channel] * result[3] * (1 - layer[3])) / alpha).concat(alpha);
+		}
+		return result[3] === 1 ? result : null;
+	};
+	const backgrounds = element => {
+		const chain = [];
 		for (let current = element; current; current = current.parentElement) {
 			const value = parseColor(getComputedStyle(current).backgroundColor);
-			if (value) return value;
+			if (value) chain.push(value);
 		}
-		return [255, 255, 255];
+		return {chain, composited: composite(chain)};
 	};
 	const contrast = (left, right) => {
 		if (!left || !right) return null;
@@ -391,9 +405,10 @@ const conformanceStateInspectionScript = `async config => {
 		item = item.trim();
 		return item.endsWith('ms') ? Number.parseFloat(item) / 1000 : Number.parseFloat(item) || 0;
 	}));
+	const animationTime = element => Math.max(-1, ...element.getAnimations({subtree: true}).filter(animation => animation.playState === 'running').map(animation => Number(animation.currentTime) || 0));
 	const pass = passed => ({applicability: 'applicable', passed});
 	const na = rationale => ({applicability: 'not-applicable', rationale});
-	return [...document.querySelectorAll('[data-conformance-state]')].map(section => {
+	return Promise.all([...document.querySelectorAll('[data-conformance-state]')].map(async section => {
 		const style = getComputedStyle(section), rect = section.getBoundingClientRect();
 		const base = '[data-conformance-state="' + CSS.escape(section.dataset.conformanceState) + '"]';
 		const target = section.querySelector('[data-conformance-target]');
@@ -402,13 +417,17 @@ const conformanceStateInspectionScript = `async config => {
 		if (!paintTarget || !visible(paintTarget)) throw new Error('state ' + section.dataset.conformanceState + ' lacks source-owned data-conformance-paint-target');
 		const targetStyle = getComputedStyle(target), targetRect = target.getBoundingClientRect();
 		const paintStyle = getComputedStyle(paintTarget);
-		const rgba = color => 'rgba(' + color.map(value => Math.round(value)).join(', ') + ', 1)';
-		const textRatio = contrast(parseColor(paintStyle.color), background(paintTarget));
+		const paintBackground = backgrounds(paintTarget), targetBackground = backgrounds(target);
+		const textRatio = contrast(parseColor(paintStyle.color), paintBackground.composited);
 		const borderWidth = Math.max(Number.parseFloat(targetStyle.borderTopWidth) || 0, Number.parseFloat(targetStyle.borderRightWidth) || 0, Number.parseFloat(targetStyle.borderBottomWidth) || 0, Number.parseFloat(targetStyle.borderLeftWidth) || 0);
-		const boundaryRatio = contrast(parseColor(targetStyle.borderTopColor), background(target.parentElement));
+		const boundaryRatio = contrast(parseColor(targetStyle.borderTopColor), targetBackground.composited);
 		const hasBoundary = borderWidth > 0 || (targetStyle.boxShadow && targetStyle.boxShadow !== 'none');
 		const motionDuration = Math.max(duration(targetStyle.animationDuration), duration(targetStyle.transitionDuration));
 		const hasMotion = (targetStyle.animationName && targetStyle.animationName !== 'none') || (targetStyle.transitionProperty && targetStyle.transitionProperty !== 'none' && motionDuration > 0);
+		const beforeMotionMS = animationTime(target);
+		await new Promise(resolve => requestAnimationFrame(resolve));
+		const actionMotionMS = animationTime(target);
+		const observedMotionDeltaMS = beforeMotionMS >= 0 && actionMotionMS >= 0 ? actionMotionMS - beforeMotionMS : 0;
 		const overlay = [...section.querySelectorAll('[role="dialog"],[role="alertdialog"],[role="menu"],[role="tooltip"]')].find(visible);
 		const targetSelector = base + ' [data-conformance-target]';
 		const paintSelector = targetSelector + ' [data-conformance-paint-target]';
@@ -428,17 +447,17 @@ const conformanceStateInspectionScript = `async config => {
 			zoom: config.zoom,
 			text_contrast: textRatio === null ? na('source-rendered text has no computable opaque contrast pair') : pass(textRatio >= 4.5),
 			boundary_contrast: !hasBoundary ? na('source-rendered state has no visual boundary contract') : (boundaryRatio === null ? na('source-rendered boundary has no computable opaque contrast pair') : pass(boundaryRatio >= 3)),
-			motion_outcome: !hasMotion ? na('source-rendered state has no animation or transition contract') : pass(config.motion === 'reduced' ? motionDuration <= .1 : motionDuration > 0),
-			overlay_provenance: !overlay ? na('source-rendered state has no visible overlay in this phase') : pass(overlay.closest('[data-conformance-state]') === section && Boolean(overlay.getAttribute('role') || overlay.id)),
+			motion_outcome: !hasMotion ? na('source-rendered state has no animation or transition contract') : pass(config.motion === 'reduced' ? motionDuration <= .1 : observedMotionDeltaMS > 0),
+			overlay_provenance: !overlay ? na('source-rendered state has no visible overlay in this phase') : pass(overlay.closest('[data-conformance-state]') === section && Boolean(overlay.getAttribute('data-goshtoso-overlay') || overlay.getAttribute('aria-labelledby'))),
 			raw: {
 				target_selector: targetSelector,
-				text: [{selector: paintSelector, adjacent_selector: targetSelector, foreground: paintStyle.color, background: paintStyle.backgroundColor, composited_background: rgba(background(paintTarget))}],
-				boundaries: [{selector: paintSelector, adjacent_selector: targetSelector, foreground: paintStyle.borderTopColor, background: paintStyle.backgroundColor, composited_background: rgba(background(target))}],
-				motion: hasMotion ? {selector: targetSelector, descendant_selector: paintSelector, before_ms: 0, action_ms: motionDuration * 1000, reduced_ms: config.motion === 'reduced' ? motionDuration * 1000 : 0} : {},
-				overlay: !overlay ? {} : {selector: base + ' [role="' + overlay.getAttribute('role') + '"]', role: overlay.getAttribute('role'), source_selector: base, source_token: overlay.id || overlay.getAttribute('aria-labelledby') || overlay.getAttribute('data-goshtoso-overlay') || ''},
+				text: [{selector: paintSelector, adjacent_selector: targetSelector, foreground: paintStyle.color, background: encodeColor(paintBackground.chain[0]), background_chain: paintBackground.chain.map(encodeColor), composited_background: encodeColor(paintBackground.composited)}],
+				boundaries: [{selector: paintSelector, adjacent_selector: targetSelector, foreground: targetStyle.borderTopColor, background: encodeColor(targetBackground.chain[0]), background_chain: targetBackground.chain.map(encodeColor), composited_background: encodeColor(targetBackground.composited)}],
+				motion: hasMotion ? {selector: targetSelector, descendant_selector: paintSelector, before_ms: beforeMotionMS, action_ms: actionMotionMS, observed_delta_ms: observedMotionDeltaMS, action_token: 'requestAnimationFrame', reduced_ms: config.motion === 'reduced' ? actionMotionMS : 0} : {},
+				overlay: !overlay ? {} : {selector: base + ' [role="' + overlay.getAttribute('role') + '"]', role: overlay.getAttribute('role'), source_selector: targetSelector, source_token: overlay.getAttribute('data-goshtoso-overlay') || overlay.getAttribute('aria-labelledby') || ''},
 			},
 		};
-	});
+	}));
 }`
 
 func conformanceInspectStates(t *testing.T, page playwright.Page, theme, mode, motion string, zoom int) []conformanceledger.BFullStateObservation {
