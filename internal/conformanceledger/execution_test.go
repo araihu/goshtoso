@@ -118,6 +118,32 @@ func TestApplyExecutionReceiptsRejectsMissingIdentityContext(t *testing.T) {
 	}
 }
 
+func TestApplyExecutionReceiptsRejectsUnverifiedRepositoryAndDependencyPins(t *testing.T) {
+	tests := []struct {
+		name    string
+		mutate  func(*ExecutionReceipt)
+		wantErr string
+	}{
+		{name: "repository", mutate: func(receipt *ExecutionReceipt) { receipt.Context.RepoRoot = t.TempDir() }, wantErr: "repo root does not match"},
+		{name: "dependency pin", mutate: func(receipt *ExecutionReceipt) {
+			receipt.Context.DependencyPins["github.com/araihu/goshtoso"] = "fixture"
+		}, wantErr: "dependency pins mismatch"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ledger, _, err := GenerateSkeleton(generationFixture(t))
+			if err != nil {
+				t.Fatal(err)
+			}
+			receipt := executionFixture(t, test.name, []string{"execution/kind/button"}, StatusExecuted)
+			test.mutate(&receipt)
+			if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{receipt}); err == nil || !strings.Contains(err.Error(), test.wantErr) {
+				t.Fatalf("identity validation error = %v, want %q", err, test.wantErr)
+			}
+		})
+	}
+}
+
 func TestApplyExecutionReceiptsRequiresAuthenticatedATArtifactMetadata(t *testing.T) {
 	ledger, _, err := GenerateSkeleton(generationFixture(t))
 	if err != nil {
@@ -243,7 +269,16 @@ func executionFixture(t *testing.T, id string, rows []string, status ReceiptStat
 	digest := sha256.Sum256(content)
 	commit := fixtureGitIdentity(t, "HEAD^{commit}")
 	tree := fixtureGitIdentity(t, "HEAD^{tree}")
-	return ExecutionReceipt{ID: id, Path: path, ExpectedSHA256: hex.EncodeToString(digest[:]), Status: status, RowIDs: rows, Context: ExecutionContext{RepoRoot: repoRoot(t), SourceCommit: commit, SourceTree: tree, DependencyPins: map[string]string{"github.com/araihu/goshtoso": "fixture"}}}
+	root := repoRoot(t)
+	identity, err := BuildBFullIdentity(root, commit, tree, BFullIdentityDirtyBound, filepath.Join(t.TempDir(), id+"-dirty-manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	pins, err := deriveExecutionDependencyPins(root, commit)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return ExecutionReceipt{ID: id, Path: path, ExpectedSHA256: hex.EncodeToString(digest[:]), Status: status, RowIDs: rows, Context: ExecutionContext{RepoRoot: root, SourceCommit: commit, SourceTree: tree, Identity: identity, DependencyPins: pins}}
 }
 
 func evidenceArtifactFixture(t *testing.T, kind, route, state, browser, atVersion string) EvidenceArtifact {

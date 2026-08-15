@@ -9,6 +9,7 @@ import (
 	"image"
 	_ "image/png"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -32,6 +33,7 @@ type ExecutionContext struct {
 	RepoRoot       string            `json:"repo_root"`
 	SourceCommit   string            `json:"source_commit"`
 	SourceTree     string            `json:"source_tree"`
+	Identity       BFullIdentity     `json:"identity"`
 	DependencyPins map[string]string `json:"dependency_pins"`
 	Route          string            `json:"route,omitempty"`
 	State          string            `json:"state,omitempty"`
@@ -226,13 +228,138 @@ func validateExecutionContext(ledger Ledger, receipt ExecutionReceipt) error {
 	if strings.TrimSpace(context.RepoRoot) == "" || context.SourceCommit != ledger.SourceCommit || context.SourceTree != ledger.SourceTree || len(context.DependencyPins) == 0 {
 		return fmt.Errorf("repo root, source commit/tree, and dependency pins are required")
 	}
-	if _, ok := context.DependencyPins["github.com/araihu/goshtoso"]; !ok {
-		return fmt.Errorf("dependency pins omit github.com/araihu/goshtoso")
+	repoRoot, err := filepath.Abs(context.RepoRoot)
+	if err != nil {
+		return fmt.Errorf("resolve execution repository root: %w", err)
+	}
+	identityRoot, err := filepath.Abs(context.Identity.RepoRoot)
+	if err != nil {
+		return fmt.Errorf("resolve execution identity repository root: %w", err)
+	}
+	if repoRoot != identityRoot {
+		return fmt.Errorf("execution repo root does not match authenticated identity root")
+	}
+	if err := VerifyBFullIdentity(context.Identity, ledger.SourceCommit, ledger.SourceTree); err != nil {
+		return fmt.Errorf("authenticate execution repository identity: %w", err)
+	}
+	expectedPins, err := deriveExecutionDependencyPins(repoRoot, ledger.SourceCommit)
+	if err != nil {
+		return err
+	}
+	if !equalExecutionDependencyPins(context.DependencyPins, expectedPins) {
+		return fmt.Errorf("execution dependency pins mismatch")
 	}
 	if context.AT != "" && context.AT != "safari-voiceover" && context.AT != "chromium-screen-reader" {
 		return fmt.Errorf("unknown execution AT context %q", context.AT)
 	}
 	return nil
+}
+
+func deriveExecutionDependencyPins(repoRoot, sourceCommit string) (map[string]string, error) {
+	rootGo, rootRequire, err := readExecutionGoMod(filepath.Join(repoRoot, "go.mod"))
+	if err != nil {
+		return nil, err
+	}
+	siteGo, siteRequire, err := readExecutionGoMod(filepath.Join(repoRoot, "site", "go.mod"))
+	if err != nil {
+		return nil, err
+	}
+	templ := rootRequire["github.com/a-h/templ"]
+	if templ == "" || siteRequire["github.com/a-h/templ"] != templ {
+		return nil, fmt.Errorf("execution dependency pins require matching root/site templ version")
+	}
+	playwright := siteRequire["github.com/mxschmitt/playwright-go"]
+	if playwright == "" {
+		return nil, fmt.Errorf("execution dependency pins require site playwright-go version")
+	}
+	lock, err := readExecutionAxeLock(filepath.Join(repoRoot, "scripts", "axe-core.lock"))
+	if err != nil {
+		return nil, err
+	}
+	pins := map[string]string{
+		"github.com/araihu/goshtoso":         sourceCommit,
+		"go.root":                            rootGo,
+		"go.site":                            siteGo,
+		"github.com/a-h/templ":               templ,
+		"github.com/mxschmitt/playwright-go": playwright,
+		"axe-core":                           lock["version"],
+		"axe-core.archive_sha256":            lock["archive_sha256"],
+		"axe-core.script_sha256":             lock["script_sha256"],
+	}
+	for name, value := range pins {
+		if strings.TrimSpace(value) == "" {
+			return nil, fmt.Errorf("execution dependency pin %s is missing", name)
+		}
+	}
+	return pins, nil
+}
+
+func readExecutionGoMod(path string) (string, map[string]string, error) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return "", nil, fmt.Errorf("read execution dependency %s: %w", path, err)
+	}
+	goDirective := ""
+	requires := map[string]string{}
+	inRequire := false
+	for raw := range strings.SplitSeq(string(content), "\n") {
+		line := strings.TrimSpace(strings.SplitN(raw, "//", 2)[0])
+		if line == "" {
+			continue
+		}
+		if after, ok := strings.CutPrefix(line, "go "); ok {
+			goDirective = strings.TrimSpace(after)
+			continue
+		}
+		if line == "require (" {
+			inRequire = true
+			continue
+		}
+		if inRequire && line == ")" {
+			inRequire = false
+			continue
+		}
+		if after, ok := strings.CutPrefix(line, "require "); ok {
+			line = strings.TrimSpace(after)
+		} else if !inRequire {
+			continue
+		}
+		fields := strings.Fields(line)
+		if len(fields) >= 2 {
+			requires[fields[0]] = fields[1]
+		}
+	}
+	if goDirective == "" {
+		return "", nil, fmt.Errorf("execution dependency %s has no go directive", path)
+	}
+	return goDirective, requires, nil
+}
+
+func readExecutionAxeLock(path string) (map[string]string, error) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read execution axe lock: %w", err)
+	}
+	values := map[string]string{}
+	for raw := range strings.SplitSeq(string(content), "\n") {
+		key, value, ok := strings.Cut(strings.TrimSpace(raw), "=")
+		if ok {
+			values[key] = value
+		}
+	}
+	return values, nil
+}
+
+func equalExecutionDependencyPins(left, right map[string]string) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for key, value := range left {
+		if right[key] != value {
+			return false
+		}
+	}
+	return true
 }
 
 func validateBFullStateReceipt(ledger Ledger, rowIndex map[string]int, receipt ExecutionReceipt) error {
