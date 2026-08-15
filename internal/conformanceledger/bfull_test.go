@@ -156,7 +156,7 @@ func bfullInputFixture(state, input string) BFullInputObservation {
 		State: state, Input: input, Applicability: Applicable, ReceiptStatus: StatusExecuted,
 		TargetSelector: "button", TargetRole: "button", AccessibleName: state,
 		ARIAState: map[string]string{}, EventCount: 1, Driver: "fixture Playwright", SourceGrounding: "fixture source",
-		Before: BFullInteractionOutcome{TargetConnected: true, TargetVisible: true}, Action: BFullInteractionOutcome{TargetConnected: true, TargetVisible: true, EventTypes: []string{"fixture"}}, Return: BFullInteractionOutcome{TargetConnected: true, TargetVisible: true},
+		Before: BFullInteractionOutcome{TargetConnected: true, TargetVisible: true}, Action: BFullInteractionOutcome{TargetConnected: true, TargetVisible: true, EventTypes: []string{"fixture"}}, Return: BFullInteractionOutcome{TargetConnected: true, TargetVisible: true, FocusVisiblePaint: BFullFocusVisiblePaint{TargetSelector: "button", OutlineRGBA: "rgb(0, 0, 0)", SurfaceRGBA: "rgb(255, 255, 255)", OutlinePixels: 4}},
 		FocusVisible: notApplicable("not keyboard input"), MovementReturn: notApplicable("not pointer movement input"), Escape: BFullEscapeOutcome{Applicability: NotApplicable, Rationale: "not keyboard input"},
 	}
 	switch input {
@@ -165,6 +165,10 @@ func bfullInputFixture(state, input string) BFullInputObservation {
 	case "keyboard":
 		observation.FocusVisible = passed
 		observation.Escape = BFullEscapeOutcome{Applicability: Applicable, Passed: true, Opened: true, Closed: true, FocusReturned: true, SurfaceSelector: "[role=dialog]"}
+		if strings.HasPrefix(state, "tooltip/") {
+			observation.Escape.SurfaceSelector = "[role=tooltip]"
+			observation.Escape.Tooltip = BFullTooltipEscapeEvidence{Selector: "[role=tooltip]", Role: "tooltip", LiveText: "State", RadiusPX: 4, SourceToken: "fixture-tooltip"}
+		}
 	case "touch":
 	default:
 		panic("unsupported fixture input " + input)
@@ -173,7 +177,7 @@ func bfullInputFixture(state, input string) BFullInputObservation {
 }
 
 func TestValidateBFullManifestRejectsStructuredEvidenceClaimsWithoutExecution(t *testing.T) {
-	axes := BFullAxes{States: []string{"button/default"}, Themes: []string{"araihu"}, Modes: []string{"light"}, Viewports: []int{390}, Zooms: []int{100}, Motions: []string{"normal"}, Inputs: []string{"mouse", "keyboard", "touch"}}
+	axes := BFullAxes{States: []string{"button/default", "tooltip/click"}, Themes: []string{"araihu"}, Modes: []string{"light"}, Viewports: []int{390}, Zooms: []int{100}, Motions: []string{"normal"}, Inputs: []string{"mouse", "keyboard", "touch"}}
 	tests := []struct {
 		name    string
 		mutate  func(*BFullBatchEvidence)
@@ -182,6 +186,16 @@ func TestValidateBFullManifestRejectsStructuredEvidenceClaimsWithoutExecution(t 
 		{name: "accessibility violation", mutate: func(evidence *BFullBatchEvidence) { evidence.Accessibility.Violations = []string{"button has no name"} }, wantErr: "accessibility scan has 1 violations"},
 		{name: "no-op input", mutate: func(evidence *BFullBatchEvidence) { evidence.Inputs[0].EventCount = 0 }, wantErr: "requires target, role, name, ARIA state, and event"},
 		{name: "missing focus-visible", mutate: func(evidence *BFullBatchEvidence) { evidence.Inputs[1].FocusVisible.Passed = false }, wantErr: "focus-visible applicable assertion must pass"},
+		{name: "missing focus-visible paint", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.Inputs[1].Return.FocusVisiblePaint = BFullFocusVisiblePaint{}
+		}, wantErr: "focus-visible raw paint is required"},
+		{name: "missing tooltip Escape evidence", mutate: func(evidence *BFullBatchEvidence) {
+			for index := range evidence.Inputs {
+				if evidence.Inputs[index].State == "tooltip/click" && evidence.Inputs[index].Input == "keyboard" {
+					evidence.Inputs[index].Escape.Tooltip = BFullTooltipEscapeEvidence{}
+				}
+			}
+		}, wantErr: "tooltip Escape requires raw live/radius evidence"},
 		{name: "duplicate input", mutate: func(evidence *BFullBatchEvidence) { evidence.Inputs = append(evidence.Inputs, evidence.Inputs[0]) }, wantErr: "duplicate input observation"},
 		{name: "wrong state", mutate: func(evidence *BFullBatchEvidence) { evidence.FirstPaint[0].State = "invented" }, wantErr: "first paint has extra state"},
 		{name: "browser error", mutate: func(evidence *BFullBatchEvidence) {

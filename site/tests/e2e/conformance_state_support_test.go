@@ -4,6 +4,7 @@ package e2e
 
 import (
 	"archive/tar"
+	"bytes"
 	"compress/gzip"
 	"context"
 	"crypto/sha256"
@@ -12,12 +13,14 @@ import (
 	"errors"
 	"fmt"
 	"html"
+	"image/png"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -629,6 +632,82 @@ func conformanceSnapshot(page playwright.Page, selector string) (conformanceledg
 	return conformanceEvaluateJSON[conformanceledger.BFullInteractionOutcome](page, conformanceSnapshotScript, selector)
 }
 
+type conformanceFocusPaintGeometry struct {
+	Focused bool    `json:"focused"`
+	X       float64 `json:"x"`
+	Y       float64 `json:"y"`
+	Width   float64 `json:"width"`
+	Height  float64 `json:"height"`
+	Outline string  `json:"outline"`
+	Surface string  `json:"surface"`
+}
+
+func conformanceCaptureFocusVisiblePaint(page playwright.Page, selector string) (conformanceledger.BFullFocusVisiblePaint, error) {
+	geometry, err := conformanceEvaluateJSON[conformanceFocusPaintGeometry](page, `selector => {
+		const target = document.querySelector(selector);
+		if (!target) return {focused:false};
+		const style = getComputedStyle(target), rect = target.getBoundingClientRect();
+		const surface = current => { for (; current; current = current.parentElement) { const value = getComputedStyle(current).backgroundColor; if (value && value !== 'rgba(0, 0, 0, 0)') return value; } return 'rgb(255, 255, 255)'; };
+		const shadowColor = (style.boxShadow || '').match(/rgba?\([^)]*\)/)?.[0] || '';
+		return {focused:target.matches(':focus-visible'), x:rect.x, y:rect.y, width:rect.width, height:rect.height, outline:style.outlineWidth !== '0px' ? style.outlineColor : shadowColor, surface:surface(target.parentElement)};
+	}`, selector)
+	if err != nil {
+		return conformanceledger.BFullFocusVisiblePaint{}, err
+	}
+	if !geometry.Focused || geometry.Outline == "" || geometry.Width <= 0 || geometry.Height <= 0 {
+		return conformanceledger.BFullFocusVisiblePaint{}, fmt.Errorf("target has no visible keyboard focus paint")
+	}
+	const margin = 8.0
+	shot, err := page.Screenshot(playwright.PageScreenshotOptions{Clip: &playwright.Rect{X: geometry.X - margin, Y: geometry.Y - margin, Width: geometry.Width + margin*2, Height: geometry.Height + margin*2}, Scale: playwright.ScreenshotScaleCss})
+	if err != nil {
+		return conformanceledger.BFullFocusVisiblePaint{}, err
+	}
+	decoded, err := png.Decode(bytes.NewReader(shot))
+	if err != nil {
+		return conformanceledger.BFullFocusVisiblePaint{}, err
+	}
+	r, g, b, ok := conformanceRGB(geometry.Outline)
+	if !ok {
+		return conformanceledger.BFullFocusVisiblePaint{}, fmt.Errorf("parse focus outline %q", geometry.Outline)
+	}
+	pixels := 0
+	for y := decoded.Bounds().Min.Y; y < decoded.Bounds().Max.Y; y++ {
+		for x := decoded.Bounds().Min.X; x < decoded.Bounds().Max.X; x++ {
+			if float64(x) >= margin && float64(x) < margin+geometry.Width && float64(y) >= margin && float64(y) < margin+geometry.Height {
+				continue
+			}
+			red, green, blue, _ := decoded.At(x, y).RGBA()
+			if absInt(int(red>>8)-r) <= 4 && absInt(int(green>>8)-g) <= 4 && absInt(int(blue>>8)-b) <= 4 {
+				pixels++
+			}
+		}
+	}
+	return conformanceledger.BFullFocusVisiblePaint{TargetSelector: selector, OutlineRGBA: geometry.Outline, SurfaceRGBA: geometry.Surface, OutlinePixels: pixels}, nil
+}
+
+func conformanceRGB(value string) (int, int, int, bool) {
+	values := regexp.MustCompile(`\d+(?:\.\d+)?`).FindAllString(value, -1)
+	if len(values) < 3 {
+		return 0, 0, 0, false
+	}
+	rgb := [3]int{}
+	for index := range rgb {
+		parsed, err := strconv.ParseFloat(values[index], 64)
+		if err != nil || parsed < 0 || parsed > 255 {
+			return 0, 0, 0, false
+		}
+		rgb[index] = int(parsed + .5)
+	}
+	return rgb[0], rgb[1], rgb[2], true
+}
+
+func absInt(value int) int {
+	if value < 0 {
+		return -value
+	}
+	return value
+}
+
 func conformanceNoTarget(state, input, source, rationale string) conformanceledger.BFullInputObservation {
 	rationale = source + "; " + rationale
 	na := conformanceledger.BFullSemanticAssertion{Applicability: conformanceledger.NotApplicable, Rationale: rationale}
@@ -727,6 +806,11 @@ func conformanceKeyboardInput(page playwright.Page, state, source string, index 
 	if err != nil {
 		return conformanceFailure(state, "keyboard", source, driver, target, before, err)
 	}
+	paint, err := conformanceCaptureFocusVisiblePaint(page, target.Selector)
+	if err != nil {
+		return conformanceFailure(state, "keyboard", source, driver, target, before, err)
+	}
+	returned.FocusVisiblePaint = paint
 	return conformanceledger.BFullInputObservation{
 		State: state, Input: "keyboard", Applicability: conformanceledger.Applicable, ReceiptStatus: conformanceledger.StatusExecuted,
 		TargetSelector: target.Selector, TargetRole: target.Role, AccessibleName: target.Name, ARIAState: target.ARIAState, EventCount: len(returned.EventTypes),
@@ -785,8 +869,12 @@ func conformanceTouchInput(page playwright.Page, session playwright.CDPSession, 
 }
 
 type conformanceEscapeSurface struct {
-	Found    bool   `json:"found"`
-	Selector string `json:"selector"`
+	Found       bool    `json:"found"`
+	Selector    string  `json:"selector"`
+	Role        string  `json:"role"`
+	LiveText    string  `json:"live_text"`
+	RadiusPX    float64 `json:"radius_px"`
+	SourceToken string  `json:"source_token"`
 }
 
 const conformanceEscapeTriggerScript = `index => {
@@ -813,7 +901,15 @@ const conformanceEscapeSurfaceScript = `index => {
 	const surface = [...document.querySelectorAll('[role="dialog"],[role="alertdialog"],[role="menu"],[role="tooltip"]')].find(element => visible(element) && (!controlled || element.id === controlled));
 	if (!surface) return {found: false};
 	surface.setAttribute('data-conformance-escape-surface', String(index));
-	return {found: true, selector: '[data-conformance-escape-surface="' + index + '"]'};
+	const style = getComputedStyle(surface);
+	return {
+		found: true,
+		selector: '[data-conformance-escape-surface="' + index + '"]',
+		role: surface.getAttribute('role') || '',
+		live_text: (surface.textContent || surface.getAttribute('aria-label') || '').trim(),
+		radius_px: Number.parseFloat(style.borderTopLeftRadius) || 0,
+		source_token: surface.id || surface.getAttribute('aria-labelledby') || surface.getAttribute('data-goshtoso-overlay') || '',
+	};
 }`
 
 const conformanceEscapeClosedScript = `index => {
@@ -859,7 +955,11 @@ func conformanceExecuteEscape(page playwright.Page, source string, index int) co
 	if err != nil {
 		return conformanceledger.BFullEscapeOutcome{Applicability: conformanceledger.Applicable, Rationale: source + "; inspect Escape return: " + err.Error(), Opened: true, SurfaceSelector: surface.Selector}
 	}
-	return conformanceledger.BFullEscapeOutcome{Applicability: conformanceledger.Applicable, Passed: closed.Closed && closed.FocusReturned, Opened: true, Closed: closed.Closed, FocusReturned: closed.FocusReturned, SurfaceSelector: surface.Selector}
+	tooltip := conformanceledger.BFullTooltipEscapeEvidence{}
+	if surface.Role == "tooltip" {
+		tooltip = conformanceledger.BFullTooltipEscapeEvidence{Selector: surface.Selector, Role: surface.Role, LiveText: surface.LiveText, RadiusPX: surface.RadiusPX, SourceToken: surface.SourceToken}
+	}
+	return conformanceledger.BFullEscapeOutcome{Applicability: conformanceledger.Applicable, Passed: closed.Closed && closed.FocusReturned, Opened: true, Closed: closed.Closed, FocusReturned: closed.FocusReturned, SurfaceSelector: surface.Selector, Tooltip: tooltip}
 }
 
 func conformanceExecuteInputs(t *testing.T, page playwright.Page, session playwright.CDPSession, fixtures []conformanceStateFixture, inventory conformanceledger.Inventory) []conformanceledger.BFullInputObservation {

@@ -252,23 +252,44 @@ type BFullInputObservation struct {
 // phases of a real browser input. EventTypes are listener observations only;
 // they are never generated with dispatchEvent.
 type BFullInteractionOutcome struct {
-	TargetConnected bool              `json:"target_connected"`
-	TargetVisible   bool              `json:"target_visible"`
-	TargetFocused   bool              `json:"target_focused"`
-	ActiveSelector  string            `json:"active_selector,omitempty"`
-	ARIAState       map[string]string `json:"aria_state,omitempty"`
-	Hovered         bool              `json:"hovered"`
-	EventTypes      []string          `json:"event_types,omitempty"`
+	TargetConnected   bool                   `json:"target_connected"`
+	TargetVisible     bool                   `json:"target_visible"`
+	TargetFocused     bool                   `json:"target_focused"`
+	ActiveSelector    string                 `json:"active_selector,omitempty"`
+	ARIAState         map[string]string      `json:"aria_state,omitempty"`
+	Hovered           bool                   `json:"hovered"`
+	EventTypes        []string               `json:"event_types,omitempty"`
+	FocusVisiblePaint BFullFocusVisiblePaint `json:"focus_visible_paint"`
+}
+
+// BFullFocusVisiblePaint records pixels sampled from the actual outline and
+// immediately adjacent surface after genuine keyboard focus.
+type BFullFocusVisiblePaint struct {
+	TargetSelector string `json:"target_selector"`
+	OutlineRGBA    string `json:"outline_rgba"`
+	SurfaceRGBA    string `json:"surface_rgba"`
+	OutlinePixels  int    `json:"outline_pixels"`
 }
 
 type BFullEscapeOutcome struct {
-	Applicability   Applicability `json:"applicability"`
-	Passed          bool          `json:"passed,omitempty"`
-	Rationale       string        `json:"rationale,omitempty"`
-	Opened          bool          `json:"opened,omitempty"`
-	Closed          bool          `json:"closed,omitempty"`
-	FocusReturned   bool          `json:"focus_returned,omitempty"`
-	SurfaceSelector string        `json:"surface_selector,omitempty"`
+	Applicability   Applicability              `json:"applicability"`
+	Passed          bool                       `json:"passed,omitempty"`
+	Rationale       string                     `json:"rationale,omitempty"`
+	Opened          bool                       `json:"opened,omitempty"`
+	Closed          bool                       `json:"closed,omitempty"`
+	FocusReturned   bool                       `json:"focus_returned,omitempty"`
+	SurfaceSelector string                     `json:"surface_selector,omitempty"`
+	Tooltip         BFullTooltipEscapeEvidence `json:"tooltip"`
+}
+
+// BFullTooltipEscapeEvidence is required for tooltip Escape paths. It binds
+// role, live text, measured radius, and source token to the opened surface.
+type BFullTooltipEscapeEvidence struct {
+	Selector    string  `json:"selector"`
+	Role        string  `json:"role"`
+	LiveText    string  `json:"live_text"`
+	RadiusPX    float64 `json:"radius_px"`
+	SourceToken string  `json:"source_token"`
 }
 
 type BFullSemanticAssertion struct {
@@ -948,9 +969,18 @@ func validateBFullInputObservation(observation BFullInputObservation) error {
 		if err := assertPassed("focus-visible", observation.FocusVisible); err != nil {
 			return err
 		}
+		if err := validateBFullFocusVisiblePaint(observation.Return.FocusVisiblePaint); err != nil {
+			return err
+		}
 		if observation.Escape.Applicability == Applicable {
 			if !observation.Escape.Passed || !observation.Escape.Opened || !observation.Escape.Closed || !observation.Escape.FocusReturned || strings.TrimSpace(observation.Escape.SurfaceSelector) == "" {
 				return fmt.Errorf("Escape applicable assertion must open, close, and return focus")
+			}
+			if strings.HasPrefix(observation.State, "tooltip/") {
+				tooltip := observation.Escape.Tooltip
+				if tooltip.Selector == "" || tooltip.Role != "tooltip" || strings.TrimSpace(tooltip.LiveText) == "" || tooltip.RadiusPX <= 0 || strings.TrimSpace(tooltip.SourceToken) == "" {
+					return fmt.Errorf("tooltip Escape requires raw live/radius evidence")
+				}
 			}
 		} else if err := assertEscapeNotApplicable(observation.Escape); err != nil {
 			return err
@@ -966,6 +996,21 @@ func validateBFullInputObservation(observation BFullInputObservation) error {
 	default:
 		return fmt.Errorf("unsupported input %q", observation.Input)
 	}
+}
+
+func validateBFullFocusVisiblePaint(paint BFullFocusVisiblePaint) error {
+	if strings.TrimSpace(paint.TargetSelector) == "" || paint.OutlinePixels < 1 {
+		return fmt.Errorf("focus-visible raw paint is required")
+	}
+	outline, ok := bfullRGBA(paint.OutlineRGBA)
+	if !ok {
+		return fmt.Errorf("focus-visible outline paint is invalid")
+	}
+	surface, ok := bfullRGBA(paint.SurfaceRGBA)
+	if !ok || surface[3] != 1 || bfullContrast(outline, surface) < 3 {
+		return fmt.Errorf("focus-visible outline contrast is insufficient")
+	}
+	return nil
 }
 
 func assertEscapeNotApplicable(outcome BFullEscapeOutcome) error {
