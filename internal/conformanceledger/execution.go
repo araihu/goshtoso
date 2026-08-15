@@ -13,6 +13,7 @@ import (
 	_ "image/png"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 
@@ -20,15 +21,16 @@ import (
 )
 
 type ExecutionReceipt struct {
-	ID             string             `json:"id"`
-	Path           string             `json:"path"`
-	ExpectedSHA256 string             `json:"expected_sha256"`
-	Status         ReceiptStatus      `json:"status"`
-	RowIDs         []string           `json:"row_ids"`
-	Rationale      string             `json:"rationale,omitempty"`
-	ToolVersions   map[string]string  `json:"tool_versions,omitempty"`
-	Artifacts      []EvidenceArtifact `json:"artifacts,omitempty"`
-	Context        ExecutionContext   `json:"context"`
+	ID             string                `json:"id"`
+	Path           string                `json:"path"`
+	ExpectedSHA256 string                `json:"expected_sha256"`
+	Status         ReceiptStatus         `json:"status"`
+	RowIDs         []string              `json:"row_ids"`
+	Rationale      string                `json:"rationale,omitempty"`
+	ToolVersions   map[string]string     `json:"tool_versions,omitempty"`
+	Artifacts      []EvidenceArtifact    `json:"artifacts,omitempty"`
+	Reproduction   ExecutionReproduction `json:"reproduction"`
+	Context        ExecutionContext      `json:"context"`
 }
 
 // ExecutionContext binds the evidence wrapper to its repository, resolved
@@ -79,7 +81,6 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 		}
 		rowIndex[row.ID] = index
 	}
-	applied := map[string]string{}
 	receiptIDs := map[string]struct{}{}
 	for _, receipt := range receipts {
 		if receipt.ID == "" || receipt.Path == "" || receipt.ExpectedSHA256 == "" || len(receipt.RowIDs) == 0 {
@@ -94,6 +95,9 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 		receiptIDs[receipt.ID] = struct{}{}
 		if receipt.Status == StatusNotApplicable && strings.TrimSpace(receipt.Rationale) == "" {
 			return fmt.Errorf("execution receipt %s N/A requires rationale", receipt.ID)
+		}
+		if strings.TrimSpace(receipt.Reproduction.Producer) == "" || strings.TrimSpace(receipt.Reproduction.RunID) == "" || strings.TrimSpace(receipt.Reproduction.Recorder) == "" {
+			return fmt.Errorf("execution receipt %s reproduction producer, run id, and recorder are required", receipt.ID)
 		}
 		if err := validateExecutionContext(*ledger, receipt); err != nil {
 			return fmt.Errorf("execution receipt %s: %w", receipt.ID, err)
@@ -144,6 +148,11 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 		if err := validateATExecutionReceipt(*ledger, rowIndex, receipt); err != nil {
 			return err
 		}
+		artifactDigests := make([]string, 0, len(artifactHashes))
+		for _, artifactDigest := range artifactHashes {
+			artifactDigests = append(artifactDigests, artifactDigest)
+		}
+		sort.Strings(artifactDigests)
 		for _, rowID := range receipt.RowIDs {
 			index, ok := rowIndex[rowID]
 			if !ok {
@@ -155,11 +164,23 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 			if receipt.Status == StatusNotApplicable && mandatoryExecutionRow(ledger.Rows[index]) {
 				return fmt.Errorf("execution receipt %s cannot mark mandatory execution row %s not applicable", receipt.ID, rowID)
 			}
-			if previous, duplicate := applied[rowID]; duplicate {
-				return fmt.Errorf("execution row %s mapped by both %s and %s", rowID, previous, receipt.ID)
-			}
-			applied[rowID] = receipt.ID
 			row := &ledger.Rows[index]
+			for _, prior := range row.Reproductions {
+				if prior.Producer == receipt.Reproduction.Producer {
+					return fmt.Errorf("execution row %s duplicate reproduction producer %s", rowID, prior.Producer)
+				}
+				if prior.RunID == receipt.Reproduction.RunID {
+					return fmt.Errorf("execution row %s duplicate reproduction run id %s", rowID, prior.RunID)
+				}
+				if prior.Recorder == receipt.Reproduction.Recorder {
+					return fmt.Errorf("execution row %s duplicate reproduction recorder %s", rowID, prior.Recorder)
+				}
+				for _, priorArtifact := range prior.ArtifactSHA256s {
+					if slices.Contains(artifactDigests, priorArtifact) {
+						return fmt.Errorf("execution row %s aliases reproduction artifact SHA-256", rowID)
+					}
+				}
+			}
 			row.ReceiptStatus = receipt.Status
 			if receipt.Status == StatusNotApplicable {
 				row.Applicability = NotApplicable
@@ -171,10 +192,17 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 			if row.EvidenceHashes == nil {
 				row.EvidenceHashes = map[string]string{}
 			}
-			row.EvidenceHashes["receipt_sha256"] = got
+			row.EvidenceHashes["receipt_sha256:"+receipt.Reproduction.RunID] = got
 			for key, digest := range artifactHashes {
-				row.EvidenceHashes["artifact:"+key] = digest
+				row.EvidenceHashes["artifact:"+receipt.Reproduction.RunID+":"+key] = digest
 			}
+			row.Reproductions = append(row.Reproductions, ExecutionReproduction{
+				Producer:        receipt.Reproduction.Producer,
+				RunID:           receipt.Reproduction.RunID,
+				Recorder:        receipt.Reproduction.Recorder,
+				ReceiptSHA256:   got,
+				ArtifactSHA256s: artifactDigests,
+			})
 		}
 		ledger.Metadata["execution."+receipt.ID+".path"] = receipt.Path
 		ledger.Metadata["execution."+receipt.ID+".sha256"] = got

@@ -79,29 +79,42 @@ var RequiredATExemplars = []ATExemplar{
 }
 
 type Row struct {
-	ID                string             `json:"id"`
-	Class             EvidenceClass      `json:"class"`
-	Package           string             `json:"package,omitempty"`
-	Renderable        string             `json:"renderable,omitempty"`
-	Kind              string             `json:"kind,omitempty"`
-	Route             string             `json:"route,omitempty"`
-	State             string             `json:"state,omitempty"`
-	Theme             string             `json:"theme,omitempty"`
-	Mode              string             `json:"mode,omitempty"`
-	Viewport          int                `json:"viewport,omitempty"`
-	Breakpoint        string             `json:"breakpoint,omitempty"`
-	Zoom              int                `json:"zoom,omitempty"`
-	Motion            string             `json:"motion,omitempty"`
-	Input             string             `json:"input,omitempty"`
-	AT                string             `json:"at,omitempty"`
-	ChecklistURLs     []string           `json:"checklist_urls,omitempty"`
-	ChecklistMappings []ChecklistMapping `json:"checklist_mappings,omitempty"`
-	Sources           []SourceRef        `json:"sources"`
-	Applicability     Applicability      `json:"applicability"`
-	ReceiptStatus     ReceiptStatus      `json:"receipt_status"`
-	Receipt           string             `json:"receipt,omitempty"`
-	Rationale         string             `json:"rationale,omitempty"`
-	EvidenceHashes    map[string]string  `json:"evidence_hashes,omitempty"`
+	ID                string                  `json:"id"`
+	Class             EvidenceClass           `json:"class"`
+	Package           string                  `json:"package,omitempty"`
+	Renderable        string                  `json:"renderable,omitempty"`
+	Kind              string                  `json:"kind,omitempty"`
+	Route             string                  `json:"route,omitempty"`
+	State             string                  `json:"state,omitempty"`
+	Theme             string                  `json:"theme,omitempty"`
+	Mode              string                  `json:"mode,omitempty"`
+	Viewport          int                     `json:"viewport,omitempty"`
+	Breakpoint        string                  `json:"breakpoint,omitempty"`
+	Zoom              int                     `json:"zoom,omitempty"`
+	Motion            string                  `json:"motion,omitempty"`
+	Input             string                  `json:"input,omitempty"`
+	AT                string                  `json:"at,omitempty"`
+	ChecklistURLs     []string                `json:"checklist_urls,omitempty"`
+	ChecklistMappings []ChecklistMapping      `json:"checklist_mappings,omitempty"`
+	Sources           []SourceRef             `json:"sources"`
+	Applicability     Applicability           `json:"applicability"`
+	ReceiptStatus     ReceiptStatus           `json:"receipt_status"`
+	Receipt           string                  `json:"receipt,omitempty"`
+	Rationale         string                  `json:"rationale,omitempty"`
+	EvidenceHashes    map[string]string       `json:"evidence_hashes,omitempty"`
+	Reproductions     []ExecutionReproduction `json:"reproductions,omitempty"`
+}
+
+// ExecutionReproduction identifies one independently-produced execution
+// evidence set. Closure-critical rows require two non-aliased records: a
+// second receipt cannot merely relabel the same runner, recorder, or capture
+// artifacts.
+type ExecutionReproduction struct {
+	Producer        string   `json:"producer"`
+	RunID           string   `json:"run_id"`
+	Recorder        string   `json:"recorder"`
+	ReceiptSHA256   string   `json:"receipt_sha256"`
+	ArtifactSHA256s []string `json:"artifact_sha256s,omitempty"`
 }
 
 type Ledger struct {
@@ -223,10 +236,55 @@ func ValidateClosure(ledger Ledger, required Inventory) error {
 		if row.ReceiptStatus == StatusBlocked || row.ReceiptStatus == StatusFailed {
 			open = append(open, fmt.Sprintf("%s=%s", row.ID, row.ReceiptStatus))
 		}
+		if mandatoryExecutionRow(row) && row.ReceiptStatus == StatusExecuted {
+			if err := validateIndependentReproductions(row); err != nil {
+				open = append(open, fmt.Sprintf("%s=%v", row.ID, err))
+			}
+		}
 	}
 	if len(open) > 0 {
 		sort.Strings(open)
 		return fmt.Errorf("closure has open rows: %s", strings.Join(open, ", "))
+	}
+	return nil
+}
+
+func validateIndependentReproductions(row Row) error {
+	if len(row.Reproductions) < 2 {
+		return fmt.Errorf("requires two independent reproductions")
+	}
+	seenProducer := map[string]struct{}{}
+	seenRun := map[string]struct{}{}
+	seenRecorder := map[string]struct{}{}
+	seenArtifact := map[string]struct{}{}
+	for _, reproduction := range row.Reproductions {
+		if strings.TrimSpace(reproduction.Producer) == "" || strings.TrimSpace(reproduction.RunID) == "" || strings.TrimSpace(reproduction.Recorder) == "" || !validSHA256(reproduction.ReceiptSHA256) {
+			return fmt.Errorf("has incomplete reproduction identity")
+		}
+		if _, duplicate := seenProducer[reproduction.Producer]; duplicate {
+			return fmt.Errorf("has duplicate reproduction producer")
+		}
+		seenProducer[reproduction.Producer] = struct{}{}
+		if _, duplicate := seenRun[reproduction.RunID]; duplicate {
+			return fmt.Errorf("has duplicate reproduction run id")
+		}
+		seenRun[reproduction.RunID] = struct{}{}
+		if _, duplicate := seenRecorder[reproduction.Recorder]; duplicate {
+			return fmt.Errorf("has duplicate reproduction recorder")
+		}
+		seenRecorder[reproduction.Recorder] = struct{}{}
+		for _, digest := range reproduction.ArtifactSHA256s {
+			if !validSHA256(digest) {
+				return fmt.Errorf("has invalid reproduction artifact SHA-256")
+			}
+			if _, duplicate := seenArtifact[digest]; duplicate {
+				return fmt.Errorf("has aliased reproduction artifact SHA-256")
+			}
+			seenArtifact[digest] = struct{}{}
+		}
+		if len(reproduction.ArtifactSHA256s) == 0 {
+			return fmt.Errorf("has no reproduction artifacts")
+		}
 	}
 	return nil
 }

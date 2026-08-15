@@ -25,7 +25,7 @@ func TestApplyExecutionReceiptsAuthenticatesAndUpdatesExactRows(t *testing.T) {
 	}
 	for _, row := range ledger.Rows {
 		if row.ID == "execution/kind/button" {
-			if row.ReceiptStatus != StatusExecuted || row.EvidenceHashes["receipt_sha256"] != receipt.ExpectedSHA256 {
+			if row.ReceiptStatus != StatusExecuted || row.EvidenceHashes["receipt_sha256:"+receipt.Reproduction.RunID] != receipt.ExpectedSHA256 || len(row.Reproductions) != 1 {
 				t.Fatalf("updated row = %#v", row)
 			}
 			return
@@ -64,8 +64,13 @@ func TestApplyExecutionReceiptsRejectsUnknownDuplicateAndTamperedMappings(t *tes
 	}
 	first := executionFixture(t, "first", []string{"execution/kind/button"}, StatusExecuted)
 	second := executionFixture(t, "second", []string{"execution/kind/button"}, StatusExecuted)
-	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{first, second}); err == nil || !strings.Contains(err.Error(), "mapped by both") {
-		t.Fatalf("duplicate mapping error = %v", err)
+	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{first, second}); err != nil {
+		t.Fatalf("independent reproduction error = %v", err)
+	}
+	third := executionFixture(t, "third", []string{"execution/kind/button"}, StatusExecuted)
+	third.Reproduction.Producer = second.Reproduction.Producer
+	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{third}); err == nil || !strings.Contains(err.Error(), "duplicate reproduction producer") {
+		t.Fatalf("aliased reproduction error = %v", err)
 	}
 }
 
@@ -276,6 +281,56 @@ func TestApplyExecutionReceiptsCannotCloseStateRowsWithoutExactBFullManifest(t *
 	}
 }
 
+func TestValidateClosureRequiresTwoIndependentExecutionReproductions(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for index := range ledger.Rows {
+		row := &ledger.Rows[index]
+		row.Applicability = Applicable
+		row.ReceiptStatus = StatusExecuted
+		row.Receipt = "fixture.log"
+		if mandatoryExecutionRow(*row) {
+			row.Reproductions = []ExecutionReproduction{{
+				Producer:        "producer-one-" + row.ID,
+				RunID:           "run-one-" + row.ID,
+				Recorder:        "recorder-one-" + row.ID,
+				ReceiptSHA256:   strings.Repeat("1", 64),
+				ArtifactSHA256s: []string{strings.Repeat("3", 64)},
+			}}
+		}
+	}
+	if err := ValidateClosure(ledger, inventory); err == nil || !strings.Contains(err.Error(), "requires two independent reproductions") {
+		t.Fatalf("single reproduction closure error = %v", err)
+	}
+	for index := range ledger.Rows {
+		row := &ledger.Rows[index]
+		if mandatoryExecutionRow(*row) {
+			row.Reproductions = append(row.Reproductions, ExecutionReproduction{
+				Producer:        "producer-two-" + row.ID,
+				RunID:           "run-two-" + row.ID,
+				Recorder:        "recorder-two-" + row.ID,
+				ReceiptSHA256:   strings.Repeat("2", 64),
+				ArtifactSHA256s: []string{strings.Repeat("4", 64)},
+			})
+		}
+	}
+	if err := ValidateClosure(ledger, inventory); err != nil {
+		t.Fatalf("two reproduction closure error = %v", err)
+	}
+	for index := range ledger.Rows {
+		row := &ledger.Rows[index]
+		if mandatoryExecutionRow(*row) {
+			row.Reproductions[1].ArtifactSHA256s = row.Reproductions[0].ArtifactSHA256s
+			break
+		}
+	}
+	if err := ValidateClosure(ledger, inventory); err == nil || !strings.Contains(err.Error(), "aliased reproduction artifact SHA-256") {
+		t.Fatalf("aliased artifact closure error = %v", err)
+	}
+}
+
 func executionFixture(t *testing.T, id string, rows []string, status ReceiptStatus) ExecutionReceipt {
 	t.Helper()
 	path := filepath.Join(t.TempDir(), id+".log")
@@ -295,7 +350,7 @@ func executionFixture(t *testing.T, id string, rows []string, status ReceiptStat
 	if err != nil {
 		t.Fatal(err)
 	}
-	return ExecutionReceipt{ID: id, Path: path, ExpectedSHA256: hex.EncodeToString(digest[:]), Status: status, RowIDs: rows, Context: ExecutionContext{RepoRoot: root, SourceCommit: commit, SourceTree: tree, Identity: identity, DependencyPins: pins}}
+	return ExecutionReceipt{ID: id, Path: path, ExpectedSHA256: hex.EncodeToString(digest[:]), Status: status, RowIDs: rows, Reproduction: ExecutionReproduction{Producer: "fixture-producer-" + id, RunID: "fixture-run-" + id, Recorder: "fixture-recorder-" + id}, Context: ExecutionContext{RepoRoot: root, SourceCommit: commit, SourceTree: tree, Identity: identity, DependencyPins: pins}}
 }
 
 func evidenceArtifactFixture(t *testing.T, kind, route, state, browser, atVersion string) EvidenceArtifact {
