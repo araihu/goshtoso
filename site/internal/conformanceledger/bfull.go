@@ -961,7 +961,7 @@ func bfullCompositeBackground(chain [][4]float64) ([4]float64, bool) {
 		if alpha == 0 {
 			continue
 		}
-		for channel := 0; channel < 3; channel++ {
+		for channel := range 3 {
 			result[channel] = (layer[channel]*layer[3] + result[channel]*result[3]*(1-layer[3])) / alpha
 		}
 		result[3] = alpha
