@@ -518,6 +518,15 @@ func TestRenderLazyLoadTbody(t *testing.T) {
 	)
 }
 
+func TestLoadingIndicatorHonorsReducedMotion(t *testing.T) {
+	html := renderT(t, Table(Config{
+		LazyLoad: true,
+		HTMX:     &HTMXConfig{Endpoint: "/api/components/table/rows"},
+		Columns:  []Column{{Key: "name", Label: "Name"}},
+	}))
+	mustContainAll(t, html, "animate-spin motion-reduce:animate-none")
+}
+
 func TestRenderInfiniteScrollSentinel(t *testing.T) {
 	cfg := Config{
 		HTMX:    &HTMXConfig{Endpoint: "/api/components/table/rows"},

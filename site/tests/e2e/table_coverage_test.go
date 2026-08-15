@@ -11,6 +11,28 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestTableReducedMotionLoadingIndicatorStopsAnimation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/table", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const spinners = document.querySelectorAll("#lazy-table svg.animate-spin");
+		return spinners.length > 0 && Array.from(spinners).every(spinner => getComputedStyle(spinner).animationName === 'none');
+	}`, nil)
+	require.NoError(t, err)
+}
+
 // TestTableCoverageDemo complements the existing table E2E suite by driving the
 // demo variants that map to low-coverage component branches: the check-all
 // Alpine toggle, the select-filter HTMX swap, and the infinite-scroll sentinel
