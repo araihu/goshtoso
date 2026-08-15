@@ -134,6 +134,67 @@ func TestGenerateSkeletonIsCompleteButCannotCloseBlockedExecutionRows(t *testing
 	}
 }
 
+func TestValidateRequiresExactInventoryExecutionBijection(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	value := inventory.Packages[0].Value
+	ledger.Rows = withoutRow(ledger.Rows, "inventory/package/"+strings.ReplaceAll(value, "/", "_"))
+	if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "inventory package "+value+" count = 0, want 1") {
+		t.Fatalf("missing inventory bijection error = %v", err)
+	}
+
+	ledger, inventory, err = GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, row := range ledger.Rows {
+		if row.ID == "execution/package/"+strings.ReplaceAll(value, "/", "_") {
+			duplicate := row
+			duplicate.ID += "/duplicate"
+			ledger.Rows = append(ledger.Rows, duplicate)
+			break
+		}
+	}
+	if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "execution package "+value+" count = 2, want 1") {
+		t.Fatalf("duplicate execution bijection error = %v", err)
+	}
+}
+
+func TestGenerateSkeletonPersistsChecklistMappingKindAndRationale(t *testing.T) {
+	ledger, _, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, row := range ledger.Rows {
+		if row.Route == "" || row.Class != ClassInventory {
+			continue
+		}
+		encoded, err := json.Marshal(row)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var document map[string]any
+		if err := json.Unmarshal(encoded, &document); err != nil {
+			t.Fatal(err)
+		}
+		mappings, ok := document["checklist_mappings"].([]any)
+		if !ok || len(mappings) == 0 {
+			t.Fatalf("route %s omitted structured checklist mappings: %s", row.Route, encoded)
+		}
+		for _, raw := range mappings {
+			mapping, ok := raw.(map[string]any)
+			if !ok || mapping["url"] == "" || mapping["kind"] == "" {
+				t.Fatalf("route %s malformed checklist mapping %#v", row.Route, raw)
+			}
+			if mapping["kind"] != string(ChecklistExact) && mapping["rationale"] == "" {
+				t.Fatalf("route %s non-exact mapping lacks rationale %#v", row.Route, raw)
+			}
+		}
+	}
+}
+
 func generationFixture(t *testing.T) GenerationConfig {
 	t.Helper()
 	directory := t.TempDir()
@@ -197,4 +258,14 @@ func rewritePrerequisiteReceipt(t *testing.T, input *ReceiptInput, mutate func(m
 	}
 	digest := sha256.Sum256(content)
 	input.ExpectedSHA256 = hex.EncodeToString(digest[:])
+}
+
+func withoutRow(rows []Row, id string) []Row {
+	result := make([]Row, 0, len(rows))
+	for _, row := range rows {
+		if row.ID != id {
+			result = append(result, row)
+		}
+	}
+	return result
 }

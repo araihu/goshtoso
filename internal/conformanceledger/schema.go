@@ -76,28 +76,29 @@ var RequiredATExemplars = []ATExemplar{
 }
 
 type Row struct {
-	ID             string            `json:"id"`
-	Class          EvidenceClass     `json:"class"`
-	Package        string            `json:"package,omitempty"`
-	Renderable     string            `json:"renderable,omitempty"`
-	Kind           string            `json:"kind,omitempty"`
-	Route          string            `json:"route,omitempty"`
-	State          string            `json:"state,omitempty"`
-	Theme          string            `json:"theme,omitempty"`
-	Mode           string            `json:"mode,omitempty"`
-	Viewport       int               `json:"viewport,omitempty"`
-	Breakpoint     string            `json:"breakpoint,omitempty"`
-	Zoom           int               `json:"zoom,omitempty"`
-	Motion         string            `json:"motion,omitempty"`
-	Input          string            `json:"input,omitempty"`
-	AT             string            `json:"at,omitempty"`
-	ChecklistURLs  []string          `json:"checklist_urls,omitempty"`
-	Sources        []SourceRef       `json:"sources"`
-	Applicability  Applicability     `json:"applicability"`
-	ReceiptStatus  ReceiptStatus     `json:"receipt_status"`
-	Receipt        string            `json:"receipt,omitempty"`
-	Rationale      string            `json:"rationale,omitempty"`
-	EvidenceHashes map[string]string `json:"evidence_hashes,omitempty"`
+	ID                string             `json:"id"`
+	Class             EvidenceClass      `json:"class"`
+	Package           string             `json:"package,omitempty"`
+	Renderable        string             `json:"renderable,omitempty"`
+	Kind              string             `json:"kind,omitempty"`
+	Route             string             `json:"route,omitempty"`
+	State             string             `json:"state,omitempty"`
+	Theme             string             `json:"theme,omitempty"`
+	Mode              string             `json:"mode,omitempty"`
+	Viewport          int                `json:"viewport,omitempty"`
+	Breakpoint        string             `json:"breakpoint,omitempty"`
+	Zoom              int                `json:"zoom,omitempty"`
+	Motion            string             `json:"motion,omitempty"`
+	Input             string             `json:"input,omitempty"`
+	AT                string             `json:"at,omitempty"`
+	ChecklistURLs     []string           `json:"checklist_urls,omitempty"`
+	ChecklistMappings []ChecklistMapping `json:"checklist_mappings,omitempty"`
+	Sources           []SourceRef        `json:"sources"`
+	Applicability     Applicability      `json:"applicability"`
+	ReceiptStatus     ReceiptStatus      `json:"receipt_status"`
+	Receipt           string             `json:"receipt,omitempty"`
+	Rationale         string             `json:"rationale,omitempty"`
+	EvidenceHashes    map[string]string  `json:"evidence_hashes,omitempty"`
 }
 
 type Ledger struct {
@@ -159,20 +160,14 @@ func Validate(ledger Ledger, required Inventory) error {
 		}
 	}
 
-	problems = append(problems, missingSourceItems("package", required.Packages, ledger.Rows, func(row Row) string { return row.Package })...)
-	problems = append(problems, missingSourceItems("renderable", required.Renderables, ledger.Rows, func(row Row) string { return row.Renderable })...)
-	problems = append(problems, missingSourceItems("kind", required.Kinds, ledger.Rows, func(row Row) string { return row.Kind })...)
-	problems = append(problems, missingSourceItems("route", required.Routes, ledger.Rows, func(row Row) string { return row.Route })...)
-	problems = append(problems, missingSourceItems("theme", required.Themes, ledger.Rows, func(row Row) string { return row.Theme })...)
-	problems = append(problems, missingSourceItems("state", required.States, ledger.Rows, func(row Row) string { return row.State })...)
-	problems = append(problems, missingSourceItems("lifecycle state", required.LifecycleStates, ledger.Rows, func(row Row) string { return row.State })...)
-	problems = append(problems, missingExecutionItems("package", required.Packages, ledger.Rows, func(row Row) string { return row.Package })...)
-	problems = append(problems, missingExecutionItems("renderable", required.Renderables, ledger.Rows, func(row Row) string { return row.Renderable })...)
-	problems = append(problems, missingExecutionItems("kind", required.Kinds, ledger.Rows, func(row Row) string { return row.Kind })...)
-	problems = append(problems, missingExecutionItems("route", required.Routes, ledger.Rows, func(row Row) string { return row.Route })...)
-	problems = append(problems, missingExecutionItems("theme", required.Themes, ledger.Rows, func(row Row) string { return row.Theme })...)
-	problems = append(problems, missingExecutionItems("state", required.States, ledger.Rows, func(row Row) string { return row.State })...)
-	problems = append(problems, missingExecutionItems("lifecycle state", required.LifecycleStates, ledger.Rows, func(row Row) string { return row.State })...)
+	problems = append(problems, sourceAxisBijection("package", required.Packages, ledger.Rows, func(row Row) string { return row.Package })...)
+	problems = append(problems, sourceAxisBijection("renderable", required.Renderables, ledger.Rows, func(row Row) string { return row.Renderable })...)
+	problems = append(problems, sourceAxisBijection("kind", required.Kinds, ledger.Rows, func(row Row) string { return row.Kind })...)
+	problems = append(problems, sourceAxisBijection("route", required.Routes, ledger.Rows, func(row Row) string { return row.Route })...)
+	problems = append(problems, sourceAxisBijection("theme", required.Themes, ledger.Rows, func(row Row) string { return row.Theme })...)
+	problems = append(problems, sourceAxisBijection("state", required.States, ledger.Rows, func(row Row) string { return row.State })...)
+	problems = append(problems, sourceAxisBijection("lifecycle-state", required.LifecycleStates, ledger.Rows, func(row Row) string { return row.State })...)
+	problems = append(problems, validateChecklistProvenance(ledger.Rows)...)
 
 	if !anyRow(ledger.Rows, func(row Row) bool { return row.State != "" }) {
 		problems = append(problems, "missing mandatory state row")
@@ -249,31 +244,82 @@ func validReceiptStatus(status ReceiptStatus) bool {
 	return status == StatusExecuted || status == StatusFailed || status == StatusBlocked || status == StatusNotApplicable
 }
 
-func missingSourceItems(axis string, items []SourceItem, rows []Row, value func(Row) string) []string {
-	var missing []string
+func sourceAxisBijection(axis string, items []SourceItem, rows []Row, value func(Row) string) []string {
+	allowed := make(map[string]bool, len(items))
 	for _, item := range items {
-		if !anyRow(rows, func(row Row) bool { return value(row) == item.Value }) {
-			missing = append(missing, fmt.Sprintf("missing mandatory %s %s", axis, item.Value))
+		allowed[item.Value] = true
+	}
+	var problems []string
+	for _, expected := range []struct {
+		name  string
+		class EvidenceClass
+	}{
+		{name: "inventory", class: ClassInventory},
+		{name: "execution", class: ClassExecution},
+	} {
+		prefix := expected.name + "/" + axis + "/"
+		counts := make(map[string]int, len(items))
+		for _, row := range rows {
+			if !strings.HasPrefix(row.ID, prefix) {
+				continue
+			}
+			if row.Class != expected.class {
+				problems = append(problems, fmt.Sprintf("%s %s row %s has class %s, want %s", expected.name, axis, row.ID, row.Class, expected.class))
+				continue
+			}
+			counts[value(row)]++
+		}
+		for _, item := range items {
+			if counts[item.Value] != 1 {
+				problems = append(problems, fmt.Sprintf("%s %s %s count = %d, want 1", expected.name, axis, item.Value, counts[item.Value]))
+			}
+		}
+		for item, count := range counts {
+			if item != "" && !allowed[item] {
+				problems = append(problems, fmt.Sprintf("unexpected %s %s %s count = %d", expected.name, axis, item, count))
+			}
 		}
 	}
-	return missing
+	return problems
 }
 
-func missingExecutionItems(axis string, items []SourceItem, rows []Row, value func(Row) string) []string {
-	var missing []string
-	for _, item := range items {
-		if !anyRow(rows, func(row Row) bool { return row.Class == ClassExecution && value(row) == item.Value }) {
-			missing = append(missing, fmt.Sprintf("missing mandatory %s execution %s", axis, item.Value))
+func validateChecklistProvenance(rows []Row) []string {
+	var problems []string
+	for _, row := range rows {
+		if !strings.HasPrefix(row.ID, "inventory/route/") && !strings.HasPrefix(row.ID, "execution/route/") {
+			continue
+		}
+		expected, err := ChecklistMappingsForRoute(row.Route)
+		if err != nil {
+			problems = append(problems, fmt.Sprintf("%s checklist mapping: %v", row.ID, err))
+			continue
+		}
+		if !equalChecklistMappings(row.ChecklistMappings, expected) {
+			problems = append(problems, fmt.Sprintf("%s checklist mapping provenance does not match %s", row.ID, row.Route))
+		}
+		urls := make([]string, 0, len(expected))
+		for _, mapping := range expected {
+			urls = append(urls, mapping.URL)
+		}
+		if !slices.Equal(row.ChecklistURLs, urls) {
+			problems = append(problems, fmt.Sprintf("%s checklist URLs do not match structured mappings", row.ID))
 		}
 	}
-	return missing
+	return problems
+}
+
+func equalChecklistMappings(left, right []ChecklistMapping) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for index := range left {
+		if left[index] != right[index] {
+			return false
+		}
+	}
+	return true
 }
 
 func anyRow(rows []Row, predicate func(Row) bool) bool {
-	for _, row := range rows {
-		if predicate(row) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(rows, predicate)
 }

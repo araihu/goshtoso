@@ -133,17 +133,19 @@ func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
 			urls = append(urls, mapping.URL)
 		}
 		ledger.Rows = append(ledger.Rows, Row{
-			ID:            "inventory/route/" + strings.TrimPrefix(route.Value, "/components/"),
-			Class:         ClassInventory,
-			Route:         route.Value,
-			ChecklistURLs: urls,
-			Sources:       []SourceRef{route.Source},
-			Applicability: Applicable,
-			ReceiptStatus: StatusExecuted,
-			Receipt:       "source-derived route and checklist mapping",
+			ID:                "inventory/route/" + strings.TrimPrefix(route.Value, "/components/"),
+			Class:             ClassInventory,
+			Route:             route.Value,
+			ChecklistURLs:     urls,
+			ChecklistMappings: mappings,
+			Sources:           []SourceRef{route.Source},
+			Applicability:     Applicable,
+			ReceiptStatus:     StatusExecuted,
+			Receipt:           "source-derived route and checklist mapping",
 		})
 		execution := blockedRow("execution/route/"+strings.TrimPrefix(route.Value, "/components/"), route.Source, config.ATBlockerReceipt, func(row *Row) { row.Route = route.Value })
 		execution.ChecklistURLs = urls
+		execution.ChecklistMappings = mappings
 		ledger.Rows = append(ledger.Rows, execution)
 	}
 
