@@ -5054,6 +5054,10 @@
       content: var(--tw-content);
       transition-property: none;
     }
+    .motion-reduce\:after\:transition-none::after {
+      content: var(--tw-content);
+      transition-property: none;
+    }
     @media (hover: hover) {
       .motion-reduce\:hover\:translate-none:hover {
         translate: none;

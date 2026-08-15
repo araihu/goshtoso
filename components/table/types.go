@@ -765,7 +765,7 @@ func badgeCellClasses(color string) string {
 
 // SortableHeaderClasses returns CSS classes for a sortable header cell
 func (cfg Config) sortableHeaderClasses(key string) string {
-	base := "p-4 cursor-pointer select-none hover:bg-surface dark:hover:bg-surface-dark transition-colors"
+	base := "p-4 cursor-pointer select-none hover:bg-surface dark:hover:bg-surface-dark transition-colors motion-reduce:transition-none"
 	if cfg.IsSortedBy(key) {
 		base += " text-primary dark:text-primary-dark"
 	}
