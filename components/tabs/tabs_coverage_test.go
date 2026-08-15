@@ -156,6 +156,14 @@ func TestCoverageHTMXPanelDefaultSwap(t *testing.T) {
 	assert.NotContains(t, browser, "hx-indicator")
 }
 
+func TestCoverageHTMXPanelReducedMotionSpinnerContract(t *testing.T) {
+	out := render(t, Config{
+		Tabs: []Tab{{ID: "details", Label: "Details", HTMX: &TabHTMX{Get: "/api/tabs/details"}}},
+	})
+
+	assert.Contains(t, html.UnescapeString(out), "animate-spin motion-reduce:animate-none")
+}
+
 // TestCoverageHTMXPanelCustomSwapAndIndicator covers the custom swap value and
 // the indicator attribute branch.
 func TestCoverageHTMXPanelCustomSwapAndIndicator(t *testing.T) {
