@@ -27,6 +27,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/araihu/goshtoso/site/internal/server"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 )
@@ -309,7 +310,10 @@ func TestScrollRegionBFullFirstPaintObserverCannotMutateProductState(t *testing.
 	cellURL, err := url.Parse(scrollRegionBFullCellRoutedURL(consumer, true, 390, scrollRegionBFullZoom{ID: "ua-200"}))
 	require.NoError(t, err)
 	require.Equal(t, scrollRegionBFullCellID(consumer, true, 390, scrollRegionBFullZoom{ID: "ua-200"}), cellURL.Query().Get("t-gs-011-cell"))
-	require.Equal(t, consumer.ID, cellURL.Query().Get("t-gs-011-consumer"))
+	require.Equal(t, "scrollregion", cellURL.Query().Get("t-gs-011-consumer"), "cell identity stays consumer-scrollregion while server transport uses its accepted token")
+	serverSource, err := os.ReadFile(filepath.Join(repository, "site", "internal", "server", "server.go"))
+	require.NoError(t, err)
+	require.Contains(t, string(serverSource), "ScrollRegionBFullConsumerRouteToken", "cell URL helper and server validator must share one transport-token authority")
 	require.Equal(t, "dark", cellURL.Query().Get("t-gs-011-mode"))
 	require.Equal(t, "390", cellURL.Query().Get("t-gs-011-width"))
 	require.Equal(t, "ua-200", cellURL.Query().Get("t-gs-011-zoom"))
@@ -752,7 +756,7 @@ func scrollRegionBFullRoutedURL(theme scrollRegionBFullTheme) string {
 	query := url.Values{}
 	query.Set("t-gs-011-theme", theme.ServerTheme)
 	if theme.ConsumerCSS {
-		query.Set("t-gs-011-consumer", "scrollregion")
+		query.Set("t-gs-011-consumer", server.ScrollRegionBFullConsumerRouteToken)
 	}
 	return baseURL + scrollRegionBFullRoute + "?" + query.Encode()
 }
@@ -765,7 +769,7 @@ func scrollRegionBFullCellRoutedURL(theme scrollRegionBFullTheme, dark bool, wid
 	query := url.Values{}
 	query.Set("t-gs-011-theme", theme.ServerTheme)
 	if theme.ConsumerCSS {
-		query.Set("t-gs-011-consumer", theme.ID)
+		query.Set("t-gs-011-consumer", server.ScrollRegionBFullConsumerRouteToken)
 	}
 	query.Set("t-gs-011-mode", scrollRegionBFullMode(dark))
 	query.Set("t-gs-011-width", strconv.Itoa(width))

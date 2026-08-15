@@ -28,6 +28,9 @@ const (
 	scrollRegionBFullThemeQuery    = "t-gs-011-theme"
 	scrollRegionBFullConsumerQuery = "t-gs-011-consumer"
 	scrollRegionBFullThemeSource   = "server-routed-html"
+	// ScrollRegionBFullConsumerRouteToken is transport only. B-FULL cells keep
+	// their distinct consumer-scrollregion identity in receipts and traces.
+	ScrollRegionBFullConsumerRouteToken = "scrollregion"
 )
 
 type scrollRegionBFullRoutedAppearance struct {
@@ -361,7 +364,7 @@ func scrollRegionBFullRoutedAppearanceForRequest(r *http.Request, key string) (s
 		return scrollRegionBFullRoutedAppearance{}, false, fmt.Errorf("unsupported %s %q", scrollRegionBFullThemeQuery, appearance.Theme)
 	}
 	if hasConsumer {
-		if len(consumer) != 1 || consumer[0] != "scrollregion" {
+		if len(consumer) != 1 || consumer[0] != ScrollRegionBFullConsumerRouteToken {
 			return scrollRegionBFullRoutedAppearance{}, false, fmt.Errorf("unsupported %s", scrollRegionBFullConsumerQuery)
 		}
 		appearance.Consumer = true

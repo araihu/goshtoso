@@ -28,6 +28,18 @@ func TestScrollRegionBFullRoutedThemeBindsInitialHTML(t *testing.T) {
 	require.NotContains(t, body, `id="site-theme-trigger"`)
 }
 
+// The route token is shared with B-FULL cell URL construction. Cell identity
+// may remain consumer-scrollregion; transport must stay server-authorized.
+func TestScrollRegionBFullRoutedThemeBindsSharedConsumerToken(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/components/scroll-region?t-gs-011-theme=araihu&t-gs-011-consumer="+ScrollRegionBFullConsumerRouteToken, nil)
+
+	(&Server{}).renderDemo(recorder, request, "components/scroll-region")
+
+	require.Equal(t, http.StatusOK, recorder.Code)
+	require.Contains(t, recorder.Body.String(), `data-goshtoso-scrollregion-consumer-theme="t-gs-011"`)
+}
+
 func TestScrollRegionBFullRoutedThemeRejectsInvalidOrForeignQuery(t *testing.T) {
 	for _, test := range []struct {
 		name string
