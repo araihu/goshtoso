@@ -220,6 +220,19 @@ type scrollRegionBFullPaintEvidence struct {
 	Settled scrollRegionBFullPaint   `json:"settled"`
 }
 
+// scrollRegionBFullPaintEvidenceFromObserver keeps the complete, ordered
+// browser observer transcript. In particular, dark restoration is proved by
+// its candidate-owned root mutation, which occurs between the initial server
+// HTML snapshot and the first animation frame.
+func scrollRegionBFullPaintEvidenceFromObserver(cellID string, events []scrollRegionBFullPaint, settled scrollRegionBFullPaint) scrollRegionBFullPaintEvidence {
+	return scrollRegionBFullPaintEvidence{
+		Schema:  scrollRegionBFullPaintEvidenceSchema,
+		CellID:  cellID,
+		Events:  append([]scrollRegionBFullPaint(nil), events...),
+		Settled: settled,
+	}
+}
+
 type scrollRegionBFullReceipt struct {
 	Schema        string                               `json:"schema"`
 	Closure       string                               `json:"closure"`
@@ -263,9 +276,40 @@ func TestScrollRegionBFullFirstPaintObserverCannotMutateProductState(t *testing.
 	require.NotContains(t, string(source), "requireScrollRegion"+"SelectTheme", "B-FULL must not claim client theme persistence through a nonexistent selector")
 	require.Contains(t, string(source), `Name:        playwright.String("scrollregion-bfull-" + scrollRegionBFullArtifactName(cellID))`, "trace names must not contain raw route separators that discard Playwright trace entries")
 	observer := scrollRegionBFullFirstPaintObserverScript()
+	for _, required := range []string{"func requireScrollRegionWideConsumerHorizontalAccess", `Press("ArrowRight")`, `Input.dispatchTouchEvent`} {
+		require.Contains(t, string(source), required, "wide consumer horizontal contract must retain real keyboard and CDP touch actions")
+	}
+	consumerCSS, err := os.ReadFile(filepath.Join(repository, "tests", "external", "scrollregion-a11y", "consumer-scrollregion.css"))
+	require.NoError(t, err)
+	require.Contains(t, string(consumerCSS), "t-gs-011-wide-consumer-content", "maintained consumer fixture must deliberately expose wide content for horizontal access proof")
 	for _, prohibited := range []string{"localStorage." + "setItem(\"theme\"", "localStorage." + "setItem(\"darkMode\"", "root." + "setAttribute(\"data-theme\"", "root." + "classList.toggle(\"dark\""} {
 		require.NotContains(t, observer, prohibited, "first-paint observer must not directly mutate product state")
 	}
+	// A dark fresh load is causal only when the raw observer sequence retains
+	// the product root mutation between the pre-bootstrap initial HTML and the
+	// first browser frame. Reducing the artifact to its first two entries would
+	// make that validator requirement impossible to satisfy.
+	initial := scrollRegionBFullPaint{Phase: "init", Dark: false}
+	mutation := scrollRegionBFullPaint{Phase: "root-mutation", Dark: true}
+	frame := scrollRegionBFullPaint{Phase: "first-animation-frame", Dark: true}
+	settled := scrollRegionBFullPaint{Phase: "settled", Dark: true}
+	evidence := scrollRegionBFullPaintEvidenceFromObserver("fixture-cell", []scrollRegionBFullPaint{initial, mutation, frame}, settled)
+	require.Equal(t, []scrollRegionBFullPaint{initial, mutation, frame}, evidence.Events)
+	_, err = validateScrollRegionBFullPaintTranscript(evidence.Events, initial, frame)
+	require.NoError(t, err)
+	_, err = validateScrollRegionBFullPaintTranscript([]scrollRegionBFullPaint{initial, mutation, settled}, initial, frame)
+	require.Error(t, err, "the serialized wrapper first paint must be an event in the raw transcript")
+	require.NoError(t, validateScrollRegionBFullDarkPaintTranscript(evidence.Events, initial, frame, "", ""))
+	require.Error(t, validateScrollRegionBFullDarkPaintTranscript([]scrollRegionBFullPaint{initial, frame, mutation}, initial, frame, "", ""), "a mutation after the first frame cannot prove dark first-paint restoration")
+	consumer, ok := scrollRegionBFullThemeByID(scrollRegionBFullConsumerTheme)
+	require.True(t, ok)
+	cellURL, err := url.Parse(scrollRegionBFullCellRoutedURL(consumer, true, 390, scrollRegionBFullZoom{ID: "ua-200"}))
+	require.NoError(t, err)
+	require.Equal(t, scrollRegionBFullCellID(consumer, true, 390, scrollRegionBFullZoom{ID: "ua-200"}), cellURL.Query().Get("t-gs-011-cell"))
+	require.Equal(t, consumer.ID, cellURL.Query().Get("t-gs-011-consumer"))
+	require.Equal(t, "dark", cellURL.Query().Get("t-gs-011-mode"))
+	require.Equal(t, "390", cellURL.Query().Get("t-gs-011-width"))
+	require.Equal(t, "ua-200", cellURL.Query().Get("t-gs-011-zoom"))
 }
 
 // scrollRegionBFullRunPlan makes diagnostic sampling opt-in and receipt-visible.
@@ -518,18 +562,85 @@ func TestScrollRegionUA200HorizontalAccessContract(t *testing.T) {
 				requireScrollRegionStorageConsent(t, page, "axis-"+zoom.ID+"-"+scrollRegionBFullMode(dark))
 				requireScrollRegionDarkModeThroughPublicUI(t, page, "axis-"+zoom.ID+"-"+scrollRegionBFullMode(dark), dark)
 				requireScrollRegionPageHealthy(t, page, failures)
-				freshPage, _ := requireScrollRegionFreshPersistedPage(t, context, theme, dark, 390, "")
+				freshPage, _ := requireScrollRegionFreshPersistedPage(t, context, theme, dark, 390, zoom, scrollRegionBFullCellRoutedURL(theme, dark, 390, zoom), "")
 				t.Cleanup(func() { _ = freshPage.Close() })
 				page = freshPage
 				freshFailures := watchPageFailures(page)
 				viewport := page.Locator("#scroll-region-default [data-goshtoso-scroll-viewport]")
 				require.NoError(t, viewport.WaitFor())
-				requireScrollRegionFirstPaint(t, page, viewport, theme, dark, 390, zoom)
+				_, _, _, _ = requireScrollRegionFirstPaint(t, page, viewport, theme, dark, 390, zoom)
 				requireScrollRegionHorizontalAccess(t, page, viewport)
 				requireScrollRegionPageHealthy(t, page, freshFailures)
+
+				// The maintained external consumer stylesheet deliberately makes
+				// its Activity cards wider than the narrow viewport. This proves
+				// the public horizontal axis by genuine keyboard and CDP touch
+				// actions without relabeling wrapped documentation prose.
+				consumer, ok := scrollRegionBFullThemeByID(scrollRegionBFullConsumerTheme)
+				require.True(t, ok)
+				consumerCSS := scrollRegionBFullConsumerStylesheet(t)
+				wideRoute := scrollRegionBFullCellRoutedURL(consumer, dark, 390, zoom)
+				widePage, err := context.NewPage()
+				require.NoError(t, err)
+				t.Cleanup(func() { _ = widePage.Close() })
+				require.NoError(t, widePage.SetViewportSize(390, 900))
+				require.NoError(t, widePage.EmulateMedia(playwright.PageEmulateMediaOptions{ReducedMotion: playwright.ReducedMotionReduce}))
+				require.NoError(t, widePage.AddInitScript(playwright.Script{Content: playwright.String(scrollRegionBFullFirstPaintObserverScript())}))
+				installScrollRegionBFullConsumerRoute(t, widePage, consumer, wideRoute, consumerCSS)
+				wideResponse, err := widePage.Goto(wideRoute, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+				require.NoError(t, err)
+				require.Equal(t, 200, wideResponse.Status())
+				requireScrollRegionStorageConsent(t, widePage, "wide-"+zoom.ID+"-"+scrollRegionBFullMode(dark))
+				requireScrollRegionDarkModeThroughPublicUI(t, widePage, "wide-"+zoom.ID+"-"+scrollRegionBFullMode(dark), dark)
+				wideFresh, _ := requireScrollRegionFreshPersistedPage(t, context, consumer, dark, 390, zoom, wideRoute, consumerCSS)
+				t.Cleanup(func() { _ = wideFresh.Close() })
+				requireScrollRegionWideConsumerHorizontalAccess(t, wideFresh, wideFresh.Locator("#scroll-region-default [data-goshtoso-scroll-viewport]"))
 			})
 		}
 	}
+}
+
+// requireScrollRegionWideConsumerHorizontalAccess exercises the public
+// horizontal ScrollRegion axis against the maintained external fixture. All
+// movement is issued through Playwright keyboard/CDP touch input; it never
+// writes scrollLeft as an assertion shortcut.
+func requireScrollRegionWideConsumerHorizontalAccess(t *testing.T, page playwright.Page, viewport playwright.Locator) {
+	t.Helper()
+	require.NoError(t, viewport.WaitFor())
+	before, err := viewport.Evaluate(`el => ({left: el.scrollLeft, clientWidth: el.clientWidth, scrollWidth: el.scrollWidth, overflowX: getComputedStyle(el).overflowX})`, nil)
+	require.NoError(t, err)
+	beforeValues := before.(map[string]any)
+	require.EqualValues(t, 0, beforeValues["left"])
+	require.Greater(t, scrollRegionBFullNumber(t, beforeValues["scrollWidth"]), scrollRegionBFullNumber(t, beforeValues["clientWidth"])+1, "wide consumer fixture must expose a real horizontal range")
+	require.Equal(t, "auto", beforeValues["overflowX"])
+
+	require.NoError(t, viewport.Focus())
+	require.NoError(t, viewport.Press("ArrowRight"))
+	_, err = page.WaitForFunction(`selector => document.querySelector(selector).scrollLeft > 0`, "#scroll-region-default [data-goshtoso-scroll-viewport]")
+	require.NoError(t, err, "real ArrowRight must move the focused wide consumer viewport")
+	keyboard, err := viewport.Evaluate(`el => el.scrollLeft`, nil)
+	require.NoError(t, err)
+	require.Greater(t, scrollRegionBFullNumber(t, keyboard), 0.0)
+
+	box, err := viewport.BoundingBox()
+	require.NoError(t, err)
+	require.NotNil(t, box)
+	session, err := page.Context().NewCDPSession(page)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = session.Detach() })
+	_, err = session.Send("Input.dispatchTouchEvent", map[string]any{"type": "touchStart", "touchPoints": []map[string]float64{{"x": box.X + box.Width - 12, "y": box.Y + box.Height/2}}})
+	require.NoError(t, err)
+	_, err = session.Send("Input.dispatchTouchEvent", map[string]any{"type": "touchMove", "touchPoints": []map[string]float64{{"x": box.X + 12, "y": box.Y + box.Height/2}}})
+	require.NoError(t, err)
+	_, err = session.Send("Input.dispatchTouchEvent", map[string]any{"type": "touchEnd", "touchPoints": []map[string]float64{}})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`selector => document.querySelector(selector).scrollLeft > 0`, "#scroll-region-default [data-goshtoso-scroll-viewport]")
+	require.NoError(t, err, "real CDP touch swipe must retain horizontal movement")
+	touch, err := viewport.Evaluate(`el => ({left: el.scrollLeft, max: el.scrollWidth - el.clientWidth})`, nil)
+	require.NoError(t, err)
+	touchValues := touch.(map[string]any)
+	require.Greater(t, scrollRegionBFullNumber(t, touchValues["left"]), 0.0)
+	require.LessOrEqual(t, scrollRegionBFullNumber(t, touchValues["left"]), scrollRegionBFullNumber(t, touchValues["max"])+1)
 }
 
 func requireScrollRegionHorizontalAccess(t *testing.T, page playwright.Page, defaultViewport playwright.Locator) {
@@ -625,6 +736,23 @@ func scrollRegionBFullRoutedURL(theme scrollRegionBFullTheme) string {
 	if theme.ConsumerCSS {
 		query.Set("t-gs-011-consumer", "scrollregion")
 	}
+	return baseURL + scrollRegionBFullRoute + "?" + query.Encode()
+}
+
+// scrollRegionBFullCellRoutedURL embeds every literal cell axis in both Page
+// A and fresh Page B navigations. The server ignores these evidence-only
+// parameters, but Playwright's raw network trace retains them and the receipt
+// validator can therefore reject a trace copied from another cell.
+func scrollRegionBFullCellRoutedURL(theme scrollRegionBFullTheme, dark bool, width int, zoom scrollRegionBFullZoom) string {
+	query := url.Values{}
+	query.Set("t-gs-011-theme", theme.ServerTheme)
+	if theme.ConsumerCSS {
+		query.Set("t-gs-011-consumer", theme.ID)
+	}
+	query.Set("t-gs-011-mode", scrollRegionBFullMode(dark))
+	query.Set("t-gs-011-width", strconv.Itoa(width))
+	query.Set("t-gs-011-zoom", zoom.ID)
+	query.Set("t-gs-011-cell", scrollRegionBFullCellID(theme, dark, width, zoom))
 	return baseURL + scrollRegionBFullRoute + "?" + query.Encode()
 }
 
@@ -812,6 +940,7 @@ func scrollRegionBFullArtifactName(cellID string) string {
 func runScrollRegionBFullCell(t *testing.T, zoom scrollRegionBFullZoom, context playwright.BrowserContext, theme scrollRegionBFullTheme, dark bool, width int, consumerCSS string, axe scrollRegionAxeCore, recorder *scrollRegionBFullRecorder) {
 	t.Helper()
 	cellID := scrollRegionBFullCellID(theme, dark, width, zoom)
+	routedURL := scrollRegionBFullCellRoutedURL(theme, dark, width, zoom)
 	page, err := context.NewPage()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = page.Close() })
@@ -821,11 +950,11 @@ func runScrollRegionBFullCell(t *testing.T, zoom scrollRegionBFullZoom, context 
 	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{ReducedMotion: playwright.ReducedMotionReduce}))
 	require.NoError(t, page.AddInitScript(playwright.Script{Content: playwright.String(scrollRegionBFullFirstPaintObserverScript())}))
 	if theme.ConsumerCSS {
-		installScrollRegionBFullConsumerRoute(t, page, theme, consumerCSS)
+		installScrollRegionBFullConsumerRoute(t, page, theme, routedURL, consumerCSS)
 	}
 	firstLoadFailures := watchPageFailures(page)
 
-	response, err := page.Goto(scrollRegionBFullRoutedURL(theme), playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	response, err := page.Goto(routedURL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
 	require.NoError(t, err)
 	require.NotNil(t, response)
 	require.Equal(t, 200, response.Status())
@@ -842,7 +971,7 @@ func runScrollRegionBFullCell(t *testing.T, zoom scrollRegionBFullZoom, context 
 	// The locked site theme arrives in server-routed initial HTML. Only dark
 	// mode has a maintained public control, so Page A persists that state via a
 	// real click and Page B proves the product-owned storage restoration.
-	freshPage, freshResponse := requireScrollRegionFreshPersistedPage(t, context, theme, dark, width, consumerCSS)
+	freshPage, freshResponse := requireScrollRegionFreshPersistedPage(t, context, theme, dark, width, zoom, routedURL, consumerCSS)
 	t.Cleanup(func() { _ = freshPage.Close() })
 	freshHTML, err := freshResponse.Body()
 	require.NoError(t, err)
@@ -856,7 +985,7 @@ func runScrollRegionBFullCell(t *testing.T, zoom scrollRegionBFullZoom, context 
 	defaultRoot := page.Locator("#scroll-region-default [data-goshtoso-scroll-region]")
 	viewport := defaultRoot.Locator("[data-goshtoso-scroll-viewport]")
 	require.NoError(t, defaultRoot.WaitFor())
-	initialPaint, firstPaint, settledPaint := requireScrollRegionFirstPaint(t, page, viewport, theme, dark, width, zoom)
+	initialPaint, firstPaint, settledPaint, observerEvents := requireScrollRegionFirstPaint(t, page, viewport, theme, dark, width, zoom)
 	capture := requireScrollRegionVisualCapture(t, page, defaultRoot, viewport)
 	initialScreenshot := recorder.screenshot(t, page, capture, theme, dark, width, zoom, "post-consent-region")
 
@@ -882,7 +1011,7 @@ func runScrollRegionBFullCell(t *testing.T, zoom scrollRegionBFullZoom, context 
 	pageAStorageArtifact := recorder.jsonArtifact(t, cellID, "page-a-storage-before", scrollRegionBFullStorageEvidence{Schema: scrollRegionBFullStorageEvidenceSchema, CellID: cellID, Phase: "page-a-storage-before", State: storageBeforeState})
 	pageBStorageArtifact := recorder.jsonArtifact(t, cellID, "page-b-storage", scrollRegionBFullStorageEvidence{Schema: scrollRegionBFullStorageEvidenceSchema, CellID: cellID, Phase: "page-b-storage", State: freshStorageState})
 	pageBInitialArtifact := recorder.bytesArtifact(t, cellID, "page-b-initial", freshHTML)
-	paintArtifact := recorder.jsonArtifact(t, cellID, "page-b-first-paint", scrollRegionBFullPaintEvidence{Schema: scrollRegionBFullPaintEvidenceSchema, CellID: cellID, Events: []scrollRegionBFullPaint{initialPaint, firstPaint}, Settled: settledPaint})
+	paintArtifact := recorder.jsonArtifact(t, cellID, "page-b-first-paint", scrollRegionBFullPaintEvidenceFromObserver(cellID, observerEvents, settledPaint))
 	nas := map[string]string{
 		"dismiss-and-Escape": "Source-grounded N/A: ScrollRegion owns no dismissible surface; Escape has no owned dismissal outcome.",
 		"focus-return":       "Source-grounded N/A: ScrollRegion does not open a transient surface; focus remains on its stable owned viewport across boundary actions.",
@@ -1083,7 +1212,7 @@ func scrollRegionBFullPageStateFor(t *testing.T, page playwright.Page) scrollReg
 	}
 }
 
-func requireScrollRegionFreshPersistedPage(t *testing.T, context playwright.BrowserContext, theme scrollRegionBFullTheme, dark bool, width int, consumerCSS string) (playwright.Page, playwright.Response) {
+func requireScrollRegionFreshPersistedPage(t *testing.T, context playwright.BrowserContext, theme scrollRegionBFullTheme, dark bool, width int, zoom scrollRegionBFullZoom, routedURL, consumerCSS string) (playwright.Page, playwright.Response) {
 	t.Helper()
 	page, err := context.NewPage()
 	require.NoError(t, err)
@@ -1093,20 +1222,21 @@ func requireScrollRegionFreshPersistedPage(t *testing.T, context playwright.Brow
 	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{ReducedMotion: playwright.ReducedMotionReduce}))
 	require.NoError(t, page.AddInitScript(playwright.Script{Content: playwright.String(scrollRegionBFullFirstPaintObserverScript())}))
 	if theme.ConsumerCSS {
-		installScrollRegionBFullConsumerRoute(t, page, theme, consumerCSS)
+		installScrollRegionBFullConsumerRoute(t, page, theme, routedURL, consumerCSS)
 	}
-	response, err := page.Goto(scrollRegionBFullRoutedURL(theme), playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
+	require.Equal(t, routedURL, scrollRegionBFullCellRoutedURL(theme, dark, width, zoom), "fresh Page B must retain the literal trace-bound cell URL")
+	response, err := page.Goto(routedURL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
 	require.NoError(t, err)
 	require.NotNil(t, response)
 	require.Equal(t, 200, response.Status())
 	return page, response
 }
 
-func installScrollRegionBFullConsumerRoute(t *testing.T, page playwright.Page, theme scrollRegionBFullTheme, stylesheet string) {
+func installScrollRegionBFullConsumerRoute(t *testing.T, page playwright.Page, theme scrollRegionBFullTheme, routedURL, stylesheet string) {
 	t.Helper()
 	require.True(t, theme.ConsumerCSS)
 	require.NotContains(t, strings.ToLower(stylesheet), "</style", "consumer fixture stylesheet must be safe to embed in its own initial document style element")
-	require.NoError(t, page.Route(scrollRegionBFullRoutedURL(theme), func(route playwright.Route) {
+	require.NoError(t, page.Route(routedURL, func(route playwright.Route) {
 		response, err := route.Fetch()
 		if err != nil {
 			t.Errorf("fetch consumer fixture route: %v", err)
@@ -1158,7 +1288,7 @@ func requireScrollRegionInitialHTML(t *testing.T, body []byte, theme scrollRegio
 	}
 }
 
-func requireScrollRegionFirstPaint(t *testing.T, page playwright.Page, viewport playwright.Locator, theme scrollRegionBFullTheme, dark bool, width int, zoom scrollRegionBFullZoom) (scrollRegionBFullPaint, scrollRegionBFullPaint, scrollRegionBFullPaint) {
+func requireScrollRegionFirstPaint(t *testing.T, page playwright.Page, viewport playwright.Locator, theme scrollRegionBFullTheme, dark bool, width int, zoom scrollRegionBFullZoom) (scrollRegionBFullPaint, scrollRegionBFullPaint, scrollRegionBFullPaint, []scrollRegionBFullPaint) {
 	t.Helper()
 	state, err := viewport.Evaluate(`(el, expected) => {
 		const root = document.documentElement;
@@ -1186,17 +1316,20 @@ func requireScrollRegionFirstPaint(t *testing.T, page playwright.Page, viewport 
 	}`, nil)
 	require.NoError(t, err)
 	values := state.(map[string]any)
-	events := values["events"].([]any)
-	require.NotEmpty(t, events)
-	initial := scrollRegionBFullPaintFromBrowser(t, events[0])
+	rawEvents := values["events"].([]any)
+	require.NotEmpty(t, rawEvents)
+	events := make([]scrollRegionBFullPaint, 0, len(rawEvents))
+	for _, raw := range rawEvents {
+		events = append(events, scrollRegionBFullPaintFromBrowser(t, raw))
+	}
+	initial := events[0]
 	require.Equal(t, "init", initial.Phase, "first-paint observer must run before product bootstrap mutates root state")
 	require.Equal(t, theme.ServerTheme, initial.Theme, "earliest observable document state must retain server-routed theme HTML")
 	require.Equal(t, scrollRegionBFullThemeInitialSource, initial.ThemeSource, "earliest observable document state must expose source provenance")
 	require.False(t, initial.Dark, "raw initial server HTML must precede product-owned dark-mode restoration")
 	if dark {
 		rootMutation := false
-		for _, raw := range events {
-			event := scrollRegionBFullPaintFromBrowser(t, raw)
+		for _, event := range events {
 			if event.Phase == "root-mutation" && event.Dark {
 				rootMutation = true
 			}
@@ -1204,8 +1337,7 @@ func requireScrollRegionFirstPaint(t *testing.T, page playwright.Page, viewport 
 		require.True(t, rootMutation, "dark mode must be restored by a product-owned root mutation after server HTML")
 	}
 	var firstPaint scrollRegionBFullPaint
-	for _, raw := range events {
-		event := scrollRegionBFullPaintFromBrowser(t, raw)
+	for _, event := range events {
 		if event.Phase == "first-animation-frame" {
 			firstPaint = event
 			break
@@ -1239,7 +1371,7 @@ func requireScrollRegionFirstPaint(t *testing.T, page playwright.Page, viewport 
 		dpr := scrollRegionBFullNumber(t, values["dpr"])
 		require.GreaterOrEqual(t, dpr, float64(zoom.Factor)-0.01)
 	}
-	return initial, firstPaint, settled
+	return initial, firstPaint, settled, events
 }
 
 func scrollRegionBFullPaintFromBrowser(t *testing.T, raw any) scrollRegionBFullPaint {
@@ -2143,12 +2275,40 @@ func validateScrollRegionBFullRawPersistenceEvidence(receipt scrollRegionBFullRe
 		if err := validateScrollRegionBFullPlaywrightTrace(cell, traceBytes); err != nil {
 			return err
 		}
-		if _, err := readScrollRegionBFullArtifact(cell.Screenshot, "cell screenshot", seenPaths, seenHashes); err != nil {
+		screenshot, err := readScrollRegionBFullArtifact(cell.Screenshot, "cell screenshot", seenPaths, seenHashes)
+		if err != nil {
+			return err
+		}
+		if err := validateScrollRegionBFullReceiptScreenshot(cell, screenshot); err != nil {
 			return err
 		}
 		if err := validateScrollRegionBFullCellPersistence(cell, seenPaths, seenHashes); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+// validateScrollRegionBFullReceiptScreenshot replays the semantic named-region
+// crop checks against receipt bytes. Hashing a producer-validated PNG is not
+// sufficient: a recomputed wrapper could otherwise pair a generic image with
+// a different literal cell.
+func validateScrollRegionBFullReceiptScreenshot(cell scrollRegionBFullCellReceipt, content []byte) error {
+	artifact := cell.Screenshot
+	if artifact.CapturedRegion != "named-scroll-region" || artifact.Capture == nil || artifact.Width <= 0 || artifact.Height <= 0 {
+		return fmt.Errorf("B-FULL cell %q screenshot lacks named-region capture provenance", cell.CellID)
+	}
+	decoded, format, err := image.Decode(bytes.NewReader(content))
+	if err != nil || format != "png" {
+		return fmt.Errorf("B-FULL cell %q screenshot is not a decodable PNG", cell.CellID)
+	}
+	bounds := decoded.Bounds()
+	if bounds.Dx() != artifact.Width || bounds.Dy() != artifact.Height {
+		return fmt.Errorf("B-FULL cell %q screenshot dimensions do not bind capture metadata", cell.CellID)
+	}
+	capture := scrollRegionBFullCapture{ExpectedWidth: float64(artifact.Width), ExpectedHeight: float64(artifact.Height), Proof: *artifact.Capture}
+	if err := validateScrollRegionBFullCapturedRegion(decoded, capture); err != nil {
+		return fmt.Errorf("B-FULL cell %q screenshot does not prove its named region: %w", cell.CellID, err)
 	}
 	return nil
 }
@@ -2200,49 +2360,112 @@ func validateScrollRegionBFullPlaywrightTrace(cell scrollRegionBFullCellReceipt,
 		return fmt.Errorf("B-FULL cell %q trace.network lacks Playwright document resource snapshot", cell.CellID)
 	}
 
-	var contextOptions, pageA, pageB, consent, darkToggle bool
+	theme, ok := scrollRegionBFullThemeByID(cell.Theme)
+	if !ok {
+		return fmt.Errorf("B-FULL cell %q has unknown trace theme", cell.CellID)
+	}
+	expectedURL, err := url.Parse(scrollRegionBFullCellRoutedURL(theme, cell.Mode == "dark", cell.ViewportWidth, scrollRegionBFullZoom{ID: cell.Zoom}))
+	if err != nil {
+		return fmt.Errorf("B-FULL cell %q construct literal trace URL: %w", cell.CellID, err)
+	}
+	urlsMatch := func(rawURL string) bool {
+		parsed, parseErr := url.Parse(rawURL)
+		return parseErr == nil && parsed.Path == expectedURL.Path && parsed.Query().Encode() == expectedURL.Query().Encode()
+	}
+	type traceCall struct {
+		Method string
+		PageID string
+	}
+	calls := make(map[string]traceCall)
+	after := make(map[string]struct{})
+	pageWidths := make(map[string]bool)
+	pageA, pageB := "", ""
+	contextOptions := false
+	consentCalls, darkCalls := make([]string, 0, 1), make([]string, 0, 2)
 	for _, line := range bytes.Split(trace, []byte{'\n'}) {
 		if len(bytes.TrimSpace(line)) == 0 {
 			continue
 		}
 		var event struct {
-			Type        string         `json:"type"`
-			Class       string         `json:"class"`
-			Method      string         `json:"method"`
-			BrowserName string         `json:"browserName"`
-			Version     int            `json:"version"`
-			Params      map[string]any `json:"params"`
+			Type              string         `json:"type"`
+			CallID            string         `json:"callId"`
+			Class             string         `json:"class"`
+			Method            string         `json:"method"`
+			BrowserName       string         `json:"browserName"`
+			PlaywrightVersion string         `json:"playwrightVersion"`
+			SDKLanguage       string         `json:"sdkLanguage"`
+			Version           int            `json:"version"`
+			PageID            string         `json:"pageId"`
+			Params            map[string]any `json:"params"`
 		}
 		if err := json.Unmarshal(line, &event); err != nil {
 			return fmt.Errorf("B-FULL cell %q trace.trace contains non-Playwright JSON event: %w", cell.CellID, err)
 		}
-		if event.Type == "context-options" && event.Version >= 1 && strings.TrimSpace(event.BrowserName) != "" {
+		if event.Type == "context-options" && event.Version >= 1 && strings.TrimSpace(event.BrowserName) != "" && strings.TrimSpace(event.PlaywrightVersion) != "" && strings.TrimSpace(event.SDKLanguage) != "" {
 			contextOptions = true
+		}
+		if event.Type == "after" && event.CallID != "" {
+			after[event.CallID] = struct{}{}
+			continue
 		}
 		if event.Type != "before" {
 			continue
 		}
+		if event.CallID == "" || event.PageID == "" {
+			continue
+		}
+		calls[event.CallID] = traceCall{Method: event.Method, PageID: event.PageID}
 		selector, _ := event.Params["selector"].(string)
+		if event.Method == "setViewportSize" {
+			if viewport, ok := event.Params["viewportSize"].(map[string]any); ok {
+				if width, ok := viewport["width"].(float64); ok && int(width) == cell.ViewportWidth {
+					pageWidths[event.PageID] = true
+				}
+			}
+		}
 		if event.Method == "goto" {
 			urlValue, _ := event.Params["url"].(string)
-			parsed, parseErr := url.Parse(urlValue)
-			if parseErr == nil && parsed.Path == cell.Route && parsed.Query().Get("t-gs-011-theme") != "" {
-				if !pageA {
-					pageA = true
+			if urlsMatch(urlValue) {
+				if pageA == "" {
+					pageA = event.PageID
+				} else if pageB == "" && event.PageID != pageA {
+					pageB = event.PageID
 				} else {
-					pageB = true
+					return fmt.Errorf("B-FULL cell %q trace has extra or reused literal Page A/Page B navigation", cell.CellID)
 				}
 			}
 		}
 		if event.Method == "click" && strings.Contains(selector, "Allow browser storage") {
-			consent = true
+			consentCalls = append(consentCalls, event.CallID)
 		}
 		if event.Method == "click" && strings.Contains(selector, "darkModeToggleBtn") {
-			darkToggle = true
+			darkCalls = append(darkCalls, event.CallID)
 		}
 	}
-	if !contextOptions || !pageA || !pageB || !consent || !darkToggle {
-		return fmt.Errorf("B-FULL cell %q trace lacks required Playwright context/Page A/Page B/consent/dark action provenance", cell.CellID)
+	if !contextOptions || pageA == "" || pageB == "" || pageA == pageB || !pageWidths[pageA] || !pageWidths[pageB] {
+		return fmt.Errorf("B-FULL cell %q trace lacks literal trace cell context/Page A/Page B/viewport provenance", cell.CellID)
+	}
+	if len(consentCalls) != 1 || calls[consentCalls[0]].PageID != pageA {
+		return fmt.Errorf("B-FULL cell %q trace lacks one Page A consent action", cell.CellID)
+	}
+	wantDarkCalls := 2
+	if cell.Mode == "dark" {
+		wantDarkCalls = 1
+	}
+	if len(darkCalls) != wantDarkCalls {
+		return fmt.Errorf("B-FULL cell %q trace dark action count does not derive from mode", cell.CellID)
+	}
+	for _, callID := range append(consentCalls, darkCalls...) {
+		call := calls[callID]
+		if call.PageID != pageA {
+			return fmt.Errorf("B-FULL cell %q trace action belongs outside Page A", cell.CellID)
+		}
+		if _, complete := after[callID]; !complete {
+			return fmt.Errorf("B-FULL cell %q trace action %q lacks a successful after event", cell.CellID, call.Method)
+		}
+	}
+	if !bytes.Contains(network, []byte(expectedURL.String())) || bytes.Count(network, []byte(`"_resourceType":"document"`)) < 2 {
+		return fmt.Errorf("B-FULL cell %q trace network does not bind both literal Page A/Page B document responses", cell.CellID)
 	}
 	return nil
 }
@@ -2267,6 +2490,46 @@ func readScrollRegionBFullArtifact(artifact scrollRegionBFullArtifact, label str
 	// treated as a forgery for this deterministic response evidence.
 	seenHashes[artifact.SHA256] = label
 	return content, nil
+}
+
+// validateScrollRegionBFullPaintTranscript establishes that the wrapper's
+// initial and first-frame values are retained in the ordered raw observer
+// transcript, rather than being claimant-authored replacement values.
+func validateScrollRegionBFullPaintTranscript(events []scrollRegionBFullPaint, initial, first scrollRegionBFullPaint) (int, error) {
+	if len(events) < 2 || !reflect.DeepEqual(events[0], initial) {
+		return 0, fmt.Errorf("first-paint transcript lacks its raw initial server HTML event")
+	}
+	firstIndex := -1
+	for index, observed := range events {
+		if observed.Phase == "first-animation-frame" {
+			firstIndex = index
+			break
+		}
+	}
+	if firstIndex < 1 || !reflect.DeepEqual(events[firstIndex], first) {
+		return 0, fmt.Errorf("first-paint transcript does not bind the first animation frame")
+	}
+	return firstIndex, nil
+}
+
+// validateScrollRegionBFullDarkPaintTranscript establishes that dark mode was
+// restored by the candidate after the raw server HTML, and before the first
+// rendered frame. The ordered browser observer transcript is the authority;
+// a receipt cannot assert a later root mutation as first-paint evidence.
+func validateScrollRegionBFullDarkPaintTranscript(events []scrollRegionBFullPaint, initial, first scrollRegionBFullPaint, theme, themeSource string) error {
+	firstIndex, err := validateScrollRegionBFullPaintTranscript(events, initial, first)
+	if err != nil {
+		return err
+	}
+	for _, observed := range events[1:firstIndex] {
+		if observed.Phase != "root-mutation" || !observed.Dark {
+			continue
+		}
+		if (theme == "" || observed.Theme == theme) && (themeSource == "" || observed.ThemeSource == themeSource) {
+			return nil
+		}
+	}
+	return fmt.Errorf("first-paint transcript lacks a dark root mutation before its first animation frame")
 }
 
 func validateScrollRegionBFullCellPersistence(cell scrollRegionBFullCellReceipt, seenPaths, seenHashes map[string]string) error {
@@ -2352,7 +2615,7 @@ func validateScrollRegionBFullCellPersistence(cell scrollRegionBFullCellReceipt,
 	if err := scrollRegionDecodeStrictJSON(paintBytes, &paint); err != nil {
 		return fmt.Errorf("B-FULL cell %q Page B first-paint schema: %w", cell.CellID, err)
 	}
-	if paint.Schema != scrollRegionBFullPaintEvidenceSchema || paint.CellID != cell.CellID || len(paint.Events) < 2 || !reflect.DeepEqual(paint.Events[0], proof.FreshLoadInitialHTML) || !reflect.DeepEqual(paint.Events[1], proof.FreshLoadFirstPaint) || !reflect.DeepEqual(paint.Settled, proof.FreshLoadSettled) {
+	if paint.Schema != scrollRegionBFullPaintEvidenceSchema || paint.CellID != cell.CellID || len(paint.Events) < 2 || !reflect.DeepEqual(paint.Settled, proof.FreshLoadSettled) {
 		return fmt.Errorf("B-FULL cell %q raw Page B first-paint evidence does not bind wrapper paints", cell.CellID)
 	}
 	initial := paint.Events[0]
@@ -2360,17 +2623,13 @@ func validateScrollRegionBFullCellPersistence(cell scrollRegionBFullCellReceipt,
 		return fmt.Errorf("B-FULL cell %q raw Page B initial observer state is not pre-rendered server-theme evidence", cell.CellID)
 	}
 	if wantDark {
-		mutated := false
-		for _, observed := range paint.Events {
-			if observed.Phase == "root-mutation" && observed.Dark && observed.Theme == theme.ServerTheme && observed.ThemeSource == scrollRegionBFullThemeInitialSource {
-				mutated = true
-			}
+		if err := validateScrollRegionBFullDarkPaintTranscript(paint.Events, proof.FreshLoadInitialHTML, proof.FreshLoadFirstPaint, theme.ServerTheme, scrollRegionBFullThemeInitialSource); err != nil {
+			return fmt.Errorf("B-FULL cell %q %w", cell.CellID, err)
 		}
-		if !mutated {
-			return fmt.Errorf("B-FULL cell %q dark first-paint evidence lacks product-owned root mutation", cell.CellID)
-		}
+	} else if _, err := validateScrollRegionBFullPaintTranscript(paint.Events, proof.FreshLoadInitialHTML, proof.FreshLoadFirstPaint); err != nil {
+		return fmt.Errorf("B-FULL cell %q %w", cell.CellID, err)
 	}
-	for _, observed := range []scrollRegionBFullPaint{paint.Events[1], paint.Settled} {
+	for _, observed := range []scrollRegionBFullPaint{proof.FreshLoadFirstPaint, paint.Settled} {
 		if observed.Theme != theme.ServerTheme || observed.ThemeSource != scrollRegionBFullThemeInitialSource || observed.Dark != wantDark || !observed.Visible || observed.Role != "region" || observed.Name != "Activity history" {
 			return fmt.Errorf("B-FULL cell %q raw Page B paint does not prove theme/mode/region correlation", cell.CellID)
 		}

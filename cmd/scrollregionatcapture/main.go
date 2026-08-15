@@ -15,6 +15,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"image"
 	"io"
 	"os"
 	"os/exec"
@@ -483,7 +484,7 @@ func executeCapture(config captureConfig, stdout io.Writer, environment captureR
 	if err != nil {
 		return err
 	}
-	if err := validateCapturedScreenshot(screenshotPath); err != nil {
+	if err := validateCapturedScreenshot(screenshotPath, window); err != nil {
 		return err
 	}
 	if err := writeBytesExclusive(filepath.Join(directory, "voiceover-system-log.json"), voiceOverLog); err != nil {
@@ -786,7 +787,7 @@ func artifactForFile(path string) (evidenceArtifact, error) {
 	return evidenceArtifact{Path: absolute, SHA256: sha256Hex(content)}, nil
 }
 
-func validateCapturedScreenshot(path string) error {
+func validateCapturedScreenshot(path string, window browserWindowCapture) error {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return err
@@ -798,6 +799,36 @@ func validateCapturedScreenshot(path string) error {
 	// This capture command has no image-processing dependency or alternate path.
 	if !bytes.HasPrefix(content, []byte("\x89PNG\r\n\x1a\n")) {
 		return fmt.Errorf("directly captured screenshot is not PNG")
+	}
+	decoded, format, err := image.Decode(bytes.NewReader(content))
+	if err != nil || format != "png" {
+		return fmt.Errorf("directly captured screenshot is not decodable PNG")
+	}
+	bounds := decoded.Bounds()
+	if window.Window.Width <= 0 || window.Window.Height <= 0 || window.CandidateRegion.Width <= 0 || window.CandidateRegion.Height <= 0 {
+		return fmt.Errorf("directly captured screenshot has invalid browser/window region geometry")
+	}
+	scaleX := float64(bounds.Dx()) / window.Window.Width
+	scaleY := float64(bounds.Dy()) / window.Window.Height
+	if scaleX <= 0 || scaleY <= 0 {
+		return fmt.Errorf("directly captured screenshot has invalid pixel scale")
+	}
+	left := int(window.CandidateRegion.X * scaleX)
+	top := int(window.CandidateRegion.Y * scaleY)
+	right := int((window.CandidateRegion.X + window.CandidateRegion.Width) * scaleX)
+	bottom := int((window.CandidateRegion.Y + window.CandidateRegion.Height) * scaleY)
+	if left < bounds.Min.X || top < bounds.Min.Y || right <= left || bottom <= top || right > bounds.Max.X || bottom > bounds.Max.Y {
+		return fmt.Errorf("directly captured screenshot does not contain the claimed named ScrollRegion window crop")
+	}
+	colors := make(map[[4]uint32]struct{})
+	for y := top; y < bottom; y += max(1, (bottom-top)/8) {
+		for x := left; x < right; x += max(1, (right-left)/8) {
+			red, green, blue, alpha := decoded.At(x, y).RGBA()
+			colors[[4]uint32{red, green, blue, alpha}] = struct{}{}
+		}
+	}
+	if len(colors) < 4 {
+		return fmt.Errorf("directly captured named ScrollRegion crop lacks visual structure")
 	}
 	return nil
 }

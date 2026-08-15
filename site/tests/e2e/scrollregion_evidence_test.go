@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -601,6 +602,17 @@ func TestScrollRegionBFullReceiptRejectsRecomputedPersistenceForgeries(t *testin
 			receipt.Cells[0].Trace = &trace
 			receipt.TraceByCell[receipt.Cells[0].CellID] = trace
 		},
+		"trace-wrong-literal-cell": func(t *testing.T, receipt *scrollRegionBFullReceipt) {
+			wrongTheme, ok := scrollRegionBFullThemeByID("goshtoso")
+			require.True(t, ok)
+			wrongCellID := scrollRegionBFullCellID(wrongTheme, false, 390, scrollRegionBFullZoom{ID: "default"})
+			trace := scrollRegionBFullFixturePlaywrightTrace(t, filepath.Dir(receipt.Cells[0].Trace.Path), "wrong-cell.trace.zip", wrongCellID)
+			receipt.Cells[0].Trace = &trace
+			receipt.TraceByCell[receipt.Cells[0].CellID] = trace
+		},
+		"screenshot-unbound-named-region": func(t *testing.T, receipt *scrollRegionBFullReceipt) {
+			receipt.Cells[0].Screenshot.Capture.Anchors = nil
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			receipt := scrollRegionBFullReceiptForFixture(t)
@@ -612,6 +624,9 @@ func TestScrollRegionBFullReceiptRejectsRecomputedPersistenceForgeries(t *testin
 			require.NoError(t, err)
 			_, err = validateScrollRegionBFullReceiptWrapper(encoded)
 			require.Error(t, err, "recomputed wrapper must not authenticate raw persistence semantics")
+			if name == "trace-wrong-literal-cell" {
+				require.ErrorContains(t, err, "literal trace cell", "trace rejection must derive from the raw cell axes rather than an incidental artifact check")
+			}
 		})
 	}
 }
@@ -645,8 +660,16 @@ func scrollRegionBFullReceiptForFixture(t *testing.T) scrollRegionBFullReceipt {
 	final := first
 	final.Phase, final.ReadyState = "settled", "complete"
 	paintArtifact := scrollRegionBFullFixtureJSONArtifact(t, directory, "page-b-paint.json", scrollRegionBFullPaintEvidence{Schema: scrollRegionBFullPaintEvidenceSchema, CellID: cellID, Events: []scrollRegionBFullPaint{paint, first}, Settled: final})
-	screenshotPath := writeScrollRegionEvidencePNG(t, directory, "cell.png", color.RGBA{R: 31, G: 95, B: 176, A: 255})
+	swatch := color.RGBA{R: 31, G: 95, B: 176, A: 255}
+	screenshotPath := writeScrollRegionEvidencePNG(t, directory, "cell.png", swatch)
 	screenshot := scrollRegionBFullEvidenceArtifactForFile(t, screenshotPath)
+	screenshot.Width, screenshot.Height, screenshot.CapturedRegion = 160, 100, "named-scroll-region"
+	screenshot.Capture = &scrollRegionBFullCaptureProof{
+		Method: "cdp-page-capture-screenshot", VisualViewportWidth: 160, VisualViewportHeight: 100, DevicePixelRatio: 1,
+		SourceWidth: 160, SourceHeight: 100, ScaleX: 1, ScaleY: 1, CropCSSWidth: 160, CropCSSHeight: 100, CropPixelWidth: 160, CropPixelHeight: 100,
+		Anchors:     []scrollRegionBFullPixelAnchor{{Name: "activity-card", DOMText: "Activity fixture", PixelX: 80, PixelY: 20, Expected: [4]uint8{71, 135, 216, 255}, Tolerance: 0}},
+		BoundaryCue: scrollRegionBFullBoundaryCue{State: "end", Visible: true, PixelX: 150, PixelY: 90, PixelWidth: 4, PixelHeight: 4},
+	}
 	trace := scrollRegionBFullFixturePlaywrightTrace(t, directory, "cell.trace.zip", cellID)
 	cell := scrollRegionBFullCellReceipt{
 		CellID: cellID, Route: scrollRegionBFullRoute, Theme: "araihu", Mode: "light", ViewportWidth: 390, Zoom: "default",
@@ -698,20 +721,48 @@ func scrollRegionBFullFixturePlaywrightTrace(t *testing.T, directory, name, cell
 		_, err = writer.Write(content)
 		require.NoError(t, err)
 	}
-	route := scrollRegionBFullRoute + "?t-gs-011-theme=araihu"
+	parts := strings.Split(cellID, "|")
+	require.Len(t, parts, 5)
+	theme, ok := scrollRegionBFullThemeByID(parts[1])
+	require.True(t, ok)
+	width, err := strconv.Atoi(parts[3])
+	require.NoError(t, err)
+	dark := parts[2] == "dark"
+	route := scrollRegionBFullCellRoutedURL(theme, dark, width, scrollRegionBFullZoom{ID: parts[4]})
+	pageA := "page@fixture-a"
+	pageB := "page@fixture-b"
 	traceLines := []string{
-		`{"version":8,"type":"context-options","browserName":"chromium","contextId":"browser-context@fixture"}`,
-		`{"type":"before","class":"Frame","method":"goto","params":{"url":"` + route + `"}}`,
-		`{"type":"before","class":"Frame","method":"click","params":{"selector":"internal:role=button[name=\"Allow browser storage\"i]"}}`,
-		`{"type":"before","class":"Frame","method":"click","params":{"selector":"#darkModeToggleBtn"}}`,
-		`{"type":"before","class":"Frame","method":"goto","params":{"url":"` + route + `"}}`,
+		`{"version":8,"type":"context-options","browserName":"chromium","playwrightVersion":"1.61.1","sdkLanguage":"javascript","contextId":"browser-context@fixture"}`,
+		`{"type":"before","callId":"call@viewport-a","class":"Page","method":"setViewportSize","pageId":"` + pageA + `","params":{"viewportSize":{"width":` + strconv.Itoa(width) + `,"height":900}}}`,
+		`{"type":"after","callId":"call@viewport-a"}`,
+		`{"type":"before","callId":"call@goto-a","class":"Frame","method":"goto","pageId":"` + pageA + `","params":{"url":"` + route + `"}}`,
+		`{"type":"after","callId":"call@goto-a","result":{"response":"<Response>"}}`,
+		`{"type":"before","callId":"call@consent","class":"Frame","method":"click","pageId":"` + pageA + `","params":{"selector":"internal:role=button[name=\"Allow browser storage\"i]"}}`,
+		`{"type":"after","callId":"call@consent"}`,
 	}
+	darkCalls := 2
+	if dark {
+		darkCalls = 1
+	}
+	for index := 0; index < darkCalls; index++ {
+		callID := "call@dark-" + strconv.Itoa(index)
+		traceLines = append(traceLines,
+			`{"type":"before","callId":"`+callID+`","class":"Frame","method":"click","pageId":"`+pageA+`","params":{"selector":"#darkModeToggleBtn"}}`,
+			`{"type":"after","callId":"`+callID+`"}`,
+		)
+	}
+	traceLines = append(traceLines,
+		`{"type":"before","callId":"call@viewport-b","class":"Page","method":"setViewportSize","pageId":"`+pageB+`","params":{"viewportSize":{"width":`+strconv.Itoa(width)+`,"height":900}}}`,
+		`{"type":"after","callId":"call@viewport-b"}`,
+		`{"type":"before","callId":"call@goto-b","class":"Frame","method":"goto","pageId":"`+pageB+`","params":{"url":"`+route+`"}}`,
+		`{"type":"after","callId":"call@goto-b","result":{"response":"<Response>"}}`,
+	)
 	write("trace.trace", []byte(strings.Join(traceLines, "\n")+"\n"))
-	write("trace.network", []byte(`{"type":"resource-snapshot","snapshot":{"_resourceType":"document","pageref":"page@fixture","request":{"url":"`+route+`"}}}`+"\n"))
+	write("trace.network", []byte(`{"type":"resource-snapshot","snapshot":{"_resourceType":"document","pageref":"`+pageA+`","request":{"url":"`+route+`"}}}`+"\n"+`{"type":"resource-snapshot","snapshot":{"_resourceType":"document","pageref":"`+pageB+`","request":{"url":"`+route+`"}}}`+"\n"))
 	write("resources/page@fixture-1.jpeg", []byte{0xff, 0xd8, 0xff, 0xd9})
+	write("resources/fixture-cell.txt", []byte(cellID))
 	require.NoError(t, archive.Close())
 	require.NoError(t, file.Close())
-	_ = cellID // fixture name is intentionally independent; the trace binds the routed literal axes below.
 	return scrollRegionBFullEvidenceArtifactForFile(t, path)
 }
 
@@ -814,7 +865,7 @@ func scrollRegionWriteATFixtureRawProvenance(t *testing.T, directory, prefix str
 	window := scrollRegionATBrowserWindow{
 		Schema: scrollRegionATBrowserStateSchema, Pair: capture.Pair, Route: capture.Route, Challenge: challenge,
 		CandidateTree: identity.CandidateTree, ManifestSHA256: identity.ManifestSHA256,
-		Window: scrollRegionATRectangle{X: 40, Y: 50, Width: 800, Height: 600}, CandidateRegion: scrollRegionATRectangle{X: 80, Y: 140, Width: 520, Height: 280},
+		Window: scrollRegionATRectangle{X: 40, Y: 50, Width: 160, Height: 100}, CandidateRegion: scrollRegionATRectangle{X: 10, Y: 10, Width: 140, Height: 80},
 	}
 	windowPath := writeScrollRegionEvidenceJSON(t, directory, prefix+".browser-window.json", window)
 	capture.BrowserWindow = scrollRegionEvidenceArtifactForFile(t, windowPath)

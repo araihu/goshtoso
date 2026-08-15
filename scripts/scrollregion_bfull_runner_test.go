@@ -109,4 +109,7 @@ func TestScrollRegionBFullRequiredTimeoutIsViableForLiteralClosure(t *testing.T)
 	if !strings.Contains(string(workflow), "timeout-minutes: 75") {
 		t.Fatal("required workflow must outlive the 60-minute Go B-FULL timeout")
 	}
+	if !strings.Contains(string(workflow), "ref: ${{ github.event.pull_request.head.sha || github.sha }}") {
+		t.Fatal("required workflow must checkout the exact PR head, never the synthetic merge revision")
+	}
 }

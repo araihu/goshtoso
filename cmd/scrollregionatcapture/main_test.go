@@ -8,6 +8,9 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"image"
+	"image/color"
+	"image/png"
 	"io"
 	"os"
 	"os/exec"
@@ -100,6 +103,8 @@ func TestDirectCaptureRequiresActionBoundVoiceOverAndObservedSnapshots(t *testin
 	for _, want := range []string{"before", "after", "exit", "document.activeElement", "scrollTop"} {
 		require.Contains(t, string(browserReader), want)
 	}
+	require.Contains(t, string(browserReader), `meta[name="goshtoso-t-gs-011-at-action-token"]`, "browser state must bind the action token emitted by the candidate server")
+	require.NotContains(t, string(browserReader), `#goshtoso-t-gs-011-at-action-token`, "candidate HTML emits token metadata, not a synthetic token DOM node")
 	require.NotContains(t, string(browserReader), "focusable = Array.from", "focus-navigation evidence must record actual traversal, not DOM adjacency")
 }
 
@@ -129,6 +134,25 @@ func TestCaptureCLIRejectsExternalURLOverride(t *testing.T) {
 	if exitCode != 2 || !strings.Contains(stderr.String(), "flag provided but not defined") {
 		t.Fatalf("capture adapter accepted a caller-selected external URL: exit=%d stderr=%q", exitCode, stderr.String())
 	}
+}
+
+func TestCapturedScreenshotBindsNamedRegionToWindowPixels(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "capture.png")
+	canvas := image.NewRGBA(image.Rect(0, 0, 200, 120))
+	for y := range 120 {
+		for x := range 200 {
+			canvas.SetRGBA(x, y, color.RGBA{R: uint8(x), G: uint8(y), B: 128, A: 255})
+		}
+	}
+	file, err := os.Create(path)
+	require.NoError(t, err)
+	require.NoError(t, png.Encode(file, canvas))
+	require.NoError(t, file.Close())
+
+	window := browserWindowCapture{Window: browserRectangle{Width: 100, Height: 60}, CandidateRegion: browserRectangle{X: 20, Y: 10, Width: 40, Height: 30}}
+	require.NoError(t, validateCapturedScreenshot(path, window))
+	window.CandidateRegion.X = 90
+	require.Error(t, validateCapturedScreenshot(path, window), "a claimed named region outside the OS window screenshot must be rejected")
 }
 
 func TestVerifyCandidateIdentityRejectsDirtyByteMutationWithSameStatus(t *testing.T) {

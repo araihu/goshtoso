@@ -23,3 +23,12 @@ html.dark[data-goshtoso-scrollregion-consumer-theme="t-gs-011"] {
   --color-primary-dark: #a5b4fc;
   --color-outline-dark: #94a3b8;
 }
+
+/* t-gs-011-wide-consumer-content: maintained external fixture. Its real
+ * unwrapped cards require the public horizontal viewport axis; docs prose
+ * continues to wrap in every non-consumer theme. */
+html[data-goshtoso-scrollregion-consumer-theme="t-gs-011"]
+  #scroll-region-default [data-goshtoso-scroll-viewport] li {
+  min-width: 44rem;
+  white-space: nowrap;
+}

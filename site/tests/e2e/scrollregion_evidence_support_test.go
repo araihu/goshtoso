@@ -1095,6 +1095,13 @@ func validateScrollRegionATCapture(capture scrollRegionATEvidenceCapture, contra
 	if err := validateScrollRegionATScreenshot(screenshot); err != nil {
 		return err
 	}
+	window, err := scrollRegionATWindowForScreenshot(capture)
+	if err != nil {
+		return err
+	}
+	if err := validateScrollRegionATScreenshotNamedRegion(screenshot, window); err != nil {
+		return err
+	}
 
 	if !contract.Platform.MatchString(capture.PlatformVersion) {
 		return fmt.Errorf("platform version %q violates pair contract", capture.PlatformVersion)
@@ -1623,6 +1630,62 @@ func validateScrollRegionATScreenshot(content []byte) error {
 	}
 	if len(colors) < 4 {
 		return fmt.Errorf("screenshot lacks visual structure required for AT provenance")
+	}
+	return nil
+}
+
+// scrollRegionATWindowForScreenshot independently rechecks the raw signed
+// browser-window artifact without consuming its normal provenance slot. The
+// direct adapter records the candidate region in outer-window coordinates.
+func scrollRegionATWindowForScreenshot(capture scrollRegionATEvidenceCapture) (scrollRegionATBrowserWindow, error) {
+	resolved, err := filepath.Abs(capture.BrowserWindow.Path)
+	if err != nil {
+		return scrollRegionATBrowserWindow{}, err
+	}
+	content, err := os.ReadFile(resolved)
+	if err != nil {
+		return scrollRegionATBrowserWindow{}, err
+	}
+	if scrollRegionBFullSHA256(content) != capture.BrowserWindow.SHA256 {
+		return scrollRegionATBrowserWindow{}, fmt.Errorf("browser-window artifact SHA-256 mismatch")
+	}
+	var window scrollRegionATBrowserWindow
+	if err := scrollRegionDecodeStrictJSON(content, &window); err != nil {
+		return scrollRegionATBrowserWindow{}, fmt.Errorf("browser-window screenshot scope schema: %w", err)
+	}
+	return window, nil
+}
+
+// validateScrollRegionATScreenshotNamedRegion ensures screenshot pixels cover
+// the signed browser window's focused named-region rectangle, rather than a
+// generic non-uniform PNG from the same browser session.
+func validateScrollRegionATScreenshotNamedRegion(content []byte, window scrollRegionATBrowserWindow) error {
+	decoded, format, err := image.Decode(bytes.NewReader(content))
+	if err != nil || format != "png" {
+		return fmt.Errorf("screenshot named-region crop is not decodable PNG")
+	}
+	bounds := decoded.Bounds()
+	if window.Window.Width <= 0 || window.Window.Height <= 0 || window.CandidateRegion.Width <= 0 || window.CandidateRegion.Height <= 0 {
+		return fmt.Errorf("browser-window screenshot geometry is invalid")
+	}
+	scaleX := float64(bounds.Dx()) / window.Window.Width
+	scaleY := float64(bounds.Dy()) / window.Window.Height
+	left := int(window.CandidateRegion.X * scaleX)
+	top := int(window.CandidateRegion.Y * scaleY)
+	right := int((window.CandidateRegion.X + window.CandidateRegion.Width) * scaleX)
+	bottom := int((window.CandidateRegion.Y + window.CandidateRegion.Height) * scaleY)
+	if left < bounds.Min.X || top < bounds.Min.Y || right <= left || bottom <= top || right > bounds.Max.X || bottom > bounds.Max.Y {
+		return fmt.Errorf("screenshot does not contain the signed named ScrollRegion rectangle")
+	}
+	colors := make(map[[4]uint32]struct{})
+	for y := top; y < bottom; y += max(1, (bottom-top)/8) {
+		for x := left; x < right; x += max(1, (right-left)/8) {
+			red, green, blue, alpha := decoded.At(x, y).RGBA()
+			colors[[4]uint32{red, green, blue, alpha}] = struct{}{}
+		}
+	}
+	if len(colors) < 2 {
+		return fmt.Errorf("screenshot named ScrollRegion rectangle lacks visual structure")
 	}
 	return nil
 }
