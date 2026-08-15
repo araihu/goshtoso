@@ -1,7 +1,9 @@
 package conformanceledger
 
 import (
+	"crypto/ed25519"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"os"
@@ -9,6 +11,11 @@ import (
 	"strings"
 	"testing"
 )
+
+var fixturePrerequisiteSigner = func() ed25519.PrivateKey {
+	seed := sha256.Sum256([]byte("T-GS-010 prerequisite fixture signer"))
+	return ed25519.NewKeyFromSeed(seed[:])
+}()
 
 func TestGenerateSkeletonAuthenticatesEveryPriorReceipt(t *testing.T) {
 	config := generationFixture(t)
@@ -48,6 +55,16 @@ func TestGenerateSkeletonRejectsOpaquePriorReceiptEvenWhenHashMatches(t *testing
 
 	if _, _, err := GenerateSkeleton(config); err == nil || !strings.Contains(err.Error(), "prerequisite receipt") {
 		t.Fatalf("opaque receipt error = %v", err)
+	}
+}
+
+func TestGenerateSkeletonRejectsSelfMintedPrerequisiteHashAndProvenance(t *testing.T) {
+	config := generationFixture(t)
+	rewritePrerequisiteReceipt(t, &config.Receipts[0], func(receipt map[string]any) {
+		receipt["attestation"] = map[string]any{"key_id": "claimant", "signature": ""}
+	})
+	if _, _, err := GenerateSkeleton(config); err == nil || !strings.Contains(err.Error(), "trusted prerequisite signature") {
+		t.Fatalf("self-minted prerequisite authority error = %v", err)
 	}
 }
 
@@ -244,10 +261,11 @@ func generationFixture(t *testing.T) GenerationConfig {
 	directory := t.TempDir()
 	commit := fixtureGitIdentity(t, "HEAD^{commit}")
 	tree := fixtureGitIdentity(t, "HEAD^{tree}")
+	public := fixturePrerequisiteSigner.Public().(ed25519.PublicKey)
 	receipts := make([]ReceiptInput, 0, len(RequiredReceiptTasks))
 	for _, task := range RequiredReceiptTasks {
 		path := filepath.Join(directory, task+".md")
-		content, err := json.Marshal(map[string]any{
+		document := map[string]any{
 			"schema_version": 1,
 			"task":           task,
 			"disposition":    "accepted",
@@ -263,7 +281,21 @@ func generationFixture(t *testing.T) GenerationConfig {
 			}},
 			"provenance": "independent-review",
 			"receipt_id": "receipt-" + task,
-		})
+		}
+		unsigned, err := json.Marshal(document)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var receipt PrerequisiteReceipt
+		if err := json.Unmarshal(unsigned, &receipt); err != nil {
+			t.Fatal(err)
+		}
+		payload, err := prerequisiteReceiptPayload(receipt)
+		if err != nil {
+			t.Fatal(err)
+		}
+		document["attestation"] = map[string]any{"key_id": "fixture-reviewer", "signature": base64.StdEncoding.EncodeToString(ed25519.Sign(fixturePrerequisiteSigner, payload))}
+		content, err := json.Marshal(document)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -274,11 +306,12 @@ func generationFixture(t *testing.T) GenerationConfig {
 		receipts = append(receipts, ReceiptInput{Task: task, Path: path, ExpectedSHA256: hex.EncodeToString(digest[:])})
 	}
 	return GenerationConfig{
-		RepoRoot:         repoRoot(t),
-		SourceCommit:     commit,
-		SourceTree:       tree,
-		Receipts:         receipts,
-		ATBlockerReceipt: "AT capability receipt",
+		RepoRoot:                repoRoot(t),
+		SourceCommit:            commit,
+		SourceTree:              tree,
+		Receipts:                receipts,
+		ATBlockerReceipt:        "AT capability receipt",
+		trustedPrerequisiteKeys: map[string]ed25519.PublicKey{"fixture-reviewer": public},
 	}
 }
 
@@ -293,6 +326,21 @@ func rewritePrerequisiteReceipt(t *testing.T, input *ReceiptInput, mutate func(m
 		t.Fatal(err)
 	}
 	mutate(receipt)
+	if attestation, ok := receipt["attestation"].(map[string]any); ok && attestation["key_id"] == "fixture-reviewer" {
+		unsigned, err := json.Marshal(receipt)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var typed PrerequisiteReceipt
+		if err := json.Unmarshal(unsigned, &typed); err != nil {
+			t.Fatal(err)
+		}
+		payload, err := prerequisiteReceiptPayload(typed)
+		if err != nil {
+			t.Fatal(err)
+		}
+		attestation["signature"] = base64.StdEncoding.EncodeToString(ed25519.Sign(fixturePrerequisiteSigner, payload))
+	}
 	content, err = json.Marshal(receipt)
 	if err != nil {
 		t.Fatal(err)

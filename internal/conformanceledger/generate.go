@@ -1,7 +1,9 @@
 package conformanceledger
 
 import (
+	"crypto/ed25519"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -51,6 +53,15 @@ type PrerequisiteReceipt struct {
 	GateEvidence  []PrerequisiteGate    `json:"gate_evidence"`
 	Provenance    string                `json:"provenance"`
 	ReceiptID     string                `json:"receipt_id"`
+	Attestation   PrerequisiteSignature `json:"attestation"`
+}
+
+// PrerequisiteSignature is an Ed25519 signature over the canonical typed
+// receipt payload. Caller-provided file hashes only locate bytes; a pinned
+// independent authority must authenticate their semantic claims.
+type PrerequisiteSignature struct {
+	KeyID     string `json:"key_id"`
+	Signature string `json:"signature"`
 }
 
 type PrerequisiteCandidate struct {
@@ -69,11 +80,12 @@ type PrerequisiteGate struct {
 }
 
 type GenerationConfig struct {
-	RepoRoot         string
-	SourceCommit     string
-	SourceTree       string
-	Receipts         []ReceiptInput
-	ATBlockerReceipt string
+	RepoRoot                string
+	SourceCommit            string
+	SourceTree              string
+	Receipts                []ReceiptInput
+	ATBlockerReceipt        string
+	trustedPrerequisiteKeys map[string]ed25519.PublicKey
 }
 
 func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
@@ -83,7 +95,7 @@ func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
 	if err := verifyGitIdentity(config.RepoRoot, config.SourceCommit, config.SourceTree); err != nil {
 		return Ledger{}, Inventory{}, err
 	}
-	receiptMetadata, err := authenticateReceipts(config.Receipts, config.SourceCommit, config.SourceTree)
+	receiptMetadata, err := authenticateReceipts(config)
 	if err != nil {
 		return Ledger{}, Inventory{}, err
 	}
@@ -214,7 +226,16 @@ func verifyGitIdentity(repoRoot, commit, tree string) error {
 	return nil
 }
 
-func authenticateReceipts(inputs []ReceiptInput, sourceCommit, sourceTree string) (map[string]string, error) {
+func authenticateReceipts(config GenerationConfig) (map[string]string, error) {
+	inputs, sourceCommit, sourceTree := config.Receipts, config.SourceCommit, config.SourceTree
+	trusted := config.trustedPrerequisiteKeys
+	if len(trusted) == 0 {
+		var err error
+		trusted, err = loadConformanceATTrustedKeys(config.RepoRoot)
+		if err != nil {
+			return nil, fmt.Errorf("load pinned prerequisite trust: %w", err)
+		}
+	}
 	byTask := make(map[string]ReceiptInput, len(inputs))
 	paths := make(map[string]string, len(inputs))
 	for _, input := range inputs {
@@ -258,6 +279,9 @@ func authenticateReceipts(inputs []ReceiptInput, sourceCommit, sourceTree string
 		}
 		if err := validatePrerequisiteReceipt(receipt, task, sourceCommit, sourceTree); err != nil {
 			return nil, err
+		}
+		if err := verifyPrerequisiteSignature(receipt, trusted); err != nil {
+			return nil, fmt.Errorf("prerequisite receipt %s trusted prerequisite signature: %w", task, err)
 		}
 		if other, duplicate := receiptIDs[receipt.ReceiptID]; duplicate {
 			return nil, fmt.Errorf("aliased prerequisite receipt identity %s used by %s and %s", receipt.ReceiptID, other, task)
@@ -309,6 +333,30 @@ func validatePrerequisiteReceipt(receipt PrerequisiteReceipt, task, sourceCommit
 		}
 	}
 	return nil
+}
+
+func verifyPrerequisiteSignature(receipt PrerequisiteReceipt, trusted map[string]ed25519.PublicKey) error {
+	key := trusted[receipt.Attestation.KeyID]
+	if len(key) != ed25519.PublicKeySize {
+		return fmt.Errorf("unknown pinned signer %q", receipt.Attestation.KeyID)
+	}
+	signature, err := base64.StdEncoding.DecodeString(receipt.Attestation.Signature)
+	if err != nil || len(signature) != ed25519.SignatureSize {
+		return fmt.Errorf("invalid signature encoding")
+	}
+	payload, err := prerequisiteReceiptPayload(receipt)
+	if err != nil {
+		return err
+	}
+	if !ed25519.Verify(key, payload, signature) {
+		return fmt.Errorf("signature does not verify")
+	}
+	return nil
+}
+
+func prerequisiteReceiptPayload(receipt PrerequisiteReceipt) ([]byte, error) {
+	receipt.Attestation = PrerequisiteSignature{}
+	return json.Marshal(receipt)
 }
 
 func validPrerequisiteSHA256(value string) bool {
