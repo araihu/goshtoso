@@ -3,17 +3,17 @@ package conformanceledger
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 )
 
 var RequiredReceiptTasks = []string{
-	"T-GS-001",
-	"T-GS-003",
 	"T-GS-008",
 	"T-GS-011",
 	"T-GS-012",
@@ -27,10 +27,45 @@ var RequiredReceiptTasks = []string{
 	"T-GS-022",
 }
 
+const prerequisiteReceiptSchemaVersion = 1
+
+var authorizedPrerequisiteProvenance = map[string]bool{
+	"independent-review": true,
+}
+
 type ReceiptInput struct {
 	Task           string `json:"task"`
 	Path           string `json:"path"`
 	ExpectedSHA256 string `json:"expected_sha256"`
+}
+
+// PrerequisiteReceipt is the typed, content-authenticated prerequisite input
+// for T-GS-010. ReceiptInput authenticates these bytes; this envelope binds
+// their semantic claim to the exact candidate identity.
+type PrerequisiteReceipt struct {
+	SchemaVersion int                   `json:"schema_version"`
+	Task          string                `json:"task"`
+	Disposition   string                `json:"disposition"`
+	Candidate     PrerequisiteCandidate `json:"candidate"`
+	Report        PrerequisiteReport    `json:"report"`
+	GateEvidence  []PrerequisiteGate    `json:"gate_evidence"`
+	Provenance    string                `json:"provenance"`
+	ReceiptID     string                `json:"receipt_id"`
+}
+
+type PrerequisiteCandidate struct {
+	Commit string `json:"commit"`
+	Tree   string `json:"tree"`
+}
+
+type PrerequisiteReport struct {
+	SHA256 string `json:"sha256"`
+}
+
+type PrerequisiteGate struct {
+	Name   string `json:"name"`
+	Tool   string `json:"tool"`
+	SHA256 string `json:"sha256"`
 }
 
 type GenerationConfig struct {
@@ -48,7 +83,7 @@ func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
 	if err := verifyGitIdentity(config.RepoRoot, config.SourceCommit, config.SourceTree); err != nil {
 		return Ledger{}, Inventory{}, err
 	}
-	receiptMetadata, err := authenticateReceipts(config.Receipts)
+	receiptMetadata, err := authenticateReceipts(config.Receipts, config.SourceCommit, config.SourceTree)
 	if err != nil {
 		return Ledger{}, Inventory{}, err
 	}
@@ -177,8 +212,9 @@ func verifyGitIdentity(repoRoot, commit, tree string) error {
 	return nil
 }
 
-func authenticateReceipts(inputs []ReceiptInput) (map[string]string, error) {
+func authenticateReceipts(inputs []ReceiptInput, sourceCommit, sourceTree string) (map[string]string, error) {
 	byTask := make(map[string]ReceiptInput, len(inputs))
+	paths := make(map[string]string, len(inputs))
 	for _, input := range inputs {
 		if input.Task == "" || input.Path == "" || input.ExpectedSHA256 == "" {
 			return nil, fmt.Errorf("receipt task, path, and expected SHA-256 are required")
@@ -186,9 +222,18 @@ func authenticateReceipts(inputs []ReceiptInput) (map[string]string, error) {
 		if _, duplicate := byTask[input.Task]; duplicate {
 			return nil, fmt.Errorf("duplicate receipt task %s", input.Task)
 		}
+		canonicalPath, err := filepath.Abs(input.Path)
+		if err != nil {
+			return nil, fmt.Errorf("resolve receipt %s path: %w", input.Task, err)
+		}
+		if other, duplicate := paths[canonicalPath]; duplicate {
+			return nil, fmt.Errorf("aliased prerequisite receipt path %s serves both %s and %s", canonicalPath, other, input.Task)
+		}
+		paths[canonicalPath] = input.Task
 		byTask[input.Task] = input
 	}
 	metadata := map[string]string{}
+	receiptIDs := make(map[string]string, len(inputs))
 	for _, task := range RequiredReceiptTasks {
 		input, ok := byTask[task]
 		if !ok {
@@ -203,13 +248,73 @@ func authenticateReceipts(inputs []ReceiptInput) (map[string]string, error) {
 		if got != strings.ToLower(input.ExpectedSHA256) {
 			return nil, fmt.Errorf("receipt %s SHA-256 = %s, want %s", task, got, input.ExpectedSHA256)
 		}
+		var receipt PrerequisiteReceipt
+		decoder := json.NewDecoder(strings.NewReader(string(content)))
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&receipt); err != nil {
+			return nil, fmt.Errorf("parse prerequisite receipt %s: %w", task, err)
+		}
+		if err := validatePrerequisiteReceipt(receipt, task, sourceCommit, sourceTree); err != nil {
+			return nil, err
+		}
+		if other, duplicate := receiptIDs[receipt.ReceiptID]; duplicate {
+			return nil, fmt.Errorf("aliased prerequisite receipt identity %s used by %s and %s", receipt.ReceiptID, other, task)
+		}
+		receiptIDs[receipt.ReceiptID] = task
 		metadata["receipt."+task+".path"] = input.Path
 		metadata["receipt."+task+".sha256"] = got
+		metadata["receipt."+task+".id"] = receipt.ReceiptID
+		metadata["receipt."+task+".report_sha256"] = receipt.Report.SHA256
+		metadata["receipt."+task+".provenance"] = receipt.Provenance
 	}
 	if len(byTask) != len(RequiredReceiptTasks) {
 		return nil, fmt.Errorf("receipt set has %d entries, want exactly %d", len(byTask), len(RequiredReceiptTasks))
 	}
 	return metadata, nil
+}
+
+func validatePrerequisiteReceipt(receipt PrerequisiteReceipt, task, sourceCommit, sourceTree string) error {
+	if receipt.SchemaVersion != prerequisiteReceiptSchemaVersion {
+		return fmt.Errorf("prerequisite receipt %s schema version %d, want %d", task, receipt.SchemaVersion, prerequisiteReceiptSchemaVersion)
+	}
+	if receipt.Task != task {
+		return fmt.Errorf("prerequisite receipt task %s, want %s", receipt.Task, task)
+	}
+	if receipt.Disposition != "accepted" {
+		return fmt.Errorf("prerequisite receipt %s requires accepted disposition", task)
+	}
+	if receipt.Candidate.Commit != sourceCommit {
+		return fmt.Errorf("prerequisite receipt %s candidate commit %s, want %s", task, receipt.Candidate.Commit, sourceCommit)
+	}
+	if receipt.Candidate.Tree != sourceTree {
+		return fmt.Errorf("prerequisite receipt %s candidate tree %s, want %s", task, receipt.Candidate.Tree, sourceTree)
+	}
+	if !validPrerequisiteSHA256(receipt.Report.SHA256) {
+		return fmt.Errorf("prerequisite receipt %s missing valid report SHA-256", task)
+	}
+	if !authorizedPrerequisiteProvenance[receipt.Provenance] {
+		return fmt.Errorf("prerequisite receipt %s lacks authorized provenance", task)
+	}
+	if strings.TrimSpace(receipt.ReceiptID) == "" {
+		return fmt.Errorf("prerequisite receipt %s missing receipt identity", task)
+	}
+	if len(receipt.GateEvidence) == 0 {
+		return fmt.Errorf("prerequisite receipt %s missing gate evidence", task)
+	}
+	for index, gate := range receipt.GateEvidence {
+		if strings.TrimSpace(gate.Name) == "" || strings.TrimSpace(gate.Tool) == "" || !validPrerequisiteSHA256(gate.SHA256) {
+			return fmt.Errorf("prerequisite receipt %s gate evidence %d is invalid", task, index)
+		}
+	}
+	return nil
+}
+
+func validPrerequisiteSHA256(value string) bool {
+	if len(value) != sha256.Size*2 {
+		return false
+	}
+	_, err := hex.DecodeString(value)
+	return err == nil
 }
 
 func appendSourceRows(rows []Row, axis string, items []SourceItem, assign func(*Row, string)) []Row {
