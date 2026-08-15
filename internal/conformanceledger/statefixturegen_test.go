@@ -25,10 +25,21 @@ func TestGenerateStateFixtureSourceCoversEveryStateExactlyOnce(t *testing.T) {
 	}
 }
 
-func TestGenerateStateFixtureSourceFailsClosedForUncontractedPublicConfigStates(t *testing.T) {
-	_, err := GenerateStateFixtureSource(repoRoot(t))
-	if err == nil || !strings.Contains(err.Error(), "actiongroup.Config.Label") || !strings.Contains(err.Error(), "alert.Config.Dismissible") {
-		t.Fatalf("uncontracted public configuration state error = %v", err)
+func TestGenerateStateFixtureSourceUsesMaintainedPublicConfigContracts(t *testing.T) {
+	source, err := GenerateStateFixtureSource(repoRoot(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, state := range []string{
+		"textinput/Config.Disabled",
+		"textinput/Config.Required",
+		"textinput/Config.Readonly",
+		"checkbox/Config.Checked",
+		"checkbox/Config.Disabled",
+	} {
+		if !strings.Contains(string(source), `State: "`+state+`"`) {
+			t.Errorf("generated fixtures omit maintained configuration state %s", state)
+		}
 	}
 }
 

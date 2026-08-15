@@ -153,25 +153,30 @@ func GenerateStateFixtureSource(repoRoot string) ([]byte, error) {
 			return nil, fmt.Errorf("invalid state %q", state.Value)
 		}
 		var expression string
-		if strings.HasSuffix(parts[1], "/default") || parts[1] == "default" {
-			if adapter := defaultStateFixtureAdapters[state.Source.Symbol]; adapter != "" {
-				expression = adapter
-				if strings.Contains(adapter, "%[1]") {
-					expression = fmt.Sprintf(adapter, stateFixtureID(state.Value))
+		if contract, ok := configStateContractFor(state.Value); ok {
+			expression = fmt.Sprintf(contract.Fixture, stateFixtureID(state.Value))
+		}
+		if expression == "" {
+			if strings.HasSuffix(parts[1], "/default") || parts[1] == "default" {
+				if adapter := defaultStateFixtureAdapters[state.Source.Symbol]; adapter != "" {
+					expression = adapter
+					if strings.Contains(adapter, "%[1]") {
+						expression = fmt.Sprintf(adapter, stateFixtureID(state.Value))
+					}
+				} else {
+					expression = defaults[state.Source.Symbol]
 				}
 			} else {
-				expression = defaults[state.Source.Symbol]
+				typeAndConstant := strings.Split(parts[1], ".")
+				if len(typeAndConstant) != 2 {
+					return nil, fmt.Errorf("invalid typed state %q", state.Value)
+				}
+				adapter := stateFixtureAdapters[parts[0]+"/"+typeAndConstant[0]]
+				if adapter == "" {
+					return nil, fmt.Errorf("missing state fixture adapter for %s", parts[0]+"/"+typeAndConstant[0])
+				}
+				expression = fmt.Sprintf(adapter, typeAndConstant[1], stateFixtureID(state.Value))
 			}
-		} else {
-			typeAndConstant := strings.Split(parts[1], ".")
-			if len(typeAndConstant) != 2 {
-				return nil, fmt.Errorf("invalid typed state %q", state.Value)
-			}
-			adapter := stateFixtureAdapters[parts[0]+"/"+typeAndConstant[0]]
-			if adapter == "" {
-				return nil, fmt.Errorf("missing state fixture adapter for %s", parts[0]+"/"+typeAndConstant[0])
-			}
-			expression = fmt.Sprintf(adapter, typeAndConstant[1], stateFixtureID(state.Value))
 		}
 		if expression == "" {
 			return nil, fmt.Errorf("missing default fixture for %s (%s)", state.Value, state.Source.Symbol)
@@ -210,6 +215,15 @@ func GenerateStateFixtureSource(repoRoot string) ([]byte, error) {
 		return nil, fmt.Errorf("format generated state fixtures: %w; around line 186: %s", err, strings.Join(lines[180:min(195, len(lines))], "\n"))
 	}
 	return formatted, nil
+}
+
+func configStateContractFor(state string) (StateExecutionContract, bool) {
+	for _, contract := range maintainedConfigStateContracts {
+		if contract.State == state {
+			return contract, true
+		}
+	}
+	return StateExecutionContract{}, false
 }
 
 func deriveDefaultFixtureExpressions(repoRoot string) (map[string]string, map[string]string, error) {

@@ -49,21 +49,23 @@ var lifecycleStateAuthorities = []struct {
 	{Value: "avatar/lifecycle/loading-error", Path: "components/avatar/avatar.templ", Marker: "x-on:error"},
 }
 
-// StateExecutionContract names the real fixture and action authority required
-// before a public Config field can enter the conformance state axis. Source
-// discovery is deliberately broader than this registry: an uncovered exported
-// Config field fails generation instead of becoming a guessed state or N/A.
+// StateExecutionContract names a maintained finite Config-state authority.
+// This is intentionally not every exported Config field: labels, classes,
+// attributes, endpoints, and other transport/presentation values are inputs,
+// not independently executable states. Each authority must still resolve to
+// an exported Config field and a real fixture/action contract.
 type StateExecutionContract struct {
+	State   string
 	Fixture string
 	Action  string
 }
 
 var maintainedConfigStateContracts = map[string]StateExecutionContract{
-	"checkbox.Config.Checked":   {Fixture: `checkbox.Checkbox(checkbox.Config{Checked:true})`, Action: "keyboard Space changes checked state"},
-	"checkbox.Config.Disabled":  {Fixture: `checkbox.Checkbox(checkbox.Config{Disabled:true})`, Action: "keyboard focus rejects disabled control"},
-	"textinput.Config.Disabled": {Fixture: `textinput.TextInput(textinput.Config{Disabled:true})`, Action: "keyboard focus rejects disabled input"},
-	"textinput.Config.Readonly": {Fixture: `textinput.TextInput(textinput.Config{Readonly:true})`, Action: "keyboard edit preserves readonly value"},
-	"textinput.Config.Required": {Fixture: `textinput.TextInput(textinput.Config{Required:true})`, Action: "keyboard focus exposes required state"},
+	"checkbox.Config.Checked":   {State: "checkbox/Config.Checked", Fixture: `checkbox.Checkbox(checkbox.Config{ID:%[1]q, Name:%[1]q, Label:"State", Checked:true})`, Action: "keyboard Space changes checked state"},
+	"checkbox.Config.Disabled":  {State: "checkbox/Config.Disabled", Fixture: `checkbox.Checkbox(checkbox.Config{ID:%[1]q, Name:%[1]q, Label:"State", Disabled:true})`, Action: "keyboard focus rejects disabled control"},
+	"textinput.Config.Disabled": {State: "textinput/Config.Disabled", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Disabled:true})`, Action: "keyboard focus rejects disabled input"},
+	"textinput.Config.Readonly": {State: "textinput/Config.Readonly", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Readonly:true})`, Action: "keyboard edit preserves readonly value"},
+	"textinput.Config.Required": {State: "textinput/Config.Required", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Required:true})`, Action: "keyboard focus exposes required state"},
 }
 
 func DeriveInventory(repoRoot string) (Inventory, error) {
@@ -142,22 +144,37 @@ func deriveLifecycleStates(repoRoot string) ([]SourceItem, error) {
 }
 
 func ValidateStateExecutionContracts(repoRoot string) error {
+	_, err := deriveMaintainedConfigStates(repoRoot)
+	return err
+}
+
+func deriveMaintainedConfigStates(repoRoot string) ([]SourceItem, error) {
 	fields, err := discoverExportedConfigFields(repoRoot)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	var uncovered []string
+	byKey := make(map[string]SourceItem, len(fields))
 	for _, field := range fields {
-		contract, ok := maintainedConfigStateContracts[field.Value]
-		if !ok || strings.TrimSpace(contract.Fixture) == "" || strings.TrimSpace(contract.Action) == "" {
-			uncovered = append(uncovered, field.Value)
+		byKey[field.Value] = field
+	}
+	states := make([]SourceItem, 0, len(maintainedConfigStateContracts))
+	for key, contract := range maintainedConfigStateContracts {
+		field, exists := byKey[key]
+		if !exists {
+			return nil, fmt.Errorf("maintained Config state authority %s is absent from exported Config source", key)
+		}
+		if strings.TrimSpace(contract.State) == "" || strings.TrimSpace(contract.Fixture) == "" || strings.TrimSpace(contract.Action) == "" {
+			return nil, fmt.Errorf("maintained Config state authority %s lacks state, fixture, or action contract", key)
+		}
+		states = append(states, SourceItem{Value: contract.State, Source: field.Source})
+	}
+	sortSourceItems(states)
+	for index := 1; index < len(states); index++ {
+		if states[index].Value == states[index-1].Value {
+			return nil, fmt.Errorf("duplicate maintained Config state %s", states[index].Value)
 		}
 	}
-	if len(uncovered) > 0 {
-		sort.Strings(uncovered)
-		return fmt.Errorf("uncontracted exported Config fields require real fixture/action contracts: %s", strings.Join(uncovered, ", "))
-	}
-	return nil
+	return states, nil
 }
 
 func discoverExportedConfigFields(repoRoot string) ([]SourceItem, error) {
@@ -420,6 +437,11 @@ func deriveStateMetadata(repoRoot string, kinds []SourceItem) ([]SourceItem, err
 	if err != nil {
 		return nil, fmt.Errorf("derive state metadata: %w", err)
 	}
+	configStates, err := deriveMaintainedConfigStates(repoRoot)
+	if err != nil {
+		return nil, err
+	}
+	states = append(states, configStates...)
 	sortSourceItems(states)
 	for index := 1; index < len(states); index++ {
 		if states[index].Value == states[index-1].Value {

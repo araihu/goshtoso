@@ -83,6 +83,7 @@ func TestDeriveStateMetadataRejectsParserErrorsAndDuplicates(t *testing.T) {
 	})
 	t.Run("duplicate", func(t *testing.T) {
 		repo := t.TempDir()
+		writeMaintainedConfigStateAuthorities(t, repo)
 		path := filepath.Join(repo, "components", "duplicate")
 		if err := os.MkdirAll(path, 0o755); err != nil {
 			t.Fatal(err)
@@ -95,6 +96,26 @@ func TestDeriveStateMetadataRejectsParserErrorsAndDuplicates(t *testing.T) {
 			t.Fatalf("duplicate state error = %v", err)
 		}
 	})
+}
+
+func writeMaintainedConfigStateAuthorities(t *testing.T, repo string) {
+	t.Helper()
+	for _, fixture := range []struct {
+		packageName string
+		fields      string
+	}{
+		{packageName: "checkbox", fields: "Checked bool\nDisabled bool"},
+		{packageName: "textinput", fields: "Disabled bool\nRequired bool\nReadonly bool"},
+	} {
+		path := filepath.Join(repo, "components", fixture.packageName)
+		if err := os.MkdirAll(path, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		source := "package " + fixture.packageName + "\ntype Config struct {\n" + fixture.fields + "\n}\n"
+		if err := os.WriteFile(filepath.Join(path, "types.go"), []byte(source), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
 }
 
 func TestValidateRejectsDuplicateRowIDs(t *testing.T) {
@@ -115,7 +136,7 @@ func TestDeriveInventoryUsesCurrentSourceAuthorities(t *testing.T) {
 	assertLen(t, "renderables", inventory.Renderables, 84)
 	assertLen(t, "kinds", inventory.Kinds, 84)
 	assertLen(t, "routes", inventory.Routes, 51)
-	assertLen(t, "configuration/default states", inventory.States, 347)
+	assertLen(t, "configuration/default states", inventory.States, 352)
 	assertLen(t, "dynamic lifecycle states", inventory.LifecycleStates, 13)
 	assertLen(t, "themes", inventory.Themes, 16)
 	wantEdges := []int{640, 768, 1024, 1280, 1536}
