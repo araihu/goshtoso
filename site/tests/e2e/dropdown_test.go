@@ -119,6 +119,51 @@ func TestDropdown_ClickVariant(t *testing.T) {
 	})
 }
 
+func TestDropdownReducedMotionOpensAndClosesWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	menu := page.Locator("#dropdown-click [role='menu']")
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		if (!menu || getComputedStyle(menu).display === "none") return false;
+		const style = getComputedStyle(menu);
+		return style.transitionProperty === "none" &&
+			style.opacity === "1" &&
+			style.transform === "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return !!menu && getComputedStyle(menu).display === "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := menu.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "reduced-motion dropdown should close immediately")
+}
+
 func TestDropdownEscapeFocusRestorationIsReopenSafe(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")

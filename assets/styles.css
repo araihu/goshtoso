@@ -1571,6 +1571,12 @@
     --tw-scale-z: 90%;
     scale: var(--tw-scale-x) var(--tw-scale-y);
   }
+  .scale-95 {
+    --tw-scale-x: 95%;
+    --tw-scale-y: 95%;
+    --tw-scale-z: 95%;
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
   .scale-100 {
     --tw-scale-x: 100%;
     --tw-scale-y: 100%;
@@ -3951,6 +3957,10 @@
   .delay-200 {
     transition-delay: 200ms;
   }
+  .duration-100 {
+    --tw-duration: 100ms;
+    transition-duration: 100ms;
+  }
   .duration-150 {
     --tw-duration: 150ms;
     transition-duration: 150ms;
@@ -5006,8 +5016,17 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .motion-reduce\:scale-100 {
+      --tw-scale-x: 100%;
+      --tw-scale-y: 100%;
+      --tw-scale-z: 100%;
+      scale: var(--tw-scale-x) var(--tw-scale-y);
+    }
     .motion-reduce\:animate-none {
       animation: none;
+    }
+    .motion-reduce\:opacity-100 {
+      opacity: 100%;
     }
     .motion-reduce\:transition-opacity {
       transition-property: opacity;

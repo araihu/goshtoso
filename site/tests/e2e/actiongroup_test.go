@@ -316,6 +316,51 @@ func TestActionGroupPartialCollapseKeyboardNavigation(t *testing.T) {
 	failures.RequireEmpty(t)
 }
 
+func TestActionGroupOverflowInheritsReducedMotionDropdownContract(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
+		Viewport: &playwright.Size{Width: 1440, Height: 1000},
+	})
+	err := page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	})
+	require.NoError(t, err)
+	_, err = page.Goto(baseURL+"/components/action-group", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() =>
+		document.querySelector("#action-group-stacked [data-goshtoso-action-group]")?.dataset.actionGroupInitialized === "true"
+	`, nil)
+	require.NoError(t, err)
+
+	withoutStorage := page.GetByRole("button", playwright.PageGetByRoleOptions{Name: "Use without storage"})
+	if visible, visibleErr := withoutStorage.IsVisible(); visibleErr == nil && visible {
+		require.NoError(t, withoutStorage.Click())
+	}
+
+	setActionGroupWidthAndWait(t, page, "#action-group-stacked", 220, "collapsed")
+	trigger := page.Locator("#action-group-stacked [data-action-group-overflow] button").First()
+	menu := page.Locator("#action-group-stacked [data-action-group-overflow] [role='menu']")
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#action-group-stacked [data-action-group-overflow] [role=menu]");
+		if (!menu || getComputedStyle(menu).display === "none") return false;
+		const style = getComputedStyle(menu);
+		return style.transitionProperty === "none" &&
+			style.opacity === "1" &&
+			style.transform === "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := menu.IsVisible()
+	require.NoError(t, err)
+	require.True(t, visible)
+}
+
 func waitForActionGroupTriggerFocus(t *testing.T, page playwright.Page) {
 	t.Helper()
 	_, err := page.WaitForFunction(`() =>
