@@ -27,7 +27,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/araihu/goshtoso/internal/scrollregionidentity"
 	"golang.org/x/mod/modfile"
 )
 
@@ -45,16 +44,37 @@ var (
 
 // scrollRegionCandidatePath binds one worktree path to its exact candidate
 // bytes. The canonical path list itself is hashed into ManifestSHA256.
-type scrollRegionCandidatePath = scrollregionidentity.CandidatePath
+type scrollRegionCandidatePath struct {
+	Path   string `json:"path"`
+	SHA256 string `json:"sha256"`
+}
 
 // scrollRegionDependencyPins are derived again from the candidate source, not
 // trusted because they merely appear in a caller-provided sidecar.
-type scrollRegionDependencyPins = scrollregionidentity.DependencyPins
+type scrollRegionDependencyPins struct {
+	RootGoDirective  string `json:"root_go_directive"`
+	SiteGoDirective  string `json:"site_go_directive"`
+	Templ            string `json:"templ"`
+	PlaywrightGo     string `json:"playwright_go"`
+	AxeCore          string `json:"axe_core"`
+	AxeArchiveSHA256 string `json:"axe_archive_sha256"`
+	AxeScriptSHA256  string `json:"axe_script_sha256"`
+}
 
 // scrollRegionCandidateIdentity is the only acceptable sealing input for a
 // dirty candidate. Each field is checked against Git and source bytes before a
 // B-FULL or AT receipt can claim final identity.
-type scrollRegionCandidateIdentity = scrollregionidentity.CandidateIdentity
+type scrollRegionCandidateIdentity struct {
+	Schema         string                      `json:"schema"`
+	RepositoryURL  string                      `json:"repository_url"`
+	Head           string                      `json:"head"`
+	Tree           string                      `json:"tree"`
+	CandidateTree  string                      `json:"candidate_tree"`
+	ManifestSHA256 string                      `json:"manifest_sha256"`
+	StatusSHA256   string                      `json:"status_sha256"`
+	Paths          []scrollRegionCandidatePath `json:"paths"`
+	DependencyPins scrollRegionDependencyPins  `json:"dependency_pins"`
+}
 
 func readScrollRegionCandidateIdentity(path string) (scrollRegionCandidateIdentity, error) {
 	content, err := os.ReadFile(path)
@@ -80,7 +100,41 @@ func readScrollRegionCandidateIdentity(path string) (scrollRegionCandidateIdenti
 // verifyScrollRegionCandidateIdentity independently derives all mutable Git and
 // source facts. A sidecar is an input contract, never evidence by assertion.
 func verifyScrollRegionCandidateIdentity(repositoryRoot, sidecarPath string) (scrollRegionCandidateIdentity, error) {
-	return scrollregionidentity.Verify(repositoryRoot, sidecarPath)
+	identity, err := readScrollRegionCandidateIdentity(sidecarPath)
+	if err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	if err := validateScrollRegionCandidateIdentityShape(identity); err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	head, err := scrollRegionGitOutput(repositoryRoot, nil, "rev-parse", "HEAD")
+	if err != nil || strings.TrimSpace(head) != identity.Head {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity HEAD mismatch: %w", err)
+	}
+	tree, err := scrollRegionGitOutput(repositoryRoot, nil, "rev-parse", "HEAD^{tree}")
+	if err != nil || strings.TrimSpace(tree) != identity.Tree {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity tree mismatch: %w", err)
+	}
+	remote, err := scrollRegionGitOutput(repositoryRoot, nil, "config", "--get", "remote.origin.url")
+	if err != nil || strings.TrimSpace(remote) != identity.RepositoryURL {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity repository URL mismatch: %w", err)
+	}
+	status, err := scrollRegionGitOutput(repositoryRoot, nil, "status", "--porcelain=v1", "--untracked-files=all")
+	if err != nil || scrollRegionBFullSHA256([]byte(status)) != identity.StatusSHA256 {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity status SHA-256 mismatch: %w", err)
+	}
+	candidateTree, err := scrollRegionCandidateTree(repositoryRoot)
+	if err != nil || candidateTree != identity.CandidateTree {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity candidate tree mismatch: %w", err)
+	}
+	if err := verifyScrollRegionCandidatePaths(repositoryRoot, identity); err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	pins, err := scrollRegionSourceDependencyPins(repositoryRoot)
+	if err != nil || !reflect.DeepEqual(pins, identity.DependencyPins) {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity dependency pins mismatch: %w", err)
+	}
+	return identity, nil
 }
 
 // scrollRegionBFullIdentityBinding distinguishes final, independently verified
