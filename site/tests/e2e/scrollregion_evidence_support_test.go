@@ -108,31 +108,49 @@ func verifyScrollRegionCandidateIdentity(repositoryRoot, sidecarPath string) (sc
 		return scrollRegionCandidateIdentity{}, err
 	}
 	head, err := scrollRegionGitOutput(repositoryRoot, nil, "rev-parse", "HEAD")
-	if err != nil || strings.TrimSpace(head) != identity.Head {
-		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity HEAD mismatch: %w", err)
+	if err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	if strings.TrimSpace(head) != identity.Head {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity HEAD mismatch")
 	}
 	tree, err := scrollRegionGitOutput(repositoryRoot, nil, "rev-parse", "HEAD^{tree}")
-	if err != nil || strings.TrimSpace(tree) != identity.Tree {
-		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity tree mismatch: %w", err)
+	if err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	if strings.TrimSpace(tree) != identity.Tree {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity tree mismatch")
 	}
 	remote, err := scrollRegionGitOutput(repositoryRoot, nil, "config", "--get", "remote.origin.url")
-	if err != nil || strings.TrimSpace(remote) != identity.RepositoryURL {
-		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity repository URL mismatch: %w", err)
+	if err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	if strings.TrimSpace(remote) != identity.RepositoryURL {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity repository URL mismatch")
 	}
 	status, err := scrollRegionGitOutput(repositoryRoot, nil, "status", "--porcelain=v1", "--untracked-files=all")
-	if err != nil || scrollRegionBFullSHA256([]byte(status)) != identity.StatusSHA256 {
-		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity status SHA-256 mismatch: %w", err)
+	if err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	if scrollRegionBFullSHA256([]byte(status)) != identity.StatusSHA256 {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity status SHA-256 mismatch")
 	}
 	candidateTree, err := scrollRegionCandidateTree(repositoryRoot)
-	if err != nil || candidateTree != identity.CandidateTree {
-		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity candidate tree mismatch: %w", err)
+	if err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	if candidateTree != identity.CandidateTree {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity candidate tree mismatch")
 	}
 	if err := verifyScrollRegionCandidatePaths(repositoryRoot, identity); err != nil {
 		return scrollRegionCandidateIdentity{}, err
 	}
 	pins, err := scrollRegionSourceDependencyPins(repositoryRoot)
-	if err != nil || !reflect.DeepEqual(pins, identity.DependencyPins) {
-		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity dependency pins mismatch: %w", err)
+	if err != nil {
+		return scrollRegionCandidateIdentity{}, err
+	}
+	if !reflect.DeepEqual(pins, identity.DependencyPins) {
+		return scrollRegionCandidateIdentity{}, fmt.Errorf("candidate identity dependency pins mismatch")
 	}
 	return identity, nil
 }
