@@ -297,13 +297,34 @@ func mandatoryExecutionRow(row Row) bool {
 	if row.Class != ClassExecution {
 		return false
 	}
-	return strings.HasPrefix(row.ID, "execution/") ||
-		strings.HasPrefix(row.ID, "at/") ||
-		strings.HasPrefix(row.ID, "mode/") ||
-		strings.HasPrefix(row.ID, "viewport/") ||
-		strings.HasPrefix(row.ID, "zoom/") ||
-		strings.HasPrefix(row.ID, "motion/") ||
-		strings.HasPrefix(row.ID, "input/")
+	switch {
+	case row.AT != "":
+		return strings.HasPrefix(row.ID, "at/"+row.AT+"/")
+	case row.Package != "":
+		return isSourceAxisRow(row, ClassExecution, "package", row.Package)
+	case row.Renderable != "":
+		return isSourceAxisRow(row, ClassExecution, "renderable", row.Renderable)
+	case row.Kind != "":
+		return isSourceAxisRow(row, ClassExecution, "kind", row.Kind)
+	case row.Route != "":
+		return isSourceAxisRow(row, ClassExecution, "route", row.Route)
+	case row.Theme != "":
+		return isSourceAxisRow(row, ClassExecution, "theme", row.Theme)
+	case row.State != "":
+		return isSourceAxisRow(row, ClassExecution, "state", row.State) || isSourceAxisRow(row, ClassExecution, "lifecycle-state", row.State)
+	case row.Mode != "":
+		return row.ID == "mode/"+row.Mode
+	case row.Viewport != 0:
+		return row.ID == fmt.Sprintf("viewport/%d", row.Viewport)
+	case row.Zoom != 0:
+		return row.ID == fmt.Sprintf("zoom/%d", row.Zoom)
+	case row.Motion != "":
+		return row.ID == "motion/"+row.Motion
+	case row.Input != "":
+		return row.ID == "input/"+row.Input
+	default:
+		return false
+	}
 }
 
 func RequiredViewportWidths(edges []int) []int {
@@ -345,26 +366,42 @@ func sourceAxisBijection(axis string, items []SourceItem, rows []Row, value func
 				problems = append(problems, fmt.Sprintf("%s %s row %s has class %s, want %s", expected.name, axis, row.ID, row.Class, expected.class))
 				continue
 			}
-			counts[value(row)]++
+			axisValue := value(row)
+			if axisValue != "" && !allowed[axisValue] {
+				problems = append(problems, fmt.Sprintf("unexpected %s %s %s", expected.name, axis, axisValue))
+				continue
+			}
+			if row.ID != ledgerSourceRowID(expected.class, axis, axisValue) {
+				problems = append(problems, fmt.Sprintf("%s %s row ID %s does not match source value %s", expected.name, axis, row.ID, axisValue))
+				continue
+			}
+			counts[axisValue]++
 		}
 		for _, item := range items {
 			if counts[item.Value] != 1 {
 				problems = append(problems, fmt.Sprintf("%s %s %s count = %d, want 1", expected.name, axis, item.Value, counts[item.Value]))
 			}
 		}
-		for item, count := range counts {
-			if item != "" && !allowed[item] {
-				problems = append(problems, fmt.Sprintf("unexpected %s %s %s count = %d", expected.name, axis, item, count))
-			}
-		}
 	}
 	return problems
+}
+
+func ledgerSourceRowID(class EvidenceClass, axis, value string) string {
+	prefix := string(class)
+	if axis == "route" {
+		value = strings.TrimPrefix(value, "/components/")
+	}
+	return prefix + "/" + axis + "/" + strings.ReplaceAll(value, "/", "_")
+}
+
+func isSourceAxisRow(row Row, class EvidenceClass, axis, value string) bool {
+	return row.Class == class && row.ID == ledgerSourceRowID(class, axis, value)
 }
 
 func validateChecklistProvenance(rows []Row) []string {
 	var problems []string
 	for _, row := range rows {
-		if !strings.HasPrefix(row.ID, "inventory/route/") && !strings.HasPrefix(row.ID, "execution/route/") {
+		if row.Route == "" || !isSourceAxisRow(row, row.Class, "route", row.Route) {
 			continue
 		}
 		expected, err := ChecklistMappingsForRoute(row.Route)

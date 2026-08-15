@@ -157,9 +157,29 @@ func TestValidateRequiresExactInventoryExecutionBijection(t *testing.T) {
 			break
 		}
 	}
-	if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "execution package "+value+" count = 2, want 1") {
+	if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "execution package row ID") {
 		t.Fatalf("duplicate execution bijection error = %v", err)
 	}
+}
+
+func TestValidateRejectsAxisPrefixCrossAxisEscape(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	packageValue := inventory.Packages[0].Value
+	for index := range ledger.Rows {
+		row := &ledger.Rows[index]
+		if row.ID != "execution/package/"+strings.ReplaceAll(packageValue, "/", "_") {
+			continue
+		}
+		row.ID = "execution/package/" + strings.ReplaceAll(inventory.States[0].Value, "/", "_")
+		if err := Validate(ledger, inventory); err == nil || !strings.Contains(err.Error(), "execution package row ID") {
+			t.Fatalf("axis prefix escape error = %v", err)
+		}
+		return
+	}
+	t.Fatal("package execution row fixture missing")
 }
 
 func TestGenerateSkeletonPersistsChecklistMappingKindAndRationale(t *testing.T) {

@@ -301,7 +301,7 @@ func TestExpectedBFullAxesIncludesSourceDerivedConsumerThemeAndExactCellCount(t 
 		t.Fatal(err)
 	}
 	for _, state := range inventory.States {
-		ledger.Rows = append(ledger.Rows, Row{ID: "execution/state/" + state.Value, Class: ClassExecution, State: state.Value})
+		ledger.Rows = append(ledger.Rows, Row{ID: ledgerSourceRowID(ClassExecution, "state", state.Value), Class: ClassExecution, State: state.Value})
 	}
 	for _, viewport := range []int{390, 639, 640, 641, 704, 767, 768, 769, 896, 1023, 1024, 1025, 1152, 1279, 1280, 1281, 1408, 1440, 1535, 1536, 1537} {
 		ledger.Rows = append(ledger.Rows, Row{Class: ClassExecution, Viewport: viewport})

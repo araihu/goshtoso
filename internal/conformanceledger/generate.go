@@ -133,7 +133,7 @@ func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
 			urls = append(urls, mapping.URL)
 		}
 		ledger.Rows = append(ledger.Rows, Row{
-			ID:                "inventory/route/" + strings.TrimPrefix(route.Value, "/components/"),
+			ID:                ledgerSourceRowID(ClassInventory, "route", route.Value),
 			Class:             ClassInventory,
 			Route:             route.Value,
 			ChecklistURLs:     urls,
@@ -143,7 +143,7 @@ func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
 			ReceiptStatus:     StatusExecuted,
 			Receipt:           "source-derived route and checklist mapping",
 		})
-		execution := blockedRow("execution/route/"+strings.TrimPrefix(route.Value, "/components/"), route.Source, config.ATBlockerReceipt, func(row *Row) { row.Route = route.Value })
+		execution := blockedRow(ledgerSourceRowID(ClassExecution, "route", route.Value), route.Source, config.ATBlockerReceipt, func(row *Row) { row.Route = route.Value })
 		execution.ChecklistURLs = urls
 		execution.ChecklistMappings = mappings
 		ledger.Rows = append(ledger.Rows, execution)
@@ -322,7 +322,7 @@ func validPrerequisiteSHA256(value string) bool {
 func appendSourceRows(rows []Row, axis string, items []SourceItem, assign func(*Row, string)) []Row {
 	for _, item := range items {
 		row := Row{
-			ID:            "inventory/" + axis + "/" + strings.ReplaceAll(item.Value, "/", "_"),
+			ID:            ledgerSourceRowID(ClassInventory, axis, item.Value),
 			Class:         ClassInventory,
 			Sources:       []SourceRef{item.Source},
 			Applicability: Applicable,
@@ -340,7 +340,7 @@ func appendSourceRows(rows []Row, axis string, items []SourceItem, assign func(*
 
 func appendExecutionRows(rows []Row, axis string, items []SourceItem, receipt string, assign func(*Row, string)) []Row {
 	for _, item := range items {
-		row := blockedRow("execution/"+axis+"/"+strings.ReplaceAll(item.Value, "/", "_"), item.Source, receipt, func(row *Row) {
+		row := blockedRow(ledgerSourceRowID(ClassExecution, axis, item.Value), item.Source, receipt, func(row *Row) {
 			assign(row, item.Value)
 		})
 		if item.Action != "" {

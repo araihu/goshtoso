@@ -322,7 +322,7 @@ func ExpectedBFullAxes(ledger Ledger) BFullAxes {
 		Inputs:  []string{"mouse", "keyboard", "touch"},
 	}
 	for _, row := range ledger.Rows {
-		if row.Class == ClassExecution && strings.HasPrefix(row.ID, "execution/state/") {
+		if isSourceAxisRow(row, ClassExecution, "state", row.State) {
 			axes.States = append(axes.States, row.State)
 		}
 		if row.Class == ClassExecution && row.Viewport != 0 {
@@ -401,7 +401,7 @@ func requiredBFullCoverageFromLedger(ledger Ledger) BFullRequiredCoverage {
 			coverage.Kinds = append(coverage.Kinds, row.Kind)
 		case row.Route != "":
 			coverage.Routes = append(coverage.Routes, row.Route)
-		case strings.HasPrefix(row.ID, "inventory/lifecycle-state/"):
+		case isSourceAxisRow(row, ClassInventory, "lifecycle-state", row.State):
 			coverage.LifecycleStates = append(coverage.LifecycleStates, row.State)
 		}
 	}
