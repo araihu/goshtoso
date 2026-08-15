@@ -182,11 +182,45 @@ func TestGenerateSkeletonIsCompleteButCannotCloseBlockedExecutionRows(t *testing
 	if err := Validate(ledger, inventory); err != nil {
 		t.Fatalf("structural validation: %v", err)
 	}
+	delete(ledger.Metadata, "current.uncovered_config_contracts")
+	delete(ledger.Metadata, "current.unverified_lifecycle_action_contracts") // Isolate the pre-existing blocked-AT closure assertion below.
 	if err := ValidateClosure(ledger, inventory); err == nil || !strings.Contains(err.Error(), "at/safari-voiceover/public=blocked") {
 		t.Fatalf("closure error = %v", err)
 	}
 	if ledger.Metadata["current.kind_count"] != "84" || ledger.Metadata["historical.kind_count"] != "83" {
 		t.Fatalf("kind drift metadata = %#v", ledger.Metadata)
+	}
+}
+
+func TestGenerateSkeletonRecordsUncoveredConfigContractsAndClosureFailsClosed(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	uncovered := ledger.Metadata["current.uncovered_config_contracts"]
+	if !strings.Contains(uncovered, "skeleton.Config.Count") {
+		t.Fatalf("uncovered Config contracts = %q, want skeleton.Config.Count", uncovered)
+	}
+	for index := range ledger.Rows {
+		ledger.Rows[index].Applicability = Applicable
+		ledger.Rows[index].ReceiptStatus = StatusExecuted
+	}
+	if err := ValidateClosure(ledger, inventory); err == nil || !strings.Contains(err.Error(), "uncovered source Config contracts") {
+		t.Fatalf("uncovered Config contract closure error = %v", err)
+	}
+}
+
+func TestGenerateSkeletonRecordsUnverifiedLifecycleActionContractsAndClosureFailsClosed(t *testing.T) {
+	ledger, inventory, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	delete(ledger.Metadata, "current.uncovered_config_contracts")
+	if lifecycle := ledger.Metadata["current.unverified_lifecycle_action_contracts"]; !strings.Contains(lifecycle, "button/lifecycle/loading") {
+		t.Fatalf("unverified lifecycle action contracts = %q, want button/lifecycle/loading", lifecycle)
+	}
+	if err := ValidateClosure(ledger, inventory); err == nil || !strings.Contains(err.Error(), "lifecycle action/outcome artifacts unavailable") {
+		t.Fatalf("unverified lifecycle action closure error = %v", err)
 	}
 }
 

@@ -221,6 +221,29 @@ func ValidateStateExecutionContracts(repoRoot string) error {
 	return err
 }
 
+// uncoveredConfigContracts is an explicit source inventory, not an inferred
+// state list. Any exported Config field outside the maintained finite-state
+// authorities and audited non-state classifications blocks closure until its
+// source owner supplies a real contract or classification.
+func uncoveredConfigContracts(repoRoot string) ([]SourceItem, error) {
+	fields, err := discoverExportedConfigFields(repoRoot)
+	if err != nil {
+		return nil, err
+	}
+	uncovered := make([]SourceItem, 0)
+	for _, field := range fields {
+		if _, stateAuthority := maintainedConfigStateContracts[field.Value]; stateAuthority {
+			continue
+		}
+		if strings.TrimSpace(maintainedConfigNonStateClassifications[field.Value]) != "" {
+			continue
+		}
+		uncovered = append(uncovered, field)
+	}
+	sortSourceItems(uncovered)
+	return uncovered, nil
+}
+
 func deriveMaintainedConfigStates(repoRoot string) ([]SourceItem, error) {
 	fields, err := discoverExportedConfigFields(repoRoot)
 	if err != nil {

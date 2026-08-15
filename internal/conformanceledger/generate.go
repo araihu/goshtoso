@@ -107,6 +107,10 @@ func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
 	if err != nil {
 		return Ledger{}, Inventory{}, err
 	}
+	uncoveredConfigContracts, err := uncoveredConfigContracts(config.RepoRoot)
+	if err != nil {
+		return Ledger{}, Inventory{}, err
+	}
 
 	ledger := Ledger{
 		SchemaVersion: SchemaVersion,
@@ -125,6 +129,22 @@ func GenerateSkeleton(config GenerationConfig) (Ledger, Inventory, error) {
 	ledger.Metadata["current.route_count"] = strconv.Itoa(len(inventory.Routes))
 	ledger.Metadata["current.lifecycle_state_count"] = strconv.Itoa(len(inventory.LifecycleStates))
 	ledger.Metadata["current.theme_count"] = strconv.Itoa(len(inventory.Themes))
+	if len(uncoveredConfigContracts) > 0 {
+		values := make([]string, 0, len(uncoveredConfigContracts))
+		for _, contract := range uncoveredConfigContracts {
+			values = append(values, contract.Value)
+		}
+		ledger.Metadata["current.uncovered_config_contracts"] = strings.Join(values, ",")
+	}
+	if len(inventory.LifecycleStates) > 0 {
+		values := make([]string, 0, len(inventory.LifecycleStates))
+		for _, contract := range inventory.LifecycleStates {
+			values = append(values, contract.Value)
+		}
+		// Current authority records source markers plus prose action/outcome
+		// contracts. It has no raw target-bound action artifact schema yet.
+		ledger.Metadata["current.unverified_lifecycle_action_contracts"] = strings.Join(values, ",")
+	}
 
 	ledger.Rows = appendSourceRows(ledger.Rows, "package", inventory.Packages, func(row *Row, value string) { row.Package = value })
 	ledger.Rows = appendSourceRows(ledger.Rows, "renderable", inventory.Renderables, func(row *Row, value string) { row.Renderable = value })

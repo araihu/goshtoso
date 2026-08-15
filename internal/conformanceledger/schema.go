@@ -276,6 +276,12 @@ func ValidateClosure(ledger Ledger, required Inventory) error {
 	if err := Validate(ledger, required); err != nil {
 		return err
 	}
+	if uncovered := strings.TrimSpace(ledger.Metadata["current.uncovered_config_contracts"]); uncovered != "" {
+		return fmt.Errorf("closure has open rows: uncovered source Config contracts=%s", uncovered)
+	}
+	if lifecycle := strings.TrimSpace(ledger.Metadata["current.unverified_lifecycle_action_contracts"]); lifecycle != "" {
+		return fmt.Errorf("closure has open rows: lifecycle action/outcome artifacts unavailable=%s", lifecycle)
+	}
 	var open []string
 	for _, row := range ledger.Rows {
 		if row.ReceiptStatus == StatusBlocked || row.ReceiptStatus == StatusFailed {

@@ -344,6 +344,8 @@ func TestValidateClosureRequiresTwoIndependentExecutionReproductions(t *testing.
 	if err != nil {
 		t.Fatal(err)
 	}
+	delete(ledger.Metadata, "current.uncovered_config_contracts")
+	delete(ledger.Metadata, "current.unverified_lifecycle_action_contracts") // Isolate reproduction validation from explicit current-source closure guards.
 	for index := range ledger.Rows {
 		row := &ledger.Rows[index]
 		row.Applicability = Applicable
