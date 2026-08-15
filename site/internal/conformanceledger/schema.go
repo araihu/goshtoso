@@ -104,6 +104,7 @@ type Row struct {
 	Rationale         string                  `json:"rationale,omitempty"`
 	EvidenceHashes    map[string]string       `json:"evidence_hashes,omitempty"`
 	Reproductions     []ExecutionReproduction `json:"reproductions,omitempty"`
+	ExecutionAttempts []ExecutionAttempt      `json:"execution_attempts,omitempty"`
 }
 
 // ExecutionReproduction identifies one independently-produced execution
@@ -111,11 +112,30 @@ type Row struct {
 // second receipt cannot merely relabel the same runner, recorder, or capture
 // artifacts.
 type ExecutionReproduction struct {
+	SourceCommit    string   `json:"source_commit"`
+	SourceTree      string   `json:"source_tree"`
 	Producer        string   `json:"producer"`
 	RunID           string   `json:"run_id"`
 	Recorder        string   `json:"recorder"`
 	ReceiptSHA256   string   `json:"receipt_sha256"`
 	ArtifactSHA256s []string `json:"artifact_sha256s,omitempty"`
+}
+
+// ExecutionAttempt preserves every authenticated receipt application. Failed,
+// blocked, and N/A attempts are history only; they cannot become closure
+// reproductions or overwrite an earlier successful receipt.
+type ExecutionAttempt struct {
+	ReceiptID       string        `json:"receipt_id"`
+	ReceiptPath     string        `json:"receipt_path"`
+	Status          ReceiptStatus `json:"status"`
+	Rationale       string        `json:"rationale,omitempty"`
+	SourceCommit    string        `json:"source_commit"`
+	SourceTree      string        `json:"source_tree"`
+	Producer        string        `json:"producer"`
+	RunID           string        `json:"run_id"`
+	Recorder        string        `json:"recorder"`
+	ReceiptSHA256   string        `json:"receipt_sha256"`
+	ArtifactSHA256s []string      `json:"artifact_sha256s,omitempty"`
 }
 
 type Ledger struct {
@@ -241,7 +261,7 @@ func ValidateClosure(ledger Ledger, required Inventory) error {
 			open = append(open, fmt.Sprintf("%s=%s", row.ID, row.ReceiptStatus))
 		}
 		if mandatoryExecutionRow(row) && row.ReceiptStatus == StatusExecuted {
-			if err := validateIndependentReproductions(row); err != nil {
+			if err := validateIndependentReproductions(row, ledger.SourceCommit, ledger.SourceTree); err != nil {
 				open = append(open, fmt.Sprintf("%s=%v", row.ID, err))
 			}
 		}
@@ -253,16 +273,33 @@ func ValidateClosure(ledger Ledger, required Inventory) error {
 	return nil
 }
 
-func validateIndependentReproductions(row Row) error {
+func validateIndependentReproductions(row Row, sourceCommit, sourceTree string) error {
 	if len(row.Reproductions) < 2 {
 		return fmt.Errorf("requires two independent reproductions")
+	}
+	successfulAttempts := make(map[string]ExecutionAttempt, len(row.ExecutionAttempts))
+	for _, attempt := range row.ExecutionAttempts {
+		if attempt.Status != StatusExecuted {
+			continue
+		}
+		if attempt.SourceCommit != sourceCommit || attempt.SourceTree != sourceTree || strings.TrimSpace(attempt.ReceiptID) == "" || strings.TrimSpace(attempt.ReceiptPath) == "" || strings.TrimSpace(attempt.Producer) == "" || strings.TrimSpace(attempt.RunID) == "" || strings.TrimSpace(attempt.Recorder) == "" || !validSHA256(attempt.ReceiptSHA256) {
+			return fmt.Errorf("has incomplete successful immutable attempt")
+		}
+		key := attempt.ReceiptSHA256 + "\x00" + attempt.Producer + "\x00" + attempt.RunID + "\x00" + attempt.Recorder
+		if _, duplicate := successfulAttempts[key]; duplicate {
+			return fmt.Errorf("has duplicate successful immutable attempt")
+		}
+		successfulAttempts[key] = attempt
+	}
+	if len(successfulAttempts) != len(row.Reproductions) {
+		return fmt.Errorf("successful immutable attempts = %d, want reproduction count %d", len(successfulAttempts), len(row.Reproductions))
 	}
 	seenProducer := map[string]struct{}{}
 	seenRun := map[string]struct{}{}
 	seenRecorder := map[string]struct{}{}
 	seenArtifact := map[string]struct{}{}
 	for _, reproduction := range row.Reproductions {
-		if strings.TrimSpace(reproduction.Producer) == "" || strings.TrimSpace(reproduction.RunID) == "" || strings.TrimSpace(reproduction.Recorder) == "" || !validSHA256(reproduction.ReceiptSHA256) {
+		if reproduction.SourceCommit != sourceCommit || reproduction.SourceTree != sourceTree || strings.TrimSpace(reproduction.Producer) == "" || strings.TrimSpace(reproduction.RunID) == "" || strings.TrimSpace(reproduction.Recorder) == "" || !validSHA256(reproduction.ReceiptSHA256) {
 			return fmt.Errorf("has incomplete reproduction identity")
 		}
 		if _, duplicate := seenProducer[reproduction.Producer]; duplicate {
@@ -288,6 +325,11 @@ func validateIndependentReproductions(row Row) error {
 		}
 		if len(reproduction.ArtifactSHA256s) == 0 {
 			return fmt.Errorf("has no reproduction artifacts")
+		}
+		key := reproduction.ReceiptSHA256 + "\x00" + reproduction.Producer + "\x00" + reproduction.RunID + "\x00" + reproduction.Recorder
+		attempt, ok := successfulAttempts[key]
+		if !ok || !slices.Equal(attempt.ArtifactSHA256s, reproduction.ArtifactSHA256s) {
+			return fmt.Errorf("reproduction is not backed by an immutable successful attempt")
 		}
 	}
 	return nil

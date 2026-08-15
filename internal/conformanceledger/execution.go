@@ -165,44 +165,56 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 				return fmt.Errorf("execution receipt %s cannot mark mandatory execution row %s not applicable", receipt.ID, rowID)
 			}
 			row := &ledger.Rows[index]
-			for _, prior := range row.Reproductions {
-				if prior.Producer == receipt.Reproduction.Producer {
-					return fmt.Errorf("execution row %s duplicate reproduction producer %s", rowID, prior.Producer)
+			for _, prior := range row.ExecutionAttempts {
+				if prior.ReceiptID == receipt.ID {
+					return fmt.Errorf("execution row %s duplicate immutable attempt receipt %s", rowID, receipt.ID)
 				}
-				if prior.RunID == receipt.Reproduction.RunID {
-					return fmt.Errorf("execution row %s duplicate reproduction run id %s", rowID, prior.RunID)
-				}
-				if prior.Recorder == receipt.Reproduction.Recorder {
-					return fmt.Errorf("execution row %s duplicate reproduction recorder %s", rowID, prior.Recorder)
-				}
-				for _, priorArtifact := range prior.ArtifactSHA256s {
-					if slices.Contains(artifactDigests, priorArtifact) {
-						return fmt.Errorf("execution row %s aliases reproduction artifact SHA-256", rowID)
+			}
+			if receipt.Status == StatusExecuted {
+				for _, prior := range row.Reproductions {
+					if prior.Producer == receipt.Reproduction.Producer {
+						return fmt.Errorf("execution row %s duplicate reproduction producer %s", rowID, prior.Producer)
+					}
+					if prior.RunID == receipt.Reproduction.RunID {
+						return fmt.Errorf("execution row %s duplicate reproduction run id %s", rowID, prior.RunID)
+					}
+					if prior.Recorder == receipt.Reproduction.Recorder {
+						return fmt.Errorf("execution row %s duplicate reproduction recorder %s", rowID, prior.Recorder)
+					}
+					for _, priorArtifact := range prior.ArtifactSHA256s {
+						if slices.Contains(artifactDigests, priorArtifact) {
+							return fmt.Errorf("execution row %s aliases reproduction artifact SHA-256", rowID)
+						}
 					}
 				}
 			}
-			row.ReceiptStatus = receipt.Status
-			if receipt.Status == StatusNotApplicable {
-				row.Applicability = NotApplicable
-			} else {
-				row.Applicability = Applicable
-			}
-			row.Receipt = receipt.Path
-			row.Rationale = receipt.Rationale
 			if row.EvidenceHashes == nil {
 				row.EvidenceHashes = map[string]string{}
 			}
-			row.EvidenceHashes["receipt_sha256:"+receipt.Reproduction.RunID] = got
+			attempt := ExecutionAttempt{ReceiptID: receipt.ID, ReceiptPath: receipt.Path, Status: receipt.Status, Rationale: receipt.Rationale, SourceCommit: receipt.Context.SourceCommit, SourceTree: receipt.Context.SourceTree, Producer: receipt.Reproduction.Producer, RunID: receipt.Reproduction.RunID, Recorder: receipt.Reproduction.Recorder, ReceiptSHA256: got, ArtifactSHA256s: artifactDigests}
+			row.ExecutionAttempts = append(row.ExecutionAttempts, attempt)
+			row.EvidenceHashes["attempt:"+receipt.ID+":receipt_sha256"] = got
 			for key, digest := range artifactHashes {
-				row.EvidenceHashes["artifact:"+receipt.Reproduction.RunID+":"+key] = digest
+				row.EvidenceHashes["attempt:"+receipt.ID+":artifact:"+key] = digest
 			}
-			row.Reproductions = append(row.Reproductions, ExecutionReproduction{
-				Producer:        receipt.Reproduction.Producer,
-				RunID:           receipt.Reproduction.RunID,
-				Recorder:        receipt.Reproduction.Recorder,
-				ReceiptSHA256:   got,
-				ArtifactSHA256s: artifactDigests,
-			})
+			if receipt.Status != StatusExecuted {
+				if row.ReceiptStatus != StatusExecuted {
+					row.ReceiptStatus = receipt.Status
+					row.Applicability = Applicable
+					if receipt.Status == StatusNotApplicable {
+						row.Applicability = NotApplicable
+					}
+					row.Receipt = receipt.Path
+					row.Rationale = receipt.Rationale
+				}
+				continue
+			}
+			row.ReceiptStatus = StatusExecuted
+			row.Applicability = Applicable
+			row.Receipt = receipt.Path
+			row.Rationale = receipt.Rationale
+			row.EvidenceHashes["receipt_sha256:"+receipt.Reproduction.RunID] = got
+			row.Reproductions = append(row.Reproductions, ExecutionReproduction{SourceCommit: receipt.Context.SourceCommit, SourceTree: receipt.Context.SourceTree, Producer: receipt.Reproduction.Producer, RunID: receipt.Reproduction.RunID, Recorder: receipt.Reproduction.Recorder, ReceiptSHA256: got, ArtifactSHA256s: artifactDigests})
 		}
 		ledger.Metadata["execution."+receipt.ID+".path"] = receipt.Path
 		ledger.Metadata["execution."+receipt.ID+".sha256"] = got

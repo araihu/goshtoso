@@ -281,6 +281,34 @@ func TestApplyExecutionReceiptsRejectsDuplicateReceiptIDs(t *testing.T) {
 	}
 }
 
+func TestApplyExecutionReceiptsPreservesImmutableAttemptsAndSuccessfulClosureEvidence(t *testing.T) {
+	ledger, _, err := GenerateSkeleton(generationFixture(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	first := executionFixture(t, "successful-attempt", []string{"execution/kind/button"}, StatusExecuted)
+	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{first}); err != nil {
+		t.Fatal(err)
+	}
+	failed := executionFixture(t, "failed-attempt", []string{"execution/kind/button"}, StatusFailed)
+	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{failed}); err != nil {
+		t.Fatal(err)
+	}
+	for _, row := range ledger.Rows {
+		if row.ID != "execution/kind/button" {
+			continue
+		}
+		if row.ReceiptStatus != StatusExecuted || row.Receipt != first.Path || len(row.Reproductions) != 1 || len(row.ExecutionAttempts) != 2 {
+			t.Fatalf("successful attempt overwritten by failed attempt: %#v", row)
+		}
+		if row.ExecutionAttempts[0].Status != StatusExecuted || row.ExecutionAttempts[1].Status != StatusFailed {
+			t.Fatalf("attempt history = %#v", row.ExecutionAttempts)
+		}
+		return
+	}
+	t.Fatal("execution row fixture missing")
+}
+
 func TestApplyExecutionReceiptsCannotCloseStateRowsWithoutExactBFullManifest(t *testing.T) {
 	ledger, _, err := GenerateSkeleton(generationFixture(t))
 	if err != nil {
@@ -304,11 +332,19 @@ func TestValidateClosureRequiresTwoIndependentExecutionReproductions(t *testing.
 		row.Receipt = "fixture.log"
 		if mandatoryExecutionRow(*row) {
 			row.Reproductions = []ExecutionReproduction{{
+				SourceCommit:    ledger.SourceCommit,
+				SourceTree:      ledger.SourceTree,
 				Producer:        "producer-one-" + row.ID,
 				RunID:           "run-one-" + row.ID,
 				Recorder:        "recorder-one-" + row.ID,
 				ReceiptSHA256:   strings.Repeat("1", 64),
 				ArtifactSHA256s: []string{strings.Repeat("3", 64)},
+			}}
+			row.ExecutionAttempts = []ExecutionAttempt{{
+				ReceiptID: "receipt-one-" + row.ID, ReceiptPath: "fixture-one.log", Status: StatusExecuted,
+				SourceCommit: ledger.SourceCommit, SourceTree: ledger.SourceTree,
+				Producer: "producer-one-" + row.ID, RunID: "run-one-" + row.ID, Recorder: "recorder-one-" + row.ID,
+				ReceiptSHA256: strings.Repeat("1", 64), ArtifactSHA256s: []string{strings.Repeat("3", 64)},
 			}}
 		}
 	}
@@ -319,11 +355,19 @@ func TestValidateClosureRequiresTwoIndependentExecutionReproductions(t *testing.
 		row := &ledger.Rows[index]
 		if mandatoryExecutionRow(*row) {
 			row.Reproductions = append(row.Reproductions, ExecutionReproduction{
+				SourceCommit:    ledger.SourceCommit,
+				SourceTree:      ledger.SourceTree,
 				Producer:        "producer-two-" + row.ID,
 				RunID:           "run-two-" + row.ID,
 				Recorder:        "recorder-two-" + row.ID,
 				ReceiptSHA256:   strings.Repeat("2", 64),
 				ArtifactSHA256s: []string{strings.Repeat("4", 64)},
+			})
+			row.ExecutionAttempts = append(row.ExecutionAttempts, ExecutionAttempt{
+				ReceiptID: "receipt-two-" + row.ID, ReceiptPath: "fixture-two.log", Status: StatusExecuted,
+				SourceCommit: ledger.SourceCommit, SourceTree: ledger.SourceTree,
+				Producer: "producer-two-" + row.ID, RunID: "run-two-" + row.ID, Recorder: "recorder-two-" + row.ID,
+				ReceiptSHA256: strings.Repeat("2", 64), ArtifactSHA256s: []string{strings.Repeat("4", 64)},
 			})
 		}
 	}
@@ -334,6 +378,7 @@ func TestValidateClosureRequiresTwoIndependentExecutionReproductions(t *testing.
 		row := &ledger.Rows[index]
 		if mandatoryExecutionRow(*row) {
 			row.Reproductions[1].ArtifactSHA256s = row.Reproductions[0].ArtifactSHA256s
+			row.ExecutionAttempts[1].ArtifactSHA256s = row.ExecutionAttempts[0].ArtifactSHA256s
 			break
 		}
 	}
