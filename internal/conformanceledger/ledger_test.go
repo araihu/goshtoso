@@ -124,6 +124,28 @@ func TestDeriveInventoryUsesCurrentSourceAuthorities(t *testing.T) {
 	}
 }
 
+func TestDeriveInventoryIncludesSourceVisiblePublicConfigurationStates(t *testing.T) {
+	inventory, err := DeriveInventory(repoRoot(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	states := make(map[string]bool, len(inventory.States))
+	for _, state := range inventory.States {
+		states[state.Value] = true
+	}
+	for _, want := range []string{
+		"textinput/Config.Disabled",
+		"textinput/Config.Required",
+		"textinput/Config.Readonly",
+		"checkbox/Config.Checked",
+		"checkbox/Config.Disabled",
+	} {
+		if !states[want] {
+			t.Errorf("source-visible public configuration state %s missing from inventory", want)
+		}
+	}
+}
+
 func TestValidateRejectsIncompleteMandatoryRows(t *testing.T) {
 	required := Inventory{
 		Packages:        []SourceItem{{Value: "github.com/araihu/goshtoso/components/button", Source: SourceRef{Path: "components/button", Symbol: "package button"}}},

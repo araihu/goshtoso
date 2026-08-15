@@ -49,6 +49,23 @@ var lifecycleStateAuthorities = []struct {
 	{Value: "avatar/lifecycle/loading-error", Path: "components/avatar/avatar.templ", Marker: "x-on:error"},
 }
 
+// StateExecutionContract names the real fixture and action authority required
+// before a public Config field can enter the conformance state axis. Source
+// discovery is deliberately broader than this registry: an uncovered exported
+// Config field fails generation instead of becoming a guessed state or N/A.
+type StateExecutionContract struct {
+	Fixture string
+	Action  string
+}
+
+var maintainedConfigStateContracts = map[string]StateExecutionContract{
+	"checkbox.Config.Checked":   {Fixture: `checkbox.Checkbox(checkbox.Config{Checked:true})`, Action: "keyboard Space changes checked state"},
+	"checkbox.Config.Disabled":  {Fixture: `checkbox.Checkbox(checkbox.Config{Disabled:true})`, Action: "keyboard focus rejects disabled control"},
+	"textinput.Config.Disabled": {Fixture: `textinput.TextInput(textinput.Config{Disabled:true})`, Action: "keyboard focus rejects disabled input"},
+	"textinput.Config.Readonly": {Fixture: `textinput.TextInput(textinput.Config{Readonly:true})`, Action: "keyboard edit preserves readonly value"},
+	"textinput.Config.Required": {Fixture: `textinput.TextInput(textinput.Config{Required:true})`, Action: "keyboard focus exposes required state"},
+}
+
 func DeriveInventory(repoRoot string) (Inventory, error) {
 	packages, err := derivePackages(repoRoot)
 	if err != nil {
@@ -122,6 +139,76 @@ func deriveLifecycleStates(repoRoot string) ([]SourceItem, error) {
 	}
 	sortSourceItems(items)
 	return items, nil
+}
+
+func ValidateStateExecutionContracts(repoRoot string) error {
+	fields, err := discoverExportedConfigFields(repoRoot)
+	if err != nil {
+		return err
+	}
+	var uncovered []string
+	for _, field := range fields {
+		contract, ok := maintainedConfigStateContracts[field.Value]
+		if !ok || strings.TrimSpace(contract.Fixture) == "" || strings.TrimSpace(contract.Action) == "" {
+			uncovered = append(uncovered, field.Value)
+		}
+	}
+	if len(uncovered) > 0 {
+		sort.Strings(uncovered)
+		return fmt.Errorf("uncontracted exported Config fields require real fixture/action contracts: %s", strings.Join(uncovered, ", "))
+	}
+	return nil
+}
+
+func discoverExportedConfigFields(repoRoot string) ([]SourceItem, error) {
+	componentsRoot := filepath.Join(repoRoot, "components")
+	var fields []SourceItem
+	err := filepath.WalkDir(componentsRoot, func(path string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() || entry.Name() != "types.go" {
+			return nil
+		}
+		file, err := parser.ParseFile(token.NewFileSet(), path, nil, 0)
+		if err != nil {
+			return fmt.Errorf("parse Config authority %s: %w", path, err)
+		}
+		relative, err := filepath.Rel(repoRoot, path)
+		if err != nil {
+			return err
+		}
+		for _, declaration := range file.Decls {
+			gen, ok := declaration.(*ast.GenDecl)
+			if !ok || gen.Tok != token.TYPE {
+				continue
+			}
+			for _, spec := range gen.Specs {
+				typeSpec, ok := spec.(*ast.TypeSpec)
+				if !ok || typeSpec.Name.Name != "Config" {
+					continue
+				}
+				structType, ok := typeSpec.Type.(*ast.StructType)
+				if !ok {
+					return fmt.Errorf("Config authority %s is not a struct", relative)
+				}
+				for _, field := range structType.Fields.List {
+					for _, name := range field.Names {
+						if !name.IsExported() {
+							continue
+						}
+						fields = append(fields, SourceItem{Value: file.Name.Name + ".Config." + name.Name, Source: SourceRef{Path: filepath.ToSlash(relative), Symbol: "Config." + name.Name}})
+					}
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("discover exported Config fields: %w", err)
+	}
+	sortSourceItems(fields)
+	return fields, nil
 }
 
 func derivePackages(repoRoot string) ([]SourceItem, error) {

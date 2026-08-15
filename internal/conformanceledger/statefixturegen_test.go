@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -21,6 +22,13 @@ func TestGenerateStateFixtureSourceCoversEveryStateExactlyOnce(t *testing.T) {
 		if count := bytes.Count(source, needle); count != 1 {
 			t.Fatalf("generated state %s count = %d, want 1", state.Value, count)
 		}
+	}
+}
+
+func TestGenerateStateFixtureSourceFailsClosedForUncontractedPublicConfigStates(t *testing.T) {
+	_, err := GenerateStateFixtureSource(repoRoot(t))
+	if err == nil || !strings.Contains(err.Error(), "actiongroup.Config.Label") || !strings.Contains(err.Error(), "alert.Config.Dismissible") {
+		t.Fatalf("uncontracted public configuration state error = %v", err)
 	}
 }
 

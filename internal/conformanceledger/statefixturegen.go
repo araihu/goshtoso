@@ -129,6 +129,9 @@ var defaultStateFixtureAdapters = map[string]string{
 }
 
 func GenerateStateFixtureSource(repoRoot string) ([]byte, error) {
+	if err := ValidateStateExecutionContracts(repoRoot); err != nil {
+		return nil, err
+	}
 	inventory, err := DeriveInventory(repoRoot)
 	if err != nil {
 		return nil, err
