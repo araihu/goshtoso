@@ -475,6 +475,25 @@ func TestSidebarOverlayRendersNativeOffCanvasShell(t *testing.T) {
 	}
 }
 
+func TestSidebarOverlayReducedMotionTransitionContract(t *testing.T) {
+	html := renderOverlay(t, OverlayConfig{ID: "reduced-motion"})
+
+	for _, want := range []string{
+		`x-transition:enter="transition-opacity ease-out duration-200 motion-reduce:transition-none"`,
+		`x-transition:enter-start="opacity-0 motion-reduce:opacity-100"`,
+		`x-transition:leave="transition-opacity ease-in duration-150 motion-reduce:transition-none"`,
+		`x-transition:leave-end="opacity-0 motion-reduce:opacity-100"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("sidebar overlay is missing %q: %s", want, html)
+		}
+	}
+
+	if strings.Contains(html, "x-transition.opacity.duration.200ms") {
+		t.Fatalf("sidebar overlay should use explicit reduced-motion transition phases: %s", html)
+	}
+}
+
 func TestSidebarOverlayPreservesLongLabelCustomTriggerAndClasses(t *testing.T) {
 	const label = "Open the complete application navigation for this workspace"
 	html := renderOverlay(t, OverlayConfig{

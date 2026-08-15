@@ -122,6 +122,53 @@ func TestSidebarCoverageDemo(t *testing.T) {
 	require.Empty(t, jsErrors, "no JS console/page errors on sidebar demo: %v", jsErrors)
 }
 
+func TestSidebarOverlayReducedMotionShowsWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/sidebar", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	overlay := page.Locator("#sidebar-overlay")
+	trigger := overlay.Locator("button[aria-label='Open sidebar']")
+	backdrop := overlay.Locator("div[aria-hidden='true']")
+	panel := overlay.Locator("[id$='-panel']")
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const root = document.querySelector('#sidebar-overlay');
+		const backdrop = root?.querySelector('div[aria-hidden="true"]');
+		const panel = root?.querySelector('[id$="-panel"]');
+		if (!backdrop || !panel || getComputedStyle(panel).display === 'none') return false;
+		const backdropStyle = getComputedStyle(backdrop);
+		const panelStyle = getComputedStyle(panel);
+		return backdropStyle.transitionProperty === 'none' &&
+			backdropStyle.opacity === '1' &&
+			panelStyle.transitionProperty === 'none' &&
+			panelStyle.transform === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = backdrop.Evaluate("el => el.click()", nil)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const panel = document.querySelector('#sidebar-overlay [id$="-panel"]');
+		return !!panel && getComputedStyle(panel).display === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := panel.IsVisible()
+	require.NoError(t, err)
+	require.False(t, visible, "reduced-motion sidebar overlay should close immediately")
+}
+
 func verifySidebarOverlayMobileTargetAcrossAcceptanceThemes(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	var jsErrors []string
