@@ -5069,6 +5069,12 @@
         scale: var(--tw-scale-x) var(--tw-scale-y);
       }
     }
+    .motion-reduce\:focus\:scale-100:focus {
+      --tw-scale-x: 100%;
+      --tw-scale-y: 100%;
+      --tw-scale-z: 100%;
+      scale: var(--tw-scale-x) var(--tw-scale-y);
+    }
     .motion-reduce\:active\:translate-none:active {
       translate: none;
     }

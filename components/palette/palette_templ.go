@@ -180,7 +180,7 @@ func swatchGrid(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if !cfg.HideNeutral {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<button type=\"button\" data-cls=\"white\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"white\"></button> <button type=\"button\" data-cls=\"black\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"black\"></button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<button type=\"button\" data-cls=\"white\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"white\"></button> <button type=\"button\" data-cls=\"black\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"black\"></button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -200,7 +200,7 @@ func swatchGrid(cfg Config) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:hover:ring-primary-dark\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
