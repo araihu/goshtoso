@@ -238,7 +238,7 @@ func TestGenerateSkeletonBindsStateActionContractsToSourceAndExecutionRows(t *te
 		t.Fatal(err)
 	}
 	for id, expected := range map[string]string{
-		"inventory/lifecycle-state/button_lifecycle_disabled": "native disabled control",
+		"inventory/lifecycle-state/button_lifecycle_disabled": "focus and activation are absent",
 		"execution/lifecycle-state/button_lifecycle_disabled": "native disabled control",
 		"inventory/state/checkbox_Config.Checked":             "keyboard Space changes checked state",
 		"execution/state/checkbox_Config.Checked":             "keyboard Space changes checked state",

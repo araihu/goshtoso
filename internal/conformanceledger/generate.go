@@ -380,6 +380,9 @@ func appendSourceRows(rows []Row, axis string, items []SourceItem, assign func(*
 		if item.Action != "" {
 			row.Rationale = "source-grounded action contract: " + item.Action
 		}
+		if item.Outcome != "" {
+			row.Rationale += "; source-grounded outcome contract: " + item.Outcome
+		}
 		assign(&row, item.Value)
 		rows = append(rows, row)
 	}
@@ -393,6 +396,9 @@ func appendExecutionRows(rows []Row, axis string, items []SourceItem, receipt st
 		})
 		if item.Action != "" {
 			row.Rationale += "; source-grounded action contract: " + item.Action
+		}
+		if item.Outcome != "" {
+			row.Rationale += "; source-grounded outcome contract: " + item.Outcome
 		}
 		rows = append(rows, row)
 	}

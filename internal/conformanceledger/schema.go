@@ -46,6 +46,9 @@ type SourceItem struct {
 	// Action is the maintained real interaction contract when this authority
 	// represents an executable configuration or lifecycle state.
 	Action string `json:"action,omitempty"`
+	// Outcome is the source-grounded postcondition for an executable action.
+	// Browser evidence must later bind a real before/action/after artifact to it.
+	Outcome string `json:"outcome,omitempty"`
 }
 
 type Inventory struct {

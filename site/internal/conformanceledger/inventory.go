@@ -31,24 +31,25 @@ var (
 // its conformance mapping. These do not inflate the source-derived configuration/default
 // state Cartesian axis; they are a separately reconciled lifecycle axis.
 var lifecycleStateAuthorities = []struct {
-	Value  string
-	Path   string
-	Marker string
-	Action string
+	Value   string
+	Path    string
+	Marker  string
+	Action  string
+	Outcome string
 }{
-	{Value: "button/lifecycle/disabled", Path: "components/button/button.templ", Marker: "disabled", Action: "keyboard Tab and Enter prove native disabled control rejects focus and activation"},
-	{Value: "button/lifecycle/loading", Path: "components/button/button.templ", Marker: "data-goshtoso-loading", Action: "mouse click trigger, wait for loading marker, then verify returned idle state"},
-	{Value: "button/lifecycle/hover-focus", Path: "components/button/types.go", Marker: "focus-visible", Action: "mouse hover then keyboard Tab captures visible focus before and after return"},
-	{Value: "dropdown/lifecycle/open-closed-dismiss", Path: "components/dropdown/dropdown.templ", Marker: "closeAndFocus()", Action: "mouse click opens menu; real Escape closes it and returns focus to trigger"},
-	{Value: "modal/lifecycle/open-closed-dismiss", Path: "components/modal/modal.templ", Marker: "keydown.esc.window", Action: "mouse click opens dialog; real Escape closes it and returns focus to trigger"},
-	{Value: "drawer/lifecycle/open-closed-dismiss", Path: "components/drawer/drawer.templ", Marker: "drawer:close-request", Action: "mouse click opens drawer; real Escape closes it and returns focus to trigger"},
-	{Value: "tooltip/lifecycle/hover-focus", Path: "components/tooltip/tooltip.templ", Marker: "peer-hover:opacity-100", Action: "mouse hover and keyboard focus reveal tooltip, then leave/blur returns hidden state"},
-	{Value: "tooltip/lifecycle/click-open-dismiss", Path: "components/tooltip/tooltip.templ", Marker: "showTooltip = false", Action: "mouse click opens tooltip; real Escape dismisses it and returns focus"},
-	{Value: "search/lifecycle/open-closed-dismiss", Path: "components/search/search.templ", Marker: "closeSearch()", Action: "mouse click opens search; real Escape closes it and returns focus to trigger"},
-	{Value: "carousel/lifecycle/touch-reduced-motion", Path: "components/carousel/carousel.templ", Marker: "x-on:touchstart", Action: "CDP touch swipe advances slide; reduced-motion outcome preserves accessible current-slide state"},
-	{Value: "form/lifecycle/error", Path: "components/form/errors.templ", Marker: "role=\"alert\"", Action: "keyboard submit invalid form exposes alert before correction and valid submit returns clear state"},
-	{Value: "form/lifecycle/empty", Path: "components/form/errors.templ", Marker: "Empty Items renders nothing", Action: "real empty-items fixture renders no error surface; populated validation action exposes error surface"},
-	{Value: "avatar/lifecycle/loading-error", Path: "components/avatar/avatar.templ", Marker: "x-on:error", Action: "served broken image response triggers native error event and fallback state"},
+	{Value: "button/lifecycle/disabled", Path: "components/button/button.templ", Marker: "disabled", Action: "keyboard Tab and Enter prove native disabled control rejects focus and activation", Outcome: "before and after snapshots retain disabled state; focus and activation are absent"},
+	{Value: "button/lifecycle/loading", Path: "components/button/button.templ", Marker: "data-goshtoso-loading", Action: "mouse click trigger, wait for loading marker, then verify returned idle state", Outcome: "before idle, action loading marker, and return idle snapshots are distinct and ordered"},
+	{Value: "button/lifecycle/hover-focus", Path: "components/button/types.go", Marker: "focus-visible", Action: "mouse hover then keyboard Tab captures visible focus before and after return", Outcome: "hover and focus-visible paint samples change only after their real respective input"},
+	{Value: "dropdown/lifecycle/open-closed-dismiss", Path: "components/dropdown/dropdown.templ", Marker: "closeAndFocus()", Action: "mouse click opens menu; real Escape closes it and returns focus to trigger", Outcome: "open surface exists after click; Escape removes it and active element is the original trigger"},
+	{Value: "modal/lifecycle/open-closed-dismiss", Path: "components/modal/modal.templ", Marker: "keydown.esc.window", Action: "mouse click opens dialog; real Escape closes it and returns focus to trigger", Outcome: "dialog exists after click; Escape removes it and active element is the original trigger"},
+	{Value: "drawer/lifecycle/open-closed-dismiss", Path: "components/drawer/drawer.templ", Marker: "drawer:close-request", Action: "mouse click opens drawer; real Escape closes it and returns focus to trigger", Outcome: "drawer exists after click; Escape removes it and active element is the original trigger"},
+	{Value: "tooltip/lifecycle/hover-focus", Path: "components/tooltip/tooltip.templ", Marker: "peer-hover:opacity-100", Action: "mouse hover and keyboard focus reveal tooltip, then leave/blur returns hidden state", Outcome: "tooltip visibility changes after hover/focus and returns hidden after leave/blur"},
+	{Value: "tooltip/lifecycle/click-open-dismiss", Path: "components/tooltip/tooltip.templ", Marker: "showTooltip = false", Action: "mouse click opens tooltip; real Escape dismisses it and returns focus", Outcome: "tooltip exists after click; Escape removes it and active element returns to its trigger"},
+	{Value: "search/lifecycle/open-closed-dismiss", Path: "components/search/search.templ", Marker: "closeSearch()", Action: "mouse click opens search; real Escape closes it and returns focus to trigger", Outcome: "search surface exists after click; Escape removes it and focus returns to trigger"},
+	{Value: "carousel/lifecycle/touch-reduced-motion", Path: "components/carousel/carousel.templ", Marker: "x-on:touchstart", Action: "CDP touch swipe advances slide; reduced-motion outcome preserves accessible current-slide state", Outcome: "current-slide identity changes after trusted touch and reduced motion preserves the resulting semantic state"},
+	{Value: "form/lifecycle/error", Path: "components/form/errors.templ", Marker: "role=\"alert\"", Action: "keyboard submit invalid form exposes alert before correction and valid submit returns clear state", Outcome: "invalid submit creates alert; valid correction removes alert in the after snapshot"},
+	{Value: "form/lifecycle/empty", Path: "components/form/errors.templ", Marker: "Empty Items renders nothing", Action: "real empty-items fixture renders no error surface; populated validation action exposes error surface", Outcome: "empty fixture has no error surface and populated invalid action adds one"},
+	{Value: "avatar/lifecycle/loading-error", Path: "components/avatar/avatar.templ", Marker: "x-on:error", Action: "served broken image response triggers native error event and fallback state", Outcome: "broken-image response causes fallback surface after the native error event"},
 }
 
 // StateExecutionContract names a maintained finite Config-state authority.
@@ -60,14 +61,78 @@ type StateExecutionContract struct {
 	State   string
 	Fixture string
 	Action  string
+	Outcome string
 }
 
 var maintainedConfigStateContracts = map[string]StateExecutionContract{
-	"checkbox.Config.Checked":   {State: "checkbox/Config.Checked", Fixture: `checkbox.Checkbox(checkbox.Config{ID:%[1]q, Name:%[1]q, Label:"State", Checked:true})`, Action: "keyboard Space changes checked state"},
-	"checkbox.Config.Disabled":  {State: "checkbox/Config.Disabled", Fixture: `checkbox.Checkbox(checkbox.Config{ID:%[1]q, Name:%[1]q, Label:"State", Disabled:true})`, Action: "keyboard focus rejects disabled control"},
-	"textinput.Config.Disabled": {State: "textinput/Config.Disabled", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Disabled:true})`, Action: "keyboard focus rejects disabled input"},
-	"textinput.Config.Readonly": {State: "textinput/Config.Readonly", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Readonly:true})`, Action: "keyboard edit preserves readonly value"},
-	"textinput.Config.Required": {State: "textinput/Config.Required", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Required:true})`, Action: "keyboard focus exposes required state"},
+	"checkbox.Config.Checked":   {State: "checkbox/Config.Checked", Fixture: `checkbox.Checkbox(checkbox.Config{ID:%[1]q, Name:%[1]q, Label:"State", Checked:true})`, Action: "keyboard Space changes checked state", Outcome: "checked state changes exactly once and returns to its prior value after a second Space"},
+	"checkbox.Config.Disabled":  {State: "checkbox/Config.Disabled", Fixture: `checkbox.Checkbox(checkbox.Config{ID:%[1]q, Name:%[1]q, Label:"State", Disabled:true})`, Action: "keyboard focus rejects disabled control", Outcome: "active element remains outside the disabled control and checked state is unchanged"},
+	"textinput.Config.Disabled": {State: "textinput/Config.Disabled", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Disabled:true})`, Action: "keyboard focus rejects disabled input", Outcome: "active element remains outside the disabled input and value is unchanged"},
+	"textinput.Config.Readonly": {State: "textinput/Config.Readonly", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Readonly:true})`, Action: "keyboard edit preserves readonly value", Outcome: "value before and after typed input is identical"},
+	"textinput.Config.Required": {State: "textinput/Config.Required", Fixture: `textinput.TextInput(textinput.Config{ID:%[1]q, Name:%[1]q, Label:"State", Required:true})`, Action: "keyboard focus exposes required state", Outcome: "required semantic is present before and after focus"},
+}
+
+// maintainedConfigNonStateClassifications exhaustively classifies the current
+// exported boolean Config fields not owned by a finite state contract. A new
+// boolean field must enter either this source-backed list or
+// maintainedConfigStateContracts; silent sampling is forbidden.
+var maintainedConfigNonStateClassifications = map[string]string{
+	"alert.Config.Dismissible":              "optional rendered affordance; no maintained state transition",
+	"avatar.Config.Border":                  "paint option; no maintained state transition",
+	"avatar.Config.Reactive":                "presentation option; no maintained state transition",
+	"avatar.Config.ReactiveRadius":          "presentation option; no maintained state transition",
+	"badge.Config.Indicator":                "paint option; no maintained state transition",
+	"banner.Config.Persistent":              "layout option; no maintained state transition",
+	"carousel.Config.Touch":                 "input capability is covered by lifecycle authority",
+	"chatbubble.Config.Grouped":             "layout option; no maintained state transition",
+	"chatbubble.Config.IsBot":               "presentation option; no maintained state transition",
+	"chatbubble.Config.ShowAvatar":          "presentation option; no maintained state transition",
+	"checkbox.Config.Container":             "layout option; no maintained state transition",
+	"combobox.Config.Disabled":              "component lifecycle authority owns disabled behavior",
+	"combobox.Config.EnableClearAll":        "optional affordance; no maintained state transition",
+	"combobox.Config.EnableSearch":          "optional affordance; no maintained state transition",
+	"combobox.Config.Required":              "native validation is covered by form lifecycle authority",
+	"drawer.Config.Persistent":              "layout option; no maintained state transition",
+	"dropdown.Config.TriggerIconOnly":       "presentation option; no maintained state transition",
+	"fileinput.Config.Disabled":             "native disabled behavior is covered by form lifecycle authority",
+	"fileinput.Config.Required":             "native validation is covered by form lifecycle authority",
+	"form.Config.PreventEnterSubmit":        "transport guard; no independently maintained state transition",
+	"icon.Config.Decorative":                "accessibility presentation option; no runtime transition",
+	"palette.Config.HideNeutral":            "optional palette entry; no maintained state transition",
+	"palette.Config.HideReset":              "optional palette entry; no maintained state transition",
+	"palette.Config.ShowHex":                "optional palette entry; no maintained state transition",
+	"radio.Config.Checked":                  "native selection behavior covered by form lifecycle authority",
+	"radio.Config.Container":                "layout option; no maintained state transition",
+	"radio.Config.Disabled":                 "native disabled behavior covered by form lifecycle authority",
+	"radio.Config.Segmented":                "presentation option; no maintained state transition",
+	"rangeinput.Config.Disabled":            "native disabled behavior covered by form lifecycle authority",
+	"rangeinput.Config.Required":            "native validation is covered by form lifecycle authority",
+	"rangeinput.Config.ShowTicks":           "presentation option; no maintained state transition",
+	"rangeinput.Config.ShowValue":           "presentation option; no maintained state transition",
+	"rating.Config.Disabled":                "native disabled behavior covered by form lifecycle authority",
+	"rating.Config.ShowLabel":               "presentation option; no maintained state transition",
+	"scrollregion.Config.DisableIndicators": "presentation option; no maintained state transition",
+	"search.Config.GlobalShortcut":          "global binding behavior covered by search lifecycle authority",
+	"selectfield.Config.Disabled":           "native disabled behavior covered by form lifecycle authority",
+	"selectfield.Config.Readonly":           "native readonly behavior covered by form lifecycle authority",
+	"selectfield.Config.Required":           "native validation is covered by form lifecycle authority",
+	"selectfield.Config.Shell":              "layout option; no maintained state transition",
+	"sidebar.Config.DisableSkipLink":        "accessibility affordance option; no maintained state transition",
+	"sidebar.Config.ShowSearch":             "optional affordance; no maintained state transition",
+	"skeleton.Config.Static":                "motion behavior covered by B-FULL reduced-motion authority",
+	"steps.Config.LiveRegion":               "accessibility announcement option; no maintained state transition",
+	"steps.Config.ShowLabels":               "presentation option; no maintained state transition",
+	"structuredinput.Config.Disabled":       "native disabled behavior covered by form lifecycle authority",
+	"table.Config.LazyLoad":                 "data transport option; no maintained state transition",
+	"table.Config.ShowCheckbox":             "optional affordance; no maintained state transition",
+	"tabs.Config.SyncHash":                  "URL transport option; no maintained state transition",
+	"tagslist.Config.Disabled":              "native disabled behavior covered by form lifecycle authority",
+	"textarea.Config.Disabled":              "native disabled behavior covered by form lifecycle authority",
+	"textarea.Config.ReadOnly":              "native readonly behavior covered by form lifecycle authority",
+	"textarea.Config.Required":              "native validation is covered by form lifecycle authority",
+	"toggle.Config.Checked":                 "native selection behavior covered by form lifecycle authority",
+	"toggle.Config.Disabled":                "native disabled behavior covered by form lifecycle authority",
+	"toolbar.Config.Sticky":                 "layout option; no maintained state transition",
 }
 
 func DeriveInventory(repoRoot string) (Inventory, error) {
@@ -128,6 +193,9 @@ func deriveLifecycleStates(repoRoot string) ([]SourceItem, error) {
 		if strings.TrimSpace(authority.Action) == "" {
 			return nil, fmt.Errorf("lifecycle state authority %s lacks action contract", authority.Value)
 		}
+		if strings.TrimSpace(authority.Outcome) == "" {
+			return nil, fmt.Errorf("lifecycle state authority %s lacks outcome contract", authority.Value)
+		}
 		content, err := os.ReadFile(filepath.Join(repoRoot, authority.Path))
 		if err != nil {
 			return nil, fmt.Errorf("read lifecycle authority %s: %w", authority.Path, err)
@@ -142,7 +210,7 @@ func deriveLifecycleStates(repoRoot string) ([]SourceItem, error) {
 		if line == 0 {
 			return nil, fmt.Errorf("unmapped lifecycle state %s: marker %q has no source line", authority.Value, authority.Marker)
 		}
-		items = append(items, SourceItem{Value: authority.Value, Source: SourceRef{Path: authority.Path, Symbol: fmt.Sprintf("%s:%d", authority.Marker, line)}, Action: authority.Action})
+		items = append(items, SourceItem{Value: authority.Value, Source: SourceRef{Path: authority.Path, Symbol: fmt.Sprintf("%s:%d", authority.Marker, line)}, Action: authority.Action, Outcome: authority.Outcome})
 	}
 	sortSourceItems(items)
 	return items, nil
@@ -159,8 +227,34 @@ func deriveMaintainedConfigStates(repoRoot string) ([]SourceItem, error) {
 		return nil, err
 	}
 	byKey := make(map[string]SourceItem, len(fields))
+	configPackages := make(map[string]struct{}, len(fields))
 	for _, field := range fields {
 		byKey[field.Value] = field
+		packageName, _, _ := strings.Cut(field.Value, ".")
+		configPackages[packageName] = struct{}{}
+	}
+	behavioralFields, err := discoverExportedBooleanConfigFields(repoRoot)
+	if err != nil {
+		return nil, err
+	}
+	behavioralKeys := make(map[string]struct{}, len(behavioralFields))
+	for _, field := range behavioralFields {
+		behavioralKeys[field.Value] = struct{}{}
+		if _, stateAuthority := maintainedConfigStateContracts[field.Value]; stateAuthority {
+			continue
+		}
+		if strings.TrimSpace(maintainedConfigNonStateClassifications[field.Value]) == "" {
+			return nil, fmt.Errorf("unclassified behavioral Config field %s", field.Value)
+		}
+	}
+	for key := range maintainedConfigNonStateClassifications {
+		packageName, _, _ := strings.Cut(key, ".")
+		if _, packagePresent := configPackages[packageName]; !packagePresent {
+			continue
+		}
+		if _, exists := behavioralKeys[key]; !exists {
+			return nil, fmt.Errorf("stale non-state behavioral Config classification %s", key)
+		}
 	}
 	states := make([]SourceItem, 0, len(maintainedConfigStateContracts))
 	for key, contract := range maintainedConfigStateContracts {
@@ -168,10 +262,10 @@ func deriveMaintainedConfigStates(repoRoot string) ([]SourceItem, error) {
 		if !exists {
 			return nil, fmt.Errorf("maintained Config state authority %s is absent from exported Config source", key)
 		}
-		if strings.TrimSpace(contract.State) == "" || strings.TrimSpace(contract.Fixture) == "" || strings.TrimSpace(contract.Action) == "" {
-			return nil, fmt.Errorf("maintained Config state authority %s lacks state, fixture, or action contract", key)
+		if strings.TrimSpace(contract.State) == "" || strings.TrimSpace(contract.Fixture) == "" || strings.TrimSpace(contract.Action) == "" || strings.TrimSpace(contract.Outcome) == "" {
+			return nil, fmt.Errorf("maintained Config state authority %s lacks state, fixture, action, or outcome contract", key)
 		}
-		states = append(states, SourceItem{Value: contract.State, Source: field.Source, Action: contract.Action})
+		states = append(states, SourceItem{Value: contract.State, Source: field.Source, Action: contract.Action, Outcome: contract.Outcome})
 	}
 	sortSourceItems(states)
 	for index := 1; index < len(states); index++ {
@@ -180,6 +274,73 @@ func deriveMaintainedConfigStates(repoRoot string) ([]SourceItem, error) {
 		}
 	}
 	return states, nil
+}
+
+// discoverExportedBooleanConfigFields is deliberately type-aware: the
+// finite-state authority must classify every exported boolean Config field,
+// while free-form presentation and transport fields remain outside this axis.
+func discoverExportedBooleanConfigFields(repoRoot string) ([]SourceItem, error) {
+	componentsRoot := filepath.Join(repoRoot, "components")
+	var fields []SourceItem
+	err := filepath.WalkDir(componentsRoot, func(path string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() || entry.Name() != "types.go" {
+			return nil
+		}
+		file, err := parser.ParseFile(token.NewFileSet(), path, nil, 0)
+		if err != nil {
+			return fmt.Errorf("parse behavioral Config authority %s: %w", path, err)
+		}
+		relative, err := filepath.Rel(repoRoot, path)
+		if err != nil {
+			return err
+		}
+		for _, declaration := range file.Decls {
+			gen, ok := declaration.(*ast.GenDecl)
+			if !ok || gen.Tok != token.TYPE {
+				continue
+			}
+			for _, spec := range gen.Specs {
+				typeSpec, ok := spec.(*ast.TypeSpec)
+				if !ok || typeSpec.Name.Name != "Config" {
+					continue
+				}
+				structType, ok := typeSpec.Type.(*ast.StructType)
+				if !ok {
+					return fmt.Errorf("Config authority %s is not a struct", relative)
+				}
+				for _, field := range structType.Fields.List {
+					if !isBooleanConfigType(field.Type) {
+						continue
+					}
+					for _, name := range field.Names {
+						if name.IsExported() {
+							fields = append(fields, SourceItem{Value: file.Name.Name + ".Config." + name.Name, Source: SourceRef{Path: filepath.ToSlash(relative), Symbol: "Config." + name.Name}})
+						}
+					}
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("discover exported boolean Config fields: %w", err)
+	}
+	sortSourceItems(fields)
+	return fields, nil
+}
+
+func isBooleanConfigType(expression ast.Expr) bool {
+	switch typed := expression.(type) {
+	case *ast.Ident:
+		return typed.Name == "bool"
+	case *ast.StarExpr:
+		return isBooleanConfigType(typed.X)
+	default:
+		return false
+	}
 }
 
 func discoverExportedConfigFields(repoRoot string) ([]SourceItem, error) {

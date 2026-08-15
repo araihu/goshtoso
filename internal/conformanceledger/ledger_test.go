@@ -104,7 +104,7 @@ func writeMaintainedConfigStateAuthorities(t *testing.T, repo string) {
 		packageName string
 		fields      string
 	}{
-		{packageName: "checkbox", fields: "Checked bool\nDisabled bool"},
+		{packageName: "checkbox", fields: "Checked bool\nDisabled bool\nContainer bool"},
 		{packageName: "textinput", fields: "Disabled bool\nRequired bool\nReadonly bool"},
 	} {
 		path := filepath.Join(repo, "components", fixture.packageName)
@@ -169,12 +169,38 @@ func TestDeriveInventoryIncludesSourceVisiblePublicConfigurationStates(t *testin
 	}
 }
 
+func TestDeriveMaintainedConfigStatesRejectsUnclassifiedBehavioralField(t *testing.T) {
+	repo := t.TempDir()
+	writeMaintainedConfigStateAuthorities(t, repo)
+	path := filepath.Join(repo, "components", "checkbox", "types.go")
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	content = []byte(strings.Replace(string(content), "Disabled bool", "Disabled bool\nExperimental bool", 1))
+	if err := os.WriteFile(path, content, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := deriveMaintainedConfigStates(repo); err == nil || !strings.Contains(err.Error(), "unclassified behavioral Config field") {
+		t.Fatalf("unclassified behavioral field error = %v", err)
+	}
+}
+
 func TestDeriveLifecycleStatesRejectsAuthorityWithoutRealActionContract(t *testing.T) {
 	original := lifecycleStateAuthorities[0].Action
 	lifecycleStateAuthorities[0].Action = ""
 	t.Cleanup(func() { lifecycleStateAuthorities[0].Action = original })
 	if _, err := deriveLifecycleStates(repoRoot(t)); err == nil || !strings.Contains(err.Error(), "lacks action contract") {
 		t.Fatalf("missing lifecycle action contract error = %v", err)
+	}
+}
+
+func TestDeriveLifecycleStatesRejectsAuthorityWithoutRealOutcomeContract(t *testing.T) {
+	original := lifecycleStateAuthorities[0].Outcome
+	lifecycleStateAuthorities[0].Outcome = ""
+	t.Cleanup(func() { lifecycleStateAuthorities[0].Outcome = original })
+	if _, err := deriveLifecycleStates(repoRoot(t)); err == nil || !strings.Contains(err.Error(), "lacks outcome contract") {
+		t.Fatalf("missing lifecycle outcome contract error = %v", err)
 	}
 }
 
