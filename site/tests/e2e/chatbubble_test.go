@@ -91,3 +91,27 @@ func TestChatBubbleComponentDemoVariants(t *testing.T) {
 		assert.Equal(t, 3, dotCount)
 	})
 }
+
+func TestChatBubbleTypingIndicatorReducedMotionStopsAnimation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/chatbubble", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	typing := page.Locator("#chatbubble-typing [aria-label='typing']")
+	require.NoError(t, typing.WaitFor())
+	_, err = page.WaitForFunction(`() => {
+		const dots = document.querySelectorAll("#chatbubble-typing [aria-label='typing'] span.animate-bounce");
+		return dots.length === 3 && Array.from(dots).every(dot => getComputedStyle(dot).animationName === 'none');
+	}`, nil)
+	require.NoError(t, err)
+}
