@@ -145,6 +145,9 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 			if ledger.Rows[index].Class != ClassExecution {
 				return fmt.Errorf("execution receipt %s references non-execution row %s", receipt.ID, rowID)
 			}
+			if receipt.Status == StatusNotApplicable && mandatoryExecutionRow(ledger.Rows[index]) {
+				return fmt.Errorf("execution receipt %s cannot mark mandatory execution row %s not applicable", receipt.ID, rowID)
+			}
 			if previous, duplicate := applied[rowID]; duplicate {
 				return fmt.Errorf("execution row %s mapped by both %s and %s", rowID, previous, receipt.ID)
 			}
@@ -178,6 +181,19 @@ func ApplyExecutionReceipts(ledger *Ledger, receipts []ExecutionReceipt) error {
 		}
 	}
 	return nil
+}
+
+func mandatoryExecutionRow(row Row) bool {
+	if row.Class != ClassExecution {
+		return false
+	}
+	return strings.HasPrefix(row.ID, "execution/") ||
+		strings.HasPrefix(row.ID, "at/") ||
+		strings.HasPrefix(row.ID, "mode/") ||
+		strings.HasPrefix(row.ID, "viewport/") ||
+		strings.HasPrefix(row.ID, "zoom/") ||
+		strings.HasPrefix(row.ID, "motion/") ||
+		strings.HasPrefix(row.ID, "input/")
 }
 
 func ReadAndApplyExecutionReceiptEnvelope(ledger *Ledger, path, expectedSHA256 string) error {

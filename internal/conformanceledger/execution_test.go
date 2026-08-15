@@ -198,25 +198,16 @@ func TestApplyExecutionReceiptsRejectsForgedATPNG(t *testing.T) {
 	}
 }
 
-func TestApplyExecutionReceiptsTransitionsNotApplicableExplicitly(t *testing.T) {
+func TestApplyExecutionReceiptsRejectsClaimantNotApplicableForMandatoryExecutionRow(t *testing.T) {
 	ledger, _, err := GenerateSkeleton(generationFixture(t))
 	if err != nil {
 		t.Fatal(err)
 	}
 	receipt := executionFixture(t, "not-applicable", []string{"execution/kind/button"}, StatusNotApplicable)
 	receipt.Rationale = "static fixture has no runtime motion"
-	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{receipt}); err != nil {
-		t.Fatal(err)
+	if err := ApplyExecutionReceipts(&ledger, []ExecutionReceipt{receipt}); err == nil || !strings.Contains(err.Error(), "mandatory execution row") {
+		t.Fatalf("claimant N/A error = %v", err)
 	}
-	for _, row := range ledger.Rows {
-		if row.ID == "execution/kind/button" {
-			if row.Applicability != NotApplicable || row.ReceiptStatus != StatusNotApplicable {
-				t.Fatalf("N/A row = %#v", row)
-			}
-			return
-		}
-	}
-	t.Fatal("updated row not found")
 }
 
 func TestApplyExecutionReceiptsRejectsDuplicateReceiptIDs(t *testing.T) {
