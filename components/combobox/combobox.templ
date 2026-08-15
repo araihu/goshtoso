@@ -197,6 +197,7 @@ templ comboboxTemplate(cfg Config, state State) {
 		<button
 			type="button"
 			id={ cfg.ID + "-trigger" }
+			x-ref="trigger"
 			role="combobox"
 			disabled?={ cfg.Disabled }
 			class={ "inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state) }
@@ -221,7 +222,7 @@ templ comboboxTemplate(cfg Config, state State) {
 			x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
 			x-transition:leave-start="opacity-100 scale-100"
 			x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
-			x-on:click.outside="isOpen = false; openedWithKeyboard = false"
+			x-on:click.outside="!$refs.trigger.contains($event.target) && (isOpen = false, openedWithKeyboard = false)"
 			class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 		>
 			@body(cfg, state)
