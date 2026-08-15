@@ -14,6 +14,7 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 	paths := map[string]string{
 		"../action-group.js": "assets/js/src/action-group.js",
 		"combobox-client.js": "assets/js/src/components/combobox-client.js",
+		"carousel.js":        "assets/js/src/components/carousel.js",
 		"dropdown.js":        "assets/js/src/components/dropdown.js",
 		"navigation.js":      "assets/js/src/components/navigation.js",
 		"search.js":          "assets/js/src/components/search.js",

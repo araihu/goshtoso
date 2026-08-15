@@ -5044,6 +5044,9 @@
     .motion-reduce\:transition-none {
       transition-property: none;
     }
+    .motion-reduce\:transition-none\! {
+      transition-property: none !important;
+    }
     .motion-reduce\:delay-0 {
       transition-delay: 0ms;
     }
