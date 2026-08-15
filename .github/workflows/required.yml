@@ -15,10 +15,12 @@ permissions:
 
 env:
   GO_VERSION: '1.26.5'
+  PLAYWRIGHT_VERSION: 'v0.6100.0'
 
 jobs:
   required:
     name: Required CI
+    timeout-minutes: 75
     runs-on: >-
       ${{
         github.event_name == 'pull_request' &&
@@ -46,3 +48,52 @@ jobs:
 
       - name: Pinned-dependency deployability (site module)
         run: ./scripts/check-site-module pinned-dependency
+
+      # This is intentionally a required, explicit selection rather than an
+      # impact-selected E2E lane: T-GS-011's maintained axe-core and real
+      # browser accessibility contract must not disappear behind tag algebra.
+      - name: Configure B-FULL browser tools
+        run: |
+          set -euo pipefail
+          tool_bin="$RUNNER_TEMP/go-bin"
+          browser_path="$HOME/.cache/ms-playwright"
+          mkdir -p "$tool_bin" "$browser_path"
+          {
+            echo "GOBIN=$tool_bin"
+            echo "PLAYWRIGHT_BROWSERS_PATH=$browser_path"
+          } >> "$GITHUB_ENV"
+          echo "$tool_bin" >> "$GITHUB_PATH"
+
+      - name: Install Playwright Chromium for B-FULL
+        run: |
+          set -euo pipefail
+          go install github.com/mxschmitt/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_VERSION }}
+          "$GOBIN/playwright" install --with-deps chromium
+
+      - name: Restore pinned axe-core acquisition cache
+        uses: actions/cache@v6
+        with:
+          path: .cache/axe-core
+          key: axe-core-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/axe-core.lock', 'scripts/acquire-axe-core.sh') }}
+
+      - name: Acquire authenticated pinned axe-core
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/axe-core-4.10.3.tgz"
+          scripts/acquire-axe-core.sh --cache-dir .cache/axe-core --output "$archive"
+          echo "GOSHTOSO_AXE_CORE_TGZ=$archive" >> "$GITHUB_ENV"
+
+      - name: Current-source B-FULL workspace
+        run: go work init . ./site
+
+      - name: Required Scroll Region B-FULL browser and axe contract
+        run: scripts/run-scrollregion-bfull.sh
+
+      - name: Upload Scroll Region B-FULL artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: required-scrollregion-bfull
+          path: site/tests/e2e/test-results/scrollregion-bfull/
+          retention-days: 7
+          if-no-files-found: error

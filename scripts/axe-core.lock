@@ -1,0 +1,7 @@
+# The CI acquisition script verifies both the npm tarball and the injected
+# maintained axe-core payload. Keep this lock human-reviewable and immutable.
+version=4.10.3
+url=https://registry.npmjs.org/axe-core/-/axe-core-4.10.3.tgz
+archive_sha256=0f2b4d7dcdf7d1219df8d1959ad68e565f51d14c3f0d88bb71cd59abeb956292
+script_path=package/axe.min.js
+script_sha256=880970c081707360e64f34cea25ff91892f5bc95675b0776925b9709dd8a68bb

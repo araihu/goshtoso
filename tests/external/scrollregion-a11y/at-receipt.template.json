@@ -1,0 +1,184 @@
+{
+  "schema": "goshtoso.t-gs-011.at-receipt.v3",
+  "status": "template-not-evidence",
+  "challenge": "REPLACE_WITH_INDEPENDENT_64_HEX_CHALLENGE",
+  "identity": {
+    "repository_url": "REPLACE_WITH_FINAL_REPOSITORY_URL",
+    "head": "REPLACE_WITH_FINAL_COMMIT",
+    "tree": "REPLACE_WITH_FINAL_COMMIT_TREE",
+    "candidate_tree": "REPLACE_WITH_FINAL_CANDIDATE_TREE",
+    "manifest_sha256": "REPLACE_WITH_FINAL_MANIFEST_SHA256",
+    "status_sha256": "REPLACE_WITH_FINAL_STATUS_SHA256",
+    "dependency_pins": {
+      "root_go_directive": "REPLACE_WITH_FINAL_ROOT_GO_DIRECTIVE",
+      "site_go_directive": "REPLACE_WITH_FINAL_SITE_GO_DIRECTIVE",
+      "templ": "REPLACE_WITH_FINAL_TEMPL_VERSION",
+      "playwright_go": "REPLACE_WITH_FINAL_PLAYWRIGHT_GO_VERSION",
+      "axe_core": "REPLACE_WITH_FINAL_AXE_CORE_VERSION",
+      "axe_archive_sha256": "REPLACE_WITH_FINAL_AXE_ARCHIVE_SHA256",
+      "axe_script_sha256": "REPLACE_WITH_FINAL_AXE_SCRIPT_SHA256"
+    }
+  },
+  "captures": [
+    {
+      "pair": "macos-safari-voiceover",
+      "platform_version": "REPLACE_WITH_macOS_MAJOR_MINOR",
+      "browser_version": "REPLACE_WITH_SAFARI_MAJOR_MINOR",
+      "screen_reader_version": "REPLACE_WITH_VOICEOVER_MAJOR_MINOR",
+      "route": "/components/scroll-region",
+      "captured_at": "REPLACE_WITH_RFC3339_CAPTURE_TIME",
+      "observations": [
+        {
+          "state": "default",
+          "role": "region",
+          "name": "Activity history",
+          "focused": false,
+          "boundary": "start",
+          "commands": ["Navigate"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "no-overflow",
+          "role": "region",
+          "name": "Current release",
+          "focused": true,
+          "boundary": "no-overflow",
+          "commands": ["Tab"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "start",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "start",
+          "commands": ["Home"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "middle",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "middle",
+          "commands": ["PageDown"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "end",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "end",
+          "commands": ["End"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "focused",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "start",
+          "commands": ["Tab"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        }
+      ],
+      "screenshot": {"path": "REPLACE_WITH_PAIR_DISTINCT_PNG", "sha256": "REPLACE_WITH_PNG_SHA256"},
+      "transcript": {"path": "REPLACE_WITH_PAIR_DISTINCT_TRANSCRIPT_JSON", "sha256": "REPLACE_WITH_TRANSCRIPT_SHA256"},
+      "trace_log": {"path": "REPLACE_WITH_PAIR_DISTINCT_TRACE_LOG_JSON", "sha256": "REPLACE_WITH_TRACE_LOG_SHA256"},
+      "attestation": {"path": "REPLACE_WITH_PAIR_DISTINCT_DSSE_ENVELOPE_JSON", "sha256": "REPLACE_WITH_DSSE_ENVELOPE_SHA256"}
+    },
+    {
+      "pair": "macos-chromium-voiceover",
+      "platform_version": "REPLACE_WITH_macOS_MAJOR_MINOR",
+      "browser_version": "REPLACE_WITH_CHROMIUM_MAJOR_MINOR",
+      "screen_reader_version": "REPLACE_WITH_VOICEOVER_MAJOR_MINOR",
+      "route": "/components/scroll-region",
+      "captured_at": "REPLACE_WITH_RFC3339_CAPTURE_TIME",
+      "observations": [
+        {
+          "state": "default",
+          "role": "region",
+          "name": "Activity history",
+          "focused": false,
+          "boundary": "start",
+          "commands": ["Navigate"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "no-overflow",
+          "role": "region",
+          "name": "Current release",
+          "focused": true,
+          "boundary": "no-overflow",
+          "commands": ["Tab"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "start",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "start",
+          "commands": ["Home"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "middle",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "middle",
+          "commands": ["PageDown"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "end",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "end",
+          "commands": ["End"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        },
+        {
+          "state": "focused",
+          "role": "region",
+          "name": "Activity history",
+          "focused": true,
+          "boundary": "start",
+          "commands": ["Tab"],
+          "focus_navigation": {"before": "REPLACE_WITH_OBSERVED_BEFORE", "entry": "REPLACE_WITH_OBSERVED_REGION_ENTRY", "exit": "REPLACE_WITH_OBSERVED_AFTER"},
+          "observed_speech": ["REPLACE_WITH_OBSERVED_REGION_ROLE_AND_NAME"],
+          "unexpected_speech": []
+        }
+      ],
+      "screenshot": {"path": "REPLACE_WITH_PAIR_DISTINCT_PNG", "sha256": "REPLACE_WITH_PNG_SHA256"},
+      "transcript": {"path": "REPLACE_WITH_PAIR_DISTINCT_TRANSCRIPT_JSON", "sha256": "REPLACE_WITH_TRANSCRIPT_SHA256"},
+      "trace_log": {"path": "REPLACE_WITH_PAIR_DISTINCT_TRACE_LOG_JSON", "sha256": "REPLACE_WITH_TRACE_LOG_SHA256"},
+      "attestation": {"path": "REPLACE_WITH_PAIR_DISTINCT_DSSE_ENVELOPE_JSON", "sha256": "REPLACE_WITH_DSSE_ENVELOPE_SHA256"}
+    }
+  ]
+}

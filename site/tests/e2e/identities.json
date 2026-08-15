@@ -164,9 +164,11 @@
       "name": "codeblock",
       "files": [
         "codeblock_coverage_test.go",
+        "codeblock_semantic_feedback_test.go",
         "codeblock_test.go"
       ],
       "tests": [
+        "TestCodeBlockCopiedFeedbackSemanticContrastAndClipboardStates",
         "TestCodeBlock_ChromaHighlighting",
         "TestCodeBlock_DirectDemoPage",
         "TestCodeblockCoverageDemo"
@@ -211,6 +213,7 @@
       ],
       "tests": [
         "TestDropdownCoverageDemo",
+        "TestDropdownEscapeFocusRestorationIsReopenSafe",
         "TestDropdown_ActionsMenu",
         "TestDropdown_ClickVariant",
         "TestDropdown_ContextMenu",
@@ -294,9 +297,12 @@
     {
       "name": "iconpack",
       "files": [
-        "iconpack_consumer_test.go"
+        "iconpack_consumer_test.go",
+        "iconpack_docs_test.go"
       ],
       "tests": [
+        "TestIconpackConfigGeneratedConsumerBrowserProof",
+        "TestIconpackDocumentationPageBrowserProof",
         "TestIconpackGeneratedConsumerBrowserProof"
       ]
     },
@@ -712,12 +718,14 @@
       "name": "tooltip",
       "files": [
         "tooltip_coverage_test.go",
+        "tooltip_persistent_test.go",
         "tooltip_test.go"
       ],
       "tests": [
         "TestTooltipCoverageDemo",
         "TestTooltipCustomButtonTriggerFocusWiring",
         "TestTooltipCustomTriggerInitializerLifecycle",
+        "TestTooltipPersistentSemanticsAcrossFoundationThemes",
         "TestTooltip_ClickTooltip",
         "TestTooltip_DefaultHover",
         "TestTooltip_Positions",
@@ -836,6 +844,214 @@
       ]
     }
   ],
+  "specialized_suites": [
+    {
+      "name": "backdropelevation",
+      "tags": [
+        "backdropelevation"
+      ],
+      "files": [
+        "backdrop_elevation_test.go"
+      ],
+      "tests": [
+        "TestBackdropElevationRolesAcrossFoundationThemes"
+      ],
+      "selected_tests": [
+        "TestBackdropElevationRolesAcrossFoundationThemes"
+      ]
+    },
+    {
+      "name": "controlboundary",
+      "tags": [
+        "controlboundary"
+      ],
+      "files": [
+        "control_boundary_contrast_test.go"
+      ],
+      "tests": [
+        "TestControlBoundaryContrastAcrossFoundationThemes"
+      ],
+      "selected_tests": [
+        "TestControlBoundaryContrastAcrossFoundationThemes"
+      ]
+    },
+    {
+      "name": "reducedmotion",
+      "tags": [
+        "reducedmotion"
+      ],
+      "files": [
+        "reduced_motion_test.go"
+      ],
+      "tests": [
+        "TestMotionBehaviorAcrossFoundationThemes",
+        "TestMotionRuntimeTracksPreferenceChanges",
+        "TestReducedMotionSuppressesCarouselAutoplay"
+      ],
+      "selected_tests": [
+        "TestMotionBehaviorAcrossFoundationThemes",
+        "TestMotionRuntimeTracksPreferenceChanges",
+        "TestReducedMotionSuppressesCarouselAutoplay"
+      ]
+    },
+    {
+      "name": "scrollregion",
+      "tags": [
+        "scrollregion"
+      ],
+      "files": [
+        "scrollregion_test.go"
+      ],
+      "tests": [
+        "TestScrollRegionDirectRouteStatesAndInputModes"
+      ],
+      "selected_tests": [
+        "TestScrollRegionDirectRouteStatesAndInputModes"
+      ]
+    },
+    {
+      "name": "scrollregion_axe",
+      "tags": [
+        "scrollregion",
+        "axe"
+      ],
+      "files": [
+        "scrollregion_axe_test.go"
+      ],
+      "tests": [
+        "TestScrollRegionAxeNamedPublicViewport"
+      ],
+      "selected_tests": [
+        "TestScrollRegionAxeNamedPublicViewport",
+        "TestScrollRegionDirectRouteStatesAndInputModes"
+      ]
+    },
+    {
+      "name": "statustext",
+      "tags": [
+        "statustext"
+      ],
+      "files": [
+        "status_text_contrast_test.go"
+      ],
+      "tests": [
+        "TestStatusTextContrastAcrossFoundationThemes"
+      ],
+      "selected_tests": [
+        "TestStatusTextContrastAcrossFoundationThemes"
+      ]
+    },
+    {
+      "name": "tooltipradius",
+      "tags": [
+        "tooltipradius"
+      ],
+      "files": [
+        "tooltip_radius_test.go"
+      ],
+      "tests": [
+        "TestTooltipSemanticRadiusAcrossFoundationThemes"
+      ],
+      "selected_tests": [
+        "TestTooltipSemanticRadiusAcrossFoundationThemes"
+      ]
+    },
+    {
+      "name": "scrollregion_bfull",
+      "tags": [
+        "scrollregion",
+        "bfull",
+        "axe"
+      ],
+      "files": [
+        "scrollregion_bfull_test.go",
+        "scrollregion_evidence_support_test.go",
+        "scrollregion_evidence_test.go"
+      ],
+      "tests": [
+        "TestScrollRegionATReceiptRejectsActionContractMutation",
+        "TestScrollRegionATReceiptRejectsAttestationPayloadMutation",
+        "TestScrollRegionATReceiptRejectsCandidateByteMutationBeforeReplayClaim",
+        "TestScrollRegionATReceiptRejectsChallengeReplay",
+        "TestScrollRegionATReceiptRejectsClaimantActionTimestampMismatch",
+        "TestScrollRegionATReceiptRejectsGenericObservedSpeech",
+        "TestScrollRegionATReceiptRejectsInferredFocusNavigation",
+        "TestScrollRegionATReceiptRejectsNoOpHomeTransition",
+        "TestScrollRegionATReceiptRejectsOverlappingActionWindow",
+        "TestScrollRegionATReceiptRejectsPairKeyMismatch",
+        "TestScrollRegionATReceiptRejectsPlaceholderOrZeroVersion",
+        "TestScrollRegionATReceiptRejectsPlainTextScreenshot",
+        "TestScrollRegionATReceiptRejectsReusedArtifacts",
+        "TestScrollRegionATReceiptRejectsSecondReceiptForClaimedChallenge",
+        "TestScrollRegionATReceiptRejectsSignedSyntheticCaptureWithoutRawProvenance",
+        "TestScrollRegionATReceiptRejectsSignedSyntheticSolidPNGBeforeSemantics",
+        "TestScrollRegionATReceiptRejectsStaleActionBoundVoiceOverLog",
+        "TestScrollRegionATReceiptRejectsUnsignedCapture",
+        "TestScrollRegionATReceiptRejectsWrongAttestationKey",
+        "TestScrollRegionBFull",
+        "TestScrollRegionBFullATReceiptHarness",
+        "TestScrollRegionBFullFirstPaintObserverCannotMutateProductState",
+        "TestScrollRegionBFullIdentityBindingRequiresSidecarForDirtyWorktree",
+        "TestScrollRegionBFullIdentityBindingSealsVerifiedSidecar",
+        "TestScrollRegionBFullPlanMarksExplicitDiagnosticNonClosure",
+        "TestScrollRegionBFullPlanRejectsUnmarkedCap",
+        "TestScrollRegionBFullReceiptRejectsLockedThemePersistenceClaim",
+        "TestScrollRegionBFullReceiptRejectsRecomputedPersistenceForgeries",
+        "TestScrollRegionBFullReceiptWrapperRejectsTampering",
+        "TestScrollRegionBFullWrongChromeCropFailsVisualBinding",
+        "TestScrollRegionCandidateIdentityRejectsDuplicatePath",
+        "TestScrollRegionCandidateIdentityRejectsMissingDeclaredPath",
+        "TestScrollRegionCandidateIdentityRejectsMutuallyConsistentFabrication",
+        "TestScrollRegionCandidateIdentityRejectsTamperedDeclaredBytes",
+        "TestScrollRegionCandidateIdentityRejectsUndeclaredExtraPath",
+        "TestScrollRegionFooterUA200ResponsiveCompatibility",
+        "TestScrollRegionReadAxeLockAllowsHumanReviewComments",
+        "TestScrollRegionUA200HorizontalAccessContract"
+      ],
+      "selected_tests": [
+        "TestScrollRegionATReceiptRejectsActionContractMutation",
+        "TestScrollRegionATReceiptRejectsAttestationPayloadMutation",
+        "TestScrollRegionATReceiptRejectsCandidateByteMutationBeforeReplayClaim",
+        "TestScrollRegionATReceiptRejectsChallengeReplay",
+        "TestScrollRegionATReceiptRejectsClaimantActionTimestampMismatch",
+        "TestScrollRegionATReceiptRejectsGenericObservedSpeech",
+        "TestScrollRegionATReceiptRejectsInferredFocusNavigation",
+        "TestScrollRegionATReceiptRejectsNoOpHomeTransition",
+        "TestScrollRegionATReceiptRejectsOverlappingActionWindow",
+        "TestScrollRegionATReceiptRejectsPairKeyMismatch",
+        "TestScrollRegionATReceiptRejectsPlaceholderOrZeroVersion",
+        "TestScrollRegionATReceiptRejectsPlainTextScreenshot",
+        "TestScrollRegionATReceiptRejectsReusedArtifacts",
+        "TestScrollRegionATReceiptRejectsSecondReceiptForClaimedChallenge",
+        "TestScrollRegionATReceiptRejectsSignedSyntheticCaptureWithoutRawProvenance",
+        "TestScrollRegionATReceiptRejectsSignedSyntheticSolidPNGBeforeSemantics",
+        "TestScrollRegionATReceiptRejectsStaleActionBoundVoiceOverLog",
+        "TestScrollRegionATReceiptRejectsUnsignedCapture",
+        "TestScrollRegionATReceiptRejectsWrongAttestationKey",
+        "TestScrollRegionAxeNamedPublicViewport",
+        "TestScrollRegionBFull",
+        "TestScrollRegionBFullATReceiptHarness",
+        "TestScrollRegionBFullFirstPaintObserverCannotMutateProductState",
+        "TestScrollRegionBFullIdentityBindingRequiresSidecarForDirtyWorktree",
+        "TestScrollRegionBFullIdentityBindingSealsVerifiedSidecar",
+        "TestScrollRegionBFullPlanMarksExplicitDiagnosticNonClosure",
+        "TestScrollRegionBFullPlanRejectsUnmarkedCap",
+        "TestScrollRegionBFullReceiptRejectsLockedThemePersistenceClaim",
+        "TestScrollRegionBFullReceiptRejectsRecomputedPersistenceForgeries",
+        "TestScrollRegionBFullReceiptWrapperRejectsTampering",
+        "TestScrollRegionBFullWrongChromeCropFailsVisualBinding",
+        "TestScrollRegionCandidateIdentityRejectsDuplicatePath",
+        "TestScrollRegionCandidateIdentityRejectsMissingDeclaredPath",
+        "TestScrollRegionCandidateIdentityRejectsMutuallyConsistentFabrication",
+        "TestScrollRegionCandidateIdentityRejectsTamperedDeclaredBytes",
+        "TestScrollRegionCandidateIdentityRejectsUndeclaredExtraPath",
+        "TestScrollRegionDirectRouteStatesAndInputModes",
+        "TestScrollRegionFooterUA200ResponsiveCompatibility",
+        "TestScrollRegionReadAxeLockAllowsHumanReviewComments",
+        "TestScrollRegionUA200HorizontalAccessContract"
+      ]
+    }
+  ],
   "full_only": {
     "name": "full_only",
     "files": [
@@ -844,6 +1060,7 @@
       "component_interaction_contrast_test.go",
       "components_test.go",
       "e2e_shutdown_test.go",
+      "foundation_producer_cascade_test.go",
       "getting_started_test.go",
       "javascript_extraction_batch2_test.go",
       "javascript_extraction_batch3_lane_f_test.go",
@@ -884,6 +1101,7 @@
       "TestE2ECoverPkgIncludesServerMainPackage",
       "TestErrorHandling",
       "TestFilterIgnorableOnlyDropsIntentionalAvatarFixtureNoise",
+      "TestFoundationRoutesResolveAuthenticatedThemeCascade",
       "TestGettingStarted_StarterRepoAndLiveOutcome",
       "TestIntegration",
       "TestJavaScriptBatch2_FirstPaintFactoriesAndDataIntegrity",
@@ -906,6 +1124,7 @@
       "TestStopServerUsesShutdownEndpointWhenConfigured",
       "TestThemeContrastMinimalDarkSmallCopyMeetsAA",
       "TestThemeContrastResolvesColors",
+      "TestThemeInventory_BFullAllThemesAndDeepModes",
       "TestThemePage_BorderRadius_AppliesVar",
       "TestThemePage_CSSExport_FilterAndMode",
       "TestThemePage_ColorPalette_BlackWhiteApply",
@@ -915,6 +1134,7 @@
       "TestThemePage_ContrastMatrix_Renders",
       "TestThemePage_DarkModeGroup_Visibility",
       "TestThemePage_FragmentNavBootstrapsData",
+      "TestThemePage_FragmentNavigationPreservesActiveTheme",
       "TestThemePage_Loads",
       "TestThemePage_OverridesSurviveReload",
       "TestThemePage_PaletteVariablesExist",

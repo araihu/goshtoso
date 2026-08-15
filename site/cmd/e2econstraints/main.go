@@ -13,6 +13,7 @@ func main() {
 	compileMatrix := flag.Bool("compile-matrix", false, "compile every focused E2E identity")
 	listMatrix := flag.Bool("list-matrix", false, "compare go test -list with the parsed identity inventory")
 	printManifest := flag.Bool("print-manifest", false, "print the inventory derived from current constraints")
+	printSpecializedTests := flag.String("print-specialized-tests", "", "print one specialized suite's manifest-owned selected tests")
 	flag.Parse()
 
 	findings, err := e2econstraints.FindCrossFileDeclarations(".")
@@ -52,6 +53,17 @@ func main() {
 	if err := e2econstraints.ValidateSuite(suite, manifest); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
+	}
+	if *printSpecializedTests != "" {
+		selected, err := e2econstraints.SpecializedSelectedTests(manifest, *printSpecializedTests)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		for _, test := range selected {
+			fmt.Fprintln(os.Stdout, test)
+		}
+		return
 	}
 	if *printManifest {
 		if err := e2econstraints.WriteManifest(os.Stdout, e2econstraints.ExpandedManifest(suite, manifest)); err != nil {

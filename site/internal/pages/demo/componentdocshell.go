@@ -18,12 +18,25 @@ func ComponentDocsLayout(meta PageMeta, active string, content templ.Component, 
 	return componentdocshell.Layout(cfg, componentDocsPage(cfg, meta, active, content))
 }
 
+// ComponentDocsLayoutWithInitialTheme renders the same locked component-docs
+// shell with a server-selected initial theme. It exists for evidence routes
+// that must bind their visual theme before the browser receives HTML; normal
+// component docs continue to use ComponentDocsLayout and their Arai Hu default.
+func ComponentDocsLayoutWithInitialTheme(meta PageMeta, active string, content templ.Component, persist bool, initialTheme string) templ.Component {
+	cfg := componentDocsConfigWithInitialTheme(persist, initialTheme)
+	return componentdocshell.Layout(cfg, componentDocsPage(cfg, meta, active, content))
+}
+
 func ComponentDocsFragment(meta PageMeta, active string, content templ.Component, persist bool) templ.Component {
 	cfg := componentDocsConfig(persist)
 	return componentdocshell.Fragment(cfg, componentDocsPage(cfg, meta, active, content))
 }
 
 func componentDocsConfig(persist bool) componentdocshell.Config {
+	return componentDocsConfigWithInitialTheme(persist, "araihu")
+}
+
+func componentDocsConfigWithInitialTheme(persist bool, initialTheme string) componentdocshell.Config {
 	sections := getSidebarSections("")
 	for i := range sections {
 		for j := range sections[i].Items {
@@ -35,7 +48,7 @@ func componentDocsConfig(persist bool) componentdocshell.Config {
 		Navigation: componentdocshell.Navigation{Items: getSidebarTopItems(""), SectionsTitle: "Components", Sections: sections, SearchPlaceholder: "Search", SearchSlot: sidebarSearchSlot()},
 		Appearance: componentdocshell.AppearanceConfig{
 			Themes:                        getThemeOptions(),
-			DefaultTheme:                  "araihu",
+			DefaultTheme:                  initialTheme,
 			DisableThemeSelector:          true,
 			DisableDefaultThemeStylesheet: true,
 			PersistPreferences:            persist,

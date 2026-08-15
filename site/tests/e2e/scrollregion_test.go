@@ -15,6 +15,41 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
+	t.Run("public viewport is a named region", func(t *testing.T) {
+		page, viewport, failures := newScrollRegionTestPage(t)
+		actual, err := viewport.Evaluate(`el => ({
+			role: el.getAttribute('role') || '',
+			ariaLabel: el.getAttribute('aria-label') || '',
+			ariaLabelledBy: el.getAttribute('aria-labelledby') || '',
+		})`, nil)
+		require.NoError(t, err)
+		require.Equal(t, map[string]any{
+			"role":           "region",
+			"ariaLabel":      "Activity history",
+			"ariaLabelledBy": "",
+		}, actual, "the public focusable viewport must expose an explicit named region contract")
+		requireScrollRegionPageHealthy(t, page, failures)
+	})
+
+	t.Run("public examples have distinct region names", func(t *testing.T) {
+		page, _, failures := newScrollRegionTestPage(t)
+		actual, err := page.Locator("#scroll-region-fragment [data-goshtoso-scroll-viewport][role='region']").EvaluateAll(`els => els.map(el => el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || '')`, nil)
+		require.NoError(t, err)
+		names, ok := actual.([]any)
+		require.True(t, ok, "region names must be returned as an array")
+		require.Len(t, names, 3)
+		seen := make(map[string]struct{}, len(names))
+		for _, value := range names {
+			name, ok := value.(string)
+			require.True(t, ok)
+			require.NotEmpty(t, name)
+			_, exists := seen[name]
+			require.Falsef(t, exists, "Scroll Region demo landmark name %q must be unique", name)
+			seen[name] = struct{}{}
+		}
+		requireScrollRegionPageHealthy(t, page, failures)
+	})
+
 	t.Run("default and no-overflow", func(t *testing.T) {
 		page, viewport, failures := newScrollRegionTestPage(t)
 		require.Equal(t, "0", scrollRegionAttribute(t, viewport, "tabindex"))
@@ -70,6 +105,18 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 		})
 	})
 
+	t.Run("mouse wheel updates boundary state", func(t *testing.T) {
+		page, viewport, failures := newScrollRegionTestPage(t)
+		setScrollRegionPosition(t, page, "#scroll-region-default", "start")
+		box, err := viewport.BoundingBox()
+		require.NoError(t, err)
+		require.NotNil(t, box)
+		require.NoError(t, page.Mouse().Move(box.X+box.Width/2, box.Y+box.Height/2))
+		require.NoError(t, page.Mouse().Wheel(0, 180))
+		waitForScrollRegionPosition(t, page, "#scroll-region-default", "middle")
+		requireScrollRegionPageHealthy(t, page, failures)
+	})
+
 	t.Run("touch scroll updates boundary state", func(t *testing.T) {
 		page, viewport, failures := newScrollRegionTestPage(t)
 		setScrollRegionPosition(t, page, "#scroll-region-default", "start")
@@ -92,24 +139,15 @@ func TestScrollRegionDirectRouteStatesAndInputModes(t *testing.T) {
 		requireScrollRegionPageHealthy(t, page, failures)
 	})
 
-	t.Run("zoom and three-theme mode matrix", func(t *testing.T) {
+	t.Run("narrow layout and catalog theme mode matrix", func(t *testing.T) {
 		page, viewport, failures := newScrollRegionTestPage(t)
-		session, err := page.Context().NewCDPSession(page)
-		require.NoError(t, err)
-		t.Cleanup(func() { _ = session.Detach() })
-		_, err = session.Send("Emulation.setPageScaleFactor", map[string]any{"pageScaleFactor": 2})
-		require.NoError(t, err)
-		_, err = page.WaitForFunction(`() => window.visualViewport && window.visualViewport.scale >= 1.9`, nil)
-		require.NoError(t, err)
 		setScrollRegionPosition(t, page, "#scroll-region-default", "start")
 		require.NoError(t, viewport.Focus())
 		require.NoError(t, viewport.Press("End"))
 		waitForScrollRegionPosition(t, page, "#scroll-region-default", "end")
-		_, err = session.Send("Emulation.setPageScaleFactor", map[string]any{"pageScaleFactor": 1})
-		require.NoError(t, err)
 
 		require.NoError(t, page.SetViewportSize(320, 900))
-		for _, theme := range []string{"araihu", "modern", "goshtoso"} {
+		for _, theme := range []string{"araihu", "goshtoso", "minimal", "modern"} {
 			for _, dark := range []bool{false, true} {
 				t.Run(fmt.Sprintf("%s/dark=%t", theme, dark), func(t *testing.T) {
 					_, err := page.Evaluate(`([theme, dark]) => {

@@ -1,14 +1,45 @@
 package main
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
+
+func TestATCaptureResponseWrapperBindsDirectCandidateHTML(t *testing.T) {
+	wrapped := atCaptureResponseWrapper(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_, _ = io.WriteString(w, "<!doctype html><html><head><title>Scroll Region</title></head><body><div role=\"region\" aria-label=\"Activity history\"></div></body></html>")
+	}), atCaptureBinding{
+		Challenge:      strings.Repeat("a", 64),
+		CandidateTree:  strings.Repeat("b", 40),
+		ManifestSHA256: strings.Repeat("c", 64),
+		Pair:           "macos-safari-voiceover",
+	})
+
+	recorder := httptest.NewRecorder()
+	challenge := strings.Repeat("a", 64)
+	token := atCaptureActionToken(challenge, "default")
+	wrapped.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/components/scroll-region?t-gs-011-at-capture="+challenge+"&t-gs-011-at-state=default&t-gs-011-at-action-token="+token, nil))
+	body := recorder.Body.String()
+	require.Equal(t, http.StatusOK, recorder.Code)
+	require.Equal(t, challenge, recorder.Header().Get(atCaptureChallengeHeader))
+	require.Equal(t, strings.Repeat("b", 40), recorder.Header().Get(atCaptureCandidateTreeHeader))
+	require.Equal(t, strings.Repeat("c", 64), recorder.Header().Get(atCaptureManifestHeader))
+	require.NotEmpty(t, recorder.Header().Get(atCaptureBodySHA256Header))
+	require.Equal(t, "macos-safari-voiceover", recorder.Header().Get(atCapturePairHeader))
+	require.Contains(t, body, `name="goshtoso-t-gs-011-at-challenge" content="`+challenge+`"`)
+	require.Contains(t, body, `name="goshtoso-t-gs-011-at-action-token" content="`+token+`"`)
+	require.NotContains(t, body, `aria-live=`, "capture metadata must not inject synthetic AT speech into the tested DOM")
+	require.NotContains(t, body, `T-GS-011 AT action token `+token)
+	require.Contains(t, body, `role="region"`)
+}
 
 func TestFindAssetsRootSkipsNestedSiteAssetsPackage(t *testing.T) {
 	t.Parallel()

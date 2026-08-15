@@ -231,6 +231,9 @@ jobs:
       - name: External runtime-manifest consumer contract
         run: cd tests/external/runtime-manifest && GOWORK=off go test ./... -count=1
 
+      - name: External Scroll Region accessibility consumer contract
+        run: cd tests/external/scrollregion-a11y && GOWORK=off go test ./... -count=1
+
       - name: Select focused E2E identities
         id: e2e-impact
         env:

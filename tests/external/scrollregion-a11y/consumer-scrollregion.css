@@ -1,0 +1,25 @@
+/*
+ * External-consumer fixture used by the T-GS-011 B-FULL browser contract.
+ * This is not a Goshtoso catalog theme and is deliberately not production CSS.
+ * A consumer owns this attribute-scoped token layer and loads it before the
+ * documentation route's first paint.
+ */
+html[data-goshtoso-scrollregion-consumer-theme="t-gs-011"] {
+  --color-surface: #f8fafc;
+  --color-surface-alt: #e0e7ff;
+  --color-on-surface: #1e293b;
+  --color-on-surface-strong: #0f172a;
+  --color-on-surface-muted: #334155;
+  --color-primary: #4338ca;
+  --color-outline: #475569;
+}
+
+html.dark[data-goshtoso-scrollregion-consumer-theme="t-gs-011"] {
+  --color-surface-dark: #0f172a;
+  --color-surface-dark-alt: #172554;
+  --color-on-surface-dark: #e2e8f0;
+  --color-on-surface-dark-strong: #f8fafc;
+  --color-on-surface-dark-muted: #cbd5e1;
+  --color-primary-dark: #a5b4fc;
+  --color-outline-dark: #94a3b8;
+}

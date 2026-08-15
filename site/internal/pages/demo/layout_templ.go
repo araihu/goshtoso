@@ -1160,7 +1160,7 @@ func siteFooter() templ.Component {
 		privacyAttrs := navHxAttrs("/privacy", "")
 		attrAttrs := navHxAttrs("/attributions", "")
 		licenseAttrs := navHxAttrs("/license", "")
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<footer class=\"mt-16 border-t border-outline dark:border-outline-dark pt-8 pb-10 text-center\"><p class=\"inline-flex items-center justify-center gap-2 font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-6 shrink-0 rounded-md\"> <span>Goshtoso <span class=\"font-normal text-on-surface-muted dark:text-on-surface-dark-muted\">2026</span></span></p><nav class=\"mt-3 flex items-center justify-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><a href=\"/privacy\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<footer class=\"mt-16 border-t border-outline dark:border-outline-dark pt-8 pb-10 text-center\"><p class=\"inline-flex items-center justify-center gap-2 font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-6 shrink-0 rounded-md\"> <span>Goshtoso <span class=\"font-normal text-on-surface-muted dark:text-on-surface-dark-muted\">2026</span></span></p><nav class=\"mt-3 flex flex-wrap items-center justify-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><a href=\"/privacy\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,0 +1,17 @@
+{
+  "schema": "goshtoso.t-gs-011.at-attestation-keys.v1",
+  "keys": [
+    {
+      "key_id": "macos-voiceover-20260812",
+      "public_key_path": "tests/external/scrollregion-a11y/attestation-keys/macos-voiceover-public.pem",
+      "public_key_sha256": "2d33f99202e6e79871ee4ba97b9b146aa472be5014bca987ce453af040cddf2d",
+      "pairs": ["macos-safari-voiceover", "macos-chromium-voiceover"]
+    },
+    {
+      "key_id": "windows-nvda-20260812",
+      "public_key_path": "tests/external/scrollregion-a11y/attestation-keys/windows-nvda-public.pem",
+      "public_key_sha256": "72eb412db94d246bf35134a017ad03a97b82643ef19a3b119a003ef36a17639f",
+      "pairs": ["windows-chromium-nvda"]
+    }
+  ]
+}

@@ -73,14 +73,14 @@ func scrollRegionDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Scroll Region",
-				Description: "Bounds long content inside a focusable viewport and shows independent start and end cues for keyboard, mouse, and touch scrolling.",
+				Description: "Bounds long content inside a named, focusable viewport and shows independent start and end cues for keyboard, mouse, and touch scrolling.",
 			},
 			scrollRegionDefaultPreview(),
-			`@scrollregion.ScrollRegion(scrollregion.Config{
+			`@scrollregion.Named(scrollregion.Config{
     RootClass:     "h-56",
     ViewportClass: "border border-outline p-4 dark:border-outline-dark",
     Content:       activityHistory(),
-})`,
+}, scrollregion.AccessibleName{Label: "Activity history"})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -91,10 +91,10 @@ func scrollRegionDemoContent() templ.Component {
 				Description: "Both boundary cues stay hidden when all content fits inside the viewport.",
 			},
 			scrollRegionNoOverflowPreview(),
-			`@scrollregion.ScrollRegion(scrollregion.Config{
-    RootClass: "h-40",
+			`@scrollregion.Named(scrollregion.Config{
+    RootClass: "h-64",
     Content:   shortSummary(),
-})`,
+}, scrollregion.AccessibleName{Label: "Current release"})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -105,11 +105,11 @@ func scrollRegionDemoContent() templ.Component {
 				Description: "DisableIndicators removes the visual cues without removing the focusable viewport or boundary sentinels.",
 			},
 			scrollRegionIndicatorsDisabledPreview(),
-			`@scrollregion.ScrollRegion(scrollregion.Config{
+			`@scrollregion.Named(scrollregion.Config{
     RootClass:         "h-40",
     Content:           activityHistory(),
     DisableIndicators: true,
-})`,
+}, scrollregion.AccessibleName{Label: "Activity history without indicators"})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -147,11 +147,11 @@ func scrollRegionDefaultPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = scrollregion.ScrollRegion(scrollregion.Config{
+		templ_7745c5c3_Err = scrollregion.Named(scrollregion.Config{
 			RootClass:     "h-full",
 			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:       scrollRegionActivityHistory(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		}, scrollregion.AccessibleName{Label: "Activity history"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -184,15 +184,15 @@ func scrollRegionNoOverflowPreview() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"scroll-region-no-overflow\" class=\"h-40 w-full max-w-2xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"scroll-region-no-overflow\" class=\"h-64 w-full max-w-2xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = scrollregion.ScrollRegion(scrollregion.Config{
+		templ_7745c5c3_Err = scrollregion.Named(scrollregion.Config{
 			RootClass:     "h-full",
 			ViewportClass: "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:       scrollRegionShortSummary(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		}, scrollregion.AccessibleName{Label: "Current release"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -229,12 +229,12 @@ func scrollRegionIndicatorsDisabledPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = scrollregion.ScrollRegion(scrollregion.Config{
+		templ_7745c5c3_Err = scrollregion.Named(scrollregion.Config{
 			RootClass:         "h-full",
 			ViewportClass:     "border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt",
 			Content:           scrollRegionActivityHistory(),
 			DisableIndicators: true,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		}, scrollregion.AccessibleName{Label: "Activity history without indicators"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -272,7 +272,7 @@ func scrollRegionActivityHistory() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for index := range 18 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<li class=\"rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"><span class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Activity ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<li class=\"rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface break-words dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"><span class=\"font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Activity ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -285,7 +285,7 @@ func scrollRegionActivityHistory() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span> <span class=\"ml-2 text-on-surface-muted dark:text-on-surface-dark-muted\">Deployment state recorded.</span></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</span> <span class=\"ml-2 text-on-surface-muted break-words dark:text-on-surface-dark-muted\">Deployment state recorded.</span></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

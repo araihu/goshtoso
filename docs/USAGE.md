@@ -696,11 +696,11 @@ scrolling, and updates its start/end cues as content or size changes:
 import "github.com/araihu/goshtoso/components/scrollregion"
 
 templ ActivityHistory() {
-    @scrollregion.ScrollRegion(scrollregion.Config{
-        RootClass:     "h-64",
-        ViewportClass: "border border-outline p-4 dark:border-outline-dark",
-        Content:       activityRows(),
-    })
+	@scrollregion.Named(scrollregion.Config{
+		RootClass:     "h-64",
+		ViewportClass: "border border-outline p-4 dark:border-outline-dark",
+		Content:       activityRows(),
+	}, scrollregion.AccessibleName{Label: "Activity history"})
 }
 ```
 
@@ -708,10 +708,39 @@ Set `DisableIndicators: true` when the surrounding interface already provides
 an equivalent boundary cue. The viewport and its start/end sentinels remain in
 the DOM, so keyboard and touch behavior do not change.
 
-For source compatibility, `ScrollRegion` keeps its original
-`func(Config) templ.Component` signature. The returned value also implements
-`components.Component` and reports `components.KindScrollRegion` when a
-consumer needs stable runtime identity.
+`scrollregion.Named` and `scrollregion.Labelled` render intentional named `region`
+landmarks. The compatibility `scrollregion.ScrollRegion(Config)`
+constructor renders a focusable named `group` instead, so repeated legacy calls
+do not create duplicate landmarks. Use `Named` with
+`scrollregion.AccessibleName{Label: ...}` to provide a landmark name, or use
+`AccessibleName{LabelledBy: ...}` to reference one or more IDs of existing
+visible label elements. `LabelledBy` takes precedence; when neither is set, the
+component uses the stable fallback name `Scrollable content`. When a page
+renders more than one named region, give every landmark a unique `Label` or
+`LabelledBy` reference.
+
+The default viewport supports both horizontal and vertical scrolling so long
+tables, code, and unbreakable consumer values remain reachable. A consumer may
+explicitly set an axis class such as `ViewportClass: "overflow-x-hidden"` only
+when its content has another complete horizontal-access path.
+
+When an existing visible heading already names the content, use the direct
+`Labelled` shortcut. It emits `aria-labelledby` without a competing
+`aria-label`:
+
+```templ
+<h2 id="activity-history-heading">Activity history</h2>
+@scrollregion.Labelled(scrollregion.Config{
+	RootClass: "h-64",
+	Content:   activityRows(),
+}, "activity-history-heading")
+```
+
+For source compatibility, `Config` keeps its original four fields and
+`ScrollRegion` keeps its original `func(Config) templ.Component` signature.
+The separate naming value avoids breaking legal unkeyed Config literals. The
+returned value also implements `components.Component` and reports
+`components.KindScrollRegion` when a consumer needs stable runtime identity.
 
 ## Theming
 

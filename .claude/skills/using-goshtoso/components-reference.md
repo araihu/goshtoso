@@ -1431,7 +1431,20 @@ import "github.com/araihu/goshtoso/components/schemaform"  // package schemaform
 import "github.com/araihu/goshtoso/components/scrollregion"  // package scrollregion
 ```
 
-**Entry points:** `ScrollRegion(cfg Config)`
+**Entry points:** `Labelled(cfg Config, labelledBy string)` · `Named(cfg Config, name AccessibleName)` · `ScrollRegion(cfg Config)`
+
+### Usage
+
+```templ
+@scrollregion.Labelled(scrollregion.Config{RootClass: "h-64", Content: activityRows()}, "activity-history-heading")
+```
+
+**AccessibleName**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Label` | `string` | Label sets the accessible name. It defaults to "Scrollable content" when LabelledBy is not set. |
+| `LabelledBy` | `string` | LabelledBy sets one or more existing element IDs that name the region. |
 
 **Config**
 

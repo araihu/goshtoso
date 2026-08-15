@@ -24,6 +24,17 @@ import (
 	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
 )
 
+const (
+	scrollRegionBFullThemeQuery    = "t-gs-011-theme"
+	scrollRegionBFullConsumerQuery = "t-gs-011-consumer"
+	scrollRegionBFullThemeSource   = "server-routed-html"
+)
+
+type scrollRegionBFullRoutedAppearance struct {
+	Theme    string
+	Consumer bool
+}
+
 // Server handles HTTP requests for Goshtoso components
 type Server struct {
 	projectRoot  string
@@ -294,14 +305,86 @@ func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) 
 		http.NotFound(w, r)
 		return
 	}
+	appearance, themed, err := scrollRegionBFullRoutedAppearanceForRequest(r, key)
+	if err != nil {
+		http.Error(w, "T-GS-011 routed theme: "+err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := entry.Content()
 	meta := demoregistry.MetaForKey(key)
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+		if themed {
+			http.Error(w, "T-GS-011 routed theme: full-document response required", http.StatusBadRequest)
+			return
+		}
 		_ = demo.ComponentDocsFragment(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
+	if themed {
+		var rendered strings.Builder
+		if err := demo.ComponentDocsLayoutWithInitialTheme(meta, entry.Active, content, storageAllowed(r), appearance.Theme).Render(r.Context(), &rendered); err != nil {
+			http.Error(w, "T-GS-011 routed theme: render failed", http.StatusInternalServerError)
+			return
+		}
+		bound, err := bindScrollRegionBFullInitialAppearance(rendered.String(), appearance)
+		if err != nil {
+			http.Error(w, "T-GS-011 routed theme: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		_, _ = w.Write([]byte(bound))
+		return
+	}
 	_ = demo.ComponentDocsLayout(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
+}
+
+// scrollRegionBFullRoutedAppearanceForRequest intentionally grants no generic
+// theme switcher. It recognizes only the evidence route's literal theme axis,
+// so normal public component docs remain locked to Arai Hu.
+func scrollRegionBFullRoutedAppearanceForRequest(r *http.Request, key string) (scrollRegionBFullRoutedAppearance, bool, error) {
+	query := r.URL.Query()
+	theme, hasTheme := query[scrollRegionBFullThemeQuery]
+	consumer, hasConsumer := query[scrollRegionBFullConsumerQuery]
+	if !hasTheme && !hasConsumer {
+		return scrollRegionBFullRoutedAppearance{}, false, nil
+	}
+	if key != "components/scroll-region" || r.URL.Path != "/components/scroll-region" {
+		return scrollRegionBFullRoutedAppearance{}, false, fmt.Errorf("query is limited to /components/scroll-region")
+	}
+	if len(theme) != 1 {
+		return scrollRegionBFullRoutedAppearance{}, false, fmt.Errorf("requires exactly one %s value", scrollRegionBFullThemeQuery)
+	}
+	appearance := scrollRegionBFullRoutedAppearance{Theme: theme[0]}
+	switch appearance.Theme {
+	case "araihu", "goshtoso", "minimal":
+	default:
+		return scrollRegionBFullRoutedAppearance{}, false, fmt.Errorf("unsupported %s %q", scrollRegionBFullThemeQuery, appearance.Theme)
+	}
+	if hasConsumer {
+		if len(consumer) != 1 || consumer[0] != "scrollregion" {
+			return scrollRegionBFullRoutedAppearance{}, false, fmt.Errorf("unsupported %s", scrollRegionBFullConsumerQuery)
+		}
+		appearance.Consumer = true
+	}
+	return appearance, true, nil
+}
+
+func bindScrollRegionBFullInitialAppearance(body string, appearance scrollRegionBFullRoutedAppearance) (string, error) {
+	lower := strings.ToLower(body)
+	start := strings.Index(lower, "<html")
+	if start < 0 {
+		return "", fmt.Errorf("full document lacks html element")
+	}
+	endRelative := strings.Index(lower[start:], ">")
+	if endRelative < 0 {
+		return "", fmt.Errorf("html start tag is incomplete")
+	}
+	end := start + endRelative
+	attributes := ` data-theme="` + appearance.Theme + `" data-goshtoso-theme-initial-source="` + scrollRegionBFullThemeSource + `"`
+	if appearance.Consumer {
+		attributes += ` data-goshtoso-scrollregion-consumer-theme="t-gs-011"`
+	}
+	return body[:end] + attributes + body[end:], nil
 }
 
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {

@@ -3,6 +3,8 @@ package e2econstraints
 import (
 	"go/build/constraint"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -42,6 +44,203 @@ func TestValidateSuiteAcceptsCurrentSourceOnlyRunnableConstraint(t *testing.T) {
 	require.NoError(t, ValidateSuite(suite, manifest))
 	require.NotContains(t, suite.FullInventory().Tests, "TestThemeCatalog")
 	require.Contains(t, suite.CurrentSourceInventory().Tests, "TestThemeCatalog")
+}
+
+func TestValidateSuiteAcceptsExplicitSpecializedSuite(t *testing.T) {
+	suite := Suite{Files: []SourceFile{
+		{Name: "support.go", Expr: mustConstraint(t, "//go:build e2e")},
+		{Name: "button_test.go", Expr: mustConstraint(t, "//go:build e2e && (full || button)"), Tests: []string{"TestButton"}},
+		{Name: "scrollregion_axe_test.go", Expr: mustConstraint(t, "//go:build e2e && scrollregion && axe"), Tests: []string{"TestScrollRegionAxe"}},
+		{Name: "scrollregion_bfull_test.go", Expr: mustConstraint(t, "//go:build e2e && scrollregion && bfull && axe"), Tests: []string{"TestScrollRegionBFull"}},
+	}}
+	manifest := Manifest{
+		Identities: []Identity{{Name: "button", Files: []string{"button_test.go"}, Tests: []string{"TestButton"}}},
+		SpecializedSuites: []SpecializedSuite{
+			{
+				Name:          "scrollregion_axe",
+				Tags:          []string{"scrollregion", "axe"},
+				Files:         []string{"scrollregion_axe_test.go"},
+				Tests:         []string{"TestScrollRegionAxe"},
+				SelectedTests: []string{"TestScrollRegionAxe"},
+			},
+			{
+				Name:          "scrollregion_bfull",
+				Tags:          []string{"scrollregion", "bfull", "axe"},
+				Files:         []string{"scrollregion_bfull_test.go"},
+				Tests:         []string{"TestScrollRegionBFull"},
+				SelectedTests: []string{"TestScrollRegionAxe", "TestScrollRegionBFull"},
+			},
+		},
+		FullOnly: Identity{Name: "full_only"},
+	}
+
+	require.NoError(t, ValidateSuite(suite, manifest))
+	require.Equal(t, []string{"TestScrollRegionBFull"}, suite.SpecializedInventory(manifest.SpecializedSuites[1]).Tests)
+	var selections []string
+	for _, selection := range suiteMatrixSelections(manifest) {
+		selections = append(selections, strings.Join(selection.Tags, ","))
+	}
+	require.Equal(t, []string{"e2e,button", "e2e,scrollregion,axe", "e2e,scrollregion,bfull,axe", "e2e,full"}, selections)
+}
+
+func TestSpecializedSelectedTestsUsesManifestAsSingleRunnerAuthority(t *testing.T) {
+	manifest := Manifest{SpecializedSuites: []SpecializedSuite{{
+		Name:          "scrollregion_bfull",
+		Tags:          []string{"scrollregion", "bfull", "axe"},
+		Files:         []string{"scrollregion_bfull_test.go"},
+		Tests:         []string{"TestScrollRegionBFull"},
+		SelectedTests: []string{"TestScrollRegionBFull", "TestScrollRegionUA200HorizontalAccessContract"},
+	}}}
+
+	selected, err := SpecializedSelectedTests(manifest, "scrollregion_bfull")
+	require.NoError(t, err)
+	require.Equal(t, manifest.SpecializedSuites[0].SelectedTests, selected)
+	selected[0] = "mutated"
+	require.Equal(t, "TestScrollRegionBFull", manifest.SpecializedSuites[0].SelectedTests[0], "runner callers must not mutate manifest-owned selection")
+
+	_, err = SpecializedSelectedTests(manifest, "missing")
+	require.ErrorContains(t, err, `specialized suite "missing" is not declared`)
+}
+
+func TestValidateSuiteExcludesFullFallbackSpecializedSuiteFromFullOnly(t *testing.T) {
+	suite := Suite{Files: []SourceFile{
+		{Name: "backdrop_elevation_test.go", Expr: mustConstraint(t, "//go:build e2e && (full || backdropelevation)"), Tests: []string{"TestBackdropElevation"}},
+	}}
+	manifest := Manifest{
+		SpecializedSuites: []SpecializedSuite{{
+			Name:          "backdropelevation",
+			Tags:          []string{"backdropelevation"},
+			Files:         []string{"backdrop_elevation_test.go"},
+			Tests:         []string{"TestBackdropElevation"},
+			SelectedTests: []string{"TestBackdropElevation"},
+		}},
+		FullOnly: Identity{Name: "full_only"},
+	}
+
+	require.NoError(t, ValidateSuite(suite, manifest))
+	require.Equal(t, []string{"backdrop_elevation_test.go"}, suite.SpecializedInventory(manifest.SpecializedSuites[0]).Files)
+	require.Empty(t, suite.FullOnly(manifest).Tests)
+}
+
+func TestScrollRegionSpecializedSuitesOwnRealFiles(t *testing.T) {
+	all, err := InspectSuite(filepath.Join(siteRoot(t), "tests", "e2e"))
+	require.NoError(t, err)
+	owned := map[string]bool{
+		"scrollregion_axe_test.go":              true,
+		"scrollregion_bfull_test.go":            true,
+		"scrollregion_evidence_support_test.go": true,
+		"scrollregion_evidence_test.go":         true,
+		"scrollregion_test.go":                  true,
+	}
+	var suite Suite
+	for _, file := range all.Files {
+		if owned[file.Name] {
+			suite.Files = append(suite.Files, file)
+		}
+	}
+	manifest := Manifest{
+		SpecializedSuites: []SpecializedSuite{
+			{
+				Name:  "scrollregion_axe",
+				Tags:  []string{"scrollregion", "axe"},
+				Files: []string{"scrollregion_axe_test.go"},
+				Tests: []string{"TestScrollRegionAxeNamedPublicViewport"},
+				SelectedTests: []string{
+					"TestScrollRegionAxeNamedPublicViewport",
+					"TestScrollRegionDirectRouteStatesAndInputModes",
+				},
+			},
+			{
+				Name:  "scrollregion_bfull",
+				Tags:  []string{"scrollregion", "bfull", "axe"},
+				Files: []string{"scrollregion_bfull_test.go", "scrollregion_evidence_support_test.go", "scrollregion_evidence_test.go"},
+				Tests: []string{
+					"TestScrollRegionATReceiptRejectsActionContractMutation",
+					"TestScrollRegionATReceiptRejectsAttestationPayloadMutation",
+					"TestScrollRegionATReceiptRejectsCandidateByteMutationBeforeReplayClaim",
+					"TestScrollRegionATReceiptRejectsChallengeReplay",
+					"TestScrollRegionATReceiptRejectsClaimantActionTimestampMismatch",
+					"TestScrollRegionATReceiptRejectsGenericObservedSpeech",
+					"TestScrollRegionATReceiptRejectsInferredFocusNavigation",
+					"TestScrollRegionATReceiptRejectsNoOpHomeTransition",
+					"TestScrollRegionATReceiptRejectsOverlappingActionWindow",
+					"TestScrollRegionATReceiptRejectsPairKeyMismatch",
+					"TestScrollRegionATReceiptRejectsPlaceholderOrZeroVersion",
+					"TestScrollRegionATReceiptRejectsPlainTextScreenshot",
+					"TestScrollRegionATReceiptRejectsReusedArtifacts",
+					"TestScrollRegionATReceiptRejectsSecondReceiptForClaimedChallenge",
+					"TestScrollRegionATReceiptRejectsSignedSyntheticCaptureWithoutRawProvenance",
+					"TestScrollRegionATReceiptRejectsSignedSyntheticSolidPNGBeforeSemantics",
+					"TestScrollRegionATReceiptRejectsStaleActionBoundVoiceOverLog",
+					"TestScrollRegionATReceiptRejectsUnsignedCapture",
+					"TestScrollRegionATReceiptRejectsWrongAttestationKey",
+					"TestScrollRegionBFull",
+					"TestScrollRegionBFullATReceiptHarness",
+					"TestScrollRegionBFullFirstPaintObserverCannotMutateProductState",
+					"TestScrollRegionBFullIdentityBindingRequiresSidecarForDirtyWorktree",
+					"TestScrollRegionBFullIdentityBindingSealsVerifiedSidecar",
+					"TestScrollRegionBFullPlanMarksExplicitDiagnosticNonClosure",
+					"TestScrollRegionBFullPlanRejectsUnmarkedCap",
+					"TestScrollRegionBFullReceiptRejectsLockedThemePersistenceClaim",
+					"TestScrollRegionBFullReceiptRejectsRecomputedPersistenceForgeries",
+					"TestScrollRegionBFullReceiptWrapperRejectsTampering",
+					"TestScrollRegionBFullWrongChromeCropFailsVisualBinding",
+					"TestScrollRegionCandidateIdentityRejectsDuplicatePath",
+					"TestScrollRegionCandidateIdentityRejectsMissingDeclaredPath",
+					"TestScrollRegionCandidateIdentityRejectsMutuallyConsistentFabrication",
+					"TestScrollRegionCandidateIdentityRejectsTamperedDeclaredBytes",
+					"TestScrollRegionCandidateIdentityRejectsUndeclaredExtraPath",
+					"TestScrollRegionFooterUA200ResponsiveCompatibility",
+					"TestScrollRegionReadAxeLockAllowsHumanReviewComments",
+					"TestScrollRegionUA200HorizontalAccessContract",
+				},
+				SelectedTests: []string{
+					"TestScrollRegionATReceiptRejectsActionContractMutation",
+					"TestScrollRegionATReceiptRejectsAttestationPayloadMutation",
+					"TestScrollRegionATReceiptRejectsCandidateByteMutationBeforeReplayClaim",
+					"TestScrollRegionATReceiptRejectsChallengeReplay",
+					"TestScrollRegionATReceiptRejectsClaimantActionTimestampMismatch",
+					"TestScrollRegionATReceiptRejectsGenericObservedSpeech",
+					"TestScrollRegionATReceiptRejectsInferredFocusNavigation",
+					"TestScrollRegionATReceiptRejectsNoOpHomeTransition",
+					"TestScrollRegionATReceiptRejectsOverlappingActionWindow",
+					"TestScrollRegionATReceiptRejectsPairKeyMismatch",
+					"TestScrollRegionATReceiptRejectsPlaceholderOrZeroVersion",
+					"TestScrollRegionATReceiptRejectsPlainTextScreenshot",
+					"TestScrollRegionATReceiptRejectsReusedArtifacts",
+					"TestScrollRegionATReceiptRejectsSecondReceiptForClaimedChallenge",
+					"TestScrollRegionATReceiptRejectsSignedSyntheticCaptureWithoutRawProvenance",
+					"TestScrollRegionATReceiptRejectsSignedSyntheticSolidPNGBeforeSemantics",
+					"TestScrollRegionATReceiptRejectsStaleActionBoundVoiceOverLog",
+					"TestScrollRegionATReceiptRejectsUnsignedCapture",
+					"TestScrollRegionATReceiptRejectsWrongAttestationKey",
+					"TestScrollRegionAxeNamedPublicViewport",
+					"TestScrollRegionBFull",
+					"TestScrollRegionBFullATReceiptHarness",
+					"TestScrollRegionBFullFirstPaintObserverCannotMutateProductState",
+					"TestScrollRegionBFullIdentityBindingRequiresSidecarForDirtyWorktree",
+					"TestScrollRegionBFullIdentityBindingSealsVerifiedSidecar",
+					"TestScrollRegionBFullPlanMarksExplicitDiagnosticNonClosure",
+					"TestScrollRegionBFullPlanRejectsUnmarkedCap",
+					"TestScrollRegionBFullReceiptRejectsLockedThemePersistenceClaim",
+					"TestScrollRegionBFullReceiptRejectsRecomputedPersistenceForgeries",
+					"TestScrollRegionBFullReceiptWrapperRejectsTampering",
+					"TestScrollRegionBFullWrongChromeCropFailsVisualBinding",
+					"TestScrollRegionCandidateIdentityRejectsDuplicatePath",
+					"TestScrollRegionCandidateIdentityRejectsMissingDeclaredPath",
+					"TestScrollRegionCandidateIdentityRejectsMutuallyConsistentFabrication",
+					"TestScrollRegionCandidateIdentityRejectsTamperedDeclaredBytes",
+					"TestScrollRegionCandidateIdentityRejectsUndeclaredExtraPath",
+					"TestScrollRegionDirectRouteStatesAndInputModes",
+					"TestScrollRegionFooterUA200ResponsiveCompatibility",
+					"TestScrollRegionReadAxeLockAllowsHumanReviewComments",
+					"TestScrollRegionUA200HorizontalAccessContract",
+				},
+			},
+		},
+		FullOnly: Identity{Name: "full_only"},
+	}
+	require.NoError(t, ValidateSuite(suite, manifest))
 }
 
 func TestValidateSuiteRejectsUnsafeCurrentSourceConstraints(t *testing.T) {

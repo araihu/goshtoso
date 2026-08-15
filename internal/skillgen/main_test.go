@@ -174,6 +174,34 @@ func Alert(config Config) Instance { return Instance{} }
 	}
 }
 
+func TestRunRendersSourceAuthoredConstructorUsageExample(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	mustWrite(t, filepath.Join("components", "scrollregion", "types.go"), `package scrollregion
+
+import "github.com/a-h/templ"
+
+// Labelled creates a named region.
+// GoshtosoSkillExample: @scrollregion.Labelled(scrollregion.Config{RootClass: "h-64"}, "activity-history-heading")
+func Labelled(cfg Config, labelledBy string) templ.Component { return nil }
+
+type Config struct { RootClass string }
+`)
+
+	if err := Run(); err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+	reference := mustRead(t, ".agents/skills/using-goshtoso/references/components-reference.md")
+	for _, want := range []string{
+		"### Usage",
+		"@scrollregion.Labelled(scrollregion.Config{RootClass: \"h-64\"}, \"activity-history-heading\")",
+	} {
+		if !strings.Contains(reference, want) {
+			t.Fatalf("generated reference missing source-authored usage %q:\n%s", want, reference)
+		}
+	}
+}
+
 func TestRunRejectsConcreteTypesWithWrongMethodSignatures(t *testing.T) {
 	t.Chdir(t.TempDir())
 

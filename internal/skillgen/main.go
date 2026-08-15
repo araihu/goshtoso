@@ -38,12 +38,21 @@ const (
 
 // pkgAPI is the extracted public surface of one component package.
 type pkgAPI struct {
-	dir     string // directory name under components/ (= import path tail)
-	name    string // Go package name (may differ, e.g. select → selectfield)
-	entries []string
-	options []string
-	enums   []enum
-	structs []strukt
+	dir      string // directory name under components/ (= import path tail)
+	name     string // Go package name (may differ, e.g. select → selectfield)
+	entries  []string
+	examples []example
+	options  []string
+	enums    []enum
+	structs  []strukt
+}
+
+// example is an explicitly source-authored consumer snippet. Keeping it in
+// the exported constructor's Go doc keeps generated skill guidance bound to
+// the same canonical public API that produces the signature inventory.
+type example struct {
+	entry string
+	code  string
 }
 
 type enum struct {
@@ -158,6 +167,12 @@ func parsePkg(dir, dirName string) (pkgAPI, bool, error) {
 	}
 	sort.Slice(api.enums, func(i, j int) bool { return api.enums[i].typ < api.enums[j].typ })
 	sort.Strings(api.entries)
+	sort.Slice(api.examples, func(i, j int) bool {
+		if api.examples[i].entry != api.examples[j].entry {
+			return api.examples[i].entry < api.examples[j].entry
+		}
+		return api.examples[i].code < api.examples[j].code
+	})
 	sort.Strings(api.options)
 	sort.Slice(api.structs, func(i, j int) bool { return api.structs[i].name < api.structs[j].name })
 	return api, true, nil
@@ -392,6 +407,9 @@ func collectFile(
 		case *ast.FuncDecl:
 			if isEntry(d, concreteTypes, imports) {
 				api.entries = append(api.entries, entrySig(fset, d))
+				if code := skillExampleOf(d.Doc); code != "" {
+					api.examples = append(api.examples, example{entry: d.Name.Name, code: code})
+				}
 			}
 			if isOption(fset, d) {
 				api.options = append(api.options, entrySig(fset, d))
@@ -405,6 +423,23 @@ func collectFile(
 			}
 		}
 	}
+}
+
+// skillExampleOf recognizes an opt-in one-line example in an exported
+// constructor comment. The marker stays deliberately narrow so ordinary Go
+// prose does not churn the reference; it also makes example provenance easy
+// to review beside the API it demonstrates.
+func skillExampleOf(doc *ast.CommentGroup) string {
+	if doc == nil {
+		return ""
+	}
+	const marker = "GoshtosoSkillExample:"
+	for line := range strings.SplitSeq(doc.Text(), "\n") {
+		if code, found := strings.CutPrefix(strings.TrimSpace(line), marker); found {
+			return strings.TrimSpace(code)
+		}
+	}
+	return ""
 }
 
 // isEntry reports whether fn is an exported component entry point: a top-level
@@ -594,6 +629,12 @@ func renderPkg(b *strings.Builder, p pkgAPI) {
 			fmt.Fprintf(b, "`%s`", option)
 		}
 		b.WriteString("\n\n")
+	}
+	if len(p.examples) > 0 {
+		b.WriteString("### Usage\n\n")
+		for _, example := range p.examples {
+			fmt.Fprintf(b, "```templ\n%s\n```\n\n", example.code)
+		}
 	}
 	for _, en := range p.enums {
 		fmt.Fprintf(b, "- **%s** — %s\n", en.typ, strings.Join(en.values, ", "))

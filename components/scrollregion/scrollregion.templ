@@ -5,9 +5,19 @@ import (
 	"github.com/araihu/goshtoso/components/icon/heroicons"
 )
 
-templ scrollRegionTemplate(cfg Config) {
+templ scrollRegionTemplate(cfg Config, name AccessibleName, landmark bool) {
 	<div class={ cfg.rootClasses() } data-goshtoso-scroll-region>
-		<div class={ cfg.viewportClasses() } data-goshtoso-scroll-viewport tabindex="0">
+		<div
+			class={ cfg.viewportClasses() }
+			data-goshtoso-scroll-viewport
+			tabindex="0"
+			role={ scrollRegionRole(landmark) }
+			if name.labelledBy() != "" {
+				aria-labelledby={ name.labelledBy() }
+			} else {
+				aria-label={ name.accessibleLabel() }
+			}
+		>
 			<span class="block h-0 w-full overflow-hidden" data-goshtoso-scroll-start aria-hidden="true"></span>
 			if cfg.Content != nil {
 				@cfg.Content
