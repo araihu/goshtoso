@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -147,23 +148,57 @@ type BFullBatchEvidence struct {
 }
 
 type BFullStateObservation struct {
-	State             string                 `json:"state"`
-	Exists            bool                   `json:"exists"`
-	DOMNodes          int                    `json:"dom_nodes"`
-	Visible           bool                   `json:"visible"`
-	Width             int                    `json:"width"`
-	Height            int                    `json:"height"`
-	Color             string                 `json:"color"`
-	Background        string                 `json:"background"`
-	OverflowX         bool                   `json:"overflow_x"`
-	Theme             string                 `json:"theme"`
-	Mode              string                 `json:"mode"`
-	Motion            string                 `json:"motion"`
-	Zoom              int                    `json:"zoom"`
-	TextContrast      BFullSemanticAssertion `json:"text_contrast"`
-	BoundaryContrast  BFullSemanticAssertion `json:"boundary_contrast"`
-	MotionOutcome     BFullSemanticAssertion `json:"motion_outcome"`
-	OverlayProvenance BFullSemanticAssertion `json:"overlay_provenance"`
+	State             string                    `json:"state"`
+	Exists            bool                      `json:"exists"`
+	DOMNodes          int                       `json:"dom_nodes"`
+	Visible           bool                      `json:"visible"`
+	Width             int                       `json:"width"`
+	Height            int                       `json:"height"`
+	Color             string                    `json:"color"`
+	Background        string                    `json:"background"`
+	OverflowX         bool                      `json:"overflow_x"`
+	Theme             string                    `json:"theme"`
+	Mode              string                    `json:"mode"`
+	Motion            string                    `json:"motion"`
+	Zoom              int                       `json:"zoom"`
+	TextContrast      BFullSemanticAssertion    `json:"text_contrast"`
+	BoundaryContrast  BFullSemanticAssertion    `json:"boundary_contrast"`
+	MotionOutcome     BFullSemanticAssertion    `json:"motion_outcome"`
+	OverlayProvenance BFullSemanticAssertion    `json:"overlay_provenance"`
+	Raw               BFullRawStateMeasurements `json:"raw"`
+}
+
+// BFullRawStateMeasurements carries target/descendant measurements. Semantic
+// booleans are checked against these values; a passing wrapper cannot mask a
+// failing child surface.
+type BFullRawStateMeasurements struct {
+	TargetSelector string                  `json:"target_selector"`
+	Text           []BFullPaintMeasurement `json:"text"`
+	Boundaries     []BFullPaintMeasurement `json:"boundaries"`
+	Motion         BFullMotionMeasurement  `json:"motion"`
+	Overlay        BFullOverlayMeasurement `json:"overlay"`
+}
+
+type BFullPaintMeasurement struct {
+	Selector             string `json:"selector"`
+	AdjacentSelector     string `json:"adjacent_selector"`
+	Foreground           string `json:"foreground"`
+	Background           string `json:"background"`
+	CompositedBackground string `json:"composited_background"`
+}
+
+type BFullMotionMeasurement struct {
+	Selector           string  `json:"selector"`
+	DescendantSelector string  `json:"descendant_selector"`
+	BeforeMS           float64 `json:"before_ms"`
+	ActionMS           float64 `json:"action_ms"`
+	ReducedMS          float64 `json:"reduced_ms"`
+}
+
+type BFullOverlayMeasurement struct {
+	Selector    string `json:"selector"`
+	Role        string `json:"role"`
+	SourceToken string `json:"source_token"`
 }
 
 type BFullAccessibilityScan struct {
@@ -727,6 +762,10 @@ func validateBFullStateObservations(label string, observations []BFullStateObser
 		if strings.TrimSpace(observation.Color) == "" || strings.TrimSpace(observation.Background) == "" {
 			return fmt.Errorf("%s state %s lacks computed paint", label, observation.State)
 		}
+		raw, err := validateBFullRawStateMeasurements(observation.Raw)
+		if err != nil {
+			return fmt.Errorf("%s state %s raw measurement: %w", label, observation.State, err)
+		}
 		for name, assertion := range map[string]BFullSemanticAssertion{
 			"text contrast":      observation.TextContrast,
 			"boundary contrast":  observation.BoundaryContrast,
@@ -743,11 +782,110 @@ func validateBFullStateObservations(label string, observations []BFullStateObser
 				return fmt.Errorf("%s state %s %s lacks applicability", label, observation.State, name)
 			}
 		}
+		if observation.TextContrast.Passed != raw.textContrast || observation.BoundaryContrast.Passed != raw.boundaryContrast || observation.MotionOutcome.Passed != raw.motionOutcome || observation.OverlayProvenance.Passed != raw.overlayProvenance {
+			return fmt.Errorf("%s state %s semantic assertions do not match raw target measurements", label, observation.State)
+		}
 	}
 	if len(seen) != len(want) {
 		return fmt.Errorf("%s states = %d, want %d", label, len(seen), len(want))
 	}
 	return nil
+}
+
+type bfullRawResult struct{ textContrast, boundaryContrast, motionOutcome, overlayProvenance bool }
+
+func validateBFullRawStateMeasurements(raw BFullRawStateMeasurements) (bfullRawResult, error) {
+	if strings.TrimSpace(raw.TargetSelector) == "" || len(raw.Text) == 0 || len(raw.Boundaries) == 0 {
+		return bfullRawResult{}, fmt.Errorf("target, descendant text, and adjacent boundary samples are required")
+	}
+	contrast := func(samples []BFullPaintMeasurement, minimum float64) (bool, error) {
+		for _, sample := range samples {
+			if strings.TrimSpace(sample.Selector) == "" || strings.TrimSpace(sample.AdjacentSelector) == "" || strings.TrimSpace(sample.Background) == "" {
+				return false, fmt.Errorf("sample selector, adjacent selector, and alpha background are required")
+			}
+			foreground, ok := bfullRGBA(sample.Foreground)
+			if !ok {
+				return false, fmt.Errorf("invalid foreground %q", sample.Foreground)
+			}
+			if _, ok := bfullRGBA(sample.Background); !ok {
+				return false, fmt.Errorf("invalid alpha background %q", sample.Background)
+			}
+			background, ok := bfullRGBA(sample.CompositedBackground)
+			if !ok || background[3] != 1 {
+				return false, fmt.Errorf("invalid opaque composited background %q", sample.CompositedBackground)
+			}
+			if bfullContrast(foreground, background) < minimum {
+				return false, nil
+			}
+		}
+		return true, nil
+	}
+	text, err := contrast(raw.Text, 4.5)
+	if err != nil {
+		return bfullRawResult{}, err
+	}
+	boundary, err := contrast(raw.Boundaries, 3)
+	if err != nil {
+		return bfullRawResult{}, err
+	}
+	if strings.TrimSpace(raw.Motion.Selector) == "" || strings.TrimSpace(raw.Motion.DescendantSelector) == "" {
+		return bfullRawResult{}, fmt.Errorf("motion target and descendant selectors are required")
+	}
+	if strings.TrimSpace(raw.Overlay.Selector) == "" || strings.TrimSpace(raw.Overlay.Role) == "" || strings.TrimSpace(raw.Overlay.SourceToken) == "" {
+		return bfullRawResult{}, fmt.Errorf("overlay selector, role, and source token are required")
+	}
+	return bfullRawResult{textContrast: text, boundaryContrast: boundary, motionOutcome: raw.Motion.ActionMS > 0 && raw.Motion.ReducedMS <= raw.Motion.ActionMS, overlayProvenance: true}, nil
+}
+
+func bfullRGBA(value string) ([4]float64, bool) {
+	value = strings.TrimSpace(value)
+	if !strings.HasPrefix(value, "rgb(") && !strings.HasPrefix(value, "rgba(") {
+		return [4]float64{}, false
+	}
+	inside := strings.TrimSuffix(strings.TrimPrefix(strings.TrimPrefix(value, "rgba("), "rgb("), ")")
+	parts := strings.FieldsFunc(inside, func(r rune) bool { return r == ',' || r == ' ' || r == '/' })
+	if len(parts) != 3 && len(parts) != 4 {
+		return [4]float64{}, false
+	}
+	var color [4]float64
+	for index, part := range parts {
+		parsed, err := strconv.ParseFloat(part, 64)
+		if err != nil {
+			return [4]float64{}, false
+		}
+		if index < 3 {
+			if parsed < 0 || parsed > 255 {
+				return [4]float64{}, false
+			}
+			color[index] = parsed / 255
+		} else {
+			if parsed < 0 || parsed > 1 {
+				return [4]float64{}, false
+			}
+			color[index] = parsed
+		}
+	}
+	if len(parts) == 3 {
+		color[3] = 1
+	}
+	return color, true
+}
+
+func bfullContrast(left, right [4]float64) float64 {
+	linear := func(value float64) float64 {
+		if value <= .04045 {
+			return value / 12.92
+		}
+		return ((value + .055) / 1.055) * ((value + .055) / 1.055) * ((value + .055) / 1.055)
+	}
+	luminance := func(value [4]float64) float64 {
+		return .2126*linear(value[0]) + .7152*linear(value[1]) + .0722*linear(value[2])
+	}
+	a, b := luminance(left), luminance(right)
+	if a < b {
+		a, b = b, a
+	}
+	return (a + .05) / (b + .05)
 }
 
 func validateBFullInputObservation(observation BFullInputObservation) error {

@@ -102,7 +102,7 @@ func bfullFixture(t *testing.T, axes BFullAxes) BFullManifest {
 						}
 						for _, state := range axes.States {
 							passed := BFullSemanticAssertion{Applicability: Applicable, Passed: true}
-							observation := BFullStateObservation{State: state, Exists: true, DOMNodes: 1, Visible: true, Width: 10, Height: 10, Color: "rgb(0, 0, 0)", Background: "rgba(0, 0, 0, 0)", Theme: theme, Mode: mode, Motion: motion, Zoom: zoom, TextContrast: passed, BoundaryContrast: passed, MotionOutcome: passed, OverlayProvenance: passed}
+							observation := BFullStateObservation{State: state, Exists: true, DOMNodes: 1, Visible: true, Width: 10, Height: 10, Color: "rgb(0, 0, 0)", Background: "rgba(0, 0, 0, 0)", Theme: theme, Mode: mode, Motion: motion, Zoom: zoom, TextContrast: passed, BoundaryContrast: passed, MotionOutcome: passed, OverlayProvenance: passed, Raw: BFullRawStateMeasurements{TargetSelector: "[data-conformance-state]", Text: []BFullPaintMeasurement{{Selector: "button", AdjacentSelector: "[data-conformance-state]", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", CompositedBackground: "rgb(255, 255, 255)"}}, Boundaries: []BFullPaintMeasurement{{Selector: "button", AdjacentSelector: "main", Foreground: "rgb(0, 0, 0)", Background: "rgba(255, 255, 255, 1)", CompositedBackground: "rgb(255, 255, 255)"}}, Motion: BFullMotionMeasurement{Selector: "button", DescendantSelector: "button > span", BeforeMS: 0, ActionMS: 1, ReducedMS: .1}, Overlay: BFullOverlayMeasurement{Selector: "[role=dialog]", Role: "dialog", SourceToken: "fixture"}}}
 							evidence.FirstPaint = append(evidence.FirstPaint, observation)
 							evidence.Persistence = append(evidence.Persistence, observation)
 							for _, input := range axes.Inputs {
@@ -187,6 +187,9 @@ func TestValidateBFullManifestRejectsStructuredEvidenceClaimsWithoutExecution(t 
 		{name: "browser error", mutate: func(evidence *BFullBatchEvidence) {
 			evidence.Errors = []BFullBrowserError{{Kind: "csp", Message: "blocked"}}
 		}, wantErr: "browser/page/network/CSP errors = 1"},
+		{name: "bad descendant despite wrapper", mutate: func(evidence *BFullBatchEvidence) {
+			evidence.FirstPaint[0].Raw.Text[0].Foreground = "rgb(255, 255, 255)"
+		}, wantErr: "semantic assertions do not match raw target measurements"},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
