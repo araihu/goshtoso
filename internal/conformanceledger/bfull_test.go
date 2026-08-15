@@ -3,10 +3,18 @@ package conformanceledger
 import (
 	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 )
+
+func TestVerifyBFullIdentityRejectsCommittedIdentityWithoutRepositoryRoot(t *testing.T) {
+	err := VerifyBFullIdentity(BFullIdentity{Mode: BFullIdentityCommitted}, "commit", "tree")
+	if err == nil || !strings.Contains(err.Error(), "repository root") {
+		t.Fatalf("empty committed identity error = %v", err)
+	}
+}
 
 func TestValidateBFullManifestRequiresExactCartesianSet(t *testing.T) {
 	axes := BFullAxes{
@@ -19,7 +27,7 @@ func TestValidateBFullManifestRequiresExactCartesianSet(t *testing.T) {
 		Inputs:    []string{"mouse", "keyboard"},
 	}
 	manifest := bfullFixture(t, axes)
-	if err := ValidateBFullManifest(manifest, "commit", "tree", axes); err != nil {
+	if err := ValidateBFullManifest(manifest, manifest.SourceCommit, manifest.SourceTree, axes); err != nil {
 		t.Fatal(err)
 	}
 
@@ -51,7 +59,7 @@ func TestValidateBFullManifestRequiresExactCartesianSet(t *testing.T) {
 			got.Cells = append([]BFullCell(nil), manifest.Cells...)
 			got.Batches = append([]BFullBatch(nil), manifest.Batches...)
 			test.mutate(&got)
-			if err := ValidateBFullManifest(got, "commit", "tree", axes); err == nil || !strings.Contains(err.Error(), test.wantErr) {
+			if err := ValidateBFullManifest(got, manifest.SourceCommit, manifest.SourceTree, axes); err == nil || !strings.Contains(err.Error(), test.wantErr) {
 				t.Fatalf("error = %v, want %q", err, test.wantErr)
 			}
 		})
@@ -60,7 +68,8 @@ func TestValidateBFullManifestRequiresExactCartesianSet(t *testing.T) {
 
 func bfullFixture(t *testing.T, axes BFullAxes) BFullManifest {
 	t.Helper()
-	manifest := BFullManifest{SchemaVersion: SchemaVersion, SourceCommit: "commit", SourceTree: "tree", Identity: BFullIdentity{Mode: BFullIdentityCommitted}, Browser: "Chromium 151"}
+	identity, commit, tree := bfullFixtureIdentity(t)
+	manifest := BFullManifest{SchemaVersion: SchemaVersion, SourceCommit: commit, SourceTree: tree, Identity: identity, Browser: "Chromium 151"}
 	evidenceDir := t.TempDir()
 	axeArchivePath := filepath.Join(evidenceDir, "axe-core-4.10.3.tgz")
 	if err := os.WriteFile(axeArchivePath, []byte("fixture axe-core archive"), 0o600); err != nil {
@@ -85,7 +94,7 @@ func bfullFixture(t *testing.T, axes BFullAxes) BFullManifest {
 				for _, zoom := range axes.Zooms {
 					for _, motion := range axes.Motions {
 						evidence := BFullBatchEvidence{
-							SchemaVersion: SchemaVersion, SourceCommit: "commit", SourceTree: "tree", Browser: "Chromium 151",
+							SchemaVersion: SchemaVersion, SourceCommit: commit, SourceTree: tree, Browser: "Chromium 151",
 							Identity: manifest.Identity,
 							Theme:    theme, Mode: mode, Viewport: viewport, Zoom: zoom, Motion: motion,
 							InitialHTMLPath: initialHTMLPath, InitialHTMLSHA256: initialHTMLSHA256,
@@ -183,11 +192,34 @@ func TestValidateBFullManifestRejectsStructuredEvidenceClaimsWithoutExecution(t 
 		t.Run(test.name, func(t *testing.T) {
 			manifest := bfullFixture(t, axes)
 			rewriteBFullEvidence(t, &manifest.Batches[0], test.mutate)
-			if err := ValidateBFullManifest(manifest, "commit", "tree", axes); err == nil || !strings.Contains(err.Error(), test.wantErr) {
+			if err := ValidateBFullManifest(manifest, manifest.SourceCommit, manifest.SourceTree, axes); err == nil || !strings.Contains(err.Error(), test.wantErr) {
 				t.Fatalf("error = %v, want %q", err, test.wantErr)
 			}
 		})
 	}
+}
+
+func bfullFixtureIdentity(t *testing.T) (BFullIdentity, string, string) {
+	t.Helper()
+	repo := t.TempDir()
+	run := func(args ...string) string {
+		t.Helper()
+		command := exec.Command("git", append([]string{"-C", repo}, args...)...)
+		output, err := command.CombinedOutput()
+		if err != nil {
+			t.Fatalf("git %v: %v\n%s", args, err, output)
+		}
+		return strings.TrimSpace(string(output))
+	}
+	run("init", "-q")
+	run("config", "user.email", "fixture@example.invalid")
+	run("config", "user.name", "B-FULL fixture")
+	if err := os.WriteFile(filepath.Join(repo, "fixture.txt"), []byte("fixture\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	run("add", "fixture.txt")
+	run("commit", "-qm", "fixture")
+	return BFullIdentity{Mode: BFullIdentityCommitted, RepoRoot: repo}, run("rev-parse", "HEAD^{commit}"), run("rev-parse", "HEAD^{tree}")
 }
 
 func rewriteBFullEvidence(t *testing.T, batch *BFullBatch, mutate func(*BFullBatchEvidence)) {
@@ -219,7 +251,7 @@ func TestExpectedBFullAxesIncludesSourceDerivedConsumerThemeAndExactCellCount(t 
 	for _, theme := range []string{"araihu", "goshtoso", "minimal", "modern"} {
 		ledger.Rows = append(ledger.Rows, Row{Class: ClassInventory, Theme: theme})
 	}
-	for index := 0; index < 347; index++ {
+	for index := range 347 {
 		ledger.Rows = append(ledger.Rows, Row{ID: "execution/state/" + string(rune(index+1)), Class: ClassExecution, State: string(rune(index + 1))})
 	}
 	for _, viewport := range []int{390, 639, 640, 641, 704, 767, 768, 769, 896, 1023, 1024, 1025, 1152, 1279, 1280, 1281, 1408, 1440, 1535, 1536, 1537} {

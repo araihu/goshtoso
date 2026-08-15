@@ -927,7 +927,7 @@ func VerifyBFullIdentity(identity BFullIdentity, sourceCommit, sourceTree string
 			return fmt.Errorf("B-FULL committed identity cannot carry a dirty manifest")
 		}
 		if identity.RepoRoot == "" {
-			return nil // unit fixtures authenticate shape; production identities carry a root.
+			return fmt.Errorf("B-FULL committed identity requires repository root")
 		}
 		if err := verifyBFullGitHead(identity.RepoRoot, sourceCommit, sourceTree); err != nil {
 			return err
