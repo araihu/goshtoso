@@ -24,4 +24,14 @@ func TestToastRenderedTransitionsProvideReducedMotionContract(t *testing.T) {
 	require.Equal(t, variantCount, strings.Count(allHTML, leave), "every client/server toast variant needs reduced-motion leave")
 	require.Equal(t, variantCount, strings.Count(allHTML, enterStart), "every client/server toast variant needs an immediate enter state")
 	require.Equal(t, variantCount, strings.Count(allHTML, leaveEnd), "every client/server toast variant needs an immediate leave state")
+	require.Equal(t, variantCount, strings.Count(allHTML, "transition-all duration-300 motion-reduce:transition-none"), "every client/server toast body needs reduced-motion transition suppression")
+}
+
+func TestToastActionButtonsProvideReducedMotionContract(t *testing.T) {
+	messageHTML := html.UnescapeString(renderToastComponent(t, MessageToast(MessageConfig{
+		Message:     "Review ready",
+		ActionLabel: "Reply",
+	})))
+
+	require.Contains(t, messageHTML, "transition motion-reduce:transition-none", "toast action controls must honor reduced motion")
 }

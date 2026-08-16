@@ -110,7 +110,8 @@ func TestToastReducedMotionShowsAndDismissesWithoutVisualTransition(t *testing.T
 			const el = Array.from(document.querySelectorAll('#toast-container [role="alert"]')).find(el => el.textContent.includes('Success!'));
 			if (!el) return false;
 			const style = getComputedStyle(el);
-			return style.transitionProperty === 'none' && style.opacity === '1' && style.transform === 'none';
+			const bodyStyle = getComputedStyle(el.firstElementChild);
+			return style.transitionProperty === 'none' && bodyStyle.transitionProperty === 'none' && style.opacity === '1' && style.transform === 'none';
 		}`,
 		nil,
 	)
@@ -135,7 +136,8 @@ func TestToastReducedMotionShowsAndDismissesWithoutVisualTransition(t *testing.T
 			const el = Array.from(document.querySelectorAll('#toast-container-oob [role="alert"]')).find(el => el.textContent.includes('Server Says Hello!'));
 			if (!el) return false;
 			const style = getComputedStyle(el);
-			return style.transitionProperty === 'none' && style.opacity === '1' && style.transform === 'none';
+			const bodyStyle = getComputedStyle(el.firstElementChild);
+			return style.transitionProperty === 'none' && bodyStyle.transitionProperty === 'none' && style.opacity === '1' && style.transform === 'none';
 		}`,
 		nil,
 	)

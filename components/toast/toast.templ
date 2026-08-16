@@ -94,7 +94,7 @@ templ clientNotification(tone string) {
 		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
-		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", bgClass }>
+		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300 motion-reduce:transition-none", bgClass }>
 			<!-- Icon -->
 			<div class={ "rounded-full p-0.5", iconBgClass } aria-hidden="true">
 				switch tone {
@@ -150,7 +150,7 @@ templ clientMessageNotification() {
 		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
-		<div class="flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 dark:bg-surface-dark-alt">
+		<div class="flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 motion-reduce:transition-none dark:bg-surface-dark-alt">
 			<div class="flex w-full items-center gap-2.5">
 				<!-- Avatar -->
 				<img x-cloak x-show="notification.sender && notification.sender.avatar" class="mr-2 size-12 rounded-full" alt="avatar" aria-hidden="true" x-bind:src="notification.sender ? notification.sender.avatar : ''"/>
@@ -161,7 +161,7 @@ templ clientMessageNotification() {
 					<p x-cloak x-show="notification.message" class="text-pretty text-sm" x-text="notification.message"></p>
 					<!-- Dismiss Action -->
 					<div class="flex items-center gap-4">
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="isVisible = false; setTimeout(() => { removeNotification(notification.id) }, 400)">Dismiss</button>
+						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="isVisible = false; setTimeout(() => { removeNotification(notification.id) }, 400)">Dismiss</button>
 					</div>
 				</div>
 			</div>
@@ -240,7 +240,7 @@ templ serverToast(cfg Config) {
 		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
-		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.bgClass() }>
+		<div class={ "flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300 motion-reduce:transition-none", cfg.bgClass() }>
 			<!-- Icon -->
 			<div class={ "rounded-full p-0.5", cfg.iconBgClass() } aria-hidden="true">
 				switch cfg.Tone {
@@ -317,7 +317,7 @@ templ serverMessageToast(cfg MessageConfig) {
 		x-transition:leave-end="-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100"
 		x-transition:leave-start="translate-x-0 opacity-100"
 	>
-		<div class="flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 dark:bg-surface-dark-alt">
+		<div class="flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 motion-reduce:transition-none dark:bg-surface-dark-alt">
 			<div class="flex w-full items-center gap-2.5">
 				if cfg.Sender.Avatar != "" {
 					<img class="mr-2 size-12 rounded-full" alt="avatar" aria-hidden="true" src={ cfg.Sender.Avatar }/>
@@ -333,7 +333,7 @@ templ serverMessageToast(cfg MessageConfig) {
 						if cfg.hasAction() {
 							<button
 								type="button"
-								class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-primary transition hover:opacity-75 active:opacity-100 dark:text-primary-dark"
+								class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-primary transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-primary-dark"
 								if cfg.ActionHTMX != nil && cfg.ActionHTMX.Get != "" {
 									hx-get={ cfg.ActionHTMX.Get }
 								}
@@ -348,7 +348,7 @@ templ serverMessageToast(cfg MessageConfig) {
 								}
 							>{ cfg.ActionLabel }</button>
 						}
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click={ fmt.Sprintf("isVisible = false; setTimeout(() => { $dispatch('toast-dismiss', { id: '%s' }) }, 400)", jsEscapeSingle(toastID)) }>{ cfg.effectiveDismissLabel() }</button>
+						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click={ fmt.Sprintf("isVisible = false; setTimeout(() => { $dispatch('toast-dismiss', { id: '%s' }) }, 400)", jsEscapeSingle(toastID)) }>{ cfg.effectiveDismissLabel() }</button>
 					</div>
 				</div>
 			</div>

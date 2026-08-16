@@ -194,7 +194,7 @@ func clientNotification(tone string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 = []any{"flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", bgClass}
+		var templ_7745c5c3_Var8 = []any{"flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300 motion-reduce:transition-none", bgClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -307,7 +307,7 @@ func clientMessageNotification() templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div x-data=\"{ isVisible: false, timeout: null }\" x-cloak x-show=\"isVisible\" class=\"pointer-events-auto relative rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"alert\" x-on:pause-auto-dismiss.window=\"clearTimeout(timeout)\" x-on:resume-auto-dismiss.window=\"timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)\" x-init=\"$nextTick(() => { isVisible = true }); timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)\" x-transition:enter=\"transition duration-300 ease-out motion-reduce:transition-none\" x-transition:enter-end=\"translate-y-0\" x-transition:enter-start=\"translate-y-8 motion-reduce:translate-y-0\" x-transition:leave=\"transition duration-300 ease-in motion-reduce:transition-none\" x-transition:leave-end=\"-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100\" x-transition:leave-start=\"translate-x-0 opacity-100\"><div class=\"flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 dark:bg-surface-dark-alt\"><div class=\"flex w-full items-center gap-2.5\"><!-- Avatar --><img x-cloak x-show=\"notification.sender && notification.sender.avatar\" class=\"mr-2 size-12 rounded-full\" alt=\"avatar\" aria-hidden=\"true\" x-bind:src=\"notification.sender ? notification.sender.avatar : ''\"><div class=\"flex flex-col items-start gap-2\"><!-- Sender Name --><h3 x-cloak x-show=\"notification.sender && notification.sender.name\" class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\" x-text=\"notification.sender ? notification.sender.name : ''\"></h3><!-- Message --><p x-cloak x-show=\"notification.message\" class=\"text-pretty text-sm\" x-text=\"notification.message\"></p><!-- Dismiss Action --><div class=\"flex items-center gap-4\"><button type=\"button\" class=\"whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark\" x-on:click=\"isVisible = false; setTimeout(() => { removeNotification(notification.id) }, 400)\">Dismiss</button></div></div></div><!-- Dismiss Button --><button type=\"button\" class=\"ml-auto\" aria-label=\"dismiss notification\" x-on:click=\"isVisible = false; removeNotification(notification.id)\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"size-5 shrink-0\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div x-data=\"{ isVisible: false, timeout: null }\" x-cloak x-show=\"isVisible\" class=\"pointer-events-auto relative rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"alert\" x-on:pause-auto-dismiss.window=\"clearTimeout(timeout)\" x-on:resume-auto-dismiss.window=\"timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)\" x-init=\"$nextTick(() => { isVisible = true }); timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)\" x-transition:enter=\"transition duration-300 ease-out motion-reduce:transition-none\" x-transition:enter-end=\"translate-y-0\" x-transition:enter-start=\"translate-y-8 motion-reduce:translate-y-0\" x-transition:leave=\"transition duration-300 ease-in motion-reduce:transition-none\" x-transition:leave-end=\"-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100\" x-transition:leave-start=\"translate-x-0 opacity-100\"><div class=\"flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 motion-reduce:transition-none dark:bg-surface-dark-alt\"><div class=\"flex w-full items-center gap-2.5\"><!-- Avatar --><img x-cloak x-show=\"notification.sender && notification.sender.avatar\" class=\"mr-2 size-12 rounded-full\" alt=\"avatar\" aria-hidden=\"true\" x-bind:src=\"notification.sender ? notification.sender.avatar : ''\"><div class=\"flex flex-col items-start gap-2\"><!-- Sender Name --><h3 x-cloak x-show=\"notification.sender && notification.sender.name\" class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\" x-text=\"notification.sender ? notification.sender.name : ''\"></h3><!-- Message --><p x-cloak x-show=\"notification.message\" class=\"text-pretty text-sm\" x-text=\"notification.message\"></p><!-- Dismiss Action --><div class=\"flex items-center gap-4\"><button type=\"button\" class=\"whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark\" x-on:click=\"isVisible = false; setTimeout(() => { removeNotification(notification.id) }, 400)\">Dismiss</button></div></div></div><!-- Dismiss Button --><button type=\"button\" class=\"ml-auto\" aria-label=\"dismiss notification\" x-on:click=\"isVisible = false; removeNotification(notification.id)\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"size-5 shrink-0\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -570,7 +570,7 @@ func serverToast(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var26 = []any{"flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300", cfg.bgClass()}
+		var templ_7745c5c3_Var26 = []any{"flex w-full items-center gap-2.5 rounded-radius p-4 transition-all duration-300 motion-reduce:transition-none", cfg.bgClass()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -886,7 +886,7 @@ func serverMessageToast(cfg MessageConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\" class=\"pointer-events-auto relative rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"alert\" x-transition:enter=\"transition duration-300 ease-out motion-reduce:transition-none\" x-transition:enter-end=\"translate-y-0\" x-transition:enter-start=\"translate-y-8 motion-reduce:translate-y-0\" x-transition:leave=\"transition duration-300 ease-in motion-reduce:transition-none\" x-transition:leave-end=\"-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100\" x-transition:leave-start=\"translate-x-0 opacity-100\"><div class=\"flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 dark:bg-surface-dark-alt\"><div class=\"flex w-full items-center gap-2.5\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "\" class=\"pointer-events-auto relative rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"alert\" x-transition:enter=\"transition duration-300 ease-out motion-reduce:transition-none\" x-transition:enter-end=\"translate-y-0\" x-transition:enter-start=\"translate-y-8 motion-reduce:translate-y-0\" x-transition:leave=\"transition duration-300 ease-in motion-reduce:transition-none\" x-transition:leave-end=\"-translate-x-24 opacity-0 md:translate-x-24 motion-reduce:translate-x-0 md:motion-reduce:translate-x-0 motion-reduce:opacity-100\" x-transition:leave-start=\"translate-x-0 opacity-100\"><div class=\"flex w-full rounded-radius items-center gap-2.5 bg-surface-alt p-4 transition-all duration-300 motion-reduce:transition-none dark:bg-surface-dark-alt\"><div class=\"flex w-full items-center gap-2.5\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -956,7 +956,7 @@ func serverMessageToast(cfg MessageConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.hasAction() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<button type=\"button\" class=\"whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-primary transition hover:opacity-75 active:opacity-100 dark:text-primary-dark\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<button type=\"button\" class=\"whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-primary transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-primary-dark\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1054,14 +1054,14 @@ func serverMessageToast(cfg MessageConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, "<button type=\"button\" class=\"whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition hover:opacity-75 active:opacity-100 dark:text-on-surface-dark\" x-on:click=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, "<button type=\"button\" class=\"whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark\" x-on:click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var53 string
 		templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("isVisible = false; setTimeout(() => { $dispatch('toast-dismiss', { id: '%s' }) }, 400)", jsEscapeSingle(toastID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 351, Col: 341}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 351, Col: 371}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var53)
 		if templ_7745c5c3_Err != nil {
@@ -1074,7 +1074,7 @@ func serverMessageToast(cfg MessageConfig) templ.Component {
 		var templ_7745c5c3_Var54 string
 		templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.effectiveDismissLabel())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 351, Col: 373}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/toast/toast.templ`, Line: 351, Col: 403}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 		if templ_7745c5c3_Err != nil {
