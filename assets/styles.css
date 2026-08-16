@@ -5036,11 +5036,6 @@
     .motion-reduce\:opacity-100 {
       opacity: 100%;
     }
-    .motion-reduce\:transition-opacity {
-      transition-property: opacity;
-      transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-      transition-duration: var(--tw-duration, var(--default-transition-duration));
-    }
     .motion-reduce\:transition-none {
       transition-property: none;
     }
@@ -5056,6 +5051,9 @@
         --tw-scale-y: 100%;
         --tw-scale-z: 100%;
         scale: var(--tw-scale-x) var(--tw-scale-y);
+      }
+      .motion-reduce\:group-hover\:gap-1:is(:where(.group):hover *) {
+        gap: var(--spacing);
       }
       .motion-reduce\:group-hover\/rating-option\:scale-100:is(:where(.group\/rating-option):hover *) {
         --tw-scale-x: 100%;
@@ -7520,6 +7518,13 @@
   }
   .theme-transition {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
   }
   .scrollbar-custom {
     scrollbar-width: thin;

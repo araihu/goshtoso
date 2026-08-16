@@ -303,7 +303,7 @@ func StepsHTMXFlow(current int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " of 4.</p><div class=\"flex items-center gap-2\"><button type=\"button\" class=\"rounded-radius border border-outline bg-surface px-3 py-2 text-sm font-medium text-on-surface transition hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-50 dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, " of 4.</p><div class=\"flex items-center gap-2\"><button type=\"button\" class=\"rounded-radius border border-outline bg-surface px-3 py-2 text-sm font-medium text-on-surface transition motion-reduce:transition-none hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-50 dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -331,7 +331,7 @@ func StepsHTMXFlow(current int) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, ">Back</button> <button type=\"button\" class=\"rounded-radius bg-primary px-3 py-2 text-sm font-medium text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-dark dark:text-on-primary-dark\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, ">Back</button> <button type=\"button\" class=\"rounded-radius bg-primary px-3 py-2 text-sm font-medium text-on-primary transition motion-reduce:transition-none hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-dark dark:text-on-primary-dark\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

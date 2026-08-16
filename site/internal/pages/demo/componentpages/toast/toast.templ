@@ -104,7 +104,7 @@ templ toastAlpinePreview() {
 				<button
 					x-on:click="$dispatch('notify', { kind: 'message-toast', sender: { name: 'Jack Ellis', avatar: '/assets/images/avatars/avatar-2.webp' }, message: 'Hey, can you review the PR I just submitted? Let me know if you spot any issues!' })"
 					type="button"
-					class="whitespace-nowrap rounded-radius bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
+					class="whitespace-nowrap rounded-radius bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
 				>
 					Message
 				</button>
@@ -112,7 +112,7 @@ templ toastAlpinePreview() {
 				<button
 					x-on:click="$dispatch('notify', { kind: 'toast', tone: 'info', title: 'Update Available', message: 'A new version of the app is ready for you. Update now to enjoy the latest features!' })"
 					type="button"
-					class="whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0"
+					class="whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0"
 				>
 					Info
 				</button>
@@ -120,7 +120,7 @@ templ toastAlpinePreview() {
 				<button
 					x-on:click="$dispatch('notify', { kind: 'toast', tone: 'success', title: 'Success!', message: 'Your changes have been saved. Keep up the great work!' })"
 					type="button"
-					class="whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0"
+					class="whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0"
 				>
 					Success
 				</button>
@@ -128,7 +128,7 @@ templ toastAlpinePreview() {
 				<button
 					x-on:click="$dispatch('notify', { kind: 'toast', tone: 'danger', title: 'Oops!', message: 'Something went wrong. Please try again. If the problem persists, we are here to help!' })"
 					type="button"
-					class="whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0"
+					class="whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0"
 				>
 					Danger
 				</button>
@@ -136,7 +136,7 @@ templ toastAlpinePreview() {
 				<button
 					x-on:click="$dispatch('notify', { kind: 'toast', tone: 'warning', title: 'Action Needed', message: 'Your storage is getting low. Consider upgrading your plan.' })"
 					type="button"
-					class="whitespace-nowrap rounded-radius bg-warning px-4 py-2 text-center text-sm font-medium tracking-wide text-on-warning transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning active:opacity-100 active:outline-offset-0"
+					class="whitespace-nowrap rounded-radius bg-warning px-4 py-2 text-center text-sm font-medium tracking-wide text-on-warning transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning active:opacity-100 active:outline-offset-0"
 				>
 					Warning
 				</button>
@@ -153,7 +153,7 @@ templ toastHTMXPreview() {
 					hx-post="/api/components/toast"
 					hx-vals='{"tone": "success", "title": "Server Says Hello!", "message": "This toast was rendered on the server and swapped in via HTMX OOB."}'
 					hx-swap="none"
-					class="whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0"
+					class="whitespace-nowrap rounded-radius bg-success px-4 py-2 text-center text-sm font-medium tracking-wide text-on-success transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0"
 				>
 					Server Success Toast
 				</button>
@@ -162,7 +162,7 @@ templ toastHTMXPreview() {
 					hx-post="/api/components/toast"
 					hx-vals='{"tone": "danger", "title": "Server Error", "message": "The server encountered an error processing your request."}'
 					hx-swap="none"
-					class="whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0"
+					class="whitespace-nowrap rounded-radius bg-danger px-4 py-2 text-center text-sm font-medium tracking-wide text-on-danger transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0"
 				>
 					Server Danger Toast
 				</button>
@@ -171,7 +171,7 @@ templ toastHTMXPreview() {
 					hx-post="/api/components/toast"
 					hx-vals='{"tone": "info", "title": "Server Info", "message": "This is an informational toast from the server."}'
 					hx-swap="none"
-					class="whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0"
+					class="whitespace-nowrap rounded-radius bg-info px-4 py-2 text-center text-sm font-medium tracking-wide text-on-info transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0"
 				>
 					Server Info Toast
 				</button>

@@ -181,6 +181,20 @@
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
+  /* Keep every consumer surface still when reduced motion is requested. The
+     component-level motion-reduce utilities remain explicit contracts for
+     stateful transforms and Alpine transitions; this rule covers authored
+     site/demo transitions and third-party shell CSS loaded after this file. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   /* ============================================
      Custom Scrollbar — .scrollbar-custom
      Uses theme colors via CSS custom properties.

@@ -140,7 +140,7 @@ templ fieldProvenPattern(title, composition, guidance string) {
 }
 
 templ applicationPatternIndexLink(number, label, href string) {
-	<a href={ templ.SafeURL(href) } class="group flex items-baseline gap-3 px-4 py-4 transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark lg:border-r lg:border-outline lg:last:border-r-0 lg:dark:border-outline-dark">
+	<a href={ templ.SafeURL(href) } class="group flex items-baseline gap-3 px-4 py-4 transition-colors motion-reduce:transition-none hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark lg:border-r lg:border-outline lg:last:border-r-0 lg:dark:border-outline-dark">
 		<span class="font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ number }</span>
 		<span class="font-semibold text-on-surface-strong group-hover:text-primary dark:text-on-surface-dark-strong dark:group-hover:text-primary-dark">{ label }</span>
 	</a>
@@ -314,7 +314,7 @@ templ applicationPatternAppShellBrand() {
 
 templ applicationPatternAppShellCreateAction() {
 	@button.Button(button.WithSize(button.SizeSmall), button.WithRootClass("group hidden !border-transparent !bg-transparent !p-1 hover:!contrast-100 dark:!border-transparent dark:!bg-transparent sm:inline-flex")) {
-		<span class="inline-flex h-8 items-center rounded-radius border border-primary bg-primary px-3 text-on-primary transition group-hover:contrast-125 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark">New change</span>
+		<span class="inline-flex h-8 items-center rounded-radius border border-primary bg-primary px-3 text-on-primary transition motion-reduce:transition-none group-hover:contrast-125 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark">New change</span>
 	}
 }
 
