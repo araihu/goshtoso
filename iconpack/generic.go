@@ -438,6 +438,17 @@ func validateViewBox(value string) error {
 }
 
 func standaloneSVGSymbol(raw []byte, relative, symbol, expectedViewBox string) ([]byte, error) {
+	body, err := standaloneSVGBody(raw, relative, expectedViewBox)
+	if err != nil {
+		return nil, err
+	}
+	if !validGenericSymbol(symbol) {
+		return nil, fmt.Errorf("source SVG %q has invalid output symbol %q", relative, symbol)
+	}
+	return fmt.Appendf(nil, `<symbol id="%s" viewBox="%s">%s</symbol>`, symbol, expectedViewBox, body), nil
+}
+
+func standaloneSVGBody(raw []byte, relative, expectedViewBox string) ([]byte, error) {
 	decoder := xml.NewDecoder(bytes.NewReader(raw))
 	var content bytes.Buffer
 	encoder := xml.NewEncoder(&content)
@@ -479,10 +490,7 @@ func standaloneSVGSymbol(raw []byte, relative, symbol, expectedViewBox string) (
 	if err := encoder.Flush(); err != nil {
 		return nil, fmt.Errorf("encode source SVG %q: %w", relative, err)
 	}
-	if !validGenericSymbol(symbol) {
-		return nil, fmt.Errorf("source SVG %q has invalid output symbol %q", relative, symbol)
-	}
-	return fmt.Appendf(nil, `<symbol id="%s" viewBox="%s">%s</symbol>`, symbol, expectedViewBox, content.Bytes()), nil
+	return content.Bytes(), nil
 }
 
 type standaloneSVGState struct {

@@ -53,6 +53,7 @@ func run(ctx context.Context, args []string) error {
 	fs.StringVar(&opts.Package, "package", "", "generated Go package name")
 	fs.StringVar(&opts.ConstPrefix, "const-prefix", "Icon", "generated Go constant prefix")
 	fs.StringVar(&opts.SpriteURL, "sprite-url", "", "same-origin URL for the generated sprite")
+	fs.StringVar(&opts.IconifyPrefix, "iconify-prefix", "", "prefix for generated Iconify JSON (defaults to package name)")
 	fs.BoolVar(&opts.Check, "check", false, "verify an existing owned output without publishing")
 	if err := fs.Parse(args); err != nil {
 		return err

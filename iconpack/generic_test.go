@@ -55,6 +55,8 @@ func TestGenerateFromGenericBootstrapIconsManifest(t *testing.T) {
 	}
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `id="bi-alarm"`)
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `id="bi-bootstrap"`)
+	assertFileContains(t, filepath.Join(output, "icons.json"), `"prefix": "bootstrapicons"`)
+	assertFileContains(t, filepath.Join(output, "icons.json"), `"bi-alarm": {`)
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `viewBox="0 0 16 16"`)
 	assertFileContains(t, filepath.Join(output, "icons_gen.go"), `IconBootstrapIconsAlarm`)
 	assertFileContains(t, filepath.Join(output, "icons_gen.go"), `"bi-alarm"`)

@@ -39,6 +39,7 @@ type outputManifest struct {
 	Package              string          `json:"package"`
 	ConstPrefix          string          `json:"constPrefix"`
 	SpriteURL            string          `json:"spriteUrl"`
+	IconifyPrefix        string          `json:"iconifyPrefix"`
 	Assets               []manifestAsset `json:"assets"`
 	Files                []outputFile    `json:"files"`
 }
@@ -151,6 +152,9 @@ func validateOutputOptions(opts Options) error {
 	if err := iconurl.ValidateSpriteURL(opts.SpriteURL); err != nil {
 		return fmt.Errorf("sprite-url: %w", err)
 	}
+	if _, err := resolveIconifyPrefix(opts); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -185,11 +189,20 @@ func validateGenericSourceOptions(opts Options, manifestSource bool) error {
 
 func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAsset, families []sourceFamily) (map[string][]byte, error) {
 	files := map[string][]byte{}
+	iconifyPrefix, err := resolveIconifyPrefix(opts)
+	if err != nil {
+		return nil, err
+	}
 	sprite, err := buildSprite(boundary, selected, families)
 	if err != nil {
 		return nil, err
 	}
 	files["sprite.svg"] = sprite
+	iconify, err := buildIconifyPack(boundary, iconifyPrefix, selected)
+	if err != nil {
+		return nil, err
+	}
+	files["icons.json"] = iconify
 	bindings, err := generateBindings(boundary, opts, selected)
 	if err != nil {
 		return nil, err
@@ -243,6 +256,7 @@ func buildOutputs(boundary releaseBoundary, opts Options, selected []selectedAss
 		Package:              opts.Package,
 		ConstPrefix:          opts.ConstPrefix,
 		SpriteURL:            opts.SpriteURL,
+		IconifyPrefix:        iconifyPrefix,
 	}
 	if boundary.muamba != nil {
 		manifest.SourceConfigSHA256 = boundary.muamba.configHash

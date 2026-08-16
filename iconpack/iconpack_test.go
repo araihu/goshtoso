@@ -24,6 +24,7 @@ func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing
 	opts.Package = "appicons"
 	opts.ConstPrefix = "Icon"
 	opts.SpriteURL = "/assets/icons/app.svg"
+	opts.IconifyPrefix = "devicon"
 
 	result, err := Generate(context.Background(), opts)
 	if err != nil {
@@ -33,6 +34,12 @@ func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing
 		t.Fatalf("result = %+v, want one published icon", result)
 	}
 	assertFileContains(t, filepath.Join(opts.OutputDir, "sprite.svg"), `id="devicon-trpc"`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "icons.json"), `"prefix": "devicon"`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "icons.json"), `"trpc": {`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "icons.json"), `"body": "<path`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "icons.json"), `"width": 100`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "icons.json"), `"height": 100`)
+	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"iconifyPrefix": "devicon"`)
 	assertFileContains(t, filepath.Join(opts.OutputDir, "icons_gen.go"), `NameBrandDeveloperIconsTRPC Name`)
 	assertFileContains(t, filepath.Join(opts.OutputDir, "icons_gen.go"), `IconBrandDeveloperIconsTRPC icon.Symbol = "devicon-trpc"`)
 	assertFileContains(t, filepath.Join(opts.OutputDir, "manifest.json"), `"canonicalName": "brand-developer-icons-tRPC"`)
