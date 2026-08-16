@@ -135,7 +135,7 @@ templ StepsHTMXFlow(current int) {
 			<div class="flex items-center gap-2">
 				<button
 					type="button"
-					class="rounded-radius border border-outline bg-surface px-3 py-2 text-sm font-medium text-on-surface transition hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-50 dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt"
+					class="rounded-radius border border-outline bg-surface px-3 py-2 text-sm font-medium text-on-surface transition motion-reduce:transition-none hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-50 dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt"
 					if current > 1 {
 						hx-get={ fmt.Sprintf("/api/components/steps/demo?step=%d", current-1) }
 						hx-target="#steps-demo-shell"
@@ -148,7 +148,7 @@ templ StepsHTMXFlow(current int) {
 				</button>
 				<button
 					type="button"
-					class="rounded-radius bg-primary px-3 py-2 text-sm font-medium text-on-primary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-dark dark:text-on-primary-dark"
+					class="rounded-radius bg-primary px-3 py-2 text-sm font-medium text-on-primary transition motion-reduce:transition-none hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-dark dark:text-on-primary-dark"
 					if current < 4 {
 						hx-get={ fmt.Sprintf("/api/components/steps/demo?step=%d", current+1) }
 						hx-target="#steps-demo-shell"

@@ -163,6 +163,27 @@ func TestCoverageFormFooterCancelHTMX(t *testing.T) {
 	)
 }
 
+func TestCoverageReducedMotionTransitionContract(t *testing.T) {
+	collapsible := render(t, CollapsibleSection(CollapsibleSectionConfig{
+		SectionConfig: SectionConfig{Title: "Advanced"},
+	}))
+	mustContain(t, collapsible,
+		"transition-colors motion-reduce:transition-none",
+		"transition-transform motion-reduce:transition-none",
+	)
+
+	flip := render(t, FlipSection(FlipSectionConfig{SectionConfig: SectionConfig{Title: "Network"}}, textinput.TextInput(textinput.Config{ID: "network", Name: "network"})))
+	mustContain(t, flip, "transition motion-reduce:transition-none")
+
+	footer := render(t, Form(Config{Footer: &FooterConfig{
+		CancelLabel: "Cancel",
+		SubmitLabel: "Submit",
+	}}))
+	if got := strings.Count(footer, "transition motion-reduce:transition-none"); got != 2 {
+		t.Fatalf("form footer should guard both action transitions, got %d in:\n%s", got, footer)
+	}
+}
+
 // --- Section ---
 
 func TestCoverageSectionDefault(t *testing.T) {

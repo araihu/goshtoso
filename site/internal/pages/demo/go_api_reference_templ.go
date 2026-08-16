@@ -88,7 +88,7 @@ func componentGoAPIReference(activeComponent string) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" target=\"_blank\" rel=\"noopener noreferrer\" data-go-api-link class=\"inline-flex shrink-0 items-center justify-center gap-2 rounded-radius bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark-hover\">Open ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" target=\"_blank\" rel=\"noopener noreferrer\" data-go-api-link class=\"inline-flex shrink-0 items-center justify-center gap-2 rounded-radius bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition-colors motion-reduce:transition-none hover:bg-primary-hover dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark-hover\">Open ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

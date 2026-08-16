@@ -75,7 +75,7 @@ templ ratingOption(cfg Config, value int) {
 			}
 		/>
 		<span
-			class={ cfg.iconClasses() + " group-hover/rating-option:scale-110" }
+			class={ cfg.iconClasses() + " group-hover/rating-option:scale-110 motion-reduce:group-hover/rating-option:scale-100" }
 			x-bind:class={ cfg.bindClass(value) }
 			aria-hidden="true"
 		>

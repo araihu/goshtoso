@@ -27,6 +27,7 @@ func TestTagsListUsesActiveControlVocabulary(t *testing.T) {
 		"placeholder:text-on-surface-muted",
 		"border-outline-strong",
 		"hover:bg-surface-alt",
+		"transition motion-reduce:transition-none",
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("TagsList render missing %q in %s", want, html)

@@ -53,7 +53,7 @@
   }
 
   function closeHiddenDropdown(wrapper) {
-    var trigger = wrapper.querySelector('button[aria-haspopup="true"]');
+    var trigger = wrapper.querySelector("button[aria-haspopup]");
     if (
       trigger &&
       trigger.getAttribute("aria-expanded") === "true" &&
@@ -61,6 +61,12 @@
     ) {
       trigger.click();
     }
+  }
+
+  function layoutState(collapsed) {
+    if (collapsed.every(Boolean)) return "collapsed";
+    if (collapsed.some(Boolean)) return "partial";
+    return "expanded";
   }
 
   function initialize(root) {
@@ -75,9 +81,18 @@
     var counts = overflowCounts(root);
     if (!primary || !overflow || secondary.length === 0) return;
     root.dataset.actionGroupInitialized = "true";
+    root.dataset.actionGroupLayoutRevision = "0";
     root.style.flexWrap = "nowrap";
 
     var queued = false;
+    var layoutRevision = 0;
+    function commitLayout(collapsed) {
+      var state = layoutState(collapsed);
+      layoutRevision += 1;
+      root.dataset.actionGroupLayoutState = state;
+      root.dataset.actionGroupLayoutRevision = String(layoutRevision);
+    }
+
     function measure() {
       queued = false;
       if (!root.isConnected || root.getBoundingClientRect().width <= 0) return;
@@ -111,6 +126,7 @@
           if (restoredAction) restoredAction.focus();
         }
         setHidden(overflow, true);
+        commitLayout(collapsed);
         return;
       }
 
@@ -127,7 +143,7 @@
 
         if (wrapper.contains(document.activeElement)) {
           var overflowTrigger = overflow.querySelector(
-            'button[aria-haspopup="true"]',
+            "button[aria-haspopup]",
           );
           if (overflowTrigger) overflowTrigger.focus();
         }
@@ -136,11 +152,13 @@
         collapsed[index] = true;
       });
       setOverflowItems(overflow, counts, collapsed);
+      commitLayout(collapsed);
     }
 
     function schedule() {
       if (queued) return;
       queued = true;
+      root.dataset.actionGroupLayoutState = "pending";
       window.requestAnimationFrame(measure);
     }
 

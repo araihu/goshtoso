@@ -96,7 +96,7 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 	entries := slices.DeleteFunc(catalog.ComponentPages(), func(entry catalog.Entry) bool {
 		return entry.Active == "app-shell"
 	})
-	require.Len(t, entries, 49)
+	require.Len(t, entries, 51)
 
 	page := newPage(t, sharedBrowser)
 	failures := watchPageFailures(page)

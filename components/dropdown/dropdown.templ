@@ -40,6 +40,7 @@ templ clickDropdown(cfg Config) {
 		Trigger:    dropdownTrigger(cfg),
 		Content:    dropdownMenu(cfg),
 		Placement:  cfg.popoverPlacement(),
+		PanelClass: cfg.panelClass(),
 		Role:       "menu",
 		RootClass:  cfg.RootClass,
 		TrapFocus:  true,
@@ -54,6 +55,7 @@ templ hoverDropdown(cfg Config) {
 		Content:    dropdownMenu(cfg),
 		Activation: popover.ActivationHover,
 		Placement:  cfg.popoverPlacement(),
+		PanelClass: cfg.panelClass(),
 		Role:       "menu",
 		RootClass:  cfg.RootClass,
 		TrapFocus:  true,
@@ -68,6 +70,7 @@ templ contextDropdown(cfg Config) {
 		Content:    contextDropdownMenu(cfg),
 		Activation: popover.ActivationContext,
 		Placement:  cfg.popoverPlacement(),
+		PanelClass: cfg.panelClass(),
 		Role:       "menu",
 		RootClass:  cfg.RootClass,
 		TrapFocus:  true,
@@ -96,6 +99,7 @@ templ triggerButton(cfg Config) {
 	<button
 		x-ref="trigger"
 		type="button"
+		aria-haspopup="true"
 		class={ cfg.buttonClasses() }
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
@@ -120,6 +124,7 @@ templ hoverTriggerButton(cfg Config) {
 	<button
 		x-ref="trigger"
 		type="button"
+		aria-haspopup="true"
 			class={ cfg.buttonClasses() }
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
@@ -145,6 +150,7 @@ templ contextTriggerButton(cfg Config) {
 		x-ref="trigger"
 		type="button"
 		aria-label="context menu"
+		aria-haspopup="true"
 		class={ cfg.buttonClasses() }
 			x-bind:class="triggerClass"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"

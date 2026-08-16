@@ -66,6 +66,24 @@ func navigateToAvatarDemo(t *testing.T, page playwright.Page) {
 	))
 }
 
+func TestAvatarReducedMotionSpinnersStopAnimation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	navigateToAvatarDemo(t, page)
+
+	_, err := page.WaitForFunction(`() => {
+		const spinners = document.querySelectorAll("[data-testid='avatar-e2e-fixtures'] svg.animate-spin");
+		return spinners.length > 0 && Array.from(spinners).every(spinner => getComputedStyle(spinner).animationName === 'none');
+	}`, nil)
+	require.NoError(t, err)
+}
+
 // TestAvatar_ImageLoaded_SpinnerGoneInitialsHidden verifies that when an image
 // loads successfully, the loading spinner disappears AND the initials fallback
 // is hidden (so transparent pixels don't show text bleeding through).

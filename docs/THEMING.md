@@ -121,6 +121,33 @@ assembling `bg-danger text-on-danger` yourself.
 |-------|---------|-------------------|
 | `--radius-radius` | Global border radius for all components | `rounded-radius` |
 
+Tooltip panels use `rounded-radius` unless their public contract documents a
+component-specific semantic radius token. Tooltip currently has no radius
+exception: default, rich, and persistent Tooltip panels all resolve through
+`--radius-radius`. The built-in Minimal theme maps that token to
+`var(--radius-none)`, so Tooltip panels compute to exactly `0px` in both light
+and dark mode.
+
+### Backdrop and Elevation
+
+Backdrop and shadow classes use semantic layering roles instead of palette
+colors or Tailwind's generic shadow scale. These roles describe visual layer
+provenance; they do not claim text or non-text contrast conformance.
+
+| Token | Purpose | Usage in Tailwind |
+|-------|---------|-------------------|
+| `--color-backdrop` | Neutral overlay base; components retain their established alpha strength | `bg-backdrop/20`, `bg-backdrop/40`, `bg-backdrop/50`, `dark:bg-backdrop/60` |
+| `--color-backdrop-surface` | Surface-derived overlay base used by Search in light mode | `bg-backdrop-surface/55` |
+| `--shadow-elevation-control` / `--shadow-elevation-control-dark` | Compact control separation | `shadow-elevation-control dark:shadow-elevation-control-dark` |
+| `--shadow-elevation-raised` | Raised panel separation | `shadow-elevation-raised` |
+| `--shadow-elevation-overlay` | Highest overlay-panel separation | `shadow-elevation-overlay` |
+
+Drawer, Modal, Sidebar, and Search backdrops resolve through the backdrop
+roles. Drawer and Search panels use distinct raised/overlay elevation tiers;
+Kbd uses the control tier. The default mappings preserve their previous layer
+geometry, alpha, and light/dark separation while allowing custom themes to
+override either base backdrop color or a complete elevation role.
+
 ## Built-in Theme Catalog
 
 The root module publishes stable built-in keys and canonical design-system

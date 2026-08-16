@@ -119,6 +119,14 @@ func TestLayoutDependentClasses(t *testing.T) {
 	if got := horizontal.imageClasses(); !strings.Contains(got, "h-52") {
 		t.Errorf("horizontal imageClasses() = %q, want h-52", got)
 	}
+	for _, cfg := range []Config{vertical, horizontal} {
+		got := cfg.imageClasses()
+		for _, want := range []string{"motion-reduce:transition-none", "motion-reduce:group-hover:scale-100"} {
+			if !strings.Contains(got, want) {
+				t.Errorf("imageClasses() = %q, want reduced-motion class %q", got, want)
+			}
+		}
+	}
 
 	if got := vertical.contentClasses(); !strings.Contains(got, "gap-4") {
 		t.Errorf("vertical contentClasses() = %q, want gap-4", got)

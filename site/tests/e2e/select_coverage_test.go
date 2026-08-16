@@ -80,6 +80,41 @@ func TestSelectOpenAndSelect(t *testing.T) {
 	assert.Empty(t, filterIgnorable(consoleErrs), "unexpected console errors")
 }
 
+func TestSelectReducedMotionOpensAndClosesWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page, _ := gotoSelectDemo(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+
+	trigger := page.Locator("#os-trigger")
+	panel := page.Locator(`#os-trigger ~ [x-show="isOpen || openedWithKeyboard"]`)
+	require.NoError(t, trigger.Click())
+	_, err := page.WaitForFunction(`() => {
+		const panel = document.querySelector('#os-trigger ~ [x-show="isOpen || openedWithKeyboard"]');
+		if (!panel || getComputedStyle(panel).display === 'none') return false;
+		const style = getComputedStyle(panel);
+		return style.transitionProperty === 'none' &&
+			style.opacity === '1' &&
+			style.transform === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const panel = document.querySelector('#os-trigger ~ [x-show="isOpen || openedWithKeyboard"]');
+		return !!panel && getComputedStyle(panel).display === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := panel.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "reduced-motion select should close immediately")
+}
+
 // TestSelectClickOutsideCloses verifies the x-on:click.outside handler closes
 // an open dropdown.
 func TestSelectClickOutsideCloses(t *testing.T) {

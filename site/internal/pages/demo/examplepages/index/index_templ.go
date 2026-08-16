@@ -116,7 +116,7 @@ func exampleEntry(index int, recipe exampleRecipe) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"aspect-[16/10] w-full object-cover transition duration-200 group-hover:scale-[1.02] motion-reduce:transition-none\" loading=\"lazy\"></a><div class=\"min-w-0\"><div class=\"flex items-baseline gap-3\"><span class=\"font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"aspect-[16/10] w-full object-cover transition duration-200 motion-reduce:transition-none group-hover:scale-[1.02] motion-reduce:group-hover:scale-100\" loading=\"lazy\"></a><div class=\"min-w-0\"><div class=\"flex items-baseline gap-3\"><span class=\"font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

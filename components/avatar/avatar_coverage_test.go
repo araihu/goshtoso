@@ -390,6 +390,13 @@ func TestRenderStaticImage(t *testing.T) {
 	}
 }
 
+func TestRenderImageSpinnerHonorsReducedMotion(t *testing.T) {
+	html := renderAvatar(t, Config{Src: "/photo.webp", Initials: "JS"})
+	if !strings.Contains(html, "animate-spin motion-reduce:animate-none") {
+		t.Errorf("image spinner should disable animation for reduced motion:\n%s", html)
+	}
+}
+
 // TestRenderReactiveSizeOnly covers the Reactive-but-not-ReactiveRadius branch
 // of avatarLayers (bindClass == "avatarSizeClass").
 func TestRenderReactiveSizeOnly(t *testing.T) {

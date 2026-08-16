@@ -119,6 +119,350 @@ func TestDropdown_ClickVariant(t *testing.T) {
 	})
 }
 
+func TestDropdownReducedMotionOpensAndClosesWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	menu := page.Locator("#dropdown-click [role='menu']")
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		if (!menu || getComputedStyle(menu).display === "none") return false;
+		const style = getComputedStyle(menu);
+		return style.transitionProperty === "none" &&
+			style.opacity === "1" &&
+			style.transform === "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return !!menu && getComputedStyle(menu).display === "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := menu.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "reduced-motion dropdown should close immediately")
+}
+
+func TestDropdownEscapeFocusRestorationIsReopenSafe(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			document.activeElement?.getAttribute("role") === "menuitem";
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "false" && document.activeElement === trigger;
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	_, err = page.WaitForFunction(`() => document.activeElement?.getAttribute("role") === "menuitem"`, nil)
+	require.NoError(t, err)
+	_, err = page.Evaluate(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		document.activeElement.dispatchEvent(new KeyboardEvent("keydown", {
+			key: "Escape",
+			bubbles: true,
+			cancelable: true,
+		}));
+		trigger.dispatchEvent(new KeyboardEvent("keydown", {
+			key: "Enter",
+			bubbles: true,
+			cancelable: true,
+		}));
+	}`, nil)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			document.activeElement?.getAttribute("role") === "menuitem";
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return trigger?.getAttribute("aria-expanded") === "false" && document.activeElement === trigger;
+	}`, nil)
+	require.NoError(t, err)
+}
+
+func TestDropdownEscapeFromExternalFocusPreservesExternalFocus(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.Evaluate(`() => {
+		const external = document.createElement("button");
+		external.id = "dropdown-external-focus";
+		external.type = "button";
+		external.textContent = "External focus";
+		document.body.appendChild(external);
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			menu && getComputedStyle(menu).display !== "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	external := page.Locator("#dropdown-external-focus")
+	require.NoError(t, external.Focus())
+	_, err = page.WaitForFunction(`() => document.activeElement?.id === "dropdown-external-focus"`, nil)
+	require.NoError(t, err)
+	_, err = page.Evaluate(`() => document.activeElement.dispatchEvent(new KeyboardEvent("keydown", {
+		key: "Escape",
+		bubbles: true,
+		cancelable: true,
+	}))`, nil)
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "false" &&
+			menu && getComputedStyle(menu).display === "none" &&
+			document.activeElement?.id === "dropdown-external-focus";
+	}`, nil)
+	require.NoError(t, err)
+}
+
+func TestDropdownEscapeWithoutMutationObserverPreservesExternalFocus(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			menu && getComputedStyle(menu).display !== "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.Evaluate(`() => {
+		const external = document.createElement("button");
+		external.id = "dropdown-missing-observer-external-focus";
+		external.type = "button";
+		external.textContent = "External focus";
+		document.body.appendChild(external);
+		window.MutationObserver = undefined;
+		external.focus();
+		external.dispatchEvent(new KeyboardEvent("keydown", {
+			key: "Escape",
+			bubbles: true,
+			cancelable: true,
+		}));
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "false" &&
+			menu && getComputedStyle(menu).display === "none" &&
+			document.activeElement?.id === "dropdown-missing-observer-external-focus";
+	}`, nil)
+	require.NoError(t, err)
+}
+
+func TestDropdownEscapeWithoutMutationObserverRestoresOwnedFocus(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		return typeof Alpine !== "undefined" && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			menu && getComputedStyle(menu).display !== "none" &&
+			document.activeElement?.getAttribute("role") === "menuitem";
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.Evaluate(`() => { window.MutationObserver = undefined; }`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "false" &&
+			menu && getComputedStyle(menu).display === "none";
+	}`, nil)
+	require.NoError(t, err)
+	time.Sleep(100 * time.Millisecond)
+
+	activeIsTrigger, err := page.Evaluate(`() => document.activeElement === document.querySelector("#dropdown-click button")`, nil)
+	require.NoError(t, err)
+	activeDescription, err := page.Evaluate(`() => ({
+		tag: document.activeElement?.tagName,
+		role: document.activeElement?.getAttribute("role") || "",
+		text: document.activeElement?.textContent?.trim() || "",
+	})`, nil)
+	require.NoError(t, err)
+	t.Logf("activeIsTrigger=%v active=%v", activeIsTrigger, activeDescription)
+	require.True(t, activeIsTrigger.(bool), "owned keyboard Escape must restore trigger focus")
+}
+
+func TestReviewDropdownAlpineDestroyInvalidatesQueuedFocusRestore(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() => {
+		const root = document.querySelector("#dropdown-click");
+		const trigger = root?.querySelector("button");
+		return typeof Alpine !== "undefined" && Alpine.$data(root) && trigger?.getAttribute("aria-expanded") === "false";
+	}`, nil)
+	require.NoError(t, err)
+	trigger := page.Locator("#dropdown-click button").First()
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const trigger = document.querySelector("#dropdown-click button");
+		const menu = document.querySelector("#dropdown-click [role=menu]");
+		return trigger?.getAttribute("aria-expanded") === "true" &&
+			menu && getComputedStyle(menu).display !== "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.Evaluate(`() => {
+		const root = document.querySelector("#dropdown-click");
+		const state = Alpine.$data(root);
+		const external = document.createElement("button");
+		external.id = "dropdown-destroy-external-focus";
+		external.type = "button";
+		external.textContent = "Destroy external focus";
+		document.body.appendChild(external);
+		external.focus();
+		window.__goshtosoDropdownDestroyReview = { settled: false, state };
+		state.closeAndFocus();
+		Alpine.destroyTree(root);
+		setTimeout(() => setTimeout(() => {
+			window.__goshtosoDropdownDestroyReview.settled = true;
+		}, 0), 0);
+	}`, nil)
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => window.__goshtosoDropdownDestroyReview?.settled === true`, nil)
+	require.NoError(t, err)
+	observer, err := page.Evaluate(`() => window.__goshtosoDropdownDestroyReview.state.focusRestoreObserver !== null`, nil)
+	require.NoError(t, err)
+	require.Equal(t, false, observer, "Alpine destroy must invalidate queued focus-restoration work")
+	activeID, err := page.Evaluate(`() => document.activeElement?.id`, nil)
+	require.NoError(t, err)
+	require.Equal(t, "dropdown-destroy-external-focus", activeID, "destroyed Dropdown must not steal focus")
+	factoryObserver, err := page.Evaluate(`() => {
+		const root = document.createElement("div");
+		const trigger = document.createElement("button");
+		const menu = document.createElement("div");
+		root.append(trigger, menu);
+		menu.style.display = "block";
+		document.body.appendChild(root);
+		const state = window.goshtosoDropdown(root);
+		state.$refs = { trigger, menu };
+		state.isOpen = true;
+		state.$nextTick = callback => { window.__goshtosoDropdownDestroyReview.factoryCallback = callback; };
+		trigger.focus();
+		state.closeAndFocus();
+		state.destroy();
+		window.__goshtosoDropdownDestroyReview.factoryCallback();
+		root.remove();
+		return state.focusRestoreObserver !== null;
+	}`, nil)
+	require.NoError(t, err)
+	require.Equal(t, false, factoryObserver, "destroyed Dropdown must reject a queued factory callback")
+}
+
 // TestDropdown_WithDividers tests dropdown with sections and dividers
 func TestDropdown_WithDividers(t *testing.T) {
 	if testing.Short() {

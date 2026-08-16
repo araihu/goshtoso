@@ -113,7 +113,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				}
 			</style>
 		</head>
-		<body class="h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition">
+		<body class="h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition motion-reduce:transition-none">
 			<!-- Header -->
 			<header data-boot-anim="header" class="sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60">
 				<div class="flex h-16 items-center justify-between px-4 lg:px-8">
@@ -155,7 +155,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 							id="darkModeToggleBtn"
 							aria-label="dark mode toggle"
 							@click="$store.darkMode.toggle()"
-							class="p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors"
+							class="p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors motion-reduce:transition-none"
 						>
 							<!-- Light Mode Icon (Sun) - shows when dark mode is ON -->
 							<svg x-show="$store.darkMode.on" name="Light Mode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="h-6 w-6">
@@ -171,7 +171,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 						<a 
 							href="https://github.com/araihu/goshtoso"
 							target="_blank"
-							class="hidden sm:inline-flex p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors"
+							class="hidden sm:inline-flex p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors motion-reduce:transition-none"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
 								<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -185,7 +185,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				<!-- Sidebar Component -->
 				<div
 					data-boot-anim="sidebar"
-					class="fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 lg:h-full"
+					class="fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out motion-reduce:transition-none lg:static lg:translate-x-0 lg:h-full"
 					:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 				>
 				<div class="h-full">
@@ -236,7 +236,12 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				x-data="demoStorageConsent"
 				x-show="show"
 				x-cloak
-				x-transition
+				x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"
+				x-transition:enter-start="opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0"
+				x-transition:enter-end="opacity-100 translate-y-0"
+				x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
+				x-transition:leave-start="opacity-100 translate-y-0"
+				x-transition:leave-end="opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0"
 				class="fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 				role="dialog"
 				aria-modal="false"
@@ -255,14 +260,14 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				<div class="flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end">
 					<button
 						@click="deny()"
-						class="px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors"
-					>
+						class="px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none"
+						>
 						Use without storage
 					</button>
 					<button
 						@click="allow()"
-						class="px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity"
-					>
+						class="px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity motion-reduce:transition-none"
+						>
 						Allow browser storage
 					</button>
 				</div>
@@ -513,7 +518,7 @@ templ componentNavFooter(activeComponent string) {
 				<a
 					href={ templ.SafeURL(prev.Href) }
 					{ prevAttrs... }
-					class="group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors"
+					class="group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors motion-reduce:transition-none"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
@@ -528,7 +533,7 @@ templ componentNavFooter(activeComponent string) {
 				<a
 					href={ templ.SafeURL(next.Href) }
 					{ nextAttrs... }
-					class="group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors"
+					class="group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors motion-reduce:transition-none"
 				>
 					<span>{ next.Label }</span>
 					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -560,14 +565,14 @@ templ siteFooter() {
 			<span>Goshtoso <span class="font-normal text-on-surface-muted dark:text-on-surface-dark-muted">2026</span></span>
 		</p>
 		<nav class="mt-3 flex items-center justify-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			<a href="/privacy" { privacyAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors">Privacy</a>
+			<a href="/privacy" { privacyAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">Privacy</a>
 			<span class="text-primary dark:text-primary-dark">•</span>
-			<a href="/attributions" { attrAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors">Attributions</a>
+			<a href="/attributions" { attrAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">Attributions</a>
 			<span class="text-primary dark:text-primary-dark">•</span>
-			<a href="/license" { licenseAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors">License</a>
+			<a href="/license" { licenseAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">License</a>
 		</nav>
 		<div class="mt-4 flex items-center justify-center gap-4">
-			<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" aria-label="GitHub" class="text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong transition-colors">
+			<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" aria-label="GitHub" class="text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong transition-colors motion-reduce:transition-none">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5" aria-hidden="true">
 					<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z"></path>
 				</svg>

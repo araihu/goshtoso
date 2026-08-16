@@ -142,7 +142,12 @@ func TestAlpineAttributes(t *testing.T) {
 		`x-on:click="open = true"`,
 		`x-show="open"`,
 		`:disabled="busy"`,
-		"x-transition",
+		`x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"`,
+		`x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`,
+		`x-transition:enter-end="opacity-100 scale-100"`,
+		`x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"`,
+		`x-transition:leave-start="opacity-100 scale-100"`,
+		`x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`,
 		`x-data="{ open: false }"`,
 	} {
 		if !strings.Contains(html, want) {

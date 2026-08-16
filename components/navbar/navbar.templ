@@ -100,7 +100,7 @@ templ avatarDropdown(cfg Config) {
 			x-on:keydown.space.prevent="openWithKeyboard = true"
 			x-on:keydown.enter.prevent="openWithKeyboard = true"
 			x-on:keydown.down.prevent="openWithKeyboard = true"
-			class="cursor-pointer rounded-full transition-transform duration-150 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 dark:focus-visible:outline-primary-dark"
+			class="cursor-pointer rounded-full transition-transform duration-150 motion-reduce:transition-none hover:scale-110 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 motion-reduce:active:scale-100 dark:focus-visible:outline-primary-dark"
 			aria-label="user menu"
 		>
 			if cfg.User.Avatar != nil {
@@ -113,7 +113,12 @@ templ avatarDropdown(cfg Config) {
 		<ul
 			x-cloak
 			x-show="userDropDownIsOpen || openWithKeyboard"
-			x-transition.opacity
+			x-transition:enter="transition-opacity ease-out duration-150 motion-reduce:transition-none"
+			x-transition:enter-start="opacity-0 motion-reduce:opacity-100"
+			x-transition:enter-end="opacity-100"
+			x-transition:leave="transition-opacity ease-in duration-100 motion-reduce:transition-none"
+			x-transition:leave-start="opacity-100"
+			x-transition:leave-end="opacity-0 motion-reduce:opacity-100"
 			x-trap="openWithKeyboard"
 			x-on:click.outside="userDropDownIsOpen = false, openWithKeyboard = false"
 			x-on:keydown.down.prevent="$focus.wrap().next()"
