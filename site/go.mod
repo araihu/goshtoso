@@ -8,7 +8,7 @@ require (
 	github.com/araihu/goshtoso-app-shells v0.1.4
 	github.com/araihu/goshtoso-charts v0.0.2-0.20260730033312-82e67bb7111f
 	github.com/coder/websocket v1.8.15
-	github.com/mxschmitt/playwright-go v0.6100.0
+	github.com/mxschmitt/playwright-go v0.6201.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/tools v0.48.0
 )
