@@ -15,6 +15,13 @@ import (
 var rawBackdropDisplayColor = regexp.MustCompile(`(?:[[:alnum:]_\[\]=/-]+:)*bg-(?:black|white)(?:/[[:digit:]]+)?|#000000`)
 var authoredClassToken = regexp.MustCompile(`[[:alnum:]_:\[\]=/.-]+`)
 
+func isAuthoredComponentSource(path string) bool {
+	if strings.HasSuffix(path, "_templ.go") || strings.HasSuffix(path, "_test.go") {
+		return false
+	}
+	return strings.HasSuffix(path, ".templ") || strings.HasSuffix(path, ".go")
+}
+
 type backdropElevationUse struct {
 	path  string
 	line  string
