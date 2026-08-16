@@ -2,6 +2,20 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.15] - 2026-08-15
+
+### Iconify icon packs
+
+- Extended `iconpack` to emit selected SVG icons as Iconify-compatible
+  `icons.json`, with a configurable prefix and per-icon dimensions, alongside
+  the existing sprite and typed Go bindings.
+
+### Upgrade note
+
+- Existing sprite, Go binding, provenance, and license outputs remain
+  compatible. Consumers can load the generated `icons.json` as a Mermaid
+  Iconify pack.
+
 ## [v0.1.14] - 2026-08-12
 
 ### Consumer-agent ecosystem discovery
