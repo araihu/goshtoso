@@ -85,7 +85,7 @@ func newConfig(text string, options []Option) config {
 }
 
 func (cfg config) rootClasses() string {
-	classes := "inline-flex items-center justify-center gap-1 rounded-radius border border-outline bg-surface-alt font-mono font-medium text-on-surface-strong shadow-sm shadow-outline/30 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong dark:shadow-black/20 " + cfg.sizeClasses()
+	classes := "inline-flex items-center justify-center gap-1 rounded-radius border border-outline bg-surface-alt font-mono font-medium text-on-surface-strong shadow-elevation-control dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong dark:shadow-elevation-control-dark " + cfg.sizeClasses()
 	if cfg.rootClass != "" {
 		classes += " " + cfg.rootClass
 	}
