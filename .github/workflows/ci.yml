@@ -49,7 +49,7 @@ jobs:
           dagger call lint-build --source=. --cache-partition="$CACHE_PARTITION"
       - name: Dagger lint, drift, and build gates
         if: runner.environment != 'self-hosted'
-        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
+        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
         with:
           version: '0.21.8'
           verb: call
@@ -107,7 +107,7 @@ jobs:
           dagger call tests --source=. --changes=.e2e-changes --cache-partition="$CACHE_PARTITION" --run-nonce="${{ github.run_id }}-${{ github.run_attempt }}" export --path=.dagger-output
       - name: Dagger unit, E2E, and coverage gates
         if: runner.environment != 'self-hosted'
-        uses: dagger/dagger-for-github@456fc3af63a2ba6f9789af9c55045b459115541b # v8.2.1
+        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
         with:
           version: '0.21.8'
           verb: call
