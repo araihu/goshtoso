@@ -169,6 +169,35 @@ func TestSidebarOverlayReducedMotionShowsWithoutVisualTransition(t *testing.T) {
 	require.False(t, visible, "reduced-motion sidebar overlay should close immediately")
 }
 
+func TestSidebarNavigationReducedMotionStopsVisualTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/sidebar", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const elements = [
+			...document.querySelectorAll("#sidebar-overlay button[aria-label='Open sidebar']"),
+			...document.querySelectorAll("#sidebar-simple a.transition-colors"),
+			...document.querySelectorAll("#sidebar-sections a.transition"),
+			...document.querySelectorAll("#sidebar-sub-items a[aria-controls] svg.transition-transform"),
+		];
+		return elements.length >= 6 && elements.every(element =>
+			getComputedStyle(element).transitionProperty === "none"
+		);
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion Sidebar navigation transitions should be disabled")
+}
+
 func verifySidebarOverlayMobileTargetAcrossAcceptanceThemes(t *testing.T) {
 	page := newPage(t, sharedBrowser)
 	var jsErrors []string
