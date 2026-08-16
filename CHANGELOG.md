@@ -2,6 +2,22 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.1.16] - 2026-08-16
+
+### Interaction and theme semantics
+
+- Added reduced-motion behavior across the component and demo surfaces.
+- Made click-triggered Tooltips persistent with reflected `aria-expanded` and
+  `aria-controls` state, keyboard activation, Escape dismissal, and outside-click
+  dismissal without moving focus.
+- Moved Tooltip panels to the semantic radius contract and added governed
+  backdrop and elevation roles for overlays and compact controls.
+
+### Upgrade note
+
+- Existing component APIs remain compatible. Custom themes may override the new
+  backdrop and elevation roles documented in `docs/THEMING.md`.
+
 ## [v0.1.15] - 2026-08-15
 
 ### Iconify icon packs
