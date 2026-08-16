@@ -129,7 +129,7 @@ func attributionsContent() templ.Component {
 		}
 		templ_7745c5c3_Err = attrSection("Design & components", "The design system and component set Goshtoso draws from.", []attribution{
 			{Name: "PenguinUI", Href: "https://www.penguinui.com", License: "Source", Note: "Design system Goshtoso is based on; reinterpreted in Go templ"},
-			{Name: "Heroicons v2.2.0", Href: "https://github.com/tailwindlabs/heroicons/tree/0435d4ca364a608cc75e2f8683d374e55abbae26", License: "MIT", Note: "Third-party UI icons pinned to upstream commit 0435d4ca364a608cc75e2f8683d374e55abbae26; bundled sprite at /assets/icons/heroicons.svg and retained notice at /assets/icons/HEROICONS_LICENSE.txt"},
+			{Name: "Heroicons v2.2.0", Href: "https://github.com/tailwindlabs/heroicons/tree/0435d4ca364a608cc75e2f8683d374e55abbae26", License: "MIT", Note: "Third-party UI icons pinned to upstream commit 0435d4ca364a608cc75e2f8683d374e55abbae26; bundled sprite at /assets/icons/heroicons.svg, consumer-local sidebar pack at /assets/icons/heroicons/sprite.svg, and retained notice at /assets/icons/HEROICONS_LICENSE.txt"},
 			{Name: "Arai Hu Assets v0.1.1 catalog", Href: "https://araihu.com/assets/releases/v0.1.1/catalog.json", License: "Catalog", Note: "Immutable schema-v1 catalog that records the Heroicons provenance and symbols; Arai Hu Assets does not author Heroicons"},
 			{Name: "Bootstrap Icons", Href: "https://icons.getbootstrap.com", License: "MIT", Note: "Some icons sourced from this set"},
 		}).Render(ctx, templ_7745c5c3_Buffer)

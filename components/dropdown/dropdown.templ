@@ -1,5 +1,7 @@
 package dropdown
 
+import "github.com/araihu/goshtoso/components/popover"
+
 // Dropdown renders a dropdown menu component based on PenguinUI
 // Usage:
 //
@@ -33,51 +35,60 @@ templ dropdownTemplate(cfg Config) {
 
 // clickDropdown renders a click-activated dropdown
 templ clickDropdown(cfg Config) {
-	<div
-		x-data="goshtosoDropdown($el)"
-		x-on:keydown.esc.window="closeAndFocus()"
-		class="relative w-fit"
-		if cfg.ID != "" {
-			id={ cfg.ID }
-		}
-	>
-		@triggerButton(cfg)
-		@dropdownMenu(cfg)
-	</div>
+	@popover.Popover(popover.Config{
+		ID:         cfg.ID,
+		Trigger:    dropdownTrigger(cfg),
+		Content:    dropdownMenu(cfg),
+		Placement:  cfg.popoverPlacement(),
+		Role:       "menu",
+		RootClass:  cfg.RootClass,
+		TrapFocus:  true,
+	})
 }
 
 // hoverDropdown renders a hover-activated dropdown with delay
 templ hoverDropdown(cfg Config) {
-	<div
-		x-data="goshtosoDropdown($el)"
-		data-dropdown-hover="true"
-		x-on:mouseleave.prevent="scheduleClose()"
-		x-on:mouseenter="leaveTimeout ? clearTimeout(leaveTimeout) : true"
-		x-on:keydown.esc.prevent="closeAndFocus()"
-		x-on:click.outside="isOpen = false, openedWithKeyboard = false"
-		class="relative w-fit"
-		if cfg.ID != "" {
-			id={ cfg.ID }
-		}
-	>
-		@hoverTriggerButton(cfg)
-		@dropdownMenu(cfg)
-	</div>
+	@popover.Popover(popover.Config{
+		ID:         cfg.ID,
+		Trigger:    dropdownTrigger(cfg),
+		Content:    dropdownMenu(cfg),
+		Activation: popover.ActivationHover,
+		Placement:  cfg.popoverPlacement(),
+		Role:       "menu",
+		RootClass:  cfg.RootClass,
+		TrapFocus:  true,
+	})
 }
 
 // contextDropdown renders a context-menu style dropdown
 templ contextDropdown(cfg Config) {
-	<div
-		x-data="goshtosoDropdown($el)"
-		x-on:keydown.esc.prevent="closeAndFocus()"
-		class="relative w-fit"
-		if cfg.ID != "" {
-			id={ cfg.ID }
+	@popover.Popover(popover.Config{
+		ID:         cfg.ID,
+		Trigger:    dropdownTrigger(cfg),
+		Content:    contextDropdownMenu(cfg),
+		Activation: popover.ActivationContext,
+		Placement:  cfg.popoverPlacement(),
+		Role:       "menu",
+		RootClass:  cfg.RootClass,
+		TrapFocus:  true,
+	})
+}
+
+// dropdownTrigger selects a consumer-owned trigger or the mode-specific
+// Goshtoso trigger. Popover decorates the selected native control with ARIA.
+templ dropdownTrigger(cfg Config) {
+	if cfg.Trigger != nil {
+		@cfg.Trigger
+	} else {
+		switch cfg.getTriggerMode() {
+			case TriggerHover:
+				@hoverTriggerButton(cfg)
+			case TriggerContext:
+				@contextTriggerButton(cfg)
+			default:
+				@triggerButton(cfg)
 		}
-	>
-		@contextTriggerButton(cfg)
-		@contextDropdownMenu(cfg)
-	</div>
+	}
 }
 
 // triggerButton renders the click trigger button
@@ -85,21 +96,19 @@ templ triggerButton(cfg Config) {
 	<button
 		x-ref="trigger"
 		type="button"
-		x-on:click="isOpen = ! isOpen"
 		class={ cfg.buttonClasses() }
-		aria-haspopup="true"
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
 		}
-		x-on:keydown.space.prevent="openedWithKeyboard = true; focusFirstItem()"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true; focusFirstItem()"
-		x-on:keydown.down.prevent="openedWithKeyboard = true; focusFirstItem()"
 			x-bind:class="triggerClass"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 	>
 		if cfg.useIconOnlyTrigger() {
 			@cfg.TriggerIcon
 		} else {
+			if cfg.TriggerIcon != nil {
+				@cfg.TriggerIcon
+			}
 			{ cfg.Label }
 			@chevronIcon()
 		}
@@ -111,21 +120,19 @@ templ hoverTriggerButton(cfg Config) {
 	<button
 		x-ref="trigger"
 		type="button"
-		x-on:mouseover="isOpen = true"
-		x-on:keydown.space.prevent="openedWithKeyboard = true; focusFirstItem()"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true; focusFirstItem()"
-		x-on:keydown.down.prevent="openedWithKeyboard = true; focusFirstItem()"
-		class={ cfg.buttonClasses() }
+			class={ cfg.buttonClasses() }
 		if cfg.useIconOnlyTrigger() {
 			aria-label={ triggerAriaLabel(cfg) }
 		}
 			x-bind:class="triggerClass"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
-		aria-haspopup="true"
 	>
 		if cfg.useIconOnlyTrigger() {
 			@cfg.TriggerIcon
 		} else {
+			if cfg.TriggerIcon != nil {
+				@cfg.TriggerIcon
+			}
 			{ cfg.Label }
 			@chevronIcon()
 		}
@@ -138,15 +145,9 @@ templ contextTriggerButton(cfg Config) {
 		x-ref="trigger"
 		type="button"
 		aria-label="context menu"
-		x-on:click="isOpen = ! isOpen"
-		x-on:contextmenu.prevent="isOpen = true"
-		x-on:keydown.space.prevent="openedWithKeyboard = true; focusFirstItem()"
-		x-on:keydown.enter.prevent="openedWithKeyboard = true; focusFirstItem()"
-		x-on:keydown.down.prevent="openedWithKeyboard = true; focusFirstItem()"
 		class={ cfg.buttonClasses() }
 			x-bind:class="triggerClass"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
-		aria-haspopup="true"
 	>
 		if cfg.TriggerIcon != nil {
 			@cfg.TriggerIcon
@@ -160,15 +161,13 @@ templ contextTriggerButton(cfg Config) {
 templ dropdownMenu(cfg Config) {
 	<div
 		x-ref="menu"
-		x-cloak
-		x-show="isOpen || openedWithKeyboard"
-		x-transition
-		x-trap.noreturn="openedWithKeyboard"
-		x-on:click.outside="isOpen = false, openedWithKeyboard = false"
 		x-on:keydown.down.prevent="focusAdjacentItem(1)"
 		x-on:keydown.up.prevent="focusAdjacentItem(-1)"
-		class={ menuClasses(cfg) }
-		role="menu"
+		if cfg.hasDividers() {
+			class="flex flex-col divide-y divide-outline dark:divide-outline-dark"
+		} else {
+			class="flex flex-col py-1.5"
+		}
 	>
 		if cfg.hasDividers() {
 			for _, section := range cfg.Sections {
@@ -192,15 +191,9 @@ templ dropdownMenu(cfg Config) {
 templ contextDropdownMenu(cfg Config) {
 	<div
 		x-ref="menu"
-		x-cloak
-		x-show="isOpen || openedWithKeyboard"
-		x-transition
-		x-trap.noreturn="openedWithKeyboard"
-		x-on:click.outside="isOpen = false, openedWithKeyboard = false"
 		x-on:keydown.down.prevent="focusAdjacentItem(1)"
 		x-on:keydown.up.prevent="focusAdjacentItem(-1)"
-		class={ menuClasses(cfg) }
-		role="menu"
+		class="flex flex-col"
 	>
 		for _, section := range cfg.Sections {
 			<ul class="flex flex-col py-1.5" role="none">
@@ -232,13 +225,16 @@ templ menuItemLink(cfg Config, item Item) {
 		if item.ID != "" {
 			id={ item.ID }
 		}
+		if item.Target != "" {
+			target={ item.Target }
+		}
+		if item.Rel != "" {
+			rel={ item.Rel }
+		}
 		class={ itemClassList(cfg, item) }
 		role="menuitem"
 	>
-		if item.Icon != nil {
-			@item.Icon
-		}
-		{ item.Label }
+		@menuItemBody(item, false)
 	</a>
 }
 
@@ -263,10 +259,7 @@ templ menuItemButton(cfg Config, item Item) {
 		class={ itemClassList(cfg, item) }
 		role="menuitem"
 	>
-		if item.Icon != nil {
-			@item.Icon
-		}
-		{ item.Label }
+		@menuItemBody(item, false)
 	</button>
 }
 
@@ -293,20 +286,7 @@ templ contextMenuItemPlain(cfg Config, item Item) {
 		role="menuitem"
 		tabindex="0"
 	>
-		if item.Icon != nil {
-			@item.Icon
-		}
-		{ item.Label }
-		if item.Shortcut != "" {
-			<div class="ml-auto flex items-center gap-1 font-semibold opacity-60" aria-hidden="true">
-				if item.ShortcutIcon != nil {
-					@item.ShortcutIcon
-				} else {
-					@cmdIcon()
-				}
-				{ item.Shortcut }
-			</div>
-		}
+		@menuItemBody(item, true)
 	</li>
 }
 
@@ -331,38 +311,45 @@ templ contextMenuItemButton(cfg Config, item Item) {
 			role="menuitem"
 			tabindex="0"
 		>
-			if item.Icon != nil {
-				@item.Icon
-			}
-			{ item.Label }
-			if item.Shortcut != "" {
-				<div class="ml-auto flex items-center gap-1 font-semibold opacity-60" aria-hidden="true">
-					if item.ShortcutIcon != nil {
-						@item.ShortcutIcon
-					} else {
-						@cmdIcon()
-					}
-					{ item.Shortcut }
-				</div>
-			}
+			@menuItemBody(item, true)
 		</button>
 	</li>
 }
 
-
-// menuClasses returns the appropriate menu classes based on config
-func menuClasses(cfg Config) string {
-	base := cfg.menuClasses()
-	if cfg.hasDividers() {
-		return base + " divide-y divide-outline dark:divide-outline-dark"
+// menuItemBody renders leading icon, label/caption content, and consumer-owned
+// trailing content. Shortcut hints are only shown for context-menu items.
+templ menuItemBody(item Item, showShortcut bool) {
+	if item.Icon != nil {
+		@item.Icon
 	}
-	return base
+	<span class="min-w-0 flex-1">
+		<span class="block">{ item.Label }</span>
+		if item.Caption != "" {
+			<span class="block text-xs font-normal opacity-70">{ item.Caption }</span>
+		}
+	</span>
+	if item.TrailingIcon != nil {
+		<span class="ml-auto shrink-0">
+			@item.TrailingIcon
+		</span>
+	}
+	if showShortcut && item.Shortcut != "" {
+		<div class="ml-auto flex shrink-0 items-center gap-1 font-semibold opacity-60" aria-hidden="true">
+			if item.ShortcutIcon != nil {
+				@item.ShortcutIcon
+			} else {
+				@cmdIcon()
+			}
+			{ item.Shortcut }
+		</div>
+	}
 }
+
 
 // itemClassList composes the class string for a menu item, layering the
 // base item classes with danger and disabled variants when applicable.
 func itemClassList(cfg Config, item Item) string {
-	hasIcon := item.Icon != nil || cfg.hasIcons()
+	hasIcon := item.Icon != nil || item.Caption != "" || item.TrailingIcon != nil || cfg.hasIcons()
 	out := cfg.itemClasses(hasIcon)
 	if item.Danger {
 		out += " " + cfg.dangerClasses()

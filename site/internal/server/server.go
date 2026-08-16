@@ -140,6 +140,11 @@ func (s *Server) setupAssetRoutes() {
 		w.Header().Set("Content-Type", "image/svg+xml")
 		http.ServeFile(w, r, bootstrapSprite)
 	})
+	heroiconsSidebarSprite := filepath.Join(s.projectRoot, "site", "internal", "demoicons", "heroicons", "sprite.svg")
+	s.mux.HandleFunc("GET /assets/icons/heroicons/sprite.svg", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/svg+xml")
+		http.ServeFile(w, r, heroiconsSidebarSprite)
+	})
 	s.mux.Handle("/site-assets/", libraryassets.WithCacheControl(siteassets.Handler()))
 	s.mux.Handle("/componentdocshell/assets/", libraryassets.WithCacheControl(shellassets.Handler()))
 	s.mux.Handle("GET "+chartassets.Prefix, withImmutableCache(chartassets.Handler()))

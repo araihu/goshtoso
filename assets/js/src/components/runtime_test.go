@@ -14,6 +14,7 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 	paths := []string{
 		"combobox-client.js",
 		"navigation.js",
+		"popover.js",
 		"search.js",
 		"sidebar.js",
 		"scroll-region.js",
@@ -29,6 +30,36 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 	}
 	if err := jstooling.ValidateJavaScript(sources); err != nil {
 		t.Fatalf("validate component runtime JavaScript: %v", err)
+	}
+}
+
+func TestPopoverRuntimePreservesLifecycleContract(t *testing.T) {
+	source := readRuntimeSource(t, "popover.js")
+	for _, want := range []string{
+		"window.goshtosoPopover",
+		"data-popover-trigger",
+		"aria-controls",
+		"openFromKeyboard: function",
+		"closeAndFocus: function",
+		"clearTimeout(this.leaveTimeout)",
+		"destroy: function ()",
+	} {
+		if !strings.Contains(source, want) {
+			t.Fatalf("popover runtime missing %q", want)
+		}
+	}
+}
+
+func TestDropdownRuntimeDelegatesToPopover(t *testing.T) {
+	source := readRuntimeSource(t, "dropdown.js")
+	for _, want := range []string{
+		"window.goshtosoPopover",
+		"window.goshtosoDropdown",
+		"goshtosoPopover",
+	} {
+		if !strings.Contains(source, want) {
+			t.Fatalf("dropdown runtime missing %q", want)
+		}
 	}
 }
 

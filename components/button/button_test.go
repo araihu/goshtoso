@@ -70,6 +70,16 @@ func TestButtonDefaultsToTouchSafeTarget(t *testing.T) {
 	}
 }
 
+func TestButtonAlignsLeadingIconsAndLabels(t *testing.T) {
+	classes := buttonClasses(newConfig(nil))
+
+	for _, class := range []string{"inline-flex", "items-center", "justify-center", "gap-2"} {
+		if !strings.Contains(classes, class) {
+			t.Fatalf("button icon-and-label layout is missing %q: %s", class, classes)
+		}
+	}
+}
+
 func TestButtonOptionsApplyOverDefaults(t *testing.T) {
 	var buf bytes.Buffer
 	ctx := templ.WithChildren(context.Background(), templ.Raw("Delete"))

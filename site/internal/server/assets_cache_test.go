@@ -73,6 +73,28 @@ func TestDemoAssetHandlersUseSharedCachePolicy(t *testing.T) {
 	}
 }
 
+func TestConsumerLocalHeroiconsSpriteIsServedByTheDemo(t *testing.T) {
+	server := newAssetTestServer(t)
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/assets/icons/heroicons/sprite.svg", nil))
+
+	if response.Code != http.StatusOK {
+		t.Fatalf("GET /assets/icons/heroicons/sprite.svg status = %d, want 200", response.Code)
+	}
+	if got := response.Header().Get("Content-Type"); got != "image/svg+xml" {
+		t.Fatalf("GET /assets/icons/heroicons/sprite.svg Content-Type = %q, want image/svg+xml", got)
+	}
+	body := response.Body.String()
+	for _, want := range []string{
+		`id="heroicons-optimized-24-outline-arrow-down-tray"`,
+		`stroke="currentColor"`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("consumer-local Heroicons sprite is missing %q", want)
+		}
+	}
+}
+
 func TestPackageAndDemoHandlersReturnIdenticalCachePolicy(t *testing.T) {
 	server := newAssetTestServer(t)
 	for _, path := range []string{

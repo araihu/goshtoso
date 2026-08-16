@@ -1,6 +1,9 @@
 package dropdown
 
-import "github.com/a-h/templ"
+import (
+	"github.com/a-h/templ"
+	"github.com/araihu/goshtoso/components/popover"
+)
 
 // HTMXConfig holds declarative HTMX attributes for an item action.
 //
@@ -86,6 +89,14 @@ type Item struct {
 	Href string
 	// Icon is an optional icon component rendered before the label
 	Icon templ.Component
+	// Caption is optional secondary text rendered below the label.
+	Caption string
+	// TrailingIcon is an optional consumer-owned icon rendered after the item content.
+	TrailingIcon templ.Component
+	// Target is passed through to native anchor items. It is ignored for buttons.
+	Target string
+	// Rel is passed through to native anchor items. It is ignored for buttons.
+	Rel string
 	// Shortcut is an optional keyboard shortcut label (e.g., "Z", "X")
 	Shortcut string
 	// ShortcutIcon is an optional icon for the shortcut modifier key
@@ -133,8 +144,8 @@ type Config struct {
 	// Sections groups items with dividers between sections
 	Sections []Section
 	// TriggerIcon is an optional custom trigger icon.
-	// Context mode always shows an icon (defaults to horizontal dots).
-	// Click and hover modes ignore it unless TriggerIconOnly is true.
+	// Context mode always shows an icon (defaults to horizontal dots). Labeled
+	// click and hover modes render it as a leading icon.
 	TriggerIcon templ.Component
 	// TriggerIconOnly, in click or hover mode, renders TriggerIcon alone
 	// inside a square button — no label, no chevron. Use this for icon-only
@@ -145,6 +156,11 @@ type Config struct {
 	// Defaults to AlignStart (panel opens rightward). Use AlignEnd for
 	// triggers at the right edge of the viewport.
 	MenuAlign MenuAlign
+	// Trigger replaces the default trigger with a consumer-owned component.
+	// It must render one native interactive element.
+	Trigger templ.Component
+	// RootClass appends classes to the popover root.
+	RootClass string
 }
 
 // GetTriggerMode returns the trigger mode with a default of click
@@ -164,7 +180,7 @@ func (cfg Config) hasDividers() bool {
 func (cfg Config) hasIcons() bool {
 	for _, section := range cfg.Sections {
 		for _, item := range section.Items {
-			if item.Icon != nil {
+			if item.Icon != nil || item.TrailingIcon != nil {
 				return true
 			}
 		}
@@ -195,22 +211,16 @@ func (cfg Config) useIconOnlyTrigger() bool {
 	return cfg.TriggerIconOnly && cfg.TriggerIcon != nil && !cfg.isContextMenu()
 }
 
-// MenuClasses returns the CSS classes for the dropdown menu container
-func (cfg Config) menuClasses() string {
-	align := "left-0"
+func (cfg Config) popoverPlacement() popover.Placement {
 	if cfg.MenuAlign == AlignEnd {
-		align = "right-0"
+		return popover.PlacementBottomEnd
 	}
-	base := "absolute " + align + " z-30 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-md dark:border-outline-dark dark:bg-surface-dark-alt"
-	if cfg.isContextMenu() {
-		return "top-8 " + base
-	}
-	return "top-11 " + base
+	return popover.PlacementBottomStart
 }
 
 // ItemClasses returns the CSS classes for a dropdown menu item
 func (cfg Config) itemClasses(hasIcon bool) string {
-	base := "bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/10 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong"
+	base := "bg-surface-alt px-4 py-2 text-left text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/10 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong"
 	if hasIcon {
 		return "flex items-center gap-2 " + base
 	}

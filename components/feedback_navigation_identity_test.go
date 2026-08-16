@@ -12,8 +12,10 @@ import (
 	"github.com/araihu/goshtoso/components/modal"
 	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/components/pagination"
+	"github.com/araihu/goshtoso/components/popover"
 	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/components/spinner"
+	"github.com/araihu/goshtoso/components/splitbutton"
 	"github.com/araihu/goshtoso/components/steps"
 	"github.com/araihu/goshtoso/components/tabs"
 	"github.com/araihu/goshtoso/components/toast"
@@ -42,6 +44,8 @@ func navigationRenderables() map[components.Kind]components.Component {
 	return map[components.Kind]components.Component{
 		components.KindBreadcrumbs:    breadcrumbs.Breadcrumbs(breadcrumbs.Config{}),
 		components.KindDropdown:       dropdown.Dropdown(dropdown.Config{}),
+		components.KindPopover:        popover.Popover(popover.Config{}),
+		components.KindSplitButton:    splitbutton.SplitButton(splitbutton.Config{}),
 		components.KindLink:           link.Link(""),
 		components.KindNavbar:         navbar.Navbar(navbar.Config{}),
 		components.KindPagination:     pagination.Pagination(pagination.Config{}),
@@ -61,7 +65,7 @@ func TestFeedbackRenderablesExposeKinds(t *testing.T) {
 
 func TestNavigationRenderablesExposeKinds(t *testing.T) {
 	values := navigationRenderables()
-	require.Len(t, values, 8)
+	require.Len(t, values, 10)
 	for want, value := range values {
 		require.Equal(t, want, value.Kind())
 	}

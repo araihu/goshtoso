@@ -1,0 +1,125 @@
+package popoverpage
+
+import (
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/popover"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// PopoverDemoPage renders the Popover component demo.
+templ PopoverDemoPage() {
+	@demo.Layout("Popover", "popover", popoverDemoContent())
+}
+
+templ popoverDemoContent() {
+	<div id="popover-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Popover",
+				Description: "Compose a positioned surface from a consumer-owned trigger and arbitrary content. Choose click, hover, or context activation and add the semantics your surface needs.",
+			},
+			popoverDefaultPreview(),
+			`@popover.Popover(popover.Config{
+    ID:        "filters-popover",
+    Trigger:   filterTrigger(),
+    Content:   filterContent(),
+    Role:      "dialog",
+    Label:     "Filters",
+    TrapFocus: true,
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Hover activation",
+				Description: "Use ActivationHover for lightweight, non-modal supporting content while keeping the trigger and panel consumer-owned.",
+			},
+			popoverHoverPreview(),
+			`@popover.Popover(popover.Config{
+    Activation: popover.ActivationHover,
+    Placement:  popover.PlacementBottomEnd,
+    Trigger:    trigger,
+    Content:    content,
+})`,
+		)
+	</div>
+}
+
+templ popoverDefaultPreview() {
+	<div id="popover-default" class="w-full max-w-xl mx-auto">
+		<div class="flex justify-center py-8">
+			@popover.Popover(popover.Config{
+				ID:        "filters-popover",
+				Trigger:   filterTrigger(),
+				Content:   filterContent(),
+				Role:      "dialog",
+				Label:     "Filters",
+				TrapFocus: true,
+			})
+		</div>
+	</div>
+}
+
+templ popoverHoverPreview() {
+	<div id="popover-hover" class="w-full max-w-xl mx-auto">
+		<div class="flex justify-center py-8">
+			@popover.Popover(popover.Config{
+				ID:         "help-popover",
+				Activation: popover.ActivationHover,
+				Placement:  popover.PlacementBottomEnd,
+				Trigger:    helpTrigger(),
+				Content:    helpContent(),
+				Role:       "note",
+				Label:      "Helpful context",
+			})
+		</div>
+	</div>
+}
+
+templ filterTrigger() {
+	@button.Button() {
+		@filterIcon()
+		<span>Open filters</span>
+	}
+}
+
+templ filterContent() {
+	<div class="grid gap-3 p-4 text-sm text-on-surface dark:text-on-surface-dark">
+		<p class="font-semibold">Filter results</p>
+		<label class="grid gap-1">
+			<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Status</span>
+			<select class="rounded-radius border border-outline bg-surface px-2 py-1.5 dark:border-outline-dark dark:bg-surface-dark">
+				<option>All statuses</option>
+				<option>Ready</option>
+				<option>Draft</option>
+			</select>
+		</label>
+	</div>
+}
+
+templ helpTrigger() {
+	@button.Button(button.WithTone(button.ToneAlternate)) {
+		@helpIcon()
+		<span>Show help</span>
+	}
+}
+
+templ helpContent() {
+	<div class="max-w-xs p-4 text-sm text-on-surface dark:text-on-surface-dark">
+		<p class="font-semibold">Need a hand?</p>
+		<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">Popover content can be prose, forms, menus, or any other consumer-owned templ component.</p>
+	</div>
+}
+
+templ filterIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" class="size-4">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M4 5h16M7 12h10m-7 7h4"></path>
+	</svg>
+}
+
+templ helpIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" class="size-4">
+		<circle cx="12" cy="12" r="9"></circle>
+		<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9a2.25 2.25 0 1 1 3.73 1.7c-.84.72-1.48 1.18-1.48 2.55M12 16.75h.01"></path>
+	</svg>
+}

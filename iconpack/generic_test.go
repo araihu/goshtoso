@@ -124,3 +124,16 @@ func TestStandaloneSVGRejectsExternalReferences(t *testing.T) {
 		t.Fatalf("standaloneSVGSymbol() error = %v, want external-reference rejection", err)
 	}
 }
+
+func TestStandaloneSVGPreservesRootPaintAttributes(t *testing.T) {
+	raw := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 0h24v24H0z"/></svg>`)
+	symbol, err := standaloneSVGSymbol(raw, "icon.svg", "hi-icon", "0 0 24 24")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`fill="none"`, `stroke="currentColor"`, `stroke-width="1.5"`} {
+		if !strings.Contains(string(symbol), want) {
+			t.Errorf("standalone symbol is missing root paint attribute %q: %s", want, symbol)
+		}
+	}
+}
