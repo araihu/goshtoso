@@ -177,6 +177,20 @@ func TestCoverageRenderCookieBannerDefaultsAndCustomActions(t *testing.T) {
 	assert.False(t, strings.Contains(customHTML, "Cookie Consent"), "custom config should replace the default title")
 }
 
+func TestCoverageReducedMotionContract(t *testing.T) {
+	ctaClasses := (Config{}).ctaClasses()
+	assert.Contains(t, ctaClasses, "transition")
+	assert.Contains(t, ctaClasses, "motion-reduce:transition-none")
+
+	dismissible := renderBanner(t, Config{Description: "Scheduled maintenance"})
+	assert.Contains(t, dismissible, "transition-opacity motion-reduce:transition-none")
+
+	cookie := renderStructuralBanner(t, CookieBanner(CookieBannerConfig{
+		Description: "We use cookies",
+	}))
+	assert.Equal(t, 2, strings.Count(cookie, "motion-reduce:transition-none"))
+}
+
 func TestBannerHTMXActionsPreferButtonsAndKeepLegacyAlpine(t *testing.T) {
 	dismiss := renderBanner(t, Config{
 		Description: "Maintenance", DismissAction: "show = false",
