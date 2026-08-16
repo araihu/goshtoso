@@ -93,9 +93,9 @@ func (cfg Config) imageContainerClasses() string {
 // ImageClasses returns the image classes
 func (cfg Config) imageClasses() string {
 	if cfg.Layout == LayoutHorizontal {
-		return "h-52 md:h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
+		return "h-52 md:h-full w-full object-cover transition duration-700 ease-out motion-reduce:transition-none group-hover:scale-105 motion-reduce:group-hover:scale-100"
 	}
-	return "object-cover transition duration-700 ease-out group-hover:scale-105"
+	return "object-cover transition duration-700 ease-out motion-reduce:transition-none group-hover:scale-105 motion-reduce:group-hover:scale-100"
 }
 
 // ContentClasses returns the content container classes

@@ -216,7 +216,7 @@ templ indicators(cfg Config) {
 	>
 		<template x-for="(slide, index) in slides">
 			<button
-				class="size-2 rounded-full transition"
+				class="size-2 rounded-full transition motion-reduce:transition-none"
 				x-on:click={ clickExpr }
 				x-bind:class={ classBinding }
 				x-bind:aria-label="'slide ' + (index + 1)"
@@ -229,7 +229,7 @@ templ indicators(cfg Config) {
 templ autoplayButton() {
 	<button
 		type="button"
-		class="absolute bottom-5 right-5 z-20 rounded-full text-on-surface-dark opacity-50 transition hover:opacity-80 focus-visible:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-dark active:outline-offset-0"
+		class="absolute bottom-5 right-5 z-20 rounded-full text-on-surface-dark opacity-50 transition motion-reduce:transition-none hover:opacity-80 focus-visible:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-dark active:outline-offset-0"
 		aria-label="pause carousel"
 		x-on:click="(isPaused = !isPaused), setAutoplayInterval(autoplayIntervalTime)"
 		x-bind:aria-pressed="isPaused"
@@ -265,7 +265,7 @@ templ slideOverlay() {
 		></p>
 		<template x-if="slide.ctaText && slide.ctaUrl">
 			<a
-				class="mt-2 whitespace-nowrap border border-on-surface-dark-strong bg-transparent px-4 py-2 text-center text-xs font-medium tracking-wide text-on-surface-dark-strong transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-surface-dark-strong active:opacity-100 active:outline-offset-0 lg:text-sm"
+				class="mt-2 whitespace-nowrap border border-on-surface-dark-strong bg-transparent px-4 py-2 text-center text-xs font-medium tracking-wide text-on-surface-dark-strong transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-surface-dark-strong active:opacity-100 active:outline-offset-0 lg:text-sm"
 				x-bind:href="slide.ctaUrl"
 				x-text="slide.ctaText"
 			></a>

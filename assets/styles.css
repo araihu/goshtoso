@@ -5050,6 +5050,20 @@
     .motion-reduce\:delay-0 {
       transition-delay: 0ms;
     }
+    @media (hover: hover) {
+      .motion-reduce\:group-hover\:scale-100:is(:where(.group):hover *) {
+        --tw-scale-x: 100%;
+        --tw-scale-y: 100%;
+        --tw-scale-z: 100%;
+        scale: var(--tw-scale-x) var(--tw-scale-y);
+      }
+      .motion-reduce\:group-hover\/rating-option\:scale-100:is(:where(.group\/rating-option):hover *) {
+        --tw-scale-x: 100%;
+        --tw-scale-y: 100%;
+        --tw-scale-z: 100%;
+        scale: var(--tw-scale-x) var(--tw-scale-y);
+      }
+    }
     .motion-reduce\:before\:transition-none::before {
       content: var(--tw-content);
       transition-property: none;
