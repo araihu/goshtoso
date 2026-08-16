@@ -40,8 +40,8 @@ func TestBackdropAndElevationUseGovernedRoles(t *testing.T) {
 
 	allowedPaletteData := map[string]int{
 		(backdropElevationUse{path: "palette/palette.templ", line: `placeholder="#000000"`, token: "#000000"}).key(): 1,
-		(backdropElevationUse{path: "palette/palette.templ", line: `class="h-5 w-full rounded-sm border border-control-outline bg-white transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-control-outline-dark dark:hover:ring-primary-dark"`, token: "bg-white"}).key(): 1,
-		(backdropElevationUse{path: "palette/palette.templ", line: `class="h-5 w-full rounded-sm border border-control-outline bg-black transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-control-outline-dark dark:hover:ring-primary-dark"`, token: "bg-black"}).key(): 1,
+		(backdropElevationUse{path: "palette/palette.templ", line: `class="h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark"`, token: "bg-white"}).key(): 1,
+		(backdropElevationUse{path: "palette/palette.templ", line: `class="h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark"`, token: "bg-black"}).key(): 1,
 	}
 
 	namedRaw := map[string]*regexp.Regexp{
