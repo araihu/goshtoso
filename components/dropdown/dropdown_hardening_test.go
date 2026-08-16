@@ -103,6 +103,7 @@ func TestDropdownMenuTransitionsProvideReducedMotionFallback(t *testing.T) {
 		},
 	} {
 		rendered := renderDropdown(t, cfg)
+		assert.Contains(t, cfg.buttonClasses(), "transition motion-reduce:transition-none")
 
 		assert.Contains(t, rendered, `x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"`)
 		assert.Contains(t, rendered, `x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`)

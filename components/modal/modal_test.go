@@ -58,6 +58,9 @@ func TestModalRenderProvidesReducedMotionTransitionContracts(t *testing.T) {
 	}
 
 	for _, html := range htmls {
+		if !strings.Contains(html, "transition motion-reduce:transition-none") {
+			t.Fatalf("Modal action controls are missing reduced-motion transition suppression: %s", html)
+		}
 		for _, want := range []string{
 			`x-transition:enter="transition-opacity ease-out duration-200 motion-reduce:transition-none"`,
 			`x-transition:enter-start="opacity-0 motion-reduce:opacity-100"`,

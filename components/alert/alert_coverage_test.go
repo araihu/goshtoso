@@ -101,6 +101,17 @@ func TestDismissibleAlertReducedMotionTransitionContract(t *testing.T) {
 	)
 }
 
+func TestAlertActionControlsHonorReducedMotion(t *testing.T) {
+	for _, classes := range []string{
+		(Config{}).linkClasses(),
+		(Config{}).primaryActionClasses(),
+	} {
+		if !strings.Contains(classes, "transition motion-reduce:transition-none") {
+			t.Fatalf("alert action classes are missing reduced-motion transition suppression: %s", classes)
+		}
+	}
+}
+
 func TestDismissibleTakesPrecedenceOverActionAndLink(t *testing.T) {
 	// Dismissible is checked first in Alert(), so action/link must be ignored.
 	html := render(t, Config{

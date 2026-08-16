@@ -95,6 +95,10 @@ func TestSearchRendersGlobalShortcutWhenEnabled(t *testing.T) {
 
 func TestSearchModalProvidesReducedMotionTransitionContracts(t *testing.T) {
 	html := renderHTML(t, SearchModal(Config{ID: "docs-search"}))
+	searchHTML := renderHTML(t, Search(Config{ID: "docs-search", Items: []Item{{Title: "Guide", Description: "Search result"}}}))
+	if !strings.Contains(searchHTML, "transition motion-reduce:transition-none") {
+		t.Fatalf("search trigger/result controls are missing reduced-motion transition suppression: %s", searchHTML)
+	}
 
 	for _, want := range []string{
 		`x-transition:enter="transition-opacity ease-out duration-150 motion-reduce:transition-none"`,

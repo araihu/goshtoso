@@ -168,7 +168,7 @@ templ resultItem(item Item, index int) {
 		x-bind:class="isActive($el) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'"
 		x-on:mouseenter="setActive($el)"
 		x-on:click="selectResult($el)"
-		class="flex w-full flex-col gap-2 p-4 text-left transition focus:outline-none"
+		class="flex w-full flex-col gap-2 p-4 text-left transition motion-reduce:transition-none focus:outline-none"
 		role="option"
 		{ item.Attrs... }
 	>
@@ -222,7 +222,7 @@ templ clientResultItems() {
 			x-bind:class="isActiveIndex(index) ? 'bg-surface-alt text-on-surface-strong shadow-[inset_2px_0_0_var(--color-outline-strong)] dark:bg-surface-dark dark:text-on-surface-dark-strong dark:shadow-[inset_2px_0_0_var(--color-outline-dark-strong)]' : 'text-on-surface hover:bg-surface-alt hover:text-on-surface-strong focus:bg-surface-alt focus:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-surface-dark dark:hover:text-on-surface-dark-strong dark:focus:bg-surface-dark dark:focus:text-on-surface-dark-strong'"
 			x-on:mouseenter="setActiveIndex(index)"
 			x-on:click="selectResult(item)"
-			class="flex w-full flex-col gap-2 p-4 text-left transition focus:outline-none"
+			class="flex w-full flex-col gap-2 p-4 text-left transition motion-reduce:transition-none focus:outline-none"
 			role="option"
 		>
 			<div class="flex items-start justify-between gap-3">

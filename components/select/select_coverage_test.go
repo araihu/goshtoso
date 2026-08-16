@@ -82,6 +82,7 @@ func TestTriggerClasses_StateBranches(t *testing.T) {
 	errClasses := Config{State: StateError}.triggerClasses()
 	assert.Contains(t, errClasses, "border-danger")
 	assert.Contains(t, errClasses, "bg-surface")
+	assert.Contains(t, errClasses, "transition motion-reduce:transition-none")
 
 	okClasses := Config{State: StateSuccess}.triggerClasses()
 	assert.Contains(t, okClasses, "border-success")

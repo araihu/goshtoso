@@ -106,6 +106,9 @@ func TestButtonHoverDoesNotReduceWholeControlOpacity(t *testing.T) {
 	if strings.Contains(html, "hover:opacity-75") {
 		t.Fatalf("button hover must not blend text and background toward the page surface:\n%s", html)
 	}
+	if !strings.Contains(html, "transition motion-reduce:transition-none") {
+		t.Fatalf("button transition must honor reduced motion:\n%s", html)
+	}
 }
 
 func TestButtonWithAttrsRendersNativeFormAndDataAttributes(t *testing.T) {
