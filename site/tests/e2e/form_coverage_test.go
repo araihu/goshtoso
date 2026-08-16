@@ -87,3 +87,34 @@ func TestFormCoverageDemo(t *testing.T) {
 
 	require.Empty(t, consoleErrors, "form demo page produced console errors: %v", consoleErrors)
 }
+
+func TestFormReducedMotionStopsVisualTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/form", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => {
+		const elements = [
+			...document.querySelectorAll("#advanced > button"),
+			...document.querySelectorAll("#advanced > button span.text-lg"),
+			...document.querySelectorAll("#advanced > button svg"),
+			...document.querySelectorAll("#network button"),
+			...document.querySelectorAll("#responsive-footer-form a, #responsive-footer-form button[type='submit']"),
+		];
+		return elements.length >= 7 && elements.every(element =>
+			getComputedStyle(element).transitionProperty === "none"
+		);
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion Form transitions should be disabled")
+}
