@@ -239,7 +239,13 @@ func TestComboboxReducedMotionOpensAndClosesWithoutVisualTransition(t *testing.T
 		const panel = document.querySelector('#industry [x-show="isOpen || openedWithKeyboard"]');
 		if (!panel || getComputedStyle(panel).display === 'none') return false;
 		const style = getComputedStyle(panel);
-		return style.transitionProperty === 'none' &&
+		const trigger = document.querySelector('#industry-trigger');
+		const options = Array.from(panel.querySelectorAll('[role="option"]:not([aria-disabled="true"])'));
+		return trigger && getComputedStyle(trigger).transitionProperty === 'none' &&
+			options.length > 0 && options.every(option =>
+				getComputedStyle(option).transitionProperty === 'none'
+			) &&
+			style.transitionProperty === 'none' &&
 			style.opacity === '1' &&
 			style.transform === 'none';
 	}`, nil)

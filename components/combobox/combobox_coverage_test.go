@@ -135,6 +135,8 @@ func TestCombobox_PopoverProvidesReducedMotionTransition(t *testing.T) {
 	assert.Contains(t, rendered, `x-transition:leave-start="opacity-100 scale-100"`)
 	assert.Contains(t, rendered, `x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"`)
 	assert.Contains(t, rendered, `transition-transform duration-150 motion-reduce:transition-none`)
+	assert.Contains(t, rendered, `transition-colors motion-reduce:transition-none`)
+	assert.Contains(t, rendered, `transition motion-reduce:transition-none`)
 }
 
 func TestCombobox_LabelDisabledRootClass(t *testing.T) {

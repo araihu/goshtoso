@@ -358,7 +358,7 @@ func clientOptionLI(cfg Config, state State, opt Option) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value))}
+		var templ_7745c5c3_Var16 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -505,7 +505,7 @@ func serverOptionLI(cfg Config, state State, opt Option) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var26 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value))}
+		var templ_7745c5c3_Var26 = []any{"flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -860,7 +860,7 @@ func comboboxTemplate(cfg Config, state State) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var49 = []any{"inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state)}
+		var templ_7745c5c3_Var49 = []any{"inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var49...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
