@@ -52,7 +52,7 @@ func buildIconifyPack(boundary releaseBoundary, prefix string, selected []select
 		}
 		width, height, err := iconifyDimensions(asset.Dimensions)
 		if err != nil {
-			return nil, fmt.Errorf("Iconify dimensions for %q: %w", asset.CanonicalName, err)
+			return nil, fmt.Errorf("iconify dimensions for %q: %w", asset.CanonicalName, err)
 		}
 		pack.Icons[name] = iconifyIcon{Body: string(body), Width: width, Height: height}
 	}

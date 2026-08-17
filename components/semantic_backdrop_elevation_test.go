@@ -69,7 +69,7 @@ func TestBackdropAndElevationUseGovernedRoles(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		defer file.Close()
+		defer func() { _ = file.Close() }()
 
 		normalizedPath := strings.TrimPrefix(filepath.ToSlash(path), "./")
 		scanner := bufio.NewScanner(file)
