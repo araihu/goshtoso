@@ -133,13 +133,13 @@ func (cfg Config) titleClasses() string {
 
 // LinkClasses returns the link CSS classes
 func (cfg Config) linkClasses() string {
-	base := "whitespace-nowrap ml-auto text-sm font-medium tracking-wide transition hover:contrast-125 text-center active:contrast-100"
+	base := "whitespace-nowrap ml-auto text-sm font-medium tracking-wide transition motion-reduce:transition-none hover:contrast-125 text-center active:contrast-100"
 	return base + " " + statusTextClasses(cfg.Tone)
 }
 
 // PrimaryActionClasses returns the primary action button CSS classes
 func (cfg Config) primaryActionClasses() string {
-	base := "whitespace-nowrap text-center text-sm font-semibold tracking-wide transition hover:contrast-125 active:contrast-100"
+	base := "whitespace-nowrap text-center text-sm font-semibold tracking-wide transition motion-reduce:transition-none hover:contrast-125 active:contrast-100"
 	return base + " " + statusTextClasses(cfg.Tone)
 }
 

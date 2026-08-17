@@ -199,3 +199,13 @@ func TestCoverageToneClassesRendered(t *testing.T) {
 		t.Fatalf("expected container label styling: %s", html)
 	}
 }
+
+func TestCoverageReducedMotionContract(t *testing.T) {
+	classes := Config{}.toggleClasses()
+	if !strings.Contains(classes, "after:transition-all") {
+		t.Fatalf("toggle should keep its default knob transition: %s", classes)
+	}
+	if !strings.Contains(classes, "motion-reduce:after:transition-none") {
+		t.Fatalf("toggle should disable knob transition under reduced motion: %s", classes)
+	}
+}

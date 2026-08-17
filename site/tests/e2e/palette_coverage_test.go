@@ -74,6 +74,37 @@ func TestPalette_HoverShowsLabel(t *testing.T) {
 	require.NoError(t, err, "hovering a swatch should update the hovered label")
 }
 
+func TestPaletteReducedMotionStopsSwatchMotion(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	gotoPalette(t, page)
+
+	_, err := page.WaitForFunction(`() => {
+		const swatches = Array.from(document.querySelectorAll("#demo-palette button[data-cls]"));
+		return swatches.length > 0 && swatches.every(swatch =>
+			getComputedStyle(swatch).transitionProperty === "none"
+		);
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion Palette swatches should disable transitions")
+
+	swatch := page.Locator(`#demo-palette button[data-cls="blue-700"]`)
+	require.NoError(t, swatch.Hover())
+	transform, err := swatch.Evaluate(`el => getComputedStyle(el).transform`, nil)
+	require.NoError(t, err)
+	require.Equal(t, "none", transform, "reduced-motion hover should not scale a swatch")
+
+	require.NoError(t, swatch.Focus())
+	transform, err = swatch.Evaluate(`el => getComputedStyle(el).transform`, nil)
+	require.NoError(t, err)
+	require.Equal(t, "none", transform, "reduced-motion focus should not scale a swatch")
+}
+
 // TestPalette_NoConsoleErrors loads the demo, exercises a pick and a hex commit,
 // and asserts no console errors were emitted (Alpine binding / escaping smoke).
 func TestPalette_NoConsoleErrors(t *testing.T) {

@@ -211,3 +211,54 @@ func TestComboboxCoverage_KeyboardAndChevron(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "false", expanded, "Escape clears expanded state")
 }
+
+func TestComboboxReducedMotionOpensAndClosesWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+
+	_, err := page.Goto(baseURL+"/components/combobox", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	trigger := page.Locator("#industry-trigger")
+	panel := page.Locator(`#industry [x-show="isOpen || openedWithKeyboard"]`)
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const panel = document.querySelector('#industry [x-show="isOpen || openedWithKeyboard"]');
+		if (!panel || getComputedStyle(panel).display === 'none') return false;
+		const style = getComputedStyle(panel);
+		const trigger = document.querySelector('#industry-trigger');
+		const options = Array.from(panel.querySelectorAll('[role="option"]:not([aria-disabled="true"])'));
+		return trigger && getComputedStyle(trigger).transitionProperty === 'none' &&
+			options.length > 0 && options.every(option =>
+				getComputedStyle(option).transitionProperty === 'none'
+			) &&
+			style.transitionProperty === 'none' &&
+			style.opacity === '1' &&
+			style.transform === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const panel = document.querySelector('#industry [x-show="isOpen || openedWithKeyboard"]');
+		return !!panel && getComputedStyle(panel).display === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := panel.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "reduced-motion combobox should close immediately")
+}

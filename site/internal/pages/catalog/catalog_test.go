@@ -61,6 +61,8 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/tooltip", "Feedback"},
 		{"/components/breadcrumbs", "Navigation"},
 		{"/components/dropdown", "Navigation"},
+		{"/components/popover", "Navigation"},
+		{"/components/splitbutton", "Navigation"},
 		{"/components/link", "Navigation"},
 		{"/components/navbar", "Navigation"},
 		{"/components/pagination", "Navigation"},

@@ -11,6 +11,58 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestTableReducedMotionLoadingIndicatorStopsAnimation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/table", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const spinners = document.querySelectorAll("#lazy-table svg.animate-spin");
+		return spinners.length > 0 && Array.from(spinners).every(spinner => getComputedStyle(spinner).animationName === 'none');
+	}`, nil)
+	require.NoError(t, err)
+}
+
+func TestTableReducedMotionStopsVisualTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/table", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const filterBar = document.querySelector("#filtered-table-filters");
+		const filterButton = filterBar?.querySelector("button");
+		const filterChevron = filterButton?.querySelector(":scope > svg");
+		const filterPanel = filterBar?.querySelector("[x-collapse]");
+		const sortableHeader = document.querySelector("#sortable-table thead th[hx-get]");
+		return filterButton && filterChevron && filterPanel && sortableHeader &&
+			getComputedStyle(filterButton).transitionProperty === "none" &&
+			getComputedStyle(filterChevron).transitionProperty === "none" &&
+			getComputedStyle(filterPanel).transitionProperty === "none" &&
+			getComputedStyle(sortableHeader).transitionProperty === "none";
+	}`, nil)
+	require.NoError(t, err, "table visual transitions should be disabled under reduced motion")
+}
+
 // TestTableCoverageDemo complements the existing table E2E suite by driving the
 // demo variants that map to low-coverage component branches: the check-all
 // Alpine toggle, the select-filter HTMX swap, and the infinite-scroll sentinel

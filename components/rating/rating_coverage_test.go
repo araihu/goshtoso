@@ -136,6 +136,22 @@ func TestIconClassesSizes(t *testing.T) {
 	}
 }
 
+func TestIconClassesHonorReducedMotion(t *testing.T) {
+	for _, got := range []string{
+		(Config{}).iconClasses(),
+		(DisplayConfig{}).iconClasses(),
+	} {
+		if !strings.Contains(got, "transition motion-reduce:transition-none") {
+			t.Fatalf("rating icon classes lack reduced-motion transition suppression: %q", got)
+		}
+	}
+
+	html := renderRating(t, Config{Appearance: AppearanceEmoji})
+	if !strings.Contains(html, "motion-reduce:group-hover/rating-option:scale-100") {
+		t.Fatalf("interactive rating hover scale lacks reduced-motion fallback: %s", html)
+	}
+}
+
 func TestActiveInactiveIconClasses(t *testing.T) {
 	star := Config{Appearance: AppearanceStars}
 	if got := star.activeIconClasses(); got != "text-warning" {

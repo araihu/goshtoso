@@ -47,6 +47,34 @@ func TestTabsCoverageDemoNoConsoleErrors(t *testing.T) {
 	assert.Empty(t, consoleErrors, "tabs demo should load without console errors")
 }
 
+func TestTabsLazyLoadingSpinnerReducedMotionStopsAnimation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/tabs", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const spinners = document.querySelectorAll('#tabs-htmx svg.animate-spin');
+		return spinners.length > 0 && Array.from(spinners).every(spinner => getComputedStyle(spinner).animationName === 'none');
+	}`, nil)
+	require.NoError(t, err)
+}
+
 // TestTabsCoverageBadgeActiveStateSwitches verifies the badge active/inactive
 // class binding toggles when switching tabs in the badges variant.
 func TestTabsCoverageBadgeActiveStateSwitches(t *testing.T) {

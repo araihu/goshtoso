@@ -103,6 +103,18 @@ func TestClassAppended(t *testing.T) {
 	}
 }
 
+func TestReducedMotionTransitionContracts(t *testing.T) {
+	textLink := renderCfg(t, "#")
+	if !strings.Contains(textLink, "transition-colors motion-reduce:transition-none") {
+		t.Fatalf("text link missing reduced-motion transition contract: %s", textLink)
+	}
+
+	buttonLink := renderCfg(t, "#", WithAppearance(AppearanceButton))
+	if !strings.Contains(buttonLink, "transition motion-reduce:transition-none") {
+		t.Fatalf("button link missing reduced-motion transition contract: %s", buttonLink)
+	}
+}
+
 func TestIconTrailingDefault(t *testing.T) {
 	var buf bytes.Buffer
 	ctx := templ.WithChildren(context.Background(), templ.Raw("Next"))

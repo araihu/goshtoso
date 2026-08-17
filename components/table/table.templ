@@ -154,7 +154,7 @@ templ filterBar(cfg Config) {
 				<button
 					type="button"
 					@click="filtersExpanded = !filtersExpanded"
-					class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-strong hover:bg-surface-alt dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt transition-colors"
+					class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-strong hover:bg-surface-alt dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt transition-colors motion-reduce:transition-none"
 				>
 					<span class="flex items-center gap-2">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
@@ -162,7 +162,7 @@ templ filterBar(cfg Config) {
 						</svg>
 						Filters
 					</span>
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 transition-transform" :class="filtersExpanded ? 'rotate-180' : ''">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 transition-transform motion-reduce:transition-none" :class="filtersExpanded ? 'rotate-180' : ''">
 						<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
 					</svg>
 				</button>
@@ -170,7 +170,7 @@ templ filterBar(cfg Config) {
 			<div
 				x-show="filtersExpanded"
 				x-collapse
-				class={ filterBarBodyClasses(cfg) }
+				class={ filterBarBodyClasses(cfg) + " motion-reduce:transition-none!" }
 			>
 				<div class="flex flex-wrap items-end gap-4">
 					for _, filter := range cfg.Filters.Filters {
@@ -267,7 +267,7 @@ templ filterToggleInput(cfg Config, filter Filter) {
 			@change="applyFilters()"
 			class="peer sr-only"
 		/>
-		<div class="relative h-6 w-11 rounded-full bg-outline/30 after:absolute after:left-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-outline/20 after:bg-surface after:transition-all peer-checked:bg-primary peer-checked:after:translate-x-full peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary dark:bg-outline-dark/30 dark:after:bg-surface-dark dark:peer-checked:bg-primary-dark"></div>
+		<div class="relative h-6 w-11 rounded-full bg-outline/30 after:absolute after:left-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-outline/20 after:bg-surface after:transition-all motion-reduce:after:transition-none peer-checked:bg-primary peer-checked:after:translate-x-full peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary dark:bg-outline-dark/30 dark:after:bg-surface-dark dark:peer-checked:bg-primary-dark"></div>
 		if filter.Label != "" {
 			<span class="text-sm text-on-surface dark:text-on-surface-dark">{ filter.Label }</span>
 		}
@@ -435,7 +435,7 @@ templ tableRowTemplate(cfg Config, row Row) {
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 20 20"
 							fill="currentColor"
-							class="size-4 text-on-surface-muted dark:text-on-surface-dark-muted transition-transform duration-150"
+							class="size-4 text-on-surface-muted dark:text-on-surface-dark-muted transition-transform duration-150 motion-reduce:transition-none"
 							x-bind:class={ fmt.Sprintf("openRows['%s'] ? 'rotate-180' : ''", row.ID) }
 						>
 							<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
@@ -449,7 +449,7 @@ templ tableRowTemplate(cfg Config, row Row) {
 		<tr
 			x-show={ fmt.Sprintf("openRows['%s']", row.ID) }
 			x-collapse
-			class="bg-surface-alt/50 dark:bg-surface-dark-alt/50"
+			class="bg-surface-alt/50 dark:bg-surface-dark-alt/50 motion-reduce:transition-none!"
 		>
 			<td colspan={ fmt.Sprintf("%d", cfg.colCount()) }>
 				@row.Detail
@@ -698,7 +698,7 @@ templ tablePaginationNavTemplate(cfg Config) {
 
 templ loadingIndicator() {
 	<div class="flex items-center justify-center gap-2 text-on-surface-muted dark:text-on-surface-dark-muted">
-		<svg class="size-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+		<svg class="size-5 animate-spin motion-reduce:animate-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 			<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 		</svg>

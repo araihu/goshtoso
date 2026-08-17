@@ -597,8 +597,8 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The public surface has 54 public component packages and 83 renderable primitives;
-the demo catalog has 50 documentation pages.
+The public surface has 56 public component packages and 85 renderable primitives;
+the demo catalog has 52 documentation pages.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -634,6 +634,7 @@ configuration previews, and API tables.
 | `panel` | `components/panel` | Neutral full-width application surface with arbitrary header, actions, body, and footer regions |
 | `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
 | `palette` | `components/palette` | Color palette and swatch utilities for theme demos and pickers |
+| `popover` | `components/popover` | Consumer-owned positioned surfaces with click, hover, or context activation |
 | `radio` | `components/radio` | Radio inputs and groups with validation and semantic tones |
 | `range` | `components/range` | Range sliders with labels, helper text, and icon slots |
 | `rating` | `components/rating` | Rating controls and display states |
@@ -643,6 +644,7 @@ configuration previews, and API tables.
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
 | `skeleton` | `components/skeleton` | Accessible loading placeholders for text, rectangles, and circles |
 | `spinner` | `components/spinner` | Loading spinner with independent size and tone dimensions |
+| `splitbutton` | `components/splitbutton` | Primary action paired with a consumer-owned menu of related actions |
 | `steps` | `components/steps` | Stepper/progress navigation for multi-step flows |
 | `structuredinput` | `components/structuredinput` | Repeatable structured row editor (for labels, taints, rules) |
 | `table` | `components/table` | Data table with sorting, pagination, infinite scroll, filters, row links |

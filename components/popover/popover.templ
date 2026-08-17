@@ -1,0 +1,69 @@
+package popover
+
+// Popover renders consumer-owned trigger and content with shared open/close
+// lifecycle, focus restoration, ARIA wiring, and CSS placement.
+templ popoverTemplate(cfg Config) {
+	<div
+		data-popover-root
+		x-data="goshtosoPopover($el)"
+		x-on:keydown.esc.window="closeAndFocus()"
+		x-on:click.outside="close()"
+		if cfg.activation() == ActivationHover {
+			x-on:mouseenter="clearScheduledClose(); open()"
+			x-on:mouseleave="scheduleClose()"
+		}
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
+		class={ cfg.rootClasses() }
+	>
+		<span
+			data-popover-trigger
+			class="contents"
+			if cfg.activation() != ActivationHover {
+				x-on:click="toggle()"
+			}
+			if cfg.activation() == ActivationContext {
+				x-on:contextmenu.prevent="open()"
+			}
+			x-on:keydown.enter.prevent="openFromKeyboard()"
+			x-on:keydown.space.prevent="openFromKeyboard()"
+			x-on:keydown.down.prevent="openFromKeyboard()"
+		>
+			if cfg.Trigger != nil {
+				@cfg.Trigger
+			} else {
+				<button type="button">Open</button>
+			}
+		</span>
+		<div
+			data-popover-panel
+			x-ref="panel"
+			x-cloak
+			x-show="isOpen || openedWithKeyboard"
+			x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"
+			x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
+			x-transition:enter-end="opacity-100 scale-100"
+			x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
+			x-transition:leave-start="opacity-100 scale-100"
+			x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
+			if cfg.TrapFocus {
+				x-trap.noreturn="openedWithKeyboard"
+			}
+			if panelID := cfg.panelID(); panelID != "" {
+				id={ panelID }
+			}
+			if cfg.Role != "" {
+				role={ cfg.Role }
+			}
+			if cfg.Label != "" {
+				aria-label={ cfg.Label }
+			}
+			class={ cfg.panelClasses() }
+		>
+			if cfg.Content != nil {
+				@cfg.Content
+			}
+		</div>
+	</div>
+}

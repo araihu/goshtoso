@@ -38,6 +38,7 @@ type Options struct {
 	Package             string
 	ConstPrefix         string
 	SpriteURL           string
+	IconifyPrefix       string
 	Check               bool
 }
 

@@ -1,0 +1,18 @@
+schemaVersion: 1
+sources:
+  - id: heroicons
+    kind: archive
+    url: https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26
+    packName: heroicons
+    stripComponents: 1
+    paths:
+      - optimized/24/outline/arrow-down-tray.svg
+      - optimized/24/outline/cube.svg
+      - optimized/24/outline/queue-list.svg
+      - optimized/24/outline/squares-2x2.svg
+      - optimized/24/outline/sparkles.svg
+      - optimized/24/outline/swatch.svg
+      - optimized/24/outline/heart.svg
+      - optimized/24/outline/clipboard-document-list.svg
+    license: MIT
+    licensePath: LICENSE

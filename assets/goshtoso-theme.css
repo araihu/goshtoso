@@ -151,6 +151,16 @@
     --color-danger-action-dark: color-mix(in srgb, var(--color-danger) 60%, var(--color-on-surface-dark-strong) 40%);
     --color-on-danger-action-dark: var(--color-surface-dark);
 
+    /* Layering roles. Backdrop alpha stays component-owned so established
+       overlay strengths remain unchanged; the base colors remain theme
+       traceable. Elevation roles own both geometry and color provenance. */
+    --color-backdrop: var(--color-black);
+    --color-backdrop-surface: var(--color-surface-dark);
+    --shadow-elevation-control: 0 1px 3px 0 color-mix(in srgb, var(--color-outline) 30%, transparent), 0 1px 2px -1px color-mix(in srgb, var(--color-outline) 30%, transparent);
+    --shadow-elevation-control-dark: 0 1px 3px 0 color-mix(in srgb, var(--color-black) 20%, transparent), 0 1px 2px -1px color-mix(in srgb, var(--color-black) 20%, transparent);
+    --shadow-elevation-raised: 0 20px 25px -5px color-mix(in srgb, var(--color-black) 10%, transparent), 0 8px 10px -6px color-mix(in srgb, var(--color-black) 10%, transparent);
+    --shadow-elevation-overlay: 0 25px 50px -12px color-mix(in srgb, var(--color-black) 20%, transparent);
+
     /* Border Radius */
     --radius-radius: var(--radius-xl);
 }
@@ -1043,6 +1053,20 @@
   /* Smooth theme transitions */
   .theme-transition {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Keep every consumer surface still when reduced motion is requested. The
+     component-level motion-reduce utilities remain explicit contracts for
+     stateful transforms and Alpine transitions; this rule covers authored
+     site/demo transitions and third-party shell CSS loaded after this file. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   /* ============================================

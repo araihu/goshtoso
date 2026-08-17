@@ -78,3 +78,29 @@ func TestLinkCoverageDemo(t *testing.T) {
 
 	assert.Empty(t, consoleErrors, "demo page should not log console errors")
 }
+
+func TestLinkReducedMotionStopsTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/link", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => {
+		const links = [
+			document.querySelector("#link-default a"),
+			document.querySelector("#link-button a"),
+		];
+		return links.every(link => link &&
+			getComputedStyle(link).transitionProperty === "none"
+		);
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion Link transitions should be disabled")
+}

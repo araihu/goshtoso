@@ -158,6 +158,9 @@ func TestCoverageRenderWithActions(t *testing.T) {
 		ReadOnly:    true,
 		RootClass:   "shadow-lg",
 	}))
+	if !strings.Contains(html, "transition motion-reduce:transition-none") {
+		t.Fatalf("textarea send action is missing reduced-motion transition suppression: %s", html)
+	}
 	for _, want := range []string{
 		`id="msg"`,
 		`name="msg"`,

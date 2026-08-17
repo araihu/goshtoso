@@ -336,3 +336,26 @@ func TestToggleAttrsPassthrough(t *testing.T) {
 		t.Fatal("expected at least one toggle input on the toggle demo page")
 	}
 }
+
+func TestToggleReducedMotionStopsKnobTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	_, err = page.WaitForFunction(`() => {
+		const tracks = Array.from(document.querySelectorAll("label[for] div[aria-hidden='true']"));
+		return tracks.length > 0 && tracks.every(track =>
+			getComputedStyle(track, "::after").transitionProperty === "none"
+		);
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion Toggle knobs should disable transitions")
+}

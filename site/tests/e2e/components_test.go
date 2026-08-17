@@ -626,7 +626,10 @@ func TestIntegration(t *testing.T) {
 		// under full-suite load (the documented HTMX rebind race).
 		// clickUntil re-fires until the title actually flips; htmx updates
 		// document.title from the swapped fragment's <title>.
-		buttonLink := page.Locator("a:has-text('Button')")
+		buttonLink := page.GetByRole("link", playwright.PageGetByRoleOptions{
+			Name:  "Button",
+			Exact: playwright.Bool(true),
+		})
 		clickUntil(t, page, buttonLink, "() => document.title.includes('Button')")
 
 		title, _ = page.Title()

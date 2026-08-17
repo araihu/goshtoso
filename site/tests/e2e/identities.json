@@ -405,6 +405,15 @@
       ]
     },
     {
+      "name": "popover",
+      "files": [
+        "popover_test.go"
+      ],
+      "tests": [
+        "TestPopover_Primitives"
+      ]
+    },
+    {
       "name": "radio",
       "files": [
         "radio_coverage_test.go",
@@ -526,6 +535,15 @@
       "tests": [
         "TestCardBodyDemoRendersBetweenDescriptionAndFooter",
         "TestCompositionComponentDemosRenderPublicContracts"
+      ]
+    },
+    {
+      "name": "splitbutton",
+      "files": [
+        "splitbutton_test.go"
+      ],
+      "tests": [
+        "TestSplitButton_Primitives"
       ]
     },
     {

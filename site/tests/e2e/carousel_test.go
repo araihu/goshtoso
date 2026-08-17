@@ -113,3 +113,49 @@ func TestCarousel_AutoplayCanBePaused(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "true", pressed)
 }
+
+func TestCarouselReducedMotionDisablesAutoplayAndSlideTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+
+	_, err := page.Goto(baseURL+"/components/carousel", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const autoplay = document.querySelector("#carousel-autoplay-c");
+		const slides = document.querySelectorAll('[class~="motion-reduce:transition-none!"]');
+		const state = autoplay && Alpine.$data(autoplay);
+		return state && state.reducedMotion === true && state.autoplayInterval === null && slides.length >= 2 &&
+			Array.from(slides).every(slide => getComputedStyle(slide).transitionProperty === "none");
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion Carousel should disable autoplay and slide transitions")
+
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionNoPreference,
+	}))
+	_, err = page.WaitForFunction(`() => {
+		const autoplay = document.querySelector("#carousel-autoplay-c");
+		const state = autoplay && Alpine.$data(autoplay);
+		return state && state.reducedMotion === false && state.autoplayInterval !== null;
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "Carousel should restart autoplay when reduced-motion is disabled")
+
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err = page.WaitForFunction(`() => {
+		const autoplay = document.querySelector("#carousel-autoplay-c");
+		const state = autoplay && Alpine.$data(autoplay);
+		return state && state.reducedMotion === true && state.autoplayInterval === null;
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "Carousel should cancel autoplay when reduced-motion is enabled")
+}

@@ -518,6 +518,15 @@ func TestRenderLazyLoadTbody(t *testing.T) {
 	)
 }
 
+func TestLoadingIndicatorHonorsReducedMotion(t *testing.T) {
+	html := renderT(t, Table(Config{
+		LazyLoad: true,
+		HTMX:     &HTMXConfig{Endpoint: "/api/components/table/rows"},
+		Columns:  []Column{{Key: "name", Label: "Name"}},
+	}))
+	mustContainAll(t, html, "animate-spin motion-reduce:animate-none")
+}
+
 func TestRenderInfiniteScrollSentinel(t *testing.T) {
 	cfg := Config{
 		HTMX:    &HTMXConfig{Endpoint: "/api/components/table/rows"},
@@ -665,6 +674,35 @@ func TestRenderFilterBarVariants(t *testing.T) {
 		`hx-get="/api/teams"`, "Loading...", // dynamic select options
 	)
 	mustNotContain(t, html, "<script")
+}
+
+func TestReducedMotionContracts(t *testing.T) {
+	html := renderT(t, Table(Config{
+		ID:   "reduced-motion",
+		HTMX: &HTMXConfig{Endpoint: "/api/components/table/rows"},
+		Columns: []Column{
+			{Key: "name", Label: "Name", Sortable: true},
+		},
+		Rows: []Row{{
+			ID:         "7",
+			Expandable: true,
+			Detail:     templ.Raw("<p>detail</p>"),
+			Cells:      map[string]Cell{"name": {Text: "Row"}},
+		}},
+		Filters: &FilterConfig{
+			Collapsible:       true,
+			InitiallyExpanded: true,
+			Filters:           []Filter{{Key: "active", Label: "Active", Type: FilterToggle}},
+		},
+	}))
+
+	mustContainAll(t, html,
+		"transition-colors motion-reduce:transition-none",
+		"size-5 transition-transform motion-reduce:transition-none",
+		"after:transition-all motion-reduce:after:transition-none",
+		"transition-transform duration-150 motion-reduce:transition-none",
+		"motion-reduce:transition-none!",
+	)
 }
 
 func TestRenderInlineFilterAppearance(t *testing.T) {
