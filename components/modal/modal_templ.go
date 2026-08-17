@@ -178,14 +178,14 @@ func defaultModal(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" x-transition.opacity.duration.200ms x-trap.inert.noscroll=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" x-transition:enter=\"transition-opacity ease-out duration-200 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 motion-reduce:opacity-100\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition-opacity ease-in duration-150 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0 motion-reduce:opacity-100\" x-trap.inert.noscroll=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(stateVar)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 37, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 42, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -198,7 +198,7 @@ func defaultModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = false", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 38, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 43, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -211,20 +211,20 @@ func defaultModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = false", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 39, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 44, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"fixed inset-0 z-30 flex items-end justify-center bg-backdrop/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(titleID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 43, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 48, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -246,13 +246,13 @@ func defaultModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(stateVar)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 46, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 51, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" x-transition:enter=\"transition ease-out duration-200 delay-100 motion-reduce:transition-opacity\" x-transition:enter-start=\"opacity-0 scale-50\" x-transition:enter-end=\"opacity-100 scale-100\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" x-transition:enter=\"transition ease-out duration-200 delay-100 motion-reduce:transition-none motion-reduce:delay-0\" x-transition:enter-start=\"opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100\" x-transition:enter-end=\"opacity-100 scale-100\" x-transition:leave=\"transition ease-in duration-150 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100 scale-100\" x-transition:leave-end=\"opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -294,7 +294,7 @@ func defaultModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(titleID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 54, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 62, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 		if templ_7745c5c3_Err != nil {
@@ -307,7 +307,7 @@ func defaultModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 54, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 62, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -320,7 +320,7 @@ func defaultModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = false", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 55, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 63, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 		if templ_7745c5c3_Err != nil {
@@ -341,7 +341,7 @@ func defaultModal(cfg Config) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Body)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 61, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 69, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -400,7 +400,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("{%s: false}", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 79, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 87, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
 		if templ_7745c5c3_Err != nil {
@@ -422,7 +422,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = true", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 80, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 88, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 		if templ_7745c5c3_Err != nil {
@@ -448,7 +448,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.TriggerLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 81, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 89, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -461,20 +461,20 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var29 string
 		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(stateVar)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 85, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 93, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" x-transition.opacity.duration.200ms x-trap.inert.noscroll=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" x-transition:enter=\"transition-opacity ease-out duration-200 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 motion-reduce:opacity-100\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition-opacity ease-in duration-150 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0 motion-reduce:opacity-100\" x-trap.inert.noscroll=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(stateVar)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 87, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 100, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 		if templ_7745c5c3_Err != nil {
@@ -487,7 +487,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = false", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 88, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 101, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 		if templ_7745c5c3_Err != nil {
@@ -500,20 +500,20 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = false", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 89, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 102, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" class=\"fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8\" role=\"alertdialog\" aria-modal=\"true\" aria-labelledby=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" class=\"fixed inset-0 z-30 flex items-end justify-center bg-backdrop/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8\" role=\"alertdialog\" aria-modal=\"true\" aria-labelledby=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(titleID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 93, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 106, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
 		if templ_7745c5c3_Err != nil {
@@ -535,13 +535,13 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var35 string
 		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue(stateVar)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 96, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 109, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" x-transition:enter=\"transition ease-out duration-200 delay-100 motion-reduce:transition-opacity\" x-transition:enter-start=\"opacity-0 scale-50\" x-transition:enter-end=\"opacity-100 scale-100\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" x-transition:enter=\"transition ease-out duration-200 delay-100 motion-reduce:transition-none motion-reduce:delay-0\" x-transition:enter-start=\"opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100\" x-transition:enter-end=\"opacity-100 scale-100\" x-transition:leave=\"transition ease-in duration-150 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100 scale-100\" x-transition:leave-end=\"opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -613,7 +613,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var41 string
 		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%s = false", stateVar))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 107, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 123, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var41)
 		if templ_7745c5c3_Err != nil {
@@ -634,7 +634,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var42 string
 		templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(titleID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 113, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 129, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var42)
 		if templ_7745c5c3_Err != nil {
@@ -647,7 +647,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var43 string
 		templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 113, Col: 132}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 129, Col: 132}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 		if templ_7745c5c3_Err != nil {
@@ -660,7 +660,7 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 		var templ_7745c5c3_Var44 string
 		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Body)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 114, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 130, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 		if templ_7745c5c3_Err != nil {
@@ -711,13 +711,13 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 		var templ_7745c5c3_Var46 string
 		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(buttonClickExpr(stateVar, action))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 128, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 144, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "\" type=\"button\" class=\"whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -729,7 +729,7 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 			var templ_7745c5c3_Var47 string
 			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 132, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 148, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
 			if templ_7745c5c3_Err != nil {
@@ -748,7 +748,7 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Post)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 135, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 151, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var48)
 			if templ_7745c5c3_Err != nil {
@@ -767,7 +767,7 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 			var templ_7745c5c3_Var49 string
 			templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Target)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 138, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 154, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var49)
 			if templ_7745c5c3_Err != nil {
@@ -786,7 +786,7 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 			var templ_7745c5c3_Var50 string
 			templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Swap)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 141, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 157, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var50)
 			if templ_7745c5c3_Err != nil {
@@ -804,7 +804,7 @@ func primaryButton(stateVar string, text string, action *ButtonAction) templ.Com
 		var templ_7745c5c3_Var51 string
 		templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 144, Col: 8}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 160, Col: 8}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 		if templ_7745c5c3_Err != nil {
@@ -847,13 +847,13 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 		var templ_7745c5c3_Var53 string
 		templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.ResolveAttributeValue(buttonClickExpr(stateVar, action))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 151, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 167, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var53)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "\" type=\"button\" class=\"whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "\" type=\"button\" class=\"whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -865,7 +865,7 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 			var templ_7745c5c3_Var54 string
 			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 155, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 171, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 			if templ_7745c5c3_Err != nil {
@@ -884,7 +884,7 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 			var templ_7745c5c3_Var55 string
 			templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Post)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 158, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 174, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 			if templ_7745c5c3_Err != nil {
@@ -903,7 +903,7 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 			var templ_7745c5c3_Var56 string
 			templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Target)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 161, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 177, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var56)
 			if templ_7745c5c3_Err != nil {
@@ -922,7 +922,7 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 			var templ_7745c5c3_Var57 string
 			templ_7745c5c3_Var57, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Swap)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 164, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 180, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var57)
 			if templ_7745c5c3_Err != nil {
@@ -940,7 +940,7 @@ func secondaryButton(stateVar string, text string, action *ButtonAction) templ.C
 		var templ_7745c5c3_Var58 string
 		templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 167, Col: 8}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 183, Col: 8}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 		if templ_7745c5c3_Err != nil {
@@ -988,7 +988,7 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 		var templ_7745c5c3_Var61 string
 		templ_7745c5c3_Var61, templ_7745c5c3_Err = templ.ResolveAttributeValue(buttonClickExpr(stateVar, action))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 174, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 190, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var61)
 		if templ_7745c5c3_Err != nil {
@@ -1019,7 +1019,7 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 			var templ_7745c5c3_Var63 string
 			templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Get)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 178, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 194, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var63)
 			if templ_7745c5c3_Err != nil {
@@ -1038,7 +1038,7 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 			var templ_7745c5c3_Var64 string
 			templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Post)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 181, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 197, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var64)
 			if templ_7745c5c3_Err != nil {
@@ -1057,7 +1057,7 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 			var templ_7745c5c3_Var65 string
 			templ_7745c5c3_Var65, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Target)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 184, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 200, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var65)
 			if templ_7745c5c3_Err != nil {
@@ -1076,7 +1076,7 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 			var templ_7745c5c3_Var66 string
 			templ_7745c5c3_Var66, templ_7745c5c3_Err = templ.ResolveAttributeValue(action.HTMX.Swap)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 187, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 203, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var66)
 			if templ_7745c5c3_Err != nil {
@@ -1094,7 +1094,7 @@ func alertCTAButton(stateVar string, text string, classes string, action *Button
 		var templ_7745c5c3_Var67 string
 		templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 190, Col: 8}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 206, Col: 8}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var67))
 		if templ_7745c5c3_Err != nil {

@@ -153,7 +153,7 @@ func tagsListTemplate(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "> <button type=\"button\" x-on:click=\"addTag()\" class=\"cursor-pointer px-3 py-2 text-sm font-medium rounded-radius border border-outline-strong bg-surface text-on-surface-strong transition hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark-strong dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark\" data-tagslist-add>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "> <button type=\"button\" x-on:click=\"addTag()\" class=\"cursor-pointer px-3 py-2 text-sm font-medium rounded-radius border border-outline-strong bg-surface text-on-surface-strong transition motion-reduce:transition-none hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark-strong dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark\" data-tagslist-add>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -102,3 +102,41 @@ func TestAccordionCoverageDemo(t *testing.T) {
 		require.False(t, strings.Contains(msg, "htmx:swapError"), "unexpected console error: %s", msg)
 	}
 }
+
+func TestAccordionReducedMotionStopsCollapseChevronAndLazySpinnerMotion(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/accordion", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const accordion = document.querySelector("#accordion-default");
+		const chevron = accordion && accordion.querySelector("button svg");
+		const region = accordion && accordion.querySelector("[x-collapse]");
+		const spinner = document.querySelector("#lazy-content-a svg.animate-spin");
+		return chevron && region && spinner &&
+			getComputedStyle(chevron).transitionProperty === "none" &&
+			getComputedStyle(region).transitionProperty === "none" &&
+			getComputedStyle(spinner).animationName === "none";
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "Accordion motion should be disabled under reduced-motion")
+
+	button := page.Locator("#accordion-default button").First()
+	require.NoError(t, button.Click())
+	_, err = page.WaitForFunction(`() => {
+		const button = document.querySelector("#accordion-default button");
+		const region = document.querySelector("#accordion-default [x-collapse]");
+		return button && button.getAttribute("aria-expanded") === "true" && region &&
+			getComputedStyle(region).transitionProperty === "none";
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "Accordion should still expand while reduced-motion removes the transition")
+}

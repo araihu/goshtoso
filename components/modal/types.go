@@ -104,11 +104,11 @@ func (cfg AlertDialogConfig) titleID() string {
 
 // TriggerClasses returns the trigger button CSS classes
 func (cfg Config) triggerClasses() string {
-	return "whitespace-nowrap rounded-radius border border-primary dark:border-primary-dark bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
+	return "whitespace-nowrap rounded-radius border border-primary dark:border-primary-dark bg-primary px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
 }
 
 func (cfg AlertDialogConfig) triggerClasses() string {
-	base := "w-36 whitespace-nowrap rounded-radius border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0"
+	base := "w-36 whitespace-nowrap rounded-radius border px-4 py-2 text-center text-sm font-medium tracking-wide transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0"
 
 	switch cfg.Tone {
 	case ToneSuccess:
@@ -198,7 +198,7 @@ func (cfg AlertDialogConfig) iconBadgeClasses() string {
 }
 
 func (cfg AlertDialogConfig) actionClasses() string {
-	base := "w-full whitespace-nowrap rounded-radius border px-4 py-2 text-center text-sm font-semibold tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0"
+	base := "w-full whitespace-nowrap rounded-radius border px-4 py-2 text-center text-sm font-semibold tracking-wide transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0"
 	switch cfg.Tone {
 	case ToneSuccess:
 		base += " border-success bg-success text-on-success focus-visible:outline-success"

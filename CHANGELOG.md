@@ -2,6 +2,63 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.0] - 2026-08-16
+
+### New composition primitives
+
+- Added the public `components/popover` primitive for composing a positioned
+  surface from a consumer-owned trigger and arbitrary content, with click,
+  hover, and context activation plus placement, ARIA, and focus semantics.
+- Added the public `components/splitbutton` primitive for composing one
+  primary action beside a consumer-owned dropdown of related actions.
+- Split button menu items support captions, leading and trailing icons,
+  native links, new-tab metadata, HTMX attributes, and local handlers.
+
+### Consumer iconpack integration
+
+- Added the demo's consumer-local Heroicons pack, including its Muamba config,
+  lockfile, generated sprite and Go bindings, provenance, and license output.
+- Preserved SVG root paint attributes during iconpack generation so consumer
+  icons can inherit `currentColor` when rendered from the generated sprite.
+
+### Upgrade note
+
+- These APIs are additive. Button now keeps leading icons and labels aligned in
+  a single inline flex row; consumers that depended on the old default display
+  behavior should review their custom overrides.
+- The Heroicons pack is demo-owned and is not part of Goshtoso's embedded icon
+  catalog; consumers should provide their own pack configuration and assets.
+
+## [v0.1.16] - 2026-08-16
+
+### Interaction and theme semantics
+
+- Added reduced-motion behavior across the component and demo surfaces.
+- Made click-triggered Tooltips persistent with reflected `aria-expanded` and
+  `aria-controls` state, keyboard activation, Escape dismissal, and outside-click
+  dismissal without moving focus.
+- Moved Tooltip panels to the semantic radius contract and added governed
+  backdrop and elevation roles for overlays and compact controls.
+
+### Upgrade note
+
+- Existing component APIs remain compatible. Custom themes may override the new
+  backdrop and elevation roles documented in `docs/THEMING.md`.
+
+## [v0.1.15] - 2026-08-15
+
+### Iconify icon packs
+
+- Extended `iconpack` to emit selected SVG icons as Iconify-compatible
+  `icons.json`, with a configurable prefix and per-icon dimensions, alongside
+  the existing sprite and typed Go bindings.
+
+### Upgrade note
+
+- Existing sprite, Go binding, provenance, and license outputs remain
+  compatible. Consumers can load the generated `icons.json` as a Mermaid
+  Iconify pack.
+
 ## [v0.1.14] - 2026-08-12
 
 ### Consumer-agent ecosystem discovery
@@ -353,6 +410,7 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.2.0]: https://github.com/araihu/goshtoso/compare/v0.1.16...v0.2.0
 [v0.1.9]: https://github.com/araihu/goshtoso/compare/v0.1.8...v0.1.9
 [v0.1.3]: https://github.com/araihu/goshtoso/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/araihu/goshtoso/compare/v0.1.1...v0.1.2

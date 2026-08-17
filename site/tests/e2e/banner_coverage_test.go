@@ -86,3 +86,30 @@ func TestBannerCoverageDemo(t *testing.T) {
 	defer mu.Unlock()
 	require.Empty(t, consoleErrors, "unexpected console errors: %s", strings.Join(consoleErrors, "; "))
 }
+
+func TestBannerReducedMotionStopsButtonTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/banner", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+	_, err = page.WaitForFunction(`() => {
+		const buttons = [
+			...document.querySelectorAll("#banner-simple button[aria-label='dismiss banner']"),
+			...document.querySelectorAll("#banner-cta button"),
+			...document.querySelectorAll("#banner-cookie button"),
+		];
+		return buttons.length === 5 && buttons.every(button =>
+			getComputedStyle(button).transitionProperty === "none"
+		);
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion Banner action buttons should disable transitions")
+}

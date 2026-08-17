@@ -1154,7 +1154,7 @@ func themeGridSection() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"group overflow-hidden rounded-radius border bg-surface text-left transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark dark:focus-visible:outline-primary-dark\" :class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"group overflow-hidden rounded-radius border bg-surface text-left transition duration-300 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark dark:focus-visible:outline-primary-dark\" :class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1167,7 +1167,7 @@ func themeGridSection() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><div class=\"flex items-center justify-between gap-2 p-2 transition-colors group-hover:bg-surface-alt dark:group-hover:bg-surface-dark-alt\"><div class=\"flex min-w-0 items-center gap-2\"><span x-show=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><div class=\"flex items-center justify-between gap-2 p-2 transition-colors motion-reduce:transition-none group-hover:bg-surface-alt dark:group-hover:bg-surface-dark-alt\"><div class=\"flex min-w-0 items-center gap-2\"><span x-show=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1254,7 +1254,7 @@ func themeGridSection() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var16 = []any{t.SurfaceClass + " h-24 border-t border-outline transition-colors dark:border-outline-dark"}
+			var templ_7745c5c3_Var16 = []any{t.SurfaceClass + " h-24 border-t border-outline transition-colors motion-reduce:transition-none dark:border-outline-dark"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var16...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1294,7 +1294,7 @@ func themeGridSection() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"><div class=\"flex flex-col gap-1 transition-[gap] duration-300 group-hover:gap-1.5\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"><div class=\"flex flex-col gap-1 transition-[gap] duration-300 motion-reduce:transition-none group-hover:gap-1.5 motion-reduce:group-hover:gap-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1581,7 +1581,7 @@ func themeBorderSection() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" @click=\"radius = $el.dataset.radius\" class=\"group relative flex h-10 flex-1 min-w-10 items-center justify-center rounded-radius transition-colors\" :class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" @click=\"radius = $el.dataset.radius\" class=\"group relative flex h-10 flex-1 min-w-10 items-center justify-center rounded-radius transition-colors motion-reduce:transition-none\" :class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1615,14 +1615,14 @@ func themeBorderSection() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<span class=\"pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-xs font-medium text-on-surface-dark-strong opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-surface dark:text-on-surface-strong\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<span class=\"pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-xs font-medium text-on-surface-dark-strong opacity-0 transition-opacity duration-150 motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-surface dark:text-on-surface-strong\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(r.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1124, Col: 342}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1124, Col: 372}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
@@ -1731,7 +1731,7 @@ func modeColorGroup(title string, tokens []colorToken, isLight bool) templ.Compo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</h3><button type=\"button\" @click=\"$store.darkMode.toggle()\" class=\"rounded-full p-1.5 text-on-surface-muted transition-colors hover:bg-surface-alt hover:text-primary dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt dark:hover:text-primary-dark\" aria-label=\"Switch mode\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</h3><button type=\"button\" @click=\"$store.darkMode.toggle()\" class=\"rounded-full p-1.5 text-on-surface-muted transition-colors motion-reduce:transition-none hover:bg-surface-alt hover:text-primary dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt dark:hover:text-primary-dark\" aria-label=\"Switch mode\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2117,7 +2117,7 @@ func previewButtons() templ.Component {
 			templ_7745c5c3_Var51 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<div><h5 class=\"text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Buttons</h5><div class=\"flex flex-wrap gap-2\"><button class=\"px-4 py-2 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark text-sm font-medium hover:opacity-90 transition-opacity\">Primary</button> <button class=\"px-4 py-2 rounded-radius bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark text-sm font-medium hover:opacity-90 transition-opacity\">Secondary</button> <button class=\"px-4 py-2 rounded-radius bg-info text-on-info text-sm font-medium hover:opacity-90 transition-opacity\">Info</button> <button class=\"px-4 py-2 rounded-radius bg-danger text-on-danger text-sm font-medium hover:opacity-90 transition-opacity\">Danger</button> <button class=\"px-4 py-2 rounded-radius bg-warning text-on-warning text-sm font-medium hover:opacity-90 transition-opacity\">Warning</button> <button class=\"px-4 py-2 rounded-radius bg-success text-on-success text-sm font-medium hover:opacity-90 transition-opacity\">Success</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<div><h5 class=\"text-xs font-semibold uppercase tracking-wider text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Buttons</h5><div class=\"flex flex-wrap gap-2\"><button class=\"px-4 py-2 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark text-sm font-medium hover:opacity-90 transition-opacity motion-reduce:transition-none\">Primary</button> <button class=\"px-4 py-2 rounded-radius bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark text-sm font-medium hover:opacity-90 transition-opacity motion-reduce:transition-none\">Secondary</button> <button class=\"px-4 py-2 rounded-radius bg-info text-on-info text-sm font-medium hover:opacity-90 transition-opacity motion-reduce:transition-none\">Info</button> <button class=\"px-4 py-2 rounded-radius bg-danger text-on-danger text-sm font-medium hover:opacity-90 transition-opacity motion-reduce:transition-none\">Danger</button> <button class=\"px-4 py-2 rounded-radius bg-warning text-on-warning text-sm font-medium hover:opacity-90 transition-opacity motion-reduce:transition-none\">Warning</button> <button class=\"px-4 py-2 rounded-radius bg-success text-on-success text-sm font-medium hover:opacity-90 transition-opacity motion-reduce:transition-none\">Success</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2353,7 +2353,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, "\" @click=\"s[$el.dataset.index] = !s[$el.dataset.index]\" class=\"relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors\" :class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, "\" @click=\"s[$el.dataset.index] = !s[$el.dataset.index]\" class=\"relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors motion-reduce:transition-none\" :class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2366,7 +2366,7 @@ func toggleCell(i int, onClass string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 84, "\" aria-label=\"Toggle\"><span class=\"inline-block size-4 transform rounded-full bg-white transition-transform\" :class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 84, "\" aria-label=\"Toggle\"><span class=\"inline-block size-4 transform rounded-full bg-white transition-transform motion-reduce:transition-none\" :class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2525,7 +2525,7 @@ func previewUpdateBanner() templ.Component {
 			templ_7745c5c3_Var67 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 91, "<div x-data=\"{ open: true }\" x-show=\"open\" x-transition class=\"flex items-start gap-4 rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt\"><span class=\"mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-info text-on-info\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z\"></path></svg></span><div class=\"min-w-0 flex-1\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Update Available</p><p class=\"mt-1 text-sm text-on-surface dark:text-on-surface-dark\">A new version is available. Please update to the latest version.</p><div class=\"mt-3 flex flex-wrap gap-2\"><button class=\"rounded-radius bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary hover:opacity-90 dark:bg-primary-dark dark:text-on-primary-dark\">Update now</button> <button @click=\"open = false\" class=\"rounded-radius border border-outline px-3 py-1.5 text-xs font-semibold text-on-surface hover:bg-surface dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark\">Later</button></div></div><button @click=\"open = false\" aria-label=\"Dismiss\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 91, "<div x-data=\"{ open: true }\" x-show=\"open\" x-transition:enter=\"transition ease-out duration-150 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" x-transition:enter-end=\"opacity-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-100 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100 translate-y-0\" x-transition:leave-end=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" class=\"flex items-start gap-4 rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt\"><span class=\"mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-info text-on-info\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z\"></path></svg></span><div class=\"min-w-0 flex-1\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Update Available</p><p class=\"mt-1 text-sm text-on-surface dark:text-on-surface-dark\">A new version is available. Please update to the latest version.</p><div class=\"mt-3 flex flex-wrap gap-2\"><button class=\"rounded-radius bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary hover:opacity-90 dark:bg-primary-dark dark:text-on-primary-dark\">Update now</button> <button @click=\"open = false\" class=\"rounded-radius border border-outline px-3 py-1.5 text-xs font-semibold text-on-surface hover:bg-surface dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark\">Later</button></div></div><button @click=\"open = false\" aria-label=\"Dismiss\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2554,7 +2554,7 @@ func themeContrastSection() templ.Component {
 			templ_7745c5c3_Var68 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 92, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Color Contrast Checker</h2><p class=\"text-sm text-on-surface dark:text-on-surface-dark mb-4\">Select a color to check its contrast with the rest of the colors in the current theme.</p><div class=\"rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark\"><div role=\"tablist\" class=\"flex border-b border-outline dark:border-outline-dark\"><button role=\"tab\" @click=\"contrastTab = 'colors'\" :class=\"contrastTab === 'colors' ? 'border-primary text-on-surface-strong dark:border-primary-dark dark:text-on-surface-dark-strong' : 'border-transparent text-on-surface dark:text-on-surface-dark'\" class=\"border-b-2 px-4 py-2 text-sm font-medium transition-colors\">Colors</button> <button role=\"tab\" @click=\"contrastTab = 'css'\" :class=\"contrastTab === 'css' ? 'border-primary text-on-surface-strong dark:border-primary-dark dark:text-on-surface-dark-strong' : 'border-transparent text-on-surface dark:text-on-surface-dark'\" class=\"border-b-2 px-4 py-2 text-sm font-medium transition-colors\">CSS</button></div><div class=\"p-4\"><div x-show=\"contrastTab === 'colors'\" class=\"space-y-4\"><label class=\"block max-w-sm\"><span class=\"sr-only\">Base color</span><div class=\"flex items-center gap-2 rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark\"><span class=\"size-5 rounded-radius border border-outline dark:border-outline-dark\" :style=\"'background-color:' + (resolved[contrastBase] || '#000')\"></span> <select x-model=\"contrastBase\" class=\"flex-1 bg-transparent text-sm text-on-surface focus:outline-none dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 92, "<div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">Color Contrast Checker</h2><p class=\"text-sm text-on-surface dark:text-on-surface-dark mb-4\">Select a color to check its contrast with the rest of the colors in the current theme.</p><div class=\"rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark\"><div role=\"tablist\" class=\"flex border-b border-outline dark:border-outline-dark\"><button role=\"tab\" @click=\"contrastTab = 'colors'\" :class=\"contrastTab === 'colors' ? 'border-primary text-on-surface-strong dark:border-primary-dark dark:text-on-surface-dark-strong' : 'border-transparent text-on-surface dark:text-on-surface-dark'\" class=\"border-b-2 px-4 py-2 text-sm font-medium transition-colors motion-reduce:transition-none\">Colors</button> <button role=\"tab\" @click=\"contrastTab = 'css'\" :class=\"contrastTab === 'css' ? 'border-primary text-on-surface-strong dark:border-primary-dark dark:text-on-surface-dark-strong' : 'border-transparent text-on-surface dark:text-on-surface-dark'\" class=\"border-b-2 px-4 py-2 text-sm font-medium transition-colors motion-reduce:transition-none\">CSS</button></div><div class=\"p-4\"><div x-show=\"contrastTab === 'colors'\" class=\"space-y-4\"><label class=\"block max-w-sm\"><span class=\"sr-only\">Base color</span><div class=\"flex items-center gap-2 rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark\"><span class=\"size-5 rounded-radius border border-outline dark:border-outline-dark\" :style=\"'background-color:' + (resolved[contrastBase] || '#000')\"></span> <select x-model=\"contrastBase\" class=\"flex-1 bg-transparent text-sm text-on-surface focus:outline-none dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -2566,7 +2566,7 @@ func themeContrastSection() templ.Component {
 			var templ_7745c5c3_Var69 string
 			templ_7745c5c3_Var69, templ_7745c5c3_Err = templ.ResolveAttributeValue(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1450, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1460, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var69)
 			if templ_7745c5c3_Err != nil {
@@ -2579,7 +2579,7 @@ func themeContrastSection() templ.Component {
 			var templ_7745c5c3_Var70 string
 			templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1450, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1460, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var70))
 			if templ_7745c5c3_Err != nil {
@@ -2626,7 +2626,7 @@ func themeCSSSection() templ.Component {
 		var templ_7745c5c3_Var72 string
 		templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.JoinStringErrs("@layer base")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1583, Col: 166}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/theme.templ`, Line: 1593, Col: 166}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var72))
 		if templ_7745c5c3_Err != nil {
@@ -2644,7 +2644,7 @@ func themeCSSSection() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 99, "</div><div class=\"inline-flex rounded-radius border border-outline dark:border-outline-dark p-0.5 bg-surface-alt dark:bg-surface-dark-alt\"><button @click=\"cssMode = 'single'\" class=\"px-3 py-1 text-xs font-medium rounded-radius transition-colors\" :class=\"cssMode === 'single' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'\">Single Theme</button> <button @click=\"cssMode = 'multiple'\" class=\"px-3 py-1 text-xs font-medium rounded-radius transition-colors\" :class=\"cssMode === 'multiple' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'\">Multiple Themes</button></div></div><div class=\"rounded-radius border border-outline dark:border-outline-dark overflow-hidden\"><div class=\"flex items-center justify-between gap-3 px-4 py-2 bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark\"><span class=\"truncate text-xs font-medium text-on-surface dark:text-on-surface-dark\" x-text=\"cssExportLabel()\">Theme CSS</span> <button type=\"button\" @click=\"copyCSS()\" aria-label=\"Copy theme CSS code\" class=\"flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors dark:text-on-surface-dark-muted dark:hover:text-primary-dark\"><svg x-show=\"!copied\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3.5 w-3.5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg> <svg x-show=\"copied\" x-cloak xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3.5 w-3.5 text-green-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"copied ? 'Copied!' : 'Copy'\">Copy</span></button></div><div id=\"theme-css-output\" class=\"codeblock overflow-x-auto\" style=\"max-height: 24rem; overflow-y: auto;\"><pre class=\"ch-chroma\"><code x-text=\"cssCode()\"></code></pre></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 99, "</div><div class=\"inline-flex rounded-radius border border-outline dark:border-outline-dark p-0.5 bg-surface-alt dark:bg-surface-dark-alt\"><button @click=\"cssMode = 'single'\" class=\"px-3 py-1 text-xs font-medium rounded-radius transition-colors motion-reduce:transition-none\" :class=\"cssMode === 'single' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'\">Single Theme</button> <button @click=\"cssMode = 'multiple'\" class=\"px-3 py-1 text-xs font-medium rounded-radius transition-colors motion-reduce:transition-none\" :class=\"cssMode === 'multiple' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'text-on-surface dark:text-on-surface-dark'\">Multiple Themes</button></div></div><div class=\"rounded-radius border border-outline dark:border-outline-dark overflow-hidden\"><div class=\"flex items-center justify-between gap-3 px-4 py-2 bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark\"><span class=\"truncate text-xs font-medium text-on-surface dark:text-on-surface-dark\" x-text=\"cssExportLabel()\">Theme CSS</span> <button type=\"button\" @click=\"copyCSS()\" aria-label=\"Copy theme CSS code\" class=\"flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors motion-reduce:transition-none dark:text-on-surface-dark-muted dark:hover:text-primary-dark\"><svg x-show=\"!copied\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3.5 w-3.5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg> <svg x-show=\"copied\" x-cloak xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3.5 w-3.5 text-green-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"copied ? 'Copied!' : 'Copy'\">Copy</span></button></div><div id=\"theme-css-output\" class=\"codeblock overflow-x-auto\" style=\"max-height: 24rem; overflow-y: auto;\"><pre class=\"ch-chroma\"><code x-text=\"cssCode()\"></code></pre></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

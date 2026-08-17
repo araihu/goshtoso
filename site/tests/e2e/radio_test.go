@@ -195,3 +195,24 @@ func TestRadio_HybridPrimitive(t *testing.T) {
 	)
 	require.NoError(t, err, "hybrid HTMX swap should land in #radio-hybrid-out")
 }
+
+func TestRadioReducedMotionStopsVisualTransitions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	navigateToRadioDemo(t, page)
+
+	_, err := page.WaitForFunction(`() => {
+		const radio = document.querySelector("#r-d-mac");
+		const segment = document.querySelector("label[for='r-seg-mac']");
+		return radio && segment &&
+			getComputedStyle(radio, "::before").transitionProperty === "none" &&
+			getComputedStyle(segment).transitionProperty === "none";
+	}`, nil)
+	require.NoError(t, err, "radio visual transitions should be disabled under reduced motion")
+}

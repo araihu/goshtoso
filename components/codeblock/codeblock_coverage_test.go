@@ -50,6 +50,13 @@ func TestRenderHeaderAndCopyButton(t *testing.T) {
 	}
 }
 
+func TestCopyButtonReducedMotionTransitionContract(t *testing.T) {
+	html := renderToString(t, Config{Language: "go", Code: "fmt.Println(\"hi\")"})
+	if !strings.Contains(html, "transition-colors motion-reduce:transition-none") {
+		t.Fatalf("copy button missing reduced-motion transition contract: %s", html)
+	}
+}
+
 // TestGetIDBaseSelection exercises the slug-base fallback chain in getID:
 // explicit ID wins, else label slug, else language slug, else "snippet".
 func TestGetIDBaseSelection(t *testing.T) {

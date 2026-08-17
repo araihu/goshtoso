@@ -1,0 +1,107 @@
+package splitbuttonpage
+
+import (
+	"github.com/araihu/goshtoso/components/dropdown"
+	"github.com/araihu/goshtoso/components/splitbutton"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+// SplitButtonDemoPage renders the SplitButton component demo.
+templ SplitButtonDemoPage() {
+	@demo.Layout("Split Button", "splitbutton", splitButtonDemoContent())
+}
+
+templ splitButtonDemoContent() {
+	<div id="splitbutton-fragment">
+		@demo.ComponentDemo(
+			demo.ComponentDemoProps{
+				Title:       "Split Button",
+				Description: "Keep one primary action visible beside a consumer-owned dropdown of related actions. Menu items support captions, leading and trailing icons, native links, new-tab metadata, HTMX, and local handlers.",
+			},
+			splitButtonPreview(),
+			`@splitbutton.SplitButton(splitbutton.Config{
+    Primary: splitbutton.Action{Label: "Publish", Href: "/publish"},
+    MenuLabel: "More publish actions",
+    Sections: []dropdown.Section{
+        {Items: []dropdown.Item{
+            {Label: "Preview", Caption: "Review the draft", Href: "/preview"},
+            {Label: "Open docs", Caption: "View in a new tab", Href: "/docs", Target: "_blank", Rel: "noopener noreferrer", TrailingIcon: externalIcon()},
+            {Label: "Schedule", OnClick: "schedule()"},
+        }},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Consumer-owned trigger and items",
+				Description: "The primitive composes Dropdown; the consumer still decides the label, icon, destinations, captions, and behavior for every action.",
+			},
+			splitButtonDangerPreview(),
+			`@splitbutton.SplitButton(splitbutton.Config{
+    Primary: splitbutton.Action{Label: "Save", OnClick: "save()"},
+    MenuTriggerIcon: moreIcon(),
+    Sections: []dropdown.Section{
+        {Items: []dropdown.Item{
+            {Label: "Duplicate", OnClick: "duplicate()"},
+            {Label: "Delete", Danger: true, Caption: "Cannot be undone", OnClick: "remove()"},
+        }},
+    },
+})`,
+		)
+	</div>
+}
+
+templ splitButtonPreview() {
+	<div id="splitbutton-default" class="w-full max-w-2xl mx-auto">
+		<div class="flex justify-center py-8">
+			@splitbutton.SplitButton(splitbutton.Config{
+				ID:        "splitbutton-demo",
+				Primary:   splitbutton.Action{Label: "Publish", Href: "/components/splitbutton"},
+				MenuLabel: "More publish actions",
+				Sections: []dropdown.Section{
+					{Items: []dropdown.Item{
+						{Label: "Preview", Caption: "Review the draft", Href: "/components/popover"},
+						{Label: "Open docs", Caption: "View in a new tab", Href: "/components/dropdown", Target: "_blank", Rel: "noopener noreferrer", TrailingIcon: externalIcon()},
+						{Label: "Schedule", Caption: "Choose a release time", OnClick: "lastAction = 'schedule'"},
+					}},
+				},
+			})
+		</div>
+	</div>
+}
+
+templ splitButtonDangerPreview() {
+	<div id="splitbutton-danger" class="w-full max-w-2xl mx-auto" x-data="{ lastAction: '' }">
+		<div class="flex flex-wrap items-center justify-center gap-4 py-8">
+			@splitbutton.SplitButton(splitbutton.Config{
+				ID:              "splitbutton-secondary-demo",
+				Primary:         splitbutton.Action{Label: "Save", OnClick: "lastAction = 'save'"},
+				MenuTriggerIcon: moreIcon(),
+				Sections: []dropdown.Section{
+					{Items: []dropdown.Item{
+						{Label: "Duplicate", OnClick: "lastAction = 'duplicate'"},
+						{Label: "Delete", Danger: true, Caption: "Cannot be undone", OnClick: "lastAction = 'delete'"},
+					}},
+				},
+			})
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted" aria-live="polite">
+				Last action: <span x-text="lastAction"></span>
+			</p>
+		</div>
+	</div>
+}
+
+templ externalIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" class="size-4">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5m-9 5 9-9M19 14v4.25A1.75 1.75 0 0 1 17.25 20H6.75A1.75 1.75 0 0 1 5 18.25V7.75A1.75 1.75 0 0 1 6.75 6H11"></path>
+	</svg>
+}
+
+templ moreIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-4">
+		<circle cx="5" cy="12" r="1.5"></circle>
+		<circle cx="12" cy="12" r="1.5"></circle>
+		<circle cx="19" cy="12" r="1.5"></circle>
+	</svg>
+}

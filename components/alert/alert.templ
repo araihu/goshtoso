@@ -36,9 +36,9 @@ templ dismissibleAlert(cfg Config) {
 		x-show="alertIsVisible"
 		class={ cfg.containerClasses() }
 		role="alert"
-		x-transition:leave="transition ease-in duration-300"
+		x-transition:leave="transition ease-in duration-300 motion-reduce:transition-none"
 		x-transition:leave-start="opacity-100 scale-100"
-		x-transition:leave-end="opacity-0 scale-90"
+		x-transition:leave-end="opacity-0 scale-90 motion-reduce:opacity-100 motion-reduce:scale-100"
 	>
 		<div class={ cfg.innerClasses() }>
 			@iconBadge(cfg)
@@ -110,7 +110,7 @@ templ actionAlert(cfg Config) {
 					</button>
 					<button
 						type="button"
-						class="whitespace-nowrap text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 dark:text-on-surface-dark active:opacity-100"
+						class="whitespace-nowrap text-center text-sm font-medium tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 dark:text-on-surface-dark active:opacity-100"
 					>
 						{ dismissText }
 					</button>

@@ -102,7 +102,7 @@ templ collapsibleSectionTemplate(cfg CollapsibleSectionConfig) {
 		<!-- Header -->
 		<button
 			type="button"
-			class="flex w-full cursor-pointer items-center justify-between gap-4 p-6 text-left underline-offset-2 hover:bg-surface-alt/75 focus-visible:bg-surface-alt/75 focus-visible:underline focus-visible:outline-hidden dark:hover:bg-surface-dark-alt/75 dark:focus-visible:bg-surface-dark-alt/75 transition-colors"
+			class="flex w-full cursor-pointer items-center justify-between gap-4 p-6 text-left underline-offset-2 hover:bg-surface-alt/75 focus-visible:bg-surface-alt/75 focus-visible:underline focus-visible:outline-hidden dark:hover:bg-surface-dark-alt/75 dark:focus-visible:bg-surface-dark-alt/75 transition-colors motion-reduce:transition-none"
 			x-on:click="isExpanded = !isExpanded"
 			x-bind:aria-expanded="isExpanded ? 'true' : 'false'"
 			if cfg.ID != "" {
@@ -111,7 +111,7 @@ templ collapsibleSectionTemplate(cfg CollapsibleSectionConfig) {
 		>
 			<div class="flex flex-col gap-1">
 				<span
-					class="text-lg font-semibold transition-colors"
+					class="text-lg font-semibold transition-colors motion-reduce:transition-none"
 					x-bind:class="isExpanded ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 				>
 					{ cfg.Title }
@@ -132,7 +132,7 @@ templ collapsibleSectionTemplate(cfg CollapsibleSectionConfig) {
 				fill="none"
 				stroke-width="2"
 				stroke="currentColor"
-				class="size-5 shrink-0 transition-transform text-on-surface dark:text-on-surface-dark"
+				class="size-5 shrink-0 transition-transform motion-reduce:transition-none text-on-surface dark:text-on-surface-dark"
 				aria-hidden="true"
 				x-bind:class="isExpanded ? 'rotate-180' : ''"
 			>
@@ -180,7 +180,7 @@ templ flipSectionTemplate(cfg FlipSectionConfig, readView templ.Component) {
 			<button
 				x-show="!isEditing"
 				type="button"
-				class="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-primary dark:text-primary-dark hover:bg-primary/10 dark:hover:bg-primary-dark/10 transition"
+				class="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-primary dark:text-primary-dark hover:bg-primary/10 dark:hover:bg-primary-dark/10 transition motion-reduce:transition-none"
 				x-on:click="isEditing = true"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4" aria-hidden="true">
@@ -194,7 +194,7 @@ templ flipSectionTemplate(cfg FlipSectionConfig, readView templ.Component) {
 				x-show="isEditing"
 				x-cloak
 				type="button"
-				class="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-success dark:text-success hover:bg-success/10 dark:hover:bg-success/10 hover:text-success dark:hover:text-success transition"
+				class="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-success dark:text-success hover:bg-success/10 dark:hover:bg-success/10 hover:text-success dark:hover:text-success transition motion-reduce:transition-none"
 				x-on:click="isEditing = false"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4" aria-hidden="true">
@@ -400,14 +400,14 @@ templ formFooter(cfg FooterConfig) {
 				if cfg.CancelHTMX != nil && cfg.CancelHref != "" {
 					href={ cfg.CancelHref }
 				}
-				class="inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-surface dark:text-on-surface-dark bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition sm:w-auto"
+				class="inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-surface dark:text-on-surface-dark bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition motion-reduce:transition-none sm:w-auto"
 			>
 				{ cfg.CancelLabel }
 			</a>
 		}
 		<button
 			type="submit"
-			class="inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:contrast-125 active:contrast-100 transition disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+			class="inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:contrast-125 active:contrast-100 transition motion-reduce:transition-none disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
 			if cfg.SubmitDisabled != "" {
 				x-bind:disabled={ cfg.SubmitDisabled }
 			}

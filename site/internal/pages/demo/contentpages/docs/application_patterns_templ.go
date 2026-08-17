@@ -469,7 +469,7 @@ func applicationPatternIndexLink(number, label, href string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" class=\"group flex items-baseline gap-3 px-4 py-4 transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark lg:border-r lg:border-outline lg:last:border-r-0 lg:dark:border-outline-dark\"><span class=\"font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" class=\"group flex items-baseline gap-3 px-4 py-4 transition-colors motion-reduce:transition-none hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark lg:border-r lg:border-outline lg:last:border-r-0 lg:dark:border-outline-dark\"><span class=\"font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1006,7 +1006,7 @@ func applicationPatternAppShellCreateAction() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<span class=\"inline-flex h-8 items-center rounded-radius border border-primary bg-primary px-3 text-on-primary transition group-hover:contrast-125 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark\">New change</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<span class=\"inline-flex h-8 items-center rounded-radius border border-primary bg-primary px-3 text-on-primary transition motion-reduce:transition-none group-hover:contrast-125 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark\">New change</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -33,20 +33,28 @@ templ defaultModal(cfg Config) {
 		<div
 			x-cloak
 			x-show={ stateVar }
-			x-transition.opacity.duration.200ms
+			x-transition:enter="transition-opacity ease-out duration-200 motion-reduce:transition-none"
+			x-transition:enter-start="opacity-0 motion-reduce:opacity-100"
+			x-transition:enter-end="opacity-100"
+			x-transition:leave="transition-opacity ease-in duration-150 motion-reduce:transition-none"
+			x-transition:leave-start="opacity-100"
+			x-transition:leave-end="opacity-0 motion-reduce:opacity-100"
 			x-trap.inert.noscroll={ stateVar }
 			x-on:keydown.esc.window={ fmt.Sprintf("%s = false", stateVar) }
 			x-on:click.self={ fmt.Sprintf("%s = false", stateVar) }
-			class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
+			class="fixed inset-0 z-30 flex items-end justify-center bg-backdrop/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={ titleID }
 		>
 			<div
 				x-show={ stateVar }
-				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
-				x-transition:enter-start="opacity-0 scale-50"
+				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-none motion-reduce:delay-0"
+				x-transition:enter-start="opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100"
 				x-transition:enter-end="opacity-100 scale-100"
+				x-transition:leave="transition ease-in duration-150 motion-reduce:transition-none"
+				x-transition:leave-start="opacity-100 scale-100"
+				x-transition:leave-end="opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100"
 				class={ cfg.dialogClasses() }
 			>
 				<!-- Dialog Header -->
@@ -83,20 +91,28 @@ templ alertDialog(cfg AlertDialogConfig) {
 		<div
 			x-cloak
 			x-show={ stateVar }
-			x-transition.opacity.duration.200ms
+			x-transition:enter="transition-opacity ease-out duration-200 motion-reduce:transition-none"
+			x-transition:enter-start="opacity-0 motion-reduce:opacity-100"
+			x-transition:enter-end="opacity-100"
+			x-transition:leave="transition-opacity ease-in duration-150 motion-reduce:transition-none"
+			x-transition:leave-start="opacity-100"
+			x-transition:leave-end="opacity-0 motion-reduce:opacity-100"
 			x-trap.inert.noscroll={ stateVar }
 			x-on:keydown.esc.window={ fmt.Sprintf("%s = false", stateVar) }
 			x-on:click.self={ fmt.Sprintf("%s = false", stateVar) }
-			class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
+			class="fixed inset-0 z-30 flex items-end justify-center bg-backdrop/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
 			role="alertdialog"
 			aria-modal="true"
 			aria-labelledby={ titleID }
 		>
 			<div
 				x-show={ stateVar }
-				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
-				x-transition:enter-start="opacity-0 scale-50"
+				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-none motion-reduce:delay-0"
+				x-transition:enter-start="opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100"
 				x-transition:enter-end="opacity-100 scale-100"
+				x-transition:leave="transition ease-in duration-150 motion-reduce:transition-none"
+				x-transition:leave-start="opacity-100 scale-100"
+				x-transition:leave-end="opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100"
 				class={ cfg.dialogClasses() }
 			>
 				<!-- Dialog Header -->
@@ -127,7 +143,7 @@ templ primaryButton(stateVar string, text string, action *ButtonAction) {
 	<button
 		x-on:click={ buttonClickExpr(stateVar, action) }
 		type="button"
-		class="whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
+		class="whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
 		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
 			hx-get={ action.HTMX.Get }
 		}
@@ -150,7 +166,7 @@ templ secondaryButton(stateVar string, text string, action *ButtonAction) {
 	<button
 		x-on:click={ buttonClickExpr(stateVar, action) }
 		type="button"
-		class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
+		class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
 		if action != nil && action.HTMX != nil && action.HTMX.Get != "" {
 			hx-get={ action.HTMX.Get }
 		}

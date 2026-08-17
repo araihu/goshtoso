@@ -96,3 +96,27 @@ func TestCodeblockCoverageDemo(t *testing.T) {
 	assert.Empty(t, pageErrors, "uncaught JS exceptions on codeblock demo")
 	assert.Empty(t, consoleErrors, "console errors on codeblock demo")
 }
+
+func TestCodeblockReducedMotionStopsCopyTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/codeblock", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	_, err = page.WaitForFunction(`() => {
+		const buttons = Array.from(document.querySelectorAll("[data-code-block] button"));
+		return buttons.length > 0 && buttons.every(button =>
+			getComputedStyle(button).transitionProperty === "none"
+		);
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err, "reduced-motion CodeBlock copy transitions should be disabled")
+}

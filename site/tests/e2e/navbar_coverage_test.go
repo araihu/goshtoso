@@ -84,3 +84,49 @@ func TestNavbarCoverageDemo(t *testing.T) {
 
 	assert.Empty(t, consoleErrors, "console errors on navbar demo")
 }
+
+func TestNavbarUserMenuReducedMotionShowsWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/navbar", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	userNav := page.Locator("#navbar-user nav[aria-label='main navigation']")
+	avatarButton := userNav.Locator("button[aria-label='user menu']")
+	require.NoError(t, avatarButton.Hover())
+	_, err = page.WaitForFunction(`() => {
+		const button = document.querySelector("#navbar-user button[aria-label='user menu']");
+		if (!button) return false;
+		const style = getComputedStyle(button);
+		return style.transitionProperty === 'none' &&
+			(style.transform === 'none' || style.transform === 'matrix(1, 0, 0, 1, 0, 0)');
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, avatarButton.Click())
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#navbar-user ul[role='menu']");
+		if (!menu || getComputedStyle(menu).display === 'none') return false;
+		const style = getComputedStyle(menu);
+		return style.transitionProperty === 'none' && style.opacity === '1';
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, page.Locator("main").Click(playwright.LocatorClickOptions{
+		Position: &playwright.Position{X: 10, Y: 10},
+	}))
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#navbar-user ul[role='menu']");
+		return !!menu && getComputedStyle(menu).display === 'none';
+	}`, nil)
+	require.NoError(t, err)
+}

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "tool": "goshtoso-iconpack",
+  "release": "iconpack-b27361d69c20",
+  "catalogSha256": "b27361d69c20f0fd8832dcbb3bf1194b9ff674232a38166b933cc9d12547f7bf",
+  "sourceKind": "muamba-snapshot",
+  "archiveSha256": "",
+  "sourceConfigSha256": "b27361d69c20f0fd8832dcbb3bf1194b9ff674232a38166b933cc9d12547f7bf",
+  "sourceLockSha256": "faef34bcf51b3695a003adbc6faae2cc0e1c734c5b8971307b5804ef4881ae33",
+  "sources": [
+    {
+      "namespace": "custom",
+      "product": "heroicons",
+      "spritePath": "",
+      "spriteSha256": "",
+      "manifestPath": ".iconpack.yaml",
+      "manifestSha256": "b27361d69c20f0fd8832dcbb3bf1194b9ff674232a38166b933cc9d12547f7bf",
+      "provenancePath": "",
+      "provenanceSha256": "",
+      "licensePath": "heroicons/LICENSE",
+      "licenseSha256": "60e0b68c0f35c078eef3a5d29419d0b03ff84ec1df9c3f9d6e39a519a5ae7985"
+    }
+  ],
+  "assets": [
+    {
+      "canonicalName": "heroicons-optimized-24-outline-arrow-down-tray",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/arrow-down-tray.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/arrow-down-tray.svg",
+      "sha256": "03f6611b7a55dfc2f4fe9ab62da600ddab28e5aa418a168adfb066a76c23e44a"
+    },
+    {
+      "canonicalName": "heroicons-optimized-24-outline-clipboard-document-list",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/clipboard-document-list.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/clipboard-document-list.svg",
+      "sha256": "0de7d55c558c8ecd344379182a766a04c4411952a21d0ba2655f9e6115e38911"
+    },
+    {
+      "canonicalName": "heroicons-optimized-24-outline-cube",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/cube.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/cube.svg",
+      "sha256": "7414e9c49119a02ca7c5fa10dd662e708c06bab1b03a57c33dce6c62a2c765f6"
+    },
+    {
+      "canonicalName": "heroicons-optimized-24-outline-heart",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/heart.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/heart.svg",
+      "sha256": "831a60fdfd1a900dad099b77f4335291cc0d49ed7d890039c7a8a784318fea7b"
+    },
+    {
+      "canonicalName": "heroicons-optimized-24-outline-queue-list",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/queue-list.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/queue-list.svg",
+      "sha256": "aa08b011e64493839e49d26fd8d200997e9d181b139b5ee951c4d8d498265914"
+    },
+    {
+      "canonicalName": "heroicons-optimized-24-outline-sparkles",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/sparkles.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/sparkles.svg",
+      "sha256": "5287e3645dfb7c059018a63415e17aec7d31724102187669e83b1730f42fc07e"
+    },
+    {
+      "canonicalName": "heroicons-optimized-24-outline-squares-2x2",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/squares-2x2.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/squares-2x2.svg",
+      "sha256": "45f2eac7a2fda730f8ac492ed12431f894ae30b6469405f7468c788fe7963223"
+    },
+    {
+      "canonicalName": "heroicons-optimized-24-outline-swatch",
+      "source": "https://codeload.github.com/tailwindlabs/heroicons/tar.gz/0435d4ca364a608cc75e2f8683d374e55abbae26:optimized/24/outline/swatch.svg",
+      "license": "MIT",
+      "path": "heroicons/optimized/24/outline/swatch.svg",
+      "sha256": "1a913cfbe4c5e51ea30705a55108b8267699236266facef9479b7b586018e819"
+    }
+  ]
+}

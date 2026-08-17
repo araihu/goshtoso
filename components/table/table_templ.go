@@ -623,12 +623,12 @@ func filterBar(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if cfg.Filters.Collapsible {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<button type=\"button\" @click=\"filtersExpanded = !filtersExpanded\" class=\"flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-strong hover:bg-surface-alt dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt transition-colors\"><span class=\"flex items-center gap-2\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"size-4\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z\"></path></svg> Filters</span> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5 transition-transform\" :class=\"filtersExpanded ? 'rotate-180' : ''\"><path fill-rule=\"evenodd\" d=\"M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z\" clip-rule=\"evenodd\"></path></svg></button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<button type=\"button\" @click=\"filtersExpanded = !filtersExpanded\" class=\"flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-strong hover:bg-surface-alt dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt transition-colors motion-reduce:transition-none\"><span class=\"flex items-center gap-2\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"size-4\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z\"></path></svg> Filters</span> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5 transition-transform motion-reduce:transition-none\" :class=\"filtersExpanded ? 'rotate-180' : ''\"><path fill-rule=\"evenodd\" d=\"M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z\" clip-rule=\"evenodd\"></path></svg></button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			var templ_7745c5c3_Var32 = []any{filterBarBodyClasses(cfg)}
+			var templ_7745c5c3_Var32 = []any{filterBarBodyClasses(cfg) + " motion-reduce:transition-none!"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var32...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -1020,7 +1020,7 @@ func filterToggleInput(cfg Config, filter Filter) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "\" hx-preserve=\"true\" type=\"checkbox\" x-model=\"filters[$el.dataset.tableFilterKey]\" @change=\"applyFilters()\" class=\"peer sr-only\"><div class=\"relative h-6 w-11 rounded-full bg-outline/30 after:absolute after:left-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-outline/20 after:bg-surface after:transition-all peer-checked:bg-primary peer-checked:after:translate-x-full peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary dark:bg-outline-dark/30 dark:after:bg-surface-dark dark:peer-checked:bg-primary-dark\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "\" hx-preserve=\"true\" type=\"checkbox\" x-model=\"filters[$el.dataset.tableFilterKey]\" @change=\"applyFilters()\" class=\"peer sr-only\"><div class=\"relative h-6 w-11 rounded-full bg-outline/30 after:absolute after:left-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-outline/20 after:bg-surface after:transition-all motion-reduce:after:transition-none peer-checked:bg-primary peer-checked:after:translate-x-full peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary dark:bg-outline-dark/30 dark:after:bg-surface-dark dark:peer-checked:bg-primary-dark\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1865,7 +1865,7 @@ func tableRowTemplate(cfg Config, row Row) templ.Component {
 				}
 			}
 			if row.Expandable {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 128, "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4 text-on-surface-muted dark:text-on-surface-dark-muted transition-transform duration-150\" x-bind:class=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 128, "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4 text-on-surface-muted dark:text-on-surface-dark-muted transition-transform duration-150 motion-reduce:transition-none\" x-bind:class=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1906,7 +1906,7 @@ func tableRowTemplate(cfg Config, row Row) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 133, "\" x-collapse class=\"bg-surface-alt/50 dark:bg-surface-dark-alt/50\"><td colspan=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 133, "\" x-collapse class=\"bg-surface-alt/50 dark:bg-surface-dark-alt/50 motion-reduce:transition-none!\"><td colspan=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -2570,7 +2570,7 @@ func loadingIndicator() templ.Component {
 			templ_7745c5c3_Var123 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 166, "<div class=\"flex items-center justify-center gap-2 text-on-surface-muted dark:text-on-surface-dark-muted\"><svg class=\"size-5 animate-spin\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span class=\"text-sm\">Loading...</span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 166, "<div class=\"flex items-center justify-center gap-2 text-on-surface-muted dark:text-on-surface-dark-muted\"><svg class=\"size-5 animate-spin motion-reduce:animate-none\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg> <span class=\"text-sm\">Loading...</span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

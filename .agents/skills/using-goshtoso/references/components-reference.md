@@ -9,7 +9,7 @@ or store mixed values through the common interface and inspect their stable
 `Kind()`. Constructor signatures, config fields, options, and rendered defaults are
 listed below. See the selected Goshtoso tag's `docs/COMPONENT_MODEL.md`.
 
-54 component packages. Each is imported by its directory path; note the
+56 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -625,9 +625,11 @@ import "github.com/araihu/goshtoso/components/dropdown"  // package dropdown
 | `Label` | `string` | Label is the text shown on the trigger button |
 | `TriggerMode` | `TriggerMode` | TriggerMode determines how the dropdown opens (click, hover, context) |
 | `Sections` | `[]Section` | Sections groups items with dividers between sections |
-| `TriggerIcon` | `templ.Component` | TriggerIcon is an optional custom trigger icon. Context mode always shows an icon (defaults to horizontal dots). Click and hover modes ignore it unless TriggerIconOnly is true. |
+| `TriggerIcon` | `templ.Component` | TriggerIcon is an optional custom trigger icon. Context mode always shows an icon (defaults to horizontal dots). Labeled click and hover modes render it as a leading icon. |
 | `TriggerIconOnly` | `bool` | TriggerIconOnly, in click or hover mode, renders TriggerIcon alone inside a square button — no label, no chevron. Use this for icon-only overflow triggers (e.g., a vertical-dots "…" affordance) without inheriting TriggerContext's &lt;li&gt; item semantics. |
 | `MenuAlign` | `MenuAlign` | MenuAlign controls which edge of the trigger the menu anchors to. Defaults to AlignStart (panel opens rightward). Use AlignEnd for triggers at the right edge of the viewport. |
+| `Trigger` | `templ.Component` | Trigger replaces the default trigger with a consumer-owned component. It must render one native interactive element. |
+| `RootClass` | `string` | RootClass appends classes to the popover root. |
 
 **HTMXConfig**
 
@@ -648,6 +650,10 @@ import "github.com/araihu/goshtoso/components/dropdown"  // package dropdown
 | `Label` | `string` | Label is the display text for the menu item |
 | `Href` | `string` | Href is the link URL (use "#" for non-navigating items). Ignored when OnClick, HTMX, or Disabled is set. |
 | `Icon` | `templ.Component` | Icon is an optional icon component rendered before the label |
+| `Caption` | `string` | Caption is optional secondary text rendered below the label. |
+| `TrailingIcon` | `templ.Component` | TrailingIcon is an optional consumer-owned icon rendered after the item content. |
+| `Target` | `string` | Target is passed through to native anchor items. It is ignored for buttons. |
+| `Rel` | `string` | Rel is passed through to native anchor items. It is ignored for buttons. |
 | `Shortcut` | `string` | Shortcut is an optional keyboard shortcut label (e.g., "Z", "X") |
 | `ShortcutIcon` | `templ.Component` | ShortcutIcon is an optional icon for the shortcut modifier key |
 | `OnClick` | `string` | OnClick is an Alpine.js expression invoked on click (e.g., "open = true"). Setting this renders the item as a &lt;button&gt; instead of an anchor. |
@@ -1242,6 +1248,32 @@ import "github.com/araihu/goshtoso/components/panel"  // package panel
 | `FooterClass` | `string` | FooterClass appends CSS classes to the footer region. |
 | `FooterAttrs` | `templ.Attributes` | FooterAttrs appends arbitrary HTML attributes to the footer region. |
 
+## popover
+
+```go
+import "github.com/araihu/goshtoso/components/popover"  // package popover
+```
+
+**Entry points:** `Popover(cfg Config)`
+
+- **Activation** — ActivationClick = "click", ActivationHover = "hover", ActivationContext = "context"
+- **Placement** — PlacementBottomStart = "bottom-start", PlacementBottomEnd = "bottom-end", PlacementTopStart = "top-start", PlacementTopEnd = "top-end"
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID is the optional unique root identifier. When set, the panel ID is ID + "-panel" and the runtime connects aria-controls to it. |
+| `Trigger` | `templ.Component` | Trigger is the consumer-owned interactive trigger component. |
+| `Content` | `templ.Component` | Content is the consumer-owned panel content. |
+| `Activation` | `Activation` | Activation controls whether the popover opens on click, hover, or context-menu activation. The default is ActivationClick. |
+| `Placement` | `Placement` | Placement controls the panel's CSS placement. The default is PlacementBottomStart. |
+| `Role` | `string` | Role sets the optional ARIA role on the panel, such as "menu" or "dialog". |
+| `Label` | `string` | Label sets the optional accessible name on the panel. |
+| `RootClass` | `string` | RootClass appends classes to the relative root. |
+| `PanelClass` | `string` | PanelClass appends classes to the positioned panel. |
+| `TrapFocus` | `bool` | TrapFocus enables Alpine's focus trap while keyboard-open. |
+
 ## radio
 
 ```go
@@ -1647,6 +1679,42 @@ import "github.com/araihu/goshtoso/components/spinner"  // package spinner
 | `Tone` | `Tone` | Tone determines the color scheme |
 | `Size` | `Size` | Size of the spinner |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the spinner root. |
+
+## splitbutton
+
+```go
+import "github.com/araihu/goshtoso/components/splitbutton"  // package splitbutton
+```
+
+**Entry points:** `SplitButton(cfg Config)`
+
+**Action**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Label` | `string` | Label is the visible action label. |
+| `Href` | `string` | Href is the native navigation URL when no button action is configured. |
+| `Icon` | `templ.Component` | Icon is an optional leading icon. |
+| `OnClick` | `string` | OnClick is an Alpine.js expression for button actions. |
+| `HTMX` | `*dropdown.HTMXConfig` | HTMX configures a declarative server action. |
+| `Disabled` | `bool` | Disabled renders an inert button. |
+| `Danger` | `bool` | Danger applies the destructive button tone. |
+| `Tooltip` | `string` | Tooltip sets a native title attribute. |
+| `ID` | `string` | ID sets the primary action's native ID. |
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID is the unique SplitButton root ID. The menu root receives ID + "-menu". |
+| `Primary` | `Action` | Primary is the always-visible dominant action. |
+| `MenuLabel` | `string` | MenuLabel is the accessible name for the adjacent menu trigger. |
+| `MenuTriggerIcon` | `templ.Component` | MenuTriggerIcon replaces the default chevron icon in the menu trigger. |
+| `Sections` | `[]dropdown.Section` | Sections supplies the consumer-owned menu items. |
+| `MenuAlign` | `dropdown.MenuAlign` | MenuAlign controls which edge of the menu panel anchors to the trigger. |
+| `Tone` | `button.Tone` | Tone controls the primary and menu-trigger color treatment. |
+| `Size` | `button.Size` | Size controls the primary and menu-trigger size. |
+| `RootClass` | `string` | RootClass appends classes to the connected group root. |
 
 ## steps
 

@@ -253,7 +253,7 @@ func avatarDropdown(cfg Config) templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div x-data=\"{ userDropDownIsOpen: false, openWithKeyboard: false }\" x-on:keydown.esc.window=\"userDropDownIsOpen = false, openWithKeyboard = false\" class=\"relative flex items-center\"><button x-on:click=\"userDropDownIsOpen = ! userDropDownIsOpen\" x-bind:aria-expanded=\"userDropDownIsOpen\" x-on:keydown.space.prevent=\"openWithKeyboard = true\" x-on:keydown.enter.prevent=\"openWithKeyboard = true\" x-on:keydown.down.prevent=\"openWithKeyboard = true\" class=\"cursor-pointer rounded-full transition-transform duration-150 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 dark:focus-visible:outline-primary-dark\" aria-label=\"user menu\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div x-data=\"{ userDropDownIsOpen: false, openWithKeyboard: false }\" x-on:keydown.esc.window=\"userDropDownIsOpen = false, openWithKeyboard = false\" class=\"relative flex items-center\"><button x-on:click=\"userDropDownIsOpen = ! userDropDownIsOpen\" x-bind:aria-expanded=\"userDropDownIsOpen\" x-on:keydown.space.prevent=\"openWithKeyboard = true\" x-on:keydown.enter.prevent=\"openWithKeyboard = true\" x-on:keydown.down.prevent=\"openWithKeyboard = true\" class=\"cursor-pointer rounded-full transition-transform duration-150 motion-reduce:transition-none hover:scale-110 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 motion-reduce:active:scale-100 dark:focus-visible:outline-primary-dark\" aria-label=\"user menu\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -268,7 +268,7 @@ func avatarDropdown(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</button><!-- User Dropdown --><ul x-cloak x-show=\"userDropDownIsOpen || openWithKeyboard\" x-transition.opacity x-trap=\"openWithKeyboard\" x-on:click.outside=\"userDropDownIsOpen = false, openWithKeyboard = false\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\" class=\"absolute right-0 top-12 z-50 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt py-1.5 shadow-md dark:border-outline-dark dark:bg-surface-dark-alt\" role=\"menu\"><!-- User Info Header -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</button><!-- User Dropdown --><ul x-cloak x-show=\"userDropDownIsOpen || openWithKeyboard\" x-transition:enter=\"transition-opacity ease-out duration-150 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 motion-reduce:opacity-100\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition-opacity ease-in duration-100 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0 motion-reduce:opacity-100\" x-trap=\"openWithKeyboard\" x-on:click.outside=\"userDropDownIsOpen = false, openWithKeyboard = false\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\" class=\"absolute right-0 top-12 z-50 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt py-1.5 shadow-md dark:border-outline-dark dark:bg-surface-dark-alt\" role=\"menu\"><!-- User Info Header -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -285,7 +285,7 @@ func avatarDropdown(cfg Config) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.User.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 129, Col: 112}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 134, Col: 112}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -304,7 +304,7 @@ func avatarDropdown(cfg Config) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.User.Email)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 132, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 137, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -341,7 +341,7 @@ func avatarDropdown(cfg Config) templ.Component {
 			var templ_7745c5c3_Var13 templ.SafeURL
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(item.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 141, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 146, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -384,7 +384,7 @@ func avatarDropdown(cfg Config) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 149, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 154, Col: 20}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -398,7 +398,7 @@ func avatarDropdown(cfg Config) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 152, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 157, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -475,7 +475,7 @@ func mobileMenu(cfg Config) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.User.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 185, Col: 104}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 190, Col: 104}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -494,7 +494,7 @@ func mobileMenu(cfg Config) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.User.Email)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 188, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 193, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -522,7 +522,7 @@ func mobileMenu(cfg Config) templ.Component {
 			var templ_7745c5c3_Var20 templ.SafeURL
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(link.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 198, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 203, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -554,7 +554,7 @@ func mobileMenu(cfg Config) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 207, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 212, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -600,7 +600,7 @@ func mobileMenu(cfg Config) templ.Component {
 				var templ_7745c5c3_Var22 templ.SafeURL
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(item.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 223, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 228, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -632,7 +632,7 @@ func mobileMenu(cfg Config) templ.Component {
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 231, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 236, Col: 18}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {

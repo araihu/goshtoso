@@ -201,9 +201,9 @@ func (cfg Config) inputClasses() string {
 	// Add animation-specific classes
 	switch cfg.Animation {
 	case AnimationScaleUp:
-		classes += " before:scale-0 before:rounded-full before:transition before:duration-200 checked:before:scale-125"
+		classes += " before:scale-0 before:rounded-full before:transition before:duration-200 motion-reduce:before:transition-none checked:before:scale-125"
 	case AnimationSlideDown:
-		classes += " before:-translate-y-4 before:transition before:duration-200 checked:before:translate-y-0"
+		classes += " before:-translate-y-4 before:transition before:duration-200 motion-reduce:before:transition-none checked:before:translate-y-0"
 	}
 
 	return classes
@@ -218,11 +218,11 @@ func (cfg Config) svgClasses() string {
 	// Add animation-specific classes
 	switch cfg.Animation {
 	case AnimationSlideUp:
-		classes = "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/4 peer-checked:-translate-y-1/2 transition duration-200 peer-checked:visible " + cfg.svgTextClass()
+		classes = "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/4 peer-checked:-translate-y-1/2 transition duration-200 motion-reduce:transition-none peer-checked:visible " + cfg.svgTextClass()
 	case AnimationScaleUp:
-		classes = "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 scale-0 transition duration-200 delay-200 peer-checked:scale-100 peer-checked:visible " + cfg.svgTextClass()
+		classes = "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 scale-0 transition duration-200 delay-200 motion-reduce:transition-none peer-checked:scale-100 peer-checked:visible " + cfg.svgTextClass()
 	case AnimationSlideDown:
-		classes = "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-y-1/2 -translate-x-1/2 opacity-0 transition delay-200 duration-200 peer-checked:visible peer-checked:opacity-100 " + cfg.svgTextClass()
+		classes = "pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-y-1/2 -translate-x-1/2 opacity-0 transition delay-200 duration-200 motion-reduce:transition-none peer-checked:visible peer-checked:opacity-100 " + cfg.svgTextClass()
 	}
 
 	return classes

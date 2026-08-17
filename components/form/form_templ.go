@@ -506,7 +506,7 @@ func collapsibleSectionTemplate(cfg CollapsibleSectionConfig) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\"><!-- Header --><button type=\"button\" class=\"flex w-full cursor-pointer items-center justify-between gap-4 p-6 text-left underline-offset-2 hover:bg-surface-alt/75 focus-visible:bg-surface-alt/75 focus-visible:underline focus-visible:outline-hidden dark:hover:bg-surface-dark-alt/75 dark:focus-visible:bg-surface-dark-alt/75 transition-colors\" x-on:click=\"isExpanded = !isExpanded\" x-bind:aria-expanded=\"isExpanded ? 'true' : 'false'\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\"><!-- Header --><button type=\"button\" class=\"flex w-full cursor-pointer items-center justify-between gap-4 p-6 text-left underline-offset-2 hover:bg-surface-alt/75 focus-visible:bg-surface-alt/75 focus-visible:underline focus-visible:outline-hidden dark:hover:bg-surface-dark-alt/75 dark:focus-visible:bg-surface-dark-alt/75 transition-colors motion-reduce:transition-none\" x-on:click=\"isExpanded = !isExpanded\" x-bind:aria-expanded=\"isExpanded ? 'true' : 'false'\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -529,7 +529,7 @@ func collapsibleSectionTemplate(cfg CollapsibleSectionConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "><div class=\"flex flex-col gap-1\"><span class=\"text-lg font-semibold transition-colors\" x-bind:class=\"isExpanded ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "><div class=\"flex flex-col gap-1\"><span class=\"text-lg font-semibold transition-colors motion-reduce:transition-none\" x-bind:class=\"isExpanded ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -565,7 +565,7 @@ func collapsibleSectionTemplate(cfg CollapsibleSectionConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-5 shrink-0 transition-transform text-on-surface dark:text-on-surface-dark\" aria-hidden=\"true\" x-bind:class=\"isExpanded ? 'rotate-180' : ''\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19.5 8.25l-7.5 7.5-7.5-7.5\"></path></svg></button><!-- Content --><div x-cloak x-show=\"isExpanded\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-5 shrink-0 transition-transform motion-reduce:transition-none text-on-surface dark:text-on-surface-dark\" aria-hidden=\"true\" x-bind:class=\"isExpanded ? 'rotate-180' : ''\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19.5 8.25l-7.5 7.5-7.5-7.5\"></path></svg></button><!-- Content --><div x-cloak x-show=\"isExpanded\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -727,7 +727,7 @@ func flipSectionTemplate(cfg FlipSectionConfig, readView templ.Component) templ.
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</h2><!-- Edit button (shown in read-only mode) --><button x-show=\"!isEditing\" type=\"button\" class=\"inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-primary dark:text-primary-dark hover:bg-primary/10 dark:hover:bg-primary-dark/10 transition\" x-on:click=\"isEditing = true\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4\" aria-hidden=\"true\"><path d=\"m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z\"></path> <path d=\"M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z\"></path></svg> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</h2><!-- Edit button (shown in read-only mode) --><button x-show=\"!isEditing\" type=\"button\" class=\"inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-primary dark:text-primary-dark hover:bg-primary/10 dark:hover:bg-primary-dark/10 transition motion-reduce:transition-none\" x-on:click=\"isEditing = true\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4\" aria-hidden=\"true\"><path d=\"m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z\"></path> <path d=\"M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z\"></path></svg> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -740,7 +740,7 @@ func flipSectionTemplate(cfg FlipSectionConfig, readView templ.Component) templ.
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</button><!-- Done button (shown in edit mode) --><button x-show=\"isEditing\" x-cloak type=\"button\" class=\"inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-success dark:text-success hover:bg-success/10 dark:hover:bg-success/10 hover:text-success dark:hover:text-success transition\" x-on:click=\"isEditing = false\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z\" clip-rule=\"evenodd\"></path></svg> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</button><!-- Done button (shown in edit mode) --><button x-show=\"isEditing\" x-cloak type=\"button\" class=\"inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-radius text-success dark:text-success hover:bg-success/10 dark:hover:bg-success/10 hover:text-success dark:hover:text-success transition motion-reduce:transition-none\" x-on:click=\"isEditing = false\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-4\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z\" clip-rule=\"evenodd\"></path></svg> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1644,7 +1644,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 151, " class=\"inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-surface dark:text-on-surface-dark bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition sm:w-auto\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 151, " class=\"inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-surface dark:text-on-surface-dark bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition motion-reduce:transition-none sm:w-auto\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1662,7 +1662,7 @@ func formFooter(cfg FooterConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 153, "<button type=\"submit\" class=\"inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:contrast-125 active:contrast-100 transition disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 153, "<button type=\"submit\" class=\"inline-flex min-h-11 w-full min-w-0 max-w-full cursor-pointer items-center justify-center whitespace-normal break-words px-6 py-2.5 text-center rounded-radius text-sm font-medium text-on-primary dark:text-on-primary-dark bg-primary dark:bg-primary-dark border border-primary dark:border-primary-dark hover:contrast-125 active:contrast-100 transition motion-reduce:transition-none disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

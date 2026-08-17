@@ -172,11 +172,11 @@ func (cfg config) classes() string {
 }
 
 func (cfg config) textClasses() string {
-	return "font-medium text-primary underline-offset-2 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-primary-dark dark:focus-visible:outline-primary-dark"
+	return "font-medium text-primary underline-offset-2 transition-colors motion-reduce:transition-none hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-primary-dark dark:focus-visible:outline-primary-dark"
 }
 
 func (cfg config) buttonClasses() string {
-	return "whitespace-nowrap rounded-2xl border border-primary bg-primary text-on-primary font-medium tracking-wide text-center transition hover:contrast-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:contrast-100 active:outline-offset-0 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark " + cfg.buttonSizeClasses()
+	return "whitespace-nowrap rounded-2xl border border-primary bg-primary text-on-primary font-medium tracking-wide text-center transition motion-reduce:transition-none hover:contrast-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:contrast-100 active:outline-offset-0 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark " + cfg.buttonSizeClasses()
 }
 
 func (cfg config) buttonSizeClasses() string {

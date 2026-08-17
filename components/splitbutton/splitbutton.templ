@@ -1,0 +1,107 @@
+package splitbutton
+
+import (
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/dropdown"
+	"github.com/araihu/goshtoso/components/link"
+)
+
+// SplitButton renders a consumer-owned primary action beside a Dropdown menu.
+templ splitButtonTemplate(cfg Config) {
+	<div
+		data-split-button
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
+		class={ cfg.rootClasses() }
+		role="group"
+		aria-label={ cfg.menuLabel() }
+	>
+		@primaryAction(cfg)
+		@splitDivider()
+		@dropdown.Dropdown(dropdown.Config{
+			ID:         cfg.menuID(),
+			Label:      cfg.menuLabel(),
+			MenuAlign:  cfg.MenuAlign,
+			Sections:   cfg.Sections,
+			RootClass:  "shrink-0",
+			Trigger:    menuTrigger(cfg),
+		})
+	</div>
+}
+
+templ primaryAction(cfg Config) {
+	if cfg.Primary.isButton() || cfg.Primary.Href == "" {
+		@button.Button(primaryButtonOptions(cfg, cfg.Primary)...) {
+			<span class="inline-flex items-center gap-1.5">
+				if cfg.Primary.Icon != nil {
+					@cfg.Primary.Icon
+				}
+				<span>{ cfg.Primary.Label }</span>
+			</span>
+		}
+	} else {
+		@link.Link(
+			cfg.Primary.Href,
+			link.WithAppearance(link.AppearanceButton),
+			link.WithSize(linkSize(cfg.size())),
+			link.WithIcon(cfg.Primary.Icon),
+			link.WithIconPosition(link.IconLeading),
+			link.WithID(cfg.Primary.ID),
+			link.WithRootClass("rounded-r-none border-r-0"),
+			link.WithAttrs(primaryLinkAttrs(cfg.Primary)),
+		) {
+			{ cfg.Primary.Label }
+		}
+	}
+}
+
+templ splitDivider() {
+	<span data-split-button-divider aria-hidden="true" class="w-px shrink-0 self-stretch bg-outline dark:bg-outline-dark"></span>
+}
+
+templ menuTrigger(cfg Config) {
+	@button.Button(
+		button.WithTone(cfg.tone()),
+		button.WithSize(cfg.size()),
+		button.WithRootClass("rounded-l-none border-l-0 px-3"),
+		button.WithAttrs(menuTriggerAttrs(cfg)),
+	) {
+		if cfg.MenuTriggerIcon != nil {
+			@cfg.MenuTriggerIcon
+		} else {
+			@chevronIcon()
+		}
+	}
+}
+
+func linkSize(size button.Size) link.Size {
+	switch size {
+	case button.SizeSmall:
+		return link.SizeSmall
+	case button.SizeLarge:
+		return link.SizeLarge
+	case button.SizeXLarge:
+		return link.SizeXLarge
+	default:
+		return link.SizeMedium
+	}
+}
+
+func primaryLinkAttrs(action Action) templ.Attributes {
+	attrs := templ.Attributes{}
+	if action.Tooltip != "" {
+		attrs["title"] = action.Tooltip
+	}
+	return attrs
+}
+
+func menuTriggerAttrs(cfg Config) templ.Attributes {
+	return templ.Attributes{"aria-label": cfg.menuLabel()}
+}
+
+templ chevronIcon() {
+	<svg aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
+	</svg>
+}

@@ -98,7 +98,7 @@ templ accordionItem(data accordionItemData) {
 				fill="none"
 				stroke-width="2"
 				stroke="currentColor"
-				class="size-5 shrink-0 transition"
+				class="size-5 shrink-0 transition motion-reduce:transition-none"
 				aria-hidden="true"
 				:class={ chevronBinding }
 			>
@@ -106,6 +106,7 @@ templ accordionItem(data accordionItemData) {
 			</svg>
 		</button>
 		<div
+			class="motion-reduce:transition-none!"
 			x-cloak
 			x-show={ showBinding }
 			id={ contentID }

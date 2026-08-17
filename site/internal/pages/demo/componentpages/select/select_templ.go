@@ -288,7 +288,7 @@ func selectDraftRestorationPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button id=\"restore-linux-draft\" type=\"button\" x-on:click=\"window.goshtosoRestoreSelectDraft('draft-os','linux')\" class=\"mt-3 inline-flex items-center justify-center rounded-radius border border-outline bg-surface px-3 py-2 text-sm font-medium text-on-surface-strong transition hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark\">Restore Linux draft</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button id=\"restore-linux-draft\" type=\"button\" x-on:click=\"window.goshtosoRestoreSelectDraft('draft-os','linux')\" class=\"mt-3 inline-flex items-center justify-center rounded-radius border border-outline bg-surface px-3 py-2 text-sm font-medium text-on-surface-strong transition motion-reduce:transition-none hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark\">Restore Linux draft</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

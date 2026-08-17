@@ -84,7 +84,7 @@ templ swatchGrid(cfg Config) {
 				@mouseleave="hovered = ''"
 				@focus="hovered = $el.dataset.cls"
 				@blur="hovered = ''"
-				class="h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
+				class="h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
 				title="white"
 			></button>
 			<button
@@ -95,7 +95,7 @@ templ swatchGrid(cfg Config) {
 				@mouseleave="hovered = ''"
 				@focus="hovered = $el.dataset.cls"
 				@blur="hovered = ''"
-				class="h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
+				class="h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
 				title="black"
 			></button>
 		}
@@ -109,7 +109,7 @@ templ swatchGrid(cfg Config) {
 					@mouseleave="hovered = ''"
 					@focus="hovered = $el.dataset.cls"
 					@blur="hovered = ''"
-					class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform hover:scale-125 hover:ring-2 hover:ring-primary focus:scale-125 dark:hover:ring-primary-dark"
+					class="h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:hover:ring-primary-dark"
 					{ swatchStyle(hue, shade)... }
 					title={ hue + "-" + shade }
 				></button>
