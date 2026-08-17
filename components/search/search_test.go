@@ -93,6 +93,33 @@ func TestSearchRendersGlobalShortcutWhenEnabled(t *testing.T) {
 	}
 }
 
+func TestSearchModalProvidesReducedMotionTransitionContracts(t *testing.T) {
+	html := renderHTML(t, SearchModal(Config{ID: "docs-search"}))
+	searchHTML := renderHTML(t, Search(Config{ID: "docs-search", Items: []Item{{Title: "Guide", Description: "Search result"}}}))
+	if !strings.Contains(searchHTML, "transition motion-reduce:transition-none") {
+		t.Fatalf("search trigger/result controls are missing reduced-motion transition suppression: %s", searchHTML)
+	}
+
+	for _, want := range []string{
+		`x-transition:enter="transition-opacity ease-out duration-150 motion-reduce:transition-none"`,
+		`x-transition:enter-start="opacity-0 motion-reduce:opacity-100"`,
+		`x-transition:enter-end="opacity-100"`,
+		`x-transition:leave="transition-opacity ease-in duration-100 motion-reduce:transition-none"`,
+		`x-transition:leave-start="opacity-100"`,
+		`x-transition:leave-end="opacity-0 motion-reduce:opacity-100"`,
+		`x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"`,
+		`x-transition:enter-start="opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0"`,
+		`x-transition:enter-end="opacity-100 translate-y-0"`,
+		`x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"`,
+		`x-transition:leave-start="opacity-100 translate-y-0"`,
+		`x-transition:leave-end="opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("SearchModal missing reduced-motion transition contract %q in %s", want, html)
+		}
+	}
+}
+
 func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 	html := renderHTML(t, SearchModal(Config{
 		ID:       "remote-search",

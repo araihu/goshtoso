@@ -109,3 +109,9 @@ func TestCoverageTypingIndicator(t *testing.T) {
 	assert.Equal(t, 3, strings.Count(html, "animate-bounce"))
 	assert.Contains(t, html, "AL")
 }
+
+func TestTypingIndicatorReducedMotionContract(t *testing.T) {
+	html := render(t, TypingIndicator(Config{}))
+
+	assert.Equal(t, 3, strings.Count(html, "motion-reduce:animate-none"))
+}

@@ -63,8 +63,8 @@ func TestCoverageRenderHoverDropdownWithIconOnlyTrigger(t *testing.T) {
 	})
 
 	assert.Contains(t, rendered, `id="hover-actions"`)
-	assert.Contains(t, rendered, `x-on:mouseover="isOpen = true"`)
-	assert.Contains(t, rendered, `x-on:mouseleave.prevent=`)
+	assert.Contains(t, rendered, `x-on:mouseenter="clearScheduledClose(); open()"`)
+	assert.Contains(t, rendered, `x-on:mouseleave="scheduleClose()"`)
 	assert.Contains(t, rendered, `aria-label="More actions"`)
 	assert.Contains(t, rendered, `data-icon="trigger"`)
 	assert.Contains(t, rendered, `right-0`)
@@ -94,8 +94,8 @@ func TestCoverageRenderContextDropdownItems(t *testing.T) {
 	for _, want := range []string{
 		`id="context-actions"`,
 		`aria-label="context menu"`,
-		`x-on:contextmenu.prevent="isOpen = true"`,
-		`top-8 absolute left-0`,
+		`x-on:contextmenu.prevent="open()"`,
+		`left-0 top-full mt-2 absolute`,
 		`<ul class="flex flex-col py-1.5" role="none">`,
 		`tabindex="0"`,
 		`data-icon="rename"`,

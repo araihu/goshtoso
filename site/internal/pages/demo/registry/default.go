@@ -34,6 +34,7 @@ import (
 	paginationpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/pagination"
 	palettepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/palette"
 	panelpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/panel"
+	popoverpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/popover"
 	radiopage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/radio"
 	rangepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/range"
 	ratingpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/rating"
@@ -43,6 +44,7 @@ import (
 	sidebarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/sidebar"
 	skeletonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/skeleton"
 	spinnerpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/spinner"
+	splitbuttonpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/splitbutton"
 	stepspage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/steps"
 	structuredinputpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/structuredinput"
 	tablepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/table"
@@ -102,6 +104,7 @@ func mustDefault() *Registry {
 		paginationpage.Definition,
 		palettepage.Definition,
 		panelpage.Definition,
+		popoverpage.Definition,
 		radiopage.Definition,
 		rangepage.Definition,
 		ratingpage.Definition,
@@ -112,6 +115,7 @@ func mustDefault() *Registry {
 		skeletonpage.Definition,
 		spinnerpage.Definition,
 		stepspage.Definition,
+		splitbuttonpage.Definition,
 		structuredinputpage.Definition,
 		tablepage.Definition,
 		tabspage.Definition,

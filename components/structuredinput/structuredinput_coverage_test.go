@@ -101,6 +101,9 @@ func TestEnabledRendersAddAndRemoveActions(t *testing.T) {
 	if !strings.Contains(html, `aria-label="Remove row"`) {
 		t.Fatalf("enabled render missing remove button:\n%s", html)
 	}
+	if got := strings.Count(html, "transition motion-reduce:transition-none"); got != 2 {
+		t.Fatalf("enabled render should guard both row action transitions, got %d:\n%s", got, html)
+	}
 }
 
 // TestRenderWithoutIDOmitsIDAttribute covers the cfg.ID == "" branch.

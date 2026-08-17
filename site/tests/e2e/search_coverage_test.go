@@ -200,3 +200,50 @@ func TestSearchCoverageClickOutsideCloses(t *testing.T) {
 	assert.Contains(t, page.URL(), "/components/search")
 	assert.Empty(t, consoleErrors, "no console errors")
 }
+
+func TestSearchReducedMotionOpensAndClosesWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+
+	_, err := page.Goto(baseURL+"/components/search", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	trigger := page.Locator("#component-search button[aria-haspopup='dialog']")
+	dialog := page.Locator("#component-search-dialog")
+	panel := dialog.Locator(":scope > div")
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const dialog = document.querySelector('#component-search-dialog');
+		const panel = dialog?.firstElementChild;
+		if (!dialog || !panel || getComputedStyle(dialog).display === 'none' || getComputedStyle(panel).display === 'none') return false;
+		const overlayStyle = getComputedStyle(dialog);
+		const panelStyle = getComputedStyle(panel);
+		return overlayStyle.transitionProperty === 'none' &&
+			overlayStyle.opacity === '1' &&
+			panelStyle.transitionProperty === 'none' &&
+			panelStyle.opacity === '1' &&
+			panelStyle.transform === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	input := page.Locator("#component-search-input")
+	require.NoError(t, input.Press("Escape"))
+	_, err = page.WaitForFunction(`() => {
+		const dialog = document.querySelector('#component-search-dialog');
+		return !!dialog && getComputedStyle(dialog).display === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := panel.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "reduced-motion search should close immediately")
+}

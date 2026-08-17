@@ -164,7 +164,7 @@ func (cfg Config) rootClasses() string {
 
 // TriggerClasses returns classes for the search trigger.
 func (cfg Config) triggerClasses() string {
-	classes := "flex min-h-10 w-full items-center gap-2 rounded-radius border border-outline bg-surface px-3 text-left text-sm text-on-surface-muted transition hover:border-outline-strong hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark/50 dark:text-on-surface-dark-muted dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark"
+	classes := "flex min-h-10 w-full items-center gap-2 rounded-radius border border-outline bg-surface px-3 text-left text-sm text-on-surface-muted transition motion-reduce:transition-none hover:border-outline-strong hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark/50 dark:text-on-surface-dark-muted dark:hover:border-outline-dark-strong dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark"
 	if cfg.TriggerClass != "" {
 		classes += " " + cfg.TriggerClass
 	}
@@ -173,7 +173,7 @@ func (cfg Config) triggerClasses() string {
 
 // DialogClasses returns classes for the search panel.
 func (cfg Config) dialogClasses() string {
-	classes := "relative mt-16 flex w-full max-w-2xl flex-col text-on-surface shadow-2xl shadow-black/20 dark:text-on-surface-dark"
+	classes := "relative mt-16 flex w-full max-w-2xl flex-col text-on-surface shadow-elevation-overlay dark:text-on-surface-dark"
 	if cfg.DialogClass != "" {
 		classes += " " + cfg.DialogClass
 	}

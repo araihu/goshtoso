@@ -495,7 +495,7 @@ func ratingOption(cfg Config, value int) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var29 = []any{cfg.iconClasses() + " group-hover/rating-option:scale-110"}
+		var templ_7745c5c3_Var29 = []any{cfg.iconClasses() + " group-hover/rating-option:scale-110 motion-reduce:group-hover/rating-option:scale-100"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var29...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

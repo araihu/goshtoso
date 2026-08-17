@@ -81,3 +81,36 @@ func TestAlertCoverageDemo(t *testing.T) {
 	require.Empty(t, pageErrors, "uncaught JS exceptions on alert demo")
 	require.Empty(t, filterIgnorable(consoleErrors), "console errors on alert demo")
 }
+
+func TestAlertReducedMotionDismissesWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+	_, err := page.Goto(baseURL+"/components/alert", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	dismissible := page.Locator("#alert-dismissible [role='alert']").First()
+	require.NoError(t, dismissible.WaitFor())
+	leave, err := dismissible.GetAttribute("x-transition:leave")
+	require.NoError(t, err)
+	assert.Equal(t, "transition ease-in duration-300 motion-reduce:transition-none", leave)
+	leaveEnd, err := dismissible.GetAttribute("x-transition:leave-end")
+	require.NoError(t, err)
+	assert.Equal(t, "opacity-0 scale-90 motion-reduce:opacity-100 motion-reduce:scale-100", leaveEnd)
+
+	require.NoError(t, dismissible.Locator("button[aria-label='dismiss alert']").Click())
+	require.NoError(t, dismissible.WaitFor(playwright.LocatorWaitForOptions{
+		State: playwright.WaitForSelectorStateHidden,
+	}))
+	visible, err := dismissible.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "reduced-motion alert should dismiss immediately")
+}

@@ -437,6 +437,51 @@ func validateViewBox(value string) error {
 	return nil
 }
 
+func standaloneSVGBody(raw []byte, relative, expectedViewBox string) ([]byte, error) {
+	decoder := xml.NewDecoder(bytes.NewReader(raw))
+	var content bytes.Buffer
+	encoder := xml.NewEncoder(&content)
+	state := standaloneSVGState{
+		encoder:         encoder,
+		relative:        relative,
+		expectedViewBox: expectedViewBox,
+	}
+	for {
+		token, err := decoder.Token()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("parse source SVG %q: %w", relative, err)
+		}
+		switch value := token.(type) {
+		case xml.Directive, xml.ProcInst:
+			return nil, fmt.Errorf("source SVG %q contains forbidden XML directive", relative)
+		case xml.StartElement:
+			if err := state.start(value); err != nil {
+				return nil, err
+			}
+		case xml.EndElement:
+			if err := state.end(value); err != nil {
+				return nil, err
+			}
+		default:
+			if state.depth > 0 {
+				if err := encoder.EncodeToken(token); err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+	if !state.rootSeen || state.depth != 0 {
+		return nil, fmt.Errorf("source SVG %q has incomplete root", relative)
+	}
+	if err := encoder.Flush(); err != nil {
+		return nil, fmt.Errorf("encode source SVG %q: %w", relative, err)
+	}
+	return content.Bytes(), nil
+}
+
 func standaloneSVGSymbol(raw []byte, relative, symbol, expectedViewBox string) ([]byte, error) {
 	decoder := xml.NewDecoder(bytes.NewReader(raw))
 	var content bytes.Buffer
@@ -482,15 +527,34 @@ func standaloneSVGSymbol(raw []byte, relative, symbol, expectedViewBox string) (
 	if !validGenericSymbol(symbol) {
 		return nil, fmt.Errorf("source SVG %q has invalid output symbol %q", relative, symbol)
 	}
-	return fmt.Appendf(nil, `<symbol id="%s" viewBox="%s">%s</symbol>`, symbol, expectedViewBox, content.Bytes()), nil
+	var output bytes.Buffer
+	symbolEncoder := xml.NewEncoder(&output)
+	start := xml.StartElement{
+		Name: xml.Name{Local: "symbol"},
+		Attr: []xml.Attr{
+			{Name: xml.Name{Local: "id"}, Value: symbol},
+			{Name: xml.Name{Local: "viewBox"}, Value: expectedViewBox},
+		},
+	}
+	start.Attr = append(start.Attr, state.rootPaintAttributes...)
+	if err := symbolEncoder.EncodeToken(start); err != nil {
+		return nil, fmt.Errorf("encode standalone symbol %q: %w", symbol, err)
+	}
+	if err := symbolEncoder.Flush(); err != nil {
+		return nil, fmt.Errorf("flush standalone symbol %q: %w", symbol, err)
+	}
+	output.Write(content.Bytes())
+	output.WriteString(`</symbol>`)
+	return output.Bytes(), nil
 }
 
 type standaloneSVGState struct {
-	encoder         *xml.Encoder
-	relative        string
-	expectedViewBox string
-	depth           int
-	rootSeen        bool
+	encoder             *xml.Encoder
+	relative            string
+	expectedViewBox     string
+	depth               int
+	rootSeen            bool
+	rootPaintAttributes []xml.Attr
 }
 
 func (state *standaloneSVGState) start(value xml.StartElement) error {
@@ -524,8 +588,22 @@ func (state *standaloneSVGState) startRoot(value xml.StartElement) error {
 	if rootViewBox != state.expectedViewBox {
 		return fmt.Errorf("source SVG %q viewBox %q does not match manifest %q", state.relative, rootViewBox, state.expectedViewBox)
 	}
+	for _, attr := range value.Attr {
+		if attr.Name.Space == "" && isSVGPresentationAttribute(attr.Name.Local) {
+			state.rootPaintAttributes = append(state.rootPaintAttributes, attr)
+		}
+	}
 	state.depth = 1
 	return nil
+}
+
+func isSVGPresentationAttribute(name string) bool {
+	switch strings.ToLower(name) {
+	case "color", "fill", "fill-opacity", "fill-rule", "paint-order", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width":
+		return true
+	default:
+		return false
+	}
 }
 
 func (state *standaloneSVGState) end(value xml.EndElement) error {

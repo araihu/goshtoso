@@ -144,7 +144,7 @@ func (cfg Config) controlClasses() string {
 
 // IconClasses returns base classes for each visual option.
 func (cfg Config) iconClasses() string {
-	base := "block transition"
+	base := "block transition motion-reduce:transition-none"
 	switch cfg.Size {
 	case SizeSM:
 		base += " size-5 text-lg"
@@ -266,7 +266,7 @@ func (cfg DisplayConfig) controlClasses() string {
 }
 
 func (cfg DisplayConfig) iconClasses() string {
-	base := "block transition"
+	base := "block transition motion-reduce:transition-none"
 	switch cfg.Size {
 	case SizeSM:
 		base += " size-5 text-lg"

@@ -258,7 +258,7 @@ func typingIndicatorTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"flex items-center gap-1 rounded-radius rounded-es-none bg-surface-alt px-4 py-3 dark:bg-surface-dark-alt\"><span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:150ms] dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce rounded-full bg-on-surface/40 [animation-delay:300ms] dark:bg-on-surface-dark/40\"></span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"flex items-center gap-1 rounded-radius rounded-es-none bg-surface-alt px-4 py-3 dark:bg-surface-dark-alt\"><span class=\"size-2 animate-bounce motion-reduce:animate-none rounded-full bg-on-surface/40 dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce motion-reduce:animate-none rounded-full bg-on-surface/40 [animation-delay:150ms] dark:bg-on-surface-dark/40\"></span> <span class=\"size-2 animate-bounce motion-reduce:animate-none rounded-full bg-on-surface/40 [animation-delay:300ms] dark:bg-on-surface-dark/40\"></span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

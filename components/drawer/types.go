@@ -98,12 +98,12 @@ func (cfg Config) titleID() string {
 
 // OverlayClasses returns classes for the backdrop overlay.
 func (cfg Config) overlayClasses() string {
-	return "fixed inset-0 z-40 bg-black/40 dark:bg-black/60"
+	return "fixed inset-0 z-40 bg-backdrop/40 dark:bg-backdrop/60"
 }
 
 // PanelClasses returns classes for the sliding panel.
 func (cfg Config) panelClasses() string {
-	base := "fixed z-50 flex flex-col bg-surface dark:bg-surface-dark border-outline dark:border-outline-dark shadow-xl"
+	base := "fixed z-50 flex flex-col bg-surface dark:bg-surface-dark border-outline dark:border-outline-dark shadow-elevation-raised"
 
 	switch cfg.Side {
 	case SideLeft:

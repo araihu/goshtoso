@@ -55,6 +55,8 @@ func TestGenerateFromGenericBootstrapIconsManifest(t *testing.T) {
 	}
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `id="bi-alarm"`)
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `id="bi-bootstrap"`)
+	assertFileContains(t, filepath.Join(output, "icons.json"), `"prefix": "bootstrapicons"`)
+	assertFileContains(t, filepath.Join(output, "icons.json"), `"bi-alarm": {`)
 	assertFileContains(t, filepath.Join(output, "sprite.svg"), `viewBox="0 0 16 16"`)
 	assertFileContains(t, filepath.Join(output, "icons_gen.go"), `IconBootstrapIconsAlarm`)
 	assertFileContains(t, filepath.Join(output, "icons_gen.go"), `"bi-alarm"`)
@@ -122,5 +124,18 @@ func TestStandaloneSVGRejectsExternalReferences(t *testing.T) {
 	raw := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><image href="https://example.test/icon.svg"/></svg>`)
 	if _, err := standaloneSVGSymbol(raw, "icon.svg", "bi-icon", "0 0 16 16"); err == nil || !strings.Contains(err.Error(), "external SVG reference") {
 		t.Fatalf("standaloneSVGSymbol() error = %v, want external-reference rejection", err)
+	}
+}
+
+func TestStandaloneSVGPreservesRootPaintAttributes(t *testing.T) {
+	raw := []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 0h24v24H0z"/></svg>`)
+	symbol, err := standaloneSVGSymbol(raw, "icon.svg", "hi-icon", "0 0 24 24")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`fill="none"`, `stroke="currentColor"`, `stroke-width="1.5"`} {
+		if !strings.Contains(string(symbol), want) {
+			t.Errorf("standalone symbol is missing root paint attribute %q: %s", want, symbol)
+		}
 	}
 }

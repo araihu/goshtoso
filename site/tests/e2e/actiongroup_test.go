@@ -43,9 +43,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 	overflow := stacked.Locator("[data-action-group-overflow]")
 
 	t.Run("wide grouped action uses one flat dropdown", func(t *testing.T) {
-		_, err := stacked.Evaluate("el => { el.style.width = '760px' }", nil)
-		require.NoError(t, err)
-		waitForActionGroupLayout(t, page, "#action-group-stacked", false)
+		setActionGroupWidthAndWait(t, page, "#action-group-stacked", 760, "expanded")
 
 		hidden, err := page.Evaluate(`() => document.querySelector("#action-group-stacked [data-action-group-secondary]").hidden`, nil)
 		require.NoError(t, err)
@@ -68,9 +66,12 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		_, err = page.WaitForFunction(`() => document.activeElement && document.activeElement.textContent.trim() === "CSV"`, nil)
 		require.NoError(t, err)
 
-		waitForActionGroupFrames(t, page)
 		require.NoError(t, page.Keyboard().Press("Escape"))
 		_, err = page.WaitForFunction(`() => document.querySelector("#action-group-export button").getAttribute("aria-expanded") === "false"`, nil)
+		require.NoError(t, err)
+		_, err = page.WaitForFunction(`() =>
+			document.activeElement === document.querySelector("#action-group-export button")
+		`, nil)
 		require.NoError(t, err)
 		activeID, err := page.Evaluate(`() => document.activeElement && document.activeElement.closest("#action-group-export")?.id`, nil)
 		require.NoError(t, err)
@@ -80,9 +81,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 	t.Run("constrained layout flattens grouped children into shared overflow", func(t *testing.T) {
 		groupTrigger := group.Locator("button").First()
 		require.NoError(t, groupTrigger.Focus())
-		_, err := stacked.Evaluate("el => { el.style.width = '220px' }", nil)
-		require.NoError(t, err)
-		waitForActionGroupLayout(t, page, "#action-group-stacked", true)
+		setActionGroupWidthAndWait(t, page, "#action-group-stacked", 220, "collapsed")
 
 		primaryHidden, err := page.Evaluate(`() => document.querySelector("#action-group-stacked [data-action-group-primary]").hidden`, nil)
 		require.NoError(t, err)
@@ -99,7 +98,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 
 		trigger := overflow.Locator("button").First()
 		require.Equal(t, "More actions", actionGroupMustAttribute(t, trigger, "aria-label"))
-		require.Equal(t, "true", actionGroupMustAttribute(t, trigger, "aria-haspopup"))
+		require.Equal(t, "menu", actionGroupMustAttribute(t, trigger, "aria-haspopup"))
 		require.NoError(t, page.Keyboard().Press("ArrowDown"))
 		_, err = page.WaitForFunction(`() => {
 			const trigger = document.querySelector("#action-group-stacked [data-action-group-overflow] button");
@@ -111,8 +110,18 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 		require.Equal(t, 0, actionGroupMustCount(t, menu.Locator(`[role="menu"]`)))
 		visibleItems := menu.Locator(`[role="menuitem"]:visible`)
 		_, err = page.WaitForFunction(`() =>
-			document.querySelectorAll("#action-group-stacked [data-action-group-overflow] [role=menuitem]:not([hidden])").length === 4
-		`, nil)
+		(() => {
+			const trigger = document.querySelector("#action-group-stacked [data-action-group-overflow] button");
+			const menu = document.querySelector("#action-group-stacked [data-action-group-overflow] [role=menu]");
+			if (trigger?.getAttribute("aria-expanded") !== "true" || !menu || getComputedStyle(menu).display === "none") return false;
+			const visibleItems = Array.from(menu.querySelectorAll("[role=menuitem]")).filter(item =>
+				!item.hidden && getComputedStyle(item).display !== "none" &&
+				getComputedStyle(item).visibility !== "hidden" && item.getClientRects().length > 0
+			);
+			const active = document.activeElement;
+			return visibleItems.length === 4 && active && menu.contains(active) && active.getAttribute("role") === "menuitem";
+		})()
+	`, nil)
 		require.NoError(t, err)
 		visibilityState, err := menu.Evaluate(`menu => ({
 			menu: { hidden: menu.hidden, display: getComputedStyle(menu).display },
@@ -139,19 +148,11 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 			return trigger.getAttribute("aria-expanded") === "false";
 		}`, nil)
 		require.NoError(t, err)
-		waitForActionGroupFrames(t, page)
 	})
 
 	t.Run("source order remains priority order", func(t *testing.T) {
 		priority := page.Locator("#action-group-priority")
-		_, err := priority.Evaluate("el => { el.style.width = '180px' }", nil)
-		require.NoError(t, err)
-		_, err = page.WaitForFunction(`() => {
-			const root = document.querySelector("#action-group-priority [data-goshtoso-action-group]");
-			const overflow = root.querySelector("[data-action-group-overflow]");
-			return !overflow.hidden;
-		}`, nil)
-		require.NoError(t, err)
+		setActionGroupWidthAndWait(t, page, "#action-group-priority", 180, "partial")
 
 		hidden, err := priority.Locator("[data-action-group-secondary]").EvaluateAll(`els => els.map(el => el.hidden)`)
 		require.NoError(t, err)
@@ -194,7 +195,7 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 			document.querySelector("#action-group-priority").style.removeProperty("width");
 		}`, nil)
 		require.NoError(t, err)
-		for _, theme := range []string{"goshtoso", "minimal"} {
+		for _, theme := range []string{"goshtoso", "minimal", "modern"} {
 			for _, dark := range []bool{false, true} {
 				_, err := page.Evaluate(`([theme, dark]) => {
 					document.documentElement.dataset.theme = theme;
@@ -203,8 +204,10 @@ func TestActionGroupResponsiveTransformAndAccessibility(t *testing.T) {
 				}`, []any{theme, dark})
 				require.NoError(t, err)
 				for _, width := range []int{320, 390, 768, 1440} {
+					beforeRevision := actionGroupLayoutRevision(t, page, "#action-group-stacked")
+					beforeWidth := actionGroupLayoutWidth(t, page, "#action-group-stacked")
 					require.NoError(t, page.SetViewportSize(width, 1000))
-					waitForActionGroupFrames(t, page)
+					waitForActionGroupViewportLayout(t, page, "#action-group-stacked", beforeRevision, beforeWidth, width)
 					overflows, err := page.Evaluate(`() => document.documentElement.scrollWidth > document.documentElement.clientWidth`, nil)
 					require.NoError(t, err)
 					require.Equalf(t, false, overflows, "theme %s dark=%t width=%d", theme, dark, width)
@@ -263,17 +266,14 @@ func TestActionGroupPartialCollapseKeyboardNavigation(t *testing.T) {
 
 	stacked := page.Locator("#action-group-stacked")
 	stackedOverflow := stacked.Locator("[data-action-group-overflow]")
-	_, err = stacked.Evaluate("el => { el.style.width = '220px' }", nil)
-	require.NoError(t, err)
-	waitForActionGroupLayout(t, page, "#action-group-stacked", true)
+	collapsedRevision := setActionGroupWidthAndWait(t, page, "#action-group-stacked", 220, "collapsed")
 	require.NoError(t, stackedOverflow.Locator("button").First().Focus())
 	_, err = page.WaitForFunction(`() =>
 		document.activeElement === document.querySelector("#action-group-stacked [data-action-group-overflow] button")
 	`, nil)
 	require.NoError(t, err)
-	_, err = stacked.Evaluate("el => { el.style.width = '760px' }", nil)
-	require.NoError(t, err)
-	waitForActionGroupLayout(t, page, "#action-group-stacked", false)
+	expandedRevision := setActionGroupWidthAndWait(t, page, "#action-group-stacked", 760, "expanded")
+	require.Greater(t, expandedRevision, collapsedRevision)
 	_, err = page.WaitForFunction(`() =>
 		document.activeElement?.closest("[data-action-group-secondary]") ===
 			document.querySelector("#action-group-stacked [data-action-group-secondary]")
@@ -281,13 +281,7 @@ func TestActionGroupPartialCollapseKeyboardNavigation(t *testing.T) {
 	require.NoError(t, err)
 
 	priority := page.Locator("#action-group-priority")
-	_, err = priority.Evaluate("el => { el.style.width = '180px' }", nil)
-	require.NoError(t, err)
-	_, err = page.WaitForFunction(`() => {
-		const root = document.querySelector("#action-group-priority [data-goshtoso-action-group]")
-		return root && !root.querySelector("[data-action-group-overflow]").hidden
-	}`, nil)
-	require.NoError(t, err)
+	setActionGroupWidthAndWait(t, page, "#action-group-priority", 180, "partial")
 
 	hidden, err := priority.Locator("[data-action-group-secondary]").EvaluateAll(`els => els.map(el => el.hidden)`)
 	require.NoError(t, err)
@@ -307,18 +301,64 @@ func TestActionGroupPartialCollapseKeyboardNavigation(t *testing.T) {
 	require.NoError(t, page.Keyboard().Press("ArrowUp"))
 	require.Equal(t, "Delete", actionGroupMustText(t, overflow.Locator(`[role="menuitem"]:focus`)))
 
-	waitForActionGroupFrames(t, page)
 	require.NoError(t, page.Keyboard().Press("Escape"))
+	waitForActionGroupDropdownExpanded(t, page, "#action-group-priority", false)
 	waitForActionGroupTriggerFocus(t, page)
 	require.NoError(t, page.Keyboard().Press("Enter"))
+	waitForActionGroupDropdownExpanded(t, page, "#action-group-priority", true)
 	_, err = page.WaitForFunction(`() => document.activeElement?.textContent.trim() === "Share"`, nil)
 	require.NoError(t, err)
-	waitForActionGroupFrames(t, page)
 	require.NoError(t, page.Keyboard().Press("Escape"))
+	waitForActionGroupDropdownExpanded(t, page, "#action-group-priority", false)
 	waitForActionGroupTriggerFocus(t, page)
 
 	waitForPageSettled(t, page)
 	failures.RequireEmpty(t)
+}
+
+func TestActionGroupOverflowInheritsReducedMotionDropdownContract(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
+		Viewport: &playwright.Size{Width: 1440, Height: 1000},
+	})
+	err := page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	})
+	require.NoError(t, err)
+	_, err = page.Goto(baseURL+"/components/action-group", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`() =>
+		document.querySelector("#action-group-stacked [data-goshtoso-action-group]")?.dataset.actionGroupInitialized === "true"
+	`, nil)
+	require.NoError(t, err)
+
+	withoutStorage := page.GetByRole("button", playwright.PageGetByRoleOptions{Name: "Use without storage"})
+	if visible, visibleErr := withoutStorage.IsVisible(); visibleErr == nil && visible {
+		require.NoError(t, withoutStorage.Click())
+	}
+
+	setActionGroupWidthAndWait(t, page, "#action-group-stacked", 220, "collapsed")
+	trigger := page.Locator("#action-group-stacked [data-action-group-overflow] button").First()
+	menu := page.Locator("#action-group-stacked [data-action-group-overflow] [role='menu']")
+	require.NoError(t, trigger.Click())
+	_, err = page.WaitForFunction(`() => {
+		const menu = document.querySelector("#action-group-stacked [data-action-group-overflow] [role=menu]");
+		if (!menu || getComputedStyle(menu).display === "none") return false;
+		const style = getComputedStyle(menu);
+		return style.transitionProperty === "none" &&
+			style.opacity === "1" &&
+			style.transform === "none";
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := menu.IsVisible()
+	require.NoError(t, err)
+	require.True(t, visible)
 }
 
 func waitForActionGroupTriggerFocus(t *testing.T, page playwright.Page) {
@@ -326,28 +366,130 @@ func waitForActionGroupTriggerFocus(t *testing.T, page playwright.Page) {
 	_, err := page.WaitForFunction(`() =>
 		document.activeElement === document.querySelector("#action-group-priority [data-action-group-overflow] button")
 	`, nil)
+	if err != nil {
+		diagnostic, diagnosticErr := page.Evaluate(`() => {
+			const owner = document.querySelector("#action-group-priority");
+			const root = owner?.querySelector("[data-goshtoso-action-group]");
+			const trigger = owner?.querySelector("[data-action-group-overflow] button");
+			return {
+				active: document.activeElement?.textContent?.trim() || document.activeElement?.tagName || "",
+				expanded: trigger?.getAttribute("aria-expanded"),
+				layoutState: root?.dataset.actionGroupLayoutState,
+				layoutRevision: root?.dataset.actionGroupLayoutRevision,
+			};
+		}`, nil)
+		require.NoError(t, diagnosticErr)
+		t.Fatalf("overflow trigger focus failed: %v; diagnostic=%#v", err, diagnostic)
+	}
+}
+
+func waitForActionGroupDropdownExpanded(t *testing.T, page playwright.Page, selector string, expanded bool) {
+	t.Helper()
+	_, err := page.WaitForFunction(`([selector, expanded]) => {
+		const trigger = document.querySelector(selector + " [data-action-group-overflow] button");
+		return trigger && trigger.getAttribute("aria-expanded") === String(expanded);
+	}`, []any{selector, expanded})
 	require.NoError(t, err)
 }
 
-func waitForActionGroupFrames(t *testing.T, page playwright.Page) {
+func actionGroupLayoutRevision(t *testing.T, page playwright.Page, selector string) int {
 	t.Helper()
-	_, err := page.Evaluate(`() => new Promise(resolve =>
-		requestAnimationFrame(() => requestAnimationFrame(resolve))
-	)`, nil)
-	require.NoError(t, err)
-}
-
-func waitForActionGroupLayout(t *testing.T, page playwright.Page, selector string, overflowVisible bool) {
-	t.Helper()
-	_, err := page.WaitForFunction(`([selector, overflowVisible]) => {
+	value, err := page.Evaluate(`selector => {
 		const root = document.querySelector(selector + " [data-goshtoso-action-group]");
-		const overflow = root && root.querySelector("[data-action-group-overflow]");
-		if (!root || !overflow) return false;
-		const expectedWidth = overflowVisible ? 220 : 760;
-		return Math.abs(root.getBoundingClientRect().width - expectedWidth) < 2 &&
-			overflow.hidden === !overflowVisible;
-	}`, []any{selector, overflowVisible})
+		return Number(root?.dataset.actionGroupLayoutRevision ?? -1);
+	}`, selector)
 	require.NoError(t, err)
+	revision, ok := value.(int)
+	if ok {
+		return revision
+	}
+	return int(value.(float64))
+}
+
+func actionGroupLayoutWidth(t *testing.T, page playwright.Page, selector string) float64 {
+	t.Helper()
+	value, err := page.Evaluate(`selector => {
+		const root = document.querySelector(selector + " [data-goshtoso-action-group]");
+		return root?.getBoundingClientRect().width ?? -1;
+	}`, selector)
+	require.NoError(t, err)
+	if width, ok := value.(int); ok {
+		return float64(width)
+	}
+	return value.(float64)
+}
+
+func waitForActionGroupViewportLayout(
+	t *testing.T,
+	page playwright.Page,
+	selector string,
+	afterRevision int,
+	beforeWidth float64,
+	expectedViewportWidth int,
+) int {
+	t.Helper()
+	_, err := page.WaitForFunction(`([selector, afterRevision, beforeWidth, expectedViewportWidth]) => {
+		const root = document.querySelector(selector + " [data-goshtoso-action-group]");
+		const overflow = root?.querySelector(":scope > [data-action-group-overflow]");
+		const secondary = root ? Array.from(root.querySelectorAll(":scope > [data-action-group-secondary]")) : [];
+		if (!root || !overflow || secondary.length === 0) return false;
+
+		const revision = Number(root.dataset.actionGroupLayoutRevision);
+		const state = root.dataset.actionGroupLayoutState;
+		const collapsedCount = secondary.filter(wrapper => wrapper.hidden).length;
+		const actualState = overflow.hidden
+			? "expanded"
+			: collapsedCount === secondary.length
+				? "collapsed"
+				: collapsedCount > 0
+					? "partial"
+					: "invalid";
+		const widthChanged = Math.abs(root.getBoundingClientRect().width - beforeWidth) > 0.5;
+		const revisionReady = widthChanged ? revision > afterRevision : revision >= afterRevision;
+
+		return document.documentElement.clientWidth === expectedViewportWidth &&
+			Number.isSafeInteger(revision) && revisionReady &&
+			state !== "pending" && state === actualState;
+	}`, []any{selector, afterRevision, beforeWidth, expectedViewportWidth})
+	require.NoError(t, err)
+	return actionGroupLayoutRevision(t, page, selector)
+}
+
+func setActionGroupWidthAndWait(t *testing.T, page playwright.Page, selector string, width int, state string) int {
+	t.Helper()
+	previousRevision := actionGroupLayoutRevision(t, page, selector)
+	_, err := page.Evaluate(`([selector, width]) => {
+		document.querySelector(selector).style.width = width + "px";
+	}`, []any{selector, width})
+	require.NoError(t, err)
+	return waitForActionGroupLayout(t, page, selector, state, previousRevision)
+}
+
+func waitForActionGroupLayout(t *testing.T, page playwright.Page, selector, expectedState string, afterRevision int) int {
+	t.Helper()
+	_, err := page.WaitForFunction(`([selector, expectedState, afterRevision]) => {
+		const root = document.querySelector(selector + " [data-goshtoso-action-group]");
+		const overflow = root?.querySelector(":scope > [data-action-group-overflow]");
+		const secondary = root ? Array.from(root.querySelectorAll(":scope > [data-action-group-secondary]")) : [];
+		if (!root || !overflow || secondary.length === 0) return false;
+
+		const revision = Number(root.dataset.actionGroupLayoutRevision);
+		const state = root.dataset.actionGroupLayoutState;
+		const collapsedCount = secondary.filter(wrapper => wrapper.hidden).length;
+		const actualState = overflow.hidden
+			? "expanded"
+			: collapsedCount === secondary.length
+				? "collapsed"
+				: collapsedCount > 0
+					? "partial"
+					: "invalid";
+
+		return Number.isSafeInteger(revision) && revision > afterRevision &&
+			state !== "pending" && state === actualState &&
+			(expectedState === "" || state === expectedState);
+	}`, []any{selector, expectedState, afterRevision})
+	require.NoError(t, err)
+	return actionGroupLayoutRevision(t, page, selector)
 }
 
 func actionGroupMustCount(t *testing.T, locator playwright.Locator) int {

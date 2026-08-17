@@ -38,7 +38,7 @@ func exampleSourceURL(source string) string {
 templ exampleEntry(index int, recipe exampleRecipe) {
 	<article data-example-recipe class="grid gap-6 border-t border-outline py-8 first:border-t-0 first:pt-0 dark:border-outline-dark md:grid-cols-[minmax(0,2fr)_minmax(18rem,3fr)] md:items-start md:gap-10">
 		<a href={ templ.SafeURL(recipe.Href) } hx-get={ recipe.Href } hx-target="#main-content" hx-push-url="true" class="group block overflow-hidden rounded-radius border border-outline bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-primary-dark">
-			<img src={ recipe.Image } alt={ recipe.ImageAlt } class="aspect-[16/10] w-full object-cover transition duration-200 group-hover:scale-[1.02] motion-reduce:transition-none" loading="lazy"/>
+			<img src={ recipe.Image } alt={ recipe.ImageAlt } class="aspect-[16/10] w-full object-cover transition duration-200 motion-reduce:transition-none group-hover:scale-[1.02] motion-reduce:group-hover:scale-100" loading="lazy"/>
 		</a>
 		<div class="min-w-0">
 			<div class="flex items-baseline gap-3">

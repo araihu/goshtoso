@@ -123,7 +123,7 @@ templ clientOptionLI(cfg Config, state State, opt Option) {
 			tabindex="-1"
 			class={ "flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.isSelected(opt.Value)) }
 		} else {
-			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
+			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
 		}
 	>
 		if cfg.Mode == ModeMultiple {
@@ -144,7 +144,7 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 			tabindex="-1"
 			class={ "flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.isSelected(opt.Value)) }
 		} else {
-			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
+			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
 			hx-post={ cfg.ToggleEndpoint }
 			hx-target="closest [data-combobox-body]"
 			hx-swap="outerHTML"
@@ -188,6 +188,7 @@ templ comboboxTemplate(cfg Config, state State) {
 		id={ cfg.ID }
 		class={ "relative " + cfg.RootClass }
 		x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"
+		x-on:click.outside="isOpen=false; openedWithKeyboard=false"
 		x-on:keydown.esc.window="isOpen=false; openedWithKeyboard=false; focusIndex=-1"
 		x-on:htmx:after-swap="focusIndex=-1"
 	>
@@ -199,7 +200,7 @@ templ comboboxTemplate(cfg Config, state State) {
 			id={ cfg.ID + "-trigger" }
 			role="combobox"
 			disabled?={ cfg.Disabled }
-			class={ "inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state) }
+			class={ "inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition motion-reduce:transition-none hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state) }
 			{ cfg.triggerAttributes()... }
 			x-on:click="isOpen = !isOpen"
 			x-on:keydown.down.prevent="openedWithKeyboard = true; isOpen = true"
@@ -208,15 +209,19 @@ templ comboboxTemplate(cfg Config, state State) {
 			x-bind:aria-expanded="isOpen || openedWithKeyboard"
 		>
 			<span id={ cfg.ID + "-trigger-label" } data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class={ "size-4 shrink-0 transition-transform duration-150 " + chevronClass(state) } x-bind:class="isOpen ? 'rotate-180' : ''">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class={ "size-4 shrink-0 transition-transform duration-150 motion-reduce:transition-none " + chevronClass(state) } x-bind:class="isOpen ? 'rotate-180' : ''">
 				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
 			</svg>
 		</button>
 		<div
 			x-cloak
 			x-show="isOpen || openedWithKeyboard"
-			x-transition
-			x-on:click.outside="isOpen = false; openedWithKeyboard = false"
+			x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"
+			x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
+			x-transition:enter-end="opacity-100 scale-100"
+			x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
+			x-transition:leave-start="opacity-100 scale-100"
+			x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
 			class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 		>
 			@body(cfg, state)

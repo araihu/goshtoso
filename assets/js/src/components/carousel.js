@@ -5,15 +5,28 @@
 
   window.goshtosoCarousel = function (root) {
     var autoplayInterval = Number(root.dataset.carouselAutoplayInterval) || 0;
+    var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var motionChangeHandler = null;
     var state = {
       slides: window.goshtosoParseData(root.dataset.carouselSlides, []),
       currentSlideIndex: 1,
       autoplayIntervalTime: autoplayInterval || 4000,
       isPaused: false,
       autoplayInterval: null,
+      reducedMotion: motionQuery.matches,
       touchStartX: null,
       touchEndX: null,
       swipeThreshold: 50,
+      init: function () {
+        motionChangeHandler = function (event) {
+          state.handleReducedMotionChange(event);
+        };
+        if (motionQuery.addEventListener) {
+          motionQuery.addEventListener("change", motionChangeHandler);
+        } else {
+          motionQuery.addListener(motionChangeHandler);
+        }
+      },
       previous: function () {
         if (this.currentSlideIndex > 1) this.currentSlideIndex -= 1;
         else this.currentSlideIndex = this.slides.length;
@@ -23,8 +36,9 @@
         else this.currentSlideIndex = 1;
       },
       autoplay: function () {
-        if (!autoplayInterval) return;
         clearInterval(this.autoplayInterval);
+        this.autoplayInterval = null;
+        if (!autoplayInterval || this.reducedMotion) return;
         this.autoplayInterval = setInterval(function () {
           if (!state.isPaused) state.next();
         }, this.autoplayIntervalTime);
@@ -33,6 +47,12 @@
         clearInterval(this.autoplayInterval);
         this.autoplayIntervalTime = interval;
         this.autoplay();
+      },
+      handleReducedMotionChange: function (event) {
+        this.reducedMotion = event.matches;
+        clearInterval(this.autoplayInterval);
+        this.autoplayInterval = null;
+        if (!this.reducedMotion) this.autoplay();
       },
       handleTouchStart: function (event) {
         this.touchStartX = event.touches[0].clientX;
@@ -50,6 +70,14 @@
       },
       destroy: function () {
         clearInterval(this.autoplayInterval);
+        this.autoplayInterval = null;
+        if (!motionChangeHandler) return;
+        if (motionQuery.removeEventListener) {
+          motionQuery.removeEventListener("change", motionChangeHandler);
+        } else {
+          motionQuery.removeListener(motionChangeHandler);
+        }
+        motionChangeHandler = null;
       },
     };
     return state;

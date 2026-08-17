@@ -92,6 +92,26 @@ func TestDismissibleAlertEmitsAlpineState(t *testing.T) {
 	)
 }
 
+func TestDismissibleAlertReducedMotionTransitionContract(t *testing.T) {
+	html := render(t, Config{Title: "Dismiss me", Dismissible: true})
+	mustContainAll(t, html,
+		`x-transition:leave="transition ease-in duration-300 motion-reduce:transition-none"`,
+		`x-transition:leave-start="opacity-100 scale-100"`,
+		`x-transition:leave-end="opacity-0 scale-90 motion-reduce:opacity-100 motion-reduce:scale-100"`,
+	)
+}
+
+func TestAlertActionControlsHonorReducedMotion(t *testing.T) {
+	for _, classes := range []string{
+		(Config{}).linkClasses(),
+		(Config{}).primaryActionClasses(),
+	} {
+		if !strings.Contains(classes, "transition motion-reduce:transition-none") {
+			t.Fatalf("alert action classes are missing reduced-motion transition suppression: %s", classes)
+		}
+	}
+}
+
 func TestDismissibleTakesPrecedenceOverActionAndLink(t *testing.T) {
 	// Dismissible is checked first in Alert(), so action/link must be ignored.
 	html := render(t, Config{

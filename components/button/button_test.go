@@ -70,6 +70,16 @@ func TestButtonDefaultsToTouchSafeTarget(t *testing.T) {
 	}
 }
 
+func TestButtonAlignsLeadingIconsAndLabels(t *testing.T) {
+	classes := buttonClasses(newConfig(nil))
+
+	for _, class := range []string{"inline-flex", "items-center", "justify-center", "gap-2"} {
+		if !strings.Contains(classes, class) {
+			t.Fatalf("button icon-and-label layout is missing %q: %s", class, classes)
+		}
+	}
+}
+
 func TestButtonOptionsApplyOverDefaults(t *testing.T) {
 	var buf bytes.Buffer
 	ctx := templ.WithChildren(context.Background(), templ.Raw("Delete"))
@@ -105,6 +115,9 @@ func TestButtonHoverDoesNotReduceWholeControlOpacity(t *testing.T) {
 
 	if strings.Contains(html, "hover:opacity-75") {
 		t.Fatalf("button hover must not blend text and background toward the page surface:\n%s", html)
+	}
+	if !strings.Contains(html, "transition motion-reduce:transition-none") {
+		t.Fatalf("button transition must honor reduced motion:\n%s", html)
 	}
 }
 

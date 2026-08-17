@@ -88,3 +88,11 @@ func TestPalette_HideNeutralKeepsGrid(t *testing.T) {
 	assert.Contains(t, html, `data-cls="blue-700"`)
 	assert.Contains(t, html, "Reset") // reset still present
 }
+
+func TestPalette_ReducedMotionContracts(t *testing.T) {
+	html := render(t, Config{ID: "p"})
+	swatchCount := len(defaultHues)*len(defaultShades) + 2
+	assert.Equal(t, swatchCount, strings.Count(html, "motion-reduce:transition-none"))
+	assert.Equal(t, swatchCount, strings.Count(html, "motion-reduce:hover:scale-100"))
+	assert.Equal(t, swatchCount, strings.Count(html, "motion-reduce:focus:scale-100"))
+}

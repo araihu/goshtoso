@@ -227,7 +227,7 @@ func TestFilterBar_NonCollapsibleBodyHasTopPadding(t *testing.T) {
 	if strings.Contains(out, `class="px-4 pb-4" class="px-4 py-4"`) {
 		t.Fatalf("non-collapsible filter body rendered duplicate classes without top padding:\n%s", out)
 	}
-	if !strings.Contains(out, `x-collapse class="px-4 py-4"`) {
+	if !strings.Contains(out, `x-collapse class="px-4 py-4 motion-reduce:transition-none!"`) {
 		t.Fatalf("non-collapsible filter body missing top padding class; got:\n%s", out)
 	}
 }

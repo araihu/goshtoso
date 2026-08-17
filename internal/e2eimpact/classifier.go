@@ -17,7 +17,7 @@ type classification struct {
 var componentJavaScript = map[string]string{
 	"action-group.js": "actiongroup", "carousel.js": "carousel", "combobox-client.js": "combobox",
 	"combobox.js": "combobox", "dropdown.js": "dropdown", "palette.js": "palette",
-	"search.js": "search", "select.js": "select", "structured-input.js": "structuredinput",
+	"search.js": "search", "select.js": "select", "popover.js": "popover", "structured-input.js": "structuredinput",
 	"table.js": "table", "tabs.js": "tabs", "tooltip.js": "tooltip",
 }
 
@@ -129,8 +129,8 @@ func derivedPath(path string) bool {
 }
 
 func derivedExplained(path string, changes []Change, authoredTempl, authoredJS bool) bool {
-	if strings.HasSuffix(path, "_templ.go") {
-		source := strings.TrimSuffix(path, "_templ.go") + ".templ"
+	if before, ok := strings.CutSuffix(path, "_templ.go"); ok {
+		source := before + ".templ"
 		return slices.ContainsFunc(changes, func(change Change) bool { return change.NewPath == source })
 	}
 	if path == "assets/styles.css" {

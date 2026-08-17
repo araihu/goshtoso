@@ -172,3 +172,49 @@ func TestModalCoverageDemo(t *testing.T) {
 		assert.Empty(t, consoleErrors, "demo should not log console errors: %s", strings.Join(consoleErrors, "; "))
 	})
 }
+
+func TestModalReducedMotionOpensAndClosesWithoutVisualTransition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{
+		ReducedMotion: playwright.ReducedMotionReduce,
+	}))
+
+	_, err := page.Goto(baseURL+"/components/modal", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+
+	container := page.Locator("#modal-default")
+	dialog := container.Locator("[role='dialog']")
+	panel := dialog.Locator(":scope > div")
+	require.NoError(t, container.GetByText("Open Modal").Click())
+	_, err = page.WaitForFunction(`() => {
+		const dialog = document.querySelector('#modal-default [role="dialog"]');
+		const panel = dialog?.firstElementChild;
+		if (!dialog || !panel || getComputedStyle(dialog).display === 'none' || getComputedStyle(panel).display === 'none') return false;
+		const overlayStyle = getComputedStyle(dialog);
+		const panelStyle = getComputedStyle(panel);
+		return overlayStyle.transitionProperty === 'none' &&
+			overlayStyle.opacity === '1' &&
+			panelStyle.transitionProperty === 'none' &&
+			panelStyle.opacity === '1' &&
+			panelStyle.transform === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	require.NoError(t, dialog.Locator("button[aria-label='close modal']").Click())
+	_, err = page.WaitForFunction(`() => {
+		const dialog = document.querySelector('#modal-default [role="dialog"]');
+		return !!dialog && getComputedStyle(dialog).display === 'none';
+	}`, nil)
+	require.NoError(t, err)
+
+	visible, err := panel.IsVisible()
+	require.NoError(t, err)
+	assert.False(t, visible, "reduced-motion modal should close immediately")
+}

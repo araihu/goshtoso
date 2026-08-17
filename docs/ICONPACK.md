@@ -4,8 +4,8 @@
 a consumer-owned directory. It does not add selected icons to Goshtoso's
 embedded Heroicons package. Consumers can use the verified Arai Hû Assets
 catalog boundary or the general `.iconpack.yaml` source contract. Both paths
-produce the same generated package and the same `components/icon` rendering
-contract.
+produce the same generated package, Iconify-compatible `icons.json`, and the
+same `components/icon` rendering contract.
 
 The general contract uses Muamba as a Go library; consumers do not install a
 Muamba executable and the command never searches for or changes `muamba.yaml`,
@@ -72,6 +72,14 @@ go run ./cmd/iconpack \
   -out ./internal/appicons -package appicons \
   -const-prefix Icon \
   -sprite-url /assets/icons/appicons/sprite.svg
+
+# Optional Mermaid/Iconify prefix. Defaults to the generated package name.
+go run ./cmd/iconpack \
+  -config ./.iconpack.yaml \
+  -out ./internal/appicons -package appicons \
+  -const-prefix Icon \
+  -sprite-url /assets/icons/appicons/sprite.svg \
+  -iconify-prefix devicon
 ```
 
 After reviewing the generated `.iconpack.lock.yaml`, regenerate without
@@ -243,6 +251,9 @@ One successful publication creates the requested directory atomically with:
 
 - `sprite.svg`: only selected `<symbol>` elements, using catalog
   `spriteSymbol` values literally.
+- `icons.json`: the selected SVG bodies in Iconify JSON format. Its `prefix`
+  is the `-iconify-prefix` value or the generated Go package name; icon names
+  use the selected sprite symbols, with the prefix removed when it matches.
 - `icons_gen.go`: typed canonical names, `icon.Symbol` bindings, lookup data,
   and a consumer-local `Icon` component bound to the selected sprite URL.
 - `manifest.json`: release, source kind and outer archive identity, catalog,

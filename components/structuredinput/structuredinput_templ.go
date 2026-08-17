@@ -192,7 +192,7 @@ func structuredInputTemplate(cfg Config) templ.Component {
 			}
 		}
 		if !cfg.Disabled {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button type=\"button\" x-on:click=\"entries.splice(index, 1)\" class=\"shrink-0 p-2 rounded-radius text-on-surface-muted dark:text-on-surface-dark-muted hover:bg-outline/20 dark:hover:bg-outline-dark/20 hover:text-on-surface-strong dark:hover:text-on-surface-dark-strong transition\" aria-label=\"Remove row\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"></path><path d=\"m6 6 12 12\"></path></svg></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button type=\"button\" x-on:click=\"entries.splice(index, 1)\" class=\"shrink-0 p-2 rounded-radius text-on-surface-muted dark:text-on-surface-dark-muted hover:bg-outline/20 dark:hover:bg-outline-dark/20 hover:text-on-surface-strong dark:hover:text-on-surface-dark-strong transition motion-reduce:transition-none\" aria-label=\"Remove row\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"></path><path d=\"m6 6 12 12\"></path></svg></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -202,7 +202,7 @@ func structuredInputTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if !cfg.Disabled {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button type=\"button\" x-on:click=\"addRow()\" class=\"self-start px-3 py-2 text-sm rounded-radius border border-dashed border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark hover:bg-outline/10 dark:hover:bg-outline-dark/20 hover:border-outline-strong dark:hover:border-outline-dark-strong transition\" data-add-row>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button type=\"button\" x-on:click=\"addRow()\" class=\"self-start px-3 py-2 text-sm rounded-radius border border-dashed border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark hover:bg-outline/10 dark:hover:bg-outline-dark/20 hover:border-outline-strong dark:hover:border-outline-dark-strong transition motion-reduce:transition-none\" data-add-row>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

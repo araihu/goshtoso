@@ -13,7 +13,9 @@ package tooltip
 //	    tooltip.WithDescription("A rich tooltip that contains longer text."),
 //	)
 //
-//	// Click tooltip
+//	// Persistent click tooltip. The actual trigger keeps aria-describedby and
+//	// reflects aria-controls/aria-expanded; click, Enter, or Space toggles it,
+//	// while Escape or an outside click dismisses it without moving focus.
 //	@tooltip.Tooltip(
 //	    "clickTooltip",
 //	    "Tooltip top",
@@ -46,7 +48,7 @@ templ defaultTooltip(cfg config) {
 		} else {
 			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
 		}
-		<div id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface-strong" } role="tooltip">{ cfg.label }</div>
+		<div id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out motion-reduce:transition-none peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface-strong" } role="tooltip">{ cfg.label }</div>
 	</div>
 }
 
@@ -66,29 +68,30 @@ templ richTooltip(cfg config) {
 		} else {
 			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
 		}
-		<div id={ cfg.id } class={ cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-sm bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface" } role="tooltip">
+		<div id={ cfg.id } class={ cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-radius bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out motion-reduce:transition-none peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface" } role="tooltip">
 			<span class="text-sm font-medium text-on-surface-dark-strong dark:text-on-surface-strong">{ cfg.label }</span>
 			<p class="text-balance">{ cfg.description }</p>
 		</div>
 	</div>
 }
 
-// clickTooltip renders a click-triggered tooltip using Alpine.js
+// clickTooltip renders a persistent click-triggered tooltip using Alpine.js.
 templ clickTooltip(cfg config) {
-	<div x-data="{ showTooltip: false }" class="relative w-fit">
+	<div x-data="{ showTooltip: false }" x-on:keydown.escape.stop="showTooltip = false" class="relative w-fit">
 		if cfg.trigger != nil {
 			<span
 				x-on:click="showTooltip = !showTooltip"
 				x-data
 				data-tooltip-content-id={ cfg.id }
 				data-tooltip-activation={ string(cfg.activation) }
-				x-init="goshtosoInitTooltipTrigger($el)"
+				x-init="goshtosoInitTooltipTrigger($el, showTooltip)"
+				x-effect="goshtosoSetTooltipExpanded($el, showTooltip)"
 			>
 				@cfg.trigger
 			</span>
 		} else {
-			<button x-on:click="showTooltip = !showTooltip" type="button" class="rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
+			<button x-on:click="showTooltip = !showTooltip" type="button" class="rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id } aria-controls={ cfg.id } x-bind:aria-expanded="showTooltip">{ cfg.triggerLabel }</button>
 		}
-		<div x-cloak x-show="showTooltip" x-on:click.outside="showTooltip = false" id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-sm bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-out" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">{ cfg.label }</div>
+		<div x-cloak x-show="showTooltip" x-on:click.outside="showTooltip = false" id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out motion-reduce:transition-none" x-transition:enter-start="opacity-0 motion-reduce:opacity-100" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in motion-reduce:transition-none" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 motion-reduce:opacity-100">{ cfg.label }</div>
 	</div>
 }
