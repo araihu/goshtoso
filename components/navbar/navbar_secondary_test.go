@@ -328,6 +328,73 @@ func TestSecondaryRowAndNavbarSuppressEmptySecondaryMarkup(t *testing.T) {
 	assert.Empty(t, rowHTML)
 }
 
+func TestNavbarWithoutSecondaryPreservesEstablishedPrimaryDOMContract(t *testing.T) {
+	t.Parallel()
+
+	markup := renderNavbar(t, Config{
+		Brand:     templ.Raw(`<span id="brand">Acme</span>`),
+		BrandHref: "/home",
+		Links: []NavLink{
+			{Label: "Home", Href: "/", Active: true},
+		},
+		NavClass: "contract-nav",
+		NavAttrs: templ.Attributes{
+			"id":            "primary-navbar",
+			"data-contract": "base",
+		},
+	})
+	doc := parseTestHTML(t, markup)
+
+	body := mustFindElement(t, doc, "body", nil)
+	bodyChildren := childElements(body)
+	require.Len(t, bodyChildren, 1)
+
+	primary := bodyChildren[0]
+	assert.Equal(t, "nav", primary.Data)
+	assert.Equal(t, "primary-navbar", getAttr(primary, "id"))
+	assert.Equal(t, "base", getAttr(primary, "data-contract"))
+	assert.Equal(t, "main navigation", getAttr(primary, "aria-label"))
+	assert.Equal(t, "{ mobileMenuIsOpen: false }", getAttr(primary, "x-data"))
+	assert.Equal(t, "mobileMenuIsOpen = false", getAttr(primary, "x-on:click.away"))
+	assert.Equal(t, "mobileMenuIsOpen = false", getAttr(primary, "x-on:keydown.escape.window"))
+	assertClassTokensInOrder(t, getAttr(primary, "class"), "flex", "contract-nav")
+
+	primaryChildren := childElements(primary)
+	require.Len(t, primaryChildren, 4)
+	assert.Equal(t, "div", primaryChildren[0].Data)
+	assert.Equal(t, "div", primaryChildren[1].Data)
+	assert.Equal(t, "button", primaryChildren[2].Data)
+	assert.Equal(t, "ul", primaryChildren[3].Data)
+
+	brand := mustFindElement(t, primaryChildren[0], "a", nil)
+	assert.Equal(t, "/home", getAttr(brand, "href"))
+	assert.Equal(t, "brand", getAttr(mustFindElement(t, brand, "span", nil), "id"))
+
+	primaryLinks := findElements(primaryChildren[1], "a", nil)
+	require.Len(t, primaryLinks, 1)
+	assert.Equal(t, "/", getAttr(primaryLinks[0], "href"))
+	assert.Equal(t, "page", getAttr(primaryLinks[0], "aria-current"))
+	assert.Equal(t, "Home", textContent(primaryLinks[0]))
+
+	assert.Equal(t, "button", primaryChildren[2].Data)
+	assert.Equal(t, "button", getAttr(primaryChildren[2], "type"))
+	assert.Equal(t, "mobileMenuIsOpen = !mobileMenuIsOpen", getAttr(primaryChildren[2], "x-on:click"))
+	assertClassTokens(t, getAttr(primaryChildren[2], "class"), "flex", "sm:hidden")
+	assert.True(t, hasAttr(primaryChildren[3], "x-cloak"))
+	assert.Equal(t, "mobileMenuIsOpen", getAttr(primaryChildren[3], "x-show"))
+
+	for _, marker := range []string{"data-navbar-shell", "data-navbar-secondary", "data-navbar-actions"} {
+		assert.Empty(t, findElements(doc, "", func(node *html.Node) bool {
+			for _, attr := range node.Attr {
+				if strings.EqualFold(attr.Key, marker) {
+					return true
+				}
+			}
+			return false
+		}), "unexpected secondary marker %q", marker)
+	}
+}
+
 func TestNavbarRendersSecondaryLinksActionsAndLinkState(t *testing.T) {
 	t.Parallel()
 
@@ -586,6 +653,15 @@ func getAttr(node *html.Node, name string) string {
 		}
 	}
 	return ""
+}
+
+func hasAttr(node *html.Node, name string) bool {
+	for _, attr := range node.Attr {
+		if strings.EqualFold(attr.Key, name) {
+			return true
+		}
+	}
+	return false
 }
 
 func textContent(node *html.Node) string {

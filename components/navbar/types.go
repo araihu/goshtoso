@@ -78,20 +78,39 @@ const (
 
 // SecondaryConfig holds the optional secondary navbar row configuration.
 type SecondaryConfig struct {
-	Links      []SecondaryLink
-	Actions    []templ.Component
-	Content    templ.Component
-	AriaLabel  string
+	// Links are consumer-owned primitive links rendered in order inside the secondary navigation landmark.
+	// The field is ignored when Content is set. The default is no links.
+	Links []SecondaryLink
+	// Actions are consumer-owned components rendered in the secondary action region.
+	// Nil actions are invalid, and the field cannot be combined with Content. The default is no actions.
+	Actions []templ.Component
+	// Content is a consumer-owned escape hatch rendered exactly once as the secondary row's only content.
+	// It cannot be combined with Links or Actions; nil selects primitive link/action rendering.
+	Content templ.Component
+	// AriaLabel names the secondary navigation landmark. It defaults to "secondary navigation"
+	// and must differ from the primary "main navigation" landmark.
+	AriaLabel string
+	// Scrollable enables horizontal scrolling for the primitive link container. The default is false.
 	Scrollable bool
-	RootClass  string
-	RootAttrs  templ.Attributes
+	// RootClass adds consumer-owned classes to the neutral secondary-row root after package defaults.
+	// The default is no additional class.
+	RootClass string
+	// RootAttrs supplies consumer-owned allowlisted attributes for the neutral secondary-row root.
+	// Structural attributes are reserved, and class is merged with package classes. The default is empty.
+	RootAttrs templ.Attributes
 }
 
 // SecondaryLink is a primitive secondary navigation link rendered by Navbar.
 type SecondaryLink struct {
-	Label     string
-	Href      string
-	Current   SecondaryCurrent
+	// Label is the required visible text rendered inside the anchor.
+	Label string
+	// Href is the required destination URL rendered on the anchor.
+	Href string
+	// Current identifies the link's current-location state. The default is SecondaryCurrentNone;
+	// page or location renders the corresponding aria-current value, with at most one current link.
+	Current SecondaryCurrent
+	// LinkAttrs supplies consumer-owned allowlisted attributes for the primitive anchor.
+	// Class is merged with package classes, while structural and action/mutation attributes are rejected.
 	LinkAttrs templ.Attributes
 }
 

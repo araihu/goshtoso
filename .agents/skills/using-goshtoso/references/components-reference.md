@@ -1114,22 +1114,22 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Links` | `[]SecondaryLink` |  |
-| `Actions` | `[]templ.Component` |  |
-| `Content` | `templ.Component` |  |
-| `AriaLabel` | `string` |  |
-| `Scrollable` | `bool` |  |
-| `RootClass` | `string` |  |
-| `RootAttrs` | `templ.Attributes` |  |
+| `Links` | `[]SecondaryLink` | Links are consumer-owned primitive links rendered in order inside the secondary navigation landmark. The field is ignored when Content is set. The default is no links. |
+| `Actions` | `[]templ.Component` | Actions are consumer-owned components rendered in the secondary action region. Nil actions are invalid, and the field cannot be combined with Content. The default is no actions. |
+| `Content` | `templ.Component` | Content is a consumer-owned escape hatch rendered exactly once as the secondary row's only content. It cannot be combined with Links or Actions; nil selects primitive link/action rendering. |
+| `AriaLabel` | `string` | AriaLabel names the secondary navigation landmark. It defaults to "secondary navigation" and must differ from the primary "main navigation" landmark. |
+| `Scrollable` | `bool` | Scrollable enables horizontal scrolling for the primitive link container. The default is false. |
+| `RootClass` | `string` | RootClass adds consumer-owned classes to the neutral secondary-row root after package defaults. The default is no additional class. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs supplies consumer-owned allowlisted attributes for the neutral secondary-row root. Structural attributes are reserved, and class is merged with package classes. The default is empty. |
 
 **SecondaryLink**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Label` | `string` |  |
-| `Href` | `string` |  |
-| `Current` | `SecondaryCurrent` |  |
-| `LinkAttrs` | `templ.Attributes` |  |
+| `Label` | `string` | Label is the required visible text rendered inside the anchor. |
+| `Href` | `string` | Href is the required destination URL rendered on the anchor. |
+| `Current` | `SecondaryCurrent` | Current identifies the link's current-location state. The default is SecondaryCurrentNone; page or location renders the corresponding aria-current value, with at most one current link. |
+| `LinkAttrs` | `templ.Attributes` | LinkAttrs supplies consumer-owned allowlisted attributes for the primitive anchor. Class is merged with package classes, while structural and action/mutation attributes are rejected. |
 
 **UserMenuItem**
 
