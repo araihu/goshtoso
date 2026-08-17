@@ -78,8 +78,8 @@ const (
 
 // SecondaryConfig holds the optional secondary navbar row configuration.
 type SecondaryConfig struct {
-	// Links are consumer-owned primitive links rendered in order inside the secondary navigation landmark.
-	// The field is ignored when Content is set. The default is no links.
+	// Links are consumer-owned primitive links rendered in order as the secondary navigation region when Content is nil.
+	// Links cannot be combined with Content. The default is no links.
 	Links []SecondaryLink
 	// Actions are consumer-owned components rendered in the secondary action region.
 	// Nil actions are invalid, and the field cannot be combined with Content. The default is no actions.

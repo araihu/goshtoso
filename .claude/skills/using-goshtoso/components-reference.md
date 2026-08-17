@@ -1114,7 +1114,7 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Links` | `[]SecondaryLink` | Links are consumer-owned primitive links rendered in order inside the secondary navigation landmark. The field is ignored when Content is set. The default is no links. |
+| `Links` | `[]SecondaryLink` | Links are consumer-owned primitive links rendered in order as the secondary navigation region when Content is nil. Links cannot be combined with Content. The default is no links. |
 | `Actions` | `[]templ.Component` | Actions are consumer-owned components rendered in the secondary action region. Nil actions are invalid, and the field cannot be combined with Content. The default is no actions. |
 | `Content` | `templ.Component` | Content is a consumer-owned escape hatch rendered exactly once as the secondary row's only content. It cannot be combined with Links or Actions; nil selects primitive link/action rendering. |
 | `AriaLabel` | `string` | AriaLabel names the secondary navigation landmark. It defaults to "secondary navigation" and must differ from the primary "main navigation" landmark. |
