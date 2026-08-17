@@ -5,10 +5,12 @@ usage() {
   cat >&2 <<'EOF'
 usage: scripts/run-focused-e2e.sh <impact.json> [--dry-run]
        scripts/run-focused-e2e.sh --current-source-theme-catalog [--dry-run]
+       scripts/run-focused-e2e.sh --current-source-navbar [--dry-run]
 EOF
 }
 
-if [[ "${1:-}" == "--current-source-theme-catalog" ]]; then
+if [[ "${1:-}" == "--current-source-theme-catalog" || "${1:-}" == "--current-source-navbar" ]]; then
+  current_source_mode="$1"
   if [[ $# -gt 2 || ( $# -eq 2 && "${2:-}" != "--dry-run" ) ]]; then
     usage
     exit 2
@@ -17,10 +19,16 @@ if [[ "${1:-}" == "--current-source-theme-catalog" ]]; then
   repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
   tmp_base="${TMPDIR:-/tmp}"
   tmp_base="${tmp_base%/}"
-  workspace_dir="$(mktemp -d "$tmp_base/goshtoso-theme-catalog-e2e.XXXXXX")"
+  workspace_prefix="goshtoso-theme-catalog-e2e"
+  test_name="TestThemePage_PublicCatalogInventoryAndSocialContract"
+  if [[ "$current_source_mode" == "--current-source-navbar" ]]; then
+    workspace_prefix="goshtoso-navbar-e2e"
+    test_name="TestNavbar_CurrentSourceSecondaryRow"
+  fi
+  workspace_dir="$(mktemp -d "$tmp_base/$workspace_prefix.XXXXXX")"
   cleanup_current_source_workspace() {
     case "$workspace_dir" in
-      "$tmp_base"/goshtoso-theme-catalog-e2e.*) rm -rf -- "$workspace_dir" ;;
+      "$tmp_base"/goshtoso-theme-catalog-e2e.*|"$tmp_base"/goshtoso-navbar-e2e.*) rm -rf -- "$workspace_dir" ;;
       *) echo "refusing to remove unexpected temporary path: $workspace_dir" >&2 ;;
     esac
   }
@@ -29,7 +37,6 @@ if [[ "${1:-}" == "--current-source-theme-catalog" ]]; then
 
   (cd "$workspace_dir" && GOWORK="$workspace" go work init "$repo_root" "$repo_root/site")
 
-  test_name="TestThemePage_PublicCatalogInventoryAndSocialContract"
   suite_tags="e2e,full,goshtoso_current_source"
   list_pattern="^${test_name}$"
   echo "Current-source E2E tags: $suite_tags"

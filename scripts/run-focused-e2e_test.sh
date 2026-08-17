@@ -16,6 +16,11 @@ output="$($runner "$fixture_dir/full.json" --dry-run)"
 grep -q 'E2E tags: e2e,full' <<< "$output"
 test "$(grep -c '^go test ' <<< "$output")" -eq 1
 
+output="$($runner --current-source-navbar --dry-run)"
+grep -q 'Current-source E2E tags: e2e,full,goshtoso_current_source' <<< "$output"
+grep -q "TestNavbar_CurrentSourceSecondaryRow" <<< "$output"
+test "$(grep -c '^GOWORK=.*go test -tags=e2e,full,goshtoso_current_source ./site/tests/e2e -count=1' <<< "$output")" -eq 1
+
 fake_bin="$fixture_dir/bin"
 fake_go="$fake_bin/go"
 fake_state="$fixture_dir/go-state"

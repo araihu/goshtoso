@@ -104,6 +104,10 @@ test-e2e-one test: css
 test-e2e-theme-catalog-current-source:
     scripts/run-focused-e2e.sh --current-source-theme-catalog
 
+# Run the current-source Navbar secondary-row browser agreement.
+test-e2e-navbar-current-source:
+    scripts/run-focused-e2e.sh --current-source-navbar
+
 # Format root and site Go code.
 fmt:
     go fmt ./...
