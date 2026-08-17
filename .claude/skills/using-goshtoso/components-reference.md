@@ -1075,9 +1075,10 @@ import "github.com/araihu/goshtoso/components/modal"  // package modal
 import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 ```
 
-**Entry points:** `Navbar(cfg Config)`
+**Entry points:** `Navbar(cfg Config)` · `SecondaryRow(cfg SecondaryConfig)`
 
 - **ActionPosition** — ActionLeft = "left", ActionRight = "right"
+- **SecondaryCurrent** — SecondaryCurrentNone = "", SecondaryCurrentPage = "page", SecondaryCurrentLocation = "location"
 
 **ActionItem**
 
@@ -1096,6 +1097,7 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Actions` | `[]ActionItem` | Actions are custom components (e.g., dark mode toggle, theme selector) rendered at configurable positions. Default position is left (after brand). |
 | `User` | `*UserProfile` | User holds user profile data for the avatar dropdown (nil = no avatar) |
 | `UserMenu` | `[]UserMenuItem` | UserMenu contains dropdown items under the avatar |
+| `Secondary` | `*SecondaryConfig` | Secondary configures an optional second navbar row. |
 | `NavClass` | `string` | NavClass allows additional CSS classes on the outer &lt;nav&gt;. |
 | `NavAttrs` | `templ.Attributes` | NavAttrs are extra HTML attributes on the &lt;nav&gt; element |
 
@@ -1107,6 +1109,27 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Href` | `string` | Href is the link URL |
 | `Active` | `bool` | Active marks this link as the current page |
 | `LinkAttrs` | `templ.Attributes` | LinkAttrs are extra HTML attributes on the &lt;a&gt; tag |
+
+**SecondaryConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Links` | `[]SecondaryLink` |  |
+| `Actions` | `[]templ.Component` |  |
+| `Content` | `templ.Component` |  |
+| `AriaLabel` | `string` |  |
+| `Scrollable` | `bool` |  |
+| `RootClass` | `string` |  |
+| `RootAttrs` | `templ.Attributes` |  |
+
+**SecondaryLink**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Label` | `string` |  |
+| `Href` | `string` |  |
+| `Current` | `SecondaryCurrent` |  |
+| `LinkAttrs` | `templ.Attributes` |  |
 
 **UserMenuItem**
 
@@ -1125,6 +1148,13 @@ import "github.com/araihu/goshtoso/components/navbar"  // package navbar
 | `Name` | `string` | Name is the user's display name |
 | `Email` | `string` | Email is the user's email address |
 | `Avatar` | `templ.Component` | Avatar is an optional component rendered as the avatar trigger button content. When nil, a default user icon is rendered. |
+
+**ValidationError**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Path` | `string` |  |
+| `Reason` | `string` |  |
 
 ## pageheader
 

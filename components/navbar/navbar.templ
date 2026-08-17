@@ -18,6 +18,17 @@ package navbar
 //	    },
 //	})
 templ navbarTemplate(cfg Config) {
+	if cfg.hasSecondaryContent() {
+		<div data-navbar-shell="true">
+			@primaryNavbar(cfg)
+			@secondaryRowTemplate(*cfg.Secondary)
+		</div>
+	} else {
+		@primaryNavbar(cfg)
+	}
+}
+
+templ primaryNavbar(cfg Config) {
 	{{ brandHref := cfg.BrandHref }}
 	{{ if brandHref == "" { brandHref = "/" } }}
 	<nav
@@ -85,6 +96,49 @@ templ navbarTemplate(cfg Config) {
 			@mobileMenu(cfg)
 		}
 	</nav>
+}
+
+templ secondaryRowTemplate(cfg SecondaryConfig) {
+	if cfg.hasContent() {
+		<div
+			data-navbar-secondary="true"
+			class={ cfg.rootClasses() }
+			{ cfg.rootAttrs()... }
+		>
+			if cfg.Content != nil {
+				@cfg.Content
+			} else {
+				if len(cfg.Links) > 0 {
+					<nav
+						aria-label={ cfg.normalizedAriaLabel() }
+						class={ cfg.linksNavClasses() }
+					>
+						<div class={ cfg.linksContainerClasses() }>
+							for _, link := range cfg.Links {
+								<a
+									href={ templ.URL(link.Href) }
+									class={ secondaryLinkClasses(link.Current, classValue(link.LinkAttrs)) }
+									{ sanitizeSecondaryLinkAttrs(link.LinkAttrs)... }
+									if link.Current != SecondaryCurrentNone {
+										aria-current={ string(link.Current) }
+									}
+								>
+									{ link.Label }
+								</a>
+							}
+						</div>
+					</nav>
+				}
+				if len(cfg.Actions) > 0 {
+					<div data-navbar-actions="true" class={ cfg.actionsClasses() }>
+						for _, action := range cfg.Actions {
+							@action
+						}
+					</div>
+				}
+			}
+		</div>
+	}
 }
 
 // avatarDropdown renders the user profile button with dropdown menu (desktop)

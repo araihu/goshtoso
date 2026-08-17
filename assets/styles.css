@@ -1896,6 +1896,9 @@
   .overflow-y-clip {
     overflow-y: clip;
   }
+  .overflow-y-visible {
+    overflow-y: visible;
+  }
   .\!rounded-radius {
     border-radius: var(--radius-radius) !important;
   }
@@ -4930,11 +4933,17 @@
     --tw-scale-z: 95%;
     scale: var(--tw-scale-x) var(--tw-scale-y);
   }
+  .active\:border-primary:active {
+    border-color: var(--color-primary);
+  }
   .active\:bg-surface-dark\/5:active {
     background-color: color-mix(in srgb, oklch(26.9% 0 none) 5%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-surface-dark) 5%, transparent);
     }
+  }
+  .active\:text-on-surface-strong:active {
+    color: var(--color-on-surface-strong);
   }
   .active\:opacity-100:active {
     opacity: 100%;
@@ -6532,6 +6541,9 @@
     outline-color: var(--color-primary-dark);
   }
   @media (hover: hover) {
+    .dark\:hover\:border-outline:where(.dark, .dark *):hover {
+      border-color: var(--color-outline);
+    }
     .dark\:hover\:border-outline-dark-strong:where(.dark, .dark *):hover {
       border-color: var(--color-outline-dark-strong);
     }
@@ -6755,11 +6767,17 @@
   .dark\:focus-visible\:outline-warning-action-dark:where(.dark, .dark *):focus-visible {
     outline-color: var(--color-warning-action-dark);
   }
+  .dark\:active\:border-primary-dark:where(.dark, .dark *):active {
+    border-color: var(--color-primary-dark);
+  }
   .dark\:active\:bg-surface\/5:where(.dark, .dark *):active {
     background-color: color-mix(in srgb, oklch(97% 0 none) 5%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-surface) 5%, transparent);
     }
+  }
+  .dark\:active\:text-on-surface-dark-strong:where(.dark, .dark *):active {
+    color: var(--color-on-surface-dark-strong);
   }
   .dark\:disabled\:bg-surface-dark-alt:where(.dark, .dark *):disabled {
     background-color: var(--color-surface-dark-alt);
