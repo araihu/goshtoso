@@ -58,8 +58,24 @@ templ componentDocsHead(meta PageMeta) {
 		}
 		.component-doc-shell__site-header-actions [data-navbar-secondary] {
 			height: 100%;
+			min-height: 0;
 			flex-wrap: nowrap;
 			align-items: stretch;
+		}
+		.component-doc-shell__site-header-actions [data-navbar-secondary] > nav,
+		.component-doc-shell__site-header-actions [data-navbar-secondary] > nav > div {
+			height: 100%;
+			min-height: 0;
+		}
+		.component-doc-shell__site-header-actions [data-navbar-secondary] > nav > div {
+			align-items: stretch;
+			overflow-y: hidden;
+			padding-block: 0;
+		}
+		.component-doc-shell__site-header-actions [data-navbar-secondary] > nav > div > a {
+			height: 100%;
+			min-height: 0;
+			padding-block: 0.5rem;
 		}
 		#goshtoso-site-secondary-navigation a[data-site-secondary-family][aria-current="location"] {
 			border-color: var(--color-primary) !important;

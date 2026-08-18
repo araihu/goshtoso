@@ -41,6 +41,26 @@ func TestComponentDocsSecondaryNavigationUsesSiteFamilies(t *testing.T) {
 	require.Contains(t, html, `>Examples</a>`)
 }
 
+func TestComponentDocsSecondaryNavigationFitsHeaderSlot(t *testing.T) {
+	t.Parallel()
+
+	var page strings.Builder
+	require.NoError(t, ComponentDocsLayout(
+		DefaultMeta("Navbar"),
+		"navbar",
+		templ.NopComponent,
+		false,
+	).Render(context.Background(), &page))
+
+	html := page.String()
+	require.Contains(t, html, `.component-doc-shell__site-header-actions [data-navbar-secondary] > nav > div`)
+	require.Contains(t, html, `padding-block: 0;`)
+	require.Contains(t, html, `overflow-y: hidden;`)
+	require.Contains(t, html, `height: 100%;
+			min-height: 0;
+			padding-block: 0.5rem;`)
+}
+
 func TestComponentDocsSecondaryNavigationTracksFamily(t *testing.T) {
 	t.Parallel()
 
