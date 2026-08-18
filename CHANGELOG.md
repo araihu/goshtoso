@@ -2,6 +2,12 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.4] - 2026-08-18
+
+### Release integrity
+
+- Removed duplicate social metadata from the component documentation shell so current-source SEO checks and crawlers see one canonical head contract.
+
 ## [v0.2.3] - 2026-08-18
 
 ### Release integrity

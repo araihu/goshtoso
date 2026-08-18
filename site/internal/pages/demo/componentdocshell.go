@@ -123,7 +123,25 @@ func componentDocsBuildBadge(version string) *componentdocshell.BrandBadge {
 }
 
 func componentDocsPage(cfg componentdocshell.Config, meta PageMeta, active string, content templ.Component) componentdocshell.Page {
-	return componentdocshell.Page{Title: meta.Title, DocumentTitle: meta.TitleText(), Description: meta.Description, CanonicalURL: meta.CanonicalURL(), Active: configuredComponentDocsActive(cfg.Navigation, componentDocsID(active)), Content: componentDocsContent(content, active), Head: componentDocsHead(meta, componentDocsFamily(active)), EnableTOC: true}
+	return componentdocshell.Page{
+		Title:         meta.Title,
+		DocumentTitle: meta.TitleText(),
+		Description:   meta.Description,
+		CanonicalURL:  meta.CanonicalURL(),
+		SiteName:      SiteName,
+		Locale:        "en_US",
+		SocialImage: componentdocshell.SocialImage{
+			URL:      meta.OGImageURL(),
+			MIMEType: OGImageMIMEType,
+			Width:    1200,
+			Height:   630,
+			Alt:      meta.OGImageAlt(),
+		},
+		Active:    configuredComponentDocsActive(cfg.Navigation, componentDocsID(active)),
+		Content:   componentDocsContent(content, active),
+		Head:      componentDocsHead(meta, componentDocsFamily(active)),
+		EnableTOC: true,
+	}
 }
 
 func configuredComponentDocsActive(navigation componentdocshell.Navigation, active string) string {
