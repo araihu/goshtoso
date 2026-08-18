@@ -24,7 +24,21 @@ func appShellsComponentPageStatesCode() string {
 }
 
 func appShellsComponentDocsShellCode() string {
-	return `cfg := componentdocshell.Config{
+	return `import (
+    "net/http"
+
+    "github.com/araihu/goshtoso/assets"
+    "github.com/araihu/goshtoso/components/sidebar"
+    "github.com/araihu/goshtoso-app-shells/componentdocshell"
+    shellassets "github.com/araihu/goshtoso-app-shells/componentdocshell/assets"
+)
+
+func registerAssets(mux *http.ServeMux) {
+    mux.Handle("GET /assets/", assets.Handler())
+    mux.Handle("GET /componentdocshell/assets/", shellassets.Handler())
+}
+
+cfg := componentdocshell.Config{
     Brand: componentdocshell.Brand{
         Name: "Product docs",
         HomeURL: "/",
@@ -47,8 +61,39 @@ page := componentdocshell.Page{
 view := componentdocshell.Layout(cfg, page)`
 }
 
+func appShellsComponentDocsShellFragmentCode() string {
+	return `func renderDocs(
+    writer http.ResponseWriter,
+    request *http.Request,
+    cfg componentdocshell.Config,
+    page componentdocshell.Page,
+) {
+    view := componentdocshell.Layout(cfg, page)
+    if request.Header.Get("HX-Request") == "true" {
+        view = componentdocshell.Fragment(cfg, page)
+    }
+    if err := view.Render(request.Context(), writer); err != nil {
+        http.Error(writer, err.Error(), http.StatusInternalServerError)
+    }
+}`
+}
+
 func appShellsConsoleShellCode() string {
-	return `cfg := consoleshell.Config{
+	return `import (
+    "net/http"
+
+    "github.com/araihu/goshtoso/assets"
+    "github.com/araihu/goshtoso/components/sidebar"
+    "github.com/araihu/goshtoso-app-shells/consoleshell"
+    shellassets "github.com/araihu/goshtoso-app-shells/consoleshell/assets"
+)
+
+func registerAssets(mux *http.ServeMux) {
+    mux.Handle("GET /assets/", assets.Handler())
+    mux.Handle("GET /consoleshell/assets/", shellassets.Handler())
+}
+
+cfg := consoleshell.Config{
     Brand: consoleshell.Brand{Name: "Operations", HomeURL: "/"},
     Navigation: consoleshell.Navigation{
         Items: []sidebar.Item{{
@@ -69,8 +114,38 @@ page := consoleshell.Page{
 view := consoleshell.Layout(cfg, page)`
 }
 
+func appShellsConsoleShellFragmentCode() string {
+	return `func renderConsole(
+    writer http.ResponseWriter,
+    request *http.Request,
+    cfg consoleshell.Config,
+    page consoleshell.Page,
+) {
+    view := consoleshell.Layout(cfg, page)
+    if request.Header.Get("HX-Request") == "true" {
+        view = consoleshell.Fragment(cfg, page)
+    }
+    if err := view.Render(request.Context(), writer); err != nil {
+        http.Error(writer, err.Error(), http.StatusInternalServerError)
+    }
+}`
+}
+
 func appShellsLandingShellCode() string {
-	return `cfg := landingshell.Config{
+	return `import (
+    "net/http"
+
+    "github.com/araihu/goshtoso/assets"
+    "github.com/araihu/goshtoso-app-shells/landingshell"
+    shellassets "github.com/araihu/goshtoso-app-shells/landingshell/assets"
+)
+
+func registerAssets(mux *http.ServeMux) {
+    mux.Handle("GET /assets/", assets.Handler())
+    mux.Handle("GET /landingshell/assets/", shellassets.Handler())
+}
+
+cfg := landingshell.Config{
     Brand: landingshell.Brand{
         Name: "Product",
         HomeURL: "/",

@@ -81,7 +81,7 @@ templ chartsModuleContent() {
 				<a href="/modules/app-shells/shells/component-docs-shell" class="block py-5 transition-colors motion-reduce:transition-none hover:bg-surface-alt dark:hover:bg-surface-dark-alt">
 					<code class="font-mono text-sm font-bold text-primary dark:text-primary-dark">componentdocshell</code>
 					<strong class="mt-1 block font-title text-lg text-on-surface-strong dark:text-on-surface-dark-strong">Component Docs Shell</strong>
-					<span class="mt-1 block max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">A documentation frame for component libraries, API references, design systems, and product docs. It powers this site’s family navigation, scoped sidebar, search, TOC, theme controls, and HTMX-aware navigation.</span>
+					<span class="mt-1 block max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">A documentation frame for component libraries, API references, design systems, and product docs. It powers this site’s family navigation, scoped sidebar and search, TOC, theme controls, and HTMX-aware navigation. Goshtoso supplies global search through the shell’s consumer-owned header actions slot.</span>
 				</a>
 				<a href="/modules/app-shells/shells/console-shell" class="block py-5 transition-colors motion-reduce:transition-none hover:bg-surface-alt dark:hover:bg-surface-dark-alt">
 					<code class="font-mono text-sm font-bold text-primary dark:text-primary-dark">consoleshell</code>
@@ -94,6 +94,13 @@ templ chartsModuleContent() {
 					<span class="mt-1 block max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">A public-site frame for product and organization pages, with brand navigation, first-paint color mode, mobile navigation, hero and footer boundaries. Your message, content, calls to action, and art direction stay yours.</span>
 				</a>
 			</div>
+		</section>
+
+		<section id="fragment-support" class="border-y border-outline py-8 dark:border-outline-dark" aria-labelledby="fragment-support-title">
+			<p class="text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark">Response model</p>
+			<h2 id="fragment-support-title" data-toc-heading class="mt-2 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Fragment support</h2>
+			<p class="mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">Only the documentation and console shells expose HTMX fragment responses in v0.1.6. Component Page is embedded inside a document; Landing Shell renders complete public pages.</p>
+			<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">For enhanced links, return <code class="font-mono">Layout</code> on ordinary requests and <code class="font-mono">Fragment</code> when <code class="font-mono">HX-Request</code> is <code class="font-mono">true</code>. Each shell page documents its exact response and out-of-band contract.</p>
 		</section>
 
 		<section class="border-y border-outline py-8 dark:border-outline-dark" aria-labelledby="compose-shell-title">

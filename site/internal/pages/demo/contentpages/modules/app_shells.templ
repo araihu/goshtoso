@@ -72,6 +72,17 @@ templ appShellsPreviewAction() {
 }
 
 templ appShellsComponentPageGuidance() {
+	<section class="space-y-4 border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby="component-page-install-title">
+		<h2 id="component-page-install-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Install and compose</h2>
+		@codeblock.CodeBlock(codeblock.Config{
+			ID:       "app-shells-component-page-install",
+			Language: "bash",
+			Label:    "Install",
+			Code:     "go get github.com/araihu/goshtoso-app-shells/componentpage@" + appShellsVersion,
+			Density:  codeblock.DensityCompact,
+		})
+		<p class="max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono">componentpage</code> renders an embedded page frame. Its document shell owns runtime and asset mounting.</p>
+	</section>
 	<section class="border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby="component-page-boundary-title">
 		<h2 id="component-page-boundary-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Consumer boundary</h2>
 		<p class="mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">The frame owns order, labels, spacing, and code presentation. The consumer owns every preview, code sample, description, control, and follow-up section.</p>
@@ -87,6 +98,7 @@ templ appShellsComponentDocsShellContent() {
 		appShellsComponentDocsShellPreview(),
 		appShellsComponentDocsShellCode(),
 		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/componentdocshell@v0.1.6",
+		appShellsComponentDocsFragmentGuidance(),
 	)
 }
 
@@ -99,6 +111,7 @@ templ appShellsConsoleShellContent() {
 		appShellsConsoleShellPreview(),
 		appShellsConsoleShellCode(),
 		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/consoleshell@v0.1.6",
+		appShellsConsoleFragmentGuidance(),
 	)
 }
 
@@ -111,10 +124,11 @@ templ appShellsLandingShellContent() {
 		appShellsLandingShellPreview(),
 		appShellsLandingShellCode(),
 		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/landingshell@v0.1.6",
+		appShellsLandingResponseGuidance(),
 	)
 }
 
-templ appShellPackagePage(title, packageName, description, codeID string, preview templpkg.Component, code, packageURL string) {
+templ appShellPackagePage(title, packageName, description, codeID string, preview templpkg.Component, code, packageURL string, responseGuidance templpkg.Component) {
 	<div class="mx-auto max-w-4xl space-y-10">
 		<header class="space-y-4">
 			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Goshtoso App Shells · { appShellsVersion }</p>
@@ -139,12 +153,23 @@ templ appShellPackagePage(title, packageName, description, codeID string, previe
 		<section class="space-y-4" aria-labelledby={ codeID + "-code-title" }>
 			<h2 id={ codeID + "-code-title" } data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Install and compose</h2>
 			@codeblock.CodeBlock(codeblock.Config{
+				ID:       codeID + "-install",
+				Language: "bash",
+				Label:    "Install",
+				Code:     "go get github.com/araihu/goshtoso-app-shells/" + packageName + "@" + appShellsVersion,
+				Density:  codeblock.DensityCompact,
+			})
+			@codeblock.CodeBlock(codeblock.Config{
 				ID:       codeID + "-code",
 				Language: "go",
-				Label:    "Usage Example",
+				Label:    "Assets and composition",
 				Code:     code,
 			})
 		</section>
+
+		if responseGuidance != nil {
+			@responseGuidance
+		}
 
 		<section class="border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby={ codeID + "-boundary-title" }>
 			<h2 id={ codeID + "-boundary-title" } data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Consumer boundary</h2>
@@ -157,11 +182,53 @@ templ appShellsComponentDocsShellPreview() {
 	<div class="space-y-5">
 		<p class="text-sm font-semibold text-success-text dark:text-success-text-dark">Live proof: this page is rendered inside Component Docs Shell.</p>
 		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Brand, global search, appearance controls, and family navigation.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Brand, appearance controls, family navigation, and a consumer-owned actions slot.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Search</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The shell owns scoped sidebar search. Consumer-owned global search belongs in <code class="font-mono">HeaderActions</code>.</span></div>
 			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Scoped sidebar</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Local pages, grouped sections, active route, and mobile drawer behavior.</span></div>
 			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Main + TOC</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">One content scroller, optional table of contents, focus handling, and fragment navigation.</span></div>
 		</div>
 	</div>
+}
+
+templ appShellsComponentDocsFragmentGuidance() {
+	@appShellsFragmentGuidance(
+		"app-shells-component-docs-shell-fragments",
+		"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
+		"Component Docs Shell Fragment emits the document title plus out-of-band replacements for main content, scoped sidebar, and family navigation. Active page and family state therefore stay synchronized after navigation.",
+		appShellsComponentDocsShellFragmentCode(),
+	)
+}
+
+templ appShellsConsoleFragmentGuidance() {
+	@appShellsFragmentGuidance(
+		"app-shells-console-shell-fragments",
+		"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
+		"Console Shell Fragment emits the document title and stable main region. NavigationOOB controls whether the same response also replaces the sidebar so its active state follows the new page.",
+		appShellsConsoleShellFragmentCode(),
+	)
+}
+
+templ appShellsFragmentGuidance(id, summary, contract, code string) {
+	<section class="space-y-4 border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby={ id + "-title" }>
+		<div class="space-y-2">
+			<h2 id={ id + "-title" } data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Full documents and HTMX fragments</h2>
+			<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">{ summary }</p>
+			<p class="max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">{ contract }</p>
+		</div>
+		@codeblock.CodeBlock(codeblock.Config{
+			ID:       id + "-code",
+			Language: "go",
+			Label:    "HTTP response selection",
+			Code:     code,
+		})
+	</section>
+}
+
+templ appShellsLandingResponseGuidance() {
+	<section class="space-y-2 border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby="app-shells-landing-response-title">
+		<h2 id="app-shells-landing-response-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Full-document response</h2>
+		<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark"><code class="font-mono">landingshell</code> has no <code class="font-mono">Fragment</code> API in v0.1.6. Use <code class="font-mono">Layout</code> to render complete public pages; keep any HTMX fragments inside consumer-owned content.</p>
+	</section>
 }
 
 templ appShellsConsoleShellPreview() {

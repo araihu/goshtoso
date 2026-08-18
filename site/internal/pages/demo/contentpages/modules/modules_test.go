@@ -3,6 +3,8 @@ package modulespages
 import (
 	"bytes"
 	"context"
+	"html"
+	"regexp"
 	"testing"
 
 	"github.com/a-h/templ"
@@ -92,4 +94,130 @@ func TestAppShellsPackagePagesRenderCurrentAPISurface(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestAppShellsPackagePagesDocumentRequiredSetup(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		page func() templ.Component
+		want []string
+	}{
+		{
+			name: "component page",
+			page: appShellsComponentPageContent,
+			want: []string{
+				`go get github.com/araihu/goshtoso-app-shells/componentpage@v0.1.6`,
+				`document shell owns runtime and asset mounting`,
+			},
+		},
+		{
+			name: "component docs shell",
+			page: appShellsComponentDocsShellContent,
+			want: []string{
+				`go get github.com/araihu/goshtoso-app-shells/componentdocshell@v0.1.6`,
+				`github.com/araihu/goshtoso-app-shells/componentdocshell/assets`,
+				`mux.Handle("GET /componentdocshell/assets/", shellassets.Handler())`,
+			},
+		},
+		{
+			name: "console shell",
+			page: appShellsConsoleShellContent,
+			want: []string{
+				`go get github.com/araihu/goshtoso-app-shells/consoleshell@v0.1.6`,
+				`github.com/araihu/goshtoso-app-shells/consoleshell/assets`,
+				`mux.Handle("GET /consoleshell/assets/", shellassets.Handler())`,
+			},
+		},
+		{
+			name: "landing shell",
+			page: appShellsLandingShellContent,
+			want: []string{
+				`go get github.com/araihu/goshtoso-app-shells/landingshell@v0.1.6`,
+				`github.com/araihu/goshtoso-app-shells/landingshell/assets`,
+				`mux.Handle("GET /landingshell/assets/", shellassets.Handler())`,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			var buffer bytes.Buffer
+			require.NoError(t, test.page().Render(context.Background(), &buffer))
+			text := renderedPlainText(buffer.String())
+			for _, want := range test.want {
+				require.Contains(t, text, want)
+			}
+		})
+	}
+}
+
+func TestAppShellHTMXPagesDocumentFragmentResponseContract(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		page func() templ.Component
+		want []string
+	}{
+		{
+			name: "component docs shell",
+			page: appShellsComponentDocsShellContent,
+			want: []string{
+				`Full documents and HTMX fragments`,
+				`request.Header.Get("HX-Request") == "true"`,
+				`componentdocshell.Fragment(cfg, page)`,
+				`main content, scoped sidebar, and family navigation`,
+			},
+		},
+		{
+			name: "console shell",
+			page: appShellsConsoleShellContent,
+			want: []string{
+				`Full documents and HTMX fragments`,
+				`request.Header.Get("HX-Request") == "true"`,
+				`consoleshell.Fragment(cfg, page)`,
+				`NavigationOOB`,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			var buffer bytes.Buffer
+			require.NoError(t, test.page().Render(context.Background(), &buffer))
+			text := renderedPlainText(buffer.String())
+			for _, want := range test.want {
+				require.Contains(t, text, want)
+			}
+		})
+	}
+}
+
+func TestComponentDocsShellPageKeepsGlobalSearchConsumerOwned(t *testing.T) {
+	t.Parallel()
+
+	var buffer bytes.Buffer
+	require.NoError(t, appShellsComponentDocsShellContent().Render(context.Background(), &buffer))
+	html := buffer.String()
+	require.Contains(t, html, `Consumer-owned global search`)
+	require.NotContains(t, html, `Brand, global search, appearance controls, and family navigation.`)
+}
+
+func TestAppShellsOverviewExplainsFragmentAvailability(t *testing.T) {
+	t.Parallel()
+
+	var buffer bytes.Buffer
+	require.NoError(t, appShellsModuleContent().Render(context.Background(), &buffer))
+	html := buffer.String()
+	require.Contains(t, html, `Fragment support`)
+	require.Contains(t, html, `Only the documentation and console shells expose HTMX fragment responses in v0.1.6.`)
+	require.Contains(t, html, `Component Page is embedded inside a document; Landing Shell renders complete public pages.`)
+}
+
+var renderedTagPattern = regexp.MustCompile(`<[^>]+>`)
+
+func renderedPlainText(markup string) string {
+	return html.UnescapeString(renderedTagPattern.ReplaceAllString(markup, ""))
 }
