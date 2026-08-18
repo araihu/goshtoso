@@ -71,6 +71,9 @@ func TestNavbar_CurrentSourceSecondaryRow(t *testing.T) {
 	t.Run("visual and interaction matrix", func(t *testing.T) {
 		assertNavbarVisualMatrix(t, fixture)
 	})
+	t.Run("unmodified popover geometry stays unclipped", func(t *testing.T) {
+		assertNavbarUnmodifiedPopoverGeometry(t, fixture)
+	})
 
 	waitForPageSettled(t, focusPage)
 	failures.RequireEmpty(t)
@@ -85,8 +88,9 @@ func newNavbarCurrentSourceFixture(t *testing.T) *navbarCurrentSourceFixture {
 		fixture.nativeRequests.Add(1)
 		view := navbarView(request)
 		scrollable := request.URL.Query().Get("scrollable") == "true"
+		unmodifiedPopover := request.URL.Query().Get("unmodified-popover") == "true"
 		writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = io.WriteString(writer, navbarCurrentSourcePage(t, view, scrollable))
+		_, _ = io.WriteString(writer, navbarCurrentSourcePage(t, view, scrollable, unmodifiedPopover))
 	})
 	mux.HandleFunc("GET /api/components/navbar/secondary", func(writer http.ResponseWriter, request *http.Request) {
 		fixture.rowRequests.Add(1)
@@ -124,7 +128,7 @@ func navbarView(request *http.Request) string {
 	return "overview"
 }
 
-func navbarCurrentSourcePage(t *testing.T, view string, scrollable bool) string {
+func navbarCurrentSourcePage(t *testing.T, view string, scrollable, unmodifiedPopover bool) string {
 	t.Helper()
 	metadata := head.Metadata(head.MetadataConfig{
 		Title:        "Navbar secondary row - Goshtoso",
@@ -149,11 +153,15 @@ func navbarCurrentSourcePage(t *testing.T, view string, scrollable bool) string 
 		NavAttrs:  templ.Attributes{"id": "primary-navbar"},
 		Secondary: ptr(navbarSecondaryConfig(view, scrollable)),
 	}))
+	popoverStyle := `<style>#navbar-secondary-actions [data-popover-panel]{min-width:0}</style>`
+	if unmodifiedPopover {
+		popoverStyle = ""
+	}
 	return fmt.Sprintf(`<!doctype html>
 <html lang="en" data-theme="goshtoso">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">%s<link rel="stylesheet" href="/assets/styles.css">%s<style>#navbar-secondary-actions [data-popover-panel]{min-width:0}</style></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">%s<link rel="stylesheet" href="/assets/styles.css">%s%s</head>
 <body class="min-h-[1200px] bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
-<main class="mx-auto w-full max-w-[1280px] overflow-x-hidden">
+<main class="mx-auto w-full max-w-[1280px]">
 <button id="outside-focus" type="button" class="m-2 min-h-11 min-w-11 px-3 py-2" hx-get="/api/navbar/unrelated" hx-target="#unrelated-content" hx-swap="innerHTML" hx-push-url="/other">Outside focus</button>
 <button id="navbar-popover-dismiss-outside" type="button" class="m-2 min-h-11 min-w-11 px-3 py-2">Dismiss popover</button>
 <div id="navbar-visual-spacer" aria-hidden="true" style="height:256px;pointer-events:none"></div>
@@ -210,7 +218,7 @@ document.body.addEventListener("htmx:historyRestore", (event) => {
 });
 })();
 </script>
-</body></html>`, header, dependencies, nav)
+</body></html>`, header, dependencies, popoverStyle, nav)
 }
 
 func navbarSecondaryConfig(view string, scrollable bool) navbar.SecondaryConfig {
@@ -421,21 +429,30 @@ func assertNavbarVisualMatrix(t *testing.T, fixture *navbarCurrentSourceFixture)
 						assertNavbarCurrentState(t, page, "Overview")
 						assertNavbarVisualGeometry(t, page, scrollable, viewport.scale2)
 						if viewport.scale2 {
-							contrastPage := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: viewport.width, Height: viewport.height}})
-							navbarPageFailures(t, contrastPage)
-							contrastPath := navbarOverviewURL + "&scrollable=" + strconv.FormatBool(scrollable)
-							navigateNavbarFixture(t, contrastPage, fixture, contrastPath)
-							setNavbarThemeMode(t, contrastPage, theme.theme, theme.dark)
-							assertNavbarCurrentState(t, contrastPage, "Overview")
-							assertNavbarContrastMatrix(t, contrastPage, theme.dark)
-						} else {
-							assertNavbarContrastMatrix(t, page, theme.dark)
+							disableNavbarTouchEmulation(t, page)
 						}
+						assertNavbarContrastMatrix(t, page, theme.dark)
 					})
 				}
 			}
 		})
 	}
+}
+
+func assertNavbarUnmodifiedPopoverGeometry(t *testing.T, fixture *navbarCurrentSourceFixture) {
+	t.Helper()
+	page := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+	navbarPageFailures(t, page)
+	navigateNavbarFixture(t, page, fixture, navbarOverviewURL+"&unmodified-popover=true")
+	require.LessOrEqual(t, mustEvaluateFloat(t, page, "() => document.documentElement.scrollWidth"), mustEvaluateFloat(t, page, "() => document.documentElement.clientWidth"))
+	trigger := page.Locator("#navbar-secondary-row [data-navbar-actions='true'] button").First()
+	panel := page.Locator("#navbar-secondary-row [role='menu']").First()
+	require.NoError(t, trigger.Click())
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.Equal(t, "192px", mustEvaluateString(t, panel, "element => getComputedStyle(element).minWidth"), "the unmodified Popover keeps its shipped min-w-48 panel geometry")
+	assertElementWithinVisualViewport(t, page, panel)
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
 }
 
 func assertNavbarCurrentState(t *testing.T, page playwright.Page, label string) {
@@ -593,10 +610,6 @@ func assertNavbarContrastMatrix(t *testing.T, page playwright.Page, dark bool) {
 	t.Helper()
 	link := page.Locator("#navbar-secondary-row nav a:not([aria-current])").First()
 	current := page.Locator("#navbar-secondary-row nav a[aria-current]")
-	hoverOptions := playwright.LocatorHoverOptions{}
-	if mustEvaluateFloat(t, page, "() => visualViewport.scale") > 1.01 {
-		hoverOptions.Force = playwright.Bool(true)
-	}
 	require.GreaterOrEqual(t, measureRenderedContrast(t, link).Ratio, 4.5)
 	require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
 	require.True(t, mustEvaluateBool(t, link, `element => {
@@ -605,33 +618,47 @@ func assertNavbarContrastMatrix(t *testing.T, page playwright.Page, dark bool) {
 	}`), "inactive links use a transparent bottom border")
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
 
-	require.NoError(t, link.Hover(hoverOptions))
+	clearHover := hoverNavbarLocator(t, page, link)
 	page.WaitForTimeout(200)
 	require.GreaterOrEqual(t, measureRenderedContrast(t, link).Ratio, 4.5)
 	hoverBorder := measureRenderedPropertyContrast(t, link, "borderBottomColor")
 	require.GreaterOrEqual(t, hoverBorder.Ratio, 3.0)
-	require.NoError(t, current.Hover(hoverOptions))
+	clearHover()
+	clearHover = hoverNavbarLocator(t, page, current)
 	page.WaitForTimeout(200)
 	require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
+	clearHover()
 
 	focusKeyboardLink(t, page, link)
 	assertNavbarFocusContrast(t, page, link, false)
-	pressFocusedLocator(t, page, link, func() {
-		assertNavbarFocusContrast(t, page, link, true)
-	})
+	assertNavbarPressedFocusContrast(t, page, link)
 	focusKeyboardLink(t, page, current)
 	assertNavbarFocusContrast(t, page, current, true)
-	pressFocusedLocator(t, page, current, func() {
-		assertNavbarFocusContrast(t, page, current, true)
-	})
-	require.NoError(t, current.Hover(hoverOptions))
+	assertNavbarPressedFocusContrast(t, page, current)
+	clearHover = hoverNavbarLocator(t, page, current)
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "outlineColor").Ratio, 3.0)
+	clearHover()
 	err := page.EmulateMedia(playwright.PageEmulateMediaOptions{ReducedMotion: playwright.ReducedMotionReduce})
 	require.NoError(t, err)
 	require.Equal(t, "none", mustEvaluateString(t, current, "element => getComputedStyle(element).transitionProperty"))
 	_ = dark
+}
+
+func assertNavbarPressedFocusContrast(t *testing.T, page playwright.Page, locator playwright.Locator) {
+	t.Helper()
+	pressFocusedLocator(t, page, locator, func() {
+		assertNavbarFocusContrast(t, page, locator, true)
+	})
+}
+
+func hoverNavbarLocator(t *testing.T, page playwright.Page, locator playwright.Locator) func() {
+	t.Helper()
+	require.NoError(t, locator.Hover())
+	return func() {
+		require.NoError(t, page.Mouse().Move(1, 1))
+	}
 }
 
 func assertNavbarFocusContrast(t *testing.T, page playwright.Page, locator playwright.Locator, borderVisible bool) {
@@ -878,6 +905,16 @@ func emulateNavbarScaleTwo(t *testing.T, page playwright.Page) {
 	require.NoError(t, err)
 	require.InDelta(t, 0, mustEvaluateFloat(t, page, "() => visualViewport.offsetLeft"), 1)
 	require.InDelta(t, 0, mustEvaluateFloat(t, page, "() => visualViewport.offsetTop"), 1)
+}
+
+func disableNavbarTouchEmulation(t *testing.T, page playwright.Page) {
+	t.Helper()
+	cdp, err := page.Context().NewCDPSession(page)
+	require.NoError(t, err)
+	_, err = cdp.Send("Emulation.setTouchEmulationEnabled", map[string]any{"enabled": false})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("() => matchMedia('(hover: hover)').matches", nil)
+	require.NoError(t, err)
 }
 
 func panVisualViewport(t *testing.T, page playwright.Page, targetLeft, targetTop float64) {

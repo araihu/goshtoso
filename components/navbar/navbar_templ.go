@@ -396,7 +396,7 @@ func secondaryRowTemplate(cfg SecondaryConfig) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					for _, link := range cfg.Links {
-						var templ_7745c5c3_Var18 = []any{secondaryLinkClasses(link.Current, classValue(link.LinkAttrs))}
+						var templ_7745c5c3_Var18 = []any{secondaryLinkClasses(link.Current, classValue(link.LinkAttrs), cfg.Scrollable)}
 						templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var18...)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err

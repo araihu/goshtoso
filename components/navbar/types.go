@@ -583,8 +583,13 @@ func (cfg SecondaryConfig) actionsClasses() string {
 	return "flex shrink-0 items-center gap-2"
 }
 
-func secondaryLinkClasses(current SecondaryCurrent, extra string) string {
-	base := "inline-flex min-h-11 min-w-11 shrink-0 items-center border-b-2 bg-surface px-3 py-2 text-sm whitespace-nowrap transition-colors motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark dark:focus-visible:outline-primary-dark"
+func secondaryLinkClasses(current SecondaryCurrent, extra string, scrollable bool) string {
+	base := "inline-flex min-h-11 min-w-11 items-center border-b-2 bg-surface px-3 py-2 text-sm transition-colors motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark dark:focus-visible:outline-primary-dark"
+	if scrollable {
+		base = mergeClasses(base, "shrink-0 whitespace-nowrap")
+	} else {
+		base = mergeClasses(base, "break-words")
+	}
 	if current != SecondaryCurrentNone {
 		return mergeClasses(
 			base,

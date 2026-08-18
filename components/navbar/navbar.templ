@@ -117,7 +117,7 @@ templ secondaryRowTemplate(cfg SecondaryConfig) {
 							for _, link := range cfg.Links {
 								<a
 									href={ templ.URL(link.Href) }
-									class={ secondaryLinkClasses(link.Current, classValue(link.LinkAttrs)) }
+									class={ secondaryLinkClasses(link.Current, classValue(link.LinkAttrs), cfg.Scrollable) }
 									{ sanitizeSecondaryLinkAttrs(link.LinkAttrs)... }
 									if link.Current != SecondaryCurrentNone {
 										aria-current={ string(link.Current) }
