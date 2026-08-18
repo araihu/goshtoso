@@ -594,7 +594,7 @@ func secondaryLinkClasses(current SecondaryCurrent, extra string) string {
 	}
 	return mergeClasses(
 		base,
-		"border-transparent text-on-surface hover:border-outline-strong hover:text-on-surface-strong active:border-primary active:text-on-surface-strong dark:text-on-surface-dark dark:hover:border-outline dark:hover:text-on-surface-dark-strong dark:active:border-primary-dark dark:active:text-on-surface-dark-strong",
+		"border-transparent text-on-surface hover:border-outline-strong hover:border-b-outline-strong hover:!border-b-outline-strong hover:text-on-surface-strong active:border-primary active:text-on-surface-strong dark:text-on-surface-dark dark:hover:border-outline dark:hover:border-b-outline-dark-strong dark:hover:!border-b-outline-dark-strong dark:hover:text-on-surface-dark-strong dark:active:border-primary-dark dark:active:text-on-surface-dark-strong",
 		extra,
 	)
 }

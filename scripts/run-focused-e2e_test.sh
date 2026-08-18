@@ -18,8 +18,13 @@ test "$(grep -c '^go test ' <<< "$output")" -eq 1
 
 output="$($runner --current-source-navbar --dry-run)"
 grep -q 'Current-source E2E tags: e2e,full,goshtoso_current_source' <<< "$output"
-grep -q "TestNavbar_CurrentSourceSecondaryRow" <<< "$output"
+test "$(grep -F -c -- "-list '^TestNavbar_CurrentSourceSecondaryRow$'" <<< "$output")" -eq 1
+test "$(grep -F -c -- "-run '^TestNavbar_CurrentSourceSecondaryRow$'" <<< "$output")" -eq 1
 test "$(grep -c '^GOWORK=.*go test -tags=e2e,full,goshtoso_current_source ./site/tests/e2e -count=1' <<< "$output")" -eq 1
+if "$runner" --current-source-navbar --invalid >/dev/null 2>&1; then
+  echo "invalid current-source runner arguments unexpectedly succeeded" >&2
+  exit 1
+fi
 
 fake_bin="$fixture_dir/bin"
 fake_go="$fake_bin/go"

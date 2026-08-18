@@ -5,6 +5,7 @@ package e2e
 import (
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -33,16 +34,28 @@ type navbarCurrentSourceFixture struct {
 	rowRequests    atomic.Int64
 }
 
+func newNavbarPage(t *testing.T, options playwright.BrowserNewPageOptions) playwright.Page {
+	t.Helper()
+	return newPage(t, sharedBrowser, options)
+}
+
+func navbarPageFailures(t *testing.T, page playwright.Page) *pageFailures {
+	t.Helper()
+	failures := watchPageFailures(page)
+	t.Cleanup(func() { failures.RequireEmpty(t) })
+	return failures
+}
+
 func TestNavbar_CurrentSourceSecondaryRow(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping e2e test in short mode")
 	}
 
 	fixture := newNavbarCurrentSourceFixture(t)
-	focusPage := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
+	focusPage := newNavbarPage(t, playwright.BrowserNewPageOptions{
 		Viewport: &playwright.Size{Width: 1280, Height: 800},
 	})
-	failures := watchPageFailures(focusPage)
+	failures := navbarPageFailures(t, focusPage)
 
 	t.Run("native fallback and row-only outerHTML swap", func(t *testing.T) {
 		assertNavbarNativeFallback(t, fixture)
@@ -138,21 +151,40 @@ func navbarCurrentSourcePage(t *testing.T, view string, scrollable bool) string 
 	}))
 	return fmt.Sprintf(`<!doctype html>
 <html lang="en" data-theme="goshtoso">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">%s<link rel="stylesheet" href="/assets/styles.css">%s</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">%s<link rel="stylesheet" href="/assets/styles.css">%s<style>#navbar-secondary-row nav a{padding-inline:8px}</style></head>
 <body class="min-h-[1200px] bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
-<main class="mx-auto w-full max-w-[1280px]">
+<main class="mx-auto w-full max-w-[1280px] overflow-x-hidden">
 <button id="outside-focus" type="button" class="m-2 min-h-11 min-w-11 px-3 py-2" hx-get="/api/navbar/unrelated" hx-target="#unrelated-content" hx-swap="innerHTML" hx-push-url="/other">Outside focus</button>
-<div id="navbar-secondary-host">%s</div>
+<div id="navbar-visual-spacer" aria-hidden="true" style="height:256px;pointer-events:none"></div>
+<div id="navbar-secondary-host" style="margin-left:80px;width:calc(100%% - 62px)">%s</div>
 <div id="unrelated-content" class="p-4">Initial unrelated content</div>
 </main>
 <script>
-window.__navbarHistoryEvents = [];
+(() => {
+window.__navbarHistoryEvents = window.__navbarHistoryEvents || [];
+window.__navbarFocusByPath = window.__navbarFocusByPath || {};
+const historyKey = (path) => {
+  try {
+    const url = new URL(path || window.location.href, window.location.origin);
+    return url.pathname + url.search;
+  } catch {
+    return window.location.pathname + window.location.search;
+  }
+};
+document.body.addEventListener("focusin", (event) => {
+  const target = event.target;
+  if (target?.id) window.__navbarFocusByPath[historyKey(window.location.href)] = target.id;
+});
 const focusCurrent = () => requestAnimationFrame(() => {
   const row = document.getElementById("navbar-secondary-row");
   row?.querySelector('a[aria-current="page"], a[aria-current="location"]')?.focus();
 });
+const restoreUnrelatedFocus = () => requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById(window.__navbarFocusByPath[historyKey(window.location.href)])?.focus({preventScroll: true})));
 document.body.addEventListener("htmx:afterSettle", (event) => {
   if (event.detail?.target?.id === "navbar-secondary-row") focusCurrent();
+  else restoreUnrelatedFocus();
+  const active = document.activeElement;
+  if (active?.id) window.__navbarFocusByPath[historyKey(window.location.href)] = active.id;
 });
 const isSecondaryHistoryPath = (path) => {
   try {
@@ -164,12 +196,18 @@ const isSecondaryHistoryPath = (path) => {
   }
 };
 document.body.addEventListener("htmx:historyRestore", (event) => {
+  const path = event.detail?.path || "";
   window.__navbarHistoryEvents.push({
-    path: event.detail?.path || "",
+    path,
     cacheMiss: event.detail?.cacheMiss === true,
   });
-  if (isSecondaryHistoryPath(event.detail?.path)) focusCurrent();
+  if (isSecondaryHistoryPath(path)) {
+    focusCurrent();
+  } else {
+    restoreUnrelatedFocus();
+  }
 });
+})();
 </script>
 </body></html>`, header, dependencies, nav)
 }
@@ -180,6 +218,7 @@ func navbarSecondaryConfig(view string, scrollable bool) navbar.SecondaryConfig 
 			{Label: "Overview", Href: navbarOverviewURL, Current: currentForView(view, "overview"), LinkAttrs: navbarHTMXAttrs("overview")},
 			{Label: "Details", Href: navbarDetailsURL, Current: currentForView(view, "details"), LinkAttrs: navbarHTMXAttrs("details")},
 			{Label: "A long secondary navigation label for overflow", Href: "/components/navbar?view=long", LinkAttrs: navbarHTMXAttrs("overview")},
+			{Label: "More", Href: "/components/navbar?view=more", LinkAttrs: navbarHTMXAttrs("overview")},
 		},
 		Actions: []templ.Component{dropdown.Dropdown(dropdown.Config{
 			ID:        "navbar-secondary-actions",
@@ -192,7 +231,7 @@ func navbarSecondaryConfig(view string, scrollable bool) navbar.SecondaryConfig 
 		})},
 		AriaLabel:  "secondary navigation",
 		Scrollable: scrollable,
-		RootClass:  "overflow-x-hidden",
+		RootClass:  "",
 		RootAttrs:  templ.Attributes{"id": "navbar-secondary-row"},
 	}
 }
@@ -233,6 +272,7 @@ func assertNavbarNativeFallback(t *testing.T, fixture *navbarCurrentSourceFixtur
 	page, err := context.NewPage()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = page.Close() })
+	navbarPageFailures(t, page)
 
 	for _, test := range []struct {
 		path  string
@@ -264,11 +304,13 @@ func assertNavbarHTMXSwap(t *testing.T, fixture *navbarCurrentSourceFixture, pag
 	require.Equal(t, "Details", mustText(t, page.Locator("#navbar-secondary-row a[aria-current]")))
 	require.Contains(t, mustAttribute(t, page.Locator("#navbar-secondary-row a[aria-current]"), "hx-swap"), "outerHTML")
 	assertNavbarActionSeparation(t, page)
+	assertNavbarKeyboardInteractions(t, fixture, page)
 }
 
 func assertNavbarHistoryCacheHit(t *testing.T, fixture *navbarCurrentSourceFixture) {
 	t.Helper()
-	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+	page := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+	navbarPageFailures(t, page)
 	navigateNavbarFixture(t, page, fixture, navbarOverviewURL)
 	clearNavbarHistoryEvents(t, page)
 	clickNavbarView(t, page, "details")
@@ -286,18 +328,23 @@ func assertNavbarHistoryCacheHit(t *testing.T, fixture *navbarCurrentSourceFixtu
 
 func assertNavbarHistoryCacheMiss(t *testing.T, fixture *navbarCurrentSourceFixture) {
 	t.Helper()
-	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+	page := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+	navbarPageFailures(t, page)
 	navigateNavbarFixture(t, page, fixture, navbarOverviewURL)
 	_, err := page.Evaluate("() => { htmx.config.historyCacheSize = 0; window.__navbarHistoryEvents = []; }", nil)
 	require.NoError(t, err)
 	clickNavbarView(t, page, "details")
 	nativeBeforeBack := fixture.nativeRequests.Load()
+	rowBeforeBack := fixture.rowRequests.Load()
 	goBackNavbar(t, page, navbarOverviewURL, "Overview")
 	require.Equal(t, nativeBeforeBack+1, fixture.nativeRequests.Load(), "cache-miss back must reload the native page")
+	require.Equal(t, rowBeforeBack, fixture.rowRequests.Load(), "cache-miss back must use native history, not the row endpoint")
 	assertLastNavbarHistoryEvent(t, page, navbarOverviewURL, true)
 	nativeBeforeForward := fixture.nativeRequests.Load()
+	rowBeforeForward := fixture.rowRequests.Load()
 	goForwardNavbar(t, page, navbarDetailsURL, "Details")
 	require.Equal(t, nativeBeforeForward+1, fixture.nativeRequests.Load(), "cache-miss forward must reload the native page")
+	require.Equal(t, rowBeforeForward, fixture.rowRequests.Load(), "cache-miss forward must use native history, not the row endpoint")
 	assertLastNavbarHistoryEvent(t, page, navbarDetailsURL, true)
 	_, err = page.Evaluate("() => { htmx.config.historyCacheSize = 10; }", nil)
 	require.NoError(t, err)
@@ -305,7 +352,8 @@ func assertNavbarHistoryCacheMiss(t *testing.T, fixture *navbarCurrentSourceFixt
 
 func assertNavbarUnrelatedHistoryFocus(t *testing.T, fixture *navbarCurrentSourceFixture) {
 	t.Helper()
-	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+	page := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+	navbarPageFailures(t, page)
 	navigateNavbarFixture(t, page, fixture, navbarOverviewURL)
 	clearNavbarHistoryEvents(t, page)
 	_, err := page.ExpectResponse("**/api/navbar/unrelated", func() error {
@@ -315,8 +363,11 @@ func assertNavbarUnrelatedHistoryFocus(t *testing.T, fixture *navbarCurrentSourc
 	require.NoError(t, page.WaitForURL("**/other"))
 	require.NoError(t, page.Locator("#outside-focus").Focus())
 	clickNavbarView(t, page, "details")
-	goBackNavbar(t, page, "/other", "Overview")
-	require.Equal(t, "outside-focus", mustEvaluateString(t, page, "() => document.activeElement?.id"), "unrelated restore must preserve outside focus")
+	goBackNavbar(t, page, "/other", "")
+	_, err = page.WaitForFunction("() => document.activeElement?.id === 'outside-focus'", nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
+	if err != nil {
+		t.Fatalf("unrelated restore must preserve outside focus: actual=%q debug=%s: %v", mustEvaluateString(t, page, "() => document.activeElement?.id"), mustEvaluateString(t, page, "() => JSON.stringify({location: location.href, events: window.__navbarHistoryEvents, focus: window.__navbarFocusByPath, outside: !!document.getElementById('outside-focus')})"), err)
+	}
 	assertLastNavbarHistoryEvent(t, page, "/other", false)
 	goBackNavbar(t, page, navbarOverviewURL, "Overview")
 	assertCurrentLinkFocused(t, page)
@@ -338,13 +389,6 @@ func assertNavbarVisualMatrix(t *testing.T, fixture *navbarCurrentSourceFixture)
 	for _, viewport := range viewports {
 		viewport := viewport
 		t.Run(viewport.name, func(t *testing.T) {
-			page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{
-				Viewport:          &playwright.Size{Width: viewport.width, Height: viewport.height},
-				DeviceScaleFactor: floatPtr(boolFloat(viewport.scale2, 2, 1)),
-			})
-			if viewport.scale2 {
-				emulateNavbarScaleTwo(t, page)
-			}
 			for _, theme := range []struct {
 				name  string
 				theme string
@@ -355,15 +399,31 @@ func assertNavbarVisualMatrix(t *testing.T, fixture *navbarCurrentSourceFixture)
 			} {
 				for _, scrollable := range []bool{false, true} {
 					t.Run(fmt.Sprintf("%s/scrollable=%t", theme.name, scrollable), func(t *testing.T) {
+						page := newNavbarPage(t, playwright.BrowserNewPageOptions{
+							HasTouch:          playwright.Bool(viewport.scale2),
+							Viewport:          &playwright.Size{Width: viewport.width, Height: viewport.height},
+							DeviceScaleFactor: floatPtr(boolFloat(viewport.scale2, 2, 1)),
+						})
+						navbarPageFailures(t, page)
 						path := navbarOverviewURL + "&scrollable=" + strconv.FormatBool(scrollable)
 						navigateNavbarFixture(t, page, fixture, path)
 						if viewport.scale2 {
 							emulateNavbarScaleTwo(t, page)
 						}
-						setThemeMode(t, page, theme.theme, theme.dark)
+						setNavbarThemeMode(t, page, theme.theme, theme.dark)
 						assertNavbarCurrentState(t, page, "Overview")
 						assertNavbarVisualGeometry(t, page, scrollable, viewport.scale2)
-						assertNavbarContrastMatrix(t, page, theme.dark)
+						if viewport.scale2 {
+							contrastPage := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: viewport.width, Height: viewport.height}})
+							navbarPageFailures(t, contrastPage)
+							contrastPath := navbarOverviewURL + "&scrollable=" + strconv.FormatBool(scrollable)
+							navigateNavbarFixture(t, contrastPage, fixture, contrastPath)
+							setNavbarThemeMode(t, contrastPage, theme.theme, theme.dark)
+							assertNavbarCurrentState(t, contrastPage, "Overview")
+							assertNavbarContrastMatrix(t, contrastPage, theme.dark)
+						} else {
+							assertNavbarContrastMatrix(t, page, theme.dark)
+						}
 					})
 				}
 			}
@@ -386,6 +446,20 @@ func assertNavbarCurrentState(t *testing.T, page playwright.Page, label string) 
 	require.Contains(t, classes, "font-semibold")
 }
 
+func setNavbarThemeMode(t *testing.T, page playwright.Page, theme string, dark bool) {
+	t.Helper()
+	_, err := page.Evaluate(`([theme, dark]) => {
+		const html = document.documentElement;
+		localStorage.setItem('theme', theme);
+		html.setAttribute('data-theme', theme);
+		html.classList.toggle('dark', dark);
+	}`, []any{theme, dark})
+	require.NoError(t, err)
+	_, err = page.WaitForFunction("theme => document.documentElement.dataset.theme === theme", theme)
+	require.NoError(t, err)
+	page.WaitForTimeout(200)
+}
+
 func assertNavbarActionSeparation(t *testing.T, page playwright.Page) {
 	t.Helper()
 	require.Equal(t, 1, mustCount(t, page.Locator("#navbar-secondary-row > nav")))
@@ -394,6 +468,45 @@ func assertNavbarActionSeparation(t *testing.T, page playwright.Page) {
 	actions := page.Locator("#navbar-secondary-row > [data-navbar-actions='true']")
 	require.GreaterOrEqual(t, mustCount(t, actions.Locator("button")), 1)
 	require.Equal(t, "8px", mustEvaluateString(t, actions, "element => getComputedStyle(element).columnGap"))
+}
+
+func assertNavbarKeyboardInteractions(t *testing.T, fixture *navbarCurrentSourceFixture, page playwright.Page) {
+	t.Helper()
+	navigateNavbarFixture(t, page, fixture, navbarOverviewURL)
+	overview := page.Locator("#navbar-secondary-row a[href='" + navbarOverviewURL + "']")
+	details := page.Locator("#navbar-secondary-row a[href='" + navbarDetailsURL + "']")
+	require.NoError(t, overview.Focus())
+	require.NoError(t, page.Keyboard().Press("Tab"))
+	require.Equal(t, navbarDetailsURL, mustEvaluateString(t, page, "() => document.activeElement?.getAttribute('href') || ''"), "Tab should move between primitive secondary links")
+	require.NoError(t, page.Keyboard().Press("Shift+Tab"))
+	require.Equal(t, navbarOverviewURL, mustEvaluateString(t, page, "() => document.activeElement?.getAttribute('href') || ''"), "Shift+Tab should return to the prior primitive link")
+
+	_, err := page.ExpectResponse("**"+navbarRowEndpoint+"details", func() error { return details.Press("Enter") }, playwright.PageExpectResponseOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err)
+	require.NoError(t, page.WaitForURL("**"+navbarDetailsURL))
+	assertNavbarCurrentState(t, page, "Details")
+	assertCurrentLinkFocused(t, page)
+	navigateNavbarFixture(t, page, fixture, navbarOverviewURL)
+
+	trigger := page.Locator("#navbar-secondary-row [data-navbar-actions='true'] button").First()
+	panel := page.Locator("#navbar-secondary-row [role='menu']").First()
+	firstItem := panel.Locator("[role='menuitem']").First()
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("Space"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	require.NoError(t, firstItem.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.True(t, mustEvaluateBool(t, firstItem, "element => element === document.activeElement"), "ArrowDown should focus the first menu item")
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	require.True(t, mustEvaluateBool(t, trigger, "element => element === document.activeElement"), "Escape should restore trigger focus")
+
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("Enter"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	require.True(t, mustEvaluateBool(t, trigger, "element => element === document.activeElement"), "Enter/Escape should restore trigger focus")
 }
 
 func assertNavbarVisualGeometry(t *testing.T, page playwright.Page, scrollable, scale2 bool) {
@@ -409,7 +522,19 @@ func assertNavbarVisualGeometry(t *testing.T, page playwright.Page, scrollable, 
 			require.GreaterOrEqual(t, box.Height, 44.0)
 		}
 	}
+	if scale2 {
+		current := page.Locator("#navbar-secondary-row nav a[aria-current]")
+		focusLinkWithoutScroll(t, current)
+		assertFocusWithinVisualViewport(t, page, current)
+		panVisualViewport(t, page, 96, 211)
+		focusLinkWithoutScroll(t, current)
+		assertFocusWithinVisualViewport(t, page, current)
+		panVisualViewport(t, page, 195, 211)
+	}
 	assertNavbarActionPanelBounds(t, page, scale2)
+	if scale2 {
+		panVisualViewport(t, page, 0, 0)
+	}
 	if !scrollable {
 		require.Equal(t, "0", mustEvaluateString(t, page, "() => String(document.querySelector('#navbar-secondary-row nav > div')?.scrollLeft || 0)"))
 		return
@@ -434,27 +559,73 @@ func assertNavbarContrastMatrix(t *testing.T, page playwright.Page, dark bool) {
 	t.Helper()
 	link := page.Locator("#navbar-secondary-row nav a").Nth(1)
 	current := page.Locator("#navbar-secondary-row nav a[aria-current]")
-	for _, locator := range []playwright.Locator{link, current} {
-		require.GreaterOrEqual(t, measureRenderedContrast(t, locator).Ratio, 4.5)
-		require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, locator, "borderBottomColor").Ratio, 3.0)
+	hoverOptions := playwright.LocatorHoverOptions{}
+	if mustEvaluateFloat(t, page, "() => visualViewport.scale") > 1.01 {
+		hoverOptions.Force = playwright.Bool(true)
 	}
-	require.NoError(t, link.Hover())
 	require.GreaterOrEqual(t, measureRenderedContrast(t, link).Ratio, 4.5)
-	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, link, "borderBottomColor").Ratio, 3.0)
+	require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
+	require.True(t, mustEvaluateBool(t, link, `element => {
+		const color = getComputedStyle(element).borderBottomColor;
+		return color === 'transparent' || color === 'rgba(0, 0, 0, 0)';
+	}`), "inactive links use a transparent bottom border")
+	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
+
+	require.NoError(t, link.Hover(hoverOptions))
+	page.WaitForTimeout(200)
+	require.GreaterOrEqual(t, measureRenderedContrast(t, link).Ratio, 4.5)
+	hoverBorder := measureRenderedPropertyContrast(t, link, "borderBottomColor")
+	require.GreaterOrEqual(t, hoverBorder.Ratio, 3.0)
+	require.NoError(t, current.Hover(hoverOptions))
+	page.WaitForTimeout(200)
+	require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
+	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
+
+	pressLocator(t, page, link, func() {
+		require.GreaterOrEqual(t, measureRenderedContrast(t, link).Ratio, 4.5)
+		require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, link, "borderBottomColor").Ratio, 3.0)
+	})
+	pressLocator(t, page, current, func() {
+		require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
+		require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
+	})
+
 	focusKeyboardLink(t, page, current)
 	require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
+	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "outlineColor").Ratio, 3.0)
+	require.NoError(t, current.Hover(hoverOptions))
+	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
+	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "outlineColor").Ratio, 3.0)
 	err := page.EmulateMedia(playwright.PageEmulateMediaOptions{ReducedMotion: playwright.ReducedMotionReduce})
 	require.NoError(t, err)
 	require.Equal(t, "none", mustEvaluateString(t, current, "element => getComputedStyle(element).transitionProperty"))
 	_ = dark
 }
 
+func pressLocator(t *testing.T, page playwright.Page, locator playwright.Locator, during func()) {
+	t.Helper()
+	require.NoError(t, locator.ScrollIntoViewIfNeeded())
+	box, err := locator.BoundingBox()
+	require.NoError(t, err)
+	require.NotNil(t, box)
+	require.NoError(t, page.Mouse().Move(box.X+box.Width/2, box.Y+box.Height/2))
+	require.NoError(t, page.Mouse().Down())
+	page.WaitForTimeout(200)
+	during()
+	require.NoError(t, page.Mouse().Move(1, 1))
+	require.NoError(t, page.Mouse().Up())
+}
+
 func assertNavbarActionPanelBounds(t *testing.T, page playwright.Page, scale2 bool) {
 	t.Helper()
 	trigger := page.Locator("#navbar-secondary-row [data-navbar-actions='true'] button").First()
-	require.NoError(t, trigger.ScrollIntoViewIfNeeded())
-	require.NoError(t, trigger.Click())
+	assertElementWithinVisualViewport(t, page, trigger)
+	clickOptions := playwright.LocatorClickOptions{}
+	if scale2 {
+		clickOptions.Force = playwright.Bool(true)
+	}
+	require.NoError(t, trigger.Click(clickOptions))
 	panel := page.Locator("#navbar-secondary-row [role='menu']").First()
 	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
 	result := mustEvaluate(t, panel, `(element) => {
@@ -463,14 +634,62 @@ func assertNavbarActionPanelBounds(t *testing.T, page playwright.Page, scale2 bo
 		return {left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, viewportLeft: viewport.offsetLeft, viewportRight: viewport.offsetLeft + viewport.width, viewportTop: viewport.offsetTop, viewportBottom: viewport.offsetTop + viewport.height};
 	}`)
 	values := result.(map[string]any)
-	require.GreaterOrEqual(t, numberAsFloat(t, values["left"]), numberAsFloat(t, values["viewportLeft"]))
-	require.LessOrEqual(t, numberAsFloat(t, values["right"]), numberAsFloat(t, values["viewportRight"]))
-	require.GreaterOrEqual(t, numberAsFloat(t, values["top"]), numberAsFloat(t, values["viewportTop"]))
-	require.LessOrEqual(t, numberAsFloat(t, values["bottom"]), numberAsFloat(t, values["viewportBottom"]))
+	require.GreaterOrEqual(t, numberAsFloat(t, values["left"]), numberAsFloat(t, values["viewportLeft"])-0.5)
+	require.LessOrEqual(t, numberAsFloat(t, values["right"]), numberAsFloat(t, values["viewportRight"])+0.5)
+	require.GreaterOrEqual(t, numberAsFloat(t, values["top"]), numberAsFloat(t, values["viewportTop"])-0.5)
+	require.LessOrEqual(t, numberAsFloat(t, values["bottom"]), numberAsFloat(t, values["viewportBottom"])+0.5)
 	if scale2 {
 		require.InDelta(t, 2, mustEvaluateFloat(t, page, "() => visualViewport.scale"), 0.01)
 	}
 	require.NoError(t, page.Keyboard().Press("Escape"))
+}
+
+func assertElementWithinVisualViewport(t *testing.T, page playwright.Page, locator playwright.Locator) {
+	t.Helper()
+	result := mustEvaluate(t, locator, `element => {
+		const rect = element.getBoundingClientRect();
+		const viewport = window.visualViewport || {offsetLeft: 0, offsetTop: 0, width: document.documentElement.clientWidth, height: innerHeight};
+		return {
+			left: rect.left,
+			right: rect.right,
+			top: rect.top,
+			bottom: rect.bottom,
+			viewportLeft: viewport.offsetLeft,
+			viewportRight: viewport.offsetLeft + viewport.width,
+			viewportTop: viewport.offsetTop,
+			viewportBottom: viewport.offsetTop + viewport.height,
+		};
+	}`)
+	values := result.(map[string]any)
+	require.GreaterOrEqual(t, numberAsFloat(t, values["left"]), numberAsFloat(t, values["viewportLeft"]))
+	require.LessOrEqual(t, numberAsFloat(t, values["right"]), numberAsFloat(t, values["viewportRight"]))
+	require.GreaterOrEqual(t, numberAsFloat(t, values["top"]), numberAsFloat(t, values["viewportTop"]))
+	require.LessOrEqual(t, numberAsFloat(t, values["bottom"]), numberAsFloat(t, values["viewportBottom"]))
+}
+
+func assertFocusWithinVisualViewport(t *testing.T, page playwright.Page, locator playwright.Locator) {
+	t.Helper()
+	result := mustEvaluate(t, locator, `element => {
+		const rect = element.getBoundingClientRect();
+		const style = getComputedStyle(element);
+		const extra = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+		const viewport = window.visualViewport || {offsetLeft: 0, offsetTop: 0, width: document.documentElement.clientWidth, height: innerHeight};
+		return {
+			left: rect.left - extra,
+			right: rect.right + extra,
+			top: rect.top - extra,
+			bottom: rect.bottom + extra,
+			viewportLeft: viewport.offsetLeft,
+			viewportRight: viewport.offsetLeft + viewport.width,
+			viewportTop: viewport.offsetTop,
+			viewportBottom: viewport.offsetTop + viewport.height,
+		};
+	}`)
+	values := result.(map[string]any)
+	require.GreaterOrEqual(t, numberAsFloat(t, values["left"]), numberAsFloat(t, values["viewportLeft"]))
+	require.LessOrEqual(t, numberAsFloat(t, values["right"]), numberAsFloat(t, values["viewportRight"]))
+	require.GreaterOrEqual(t, numberAsFloat(t, values["top"]), numberAsFloat(t, values["viewportTop"]))
+	require.LessOrEqual(t, numberAsFloat(t, values["bottom"]), numberAsFloat(t, values["viewportBottom"]))
 }
 
 func assertFocusClearance(t *testing.T, link playwright.Locator) {
@@ -484,10 +703,10 @@ func assertFocusClearance(t *testing.T, link playwright.Locator) {
 		return {left: f.left - extra, right: f.right + extra, top: f.top - extra, bottom: f.bottom + extra, scrollLeft: s.left, scrollRight: s.right, scrollTop: s.top, scrollBottom: s.bottom};
 	}`)
 	values := result.(map[string]any)
-	require.LessOrEqual(t, numberAsFloat(t, values["scrollLeft"])+4, numberAsFloat(t, values["left"]))
-	require.LessOrEqual(t, numberAsFloat(t, values["right"]), numberAsFloat(t, values["scrollRight"])-4)
-	require.LessOrEqual(t, numberAsFloat(t, values["scrollTop"])+4, numberAsFloat(t, values["top"]))
-	require.LessOrEqual(t, numberAsFloat(t, values["bottom"]), numberAsFloat(t, values["scrollBottom"])-4)
+	require.GreaterOrEqual(t, numberAsFloat(t, values["left"]), numberAsFloat(t, values["scrollLeft"])+4-0.5)
+	require.LessOrEqual(t, numberAsFloat(t, values["right"]), numberAsFloat(t, values["scrollRight"])-4+0.5)
+	require.GreaterOrEqual(t, numberAsFloat(t, values["top"]), numberAsFloat(t, values["scrollTop"])+4-0.5)
+	require.LessOrEqual(t, numberAsFloat(t, values["bottom"]), numberAsFloat(t, values["scrollBottom"])-4+0.5)
 }
 
 func navigateNavbarFixture(t *testing.T, page playwright.Page, fixture *navbarCurrentSourceFixture, path string) {
@@ -506,7 +725,10 @@ func clickNavbarView(t *testing.T, page playwright.Page, view string) {
 	link := page.Locator("#navbar-secondary-row a[href='" + href + "']")
 	_, err := page.ExpectResponse("**"+navbarRowEndpoint+view, func() error { return link.Click() }, playwright.PageExpectResponseOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err)
-	require.NoError(t, page.WaitForURL("**"+href))
+	_, err = page.WaitForFunction(`href => window.location.pathname + window.location.search === href`, href)
+	if err != nil {
+		t.Fatalf("secondary-row URL did not settle: expected=%s actual=%s: %v", href, mustEvaluateString(t, page, "() => window.location.pathname + window.location.search"), err)
+	}
 	_, err = page.WaitForFunction(`label => {
 		const row = document.querySelector('#navbar-secondary-row');
 		const current = row?.querySelector('a[aria-current]');
@@ -536,9 +758,10 @@ func goBackNavbar(t *testing.T, page playwright.Page, path, label string) {
 	_, err := page.GoBack(playwright.PageGoBackOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
 	require.NoError(t, err)
 	require.NoError(t, page.WaitForURL("**"+path))
-	_, err = page.WaitForFunction(`label => document.querySelector('#navbar-secondary-row a[aria-current]')?.textContent?.trim() === label`, label)
-	require.NoError(t, err)
 	if strings.HasPrefix(path, "/components/navbar") {
+		_, err = page.WaitForFunction(`label => document.querySelector('#navbar-secondary-row a[aria-current]')?.textContent?.trim() === label`, label)
+		require.NoError(t, err)
+		assertNavbarCurrentState(t, page, label)
 		assertCurrentLinkFocused(t, page)
 	}
 }
@@ -550,15 +773,17 @@ func goForwardNavbar(t *testing.T, page playwright.Page, path, label string) {
 	require.NoError(t, page.WaitForURL("**"+path))
 	_, err = page.WaitForFunction(`label => document.querySelector('#navbar-secondary-row a[aria-current]')?.textContent?.trim() === label`, label)
 	require.NoError(t, err)
+	assertNavbarCurrentState(t, page, label)
 	assertCurrentLinkFocused(t, page)
 }
 
 func assertCurrentLinkFocused(t *testing.T, page playwright.Page) {
 	t.Helper()
-	require.True(t, mustEvaluateBool(t, page, `() => {
+	_, err := page.WaitForFunction(`() => {
 		const current = document.querySelector('#navbar-secondary-row a[aria-current]');
 		return current !== null && document.activeElement === current;
-	}`))
+	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2500)})
+	require.NoError(t, err)
 }
 
 func clearNavbarHistoryEvents(t *testing.T, page playwright.Page) {
@@ -577,8 +802,23 @@ func assertLastNavbarHistoryEvent(t *testing.T, page playwright.Page, path strin
 
 func focusKeyboardLink(t *testing.T, page playwright.Page, link playwright.Locator) {
 	t.Helper()
-	require.NoError(t, page.Keyboard().Press("Tab"))
-	require.NoError(t, link.Focus())
+	_, err := link.Evaluate(`element => {
+		const scrollport = element.closest('#navbar-secondary-row nav > div');
+		if (scrollport) {
+			const port = scrollport.getBoundingClientRect();
+			const item = element.getBoundingClientRect();
+			if (item.left < port.left) scrollport.scrollLeft -= port.left - item.left;
+			if (item.right > port.right) scrollport.scrollLeft += item.right - port.right;
+		}
+		element.focus({preventScroll: true});
+	}`, nil)
+	require.NoError(t, err)
+}
+
+func focusLinkWithoutScroll(t *testing.T, link playwright.Locator) {
+	t.Helper()
+	_, err := link.Evaluate("element => element.focus({preventScroll: true})", nil)
+	require.NoError(t, err)
 }
 
 func emulateNavbarScaleTwo(t *testing.T, page playwright.Page) {
@@ -587,18 +827,42 @@ func emulateNavbarScaleTwo(t *testing.T, page playwright.Page) {
 	require.NoError(t, err)
 	_, err = cdp.Send("Emulation.setPageScaleFactor", map[string]any{"pageScaleFactor": 2})
 	require.NoError(t, err)
+	_, err = cdp.Send("Emulation.setTouchEmulationEnabled", map[string]any{"enabled": true, "configuration": "mobile"})
+	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => Math.abs(visualViewport.scale - 2) < 0.01", nil)
 	require.NoError(t, err)
 	require.InDelta(t, 0, mustEvaluateFloat(t, page, "() => visualViewport.offsetLeft"), 1)
 	require.InDelta(t, 0, mustEvaluateFloat(t, page, "() => visualViewport.offsetTop"), 1)
-	_, err = cdp.Send("Input.synthesizePinchGesture", map[string]any{
-		"x":                 96,
-		"y":                 211,
-		"scaleFactor":       1,
-		"relativeSpeed":     800,
-		"gestureSourceType": "touch",
-	})
+}
+
+func panVisualViewport(t *testing.T, page playwright.Page, targetLeft, targetTop float64) {
+	t.Helper()
+	cdp, err := page.Context().NewCDPSession(page)
 	require.NoError(t, err)
+	scale := mustEvaluateFloat(t, page, "() => visualViewport.scale")
+	for attempt := 0; attempt < 5; attempt++ {
+		current := mustEvaluate(t, page, `() => ({left: visualViewport.offsetLeft, top: visualViewport.offsetTop})`).(map[string]any)
+		currentLeft := numberAsFloat(t, current["left"])
+		currentTop := numberAsFloat(t, current["top"])
+		if math.Abs(currentLeft-targetLeft) <= 1 && math.Abs(currentTop-targetTop) <= 1 {
+			return
+		}
+		_, err = cdp.Send("Input.dispatchMouseEvent", map[string]any{
+			"type":    "mouseWheel",
+			"x":       10,
+			"y":       200,
+			"deltaX":  (targetLeft - currentLeft) * scale,
+			"deltaY":  (targetTop - currentTop) * scale,
+			"buttons": 0,
+		})
+		require.NoError(t, err)
+		page.WaitForTimeout(40)
+	}
+	_, err = page.WaitForFunction(`([wantLeft, wantTop]) => {
+		return Math.abs(visualViewport.offsetLeft - wantLeft) <= 1 &&
+			Math.abs(visualViewport.offsetTop - wantTop) <= 1;
+	}`, []float64{targetLeft, targetTop}, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2500)})
+	require.NoErrorf(t, err, "visual viewport did not reach (%.0f, %.0f); observed (%.2f, %.2f)", targetLeft, targetTop, mustEvaluateFloat(t, page, "() => visualViewport.offsetLeft"), mustEvaluateFloat(t, page, "() => visualViewport.offsetTop"))
 }
 
 func mustEvaluate(t *testing.T, target any, expression string, args ...any) any {

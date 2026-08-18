@@ -4531,6 +4531,9 @@
     .hover\:border-primary:hover {
       border-color: var(--color-primary);
     }
+    .hover\:\!border-b-outline-strong:hover {
+      border-bottom-color: var(--color-outline-strong) !important;
+    }
     .hover\:border-b-outline-strong:hover {
       border-bottom-color: var(--color-outline-strong);
     }
@@ -6549,6 +6552,9 @@
     }
     .dark\:hover\:border-primary-dark:where(.dark, .dark *):hover {
       border-color: var(--color-primary-dark);
+    }
+    .dark\:hover\:\!border-b-outline-dark-strong:where(.dark, .dark *):hover {
+      border-bottom-color: var(--color-outline-dark-strong) !important;
     }
     .dark\:hover\:border-b-outline-dark-strong:where(.dark, .dark *):hover {
       border-bottom-color: var(--color-outline-dark-strong);
