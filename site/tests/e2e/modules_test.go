@@ -21,8 +21,8 @@ func TestModulesSidebarAndAppShellsShowcase(t *testing.T) {
 	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: "Goshtoso App Shells"}).WaitFor())
 	require.NoError(t, page.Locator(`[data-sidebar-section="Frames"]`).WaitFor())
 	require.NoError(t, page.Locator(`[data-sidebar-section="Shells"]`).WaitFor())
-	require.NoError(t, page.Locator(`a[href="/modules/app-shells/frames/component-page"]`).WaitFor())
-	require.NoError(t, page.Locator(`a[href="/modules/app-shells/shells/component-docs-shell"]`).WaitFor())
+	require.NoError(t, page.Locator(`#componentdocshell-sidebar-content a[href="/modules/app-shells/frames/component-page"]`).WaitFor())
+	require.NoError(t, page.Locator(`#componentdocshell-sidebar-content a[href="/modules/app-shells/shells/component-docs-shell"]`).WaitFor())
 	require.Equal(t, 1, mustCount(t, page.Locator(`a[href="/modules/charts"]`)))
 	require.Equal(t, 0, mustCount(t, page.Locator(`a[href="/components/app-shell"]`)))
 

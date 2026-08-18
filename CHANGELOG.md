@@ -2,6 +2,14 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.5] - 2026-08-18
+
+### Site navigation and module showcases
+
+- Mounted the Charts module landing page with static SVG, interactive, and 3D showcase frames.
+- Restored the Examples family sidebar with module links and one entry for each runnable example.
+- Aligned browser contracts with the dedicated Icon Catalog route and the current App Shells and Component Page APIs.
+
 ## [v0.2.4] - 2026-08-18
 
 ### Release integrity

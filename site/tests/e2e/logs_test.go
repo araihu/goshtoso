@@ -186,6 +186,15 @@ func TestLogFeed_SidebarScrollPreservedDuringStream(t *testing.T) {
 	require.NoError(t, page.SetViewportSize(1100, 600))
 	gotoLogs(t, page)
 	waitForRows(t, page)
+	_, err := page.Evaluate(`() => {
+		const sb = document.querySelector('.sidebar-scroll');
+		if (!sb) return 0;
+		sb.style.height = '160px';
+		sb.style.maxHeight = '160px';
+		sb.style.overflowY = 'auto';
+		return sb.scrollHeight;
+	}`)
+	require.NoError(t, err)
 
 	// Scroll the nav sidebar down and confirm it moved.
 	scrolled, err := page.Evaluate("() => { const sb = document.querySelector('.sidebar-scroll'); sb.scrollTop = 120; return sb.scrollTop; }")

@@ -198,12 +198,12 @@ func openIconCatalogPage(t *testing.T) playwright.Page {
 	failures := watchPageFailures(page)
 	stubIconClipboard(t, page)
 
-	_, err := page.Goto(baseURL+"/components/icon", playwright.PageGotoOptions{
+	_, err := page.Goto(baseURL+"/docs/icon-catalog", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 	require.NoError(t, waitForAlpine(page))
-	require.NoError(t, page.Locator("#icon-fragment").WaitFor())
+	require.NoError(t, page.Locator("#icon-catalog-fragment").WaitFor())
 	t.Cleanup(func() {
 		waitForPageSettled(t, page)
 		failures.RequireEmpty(t)

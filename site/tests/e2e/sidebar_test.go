@@ -122,6 +122,13 @@ func TestSidebar_ExamplesTopItemNavigatesToTicker(t *testing.T) {
 		Timeout: playwright.Float(3000),
 	}))
 
+	// Examples own a family-specific sidebar. Start on another example so the
+	// first sidebar item is actionable rather than already active.
+	_, err = page.Goto(baseURL+"/examples/chat", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
 	examplesLink := sidebar.Locator("a[href='/examples/ticker']")
 	count, err := examplesLink.Count()
 	require.NoError(t, err)

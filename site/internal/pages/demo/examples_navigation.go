@@ -12,6 +12,25 @@ type examplesSidebarLink struct {
 }
 
 func examplesDocsNavigation(active string) componentdocshell.Navigation {
+	return componentdocshell.Navigation{
+		Sections: []sidebar.Section{
+			{
+				Title: "Modules",
+				Items: []sidebar.Item{
+					{ID: "module-charts", Label: "Charts", Href: "/modules/charts", LinkAttrs: navHxAttrs("/modules/charts", "Charts")},
+					{ID: "module-app-shells", Label: "App Shells", Href: "/modules/app-shells", LinkAttrs: navHxAttrs("/modules/app-shells", "App Shells")},
+				},
+			},
+			{
+				Title: "Examples",
+				Items: examplesSidebarItems(active),
+			},
+		},
+		DisableSearch: true,
+	}
+}
+
+func examplesSidebarItems(active string) []sidebar.Item {
 	items := make([]sidebar.Item, 0, len(examplesSidebarLinks()))
 	for _, link := range examplesSidebarLinks() {
 		items = append(items, sidebar.Item{
@@ -22,11 +41,7 @@ func examplesDocsNavigation(active string) componentdocshell.Navigation {
 			LinkAttrs: navHxAttrs(link.Href, link.Label),
 		})
 	}
-
-	return componentdocshell.Navigation{
-		Items:         items,
-		DisableSearch: true,
-	}
+	return items
 }
 
 func examplesSidebarLinks() []examplesSidebarLink {

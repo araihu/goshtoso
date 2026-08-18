@@ -3,7 +3,42 @@ package modulespages
 import charts "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/charts"
 
 templ chartsModuleContent() {
-	@charts.GettingStartedPage(false)
+	<div id="charts-module-fragment" class="mx-auto max-w-6xl space-y-12">
+		@charts.GettingStartedPage(false)
+
+		<section data-chart-module-showcase="static" class="space-y-4" aria-labelledby="charts-static-showcase-title">
+			<header class="space-y-2">
+				<p class="text-sm font-semibold text-primary dark:text-primary-dark">See it in action</p>
+				<h2 id="charts-static-showcase-title" class="font-title text-2xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Server-rendered SVG</h2>
+				<p class="max-w-3xl leading-7 text-on-surface-muted dark:text-on-surface-dark-muted">Static charts render on the server as ordinary SVG. They work well for reports, email, print, and pages where the first meaningful paint matters more than browser exploration.</p>
+			</header>
+			<div class="overflow-hidden rounded-radius border border-outline dark:border-outline-dark">
+				@ChartsShowcaseFrameFor(chartsShowcaseStatic)
+			</div>
+		</section>
+
+		<section data-chart-module-showcase="interactive" class="space-y-4" aria-labelledby="charts-interactive-showcase-title">
+			<header class="space-y-2">
+				<p class="text-sm font-semibold text-primary dark:text-primary-dark">Explore in the browser</p>
+				<h2 id="charts-interactive-showcase-title" class="font-title text-2xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Interactive charts</h2>
+				<p class="max-w-3xl leading-7 text-on-surface-muted dark:text-on-surface-dark-muted">Interactive charts add browser-side exploration when zoom, hover detail, or live updates justify the runtime. The frame is local and does not depend on a third-party CDN.</p>
+			</header>
+			<div class="overflow-hidden rounded-radius border border-outline dark:border-outline-dark">
+				@ChartsShowcaseFrameFor(chartsShowcaseInteractive)
+			</div>
+		</section>
+
+		<section data-chart-module-showcase="line-3d" class="space-y-4" aria-labelledby="charts-line-3d-showcase-title">
+			<header class="space-y-2">
+				<p class="text-sm font-semibold text-primary dark:text-primary-dark">Higher-dimensional data</p>
+				<h2 id="charts-line-3d-showcase-title" class="font-title text-2xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Three-dimensional line chart</h2>
+				<p class="max-w-3xl leading-7 text-on-surface-muted dark:text-on-surface-dark-muted">Use the 3D family for a deliberate spatial comparison. Keep the surrounding explanation and exact values available so the visual does not carry the entire interpretation.</p>
+			</header>
+			<div class="overflow-hidden rounded-radius border border-outline dark:border-outline-dark">
+				@ChartsShowcaseFrameFor(chartsShowcaseLine3D)
+			</div>
+		</section>
+	</div>
 }
 
 	templ appShellsModuleContent() {

@@ -10,6 +10,7 @@ import (
 	interactive "github.com/araihu/goshtoso-charts/components/interactive"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	charts "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/charts"
+	modulespages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/modules"
 )
 
 type chartsPageRoute struct {
@@ -32,7 +33,15 @@ func (s *Server) registerChartsRoutes() {
 
 func chartsPageRoutes() []chartsPageRoute {
 	return []chartsPageRoute{
-		chartsPage("/modules/charts", "module-charts", "Getting started", "Install Goshtoso Charts and render a first static or interactive chart.", charts.GettingStartedPage),
+		{
+			Path:        "/modules/charts",
+			Active:      "module-charts",
+			Title:       "Getting started",
+			Description: "Install Goshtoso Charts and render a first static or interactive chart.",
+			Render: func(*http.Request) templ.Component {
+				return modulespages.ChartsModuleContent()
+			},
+		},
 		chartsPage("/modules/charts/docs/chart-modes", "charts-chart-modes", "Static and interactive", "Choose the chart delivery model from the job the chart must do.", charts.ChartModesPage),
 		{
 			Path:        "/modules/charts/docs/chart-controls",

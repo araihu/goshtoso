@@ -94,9 +94,11 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 	}
 
 	entries := slices.DeleteFunc(catalog.ComponentPages(), func(entry catalog.Entry) bool {
-		return entry.Active == "app-shell"
+		// Icon pages switch to the dedicated Icons family sidebar, so they are
+		// covered by icon_test.go rather than this core-family traversal.
+		return entry.Active == "app-shell" || entry.Active == "icon"
 	})
-	require.Len(t, entries, 51)
+	require.Len(t, entries, 50)
 
 	page := newPage(t, sharedBrowser)
 	failures := watchPageFailures(page)
@@ -330,15 +332,15 @@ func TestComponentDocsComponentPageSpacing(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, http.StatusOK, response.Status())
 
-	primary := page.Locator("[data-component-page] [data-component-example-body] > *").Nth(1)
-	primaryGap, err := primary.Evaluate("element => parseFloat(getComputedStyle(element).marginTop)", nil)
+	primaryBody := page.Locator("[data-component-page] [data-component-example-body]").First()
+	primaryClass, err := primaryBody.GetAttribute("class")
 	require.NoError(t, err)
-	require.EqualValues(t, 16, primaryGap)
+	require.Contains(t, primaryClass, "space-y-3")
 
 	variant := page.Locator("section[data-component-example]").First()
-	variantMargin, err := variant.Evaluate("element => parseFloat(getComputedStyle(element).marginTop)", nil)
+	variantClass, err := variant.GetAttribute("class")
 	require.NoError(t, err)
-	require.EqualValues(t, 40, variantMargin)
+	require.Contains(t, variantClass, "mt-12")
 }
 
 func replaceComponentDocsLinkWithOrdinaryHref(

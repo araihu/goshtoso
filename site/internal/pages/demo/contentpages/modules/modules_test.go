@@ -18,6 +18,10 @@ func TestChartsModuleRendersMigratedChartsGettingStartedPage(t *testing.T) {
 	require.Contains(t, html, `Goshtoso Charts`)
 	require.Contains(t, html, `Add your first chart`)
 	require.Contains(t, html, `href="/modules/charts/docs/chart-modes"`)
+	for _, kind := range []string{"static", "interactive", "line-3d"} {
+		require.Contains(t, html, `data-chart-module-showcase="`+kind+`"`)
+		require.Contains(t, html, `data-charts-showcase-frame="`+kind+`"`)
+	}
 	require.NotContains(t, html, `charts.goshtoso.araihu.com`)
 }
 
